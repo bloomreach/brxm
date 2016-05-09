@@ -17,6 +17,8 @@
 export class ChannelCtrl {
 
   constructor(
+      $log,
+      $translate,
       ChannelService,
       ComponentAdderService,
       FeedbackService,
@@ -27,7 +29,8 @@ export class ChannelCtrl {
     ) {
     'ngInject';
 
-
+    this.$log = $log;
+    this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;

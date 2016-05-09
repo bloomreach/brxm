@@ -33,7 +33,7 @@ describe('ChannelCtrl', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$q_, _DialogService_, _FeedbackService_, _SessionService_) => {
+    inject(($controller, _$rootScope_, _$q_, _FeedbackService_, _SessionService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
@@ -180,59 +180,6 @@ describe('ChannelCtrl', () => {
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
     ChannelCtrl.enterEditMode();
     expect(ChannelService.createPreviewConfiguration).not.toHaveBeenCalled();
-  });
-
-  it('detects that the current user has pending changes', () => {
-    ConfigService.cmsUser = 'testUser';
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['tobi', 'testUser', 'obiwan'] });
-
-    expect(ChannelCtrl.hasChanges()).toBe(true);
-  });
-
-  it('detects that the current user has no pending changes', () => {
-    ConfigService.cmsUser = 'testUser';
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['tobi', 'obiwan'] });
-
-    expect(ChannelCtrl.hasChanges()).toBe(false);
-  });
-
-  it('publishes changes', () => {
-    ChannelService.publishOwnChanges.and.returnValue($q.resolve());
-
-    ChannelCtrl.publish();
-    $rootScope.$digest();
-
-    expect(ChannelService.publishOwnChanges).toHaveBeenCalled();
-    expect(HippoIframeService.reload).toHaveBeenCalled();
-  });
-
-  it('discards changes', () => {
-    ChannelService.discardOwnChanges.and.returnValue($q.resolve());
-    ChannelService.getSiteMapId.and.returnValue('siteMapId');
-    spyOn(DialogService, 'show').and.returnValue($q.resolve());
-    spyOn(DialogService, 'confirm').and.callThrough();
-    spyOn(SiteMapService, 'load');
-
-    ChannelCtrl.discard();
-    $rootScope.$digest();
-
-    expect(DialogService.confirm).toHaveBeenCalled();
-    expect(DialogService.show).toHaveBeenCalled();
-    expect(ChannelService.discardOwnChanges).toHaveBeenCalled();
-    expect(HippoIframeService.reload).toHaveBeenCalled();
-    expect(SiteMapService.load).toHaveBeenCalledWith('siteMapId');
-  });
-
-  it('does not discard changes if not confirmed', () => {
-    spyOn(DialogService, 'show').and.returnValue($q.reject());
-    spyOn(DialogService, 'confirm').and.callThrough();
-
-    ChannelCtrl.discard();
-    $rootScope.$digest();
-
-    expect(DialogService.confirm).toHaveBeenCalled();
-    expect(DialogService.show).toHaveBeenCalled();
-    expect(ChannelService.discardOwnChanges).not.toHaveBeenCalled();
   });
 
   it('correctly shows and hides subpages', () => {
