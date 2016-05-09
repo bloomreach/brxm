@@ -23,18 +23,13 @@
   top: 0;
 }
 
-@mixin overlay-border($suffix:"") {
-  border-style: solid unquote($suffix);
-  border-width: 1px unquote($suffix);
-}
-
 @mixin overlay-border-component($suffix:"") {
-  border-color: $blue unquote($suffix);
+  border: 1px solid $blue unquote($suffix);
   box-shadow: inset 0 0 0 1px $half-white unquote($suffix);
 }
 
 @mixin overlay-border-container() {
-  border-color: $black;
+  border: 1px solid $black;
   box-shadow: inset 0 0 0 1px $half-white;
 }
 
@@ -43,7 +38,6 @@
 }
 
 overlay-element {
-  @include overlay-border();
   box-sizing: border-box;
   pointer-events: auto;
   position: absolute;
@@ -133,6 +127,10 @@ overlay-element {
   }
 }
 
+.overlay-element-content-button {
+  margin: 0;
+}
+
 .overlay-lock-icon {
   background: $black;
   color: white;
@@ -153,7 +151,6 @@ overlay-element {
   @include overlay-position();
 
   > .gu-mirror {
-    @include overlay-border('!important');
     @include overlay-border-component('!important');
     overflow: hidden !important;
     position: absolute !important;

@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-export function overlayElementDirective() {
-  'ngInject';
+import { PageStructureElement } from './pageStructureElement';
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      structureElement: '=',
-    },
-    templateUrl: 'channel/hippoIframe/overlay/overlayElement.html',
-    transclude: true,
-    controller: 'OverlayElementCtrl',
-    controllerAs: 'overlayElement',
-  };
+export class ContentLink extends PageStructureElement {
+
+  constructor(commentElement, metaData) {
+    super('contentLink', metaData, commentElement, commentElement, null);
+  }
 }

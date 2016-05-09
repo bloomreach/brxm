@@ -43,6 +43,12 @@
               </overlay-element>
             </div>
           </div>
+          <div ng-repeat="contentLink in iframe.getContentLinks()" class="qa-content-link">
+            <overlay-element class="overlay-element-content-link"
+                             structure-element="contentLink">
+              <md-button class="overlay-element-content-button md-fab"><md-icon class="material-icons">description</md-icon></md-button>
+            </overlay-element>
+          </div>
         </div>
 
       </div>

@@ -24,9 +24,9 @@
   </md-icon>
   <span class="overlay-label-text">{{ overlayElement.getLabelText() }}</span>
 </span>
+<div ng-transclude></div>
 <md-icon class="overlay-lock-icon" ng-if="overlayElement.isLockIconVisible()"
          ng-attr-qa-locked-by="{{ overlayElement.getQaLockedLabel() }}">
   {{ overlayElement.getLockIcon() }}
   <md-tooltip class="overlay-lock-tooltip" md-direction="left">{{ overlayElement.getLockedByText() }}</md-tooltip>
 </md-icon>
-

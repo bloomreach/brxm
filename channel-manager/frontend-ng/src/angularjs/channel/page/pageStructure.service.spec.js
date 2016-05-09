@@ -57,7 +57,7 @@ describe('PageStructureService', () => {
   });
 
   it('has no containers initially', () => {
-    expect(PageStructureService.containers).toEqual([]);
+    expect(PageStructureService.getContainers()).toEqual([]);
   });
 
   it('rejects components if there is no container yet', () => {
@@ -66,7 +66,7 @@ describe('PageStructureService', () => {
       'HST-Type': 'CONTAINER_ITEM_COMPONENT',
     });
 
-    expect(PageStructureService.containers).toEqual([]);
+    expect(PageStructureService.getContainers()).toEqual([]);
     expect($log.warn).toHaveBeenCalled();
   });
 
@@ -145,19 +145,20 @@ describe('PageStructureService', () => {
     const container1 = registerVBoxContainer();
     const container2 = registerNoMarkupContainer();
 
-    expect(PageStructureService.containers.length).toEqual(2);
+    const containers = PageStructureService.getContainers();
+    expect(containers.length).toEqual(2);
 
-    expect(PageStructureService.containers[0].type).toEqual('container');
-    expect(PageStructureService.containers[0].isEmpty()).toEqual(true);
-    expect(PageStructureService.containers[0].getComponents()).toEqual([]);
-    expect(PageStructureService.containers[0].getBoxElement()[0]).toEqual(container1);
-    expect(PageStructureService.containers[0].getLabel()).toEqual('vBox container');
+    expect(containers[0].type).toEqual('container');
+    expect(containers[0].isEmpty()).toEqual(true);
+    expect(containers[0].getComponents()).toEqual([]);
+    expect(containers[0].getBoxElement()[0]).toEqual(container1);
+    expect(containers[0].getLabel()).toEqual('vBox container');
 
-    expect(PageStructureService.containers[1].type).toEqual('container');
-    expect(PageStructureService.containers[1].isEmpty()).toEqual(true);
-    expect(PageStructureService.containers[1].getComponents()).toEqual([]);
-    expect(PageStructureService.containers[1].getBoxElement()[0]).toEqual(container2);
-    expect(PageStructureService.containers[1].getLabel()).toEqual('NoMarkup container');
+    expect(containers[1].type).toEqual('container');
+    expect(containers[1].isEmpty()).toEqual(true);
+    expect(containers[1].getComponents()).toEqual([]);
+    expect(containers[1].getBoxElement()[0]).toEqual(container2);
+    expect(containers[1].getLabel()).toEqual('NoMarkup container');
   });
 
   it('adds components to the most recently registered container', () => {
@@ -167,46 +168,50 @@ describe('PageStructureService', () => {
     const componentA = registerVBoxComponent('componentA');
     const componentB = registerVBoxComponent('componentB');
 
-    expect(PageStructureService.containers.length).toEqual(2);
-    expect(PageStructureService.containers[0].isEmpty()).toEqual(true);
-    expect(PageStructureService.containers[1].isEmpty()).toEqual(false);
-    expect(PageStructureService.containers[1].getComponents().length).toEqual(2);
+    const containers = PageStructureService.getContainers();
+    expect(containers.length).toEqual(2);
+    expect(containers[0].isEmpty()).toEqual(true);
+    expect(containers[1].isEmpty()).toEqual(false);
+    expect(containers[1].getComponents().length).toEqual(2);
 
-    expect(PageStructureService.containers[1].getComponents()[0].type).toEqual('component');
-    expect(PageStructureService.containers[1].getComponents()[0].getBoxElement()[0]).toBe(componentA);
-    expect(PageStructureService.containers[1].getComponents()[0].getLabel()).toEqual('component A');
-    expect(PageStructureService.containers[1].getComponents()[0].container).toEqual(PageStructureService.containers[1]);
+    expect(containers[1].getComponents()[0].type).toEqual('component');
+    expect(containers[1].getComponents()[0].getBoxElement()[0]).toBe(componentA);
+    expect(containers[1].getComponents()[0].getLabel()).toEqual('component A');
+    expect(containers[1].getComponents()[0].container).toEqual(containers[1]);
 
-    expect(PageStructureService.containers[1].getComponents()[1].type).toEqual('component');
-    expect(PageStructureService.containers[1].getComponents()[1].getBoxElement()[0]).toBe(componentB);
-    expect(PageStructureService.containers[1].getComponents()[1].getLabel()).toEqual('component B');
-    expect(PageStructureService.containers[1].getComponents()[1].container).toEqual(PageStructureService.containers[1]);
+    expect(containers[1].getComponents()[1].type).toEqual('component');
+    expect(containers[1].getComponents()[1].getBoxElement()[0]).toBe(componentB);
+    expect(containers[1].getComponents()[1].getLabel()).toEqual('component B');
+    expect(containers[1].getComponents()[1].container).toEqual(containers[1]);
   });
 
   it('clears the page structure', () => {
     registerVBoxContainer();
 
-    expect(PageStructureService.containers.length).toEqual(1);
+    expect(PageStructureService.getContainers().length).toEqual(1);
 
     PageStructureService.clearParsedElements();
 
-    expect(PageStructureService.containers.length).toEqual(0);
+    expect(PageStructureService.getContainers().length).toEqual(0);
   });
 
   it('registers additional elements', () => {
     registerVBoxContainer();
 
     const testElement = $j('#test', $document);
-    PageStructureService.containers[0].setJQueryElement('test', testElement);
 
-    expect(PageStructureService.containers[0].getJQueryElement('test')).toEqual(testElement);
+    const containers = PageStructureService.getContainers();
+    containers[0].setJQueryElement('test', testElement);
+
+    expect(containers[0].getJQueryElement('test')).toEqual(testElement);
   });
 
   it('finds the DOM element of a transparent container as parent of the comment', () => {
     const container = registerNoMarkupContainer();
 
-    expect(PageStructureService.containers.length).toEqual(1);
-    expect(PageStructureService.containers[0].getBoxElement()[0]).toBe(container);
+    const containers = PageStructureService.getContainers();
+    expect(containers.length).toEqual(1);
+    expect(containers[0].getBoxElement()[0]).toBe(container);
   });
 
   it('finds the DOM element of a component of a transparent container as next sibling of the comment', () => {
@@ -214,21 +219,23 @@ describe('PageStructureService', () => {
 
     const component = registerNoMarkupComponent();
 
-    expect(PageStructureService.containers.length).toEqual(1);
-    expect(PageStructureService.containers[0].isEmpty()).toEqual(false);
-    expect(PageStructureService.containers[0].getComponents().length).toEqual(1);
-    expect(PageStructureService.containers[0].getComponents()[0].getBoxElement()[0]).toBe(component);
-    expect(PageStructureService.containers[0].getComponents()[0].hasNoIFrameDomElement()).not.toEqual(true);
+    const containers = PageStructureService.getContainers();
+    expect(containers.length).toEqual(1);
+    expect(containers[0].isEmpty()).toEqual(false);
+    expect(containers[0].getComponents().length).toEqual(1);
+    expect(containers[0].getComponents()[0].getBoxElement()[0]).toBe(component);
+    expect(containers[0].getComponents()[0].hasNoIFrameDomElement()).not.toEqual(true);
   });
 
   it('registers no iframe box element in case of a transparent, empty component', () => {
     registerNoMarkupContainer();
     registerEmptyNoMarkupComponent();
 
-    expect(PageStructureService.containers.length).toEqual(1);
-    expect(PageStructureService.containers[0].isEmpty()).toEqual(false);
-    expect(PageStructureService.containers[0].getComponents().length).toEqual(1);
-    expect(PageStructureService.containers[0].getComponents()[0].getBoxElement().length).toEqual(0);
+    const containers = PageStructureService.getContainers();
+    expect(containers.length).toEqual(1);
+    expect(containers[0].isEmpty()).toEqual(false);
+    expect(containers[0].getComponents().length).toEqual(1);
+    expect(containers[0].getComponents()[0].getBoxElement().length).toEqual(0);
   });
 
   it('parses the page meta-data and adds it to the PageMetaDataService', () => {
