@@ -23,3 +23,12 @@
 .list-item-active {
   background-color: $list-item-active-bgcolor;
 }
+
+.catalog-dd-container-item {
+  cursor: move; // IE 11&edge
+  cursor: grab;
+
+  &:active, &.gu-mirror {
+    cursor: grabbing;
+  }
+}
