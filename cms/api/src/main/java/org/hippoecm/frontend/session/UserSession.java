@@ -78,6 +78,10 @@ public abstract class UserSession extends WebSession {
 
     public TimeZone getTimeZone() {
         final ClientProperties properties = getClientInfo().getProperties();
-        return properties.getTimeZone();
+        TimeZone timeZone = properties.getTimeZone();
+        if (timeZone == null) {
+            timeZone = TimeZone.getDefault();
+        }
+        return timeZone;
     }
 }
