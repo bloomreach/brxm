@@ -145,7 +145,7 @@ public interface DateTimePrinter extends IClusterable {
         private String print(DateTimeFormatter formatter) {
             final ZonedDateTime dateTime = ZonedDateTime.ofInstant(instant, zoneId);
             formatter = formatter.withLocale(locale);
-            final String dst = new ClassResourceModel("dst", JavaDateTimePrinter.class).getObject();
+            final String dst = new ClassResourceModel("dst", JavaDateTimePrinter.class, locale, null).getObject();
             final String suffix = appendDST && isDST() ? " (" + dst + ")" : StringUtils.EMPTY;
             return dateTime.format(formatter) + suffix;
         }
