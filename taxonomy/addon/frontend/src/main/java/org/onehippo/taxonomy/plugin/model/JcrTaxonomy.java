@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
 
-    static final Logger log = LoggerFactory.getLogger(JcrTaxonomy.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrTaxonomy.class);
 
     private transient Map<String, JcrCategory> categories;
 
