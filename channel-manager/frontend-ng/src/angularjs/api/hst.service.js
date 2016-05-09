@@ -80,6 +80,10 @@ export class HstService {
     return this._callHst('POST', uuid, pathElements, undefined, undefined, headers);
   }
 
+  doPut(data, uuid, ...pathElements) {
+    return this._callHst('PUT', uuid, pathElements, data);
+  }
+
   _callHst(method, uuid, pathElements, data, params, headers) {
     const url = this._createApiUrl(uuid, pathElements, params);
 

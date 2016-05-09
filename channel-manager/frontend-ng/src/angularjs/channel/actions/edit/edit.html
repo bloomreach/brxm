@@ -27,9 +27,19 @@
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent">
   <form name="form" flex="initial" class="qa-channel-edit subpage-form">
+
+    <div ng-repeat="fieldGroup in channelEdit.fieldGroups">
+      <div class="qa-channel-edit-fieldgroup">{{ channelEdit.getLabel(fieldGroup.titleKey) }}</div>
+      <md-input-container class="qa-channel-edit-field md-block" flex
+                          ng-repeat="fieldName in fieldGroup.value">
+        <label>{{ channelEdit.getLabel(fieldName) }}</label>
+        <input type="text" ng-model="channelEdit.values[fieldName]">
+      </md-input-container>
+    </div>
+
     <md-input-container>
-      <md-button type="submit" class="md-raised md-primary qa-save"
-                 ng-disabled="form.$invalid"
+      <md-button type="submit" class="qa-channel-edit-save md-raised md-primary"
+                 ng-disabled="form.$pristine || form.$invalid"
                  ng-click="channelEdit.save()">
         {{ 'SUBPAGE_BUTTON_SAVE' | translate }}
       </md-button>

@@ -55,6 +55,7 @@ describe('ChannelService', () => {
       rootUuid: 'testRootUuid',
       cmsUser: 'testUser',
       contextPaths: ['/testContextPath1', '/'],
+      locale: 'en',
     };
 
     module(($provide) => {
@@ -77,6 +78,7 @@ describe('ChannelService', () => {
     spyOn(HstService, 'doPost');
     spyOn(HstService, 'doGet').and.returnValue($q.when({ data: {} }));
     spyOn(HstService, 'doGetWithParams').and.returnValue($q.when({ data: {} }));
+    spyOn(HstService, 'doPut');
     spyOn(HstService, 'getChannel');
     spyOn(SiteMapService, 'load');
     spyOn(window.APP_TO_CMS, 'publish');
@@ -465,6 +467,76 @@ describe('ChannelService', () => {
         fail();
       })
       .catch(() => {
+        done();
+      });
+    $rootScope.$digest();
+  });
+
+  it('should ask the HST service to retrieve the channel settings description', (done) => {
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    const channelInfoDescription = { };
+    HstService.doGetWithParams.and.returnValue($q.when(channelInfoDescription));
+
+    ChannelService.getChannelInfoDescription()
+      .then((response) => {
+        expect(response).toBe(channelInfoDescription);
+        done();
+      })
+      .catch(() => {
+        fail();
+      });
+    expect(HstService.doGetWithParams)
+      .toHaveBeenCalledWith('testRootUuid', { locale: 'en' }, 'channels', 'channelId', 'info');
+    $rootScope.$digest();
+  });
+
+  it('should relay any error when retrieving the channel settings description', (done) => {
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    const error = { };
+    HstService.doGetWithParams.and.returnValue($q.reject(error));
+
+    ChannelService.getChannelInfoDescription()
+      .then(() => {
+        fail();
+      })
+      .catch((response) => {
+        expect(response).toBe(error);
+        done();
+      });
+    $rootScope.$digest();
+  });
+
+  it('should ask the HST service to save the channel settings', (done) => {
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    const properties = { };
+    HstService.doPut.and.returnValue($q.when());
+
+    ChannelService.saveProperties(properties)
+      .then(() => {
+        done();
+      })
+      .catch(() => {
+        fail();
+      });
+    expect(HstService.doPut).toHaveBeenCalledWith(properties, 'testRootUuid', 'channels', 'channelId', 'properties');
+    $rootScope.$digest();
+  });
+
+  it('should relay any error when saving the channel settings', (done) => {
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    const error = { };
+    HstService.doPut.and.returnValue($q.reject(error));
+
+    ChannelService.saveProperties({ })
+      .then(() => {
+        fail();
+      })
+      .catch((response) => {
+        expect(response).toBe(error);
         done();
       });
     $rootScope.$digest();

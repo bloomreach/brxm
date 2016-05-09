@@ -227,6 +227,15 @@ export class ChannelService {
       .then((response) => response.data);
   }
 
+  getChannelInfoDescription() {
+    const params = { locale: this.ConfigService.locale };
+    return this.HstService.doGetWithParams(this.ConfigService.rootUuid, params, 'channels', this.channel.id, 'info');
+  }
+
+  saveProperties(properties) {
+    return this.HstService.doPut(properties, this.ConfigService.rootUuid, 'channels', this.channel.id, 'properties');
+  }
+
   isCrossChannelPageCopySupported() {
     return this.crossChannelPageCopySupported;
   }

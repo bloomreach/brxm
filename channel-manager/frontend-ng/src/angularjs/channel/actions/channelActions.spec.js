@@ -21,14 +21,18 @@ describe('ChannelActions', () => {
   let $compile;
   let $scope;
   let $element;
+  let ChannelService;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_) => {
+    inject((_$rootScope_, _$compile_, _ChannelService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
+      ChannelService = _ChannelService_;
     });
+
+    spyOn(ChannelService, 'getChannel').and.returnValue({ hasCustomProperties: true });
   });
 
   function compileDirectiveAndGetController() {
@@ -47,5 +51,14 @@ describe('ChannelActions', () => {
     $element.find('.qa-button-channel').click();
 
     expect($scope.onActionSelected).toHaveBeenCalledWith('channel-edit');
+  });
+
+  it('doesn\'t expose the functionality if the channel has no custom properties', () => {
+    let ChannelActionsCtrl = compileDirectiveAndGetController();
+    expect(ChannelActionsCtrl.isChannelEditAvailable()).toBe(true);
+
+    ChannelService.getChannel.and.returnValue({ hasCustomProperties: false });
+    ChannelActionsCtrl = compileDirectiveAndGetController();
+    expect(ChannelActionsCtrl.isChannelEditAvailable()).toBe(false);
   });
 });

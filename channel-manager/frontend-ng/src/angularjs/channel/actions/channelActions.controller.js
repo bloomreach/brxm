@@ -15,11 +15,16 @@
  */
 
 export class ChannelActionsCtrl {
-  constructor() {
+  constructor(ChannelService) {
     'ngInject';
+    this.ChannelService = ChannelService;
   }
 
   edit() {
     this.onActionSelected({ subpage: 'channel-edit' });
+  }
+
+  isChannelEditAvailable() {
+    return this.ChannelService.getChannel().hasCustomProperties;
   }
 }

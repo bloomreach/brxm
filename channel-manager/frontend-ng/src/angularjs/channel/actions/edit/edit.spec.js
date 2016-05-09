@@ -22,40 +22,92 @@ describe('ChannelActionEdit', () => {
   let $compile;
   let $translate;
   let $element;
+  let $q;
   let ChannelService;
+  let FeedbackService;
+  let HippoIframeService;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$translate_, _ChannelService_) => {
+    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $translate = _$translate_;
+      $q = _$q_;
       ChannelService = _ChannelService_;
+      FeedbackService = _FeedbackService_;
+      HippoIframeService = _HippoIframeService_;
     });
 
     spyOn($translate, 'instant');
     spyOn(ChannelService, 'getName').and.returnValue('test-name');
   });
 
+  function mockChannelInfoDescription() {
+    spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when({
+      fieldGroups: [
+        { value: ['field1', 'field2'],
+          titleKey: 'group1',
+        },
+      ],
+      i18nResources: {
+        field1: 'Field 1',
+        field2: 'Field 2',
+        group1: 'Field Group 1',
+      },
+    }));
+  }
+
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
     $scope.onDone = jasmine.createSpy('onDone');
-    $element = angular.element('<channel-edit on-done="onDone()"></channel-edit>');
+    $scope.onError = jasmine.createSpy('onError');
+    $scope.onSuccess = jasmine.createSpy('onSuccess');
+
+    $element = angular.element(`
+      <channel-edit on-done="onDone()" on-success="onSuccess(key, params)" on-error="onError(key, params)">
+      </channel-edit>
+    `);
     $compile($element)($scope);
     $scope.$digest();
 
     return $element.controller('channel-edit');
   }
 
-  it('initializes correctly', () => {
+  it('initializes correctly when fetching channel setting from backend is successful', () => {
+    mockChannelInfoDescription();
     compileDirectiveAndGetController();
 
     expect(ChannelService.getName).toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_TITLE', { channelName: 'test-name' });
+
+    expect($element.find('.qa-channel-edit-save').is(':disabled')).toBe(true);
+    expect($element.find('.qa-channel-edit-fieldgroup').text()).toBe('Field Group 1');
+    expect($element.find('.qa-channel-edit-field label:eq(0)').text()).toBe('Field 1');
+    expect($element.find('.qa-channel-edit-field label:eq(1)').text()).toBe('Field 2');
+  });
+
+  it('enables "save" button when form is dirty', () => {
+    mockChannelInfoDescription();
+    compileDirectiveAndGetController();
+
+    $scope.form.$setDirty();
+    $scope.$digest();
+
+    expect($element.find('.qa-channel-edit-save').is(':enabled')).toBe(true);
+  });
+
+
+  it('notifies the event "on-error" when fetching channel setting from backend is failed', () => {
+    spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.reject());
+    compileDirectiveAndGetController();
+
+    expect($scope.onError).toHaveBeenCalledWith('ERROR_CHANNEL_INFO_RETRIEVAL_FAILED', undefined);
   });
 
   it('notifies the event "on-done" when clicking the back button', () => {
+    mockChannelInfoDescription();
     compileDirectiveAndGetController();
 
     $element.find('.qa-button-back').click();
@@ -63,11 +115,35 @@ describe('ChannelActionEdit', () => {
     expect($scope.onDone).toHaveBeenCalled();
   });
 
-  it('notifies the event "on-done" when clicking the save button', () => {
+  it('notifies the event "on-success" when saving is successful', () => {
+    mockChannelInfoDescription();
+    spyOn(ChannelService, 'saveProperties').and.returnValue($q.when());
+    spyOn(ChannelService, 'recordOwnChange');
+    spyOn(HippoIframeService, 'reload').and.returnValue($q.when());
     compileDirectiveAndGetController();
 
-    $element.find('.qa-save').click();
+    $scope.form.$setDirty();
+    $scope.$digest();
+    $element.find('.qa-channel-edit-save').click();
 
-    expect($scope.onDone).toHaveBeenCalled();
+    expect(ChannelService.saveProperties).toHaveBeenCalled();
+    expect(HippoIframeService.reload).toHaveBeenCalled();
+    expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+    expect($scope.onSuccess).toHaveBeenCalledWith('CHANNEL_PROPERTIES_SAVE_SUCCESS', undefined);
+  });
+
+  it('shows feedback message when saving is failed', () => {
+    mockChannelInfoDescription();
+    spyOn(ChannelService, 'saveProperties').and.returnValue($q.reject());
+    spyOn(FeedbackService, 'showError');
+    compileDirectiveAndGetController();
+    const feedbackParent = $element.find('.feedback-parent');
+
+    $scope.form.$setDirty();
+    $scope.$digest();
+    $element.find('.qa-channel-edit-save').click();
+
+    expect(ChannelService.saveProperties).toHaveBeenCalled();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED', undefined, feedbackParent);
   });
 });

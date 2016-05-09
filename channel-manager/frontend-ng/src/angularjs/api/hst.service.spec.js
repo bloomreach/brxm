@@ -329,4 +329,15 @@ describe('HstService', () => {
     ConfigServiceMock.apiUrlPrefix = apiUrlPrefix;
     ConfigServiceMock.contextPath = contextPath;
   });
+
+  it('can do a put call', () => {
+    $httpBackend.expectPUT(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, { foo: 1 }, {
+      'CMS-User': 'testUser',
+      FORCE_CLIENT_HOST: 'true',
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json;charset=utf-8',
+    }).respond(200);
+    hstService.doPut({ foo: 1 }, 'some-uuid', 'one', 'two', 'three').catch(fail);
+    $httpBackend.flush();
+  });
 });

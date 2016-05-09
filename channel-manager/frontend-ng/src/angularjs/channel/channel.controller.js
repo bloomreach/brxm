@@ -161,4 +161,19 @@ export class ChannelCtrl {
   hideSubpage() {
     delete this.currentSubpage;
   }
+
+  onSubpageSuccess(key, params) {
+    this.hideSubpage();
+    if (key) {
+      // TODO show a toast message notify this change
+      this.$log.info(this.$translate.instant(key, params));
+    }
+  }
+
+  onSubpageError(key, params) {
+    this.hideSubpage();
+    if (key) {
+      this.FeedbackService.showError(key, params);
+    }
+  }
 }
