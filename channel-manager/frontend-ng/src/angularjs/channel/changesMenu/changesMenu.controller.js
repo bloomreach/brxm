@@ -22,14 +22,17 @@ export class ChangesMenuCtrl {
       CmsService,
       DialogService,
       HippoIframeService,
+      SiteMapService
     ) {
     'ngInject';
+
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.DialogService = DialogService;
     this.HippoIframeService = HippoIframeService;
+    this.SiteMapService = SiteMapService;
 
     this.canManageChanges = ConfigService.canManageChanges;
   }
@@ -70,6 +73,7 @@ export class ChangesMenuCtrl {
       this.ChannelService.discardChanges().then(() => {
         this.CmsService.publish('channel-changed-in-angular');
         this.HippoIframeService.reload();
+        this.SiteMapService.load(this.ChannelService.getSiteMapId());
       });
     });
   }

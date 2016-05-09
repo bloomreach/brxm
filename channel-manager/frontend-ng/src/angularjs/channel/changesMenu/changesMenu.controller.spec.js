@@ -19,6 +19,7 @@ describe('ChangesMenuCtrl', () => {
   let DialogService;
   let HippoIframeService;
   let ConfigService;
+  let SiteMapService;
   let $q;
   let $rootScope;
   let $compile;
@@ -33,7 +34,8 @@ describe('ChangesMenuCtrl', () => {
       _ChannelService_,
       _DialogService_,
       _HippoIframeService_,
-      _ConfigService_
+      _ConfigService_,
+      _SiteMapService_
     ) => {
       $compile = _$compile_;
       $q = _$q_;
@@ -41,6 +43,7 @@ describe('ChangesMenuCtrl', () => {
       DialogService = _DialogService_;
       HippoIframeService = _HippoIframeService_;
       ConfigService = _ConfigService_;
+      SiteMapService = _SiteMapService_;
       $rootScope = _$rootScope_;
     });
 
@@ -51,6 +54,7 @@ describe('ChangesMenuCtrl', () => {
     });
     spyOn(HippoIframeService, 'reload');
     spyOn(DialogService, 'confirm').and.callThrough();
+    spyOn(SiteMapService, 'load');
 
     ConfigService.cmsUser = 'testUser';
     ConfigService.canManageChanges = true;
