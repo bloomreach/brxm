@@ -42,7 +42,8 @@ export class PageCopyCtrl {
 
     if (ChannelService.isCrossChannelPageCopySupported()) {
       this.channels = ChannelService.getPageModifiableChannels();
-      if (this.channels && (this.channels.length > 1 || this.channels[0].id !== this.channelId)) {
+      if (this.channels && (this.channels.length > 1 ||
+        (this.channels.length === 1 && this.channels[0].id !== this.channelId))) {
         this.channel = this.channels.find((channel) => channel.id === this.channelId) || this.channels[0];
         this.isCrossChannelCopyAvailable = true;
       }
