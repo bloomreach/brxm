@@ -58,13 +58,10 @@
               single: true
             }
           }
-        },
-        listeners: {
-          afterrender: this._onAfterRender,
-          'resize': this._onResize,
-          scope: this
         }
       }));
+      this.on('afterrender', this._onAfterRender, this);
+      this.on('resize', this._onResize, this);
     },
 
     _onFrameLoad: function () {
