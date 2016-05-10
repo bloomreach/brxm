@@ -35,7 +35,7 @@ export class ComponentAdderCtrl {
         this.selectedCatalogItem = CatalogService.getComponentByDomElement(original);
         $element.addClass('add-mode');
 
-        // CHANNELMGR-633: prevent IE11 from dragging the image
+        // prevent IE11 from dragging the image
         this.selectedCatalogItem.catalogJQueryElement.find('img').on('dragstart', (event) => event.preventDefault());
       });
     });
