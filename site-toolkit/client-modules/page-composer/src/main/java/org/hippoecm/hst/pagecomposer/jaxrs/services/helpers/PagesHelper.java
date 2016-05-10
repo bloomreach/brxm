@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -309,7 +309,7 @@ public class PagesHelper extends AbstractHelper {
                 Node targetNode = session.getNode(targetContainerPath);
                 if (targetNode.isNodeType(NODETYPE_HST_CONTAINERCOMPONENT)) {
                     moveContainerItems(existingContainer, targetNode);
-                    break;
+                    continue;
                 }
             }
             nonRelocatedContainers.add(existingContainer);
