@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.datetime;
 
+import java.io.Serializable;
 import java.time.format.FormatStyle;
 import java.util.Date;
 
@@ -40,7 +41,7 @@ public class DateTimeLabel extends Label {
         super(id, new DateTimePrinterModel(model, printer -> printer.print(pattern)));
     }
 
-    private interface Printer {
+    private interface Printer extends Serializable {
         String print(DateTimePrinter printer);
     }
 
