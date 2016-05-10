@@ -203,6 +203,10 @@ export class HippoIframeCtrl {
     return !this.editMode ? this.PageStructureService.getContentLinks() : [];
   }
 
+  openContent(contentLink) {
+    this.CmsService.publish('open-content', contentLink.getUuid());
+  }
+
   getSrc() {
     return this.HippoIframeService.getSrc();
   }

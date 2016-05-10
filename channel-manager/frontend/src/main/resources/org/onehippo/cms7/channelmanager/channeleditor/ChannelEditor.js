@@ -48,9 +48,12 @@
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
       this.iframeToHost.subscribe('component-removed', this._onComponentRemoved, this);
       this.iframeToHost.subscribe('reset-component-properties', this._resetComponentPropertiesWindow, this);
+      this.iframeToHost.subscribe('open-content', this._openDocumentEditor, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
       this.iframeToHost.subscribe('remove-mask', this._unmaskSurroundings, this);
       this.iframeToHost.subscribe('edit-alter-ego', this._showAlterEgoEditor, this);
+
+      this.addEvents('open-document-editor');
     },
 
     loadChannel: function(channelId, initialPath) {
@@ -94,6 +97,10 @@
         this.componentPropertiesWindow.destroy();
       }
       this.componentPropertiesWindow = this._createComponentPropertiesWindow();
+    },
+
+    _openDocumentEditor: function(uuid) {
+      this.fireEvent('open-document-editor', uuid);
     },
 
     _setChannel: function(channelId) {

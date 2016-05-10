@@ -21,4 +21,8 @@ export class ContentLink extends PageStructureElement {
   constructor(commentElement, metaData) {
     super('contentLink', metaData, commentElement, commentElement, null);
   }
+
+  getUuid() {
+    return this.metaData.uuid;
+  }
 }
