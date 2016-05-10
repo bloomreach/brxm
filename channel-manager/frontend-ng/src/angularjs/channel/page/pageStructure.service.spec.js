@@ -58,6 +58,11 @@ describe('PageStructureService', () => {
 
   it('has no containers initially', () => {
     expect(PageStructureService.getContainers()).toEqual([]);
+    expect(PageStructureService.hasContainer()).toEqual(false);
+  });
+
+  it('has no content links initially', () => {
+    expect(PageStructureService.getContentLinks()).toEqual([]);
   });
 
   it('rejects components if there is no container yet', () => {
@@ -141,6 +146,10 @@ describe('PageStructureService', () => {
     registerParsedElement(nextComment(childComment($j('#container-no-markup', $document)[0])));
   };
 
+  const registerContentLink = () => {
+    registerParsedElement(childComment($j('#content', $document)[0]));
+  };
+
   it('registers containers in the correct order', () => {
     const container1 = registerVBoxContainer();
     const container2 = registerNoMarkupContainer();
@@ -159,6 +168,9 @@ describe('PageStructureService', () => {
     expect(containers[1].getComponents()).toEqual([]);
     expect(containers[1].getBoxElement()[0]).toEqual(container2);
     expect(containers[1].getLabel()).toEqual('NoMarkup container');
+
+    expect(PageStructureService.hasContainer(containers[0])).toEqual(true);
+    expect(PageStructureService.hasContainer(containers[1])).toEqual(true);
   });
 
   it('adds components to the most recently registered container', () => {
@@ -185,14 +197,24 @@ describe('PageStructureService', () => {
     expect(containers[1].getComponents()[1].container).toEqual(containers[1]);
   });
 
+  it('registers content links', () => {
+    registerContentLink();
+    const contentLinks = PageStructureService.getContentLinks();
+    expect(contentLinks.length).toEqual(1);
+    expect(contentLinks[0].getUuid()).toEqual('content-1234');
+  });
+
   it('clears the page structure', () => {
     registerVBoxContainer();
+    registerContentLink();
 
     expect(PageStructureService.getContainers().length).toEqual(1);
+    expect(PageStructureService.getContentLinks().length).toEqual(1);
 
     PageStructureService.clearParsedElements();
 
     expect(PageStructureService.getContainers().length).toEqual(0);
+    expect(PageStructureService.getContentLinks().length).toEqual(0);
   });
 
   it('registers additional elements', () => {
