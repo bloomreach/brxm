@@ -416,6 +416,61 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
     }
 
     @Test
+    public void test_reapply_prototype_with_simple_component_in_location_of_container() throws Exception {
+        final String[] secondPrototype = new String[] {
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", NODETYPE_HST_COMPONENT,
+                    COMPONENT_PROPERTY_REFERECENCECOMPONENT, "hst:abstractpages/basepage",
+                    "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main", NODETYPE_HST_COMPONENT,
+                        "hst:template", "prototype",
+                        "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/container1", NODETYPE_HST_COMPONENT,
+                        "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/container2", NODETYPE_HST_CONTAINERCOMPONENT,
+                            COMPONENT_PROPERTY_XTYPE, "HST.vBox"
+        };
+        final String[] relContainerPathsForItem = {"main/container1", "main/container2"};
+
+        final TestContext testContext = initContextAndFixture(secondPrototype, relContainerPathsForItem);
+
+        reapplyPrototype(testContext, testContext.secondPrototypeUUID);
+
+        final SiteMapItemRepresentation updatedFoo = getSiteMapItemRepresentation(session, "foo");
+        final String newFooPageId = updatedFoo.getComponentConfigurationId();
+
+        final HstComponentConfiguration updatedFooPage = mountResource.getPageComposerContextService().getEditingPreviewSite()
+                .getComponentsConfiguration().getComponentConfiguration(newFooPageId);
+
+        Node updatedFooPageNode = session.getNodeByIdentifier(updatedFooPage.getCanonicalIdentifier());
+
+        final Node newComponent = updatedFooPageNode.getNode("main/container1");
+        final Node newContainer = updatedFooPageNode.getNode("main/container2");
+
+        /*
+         *
+         * Since the page before re-applying prototype container
+         * + main
+         *    + container1
+         *        + catalog-item
+         *    + container2
+         *        + catalog-item
+         *
+         * AND it got mapped to secondPrototype:
+         *
+         * + protoxxx
+         *   + main
+         *      + container1 (is not of type containercomponent)
+         *      + container2
+         *        + catalog-item
+         *        + catalog-item1
+         *
+         * We expect all catalog items to be moved to 'holder1' (the first container, since there is no primary container
+         * specified on secondPrototype). The container2/catalog-item should be relocated to container2/catalog-item2
+         */
+
+        assertTrue(newContainer.hasNode("catalog-item"));
+        assertTrue(newContainer.hasNode("catalog-item1"));
+        assertEquals(0, newComponent.getNodes().getSize());
+    }
+
+    @Test
     public void test_reapply_prototype_with_other_containers_gets_items_moved_to_marked_container() throws Exception {
         final String[] secondPrototype = new String[] {
                 "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", NODETYPE_HST_COMPONENT,
