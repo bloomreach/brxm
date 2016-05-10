@@ -16,6 +16,8 @@
  *
  */
 
+import { ContentLink } from '../page/element/contentLink';
+
 describe('hippoIframeCtrl', () => {
   'use strict';
 
@@ -33,6 +35,7 @@ describe('hippoIframeCtrl', () => {
   let CmsService;
   let HippoIframeService;
   let DialogService;
+  let DomService;
 
   beforeEach(() => {
     let $compile;
@@ -40,7 +43,7 @@ describe('hippoIframeCtrl', () => {
 
     inject(($controller, _$rootScope_, _$compile_, _$mdDialog_, _$q_, _DragDropService_, _OverlaySyncService_,
             _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,
-            _ChannelService_, _CmsService_, _HippoIframeService_, _DialogService_) => {
+            _ChannelService_, _CmsService_, _HippoIframeService_, _DialogService_, _DomService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $q = _$q_;
@@ -54,6 +57,7 @@ describe('hippoIframeCtrl', () => {
       CmsService = _CmsService_;
       HippoIframeService = _HippoIframeService_;
       DialogService = _DialogService_;
+      DomService = _DomService_;
       scope = $rootScope.$new();
     });
 
@@ -142,5 +146,44 @@ describe('hippoIframeCtrl', () => {
 
     expect(hippoIframeCtrl._parseLinks).toHaveBeenCalled();
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
+  });
+
+  it('inserts CSS and generates content link box elements when there are content links', () => {
+    const contentLinkContainer = $j('<div><!-- { "HST-Type": "CONTENT_LINK" --></div>');
+    const contentLinkComment = contentLinkContainer[0].childNodes[0];
+    const contentLink = new ContentLink(contentLinkComment, {});
+
+    spyOn(PageStructureService, 'clearParsedElements');
+    spyOn(PageStructureService, 'hasContentLinks').and.returnValue(true);
+    spyOn(PageStructureService, 'getContentLinks').and.returnValue([contentLink]);
+    spyOn(hippoIframeCtrl, '_getIframeDOM').and.returnValue({
+      defaultView: window,
+    });
+    spyOn(DomService, 'getAppRootUrl').and.returnValue('http://cms.example.com/app/root/');
+    spyOn(DomService, 'addCss').and.returnValue($q.resolve());
+    spyOn(hippoIframeCtrl, '_parseLinks');
+    spyOn(HippoIframeService, 'signalPageLoadCompleted');
+
+    hippoIframeCtrl.onLoad();
+
+    expect(DomService.addCss).toHaveBeenCalledWith(window, 'http://cms.example.com/app/root/styles/hippo-iframe.css');
+
+    $rootScope.$digest();
+
+    const contentLinkElement = contentLinkContainer.find('a.hst-cmseditlink');
+    expect(contentLinkElement.length).toEqual(1);
+    expect(contentLink.getBoxElement()).toEqual(contentLinkElement[0]);
+  });
+
+  it('sends an "open-content" event to the CMS to open content', () => {
+    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
+    const contentLink = new ContentLink(contentLinkComment, {
+      uuid: '1234',
+    });
+    spyOn(CmsService, 'publish');
+
+    hippoIframeCtrl.openContent(contentLink);
+
+    expect(CmsService.publish).toHaveBeenCalledWith('open-content', '1234');
   });
 });
