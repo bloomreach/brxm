@@ -28,7 +28,7 @@
                 height: 533,
                 modal: true,
                 resizable: false,
-                iframeUrl: './angular/menu/index.html',
+                iframeUrl: './angular/channelmanager/menu/index.html',
                 iframeConfig: {
                     apiUrlPrefix: config.composerRestMountUrl,
                     debug: config.debug,
