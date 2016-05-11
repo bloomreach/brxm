@@ -14,37 +14,48 @@
  * limitations under the License.
  */
 
-/* eslint-disable prefer-arrow-callback */
-
-import { ContainerElement } from './element/containerElement';
 import { ComponentElement } from './element/componentElement';
+import { ContainerElement } from './element/containerElement';
+import { ContentLink } from './element/contentLink';
 
 export class PageStructureService {
 
-  constructor($log, $q, HstConstants, hstCommentsProcessorService, RenderingService, OverlaySyncService,
-              ChannelService, CmsService, PageMetaDataService, HstService, MaskService, HippoIframeService, FeedbackService) {
+  constructor($log,
+              $q,
+              ChannelService,
+              CmsService,
+              FeedbackService,
+              HippoIframeService,
+              hstCommentsProcessorService,
+              HstConstants,
+              HstService,
+              MaskService,
+              OverlaySyncService,
+              PageMetaDataService,
+              RenderingService) {
     'ngInject';
 
     // Injected
     this.$log = $log;
     this.$q = $q;
-    this.HST = HstConstants;
-    this.HstService = HstService;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.FeedbackService = FeedbackService;
+    this.HippoIframeService = HippoIframeService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
-    this.RenderingService = RenderingService;
+    this.HST = HstConstants;
+    this.HstService = HstService;
+    this.MaskService = MaskService;
     this.OverlaySyncService = OverlaySyncService;
     this.PageMetaDataService = PageMetaDataService;
-    this.MaskService = MaskService;
-    this.HippoIframeService = HippoIframeService;
-    this.FeedbackService = FeedbackService;
+    this.RenderingService = RenderingService;
 
     this.clearParsedElements();
   }
 
   clearParsedElements() {
     this.containers = [];
+    this.contentLinks = [];
     this.PageMetaDataService.clear();
   }
 
@@ -76,9 +87,23 @@ export class PageStructureService {
         break;
       }
 
+      case this.HST.TYPE_CONTENT_LINK: {
+        const contentLink = new ContentLink(commentDomElement, metaData);
+        this.contentLinks.push(contentLink);
+        break;
+      }
+
       default:
         break;
     }
+  }
+
+  hasContentLinks() {
+    return this.contentLinks.length > 0;
+  }
+
+  getContentLinks() {
+    return this.contentLinks;
   }
 
   getComponentById(id) {
@@ -92,6 +117,10 @@ export class PageStructureService {
 
   hasContainer(container) {
     return this.containers.indexOf(container) !== -1;
+  }
+
+  getContainers() {
+    return this.containers;
   }
 
   /**

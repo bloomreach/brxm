@@ -72,7 +72,8 @@ describe('DragDropService', () => {
       mockCommentData[`container${number}`]
     );
     PageStructureService.registerParsedElement(iframeContainerComment, commentData);
-    return PageStructureService.containers[PageStructureService.containers.length - 1];
+    const containers = PageStructureService.getContainers();
+    return containers[containers.length - 1];
   }
 
   function createComponent(number) {

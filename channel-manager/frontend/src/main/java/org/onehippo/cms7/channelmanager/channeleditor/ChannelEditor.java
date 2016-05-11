@@ -35,6 +35,7 @@ import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtProperty;
@@ -46,6 +47,8 @@ public class ChannelEditor extends ExtPanel {
 
     private static final long DEFAULT_INITIAL_CONNECTION_TIMEOUT = 60000L;
     private static final long DEFAULT_EXT_AJAX_TIMEOUT = 30000L;
+
+    private static final String OPEN_DOCUMENT_EDITOR_EVENT = "open-document-editor";
 
     @ExtProperty
     private Boolean debug = false;
@@ -111,7 +114,7 @@ public class ChannelEditor extends ExtPanel {
         // and a message from the ng app (a click) to show the hst-config-editor card
         this.hideHstConfigEditor = true;
 
-        //TODO: register event listener (like edit-document)
+        addEventListener(OPEN_DOCUMENT_EDITOR_EVENT, new OpenDocumentEditorEventListener(config, context));
     }
 
     @Override
@@ -138,6 +141,14 @@ public class ChannelEditor extends ExtPanel {
     protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
         properties.put("channelStoreFuture", new JSONIdentifier(this.channelStoreFuture.getJsObjectId()));
+    }
+
+    @Override
+    protected ExtEventAjaxBehavior newExtEventBehavior(final String event) {
+        if (OPEN_DOCUMENT_EDITOR_EVENT.equals(event)) {
+            return OpenDocumentEditorEventListener.getExtEventBehavior();
+        }
+        return super.newExtEventBehavior(event);
     }
 
     public void viewChannel(final String channelId, final String initialPath) {
