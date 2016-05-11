@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+import org.apache.commons.lang.StringUtils;
+
 
 /**
  * Java {@link Annotation}(s) custom JSON serializer
@@ -46,7 +48,7 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
 
         // Type field name is the name of the field used by the serializer to serialize meta information about the type
         // being serialized
-        this.typeFieldName = "@class";
+        this.typeFieldName = "type";
     }
 
     /**
@@ -81,7 +83,7 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
         for (Class<?> iface : value.getClass().getInterfaces()) {
             if (iface.isAnnotation()) {
                 jgen.writeStartObject();
-                jgen.writeStringField(getTypeFieldName(), iface.getName());
+                jgen.writeStringField(getTypeFieldName(), getType(iface));
                 for (Method method : iface.getDeclaredMethods()) {
                     if (isValidAnnotationMethod(method)) {
                         try {
@@ -98,6 +100,11 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
             // Annotation interface are not treated as annotations like the ones designated with the @
             break;
         }
+    }
+
+    private String getType(final Class<?> iface) {
+        final AnnotationType annotationType = AnnotationType.fromClassPath(iface.getName());
+        return annotationType == null ? StringUtils.EMPTY : annotationType.toString();
     }
 
     /**

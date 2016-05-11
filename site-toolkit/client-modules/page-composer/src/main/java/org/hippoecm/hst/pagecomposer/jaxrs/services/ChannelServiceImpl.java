@@ -43,6 +43,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
+import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +60,10 @@ public class ChannelServiceImpl implements ChannelService {
                 throw new ChannelException("Cannot find ChannelInfo class of the channel with id '" + channelId + "'");
             }
             final ChannelInfoClassInfo channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
-            return new ChannelInfoDescription(channelInfoClassInfo.getFieldGroups(), getLocalizedResources(channelId, locale));
+            final Map<String, HstPropertyDefinitionInfo> propertyDefinitions = getPropertyDefinitions(channelId);
+            return new ChannelInfoDescription(channelInfoClassInfo.getFieldGroups(),
+                    propertyDefinitions,
+                    getLocalizedResources(channelId, locale));
         } catch (ChannelException e) {
             if (log.isDebugEnabled()) {
                 log.info("Failed to retrieve channel info class for channel with id '{}'", channelId, e);
@@ -68,6 +72,16 @@ public class ChannelServiceImpl implements ChannelService {
             }
             throw e;
         }
+    }
+
+    private Map<String, HstPropertyDefinitionInfo> getPropertyDefinitions(final String channelId) {
+        String currentHostGroupName = getCurrentVirtualHost().getHostGroupName();
+
+        final List<HstPropertyDefinitionInfo> hstPropertyDefinitionInfos = InformationObjectsBuilder.buildHstPropertyDefinitionInfos(
+                getAllVirtualHosts().getPropertyDefinitions(currentHostGroupName, channelId));
+
+        return hstPropertyDefinitionInfos.stream()
+                .collect(Collectors.toMap(HstPropertyDefinitionInfo::getName, Function.identity()));
     }
 
     private Map<String, String> getLocalizedResources(final String channelId, final String language) {

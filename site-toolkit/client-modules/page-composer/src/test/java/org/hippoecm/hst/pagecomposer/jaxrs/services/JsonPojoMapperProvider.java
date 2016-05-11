@@ -17,6 +17,8 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.lang.annotation.Annotation;
+
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.ContextResolver;
@@ -25,15 +27,29 @@ import javax.ws.rs.ext.Provider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+import org.hippoecm.hst.rest.custom.AnnotationJsonSerializer;
+
 @Provider
 public class JsonPojoMapperProvider implements ContextResolver<ObjectMapper> {
     private final ObjectMapper mapper;
 
     public JsonPojoMapperProvider() {
         this.mapper = new ObjectMapper();
+        mapper.registerModule(createCustomJsonSerializerMapModule());
+        mapper.registerModule(createAnnotationJsonSerializerModule());
+    }
+
+    private SimpleModule createCustomJsonSerializerMapModule() {
         final SimpleModule simpleModule = new SimpleModule(MultivaluedMap.class.getName());
         simpleModule.addAbstractTypeMapping(MultivaluedMap.class, MultivaluedHashMap.class);
-        mapper.registerModule(simpleModule);
+        return simpleModule;
+    }
+
+    private SimpleModule createAnnotationJsonSerializerModule() {
+        final SimpleModule module = new SimpleModule("customJsonSerializerAnnotationModule");
+        final AnnotationJsonSerializer annotationJsonSerializer = new AnnotationJsonSerializer(Annotation.class);
+        module.addSerializer(annotationJsonSerializer);
+        return module;
     }
 
     @Override
