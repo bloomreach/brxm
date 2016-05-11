@@ -19,6 +19,7 @@ import { channelPageActionsModule } from './page/actions/actions';
 import { channelActionsModule } from './actions/actions';
 import { channelSidenavModule } from './sidenav/sidenav';
 import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
+import { channelMenuModule } from './menu/menu';
 import { channelMaskModule } from './mask/mask';
 import { channelRelevanceModule } from './relevance/relevance';
 import { config } from './channel.config';
@@ -39,6 +40,7 @@ export const channelModule = angular
     channelActionsModule.name,
     channelSidenavModule.name,
     channelHippoIframeModule.name,
+    channelMenuModule.name,
     channelMaskModule.name,
     channelRelevanceModule.name,
   ])
