@@ -62,6 +62,9 @@ describe('hippoIframeCtrl', () => {
     spyOn(ScalingService, 'init');
     spyOn(DragDropService, 'init');
     spyOn(OverlaySyncService, 'init');
+    spyOn(DomService, 'getAppRootUrl').and.returnValue('http://cms.example.com/app/root/');
+    spyOn(DomService, 'addCss').and.returnValue($q.resolve());
+
 
     scope.testEditMode = false;
 
@@ -70,6 +73,7 @@ describe('hippoIframeCtrl', () => {
     scope.$digest();
 
     hippoIframeCtrl = el.controller('hippo-iframe');
+    spyOn(hippoIframeCtrl, '_getIframeDOM').and.returnValue({ defaultView: window });
   });
 
   it('unsubscribes "delete-component" event when the scope is destroyed', () => {
@@ -127,6 +131,7 @@ describe('hippoIframeCtrl', () => {
     spyOn(HippoIframeService, 'signalPageLoadCompleted');
 
     hippoIframeCtrl.onLoad();
+    $rootScope.$digest();
 
     expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
     expect(hstCommentsProcessorService.run).toHaveBeenCalled();
@@ -146,31 +151,14 @@ describe('hippoIframeCtrl', () => {
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
-  it('inserts CSS and generates content link box elements when there are content links', () => {
-    const contentLinkContainer = $j('<div><!-- { "HST-Type": "CONTENT_LINK" --></div>');
-    const contentLinkComment = contentLinkContainer[0].childNodes[0];
-    const contentLink = new EmbeddedLink(contentLinkComment, {});
-
+  it('inserts CSS', () => {
     spyOn(PageStructureService, 'clearParsedElements');
-    spyOn(PageStructureService, 'hasContentLinks').and.returnValue(true);
-    spyOn(PageStructureService, 'getContentLinks').and.returnValue([contentLink]);
-    spyOn(hippoIframeCtrl, '_getIframeDOM').and.returnValue({
-      defaultView: window,
-    });
-    spyOn(DomService, 'getAppRootUrl').and.returnValue('http://cms.example.com/app/root/');
-    spyOn(DomService, 'addCss').and.returnValue($q.resolve());
     spyOn(hippoIframeCtrl, '_parseLinks');
     spyOn(HippoIframeService, 'signalPageLoadCompleted');
 
     hippoIframeCtrl.onLoad();
 
     expect(DomService.addCss).toHaveBeenCalledWith(window, 'http://cms.example.com/app/root/styles/hippo-iframe.css');
-
-    $rootScope.$digest();
-
-    const contentLinkElement = contentLinkContainer.find('a.hst-cmseditlink');
-    expect(contentLinkElement.length).toEqual(1);
-    expect(contentLink.getBoxElement()).toEqual(contentLinkElement[0]);
   });
 
   it('sends an "open-content" event to the CMS to open content', () => {
