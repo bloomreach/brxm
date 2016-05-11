@@ -14,18 +14,11 @@
   limitations under the License.
   -->
 
-<md-toolbar class="qa-toolbar">
-  <div class="md-toolbar-tools">
-    <md-button class="qa-button-back" ng-click="pageMove.back()">
-      {{ 'TOOLBAR_BUTTON_BACK' | translate }}
-    </md-button>
-    <span flex></span>
-    <h2 class="qa-subpage-page-move">{{ pageMove.heading }}</h2>
-    <span flex></span>
-  </div>
-</md-toolbar>
+<subpage-toolbar title="{{ pageMove.subpageTitle }}"
+                 on-back="pageMove.onDone()">
+</subpage-toolbar>
 
-<md-content layout-padding layout="row" layout-align="center" class="feedback-parent">
+<md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-page-move">
   <form name="form" flex="initial" class="qa-subpage subpage-form">
     <div layout="row">
       <md-input-container class="md-block" flex>

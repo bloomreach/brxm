@@ -26,6 +26,7 @@ describe('ChannelActionEdit', () => {
   let ChannelService;
   let FeedbackService;
   let HippoIframeService;
+  const channelInfoDescription = {};
 
   beforeEach(() => {
     module('hippo-cm');
@@ -40,24 +41,21 @@ describe('ChannelActionEdit', () => {
       HippoIframeService = _HippoIframeService_;
     });
 
+    channelInfoDescription.fieldGroups = [
+      { value: ['field1', 'field2'],
+        titleKey: 'group1',
+      },
+    ];
+    channelInfoDescription.i18nResources = {
+      field1: 'Field 1',
+      field2: 'Field 2',
+      group1: 'Field Group 1',
+    };
+
     spyOn($translate, 'instant');
     spyOn(ChannelService, 'getName').and.returnValue('test-name');
+    spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when(channelInfoDescription));
   });
-
-  function mockChannelInfoDescription() {
-    spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when({
-      fieldGroups: [
-        { value: ['field1', 'field2'],
-          titleKey: 'group1',
-        },
-      ],
-      i18nResources: {
-        field1: 'Field 1',
-        field2: 'Field 2',
-        group1: 'Field Group 1',
-      },
-    }));
-  }
 
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
@@ -76,7 +74,6 @@ describe('ChannelActionEdit', () => {
   }
 
   it('initializes correctly when fetching channel setting from backend is successful', () => {
-    mockChannelInfoDescription();
     compileDirectiveAndGetController();
 
     expect(ChannelService.getName).toHaveBeenCalled();
@@ -89,7 +86,6 @@ describe('ChannelActionEdit', () => {
   });
 
   it('enables "save" button when form is dirty', () => {
-    mockChannelInfoDescription();
     compileDirectiveAndGetController();
 
     $scope.form.$setDirty();
@@ -98,25 +94,21 @@ describe('ChannelActionEdit', () => {
     expect($element.find('.qa-channel-edit-save').is(':enabled')).toBe(true);
   });
 
-
   it('notifies the event "on-error" when fetching channel setting from backend is failed', () => {
-    spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.reject());
+    ChannelService.getChannelInfoDescription.and.returnValue($q.reject());
     compileDirectiveAndGetController();
 
     expect($scope.onError).toHaveBeenCalledWith('ERROR_CHANNEL_INFO_RETRIEVAL_FAILED', undefined);
   });
 
   it('notifies the event "on-done" when clicking the back button', () => {
-    mockChannelInfoDescription();
     compileDirectiveAndGetController();
 
     $element.find('.qa-button-back').click();
-
     expect($scope.onDone).toHaveBeenCalled();
   });
 
   it('notifies the event "on-success" when saving is successful', () => {
-    mockChannelInfoDescription();
     spyOn(ChannelService, 'saveProperties').and.returnValue($q.when());
     spyOn(ChannelService, 'recordOwnChange');
     spyOn(HippoIframeService, 'reload').and.returnValue($q.when());
@@ -133,7 +125,6 @@ describe('ChannelActionEdit', () => {
   });
 
   it('shows feedback message when saving is failed', () => {
-    mockChannelInfoDescription();
     spyOn(ChannelService, 'saveProperties').and.returnValue($q.reject());
     spyOn(FeedbackService, 'showError');
     compileDirectiveAndGetController();

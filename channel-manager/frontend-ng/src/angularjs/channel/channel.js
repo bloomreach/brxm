@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { channelSubpageModule } from './subpage/subpage';
 import { channelPageModule } from './page/page';
 import { channelPageActionsModule } from './page/actions/actions';
 import { channelActionsModule } from './actions/actions';
@@ -33,6 +34,7 @@ import { changeManagementModule } from './changeManagement/changeManagement';
 export const channelModule = angular
   .module('hippo-cm.channel', [
     'hippo-cm-api',
+    channelSubpageModule.name,
     changesMenuModule.name,
     changeManagementModule.name,
     channelPageModule.name,

@@ -14,18 +14,11 @@
   limitations under the License.
   -->
 
-<md-toolbar class="qa-toolbar">
-  <div class="md-toolbar-tools">
-    <md-button class="qa-button-back" ng-click="channelEdit.back()">
-      {{ 'TOOLBAR_BUTTON_BACK' | translate }}
-    </md-button>
-    <span flex></span>
-    <h2 class="qa-subpage-channel-edit">{{ channelEdit.pageTitle }}</h2>
-    <span flex></span>
-  </div>
-</md-toolbar>
+<subpage-toolbar title="{{ channelEdit.subpageTitle }}"
+                 on-back="channelEdit.onDone()">
+</subpage-toolbar>
 
-<md-content layout-padding layout="row" layout-align="center" class="feedback-parent">
+<md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-channel-edit">
   <form name="form" flex="initial" class="qa-channel-edit subpage-form">
 
     <div ng-repeat="fieldGroup in channelEdit.fieldGroups">
