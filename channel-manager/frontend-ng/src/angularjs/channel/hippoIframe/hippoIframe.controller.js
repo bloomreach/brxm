@@ -21,7 +21,6 @@ export class HippoIframeCtrl {
     $q,
     $log,
     $element,
-    $rootScope,
     $scope,
     $translate,
     ChannelService,
@@ -41,7 +40,6 @@ export class HippoIframeCtrl {
 
     this.$q = $q;
     this.$log = $log;
-    this.$rootScope = $rootScope;
     this.$translate = $translate;
     this.linkProcessorService = linkProcessorService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
