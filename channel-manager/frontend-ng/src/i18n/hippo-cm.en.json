@@ -49,7 +49,7 @@
   "SIDENAV_TAB_SITEMAP": "Sitemap",
   "SUBPAGE_BUTTON_SAVE": "Save",
   "SUBPAGE_CHANNEL_EDIT_TITLE": "Edit channel '{{channelName}}'",
-  "SUBPAGE_MENU_EDITOR_TITLE": "Edit menu '{{menuName}}'",
+  "SUBPAGE_MENU_EDITOR_TITLE": "Edit menu",
   "SUBPAGE_PAGE_ADD_BUTTON_CREATE": "Create",
   "SUBPAGE_PAGE_ADD_LABEL_LAST_PATHINFO_ELEMENT": "Last element",
   "SUBPAGE_PAGE_ADD_LABEL_TEMPLATE": "Page template",

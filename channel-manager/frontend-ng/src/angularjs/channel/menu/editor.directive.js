@@ -20,7 +20,7 @@ export function menuEditorDirective() {
   return {
     restrict: 'E',
     bindToController: {
-      menuName: '@',
+      menuUuid: '@',
       onDone: '&',
       onSuccess: '&',
       onError: '&',
