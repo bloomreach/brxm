@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { WidgetTypes } from './widget.types';
 
 export class ChannelEditCtrl {
   constructor($element, $translate, FeedbackService, ChannelService, HippoIframeService) {
@@ -29,8 +30,7 @@ export class ChannelEditCtrl {
 
     ChannelService.getChannelInfoDescription()
       .then((channelInfoDescription) => {
-        this.fieldGroups = channelInfoDescription.fieldGroups;
-        this.labels = channelInfoDescription.i18nResources;
+        this.channelInfoDescription = channelInfoDescription;
       })
       .catch(() => {
         this.onError({ key: 'ERROR_CHANNEL_INFO_RETRIEVAL_FAILED' });
@@ -52,7 +52,28 @@ export class ChannelEditCtrl {
   }
 
   getLabel(fieldName) {
-    return this.labels[fieldName];
+    return this.channelInfoDescription && this.channelInfoDescription.i18nResources[fieldName];
+  }
+
+  getFieldGroups() {
+    return this.channelInfoDescription && this.channelInfoDescription.fieldGroups;
+  }
+
+  getType(fieldName) {
+    const propertyDefinition = this.channelInfoDescription && this.channelInfoDescription.propertyDefinitions[fieldName];
+    const fieldAnnotations = propertyDefinition.annotations;
+    if (fieldAnnotations && fieldAnnotations.length > 0) {
+      const widgetType = WidgetTypes[fieldAnnotations[0].type];
+      if (widgetType) {
+        return widgetType;
+      }
+    }
+
+    if (propertyDefinition.valueType === 'BOOLEAN') {
+      return WidgetTypes.CheckBox;
+    }
+
+    return WidgetTypes.InputBox;
   }
 
   _showError(key, params) {

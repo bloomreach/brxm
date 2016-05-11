@@ -51,6 +51,22 @@ describe('ChannelActionEdit', () => {
           titleKey: 'group1',
         },
       ],
+      propertyDefinitions: {
+        field1: {
+          isRequired: false,
+          defaultValue: '',
+          name: 'field1',
+          valueType: 'STRING',
+          annotations: [],
+        },
+        field2: {
+          isRequired: false,
+          defaultValue: '',
+          name: 'field2',
+          valueType: 'STRING',
+          annotations: [],
+        },
+      },
       i18nResources: {
         field1: 'Field 1',
         field2: 'Field 2',

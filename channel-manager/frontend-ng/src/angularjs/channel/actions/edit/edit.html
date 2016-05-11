@@ -28,13 +28,24 @@
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent">
   <form name="form" flex="initial" class="qa-channel-edit subpage-form">
 
-    <div ng-repeat="fieldGroup in channelEdit.fieldGroups">
+    <div ng-repeat="fieldGroup in channelEdit.getFieldGroups()">
       <div class="qa-channel-edit-fieldgroup">{{ channelEdit.getLabel(fieldGroup.titleKey) }}</div>
-      <md-input-container class="qa-channel-edit-field md-block" flex
-                          ng-repeat="fieldName in fieldGroup.value">
-        <label>{{ channelEdit.getLabel(fieldName) }}</label>
-        <input type="text" ng-model="channelEdit.values[fieldName]">
-      </md-input-container>
+
+      <div ng-repeat="fieldName in fieldGroup.value" ng-switch on="channelEdit.getType(fieldName)">
+        <span ng-switch-when="CheckBox">
+          <md-checkbox ng-model="channelEdit.values[fieldName]"
+                       aria-label="channelEdit.getLabel(fieldName)">
+            {{ channelEdit.getLabel(fieldName) }}
+          </md-checkbox>
+        </span>
+
+        <span ng-switch-default>
+          <md-input-container class="qa-channel-edit-field md-block" flex>
+            <label>{{ channelEdit.getLabel(fieldName) }}</label>
+            <input type="text" ng-model="channelEdit.values[fieldName]">
+          </md-input-container>
+        </span>
+      </div>
     </div>
 
     <md-input-container>
