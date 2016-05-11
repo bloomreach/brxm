@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-const EMBEDDED_LINK_MARKUP = '<a class="hst-cmseditlink"></a>';
-
 export class HippoIframeCtrl {
   constructor(
     $q,
@@ -77,8 +75,9 @@ export class HippoIframeCtrl {
   }
 
   onLoad() {
-    this._parseHstComments();
-    this._showEmbeddedLinks().then(() => {
+    // we insert the CSS for every page, because embedded links can come and go without reloading the page
+    this._insertCss().then(() => {
+      this._parseHstComments();
       this._updateDragDrop();
       this._updateChannelIfSwitched().then(() => {
         this._parseLinks();
@@ -143,19 +142,20 @@ export class HippoIframeCtrl {
     return this.DragDropService.isDragging();
   }
 
+  _insertCss() {
+    const iframeWindow = this._getIframeDOM().defaultView;
+    const appRootUrl = this.DomService.getAppRootUrl();
+    const hippoIframeCss = `${appRootUrl}styles/hippo-iframe.css`;
+    return this.DomService.addCss(iframeWindow, hippoIframeCss);
+  }
+
   _parseHstComments() {
     this.PageStructureService.clearParsedElements();
     this.hstCommentsProcessorService.run(
       this._getIframeDOM(),
       this.PageStructureService.registerParsedElement.bind(this.PageStructureService)
     );
-  }
-
-  _insertCss() {
-    const iframeWindow = this._getIframeDOM().defaultView;
-    const appRootUrl = this.DomService.getAppRootUrl();
-    const hippoIframeCss = `${appRootUrl}styles/hippo-iframe.css`;
-    return this.DomService.addCss(iframeWindow, hippoIframeCss);
+    this.PageStructureService.attachEmbeddedLinks();
   }
 
   _updateChannelIfSwitched() {
@@ -177,23 +177,6 @@ export class HippoIframeCtrl {
     const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map((path) => protocolAndHost + path);
 
     this.linkProcessorService.run(iframeDom, internalLinkPrefixes);
-  }
-
-  _showEmbeddedLinks() {
-    if (!this.PageStructureService.hasContentLinks() && !this.PageStructureService.hasEditMenuLinks()) {
-      return this.$q.resolve();
-    }
-
-    return this._insertCss().then(() => {
-      this.PageStructureService.getContentLinks().forEach((link) => this._pushLinkPlaceholder(link));
-      this.PageStructureService.getEditMenuLinks().forEach((link) => this._pushLinkPlaceholder(link));
-    });
-  }
-
-  _pushLinkPlaceholder(link) {
-    const linkElement = $(EMBEDDED_LINK_MARKUP);
-    link.getStartComment().after(linkElement);
-    link.setBoxElement(linkElement);
   }
 
   getContainers() {

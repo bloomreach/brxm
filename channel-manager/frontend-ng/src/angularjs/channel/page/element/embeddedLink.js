@@ -25,4 +25,12 @@ export class EmbeddedLink extends PageStructureElement {
   getUuid() {
     return this.metaData.uuid;
   }
+
+  setEnclosingElement(element) {
+    this.enclosingElement = element;
+  }
+
+  getEnclosingElement() {
+    return this.enclosingElement;
+  }
 }

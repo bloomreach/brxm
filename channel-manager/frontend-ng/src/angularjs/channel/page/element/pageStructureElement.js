@@ -131,4 +131,16 @@ export class PageStructureElement {
   setOverlayElement(newJQueryOverlayElement) {
     this.setJQueryElement('overlay', newJQueryOverlayElement);
   }
+
+  containsDomElement(domElement) {
+    const endCommentNode = this.getEndComment()[0];
+    let node = this.getStartComment()[0].nextSibling;
+    while (node && node !== endCommentNode) {
+      if (node.contains(domElement)) {
+        return true;
+      }
+      node = node.nextSibling;
+    }
+    return false;
+  }
 }
