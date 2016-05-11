@@ -22,7 +22,7 @@ export function config($stateProvider) {
     controller: 'ChannelCtrl as channelCtrl',
     templateUrl: 'channel/channel.html',
     params: {
-      initialPath: '/',
+      initialRenderPath: '',
     },
   });
 }

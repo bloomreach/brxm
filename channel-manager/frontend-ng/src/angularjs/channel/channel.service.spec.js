@@ -90,6 +90,7 @@ describe('ChannelService', () => {
   it('should initialize the channel', () => {
     const testChannel = {
       id: 'testChannelId',
+      mountPath: '/testMount',
       siteMapId: 'testSiteMapId',
     };
 
@@ -115,7 +116,7 @@ describe('ChannelService', () => {
       'hippo-cm.channel',
       {
         channelId: testChannel.id,
-        initialPath: '/testPath',
+        initialRenderPath: '/testMount/testPath',
       },
       {
         reload: true,
@@ -170,16 +171,14 @@ describe('ChannelService', () => {
 
   it('should ignore the contextPath if it is /', () => {
     const contextPath = '/';
-    const mountPath = '/mount';
+    ChannelService._load({ contextPath });
+    $rootScope.$digest();
+    expect(ChannelService.makePath()).toEqual('/');
+
     const cmsPreviewPrefix = 'cmsPreviewPrefix';
-
-    ChannelService._load({ contextPath, mountPath });
+    ChannelService._load({ contextPath, cmsPreviewPrefix });
     $rootScope.$digest();
-    expect(ChannelService.makePath()).toEqual('/mount');
-
-    ChannelService._load({ contextPath, cmsPreviewPrefix, mountPath });
-    $rootScope.$digest();
-    expect(ChannelService.makePath()).toEqual('/cmsPreviewPrefix/mount');
+    expect(ChannelService.makePath()).toEqual('/cmsPreviewPrefix');
   });
 
   it('should return a preview path that starts with the contextPath', () => {
@@ -205,24 +204,13 @@ describe('ChannelService', () => {
     expect(ChannelService.makePath()).toEqual('/contextPath/');
   });
 
-  it('should return a url with the mount path appended after the cmsPreviewPrefix', () => {
-    ChannelService._load({
-      contextPath: '/contextPath',
-      cmsPreviewPrefix: 'cmsPreviewPrefix',
-      mountPath: '/mountPath',
-    });
-    $rootScope.$digest();
-    expect(ChannelService.makePath()).toEqual('/contextPath/cmsPreviewPrefix/mountPath');
-  });
-
   it('should append argument path to the url', () => {
     ChannelService._load({
       contextPath: '/contextPath',
       cmsPreviewPrefix: 'cmsPreviewPrefix',
-      mountPath: '/mountPath',
     });
     $rootScope.$digest();
-    expect(ChannelService.makePath('/test/path')).toEqual('/contextPath/cmsPreviewPrefix/mountPath/test/path');
+    expect(ChannelService.makePath('/mountPath/testPath')).toEqual('/contextPath/cmsPreviewPrefix/mountPath/testPath');
   });
 
   it('should compile a list of preview paths', () => {
@@ -409,15 +397,13 @@ describe('ChannelService', () => {
   });
 
   it('should extract the renderPathInfo given a channel with non-empty preview prefix and mount path', () => {
-    channelMock.cmsPreviewPrefix = 'cmsPreviewPrefix';
-    channelMock.mountPath = '/mou/nt';
+    channelMock.cmsPreviewPrefix = '_cmsinternal';
     ChannelService._load(channelMock);
     $rootScope.$digest();
 
-    expect(ChannelService.extractRenderPathInfo('/testContextPath/cmsPreviewPrefix/mou/nt/test/renderpa.th/'))
-      .toBe('/test/renderpa.th');
-    expect(ChannelService.extractRenderPathInfo('/testContextPath/cmsPreviewPrefix/mou/nt'))
-      .toBe('');
+    expect(ChannelService.extractRenderPathInfo('/testContextPath/_cmsinternal/test/pa.th')).toBe('/test/pa.th');
+    expect(ChannelService.extractRenderPathInfo('/testContextPath/_cmsinternal/')).toBe('');
+    expect(ChannelService.extractRenderPathInfo('/testContextPath/_cmsinternal')).toBe('');
   });
 
   it('should extract the renderPathInfo given a channel with empty preview prefix and mount path', () => {
@@ -427,6 +413,18 @@ describe('ChannelService', () => {
     expect(ChannelService.extractRenderPathInfo('/testContextPath/test/render.path'))
       .toBe('/test/render.path');
     expect(ChannelService.extractRenderPathInfo('/testContextPath/')).toBe('');
+  });
+
+  it('uses the channel\'s mount path to generate the homepage renderPathInfo', () => {
+    channelMock.mountPath = '/mou/nt';
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    expect(ChannelService.getHomePageRenderPathInfo()).toBe('/mou/nt');
+
+    delete channelMock.mountPath;
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    expect(ChannelService.getHomePageRenderPathInfo()).toBe('');
   });
 
   it('should log a warning trying to extract a renderPathInfo if there is no matching channel prefix', () => {

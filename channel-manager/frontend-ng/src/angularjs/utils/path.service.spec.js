@@ -35,6 +35,7 @@ describe('PathService', () => {
     expect(PathService.concatPaths('/', 'two')).toEqual('/two');
     expect(PathService.concatPaths('/', '/two')).toEqual('/two');
     expect(PathService.concatPaths('one', '/')).toEqual('one/');
+    expect(PathService.concatPaths('/one', '/')).toEqual('/one/');
     expect(PathService.concatPaths('one/', '/')).toEqual('one/');
     expect(PathService.concatPaths('/', '/')).toEqual('/');
     expect(PathService.concatPaths(' one ', ' two ')).toEqual('one/two');
