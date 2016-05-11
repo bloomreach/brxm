@@ -71,6 +71,12 @@
       }.bind(this));
     },
 
+    reloadPage: function() {
+      if (this.selectedChannel) {
+        this.hostToIFrame.publish('reload-page');
+      }
+    },
+
     _syncChannel: function() {
       this._reloadChannels().when(function (channelStore) {
         this.selectedChannel = channelStore.getById(this.selectedChannel.id);
