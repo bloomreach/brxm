@@ -116,8 +116,7 @@ export class OverlayElementCtrl {
 
   _createAndInsertTemporaryBox() {
     const startCommentJQueryElement = this.structureElement.getStartComment();
-    const div = this.$document.createElement('div');
-
+    const div = this.$document[0].createElement('div');
 
     if (startCommentJQueryElement[0].nextSibling !== null) {
       // this should always be the case due to the presence of the HST-End marker

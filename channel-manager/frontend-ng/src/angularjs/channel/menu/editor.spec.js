@@ -34,13 +34,19 @@ describe('MenuEditor', () => {
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
     $scope.onDone = jasmine.createSpy('onDone');
-    $scope.menuName = 'testMenu';
-    $element = angular.element('<menu-editor menu-name="{{menuName}}" on-done="onDone()"> </menu-editor>');
+    $scope.menuUuid = 'testUuid';
+    $element = angular.element('<menu-editor menu-uuid="{{menuUuid}}" on-done="onDone()"> </menu-editor>');
     $compile($element)($scope);
     $scope.$digest();
 
     return $element.controller('menu-editor');
   }
+
+  it('initializes correctly', () => {
+    const MenuEditorCtrl = compileDirectiveAndGetController();
+
+    expect(MenuEditorCtrl.menuUuid).toBe('testUuid');
+  });
 
   it('returns to the page when clicking the "back" button', () => {
     compileDirectiveAndGetController();
