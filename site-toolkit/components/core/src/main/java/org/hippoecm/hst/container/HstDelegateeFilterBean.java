@@ -509,6 +509,10 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
         final Mount mount = resolvedMount.getMount();
 
+        if (mount.isSchemeAgnostic()) {
+            return true;
+        }
+
         if (mount.getScheme().equals(farthestRequestScheme)) {
             return true;
         }
