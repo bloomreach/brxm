@@ -102,6 +102,11 @@ export class ChannelCtrl {
     return this.SessionService.hasWriteAccess();
   }
 
+  editMenu(menuUuid) {
+    this.menuUuid = menuUuid;
+    this.showSubpage('menu-editor');
+  }
+
   _createPreviewConfiguration() {
     this.isCreatingPreview = true;
     this.ChannelService.createPreviewConfiguration().then(() => {

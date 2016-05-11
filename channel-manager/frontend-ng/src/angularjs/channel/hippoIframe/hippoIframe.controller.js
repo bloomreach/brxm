@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const CONTENT_LINK_MARKUP = '<a class="hst-cmseditlink"></a>';
+const EMBEDDED_LINK_MARKUP = '<a class="hst-cmseditlink"></a>';
 
 export class HippoIframeCtrl {
   constructor(
@@ -78,7 +78,7 @@ export class HippoIframeCtrl {
 
   onLoad() {
     this._parseHstComments();
-    this._showContentLinks().then(() => {
+    this._showEmbeddedLinks().then(() => {
       this._updateDragDrop();
       this._updateChannelIfSwitched().then(() => {
         this._parseLinks();
@@ -179,18 +179,21 @@ export class HippoIframeCtrl {
     this.linkProcessorService.run(iframeDom, internalLinkPrefixes);
   }
 
-  _showContentLinks() {
-    if (!this.PageStructureService.hasContentLinks()) {
+  _showEmbeddedLinks() {
+    if (!this.PageStructureService.hasContentLinks() && !this.PageStructureService.hasEditMenuLinks()) {
       return this.$q.resolve();
     }
 
     return this._insertCss().then(() => {
-      this.PageStructureService.getContentLinks().forEach((contentLink) => {
-        const contentLinkElement = $(CONTENT_LINK_MARKUP);
-        contentLink.getStartComment().after(contentLinkElement);
-        contentLink.setBoxElement(contentLinkElement);
-      });
+      this.PageStructureService.getContentLinks().forEach((link) => this._pushLinkPlaceholder(link));
+      this.PageStructureService.getEditMenuLinks().forEach((link) => this._pushLinkPlaceholder(link));
     });
+  }
+
+  _pushLinkPlaceholder(link) {
+    const linkElement = $(EMBEDDED_LINK_MARKUP);
+    link.getStartComment().after(linkElement);
+    link.setBoxElement(linkElement);
   }
 
   getContainers() {
@@ -203,6 +206,14 @@ export class HippoIframeCtrl {
 
   openContent(contentLink) {
     this.CmsService.publish('open-content', contentLink.getUuid());
+  }
+
+  getEditMenuLinks() {
+    return this.editMode ? this.PageStructureService.getEditMenuLinks() : [];
+  }
+
+  openMenuEditor(editMenuLink) {
+    this.onEditMenu({ menuUuid: editMenuLink.getUuid() });
   }
 
   getSrc() {

@@ -44,11 +44,18 @@
             </div>
           </div>
           <div ng-repeat="contentLink in iframe.getContentLinks()" class="qa-content-link">
-            <overlay-element class="overlay-element-content-link"
-                             structure-element="contentLink">
-              <md-button class="overlay-element-content-button md-fab"
+            <overlay-element structure-element="contentLink">
+              <md-button class="overlay-element-fab md-fab"
                          ng-click="iframe.openContent(contentLink)">
                 <md-icon class="material-icons">description</md-icon>
+              </md-button>
+            </overlay-element>
+          </div>
+          <div ng-repeat="editMenuLink in iframe.getEditMenuLinks()" class="qa-edit-menu-link">
+            <overlay-element structure-element="editMenuLink">
+              <md-button class="overlay-element-fab md-fab"
+                         ng-click="iframe.openMenuEditor(editMenuLink)">
+                <md-icon class="material-icons">menu</md-icon>
               </md-button>
             </overlay-element>
           </div>

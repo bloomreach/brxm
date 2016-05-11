@@ -23,9 +23,6 @@
 
       <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
 
-      <!--Temporary access to menu editor-->
-      <md-button ng-if="channelCtrl.isEditMode" ng-click="channelCtrl.menuName = 'main'; channelCtrl.showSubpage('menu-editor')">Edit menu</md-button>
-
       <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
       <span flex></span>
@@ -68,7 +65,8 @@
     <hippo-iframe
       flex
       layout="row"
-      edit-mode="channelCtrl.isEditMode">
+      edit-mode="channelCtrl.isEditMode"
+      on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
   </md-content>
 </div>
@@ -107,7 +105,7 @@
 
 <menu-editor layout="column" flex
              ng-if="channelCtrl.currentSubpage == 'menu-editor'"
-             menu-name="{{channelCtrl.menuName}}"
+             menu-uuid="{{channelCtrl.menuUuid}}"
              on-done="channelCtrl.hideSubpage()">
 </menu-editor>
 

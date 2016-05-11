@@ -20,14 +20,14 @@
       {{ 'TOOLBAR_BUTTON_BACK' | translate }}
     </md-button>
     <span flex></span>
-    <h2 class="qa-subpage-menu-editor">{{ menuEditor.subpageTitle }}</h2>
+    <h2 class="qa-subpage-menu-editor">{{ 'SUBPAGE_MENU_EDITOR_TITLE' | translate }}</h2>
     <span flex></span>
   </div>
 </md-toolbar>
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent">
   <form name="form" flex="initial" class="qa-subpage subpage-form">
-
+    <h2>Editing menu {{menuEditor.menuUuid}}</h2>
     <md-input-container>
       <md-button type="submit" class="qa-menu-editor-save md-raised md-primary"
                  ng-disabled="form.$pristine || form.$invalid"

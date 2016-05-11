@@ -16,7 +16,7 @@
 
 import { ComponentElement } from './element/componentElement';
 import { ContainerElement } from './element/containerElement';
-import { ContentLink } from './element/contentLink';
+import { EmbeddedLink } from './element/embeddedLink';
 
 export class PageStructureService {
 
@@ -56,6 +56,7 @@ export class PageStructureService {
   clearParsedElements() {
     this.containers = [];
     this.contentLinks = [];
+    this.editMenuLinks = [];
     this.PageMetaDataService.clear();
   }
 
@@ -88,8 +89,12 @@ export class PageStructureService {
       }
 
       case this.HST.TYPE_CONTENT_LINK: {
-        const contentLink = new ContentLink(commentDomElement, metaData);
-        this.contentLinks.push(contentLink);
+        this.contentLinks.push(new EmbeddedLink(commentDomElement, metaData));
+        break;
+      }
+
+      case this.HST.TYPE_EDIT_MENU_LINK: {
+        this.editMenuLinks.push(new EmbeddedLink(commentDomElement, metaData));
         break;
       }
 
@@ -104,6 +109,14 @@ export class PageStructureService {
 
   getContentLinks() {
     return this.contentLinks;
+  }
+
+  hasEditMenuLinks() {
+    return this.editMenuLinks.length > 0;
+  }
+
+  getEditMenuLinks() {
+    return this.editMenuLinks;
   }
 
   getComponentById(id) {

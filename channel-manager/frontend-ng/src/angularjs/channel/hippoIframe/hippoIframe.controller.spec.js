@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ContentLink } from '../page/element/contentLink';
+import { EmbeddedLink } from '../page/element/embeddedLink';
 
 describe('hippoIframeCtrl', () => {
   'use strict';
@@ -149,7 +149,7 @@ describe('hippoIframeCtrl', () => {
   it('inserts CSS and generates content link box elements when there are content links', () => {
     const contentLinkContainer = $j('<div><!-- { "HST-Type": "CONTENT_LINK" --></div>');
     const contentLinkComment = contentLinkContainer[0].childNodes[0];
-    const contentLink = new ContentLink(contentLinkComment, {});
+    const contentLink = new EmbeddedLink(contentLinkComment, {});
 
     spyOn(PageStructureService, 'clearParsedElements');
     spyOn(PageStructureService, 'hasContentLinks').and.returnValue(true);
@@ -175,7 +175,7 @@ describe('hippoIframeCtrl', () => {
 
   it('sends an "open-content" event to the CMS to open content', () => {
     const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
-    const contentLink = new ContentLink(contentLinkComment, {
+    const contentLink = new EmbeddedLink(contentLinkComment, {
       uuid: '1234',
     });
     spyOn(CmsService, 'publish');

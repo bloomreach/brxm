@@ -21,18 +21,14 @@ describe('MenuEditor', () => {
   let $scope;
   let $rootScope;
   let $compile;
-  let $translate;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$translate_) => {
+    inject((_$rootScope_, _$compile_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      $translate = _$translate_;
     });
-
-    spyOn($translate, 'instant').and.callFake((key) => key);
   });
 
   function compileDirectiveAndGetController() {
@@ -45,12 +41,6 @@ describe('MenuEditor', () => {
 
     return $element.controller('menu-editor');
   }
-
-  it('initializes correctly', () => {
-    compileDirectiveAndGetController();
-
-    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_MENU_EDITOR_TITLE', { menuName: 'testMenu' });
-  });
 
   it('returns to the page when clicking the "back" button', () => {
     compileDirectiveAndGetController();

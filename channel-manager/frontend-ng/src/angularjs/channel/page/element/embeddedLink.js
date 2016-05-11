@@ -16,10 +16,10 @@
 
 import { PageStructureElement } from './pageStructureElement';
 
-export class ContentLink extends PageStructureElement {
+export class EmbeddedLink extends PageStructureElement {
 
   constructor(commentElement, metaData) {
-    super('contentLink', metaData, commentElement, commentElement, null);
+    super('embeddedLink', metaData, commentElement, commentElement, null);
   }
 
   getUuid() {

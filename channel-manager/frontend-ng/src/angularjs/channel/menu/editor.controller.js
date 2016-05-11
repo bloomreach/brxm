@@ -15,9 +15,7 @@
  */
 
 export class MenuEditorCtrl {
-  constructor($translate) {
+  constructor() {
     'ngInject';
-
-    this.subpageTitle = $translate.instant('SUBPAGE_MENU_EDITOR_TITLE', { menuName: this.menuName });
   }
 }
