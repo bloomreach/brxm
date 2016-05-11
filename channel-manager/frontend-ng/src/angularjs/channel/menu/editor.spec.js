@@ -21,25 +21,21 @@ describe('MenuEditor', () => {
   let $scope;
   let $rootScope;
   let $compile;
-  let $translate;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$translate_) => {
+    inject((_$rootScope_, _$compile_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      $translate = _$translate_;
     });
-
-    spyOn($translate, 'instant').and.callFake((key) => key);
   });
 
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
     $scope.onDone = jasmine.createSpy('onDone');
-    $scope.menuName = 'testMenu';
-    $element = angular.element('<menu-editor menu-name="{{menuName}}" on-done="onDone()"> </menu-editor>');
+    $scope.menuUuid = 'testUuid';
+    $element = angular.element('<menu-editor menu-uuid="{{menuUuid}}" on-done="onDone()"> </menu-editor>');
     $compile($element)($scope);
     $scope.$digest();
 
@@ -47,9 +43,9 @@ describe('MenuEditor', () => {
   }
 
   it('initializes correctly', () => {
-    compileDirectiveAndGetController();
+    const MenuEditorCtrl = compileDirectiveAndGetController();
 
-    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_MENU_EDITOR_TITLE', { menuName: 'testMenu' });
+    expect(MenuEditorCtrl.menuUuid).toBe('testUuid');
   });
 
   it('returns to the page when clicking the "back" button', () => {
