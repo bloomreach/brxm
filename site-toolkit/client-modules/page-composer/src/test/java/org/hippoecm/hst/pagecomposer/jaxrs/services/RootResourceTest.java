@@ -154,13 +154,13 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService);
 
         given()
-                .contentType(JSON)
-                .body(channelFoo)
-                .when()
-                .put(MOCK_REST_PATH + "channels/channel-foo")
-                .then()
-                .statusCode(200)
-                .body("properties.foo", equalTo("bah"));
+            .contentType(JSON)
+            .body(channelFoo)
+        .when()
+            .put(MOCK_REST_PATH + "channels/channel-foo")
+        .then()
+            .statusCode(200)
+            .body("properties.foo", equalTo("bah"));
 
         verify(channelService);
     }
@@ -179,12 +179,12 @@ public class RootResourceTest extends AbstractResourceTest {
         replay(channelService);
 
         given()
-                .contentType(JSON)
-                .body(channelFoo)
-                .when()
-                .put(MOCK_REST_PATH + "channels/channel-foo")
-                .then()
-                .statusCode(500);
+            .contentType(JSON)
+            .body(channelFoo)
+        .when()
+            .put(MOCK_REST_PATH + "channels/channel-foo")
+        .then()
+            .statusCode(500);
 
         verify(channelService);
         assertThat(capturedArgument.getValue().getProperties().get("foo"), equalTo("bah"));

@@ -198,6 +198,7 @@ public class ChannelManagerImpl implements ChannelManager {
         }
     }
 
+    @Deprecated
     @Override
     public void save(final Channel channel) throws ChannelException {
         final String hostGroupForCmsHost = getHostGroupNameFromContext();

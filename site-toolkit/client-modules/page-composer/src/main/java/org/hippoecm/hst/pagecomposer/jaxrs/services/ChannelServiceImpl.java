@@ -29,6 +29,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
@@ -88,7 +89,10 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void saveChannel(Session session, final String channelId, Channel channel) throws RepositoryException, IllegalStateException, ChannelException {
-        String currentHostGroupName = getCurrentVirtualHost().getHostGroupName();
+        if (!StringUtils.equals(channel.getId(), channelId)) {
+            throw new ChannelException("Channel object does not contain the correct id, that should be " + channelId);
+        }
+        final String currentHostGroupName = getCurrentVirtualHost().getHostGroupName();
 
         this.channelManager.save(currentHostGroupName, channel);
     }
