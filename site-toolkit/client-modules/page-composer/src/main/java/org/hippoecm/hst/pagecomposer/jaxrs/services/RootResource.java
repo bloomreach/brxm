@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -126,18 +125,18 @@ public class RootResource extends AbstractConfigResource {
      * Update field setting properties of a channel
      */
     @PUT
-    @Path("/channels/{id}/properties")
+    @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response saveChannelProperties(@PathParam("id") String channelId, Map<String, Object> properties) {
+    public Response saveChannel(@PathParam("id") String channelId, final Channel channel) {
         try {
             final Session session = RequestContextProvider.get().getSession();
-            this.channelService.saveChannelProperties(session, channelId, properties);
+            this.channelService.saveChannel(session, channelId, channel);
             HstConfigurationUtils.persistChanges(session);
 
-            return Response.ok().entity(properties).build();
-        } catch (RepositoryException | IllegalStateException e) {
-            log.error("Failed to saveChannelProperties channel", e);
+            return Response.ok().entity(channel).build();
+        } catch (RepositoryException | IllegalStateException | ChannelException e) {
+            log.error("Failed to saveChannel channel", e);
             return Response.serverError().build();
         }
     }

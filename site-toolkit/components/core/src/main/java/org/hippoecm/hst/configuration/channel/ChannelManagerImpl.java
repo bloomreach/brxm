@@ -200,11 +200,17 @@ public class ChannelManagerImpl implements ChannelManager {
 
     @Override
     public void save(final Channel channel) throws ChannelException {
+        final String hostGroupForCmsHost = getHostGroupNameFromContext();
+        save(hostGroupForCmsHost, channel);
+    }
+
+    @Override
+    public void save(final String hostGroupName, final Channel channel) throws ChannelException {
         synchronized (hstModelMutex) {
             try {
                 final Session session = getSession();
                 Node configNode = session.getNode(hstNodeLoadingCache.getRootPath());
-                updateChannel(configNode, channel);
+                updateChannel(configNode, hostGroupName, channel);
 
                 ChannelManagerEvent event = new ChannelManagerEventImpl(null, channel, configNode);
                 for (ChannelManagerEventListener listener : channelManagerEventListeners) {
@@ -379,7 +385,22 @@ public class ChannelManagerImpl implements ChannelManager {
         return mount;
     }
 
-    private Node getOrCreateVirtualHost(final Node configRoot, final String hostName) throws RepositoryException, ChannelException {
+    private Node getOrCreateVirtualHost(final Node configRoot, final String host) throws ChannelException, RepositoryException {
+        final String hostGroupForCmsHost = getHostGroupNameFromContext();
+        return getOrCreateVirtualHost(configRoot, host, hostGroupForCmsHost);
+    }
+
+    private String getHostGroupNameFromContext() throws ChannelException {
+        // FIXME: move all modification methods to the 'cmsrest' module and use the
+        // CmsRestSecurityValve#HOST_GROUP_NAME_FOR_CMS_HOST constant instead of the hardcoded string "HOST_GROUP_NAME_FOR_CMS_HOST"
+        final String hostGroupForCmsHost = (String) RequestContextProvider.get().getAttribute("HOST_GROUP_NAME_FOR_CMS_HOST");
+        if (StringUtils.isEmpty(hostGroupForCmsHost)) {
+            throw new ChannelException("There is no hostgroup for cms host available. Cannot get or create virtual hosts");
+        }
+        return hostGroupForCmsHost;
+    }
+
+    private Node getOrCreateVirtualHost(final Node configRoot, final String hostName, final String hostGroupName) throws RepositoryException, ChannelException {
         String[] elements;
 
         if (InetAddresses.isInetAddress(hostName)) {
@@ -388,13 +409,7 @@ public class ChannelManagerImpl implements ChannelManager {
             elements = hostName.split("[.]");
         }
 
-        // FIXME: move all modification methods to the 'cmsrest' module and use the
-        // CmsRestSecurityValve#HOST_GROUP_NAME_FOR_CMS_HOST constant instead of the hardcoded string "HOST_GROUP_NAME_FOR_CMS_HOST"
-        final String hostGroupForCmsHost = (String)RequestContextProvider.get().getAttribute("HOST_GROUP_NAME_FOR_CMS_HOST");
-        if (StringUtils.isEmpty(hostGroupForCmsHost)) {
-            throw new ChannelException("There is no hostgroup for cms host available. Cannot get or create virtual hosts");
-        }
-        Node host = configRoot.getNode(HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroupForCmsHost);
+        Node host = configRoot.getNode(HstNodeTypes.NODENAME_HST_HOSTS + "/" + hostGroupName);
 
         for (int i = elements.length - 1; i >= 0; i--) {
             host = getOrAddNode(host, elements[i], HstNodeTypes.NODETYPE_HST_VIRTUALHOST);
@@ -527,9 +542,9 @@ public class ChannelManagerImpl implements ChannelManager {
         return false;
     }
 
-    private void updateChannel(Node configRoot, final Channel channel) throws ChannelException, RepositoryException {
+    private void updateChannel(Node configRoot, final String hostGroupName, final Channel channel) throws ChannelException, RepositoryException {
         URI channelUri = getChannelUri(channel);
-        Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost());
+        Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost(), hostGroupName);
 
         // resolve mount
         Node mount;

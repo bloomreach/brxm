@@ -60,6 +60,8 @@ public interface ChannelManager {
      */
     void save(Channel channel) throws ChannelException;
 
+    void save(final String hostGroupName, final Channel channel) throws ChannelException;
+
     /**
      * Can the current user (set in HstSubject) create or modify channels.
      *
@@ -78,5 +80,4 @@ public interface ChannelManager {
      * @param channelManagerEventListeners
      */
     void removeChannelManagerEventListeners(ChannelManagerEventListener ... channelManagerEventListeners);
-
 }

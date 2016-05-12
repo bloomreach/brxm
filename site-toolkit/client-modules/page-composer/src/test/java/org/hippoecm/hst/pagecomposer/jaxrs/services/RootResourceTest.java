@@ -25,7 +25,9 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.Path;
 
+import org.easymock.Capture;
 import org.easymock.EasyMock;
+import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
@@ -35,10 +37,13 @@ import org.junit.Test;
 import org.onehippo.jaxrs.cxf.hst.HstCXFTestFixtureHelper;
 
 import static com.jayway.restassured.http.ContentType.JSON;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 
@@ -138,42 +143,50 @@ public class RootResourceTest extends AbstractResourceTest {
     }
 
     @Test
-    public void can_save_channelsettings_properties() throws ChannelException, RepositoryException {
+    public void can_save_channelsettings() throws ChannelException, RepositoryException {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("foo", "bah");
-        channelService.saveChannelProperties(mockSession, "channel-foo", properties);
+        final Channel channelFoo = new Channel("channel-foo");
+        channelFoo.setProperties(properties);
+
+        channelService.saveChannel(mockSession, "channel-foo", channelFoo);
         expectLastCall();
         replay(channelService);
 
         given()
-            .contentType(JSON)
-            .body(properties)
-        .when()
-            .put(MOCK_REST_PATH + "channels/channel-foo/properties")
-        .then()
+                .contentType(JSON)
+                .body(channelFoo)
+                .when()
+                .put(MOCK_REST_PATH + "channels/channel-foo")
+                .then()
                 .statusCode(200)
-                .body("foo", equalTo("bah"));
+                .body("properties.foo", equalTo("bah"));
 
         verify(channelService);
     }
 
     @Test
-    public void cannot_save_channelsettings_properties_when_server_has_error() throws ChannelException, RepositoryException {
+    public void cannot_save_channelsettings_when_server_has_error() throws ChannelException, RepositoryException {
         final Map<String, Object> properties = new HashMap<>();
         properties.put("foo", "bah");
-        channelService.saveChannelProperties(mockSession, "channel-foo", properties);
+        final Channel channelFoo = new Channel("channel-foo");
+        channelFoo.setProperties(properties);
+
+        final Capture<Channel> capturedArgument = new Capture<>();
+        channelService.saveChannel(eq(mockSession), eq("channel-foo"), capture(capturedArgument));
         expectLastCall().andThrow(new IllegalStateException("something is wrong"));
 
         replay(channelService);
 
         given()
-            .contentType(JSON)
-            .body(properties)
-        .when()
-            .put(MOCK_REST_PATH + "channels/channel-foo/properties")
-        .then()
-            .statusCode(500);
+                .contentType(JSON)
+                .body(channelFoo)
+                .when()
+                .put(MOCK_REST_PATH + "channels/channel-foo")
+                .then()
+                .statusCode(500);
 
         verify(channelService);
+        assertThat(capturedArgument.getValue().getProperties().get("foo"), equalTo("bah"));
     }
 }
