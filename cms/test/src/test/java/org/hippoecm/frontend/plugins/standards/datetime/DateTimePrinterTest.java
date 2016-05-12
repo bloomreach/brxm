@@ -132,6 +132,6 @@ public class DateTimePrinterTest extends PluginTest {
         LocalDate dstInNL = LocalDate.of(2016, Month.MAY, 1);
         Date dstDate = Date.from(dstInNL.atStartOfDay(timeZone.toZoneId()).toInstant());
         assertEquals("01.05.16 00:00", DateTimePrinter.of(dstDate).print(FormatStyle.SHORT, FormatStyle.SHORT));
-        assertEquals("01.05.16 00:00 (Sommerzeit)", DateTimePrinter.of(dstDate).appendDST().print(FormatStyle.SHORT, FormatStyle.SHORT));
+        assertEquals("01.05.16 00:00 (DST)", DateTimePrinter.of(dstDate).appendDST().print(FormatStyle.SHORT, FormatStyle.SHORT));
     }
 }
