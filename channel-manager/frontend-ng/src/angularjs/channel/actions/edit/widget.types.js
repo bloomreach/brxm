@@ -16,8 +16,8 @@
  */
 
 export const WidgetTypes = {
-  JcrPath: 'LinkPicker',
-  ImageSetPath: 'LinkPicker',
+  JcrPath: 'JcrPath',
+  ImageSetPath: 'ImageSetPath',
   DropDownList: 'DropDownList',
   CheckBox: 'CheckBox',
   InputBox: 'InputBox',

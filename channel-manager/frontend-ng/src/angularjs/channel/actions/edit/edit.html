@@ -39,6 +39,17 @@
           </md-checkbox>
         </span>
 
+        <span ng-switch-when="DropDownList">
+          <md-input-container class="qa-channel-edit-field md-block" flex>
+            <label>{{ channelEdit.getLabel(fieldName) }}</label>
+            <md-select ng-model="channelEdit.values[fieldName]">
+              <md-option ng-repeat="choice in channelEdit.getDropDownListValues(fieldName)" value="{{choice}}">
+                {{choice}}
+              </md-option>
+            </md-select>
+          </md-input-container>
+        </span>
+
         <span ng-switch-default>
           <md-input-container class="qa-channel-edit-field md-block" flex>
             <label>{{ channelEdit.getLabel(fieldName) }}</label>

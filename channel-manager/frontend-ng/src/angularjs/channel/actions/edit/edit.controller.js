@@ -16,8 +16,9 @@
 import { WidgetTypes } from './widget.types';
 
 export class ChannelEditCtrl {
-  constructor($element, $translate, FeedbackService, ChannelService, HippoIframeService) {
+  constructor($log, $element, $translate, FeedbackService, ChannelService, HippoIframeService) {
     'ngInject';
+    this.$log = $log;
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
@@ -28,6 +29,7 @@ export class ChannelEditCtrl {
       channelName: ChannelService.getName(),
     });
 
+    this.channelInfoDescription = {};
     ChannelService.getChannelInfoDescription()
       .then((channelInfoDescription) => {
         this.channelInfoDescription = channelInfoDescription;
@@ -52,28 +54,60 @@ export class ChannelEditCtrl {
   }
 
   getLabel(fieldName) {
-    return this.channelInfoDescription && this.channelInfoDescription.i18nResources[fieldName];
+    const localizedLabel = this.channelInfoDescription.i18nResources[fieldName];
+    return localizedLabel || this._getPropertyDefinition(fieldName).displayName || fieldName;
   }
 
   getFieldGroups() {
-    return this.channelInfoDescription && this.channelInfoDescription.fieldGroups;
+    return this.channelInfoDescription.fieldGroups;
   }
 
   getType(fieldName) {
-    const propertyDefinition = this.channelInfoDescription && this.channelInfoDescription.propertyDefinitions[fieldName];
-    const fieldAnnotations = propertyDefinition.annotations;
-    if (fieldAnnotations && fieldAnnotations.length > 0) {
-      const widgetType = WidgetTypes[fieldAnnotations[0].type];
+    const fieldAnnotation = this._getFirstFieldAnnotation(fieldName);
+    if (fieldAnnotation) {
+      const widgetType = WidgetTypes[fieldAnnotation.type];
       if (widgetType) {
         return widgetType;
       }
     }
 
+    const propertyDefinition = this._getPropertyDefinition(fieldName);
     if (propertyDefinition.valueType === 'BOOLEAN') {
       return WidgetTypes.CheckBox;
     }
 
+    // default widget
     return WidgetTypes.InputBox;
+  }
+
+  _getPropertyDefinition(fieldName) {
+    return this.channelInfoDescription.propertyDefinitions[fieldName];
+  }
+
+  _getFirstFieldAnnotation(fieldName) {
+    const propertyDefinition = this._getPropertyDefinition(fieldName);
+    if (!propertyDefinition) {
+      this.$log.warn('Property definition for the field "{}" not found. Please check your ChannelInfo class', fieldName);
+      return undefined;
+    }
+
+    const fieldAnnotations = propertyDefinition.annotations;
+    if (!fieldAnnotations || fieldAnnotations.length === 0) {
+      return undefined;
+    }
+    if (fieldAnnotations.length > 1) {
+      this.$log.warn('Field "{}" contains multiple annotations, that is incorrect. Please check your ChannelInfo class', fieldName);
+    }
+    return fieldAnnotations[0];
+  }
+
+  getDropDownListValues(fieldName) {
+    const fieldAnnotation = this._getFirstFieldAnnotation(fieldName);
+    if (fieldAnnotation.type !== 'DropDownList') {
+      this.$log.debug('Field "{}" is not a dropdown.', fieldName);
+      return [];
+    }
+    return fieldAnnotation.value;
   }
 
   _showError(key, params) {
