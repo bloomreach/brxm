@@ -117,7 +117,7 @@ describe('ChannelActionEdit', () => {
 
   it('notifies the event "on-success" when saving is successful', () => {
     mockChannelInfoDescription();
-    spyOn(ChannelService, 'saveProperties').and.returnValue($q.when());
+    spyOn(ChannelService, 'saveChannel').and.returnValue($q.when());
     spyOn(ChannelService, 'recordOwnChange');
     spyOn(HippoIframeService, 'reload').and.returnValue($q.when());
     compileDirectiveAndGetController();
@@ -126,7 +126,7 @@ describe('ChannelActionEdit', () => {
     $scope.$digest();
     $element.find('.qa-channel-edit-save').click();
 
-    expect(ChannelService.saveProperties).toHaveBeenCalled();
+    expect(ChannelService.saveChannel).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
     expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     expect($scope.onSuccess).toHaveBeenCalledWith('CHANNEL_PROPERTIES_SAVE_SUCCESS', undefined);
@@ -134,7 +134,7 @@ describe('ChannelActionEdit', () => {
 
   it('shows feedback message when saving is failed', () => {
     mockChannelInfoDescription();
-    spyOn(ChannelService, 'saveProperties').and.returnValue($q.reject());
+    spyOn(ChannelService, 'saveChannel').and.returnValue($q.reject());
     spyOn(FeedbackService, 'showError');
     compileDirectiveAndGetController();
     const feedbackParent = $element.find('.feedback-parent');
@@ -143,7 +143,7 @@ describe('ChannelActionEdit', () => {
     $scope.$digest();
     $element.find('.qa-channel-edit-save').click();
 
-    expect(ChannelService.saveProperties).toHaveBeenCalled();
+    expect(ChannelService.saveChannel).toHaveBeenCalled();
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED', undefined, feedbackParent);
   });
 });

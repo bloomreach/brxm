@@ -223,12 +223,12 @@ export class ChannelService {
   _augmentChannelWithPrototypeInfo() {
     this.getNewPageModel()
       .then((data) => {
-        this.hasPrototypes = data.prototypes && data.prototypes.length > 0;
+        this._hasPrototypes = data.prototypes && data.prototypes.length > 0;
       });
   }
 
   hasPrototypes() {
-    return this.hasPrototypes;
+    return this._hasPrototypes;
   }
 
   hasWorkspace() {

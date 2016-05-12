@@ -513,17 +513,16 @@ describe('ChannelService', () => {
   it('should ask the HST service to save the channel settings', (done) => {
     ChannelService._load(channelMock);
     $rootScope.$digest();
-    const properties = { };
     HstService.doPut.and.returnValue($q.when());
 
-    ChannelService.saveProperties(properties)
+    ChannelService.saveChannel()
       .then(() => {
         done();
       })
       .catch(() => {
         fail();
       });
-    expect(HstService.doPut).toHaveBeenCalledWith(properties, 'testRootUuid', 'channels', 'channelId', 'properties');
+    expect(HstService.doPut).toHaveBeenCalledWith(ChannelService.getChannel(), 'testRootUuid', 'channels', 'channelId');
     $rootScope.$digest();
   });
 
@@ -533,7 +532,7 @@ describe('ChannelService', () => {
     const error = { };
     HstService.doPut.and.returnValue($q.reject(error));
 
-    ChannelService.saveProperties({ })
+    ChannelService.saveChannel()
       .then(() => {
         fail();
       })
