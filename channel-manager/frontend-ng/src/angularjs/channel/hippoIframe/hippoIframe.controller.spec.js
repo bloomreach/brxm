@@ -67,8 +67,9 @@ describe('hippoIframeCtrl', () => {
 
 
     scope.testEditMode = false;
+    scope.onEditMenu = jasmine.createSpy('onEditMenu');
 
-    const el = angular.element('<hippo-iframe edit-mode="testEditMode"></hippo-iframe>');
+    const el = angular.element('<hippo-iframe edit-mode="testEditMode" on-edit-menu="onEditMenu(menuUuid)"></hippo-iframe>');
     $compile(el)(scope);
     scope.$digest();
 
@@ -171,5 +172,11 @@ describe('hippoIframeCtrl', () => {
     hippoIframeCtrl.openContent(contentLink);
 
     expect(CmsService.publish).toHaveBeenCalledWith('open-content', '1234');
+  });
+
+  it('calls the registered callback for editing a menu', () => {
+    const editMenuLink = { getUuid: () => 'testUuid' };
+    hippoIframeCtrl.openMenuEditor(editMenuLink);
+    expect(scope.onEditMenu).toHaveBeenCalledWith('testUuid');
   });
 });
