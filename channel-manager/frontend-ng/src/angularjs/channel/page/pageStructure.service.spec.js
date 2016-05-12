@@ -65,6 +65,10 @@ describe('PageStructureService', () => {
     expect(PageStructureService.getContentLinks()).toEqual([]);
   });
 
+  it('has no edit menu links initially', () => {
+    expect(PageStructureService.getEditMenuLinks()).toEqual([]);
+  });
+
   it('rejects components if there is no container yet', () => {
     spyOn($log, 'warn');
     PageStructureService.registerParsedElement(undefined, {

@@ -90,6 +90,14 @@ export class PageStructureService {
         break;
       }
 
+      default:
+        this._processEmbeddedLinks(commentDomElement, metaData);
+        break;
+    }
+  }
+
+  _processEmbeddedLinks(commentDomElement, metaData) {
+    switch (metaData[this.HST.TYPE]) {
       case this.HST.TYPE_CONTENT_LINK: {
         this.contentLinks.push(new EmbeddedLink(commentDomElement, metaData));
         break;
@@ -105,6 +113,9 @@ export class PageStructureService {
     }
   }
 
+  // Attaching the embedded links to the page structure (by means of the 'enclosingElement') is only
+  // done as a final step of processing an entire page or markup fragment, because it requires an
+  // up-to-date and complete page structure (containers, components).
   attachEmbeddedLinks() {
     this.contentLinks.forEach((link) => this._attachEmbeddedLink(link));
     this.editMenuLinks.forEach((link) => this._attachEmbeddedLink(link));
@@ -394,17 +405,8 @@ export class PageStructureService {
             }
             break;
 
-          case this.HST.TYPE_CONTENT_LINK: {
-            this.contentLinks.push(new EmbeddedLink(commentDomElement, metaData));
-            break;
-          }
-
-          case this.HST.TYPE_EDIT_MENU_LINK: {
-            this.editMenuLinks.push(new EmbeddedLink(commentDomElement, metaData));
-            break;
-          }
-
           default:
+            this._processEmbeddedLinks(commentDomElement, metaData);
             break;
         }
       } catch (exception) {
@@ -435,17 +437,8 @@ export class PageStructureService {
           }
           break;
 
-        case this.HST.TYPE_CONTENT_LINK: {
-          this.contentLinks.push(new EmbeddedLink(commentDomElement, metaData));
-          break;
-        }
-
-        case this.HST.TYPE_EDIT_MENU_LINK: {
-          this.editMenuLinks.push(new EmbeddedLink(commentDomElement, metaData));
-          break;
-        }
-
         default:
+          this._processEmbeddedLinks(commentDomElement, metaData);
           break;
       }
     });
