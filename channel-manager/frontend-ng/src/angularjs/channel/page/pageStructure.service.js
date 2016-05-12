@@ -97,19 +97,12 @@ export class PageStructureService {
   }
 
   _processEmbeddedLinks(commentDomElement, metaData) {
-    switch (metaData[this.HST.TYPE]) {
-      case this.HST.TYPE_CONTENT_LINK: {
-        this.contentLinks.push(new EmbeddedLink(commentDomElement, metaData));
-        break;
-      }
+    if (metaData[this.HST.TYPE] === this.HST.TYPE_CONTENT_LINK) {
+      this.contentLinks.push(new EmbeddedLink(commentDomElement, metaData));
+    }
 
-      case this.HST.TYPE_EDIT_MENU_LINK: {
-        this.editMenuLinks.push(new EmbeddedLink(commentDomElement, metaData));
-        break;
-      }
-
-      default:
-        break;
+    if (metaData[this.HST.TYPE] === this.HST.TYPE_EDIT_MENU_LINK) {
+      this.editMenuLinks.push(new EmbeddedLink(commentDomElement, metaData));
     }
   }
 
@@ -269,9 +262,19 @@ export class PageStructureService {
    * Update the component with the new markup
    */
   _updateComponent(componentId, newMarkup) {
-    const component = this.getComponentById(componentId);
-    const jQueryNodeCollection = component.replaceDOM(newMarkup);
-    this._replaceComponent(component, this._createComponent(jQueryNodeCollection, component.getContainer()));
+    const oldComponent = this.getComponentById(componentId);
+    const container = oldComponent.getContainer();
+
+    this._removeEmbeddedLinksInComponent(oldComponent);
+    const jQueryNodeCollection = oldComponent.replaceDOM(newMarkup);
+    const newComponent = this._createComponent(jQueryNodeCollection, container);
+    if (newComponent) {
+      container.replaceComponent(oldComponent, newComponent);
+    } else {
+      container.removeComponent(oldComponent);
+    }
+    this.attachEmbeddedLinks();
+
     this.OverlaySyncService.syncIframe();
   }
 
@@ -296,19 +299,6 @@ export class PageStructureService {
 
     this.attachEmbeddedLinks();
     return newContainer;
-  }
-
-  _replaceComponent(oldComponent, newComponent) {
-    this._removeEmbeddedLinksInComponent(oldComponent);
-
-    const container = oldComponent.getContainer();
-    if (this.hasContainer(container) && container.hasComponent(oldComponent)) {
-      container.replaceComponent(oldComponent, newComponent);
-    } else {
-      this.$log.warn('Cannot find component', oldComponent);
-    }
-
-    this.attachEmbeddedLinks();
   }
 
   _removeEmbeddedLinksInContainer(container) {
