@@ -622,5 +622,10 @@ public class UpdaterExecutor implements EventListener {
         public void reportFailed(String path) {
             report.failed(path);
         }
+
+        @Override
+        public boolean isDryRun() {
+            return updaterInfo.isDryRun();
+        }
     }
 }
