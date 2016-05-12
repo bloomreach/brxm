@@ -16,7 +16,7 @@
 
 const COMPONENT_QA_CLASS = 'qa-dragula-component';
 const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
-const MOUSEOUT_EVENT_NAME = 'mouseout.dragDropService';
+const MOUSELEAVE_EVENT_NAME = 'mouseleave.dragDropService';
 const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 
 export class DragDropService {
@@ -124,7 +124,7 @@ export class DragDropService {
 
     const componentBoxElement = component.getBoxElement();
     componentBoxElement.on(MOUSEUP_EVENT_NAME, () => this._onComponentClick(component));
-    componentBoxElement.on(MOUSEOUT_EVENT_NAME, () => this._onComponentLeave(component));
+    componentBoxElement.on(MOUSELEAVE_EVENT_NAME, () => this._onComponentLeave(component));
     componentBoxElement.addClass(COMPONENT_QA_CLASS);
   }
 
@@ -166,7 +166,7 @@ export class DragDropService {
     this.draggingOrClicking = false;
     $(element)
       .off(MOUSEUP_EVENT_NAME)
-      .off(MOUSEOUT_EVENT_NAME)
+      .off(MOUSELEAVE_EVENT_NAME)
       .removeClass(COMPONENT_QA_CLASS);
     this._digestIfNeeded();
   }
