@@ -36,11 +36,12 @@ export class ChannelEditCtrl {
         this.onError({ key: 'ERROR_CHANNEL_INFO_RETRIEVAL_FAILED' });
       });
 
-    this.values = ChannelService.getChannel().properties;
+    this.values = angular.copy(ChannelService.getChannel().properties);
   }
 
   save() {
-    this.ChannelService.saveProperties(this.values)
+    this.ChannelService.getChannel().properties = this.values;
+    this.ChannelService.saveChannel()
       .then(() => {
         this.HippoIframeService.reload();
         this.ChannelService.recordOwnChange();

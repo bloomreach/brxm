@@ -223,12 +223,12 @@ export class ChannelService {
   _augmentChannelWithPrototypeInfo() {
     this.getNewPageModel()
       .then((data) => {
-        this.channel.hasPrototypes = data.prototypes && data.prototypes.length > 0;
+        this.hasPrototypes = data.prototypes && data.prototypes.length > 0;
       });
   }
 
   hasPrototypes() {
-    return this.channel.hasPrototypes;
+    return this.hasPrototypes;
   }
 
   hasWorkspace() {
@@ -246,8 +246,8 @@ export class ChannelService {
     return this.HstService.doGetWithParams(this.ConfigService.rootUuid, params, 'channels', this.channel.id, 'info');
   }
 
-  saveProperties(properties) {
-    return this.HstService.doPut(properties, this.ConfigService.rootUuid, 'channels', this.channel.id, 'properties');
+  saveChannel() {
+    return this.HstService.doPut(this.channel, this.ConfigService.rootUuid, 'channels', this.channel.id);
   }
 
   isCrossChannelPageCopySupported() {
