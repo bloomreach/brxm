@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -232,7 +232,7 @@
                 <exclude>*/.bowerrc/**</exclude>
                 <exclude>*/.npmrc/**</exclude>
                 <exclude>**/*.svg</exclude>
-                <exclude>**/*.woff</exclude>
+                <exclude>**/*.woff*</exclude>
                 <exclude>**/*.ttf</exclude>
                 <exclude>jar-dependencies.txt</exclude>
                 <exclude>plugins/skeleton-package/src/main/resources/instructions/bootstrap/**</exclude>
