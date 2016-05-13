@@ -34,6 +34,13 @@ describe('hippoIframeCtrl', () => {
   let HippoIframeService;
   let DialogService;
   let DomService;
+  const iframeDom = {
+    defaultView: window,
+    location: {
+      host: 'localhost',
+      protocol: 'http:',
+    },
+  };
 
   beforeEach(() => {
     let $compile;
@@ -74,7 +81,7 @@ describe('hippoIframeCtrl', () => {
     scope.$digest();
 
     hippoIframeCtrl = el.controller('hippo-iframe');
-    spyOn(hippoIframeCtrl, '_getIframeDOM').and.returnValue({ defaultView: window });
+    spyOn(hippoIframeCtrl, '_getIframeDOM').and.returnValue(iframeDom);
   });
 
   it('unsubscribes "delete-component" event when the scope is destroyed', () => {
@@ -152,14 +159,22 @@ describe('hippoIframeCtrl', () => {
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
-  it('inserts CSS', () => {
+  it('handles the loading of a new page', () => {
     spyOn(PageStructureService, 'clearParsedElements');
-    spyOn(hippoIframeCtrl, '_parseLinks');
+    spyOn(PageStructureService, 'attachEmbeddedLinks');
+    spyOn(hstCommentsProcessorService, 'run');
+    spyOn(ChannelService, 'getPreviewPaths').and.callThrough();
     spyOn(HippoIframeService, 'signalPageLoadCompleted');
 
     hippoIframeCtrl.onLoad();
+    $rootScope.$digest();
 
     expect(DomService.addCss).toHaveBeenCalledWith(window, 'http://cms.example.com/app/root/styles/hippo-iframe.css');
+    expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
+    expect(hstCommentsProcessorService.run).toHaveBeenCalled();
+    expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
+    expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
+    expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
   it('sends an "open-content" event to the CMS to open content', () => {
