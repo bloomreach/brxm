@@ -617,6 +617,8 @@ public class ContentBeansService {
                 continue;
             }
             final ExistingMethodsVisitor methods = JavaSourceUtils.getMethodCollection(path);
+            final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
+            final boolean allowUpdate = annotation != null && annotation.isAllowModifications();
             final List<EssentialsGeneratedMethod> generatedMethods = methods.getGeneratedMethods();
             for (EssentialsGeneratedMethod m : generatedMethods) {
                 final Type type = m.getMethodDeclaration().getReturnType2();
@@ -626,13 +628,20 @@ public class ContentBeansService {
                     // check if image type and different than new return type
                     if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
                         log.info("Found image type: {}", returnType);
-                        updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType));
+                        if (allowUpdate) {
+                            updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType));
+                        } else{
+                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method return type should be changed, but modifications are disabled: "
+                                    + m.getInternalName() + ", " + m.getMethodName()));
+                        }
                     }
                 } else if (JavaSourceUtils.getParameterizedType(type) != null) {
                     final String returnType = JavaSourceUtils.getParameterizedType(type);
                     if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
                         log.info("Found image type: {}", returnType);
-                        updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType));
+                        if (allowUpdate) {
+                            updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType));
+                        }
                     }
                 }
             }
@@ -732,14 +741,28 @@ public class ContentBeansService {
         if (existing.contains(name)) {
             log.debug("Property already exists {}. Checking if method signature has changed e.g. single value to multiple", name);
             final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(beanPath);
+            final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(beanPath);
+            final boolean allowUpdate = annotation != null && annotation.isAllowModifications();
             final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
             for (EssentialsGeneratedMethod generatedMethod : generatedMethods) {
                 final String internalName = generatedMethod.getInternalName();
                 if (name.equals(internalName)) {
                     // check if single/multiple  changed:
                     if (generatedMethod.isMultiType() != multiple) {
-                        log.info("Property changed (single/multiple): {}", internalName);
-                        return JavaSourceUtils.deleteMethod(generatedMethod, beanPath);
+                        if (allowUpdate) {
+                            log.info("Property changed (single/multiple): {}", internalName);
+                            return JavaSourceUtils.deleteMethod(generatedMethod, beanPath);
+                        }else{
+                            // there was a change, however, method is marked as read only
+                            log.warn("Property changed (single/multiple): {}, but changes not allowed", internalName);
+                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method return type should be changed, but modifications are disabled: "
+                                    + internalName + ", " + generatedMethod.getMethodName()));
+
+                            return false;
+                        }
+
+
+
                     }
                     // TODO: check check if signature changed:
                 }
