@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,7 @@ public final class EssentialConst {
     public static final String PLACEHOLDER_SOURCE = "source";
     public static final String PLACEHOLDER_TARGET = "target";
     public static final String PLACEHOLDER_BEANS_PACKAGE = "beansPackage";
+    public static final String PLACEHOLDER_PROJECT_PACKAGE = "projectPackage";
     public static final String PLACEHOLDER_COMPONENTS_PACKAGE = "componentsPackage";
     public static final String PLACEHOLDER_REST_PACKAGE = "restPackage";
     public static final String PLACEHOLDER_BEANS_FOLDER = "beansFolder";
