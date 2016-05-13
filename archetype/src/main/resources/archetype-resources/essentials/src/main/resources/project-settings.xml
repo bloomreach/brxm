@@ -2,6 +2,7 @@
 <project>
   <projectNamespace>${rootArtifactId.replace($hyphen,$empty)}</projectNamespace>
   <confirmParams>false</confirmParams>
+  <selectedProjectPackage>${package}</selectedProjectPackage>
   <selectedBeansPackage>${package}.beans</selectedBeansPackage>
   <selectedComponentsPackage>${package}.components</selectedComponentsPackage>
   <selectedRestPackage>${package}.rest</selectedRestPackage>
