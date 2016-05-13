@@ -29,8 +29,9 @@
     <sv:value>content/gallery//element(*,hippogallery:imageset)</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:script" sv:type="String">
-    <sv:value>/*&#xd;
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)&#xd;
+    <sv:value>
+/*&#xd;
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)&#xd;
  *&#xd;
  * Licensed under the Apache License, Version 2.0 (the "License");&#xd;
  * you may not use this file except in compliance with the License.&#xd;
@@ -111,6 +112,7 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {&#xd;
             return true;&#xd;
         } catch (RepositoryException e) {&#xd;
             log.error("Failed in generating image variants", e);&#xd;
+            node.getSession().refresh(false)&#xd;
         }&#xd;
         return false;&#xd;
     }&#xd;
@@ -169,6 +171,11 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {&#xd;
         InputStream dataInputStream = null;&#xd;
 &#xd;
         try {&#xd;
+            if(!data.hasProperty(JcrConstants.JCR_DATA)) {&#xd;
+                log.warn("Image variant {} for node {} does not have {} property. Variant not updated.",&#xd;
+                        variant.getName(), node.getPath(), JcrConstants.JCR_DATA)&#xd;
+                return&#xd;
+            }&#xd;
             dataInputStream = data.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();&#xd;
             String mimeType = data.getProperty(JcrConstants.JCR_MIMETYPE).getString();&#xd;
 &#xd;
