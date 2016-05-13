@@ -140,11 +140,6 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
         InputStream dataInputStream = null;
 
         try {
-            if(!data.hasProperty(JcrConstants.JCR_DATA)) {
-                log.warn("Image variant {} for node {} does not have {} property. Variant not updated.",
-                        variant.getName(), node.getPath(), JcrConstants.JCR_DATA)
-                return
-            }
             dataInputStream = data.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
             String mimeType = data.getProperty(JcrConstants.JCR_MIMETYPE).getString();
 
