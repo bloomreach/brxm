@@ -35,10 +35,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.core.parameters.HstValueType;
+import org.hippoecm.hst.rest.custom.AnnotationType;
 import org.hippoecm.hst.rest.custom.CouldNotFindHstPropertyDefinition;
 
 /**
- * A utility class to compare between java {@link Annotations} and its JSON serialization in the form of {@link JsonNode}
+ * A utility class to compare between java Annotations and its JSON serialization in the form of {@link JsonNode}
  * The {@link Annotation} are defined on an interface which extends {@link ChannelInfo}
  */
 public final class JsonTreeAnnotationsComparator {
@@ -218,7 +219,7 @@ public final class JsonTreeAnnotationsComparator {
                     assertTrue("Expected a textual '@class' field with a non-empty value", !annotationClassNameNode
                             .textValue().isEmpty());
 
-                    if (annotation.annotationType().getName().equals(annotationClassNameNode.textValue())) {
+                    if (AnnotationType.fromClass(annotation.annotationType()).toString().equals(annotationClassNameNode.textValue())) {
                         assertEquivalent(annotationNode, annotation);
                         foundAnEquivalentAnnotation = true;
                         equivalentFoundAnnotations.add(annotation);
@@ -261,7 +262,7 @@ public final class JsonTreeAnnotationsComparator {
 
         assertTrue("Expected a text value of '" + actual.getClass().getName() + "', but got '"
                 + annotationClassNameNode.textValue() + "'",
-                actual.annotationType().getName().equals(annotationClassNameNode.textValue()));
+                AnnotationType.fromClass(actual.annotationType()).toString().equals(annotationClassNameNode.textValue()));
 
         // Assert that for each field defined for expected object JSON node has an equivalent attribute/property
         // defined on actual annotation
