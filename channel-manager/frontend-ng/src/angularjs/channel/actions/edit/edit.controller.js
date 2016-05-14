@@ -53,17 +53,17 @@ export class ChannelEditCtrl {
       });
   }
 
-  getLabel(fieldName) {
-    const localizedLabel = this.channelInfoDescription.i18nResources[fieldName];
-    return localizedLabel || this._getPropertyDefinition(fieldName).displayName || fieldName;
+  getLabel(field) {
+    const localizedLabel = this.channelInfoDescription.i18nResources[field];
+    return localizedLabel || field;
   }
 
   getFieldGroups() {
     return this.channelInfoDescription.fieldGroups;
   }
 
-  getType(fieldName) {
-    const fieldAnnotation = this._getFirstFieldAnnotation(fieldName);
+  getType(field) {
+    const fieldAnnotation = this._getFirstFieldAnnotation(field);
     if (fieldAnnotation) {
       const widgetType = WidgetTypes[fieldAnnotation.type];
       if (widgetType) {
@@ -71,7 +71,7 @@ export class ChannelEditCtrl {
       }
     }
 
-    const propertyDefinition = this._getPropertyDefinition(fieldName);
+    const propertyDefinition = this._getPropertyDefinition(field);
     if (propertyDefinition.valueType === 'BOOLEAN') {
       return WidgetTypes.CheckBox;
     }
@@ -80,14 +80,19 @@ export class ChannelEditCtrl {
     return WidgetTypes.InputBox;
   }
 
-  _getPropertyDefinition(fieldName) {
-    return this.channelInfoDescription.propertyDefinitions[fieldName];
+  getDropDownListValues(field) {
+    const fieldAnnotation = this._getFirstFieldAnnotation(field);
+    if (!fieldAnnotation || fieldAnnotation.type !== 'DropDownList') {
+      this.$log.debug(`Field '${field}' is not a dropdown.`);
+      return [];
+    }
+    return fieldAnnotation.value;
   }
 
-  _getFirstFieldAnnotation(fieldName) {
-    const propertyDefinition = this._getPropertyDefinition(fieldName);
+  _getFirstFieldAnnotation(field) {
+    const propertyDefinition = this._getPropertyDefinition(field);
     if (!propertyDefinition) {
-      this.$log.warn('Property definition for the field "{}" not found. Please check your ChannelInfo class', fieldName);
+      this.$log.warn(`Property definition for field '${field}' not found. Please check your ChannelInfo class.`);
       return undefined;
     }
 
@@ -96,18 +101,13 @@ export class ChannelEditCtrl {
       return undefined;
     }
     if (fieldAnnotations.length > 1) {
-      this.$log.warn('Field "{}" contains multiple annotations, that is incorrect. Please check your ChannelInfo class', fieldName);
+      this.$log.warn(`Field '${field}' contains too many annotations. Please check your ChannelInfo class.`);
     }
     return fieldAnnotations[0];
   }
 
-  getDropDownListValues(fieldName) {
-    const fieldAnnotation = this._getFirstFieldAnnotation(fieldName);
-    if (fieldAnnotation.type !== 'DropDownList') {
-      this.$log.debug('Field "{}" is not a dropdown.', fieldName);
-      return [];
-    }
-    return fieldAnnotation.value;
+  _getPropertyDefinition(field) {
+    return this.channelInfoDescription.propertyDefinitions[field];
   }
 
   _showError(key, params) {

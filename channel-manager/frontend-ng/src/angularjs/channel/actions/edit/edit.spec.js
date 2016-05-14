@@ -26,6 +26,14 @@ describe('ChannelActionEdit', () => {
   let ChannelService;
   let FeedbackService;
   let HippoIframeService;
+  let channelInfoDescription;
+  const channel = {
+    properties: {
+      textField: 'summer',
+      dropDown: 'large',
+      boolean: true,
+    },
+  };
 
   beforeEach(() => {
     module('hippo-cm');
@@ -40,40 +48,53 @@ describe('ChannelActionEdit', () => {
       HippoIframeService = _HippoIframeService_;
     });
 
-    spyOn($translate, 'instant');
-    spyOn(ChannelService, 'getName').and.returnValue('test-name');
-  });
-
-  function mockChannelInfoDescription() {
-    spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when({
+    channelInfoDescription = {
       fieldGroups: [
-        { value: ['field1', 'field2'],
+        { value: ['textField', 'dropDown', 'boolean'],
           titleKey: 'group1',
         },
       ],
       propertyDefinitions: {
-        field1: {
+        textField: {
           isRequired: false,
           defaultValue: '',
-          name: 'field1',
+          name: 'textField',
           valueType: 'STRING',
           annotations: [],
         },
-        field2: {
+        dropDown: {
           isRequired: false,
           defaultValue: '',
-          name: 'field2',
+          name: 'dropDown fallback',
           valueType: 'STRING',
+          annotations: [
+            {
+              type: 'DropDownList',
+              value: ['small', 'medium', 'large'],
+            },
+          ],
+        },
+        boolean: {
+          isRequired: false,
+          defaultValue: false,
+          name: 'boolean fallback',
+          valueType: 'BOOLEAN',
           annotations: [],
         },
       },
       i18nResources: {
-        field1: 'Field 1',
-        field2: 'Field 2',
+        textField: 'Text Field',
+        dropDown: 'Drop Down',
+        boolean: 'Boolean',
         group1: 'Field Group 1',
       },
-    }));
-  }
+    };
+
+    spyOn($translate, 'instant');
+    spyOn(ChannelService, 'getName').and.returnValue('test-name');
+    spyOn(ChannelService, 'getChannel').and.returnValue(channel);
+    spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when(channelInfoDescription));
+  });
 
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
@@ -92,64 +113,57 @@ describe('ChannelActionEdit', () => {
   }
 
   it('initializes correctly when fetching channel setting from backend is successful', () => {
-    mockChannelInfoDescription();
     compileDirectiveAndGetController();
 
     expect(ChannelService.getName).toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_TITLE', { channelName: 'test-name' });
 
-    expect($element.find('.qa-channel-edit-save').is(':disabled')).toBe(true);
-    expect($element.find('.qa-channel-edit-fieldgroup').text()).toBe('Field Group 1');
-    expect($element.find('.qa-channel-edit-field label:eq(0)').text()).toBe('Field 1');
-    expect($element.find('.qa-channel-edit-field label:eq(1)').text()).toBe('Field 2');
+    expect($element.find('.qa-action').is(':disabled')).toBe(true);
+    expect($element.find('.qa-fieldgroup').text()).toBe('Field Group 1');
+    expect($element.find('.qa-field-textField label').text()).toBe('Text Field');
+    expect($element.find('.qa-field-dropDown label').text()).toBe('Drop Down');
   });
 
   it('enables "save" button when form is dirty', () => {
-    mockChannelInfoDescription();
     compileDirectiveAndGetController();
 
     $scope.form.$setDirty();
     $scope.$digest();
 
-    expect($element.find('.qa-channel-edit-save').is(':enabled')).toBe(true);
+    expect($element.find('.qa-action').is(':enabled')).toBe(true);
   });
 
-
   it('notifies the event "on-error" when fetching channel setting from backend is failed', () => {
-    spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.reject());
+    ChannelService.getChannelInfoDescription.and.returnValue($q.reject());
     compileDirectiveAndGetController();
 
     expect($scope.onError).toHaveBeenCalledWith('ERROR_CHANNEL_INFO_RETRIEVAL_FAILED', undefined);
   });
 
   it('notifies the event "on-done" when clicking the back button', () => {
-    mockChannelInfoDescription();
     compileDirectiveAndGetController();
 
     $element.find('.qa-button-back').click();
-
     expect($scope.onDone).toHaveBeenCalled();
   });
 
   it('notifies the event "on-success" when saving is successful', () => {
-    mockChannelInfoDescription();
     spyOn(ChannelService, 'saveProperties').and.returnValue($q.when());
     spyOn(ChannelService, 'recordOwnChange');
-    spyOn(HippoIframeService, 'reload').and.returnValue($q.when());
+    spyOn(HippoIframeService, 'reload');
     compileDirectiveAndGetController();
 
     $scope.form.$setDirty();
     $scope.$digest();
-    $element.find('.qa-channel-edit-save').click();
+    $element.find('.qa-action').click();
 
-    expect(ChannelService.saveProperties).toHaveBeenCalled();
+    expect(ChannelService.saveProperties).toHaveBeenCalledWith(channel.properties);
     expect(HippoIframeService.reload).toHaveBeenCalled();
     expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     expect($scope.onSuccess).toHaveBeenCalledWith('CHANNEL_PROPERTIES_SAVE_SUCCESS', undefined);
   });
 
   it('shows feedback message when saving is failed', () => {
-    mockChannelInfoDescription();
     spyOn(ChannelService, 'saveProperties').and.returnValue($q.reject());
     spyOn(FeedbackService, 'showError');
     compileDirectiveAndGetController();
@@ -157,9 +171,46 @@ describe('ChannelActionEdit', () => {
 
     $scope.form.$setDirty();
     $scope.$digest();
-    $element.find('.qa-channel-edit-save').click();
+    $element.find('.qa-action').click();
 
     expect(ChannelService.saveProperties).toHaveBeenCalled();
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED', undefined, feedbackParent);
+  });
+
+  it('applies a fall-back strategy when determining a field label', () => {
+    const ChannelEditCtrl = compileDirectiveAndGetController();
+    expect(ChannelEditCtrl.getLabel('textField')).toBe('Text Field');
+
+    delete channelInfoDescription.i18nResources.textField;
+    expect(ChannelEditCtrl.getLabel('textField')).toBe('textField');
+  });
+
+  it('applies a fall-back strategy when determining the type of a field', () => {
+    channelInfoDescription.propertyDefinitions.invalidFieldTypeField = {
+      isRequired: false,
+      defaultValue: '',
+      name: 'bla',
+      valueType: 'ANYTHING_BUT_NO_BOOLEAN',
+      annotations: [
+        {
+          type: 'Invalid',
+        },
+      ],
+    };
+    const ChannelEditCtrl = compileDirectiveAndGetController();
+    expect(ChannelEditCtrl.getType('invalidFieldTypeField')).toBe('InputBox');
+  });
+
+  it('applies a sanity check on drop-down fields', () => {
+    const ChannelEditCtrl = compileDirectiveAndGetController();
+
+    expect(ChannelEditCtrl.getDropDownListValues('unknownField')).toEqual([]);
+
+    channelInfoDescription.propertyDefinitions.dropDown.annotations.push({ });
+    expect(ChannelEditCtrl.getDropDownListValues('dropDown')).toEqual([]);
+    channelInfoDescription.propertyDefinitions.dropDown.annotations.pop({ });
+
+    channelInfoDescription.propertyDefinitions.dropDown.annotations[0].type = 'InputBox';
+    expect(ChannelEditCtrl.getDropDownListValues('dropDown')).toEqual([]);
   });
 });
