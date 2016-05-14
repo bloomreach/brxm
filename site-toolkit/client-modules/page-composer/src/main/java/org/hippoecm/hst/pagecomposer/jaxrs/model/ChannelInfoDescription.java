@@ -21,14 +21,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
+import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 
 public class ChannelInfoDescription {
     private List<FieldGroupInfo> fieldGroups;
 
+    private Map<String, HstPropertyDefinitionInfo> propertyDefinitions;
+
     private Map<String, String> i18nResources;
 
-    public ChannelInfoDescription(final List<FieldGroupInfo> fieldGroups, final Map<String, String> i18nResources) {
+    public ChannelInfoDescription(final List<FieldGroupInfo> fieldGroups,
+                                  final Map<String, HstPropertyDefinitionInfo> propertyDefinitions,
+                                  final Map<String, String> i18nResources) {
         this.fieldGroups = fieldGroups;
+        this.propertyDefinitions = propertyDefinitions;
         this.i18nResources = i18nResources;
     }
 
@@ -38,5 +44,9 @@ public class ChannelInfoDescription {
 
     public Map<String, String> getI18nResources() {
         return i18nResources;
+    }
+
+    public Map<String, HstPropertyDefinitionInfo> getPropertyDefinitions() {
+        return propertyDefinitions;
     }
 }

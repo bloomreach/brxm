@@ -18,6 +18,35 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
+  <bean id="annotationJsonSerializer" class="org.hippoecm.hst.rest.custom.AnnotationJsonSerializer">
+    <constructor-arg type="java.lang.Class" value="java.lang.annotation.Annotation" />
+    <property name="typeFieldName" value="type" />
+  </bean>
+
+  <bean id="jaxrsHstConfigJacksonJsonModule" class="com.fasterxml.jackson.databind.module.SimpleModule">
+    <constructor-arg value="JaxRSHstConfigJacksonJsonModule" />
+    <constructor-arg>
+      <bean class="com.fasterxml.jackson.core.util.VersionUtil" factory-method="parseVersion">
+        <constructor-arg value="${project.version}" />
+        <constructor-arg value="${project.groupId}" />
+        <constructor-arg value="${project.artifactId}" />
+      </bean>
+    </constructor-arg>
+    <constructor-arg>
+      <list>
+        <ref bean="annotationJsonSerializer"/>
+      </list>
+    </constructor-arg>
+  </bean>
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="jaxrsRestJacksonObjectMapper" />
+    <property name="targetMethod" value="registerModule" />
+    <property name="arguments">
+      <ref bean="jaxrsHstConfigJacksonJsonModule" />
+    </property>
+  </bean>
+
   <bean id="jaxrsHstConfigService" class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService">
     <constructor-arg value="jaxrsHstConfigService"/>
     <property name="servletPath" value=""/>

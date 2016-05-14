@@ -17,7 +17,9 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +29,12 @@ import javax.ws.rs.Path;
 
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.core.parameters.DropDownList;
+import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
+import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.jaxrs.cxf.hst.HstCXFTestFixtureHelper;
@@ -39,6 +44,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 
@@ -65,7 +71,7 @@ public class RootResourceTest extends AbstractResourceTest {
         rootResource.setChannelService(channelService);
         rootResource.setRootPath("/hst:hst");
 
-        Config config = createDefaultConfig()
+        Config config = createDefaultConfig(JsonPojoMapperProvider.class)
                 .addServerSingleton(rootResource)
                 .addServerSingleton(helper);
         setup(config);
@@ -81,7 +87,7 @@ public class RootResourceTest extends AbstractResourceTest {
         fieldGroups.add(new FieldGroupInfo(fieldNames, "fieldGroup1"));
         fieldGroups.add(new FieldGroupInfo(fieldNames, "fieldGroup2"));
 
-        final ChannelInfoDescription channelInfoDescription = new ChannelInfoDescription(fieldGroups, i18nResources);
+        final ChannelInfoDescription channelInfoDescription = new ChannelInfoDescription(fieldGroups, createPropertyDefinitions(), i18nResources);
 
         expect(channelService.getChannelInfoDescription("channel-foo", "nl"))
                 .andReturn(channelInfoDescription);
@@ -93,10 +99,38 @@ public class RootResourceTest extends AbstractResourceTest {
             .statusCode(200)
             .body("fieldGroups[0].titleKey", equalTo("fieldGroup1"),
                     "fieldGroups[1].titleKey", equalTo("fieldGroup2"),
-                    "i18nResources", hasEntry("field1", "Field 1"),
-                    "i18nResources", hasEntry("field2", "Field 2"));
+                    "propertyDefinitions['field1'].name", equalTo("field1"),
+                    "propertyDefinitions['field2'].name", equalTo("field2"),
+                    "propertyDefinitions['field1'].annotations[0].type", equalTo("DropDownList"),
+                    "propertyDefinitions['field1'].annotations[0].value", containsInAnyOrder("value-1", "value-2"),
+                    "propertyDefinitions['field2'].annotations[0].value", containsInAnyOrder("value-3", "value-4"),
+                    "i18nResources['field1']", equalTo("Field 1"),
+                    "i18nResources['field2']", equalTo("Field 2"));
 
         verify(channelService);
+    }
+
+    private Map<String, HstPropertyDefinitionInfo> createPropertyDefinitions() {
+        final Map<String, HstPropertyDefinitionInfo> propertyDefinitions = new HashMap<>();
+
+        final Annotation field1Annotation = createDropDownListAnnotation("value-1", "value-2");
+        final Annotation field2Annotation = createDropDownListAnnotation("value-3", "value-4");
+
+        propertyDefinitions.put("field1", createHstPropertyDefinitionInfo("field1", HstValueType.BOOLEAN, true, field1Annotation));
+        propertyDefinitions.put("field2", createHstPropertyDefinitionInfo("field2", HstValueType.STRING, true, field2Annotation));
+        return propertyDefinitions;
+    }
+
+    private static HstPropertyDefinitionInfo createHstPropertyDefinitionInfo(final String name,
+                                                                             final HstValueType valueType,
+                                                                             final boolean required,
+                                                                             final Annotation annotation) {
+        final HstPropertyDefinitionInfo propertyDefinitionInfo = new HstPropertyDefinitionInfo();
+        propertyDefinitionInfo.setName(name);
+        propertyDefinitionInfo.setValueType(valueType);
+        propertyDefinitionInfo.setIsRequired(required);
+        propertyDefinitionInfo.setAnnotations(Arrays.asList(annotation));
+        return propertyDefinitionInfo;
     }
 
     @Test
@@ -106,7 +140,7 @@ public class RootResourceTest extends AbstractResourceTest {
         final List<FieldGroupInfo> fieldGroups = new ArrayList<>();
         fieldGroups.add(new FieldGroupInfo(null, "fieldGroup1"));
 
-        final ChannelInfoDescription channelInfoDescription = new ChannelInfoDescription(fieldGroups, i18nResources);
+        final ChannelInfoDescription channelInfoDescription = new ChannelInfoDescription(fieldGroups, createPropertyDefinitions(), i18nResources);
 
         expect(channelService.getChannelInfoDescription("channel-foo", "en"))
                 .andReturn(channelInfoDescription);
@@ -175,5 +209,19 @@ public class RootResourceTest extends AbstractResourceTest {
             .statusCode(500);
 
         verify(channelService);
+    }
+
+    private static Annotation createDropDownListAnnotation(String... values) {
+        return new DropDownList() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return DropDownList.class;
+            }
+
+            @Override
+            public String[] value() {
+                return values;
+            }
+        };
     }
 }
