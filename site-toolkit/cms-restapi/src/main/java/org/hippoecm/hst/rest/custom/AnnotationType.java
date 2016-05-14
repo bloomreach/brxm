@@ -17,35 +17,37 @@
 
 package org.hippoecm.hst.rest.custom;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.parameters.Color;
+import org.hippoecm.hst.core.parameters.DocumentLink;
+import org.hippoecm.hst.core.parameters.DropDownList;
+import org.hippoecm.hst.core.parameters.FieldGroup;
+import org.hippoecm.hst.core.parameters.FieldGroupList;
+import org.hippoecm.hst.core.parameters.ImageSetPath;
+import org.hippoecm.hst.core.parameters.JcrPath;
 
 public enum AnnotationType {
-    Color(Color.class.toString()),
-    DocumentLink("org.hippoecm.hst.core.parameters.DocumentLink"),
-    DropDownList("org.hippoecm.hst.core.parameters.DropDownList"),
-    FieldGroup("org.hippoecm.hst.core.parameters.FieldGroup"),
-    FieldGroupList("org.hippoecm.hst.core.parameters.FieldGroupList"),
-    ImageSetPath("org.hippoecm.hst.core.parameters.ImageSetPath"),
-    JcrPath("org.hippoecm.hst.core.parameters.JcrPath");
+    Color(Color.class),
+    DocumentLink(DocumentLink.class),
+    DropDownList(DropDownList.class),
+    FieldGroup(FieldGroup.class),
+    FieldGroupList(FieldGroupList.class),
+    ImageSetPath(ImageSetPath.class),
+    JcrPath(JcrPath.class),
+    Unknown(AnnotationType.class);
 
-    private final String path;
+    private final Class<?> clazz;
 
-    AnnotationType(final String path) {
-        this.path = path;
+    AnnotationType(final Class<?> clazz) {
+        this.clazz = clazz;
     }
 
-    public static AnnotationType fromClassPath(String path) {
-        if (StringUtils.isEmpty(path)) {
-            return null;
-        }
-
+    public static AnnotationType fromClass(final Class<?> annotationClass) {
         for (AnnotationType type : AnnotationType.values()) {
-            if (StringUtils.equals(type.path, path)) {
+            if (type.clazz == annotationClass) {
                 return type;
             }
         }
-        return null;
+        return Unknown;
     }
 
 }

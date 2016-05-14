@@ -28,8 +28,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
-import org.apache.commons.lang.StringUtils;
-
 
 /**
  * Java {@link Annotation}(s) custom JSON serializer
@@ -83,7 +81,7 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
         for (Class<?> iface : value.getClass().getInterfaces()) {
             if (iface.isAnnotation()) {
                 jgen.writeStartObject();
-                jgen.writeStringField(getTypeFieldName(), getType(iface));
+                jgen.writeStringField(getTypeFieldName(), AnnotationType.fromClass(iface).toString());
                 for (Method method : iface.getDeclaredMethods()) {
                     if (isValidAnnotationMethod(method)) {
                         try {
@@ -100,11 +98,6 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
             // Annotation interface are not treated as annotations like the ones designated with the @
             break;
         }
-    }
-
-    private String getType(final Class<?> iface) {
-        final AnnotationType annotationType = AnnotationType.fromClassPath(iface.getName());
-        return annotationType == null ? StringUtils.EMPTY : annotationType.toString();
     }
 
     /**
