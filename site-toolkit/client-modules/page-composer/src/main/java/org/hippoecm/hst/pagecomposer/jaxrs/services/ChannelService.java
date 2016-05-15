@@ -33,7 +33,7 @@ public interface ChannelService {
 
     Channel getChannel(String channelId);
 
-    void saveChannelProperties(Session session, String channelId, Map<String, Object> properties) throws RepositoryException;
+    void saveChannel(Session session, String channelId, Channel channel) throws RepositoryException, ChannelException;
 
     List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired);
 }

@@ -34,8 +34,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
-import org.hippoecm.hst.configuration.channel.ChannelInfoClassProcessor;
-import org.hippoecm.hst.configuration.channel.ChannelPropertyMapper;
+import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -50,6 +49,8 @@ import org.slf4j.LoggerFactory;
 
 public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
+
+    private ChannelManager channelManager;
 
     @Override
     public ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale) throws ChannelException {
@@ -101,24 +102,13 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public void saveChannelProperties(Session session, final String channelId, Map<String, Object> properties) throws RepositoryException, IllegalStateException {
-        final Channel channel = getChannel(channelId);
-        final String channelPath = channel.getChannelPath();
-        if (StringUtils.isEmpty(channelPath)) {
-            throw new IllegalStateException("Path for the channel '" + channel.getId() + "' not found");
+    public void saveChannel(Session session, final String channelId, Channel channel) throws RepositoryException, IllegalStateException, ChannelException {
+        if (!StringUtils.equals(channel.getId(), channelId)) {
+            throw new ChannelException("Channel object does not contain the correct id, that should be " + channelId);
         }
+        final String currentHostGroupName = getCurrentVirtualHost().getHostGroupName();
 
-        final Node channelNode = session.getNode(channelPath);
-        final Node channelPropsNode = getOrAddChannelPropsNode(channelNode);
-
-        final String channelInfoClassName = channel.getChannelInfoClassName();
-        try {
-            Class<? extends ChannelInfo> channelInfoClass = (Class<? extends ChannelInfo>) ChannelPropertyMapper.class.getClassLoader().loadClass(channelInfoClassName);
-            ChannelPropertyMapper.saveProperties(channelPropsNode, ChannelInfoClassProcessor.getProperties(channelInfoClass), properties);
-        } catch (ClassNotFoundException e) {
-            log.warn("Could not find channel info class " + channelInfoClassName, e);
-            throw new IllegalStateException("Could not find channel info class ", e);
-        }
+        this.channelManager.save(currentHostGroupName, channel);
     }
 
     @Override
@@ -163,5 +153,9 @@ public class ChannelServiceImpl implements ChannelService {
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException(e);
         }
+    }
+
+    public void setChannelManager(final ChannelManager channelManager) {
+        this.channelManager = channelManager;
     }
 }
