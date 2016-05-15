@@ -146,4 +146,19 @@ describe('ChannelActionEdit', () => {
     expect(ChannelService.saveChannel).toHaveBeenCalled();
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED', undefined, feedbackParent);
   });
+
+  it('manipulates the channel\'s properties', () => {
+    const properties = { };
+    mockChannelInfoDescription();
+    spyOn(ChannelService, 'getProperties').and.returnValue(properties);
+    spyOn(ChannelService, 'setProperties');
+    const ChannelEditCtrl = compileDirectiveAndGetController();
+
+    expect(ChannelService.getProperties).toHaveBeenCalled();
+    expect(ChannelEditCtrl.values).toBe(properties);
+
+    properties.key = 'value';
+    ChannelEditCtrl.save();
+    expect(ChannelService.setProperties).toHaveBeenCalledWith(properties);
+  });
 });

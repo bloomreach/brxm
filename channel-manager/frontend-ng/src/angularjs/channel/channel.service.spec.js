@@ -522,7 +522,7 @@ describe('ChannelService', () => {
       .catch(() => {
         fail();
       });
-    expect(HstService.doPut).toHaveBeenCalledWith(ChannelService.getChannel(), 'testRootUuid', 'channels', 'channelId');
+    expect(HstService.doPut).toHaveBeenCalledWith(channelMock, 'testRootUuid', 'channels', 'channelId');
     $rootScope.$digest();
   });
 
@@ -583,5 +583,28 @@ describe('ChannelService', () => {
     $rootScope.$digest();
     ChannelService.getNewPageModel('other-mount');
     expect(HstService.doGetWithParams).toHaveBeenCalledWith('mountId', { mountId: 'other-mount' }, 'newpagemodel');
+  });
+
+  it('sets and retrieves channel properties', () => {
+    const properties = {
+      key1: 'value1',
+      key2: 'value2',
+    };
+    channelMock.properties = properties;
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    expect(ChannelService.getProperties()).toBe(properties);
+
+    const modifiedProperties = {
+      key1: true,
+      key3: 'value3',
+    };
+    ChannelService.setProperties(modifiedProperties);
+    expect(ChannelService.getProperties()).toBe(modifiedProperties);
+
+    HstService.doPut.and.returnValue($q.when());
+    ChannelService.saveChannel();
+    expect(HstService.doPut.calls.mostRecent().args[0].properties).toBe(modifiedProperties);
+    $rootScope.$digest();
   });
 });

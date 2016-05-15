@@ -246,6 +246,14 @@ export class ChannelService {
     return this.HstService.doGetWithParams(this.ConfigService.rootUuid, params, 'channels', this.channel.id, 'info');
   }
 
+  getProperties() {
+    return this.channel.properties;
+  }
+
+  setProperties(properties) {
+    this.channel.properties = properties;
+  }
+
   saveChannel() {
     return this.HstService.doPut(this.channel, this.ConfigService.rootUuid, 'channels', this.channel.id);
   }
