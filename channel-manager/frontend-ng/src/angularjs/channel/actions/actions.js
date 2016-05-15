@@ -18,10 +18,14 @@ import { channelActionsDirective } from './channelActions.directive';
 import { ChannelActionsCtrl } from './channelActions.controller';
 import { channelEditDirective } from './edit/edit.directive';
 import { ChannelEditCtrl } from './edit/edit.controller';
+import { channelPropertyDirective } from './edit/property/property.directive';
+import { ChannelPropertyCtrl } from './edit/property/property.controller';
 
 export const channelActionsModule = angular
   .module('hippo-cm.channel.actions', ['ngMessages'])
   .controller('ChannelActionsCtrl', ChannelActionsCtrl)
   .directive('channelActions', channelActionsDirective)
   .controller('ChannelEditCtrl', ChannelEditCtrl)
-  .directive('channelEdit', channelEditDirective);
+  .directive('channelEdit', channelEditDirective)
+  .controller('ChannelPropertyCtrl', ChannelPropertyCtrl)
+  .directive('channelProperty', channelPropertyDirective);
