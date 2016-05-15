@@ -205,7 +205,7 @@ export class ChannelService {
   publishChanges(users = [this.ConfigService.cmsUser]) {
     const url = 'userswithchanges/publish';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this.resetUserChanges(users))
+      .then(() => this._reload())
       .catch(() => this.FeedbackService.showError('ERROR_PUBLISH_CHANGES'));
   }
 
@@ -214,12 +214,6 @@ export class ChannelService {
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
       .then(() => this._reload())
       .catch(() => this.FeedbackService.showError('ERROR_DISCARD_CHANGES'));
-  }
-
-  resetUserChanges(users) {
-    users.forEach((user) => {
-      this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(user), 1);
-    });
   }
 
   getSiteMapId() {

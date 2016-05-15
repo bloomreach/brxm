@@ -42,7 +42,6 @@ describe('ChangeManagementCtrl', () => {
       HippoIframeService = _HippoIframeService_;
     });
 
-    spyOn(ChannelService, 'resetUserChanges');
     spyOn(ChannelService, 'getChannel').and.returnValue({
       changedBySet: ['testuser', 'otheruser'],
     });
