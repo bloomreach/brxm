@@ -386,11 +386,6 @@ public class ChannelManagerImpl implements ChannelManager {
         return mount;
     }
 
-    private Node getOrCreateVirtualHost(final Node configRoot, final String host) throws ChannelException, RepositoryException {
-        final String hostGroupForCmsHost = getHostGroupNameFromContext();
-        return getOrCreateVirtualHost(configRoot, host, hostGroupForCmsHost);
-    }
-
     private String getHostGroupNameFromContext() throws ChannelException {
         // FIXME: move all modification methods to the 'cmsrest' module and use the
         // CmsRestSecurityValve#HOST_GROUP_NAME_FOR_CMS_HOST constant instead of the hardcoded string "HOST_GROUP_NAME_FOR_CMS_HOST"
@@ -399,6 +394,10 @@ public class ChannelManagerImpl implements ChannelManager {
             throw new ChannelException("There is no hostgroup for cms host available. Cannot get or create virtual hosts");
         }
         return hostGroupForCmsHost;
+    }
+
+    private Node getOrCreateVirtualHost(final Node configRoot, final String hostName) throws RepositoryException, ChannelException {
+        return getOrCreateVirtualHost(configRoot, hostName, getHostGroupNameFromContext());
     }
 
     private Node getOrCreateVirtualHost(final Node configRoot, final String hostName, final String hostGroupName) throws RepositoryException, ChannelException {
