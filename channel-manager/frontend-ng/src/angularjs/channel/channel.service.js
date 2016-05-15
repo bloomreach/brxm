@@ -50,15 +50,17 @@ export class ChannelService {
   }
 
   _onChannelChanged() {
-    this.$rootScope.$apply(() => {
-      this.HstService.getChannel(this.channel.id)
-        .then((channel) => {
-          this._setChannel(channel);
-        })
-        .catch(() => {
-          this.$log.error(`Cannot retrieve properties of the channel with id = "${this.channel.id}" from server`);
-        });
-    });
+    this.$rootScope.$apply(() => this._reload());
+  }
+
+  _reload() {
+    return this.HstService.getChannel(this.channel.id)
+      .then((channel) => {
+        this._setChannel(channel);
+      })
+      .catch((error) => {
+        this.$log.error(`Failed to reload channel '${this.channel.id}'.`, error);
+      });
   }
 
   initialize() {
@@ -210,7 +212,7 @@ export class ChannelService {
   discardChanges(users = [this.ConfigService.cmsUser]) {
     const url = 'userswithchanges/discard';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this.resetUserChanges(users))
+      .then(() => this._reload())
       .catch(() => this.FeedbackService.showError('ERROR_DISCARD_CHANGES'));
   }
 

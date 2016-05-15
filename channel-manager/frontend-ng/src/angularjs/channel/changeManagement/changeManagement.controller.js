@@ -20,8 +20,7 @@ export class ChangeManagementCtrl {
       ChannelService,
       CmsService,
       DialogService,
-      HippoIframeService,
-      HstService
+      HippoIframeService
     ) {
     'ngInject';
 
@@ -30,7 +29,6 @@ export class ChangeManagementCtrl {
     this.CmsService = CmsService;
     this.DialogService = DialogService;
     this.HippoIframeService = HippoIframeService;
-    this.HstService = HstService;
 
     this.usersWithChanges = ChannelService.getChannel().changedBySet;
     this.selectedUsers = [];

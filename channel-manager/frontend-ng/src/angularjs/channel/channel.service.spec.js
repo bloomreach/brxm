@@ -291,12 +291,14 @@ describe('ChannelService', () => {
     ChannelService._load(channelMock);
     $rootScope.$digest();
 
+    channelMock.changedBySet = ['anotherUser'];
     HstService.doPost.and.returnValue($q.resolve());
+    HstService.getChannel.and.returnValue($q.when(channelMock));
     ChannelService.discardChanges();
-    $rootScope.$digest();
-
     expect(HstService.doPost).toHaveBeenCalledWith({ data: ['testUser'] }, 'mountId', 'userswithchanges/discard');
-    expect(channelMock.changedBySet).toEqual([]);
+
+    $rootScope.$digest();
+    expect(channelMock.changedBySet).toEqual(['anotherUser']);
   });
 
   it('should display error message on failure', () => {
