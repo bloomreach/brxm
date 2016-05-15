@@ -150,7 +150,7 @@ describe('ChannelActionEdit', () => {
   });
 
   it('notifies the event "on-success" when saving is successful', () => {
-    spyOn(ChannelService, 'saveProperties').and.returnValue($q.when());
+    spyOn(ChannelService, 'saveChannel').and.returnValue($q.when());
     spyOn(ChannelService, 'recordOwnChange');
     spyOn(HippoIframeService, 'reload');
     compileDirectiveAndGetController();
@@ -159,14 +159,14 @@ describe('ChannelActionEdit', () => {
     $scope.$digest();
     $element.find('.qa-action').click();
 
-    expect(ChannelService.saveProperties).toHaveBeenCalledWith(channel.properties);
+    expect(ChannelService.saveChannel).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
     expect(ChannelService.recordOwnChange).toHaveBeenCalled();
     expect($scope.onSuccess).toHaveBeenCalledWith('CHANNEL_PROPERTIES_SAVE_SUCCESS', undefined);
   });
 
   it('shows feedback message when saving is failed', () => {
-    spyOn(ChannelService, 'saveProperties').and.returnValue($q.reject());
+    spyOn(ChannelService, 'saveChannel').and.returnValue($q.reject());
     spyOn(FeedbackService, 'showError');
     compileDirectiveAndGetController();
     const feedbackParent = $element.find('.feedback-parent');
@@ -175,7 +175,7 @@ describe('ChannelActionEdit', () => {
     $scope.$digest();
     $element.find('.qa-action').click();
 
-    expect(ChannelService.saveProperties).toHaveBeenCalled();
+    expect(ChannelService.saveChannel).toHaveBeenCalled();
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED', undefined, feedbackParent);
   });
 
@@ -217,5 +217,19 @@ describe('ChannelActionEdit', () => {
 
     channelInfoDescription.propertyDefinitions.dropDown.annotations[0].type = 'InputBox';
     expect(ChannelEditCtrl.getDropDownListValues('dropDown')).toEqual([]);
+  });
+
+  it('manipulates the channel\'s properties', () => {
+    const properties = { };
+    spyOn(ChannelService, 'getProperties').and.returnValue(properties);
+    spyOn(ChannelService, 'setProperties');
+    const ChannelEditCtrl = compileDirectiveAndGetController();
+
+    expect(ChannelService.getProperties).toHaveBeenCalled();
+    expect(ChannelEditCtrl.values).toBe(properties);
+
+    properties.key = 'value';
+    ChannelEditCtrl.save();
+    expect(ChannelService.setProperties).toHaveBeenCalledWith(properties);
   });
 });

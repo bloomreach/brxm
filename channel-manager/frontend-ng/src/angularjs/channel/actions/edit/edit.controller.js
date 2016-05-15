@@ -38,11 +38,12 @@ export class ChannelEditCtrl {
         this.onError({ key: 'ERROR_CHANNEL_INFO_RETRIEVAL_FAILED' });
       });
 
-    this.values = ChannelService.getChannel().properties;
+    this.values = ChannelService.getProperties();
   }
 
   save() {
-    this.ChannelService.saveProperties(this.values)
+    this.ChannelService.setProperties(this.values);
+    this.ChannelService.saveChannel()
       .then(() => {
         this.HippoIframeService.reload();
         this.ChannelService.recordOwnChange();
