@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ContentLink } from '../page/element/contentLink';
+import { EmbeddedLink } from '../page/element/embeddedLink';
 
 describe('hippoIframeCtrl', () => {
   'use strict';
@@ -34,6 +34,13 @@ describe('hippoIframeCtrl', () => {
   let HippoIframeService;
   let DialogService;
   let DomService;
+  const iframeDom = {
+    defaultView: window,
+    location: {
+      host: 'localhost',
+      protocol: 'http:',
+    },
+  };
 
   beforeEach(() => {
     let $compile;
@@ -62,14 +69,19 @@ describe('hippoIframeCtrl', () => {
     spyOn(ScalingService, 'init');
     spyOn(DragDropService, 'init');
     spyOn(OverlaySyncService, 'init');
+    spyOn(DomService, 'getAppRootUrl').and.returnValue('http://cms.example.com/app/root/');
+    spyOn(DomService, 'addCss').and.returnValue($q.resolve());
+
 
     scope.testEditMode = false;
+    scope.onEditMenu = jasmine.createSpy('onEditMenu');
 
-    const el = angular.element('<hippo-iframe edit-mode="testEditMode"></hippo-iframe>');
+    const el = angular.element('<hippo-iframe edit-mode="testEditMode" on-edit-menu="onEditMenu(menuUuid)"></hippo-iframe>');
     $compile(el)(scope);
     scope.$digest();
 
     hippoIframeCtrl = el.controller('hippo-iframe');
+    spyOn(hippoIframeCtrl, '_getIframeDOM').and.returnValue(iframeDom);
   });
 
   it('unsubscribes "delete-component" event when the scope is destroyed', () => {
@@ -127,6 +139,7 @@ describe('hippoIframeCtrl', () => {
     spyOn(HippoIframeService, 'signalPageLoadCompleted');
 
     hippoIframeCtrl.onLoad();
+    $rootScope.$digest();
 
     expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
     expect(hstCommentsProcessorService.run).toHaveBeenCalled();
@@ -146,36 +159,27 @@ describe('hippoIframeCtrl', () => {
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
-  it('inserts CSS and generates content link box elements when there are content links', () => {
-    const contentLinkContainer = $j('<div><!-- { "HST-Type": "CONTENT_LINK" --></div>');
-    const contentLinkComment = contentLinkContainer[0].childNodes[0];
-    const contentLink = new ContentLink(contentLinkComment, {});
-
+  it('handles the loading of a new page', () => {
     spyOn(PageStructureService, 'clearParsedElements');
-    spyOn(PageStructureService, 'hasContentLinks').and.returnValue(true);
-    spyOn(PageStructureService, 'getContentLinks').and.returnValue([contentLink]);
-    spyOn(hippoIframeCtrl, '_getIframeDOM').and.returnValue({
-      defaultView: window,
-    });
-    spyOn(DomService, 'getAppRootUrl').and.returnValue('http://cms.example.com/app/root/');
-    spyOn(DomService, 'addCss').and.returnValue($q.resolve());
-    spyOn(hippoIframeCtrl, '_parseLinks');
+    spyOn(PageStructureService, 'attachEmbeddedLinks');
+    spyOn(hstCommentsProcessorService, 'run');
+    spyOn(ChannelService, 'getPreviewPaths').and.callThrough();
     spyOn(HippoIframeService, 'signalPageLoadCompleted');
 
     hippoIframeCtrl.onLoad();
-
-    expect(DomService.addCss).toHaveBeenCalledWith(window, 'http://cms.example.com/app/root/styles/hippo-iframe.css');
-
     $rootScope.$digest();
 
-    const contentLinkElement = contentLinkContainer.find('a.hst-cmseditlink');
-    expect(contentLinkElement.length).toEqual(1);
-    expect(contentLink.getBoxElement()).toEqual(contentLinkElement[0]);
+    expect(DomService.addCss).toHaveBeenCalledWith(window, 'http://cms.example.com/app/root/styles/hippo-iframe.css');
+    expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
+    expect(hstCommentsProcessorService.run).toHaveBeenCalled();
+    expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
+    expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
+    expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
   it('sends an "open-content" event to the CMS to open content', () => {
     const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
-    const contentLink = new ContentLink(contentLinkComment, {
+    const contentLink = new EmbeddedLink(contentLinkComment, {
       uuid: '1234',
     });
     spyOn(CmsService, 'publish');
@@ -183,5 +187,11 @@ describe('hippoIframeCtrl', () => {
     hippoIframeCtrl.openContent(contentLink);
 
     expect(CmsService.publish).toHaveBeenCalledWith('open-content', '1234');
+  });
+
+  it('calls the registered callback for editing a menu', () => {
+    const editMenuLink = { getUuid: () => 'testUuid' };
+    hippoIframeCtrl.openMenuEditor(editMenuLink);
+    expect(scope.onEditMenu).toHaveBeenCalledWith('testUuid');
   });
 });

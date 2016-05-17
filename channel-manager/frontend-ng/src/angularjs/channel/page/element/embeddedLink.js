@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-export class MenuEditorCtrl {
-  constructor(SiteMenuService) {
-    'ngInject';
+import { PageStructureElement } from './pageStructureElement';
 
-    SiteMenuService.loadMenu(this.menuUuid)
-      .then((menu) => {
-        this.menu = menu;
-      })
-      .catch(() => this.onError({ key: 'ERROR_MENU_LOAD_FAILED' }));
+export class EmbeddedLink extends PageStructureElement {
+
+  constructor(commentElement, metaData) {
+    super('embeddedLink', metaData, commentElement, commentElement, null);
+  }
+
+  getUuid() {
+    return this.metaData.uuid;
+  }
+
+  setEnclosingElement(element) {
+    this.enclosingElement = element;
+  }
+
+  getEnclosingElement() {
+    return this.enclosingElement;
   }
 }
