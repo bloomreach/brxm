@@ -23,6 +23,9 @@
 
       <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
 
+      <!--Temporary access to menu editor-->
+      <md-button ng-if="channelCtrl.isEditMode" ng-click="channelCtrl.menuUuid = 'uuid'; channelCtrl.showSubpage('menu-editor')">Edit menu</md-button>
+
       <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
       <span flex></span>
@@ -101,5 +104,11 @@
                    ng-if="channelCtrl.currentSubpage == 'manage-changes'"
                    on-done="channelCtrl.hideSubpage()">
 </change-management>
+
+<menu-editor layout="column" flex
+             ng-if="channelCtrl.currentSubpage == 'menu-editor'"
+             menu-uuid="{{channelCtrl.menuUuid}}"
+             on-done="channelCtrl.hideSubpage()">
+</menu-editor>
 
 <div class="mask qa-mask" mask></div>

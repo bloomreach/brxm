@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-export function overlayElementDirective() {
+export function menuEditorDirective() {
   'ngInject';
 
   return {
     restrict: 'E',
     bindToController: {
-      structureElement: '=',
+      menuUuid: '@',
+      onDone: '&',
+      onSuccess: '&',
+      onError: '&',
     },
-    templateUrl: 'channel/hippoIframe/overlay/overlayElement.html',
-    transclude: true,
-    controller: 'OverlayElementCtrl',
-    controllerAs: 'overlayElement',
+    templateUrl: 'channel/menu/editor.html',
+    controller: 'MenuEditorCtrl',
+    controllerAs: 'menuEditor',
   };
 }

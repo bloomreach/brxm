@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-const HOME_PAGE = '';
-
 export class PageActionsCtrl {
   constructor($translate, FeedbackService, ChannelService, SiteMapService, SiteMapItemService, DialogService,
               HippoIframeService, PageMetaDataService) {
@@ -114,10 +112,12 @@ export class PageActionsCtrl {
       .then(() => {
         this.SiteMapItemService.deleteItem()
           .then(() => {
-            const siteMapId = this.ChannelService.getSiteMapId();
+            const homePage = this.ChannelService.getHomePageRenderPathInfo();
+            this.HippoIframeService.load(homePage);
 
-            this.HippoIframeService.load(HOME_PAGE);
+            const siteMapId = this.ChannelService.getSiteMapId();
             this.SiteMapService.load(siteMapId);   // reload sitemap (sidenav)
+
             this.SiteMapItemService.clear();       // wipe meta-data of current page
             this.ChannelService.recordOwnChange(); // mark the channel changed
           })

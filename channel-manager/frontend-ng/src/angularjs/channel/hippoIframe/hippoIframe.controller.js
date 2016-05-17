@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
+const CONTENT_LINK_MARKUP = '<a class="hst-cmseditlink"></a>';
+
 export class HippoIframeCtrl {
   constructor(
     $q,
     $log,
     $element,
-    $rootScope,
     $scope,
     $translate,
     ChannelService,
     CmsService,
     DialogService,
+    DomService,
     DragDropService,
     hstCommentsProcessorService,
     linkProcessorService,
@@ -38,13 +40,13 @@ export class HippoIframeCtrl {
 
     this.$q = $q;
     this.$log = $log;
-    this.$rootScope = $rootScope;
     this.$translate = $translate;
     this.linkProcessorService = linkProcessorService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
     this.CmsService = CmsService;
     this.ChannelService = ChannelService;
     this.DialogService = DialogService;
+    this.DomService = DomService;
     this.PageStructureService = PageStructureService;
     this.PageMetaDataService = PageMetaDataService;
     this.OverlaySyncService = OverlaySyncService;
@@ -75,17 +77,17 @@ export class HippoIframeCtrl {
   }
 
   onLoad() {
-    this.$rootScope.$apply(() => {
-      this._parseHstComments();
+    this._parseHstComments();
+    this._showContentLinks().then(() => {
       this._updateDragDrop();
       this._updateChannelIfSwitched().then(() => {
         this._parseLinks();
         this.HippoIframeService.signalPageLoadCompleted();
       });
-      // TODO: handle error.
-      // show dialog explaining that for this channel, the CM can currently not be used,
-      // and return to the channel overview upon confirming?
     });
+    // TODO: handle error.
+    // show dialog explaining that for this channel, the CM can currently not be used,
+    // and return to the channel overview upon confirming?
   }
 
   deleteComponent(componentId) {
@@ -123,7 +125,7 @@ export class HippoIframeCtrl {
 
   _updateDragDrop() {
     if (this.editMode) {
-      this.DragDropService.enable(this.PageStructureService.containers);
+      this.DragDropService.enable(this.PageStructureService.getContainers());
     } else {
       this.DragDropService.disable();
     }
@@ -142,13 +144,18 @@ export class HippoIframeCtrl {
   }
 
   _parseHstComments() {
-    const iframeDom = this._getIframeDOM(this);
-
     this.PageStructureService.clearParsedElements();
     this.hstCommentsProcessorService.run(
-      iframeDom,
+      this._getIframeDOM(),
       this.PageStructureService.registerParsedElement.bind(this.PageStructureService)
     );
+  }
+
+  _insertCss() {
+    const iframeWindow = this._getIframeDOM().defaultView;
+    const appRootUrl = this.DomService.getAppRootUrl();
+    const hippoIframeCss = `${appRootUrl}styles/hippo-iframe.css`;
+    return this.DomService.addCss(iframeWindow, hippoIframeCss);
   }
 
   _updateChannelIfSwitched() {
@@ -172,8 +179,30 @@ export class HippoIframeCtrl {
     this.linkProcessorService.run(iframeDom, internalLinkPrefixes);
   }
 
+  _showContentLinks() {
+    if (!this.PageStructureService.hasContentLinks()) {
+      return this.$q.resolve();
+    }
+
+    return this._insertCss().then(() => {
+      this.PageStructureService.getContentLinks().forEach((contentLink) => {
+        const contentLinkElement = $(CONTENT_LINK_MARKUP);
+        contentLink.getStartComment().after(contentLinkElement);
+        contentLink.setBoxElement(contentLinkElement);
+      });
+    });
+  }
+
   getContainers() {
-    return this.editMode ? this.PageStructureService.containers : [];
+    return this.editMode ? this.PageStructureService.getContainers() : [];
+  }
+
+  getContentLinks() {
+    return !this.editMode ? this.PageStructureService.getContentLinks() : [];
+  }
+
+  openContent(contentLink) {
+    this.CmsService.publish('open-content', contentLink.getUuid());
   }
 
   getSrc() {

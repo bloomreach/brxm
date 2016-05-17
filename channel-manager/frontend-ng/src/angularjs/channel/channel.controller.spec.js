@@ -42,7 +42,7 @@ describe('ChannelCtrl', () => {
       SessionService = _SessionService_;
 
       const $stateParams = {
-        initialPath: '/testPath',
+        initialRenderPath: '/testPath',
       };
 
       ChannelService = jasmine.createSpyObj('ChannelService', [

@@ -70,7 +70,7 @@ export class ChannelCtrl {
     ComponentAdderService.setCatalogContainerClass('catalog-dd-container');
     ComponentAdderService.setCatalogContainerItemClass('catalog-dd-container-item');
 
-    this.HippoIframeService.load($stateParams.initialPath);
+    this.HippoIframeService.load($stateParams.initialRenderPath);
   }
 
   selectViewPort(viewPort) {

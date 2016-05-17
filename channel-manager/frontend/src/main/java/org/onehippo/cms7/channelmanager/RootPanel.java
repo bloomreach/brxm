@@ -96,6 +96,9 @@ public class RootPanel extends ExtPanel {
     @ExtProperty
     private final String[] contextPaths;
 
+    @ExtProperty
+    private boolean showBreadcrumbInitially = false;
+
     @Override
     public void buildInstantiationJs(final StringBuilder js, final String extClass, final JSONObject properties) {
         js.append("try { ");
@@ -174,8 +177,8 @@ public class RootPanel extends ExtPanel {
                 selectActiveItem(target);
                 redraw = false;
             }
-            // show the channel manager breadcrumb when the channel manager perspective is active on the first page load
-            target.appendJavaScript("Ext.getCmp('rootPanel').showBreadcrumb();");
+        } else {
+            this.showBreadcrumbInitially = true;
         }
     }
 

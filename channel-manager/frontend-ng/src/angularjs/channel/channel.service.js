@@ -65,7 +65,8 @@ export class ChannelService {
     this.CmsService.subscribe('load-channel', (channel, initialPath) => {
       this.HstService.getChannel(channel.id).then((updatedChannel) => {
         this._load(updatedChannel).then((channelId) => {
-          this.$state.go('hippo-cm.channel', { channelId, initialPath }, { reload: true });
+          const initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
+          this.$state.go('hippo-cm.channel', { channelId, initialRenderPath }, { reload: true });
         });
       });
       // TODO: handle error.
@@ -90,8 +91,7 @@ export class ChannelService {
     this.channel = channel;
 
     // precompute channel prefix to be more efficient
-    const contextPrefix = this._makeContextPrefix(channel.contextPath);
-    this.channelPrefix = this.PathService.concatPaths(contextPrefix, this.channel.mountPath);
+    this.channelPrefix = this._makeContextPrefix(channel.contextPath);
 
     this.CatalogService.load(this.getMountId());
     this.SiteMapService.load(channel.siteMapId);
@@ -133,7 +133,7 @@ export class ChannelService {
     if (path === this.channel.contextPath) {
       // The best practice for proxy pass rules is to match on <context path>/ to delegate to the site webapp.
       // The iframe url should therefore end with '/'.
-      path += '/';
+      path = this.PathService.concatPaths(path, '/');
     }
 
     return path;
@@ -157,6 +157,10 @@ export class ChannelService {
 
   getId() {
     return this.channel.id;
+  }
+
+  getHomePageRenderPathInfo() {
+    return this.channel.mountPath ? this.channel.mountPath : '';
   }
 
   getName() {
@@ -223,12 +227,12 @@ export class ChannelService {
   _augmentChannelWithPrototypeInfo() {
     this.getNewPageModel()
       .then((data) => {
-        this.channel.hasPrototypes = data.prototypes && data.prototypes.length > 0;
+        this._hasPrototypes = data.prototypes && data.prototypes.length > 0;
       });
   }
 
   hasPrototypes() {
-    return this.channel.hasPrototypes;
+    return this._hasPrototypes;
   }
 
   hasWorkspace() {
@@ -246,8 +250,16 @@ export class ChannelService {
     return this.HstService.doGetWithParams(this.ConfigService.rootUuid, params, 'channels', this.channel.id, 'info');
   }
 
-  saveProperties(properties) {
-    return this.HstService.doPut(properties, this.ConfigService.rootUuid, 'channels', this.channel.id, 'properties');
+  getProperties() {
+    return this.channel.properties;
+  }
+
+  setProperties(properties) {
+    this.channel.properties = properties;
+  }
+
+  saveChannel() {
+    return this.HstService.doPut(this.channel, this.ConfigService.rootUuid, 'channels', this.channel.id);
   }
 
   isCrossChannelPageCopySupported() {

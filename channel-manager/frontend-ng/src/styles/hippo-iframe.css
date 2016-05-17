@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-export function overlayElementDirective() {
-  'ngInject';
-
-  return {
-    restrict: 'E',
-    bindToController: {
-      structureElement: '=',
-    },
-    templateUrl: 'channel/hippoIframe/overlay/overlayElement.html',
-    transclude: true,
-    controller: 'OverlayElementCtrl',
-    controllerAs: 'overlayElement',
-  };
+a.hst-cmseditlink {
+  display: block;
+  float: left;
+  height: 56px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 56px;
 }

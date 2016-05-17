@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-export function overlayElementDirective() {
-  'ngInject';
+export class MenuEditorCtrl {
+  constructor() {
+    'ngInject';
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      structureElement: '=',
-    },
-    templateUrl: 'channel/hippoIframe/overlay/overlayElement.html',
-    transclude: true,
-    controller: 'OverlayElementCtrl',
-    controllerAs: 'overlayElement',
-  };
+    // this.menuUuid will be passed in to indicate which menu should be loaded.
+  }
 }

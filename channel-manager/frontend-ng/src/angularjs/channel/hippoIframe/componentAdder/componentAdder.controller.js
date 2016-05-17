@@ -34,6 +34,9 @@ export class ComponentAdderCtrl {
       $scope.$apply(() => {
         this.selectedCatalogItem = CatalogService.getComponentByDomElement(original);
         $element.addClass('add-mode');
+
+        // prevent IE11 from dragging the image
+        this.selectedCatalogItem.catalogJQueryElement.find('img').on('dragstart', (event) => event.preventDefault());
       });
     });
 
@@ -42,6 +45,8 @@ export class ComponentAdderCtrl {
         $element.removeClass('add-mode');
         this.isAddingComponent = false;
       });
+
+      this.selectedCatalogItem.catalogJQueryElement.find('img').off('dragstart');
     });
 
     drake.on('over', (el, container) => {

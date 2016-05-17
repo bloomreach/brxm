@@ -29,6 +29,10 @@ const customConfig = {
       src: 'bower_components/dragula.js/dist/dragula.min.js',
       dest: `${targetDir}scripts`,
     },
+    {
+      src: 'src/styles/hippo-iframe.css',
+      dest: `${targetDir}styles`,
+    },
   ],
   systemjsOptions: {
     transpiler: 'babel',

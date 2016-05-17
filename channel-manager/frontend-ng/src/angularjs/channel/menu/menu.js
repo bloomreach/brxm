@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-export function overlayElementDirective() {
-  'ngInject';
+import { menuEditorDirective } from './editor.directive';
+import { MenuEditorCtrl } from './editor.controller';
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      structureElement: '=',
-    },
-    templateUrl: 'channel/hippoIframe/overlay/overlayElement.html',
-    transclude: true,
-    controller: 'OverlayElementCtrl',
-    controllerAs: 'overlayElement',
-  };
-}
+export const channelMenuModule = angular
+  .module('hippo-cm.channel.menu', [])
+  .directive('menuEditor', menuEditorDirective)
+  .controller('MenuEditorCtrl', MenuEditorCtrl);

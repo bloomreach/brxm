@@ -12,19 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
-export function overlayElementDirective() {
-  'ngInject';
-
-  return {
-    restrict: 'E',
-    bindToController: {
-      structureElement: '=',
-    },
-    templateUrl: 'channel/hippoIframe/overlay/overlayElement.html',
-    transclude: true,
-    controller: 'OverlayElementCtrl',
-    controllerAs: 'overlayElement',
-  };
-}
+export const WidgetTypes = {
+  JcrPath: 'JcrPath',
+  ImageSetPath: 'ImageSetPath',
+  DropDownList: 'DropDownList',
+  CheckBox: 'CheckBox',
+  InputBox: 'InputBox',
+};
