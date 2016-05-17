@@ -106,7 +106,8 @@
 <menu-editor layout="column" flex
              ng-if="channelCtrl.currentSubpage == 'menu-editor'"
              menu-uuid="{{channelCtrl.menuUuid}}"
-             on-done="channelCtrl.hideSubpage()">
+             on-done="channelCtrl.hideSubpage()"
+             on-error="channelCtrl.onSubpageError(key, params)">
 </menu-editor>
 
 <div class="mask qa-mask" mask></div>

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-export class MenuEditorCtrl {
-  constructor(SiteMenuService) {
+export class SiteMenuService {
+  constructor(HstService) {
     'ngInject';
 
-    SiteMenuService.loadMenu(this.menuUuid)
-      .then((menu) => {
-        this.menu = menu;
-      })
-      .catch(() => this.onError({ key: 'ERROR_MENU_LOAD_FAILED' }));
+    this.HstService = HstService;
+  }
+
+  loadMenu(menuUuid) {
+    return this.HstService.doGet(menuUuid)
+      .then((response) => response.data);
   }
 }

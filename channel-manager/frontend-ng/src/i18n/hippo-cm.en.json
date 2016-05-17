@@ -22,6 +22,7 @@
   "ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED": "Cannot delete '{{component}}': the container is locked by '{{lockedBy}}'.",
   "ERROR_DELETE_PAGE": "Failed to delete page.",
   "ERROR_ENTER_EDIT": "Failed to enter Edit mode.",
+  "ERROR_MENU_LOAD_FAILED": "Failed to load menu.",
   "ERROR_MOVE_COMPONENT_FAILED": "Failed to move component '{{component}}'",
   "ERROR_PAGE_ADD_FAILED": "Failed to create a new page",
   "ERROR_PAGE_COPY_FAILED": "Failed to copy page.",
