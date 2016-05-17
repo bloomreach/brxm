@@ -85,8 +85,13 @@
         this.toolbar.render(hippoFooter, 0);
 
         // only show the channel manager breadcrumb when channel manager is active
-        Hippo.Events.subscribe('CMSChannels', this.showBreadcrumb, this);
-        Hippo.Events.subscribe('CMSChannels-deactivated', this.hideBreadcrumb, this);
+        Hippo.Events.subscribe('CMSChannels', this._onActivate, this);
+        Hippo.Events.subscribe('CMSChannels-deactivated', this._onDeactivate, this);
+
+        // show the breadcrumb initially when needed
+        if (this.initialConfig.showBreadcrumbInitially) {
+          this._showBreadcrumb();
+        }
       }, this, {single: true});
 
       // get all child components
@@ -133,6 +138,17 @@
       Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
     },
 
+    _onActivate: function() {
+      this._showBreadcrumb();
+      if (this._isChannelEditorShown()) {
+        this.layout.activeItem.reloadPage();
+      }
+    },
+
+    _onDeactivate: function() {
+      this._hideBreadcrumb();
+    },
+
     _initBreadcrumbAnimation: function () {
       var toolbar, toolbarEl, toolbarWidth;
 
@@ -174,14 +190,14 @@
       }, this);
     },
 
-    hideBreadcrumb: function () {
+    _hideBreadcrumb: function () {
       this._initBreadcrumbAnimation();
       this.showBreadcrumbTask.cancel();
       this.toolbar.getEl().removeClass('hippo-breadcrumb-active');
       this.hideBreadcrumbTask.delay(500);
     },
 
-    showBreadcrumb: function () {
+    _showBreadcrumb: function () {
       this._initBreadcrumbAnimation();
       this.hideBreadcrumbTask.cancel();
       this.toolbar.getEl().addClass('hippo-breadcrumb-active');
@@ -228,6 +244,10 @@
         scope: this
       });
       this.layout.setActiveItem(1);
+    },
+
+    _isChannelEditorShown: function () {
+      return this.layout.activeItem === this.items.get(1);
     },
 
     showConfigEditor: function () {

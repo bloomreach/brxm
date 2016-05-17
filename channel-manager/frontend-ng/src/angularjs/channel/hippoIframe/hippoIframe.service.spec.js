@@ -53,13 +53,11 @@ describe('HippoIframeService', () => {
     iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`);
   }
 
-  it('logs a warning when a reload is requested before the iframe has been initialized', (done) => {
-    spyOn($log, 'warn');
-
+  it('does not reload the iframe when no page has been loaded yet', (done) => {
     HippoIframeService.initialize(undefined); // undo initialization
 
     HippoIframeService.reload().then(() => {
-      expect($log.warn).toHaveBeenCalled();
+      expect(HippoIframeService.deferredReload).toBeFalsy();
       done();
     });
 
@@ -68,26 +66,35 @@ describe('HippoIframeService', () => {
 
   it('reloads the iframe and waits for the page load to complete', (done) => {
     loadIframeFixture(() => { // give the iframe something to reload.
+      HippoIframeService.pageLoaded = true;
       spyOn($log, 'warn');
 
       iframe.one('load', () => { // catch the reload event to signal page load completion
-        expect(HippoIframeService._deferredReload).toBeTruthy();
+        expect(HippoIframeService.deferredReload).toBeTruthy();
         HippoIframeService.signalPageLoadCompleted();
 
         $rootScope.$digest();
       });
 
       HippoIframeService.reload().then(() => { // trigger the reload, wait for its completion
-        expect(HippoIframeService._deferredReload).toBeFalsy();
+        expect(HippoIframeService.deferredReload).toBeFalsy();
         expect($log.warn).not.toHaveBeenCalled();
         done();
       });
     });
   });
 
+  it('reloads the iframe when a "reload-page" event is received', () => {
+    spyOn(HippoIframeService, 'reload');
+    window.CMS_TO_APP.publish('reload-page');
+    expect(HippoIframeService.reload).toHaveBeenCalled();
+  });
+
+
   it('logs a warning upon a reload request when a reload is already ongoing', (done) => {
     spyOn($log, 'warn');
 
+    HippoIframeService.pageLoaded = true;
     const initialPromise = HippoIframeService.reload();
 
     expect($log.warn).not.toHaveBeenCalled();
