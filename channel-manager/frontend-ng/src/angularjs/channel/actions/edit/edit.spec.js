@@ -20,7 +20,6 @@ describe('ChannelActionEdit', () => {
   let $scope;
   let $rootScope;
   let $compile;
-  let $log;
   let $translate;
   let $element;
   let $q;
@@ -39,10 +38,9 @@ describe('ChannelActionEdit', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$q_, _$log_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_) => {
+    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      $log = _$log_;
       $translate = _$translate_;
       $q = _$q_;
       ChannelService = _ChannelService_;
@@ -185,51 +183,5 @@ describe('ChannelActionEdit', () => {
 
     delete channelInfoDescription.i18nResources.textField;
     expect(ChannelEditCtrl.getLabel('textField')).toBe('textField');
-  });
-
-  it('applies a fall-back strategy when determining the type of a field', () => {
-    channelInfoDescription.propertyDefinitions.invalidFieldTypeField = {
-      isRequired: false,
-      defaultValue: '',
-      name: 'bla',
-      valueType: 'ANYTHING_BUT_NO_BOOLEAN',
-      annotations: [
-        {
-          type: 'Invalid',
-        },
-      ],
-    };
-    const ChannelEditCtrl = compileDirectiveAndGetController();
-    expect(ChannelEditCtrl.getType('invalidFieldTypeField')).toBe('InputBox');
-  });
-
-  it('applies a sanity check on drop-down fields', () => {
-    const ChannelEditCtrl = compileDirectiveAndGetController();
-
-    expect(ChannelEditCtrl.getDropDownListValues('unknownField')).toEqual([]);
-
-    // too many annotations only triggers a warning
-    spyOn($log, 'warn');
-    channelInfoDescription.propertyDefinitions.dropDown.annotations.push({ });
-    expect(ChannelEditCtrl.getDropDownListValues('dropDown')).toEqual(['small', 'medium', 'large']);
-    channelInfoDescription.propertyDefinitions.dropDown.annotations.pop({ });
-    expect($log.warn).toHaveBeenCalled();
-
-    channelInfoDescription.propertyDefinitions.dropDown.annotations[0].type = 'InputBox';
-    expect(ChannelEditCtrl.getDropDownListValues('dropDown')).toEqual([]);
-  });
-
-  it('manipulates the channel\'s properties', () => {
-    const properties = { };
-    spyOn(ChannelService, 'getProperties').and.returnValue(properties);
-    spyOn(ChannelService, 'setProperties');
-    const ChannelEditCtrl = compileDirectiveAndGetController();
-
-    expect(ChannelService.getProperties).toHaveBeenCalled();
-    expect(ChannelEditCtrl.values).toBe(properties);
-
-    properties.key = 'value';
-    ChannelEditCtrl.save();
-    expect(ChannelService.setProperties).toHaveBeenCalledWith(properties);
   });
 });

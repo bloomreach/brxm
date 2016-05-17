@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { WidgetTypes } from './widget.types';
 
 export class ChannelEditCtrl {
-  constructor($log, $element, $translate, FeedbackService, ChannelService, HippoIframeService) {
+  constructor($element, $translate, FeedbackService, ChannelService, HippoIframeService) {
     'ngInject';
-    this.$log = $log;
+
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
@@ -55,60 +54,23 @@ export class ChannelEditCtrl {
   }
 
   getLabel(field) {
-    const localizedLabel = this.channelInfoDescription.i18nResources[field];
-    return localizedLabel || field;
+    return this.channelInfoDescription.i18nResources[field] || field;
   }
 
   getFieldGroups() {
     return this.channelInfoDescription.fieldGroups;
   }
 
-  getType(field) {
-    const fieldAnnotation = this._getFirstFieldAnnotation(field);
-    if (fieldAnnotation) {
-      const widgetType = WidgetTypes[fieldAnnotation.type];
-      if (widgetType) {
-        return widgetType;
-      }
-    }
-
-    const propertyDefinition = this._getPropertyDefinition(field);
-    if (propertyDefinition.valueType === 'BOOLEAN') {
-      return WidgetTypes.CheckBox;
-    }
-
-    // default widget
-    return WidgetTypes.InputBox;
-  }
-
-  getDropDownListValues(field) {
-    const fieldAnnotation = this._getFirstFieldAnnotation(field);
-    if (!fieldAnnotation || fieldAnnotation.type !== 'DropDownList') {
-      this.$log.debug(`Field '${field}' is not a dropdown.`);
+  getUngroupedFields() {
+    if (!this.channelInfoDescription.propertyDefinitions) {
       return [];
     }
-    return fieldAnnotation.value;
-  }
 
-  _getFirstFieldAnnotation(field) {
-    const propertyDefinition = this._getPropertyDefinition(field);
-    if (!propertyDefinition) {
-      this.$log.warn(`Property definition for field '${field}' not found. Please check your ChannelInfo class.`);
-      return undefined;
-    }
-
-    const fieldAnnotations = propertyDefinition.annotations;
-    if (!fieldAnnotations || fieldAnnotations.length === 0) {
-      return undefined;
-    }
-    if (fieldAnnotations.length > 1) {
-      this.$log.warn(`Field '${field}' contains too many annotations. Please check your ChannelInfo class.`);
-    }
-    return fieldAnnotations[0];
-  }
-
-  _getPropertyDefinition(field) {
-    return this.channelInfoDescription.propertyDefinitions[field];
+    return Object.keys(this.channelInfoDescription.propertyDefinitions).sort((fieldA, fieldB) => {
+      const labelA = this.getLabel(fieldA);
+      const labelB = this.getLabel(fieldB);
+      return labelA.localeCompare(labelB);
+    });
   }
 
   _showError(key, params) {

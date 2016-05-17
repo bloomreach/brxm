@@ -24,28 +24,18 @@
     <div ng-repeat="fieldGroup in channelEdit.getFieldGroups()">
       <h3 class="md-title qa-fieldgroup">{{ channelEdit.getLabel(fieldGroup.titleKey) }}</h3>
 
-      <div ng-repeat="field in fieldGroup.value" ng-switch="channelEdit.getType(field)">
-        <md-input-container ng-switch-when="CheckBox" class="qa-field-{{field}}">
-          <md-checkbox ng-model="channelEdit.values[field]"
-                       aria-label="channelEdit.getLabel(field)">
-            {{ channelEdit.getLabel(field) }}
-          </md-checkbox>
-        </md-input-container>
-
-        <md-input-container ng-switch-when="DropDownList" class="md-block qa-field-{{field}}" flex>
-          <label>{{ channelEdit.getLabel(field) }}</label>
-          <md-select ng-model="channelEdit.values[field]">
-            <md-option ng-repeat="choice in channelEdit.getDropDownListValues(field)" value="{{choice}}">
-              {{choice}}
-            </md-option>
-          </md-select>
-        </md-input-container>
-
-        <md-input-container ng-switch-default class="md-block qa-field-{{field}}" flex>
-          <label>{{ channelEdit.getLabel(field) }}</label>
-          <input type="text" ng-model="channelEdit.values[field]">
-        </md-input-container>
+      <div ng-repeat="field in fieldGroup.value"
+           channel-property="{{field}}"
+           channel-property-value="channelEdit.values[field]"
+           channel-properties-data="channelEdit.channelInfoDescription">
       </div>
+    </div>
+
+    <div ng-if="!channelEdit.getFieldGroups().length"
+         ng-repeat="field in channelEdit.getUngroupedFields()"
+         channel-property="{{field}}"
+         channel-property-value="channelEdit.values[field]"
+         channel-properties-data="channelEdit.channelInfoDescription">
     </div>
 
     <md-input-container>
