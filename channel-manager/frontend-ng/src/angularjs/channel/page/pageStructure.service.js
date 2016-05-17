@@ -65,38 +65,46 @@ export class PageStructureService {
   registerParsedElement(commentDomElement, metaData) {
     switch (metaData[this.HST.TYPE]) {
       case this.HST.TYPE_CONTAINER:
-        this.containers.push(new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService));
+        this._registerContainer(commentDomElement, metaData);
         break;
-
-      case this.HST.TYPE_COMPONENT: {
-        if (this.containers.length === 0) {
-          this.$log.warn('Unable to register component outside of a container context.');
-          return;
-        }
-
-        const container = this.containers[this.containers.length - 1];
-        try {
-          container.addComponent(new ComponentElement(commentDomElement, metaData,
-            container, this.hstCommentsProcessorService));
-        } catch (exception) {
-          this.$log.debug(exception, metaData);
-        }
+      case this.HST.TYPE_COMPONENT:
+        this._registerComponent(commentDomElement, metaData);
         break;
-      }
-
-      case this.HST.TYPE_PAGE: {
-        delete metaData[this.HST.TYPE];
-        this.PageMetaDataService.add(metaData);
+      case this.HST.TYPE_PAGE:
+        this._registerPageMetaData(metaData);
         break;
-      }
-
       default:
-        this._processEmbeddedLinks(commentDomElement, metaData);
+        this._registerEmbeddedLink(commentDomElement, metaData);
         break;
     }
   }
 
-  _processEmbeddedLinks(commentDomElement, metaData) {
+  _registerContainer(commentDomElement, metaData) {
+    const container = new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService);
+    this.containers.push(container);
+  }
+
+  _registerComponent(commentDomElement, metaData) {
+    if (this.containers.length === 0) {
+      this.$log.warn('Unable to register component outside of a container context.');
+      return;
+    }
+
+    const container = this.containers[this.containers.length - 1];
+    try {
+      const component = new ComponentElement(commentDomElement, metaData, container, this.hstCommentsProcessorService);
+      container.addComponent(component);
+    } catch (exception) {
+      this.$log.debug(exception, metaData);
+    }
+  }
+
+  _registerPageMetaData(metaData) {
+    delete metaData[this.HST.TYPE];
+    this.PageMetaDataService.add(metaData);
+  }
+
+  _registerEmbeddedLink(commentDomElement, metaData) {
     if (metaData[this.HST.TYPE] === this.HST.TYPE_CONTENT_LINK) {
       this.contentLinks.push(new EmbeddedLink(commentDomElement, metaData));
     }
@@ -396,7 +404,7 @@ export class PageStructureService {
             break;
 
           default:
-            this._processEmbeddedLinks(commentDomElement, metaData);
+            this._registerEmbeddedLink(commentDomElement, metaData);
             break;
         }
       } catch (exception) {
@@ -428,7 +436,7 @@ export class PageStructureService {
           break;
 
         default:
-          this._processEmbeddedLinks(commentDomElement, metaData);
+          this._registerEmbeddedLink(commentDomElement, metaData);
           break;
       }
     });
