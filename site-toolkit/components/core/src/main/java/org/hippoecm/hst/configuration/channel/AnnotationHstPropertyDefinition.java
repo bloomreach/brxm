@@ -52,7 +52,7 @@ public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefiniti
         type = getHstType(returnType);
         this.required = propAnnotation.required();
         this.defaultValue = type.from(propAnnotation.defaultValue());
-        this.hideInChannelManager = propAnnotation.hideInChannelManager();
+        this.hiddenInChannelManager = propAnnotation.hideInChannelManager();
 
         for (Annotation annotation : annotations) {
             if (annotation == propAnnotation) {

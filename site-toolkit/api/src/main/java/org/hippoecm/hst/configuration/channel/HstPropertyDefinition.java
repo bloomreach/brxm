@@ -34,7 +34,7 @@ public interface HstPropertyDefinition {
 
     public boolean isRequired();
 
-    public boolean isHideInChannelManager();
+    public boolean isHiddenInChannelManager();
 
     public List<Annotation> getAnnotations();
 
