@@ -22,7 +22,6 @@ describe('ChangeManagementCtrl', () => {
   let ChannelService;
   let CmsService;
   let HippoIframeService;
-  let HstService;
 
   beforeEach(() => {
     module('hippo-cm');
@@ -33,8 +32,7 @@ describe('ChangeManagementCtrl', () => {
       _$rootScope_,
       _ChannelService_,
       _CmsService_,
-      _HippoIframeService_,
-      _HstService_
+      _HippoIframeService_
     ) => {
       $compile = _$compile_;
       $q = _$q_;
@@ -42,11 +40,8 @@ describe('ChangeManagementCtrl', () => {
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
       HippoIframeService = _HippoIframeService_;
-      HstService = _HstService_;
     });
 
-    spyOn(HstService, 'doPost').and.returnValue($q.resolve());
-    spyOn(ChannelService, 'resetUserChanges');
     spyOn(ChannelService, 'getChannel').and.returnValue({
       changedBySet: ['testuser', 'otheruser'],
     });
@@ -70,29 +65,33 @@ describe('ChangeManagementCtrl', () => {
   });
 
   it('should publish selected users changes', () => {
+    spyOn(ChannelService, 'publishChanges').and.returnValue($q.when());
     spyOn(ChangeManagementCtrl, 'resetSelection');
 
     ChangeManagementCtrl.selectedUsers = ['testuser'];
     ChangeManagementCtrl.publishSelectedChanges();
     $rootScope.$apply();
 
-    expect(HstService.doPost).toHaveBeenCalled();
+    expect(ChannelService.publishChanges).toHaveBeenCalled();
     expect(ChangeManagementCtrl.resetSelection).toHaveBeenCalled();
   });
 
   it('should discard selected users changes on confirm', () => {
+    spyOn(ChannelService, 'discardChanges').and.returnValue($q.when());
     spyOn(ChangeManagementCtrl, 'resetSelection');
     spyOn(ChangeManagementCtrl, '_confirmDiscard').and.returnValue($q.resolve());
 
-    ChangeManagementCtrl.selectedUsers = ['testuser'];
+    const selectedUsers = ['testuser'];
+    ChangeManagementCtrl.selectedUsers = selectedUsers;
     ChangeManagementCtrl.discardSelectedChanges();
     $rootScope.$apply();
 
-    expect(HstService.doPost).toHaveBeenCalled();
+    expect(ChannelService.discardChanges).toHaveBeenCalledWith(selectedUsers);
     expect(ChangeManagementCtrl.resetSelection).toHaveBeenCalled();
   });
 
   it('should not discard selected users changes on cancel', () => {
+    spyOn(ChannelService, 'discardChanges');
     spyOn(ChangeManagementCtrl, 'resetSelection');
     spyOn(ChangeManagementCtrl, '_confirmDiscard').and.returnValue($q.reject());
 
@@ -100,7 +99,7 @@ describe('ChangeManagementCtrl', () => {
     ChangeManagementCtrl.discardSelectedChanges();
     $rootScope.$apply();
 
-    expect(HstService.doPost).not.toHaveBeenCalled();
+    expect(ChannelService.discardChanges).not.toHaveBeenCalled();
     expect(ChangeManagementCtrl.resetSelection).not.toHaveBeenCalled();
   });
 
