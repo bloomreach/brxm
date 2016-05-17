@@ -25,17 +25,18 @@ import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 
 public class ChannelInfoDescription {
     private List<FieldGroupInfo> fieldGroups;
-
     private Map<String, HstPropertyDefinitionInfo> propertyDefinitions;
-
     private Map<String, String> i18nResources;
+    private String lockedBy;
 
     public ChannelInfoDescription(final List<FieldGroupInfo> fieldGroups,
                                   final Map<String, HstPropertyDefinitionInfo> propertyDefinitions,
-                                  final Map<String, String> i18nResources) {
+                                  final Map<String, String> i18nResources,
+                                  final String lockedBy) {
         this.fieldGroups = fieldGroups;
         this.propertyDefinitions = propertyDefinitions;
         this.i18nResources = i18nResources;
+        this.lockedBy = lockedBy;
     }
 
     public List<FieldGroupInfo> getFieldGroups() {
@@ -48,5 +49,9 @@ public class ChannelInfoDescription {
 
     public Map<String, HstPropertyDefinitionInfo> getPropertyDefinitions() {
         return propertyDefinitions;
+    }
+
+    public String getLockedBy() {
+        return lockedBy;
     }
 }

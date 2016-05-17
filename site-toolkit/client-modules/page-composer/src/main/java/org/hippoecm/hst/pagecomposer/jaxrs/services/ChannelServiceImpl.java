@@ -41,6 +41,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
@@ -50,6 +51,7 @@ import org.slf4j.LoggerFactory;
 public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
 
+    private static LockHelper lockHelper = new LockHelper();
     private ChannelManager channelManager;
 
     @Override
@@ -62,9 +64,9 @@ public class ChannelServiceImpl implements ChannelService {
             }
             final ChannelInfoClassInfo channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
             final Map<String, HstPropertyDefinitionInfo> propertyDefinitions = getPropertyDefinitions(channelId);
+            final String lockedBy = getChannelLockedBy(channelId);
             return new ChannelInfoDescription(channelInfoClassInfo.getFieldGroups(),
-                    propertyDefinitions,
-                    getLocalizedResources(channelId, locale));
+                    propertyDefinitions, getLocalizedResources(channelId, locale), lockedBy);
         } catch (ChannelException e) {
             if (log.isDebugEnabled()) {
                 log.info("Failed to retrieve channel info class for channel with id '{}'", channelId, e);
@@ -83,6 +85,20 @@ public class ChannelServiceImpl implements ChannelService {
 
         return hstPropertyDefinitionInfos.stream()
                 .collect(Collectors.toMap(HstPropertyDefinitionInfo::getName, Function.identity()));
+    }
+
+    private String getChannelLockedBy(final String channelId) {
+        final String hostGroupName = getCurrentVirtualHost().getHostGroupName();
+        final String channelPath = getAllVirtualHosts().getChannelById(hostGroupName, channelId).getChannelPath();
+        try {
+            final Node channelNode = RequestContextProvider.get().getSession().getNode(channelPath);
+            if (channelNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+                return channelNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
+            }
+        } catch (RepositoryException e) {
+            log.info("Failed to retrieve locked-by information for channel '" + channelId + "'.");
+        }
+        return null;
     }
 
     private Map<String, String> getLocalizedResources(final String channelId, final String language) {

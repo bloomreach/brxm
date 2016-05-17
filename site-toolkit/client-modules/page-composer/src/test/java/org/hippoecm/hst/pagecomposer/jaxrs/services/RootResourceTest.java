@@ -92,7 +92,8 @@ public class RootResourceTest extends AbstractResourceTest {
         fieldGroups.add(new FieldGroupInfo(fieldNames, "fieldGroup1"));
         fieldGroups.add(new FieldGroupInfo(fieldNames, "fieldGroup2"));
 
-        final ChannelInfoDescription channelInfoDescription = new ChannelInfoDescription(fieldGroups, createPropertyDefinitions(), i18nResources);
+        final ChannelInfoDescription channelInfoDescription
+                = new ChannelInfoDescription(fieldGroups, createPropertyDefinitions(), i18nResources, "tester");
 
         expect(channelService.getChannelInfoDescription("channel-foo", "nl"))
                 .andReturn(channelInfoDescription);
@@ -110,7 +111,8 @@ public class RootResourceTest extends AbstractResourceTest {
                     "propertyDefinitions['field1'].annotations[0].value", containsInAnyOrder("value-1", "value-2"),
                     "propertyDefinitions['field2'].annotations[0].value", containsInAnyOrder("value-3", "value-4"),
                     "i18nResources['field1']", equalTo("Field 1"),
-                    "i18nResources['field2']", equalTo("Field 2"));
+                    "i18nResources['field2']", equalTo("Field 2"),
+                    "lockedBy", equalTo("tester"));
 
         verify(channelService);
     }
@@ -145,7 +147,8 @@ public class RootResourceTest extends AbstractResourceTest {
         final List<FieldGroupInfo> fieldGroups = new ArrayList<>();
         fieldGroups.add(new FieldGroupInfo(null, "fieldGroup1"));
 
-        final ChannelInfoDescription channelInfoDescription = new ChannelInfoDescription(fieldGroups, createPropertyDefinitions(), i18nResources);
+        final ChannelInfoDescription channelInfoDescription
+                = new ChannelInfoDescription(fieldGroups, createPropertyDefinitions(), i18nResources, null);
 
         expect(channelService.getChannelInfoDescription("channel-foo", "en"))
                 .andReturn(channelInfoDescription);
