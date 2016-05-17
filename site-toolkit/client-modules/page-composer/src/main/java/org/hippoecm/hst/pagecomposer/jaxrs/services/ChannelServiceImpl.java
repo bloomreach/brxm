@@ -41,7 +41,6 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.LockHelper;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
@@ -51,7 +50,6 @@ import org.slf4j.LoggerFactory;
 public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
 
-    private static LockHelper lockHelper = new LockHelper();
     private ChannelManager channelManager;
 
     @Override
@@ -96,7 +94,11 @@ public class ChannelServiceImpl implements ChannelService {
                 return channelNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
             }
         } catch (RepositoryException e) {
-            log.info("Failed to retrieve locked-by information for channel '" + channelId + "'.");
+            if (log.isDebugEnabled()) {
+                log.info("Failed to retrieve locked-by information for channel '{}'", channelId, e);
+            } else {
+                log.info("Failed to retrieve locked-by information for channel '{}'", channelId, e.toString());
+            }
         }
         return null;
     }
