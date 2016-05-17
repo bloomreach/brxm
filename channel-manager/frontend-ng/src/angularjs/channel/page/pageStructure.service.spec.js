@@ -628,7 +628,7 @@ describe('PageStructureService', () => {
     expect(RenderingService.fetchComponentMarkup).not.toHaveBeenCalled();
   });
 
-  it('Doesn\'t add a re-rendered and incorrectly commented component to the page structure', () => {
+  it('does not add a re-rendered and incorrectly commented component to the page structure', () => {
     registerVBoxContainer();
     registerVBoxComponent('componentA');
 
@@ -648,7 +648,7 @@ describe('PageStructureService', () => {
     expect($log.error).toHaveBeenCalled();
   });
 
-  it('Retrieves a container by overlay element', () => {
+  it('retrieves a container by overlay element', () => {
     registerVBoxContainer();
     const container = PageStructureService.getContainers()[0];
     const overlayElement = { };
