@@ -28,6 +28,7 @@ public abstract class AbstractHstPropertyDefinition implements HstPropertyDefini
     protected HstValueType type;
     protected boolean required;
     protected Object defaultValue;
+    protected boolean hideInChannelManager = false;
 
     public AbstractHstPropertyDefinition(String name) {
         this.name = name;
@@ -54,6 +55,11 @@ public abstract class AbstractHstPropertyDefinition implements HstPropertyDefini
     @Override
     public boolean isRequired() {
         return required;
+    }
+
+    @Override
+    public boolean isHideInChannelManager() {
+        return hideInChannelManager;
     }
 
     @Override
