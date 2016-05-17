@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { PageStructureElement } from './pageStructureElement';
+export class SiteMenuService {
+  constructor(HstService) {
+    'ngInject';
 
-export class ContentLink extends PageStructureElement {
-
-  constructor(commentElement, metaData) {
-    super('contentLink', metaData, commentElement, commentElement, null);
+    this.HstService = HstService;
   }
 
-  getUuid() {
-    return this.metaData.uuid;
+  loadMenu(menuUuid) {
+    return this.HstService.doGet(menuUuid)
+      .then((response) => response.data);
   }
 }

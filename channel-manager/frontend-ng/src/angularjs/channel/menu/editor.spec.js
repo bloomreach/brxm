@@ -14,28 +14,40 @@
  * limitations under the License.
  */
 
+/* eslint-disable prefer-const */
+
 describe('MenuEditor', () => {
   'use strict';
 
+  let $q;
   let $element;
   let $scope;
   let $rootScope;
   let $compile;
+  let SiteMenuService;
+  let menu;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_) => {
+    inject((_$q_, _$rootScope_, _$compile_, _SiteMenuService_) => {
+      $q = _$q_;
       $rootScope = _$rootScope_;
       $compile = _$compile_;
+      SiteMenuService = _SiteMenuService_;
     });
+
+    menu = { }; // TODO: populate for testing
+
+    spyOn(SiteMenuService, 'loadMenu').and.returnValue($q.when(menu));
   });
 
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
     $scope.onDone = jasmine.createSpy('onDone');
+    $scope.onError = jasmine.createSpy('onError');
     $scope.menuUuid = 'testUuid';
-    $element = angular.element('<menu-editor menu-uuid="{{menuUuid}}" on-done="onDone()"> </menu-editor>');
+    $element = angular.element('<menu-editor menu-uuid="{{menuUuid}}" on-done="onDone()" on-error="onError(key)"> </menu-editor>');
     $compile($element)($scope);
     $scope.$digest();
 
@@ -46,6 +58,14 @@ describe('MenuEditor', () => {
     const MenuEditorCtrl = compileDirectiveAndGetController();
 
     expect(MenuEditorCtrl.menuUuid).toBe('testUuid');
+    expect(MenuEditorCtrl.menu).toBe(menu);
+  });
+
+  it('returns to the main page when it fails to load the menu', () => {
+    SiteMenuService.loadMenu.and.returnValue($q.reject());
+    compileDirectiveAndGetController();
+
+    expect($scope.onError).toHaveBeenCalledWith('ERROR_MENU_LOAD_FAILED');
   });
 
   it('returns to the page when clicking the "back" button', () => {

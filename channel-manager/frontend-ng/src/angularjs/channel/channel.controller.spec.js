@@ -220,4 +220,11 @@ describe('ChannelCtrl', () => {
     ChannelCtrl.onSubpageSuccess();
     expect(ChannelCtrl.isSubpageOpen()).toBe(false);
   });
+
+  it('opens the menu editor when told so', () => {
+    ChannelCtrl.editMenu('testUuid');
+
+    expect(ChannelCtrl.menuUuid).toBe('testUuid');
+    expect(ChannelCtrl.currentSubpage).toBe('menu-editor');
+  });
 });

@@ -19,8 +19,14 @@
   <div id="componentA">
     <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
     <p id="test">Some markup in component A</p>
+    <p id="edit-menu-in-component-a">
+      <!-- { "HST-Type": "EDIT_MENU_LINK", "uuid": "menu-in-component-a" } -->
+    </p>
     <!-- { "HST-End": "true", "uuid": "aaaa" } -->
   </div>
+  <p id="content-in-container-vbox">
+    <!-- { "HST-Type": "CONTENT_LINK", "uuid": "content-in-container-vbox" } -->
+  </p>
   <div id="componentB">
     <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component B", "uuid": "bbbb" } -->
     <p>Some markup in component B</p>
@@ -37,11 +43,17 @@
   <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "Component in NoMarkup container", "uuid": "component-no-markup" } -->
   <div id="component-no-markup">
     <p>Some markup in component D</p>
+    <p id="content-in-component-no-markup">
+      <!-- { "HST-Type": "CONTENT_LINK", "uuid": "content-in-component-no-markup" } -->
+    </p>
   </div>
   <!-- { "HST-End": "true", "uuid": "component-no-markup" } -->
   <!-- { "HST-End": "true", "uuid": "container-no-markup" } -->
 </div>
 
-<div id="content">
-  <!-- { "HST-Type": "CONTENT_LINK", "uuid": "content-1234" } -->
+<div id="content-in-page">
+  <!-- { "HST-Type": "CONTENT_LINK", "uuid": "content-in-page" } -->
+</div>
+<div id="edit-menu-in-page">
+  <!-- { "HST-Type": "EDIT_MENU_LINK", "uuid": "menu-in-page" } -->
 </div>

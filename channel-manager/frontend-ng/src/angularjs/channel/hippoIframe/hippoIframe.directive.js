@@ -22,6 +22,7 @@ export function hippoIframe() {
     scope: {},
     bindToController: {
       editMode: '=',
+      onEditMenu: '&',
     },
     templateUrl: 'channel/hippoIframe/hippoIframe.html',
     controller: 'hippoIframeCtrl',

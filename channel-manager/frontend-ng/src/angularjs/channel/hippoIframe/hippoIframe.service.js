@@ -16,16 +16,20 @@
 
 export class HippoIframeService {
 
-  constructor($q, $log, ChannelService) {
+  constructor($q, $log, ChannelService, CmsService) {
     'ngInject';
 
     this.$q = $q;
     this.$log = $log;
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
+
+    CmsService.subscribe('reload-page', () => this.reload());
   }
 
   initialize(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
+    this.pageLoaded = false;
   }
 
   load(renderPathInfo) {
@@ -58,30 +62,29 @@ export class HippoIframeService {
   }
 
   reload() {
-    if (this._deferredReload) {
-      this.$log.warn('Trying to reload when a reload is already ongoing. Taking no action.');
-      return this._deferredReload.promise;
+    if (!this.pageLoaded) {
+      return this.$q.resolve();
     }
 
-    const deferred = this.$q.defer();
-    if (this.iframeJQueryElement && this.iframeJQueryElement[0]) {
-      this.iframeJQueryElement[0].contentWindow.location.reload();
-      this._deferredReload = deferred;
-    } else {
-      this.$log.warn('Reload requested while iframe element unknown. Not reloading.');
-      deferred.resolve(); // resolving (rather than rejecting) keeps error handling simpler
+    if (this.deferredReload) {
+      this.$log.warn('Trying to reload when a reload is already ongoing. Taking no action.');
+      return this.deferredReload.promise;
     }
-    return deferred.promise;
+
+    this.deferredReload = this.$q.defer();
+    this.iframeJQueryElement[0].contentWindow.location.reload();
+    return this.deferredReload.promise;
   }
 
   // called by the hippoIframe controller when the processing of the loaded page is completed.
   signalPageLoadCompleted() {
     this._extractRenderPathInfo(this.iframeJQueryElement[0].contentWindow.location.pathname);
 
-    const deferred = this._deferredReload;
+    const deferred = this.deferredReload;
     if (deferred) {
       // delete the "state" before resolving the promise.
-      delete this._deferredReload;
+      delete this.deferredReload;
+      this.pageLoaded = true;
       deferred.resolve();
     }
   }
