@@ -454,6 +454,7 @@
                 <exclude>console/frontend/node_modules/**</exclude>
                 <!-- files without license header  -->
                 <exclude>upgrade_notes.txt</exclude>
+                <exclude>engine/src/main/java/org/hippoecm/frontend/plugins/login/jstz.min.js</exclude>
               </excludes>
             </configuration>
           </plugin>
