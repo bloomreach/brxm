@@ -30,7 +30,7 @@ export class ChannelPropertyCtrl {
 
     this.label = this.data.i18nResources[this.field] || this.field;
     this.type = this._getType();
-    this.qaClass = `qa-field-${this.field}`;
+    this.qaClass = this._getQaClass();
   }
 
   getDropDownListValues() {
@@ -79,5 +79,10 @@ export class ChannelPropertyCtrl {
 
   _getPropertyDefinition() {
     return this.data.propertyDefinitions[this.field];
+  }
+
+  // Replace (subsequent) space and double quote characters with a hyphen. We could do more, but for now this is good enough
+  _getQaClass() {
+    return `qa-field-${this.field.replace(/(\s|")+/g, '-')}`;
   }
 }

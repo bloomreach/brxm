@@ -82,6 +82,20 @@ describe('ChannelProperty', () => {
     expect(ChannelPropertyCtrl.label).toBe('unknownField');
   });
 
+  it('generates valid QA classnames', () => {
+    let ChannelPropertyCtrl = compileDirectiveAndGetController();
+    expect(ChannelPropertyCtrl.qaClass).toBe('qa-field-testField');
+
+    ChannelPropertyCtrl = compileDirectiveAndGetController('one space');
+    expect(ChannelPropertyCtrl.qaClass).toBe('qa-field-one-space');
+
+    ChannelPropertyCtrl = compileDirectiveAndGetController('two  spaces');
+    expect(ChannelPropertyCtrl.qaClass).toBe('qa-field-two-spaces');
+
+    ChannelPropertyCtrl = compileDirectiveAndGetController('double " quote');
+    expect(ChannelPropertyCtrl.qaClass).toBe('qa-field-double-quote');
+  });
+
   it('determines the type of a field', () => {
     // Known annotation
     let ChannelPropertyCtrl = compileDirectiveAndGetController();
