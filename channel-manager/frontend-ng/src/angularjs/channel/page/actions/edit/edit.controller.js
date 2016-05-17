@@ -38,7 +38,7 @@ export class PageEditCtrl {
     this.item = SiteMapItemService.get();
     this.isEditable = SiteMapItemService.isEditable();
 
-    this.heading = $translate.instant('SUBPAGE_PAGE_EDIT_TITLE', { pageName: this.item.name });
+    this.subpageTitle = $translate.instant('SUBPAGE_PAGE_EDIT_TITLE', { pageName: this.item.name });
     this.title = this.item.pageTitle;
     this.availableDocuments = this.item.availableDocumentRepresentations || [];
     this.availableDocuments.unshift(documentNone);
@@ -54,10 +54,6 @@ export class PageEditCtrl {
       .catch(() => {
         this._showError('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
       });
-  }
-
-  back() {
-    this.onDone();
   }
 
   save() {

@@ -21,6 +21,7 @@ describe('PageActionEdit', () => {
   let $scope;
   let $rootScope;
   let $compile;
+  let $element;
   let $translate;
   let $mdDialog;
   let ChannelService;
@@ -97,7 +98,7 @@ describe('PageActionEdit', () => {
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
     $scope.onDone = jasmine.createSpy('onDone');
-    const $element = angular.element('<page-edit on-done="onDone()"> </page-edit>');
+    $element = angular.element('<page-edit on-done="onDone()"> </page-edit>');
     $compile($element)($scope);
     $scope.$digest();
 
@@ -152,9 +153,9 @@ describe('PageActionEdit', () => {
   });
 
   it('calls the callback when navigating back', () => {
-    const PageEditCtrl = compileDirectiveAndGetController();
+    compileDirectiveAndGetController();
 
-    PageEditCtrl.back();
+    $element.find('.qa-button-back').click();
     expect($scope.onDone).toHaveBeenCalled();
   });
 

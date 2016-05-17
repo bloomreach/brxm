@@ -38,7 +38,7 @@ export class PageMoveCtrl {
     this.item = SiteMapItemService.get();
     this.lastPathInfoElement = this.item.name;
     this.isEditable = SiteMapItemService.isEditable();
-    this.heading = $translate.instant('SUBPAGE_PAGE_MOVE_TITLE', { pageName: this.item.name });
+    this.subpageTitle = $translate.instant('SUBPAGE_PAGE_MOVE_TITLE', { pageName: this.item.name });
 
     ChannelService.getNewPageModel()
       .then((data) => {
@@ -103,10 +103,6 @@ export class PageMoveCtrl {
 
         this._showError(messageKey, response.data);
       });
-  }
-
-  back() {
-    this.onDone();
   }
 
   _showError(key, params) {

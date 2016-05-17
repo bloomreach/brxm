@@ -25,7 +25,7 @@ export class ChannelEditCtrl {
 
     this.feedbackParent = $element.find('.feedback-parent');
 
-    this.pageTitle = $translate.instant('SUBPAGE_CHANNEL_EDIT_TITLE', {
+    this.subpageTitle = $translate.instant('SUBPAGE_CHANNEL_EDIT_TITLE', {
       channelName: ChannelService.getName(),
     });
 
@@ -113,9 +113,5 @@ export class ChannelEditCtrl {
 
   _showError(key, params) {
     this.FeedbackService.showError(key, params, this.feedbackParent);
-  }
-
-  back() {
-    this.onDone();
   }
 }
