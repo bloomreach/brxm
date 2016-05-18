@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.core.parameters.HstValueType;
+import org.hippoecm.hst.rest.custom.AnnotationJsonSerializer;
 import org.hippoecm.hst.rest.custom.AnnotationType;
 import org.hippoecm.hst.rest.custom.CouldNotFindHstPropertyDefinition;
 
@@ -84,16 +85,17 @@ public final class JsonTreeAnnotationsComparator {
                 (nameField.textValue() != null && !nameField.textValue().isEmpty()));
 
         // Asset that the object has the type meta data added by the custom JSON serializer
-        final JsonNode classTypeField = expected.get("@class");
-        // Assert that we have an object with a textual '@class' field
-        assertTrue("Expected an object with a textual '@class' field",
+        final JsonNode classTypeField = expected.get(AnnotationJsonSerializer.TYPE_ATTRIBUTE);
+        // Assert that we have an object with a textual AnnotationJsonSerializer.TYPE_ATTRIBUTE field
+        assertTrue("Expected an object with a textual '" + AnnotationJsonSerializer.TYPE_ATTRIBUTE + "' field",
                 (classTypeField != null && classTypeField.isTextual()));
 
-        // Assert that the '@class' field's value is not null or empty
-        assertTrue("Expected an object with a non-empty textual '@class' field",
+        // Assert that the AnnotationJsonSerializer.TYPE_ATTRIBUTE field's value is not null or empty
+        assertTrue("Expected an object with a non-empty textual '" + AnnotationJsonSerializer.TYPE_ATTRIBUTE + "' field",
                 (classTypeField.textValue() != null && !classTypeField.textValue().isEmpty()));
 
-        // Assert that the class type of the HST property definition is the same as the value of the '@class' field
+        // Assert that the class type of the HST property definition is the same as the value of the
+        // AnnotationJsonSerializer.TYPE_ATTRIBUTE field
         assertTrue("Hst property definition class type mis-match: expected '" + classTypeField.textValue()
                 + "', atcual: '" + actual.getClass().getName() + "'",
                 actual.getClass().getName().equals(classTypeField.textValue()));
@@ -209,17 +211,17 @@ public final class JsonTreeAnnotationsComparator {
                     assertTrue("Expected an object JSON node but got '" + getNodeType(annotationNode) + "' JSON node!",
                             annotationNode.isObject());
 
-                    // Assert that expected JSON node has a '@class' textual field which is not null, not empty and has a value
-                    // equals to the class name of actual
-                    final JsonNode annotationClassNameNode = annotationNode.get("@class");
-                    assertNotNull("Expected a '@class' field!", annotationClassNameNode);
-                    assertTrue("Expected a textual '@class' field but got '" + getNodeType(annotationClassNameNode)
-                            + "' field", annotationClassNameNode.isTextual());
+                    // Assert that expected JSON node has a AnnotationJsonSerializer#TYPE_ATTRIBUTE} textual field which
+                    // is not null, not empty and has a value equals to the class name of actual
+                    final JsonNode annotationTypeNode = annotationNode.get(AnnotationJsonSerializer.TYPE_ATTRIBUTE);
+                    assertNotNull("Expected a '" + AnnotationJsonSerializer.TYPE_ATTRIBUTE + "' field!", annotationTypeNode);
+                    assertTrue("Expected a textual '" + AnnotationJsonSerializer.TYPE_ATTRIBUTE + "' field but got '" + getNodeType(annotationTypeNode)
+                            + "' field", annotationTypeNode.isTextual());
 
-                    assertTrue("Expected a textual '@class' field with a non-empty value", !annotationClassNameNode
+                    assertTrue("Expected a textual '" + AnnotationJsonSerializer.TYPE_ATTRIBUTE + "' field with a non-empty value", !annotationTypeNode
                             .textValue().isEmpty());
 
-                    if (AnnotationType.fromClass(annotation.annotationType()).toString().equals(annotationClassNameNode.textValue())) {
+                    if (AnnotationType.fromClass(annotation.annotationType()).toString().equals(annotationTypeNode.textValue())) {
                         assertEquivalent(annotationNode, annotation);
                         foundAnEquivalentAnnotation = true;
                         equivalentFoundAnnotations.add(annotation);
@@ -250,14 +252,14 @@ public final class JsonTreeAnnotationsComparator {
         assertTrue("Expected an object JSON node but got '" + getNodeType(expected) + "' JSON node!",
                 expected.isObject());
 
-        // Assert that expected JSON node has a '@class' textual field which is not null, not empty and has a value
-        // equals to the class name of actual
-        final JsonNode annotationClassNameNode = expected.get("@class");
-        assertNotNull("Expected a '@class' field!", annotationClassNameNode);
-        assertTrue("Expected a textual '@class' field but got '" + getNodeType(annotationClassNameNode) + "' field",
+        // Assert that expected JSON node has a AnnotationJsonSerializer.TYPE_ATTRIBUTE textual field which is not null,
+        // not empty and has a value equals to the class name of actual
+        final JsonNode annotationClassNameNode = expected.get(AnnotationJsonSerializer.TYPE_ATTRIBUTE);
+        assertNotNull("Expected a '" + AnnotationJsonSerializer.TYPE_ATTRIBUTE + "' field!", annotationClassNameNode);
+        assertTrue("Expected a textual '" + AnnotationJsonSerializer.TYPE_ATTRIBUTE + "' field but got '" + getNodeType(annotationClassNameNode) + "' field",
                 annotationClassNameNode.isTextual());
 
-        assertTrue("Expected a textual '@class' field with a non-empty value", !annotationClassNameNode.textValue()
+        assertTrue("Expected a textual '" + AnnotationJsonSerializer.TYPE_ATTRIBUTE + "' field with a non-empty value", !annotationClassNameNode.textValue()
                 .isEmpty());
 
         assertTrue("Expected a text value of '" + actual.getClass().getName() + "', but got '"
@@ -272,7 +274,7 @@ public final class JsonTreeAnnotationsComparator {
             final Entry<String, JsonNode> jsonFieldNode = jsonFieldNodes.next();
 
             // Skip the class type field as it has been tested before
-            if (jsonFieldNode.getKey().equals("@class")) {
+            if (jsonFieldNode.getKey().equals(AnnotationJsonSerializer.TYPE_ATTRIBUTE)) {
                 continue;
             }
 

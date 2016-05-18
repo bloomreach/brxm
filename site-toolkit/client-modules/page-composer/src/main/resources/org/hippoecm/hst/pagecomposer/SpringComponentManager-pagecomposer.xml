@@ -20,7 +20,6 @@
 
   <bean id="annotationJsonSerializer" class="org.hippoecm.hst.rest.custom.AnnotationJsonSerializer">
     <constructor-arg type="java.lang.Class" value="java.lang.annotation.Annotation" />
-    <property name="typeFieldName" value="type" />
   </bean>
 
   <bean id="jaxrsHstConfigJacksonJsonModule" class="com.fasterxml.jackson.databind.module.SimpleModule">
