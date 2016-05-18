@@ -23,10 +23,11 @@ const WIDGET_TYPES = {
 };
 
 export class ChannelPropertyCtrl {
-  constructor($log, CmsService) {
+  constructor($log, $scope, CmsService) {
     'ngInject';
 
     this.$log = $log;
+    this.$scope = $scope;
     this.CmsService = CmsService;
 
     this.label = this.data.i18nResources[this.field] || this.field;
@@ -45,7 +46,8 @@ export class ChannelPropertyCtrl {
 
   showPicker() {
     const annotation = this._getFirstFieldAnnotation();
-    this.CmsService.publish('show-picker', this.value, {
+    this.CmsService.subscribe('picked', this._onPicked, this);
+    this.CmsService.publish('show-picker', this.field, this.value, {
       configuration: annotation.pickerConfiguration,
       initialPath: annotation.pickerInitialPath,
       isRelativePath: annotation.isRelative,
@@ -53,6 +55,14 @@ export class ChannelPropertyCtrl {
       rootPath: annotation.pickerRootPath,
       selectableNodeTypes: annotation.pickerSelectableNodeTypes,
     });
+  }
+
+  _onPicked(field, path) {
+    this.CmsService.unsubscribe('picked', this._onPicked, this);
+    if (this.field === field) {
+      this.value = path;
+      this.$scope.$digest();
+    }
   }
 
   _getType() {

@@ -74,6 +74,7 @@ button .disabled-marker {
   font-style: italic;
 }
 
-md-input-container .md-input.flex-order-0 {
+md-input-container .md-input.input-picker {
+  cursor: pointer;
   order: 0;
 }

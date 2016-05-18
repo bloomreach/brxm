@@ -188,12 +188,13 @@
       );
     },
 
-    _showPicker: function(value, pickerConfig) {
+    _showPicker: function(field, value, pickerConfig) {
+      this.pickedField = field;
       Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(value, pickerConfig, this._onPicked.bind(this));
     },
 
-    _onPicked: function() {
-      console.log("PICKED!", arguments);
+    _onPicked: function(path, displayValue) {
+      this.hostToIFrame.publish('picked', this.pickedField, path, displayValue);
     },
 
     _onComponentRemoved: function() {

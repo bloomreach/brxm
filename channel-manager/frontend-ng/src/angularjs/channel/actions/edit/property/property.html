@@ -34,7 +34,12 @@
   <md-input-container ng-switch-when="JcrPath" class="md-block qa-field-{{field}}">
     <label>{{ channelEdit.getLabel(field) }}</label>
     <div layout="row">
-      <input type="text" ng-model="channelProperty.value" flex flex-order="0">
+      <input type="text"
+             class="input-picker"
+             readonly="readonly"
+             flex
+             ng-model="channelProperty.value"
+             ng-click="channelProperty.showPicker()">
       <md-button class="md-icon-button" ng-click="channelProperty.showPicker()">
         <md-icon class="material-icons">search</md-icon>
       </md-button>
