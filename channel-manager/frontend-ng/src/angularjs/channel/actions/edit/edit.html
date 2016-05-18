@@ -45,7 +45,7 @@
           <label>{{ channelEdit.getLabel(field) }}</label>
           <div layout="row">
             <input type="text" ng-model="channelEdit.values[field]" flex flex-order="0">
-            <md-button class="md-icon-button">
+            <md-button class="md-icon-button" ng-click="channelEdit.showPicker(field)">
               <md-icon class="material-icons">search</md-icon>
             </md-button>
           </div>

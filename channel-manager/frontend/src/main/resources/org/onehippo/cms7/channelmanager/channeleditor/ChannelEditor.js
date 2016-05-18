@@ -46,6 +46,7 @@
       this.iframeToHost.subscribe('channel-changed-in-angular', this._reloadChannels, this);
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
+      this.iframeToHost.subscribe('show-picker', this._showPicker, this);
       this.iframeToHost.subscribe('component-removed', this._onComponentRemoved, this);
       this.iframeToHost.subscribe('reset-component-properties', this._resetComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('open-content', this._openDocumentEditor, this);
@@ -185,6 +186,14 @@
         selected.container,
         selected.page
       );
+    },
+
+    _showPicker: function(value, pickerConfig) {
+      Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(value, pickerConfig, this._onPicked.bind(this));
+    },
+
+    _onPicked: function() {
+      console.log("PICKED!", arguments);
     },
 
     _onComponentRemoved: function() {

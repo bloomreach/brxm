@@ -16,10 +16,11 @@
 import { WidgetTypes } from './widget.types';
 
 export class ChannelEditCtrl {
-  constructor($log, $element, $translate, FeedbackService, ChannelService, HippoIframeService) {
+  constructor($log, $element, $translate, FeedbackService, ChannelService, CmsService, HippoIframeService) {
     'ngInject';
     this.$log = $log;
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
 
@@ -109,6 +110,12 @@ export class ChannelEditCtrl {
 
   _getPropertyDefinition(field) {
     return this.channelInfoDescription.propertyDefinitions[field];
+  }
+
+  showPicker(field) {
+    const fieldValue = this.values[field];
+    const pickerConfig = this._getFirstFieldAnnotation(field);
+    this.CmsService.publish('show-picker', fieldValue, pickerConfig);
   }
 
   _showError(key, params) {
