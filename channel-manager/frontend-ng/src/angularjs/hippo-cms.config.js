@@ -34,7 +34,7 @@ export function config($stateProvider, $urlRouterProvider, $translateProvider) {
   });
 
   $translateProvider.useStaticFilesLoader({
-    prefix: 'i18n/hippo-cm.',
+    prefix: 'i18n/',
     suffix: '.json',
   });
   $translateProvider.fallbackLanguage('en');
