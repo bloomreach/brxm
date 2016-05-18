@@ -74,9 +74,7 @@ public final class InformationObjectsBuilder {
         List<HstPropertyDefinitionInfo> hstPropertyDefinitionInfos = new ArrayList<HstPropertyDefinitionInfo>(hstPropertyDefinitions.size());
 
         for (HstPropertyDefinition hstPropertyDefinition : hstPropertyDefinitions) {
-            if (!hstPropertyDefinition.isHiddenInChannelManager()) {
-                hstPropertyDefinitionInfos.add(buildHstPropertyDefinitionInfo(hstPropertyDefinition));
-            }
+            hstPropertyDefinitionInfos.add(buildHstPropertyDefinitionInfo(hstPropertyDefinition));
         }
 
         return hstPropertyDefinitionInfos;

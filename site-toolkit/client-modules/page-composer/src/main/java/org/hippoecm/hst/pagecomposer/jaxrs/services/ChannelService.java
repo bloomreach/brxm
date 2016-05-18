@@ -18,7 +18,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;

@@ -18,10 +18,12 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,7 @@ import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
+import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -42,6 +45,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
+import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
 import org.slf4j.Logger;
@@ -60,11 +64,18 @@ public class ChannelServiceImpl implements ChannelService {
             if (channelInfoClass == null) {
                 throw new ChannelException("Cannot find ChannelInfo class of the channel with id '" + channelId + "'");
             }
-            final ChannelInfoClassInfo channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
-            final Map<String, HstPropertyDefinitionInfo> propertyDefinitions = getPropertyDefinitions(channelId);
+
+            final List<HstPropertyDefinition> propertyDefinitions = getHstPropertyDefinitions(channelId);
+            final Set<String> hiddenFields = getHiddenFields(propertyDefinitions);
+            final Map<String, HstPropertyDefinitionInfo> visiblePropertyDefinitions = createVisiblePropDefinitionInfos(propertyDefinitions);
+
+            final List<FieldGroupInfo> validFieldGroups = getValidFieldGroups(channelInfoClass, hiddenFields);
+            final Map<String, String> localizedResources = getLocalizedResources(channelId, locale);
+            localizedResources.keySet().removeIf(hiddenFields::contains);
+
             final String lockedBy = getChannelLockedBy(channelId);
-            return new ChannelInfoDescription(channelInfoClassInfo.getFieldGroups(),
-                    propertyDefinitions, getLocalizedResources(channelId, locale), lockedBy);
+            return new ChannelInfoDescription(validFieldGroups, visiblePropertyDefinitions,
+                    localizedResources, lockedBy);
         } catch (ChannelException e) {
             if (log.isDebugEnabled()) {
                 log.info("Failed to retrieve channel info class for channel with id '{}'", channelId, e);
@@ -75,14 +86,57 @@ public class ChannelServiceImpl implements ChannelService {
         }
     }
 
-    private Map<String, HstPropertyDefinitionInfo> getPropertyDefinitions(final String channelId) {
-        String currentHostGroupName = getCurrentVirtualHost().getHostGroupName();
+    private Set<String> getHiddenFields(final List<HstPropertyDefinition> propertyDefinitions) {
+        return propertyDefinitions.stream()
+                        .filter(HstPropertyDefinition::isHiddenInChannelManager)
+                        .map(HstPropertyDefinition::getName)
+                        .collect(Collectors.toSet());
+    }
 
-        final List<HstPropertyDefinitionInfo> hstPropertyDefinitionInfos = InformationObjectsBuilder.buildHstPropertyDefinitionInfos(
-                getAllVirtualHosts().getPropertyDefinitions(currentHostGroupName, channelId));
+    /**
+     * Get field groups containing only visible fields and give warning on duplicate field declaration
+     *
+     * @param channelInfoClass
+     * @param hiddenFields
+     */
+    private List<FieldGroupInfo> getValidFieldGroups(final Class<? extends ChannelInfo> channelInfoClass, final Set<String> hiddenFields) {
+        final List<FieldGroupInfo> fieldGroups = getFieldGroups(channelInfoClass);
 
-        return hstPropertyDefinitionInfos.stream()
+        final Set<String> allFields = new HashSet<>();
+        return fieldGroups.stream().map(fgi -> {
+            final Set<String> visibleFieldsInGroup = new HashSet<>();
+            for (String fieldInGroup : fgi.getValue()) {
+                if (!allFields.add(fieldInGroup)) {
+                    log.warn("Channel property '{}' in the '{}' group has existed in another group. Please check your ChannelInfo class", fieldInGroup, fgi.getTitleKey());
+                    continue;
+                }
+
+                if (!hiddenFields.contains(fieldInGroup)) {
+                    visibleFieldsInGroup.add(fieldInGroup);
+                }
+            }
+            return new FieldGroupInfo(visibleFieldsInGroup.toArray(new String[visibleFieldsInGroup.size()]), fgi.getTitleKey());
+        }).collect(Collectors.toList());
+    }
+
+    private List<FieldGroupInfo> getFieldGroups(final Class<? extends ChannelInfo> channelInfoClass) {
+        final ChannelInfoClassInfo channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
+        return channelInfoClassInfo.getFieldGroups();
+    }
+
+    private Map<String, HstPropertyDefinitionInfo> createVisiblePropDefinitionInfos(List<HstPropertyDefinition> propertyDefinitions) {
+        final List<HstPropertyDefinitionInfo> visiblePropertyDefinitionInfos = propertyDefinitions.stream()
+                .filter((propDef) -> !propDef.isHiddenInChannelManager())
+                .map(InformationObjectsBuilder::buildHstPropertyDefinitionInfo)
+                .collect(Collectors.toList());
+
+        return visiblePropertyDefinitionInfos.stream()
                 .collect(Collectors.toMap(HstPropertyDefinitionInfo::getName, Function.identity()));
+    }
+
+    private List<HstPropertyDefinition> getHstPropertyDefinitions(final String channelId) {
+        final String currentHostGroupName = getCurrentVirtualHost().getHostGroupName();
+        return getAllVirtualHosts().getPropertyDefinitions(currentHostGroupName, channelId);
     }
 
     private String getChannelLockedBy(final String channelId) {
