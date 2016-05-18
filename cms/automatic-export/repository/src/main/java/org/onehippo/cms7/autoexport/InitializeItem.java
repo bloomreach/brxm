@@ -32,10 +32,13 @@ import org.xml.sax.SAXException;
 
 import net.sf.json.JSONObject;
 import static org.onehippo.cms7.autoexport.AutoExportModule.log;
-import static org.onehippo.cms7.autoexport.Constants.QFILE;
-import static org.onehippo.cms7.autoexport.Constants.QMERGE;
+import static org.onehippo.cms7.autoexport.Constants.DELTA_URI;
+import static org.onehippo.cms7.autoexport.Constants.FILE;
+import static org.onehippo.cms7.autoexport.Constants.MERGE;
+import static org.onehippo.cms7.autoexport.Constants.NAME;
 import static org.onehippo.cms7.autoexport.Constants.QNAME;
 import static org.onehippo.cms7.autoexport.Constants.QNODE;
+import static org.onehippo.cms7.autoexport.Constants.SV_URI;
 
 final class InitializeItem {
     
@@ -270,15 +273,16 @@ final class InitializeItem {
         // context must be read from file, it is the contentroot plus
         // name of the root node in the content xml file
         final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
 
         try {
             final DocumentBuilder builder = dbf.newDocumentBuilder();
             Document document = builder.parse(file);
 
-            String contextNodeName = document.getDocumentElement().getAttribute(QNAME);
+            String contextNodeName = document.getDocumentElement().getAttributeNS(SV_URI, NAME);
             contextPath = contentRoot.equals("/") ? "/" + contextNodeName : contentRoot + "/" + contextNodeName;
             
-            String directive = document.getDocumentElement().getAttribute(QMERGE);
+            String directive = document.getDocumentElement().getAttributeNS(DELTA_URI, MERGE);
             isDelta = directive != null && !directive.equals("");
             
             if (isDelta) {
@@ -313,7 +317,7 @@ final class InitializeItem {
         
         boolean isNode = element.getTagName().equals(QNODE);
         String name = element.getAttribute(QNAME);
-        String directive = element.getAttribute(QMERGE);
+        String directive = element.getAttributeNS(DELTA_URI, MERGE);
 
         DeltaInstruction instruction;
         if (parent == null) {
@@ -345,7 +349,7 @@ final class InitializeItem {
     }
 
     private boolean containsFileReferenceValues(final Element element) {
-        if (element.hasAttribute(QFILE)) {
+        if (element.hasAttributeNS(DELTA_URI, FILE)) {
             return true;
         }
         final NodeList childNodes = element.getChildNodes();
