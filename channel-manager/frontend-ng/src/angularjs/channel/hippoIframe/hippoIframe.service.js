@@ -79,12 +79,12 @@ export class HippoIframeService {
   // called by the hippoIframe controller when the processing of the loaded page is completed.
   signalPageLoadCompleted() {
     this._extractRenderPathInfo(this.iframeJQueryElement[0].contentWindow.location.pathname);
+    this.pageLoaded = true;
 
     const deferred = this.deferredReload;
     if (deferred) {
       // delete the "state" before resolving the promise.
       delete this.deferredReload;
-      this.pageLoaded = true;
       deferred.resolve();
     }
   }
