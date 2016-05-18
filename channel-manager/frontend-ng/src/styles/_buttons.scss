@@ -74,7 +74,13 @@ button .disabled-marker {
   font-style: italic;
 }
 
-md-input-container .md-input.input-picker {
-  cursor: pointer;
-  order: 0;
+md-input-container.input-container-picker {
+  .md-input {
+    cursor: pointer;
+    order: 0;
+  }
+  .md-icon-button {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
