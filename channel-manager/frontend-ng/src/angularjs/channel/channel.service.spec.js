@@ -382,9 +382,11 @@ describe('ChannelService', () => {
 
     ChannelService.createPreviewConfiguration();
     expect(HstService.doPost).toHaveBeenCalledWith(null, 'mountId', 'edit');
+    HstService.getChannel.and.returnValue($q.when(channelMock));
 
     $rootScope.$digest();
     expect(ChannelService.hasPreviewConfiguration()).toBe(true);
+    expect(HstService.getChannel).toHaveBeenCalledWith('channelId-preview');
   });
 
   it('should not update the channel\'s preview config flag if creating a preview config failed', () => {
