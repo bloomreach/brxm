@@ -45,7 +45,7 @@ export class ChangesMenuCtrl {
     return this.ChannelService.getChannel().changedBySet;
   }
 
-  hasChangesToManage() {
+  _hasChangesToManage() {
     return this.canManageChanges && this._getChangedBySet().length > 0;
   }
 
@@ -53,16 +53,16 @@ export class ChangesMenuCtrl {
     return this._getChangedBySet().indexOf(this.ConfigService.cmsUser) !== -1;
   }
 
-  hasOnlyOwnChanges() {
+  _hasOnlyOwnChanges() {
     return this.hasOwnChanges() && this._getChangedBySet().length === 1;
   }
 
   isShowChangesMenu() {
-    return this.hasChangesToManage() || this.hasOwnChanges();
+    return this._hasChangesToManage() || this.hasOwnChanges();
   }
 
   isManageChangesEnabled() {
-    return this.hasChangesToManage() && !this.hasOnlyOwnChanges();
+    return this._hasChangesToManage() && !this._hasOnlyOwnChanges();
   }
 
   publish() {

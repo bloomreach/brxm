@@ -89,24 +89,6 @@ describe('ChangesMenu', () => {
     expect(ChangesMenuCtrl.hasOwnChanges()).toBe(true);
   });
 
-  it('determines if there are manageable changes', () => {
-    let ChangesMenuCtrl = createChangesMenuCtrl();
-    expect(ChangesMenuCtrl.hasChangesToManage()).toBe(false);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'] });
-    expect(ChangesMenuCtrl.hasChangesToManage()).toBe(true);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser'] });
-    expect(ChangesMenuCtrl.hasChangesToManage()).toBe(true);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser', 'testUser'] });
-    expect(ChangesMenuCtrl.hasChangesToManage()).toBe(true);
-
-    ConfigService.canManageChanges = false;
-    ChangesMenuCtrl = createChangesMenuCtrl();
-    expect(ChangesMenuCtrl.hasChangesToManage()).toBe(false);
-  });
-
   it('enables the manage changes option when there are changes by other users', () => {
     let ChangesMenuCtrl = createChangesMenuCtrl();
     expect(ChangesMenuCtrl.isManageChangesEnabled()).toBe(false);
