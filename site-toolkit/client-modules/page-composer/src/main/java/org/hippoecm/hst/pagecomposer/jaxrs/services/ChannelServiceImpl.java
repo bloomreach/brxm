@@ -66,16 +66,23 @@ public class ChannelServiceImpl implements ChannelService {
             }
 
             final List<HstPropertyDefinition> propertyDefinitions = getHstPropertyDefinitions(channelId);
-            final Set<String> hiddenFields = getHiddenFields(propertyDefinitions);
+            final Set<String> annotatedFields = propertyDefinitions.stream()
+                    .map(HstPropertyDefinition::getName)
+                    .collect(Collectors.toSet());
+
+            final Set<String> hiddenFields = propertyDefinitions.stream()
+                    .filter(HstPropertyDefinition::isHiddenInChannelManager)
+                    .map(HstPropertyDefinition::getName)
+                    .collect(Collectors.toSet());
+
+
             final Map<String, HstPropertyDefinitionInfo> visiblePropertyDefinitions = createVisiblePropDefinitionInfos(propertyDefinitions);
 
-            final List<FieldGroupInfo> validFieldGroups = getValidFieldGroups(channelInfoClass, hiddenFields);
-            final Map<String, String> localizedResources = getLocalizedResources(channelId, locale);
-            localizedResources.keySet().removeIf(hiddenFields::contains);
+            final List<FieldGroupInfo> validFieldGroups = getValidFieldGroups(channelInfoClass, annotatedFields, hiddenFields);
+            final Map<String, String> localizedResources = getLocalizedResources(channelId, locale, hiddenFields);
 
             final String lockedBy = getChannelLockedBy(channelId);
-            return new ChannelInfoDescription(validFieldGroups, visiblePropertyDefinitions,
-                    localizedResources, lockedBy);
+            return new ChannelInfoDescription(validFieldGroups, visiblePropertyDefinitions, localizedResources, lockedBy);
         } catch (ChannelException e) {
             if (log.isDebugEnabled()) {
                 log.info("Failed to retrieve channel info class for channel with id '{}'", channelId, e);
@@ -86,28 +93,28 @@ public class ChannelServiceImpl implements ChannelService {
         }
     }
 
-    private Set<String> getHiddenFields(final List<HstPropertyDefinition> propertyDefinitions) {
-        return propertyDefinitions.stream()
-                        .filter(HstPropertyDefinition::isHiddenInChannelManager)
-                        .map(HstPropertyDefinition::getName)
-                        .collect(Collectors.toSet());
-    }
-
     /**
-     * Get field groups containing only visible fields and give warning on duplicate field declaration
+     * Get field groups containing only visible, annotated fields and give warnings on duplicated or without annotation fields
      *
-     * @param channelInfoClass
-     * @param hiddenFields
+     *  @param channelInfoClass
+     * @param annotatedFields a set containing annotated fields
+     * @param hiddenFields a set containing fields that mark as hidden
      */
-    private List<FieldGroupInfo> getValidFieldGroups(final Class<? extends ChannelInfo> channelInfoClass, final Set<String> hiddenFields) {
-        final List<FieldGroupInfo> fieldGroups = getFieldGroups(channelInfoClass);
+    private List<FieldGroupInfo> getValidFieldGroups(final Class<? extends ChannelInfo> channelInfoClass,
+                                                     final Set<String> annotatedFields, final Set<String> hiddenFields) {
+        final ChannelInfoClassInfo channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
+        final List<FieldGroupInfo> fieldGroups = channelInfoClassInfo.getFieldGroups();
 
         final Set<String> allFields = new HashSet<>();
         return fieldGroups.stream().map(fgi -> {
             final Set<String> visibleFieldsInGroup = new HashSet<>();
             for (String fieldInGroup : fgi.getValue()) {
                 if (!allFields.add(fieldInGroup)) {
-                    log.warn("Channel property '{}' in the '{}' group has existed in another group. Please check your ChannelInfo class", fieldInGroup, fgi.getTitleKey());
+                    log.warn("Channel property '{}' in the group '{}' has existed in another group. Please check your ChannelInfo class", fieldInGroup, fgi.getTitleKey());
+                    continue;
+                }
+                if (!annotatedFields.contains(fieldInGroup)) {
+                    log.warn("Channel property '{}' does not refer to any annotation. Please check your ChannelInfo class", fieldInGroup);
                     continue;
                 }
 
@@ -117,11 +124,6 @@ public class ChannelServiceImpl implements ChannelService {
             }
             return new FieldGroupInfo(visibleFieldsInGroup.toArray(new String[visibleFieldsInGroup.size()]), fgi.getTitleKey());
         }).collect(Collectors.toList());
-    }
-
-    private List<FieldGroupInfo> getFieldGroups(final Class<? extends ChannelInfo> channelInfoClass) {
-        final ChannelInfoClassInfo channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
-        return channelInfoClassInfo.getFieldGroups();
     }
 
     private Map<String, HstPropertyDefinitionInfo> createVisiblePropDefinitionInfos(List<HstPropertyDefinition> propertyDefinitions) {
@@ -157,14 +159,17 @@ public class ChannelServiceImpl implements ChannelService {
         return null;
     }
 
-    private Map<String, String> getLocalizedResources(final String channelId, final String language) {
+    private Map<String, String> getLocalizedResources(final String channelId, final String language, final Set<String> hiddenFields) {
         final ResourceBundle resourceBundle = getAllVirtualHosts().getResourceBundle(getChannel(channelId), new Locale(language));
         if (resourceBundle == null) {
             return Collections.EMPTY_MAP;
         }
 
-        return resourceBundle.keySet().stream()
+        final Map<String, String> resources = resourceBundle.keySet().stream()
                 .collect(Collectors.toMap(Function.identity(), resourceBundle::getString));
+
+        resources.keySet().removeIf(hiddenFields::contains);
+        return resources;
     }
 
     @Override
