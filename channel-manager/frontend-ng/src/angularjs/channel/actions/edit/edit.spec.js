@@ -26,6 +26,7 @@ describe('ChannelActionEdit', () => {
   let ChannelService;
   let FeedbackService;
   let HippoIframeService;
+  let ConfigService;
   let channelInfoDescription;
   const channel = {
     properties: {
@@ -38,7 +39,8 @@ describe('ChannelActionEdit', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_) => {
+    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_,
+            _ConfigService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $translate = _$translate_;
@@ -46,6 +48,7 @@ describe('ChannelActionEdit', () => {
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
+      ConfigService = _ConfigService_;
     });
 
     channelInfoDescription = {
@@ -90,7 +93,7 @@ describe('ChannelActionEdit', () => {
       },
     };
 
-    spyOn($translate, 'instant');
+    spyOn($translate, 'instant').and.callFake((key) => key);
     spyOn(ChannelService, 'getName').and.returnValue('test-name');
     spyOn(ChannelService, 'getChannel').and.returnValue(channel);
     spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when(channelInfoDescription));
@@ -183,5 +186,25 @@ describe('ChannelActionEdit', () => {
 
     delete channelInfoDescription.i18nResources.textField;
     expect(ChannelEditCtrl.getLabel('textField')).toBe('textField');
+  });
+
+  it('displays an alert message when the current channel is locked', () => {
+    ConfigService.cmsUser = 'admin';
+    channelInfoDescription.lockedBy = 'tester';
+    let ChannelEditCtrl = compileDirectiveAndGetController();
+    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_READONLY_ALERT', { lockedBy: 'tester' });
+    expect(ChannelEditCtrl.readOnlyAlert).toBeTruthy();
+
+    $translate.instant.calls.reset();
+    channelInfoDescription.lockedBy = 'admin';
+    ChannelEditCtrl = compileDirectiveAndGetController();
+    expect($translate.instant).not.toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_READONLY_ALERT', { lockedBy: 'admin' });
+    expect(ChannelEditCtrl.readOnlyAlert).toBeFalsy();
+
+    $translate.instant.calls.reset();
+    delete channelInfoDescription.lockedBy;
+    ChannelEditCtrl = compileDirectiveAndGetController();
+    expect($translate.instant).not.toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_READONLY_ALERT', { lockedBy: 'admin' });
+    expect(ChannelEditCtrl.readOnlyAlert).toBeFalsy();
   });
 });

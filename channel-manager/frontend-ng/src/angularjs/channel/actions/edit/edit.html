@@ -20,6 +20,9 @@
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent">
   <form name="form" flex="initial" class="qa-subpage subpage-form">
+    <div ng-if="channelEdit.readOnlyAlert">
+      <p class="md-body-2">{{ channelEdit.readOnlyAlert }}</p>
+    </div>
 
     <div ng-repeat="fieldGroup in channelEdit.getFieldGroups()">
       <h3 class="md-title qa-fieldgroup">{{ channelEdit.getLabel(fieldGroup.titleKey) }}</h3>
