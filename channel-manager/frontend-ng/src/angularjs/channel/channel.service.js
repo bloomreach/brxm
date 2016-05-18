@@ -53,13 +53,13 @@ export class ChannelService {
     this.$rootScope.$apply(() => this._reload());
   }
 
-  _reload() {
-    return this.HstService.getChannel(this.channel.id)
+  _reload(channelId = this.channel.id) {
+    return this.HstService.getChannel(channelId)
       .then((channel) => {
         this._setChannel(channel);
       })
       .catch((error) => {
-        this.$log.error(`Failed to reload channel '${this.channel.id}'.`, error);
+        this.$log.error(`Failed to reload channel '${channelId}'.`, error);
       });
   }
 
@@ -184,6 +184,7 @@ export class ChannelService {
   createPreviewConfiguration() {
     return this.HstService.doPost(null, this.getMountId(), 'edit')
       .then(() => {
+        this._reload(`${this.channel.id}-preview`);
         this.channel.previewHstConfigExists = true;
       });
   }
