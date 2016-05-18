@@ -44,8 +44,15 @@ export class ChannelPropertyCtrl {
   }
 
   showPicker() {
-    const pickerConfig = this._getFirstFieldAnnotation();
-    this.CmsService.publish('show-picker', this.value, pickerConfig);
+    const annotation = this._getFirstFieldAnnotation();
+    this.CmsService.publish('show-picker', this.value, {
+      configuration: annotation.pickerConfiguration,
+      initialPath: annotation.pickerInitialPath,
+      isRelativePath: annotation.isRelative,
+      remembersLastVisited: annotation.pickerRemembersLastVisited,
+      rootPath: annotation.pickerRootPath,
+      selectableNodeTypes: annotation.pickerSelectableNodeTypes,
+    });
   }
 
   _getType() {
