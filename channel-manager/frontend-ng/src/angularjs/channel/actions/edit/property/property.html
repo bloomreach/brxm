@@ -17,6 +17,7 @@
 <div ng-switch="channelProperty.type">
   <md-input-container ng-switch-when="CheckBox" class="{{channelProperty.qaClass}}">
     <md-checkbox ng-model="channelProperty.value"
+                 ng-disabled="channelProperty.readOnly"
                  aria-label="channelProperty.label">
       {{ channelProperty.label }}
     </md-checkbox>
@@ -24,7 +25,8 @@
 
   <md-input-container ng-switch-when="DropDownList" class="md-block {{channelProperty.qaClass}}" flex>
     <label>{{ channelProperty.label }}</label>
-    <md-select ng-model="channelProperty.value">
+    <md-select ng-model="channelProperty.value"
+               ng-disabled="channelProperty.readOnly">
       <md-option ng-repeat="choice in channelProperty.getDropDownListValues()" value="{{choice}}">
         {{choice}}
       </md-option>
@@ -33,6 +35,7 @@
 
   <md-input-container ng-switch-default class="md-block {{channelProperty.qaClass}}" flex>
     <label>{{ channelProperty.label }}</label>
-    <input type="text" ng-model="channelProperty.value">
+    <input type="text" ng-model="channelProperty.value"
+           ng-disabled="channelProperty.readOnly">
   </md-input-container>
 </div>
