@@ -16,21 +16,25 @@
 
 export class ChangesMenuCtrl {
   constructor(
+      $log,
       $translate,
       ChannelService,
       ConfigService,
       CmsService,
       DialogService,
+      FeedbackService,
       HippoIframeService,
       SiteMapService
     ) {
     'ngInject';
 
+    this.$log = $log;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.DialogService = DialogService;
+    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.SiteMapService = SiteMapService;
 
@@ -57,24 +61,38 @@ export class ChangesMenuCtrl {
     return this.hasChangesToManage() || this.hasOwnChanges();
   }
 
-  isShowManageChanges() {
+  isManageChangesEnabled() {
     return this.hasChangesToManage() && !this.hasOnlyOwnChanges();
   }
 
   publish() {
-    this.ChannelService.publishChanges().then(() => {
-      this.CmsService.publish('channel-changed-in-angular');
-      this.HippoIframeService.reload();
-    });
+    this.ChannelService.publishChanges()
+      .then(() => {
+        this.CmsService.publish('channel-changed-in-angular');
+        this.HippoIframeService.reload();
+      })
+      .catch((response) => {
+        response = response || { };
+
+        this.$log.info(response.message);
+        this.FeedbackService.showError('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
+      });
   }
 
   discard() {
     this._confirmDiscard().then(() => {
-      this.ChannelService.discardChanges().then(() => {
-        this.CmsService.publish('channel-changed-in-angular');
-        this.HippoIframeService.reload();
-        this.SiteMapService.load(this.ChannelService.getSiteMapId());
-      });
+      this.ChannelService.discardChanges()
+        .then(() => {
+          this.CmsService.publish('channel-changed-in-angular');
+          this.HippoIframeService.reload();
+          this.SiteMapService.load(this.ChannelService.getSiteMapId());
+        })
+        .catch((response) => {
+          response = response || { };
+
+          this.$log.info(response.message);
+          this.FeedbackService.showError('ERROR_CHANGE_DISCARD_FAILED', response.data);
+        });
     });
   }
 

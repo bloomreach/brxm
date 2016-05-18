@@ -20,23 +20,33 @@
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-change-management">
   <form class="qa-manage-changes subpage-form">
-    <md-checkbox class="qa-toggle-all" ng-click="changeMan.toggleAll()"
-        md-indeterminate="!changeMan.allAreChecked()"
-        ng-checked="changeMan.allAreChecked()">
-      {{ 'SUBPAGE_CHANGEMANAGEMENT_LABEL_TOGGLE_ALL' | translate }}
-    </md-checkbox>
+    <div>
+      <p>{{ 'SUBPAGE_CHANGEMANAGEMENT_INTRO' | translate }}</p>
+    </div>
+
+    <div>
+      <p class="md-body-2">
+        <a ng-click="changeMan.selectAll()" class="qa-select-all">{{ 'SUBPAGE_CHANGEMANAGEMENT_SELECT_ALL' | translate }}</a> -
+        <a ng-click="changeMan.selectNone()" class="qa-select-none">{{ 'SUBPAGE_CHANGEMANAGEMENT_SELECT_NONE' | translate }}</a>
+      </p>
+    </div>
+
     <div ng-repeat="user in changeMan.usersWithChanges">
       <md-checkbox class="qa-toggle-user" ng-checked="changeMan.isChecked(user)"
           ng-click="changeMan.toggle(user)">
-        {{ user }}
+        {{ changeMan.getLabel(user) }}
       </md-checkbox>
     </div>
 
-    <md-button class="qa-publish" ng-click="changeMan.publishSelectedChanges()">
+    <md-button class="md-primary md-raised qa-publish"
+               ng-disabled="changeMan.isNoneSelected()"
+               ng-click="changeMan.publishSelectedChanges()">
       {{ 'SUBPAGE_CHANGEMANAGEMENT_PUBLISH' | translate }}
     </md-button>
 
-    <md-button class="qa-discard" ng-click="changeMan.discardSelectedChanges()">
+    <md-button class="md-primary md-raised qa-discard"
+               ng-disabled="changeMan.isNoneSelected()"
+               ng-click="changeMan.discardSelectedChanges()">
       {{ 'SUBPAGE_CHANGEMANAGEMENT_DISCARD' | translate }}
     </md-button>
   </form>

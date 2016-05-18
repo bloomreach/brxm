@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-export function changeManagementDirective() {
+export function changesMenuDirective() {
   return {
     restrict: 'E',
-    templateUrl: 'channel/changeManagement/changeManagement.html',
-    controller: 'ChangeManagementCtrl as changeMan',
+    templateUrl: 'channel/changes/menu.html',
+    controller: 'ChangesMenuCtrl as changes',
     bindToController: {
-      onDone: '&',
+      onManageChanges: '&',
     },
   };
 }

@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('ChangesMenuCtrl', () => {
+describe('ChangesMenu', () => {
   let ChannelService;
   let DialogService;
+  let FeedbackService;
   let HippoIframeService;
   let ConfigService;
   let SiteMapService;
@@ -33,6 +34,7 @@ describe('ChangesMenuCtrl', () => {
       _$q_,
       _ChannelService_,
       _DialogService_,
+      _FeedbackService_,
       _HippoIframeService_,
       _ConfigService_,
       _SiteMapService_
@@ -41,6 +43,7 @@ describe('ChangesMenuCtrl', () => {
       $q = _$q_;
       ChannelService = _ChannelService_;
       DialogService = _DialogService_;
+      FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       ConfigService = _ConfigService_;
       SiteMapService = _SiteMapService_;
@@ -54,6 +57,7 @@ describe('ChangesMenuCtrl', () => {
     });
     spyOn(HippoIframeService, 'reload');
     spyOn(DialogService, 'confirm').and.callThrough();
+    spyOn(FeedbackService, 'showError');
     spyOn(SiteMapService, 'load');
 
     ConfigService.cmsUser = 'testUser';
@@ -103,6 +107,24 @@ describe('ChangesMenuCtrl', () => {
     expect(ChangesMenuCtrl.hasChangesToManage()).toBe(false);
   });
 
+  it('enables the manage changes option when there are changes by other users', () => {
+    let ChangesMenuCtrl = createChangesMenuCtrl();
+    expect(ChangesMenuCtrl.isManageChangesEnabled()).toBe(false);
+
+    ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'] });
+    expect(ChangesMenuCtrl.isManageChangesEnabled()).toBe(false);
+
+    ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser'] });
+    expect(ChangesMenuCtrl.isManageChangesEnabled()).toBe(true);
+
+    ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser', 'otherUser'] });
+    expect(ChangesMenuCtrl.isManageChangesEnabled()).toBe(true);
+
+    ConfigService.canManageChanges = false;
+    ChangesMenuCtrl = createChangesMenuCtrl();
+    expect(ChangesMenuCtrl.isManageChangesEnabled()).toBe(false);
+  });
+
   it('publishes changes', () => {
     const ChangesMenuCtrl = createChangesMenuCtrl();
     ChangesMenuCtrl.publish();
@@ -110,6 +132,21 @@ describe('ChangesMenuCtrl', () => {
 
     expect(ChannelService.publishChanges).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
+  });
+
+  it('flashes a toast when publication failed', () => {
+    const ChangesMenuCtrl = createChangesMenuCtrl();
+
+    const params = { };
+    ChannelService.publishChanges.and.returnValue($q.reject({ data: params }));
+    ChangesMenuCtrl.publish();
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', params);
+
+    ChannelService.publishChanges.and.returnValue($q.reject());
+    ChangesMenuCtrl.publish();
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', undefined);
   });
 
   it('discards changes', () => {
@@ -123,6 +160,22 @@ describe('ChangesMenuCtrl', () => {
     expect(DialogService.show).toHaveBeenCalled();
     expect(ChannelService.discardChanges).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
+  });
+
+  it('flashes a toast when discarding failed', () => {
+    const ChangesMenuCtrl = createChangesMenuCtrl();
+    spyOn(DialogService, 'show').and.returnValue($q.resolve());
+
+    const params = { };
+    ChannelService.discardChanges.and.returnValue($q.reject({ data: params }));
+    ChangesMenuCtrl.discard();
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', params);
+
+    ChannelService.discardChanges.and.returnValue($q.reject());
+    ChangesMenuCtrl.discard();
+    $rootScope.$digest();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', undefined);
   });
 
   it('does not discard changes if not confirmed', () => {
