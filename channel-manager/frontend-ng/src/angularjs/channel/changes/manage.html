@@ -38,16 +38,17 @@
       </md-checkbox>
     </div>
 
-    <md-button class="md-primary md-raised qa-publish"
-               ng-disabled="changeMan.isNoneSelected()"
-               ng-click="changeMan.publishSelectedChanges()">
-      {{ 'SUBPAGE_CHANGEMANAGEMENT_PUBLISH' | translate }}
-    </md-button>
-
-    <md-button class="md-primary md-raised qa-discard"
-               ng-disabled="changeMan.isNoneSelected()"
-               ng-click="changeMan.discardSelectedChanges()">
-      {{ 'SUBPAGE_CHANGEMANAGEMENT_DISCARD' | translate }}
-    </md-button>
+    <div layout="row" layout-align="end center">
+      <md-button class="qa-discard"
+                 ng-disabled="changeMan.isNoneSelected()"
+                 ng-click="changeMan.discardSelectedChanges()">
+        {{ 'SUBPAGE_CHANGEMANAGEMENT_DISCARD' | translate }}
+      </md-button>
+      <md-button class="md-primary md-raised qa-publish"
+                 ng-disabled="changeMan.isNoneSelected()"
+                 ng-click="changeMan.publishSelectedChanges()">
+        {{ 'SUBPAGE_CHANGEMANAGEMENT_PUBLISH' | translate }}
+      </md-button>
+    </div>
   </form>
 </md-content>
