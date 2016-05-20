@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export function channelEditDirective() {
+export function channelSettingsDirective() {
   'ngInject';
 
   return {
@@ -24,8 +24,8 @@ export function channelEditDirective() {
       onSuccess: '&',
       onError: '&',
     },
-    templateUrl: 'channel/actions/edit/edit.html',
-    controller: 'ChannelEditCtrl',
-    controllerAs: 'channelEdit',
+    templateUrl: 'channel/actions/settings/settings.html',
+    controller: 'ChannelSettingsCtrl',
+    controllerAs: 'channelSettings',
   };
 }

@@ -23,7 +23,7 @@ const WIDGET_TYPES = {
 };
 
 export class ChannelPropertyCtrl {
-  constructor($log, $scope, CmsService) {
+  constructor($log, $scope, CmsService, ConfigService) {
     'ngInject';
 
     this.$log = $log;
@@ -33,6 +33,7 @@ export class ChannelPropertyCtrl {
     this.label = this.data.i18nResources[this.field] || this.field;
     this.type = this._getType();
     this.qaClass = this._getQaClass();
+    this.readOnly = this.data.lockedBy && this.data.lockedBy !== ConfigService.cmsUser;
   }
 
   getDropDownListValues() {
