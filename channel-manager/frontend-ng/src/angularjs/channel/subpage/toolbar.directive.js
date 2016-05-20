@@ -23,6 +23,11 @@ export function subpageToolbarDirective() {
       onBack: '&',
       title: '@',
     },
+    bindToController: {
+      mode: '@',
+    },
     templateUrl: 'channel/subpage/toolbar.html',
+    controller: 'SubpageToolbarCtrl',
+    controllerAs: 'toolbar',
   };
 }

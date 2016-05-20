@@ -22,6 +22,7 @@ describe('SubpageToolbar', () => {
   let $rootScope;
   let $compile;
   let $translate;
+  let mode;
 
   beforeEach(() => {
     module('hippo-cm');
@@ -39,7 +40,8 @@ describe('SubpageToolbar', () => {
     $scope = $rootScope.$new();
     $scope.onBack = jasmine.createSpy('onBack');
     $scope.title = 'testTitle';
-    $element = angular.element('<subpage-toolbar title="{{title}}" on-back="onBack()"> </subpage-toolbar>');
+    $scope.mode = mode;
+    $element = angular.element('<subpage-toolbar title="{{title}}" on-back="onBack()" mode="{{mode}}"> </subpage-toolbar>');
     $compile($element)($scope);
     $scope.$digest();
 
@@ -57,5 +59,17 @@ describe('SubpageToolbar', () => {
 
     $element.find('.qa-button-back').click();
     expect($scope.onBack).toHaveBeenCalled();
+  });
+
+  it('should show the back icon if the mode is not set to cancel', () => {
+    mode = undefined;
+    const SubpageToolbarCtrl = compileDirectiveAndGetController();
+    expect(SubpageToolbarCtrl.icon).toBe('keyboard_backspace');
+  });
+
+  it('should show the clear icon if the mode is set to cancel', () => {
+    mode = 'cancel';
+    const SubpageToolbarCtrl = compileDirectiveAndGetController();
+    expect(SubpageToolbarCtrl.icon).toBe('clear');
   });
 });
