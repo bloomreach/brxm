@@ -19,7 +19,11 @@
 </subpage-toolbar>
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-change-management">
-  <form class="qa-manage-changes subpage-form">
+  <form name="form"
+        flex="initial"
+        class="qa-manage-changes subpage-form"
+        ng-submit="form.$valid && changeMan.publishSelectedChanges()"
+        novalidate>
     <div>
       <p>{{ 'SUBPAGE_CHANGEMANAGEMENT_INTRO' | translate }}</p>
     </div>
@@ -39,14 +43,13 @@
     </div>
 
     <div layout="row" layout-align="end center">
-      <md-button class="qa-discard"
-                 ng-disabled="changeMan.isNoneSelected()"
+      <md-button type="button"
+                 class="qa-discard"
                  ng-click="changeMan.discardSelectedChanges()">
         {{ 'SUBPAGE_CHANGEMANAGEMENT_DISCARD' | translate }}
       </md-button>
-      <md-button class="md-primary md-raised qa-publish"
-                 ng-disabled="changeMan.isNoneSelected()"
-                 ng-click="changeMan.publishSelectedChanges()">
+      <md-button type="submit"
+                 class="md-primary md-raised qa-publish">
         {{ 'SUBPAGE_CHANGEMANAGEMENT_PUBLISH' | translate }}
       </md-button>
     </div>

@@ -19,8 +19,11 @@
 </subpage-toolbar>
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent">
-  <form name="form" flex="initial" class="qa-subpage subpage-form">
-
+  <form name="form"
+        flex="initial"
+        class="qa-subpage subpage-form"
+        ng-submit="form.$valid && channelEdit.save()"
+        novalidate>
     <div ng-repeat="fieldGroup in channelEdit.getFieldGroups()">
       <h3 class="md-title qa-fieldgroup">{{ channelEdit.getLabel(fieldGroup.titleKey) }}</h3>
 
@@ -38,12 +41,11 @@
          channel-properties-data="channelEdit.channelInfoDescription">
     </div>
 
-    <md-input-container>
-      <md-button type="submit" class="qa-action md-raised md-primary"
-                 ng-disabled="form.$pristine || form.$invalid"
-                 ng-click="channelEdit.save()">
+    <div layout="row" layout-align="end center">
+      <md-button type="submit"
+                 class="qa-action md-raised md-primary">
         {{ 'SUBPAGE_BUTTON_SAVE' | translate }}
       </md-button>
-    </md-input-container>
+    </div>
   </form>
 </md-content>
