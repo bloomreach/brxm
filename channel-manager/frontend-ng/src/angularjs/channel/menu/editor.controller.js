@@ -15,13 +15,76 @@
  */
 
 export class MenuEditorCtrl {
-  constructor(SiteMenuService) {
+  constructor($scope, SiteMenuService, FormStateService) {
     'ngInject';
 
-    SiteMenuService.loadMenu(this.menuUuid)
+    this.SiteMenuService = SiteMenuService;
+    this.FormStateService = FormStateService;
+
+    SiteMenuService.getMenu(this.menuUuid)
       .then((menu) => {
-        this.menu = menu;
+        this.items = menu.items;
+        this.selectedItem = this.items.length > 0 ? this.items[0] : undefined;
+
+        $scope.$watch(
+          () => menu.items,
+          () => {
+            this.items = menu.items;
+            $scope.$broadcast('menu-items-changed');
+
+            // merge pending changes into newly loaded tree
+            if (this.items.length > 0 && this.selectedItem) {
+              SiteMenuService.getMenuItem(this.menuUuid, this.selectedItem.id).then((item) => {
+                if (this.selectedItem !== item) {
+                  delete this.selectedItem.items;
+                  this.selectedItem = angular.extend(item, this.selectedItem);
+                }
+              });
+            }
+          },
+          false);
       })
       .catch(() => this.onError({ key: 'ERROR_MENU_LOAD_FAILED' }));
+
+    this.treeOptions = {
+      // created an issue for the Tree component, to add a disabled state
+      // link: https://github.com/JimLiu/angular-ui-tree/issues/63
+      // for now, simply don't accept any moves when the form is invalid
+      accept: () => FormStateService.isValid(),
+      dropped: (event) => {
+        const source = event.source;
+        const sourceNodeScope = source.nodeScope;
+        const sourceId = sourceNodeScope.$modelValue.id;
+        const dest = event.dest;
+        const destNodesScope = dest.nodesScope;
+        const destId = destNodesScope.$nodeScope ? destNodesScope.$nodeScope.$modelValue.id : this.menuUuid;
+
+        if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
+          SiteMenuService.moveMenuItem(sourceId, destId, dest.index);
+        }
+
+        if (this.selectedItem.id !== sourceId) {
+          this.selectItem(sourceId);
+        }
+      },
+    };
+  }
+
+  selectItem(itemId) {
+    if (this.FormStateService.isDirty()) {
+      if (this.FormStateService.isValid()) {
+        const saved = () => this.editItem(itemId);
+        const failed = (error) => {
+          this.onError({ key: 'ERROR_MENU_SAVE_FAILED', params: [error] });
+          this.FormStateService.setValid(false);
+        };
+        this.SiteMenuService.saveMenuItem(this.selectedItem).then(saved, failed);
+      }
+    } else {
+      this.editItem(itemId);
+    }
+  }
+
+  editItem() {
   }
 }

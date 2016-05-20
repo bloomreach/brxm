@@ -37,9 +37,9 @@ describe('MenuEditor', () => {
       SiteMenuService = _SiteMenuService_;
     });
 
-    menu = { }; // TODO: populate for testing
+    menu = { items: [] }; // TODO: populate for testing
 
-    spyOn(SiteMenuService, 'loadMenu').and.returnValue($q.when(menu));
+    spyOn(SiteMenuService, 'getMenu').and.returnValue($q.when(menu));
   });
 
   function compileDirectiveAndGetController() {
@@ -58,11 +58,11 @@ describe('MenuEditor', () => {
     const MenuEditorCtrl = compileDirectiveAndGetController();
 
     expect(MenuEditorCtrl.menuUuid).toBe('testUuid');
-    expect(MenuEditorCtrl.menu).toBe(menu);
+    expect(MenuEditorCtrl.items).toBe(menu.items);
   });
 
   it('returns to the main page when it fails to load the menu', () => {
-    SiteMenuService.loadMenu.and.returnValue($q.reject());
+    SiteMenuService.getMenu.and.returnValue($q.reject());
     compileDirectiveAndGetController();
 
     expect($scope.onError).toHaveBeenCalledWith('ERROR_MENU_LOAD_FAILED');
