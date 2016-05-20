@@ -15,14 +15,72 @@
  */
 
 export class SiteMenuService {
-  constructor(HstService) {
+  constructor($q, HstService) {
     'ngInject';
 
+    this.$q = $q;
     this.HstService = HstService;
+
+    this.menu = {
+      id: null,
+      items: [],
+    };
+    this.loadMenuPromise = null;
   }
 
-  loadMenu(menuUuid) {
-    return this.HstService.doGet(menuUuid)
-      .then((response) => response.data);
+  getMenu(menuId) {
+    return this._loadMenu(menuId);
+  }
+
+  getMenuItem(menuId, menuItemId) {
+    return this._loadMenu(menuId).then((menu) => this._findMenuItem(menu.items, menuItemId));
+  }
+
+  _loadMenu(menuUuid) {
+    if (this.loadMenuPromise === null) {
+      this.loadMenuPromise = this.HstService.doGet(menuUuid)
+        .then((response) => {
+          if (response.data.items && !angular.equals(this.menu.items, response.data.items)) {
+            // if response items are different, copy response items into menu
+            angular.copy(response.data, this.menu);
+            // collapse all nodes with childNodes
+            this.addCollapsedProperties(this.menu.items, true);
+          }
+          this.menu.id = response.data.id || null;
+          return this.menu;
+        });
+    }
+    return this.loadMenuPromise;
+  }
+
+  addCollapsedProperties(items, collapsed) {
+    if (angular.isArray(items)) {
+      items.forEach((item) => {
+        if (item.items && item.items.length > 0) {
+          item.collapsed = collapsed;
+          this.addCollapsedProperties(item.items, collapsed);
+        }
+      });
+    }
+  }
+
+  _findMenuItem(items, id) {
+    let found = null;
+
+    if (angular.isArray(items)) {
+      items.some((item) => {
+        found = item.id === id ? item : this._findMenuItem(item.items, id);
+        return found !== null;
+      });
+    }
+
+    if (found !== null && found.linkType) {
+      if (found.linkType === 'SITEMAPITEM') {
+        found.sitemapLink = found.link;
+      } else if (found.linkType === 'EXTERNAL') {
+        found.externalLink = found.link;
+      }
+    }
+    return found;
   }
 }
