@@ -39,6 +39,10 @@ export class SiteMenuService {
     return this._loadMenu(menuId).then((menu) => this._findMenuItem(menu.items, menuItemId));
   }
 
+  moveMenuItem(menuId, menuItemId, parentId, position) {
+    return this.HstService.doPost({}, menuId, 'move', menuItemId, parentId, String(position));
+  }
+
   _loadMenu(menuId) {
     if (this.loadMenuPromise === null) {
       this.loadMenuPromise = this.HstService.doGet(menuId)

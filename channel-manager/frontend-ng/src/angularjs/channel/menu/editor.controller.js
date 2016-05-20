@@ -60,7 +60,8 @@ export class MenuEditorCtrl {
         const destId = destNodesScope.$nodeScope ? destNodesScope.$nodeScope.$modelValue.id : this.menuUuid;
 
         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
-          SiteMenuService.moveMenuItem(sourceId, destId, dest.index);
+          SiteMenuService.moveMenuItem(this.menuUuid, sourceId, destId, dest.index)
+            .catch(() => this.onError({ key: 'ERROR_MENU_MOVE_FAILED' }));
         }
 
         if (this.selectedItem.id !== sourceId) {
@@ -85,6 +86,12 @@ export class MenuEditorCtrl {
     }
   }
 
-  editItem() {
+  editItem(itemId) {
+    if (this.selectedItem && this.selectedItem.id !== itemId) {
+      this.SiteMenuService.getMenuItem(this.menuUuid, itemId)
+        .then((item) => {
+          this.selectedItem = item;
+        });
+    }
   }
 }
