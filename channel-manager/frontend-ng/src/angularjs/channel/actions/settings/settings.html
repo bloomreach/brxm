@@ -14,37 +14,37 @@
   limitations under the License.
   -->
 
-<subpage-toolbar title="{{ channelEdit.subpageTitle }}"
-                 on-back="channelEdit.onDone()">
+<subpage-toolbar title="{{ channelSettings.subpageTitle }}"
+                 on-back="channelSettings.onDone()">
 </subpage-toolbar>
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent">
   <form name="form" flex="initial" class="qa-subpage subpage-form">
-    <div ng-if="channelEdit.readOnlyAlert">
-      <p class="md-body-2">{{ channelEdit.readOnlyAlert }}</p>
+    <div ng-if="channelSettings.readOnlyAlert">
+      <p class="md-body-2">{{ channelSettings.readOnlyAlert }}</p>
     </div>
 
-    <div ng-repeat="fieldGroup in channelEdit.getFieldGroups()">
-      <h3 class="md-title qa-fieldgroup">{{ channelEdit.getLabel(fieldGroup.titleKey) }}</h3>
+    <div ng-repeat="fieldGroup in channelSettings.getFieldGroups()">
+      <h3 class="md-title qa-fieldgroup">{{ channelSettings.getLabel(fieldGroup.titleKey) }}</h3>
 
       <div ng-repeat="field in fieldGroup.value"
            channel-property="{{field}}"
-           channel-property-value="channelEdit.values[field]"
-           channel-properties-data="channelEdit.channelInfoDescription">
+           channel-property-value="channelSettings.values[field]"
+           channel-properties-data="channelSettings.channelInfoDescription">
       </div>
     </div>
 
-    <div ng-if="!channelEdit.getFieldGroups().length"
-         ng-repeat="field in channelEdit.getUngroupedFields()"
+    <div ng-if="!channelSettings.getFieldGroups().length"
+         ng-repeat="field in channelSettings.getUngroupedFields()"
          channel-property="{{field}}"
-         channel-property-value="channelEdit.values[field]"
-         channel-properties-data="channelEdit.channelInfoDescription">
+         channel-property-value="channelSettings.values[field]"
+         channel-properties-data="channelSettings.channelInfoDescription">
     </div>
 
     <md-input-container>
       <md-button type="submit" class="qa-action md-raised md-primary"
                  ng-disabled="form.$pristine || form.$invalid"
-                 ng-click="channelEdit.save()">
+                 ng-click="channelSettings.save()">
         {{ 'SUBPAGE_BUTTON_SAVE' | translate }}
       </md-button>
     </md-input-container>

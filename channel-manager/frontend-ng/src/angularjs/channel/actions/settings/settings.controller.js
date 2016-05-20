@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ChannelEditCtrl {
+export class ChannelSettingsCtrl {
   constructor($element, $translate, FeedbackService, ChannelService, HippoIframeService, ConfigService) {
     'ngInject';
 
@@ -24,7 +24,7 @@ export class ChannelEditCtrl {
 
     this.feedbackParent = $element.find('.feedback-parent');
 
-    this.subpageTitle = $translate.instant('SUBPAGE_CHANNEL_EDIT_TITLE', {
+    this.subpageTitle = $translate.instant('SUBPAGE_CHANNEL_SETTINGS_TITLE', {
       channelName: ChannelService.getName(),
     });
 
@@ -33,7 +33,7 @@ export class ChannelEditCtrl {
       .then((channelInfoDescription) => {
         this.channelInfoDescription = channelInfoDescription;
         if (channelInfoDescription.lockedBy && channelInfoDescription.lockedBy !== ConfigService.cmsUser) {
-          this.readOnlyAlert = $translate.instant('SUBPAGE_CHANNEL_EDIT_READONLY_ALERT', {
+          this.readOnlyAlert = $translate.instant('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', {
             lockedBy: channelInfoDescription.lockedBy,
           });
         }

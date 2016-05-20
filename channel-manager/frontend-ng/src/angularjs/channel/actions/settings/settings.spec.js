@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('ChannelActionEdit', () => {
+describe('ChannelSettings', () => {
   'use strict';
 
   let $scope;
@@ -106,20 +106,20 @@ describe('ChannelActionEdit', () => {
     $scope.onSuccess = jasmine.createSpy('onSuccess');
 
     $element = angular.element(`
-      <channel-edit on-done="onDone()" on-success="onSuccess(key, params)" on-error="onError(key, params)">
-      </channel-edit>
+      <channel-settings on-done="onDone()" on-success="onSuccess(key, params)" on-error="onError(key, params)">
+      </channel-settings>
     `);
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('channel-edit');
+    return $element.controller('channel-settings');
   }
 
   it('initializes correctly when fetching channel setting from backend is successful', () => {
     compileDirectiveAndGetController();
 
     expect(ChannelService.getName).toHaveBeenCalled();
-    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_TITLE', { channelName: 'test-name' });
+    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_TITLE', { channelName: 'test-name' });
 
     expect($element.find('.qa-action').is(':disabled')).toBe(true);
     expect($element.find('.qa-fieldgroup').text()).toBe('Field Group 1');
@@ -181,30 +181,30 @@ describe('ChannelActionEdit', () => {
   });
 
   it('applies a fall-back strategy when determining a field label', () => {
-    const ChannelEditCtrl = compileDirectiveAndGetController();
-    expect(ChannelEditCtrl.getLabel('textField')).toBe('Text Field');
+    const ChannelSettingsCtrl = compileDirectiveAndGetController();
+    expect(ChannelSettingsCtrl.getLabel('textField')).toBe('Text Field');
 
     delete channelInfoDescription.i18nResources.textField;
-    expect(ChannelEditCtrl.getLabel('textField')).toBe('textField');
+    expect(ChannelSettingsCtrl.getLabel('textField')).toBe('textField');
   });
 
   it('displays an alert message when the current channel is locked', () => {
     ConfigService.cmsUser = 'admin';
     channelInfoDescription.lockedBy = 'tester';
-    let ChannelEditCtrl = compileDirectiveAndGetController();
-    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_READONLY_ALERT', { lockedBy: 'tester' });
-    expect(ChannelEditCtrl.readOnlyAlert).toBeTruthy();
+    let ChannelSettingsCtrl = compileDirectiveAndGetController();
+    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', { lockedBy: 'tester' });
+    expect(ChannelSettingsCtrl.readOnlyAlert).toBeTruthy();
 
     $translate.instant.calls.reset();
     channelInfoDescription.lockedBy = 'admin';
-    ChannelEditCtrl = compileDirectiveAndGetController();
-    expect($translate.instant).not.toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_READONLY_ALERT', { lockedBy: 'admin' });
-    expect(ChannelEditCtrl.readOnlyAlert).toBeFalsy();
+    ChannelSettingsCtrl = compileDirectiveAndGetController();
+    expect($translate.instant).not.toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', { lockedBy: 'admin' });
+    expect(ChannelSettingsCtrl.readOnlyAlert).toBeFalsy();
 
     $translate.instant.calls.reset();
     delete channelInfoDescription.lockedBy;
-    ChannelEditCtrl = compileDirectiveAndGetController();
-    expect($translate.instant).not.toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_READONLY_ALERT', { lockedBy: 'admin' });
-    expect(ChannelEditCtrl.readOnlyAlert).toBeFalsy();
+    ChannelSettingsCtrl = compileDirectiveAndGetController();
+    expect($translate.instant).not.toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', { lockedBy: 'admin' });
+    expect(ChannelSettingsCtrl.readOnlyAlert).toBeFalsy();
   });
 });
