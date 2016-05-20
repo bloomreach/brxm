@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-export class ToolbarCtrl {
-  constructor($scope) {
+export class SubpageToolbarCtrl {
+  constructor() {
     'ngInject';
 
-    this.processMode($scope.mode);
-  }
-
-  processMode(mode) {
-    if (mode === 'cancel') {
-      this.icon = 'clear';
-    } else {
-      this.icon = 'keyboard_backspace';
-    }
+    this.icon = (this.mode === 'cancel') ? 'clear' : 'keyboard_backspace';
   }
 }
