@@ -23,11 +23,12 @@ const WIDGET_TYPES = {
 };
 
 export class ChannelPropertyCtrl {
-  constructor($log, $scope, CmsService, ConfigService, PathService) {
+  constructor($log, $scope, ChannelService, CmsService, ConfigService, PathService) {
     'ngInject';
 
     this.$log = $log;
     this.$scope = $scope;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.PathService = PathService;
 
@@ -58,7 +59,7 @@ export class ChannelPropertyCtrl {
       initialPath: annotation.pickerInitialPath,
       isRelativePath: annotation.isRelative,
       remembersLastVisited: annotation.pickerRemembersLastVisited,
-      rootPath: annotation.pickerRootPath,
+      rootPath: annotation.pickerRootPath || this.ChannelService.getContentRootPath(),
       selectableNodeTypes: annotation.pickerSelectableNodeTypes,
     });
   }
