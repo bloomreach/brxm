@@ -76,8 +76,10 @@ button .disabled-marker {
 
 md-input-container.input-container-picker {
   .md-input {
-    cursor: pointer;
     order: 0;
+    &:not([disabled]) {
+      cursor: pointer;
+    }
   }
   .md-icon-button {
     margin-left: 0;

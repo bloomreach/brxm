@@ -39,12 +39,18 @@
       <input type="text"
              readonly="readonly"
              flex
+             ng-disabled="channelProperty.readOnly"
              ng-model="channelProperty.value"
              ng-click="channelProperty.showPicker()">
-      <md-button class="md-icon-button" ng-if="channelProperty.value" ng-click="channelProperty.value = ''">
+      <md-button class="md-icon-button"
+                 ng-if="channelProperty.value"
+                 ng-click="channelProperty.value = ''"
+                 ng-disabled="channelProperty.readOnly">
         <md-icon class="material-icons">clear</md-icon>
       </md-button>
-      <md-button class="md-icon-button" ng-click="channelProperty.showPicker()">
+      <md-button class="md-icon-button"
+                 ng-click="channelProperty.showPicker()"
+                 ng-disabled="channelProperty.readOnly">
         <md-icon class="material-icons">search</md-icon>
       </md-button>
     </div>
