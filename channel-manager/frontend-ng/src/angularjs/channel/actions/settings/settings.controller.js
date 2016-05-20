@@ -42,7 +42,7 @@ export class ChannelSettingsCtrl {
         this.onError({ key: 'ERROR_CHANNEL_INFO_RETRIEVAL_FAILED' });
       });
 
-    this.values = ChannelService.getProperties();
+    this.values = angular.copy(ChannelService.getProperties());
   }
 
   save() {
