@@ -45,7 +45,7 @@ export class ChangeManagementCtrl {
 
   selectAll() {
     this.usersWithChanges.forEach((user) => {
-      if (!this._isChecked(user)) {
+      if (!this.isChecked(user)) {
         this._checkUser(user);
       }
     });
@@ -53,7 +53,7 @@ export class ChangeManagementCtrl {
 
   selectNone() {
     this.usersWithChanges.forEach((user) => {
-      if (this._isChecked(user)) {
+      if (this.isChecked(user)) {
         this._uncheckUser(user);
       }
     });
@@ -73,6 +73,10 @@ export class ChangeManagementCtrl {
     } else {
       this._checkUser(user);
     }
+  }
+
+  isChecked(user) {
+    return this.selectedUsers.includes(user);
   }
 
   isNoneSelected() {
@@ -120,10 +124,6 @@ export class ChangeManagementCtrl {
     this.CmsService.publish('channel-changed-in-angular');
     this.HippoIframeService.reload();
     this.onDone();
-  }
-
-  _isChecked(user) {
-    return this.selectedUsers.includes(user);
   }
 
   _checkUser(user) {
