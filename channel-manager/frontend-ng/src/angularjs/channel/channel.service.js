@@ -206,15 +206,13 @@ export class ChannelService {
   publishChanges(users = [this.ConfigService.cmsUser]) {
     const url = 'userswithchanges/publish';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this._reload())
-      .catch(() => this.FeedbackService.showError('ERROR_PUBLISH_CHANGES'));
+      .then(() => this._reload());
   }
 
   discardChanges(users = [this.ConfigService.cmsUser]) {
     const url = 'userswithchanges/discard';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this._reload())
-      .catch(() => this.FeedbackService.showError('ERROR_DISCARD_CHANGES'));
+      .then(() => this._reload());
   }
 
   getSiteMapId() {

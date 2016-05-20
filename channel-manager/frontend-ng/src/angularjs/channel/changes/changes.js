@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-export function changeManagementDirective() {
-  return {
-    restrict: 'E',
-    templateUrl: 'channel/changeManagement/changeManagement.html',
-    controller: 'ChangeManagementCtrl as changeMan',
-    bindToController: {
-      onDone: '&',
-    },
-  };
-}
+import { changesMenuDirective } from './changesMenu.directive';
+import { ChangesMenuCtrl } from './changesMenu.controller';
+import { changeManagementDirective } from './manageChanges.directive';
+import { ChangeManagementCtrl } from './manageChanges.controller';
+
+export const channelChangesModule = angular
+  .module('hippo-cm.channel.changes', [])
+  .controller('ChangesMenuCtrl', ChangesMenuCtrl)
+  .directive('changesMenu', changesMenuDirective)
+  .controller('ChangeManagementCtrl', ChangeManagementCtrl)
+  .directive('changeManagement', changeManagementDirective);
