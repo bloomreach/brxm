@@ -16,9 +16,8 @@
 
 <md-toolbar class="qa-toolbar">
   <div class="md-toolbar-tools">
-    <md-button class="qa-button-back" ng-click="onBack()">
-      <md-icon class="material-icons">keyboard_backspace</md-icon>
-      {{ 'TOOLBAR_BUTTON_BACK' | translate }}
+    <md-button class="qa-button-back md-icon-button" ng-click="onBack()">
+      <md-icon class="material-icons">{{ toolbar.icon }}</md-icon>
     </md-button>
     <span flex></span>
     <h2>{{ title }}</h2>

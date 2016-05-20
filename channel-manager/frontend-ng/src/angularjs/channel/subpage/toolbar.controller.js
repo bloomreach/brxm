@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-import { ToolbarCtrl } from './toolbar.controller';
-import { subpageToolbarDirective } from './toolbar.directive';
+export class ToolbarCtrl {
+  constructor($scope) {
+    'ngInject';
 
-export const channelSubpageModule = angular
-  .module('hippo-cm.channel.subpage', [])
-  .controller('ToolbarCtrl', ToolbarCtrl)
-  .directive('subpageToolbar', subpageToolbarDirective);
+    this.processMode($scope.mode);
+  }
+
+  processMode(mode) {
+    if (mode === 'cancel') {
+      this.icon = 'clear';
+    } else {
+      this.icon = 'keyboard_backspace';
+    }
+  }
+}

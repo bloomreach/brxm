@@ -20,9 +20,12 @@ export function subpageToolbarDirective() {
   return {
     restrict: 'E',
     scope: {
+      mode: '@',
       onBack: '&',
       title: '@',
     },
     templateUrl: 'channel/subpage/toolbar.html',
+    controller: 'ToolbarCtrl',
+    controllerAs: 'toolbar',
   };
 }
