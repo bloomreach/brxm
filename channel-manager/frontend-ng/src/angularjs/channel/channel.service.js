@@ -50,13 +50,14 @@ export class ChannelService {
   }
 
   _onChannelChanged() {
-    this.$rootScope.$apply(() => this._reload());
+    this.$rootScope.$apply(() => this.reload());
   }
 
-  _reload(channelId = this.channel.id) {
+  reload(channelId = this.channel.id) {
     return this.HstService.getChannel(channelId)
       .then((channel) => {
         this._setChannel(channel);
+        return channel;
       })
       .catch((error) => {
         this.$log.error(`Failed to reload channel '${channelId}'.`, error);
@@ -184,7 +185,7 @@ export class ChannelService {
   createPreviewConfiguration() {
     return this.HstService.doPost(null, this.getMountId(), 'edit')
       .then(() => {
-        this._reload(`${this.channel.id}-preview`);
+        this.reload(`${this.channel.id}-preview`);
         this.channel.previewHstConfigExists = true;
       });
   }
@@ -206,13 +207,13 @@ export class ChannelService {
   publishChanges(users = [this.ConfigService.cmsUser]) {
     const url = 'userswithchanges/publish';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this._reload());
+      .then(() => this.reload());
   }
 
   discardChanges(users = [this.ConfigService.cmsUser]) {
     const url = 'userswithchanges/discard';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this._reload());
+      .then(() => this.reload());
   }
 
   getSiteMapId() {
