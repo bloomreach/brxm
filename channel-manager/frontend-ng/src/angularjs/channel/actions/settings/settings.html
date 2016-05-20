@@ -15,11 +15,16 @@
   -->
 
 <subpage-toolbar title="{{ channelSettings.subpageTitle }}"
-                 on-back="channelSettings.onDone()">
+                 on-back="channelSettings.onDone()"
+                 mode="cancel">
 </subpage-toolbar>
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent">
-  <form name="form" flex="initial" class="qa-subpage subpage-form">
+  <form name="form"
+        flex="initial"
+        class="qa-subpage subpage-form"
+        ng-submit="form.$valid && channelSettings.save()"
+        novalidate>
     <div ng-if="channelSettings.readOnlyAlert">
       <p class="md-body-2">{{ channelSettings.readOnlyAlert }}</p>
     </div>
@@ -41,12 +46,16 @@
          channel-properties-data="channelSettings.channelInfoDescription">
     </div>
 
-    <md-input-container>
-      <md-button type="submit" class="qa-action md-raised md-primary"
-                 ng-disabled="form.$pristine || form.$invalid"
-                 ng-click="channelSettings.save()">
+    <div layout="row" layout-align="end center">
+      <md-button type="button"
+                 class="qa-discard"
+                 ng-click="channelSettings.onDone()">
+        {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
+      </md-button>
+      <md-button type="submit"
+                 class="qa-action md-raised md-primary">
         {{ 'SUBPAGE_BUTTON_SAVE' | translate }}
       </md-button>
-    </md-input-container>
+    </div>
   </form>
 </md-content>

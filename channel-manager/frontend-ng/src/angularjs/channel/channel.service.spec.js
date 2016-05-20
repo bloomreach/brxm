@@ -303,22 +303,16 @@ describe('ChannelService', () => {
     expect(channelMock.changedBySet).toEqual(['anotherUser']);
   });
 
-  it('should display error message on failure', () => {
-    HstService.doPost.and.returnValue($q.reject());
-
-    channelMock.changedBySet = ['testUser'];
+  it('should use the specified users when publishing or discarding changes', () => {
+    HstService.doPost.and.returnValue($q.when());
     ChannelService._load(channelMock);
-    ChannelService.discardChanges();
-    $rootScope.$apply();
+    $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalled();
+    ChannelService.publishChanges(['tester']);
+    expect(HstService.doPost).toHaveBeenCalledWith({ data: ['tester'] }, 'mountId', 'userswithchanges/publish');
 
-    channelMock.changedBySet = ['testUser'];
-    ChannelService._load(channelMock);
-    ChannelService.publishChanges();
-    $rootScope.$apply();
-
-    expect(FeedbackService.showError).toHaveBeenCalled();
+    ChannelService.discardChanges(['tester']);
+    expect(HstService.doPost).toHaveBeenCalledWith({ data: ['tester'] }, 'mountId', 'userswithchanges/discard');
   });
 
   it('records own changes', () => {

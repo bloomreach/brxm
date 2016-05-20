@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-export function changeManagementDirective() {
-  return {
-    restrict: 'E',
-    templateUrl: 'channel/changeManagement/changeManagement.html',
-    controller: 'ChangeManagementCtrl as changeMan',
-    bindToController: {
-      onDone: '&',
-    },
-  };
+export class SubpageToolbarCtrl {
+  constructor() {
+    'ngInject';
+
+    this.icon = (this.mode === 'cancel') ? 'clear' : 'keyboard_backspace';
+  }
 }

@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import { SubpageToolbarCtrl } from './toolbar.controller';
 import { subpageToolbarDirective } from './toolbar.directive';
 
 export const channelSubpageModule = angular
   .module('hippo-cm.channel.subpage', [])
+  .controller('SubpageToolbarCtrl', SubpageToolbarCtrl)
   .directive('subpageToolbar', subpageToolbarDirective);
