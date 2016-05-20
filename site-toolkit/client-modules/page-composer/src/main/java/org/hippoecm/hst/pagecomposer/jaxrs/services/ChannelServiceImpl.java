@@ -19,6 +19,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -79,7 +80,7 @@ public class ChannelServiceImpl implements ChannelService {
             final Map<String, HstPropertyDefinitionInfo> visiblePropertyDefinitions = createVisiblePropDefinitionInfos(propertyDefinitions);
 
             final List<FieldGroupInfo> validFieldGroups = getValidFieldGroups(channelInfoClass, annotatedFields, hiddenFields);
-            final Map<String, String> localizedResources = getLocalizedResources(channelId, locale, hiddenFields);
+            final Map<String, String> localizedResources = getLocalizedResources(channelId, locale);
 
             final String lockedBy = getChannelLockedBy(channelId);
             return new ChannelInfoDescription(validFieldGroups, visiblePropertyDefinitions, localizedResources, lockedBy);
@@ -107,19 +108,21 @@ public class ChannelServiceImpl implements ChannelService {
 
         final Set<String> allFields = new HashSet<>();
         return fieldGroups.stream().map(fgi -> {
-            final Set<String> visibleFieldsInGroup = new HashSet<>();
-            for (String fieldInGroup : fgi.getValue()) {
-                if (!allFields.add(fieldInGroup)) {
-                    log.warn("Channel property '{}' in the group '{}' has existed in another group. Please check your ChannelInfo class", fieldInGroup, fgi.getTitleKey());
+            final Set<String> visibleFieldsInGroup = new LinkedHashSet<>();
+            for (String fieldName : fgi.getValue()) {
+                if (!allFields.add(fieldName)) {
+                    log.warn("Channel property '{}' in group '{}' is encountered multiple times. " +
+                            "Please check your ChannelInfo class", fieldName, fgi.getTitleKey());
                     continue;
                 }
-                if (!annotatedFields.contains(fieldInGroup)) {
-                    log.warn("Channel property '{}' does not refer to any annotation. Please check your ChannelInfo class", fieldInGroup);
+                if (!annotatedFields.contains(fieldName)) {
+                    log.warn("Channel property '{}' in group '{}' is not annotated correctly. " +
+                            "Please check your ChannelInfo class", fieldName, fgi.getTitleKey());
                     continue;
                 }
 
-                if (!hiddenFields.contains(fieldInGroup)) {
-                    visibleFieldsInGroup.add(fieldInGroup);
+                if (!hiddenFields.contains(fieldName)) {
+                    visibleFieldsInGroup.add(fieldName);
                 }
             }
             return new FieldGroupInfo(visibleFieldsInGroup.toArray(new String[visibleFieldsInGroup.size()]), fgi.getTitleKey());
@@ -159,17 +162,14 @@ public class ChannelServiceImpl implements ChannelService {
         return null;
     }
 
-    private Map<String, String> getLocalizedResources(final String channelId, final String language, final Set<String> hiddenFields) {
+    private Map<String, String> getLocalizedResources(final String channelId, final String language) {
         final ResourceBundle resourceBundle = getAllVirtualHosts().getResourceBundle(getChannel(channelId), new Locale(language));
         if (resourceBundle == null) {
             return Collections.EMPTY_MAP;
         }
 
-        final Map<String, String> resources = resourceBundle.keySet().stream()
+        return resourceBundle.keySet().stream()
                 .collect(Collectors.toMap(Function.identity(), resourceBundle::getString));
-
-        resources.keySet().removeIf(hiddenFields::contains);
-        return resources;
     }
 
     @Override
