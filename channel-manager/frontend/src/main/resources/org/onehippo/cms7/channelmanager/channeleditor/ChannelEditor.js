@@ -31,7 +31,8 @@
       Ext.apply(config, {
         cls: 'qa-channel-editor',
         iframeConfig: Ext.apply({}, config, {
-          antiCache: this.antiCache
+          antiCache: this.antiCache,
+          cmsLocation: Ext.getDoc().dom.location,
         })
       });
       Hippo.ChannelManager.ChannelEditor.ChannelEditor.superclass.constructor.call(this, config);

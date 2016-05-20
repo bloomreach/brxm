@@ -75,6 +75,10 @@ button .disabled-marker {
 }
 
 md-input-container.input-container-picker {
+  img {
+    cursor: pointer;
+    max-width: 100%;
+  }
   .md-input {
     order: 0;
     &:not([disabled]) {

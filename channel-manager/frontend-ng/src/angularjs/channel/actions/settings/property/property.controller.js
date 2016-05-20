@@ -22,6 +22,9 @@ const WIDGET_TYPES = {
   InputBox: 'InputBox',
 };
 
+const BINARIES_PATH = 'binaries';
+const DEFAULT_IMAGE_VARIANT = 'hippogallery:thumbnail';
+
 export class ChannelPropertyCtrl {
   constructor($log, $scope, ChannelService, CmsService, ConfigService, PathService) {
     'ngInject';
@@ -30,37 +33,53 @@ export class ChannelPropertyCtrl {
     this.$scope = $scope;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
     this.PathService = PathService;
 
     this.label = this.data.i18nResources[this.field] || this.field;
+    this.annotation = this._getFirstFieldAnnotation();
     this.type = this._getType();
     this.qaClass = this._getQaClass();
     this.readOnly = this.data.lockedBy && this.data.lockedBy !== ConfigService.cmsUser;
 
-    if (this.type === 'JcrPath') {
+    if (this._isPickerField()) {
       this.CmsService.subscribe('picked', this._onPicked, this);
       this.$scope.$on('$destroy', () => this.CmsService.unsubscribe('picked', this._onPicked, this));
     }
   }
 
   getDropDownListValues() {
-    const fieldAnnotation = this._getFirstFieldAnnotation();
-    if (!fieldAnnotation || fieldAnnotation.type !== 'DropDownList') {
+    if (!this.annotation || this.annotation.type !== 'DropDownList') {
       this.$log.debug(`Field '${this.field}' is not a dropdown.`);
       return [];
     }
-    return fieldAnnotation.value;
+    return this.annotation.value;
+  }
+
+  _isPickerField() {
+    return this.type === 'ImageSetPath' || this.type === 'JcrPath';
+  }
+
+  getImageVariantPath() {
+    const cmsProtocol = this.ConfigService.cmsLocation.protocol;
+    const cmsHost = this.ConfigService.cmsLocation.host;
+
+    const imageName = this.PathService.baseName(this.value);
+    const variantName = this.annotation.previewVariant || DEFAULT_IMAGE_VARIANT;
+    const cmsContextPath = this.ConfigService.cmsLocation.pathname;
+    const binaryPath = this.PathService.concatPaths(cmsContextPath, BINARIES_PATH, this.value, imageName, variantName);
+
+    return `${cmsProtocol}//${cmsHost}${binaryPath}`;
   }
 
   showPicker() {
-    const annotation = this._getFirstFieldAnnotation();
     this.CmsService.publish('show-picker', this.field, this.value, {
-      configuration: annotation.pickerConfiguration,
-      initialPath: annotation.pickerInitialPath,
-      isRelativePath: annotation.isRelative,
-      remembersLastVisited: annotation.pickerRemembersLastVisited,
-      rootPath: annotation.pickerRootPath || this.ChannelService.getContentRootPath(),
-      selectableNodeTypes: annotation.pickerSelectableNodeTypes,
+      configuration: this.annotation.pickerConfiguration,
+      initialPath: this.annotation.pickerInitialPath,
+      isRelativePath: this.annotation.isRelative,
+      remembersLastVisited: this.annotation.pickerRemembersLastVisited,
+      rootPath: this.annotation.pickerRootPath || this.ChannelService.getContentRootPath(),
+      selectableNodeTypes: this.annotation.pickerSelectableNodeTypes,
     });
   }
 
@@ -76,9 +95,8 @@ export class ChannelPropertyCtrl {
   }
 
   _getType() {
-    const fieldAnnotation = this._getFirstFieldAnnotation();
-    if (fieldAnnotation) {
-      const widgetType = WIDGET_TYPES[fieldAnnotation.type];
+    if (this.annotation) {
+      const widgetType = WIDGET_TYPES[this.annotation.type];
       if (widgetType) {
         return widgetType;
       }

@@ -33,6 +33,32 @@
     </md-select>
   </md-input-container>
 
+  <md-input-container ng-switch-when="ImageSetPath" class="md-block input-container-picker {{channelProperty.qaClass}}">
+    <label>{{ channelSettings.getLabel(field) }}</label>
+    <div layout="row">
+      <input type="text"
+             ng-model="channelProperty.value"
+             ng-hide="channelProperty.value"
+             ng-click="channelProperty.showPicker()">
+      <div flex>
+        <img ng-if="channelProperty.value"
+             ng-src="{{ channelProperty.getImageVariantPath() }}"
+             ng-click="channelProperty.showPicker()">
+      </div>
+      <md-button class="md-icon-button"
+                 ng-if="channelProperty.value"
+                 ng-click="channelProperty.value = ''"
+                 ng-disabled="channelProperty.readOnly">
+        <md-icon class="material-icons">clear</md-icon>
+      </md-button>
+      <md-button class="md-icon-button"
+                 ng-click="channelProperty.showPicker()"
+                 ng-disabled="channelProperty.readOnly">
+        <md-icon class="material-icons">search</md-icon>
+      </md-button>
+    </div>
+  </md-input-container>
+
   <md-input-container ng-switch-when="JcrPath" class="md-block input-container-picker {{channelProperty.qaClass}}">
     <label>{{ channelSettings.getLabel(field) }}</label>
     <div layout="row">
