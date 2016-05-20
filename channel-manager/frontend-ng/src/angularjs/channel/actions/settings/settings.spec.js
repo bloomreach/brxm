@@ -121,7 +121,6 @@ describe('ChannelSettings', () => {
     expect(ChannelService.getName).toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_TITLE', { channelName: 'test-name' });
 
-    expect($element.find('.qa-action').is(':disabled')).toBe(true);
     expect($element.find('.qa-fieldgroup').text()).toBe('Field Group 1');
     expect($element.find('.qa-field-textField label').text()).toBe('Text Field');
     expect($element.find('.qa-field-dropDown label').text()).toBe('Drop Down');
