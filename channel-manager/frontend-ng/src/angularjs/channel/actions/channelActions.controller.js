@@ -20,11 +20,11 @@ export class ChannelActionsCtrl {
     this.ChannelService = ChannelService;
   }
 
-  edit() {
-    this.onActionSelected({ subpage: 'channel-edit' });
+  openSettings() {
+    this.onActionSelected({ subpage: 'channel-settings' });
   }
 
-  isChannelEditAvailable() {
+  isChannelSettingsAvailable() {
     return this.ChannelService.getChannel().hasCustomProperties;
   }
 }

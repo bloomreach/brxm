@@ -24,7 +24,7 @@ export function channelPropertyDirective() {
       value: '=channelPropertyValue',
       data: '=channelPropertiesData',
     },
-    templateUrl: 'channel/actions/edit/property/property.html',
+    templateUrl: 'channel/actions/settings/property/property.html',
     controller: 'ChannelPropertyCtrl',
     controllerAs: 'channelProperty',
   };
