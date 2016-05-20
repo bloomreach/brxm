@@ -25,10 +25,6 @@
         class="qa-subpage subpage-form"
         ng-submit="form.$valid && channelSettings.save()"
         novalidate>
-    <div ng-if="channelSettings.readOnlyAlert">
-      <p class="md-body-2">{{ channelSettings.readOnlyAlert }}</p>
-    </div>
-
     <div ng-repeat="fieldGroup in channelSettings.getFieldGroups()">
       <h3 class="md-title qa-fieldgroup">{{ channelSettings.getLabel(fieldGroup.titleKey) }}</h3>
 
