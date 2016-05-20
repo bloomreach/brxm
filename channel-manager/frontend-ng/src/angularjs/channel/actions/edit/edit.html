@@ -42,6 +42,11 @@
     </div>
 
     <div layout="row" layout-align="end center">
+      <md-button type="button"
+                 class="qa-discard"
+                 ng-click="channelEdit.onDone()">
+        {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
+      </md-button>
       <md-button type="submit"
                  class="qa-action md-raised md-primary">
         {{ 'SUBPAGE_BUTTON_SAVE' | translate }}

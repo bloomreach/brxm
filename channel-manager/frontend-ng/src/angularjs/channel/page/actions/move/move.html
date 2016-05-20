@@ -52,6 +52,11 @@
       </md-input-container>
     </div>
     <div layout="row" layout-align="end center">
+      <md-button type="button"
+                 class="qa-discard"
+                 ng-click="pageMove.onDone()">
+        {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
+      </md-button>
       <md-button type="submit"
                  class="md-raised md-primary qa-action">
         {{ 'SUBPAGE_PAGE_MOVE_BUTTON_MOVE' | translate }}

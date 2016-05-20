@@ -64,6 +64,11 @@
       </md-select>
     </md-input-container>
     <div layout="row" layout-align="end center">
+      <md-button type="button"
+                 class="qa-discard"
+                 ng-click="pageEdit.onDone()">
+        {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
+      </md-button>
       <md-button type="submit"
                  class="md-raised md-primary qa-action">
         {{ 'SUBPAGE_BUTTON_SAVE' | translate }}
