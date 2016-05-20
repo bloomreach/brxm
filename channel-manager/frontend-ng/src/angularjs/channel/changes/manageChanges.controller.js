@@ -16,7 +16,6 @@
 
 export class ChangeManagementCtrl {
   constructor(
-      $element,
       $log,
       $translate,
       ChannelService,
@@ -37,7 +36,6 @@ export class ChangeManagementCtrl {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
 
-    this.feedbackParent = $element.find('.feedback-parent');
     this.usersWithChanges = ChannelService.getChannel().changedBySet.sort();
     this.selectedUsers = [];
     this.suffixYou = $translate.instant('SUBPAGE_CHANNELMANAGEMENT_SUFFIX_YOU');
@@ -91,7 +89,7 @@ export class ChangeManagementCtrl {
         response = response || {};
 
         this.$log.info(response.message);
-        this._showError('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
+        this.FeedbackService.showErrorOnSubpage('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
       });
   }
 
@@ -104,7 +102,7 @@ export class ChangeManagementCtrl {
           response = response || {};
 
           this.$log.info(response.message);
-          this._showError('ERROR_CHANGE_DISCARD_FAILED', response.data);
+          this.FeedbackService.showErrorOnSubpage('ERROR_CHANGE_DISCARD_FAILED', response.data);
         });
     });
   }
@@ -133,9 +131,5 @@ export class ChangeManagementCtrl {
   _uncheckUser(user) {
     const index = this.selectedUsers.indexOf(user);
     this.selectedUsers.splice(index, 1);
-  }
-
-  _showError(key, params) {
-    this.FeedbackService.showError(key, params, this.feedbackParent);
   }
 }

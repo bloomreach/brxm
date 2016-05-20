@@ -15,7 +15,7 @@
  */
 
 export class PageMoveCtrl {
-  constructor($log, $element, $translate, ChannelService, SiteMapService, SiteMapItemService, HippoIframeService,
+  constructor($log, $translate, ChannelService, SiteMapService, SiteMapItemService, HippoIframeService,
               FeedbackService) {
     'ngInject';
 
@@ -27,7 +27,6 @@ export class PageMoveCtrl {
     this.FeedbackService = FeedbackService;
 
     this.locations = [];
-    this.feedbackParent = $element.find('.feedback-parent');
     this.siteMapId = ChannelService.getSiteMapId();
     this.illegalCharacters = '/ :';
     this.illegalCharactersMessage = $translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
@@ -58,7 +57,7 @@ export class PageMoveCtrl {
         }
       })
       .catch(() => {
-        this._showError('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
+        this.FeedbackService.showErrorOnSubpage('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
       });
   }
 
@@ -101,11 +100,7 @@ export class PageMoveCtrl {
             break;
         }
 
-        this._showError(messageKey, response.data);
+        this.FeedbackService.showErrorOnSubpage(messageKey, response.data);
       });
-  }
-
-  _showError(key, params) {
-    this.FeedbackService.showError(key, params, this.feedbackParent);
   }
 }

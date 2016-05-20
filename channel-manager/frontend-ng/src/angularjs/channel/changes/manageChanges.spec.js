@@ -67,7 +67,7 @@ describe('ChangeManagement', () => {
     ConfigService.cmsUser = 'testuser';
     spyOn(DialogService, 'confirm').and.returnValue(dialog);
     spyOn(DialogService, 'show').and.returnValue($q.when());
-    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showErrorOnSubpage');
     spyOn(HippoIframeService, 'reload');
 
     $scope = $rootScope.$new();
@@ -105,15 +105,13 @@ describe('ChangeManagement', () => {
     ChangeManagementCtrl.publishSelectedChanges();
     $rootScope.$apply();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', params,
-                                                           ChangeManagementCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', params);
     expect($scope.onDone).not.toHaveBeenCalled();
 
     ChannelService.publishChanges.and.returnValue($q.reject());
     ChangeManagementCtrl.publishSelectedChanges();
     $rootScope.$apply();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', undefined,
-                                                           ChangeManagementCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', undefined);
   });
 
   it('should discard selected users changes on confirm', () => {
@@ -147,15 +145,13 @@ describe('ChangeManagement', () => {
     ChangeManagementCtrl.discardSelectedChanges();
     $rootScope.$apply();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', params,
-                                                           ChangeManagementCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', params);
     expect($scope.onDone).not.toHaveBeenCalled();
 
     ChannelService.discardChanges.and.returnValue($q.reject());
     ChangeManagementCtrl.discardSelectedChanges();
     $rootScope.$apply();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', undefined,
-                                                           ChangeManagementCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', undefined);
   });
 
   it('should toggle a user', () => {

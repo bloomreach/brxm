@@ -97,6 +97,7 @@ describe('ChannelSettings', () => {
     spyOn(ChannelService, 'getName').and.returnValue('test-name');
     spyOn(ChannelService, 'getChannel').and.returnValue(channel);
     spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when(channelInfoDescription));
+    spyOn(FeedbackService, 'showErrorOnSubpage');
   });
 
   function compileDirectiveAndGetController() {
@@ -121,19 +122,9 @@ describe('ChannelSettings', () => {
     expect(ChannelService.getName).toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_TITLE', { channelName: 'test-name' });
 
-    expect($element.find('.qa-action').is(':disabled')).toBe(true);
     expect($element.find('.qa-fieldgroup').text()).toBe('Field Group 1');
     expect($element.find('.qa-field-textField label').text()).toBe('Text Field');
     expect($element.find('.qa-field-dropDown label').text()).toBe('Drop Down');
-  });
-
-  it('enables "save" button when form is dirty', () => {
-    compileDirectiveAndGetController();
-
-    $scope.form.$setDirty();
-    $scope.$digest();
-
-    expect($element.find('.qa-action').is(':enabled')).toBe(true);
   });
 
   it('notifies the event "on-error" when fetching channel setting from backend is failed', () => {
@@ -156,8 +147,6 @@ describe('ChannelSettings', () => {
     spyOn(HippoIframeService, 'reload');
     compileDirectiveAndGetController();
 
-    $scope.form.$setDirty();
-    $scope.$digest();
     $element.find('.qa-action').click();
 
     expect(ChannelService.saveChannel).toHaveBeenCalled();
@@ -168,16 +157,12 @@ describe('ChannelSettings', () => {
 
   it('shows feedback message when saving is failed', () => {
     spyOn(ChannelService, 'saveChannel').and.returnValue($q.reject());
-    spyOn(FeedbackService, 'showError');
     compileDirectiveAndGetController();
-    const feedbackParent = $element.find('.feedback-parent');
 
-    $scope.form.$setDirty();
-    $scope.$digest();
     $element.find('.qa-action').click();
 
     expect(ChannelService.saveChannel).toHaveBeenCalled();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED', undefined, feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
   });
 
   it('applies a fall-back strategy when determining a field label', () => {

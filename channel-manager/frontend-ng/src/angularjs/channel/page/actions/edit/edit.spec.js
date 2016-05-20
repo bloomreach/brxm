@@ -87,7 +87,7 @@ describe('PageActionEdit', () => {
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(ChannelService, 'recordOwnChange');
-    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showErrorOnSubpage');
     spyOn(HippoIframeService, 'reload');
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
@@ -148,8 +148,7 @@ describe('PageActionEdit', () => {
     $rootScope.$digest();
 
     expect(PageEditCtrl.prototypes).toEqual([]);
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_MODEL_RETRIEVAL_FAILED',
-                                                           undefined, PageEditCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
   });
 
   it('calls the callback when navigating back', () => {
@@ -208,8 +207,7 @@ describe('PageActionEdit', () => {
     expect(SiteMapItemService.updateItem).toHaveBeenCalledWith(savedItem, 'siteMapId');
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_LOCKED_BY',
-                                                           error.data, PageEditCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_LOCKED_BY', error.data);
     expect($scope.onDone).not.toHaveBeenCalled();
   });
 
@@ -233,8 +231,7 @@ describe('PageActionEdit', () => {
     expect(SiteMapItemService.updateItem).toHaveBeenCalledWith(savedItem, 'siteMapId');
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_SAVE_FAILED',
-                                                           undefined, PageEditCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_SAVE_FAILED', undefined);
     expect($scope.onDone).not.toHaveBeenCalled();
   });
 

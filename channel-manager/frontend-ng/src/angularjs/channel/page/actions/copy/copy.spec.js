@@ -101,6 +101,7 @@ describe('PageActionCopy', () => {
     spyOn(ChannelService, 'recordOwnChange');
     spyOn(ChannelService, 'getId').and.returnValue('channelB');
     spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showErrorOnSubpage');
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
@@ -179,8 +180,7 @@ describe('PageActionCopy', () => {
 
     expect(PageCopyCtrl.locations).toEqual([]);
     expect(PageCopyCtrl.location).toBeUndefined();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED',
-                                                           undefined, PageCopyCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED');
   });
 
   it('successfully retrieves the locations for the selected channel', () => {
@@ -328,15 +328,13 @@ describe('PageActionCopy', () => {
     SiteMapService.copy.and.returnValue($q.reject({ }));
     PageCopyCtrl.copy();
     $rootScope.$digest();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_COPY_FAILED', undefined,
-                                                           PageCopyCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_COPY_FAILED', undefined);
 
     const data = { key: 'value' };
     SiteMapService.copy.and.returnValue($q.reject({ message: 'bla', data, errorCode: 'ITEM_CANNOT_BE_CLONED' }));
     PageCopyCtrl.copy();
     $rootScope.$digest();
     expect($log.info).toHaveBeenCalledWith('bla');
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_COPY_TARGET_EXISTS', data,
-                                                           PageCopyCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_COPY_TARGET_EXISTS', data);
   });
 });

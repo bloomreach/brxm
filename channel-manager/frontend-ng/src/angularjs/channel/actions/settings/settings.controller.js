@@ -15,14 +15,12 @@
  */
 
 export class ChannelSettingsCtrl {
-  constructor($element, $translate, FeedbackService, ChannelService, HippoIframeService, ConfigService) {
+  constructor($translate, FeedbackService, ChannelService, HippoIframeService, ConfigService) {
     'ngInject';
 
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
-
-    this.feedbackParent = $element.find('.feedback-parent');
 
     this.subpageTitle = $translate.instant('SUBPAGE_CHANNEL_SETTINGS_TITLE', {
       channelName: ChannelService.getName(),
@@ -56,7 +54,7 @@ export class ChannelSettingsCtrl {
         this.onSuccess({ key: 'CHANNEL_PROPERTIES_SAVE_SUCCESS' });
       })
       .catch(() => {
-        this._showError('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
+        this.FeedbackService.showErrorOnSubpage('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
       });
   }
 
@@ -78,9 +76,5 @@ export class ChannelSettingsCtrl {
       const labelB = this.getLabel(fieldB);
       return labelA.localeCompare(labelB);
     });
-  }
-
-  _showError(key, params) {
-    this.FeedbackService.showError(key, params, this.feedbackParent);
   }
 }

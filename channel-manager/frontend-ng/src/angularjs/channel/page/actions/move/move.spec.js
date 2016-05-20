@@ -74,7 +74,7 @@ describe('PageActionMove', () => {
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(ChannelService, 'recordOwnChange');
-    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showErrorOnSubpage');
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
@@ -110,8 +110,7 @@ describe('PageActionMove', () => {
 
     expect(PageMoveCtrl.locations).toEqual([]);
     expect(PageMoveCtrl.location).toBeUndefined();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_MODEL_RETRIEVAL_FAILED',
-      undefined, PageMoveCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
   });
 
   it('filters out unavailable locations', () => {
@@ -193,8 +192,7 @@ describe('PageActionMove', () => {
     PageMoveCtrl.move();
     $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_MOVE_FAILED',
-                                                           undefined, PageMoveCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_MOVE_FAILED', undefined);
     expect($scope.onDone).not.toHaveBeenCalled();
   });
 
@@ -209,25 +207,21 @@ describe('PageActionMove', () => {
     SiteMapItemService.updateItem.and.returnValue($q.reject(lockedError));
     PageMoveCtrl.move();
     $rootScope.$digest();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_LOCKED_BY', lockedError.data,
-      PageMoveCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_LOCKED_BY', lockedError.data);
 
     SiteMapItemService.updateItem.and.returnValue($q.reject({ errorCode: 'ITEM_NOT_FOUND' }));
     PageMoveCtrl.move();
     $rootScope.$digest();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_PARENT_MISSING', undefined,
-      PageMoveCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_PARENT_MISSING', undefined);
 
     SiteMapItemService.updateItem.and.returnValue($q.reject({ errorCode: 'ITEM_NAME_NOT_UNIQUE' }));
     PageMoveCtrl.move();
     $rootScope.$digest();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_PATH_EXISTS', undefined,
-      PageMoveCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_PATH_EXISTS', undefined);
 
     SiteMapItemService.updateItem.and.returnValue($q.reject({ errorCode: 'INVALID_PATH_INFO' }));
     PageMoveCtrl.move();
     $rootScope.$digest();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_PAGE_PATH_INVALID', undefined,
-      PageMoveCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_PATH_INVALID', undefined);
   });
 });

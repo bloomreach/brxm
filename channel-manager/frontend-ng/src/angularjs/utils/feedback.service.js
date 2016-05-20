@@ -33,5 +33,10 @@ export class FeedbackService {
         .parent(parentJQueryElement)
     );
   }
+
+  showErrorOnSubpage(errorKey, params) {
+    const feedbackParent = $('.subpage-feedback-parent');
+    this.showError(errorKey, params, feedbackParent);
+  }
 }
 

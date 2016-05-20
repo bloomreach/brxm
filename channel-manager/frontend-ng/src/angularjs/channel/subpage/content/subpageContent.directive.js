@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { SubpageToolbarCtrl } from './toolbar.controller';
-import { subpageToolbarDirective } from './toolbar.directive';
-import { subpageContentDirective } from './content/subpageContent.directive';
+export function subpageContentDirective() {
+  'ngInject';
 
-export const channelSubpageModule = angular
-  .module('hippo-cm.channel.subpage', [])
-  .controller('SubpageToolbarCtrl', SubpageToolbarCtrl)
-  .directive('subpageToolbar', subpageToolbarDirective)
-  .directive('subpageContent', subpageContentDirective);
+  return {
+    restrict: 'E',
+    transclude: true,
+    templateUrl: 'channel/subpage/content/subpageContent.html',
+  };
+}
