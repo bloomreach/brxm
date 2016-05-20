@@ -28,7 +28,10 @@ export class SiteMenuService {
     this.loadMenuPromise = null;
   }
 
-  getMenu(menuId) {
+  getMenu(menuId, forceUpdate) {
+    if (forceUpdate) {
+      this.loadMenuPromise = null;
+    }
     return this._loadMenu(menuId);
   }
 
@@ -36,15 +39,15 @@ export class SiteMenuService {
     return this._loadMenu(menuId).then((menu) => this._findMenuItem(menu.items, menuItemId));
   }
 
-  _loadMenu(menuUuid) {
+  _loadMenu(menuId) {
     if (this.loadMenuPromise === null) {
-      this.loadMenuPromise = this.HstService.doGet(menuUuid)
+      this.loadMenuPromise = this.HstService.doGet(menuId)
         .then((response) => {
           if (response.data.items && !angular.equals(this.menu.items, response.data.items)) {
             // if response items are different, copy response items into menu
             angular.copy(response.data, this.menu);
             // collapse all nodes with childNodes
-            this.addCollapsedProperties(this.menu.items, true);
+            this._addCollapsedProperties(this.menu.items, true);
           }
           this.menu.id = response.data.id || null;
           return this.menu;
@@ -53,12 +56,12 @@ export class SiteMenuService {
     return this.loadMenuPromise;
   }
 
-  addCollapsedProperties(items, collapsed) {
+  _addCollapsedProperties(items, collapsed) {
     if (angular.isArray(items)) {
       items.forEach((item) => {
         if (item.items && item.items.length > 0) {
           item.collapsed = collapsed;
-          this.addCollapsedProperties(item.items, collapsed);
+          this._addCollapsedProperties(item.items, collapsed);
         }
       });
     }

@@ -21,7 +21,7 @@ export class MenuEditorCtrl {
     this.SiteMenuService = SiteMenuService;
     this.FormStateService = FormStateService;
 
-    SiteMenuService.getMenu(this.menuUuid)
+    SiteMenuService.getMenu(this.menuUuid, true)
       .then((menu) => {
         this.items = menu.items;
         this.selectedItem = this.items.length > 0 ? this.items[0] : undefined;
