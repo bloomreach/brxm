@@ -35,6 +35,11 @@ export class ChannelPropertyCtrl {
     this.type = this._getType();
     this.qaClass = this._getQaClass();
     this.readOnly = this.data.lockedBy && this.data.lockedBy !== ConfigService.cmsUser;
+
+    if (this.type === 'JcrPath') {
+      this.CmsService.subscribe('picked', this._onPicked, this);
+      this.$scope.$on('$destroy', () => this.CmsService.unsubscribe('picked', this._onPicked, this));
+    }
   }
 
   getDropDownListValues() {
@@ -48,7 +53,6 @@ export class ChannelPropertyCtrl {
 
   showPicker() {
     const annotation = this._getFirstFieldAnnotation();
-    this.CmsService.subscribe('picked', this._onPicked, this);
     this.CmsService.publish('show-picker', this.field, this.value, {
       configuration: annotation.pickerConfiguration,
       initialPath: annotation.pickerInitialPath,
@@ -60,7 +64,6 @@ export class ChannelPropertyCtrl {
   }
 
   _onPicked(field, path) {
-    this.CmsService.unsubscribe('picked', this._onPicked, this);
     if (this.field === field) {
       this.getSetPath(path);
       this.$scope.$digest();
