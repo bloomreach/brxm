@@ -23,12 +23,13 @@ const WIDGET_TYPES = {
 };
 
 export class ChannelPropertyCtrl {
-  constructor($log, $scope, CmsService, ConfigService) {
+  constructor($log, $scope, CmsService, ConfigService, PathService) {
     'ngInject';
 
     this.$log = $log;
     this.$scope = $scope;
     this.CmsService = CmsService;
+    this.PathService = PathService;
 
     this.label = this.data.i18nResources[this.field] || this.field;
     this.type = this._getType();
@@ -61,9 +62,13 @@ export class ChannelPropertyCtrl {
   _onPicked(field, path) {
     this.CmsService.unsubscribe('picked', this._onPicked, this);
     if (this.field === field) {
-      this.value = path;
+      this.getSetPath(path);
       this.$scope.$digest();
     }
+  }
+
+  getSetPath(...args) {
+    return args.length ? (this.value = args[0]) : this.PathService.baseName(this.value);
   }
 
   _getType() {

@@ -52,5 +52,21 @@ describe('PathService', () => {
     expect(PathService.concatPaths('one', '')).toEqual('one');
     expect(PathService.concatPaths('', 'two')).toEqual('two');
   });
-});
 
+  it('returns the base name of a path', () => {
+    expect(PathService.baseName('/one/two')).toEqual('two');
+    expect(PathService.baseName('/one')).toEqual('one');
+    expect(PathService.baseName('/one/two.txt')).toEqual('two.txt');
+    expect(PathService.baseName('/one.txt')).toEqual('one.txt');
+    expect(PathService.baseName('/one/two/')).toEqual('two');
+    expect(PathService.baseName('/one/')).toEqual('one');
+    expect(PathService.baseName('/')).toEqual('/');
+    expect(PathService.baseName('one/two')).toEqual('two');
+    expect(PathService.baseName('one')).toEqual('one');
+    expect(PathService.baseName('one/two.txt')).toEqual('two.txt');
+    expect(PathService.baseName('one.txt')).toEqual('one.txt');
+    expect(PathService.baseName('')).toEqual('');
+    expect(PathService.baseName(null)).toEqual(null);
+    expect(PathService.baseName(undefined)).toEqual(undefined);
+  });
+});

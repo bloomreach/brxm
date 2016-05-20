@@ -38,5 +38,15 @@ export class PathService {
   _removeLeadingSlashes(path) {
     return path.replace(/^\/*/, '');
   }
+
+  baseName(path) {
+    let result = path;
+    if (path) {
+      const endIndex = path.endsWith('/') ? path.length - 2 : path.length - 1;
+      const lastSlashIndex = path.lastIndexOf('/', endIndex);
+      result = path.substring(lastSlashIndex + 1, endIndex + 1);
+    }
+    return result;
+  }
 }
 

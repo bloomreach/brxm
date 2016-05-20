@@ -40,7 +40,8 @@
              readonly="readonly"
              flex
              ng-disabled="channelProperty.readOnly"
-             ng-model="channelProperty.value"
+             ng-model="channelProperty.getSetPath"
+             ng-model-options="{ getterSetter: true }"
              ng-click="channelProperty.showPicker()">
       <md-button class="md-icon-button"
                  ng-if="channelProperty.value"
