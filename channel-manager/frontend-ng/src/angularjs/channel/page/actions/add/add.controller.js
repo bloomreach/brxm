@@ -98,10 +98,6 @@ export class PageAddCtrl {
       });
   }
 
-  back() {
-    this.onDone();
-  }
-
   disableAutomaticLastPathInfoElementUpdate() {
     this.updateLastPathInfoElementAutomatically = false;
   }

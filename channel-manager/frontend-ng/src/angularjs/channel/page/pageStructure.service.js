@@ -16,7 +16,9 @@
 
 import { ComponentElement } from './element/componentElement';
 import { ContainerElement } from './element/containerElement';
-import { ContentLink } from './element/contentLink';
+import { EmbeddedLink } from './element/embeddedLink';
+
+const EMBEDDED_LINK_MARKUP = '<a class="hst-cmseditlink"></a>';
 
 export class PageStructureService {
 
@@ -56,45 +58,97 @@ export class PageStructureService {
   clearParsedElements() {
     this.containers = [];
     this.contentLinks = [];
+    this.editMenuLinks = [];
     this.PageMetaDataService.clear();
   }
 
   registerParsedElement(commentDomElement, metaData) {
     switch (metaData[this.HST.TYPE]) {
       case this.HST.TYPE_CONTAINER:
-        this.containers.push(new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService));
+        this._registerContainer(commentDomElement, metaData);
         break;
-
-      case this.HST.TYPE_COMPONENT: {
-        if (this.containers.length === 0) {
-          this.$log.warn('Unable to register component outside of a container context.');
-          return;
-        }
-
-        const container = this.containers[this.containers.length - 1];
-        try {
-          container.addComponent(new ComponentElement(commentDomElement, metaData,
-            container, this.hstCommentsProcessorService));
-        } catch (exception) {
-          this.$log.debug(exception, metaData);
-        }
+      case this.HST.TYPE_COMPONENT:
+        this._registerComponent(commentDomElement, metaData);
         break;
-      }
-
-      case this.HST.TYPE_PAGE: {
-        delete metaData[this.HST.TYPE];
-        this.PageMetaDataService.add(metaData);
+      case this.HST.TYPE_PAGE:
+        this._registerPageMetaData(metaData);
         break;
-      }
-
-      case this.HST.TYPE_CONTENT_LINK: {
-        const contentLink = new ContentLink(commentDomElement, metaData);
-        this.contentLinks.push(contentLink);
-        break;
-      }
-
       default:
+        this._registerEmbeddedLink(commentDomElement, metaData);
         break;
+    }
+  }
+
+  _registerContainer(commentDomElement, metaData) {
+    const container = new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService);
+    this.containers.push(container);
+  }
+
+  _registerComponent(commentDomElement, metaData) {
+    if (this.containers.length === 0) {
+      this.$log.warn('Unable to register component outside of a container context.');
+      return;
+    }
+
+    const container = this.containers[this.containers.length - 1];
+    try {
+      const component = new ComponentElement(commentDomElement, metaData, container, this.hstCommentsProcessorService);
+      container.addComponent(component);
+    } catch (exception) {
+      this.$log.debug(exception, metaData);
+    }
+  }
+
+  _registerPageMetaData(metaData) {
+    delete metaData[this.HST.TYPE];
+    this.PageMetaDataService.add(metaData);
+  }
+
+  _registerEmbeddedLink(commentDomElement, metaData) {
+    if (metaData[this.HST.TYPE] === this.HST.TYPE_CONTENT_LINK) {
+      this.contentLinks.push(new EmbeddedLink(commentDomElement, metaData));
+    }
+
+    if (metaData[this.HST.TYPE] === this.HST.TYPE_EDIT_MENU_LINK) {
+      this.editMenuLinks.push(new EmbeddedLink(commentDomElement, metaData));
+    }
+  }
+
+  // Attaching the embedded links to the page structure (by means of the 'enclosingElement') is only
+  // done as a final step of processing an entire page or markup fragment, because it requires an
+  // up-to-date and complete page structure (containers, components).
+  attachEmbeddedLinks() {
+    this.contentLinks.forEach((link) => this._attachEmbeddedLink(link));
+    this.editMenuLinks.forEach((link) => this._attachEmbeddedLink(link));
+  }
+
+  _attachEmbeddedLink(link) {
+    let enclosingElement = link.getEnclosingElement();
+
+    if (enclosingElement === undefined) {
+      // link is not yet attached, determine enclosing element.
+      const commentDomElement = link.getStartComment()[0];
+      this.getContainers().some((container) => {
+        container.getComponents().some((component) => {
+          if (component.containsDomElement(commentDomElement)) {
+            enclosingElement = component;
+          }
+          return enclosingElement;
+        });
+        if (!enclosingElement && container.containsDomElement(commentDomElement)) {
+          enclosingElement = container;
+        }
+        return enclosingElement;
+      });
+      if (enclosingElement === undefined) {
+        enclosingElement = null; // marks that the *page* is the enclosing element
+      }
+      link.setEnclosingElement(enclosingElement);
+
+      // insert transparent placeholder into page
+      const linkElement = $(EMBEDDED_LINK_MARKUP);
+      link.getStartComment().after(linkElement);
+      link.setBoxElement(linkElement);
     }
   }
 
@@ -104,6 +158,14 @@ export class PageStructureService {
 
   getContentLinks() {
     return this.contentLinks;
+  }
+
+  hasEditMenuLinks() {
+    return this.editMenuLinks.length > 0;
+  }
+
+  getEditMenuLinks() {
+    return this.editMenuLinks;
   }
 
   getComponentById(id) {
@@ -208,9 +270,19 @@ export class PageStructureService {
    * Update the component with the new markup
    */
   _updateComponent(componentId, newMarkup) {
-    const component = this.getComponentById(componentId);
-    const jQueryNodeCollection = component.replaceDOM(newMarkup);
-    this._replaceComponent(component, this._createComponent(jQueryNodeCollection, component.getContainer()));
+    const oldComponent = this.getComponentById(componentId);
+    const container = oldComponent.getContainer();
+
+    this._removeEmbeddedLinksInComponent(oldComponent);
+    const jQueryNodeCollection = oldComponent.replaceDOM(newMarkup);
+    const newComponent = this._createComponent(jQueryNodeCollection, container);
+    if (newComponent) {
+      container.replaceComponent(oldComponent, newComponent);
+    } else {
+      container.removeComponent(oldComponent);
+    }
+    this.attachEmbeddedLinks();
+
     this.OverlaySyncService.syncIframe();
   }
 
@@ -227,18 +299,36 @@ export class PageStructureService {
     // try reloading the entire page?
   }
 
-  _updateContainer(container, newMarkup) {
+  _updateContainer(oldContainer, newMarkup) {
+    this._removeEmbeddedLinksInContainer(oldContainer);
+
     // consider following three actions to be an atomic operation
-    return this._replaceContainer(container, this._createContainer(container.replaceDOM(newMarkup)));
+    const newContainer = this._replaceContainer(oldContainer, this._createContainer(oldContainer.replaceDOM(newMarkup)));
+
+    this.attachEmbeddedLinks();
+    return newContainer;
   }
 
-  _replaceComponent(oldComponent, newComponent) {
-    const container = oldComponent.getContainer();
-    if (this.hasContainer(container) && container.hasComponent(oldComponent)) {
-      container.replaceComponent(oldComponent, newComponent);
-    } else {
-      this.$log.warn('Cannot find component', oldComponent);
-    }
+  _removeEmbeddedLinksInContainer(container) {
+    container.getComponents().forEach((component) => this._removeEmbeddedLinksInComponent(component));
+
+    this.contentLinks = this._getLinksNotEnclosedInElement(this.contentLinks, container);
+    this.editMenuLinks = this._getLinksNotEnclosedInElement(this.editMenuLinks, container);
+  }
+
+  _removeEmbeddedLinksInComponent(component) {
+    this.contentLinks = this._getLinksNotEnclosedInElement(this.contentLinks, component);
+    this.editMenuLinks = this._getLinksNotEnclosedInElement(this.editMenuLinks, component);
+  }
+
+  _getLinksNotEnclosedInElement(links, element) {
+    const remainingContentLinks = [];
+    links.forEach((link) => {
+      if (link.getEnclosingElement() !== element) {
+        remainingContentLinks.push(link);
+      }
+    });
+    return remainingContentLinks;
   }
 
   addComponentToContainer(catalogComponent, container) {
@@ -314,6 +404,7 @@ export class PageStructureService {
             break;
 
           default:
+            this._registerEmbeddedLink(commentDomElement, metaData);
             break;
         }
       } catch (exception) {
@@ -345,6 +436,7 @@ export class PageStructureService {
           break;
 
         default:
+          this._registerEmbeddedLink(commentDomElement, metaData);
           break;
       }
     });

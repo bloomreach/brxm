@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-describe('ChannelActionEdit', () => {
+describe('ChannelSettings', () => {
   'use strict';
 
   let $scope;
   let $rootScope;
   let $compile;
-  let $log;
   let $translate;
   let $element;
   let $q;
   let ChannelService;
   let FeedbackService;
   let HippoIframeService;
+  let ConfigService;
   let channelInfoDescription;
   const channel = {
     properties: {
@@ -39,15 +39,16 @@ describe('ChannelActionEdit', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$q_, _$log_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_) => {
+    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_,
+            _ConfigService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      $log = _$log_;
       $translate = _$translate_;
       $q = _$q_;
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
+      ConfigService = _ConfigService_;
     });
 
     channelInfoDescription = {
@@ -92,7 +93,7 @@ describe('ChannelActionEdit', () => {
       },
     };
 
-    spyOn($translate, 'instant');
+    spyOn($translate, 'instant').and.callFake((key) => key);
     spyOn(ChannelService, 'getName').and.returnValue('test-name');
     spyOn(ChannelService, 'getChannel').and.returnValue(channel);
     spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when(channelInfoDescription));
@@ -105,20 +106,20 @@ describe('ChannelActionEdit', () => {
     $scope.onSuccess = jasmine.createSpy('onSuccess');
 
     $element = angular.element(`
-      <channel-edit on-done="onDone()" on-success="onSuccess(key, params)" on-error="onError(key, params)">
-      </channel-edit>
+      <channel-settings on-done="onDone()" on-success="onSuccess(key, params)" on-error="onError(key, params)">
+      </channel-settings>
     `);
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('channel-edit');
+    return $element.controller('channel-settings');
   }
 
   it('initializes correctly when fetching channel setting from backend is successful', () => {
     compileDirectiveAndGetController();
 
     expect(ChannelService.getName).toHaveBeenCalled();
-    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_TITLE', { channelName: 'test-name' });
+    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_TITLE', { channelName: 'test-name' });
 
     expect($element.find('.qa-action').is(':disabled')).toBe(true);
     expect($element.find('.qa-fieldgroup').text()).toBe('Field Group 1');
@@ -180,56 +181,30 @@ describe('ChannelActionEdit', () => {
   });
 
   it('applies a fall-back strategy when determining a field label', () => {
-    const ChannelEditCtrl = compileDirectiveAndGetController();
-    expect(ChannelEditCtrl.getLabel('textField')).toBe('Text Field');
+    const ChannelSettingsCtrl = compileDirectiveAndGetController();
+    expect(ChannelSettingsCtrl.getLabel('textField')).toBe('Text Field');
 
     delete channelInfoDescription.i18nResources.textField;
-    expect(ChannelEditCtrl.getLabel('textField')).toBe('textField');
+    expect(ChannelSettingsCtrl.getLabel('textField')).toBe('textField');
   });
 
-  it('applies a fall-back strategy when determining the type of a field', () => {
-    channelInfoDescription.propertyDefinitions.invalidFieldTypeField = {
-      isRequired: false,
-      defaultValue: '',
-      name: 'bla',
-      valueType: 'ANYTHING_BUT_NO_BOOLEAN',
-      annotations: [
-        {
-          type: 'Invalid',
-        },
-      ],
-    };
-    const ChannelEditCtrl = compileDirectiveAndGetController();
-    expect(ChannelEditCtrl.getType('invalidFieldTypeField')).toBe('InputBox');
-  });
+  it('displays an alert message when the current channel is locked', () => {
+    ConfigService.cmsUser = 'admin';
+    channelInfoDescription.lockedBy = 'tester';
+    let ChannelSettingsCtrl = compileDirectiveAndGetController();
+    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', { lockedBy: 'tester' });
+    expect(ChannelSettingsCtrl.readOnlyAlert).toBeTruthy();
 
-  it('applies a sanity check on drop-down fields', () => {
-    const ChannelEditCtrl = compileDirectiveAndGetController();
+    $translate.instant.calls.reset();
+    channelInfoDescription.lockedBy = 'admin';
+    ChannelSettingsCtrl = compileDirectiveAndGetController();
+    expect($translate.instant).not.toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', { lockedBy: 'admin' });
+    expect(ChannelSettingsCtrl.readOnlyAlert).toBeFalsy();
 
-    expect(ChannelEditCtrl.getDropDownListValues('unknownField')).toEqual([]);
-
-    // too many annotations only triggers a warning
-    spyOn($log, 'warn');
-    channelInfoDescription.propertyDefinitions.dropDown.annotations.push({ });
-    expect(ChannelEditCtrl.getDropDownListValues('dropDown')).toEqual(['small', 'medium', 'large']);
-    channelInfoDescription.propertyDefinitions.dropDown.annotations.pop({ });
-    expect($log.warn).toHaveBeenCalled();
-
-    channelInfoDescription.propertyDefinitions.dropDown.annotations[0].type = 'InputBox';
-    expect(ChannelEditCtrl.getDropDownListValues('dropDown')).toEqual([]);
-  });
-
-  it('manipulates the channel\'s properties', () => {
-    const properties = { };
-    spyOn(ChannelService, 'getProperties').and.returnValue(properties);
-    spyOn(ChannelService, 'setProperties');
-    const ChannelEditCtrl = compileDirectiveAndGetController();
-
-    expect(ChannelService.getProperties).toHaveBeenCalled();
-    expect(ChannelEditCtrl.values).toBe(properties);
-
-    properties.key = 'value';
-    ChannelEditCtrl.save();
-    expect(ChannelService.setProperties).toHaveBeenCalledWith(properties);
+    $translate.instant.calls.reset();
+    delete channelInfoDescription.lockedBy;
+    ChannelSettingsCtrl = compileDirectiveAndGetController();
+    expect($translate.instant).not.toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', { lockedBy: 'admin' });
+    expect(ChannelSettingsCtrl.readOnlyAlert).toBeFalsy();
   });
 });

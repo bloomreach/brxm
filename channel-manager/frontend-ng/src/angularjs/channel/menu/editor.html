@@ -14,26 +14,22 @@
   limitations under the License.
   -->
 
-<md-toolbar class="qa-toolbar">
-  <div class="md-toolbar-tools">
-    <md-button class="qa-button-back" ng-click="menuEditor.onDone()">
-      {{ 'TOOLBAR_BUTTON_BACK' | translate }}
-    </md-button>
-    <span flex></span>
-    <h2 class="qa-subpage-menu-editor">{{ 'SUBPAGE_MENU_EDITOR_TITLE' | translate }}</h2>
-    <span flex></span>
-  </div>
-</md-toolbar>
+<subpage-toolbar title="{{ 'SUBPAGE_MENU_EDITOR_TITLE' | translate }}"
+                 on-back="menuEditor.onDone()">
+</subpage-toolbar>
 
-<md-content layout-padding layout="row" layout-align="center" class="feedback-parent">
-  <form name="form" flex="initial" class="qa-subpage subpage-form">
-
-    <md-input-container>
-      <md-button type="submit" class="qa-menu-editor-save md-raised md-primary"
-                 ng-disabled="form.$pristine || form.$invalid"
-                 ng-click="menuEditor.onDone()">
+<md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-menu-editor">
+  <form name="form"
+        flex="initial"
+        class="qa-subpage subpage-form"
+        ng-submit="form.$valid && menuEditor.onDone()"
+        novalidate>
+    <h2>Editing menu {{menuEditor.menuUuid}}</h2>
+    <div layout="row" layout-align="end center">
+      <md-button type="submit"
+                 class="qa-menu-editor-save md-raised md-primary">
         {{ 'SUBPAGE_BUTTON_SAVE' | translate }}
       </md-button>
-    </md-input-container>
+    </div>
   </form>
 </md-content>

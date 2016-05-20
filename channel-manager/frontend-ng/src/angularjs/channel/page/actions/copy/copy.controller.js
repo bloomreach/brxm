@@ -38,7 +38,7 @@ export class PageCopyCtrl {
     // Now, it is available through the SiteMapItemService.
     this.item = SiteMapItemService.get();
     this.lastPathInfoElement = '';
-    this.heading = $translate.instant('SUBPAGE_PAGE_COPY_TITLE', { pageName: this.item.name });
+    this.subpageTitle = $translate.instant('SUBPAGE_PAGE_COPY_TITLE', { pageName: this.item.name });
 
     if (ChannelService.isCrossChannelPageCopySupported()) {
       this.channels = ChannelService.getPageModifiableChannels();
@@ -104,10 +104,6 @@ export class PageCopyCtrl {
       this.ChannelService.recordOwnChange();
       this.onDone();
     }
-  }
-
-  back() {
-    this.onDone();
   }
 
   channelChanged() {

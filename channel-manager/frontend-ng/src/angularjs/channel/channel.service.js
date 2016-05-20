@@ -50,15 +50,17 @@ export class ChannelService {
   }
 
   _onChannelChanged() {
-    this.$rootScope.$apply(() => {
-      this.HstService.getChannel(this.channel.id)
-        .then((channel) => {
-          this._setChannel(channel);
-        })
-        .catch(() => {
-          this.$log.error(`Cannot retrieve properties of the channel with id = "${this.channel.id}" from server`);
-        });
-    });
+    this.$rootScope.$apply(() => this._reload());
+  }
+
+  _reload(channelId = this.channel.id) {
+    return this.HstService.getChannel(channelId)
+      .then((channel) => {
+        this._setChannel(channel);
+      })
+      .catch((error) => {
+        this.$log.error(`Failed to reload channel '${channelId}'.`, error);
+      });
   }
 
   initialize() {
@@ -182,6 +184,7 @@ export class ChannelService {
   createPreviewConfiguration() {
     return this.HstService.doPost(null, this.getMountId(), 'edit')
       .then(() => {
+        this._reload(`${this.channel.id}-preview`);
         this.channel.previewHstConfigExists = true;
       });
   }
@@ -203,21 +206,13 @@ export class ChannelService {
   publishChanges(users = [this.ConfigService.cmsUser]) {
     const url = 'userswithchanges/publish';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this.resetUserChanges(users))
-      .catch(() => this.FeedbackService.showError('ERROR_PUBLISH_CHANGES'));
+      .then(() => this._reload());
   }
 
   discardChanges(users = [this.ConfigService.cmsUser]) {
     const url = 'userswithchanges/discard';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
-      .then(() => this.resetUserChanges(users))
-      .catch(() => this.FeedbackService.showError('ERROR_DISCARD_CHANGES'));
-  }
-
-  resetUserChanges(users) {
-    users.forEach((user) => {
-      this.channel.changedBySet.splice(this.channel.changedBySet.indexOf(user), 1);
-    });
+      .then(() => this._reload());
   }
 
   getSiteMapId() {

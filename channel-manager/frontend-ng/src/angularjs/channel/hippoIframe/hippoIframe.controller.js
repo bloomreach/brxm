@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-const CONTENT_LINK_MARKUP = '<a class="hst-cmseditlink"></a>';
-
 export class HippoIframeCtrl {
   constructor(
     $q,
@@ -77,8 +75,9 @@ export class HippoIframeCtrl {
   }
 
   onLoad() {
-    this._parseHstComments();
-    this._showContentLinks().then(() => {
+    // we insert the CSS for every page, because embedded links can come and go without reloading the page
+    this._insertCss().then(() => {
+      this._parseHstComments();
       this._updateDragDrop();
       this._updateChannelIfSwitched().then(() => {
         this._parseLinks();
@@ -143,19 +142,20 @@ export class HippoIframeCtrl {
     return this.DragDropService.isDragging();
   }
 
+  _insertCss() {
+    const iframeWindow = this._getIframeDOM().defaultView;
+    const appRootUrl = this.DomService.getAppRootUrl();
+    const hippoIframeCss = `${appRootUrl}styles/hippo-iframe.css`;
+    return this.DomService.addCss(iframeWindow, hippoIframeCss);
+  }
+
   _parseHstComments() {
     this.PageStructureService.clearParsedElements();
     this.hstCommentsProcessorService.run(
       this._getIframeDOM(),
       this.PageStructureService.registerParsedElement.bind(this.PageStructureService)
     );
-  }
-
-  _insertCss() {
-    const iframeWindow = this._getIframeDOM().defaultView;
-    const appRootUrl = this.DomService.getAppRootUrl();
-    const hippoIframeCss = `${appRootUrl}styles/hippo-iframe.css`;
-    return this.DomService.addCss(iframeWindow, hippoIframeCss);
+    this.PageStructureService.attachEmbeddedLinks();
   }
 
   _updateChannelIfSwitched() {
@@ -179,20 +179,6 @@ export class HippoIframeCtrl {
     this.linkProcessorService.run(iframeDom, internalLinkPrefixes);
   }
 
-  _showContentLinks() {
-    if (!this.PageStructureService.hasContentLinks()) {
-      return this.$q.resolve();
-    }
-
-    return this._insertCss().then(() => {
-      this.PageStructureService.getContentLinks().forEach((contentLink) => {
-        const contentLinkElement = $(CONTENT_LINK_MARKUP);
-        contentLink.getStartComment().after(contentLinkElement);
-        contentLink.setBoxElement(contentLinkElement);
-      });
-    });
-  }
-
   getContainers() {
     return this.editMode ? this.PageStructureService.getContainers() : [];
   }
@@ -203,6 +189,14 @@ export class HippoIframeCtrl {
 
   openContent(contentLink) {
     this.CmsService.publish('open-content', contentLink.getUuid());
+  }
+
+  getEditMenuLinks() {
+    return this.editMode ? this.PageStructureService.getEditMenuLinks() : [];
+  }
+
+  openMenuEditor(editMenuLink) {
+    this.onEditMenu({ menuUuid: editMenuLink.getUuid() });
   }
 
   getSrc() {

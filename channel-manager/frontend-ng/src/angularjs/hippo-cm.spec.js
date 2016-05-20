@@ -47,7 +47,7 @@ describe('The hippo-cm module', () => {
       $translate = _$translate_;
     });
 
-    $httpBackend.whenGET('i18n/hippo-cm.no-such-locale.json').respond(404);
+    $httpBackend.whenGET('i18n/no-such-locale.json').respond(404);
   });
 
   it('uses English translations by default', () => {

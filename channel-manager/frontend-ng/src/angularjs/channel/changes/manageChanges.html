@@ -1,0 +1,53 @@
+<!--
+  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<subpage-toolbar title="{{ 'SUBPAGE_CHANGEMANAGEMENT_TITLE' | translate }}"
+                 on-back="changeMan.onDone()">
+</subpage-toolbar>
+
+<md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-change-management">
+  <form name="form"
+        flex="initial"
+        class="qa-manage-changes subpage-form"
+        ng-submit="form.$valid && changeMan.publishSelectedChanges()"
+        novalidate>
+    <div>
+      <p class="md-body-2">
+        <a ng-click="changeMan.selectAll()" class="qa-select-all">{{ 'SUBPAGE_CHANGEMANAGEMENT_SELECT_ALL' | translate }}</a> -
+        <a ng-click="changeMan.selectNone()" class="qa-select-none">{{ 'SUBPAGE_CHANGEMANAGEMENT_SELECT_NONE' | translate }}</a>
+      </p>
+    </div>
+
+    <div ng-repeat="user in changeMan.usersWithChanges">
+      <md-checkbox class="qa-toggle-user" ng-checked="changeMan.isChecked(user)"
+          ng-click="changeMan.toggle(user)">
+        {{ changeMan.getLabel(user) }}
+      </md-checkbox>
+    </div>
+
+    <div layout="row" layout-align="end center">
+      <md-button type="button"
+                 class="qa-discard"
+                 ng-click="changeMan.discardSelectedChanges()">
+        {{ 'SUBPAGE_CHANGEMANAGEMENT_DISCARD' | translate }}
+      </md-button>
+      <md-button type="submit"
+                 class="md-primary md-raised qa-publish">
+        {{ 'SUBPAGE_CHANGEMANAGEMENT_PUBLISH' | translate }}
+      </md-button>
+    </div>
+  </form>
+</md-content>

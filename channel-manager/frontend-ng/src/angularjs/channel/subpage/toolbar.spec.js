@@ -14,65 +14,62 @@
  * limitations under the License.
  */
 
-/* eslint-disable prefer-const */
-
-describe('MenuEditor', () => {
+describe('SubpageToolbar', () => {
   'use strict';
 
-  let $q;
   let $element;
   let $scope;
   let $rootScope;
   let $compile;
-  let SiteMenuService;
-  let menu;
+  let $translate;
+  let mode;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$q_, _$rootScope_, _$compile_, _SiteMenuService_) => {
-      $q = _$q_;
+    inject((_$rootScope_, _$compile_, _$translate_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      SiteMenuService = _SiteMenuService_;
+      $translate = _$translate_;
     });
 
-    menu = { }; // TODO: populate for testing
-
-    spyOn(SiteMenuService, 'loadMenu').and.returnValue($q.when(menu));
+    spyOn($translate, 'instant').and.callFake((key) => key);
   });
 
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
-    $scope.onDone = jasmine.createSpy('onDone');
-    $scope.onError = jasmine.createSpy('onError');
-    $scope.menuUuid = 'testUuid';
-    $element = angular.element('<menu-editor menu-uuid="{{menuUuid}}" on-done="onDone()" on-error="onError(key)"> </menu-editor>');
+    $scope.onBack = jasmine.createSpy('onBack');
+    $scope.title = 'testTitle';
+    $scope.mode = mode;
+    $element = angular.element('<subpage-toolbar title="{{title}}" on-back="onBack()" mode="{{mode}}"> </subpage-toolbar>');
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('menu-editor');
+    return $element.controller('subpage-toolbar');
   }
 
-  it('initializes correctly', () => {
-    const MenuEditorCtrl = compileDirectiveAndGetController();
-
-    expect(MenuEditorCtrl.menuUuid).toBe('testUuid');
-    expect(MenuEditorCtrl.menu).toBe(menu);
-  });
-
-  it('returns to the main page when it fails to load the menu', () => {
-    SiteMenuService.loadMenu.and.returnValue($q.reject());
+  it('displays the passed-in page title', () => {
     compileDirectiveAndGetController();
 
-    expect($scope.onError).toHaveBeenCalledWith('ERROR_MENU_LOAD_FAILED');
+    expect($element.find('h2').text()).toBe('testTitle');
   });
 
   it('returns to the page when clicking the "back" button', () => {
     compileDirectiveAndGetController();
 
     $element.find('.qa-button-back').click();
-    expect($scope.onDone).toHaveBeenCalled();
+    expect($scope.onBack).toHaveBeenCalled();
+  });
+
+  it('should show the back icon if the mode is not set to cancel', () => {
+    mode = undefined;
+    const SubpageToolbarCtrl = compileDirectiveAndGetController();
+    expect(SubpageToolbarCtrl.icon).toBe('keyboard_backspace');
+  });
+
+  it('should show the clear icon if the mode is set to cancel', () => {
+    mode = 'cancel';
+    const SubpageToolbarCtrl = compileDirectiveAndGetController();
+    expect(SubpageToolbarCtrl.icon).toBe('clear');
   });
 });
-

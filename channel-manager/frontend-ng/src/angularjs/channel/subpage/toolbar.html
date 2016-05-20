@@ -14,9 +14,13 @@
   limitations under the License.
   -->
 
-<md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANNEL_SETTINGS' | translate }}"
-           class="qa-button-channel"
-           ng-if="channelActions.isChannelSettingsAvailable()"
-           ng-click="channelActions.openSettings()">
-  {{ 'TOOLBAR_BUTTON_CHANNEL_SETTINGS' | translate }}
-</md-button>
+<md-toolbar class="qa-toolbar">
+  <div class="md-toolbar-tools">
+    <md-button class="qa-button-back md-icon-button" ng-click="onBack()">
+      <md-icon class="material-icons">{{ toolbar.icon }}</md-icon>
+    </md-button>
+    <span flex></span>
+    <h2>{{ title }}</h2>
+    <span flex></span>
+  </div>
+</md-toolbar>

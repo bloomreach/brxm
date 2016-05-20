@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-export function channelEditDirective() {
-  'ngInject';
+import { SubpageToolbarCtrl } from './toolbar.controller';
+import { subpageToolbarDirective } from './toolbar.directive';
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      onDone: '&',
-      onSuccess: '&',
-      onError: '&',
-    },
-    templateUrl: 'channel/actions/edit/edit.html',
-    controller: 'ChannelEditCtrl',
-    controllerAs: 'channelEdit',
-  };
-}
+export const channelSubpageModule = angular
+  .module('hippo-cm.channel.subpage', [])
+  .controller('SubpageToolbarCtrl', SubpageToolbarCtrl)
+  .directive('subpageToolbar', subpageToolbarDirective);

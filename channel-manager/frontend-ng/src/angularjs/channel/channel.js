@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { channelSubpageModule } from './subpage/subpage';
+import { channelChangesModule } from './changes/changes';
 import { channelPageModule } from './page/page';
 import { channelPageActionsModule } from './page/actions/actions';
 import { channelActionsModule } from './actions/actions';
@@ -27,14 +29,12 @@ import { ChannelCtrl } from './channel.controller';
 import { ChannelService } from './channel.service';
 import { run } from './channel.run';
 import { CatalogComponentDirective } from './catalog.component.directive';
-import { changesMenuModule } from './changesMenu/changesMenu';
-import { changeManagementModule } from './changeManagement/changeManagement';
 
 export const channelModule = angular
   .module('hippo-cm.channel', [
     'hippo-cm-api',
-    changesMenuModule.name,
-    changeManagementModule.name,
+    channelSubpageModule.name,
+    channelChangesModule.name,
     channelPageModule.name,
     channelPageActionsModule.name,
     channelActionsModule.name,

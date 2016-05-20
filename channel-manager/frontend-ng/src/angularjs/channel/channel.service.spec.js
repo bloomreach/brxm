@@ -278,12 +278,14 @@ describe('ChannelService', () => {
     ChannelService._load(channelMock);
     $rootScope.$digest();
 
+    channelMock.changedBySet = ['anotherUser'];
     HstService.doPost.and.returnValue($q.resolve());
+    HstService.getChannel.and.returnValue($q.when(channelMock));
     ChannelService.publishChanges();
-    $rootScope.$digest();
-
     expect(HstService.doPost).toHaveBeenCalledWith({ data: ['testUser'] }, 'mountId', 'userswithchanges/publish');
-    expect(channelMock.changedBySet).toEqual([]);
+
+    $rootScope.$digest();
+    expect(channelMock.changedBySet).toEqual(['anotherUser']);
   });
 
   it('should discard own changes', () => {
@@ -291,30 +293,26 @@ describe('ChannelService', () => {
     ChannelService._load(channelMock);
     $rootScope.$digest();
 
+    channelMock.changedBySet = ['anotherUser'];
     HstService.doPost.and.returnValue($q.resolve());
+    HstService.getChannel.and.returnValue($q.when(channelMock));
     ChannelService.discardChanges();
-    $rootScope.$digest();
-
     expect(HstService.doPost).toHaveBeenCalledWith({ data: ['testUser'] }, 'mountId', 'userswithchanges/discard');
-    expect(channelMock.changedBySet).toEqual([]);
+
+    $rootScope.$digest();
+    expect(channelMock.changedBySet).toEqual(['anotherUser']);
   });
 
-  it('should display error message on failure', () => {
-    HstService.doPost.and.returnValue($q.reject());
-
-    channelMock.changedBySet = ['testUser'];
+  it('should use the specified users when publishing or discarding changes', () => {
+    HstService.doPost.and.returnValue($q.when());
     ChannelService._load(channelMock);
-    ChannelService.discardChanges();
-    $rootScope.$apply();
+    $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalled();
+    ChannelService.publishChanges(['tester']);
+    expect(HstService.doPost).toHaveBeenCalledWith({ data: ['tester'] }, 'mountId', 'userswithchanges/publish');
 
-    channelMock.changedBySet = ['testUser'];
-    ChannelService._load(channelMock);
-    ChannelService.publishChanges();
-    $rootScope.$apply();
-
-    expect(FeedbackService.showError).toHaveBeenCalled();
+    ChannelService.discardChanges(['tester']);
+    expect(HstService.doPost).toHaveBeenCalledWith({ data: ['tester'] }, 'mountId', 'userswithchanges/discard');
   });
 
   it('records own changes', () => {
@@ -378,9 +376,11 @@ describe('ChannelService', () => {
 
     ChannelService.createPreviewConfiguration();
     expect(HstService.doPost).toHaveBeenCalledWith(null, 'mountId', 'edit');
+    HstService.getChannel.and.returnValue($q.when(channelMock));
 
     $rootScope.$digest();
     expect(ChannelService.hasPreviewConfiguration()).toBe(true);
+    expect(HstService.getChannel).toHaveBeenCalledWith('channelId-preview');
   });
 
   it('should not update the channel\'s preview config flag if creating a preview config failed', () => {

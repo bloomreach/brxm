@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-export class MenuEditorCtrl {
-  constructor(SiteMenuService) {
-    'ngInject';
-
-    SiteMenuService.loadMenu(this.menuUuid)
-      .then((menu) => {
-        this.menu = menu;
-      })
-      .catch(() => this.onError({ key: 'ERROR_MENU_LOAD_FAILED' }));
-  }
+export function changesMenuDirective() {
+  return {
+    restrict: 'E',
+    templateUrl: 'channel/changes/changesMenu.html',
+    controller: 'ChangesMenuCtrl as changes',
+    bindToController: {
+      onManageChanges: '&',
+    },
+  };
 }

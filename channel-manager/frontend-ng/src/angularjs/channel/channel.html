@@ -23,9 +23,6 @@
 
       <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
 
-      <!--Temporary access to menu editor-->
-      <md-button ng-if="channelCtrl.isEditMode" ng-click="channelCtrl.menuUuid = 'uuid'; channelCtrl.showSubpage('menu-editor')">Edit menu</md-button>
-
       <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
       <span flex></span>
@@ -68,7 +65,8 @@
     <hippo-iframe
       flex
       layout="row"
-      edit-mode="channelCtrl.isEditMode">
+      edit-mode="channelCtrl.isEditMode"
+      on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
   </md-content>
 </div>
@@ -93,12 +91,12 @@
           on-done="channelCtrl.hideSubpage()">
 </page-add>
 
-<channel-edit layout="column" flex
-              ng-if="channelCtrl.currentSubpage == 'channel-edit'"
-              on-done="channelCtrl.hideSubpage()"
-              on-success="channelCtrl.onSubpageSuccess(key, params)"
-              on-error="channelCtrl.onSubpageError(key, params)">
-</channel-edit>
+<channel-settings layout="column" flex
+                  ng-if="channelCtrl.currentSubpage == 'channel-settings'"
+                  on-done="channelCtrl.hideSubpage()"
+                  on-success="channelCtrl.onSubpageSuccess(key, params)"
+                  on-error="channelCtrl.onSubpageError(key, params)">
+</channel-settings>
 
 <change-management layout="column" flex
                    ng-if="channelCtrl.currentSubpage == 'manage-changes'"
@@ -108,7 +106,8 @@
 <menu-editor layout="column" flex
              ng-if="channelCtrl.currentSubpage == 'menu-editor'"
              menu-uuid="{{channelCtrl.menuUuid}}"
-             on-done="channelCtrl.hideSubpage()">
+             on-done="channelCtrl.hideSubpage()"
+             on-error="channelCtrl.onSubpageError(key, params)">
 </menu-editor>
 
 <div class="mask qa-mask" mask></div>

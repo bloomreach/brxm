@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-import { PageStructureElement } from './pageStructureElement';
+export function subpageToolbarDirective() {
+  'ngInject';
 
-export class ContentLink extends PageStructureElement {
-
-  constructor(commentElement, metaData) {
-    super('contentLink', metaData, commentElement, commentElement, null);
-  }
-
-  getUuid() {
-    return this.metaData.uuid;
-  }
+  return {
+    restrict: 'E',
+    scope: {
+      onBack: '&',
+      title: '@',
+    },
+    bindToController: {
+      mode: '@',
+    },
+    templateUrl: 'channel/subpage/toolbar.html',
+    controller: 'SubpageToolbarCtrl',
+    controllerAs: 'toolbar',
+  };
 }

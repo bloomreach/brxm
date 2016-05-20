@@ -16,12 +16,16 @@
 
 import { channelActionsDirective } from './channelActions.directive';
 import { ChannelActionsCtrl } from './channelActions.controller';
-import { channelEditDirective } from './edit/edit.directive';
-import { ChannelEditCtrl } from './edit/edit.controller';
+import { channelSettingsDirective } from './settings/settings.directive';
+import { ChannelSettingsCtrl } from './settings/settings.controller';
+import { channelPropertyDirective } from './settings/property/property.directive';
+import { ChannelPropertyCtrl } from './settings/property/property.controller';
 
 export const channelActionsModule = angular
   .module('hippo-cm.channel.actions', ['ngMessages'])
   .controller('ChannelActionsCtrl', ChannelActionsCtrl)
   .directive('channelActions', channelActionsDirective)
-  .controller('ChannelEditCtrl', ChannelEditCtrl)
-  .directive('channelEdit', channelEditDirective);
+  .controller('ChannelSettingsCtrl', ChannelSettingsCtrl)
+  .directive('channelSettings', channelSettingsDirective)
+  .controller('ChannelPropertyCtrl', ChannelPropertyCtrl)
+  .directive('channelProperty', channelPropertyDirective);
