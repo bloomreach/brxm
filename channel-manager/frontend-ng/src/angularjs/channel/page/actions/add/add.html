@@ -20,7 +20,11 @@
 </subpage-toolbar>
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-page-add">
-  <form name="form" flex="initial" class="qa-subpage subpage-form">
+  <form name="form"
+        flex="initial"
+        class="qa-subpage subpage-form"
+        ng-submit="form.$valid && pageAdd.create()"
+        novalidate>
     <md-input-container class="md-block">
       <label class="md-required">{{ 'SUBPAGE_PAGE_ADD_LABEL_TITLE' | translate }}</label>
       <input type="text" name="title" class="qa-title"
@@ -71,12 +75,16 @@
         <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
       </div>
     </md-input-container>
-    <md-input-container>
-      <md-button type="submit" class="md-raised md-primary qa-action"
-                 ng-disabled="form.$invalid"
-                 ng-click="pageAdd.create()">
+    <div layout="row" layout-align="end center">
+      <md-button type="button"
+                 class="qa-discard"
+                 ng-click="pageAdd.onDone()">
+        {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
+      </md-button>
+      <md-button type="submit"
+                 class="md-raised md-primary qa-action">
         {{ 'SUBPAGE_PAGE_ADD_BUTTON_CREATE' | translate }}
       </md-button>
-    </md-input-container>
+    </div>
   </form>
 </md-content>

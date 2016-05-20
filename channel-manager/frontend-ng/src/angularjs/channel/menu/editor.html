@@ -19,14 +19,17 @@
 </subpage-toolbar>
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-menu-editor">
-  <form name="form" flex="initial" class="qa-subpage subpage-form">
+  <form name="form"
+        flex="initial"
+        class="qa-subpage subpage-form"
+        ng-submit="form.$valid && menuEditor.onDone()"
+        novalidate>
     <h2>Editing menu {{menuEditor.menuUuid}}</h2>
-    <md-input-container>
-      <md-button type="submit" class="qa-menu-editor-save md-raised md-primary"
-                 ng-disabled="form.$pristine || form.$invalid"
-                 ng-click="menuEditor.onDone()">
+    <div layout="row" layout-align="end center">
+      <md-button type="submit"
+                 class="qa-menu-editor-save md-raised md-primary">
         {{ 'SUBPAGE_BUTTON_SAVE' | translate }}
       </md-button>
-    </md-input-container>
+    </div>
   </form>
 </md-content>

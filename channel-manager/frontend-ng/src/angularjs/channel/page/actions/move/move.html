@@ -20,7 +20,11 @@
 </subpage-toolbar>
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-page-move">
-  <form name="form" flex="initial" class="qa-subpage subpage-form">
+  <form name="form"
+        flex="initial"
+        class="qa-subpage subpage-form"
+        ng-submit="form.$valid && pageMove.move()"
+        novalidate>
     <div layout="row">
       <md-input-container class="md-block" flex>
         <label>{{ 'SUBPAGE_PAGE_ADD_LABEL_URL_STEM' | translate }}</label>
@@ -48,12 +52,16 @@
         </div>
       </md-input-container>
     </div>
-    <md-input-container>
-      <md-button type="submit" class="md-raised md-primary qa-action"
-                 ng-disabled="form.$invalid || form.$pristine"
-                 ng-click="pageMove.move()">
+    <div layout="row" layout-align="end center">
+      <md-button type="button"
+                 class="qa-discard"
+                 ng-click="pageMove.onDone()">
+        {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
+      </md-button>
+      <md-button type="submit"
+                 class="md-raised md-primary qa-action">
         {{ 'SUBPAGE_PAGE_MOVE_BUTTON_MOVE' | translate }}
       </md-button>
-    </md-input-container>
+    </div>
   </form>
 </md-content>

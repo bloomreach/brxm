@@ -20,7 +20,11 @@
 </subpage-toolbar>
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-page-copy">
-  <form name="form" flex="initial" class="qa-subpage subpage-form">
+  <form name="form"
+        flex="initial"
+        class="qa-subpage subpage-form"
+    ng-submit="form.$valid && pageCopy.copy()"
+    novalidate>
     <md-input-container ng-if="pageCopy.isCrossChannelCopyAvailable" class="md-block">
       <label>{{ 'SUBPAGE_PAGE_COPY_LABEL_CHANNEL' | translate }}</label>
       <md-select required name="channel" class="qa-channel"
@@ -63,12 +67,17 @@
         </div>
       </md-input-container>
     </div>
-    <md-input-container>
-      <md-button type="submit" class="md-raised md-primary qa-action"
-                 ng-disabled="form.$invalid || form.$pristine"
-                 ng-click="pageCopy.copy()">
+
+    <div layout="row" layout-align="end center">
+      <md-button type="button"
+                 class="qa-discard"
+                 ng-click="pageCopy.onDone()">
+        {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
+      </md-button>
+      <md-button type="submit"
+                 class="md-raised md-primary qa-action">
         {{ 'SUBPAGE_PAGE_COPY_BUTTON_COPY' | translate }}
       </md-button>
-    </md-input-container>
+    </div>
   </form>
 </md-content>
