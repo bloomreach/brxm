@@ -20,15 +20,17 @@ describe('ChannelProperty', () => {
   let $rootScope;
   let $compile;
   let $log;
+  let ConfigService;
   let channelInfoDescription;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$log_) => {
+    inject((_$rootScope_, _$compile_, _$log_, _ConfigService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $log = _$log_;
+      ConfigService = _ConfigService_;
     });
 
     channelInfoDescription = {
@@ -178,5 +180,20 @@ describe('ChannelProperty', () => {
     };
     ChannelPropertyCtrl = compileDirectiveAndGetController({ data });
     expect(ChannelPropertyCtrl.getDropDownListValues()).toEqual([]);
+  });
+
+  it('enters read-only mode if the channel is locked by someone else', () => {
+    ConfigService.cmsUser = 'admin';
+    channelInfoDescription.lockedBy = 'tester';
+    let ChannelPropertyCtrl = compileDirectiveAndGetController();
+    expect(ChannelPropertyCtrl.readOnly).toBe(true);
+
+    channelInfoDescription.lockedBy = 'admin';
+    ChannelPropertyCtrl = compileDirectiveAndGetController();
+    expect(ChannelPropertyCtrl.readOnly).toBe(false);
+
+    delete channelInfoDescription.lockedBy;
+    ChannelPropertyCtrl = compileDirectiveAndGetController();
+    expect(ChannelPropertyCtrl.readOnly).toBeFalsy();
   });
 });
