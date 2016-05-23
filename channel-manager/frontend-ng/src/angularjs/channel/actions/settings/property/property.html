@@ -39,11 +39,13 @@
       <input type="text"
              ng-model="channelProperty.value"
              ng-hide="channelProperty.value"
-             ng-click="channelProperty.showPicker()">
+             ng-click="channelProperty.showPicker()"
+             ng-disabled="channelProperty.readOnly">
       <div flex>
-        <img ng-if="channelProperty.value"
+        <img ng-class="{ 'readonly': channelProperty.readOnly }"
+             ng-if="channelProperty.value"
              ng-src="{{ channelProperty.getImageVariantPath() }}"
-             ng-click="channelProperty.showPicker()">
+             ng-click="channelProperty.readOnly || channelProperty.showPicker()">
       </div>
       <md-button class="md-icon-button"
                  ng-if="channelProperty.value"
