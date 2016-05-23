@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ package org.onehippo.forge.sitemap.components.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -37,9 +38,9 @@ import static java.util.Collections.synchronizedList;
 
 /**
  * <p>Java class for anonymous complex type.
- * 
+ * <p>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -51,17 +52,17 @@ import static java.util.Collections.synchronizedList;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
 @XmlType(name = "", propOrder = {
-    "urls"
+        "urls"
 })
 @XmlRootElement(name = "urlset")
 public class Urlset {
 
     public static final int MAX_SUPPORTED_URLS_PER_FILE = 50000;
+
+    private final Object lock = new Object();
 
     private List<Url> urls;
 
@@ -76,26 +77,25 @@ public class Urlset {
 
     /**
      * Gets the value of the url property.
-     * 
+     * <p>
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the url property.
-     * 
+     * <p>
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getUrls().add(newItem);
      * </pre>
-     * 
-     * 
+     * <p>
+     * <p>
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Url }
      *
      * @return the list containing all the {@link Url}s in this set.
-     * 
      */
     @XmlElement(name = "url", required = true)
     public List<Url> getUrls() {
@@ -104,11 +104,14 @@ public class Urlset {
 
     /**
      * Adds the specified url to the Urlset if this Url isn't already in the Urlset
+     *
      * @param url the Url to add
      */
     public void addUrlThatDoesntExistInTheListYet(Url url) {
-        if (!urls.contains(url)) {
-            urls.add(url);
+        synchronized (lock) {
+            if (!urls.contains(url)) {
+                urls.add(url);
+            }
         }
     }
 
