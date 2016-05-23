@@ -57,13 +57,11 @@
       </form>
     </div>
       <div flex>
-        <md-input-container>
-          <md-button type="submit" class="qa-menu-editor-save md-raised md-primary"
-                     ng-disabled="form.$pristine || form.$invalid"
-                     ng-click="menuEditor.onDone()">
-            {{ 'SUBPAGE_BUTTON_DONE' | translate }}
-          </md-button>
-        </md-input-container>
+        <md-button type="submit" class="qa-menu-editor-save md-raised md-primary"
+                   ng-disabled="form.$pristine || form.$invalid"
+                   ng-click="menuEditor.onDone()">
+          {{ 'SUBPAGE_BUTTON_DONE' | translate }}
+        </md-button>
       </div>
     </div>
   </div>
