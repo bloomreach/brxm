@@ -15,11 +15,15 @@
  */
 
 export class MenuEditorCtrl {
-  constructor($scope, SiteMenuService, FormStateService) {
+  constructor($q, $filter, $scope, $translate, SiteMenuService, FormStateService, HippoIframeService) {
     'ngInject';
 
+    this.$q = $q;
+    this.$filter = $filter;
+    this.$translate = $translate;
     this.SiteMenuService = SiteMenuService;
     this.FormStateService = FormStateService;
+    this.HippoIframeService = HippoIframeService;
 
     SiteMenuService.getMenu(this.menuUuid, true)
       .then((menu) => {
@@ -27,22 +31,19 @@ export class MenuEditorCtrl {
         this.selectedItem = this.items.length > 0 ? this.items[0] : undefined;
 
         $scope.$watch(
-          () => menu.items,
-          () => {
+          () => menu.items, () => {
             this.items = menu.items;
             $scope.$broadcast('menu-items-changed');
-
-            // merge pending changes into newly loaded tree
-            if (this.items.length > 0 && this.selectedItem) {
-              SiteMenuService.getMenuItem(this.menuUuid, this.selectedItem.id).then((item) => {
-                if (this.selectedItem !== item) {
-                  delete this.selectedItem.items;
-                  this.selectedItem = angular.extend(item, this.selectedItem);
-                }
-              });
-            }
           },
           false);
+
+        $scope.$watch(
+          () => this.selectedItem, (current, last) => {
+            if (current && last && current.id !== last.id) {
+              this._saveIfDirty(last);
+            }
+          }
+        );
       })
       .catch(() => this.onError({ key: 'ERROR_MENU_LOAD_FAILED' }));
 
@@ -61,37 +62,110 @@ export class MenuEditorCtrl {
 
         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
           SiteMenuService.moveMenuItem(this.menuUuid, sourceId, destId, dest.index)
+            .then(() => this.HippoIframeService.reload())
             .catch(() => this.onError({ key: 'ERROR_MENU_MOVE_FAILED' }));
         }
 
         if (this.selectedItem.id !== sourceId) {
-          this.selectItem(sourceId);
+          this._saveIfDirty(this.selectedItem).then(() => this.selectItem(sourceId));
         }
       },
     };
   }
 
   selectItem(itemId) {
-    if (this.FormStateService.isDirty()) {
-      if (this.FormStateService.isValid()) {
-        const saved = () => this.editItem(itemId);
-        const failed = (error) => {
-          this.onError({ key: 'ERROR_MENU_SAVE_FAILED', params: [error] });
-          this.FormStateService.setValid(false);
-        };
-        this.SiteMenuService.saveMenuItem(this.selectedItem).then(saved, failed);
-      }
-    } else {
-      this.editItem(itemId);
-    }
-  }
-
-  editItem(itemId) {
-    if (this.selectedItem && this.selectedItem.id !== itemId) {
+    if (!this.selectedItem || this.selectedItem.id !== itemId) {
       this.SiteMenuService.getMenuItem(this.menuUuid, itemId)
         .then((item) => {
           this.selectedItem = item;
         });
     }
+  }
+
+  addItem() {
+    this._saveIfDirty(this.selectedItem)
+      .then(() => {
+        this._addItemAfterCheckingValidity();
+      });
+  }
+
+  _saveIfDirty(item) {
+    if (this.FormStateService.isDirty()) {
+      if (!this.FormStateService.isValid()) {
+        return this.$q.reject();
+      }
+      const defer = this.$q.defer();
+      this.SiteMenuService.saveMenuItem(item)
+        .then(() => {
+          this.HippoIframeService.reload();
+          defer.resolve();
+        },
+        (error) => {
+          this.onError({ key: 'ERROR_MENU_SAVE_FAILED', params: [error] });
+          this.FormStateService.setValid(false);
+          defer.reject();
+        });
+      return defer.promise;
+    }
+    return this.$q.when();
+  }
+
+  _createBlankMenuItem(menu) {
+    const incFilter = this.$filter('incrementProperty');
+    const result = {
+      linkType: 'SITEMAPITEM',
+      title: incFilter(menu.items, 'title', this.$translate.instant('SUBPAGE_MENU_EDITOR_NEW_ITEM_TITLE'), 'items'),
+      link: '',
+    };
+    if (angular.isObject(menu.prototypeItem)) {
+      result.localParameters = angular.copy(menu.prototypeItem.localParameters);
+    }
+    return result;
+  }
+
+  _addItemAfterCheckingValidity() {
+    if (!this.selectedItem) {
+      return;
+    }
+
+    this.SiteMenuService.getMenu(this.menuUuid, true).then((menu) => {
+      this.SiteMenuService.getPathToMenuItem(this.menuUuid, this.selectedItem.id).then((path) => {
+        let currentItem;
+        let parentItemId;
+        let position = this.SiteMenuService.AFTER;
+        let siblingId;
+
+        // create child if currently selected item already has children.
+        // otherwise, create sibling.
+        if (path && path.length >= 1) {
+          currentItem = path.pop();
+          if (currentItem.items && currentItem.items.length > 0) {
+            parentItemId = currentItem.id;
+            position = this.SiteMenuService.FIRST;
+          } else if (path.length >= 1) {
+            siblingId = currentItem.id;
+            currentItem = path.pop();
+            parentItemId = currentItem.id;
+          }
+        }
+
+        const blankMenuItem = this._createBlankMenuItem(menu);
+        this.SiteMenuService.createMenuItem(menu.id, blankMenuItem, parentItemId, { position, siblingId }).then(
+          (itemId) => {
+            this.FormStateService.setValid(true);
+
+            this.SiteMenuService.getMenuItem(this.menuUuid, parentItemId).then((parentItem) => {
+              if (parentItem !== null) {
+                parentItem.collapsed = false;
+              }
+              this.SiteMenuService.getMenu(this.menuUuid, true).then(() => {
+                this.selectItem(itemId);
+              });
+            });
+          },
+          (error) => this.onError({ key: 'ERROR_MENU_CREATE_FAILED', params: [error] })
+        );
+      });
+    });
   }
 }

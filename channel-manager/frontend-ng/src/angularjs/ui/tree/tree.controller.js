@@ -22,7 +22,7 @@ export class HippoTreeCtrl {
     this.$filter = $filter;
     this.renderTreeTemplate = $transclude;
 
-    $scope.$watch('items', (newItems, oldItems) => {
+    $scope.$watch(() => this.items, (newItems, oldItems) => {
       const oldNodes = this._collectNodes(oldItems, {});
       const newNodes = this._collectNodes(newItems, {});
       this._copyCollapsedState(oldNodes, newNodes);
