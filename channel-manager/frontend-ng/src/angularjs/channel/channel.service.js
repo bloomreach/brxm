@@ -57,7 +57,6 @@ export class ChannelService {
     return this.HstService.getChannel(channelId)
       .then((channel) => {
         this._setChannel(channel);
-        return channel;
       })
       .catch((error) => {
         this.$log.error(`Failed to reload channel '${channelId}'.`, error);
