@@ -18,21 +18,18 @@ export function getByPropertyFilter() {
   'ngInject';
 
   return (collection, propertyName, propertyValue, subCollection) => {
-    let itemWithProperty = null;
-
     function findPropertiesAndSubProperties(newCollection) {
       for (let i = 0; i < newCollection.length; i++) {
         if (newCollection[i][propertyName] === propertyValue) {
-          itemWithProperty = newCollection[i];
+          return newCollection[i];
         }
         if (subCollection && newCollection[i][subCollection]) {
-          findPropertiesAndSubProperties(newCollection[i][subCollection]);
+          return findPropertiesAndSubProperties(newCollection[i][subCollection]);
         }
       }
+      return null;
     }
 
-    findPropertiesAndSubProperties(collection);
-
-    return itemWithProperty;
+    return findPropertiesAndSubProperties(collection);
   };
 }
