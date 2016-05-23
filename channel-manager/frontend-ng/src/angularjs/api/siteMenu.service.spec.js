@@ -315,4 +315,18 @@ describe('SiteMenuService', () => {
 
     $rootScope.$digest();
   });
+
+  // find path to menu item
+  it('should find the path to a menu item', (done) => {
+    SiteMenuService.getPathToMenuItem('testUuid', 'child1').then((paths) => {
+      expect(paths).toBeDefined();
+      expect(paths.length).toBe(3);
+      expect(paths[0].id).toEqual('testUuid');
+      expect(paths[1].id).toEqual('2');
+      expect(paths[2].id).toEqual('child1');
+      done();
+    });
+
+    $rootScope.$digest();
+  });
 });
