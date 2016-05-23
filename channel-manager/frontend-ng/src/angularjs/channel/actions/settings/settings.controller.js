@@ -38,7 +38,7 @@ export class ChannelSettingsCtrl {
     this.ChannelService.getChannelInfoDescription()
       .then((channelInfoDescription) => {
         this.channelInfoDescription = channelInfoDescription;
-        if (this._isLockedByOther()) {
+        if (this.isLockedByOther()) {
           this.readOnlyAlert = this.$translate.instant('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', {
             lockedBy: channelInfoDescription.lockedBy,
           });
@@ -53,7 +53,7 @@ export class ChannelSettingsCtrl {
     this.values = angular.copy(this.ChannelService.getProperties());
   }
 
-  _isLockedByOther() {
+  isLockedByOther() {
     return this.channelInfoDescription.lockedBy && this.channelInfoDescription.lockedBy !== this.ConfigService.cmsUser;
   }
 

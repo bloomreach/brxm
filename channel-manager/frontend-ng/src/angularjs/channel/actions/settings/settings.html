@@ -19,7 +19,7 @@
                  mode="cancel">
 </subpage-toolbar>
 
-<md-content layout-padding layout="row" layout-align="center" class="feedback-parent">
+<md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-channel-settings">
   <form name="form"
         flex="initial"
         class="qa-subpage subpage-form"
@@ -53,7 +53,8 @@
         {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
       </md-button>
       <md-button type="submit"
-                 class="qa-action md-raised md-primary">
+                 class="qa-action md-raised md-primary"
+                 ng-disabled="channelSettings.isLockedByOther()">
         {{ 'SUBPAGE_BUTTON_SAVE' | translate }}
       </md-button>
     </div>
