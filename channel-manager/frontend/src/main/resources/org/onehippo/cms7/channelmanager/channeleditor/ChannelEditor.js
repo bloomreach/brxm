@@ -79,7 +79,12 @@
 
     _syncChannel: function() {
       this._reloadChannels().when(function (channelStore) {
-        this.selectedChannel = channelStore.getById(this.selectedChannel.id);
+        var id = this.selectedChannel.id;
+        this.selectedChannel = channelStore.getById(id);
+        if (!this.selectedChannel) {
+          // we may just have created the preview config of this channel
+          this.selectedChannel = channelStore.getById(id + '-preview');
+        }
         this.hostToIFrame.publish('channel-changed-in-extjs');
       }.bind(this));
     },
