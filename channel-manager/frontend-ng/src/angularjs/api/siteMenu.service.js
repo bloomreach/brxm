@@ -21,6 +21,9 @@ export class SiteMenuService {
     this.$q = $q;
     this.HstService = HstService;
 
+    this.FIRST = 'first';
+    this.AFTER = 'after';
+
     this.menu = {
       id: null,
       items: [],
@@ -29,7 +32,7 @@ export class SiteMenuService {
   }
 
   getMenu(menuId, forceUpdate) {
-    if (forceUpdate) {
+    if (forceUpdate || menuId !== this.menu.id) {
       this.loadMenuPromise = null;
     }
     return this._loadMenu(menuId);
@@ -41,6 +44,41 @@ export class SiteMenuService {
 
   moveMenuItem(menuId, menuItemId, parentId, position) {
     return this.HstService.doPost({}, menuId, 'move', menuItemId, parentId, String(position));
+  }
+
+  saveMenuItem(menuId, menuItem) {
+    const menuItemCopy = angular.copy(menuItem);
+
+    // TODO: needed?
+    this._removeCollapsedProperties(menuItemCopy);
+    this._extractLinkFromSitemapLinkOrExternalLink(menuItemCopy);
+    return this.HstService.doPost(menuItemCopy, menuId);
+  }
+
+  /**
+   * Create a new menu item.
+
+   * @param menuId The menu id
+   * @param parentItemId When specified, the item will be created under the parent.
+   *                     Otherwise, the item will be created as a root item.
+   * @param menuItem The item to be created
+   * @param options item positioning details;
+   *      { position: <position> , siblingId: <sibling> }
+   *      with position either SiteMenuService.FIRST or SiteMenuService.AFTER.  The siblingId is taken into account
+   *      when the position is AFTER.
+   * @returns {promise|Promise.promise|Q.promise}
+   */
+  createMenuItem(menuId, menuItem, parentItemId, options) {
+    const parentId = parentItemId || menuId;
+    let params = options && options.position ? `?position=${options.position}` : '';
+    params += options && options.position && options.siblingId ? `&sibling=${options.siblingId}` : '';
+
+    return this.HstService.doPost(menuItem, menuId, 'create', parentId, params)
+      .then((response) => response.data);
+  }
+
+  getPathToMenuItem(menuId, menuItemId) {
+    return this._loadMenu(menuId).then((menu) => this._findPathToMenuItem(menu, menuItemId));
   }
 
   _loadMenu(menuId) {
@@ -89,5 +127,47 @@ export class SiteMenuService {
       }
     }
     return found;
+  }
+
+  _findPathToMenuItem(parent, id) {
+    let found = null;
+
+    parent.items.every((item) => {
+      if (item.id === id) {
+        found = [item];
+      } else if (item.items) {
+        found = this._findPathToMenuItem(item, id);
+      }
+      return !found;
+    });
+
+    if (found) {
+      found.unshift(parent);
+    }
+
+    return found;
+  }
+
+  _extractLinkFromSitemapLinkOrExternalLink(item) {
+    if (item.linkType === 'SITEMAPITEM') {
+      item.link = item.sitemapLink;
+    } else if (item.linkType === 'EXTERNAL') {
+      item.link = item.externalLink;
+    } else if (item.linkType === 'NONE') {
+      delete item.link;
+    }
+    delete item.sitemapLink;
+    delete item.externalLink;
+
+    angular.forEach(item.items, (subItem) => {
+      this._extractLinkFromSitemapLinkOrExternalLink(subItem);
+    });
+  }
+
+  _removeCollapsedProperties(item) {
+    delete item.collapsed;
+    angular.forEach(item.items, (subItem) => {
+      this._removeCollapsedProperties(subItem);
+    });
   }
 }

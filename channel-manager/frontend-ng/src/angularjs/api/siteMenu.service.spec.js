@@ -49,10 +49,12 @@ describe('SiteMenuService', () => {
       },
       {
         id: '3',
-        title: 'One',
+        title: 'Three',
       },
     ],
   };
+
+  const newMenuItem = { id: 'child1' };
 
   beforeEach(() => {
     module('hippo-cm');
@@ -66,6 +68,9 @@ describe('SiteMenuService', () => {
 
     spyOn(HstService, 'doGet');
     HstService.doGet.and.returnValue($q.when({ data: testMenu }));
+
+    spyOn(HstService, 'doPost');
+    HstService.doPost.and.returnValue($q.when({ data: newMenuItem.id }));
   });
 
   it('successfully retrieves a menu', (done) => {
@@ -90,6 +95,53 @@ describe('SiteMenuService', () => {
         expect(response).toBe(error);
         done();
       });
+    $rootScope.$digest();
+  });
+
+  it('caches a menu', (done) => {
+    const menu = { id: 'testUuid' };
+    HstService.doGet.and.returnValue($q.when({ data: menu }));
+    SiteMenuService.getMenu('testUuid')
+      .then(() => {
+        HstService.doGet.calls.reset();
+        SiteMenuService.getMenu('testUuid').then((response) => {
+          expect(response).toEqual({ items: [], id: menu.id });
+          expect(HstService.doGet).not.toHaveBeenCalled();
+          done();
+        });
+      })
+      .catch(() => fail());
+
+    $rootScope.$digest();
+  });
+
+  it('should not return cached menu if menuId does not matches cached menuId', (done) => {
+    SiteMenuService.getMenu('testUuid')
+      .then(() => {
+        SiteMenuService.getMenu('testUuid2').then(() => {
+          expect(HstService.doGet).toHaveBeenCalledWith('testUuid2');
+          done();
+        });
+      })
+      .catch(() => fail());
+
+    $rootScope.$digest();
+  });
+
+  it('should not return cached menu if forceUpdate is true', (done) => {
+    const menu = { id: 'testUuid' };
+    HstService.doGet.and.returnValue($q.when({ data: menu }));
+    SiteMenuService.getMenu('testUuid')
+      .then(() => {
+        HstService.doGet.calls.reset();
+        SiteMenuService.getMenu('testUuid', true).then((response) => {
+          expect(response).toEqual({ items: [], id: menu.id });
+          expect(HstService.doGet).toHaveBeenCalled();
+          done();
+        });
+      })
+      .catch(() => fail());
+
     $rootScope.$digest();
   });
 
@@ -165,6 +217,102 @@ describe('SiteMenuService', () => {
       expect(menuItem.sitemapLink).toEqual('home');
       done();
     });
+    $rootScope.$digest();
+  });
+
+  // Create item
+  it('should create a menu item', (done) => {
+    SiteMenuService.createMenuItem('testUuid', newMenuItem, 'parentId').then(() => {
+      expect(HstService.doPost).toHaveBeenCalledWith(newMenuItem, 'testUuid', 'create', 'parentId', '');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('should create a root menu item if parentId is not specified', (done) => {
+    SiteMenuService.createMenuItem('testUuid', newMenuItem).then(() => {
+      expect(HstService.doPost).toHaveBeenCalledWith(newMenuItem, 'testUuid', 'create', 'testUuid', '');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('should create a menu item at specified position and sibling', (done) => {
+    const options = { position: '_pos', siblingId: '_sib' };
+    SiteMenuService.createMenuItem('testUuid', newMenuItem, 'testUuid', options).then(() => {
+      expect(HstService.doPost).toHaveBeenCalledWith(newMenuItem, 'testUuid', 'create', 'testUuid', '?position=_pos&sibling=_sib');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('should create a menu item at specified sibling only if position is specified as well', (done) => {
+    const options = { siblingId: '_sib' };
+    SiteMenuService.createMenuItem('testUuid', newMenuItem, 'testUuid', options).then(() => {
+      expect(HstService.doPost).toHaveBeenCalledWith(newMenuItem, 'testUuid', 'create', 'testUuid', '');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  // Save item
+  it('should save a menu item', (done) => {
+    const menuItemToSave = {
+      id: 'child1',
+      items: [
+        {
+          id: 'child2',
+          title: 'Child 2',
+          sitemapLink: 'home',
+          linkType: 'SITEMAPITEM',
+          collapsed: false,
+        },
+        {
+          id: 'child3',
+          title: 'Child 3',
+          link: 'child3link',
+          linkType: 'NONE',
+        },
+      ],
+      externalLink: 'http://onehippo.org',
+      linkType: 'EXTERNAL',
+      title: 'New title',
+    };
+    const savedMenuItem = {
+      id: 'child1',
+      items: [
+        {
+          id: 'child2',
+          title: 'Child 2',
+          link: 'home',
+          linkType: 'SITEMAPITEM',
+        },
+        {
+          id: 'child3',
+          title: 'Child 3',
+          linkType: 'NONE',
+        },
+      ],
+      link: 'http://onehippo.org',
+      linkType: 'EXTERNAL',
+      title: 'New title',
+    };
+
+    SiteMenuService.saveMenuItem('testUuid', menuItemToSave).then(() => {
+      expect(HstService.doPost).toHaveBeenCalledWith(savedMenuItem, 'testUuid');
+      done();
+    });
+
+    $rootScope.$digest();
+  });
+
+  // Move item
+  it('should move an item', (done) => {
+    SiteMenuService.moveMenuItem('testUuid', 'three', '1', 0).then(() => {
+      expect(HstService.doPost).toHaveBeenCalledWith({}, 'testUuid', 'move', 'three', '1', '0');
+      done();
+    });
+
     $rootScope.$digest();
   });
 });
