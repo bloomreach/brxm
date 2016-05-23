@@ -19,12 +19,7 @@ export class PathService {
     if (!paths) {
       return paths;
     }
-
-    let result = '';
-    paths.forEach((path) => {
-      result = this._concatTwoPaths(result, path);
-    });
-    return result;
+    return paths.reduce((result, path) => this._concatTwoPaths(result, path), '');
   }
 
   _concatTwoPaths(path1, path2) {
