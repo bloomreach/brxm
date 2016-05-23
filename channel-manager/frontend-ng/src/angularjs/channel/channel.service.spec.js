@@ -605,4 +605,10 @@ describe('ChannelService', () => {
     expect(HstService.doPut.calls.mostRecent().args[0].properties).toBe(modifiedProperties);
     $rootScope.$digest();
   });
+
+  it('returns the content root path of the current channel', () => {
+    ChannelService._load({ contentRoot: '/content/documents/testChannel' });
+    $rootScope.$digest();
+    expect(ChannelService.getContentRootPath()).toEqual('/content/documents/testChannel');
+  });
 });

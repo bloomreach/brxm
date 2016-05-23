@@ -279,4 +279,8 @@ export class ChannelService {
   getMountId() {
     return this.channel.mountId;
   }
+
+  getContentRootPath() {
+    return this.channel.contentRoot;
+  }
 }

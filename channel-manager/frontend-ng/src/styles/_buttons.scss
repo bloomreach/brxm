@@ -74,3 +74,21 @@ button .disabled-marker {
   font-style: italic;
 }
 
+md-input-container.input-container-picker {
+  img {
+    max-width: 100%;
+    &:not(.readonly) {
+      cursor: pointer;
+    }
+  }
+  .md-input {
+    order: 0;
+    &:not([disabled]) {
+      cursor: pointer;
+    }
+  }
+  .md-icon-button {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
