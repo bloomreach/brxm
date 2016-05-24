@@ -77,6 +77,10 @@ export class HippoIframeCtrl {
   onLoad() {
     // we insert the CSS for every page, because embedded links can come and go without reloading the page
     this._insertCss().then(() => {
+      // ignore parsing if the old iframe has been unloaded from DOM
+      if (!this._getIframeDOM()) {
+        return;
+      }
       this._parseHstComments();
       this._updateDragDrop();
       this._updateChannelIfSwitched().then(() => {
