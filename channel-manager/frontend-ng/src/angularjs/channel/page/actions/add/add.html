@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<subpage-toolbar title="{{ 'SUBPAGE_PAGE_ADD_TITLE' | translate }}"
+<subpage-toolbar title="{{ 'SUBPAGE_PAGE_CREATE_TITLE' | translate }}"
                  on-back="pageAdd.onDone()"
                  mode="cancel">
 </subpage-toolbar>
@@ -79,11 +79,11 @@
       <md-button type="button"
                  class="qa-discard"
                  ng-click="pageAdd.onDone()">
-        {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
+        {{ 'CANCEL' | translate }}
       </md-button>
       <md-button type="submit"
                  class="md-raised md-primary qa-action">
-        {{ 'SUBPAGE_PAGE_ADD_BUTTON_CREATE' | translate }}
+        {{ 'CREATE' | translate }}
       </md-button>
     </div>
   </form>
