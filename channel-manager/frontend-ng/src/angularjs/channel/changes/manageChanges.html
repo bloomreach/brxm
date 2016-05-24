@@ -18,7 +18,8 @@
     on-back="changeMan.goBack()">
 </subpage-toolbar>
 
-<md-content layout-padding class="feedback-parent qa-subpage-change-management"
+<subpage-content class="qa-change-management"
+  layout-padding
   layout-gt-sm
   layout-align-gt-sm="center">
 
@@ -37,4 +38,4 @@
       <md-button class="md-secondary md-primary" ng-click="changeMan.publishChanges(user)">{{ 'PUBLISH' | translate }}</md-button>
     </md-list-item>
   </md-list>
-</md-content>
+</subpage-content>

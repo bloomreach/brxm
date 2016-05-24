@@ -15,7 +15,7 @@
  */
 
 export class PageCopyCtrl {
-  constructor($log, $element, $translate, ChannelService, SiteMapService, SiteMapItemService, HippoIframeService,
+  constructor($log, $translate, ChannelService, SiteMapService, SiteMapItemService, HippoIframeService,
               FeedbackService) {
     'ngInject';
 
@@ -27,7 +27,6 @@ export class PageCopyCtrl {
 
     this.locations = [];
     this.channels = [];
-    this.feedbackParent = $element.find('.feedback-parent');
     this.siteMapId = ChannelService.getSiteMapId();
     this.channelId = ChannelService.getId();
     this.illegalCharacters = '/ :';
@@ -82,7 +81,7 @@ export class PageCopyCtrl {
             break;
         }
 
-        this._showError(messageKey, response.data);
+        this.FeedbackService.showErrorOnSubpage(messageKey, response.data);
       });
   }
 
@@ -120,11 +119,7 @@ export class PageCopyCtrl {
         }
       })
       .catch(() => {
-        this._showError('ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED');
+        this.FeedbackService.showErrorOnSubpage('ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED');
       });
-  }
-
-  _showError(key, params) {
-    this.FeedbackService.showError(key, params, this.feedbackParent);
   }
 }

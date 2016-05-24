@@ -27,7 +27,6 @@ export class PageCreateCtrl {
 
     this.prototypes = [];
     this.locations = [];
-    this.feedbackParent = $element.find('.feedback-parent');
     this.updateLastPathInfoElementAutomatically = true;
     this.siteMapId = ChannelService.getSiteMapId();
     this.illegalCharacters = '/ :';
@@ -48,7 +47,7 @@ export class PageCreateCtrl {
         this.location = (data.locations.length > 0) ? data.locations[0] : undefined;
       })
       .catch(() => {
-        this._showError('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
+        this.FeedbackService.showErrorOnSubpage('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
       });
   }
 
@@ -94,16 +93,12 @@ export class PageCreateCtrl {
             break;
         }
 
-        this._showError(messageKey, response.data);
+        this.FeedbackService.showErrorOnSubpage(messageKey, response.data);
       });
   }
 
   disableAutomaticLastPathInfoElementUpdate() {
     this.updateLastPathInfoElementAutomatically = false;
-  }
-
-  _showError(key, params) {
-    this.FeedbackService.showError(key, params, this.feedbackParent);
   }
 
   _replaceIllegalCharacters(value, replacement) {

@@ -16,7 +16,6 @@
 
 export class ChangeManagementCtrl {
   constructor(
-      $element,
       $log,
       $translate,
       ChannelService,
@@ -37,7 +36,6 @@ export class ChangeManagementCtrl {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
 
-    this.feedbackParent = $element.find('.feedback-parent');
     this.usersWithChanges = ChannelService.getChannel().changedBySet.sort();
     this.suffixYou = $translate.instant('SUBPAGE_CHANGEMANAGEMENT_SUFFIX_YOU');
     this.hasManagedChanges = false;
@@ -124,6 +122,6 @@ export class ChangeManagementCtrl {
     response = response || {};
 
     this.$log.info(response.message);
-    this.FeedbackService.showError(key, response.data, this.feedbackParent);
+    this.FeedbackService.showErrorOnSubpage(key, response.data);
   }
 }

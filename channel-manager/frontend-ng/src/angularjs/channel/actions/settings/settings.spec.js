@@ -98,7 +98,7 @@ describe('ChannelSettings', () => {
     spyOn(ChannelService, 'reload').and.returnValue($q.when(channel));
     spyOn(ChannelService, 'getChannel').and.returnValue(channel);
     spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when(channelInfoDescription));
-    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showErrorOnSubpage');
   });
 
   function compileDirectiveAndGetController() {
@@ -114,6 +114,7 @@ describe('ChannelSettings', () => {
     $compile($element)($scope);
     $scope.$digest();
 
+
     return $element.controller('channel-settings');
   }
 
@@ -127,15 +128,6 @@ describe('ChannelSettings', () => {
     expect($element.find('.qa-fieldgroup').text()).toBe('Field Group 1');
     expect($element.find('.qa-field-textField label').text()).toBe('Text Field');
     expect($element.find('.qa-field-dropDown label').text()).toBe('Drop Down');
-  });
-
-  it('enables "save" button when form is dirty', () => {
-    compileDirectiveAndGetController();
-
-    $scope.form.$setDirty();
-    $scope.$digest();
-
-    expect($element.find('.qa-action').is(':enabled')).toBe(true);
   });
 
   it('notifies the event "on-error" when fetching channel setting from backend is failed', () => {
@@ -158,8 +150,6 @@ describe('ChannelSettings', () => {
     spyOn(HippoIframeService, 'reload');
     compileDirectiveAndGetController();
 
-    $scope.form.$setDirty();
-    $scope.$digest();
     $element.find('.qa-action').click();
 
     expect(ChannelService.saveChannel).toHaveBeenCalled();
@@ -171,14 +161,11 @@ describe('ChannelSettings', () => {
   it('shows feedback message when saving is failed', () => {
     spyOn(ChannelService, 'saveChannel').and.returnValue($q.reject());
     compileDirectiveAndGetController();
-    const feedbackParent = $element.find('.feedback-parent');
 
-    $scope.form.$setDirty();
-    $scope.$digest();
     $element.find('.qa-action').click();
 
     expect(ChannelService.saveChannel).toHaveBeenCalled();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED', undefined, feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
   });
 
   it('applies a fall-back strategy when determining a field label', () => {
@@ -192,18 +179,17 @@ describe('ChannelSettings', () => {
   it('displays an alert message when the current channel is locked', () => {
     ConfigService.cmsUser = 'admin';
     channelInfoDescription.lockedBy = 'tester';
-    const ChannelSettingsCtrl = compileDirectiveAndGetController();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: 'tester' },
-                                                           ChannelSettingsCtrl.feedbackParent);
+    compileDirectiveAndGetController();
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: 'tester' });
 
-    FeedbackService.showError.calls.reset();
+    FeedbackService.showErrorOnSubpage.calls.reset();
     channelInfoDescription.lockedBy = 'admin';
     compileDirectiveAndGetController();
-    expect(FeedbackService.showError).not.toHaveBeenCalled();
+    expect(FeedbackService.showErrorOnSubpage).not.toHaveBeenCalled();
 
-    FeedbackService.showError.calls.reset();
+    FeedbackService.showErrorOnSubpage.calls.reset();
     delete channelInfoDescription.lockedBy;
     compileDirectiveAndGetController();
-    expect(FeedbackService.showError).not.toHaveBeenCalled();
+    expect(FeedbackService.showErrorOnSubpage).not.toHaveBeenCalled();
   });
 });

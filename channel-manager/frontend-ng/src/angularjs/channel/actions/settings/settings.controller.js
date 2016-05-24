@@ -15,7 +15,7 @@
  */
 
 export class ChannelSettingsCtrl {
-  constructor($element, $translate, FeedbackService, ChannelService, HippoIframeService, ConfigService) {
+  constructor($translate, FeedbackService, ChannelService, HippoIframeService, ConfigService) {
     'ngInject';
 
     this.$translate = $translate;
@@ -24,10 +24,10 @@ export class ChannelSettingsCtrl {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
 
-    this.feedbackParent = $element.find('.feedback-parent');
-    this.channelInfoDescription = {};
     ChannelService.reload()
       .then(() => this._initialize());
+
+    this.channelInfoDescription = {};
   }
 
   _initialize() {
@@ -39,7 +39,7 @@ export class ChannelSettingsCtrl {
       .then((channelInfoDescription) => {
         this.channelInfoDescription = channelInfoDescription;
         if (this.isLockedByOther()) {
-          this._showError('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: channelInfoDescription.lockedBy });
+          this.FeedbackService.showErrorOnSubpage('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: channelInfoDescription.lockedBy });
         }
       })
       .catch(() => {
@@ -64,7 +64,7 @@ export class ChannelSettingsCtrl {
         this.onSuccess({ key: 'CHANNEL_PROPERTIES_SAVE_SUCCESS' });
       })
       .catch(() => {
-        this._showError('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
+        this.FeedbackService.showErrorOnSubpage('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
       });
   }
 
@@ -86,9 +86,5 @@ export class ChannelSettingsCtrl {
       const labelB = this.getLabel(fieldB);
       return labelA.localeCompare(labelB);
     });
-  }
-
-  _showError(key, params) {
-    this.FeedbackService.showError(key, params, this.feedbackParent);
   }
 }

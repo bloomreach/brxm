@@ -15,11 +15,10 @@
  */
 
 export class PageEditCtrl {
-  constructor($element, $translate, $mdDialog, SiteMapService, SiteMapItemService, ChannelService, HippoIframeService,
+  constructor($translate, $mdDialog, SiteMapService, SiteMapItemService, ChannelService, HippoIframeService,
               FeedbackService) {
     'ngInject';
 
-    this.feedbackParent = $element.find('.feedback-parent');
     this.$translate = $translate;
     this.$mdDialog = $mdDialog;
     this.SiteMapService = SiteMapService;
@@ -52,7 +51,7 @@ export class PageEditCtrl {
         this.prototypes = data.prototypes;
       })
       .catch(() => {
-        this._showError('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
+        this.FeedbackService.showErrorOnSubpage('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
       });
   }
 
@@ -91,7 +90,7 @@ export class PageEditCtrl {
             break;
         }
 
-        this._showError(messageKey, response.data);
+        this.FeedbackService.showErrorOnSubpage(messageKey, response.data);
       });
   }
 
@@ -115,10 +114,6 @@ export class PageEditCtrl {
           .ok(this.$translate.instant('ALERT_OK'))
       );
     }
-  }
-
-  _showError(key, params) {
-    this.FeedbackService.showError(key, params, this.feedbackParent);
   }
 }
 

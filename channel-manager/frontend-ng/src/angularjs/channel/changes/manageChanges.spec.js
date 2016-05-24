@@ -67,7 +67,7 @@ describe('ChangeManagement', () => {
     spyOn(CmsService, 'publish');
     spyOn(DialogService, 'confirm').and.returnValue(dialog);
     spyOn(DialogService, 'show').and.returnValue($q.when());
-    spyOn(FeedbackService, 'showError');
+    spyOn(FeedbackService, 'showErrorOnSubpage');
     spyOn(HippoIframeService, 'reload');
 
     ConfigService.cmsUser = 'testuser';
@@ -158,8 +158,7 @@ describe('ChangeManagement', () => {
     ChangeManagementCtrl.publishAllChanges();
     $rootScope.$apply();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', params,
-                                                           ChangeManagementCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', params);
     expect($scope.onDone).not.toHaveBeenCalled();
 
     ChannelService.publishChanges.and.returnValue($q.reject());
@@ -167,8 +166,7 @@ describe('ChangeManagement', () => {
     ChangeManagementCtrl.publishChanges('testuser');
     $rootScope.$apply();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', undefined,
-                                                           ChangeManagementCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', undefined);
   });
 
   it('should show a toast when discarding of the changes fails', () => {
@@ -178,8 +176,7 @@ describe('ChangeManagement', () => {
     ChangeManagementCtrl.discardAllChanges();
     $rootScope.$apply();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', params,
-                                                           ChangeManagementCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', params);
     expect($scope.onDone).not.toHaveBeenCalled();
 
     ChannelService.discardChanges.and.returnValue($q.reject());
@@ -187,8 +184,7 @@ describe('ChangeManagement', () => {
     ChangeManagementCtrl.discardChanges('testuser');
     $rootScope.$apply();
 
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', undefined,
-                                                           ChangeManagementCtrl.feedbackParent);
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', undefined);
   });
 
   it('should add a suffix to the current user\'s label', () => {
