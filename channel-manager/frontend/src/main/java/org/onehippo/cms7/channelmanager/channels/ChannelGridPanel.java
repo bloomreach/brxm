@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -125,27 +125,58 @@ public class ChannelGridPanel extends ExtPanel {
         fieldConfig.put("header", store.getLocalizedFieldName(columnName));
         fieldConfig.put("hidden", isHidden);
 
-        if (ChannelStore.ChannelField.name.name().equals(columnName)) {
-            // render the 'name' column as a link to the template composer
-            String tooltipNamePrefix = getLocalizer().getString("tooltip.name.prefix", this);
-            fieldConfig.put("xtype", "templatecolumn");
-            fieldConfig.put("tpl", "<a href=\"#\" name=\"show-channel\" title=\"" + tooltipNamePrefix + " {name}\">{name}</a>");
-        } else if (ChannelStore.ChannelField.url.name().equals(columnName)) {
-            // render the 'url' column as two links: one to the live site, and one to the preview site
-            Localizer localizer = getLocalizer();
-            CharSequence previewLabel = Strings.escapeMarkup(localizer.getString("action.preview", this));
-            CharSequence liveTooltip = Strings.escapeMarkup(localizer.getString("tooltip.live", this));
-            CharSequence previewTooltip = Strings.escapeMarkup(localizer.getString("tooltip.preview", this));
-            fieldConfig.put("xtype", "templatecolumn");
-            fieldConfig.put("tpl", "<a href=\"{url}\" name=\"show-live\" class=\"show-live\" target=\"_blank\" "
-                    + "title=\"" + liveTooltip + "\">{url}</a>"
-                    + "<a href=\"{contextPath}"
-                    + "{[values.cmsPreviewPrefix !== '' ? '/' : '']}{cmsPreviewPrefix}"
-                    + "{[values.mountPath === '' ? '/' : '']}{mountPath}\" "
-                    + "name=\"show-preview\" class=\"show-preview\" target=\"hippochannelmanagerpreview\" title=\""
-                    + previewTooltip + "\">" + previewLabel + "</a>");
+        try {
+            final ChannelStore.ChannelField channelField = ChannelStore.ChannelField.valueOf(columnName);
+            switch (channelField) {
+                case name:
+                    createNameFieldConfig(fieldConfig);
+                    break;
+                case url:
+                    createUrlFieldConfig(fieldConfig);
+                    break;
+                case hstConfigEditor:
+                    createHstConfigEditorFieldConfig(fieldConfig);
+            }
+        } catch (IllegalArgumentException e) {
+            // custom field, ignore
         }
         return fieldConfig;
+    }
+
+    private void createHstConfigEditorFieldConfig(final JSONObject fieldConfig) throws JSONException {
+        final String hstConfigEditorTooltip = getLocalizer().getString("tooltip.hstconfigeditor", this);
+        final String hstConfigEditorLabel = getLocalizer().getString("action.hstconfigeditor", this);
+        fieldConfig.put("xtype", "templatecolumn");
+
+        final StringBuilder templateBuilder = new StringBuilder();
+        templateBuilder.append("<a href=\"#\" name=\"open-hstconfigeditor\" title=\"");
+        templateBuilder.append(hstConfigEditorTooltip);
+        templateBuilder.append("\">" + hstConfigEditorLabel + "</a>");
+
+        fieldConfig.put("tpl", templateBuilder.toString());
+    }
+
+    private void createUrlFieldConfig(final JSONObject fieldConfig) throws JSONException {
+        // render the 'url' column as two links: one to the live site, and one to the preview site
+        Localizer localizer = getLocalizer();
+        CharSequence previewLabel = Strings.escapeMarkup(localizer.getString("action.preview", this));
+        CharSequence liveTooltip = Strings.escapeMarkup(localizer.getString("tooltip.live", this));
+        CharSequence previewTooltip = Strings.escapeMarkup(localizer.getString("tooltip.preview", this));
+        fieldConfig.put("xtype", "templatecolumn");
+        fieldConfig.put("tpl", "<a href=\"{url}\" name=\"show-live\" class=\"show-live\" target=\"_blank\" "
+                + "title=\"" + liveTooltip + "\">{url}</a>"
+                + "<a href=\"{contextPath}"
+                + "{[values.cmsPreviewPrefix !== '' ? '/' : '']}{cmsPreviewPrefix}"
+                + "{[values.mountPath === '' ? '/' : '']}{mountPath}\" "
+                + "name=\"show-preview\" class=\"show-preview\" target=\"hippochannelmanagerpreview\" title=\""
+                + previewTooltip + "\">" + previewLabel + "</a>");
+    }
+
+    private void createNameFieldConfig(final JSONObject fieldConfig) throws JSONException {
+        // render the 'name' column as a link to the template composer
+        String tooltipNamePrefix = getLocalizer().getString("tooltip.name.prefix", this);
+        fieldConfig.put("xtype", "templatecolumn");
+        fieldConfig.put("tpl", "<a href=\"#\" name=\"show-channel\" title=\"" + tooltipNamePrefix + " {name}\">{name}</a>");
     }
 
 }
