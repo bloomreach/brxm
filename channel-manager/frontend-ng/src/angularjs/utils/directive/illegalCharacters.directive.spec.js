@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('PageActionAdd', () => {
+describe('PageActionCreate', () => {
   'use strict';
 
   let $rootScope;

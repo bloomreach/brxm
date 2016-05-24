@@ -113,7 +113,7 @@ describe('PageActions', () => {
     expect($scope.onActionSelected).toHaveBeenCalledWith('page-copy');
   });
 
-  it('enables the add action if the current channel has both a workspace and prototypes', () => {
+  it('enables the create action if the current channel has both a workspace and prototypes', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
     const createAction = PageActionsCtrl.createAction;
 
