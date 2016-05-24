@@ -104,7 +104,8 @@ export class PageActionsCtrl {
   }
 
   _deletePage() {
-    this._confirmDelete()
+    const siteMapItem = this.SiteMapItemService.get();
+    this._confirmDelete(siteMapItem.name)
       .then(() => {
         this.SiteMapItemService.deleteItem()
           .then(() => {
@@ -124,12 +125,11 @@ export class PageActionsCtrl {
       // do nothing on cancel
   }
 
-  _confirmDelete() {
+  _confirmDelete(pageTitle) {
     const confirm = this.DialogService.confirm()
-      .title(this.$translate.instant('CONFIRM_DELETE_PAGE_TITLE'))
-      .textContent(this.$translate.instant('CONFIRM_DELETE_PAGE_MESSAGE'))
-      .ok(this.$translate.instant('BUTTON_YES'))
-      .cancel(this.$translate.instant('BUTTON_NO'));
+      .title(`${this.$translate.instant('DELETE')} '${pageTitle}'?`)
+      .ok(this.$translate.instant('DELETE'))
+      .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
   }

@@ -70,6 +70,7 @@ describe('PageActions', () => {
     spyOn(ChannelService, 'isCrossChannelPageCopySupported').and.returnValue(true);
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(SiteMapService, 'load');
+    spyOn(SiteMapItemService, 'get').and.returnValue({ name: 'name' });
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(false);
     spyOn(SiteMapItemService, 'isLocked').and.returnValue(false);
     spyOn(SiteMapItemService, 'deleteItem');
@@ -208,7 +209,6 @@ describe('PageActions', () => {
     PageActionsCtrl.trigger(deleteAction);
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(confirmDialog.title).toHaveBeenCalled();
-    expect(confirmDialog.textContent).toHaveBeenCalled();
     expect(confirmDialog.ok).toHaveBeenCalled();
     expect(confirmDialog.cancel).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalledWith(confirmDialog);
