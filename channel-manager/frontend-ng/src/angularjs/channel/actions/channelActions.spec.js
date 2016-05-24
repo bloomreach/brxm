@@ -48,7 +48,7 @@ describe('ChannelActions', () => {
   it('calls the on-action-selected callback when clicking the button', () => {
     compileDirectiveAndGetController();
 
-    $element.find('.qa-button-channel').click();
+    $element.find('.qa-button-settings').click();
 
     expect($scope.onActionSelected).toHaveBeenCalledWith('channel-settings');
   });
