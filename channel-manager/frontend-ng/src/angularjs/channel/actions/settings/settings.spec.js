@@ -98,6 +98,7 @@ describe('ChannelSettings', () => {
     spyOn(ChannelService, 'reload').and.returnValue($q.when(channel));
     spyOn(ChannelService, 'getChannel').and.returnValue(channel);
     spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when(channelInfoDescription));
+    spyOn(FeedbackService, 'showError');
   });
 
   function compileDirectiveAndGetController() {
@@ -169,7 +170,6 @@ describe('ChannelSettings', () => {
 
   it('shows feedback message when saving is failed', () => {
     spyOn(ChannelService, 'saveChannel').and.returnValue($q.reject());
-    spyOn(FeedbackService, 'showError');
     compileDirectiveAndGetController();
     const feedbackParent = $element.find('.feedback-parent');
 
@@ -192,20 +192,18 @@ describe('ChannelSettings', () => {
   it('displays an alert message when the current channel is locked', () => {
     ConfigService.cmsUser = 'admin';
     channelInfoDescription.lockedBy = 'tester';
-    let ChannelSettingsCtrl = compileDirectiveAndGetController();
-    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', { lockedBy: 'tester' });
-    expect(ChannelSettingsCtrl.readOnlyAlert).toBeTruthy();
+    const ChannelSettingsCtrl = compileDirectiveAndGetController();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: 'tester' },
+                                                           ChannelSettingsCtrl.feedbackParent);
 
-    $translate.instant.calls.reset();
+    FeedbackService.showError.calls.reset();
     channelInfoDescription.lockedBy = 'admin';
-    ChannelSettingsCtrl = compileDirectiveAndGetController();
-    expect($translate.instant).not.toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', { lockedBy: 'admin' });
-    expect(ChannelSettingsCtrl.readOnlyAlert).toBeFalsy();
+    compileDirectiveAndGetController();
+    expect(FeedbackService.showError).not.toHaveBeenCalled();
 
-    $translate.instant.calls.reset();
+    FeedbackService.showError.calls.reset();
     delete channelInfoDescription.lockedBy;
-    ChannelSettingsCtrl = compileDirectiveAndGetController();
-    expect($translate.instant).not.toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', { lockedBy: 'admin' });
-    expect(ChannelSettingsCtrl.readOnlyAlert).toBeFalsy();
+    compileDirectiveAndGetController();
+    expect(FeedbackService.showError).not.toHaveBeenCalled();
   });
 });

@@ -39,9 +39,7 @@ export class ChannelSettingsCtrl {
       .then((channelInfoDescription) => {
         this.channelInfoDescription = channelInfoDescription;
         if (this.isLockedByOther()) {
-          this.readOnlyAlert = this.$translate.instant('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', {
-            lockedBy: channelInfoDescription.lockedBy,
-          });
+          this._showError('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: channelInfoDescription.lockedBy });
         }
       })
       .catch(() => {
