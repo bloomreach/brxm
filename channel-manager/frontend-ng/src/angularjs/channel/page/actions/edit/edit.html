@@ -26,7 +26,7 @@
         ng-submit="form.$valid && pageEdit.save()"
         novalidate>
     <md-input-container class="md-block">
-      <label class="md-required">{{ 'SUBPAGE_PAGE_ADD_LABEL_TITLE' | translate }}</label>
+      <label class="md-required">{{ 'SUBPAGE_PAGE_LABEL_TITLE' | translate }}</label>
       <input type="text" name="title" class="qa-title"
              required
              focus-if
@@ -54,7 +54,7 @@
       {{ 'SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE' | translate }}
     </md-switch>
     <md-input-container ng-if="pageEdit.isAssigningNewTemplate" class="md-block">
-      <label>{{ 'SUBPAGE_PAGE_ADD_LABEL_TEMPLATE' | translate }}</label>
+      <label>{{ 'SUBPAGE_PAGE_LABEL_TEMPLATE' | translate }}</label>
       <md-select name="prototype" class="qa-template"
                  ng-model="pageEdit.prototype"
                  ng-change="pageEdit.evaluatePrototype()"
@@ -68,11 +68,11 @@
       <md-button type="button"
                  class="qa-discard"
                  ng-click="pageEdit.onDone()">
-        {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
+        {{ 'CANCEL' | translate }}
       </md-button>
       <md-button type="submit"
                  class="md-raised md-primary qa-action">
-        {{ 'SUBPAGE_BUTTON_SAVE' | translate }}
+        {{ 'SAVE' | translate }}
       </md-button>
     </div>
   </form>

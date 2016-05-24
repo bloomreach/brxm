@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-export function pageAddDirective() {
+export function getByPropertyFilter() {
   'ngInject';
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      onDone: '&',
-    },
-    templateUrl: 'channel/page/actions/add/add.html',
-    controller: 'PageAddCtrl',
-    controllerAs: 'pageAdd',
+  return (collection, propertyName, propertyValue, subCollection) => {
+    function findPropertiesAndSubProperties(newCollection) {
+      for (let i = 0; i < newCollection.length; i++) {
+        if (newCollection[i][propertyName] === propertyValue) {
+          return newCollection[i];
+        }
+        if (subCollection && newCollection[i][subCollection]) {
+          return findPropertiesAndSubProperties(newCollection[i][subCollection]);
+        }
+      }
+      return null;
+    }
+
+    return findPropertiesAndSubProperties(collection);
   };
 }

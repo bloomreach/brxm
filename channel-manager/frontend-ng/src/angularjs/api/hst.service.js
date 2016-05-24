@@ -58,6 +58,10 @@ export class HstService {
     return this._callHst('POST', uuid, pathElements, undefined, undefined, headers);
   }
 
+  doPostWithParams(data, uuid, params, ...pathElements) {
+    return this._callHst('POST', uuid, pathElements, data, params);
+  }
+
   doPut(data, uuid, ...pathElements) {
     return this._callHst('PUT', uuid, pathElements, data);
   }

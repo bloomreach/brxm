@@ -22,6 +22,40 @@ describe('SiteMenuService', () => {
   let SiteMenuService;
   let HstService;
 
+  const testMenu = {
+    id: 'testUuid',
+    items: [
+      {
+        id: '1',
+        link: 'http://onehippo.org',
+        linkType: 'EXTERNAL',
+        localParameters: {
+          cssclass: 'bike',
+          'call-to-action': 'use it',
+        },
+        title: 'One',
+      },
+      {
+        id: '2',
+        link: 'home',
+        linkType: 'SITEMAPITEM',
+        title: 'Two',
+        items: [
+          {
+            id: 'child1',
+            title: 'Child 1',
+          },
+        ],
+      },
+      {
+        id: '3',
+        title: 'Three',
+      },
+    ],
+  };
+
+  const newMenuItem = { id: 'child1' };
+
   beforeEach(() => {
     module('hippo-cm');
 
@@ -33,14 +67,21 @@ describe('SiteMenuService', () => {
     });
 
     spyOn(HstService, 'doGet');
+    HstService.doGet.and.returnValue($q.when({ data: testMenu }));
+
+    spyOn(HstService, 'doPost');
+    HstService.doPost.and.returnValue($q.when({ data: newMenuItem.id }));
+
+    spyOn(HstService, 'doPostWithParams');
+    HstService.doPostWithParams.and.returnValue($q.when({ data: newMenuItem.id }));
   });
 
   it('successfully retrieves a menu', (done) => {
-    const menu = { };
+    const menu = { id: 'testUuid' };
     HstService.doGet.and.returnValue($q.when({ data: menu }));
-    SiteMenuService.loadMenu('testUuid')
+    SiteMenuService.getMenu('testUuid')
       .then((response) => {
-        expect(response).toBe(menu);
+        expect(response).toEqual({ items: [], id: menu.id });
         done();
       })
       .catch(() => fail());
@@ -51,12 +92,250 @@ describe('SiteMenuService', () => {
   it('relays the server\'s response in case of a failure', (done) => {
     const error = { };
     HstService.doGet.and.returnValue($q.reject(error));
-    SiteMenuService.loadMenu('testUuid')
+    SiteMenuService.getMenu('testUuid')
       .then(() => fail())
       .catch((response) => {
         expect(response).toBe(error);
         done();
       });
+    $rootScope.$digest();
+  });
+
+  it('caches a menu', (done) => {
+    const menu = { id: 'testUuid' };
+    HstService.doGet.and.returnValue($q.when({ data: menu }));
+    SiteMenuService.getMenu('testUuid')
+      .then(() => {
+        HstService.doGet.calls.reset();
+        SiteMenuService.getMenu('testUuid').then((response) => {
+          expect(response).toEqual({ items: [], id: menu.id });
+          expect(HstService.doGet).not.toHaveBeenCalled();
+          done();
+        });
+      })
+      .catch(() => fail());
+
+    $rootScope.$digest();
+  });
+
+  it('should not return cached menu if menuId does not matches cached menuId', (done) => {
+    SiteMenuService.getMenu('testUuid')
+      .then(() => {
+        SiteMenuService.getMenu('testUuid2').then(() => {
+          expect(HstService.doGet).toHaveBeenCalledWith('testUuid2');
+          done();
+        });
+      })
+      .catch(() => fail());
+
+    $rootScope.$digest();
+  });
+
+  it('should load a menu from the server', (done) => {
+    const menu = { id: 'testUuid' };
+    HstService.doGet.and.returnValue($q.when({ data: menu }));
+    SiteMenuService.getMenu('testUuid')
+      .then(() => {
+        HstService.doGet.calls.reset();
+        SiteMenuService.loadMenu('testUuid').then((response) => {
+          expect(response).toEqual({ items: [], id: menu.id });
+          expect(HstService.doGet).toHaveBeenCalled();
+          done();
+        });
+      })
+      .catch(() => fail());
+
+    $rootScope.$digest();
+  });
+
+  it('should collapse node with childNodes on first load', (done) => {
+    SiteMenuService.getMenu('testUuid')
+      .then((menu) => {
+        expect(menu.items[1].collapsed).toBe(true);
+        done();
+      });
+    $rootScope.$digest();
+  });
+
+  // getMenuItem
+  it('should return a main menu item by id', (done) => {
+    SiteMenuService.getMenuItem('testUuid', '2').then((menuItem) => {
+      expect(menuItem).toBeDefined();
+      expect(menuItem.id).toEqual('2');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('should return a child menu item by id', (done) => {
+    SiteMenuService.getMenuItem('testUuid', 'child1').then((menuItem) => {
+      expect(menuItem).toBeDefined();
+      expect(menuItem.id).toEqual('child1');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('should return a child menu item by id with parameters', (done) => {
+    SiteMenuService.getMenuItem('testUuid', '1').then((menuItem) => {
+      expect(menuItem.localParameters.cssclass).toEqual('bike');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('should return null when getting an unknown menu item', (done) => {
+    SiteMenuService.getMenuItem('testUuid', 'nosuchitem').then((menuItem) => {
+      expect(menuItem).toBeNull();
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('should update the returned menu data when the title of a menu item changes', (done) => {
+    SiteMenuService.getMenu('testUuid').then((menu) => {
+      SiteMenuService.getMenuItem('testUuid', 'child1').then((child1) => {
+        child1.title = 'New title';
+        expect(menu.items[1].items[0].title).toEqual('New title');
+        done();
+      });
+    });
+    $rootScope.$digest();
+  });
+
+  it('should return externalLink split from the normal link', (done) => {
+    SiteMenuService.getMenuItem('testUuid', '1').then((menuItem) => {
+      expect(menuItem).toBeDefined();
+      expect(menuItem.externalLink).toBeDefined();
+      expect(menuItem.externalLink).toEqual('http://onehippo.org');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('should return sitemapLink split from the normal link', (done) => {
+    SiteMenuService.getMenuItem('testUuid', '2').then((menuItem) => {
+      expect(menuItem).toBeDefined();
+      expect(menuItem.sitemapLink).toBeDefined();
+      expect(menuItem.sitemapLink).toEqual('home');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  // Create item
+  it('should create a menu item', (done) => {
+    SiteMenuService.loadMenu('testUuid').then(() => {
+      SiteMenuService.createMenuItem('testUuid', newMenuItem, 'testUuid').then(() => {
+        expect(HstService.doPostWithParams)
+          .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+        done();
+      });
+    });
+    $rootScope.$digest();
+  });
+
+  it('should create a menu item after specified sibling', (done) => {
+    SiteMenuService.loadMenu('testUuid').then(() => {
+      SiteMenuService.createMenuItem('testUuid', newMenuItem, '1').then(() => {
+        expect(HstService.doPostWithParams)
+          .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after', sibling: '1' }, 'create', 'testUuid');
+        done();
+      });
+    });
+    $rootScope.$digest();
+  });
+
+  it('should create a root menu item if parentId is not specified', (done) => {
+    SiteMenuService.createMenuItem('testUuid', newMenuItem).then(() => {
+      expect(HstService.doPostWithParams)
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('should create a root menu item if parentId is not found', (done) => {
+    SiteMenuService.createMenuItem('testUuid', newMenuItem, 'non-existing').then(() => {
+      expect(HstService.doPostWithParams)
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  // Save item
+  it('should save a menu item', (done) => {
+    const menuItemToSave = {
+      id: 'child1',
+      items: [
+        {
+          id: 'child2',
+          title: 'Child 2',
+          sitemapLink: 'home',
+          linkType: 'SITEMAPITEM',
+          collapsed: false,
+        },
+        {
+          id: 'child3',
+          title: 'Child 3',
+          link: 'child3link',
+          linkType: 'NONE',
+        },
+      ],
+      externalLink: 'http://onehippo.org',
+      linkType: 'EXTERNAL',
+      title: 'New title',
+    };
+    const savedMenuItem = {
+      id: 'child1',
+      items: [
+        {
+          id: 'child2',
+          title: 'Child 2',
+          link: 'home',
+          linkType: 'SITEMAPITEM',
+        },
+        {
+          id: 'child3',
+          title: 'Child 3',
+          linkType: 'NONE',
+        },
+      ],
+      link: 'http://onehippo.org',
+      linkType: 'EXTERNAL',
+      title: 'New title',
+    };
+
+    SiteMenuService.saveMenuItem('testUuid', menuItemToSave).then(() => {
+      expect(HstService.doPost).toHaveBeenCalledWith(savedMenuItem, 'testUuid');
+      done();
+    });
+
+    $rootScope.$digest();
+  });
+
+  // Move item
+  it('should move an item', (done) => {
+    SiteMenuService.moveMenuItem('testUuid', 'three', '1', 0).then(() => {
+      expect(HstService.doPost).toHaveBeenCalledWith({}, 'testUuid', 'move', 'three', '1', '0');
+      done();
+    });
+
+    $rootScope.$digest();
+  });
+
+  // find path to menu item
+  it('should find the path to a menu item', (done) => {
+    SiteMenuService.getPathToMenuItem('testUuid', 'child1').then((paths) => {
+      expect(paths).toBeDefined();
+      expect(paths.length).toBe(3);
+      expect(paths[0].id).toEqual('testUuid');
+      expect(paths[1].id).toEqual('2');
+      expect(paths[2].id).toEqual('child1');
+      done();
+    });
+
     $rootScope.$digest();
   });
 });

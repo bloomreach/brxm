@@ -102,8 +102,8 @@ export class ChangeManagementCtrl {
     const message = user ? 'CONFIRM_DISCARD_CHANGES_MESSAGE' : 'CONFIRM_DISCARD_ALL_CHANGES_MESSAGE';
     const confirm = this.DialogService.confirm()
       .textContent(this.$translate.instant(message, { user }))
-      .ok(this.$translate.instant('BUTTON_DISCARD'))
-      .cancel(this.$translate.instant('BUTTON_CANCEL'));
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
   }
@@ -111,8 +111,8 @@ export class ChangeManagementCtrl {
   _confirmPublish() {
     const confirm = this.DialogService.confirm()
       .textContent(this.$translate.instant('CONFIRM_PUBLISH_ALL_CHANGES_MESSAGE'))
-      .ok(this.$translate.instant('BUTTON_PUBLISH'))
-      .cancel(this.$translate.instant('BUTTON_CANCEL'));
+      .ok(this.$translate.instant('PUBLISH'))
+      .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
   }

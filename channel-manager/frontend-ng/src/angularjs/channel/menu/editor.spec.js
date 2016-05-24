@@ -37,7 +37,7 @@ describe('MenuEditor', () => {
       SiteMenuService = _SiteMenuService_;
     });
 
-    menu = { }; // TODO: populate for testing
+    menu = { items: [] };
 
     spyOn(SiteMenuService, 'loadMenu').and.returnValue($q.when(menu));
   });
@@ -58,7 +58,7 @@ describe('MenuEditor', () => {
     const MenuEditorCtrl = compileDirectiveAndGetController();
 
     expect(MenuEditorCtrl.menuUuid).toBe('testUuid');
-    expect(MenuEditorCtrl.menu).toBe(menu);
+    expect(MenuEditorCtrl.items).toBe(menu.items);
   });
 
   it('returns to the main page when it fails to load the menu', () => {

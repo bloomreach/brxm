@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('PageActionAdd', () => {
+describe('PageActionCreate', () => {
   'use strict';
 
   let $q;
@@ -75,43 +75,43 @@ describe('PageActionAdd', () => {
   function compileDirectiveAndGetController() {
     $scope = $rootScope.$new();
     $scope.onDone = jasmine.createSpy('onDone');
-    $element = angular.element('<page-add on-done="onDone()"> </page-add>');
+    $element = angular.element('<page-create on-done="onDone()"> </page-create>');
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('page-add');
+    return $element.controller('page-create');
   }
 
   it('initializes correctly', () => {
-    const PageAddCtrl = compileDirectiveAndGetController();
+    const PageCreateCtrl = compileDirectiveAndGetController();
 
-    expect(PageAddCtrl.illegalCharacters).toBe('/ :');
-    expect(PageAddCtrl.illegalCharactersMessage).toBe('Illegal Characters');
-    expect(PageAddCtrl.siteMapId).toBe('siteMapId');
-    expect(PageAddCtrl.updateLastPathInfoElementAutomatically).toBe(true);
+    expect(PageCreateCtrl.illegalCharacters).toBe('/ :');
+    expect(PageCreateCtrl.illegalCharactersMessage).toBe('Illegal Characters');
+    expect(PageCreateCtrl.siteMapId).toBe('siteMapId');
+    expect(PageCreateCtrl.updateLastPathInfoElementAutomatically).toBe(true);
     expect(ChannelService.getNewPageModel).toHaveBeenCalled();
     $rootScope.$digest();
 
-    expect(PageAddCtrl.locations).toBe(pageModel.locations);
-    expect(PageAddCtrl.location).toBe(pageModel.locations[0]);
-    expect(PageAddCtrl.prototypes).toBe(pageModel.prototypes);
-    expect(PageAddCtrl.prototype).toBe(pageModel.prototypes[0]);
+    expect(PageCreateCtrl.locations).toBe(pageModel.locations);
+    expect(PageCreateCtrl.location).toBe(pageModel.locations[0]);
+    expect(PageCreateCtrl.prototypes).toBe(pageModel.prototypes);
+    expect(PageCreateCtrl.prototype).toBe(pageModel.prototypes[0]);
   });
 
   it('updates the last pathinfo element as long as it is coupled to the title field', () => {
-    const PageAddCtrl = compileDirectiveAndGetController();
+    const PageCreateCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    expect(PageAddCtrl.title).toBeUndefined();
-    expect(PageAddCtrl.lastPathInfoElement).toBe('');
-    PageAddCtrl.title = '/foo :bar:';
+    expect(PageCreateCtrl.title).toBeUndefined();
+    expect(PageCreateCtrl.lastPathInfoElement).toBe('');
+    PageCreateCtrl.title = '/foo :bar:';
     $rootScope.$digest();
-    expect(PageAddCtrl.lastPathInfoElement).toBe('-foo--bar-');
+    expect(PageCreateCtrl.lastPathInfoElement).toBe('-foo--bar-');
 
-    PageAddCtrl.disableAutomaticLastPathInfoElementUpdate();
-    PageAddCtrl.title = 'bar';
+    PageCreateCtrl.disableAutomaticLastPathInfoElementUpdate();
+    PageCreateCtrl.title = 'bar';
     $rootScope.$digest();
-    expect(PageAddCtrl.lastPathInfoElement).toBe('-foo--bar-');
+    expect(PageCreateCtrl.lastPathInfoElement).toBe('-foo--bar-');
   });
 
   it('calls the callback when navigating back', () => {
@@ -133,20 +133,20 @@ describe('PageActionAdd', () => {
     pageModel.prototypes = [];
     pageModel.locations = [];
 
-    const PageAddCtrl = compileDirectiveAndGetController();
+    const PageCreateCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    expect(PageAddCtrl.location).toBeUndefined();
-    expect(PageAddCtrl.prototype).toBeUndefined();
+    expect(PageCreateCtrl.location).toBeUndefined();
+    expect(PageCreateCtrl.prototype).toBeUndefined();
   });
 
   it('successfully creates a new page', () => {
-    const PageAddCtrl = compileDirectiveAndGetController();
+    const PageCreateCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    PageAddCtrl.title = 'title';
-    PageAddCtrl.lastPathInfoElement = 'lastPathInfoElement';
-    PageAddCtrl.create();
+    PageCreateCtrl.title = 'title';
+    PageCreateCtrl.lastPathInfoElement = 'lastPathInfoElement';
+    PageCreateCtrl.create();
 
     expect(SiteMapService.create).toHaveBeenCalledWith('siteMapId', undefined, {
       pageTitle: 'title',
@@ -163,14 +163,14 @@ describe('PageActionAdd', () => {
 
   it('flashes a toast when failing to create a new page with a parent sitemap item id', () => {
     SiteMapService.create.and.returnValue($q.reject());
-    const PageAddCtrl = compileDirectiveAndGetController();
+    const PageCreateCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    PageAddCtrl.title = 'title';
-    PageAddCtrl.lastPathInfoElement = 'lastPathInfoElement';
-    PageAddCtrl.location = pageModel.locations[1];
-    PageAddCtrl.prototype = pageModel.prototypes[1];
-    PageAddCtrl.create();
+    PageCreateCtrl.title = 'title';
+    PageCreateCtrl.lastPathInfoElement = 'lastPathInfoElement';
+    PageCreateCtrl.location = pageModel.locations[1];
+    PageCreateCtrl.prototype = pageModel.prototypes[1];
+    PageCreateCtrl.create();
 
     expect(SiteMapService.create).toHaveBeenCalledWith('siteMapId', 'location-2', {
       pageTitle: 'title',
@@ -186,7 +186,7 @@ describe('PageActionAdd', () => {
   });
 
   it('correctly dispatches the error from the server when trying to create a new page', () => {
-    const PageAddCtrl = compileDirectiveAndGetController();
+    const PageCreateCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
     const lockedError = {
@@ -194,7 +194,7 @@ describe('PageActionAdd', () => {
       data: { lockedBy: 'tobi' },
     };
     SiteMapService.create.and.returnValue($q.reject(lockedError));
-    PageAddCtrl.create();
+    PageCreateCtrl.create();
     $rootScope.$digest();
     expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith(
       'ERROR_PAGE_LOCKED_BY',
@@ -202,7 +202,7 @@ describe('PageActionAdd', () => {
     );
 
     SiteMapService.create.and.returnValue($q.reject({ errorCode: 'ITEM_NOT_IN_PREVIEW' }));
-    PageAddCtrl.create();
+    PageCreateCtrl.create();
     $rootScope.$digest();
     expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith(
       'ERROR_PAGE_PARENT_MISSING',
@@ -210,7 +210,7 @@ describe('PageActionAdd', () => {
     );
 
     SiteMapService.create.and.returnValue($q.reject({ errorCode: 'ITEM_NAME_NOT_UNIQUE' }));
-    PageAddCtrl.create();
+    PageCreateCtrl.create();
     $rootScope.$digest();
     expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith(
       'ERROR_PAGE_PATH_EXISTS',
@@ -218,7 +218,7 @@ describe('PageActionAdd', () => {
     );
 
     SiteMapService.create.and.returnValue($q.reject({ errorCode: 'INVALID_PATH_INFO' }));
-    PageAddCtrl.create();
+    PageCreateCtrl.create();
     $rootScope.$digest();
     expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith(
       'ERROR_PAGE_PATH_INVALID',

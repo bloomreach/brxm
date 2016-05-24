@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-export class PageAddCtrl {
-  constructor($log, $scope, $translate, ChannelService, SiteMapService, HippoIframeService,
+export class PageCreateCtrl {
+  constructor($element, $log, $scope, $translate, ChannelService, SiteMapService, HippoIframeService,
               FeedbackService, lowercaseFilter) {
     'ngInject';
 
@@ -33,7 +33,7 @@ export class PageAddCtrl {
     this.illegalCharactersMessage = $translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
             { characters: $translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
 
-    $scope.$watch('pageAdd.title', () => {
+    $scope.$watch('pageCreate.title', () => {
       if (this.updateLastPathInfoElementAutomatically) {
         this.lastPathInfoElement = this._replaceIllegalCharacters(lowercaseFilter(this.title), '-');
       }

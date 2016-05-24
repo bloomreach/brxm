@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('PageActionAdd', () => {
+describe('IllegalCharactersDirective', () => {
   'use strict';
 
   let $rootScope;
