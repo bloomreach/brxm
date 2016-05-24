@@ -24,7 +24,7 @@ export function hippoTreeDirective() {
       options: '=',
       items: '=',
       selectedItem: '=',
-      drag: '@',
+      draggable: '=',
     },
     templateUrl: 'ui/tree/tree.html',
     controller: 'HippoTreeCtrl',

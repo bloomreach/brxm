@@ -15,23 +15,23 @@
   -->
 
 <subpage-toolbar title="{{ 'SUBPAGE_MENU_EDITOR_TITLE' | translate }}"
-                 on-back="menuEditor.onDone()">
+                 on-back="menuEditor.onBack()">
 </subpage-toolbar>
 
 <md-content layout="row" layout-align="center" class="feedback-parent qa-subpage-menu-editor">
-  <div flex="66">
+  <div flex="80">
     <div layout="row" layout-padding layout-wrap>
-      <div flex="33" data-keep-scroll-pos>
+      <div flex="50">
         <div hippo-tree
              ng-if="menuEditor.items.length > 0"
              class="hippo-tree"
              data-items="menuEditor.items"
              data-options="menuEditor.treeOptions"
              data-selected-item="menuEditor.selectedItem"
-             data-drag="true">
+             data-draggable="true">
 
           <span class="spacer">
-            <a class="btn btn-link btn-xs"
+            <a class="hippo-tree-item-toggle"
                data-nodrag stop-propagation
                ng-click="hippoTree.toggle(this)"
                ng-hide="childNodes().length === 0">
@@ -40,18 +40,18 @@
             <span data-ng-show="childNodes().length === 0">&#9679;</span>
           </span>
           <span class="angular-ui-tree-title-wrapper">
-            <span class="angular-ui-tree-title qa-cm-tc-menu-tree-item">{{ item.title }}</span>
+            <span class="angular-ui-tree-title qa-menu-tree-item">{{ item.title }}</span>
           </span>
         </div>
-        <div class="empty-tree" ng-if="menuEditor.items.length == 0">{{ 'EMPTY_MENU' | translate }}</div>
+        <div class="empty-tree" ng-if="menuEditor.items.length === 0">{{ 'EMPTY_MENU' | translate }}</div>
         <md-button type="button"
-                 class="qa-cm-tc-menu-item-add md-accent"
+                 class="qa-menu-item-add md-accent"
                  ng-click="menuEditor.addItem()"
                  ng-disabled="menuEditor.isSaving.newItem">
           {{ 'ADD_MENU_ITEM' | translate }}
         </md-button>
       </div>
-      <div flex="66">
+      <div flex="50">
       <form name="form" flex="initial" class="qa-subpage subpage-form">
         Editing menu {{menuEditor.menuUuid}}<br/>Selected item {{menuEditor.selectedItem.id}}
       </form>

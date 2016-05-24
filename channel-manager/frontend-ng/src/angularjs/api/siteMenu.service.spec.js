@@ -71,6 +71,9 @@ describe('SiteMenuService', () => {
 
     spyOn(HstService, 'doPost');
     HstService.doPost.and.returnValue($q.when({ data: newMenuItem.id }));
+
+    spyOn(HstService, 'doPostWithParams');
+    HstService.doPostWithParams.and.returnValue($q.when({ data: newMenuItem.id }));
   });
 
   it('successfully retrieves a menu', (done) => {
@@ -128,13 +131,13 @@ describe('SiteMenuService', () => {
     $rootScope.$digest();
   });
 
-  it('should not return cached menu if forceUpdate is true', (done) => {
+  it('should load a menu from the server', (done) => {
     const menu = { id: 'testUuid' };
     HstService.doGet.and.returnValue($q.when({ data: menu }));
     SiteMenuService.getMenu('testUuid')
       .then(() => {
         HstService.doGet.calls.reset();
-        SiteMenuService.getMenu('testUuid', true).then((response) => {
+        SiteMenuService.loadMenu('testUuid').then((response) => {
           expect(response).toEqual({ items: [], id: menu.id });
           expect(HstService.doGet).toHaveBeenCalled();
           done();
@@ -223,7 +226,7 @@ describe('SiteMenuService', () => {
   // Create item
   it('should create a menu item', (done) => {
     SiteMenuService.createMenuItem('testUuid', newMenuItem, 'parentId').then(() => {
-      expect(HstService.doPost).toHaveBeenCalledWith(newMenuItem, 'testUuid', 'create', 'parentId', '');
+      expect(HstService.doPostWithParams).toHaveBeenCalledWith(newMenuItem, 'testUuid', {}, 'create', 'parentId');
       done();
     });
     $rootScope.$digest();
@@ -231,7 +234,7 @@ describe('SiteMenuService', () => {
 
   it('should create a root menu item if parentId is not specified', (done) => {
     SiteMenuService.createMenuItem('testUuid', newMenuItem).then(() => {
-      expect(HstService.doPost).toHaveBeenCalledWith(newMenuItem, 'testUuid', 'create', 'testUuid', '');
+      expect(HstService.doPostWithParams).toHaveBeenCalledWith(newMenuItem, 'testUuid', {}, 'create', 'testUuid');
       done();
     });
     $rootScope.$digest();
@@ -240,7 +243,7 @@ describe('SiteMenuService', () => {
   it('should create a menu item at specified position and sibling', (done) => {
     const options = { position: '_pos', siblingId: '_sib' };
     SiteMenuService.createMenuItem('testUuid', newMenuItem, 'testUuid', options).then(() => {
-      expect(HstService.doPost).toHaveBeenCalledWith(newMenuItem, 'testUuid', 'create', 'testUuid', '?position=_pos&sibling=_sib');
+      expect(HstService.doPostWithParams).toHaveBeenCalledWith(newMenuItem, 'testUuid', options, 'create', 'testUuid');
       done();
     });
     $rootScope.$digest();
@@ -249,7 +252,7 @@ describe('SiteMenuService', () => {
   it('should create a menu item at specified sibling only if position is specified as well', (done) => {
     const options = { siblingId: '_sib' };
     SiteMenuService.createMenuItem('testUuid', newMenuItem, 'testUuid', options).then(() => {
-      expect(HstService.doPost).toHaveBeenCalledWith(newMenuItem, 'testUuid', 'create', 'testUuid', '');
+      expect(HstService.doPostWithParams).toHaveBeenCalledWith(newMenuItem, 'testUuid', {}, 'create', 'testUuid');
       done();
     });
     $rootScope.$digest();

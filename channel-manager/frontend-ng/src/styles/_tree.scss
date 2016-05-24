@@ -23,7 +23,7 @@
   list-style: none;
 
   .angular-ui-tree-nodes {
-    padding-left: 10px;
+    padding-left: 16px;
   }
 }
 
@@ -41,7 +41,7 @@
       color: $tree-active-color;
 
       .spacer,
-      .btn {
+      .hippo-tree-item-toggle {
         color: $tree-active-color;
       }
     }
@@ -70,13 +70,14 @@
     text-decoration: none;
   }
 
-  .btn-xs {
+  .hippo-tree-item-toggle {
     color: $tree-color;
     width: 12px;
     border: 0;
     padding: 0;
     &:hover {
       text-decoration: none;
+      cursor: pointer;
     }
   }
 

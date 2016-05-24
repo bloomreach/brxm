@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
+const FIRST_CHILD = 'first';
+const NEXT_SIBLING = 'after';
+
 export class SiteMenuService {
   constructor($q, HstService) {
     'ngInject';
 
     this.$q = $q;
     this.HstService = HstService;
-
-    this.FIRST = 'first';
-    this.AFTER = 'after';
 
     this.menu = {
       id: null,
@@ -31,10 +31,15 @@ export class SiteMenuService {
     this.loadMenuPromise = null;
   }
 
-  getMenu(menuId, forceUpdate) {
-    if (forceUpdate || menuId !== this.menu.id) {
+  getMenu(menuId) {
+    if (menuId !== this.menu.id) {
       this.loadMenuPromise = null;
     }
+    return this._loadMenu(menuId);
+  }
+
+  loadMenu(menuId) {
+    this.loadMenuPromise = null;
     return this._loadMenu(menuId);
   }
 
@@ -59,22 +64,35 @@ export class SiteMenuService {
    * Create a new menu item.
 
    * @param menuId The menu id
-   * @param parentItemId When specified, the item will be created under the parent.
-   *                     Otherwise, the item will be created as a root item.
-   * @param menuItem The item to be created
-   * @param options item positioning details;
-   *      { position: <position> , siblingId: <sibling> }
-   *      with position either SiteMenuService.FIRST or SiteMenuService.AFTER.  The siblingId is taken into account
-   *      when the position is AFTER.
+   * @param newItem The item to be created
+   * @param selectedItem When specified, the item will be created either as an additional child, or as a sibling of the
+   *                     selected item does not have any children yet.
    * @returns {promise|Promise.promise|Q.promise}
    */
-  createMenuItem(menuId, menuItem, parentItemId, options) {
-    const parentId = parentItemId || menuId;
-    let params = options && options.position ? `?position=${options.position}` : '';
-    params += options && options.position && options.siblingId ? `&sibling=${options.siblingId}` : '';
+  createMenuItem(menuId, newItem, selectedItem) {
+    return this.getPathToMenuItem(menuId, selectedItem.id).then((paths) => {
+      const options = {
+        position: NEXT_SIBLING,
+      };
+      let parentId = menuId;
 
-    return this.HstService.doPost(menuItem, menuId, 'create', parentId, params)
-      .then((response) => response.data);
+      if (paths && paths.length >= 1) {
+        let currentItem = paths.pop();
+        if (currentItem.items && currentItem.items.length > 0) {
+          parentId = currentItem.id;
+          options.position = FIRST_CHILD;
+          currentItem.collapsed = false;
+        } else if (paths.length >= 1) {
+          options.sibling = currentItem.id;
+          currentItem = paths.pop();
+          parentId = currentItem.id;
+        }
+      }
+
+      return this.HstService.doPostWithParams(newItem, menuId, options, 'create', parentId)
+        .then((response) => response.data)
+        .then((newItemId) => this.loadMenu(menuId).then((menu) => this._findMenuItem(menu.items, newItemId)));
+    });
   }
 
   getPathToMenuItem(menuId, menuItemId) {
@@ -119,12 +137,8 @@ export class SiteMenuService {
       });
     }
 
-    if (found !== null && found.linkType) {
-      if (found.linkType === 'SITEMAPITEM') {
-        found.sitemapLink = found.link;
-      } else if (found.linkType === 'EXTERNAL') {
-        found.externalLink = found.link;
-      }
+    if (found !== null) {
+      this._setSitemapLinkOrExternalLinkFromLink(found);
     }
     return found;
   }
@@ -146,6 +160,16 @@ export class SiteMenuService {
     }
 
     return found;
+  }
+
+  _setSitemapLinkOrExternalLinkFromLink(item) {
+    if (item.linkType) {
+      if (item.linkType === 'SITEMAPITEM') {
+        item.sitemapLink = item.link;
+      } else if (item.linkType === 'EXTERNAL') {
+        item.externalLink = item.link;
+      }
+    }
   }
 
   _extractLinkFromSitemapLinkOrExternalLink(item) {

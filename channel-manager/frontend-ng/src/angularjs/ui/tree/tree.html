@@ -15,16 +15,16 @@
 -->
 <div ui-tree="hippoTree.options"
      ng-class="{
-       'drag-enabled': drag == true,
-       'drag-disabled': drag == false,
+       'drag-enabled': hippoTree.draggable,
+       'drag-disabled': !hippoTree.draggable,
      }"
-     data-drag-enabled="drag"
+     data-drag-enabled="hippoTree.draggable"
      data-drag-delay="250">
   <ol ui-tree-nodes ng-model="hippoTree.items">
     <li ng-repeat="item in hippoTree.items"
         ui-tree-node
         ng-include="'ui/tree/items.renderer.html'"
-        ng-class="{active: hippoTree.selectedItem.id == item.id}"
+        ng-class="{active: hippoTree.selectedItem.id === item.id}"
         data-collapsed="item.collapsed">
     </li>
   </ol>

@@ -37,9 +37,9 @@ describe('MenuEditor', () => {
       SiteMenuService = _SiteMenuService_;
     });
 
-    menu = { items: [] }; // TODO: populate for testing
+    menu = { items: [] };
 
-    spyOn(SiteMenuService, 'getMenu').and.returnValue($q.when(menu));
+    spyOn(SiteMenuService, 'loadMenu').and.returnValue($q.when(menu));
   });
 
   function compileDirectiveAndGetController() {
@@ -62,7 +62,7 @@ describe('MenuEditor', () => {
   });
 
   it('returns to the main page when it fails to load the menu', () => {
-    SiteMenuService.getMenu.and.returnValue($q.reject());
+    SiteMenuService.loadMenu.and.returnValue($q.reject());
     compileDirectiveAndGetController();
 
     expect($scope.onError).toHaveBeenCalledWith('ERROR_MENU_LOAD_FAILED');
