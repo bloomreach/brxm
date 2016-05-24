@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-export function changesMenuDirective() {
+export function channelSettingsDirective() {
+  'ngInject';
+
   return {
     restrict: 'E',
-    templateUrl: 'channel/changesMenu/changesMenu.html',
-    controller: 'ChangesMenuCtrl as changes',
     bindToController: {
-      onManageChanges: '&',
+      onDone: '&',
+      onSuccess: '&',
+      onError: '&',
     },
+    templateUrl: 'channel/actions/settings/settings.html',
+    controller: 'ChannelSettingsCtrl',
+    controllerAs: 'channelSettings',
   };
 }

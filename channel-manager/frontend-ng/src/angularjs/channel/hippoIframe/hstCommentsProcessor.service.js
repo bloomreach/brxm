@@ -27,6 +27,9 @@ export class HstCommentsProcessorService {
   }
 
   run(document, callback) {
+    if (!document) {
+      return;
+    }
     // IE doesn't support 'evaluate', see
     // https://developer.mozilla.org/en/docs/Web/API/Document/evaluate#Browser_compatibility
     if (!!document.evaluate) {

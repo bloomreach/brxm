@@ -48,17 +48,17 @@ describe('ChannelActions', () => {
   it('calls the on-action-selected callback when clicking the button', () => {
     compileDirectiveAndGetController();
 
-    $element.find('.qa-button-channel').click();
+    $element.find('.qa-button-settings').click();
 
-    expect($scope.onActionSelected).toHaveBeenCalledWith('channel-edit');
+    expect($scope.onActionSelected).toHaveBeenCalledWith('channel-settings');
   });
 
   it('doesn\'t expose the functionality if the channel has no custom properties', () => {
     let ChannelActionsCtrl = compileDirectiveAndGetController();
-    expect(ChannelActionsCtrl.isChannelEditAvailable()).toBe(true);
+    expect(ChannelActionsCtrl.isChannelSettingsAvailable()).toBe(true);
 
     ChannelService.getChannel.and.returnValue({ hasCustomProperties: false });
     ChannelActionsCtrl = compileDirectiveAndGetController();
-    expect(ChannelActionsCtrl.isChannelEditAvailable()).toBe(false);
+    expect(ChannelActionsCtrl.isChannelSettingsAvailable()).toBe(false);
   });
 });

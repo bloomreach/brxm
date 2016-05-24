@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -81,7 +80,7 @@ public class ExtLinkPicker extends ExtObservable {
     private static final long serialVersionUID = 1L;
     private static final JavaScriptResourceReference LINKPICKER_JS = new JavaScriptResourceReference(ExtLinkPicker.class, "ExtLinkPicker.js");
 
-    private final Logger log = LoggerFactory.getLogger(ExtLinkPicker.class);
+    private static final Logger log = LoggerFactory.getLogger(ExtLinkPicker.class);
 
     public ExtLinkPicker(final IPluginContext context) {
         addEventListener(EVENT_PICK, new ExtEventListener() {
@@ -189,9 +188,32 @@ public class ExtLinkPicker extends ExtObservable {
 
             @Override
             public AbstractDialog<String> createDialog() {
-                return new LinkPickerDialog(context, config, model);
+                return new LinkPickerDialog(context, config, model) {
+                    @Override
+                    protected void onCancel() {
+                        super.onCancel();
+                        fireLinkPickerFactoryEvent("cancel");
+                    }
+                };
             }
         };
+    }
+
+    private static void fireLinkPickerFactoryEvent(final String eventName, final String... params) {
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (target == null) {
+            log.info("Cannot invoke callback for event '{}': no Ajax request target available");
+            return;
+        }
+
+        final StringBuilder script = new StringBuilder();
+        script.append("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('").append(eventName).append("'");
+        for (String param : params) {
+            script.append(", '").append(param).append("'");
+        }
+        script.append(");");
+
+        target.prependJavaScript(script);
     }
 
     /**
@@ -214,17 +236,7 @@ public class ExtLinkPicker extends ExtObservable {
             super.setObject(documentLinkInfo);
 
             if (enabledEvents) {
-                // notify the client that a new path has been picked
-                AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                if (target == null) {
-                    log.warn("Cannot invoke callback for picked path '{}': no ajax request target available", documentLinkInfo.getPath());
-                    return;
-                }
-
-                final String script = String.format("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('picked', '%s', '%s');",
-                        documentLinkInfo.getPath(), StringEscapeUtils.escapeJavaScript(documentLinkInfo.getDocumentName()));
-
-                target.prependJavaScript(script);
+                fireLinkPickerFactoryEvent("picked", documentLinkInfo.getPath(), documentLinkInfo.getDocumentName());
             }
         }
     }

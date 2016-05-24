@@ -15,11 +15,16 @@
   -->
 
 <subpage-toolbar title="{{ pageEdit.subpageTitle }}"
-                 on-back="pageEdit.onDone()">
+                 on-back="pageEdit.onDone()"
+                 mode="cancel">
 </subpage-toolbar>
 
 <md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-page-edit">
-  <form name="form" flex="initial" class="qa-subpage subpage-form">
+  <form name="form"
+        flex="initial"
+        class="qa-subpage subpage-form"
+        ng-submit="form.$valid && pageEdit.save()"
+        novalidate>
     <md-input-container class="md-block">
       <label class="md-required">{{ 'SUBPAGE_PAGE_ADD_LABEL_TITLE' | translate }}</label>
       <input type="text" name="title" class="qa-title"
@@ -59,12 +64,16 @@
         </md-option>
       </md-select>
     </md-input-container>
-    <md-input-container>
-      <md-button type="submit" class="md-raised md-primary qa-action"
-                 ng-disabled="form.$invalid || form.$pristine"
-                 ng-click="pageEdit.save()">
+    <div layout="row" layout-align="end center">
+      <md-button type="button"
+                 class="qa-discard"
+                 ng-click="pageEdit.onDone()">
+        {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
+      </md-button>
+      <md-button type="submit"
+                 class="md-raised md-primary qa-action">
         {{ 'SUBPAGE_BUTTON_SAVE' | translate }}
       </md-button>
-    </md-input-container>
+    </div>
   </form>
 </md-content>

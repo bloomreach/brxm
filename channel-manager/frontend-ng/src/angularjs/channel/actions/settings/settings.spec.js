@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('ChannelActionEdit', () => {
+describe('ChannelSettings', () => {
   'use strict';
 
   let $scope;
@@ -26,6 +26,7 @@ describe('ChannelActionEdit', () => {
   let ChannelService;
   let FeedbackService;
   let HippoIframeService;
+  let ConfigService;
   let channelInfoDescription;
   const channel = {
     properties: {
@@ -38,7 +39,8 @@ describe('ChannelActionEdit', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_) => {
+    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_,
+            _ConfigService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $translate = _$translate_;
@@ -46,6 +48,7 @@ describe('ChannelActionEdit', () => {
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
+      ConfigService = _ConfigService_;
     });
 
     channelInfoDescription = {
@@ -90,10 +93,12 @@ describe('ChannelActionEdit', () => {
       },
     };
 
-    spyOn($translate, 'instant');
+    spyOn($translate, 'instant').and.callFake((key) => key);
     spyOn(ChannelService, 'getName').and.returnValue('test-name');
+    spyOn(ChannelService, 'reload').and.returnValue($q.when(channel));
     spyOn(ChannelService, 'getChannel').and.returnValue(channel);
     spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when(channelInfoDescription));
+    spyOn(FeedbackService, 'showError');
   });
 
   function compileDirectiveAndGetController() {
@@ -103,22 +108,22 @@ describe('ChannelActionEdit', () => {
     $scope.onSuccess = jasmine.createSpy('onSuccess');
 
     $element = angular.element(`
-      <channel-edit on-done="onDone()" on-success="onSuccess(key, params)" on-error="onError(key, params)">
-      </channel-edit>
+      <channel-settings on-done="onDone()" on-success="onSuccess(key, params)" on-error="onError(key, params)">
+      </channel-settings>
     `);
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('channel-edit');
+    return $element.controller('channel-settings');
   }
 
   it('initializes correctly when fetching channel setting from backend is successful', () => {
     compileDirectiveAndGetController();
 
+    expect(ChannelService.reload).toHaveBeenCalled();
     expect(ChannelService.getName).toHaveBeenCalled();
-    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_EDIT_TITLE', { channelName: 'test-name' });
+    expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_TITLE', { channelName: 'test-name' });
 
-    expect($element.find('.qa-action').is(':disabled')).toBe(true);
     expect($element.find('.qa-fieldgroup').text()).toBe('Field Group 1');
     expect($element.find('.qa-field-textField label').text()).toBe('Text Field');
     expect($element.find('.qa-field-dropDown label').text()).toBe('Drop Down');
@@ -165,7 +170,6 @@ describe('ChannelActionEdit', () => {
 
   it('shows feedback message when saving is failed', () => {
     spyOn(ChannelService, 'saveChannel').and.returnValue($q.reject());
-    spyOn(FeedbackService, 'showError');
     compileDirectiveAndGetController();
     const feedbackParent = $element.find('.feedback-parent');
 
@@ -178,10 +182,28 @@ describe('ChannelActionEdit', () => {
   });
 
   it('applies a fall-back strategy when determining a field label', () => {
-    const ChannelEditCtrl = compileDirectiveAndGetController();
-    expect(ChannelEditCtrl.getLabel('textField')).toBe('Text Field');
+    const ChannelSettingsCtrl = compileDirectiveAndGetController();
+    expect(ChannelSettingsCtrl.getLabel('textField')).toBe('Text Field');
 
     delete channelInfoDescription.i18nResources.textField;
-    expect(ChannelEditCtrl.getLabel('textField')).toBe('textField');
+    expect(ChannelSettingsCtrl.getLabel('textField')).toBe('textField');
+  });
+
+  it('displays an alert message when the current channel is locked', () => {
+    ConfigService.cmsUser = 'admin';
+    channelInfoDescription.lockedBy = 'tester';
+    const ChannelSettingsCtrl = compileDirectiveAndGetController();
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: 'tester' },
+                                                           ChannelSettingsCtrl.feedbackParent);
+
+    FeedbackService.showError.calls.reset();
+    channelInfoDescription.lockedBy = 'admin';
+    compileDirectiveAndGetController();
+    expect(FeedbackService.showError).not.toHaveBeenCalled();
+
+    FeedbackService.showError.calls.reset();
+    delete channelInfoDescription.lockedBy;
+    compileDirectiveAndGetController();
+    expect(FeedbackService.showError).not.toHaveBeenCalled();
   });
 });

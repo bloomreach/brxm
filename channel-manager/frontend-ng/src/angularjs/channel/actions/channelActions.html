@@ -14,9 +14,9 @@
   limitations under the License.
   -->
 
-<md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}"
-           class="qa-button-channel"
-           ng-if="channelActions.isChannelEditAvailable()"
-           ng-click="channelActions.edit()">
-  {{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}
+<md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANNEL_SETTINGS' | translate }}"
+           class="qa-button-settings"
+           ng-if="channelActions.isChannelSettingsAvailable()"
+           ng-click="channelActions.openSettings()">
+  {{ 'TOOLBAR_BUTTON_CHANNEL_SETTINGS' | translate }}
 </md-button>

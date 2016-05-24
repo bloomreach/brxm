@@ -14,30 +14,45 @@
  * limitations under the License.
  */
 
-export class ChannelEditCtrl {
-  constructor($element, $translate, FeedbackService, ChannelService, HippoIframeService) {
+export class ChannelSettingsCtrl {
+  constructor($element, $translate, FeedbackService, ChannelService, HippoIframeService, ConfigService) {
     'ngInject';
 
+    this.$translate = $translate;
+    this.ConfigService = ConfigService;
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
 
     this.feedbackParent = $element.find('.feedback-parent');
+    this.channelInfoDescription = {};
+    ChannelService.reload()
+      .then(() => this._initialize());
+  }
 
-    this.subpageTitle = $translate.instant('SUBPAGE_CHANNEL_EDIT_TITLE', {
-      channelName: ChannelService.getName(),
+  _initialize() {
+    this.subpageTitle = this.$translate.instant('SUBPAGE_CHANNEL_SETTINGS_TITLE', {
+      channelName: this.ChannelService.getName(),
     });
 
-    this.channelInfoDescription = {};
-    ChannelService.getChannelInfoDescription()
+    this.ChannelService.getChannelInfoDescription()
       .then((channelInfoDescription) => {
         this.channelInfoDescription = channelInfoDescription;
+        if (this.isLockedByOther()) {
+          this._showError('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: channelInfoDescription.lockedBy });
+        }
       })
       .catch(() => {
         this.onError({ key: 'ERROR_CHANNEL_INFO_RETRIEVAL_FAILED' });
       });
 
-    this.values = ChannelService.getProperties();
+    // We're making a copy in order not to mess with ChannelService state
+    // in case we're going to cancel the action after changing some of the fields.
+    this.values = angular.copy(this.ChannelService.getProperties());
+  }
+
+  isLockedByOther() {
+    return this.channelInfoDescription.lockedBy && this.channelInfoDescription.lockedBy !== this.ConfigService.cmsUser;
   }
 
   save() {

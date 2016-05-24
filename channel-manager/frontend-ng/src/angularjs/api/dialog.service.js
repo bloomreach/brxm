@@ -15,7 +15,6 @@
  */
 
 export class DialogService {
-
   constructor($mdDialog, CmsService) {
     'ngInject';
 
@@ -35,5 +34,4 @@ export class DialogService {
     this.CmsService.publish('show-mask');
     return this.$mdDialog.show(dialog);
   }
-
 }

@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
-import { changeManagementDirective } from './changeManagement.directive';
-import { ChangeManagementCtrl } from './changeManagement.controller';
+export function channelPropertyDirective() {
+  'ngInject';
 
-export const changeManagementModule = angular
-  .module('hippo-cm.changeManagement', [])
-  .controller('ChangeManagementCtrl', ChangeManagementCtrl)
-  .directive('changeManagement', changeManagementDirective);
+  return {
+    restrict: 'A',
+    bindToController: {
+      field: '@channelProperty',
+      value: '=channelPropertyValue',
+      data: '=channelPropertiesData',
+    },
+    templateUrl: 'channel/actions/settings/property/property.html',
+    controller: 'ChannelPropertyCtrl',
+    controllerAs: 'channelProperty',
+  };
+}

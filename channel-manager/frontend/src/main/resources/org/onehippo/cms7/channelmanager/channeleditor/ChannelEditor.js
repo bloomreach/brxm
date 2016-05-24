@@ -31,7 +31,8 @@
       Ext.apply(config, {
         cls: 'qa-channel-editor',
         iframeConfig: Ext.apply({}, config, {
-          antiCache: this.antiCache
+          antiCache: this.antiCache,
+          cmsLocation: Ext.getDoc().dom.location
         })
       });
       Hippo.ChannelManager.ChannelEditor.ChannelEditor.superclass.constructor.call(this, config);
@@ -46,6 +47,7 @@
       this.iframeToHost.subscribe('channel-changed-in-angular', this._reloadChannels, this);
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
+      this.iframeToHost.subscribe('show-picker', this._showPicker, this);
       this.iframeToHost.subscribe('component-removed', this._onComponentRemoved, this);
       this.iframeToHost.subscribe('reset-component-properties', this._resetComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('open-content', this._openDocumentEditor, this);
@@ -79,7 +81,12 @@
 
     _syncChannel: function() {
       this._reloadChannels().when(function (channelStore) {
-        this.selectedChannel = channelStore.getById(this.selectedChannel.id);
+        var id = this.selectedChannel.id;
+        this.selectedChannel = channelStore.getById(id);
+        if (!this.selectedChannel) {
+          // we may just have created the preview config of this channel
+          this.selectedChannel = channelStore.getById(id + '-preview');
+        }
         this.hostToIFrame.publish('channel-changed-in-extjs');
       }.bind(this));
     },
@@ -185,6 +192,15 @@
         selected.container,
         selected.page
       );
+    },
+
+    _showPicker: function(field, value, pickerConfig) {
+      this.pickedField = field;
+      Hippo.ChannelManager.ExtLinkPickerFactory.Instance.openPicker(value, pickerConfig, this._onPicked.bind(this));
+    },
+
+    _onPicked: function(path, displayValue) {
+      this.hostToIFrame.publish('picked', this.pickedField, path, displayValue);
     },
 
     _onComponentRemoved: function() {

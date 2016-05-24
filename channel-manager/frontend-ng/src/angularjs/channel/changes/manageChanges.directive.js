@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-export function channelPropertyDirective() {
-  'ngInject';
-
+export function changeManagementDirective() {
   return {
-    restrict: 'A',
+    restrict: 'E',
+    templateUrl: 'channel/changes/manageChanges.html',
+    controller: 'ChangeManagementCtrl as changeMan',
     bindToController: {
-      field: '@channelProperty',
-      value: '=channelPropertyValue',
-      data: '=channelPropertiesData',
+      onDone: '&',
     },
-    templateUrl: 'channel/actions/edit/property/property.html',
-    controller: 'ChannelPropertyCtrl',
-    controllerAs: 'channelProperty',
   };
 }

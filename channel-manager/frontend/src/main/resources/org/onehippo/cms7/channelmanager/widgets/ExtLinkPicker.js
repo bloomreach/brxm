@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -23,18 +23,40 @@
     constructor: function (config) {
       Hippo.ChannelManager.ExtLinkPickerFactory.Instance = this;
 
-      this.addEvents('pick', 'picked', 'select');
+      this.addEvents('pick', 'picked', 'cancel');
 
       this.listeners = config.listeners;
 
       Hippo.ChannelManager.ExtLinkPickerFactory.superclass.constructor.call(this, config);
+
+      this.on('cancel', this._removePickedListener, this);
     },
 
-    openPicker: function (currentValue, pickerConfig, cb) {
+    _addPickedListener: function (callback) {
+      this.callback = callback;
+      this.on('picked', this._onPicked, this);
+    },
+
+    _removePickedListener: function () {
+      this.callback = null;
+      this.un('picked', this._onPicked, this);
+    },
+
+    _onPicked: function (path, name) {
+      this.callback.call(this, path, name);
+      this._removePickedListener();
+    },
+
+    openPicker: function (currentValue, pickerConfig, callback) {
+      this._addPickedListener(callback);
+      this._firePickEvent(currentValue, pickerConfig);
+    },
+
+    _firePickEvent: function (currentValue, pickerConfig) {
       var config = JSON.parse(JSON.stringify(pickerConfig));
       config.rootPath = encodeURI(pickerConfig.rootPath || '');
       config.initialPath = encodeURI(pickerConfig.initialPath || '');
-      this.on('picked', cb, this, {single: true});
+
       this.fireEvent('pick', currentValue, Ext.util.JSON.encode(config));
     }
   });
@@ -53,6 +75,9 @@
 
     initComponent: function () {
       Hippo.ChannelManager.ExtLinkPicker.superclass.initComponent.call(this);
+
+      this.addEvents('select');
+
       this.on('valid', this.validateRenderTextField, this);
       this.on('invalid', this.invalidateRenderTextField, this);
       this.on('resize', this.resizeRenderTextField, this);

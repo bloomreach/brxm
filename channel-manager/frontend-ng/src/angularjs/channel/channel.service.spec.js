@@ -303,22 +303,16 @@ describe('ChannelService', () => {
     expect(channelMock.changedBySet).toEqual(['anotherUser']);
   });
 
-  it('should display error message on failure', () => {
-    HstService.doPost.and.returnValue($q.reject());
-
-    channelMock.changedBySet = ['testUser'];
+  it('should use the specified users when publishing or discarding changes', () => {
+    HstService.doPost.and.returnValue($q.when());
     ChannelService._load(channelMock);
-    ChannelService.discardChanges();
-    $rootScope.$apply();
+    $rootScope.$digest();
 
-    expect(FeedbackService.showError).toHaveBeenCalled();
+    ChannelService.publishChanges(['tester']);
+    expect(HstService.doPost).toHaveBeenCalledWith({ data: ['tester'] }, 'mountId', 'userswithchanges/publish');
 
-    channelMock.changedBySet = ['testUser'];
-    ChannelService._load(channelMock);
-    ChannelService.publishChanges();
-    $rootScope.$apply();
-
-    expect(FeedbackService.showError).toHaveBeenCalled();
+    ChannelService.discardChanges(['tester']);
+    expect(HstService.doPost).toHaveBeenCalledWith({ data: ['tester'] }, 'mountId', 'userswithchanges/discard');
   });
 
   it('records own changes', () => {
@@ -382,9 +376,11 @@ describe('ChannelService', () => {
 
     ChannelService.createPreviewConfiguration();
     expect(HstService.doPost).toHaveBeenCalledWith(null, 'mountId', 'edit');
+    HstService.getChannel.and.returnValue($q.when(channelMock));
 
     $rootScope.$digest();
     expect(ChannelService.hasPreviewConfiguration()).toBe(true);
+    expect(HstService.getChannel).toHaveBeenCalledWith('channelId-preview');
   });
 
   it('should not update the channel\'s preview config flag if creating a preview config failed', () => {
@@ -608,5 +604,11 @@ describe('ChannelService', () => {
     ChannelService.saveChannel();
     expect(HstService.doPut.calls.mostRecent().args[0].properties).toBe(modifiedProperties);
     $rootScope.$digest();
+  });
+
+  it('returns the content root path of the current channel', () => {
+    ChannelService._load({ contentRoot: '/content/documents/testChannel' });
+    $rootScope.$digest();
+    expect(ChannelService.getContentRootPath()).toEqual('/content/documents/testChannel');
   });
 });

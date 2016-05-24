@@ -15,7 +15,14 @@
  */
 export class PathService {
 
-  concatPaths(path1, path2) {
+  concatPaths(...paths) {
+    if (!paths) {
+      return paths;
+    }
+    return paths.reduce((result, path) => this._concatTwoPaths(result, path), '');
+  }
+
+  _concatTwoPaths(path1, path2) {
     if (!path1 && !path2) {
       return '';
     }
@@ -37,6 +44,16 @@ export class PathService {
 
   _removeLeadingSlashes(path) {
     return path.replace(/^\/*/, '');
+  }
+
+  baseName(path) {
+    let result = path;
+    if (path) {
+      const endIndex = path.endsWith('/') ? path.length - 2 : path.length - 1;
+      const lastSlashIndex = path.lastIndexOf('/', endIndex);
+      result = path.substring(lastSlashIndex + 1, endIndex + 1);
+    }
+    return result;
   }
 }
 
