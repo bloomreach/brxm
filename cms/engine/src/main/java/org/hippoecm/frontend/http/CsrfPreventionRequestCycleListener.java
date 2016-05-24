@@ -479,7 +479,12 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
         if (request == null)
             return false;
 
-        return origin.equalsIgnoreCase(request);
+        final boolean isLocal = origin.equalsIgnoreCase(request);
+        if (!isLocal && originHeader.startsWith("https:") && !request.startsWith("https:")) {
+            log.warn("Origin starts with https: but request starts with http:. If you are running behind a proxy, make " +
+                    "sure to set 'X-Forwarded-Proto: https' in the proxy");
+        }
+        return isLocal;
     }
 
     /**
