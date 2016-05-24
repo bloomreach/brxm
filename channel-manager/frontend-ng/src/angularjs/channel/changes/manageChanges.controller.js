@@ -39,76 +39,8 @@ export class ChangeManagementCtrl {
 
     this.feedbackParent = $element.find('.feedback-parent');
     this.usersWithChanges = ChannelService.getChannel().changedBySet.sort();
-    this.suffixYou = $translate.instant('SUBPAGE_CHANNELMANAGEMENT_SUFFIX_YOU');
+    this.suffixYou = $translate.instant('SUBPAGE_CHANGEMANAGEMENT_SUFFIX_YOU');
     this.hasManagedChanges = false;
-  }
-
-  publishChanges(user) {
-    this.ChannelService.publishChanges([user])
-      .then(() => {
-        this.hasManagedChanges = true;
-        this.usersWithChanges = this.ChannelService.getChannel().changedBySet.sort();
-      })
-      .catch((response) => {
-        // response might be undefined or null (for example when the network connection is lost)
-        response = response || {};
-        this.$log.info(response.message);
-        this._showError('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
-      });
-  }
-
-  discardChanges(user) {
-    this._confirmDiscard(user).then(() => {
-      this.ChannelService.discardChanges([user])
-        .then(() => {
-          this.hasManagedChanges = true;
-          this.usersWithChanges = this.ChannelService.getChannel().changedBySet.sort();
-
-          if (this.usersWithChanges === []) {
-            this.goBack();
-          }
-        })
-        .catch((response) => {
-          // response might be undefined or null (for example when the network connection is lost)
-          response = response || {};
-          this.$log.info(response.message);
-          this._showError('ERROR_CHANGE_DISCARD_FAILED', response.data);
-        });
-    });
-  }
-
-  publishAllChanges() {
-    this._confirmPublish().then(() => {
-      this.ChannelService.publishChanges(this.usersWithChanges)
-        .then(() => {
-          this.hasManagedChanges = true;
-          this.goBack();
-        })
-        .catch((response) => {
-          // response might be undefined or null (for example when the network connection is lost)
-          response = response || {};
-
-          this.$log.info(response.message);
-          this._showError('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
-        });
-    });
-  }
-
-  discardAllChanges() {
-    this._confirmDiscard().then(() => {
-      this.ChannelService.discardChanges(this.usersWithChanges)
-        .then(() => {
-          this.hasManagedChanges = true;
-          this.goBack();
-        })
-        .catch((response) => {
-          // response might be undefined or null (for example when the network connection is lost)
-          response = response || {};
-
-          this.$log.info(response.message);
-          this._showError('ERROR_CHANGE_DISCARD_FAILED', response.data);
-        });
-    });
   }
 
   getLabel(user) {
@@ -119,23 +51,34 @@ export class ChangeManagementCtrl {
     return label;
   }
 
-  _confirmDiscard(user) {
-    const message = user ? 'CONFIRM_DISCARD_CHANGES_MESSAGE' : 'CONFIRM_DISCARD_ALL_CHANGES_MESSAGE';
-    const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant(message))
-      .ok(this.$translate.instant('BUTTON_YES_DISCARD'))
-      .cancel(this.$translate.instant('BUTTON_CANCEL'));
-
-    return this.DialogService.show(confirm);
+  publishChanges(user) {
+    this.ChannelService.publishChanges([user])
+      .then(() => this._onSuccess())
+      .catch((response) => this._showError('ERROR_CHANGE_PUBLICATION_FAILED', response));
   }
 
-  _confirmPublish() {
-    const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_PUBLISH_ALL_CHANGES_MESSAGE'))
-      .ok(this.$translate.instant('BUTTON_YES_PUBLISH'))
-      .cancel(this.$translate.instant('BUTTON_CANCEL'));
+  discardChanges(user) {
+    this._confirmDiscard(user).then(() => {
+      this.ChannelService.discardChanges([user])
+        .then(() => this._onSuccess())
+        .catch((response) => this._showError('ERROR_CHANGE_DISCARD_FAILED', response));
+    });
+  }
 
-    return this.DialogService.show(confirm);
+  publishAllChanges() {
+    this._confirmPublish().then(() => {
+      this.ChannelService.publishChanges(this.usersWithChanges)
+        .then(() => this._onSuccess())
+        .catch((response) => this._showError('ERROR_CHANGE_PUBLICATION_FAILED', response));
+    });
+  }
+
+  discardAllChanges() {
+    this._confirmDiscard().then(() => {
+      this.ChannelService.discardChanges(this.usersWithChanges)
+        .then(() => this._onSuccess())
+        .catch((response) => this._showError('ERROR_CHANGE_DISCARD_FAILED', response));
+    });
   }
 
   goBack() {
@@ -148,7 +91,39 @@ export class ChangeManagementCtrl {
     this.onDone();
   }
 
-  _showError(key, params) {
-    this.FeedbackService.showError(key, params, this.feedbackParent);
+  _onSuccess() {
+    this.hasManagedChanges = true;
+    this.usersWithChanges = this.ChannelService.getChannel().changedBySet.sort();
+
+    if (!this.usersWithChanges.length) {
+      this.goBack();
+    }
+  }
+
+  _confirmDiscard(user) {
+    const message = user ? 'CONFIRM_DISCARD_CHANGES_MESSAGE' : 'CONFIRM_DISCARD_ALL_CHANGES_MESSAGE';
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant(message, { user }))
+      .ok(this.$translate.instant('BUTTON_DISCARD'))
+      .cancel(this.$translate.instant('BUTTON_CANCEL'));
+
+    return this.DialogService.show(confirm);
+  }
+
+  _confirmPublish() {
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_PUBLISH_ALL_CHANGES_MESSAGE'))
+      .ok(this.$translate.instant('BUTTON_PUBLISH'))
+      .cancel(this.$translate.instant('BUTTON_CANCEL'));
+
+    return this.DialogService.show(confirm);
+  }
+
+  _showError(key, response) {
+    // response might be undefined or null (for example when the network connection is lost)
+    response = response || {};
+
+    this.$log.info(response.message);
+    this.FeedbackService.showError(key, response.data, this.feedbackParent);
   }
 }

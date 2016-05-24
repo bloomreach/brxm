@@ -24,8 +24,8 @@
 
   <md-list class="subpage-form">
     <md-list-item>
-      <md-button class="md-secondary" ng-click="changeMan.discardAllChanges()">Discard All</md-button>
-      <md-button class="md-secondary md-primary" ng-click="changeMan.publishAllChanges()">Publish All</md-button>
+      <md-button class="md-secondary" ng-click="changeMan.discardAllChanges()">{{ 'BUTTON_DISCARD_ALL' | translate }}</md-button>
+      <md-button class="md-secondary md-primary" ng-click="changeMan.publishAllChanges()">{{ 'BUTTON_PUBLISH_ALL' | translate }}</md-button>
     </md-list-item>
 
     <md-divider></md-divider>
@@ -33,8 +33,8 @@
     <md-list-item ng-repeat="user in changeMan.usersWithChanges">
       {{ changeMan.getLabel(user) }}
 
-      <md-button class="md-secondary" ng-click="changeMan.discardChanges(user)">Discard</md-button>
-      <md-button class="md-secondary md-primary" ng-click="changeMan.publishChanges(user)">Publish</md-button>
+      <md-button class="md-secondary" ng-click="changeMan.discardChanges(user)">{{ 'BUTTON_DISCARD' | translate }}</md-button>
+      <md-button class="md-secondary md-primary" ng-click="changeMan.publishChanges(user)">{{ 'BUTTON_PUBLISH' | translate }}</md-button>
     </md-list-item>
   </md-list>
 </md-content>

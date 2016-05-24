@@ -90,12 +90,13 @@ describe('ChangeManagement', () => {
   });
 
   it('should publish all users changes on confirm', () => {
+    ChannelService.getChannel.and.returnValue({ changedBySet: [] });
     ChangeManagementCtrl.publishAllChanges();
     $rootScope.$apply();
 
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalledWith(dialog);
-    expect(ChannelService.publishChanges).toHaveBeenCalled();
+    expect(ChannelService.publishChanges).toHaveBeenCalledWith(['otheruser', 'testuser']);
     expect(CmsService.publish).toHaveBeenCalledWith('channel-changed-in-angular');
     expect(HippoIframeService.reload).toHaveBeenCalled();
     expect($scope.onDone).toHaveBeenCalled();
@@ -112,12 +113,13 @@ describe('ChangeManagement', () => {
   });
 
   it('should discard all users changes on confirm', () => {
+    ChannelService.getChannel.and.returnValue({ changedBySet: [] });
     ChangeManagementCtrl.discardAllChanges();
     $rootScope.$apply();
 
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalledWith(dialog);
-    expect(ChannelService.discardChanges).toHaveBeenCalled();
+    expect(ChannelService.discardChanges).toHaveBeenCalledWith(['otheruser', 'testuser']);
     expect(CmsService.publish).toHaveBeenCalledWith('channel-changed-in-angular');
     expect(HippoIframeService.reload).toHaveBeenCalled();
     expect($scope.onDone).toHaveBeenCalled();
@@ -138,15 +140,15 @@ describe('ChangeManagement', () => {
 
     $rootScope.$apply();
 
-    expect(ChannelService.publishChanges).toHaveBeenCalled();
+    expect(ChannelService.publishChanges).toHaveBeenCalledWith(['testuser']);
   });
 
   it('should discard one users changes', () => {
-    ChangeManagementCtrl.publishChanges('testuser');
+    ChangeManagementCtrl.discardChanges('testuser');
 
     $rootScope.$apply();
 
-    expect(ChannelService.publishChanges).toHaveBeenCalled();
+    expect(ChannelService.discardChanges).toHaveBeenCalledWith(['testuser']);
   });
 
   it('should show a toast when publication fails', () => {
@@ -162,7 +164,7 @@ describe('ChangeManagement', () => {
 
     ChannelService.publishChanges.and.returnValue($q.reject());
 
-    ChangeManagementCtrl.publishAllChanges();
+    ChangeManagementCtrl.publishChanges('testuser');
     $rootScope.$apply();
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', undefined,
@@ -182,7 +184,7 @@ describe('ChangeManagement', () => {
 
     ChannelService.discardChanges.and.returnValue($q.reject());
 
-    ChangeManagementCtrl.discardAllChanges();
+    ChangeManagementCtrl.discardChanges('testuser');
     $rootScope.$apply();
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', undefined,
@@ -195,5 +197,11 @@ describe('ChangeManagement', () => {
     expect(label).not.toBe('testuser');
 
     expect(ChangeManagementCtrl.getLabel('otheruser')).toBe('otheruser');
+  });
+
+  it('should go back after no action', () => {
+    ChangeManagementCtrl.goBack();
+    expect($scope.onDone).toHaveBeenCalled();
+    expect(HippoIframeService.reload).not.toHaveBeenCalled();
   });
 });
