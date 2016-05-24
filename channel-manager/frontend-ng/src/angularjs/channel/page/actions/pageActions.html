@@ -33,10 +33,10 @@
     <md-menu-divider></md-menu-divider>
     <md-menu-item>
       <md-button class="qa-page-action-add"
-                 aria-label="{{ pageActions.getLabel(pageActions.addAction) }}"
-                 ng-click="pageActions.trigger(pageActions.addAction)"
-                 ng-disabled="!pageActions.addAction.isEnabled()">
-        {{ pageActions.getLabel(pageActions.addAction) }}
+                 aria-label="{{ pageActions.getLabel(pageActions.createAction) }}"
+                 ng-click="pageActions.trigger(pageActions.createAction)"
+                 ng-disabled="!pageActions.createAction.isEnabled()">
+        {{ pageActions.getLabel(pageActions.createAction) }}
         <span class="disabled-marker">&nbsp;{{ pageActions.getSitemapNotEditableMarker() }}</span>
       </md-button>
     </md-menu-item>

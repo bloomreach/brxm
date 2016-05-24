@@ -37,8 +37,8 @@ export class PageActionsCtrl {
         });
       });
 
-    this.addAction = {
-      id: 'add',
+    this.createAction = {
+      id: 'create',
       isEnabled: () => ChannelService.hasWorkspace() && ChannelService.hasPrototypes(),
     };
 
@@ -69,11 +69,7 @@ export class PageActionsCtrl {
   }
 
   getLabel(action) {
-    let label = this.$translate.instant(`TOOLBAR_MENU_PAGE_${action.id.toUpperCase()}`);
-    if (action.isEnabled() && action.id !== 'delete') {
-      label += '...';
-    }
-    return label;
+    return this.$translate.instant(`TOOLBAR_MENU_PAGE_${action.id.toUpperCase()}`);
   }
 
   getPageNotEditableMarker(action) {
@@ -86,7 +82,7 @@ export class PageActionsCtrl {
   }
 
   getSitemapNotEditableMarker() {
-    if (this.addAction.isEnabled()) {
+    if (this.createAction.isEnabled()) {
       return '';
     }
 

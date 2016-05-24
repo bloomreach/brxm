@@ -100,7 +100,7 @@ describe('PageActions', () => {
     expect(PageActionsCtrl.actions[2].id).toBe('move');
     expect(PageActionsCtrl.actions[3].id).toBe('delete');
 
-    expect(PageActionsCtrl.addAction.id).toBe('add');
+    expect(PageActionsCtrl.createAction.id).toBe('create');
   });
 
   it('calls the passed in callback when selecting an action', () => {
@@ -115,28 +115,28 @@ describe('PageActions', () => {
 
   it('enables the add action if the current channel has both a workspace and prototypes', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
-    const addAction = PageActionsCtrl.addAction;
+    const createAction = PageActionsCtrl.createAction;
 
     $translate.instant.calls.reset();
     ChannelService.hasWorkspace.and.returnValue(false);
     ChannelService.hasPrototypes.and.returnValue(false);
-    expect(addAction.isEnabled()).toBe(false);
+    expect(createAction.isEnabled()).toBe(false);
     expect(PageActionsCtrl.getSitemapNotEditableMarker()).not.toBe('');
     expect($translate.instant).toHaveBeenCalledWith('TOOLBAR_MENU_PAGE_SITEMAP_NOT_EDITABLE');
 
     ChannelService.hasWorkspace.and.returnValue(false);
     ChannelService.hasPrototypes.and.returnValue(true);
-    expect(addAction.isEnabled()).toBe(false);
+    expect(createAction.isEnabled()).toBe(false);
     expect(PageActionsCtrl.getSitemapNotEditableMarker()).not.toBe('');
 
     ChannelService.hasWorkspace.and.returnValue(true);
     ChannelService.hasPrototypes.and.returnValue(false);
-    expect(addAction.isEnabled()).toBe(false);
+    expect(createAction.isEnabled()).toBe(false);
     expect(PageActionsCtrl.getSitemapNotEditableMarker()).not.toBe('');
 
     ChannelService.hasWorkspace.and.returnValue(true);
     ChannelService.hasPrototypes.and.returnValue(true);
-    expect(addAction.isEnabled()).toBe(true);
+    expect(createAction.isEnabled()).toBe(true);
     expect(PageActionsCtrl.getSitemapNotEditableMarker()).toBe('');
   });
 
@@ -195,20 +195,9 @@ describe('PageActions', () => {
   });
 
   it('builds the action label correctly', () => {
-    const PageActionsCtrl = compileDirectiveAndGetController();
-    const editAction = PageActionsCtrl.actions.find((action) => action.id === 'edit');
-    const moveAction = PageActionsCtrl.actions.find((action) => action.id === 'move');
-    const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
-
     SiteMapItemService.isEditable.and.returnValue(false);
-    expect(PageActionsCtrl.getLabel(editAction).endsWith('...')).toBe(false);
-    expect(PageActionsCtrl.getLabel(moveAction).endsWith('...')).toBe(false);
-    expect(PageActionsCtrl.getLabel(deleteAction).endsWith('...')).toBe(false);
 
     SiteMapItemService.isEditable.and.returnValue(true);
-    expect(PageActionsCtrl.getLabel(editAction).endsWith('...')).toBe(true);
-    expect(PageActionsCtrl.getLabel(moveAction).endsWith('...')).toBe(true);
-    expect(PageActionsCtrl.getLabel(deleteAction).endsWith('...')).toBe(false);
   });
 
   it('does nothing when not confirming the deletion of a page', () => {
