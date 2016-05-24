@@ -25,3 +25,20 @@ $canvas-bgcolor: #c1c3c5;
 $sheet-bgcolor: #fff;
 
 $list-item-active-bgcolor: rgba(158, 158, 158, 0.2);
+
+// Tree
+$tree-bg:                                     $white;
+$tree-color:                                  $black;
+$tree-icon-color:                             $black;
+$tree-border-radius:                          4px;
+$tree-border-color:                           $black;
+$tree-font-size:                              13px;
+$tree-hover-bg:                               $half-white;
+
+// Active tree item
+$tree-active-bg:                              $blue;
+$tree-active-border-color:                    $blue-shadow;
+$tree-active-color:                           $white;
+
+// DragDrop placeholder
+$tree-dd-bg:                                  $black-shadow;

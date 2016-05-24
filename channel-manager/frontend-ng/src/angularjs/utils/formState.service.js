@@ -14,11 +14,30 @@
  * limitations under the License.
  */
 
-import { menuEditorDirective } from './editor.directive';
-import { MenuEditorCtrl } from './editor.controller';
-import { uiTreeModule } from '../../ui/tree/tree.js';
+class FormStateService {
 
-export const channelMenuModule = angular
-  .module('hippo-cm.channel.menu', [uiTreeModule.name])
-  .directive('menuEditor', menuEditorDirective)
-  .controller('MenuEditorCtrl', MenuEditorCtrl);
+  constructor() {
+    this.valid = true;
+    this.dirty = false;
+  }
+
+  setValid(value) {
+    this.valid = value;
+  }
+
+  isValid() {
+    return this.valid;
+  }
+
+  setDirty(value) {
+    this.dirty = value;
+  }
+
+  isDirty() {
+    return this.dirty;
+  }
+}
+
+export function FormStateServiceFactory() {
+  return new FormStateService();
+}

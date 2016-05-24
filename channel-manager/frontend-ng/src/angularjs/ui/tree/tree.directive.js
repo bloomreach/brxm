@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-import { menuEditorDirective } from './editor.directive';
-import { MenuEditorCtrl } from './editor.controller';
-import { uiTreeModule } from '../../ui/tree/tree.js';
+export function hippoTreeDirective() {
+  'ngInject';
 
-export const channelMenuModule = angular
-  .module('hippo-cm.channel.menu', [uiTreeModule.name])
-  .directive('menuEditor', menuEditorDirective)
-  .controller('MenuEditorCtrl', MenuEditorCtrl);
+  return {
+    restrict: 'A',
+    transclude: true,
+    bindToController: {
+      options: '=',
+      items: '=',
+      selectedItem: '=',
+      draggable: '=',
+    },
+    templateUrl: 'ui/tree/tree.html',
+    controller: 'HippoTreeCtrl',
+    controllerAs: 'hippoTree',
+  };
+}

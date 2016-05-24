@@ -15,21 +15,54 @@
   -->
 
 <subpage-toolbar title="{{ 'SUBPAGE_MENU_EDITOR_TITLE' | translate }}"
-                 on-back="menuEditor.onDone()">
+                 on-back="menuEditor.onBack()">
 </subpage-toolbar>
 
-<md-content layout-padding layout="row" layout-align="center" class="feedback-parent qa-subpage-menu-editor">
-  <form name="form"
-        flex="initial"
-        class="qa-subpage subpage-form"
-        ng-submit="form.$valid && menuEditor.onDone()"
-        novalidate>
-    <h2>Editing menu {{menuEditor.menuUuid}}</h2>
-    <div layout="row" layout-align="end center">
-      <md-button type="submit"
-                 class="qa-menu-editor-save md-raised md-primary">
-        {{ 'SAVE' | translate }}
-      </md-button>
+<md-content layout="row" layout-align="center" class="feedback-parent qa-subpage-menu-editor">
+  <div flex="80">
+    <div layout="row" layout-padding layout-wrap>
+      <div flex="50">
+        <div hippo-tree
+             ng-if="menuEditor.items.length > 0"
+             class="hippo-tree"
+             data-items="menuEditor.items"
+             data-options="menuEditor.treeOptions"
+             data-selected-item="menuEditor.selectedItem"
+             data-draggable="true">
+
+          <span class="spacer">
+            <a class="hippo-tree-item-toggle"
+               data-nodrag stop-propagation
+               ng-click="hippoTree.toggle(this)"
+               ng-hide="childNodes().length === 0">
+              {{collapsed ? '+' : '-'}}
+            </a>
+            <span data-ng-show="childNodes().length === 0">&#9679;</span>
+          </span>
+          <span class="angular-ui-tree-title-wrapper">
+            <span class="angular-ui-tree-title qa-menu-tree-item">{{ item.title }}</span>
+          </span>
+        </div>
+        <div class="empty-tree" ng-if="menuEditor.items.length === 0">{{ 'EMPTY_MENU' | translate }}</div>
+        <md-button type="button"
+                 class="qa-menu-item-add md-accent"
+                 ng-click="menuEditor.addItem()"
+                 ng-disabled="menuEditor.isSaving.newItem">
+          {{ 'ADD_MENU_ITEM' | translate }}
+        </md-button>
+      </div>
+      <div flex="50">
+      <form name="form" flex="initial" class="qa-subpage subpage-form">
+        Editing menu {{menuEditor.menuUuid}}<br/>Selected item {{menuEditor.selectedItem.id}}
+      </form>
     </div>
-  </form>
+      <div flex>
+        <md-button type="submit" class="qa-menu-editor-save md-raised md-primary"
+                   ng-disabled="form.$pristine || form.$invalid"
+                   ng-click="menuEditor.onDone()">
+          {{ 'DONE' | translate }}
+        </md-button>
+      </div>
+    </div>
+  </div>
 </md-content>

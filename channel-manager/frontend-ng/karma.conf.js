@@ -28,6 +28,7 @@ module.exports = function karmaConfig(config) {
     `${cfg.bowerDir}/angular-material/angular-material.js`,
     `${cfg.bowerDir}/angular-messages/angular-messages.js`,
     `${cfg.bowerDir}/angular-ui-router/release/angular-ui-router.js`,
+    `${cfg.bowerDir}/angular-ui-tree/dist/angular-ui-tree.min.js`,
     `${cfg.bowerDir}/angular-translate/angular-translate.js`,
     `${cfg.bowerDir}/angular-translate-loader-static-files/angular-translate-loader-static-files.js`,
     `${cfg.bowerDir}/angular-mocks/angular-mocks.js`,
