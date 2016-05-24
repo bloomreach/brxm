@@ -99,8 +99,8 @@ export class ChangesMenuCtrl {
   _confirmDiscard() {
     const confirm = this.DialogService.confirm()
       .textContent(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE'))
-      .ok(this.$translate.instant('BUTTON_YES_DISCARD'))
-      .cancel(this.$translate.instant('BUTTON_CANCEL'));
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
   }

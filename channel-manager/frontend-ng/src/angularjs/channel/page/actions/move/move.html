@@ -27,7 +27,7 @@
         novalidate>
     <div layout="row">
       <md-input-container class="md-block" flex>
-        <label>{{ 'SUBPAGE_PAGE_ADD_LABEL_URL_STEM' | translate }}</label>
+        <label>{{ 'SUBPAGE_PAGE_LABEL_URL_STEM' | translate }}</label>
         <md-select required name="location" class="qa-url-stem"
                    focus-if
                    ng-model="pageMove.location"
@@ -41,7 +41,7 @@
         </div>
       </md-input-container>
       <md-input-container class="md-block" flex>
-        <label class="md-required">{{ 'SUBPAGE_PAGE_ADD_LABEL_LAST_PATHINFO_ELEMENT' | translate }}</label>
+        <label class="md-required">{{ 'SUBPAGE_PAGE_LABEL_LAST_PATHINFO_ELEMENT' | translate }}</label>
         <input type="text" name="lastPathInfoElement" class="qa-url-leaf"
                required
                illegal-characters="{{pageMove.illegalCharacters}}"
@@ -56,11 +56,11 @@
       <md-button type="button"
                  class="qa-discard"
                  ng-click="pageMove.onDone()">
-        {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
+        {{ 'CANCEL' | translate }}
       </md-button>
       <md-button type="submit"
                  class="md-raised md-primary qa-action">
-        {{ 'SUBPAGE_PAGE_MOVE_BUTTON_MOVE' | translate }}
+        {{ 'MOVE' | translate }}
       </md-button>
     </div>
   </form>

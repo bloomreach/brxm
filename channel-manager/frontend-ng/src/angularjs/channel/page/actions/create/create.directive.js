@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export function pageAddDirective() {
+export function pageCreateDirective() {
   'ngInject';
 
   return {
@@ -22,8 +22,8 @@ export function pageAddDirective() {
     bindToController: {
       onDone: '&',
     },
-    templateUrl: 'channel/page/actions/add/add.html',
-    controller: 'PageAddCtrl',
-    controllerAs: 'pageAdd',
+    templateUrl: 'channel/page/actions/create/create.html',
+    controller: 'PageCreateCtrl',
+    controllerAs: 'pageCreate',
   };
 }

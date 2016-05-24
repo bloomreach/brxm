@@ -37,8 +37,8 @@ export class PageActionsCtrl {
         });
       });
 
-    this.addAction = {
-      id: 'add',
+    this.createAction = {
+      id: 'create',
       isEnabled: () => ChannelService.hasWorkspace() && ChannelService.hasPrototypes(),
     };
 
@@ -69,11 +69,7 @@ export class PageActionsCtrl {
   }
 
   getLabel(action) {
-    let label = this.$translate.instant(`TOOLBAR_MENU_PAGE_${action.id.toUpperCase()}`);
-    if (action.isEnabled() && action.id !== 'delete') {
-      label += '...';
-    }
-    return label;
+    return this.$translate.instant(`TOOLBAR_MENU_PAGE_${action.id.toUpperCase()}`);
   }
 
   getPageNotEditableMarker(action) {
@@ -86,7 +82,7 @@ export class PageActionsCtrl {
   }
 
   getSitemapNotEditableMarker() {
-    if (this.addAction.isEnabled()) {
+    if (this.createAction.isEnabled()) {
       return '';
     }
 
@@ -108,7 +104,8 @@ export class PageActionsCtrl {
   }
 
   _deletePage() {
-    this._confirmDelete()
+    const siteMapItem = this.SiteMapItemService.get();
+    this._confirmDelete(siteMapItem.name)
       .then(() => {
         this.SiteMapItemService.deleteItem()
           .then(() => {
@@ -128,12 +125,11 @@ export class PageActionsCtrl {
       // do nothing on cancel
   }
 
-  _confirmDelete() {
+  _confirmDelete(page) {
     const confirm = this.DialogService.confirm()
-      .title(this.$translate.instant('CONFIRM_DELETE_PAGE_TITLE'))
-      .textContent(this.$translate.instant('CONFIRM_DELETE_PAGE_MESSAGE'))
-      .ok(this.$translate.instant('BUTTON_YES'))
-      .cancel(this.$translate.instant('BUTTON_NO'));
+      .title(this.$translate.instant('CONFIRM_DELETE_PAGE_MESSAGE', { page }))
+      .ok(this.$translate.instant('DELETE'))
+      .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
   }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('illegalCharactersDirective', () => {
+describe('IllegalCharactersDirective', () => {
   'use strict';
 
   let $rootScope;
