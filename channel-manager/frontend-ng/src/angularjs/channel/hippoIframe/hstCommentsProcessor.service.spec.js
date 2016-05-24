@@ -37,7 +37,6 @@ describe('HstCommentsProcessorService', () => {
     expect(hstCommentsProcessorService.processCommentsWithDomWalking).toHaveBeenCalled();
   });
 
-
   it('should process comments with DOM-walking', () => {
     const fixture = $j('#jasmine-fixtures')[0];
     const gatheredData = [];
@@ -56,7 +55,6 @@ describe('HstCommentsProcessorService', () => {
     expect(hstCommentsProcessorService.processCommentsWithDomWalking).not.toThrow();
   });
 
-
   it('should not invoke callback when JSON data is invalid', () => {
     const fixture = $j('#qa-invalid-json')[0];
     const observer = { callback: NOOP };
@@ -64,5 +62,11 @@ describe('HstCommentsProcessorService', () => {
     hstCommentsProcessorService.processCommentsWithDomWalking(fixture, observer.callback);
 
     expect(observer.callback).not.toHaveBeenCalled();
+  });
+
+  it('should not do anything where there is no document', () => {
+    hstCommentsProcessorService.run(undefined, () => {
+      fail('callback should not have been called');
+    });
   });
 });

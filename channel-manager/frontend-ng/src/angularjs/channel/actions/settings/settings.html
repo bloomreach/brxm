@@ -53,7 +53,8 @@
         {{ 'SUBPAGE_BUTTON_DISCARD' | translate }}
       </md-button>
       <md-button type="submit"
-                 class="qa-action md-raised md-primary">
+                 class="qa-action md-raised md-primary"
+                 ng-disabled="channelSettings.isLockedByOther()">
         {{ 'SUBPAGE_BUTTON_SAVE' | translate }}
       </md-button>
     </div>

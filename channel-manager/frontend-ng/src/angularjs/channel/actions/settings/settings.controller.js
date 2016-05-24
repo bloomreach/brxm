@@ -18,20 +18,26 @@ export class ChannelSettingsCtrl {
   constructor($translate, FeedbackService, ChannelService, HippoIframeService, ConfigService) {
     'ngInject';
 
+    this.$translate = $translate;
+    this.ConfigService = ConfigService;
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
 
-    this.subpageTitle = $translate.instant('SUBPAGE_CHANNEL_SETTINGS_TITLE', {
-      channelName: ChannelService.getName(),
+    ChannelService.reload()
+      .then(() => this._initialize());
+  }
+
+  _initialize() {
+    this.subpageTitle = this.$translate.instant('SUBPAGE_CHANNEL_SETTINGS_TITLE', {
+      channelName: this.ChannelService.getName(),
     });
 
-    this.channelInfoDescription = {};
-    ChannelService.getChannelInfoDescription()
+    this.ChannelService.getChannelInfoDescription()
       .then((channelInfoDescription) => {
         this.channelInfoDescription = channelInfoDescription;
-        if (channelInfoDescription.lockedBy && channelInfoDescription.lockedBy !== ConfigService.cmsUser) {
-          this.readOnlyAlert = $translate.instant('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', {
+        if (this.isLockedByOther()) {
+          this.readOnlyAlert = this.$translate.instant('SUBPAGE_CHANNEL_SETTINGS_READONLY_ALERT', {
             lockedBy: channelInfoDescription.lockedBy,
           });
         }
@@ -42,7 +48,11 @@ export class ChannelSettingsCtrl {
 
     // We're making a copy in order not to mess with ChannelService state
     // in case we're going to cancel the action after changing some of the fields.
-    this.values = angular.copy(ChannelService.getProperties());
+    this.values = angular.copy(this.ChannelService.getProperties());
+  }
+
+  isLockedByOther() {
+    return this.channelInfoDescription.lockedBy && this.channelInfoDescription.lockedBy !== this.ConfigService.cmsUser;
   }
 
   save() {

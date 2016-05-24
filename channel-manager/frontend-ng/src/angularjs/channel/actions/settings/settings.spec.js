@@ -95,6 +95,7 @@ describe('ChannelSettings', () => {
 
     spyOn($translate, 'instant').and.callFake((key) => key);
     spyOn(ChannelService, 'getName').and.returnValue('test-name');
+    spyOn(ChannelService, 'reload').and.returnValue($q.when(channel));
     spyOn(ChannelService, 'getChannel').and.returnValue(channel);
     spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when(channelInfoDescription));
     spyOn(FeedbackService, 'showErrorOnSubpage');
@@ -119,6 +120,7 @@ describe('ChannelSettings', () => {
   it('initializes correctly when fetching channel setting from backend is successful', () => {
     compileDirectiveAndGetController();
 
+    expect(ChannelService.reload).toHaveBeenCalled();
     expect(ChannelService.getName).toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('SUBPAGE_CHANNEL_SETTINGS_TITLE', { channelName: 'test-name' });
 
