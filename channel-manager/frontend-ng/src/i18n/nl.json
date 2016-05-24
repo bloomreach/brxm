@@ -60,6 +60,8 @@
   "SUBPAGE_CHANGEMANAGEMENT_TITLE": "???",
   "SUBPAGE_CHANNEL_EDIT_TITLE": "Bewerk channel '{{channelName}}'",
   "SUBPAGE_CHANNEL_SETTINGS_TITLE": "Instellingen van '{{channelName}}'",
+  "SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM": "Voeg menu onderdeel toe",
+  "SUBPAGE_MENU_EDITOR_EMPTY_MENU": "Het menu is leeg",
   "SUBPAGE_MENU_EDITOR_NEW_ITEM_TITLE": "Naamloos",
   "SUBPAGE_MENU_EDITOR_TITLE": "Bewerk menu",
   "SUBPAGE_PAGE_COPY_LABEL_CHANNEL": "???",
