@@ -65,12 +65,12 @@ export class SiteMenuService {
 
    * @param menuId The menu id
    * @param newItem The item to be created
-   * @param selectedItem When specified, the item will be created either as an additional child, or as a sibling of the
-   *                     selected item does not have any children yet.
+   * @param selectedItemId When specified, the item will be created either as an additional child, or as a sibling of the
+   *                       selected item if it does not have any children yet.
    * @returns {promise|Promise.promise|Q.promise}
    */
-  createMenuItem(menuId, newItem, selectedItem) {
-    return this.getPathToMenuItem(menuId, selectedItem.id).then((paths) => {
+  createMenuItem(menuId, newItem, selectedItemId) {
+    return this.getPathToMenuItem(menuId, selectedItemId).then((paths) => {
       const options = {
         position: NEXT_SIBLING,
       };

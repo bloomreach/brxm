@@ -95,7 +95,7 @@ export class MenuEditorCtrl {
 
       this.SiteMenuService.getMenu(this.menuUuid)
         .then((menu) => this._createBlankMenuItem(menu))
-        .then((blankItem) => this.SiteMenuService.createMenuItem(this.menuUuid, blankItem, this.selectedItem))
+        .then((blankItem) => this.SiteMenuService.createMenuItem(this.menuUuid, blankItem, this.selectedItem.id))
         .then((newItem) => {
           this.FormStateService.setValid(true);
           this.isSaving.newItem = false;

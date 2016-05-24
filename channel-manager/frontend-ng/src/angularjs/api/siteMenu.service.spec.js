@@ -225,34 +225,40 @@ describe('SiteMenuService', () => {
 
   // Create item
   it('should create a menu item', (done) => {
-    SiteMenuService.createMenuItem('testUuid', newMenuItem, 'parentId').then(() => {
-      expect(HstService.doPostWithParams).toHaveBeenCalledWith(newMenuItem, 'testUuid', {}, 'create', 'parentId');
-      done();
+    SiteMenuService.loadMenu('testUuid').then(() => {
+      SiteMenuService.createMenuItem('testUuid', newMenuItem, 'testUuid').then(() => {
+        expect(HstService.doPostWithParams)
+          .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+        done();
+      });
+    });
+    $rootScope.$digest();
+  });
+
+  it('should create a menu item after specified sibling', (done) => {
+    SiteMenuService.loadMenu('testUuid').then(() => {
+      SiteMenuService.createMenuItem('testUuid', newMenuItem, '1').then(() => {
+        expect(HstService.doPostWithParams)
+          .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after', sibling: '1' }, 'create', 'testUuid');
+        done();
+      });
     });
     $rootScope.$digest();
   });
 
   it('should create a root menu item if parentId is not specified', (done) => {
     SiteMenuService.createMenuItem('testUuid', newMenuItem).then(() => {
-      expect(HstService.doPostWithParams).toHaveBeenCalledWith(newMenuItem, 'testUuid', {}, 'create', 'testUuid');
+      expect(HstService.doPostWithParams)
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
       done();
     });
     $rootScope.$digest();
   });
 
-  it('should create a menu item at specified position and sibling', (done) => {
-    const options = { position: '_pos', siblingId: '_sib' };
-    SiteMenuService.createMenuItem('testUuid', newMenuItem, 'testUuid', options).then(() => {
-      expect(HstService.doPostWithParams).toHaveBeenCalledWith(newMenuItem, 'testUuid', options, 'create', 'testUuid');
-      done();
-    });
-    $rootScope.$digest();
-  });
-
-  it('should create a menu item at specified sibling only if position is specified as well', (done) => {
-    const options = { siblingId: '_sib' };
-    SiteMenuService.createMenuItem('testUuid', newMenuItem, 'testUuid', options).then(() => {
-      expect(HstService.doPostWithParams).toHaveBeenCalledWith(newMenuItem, 'testUuid', {}, 'create', 'testUuid');
+  it('should create a root menu item if parentId is not found', (done) => {
+    SiteMenuService.createMenuItem('testUuid', newMenuItem, 'non-existing').then(() => {
+      expect(HstService.doPostWithParams)
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
       done();
     });
     $rootScope.$digest();
