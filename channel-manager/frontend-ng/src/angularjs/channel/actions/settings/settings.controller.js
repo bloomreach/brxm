@@ -26,6 +26,8 @@ export class ChannelSettingsCtrl {
 
     ChannelService.reload()
       .then(() => this._initialize());
+
+    this.channelInfoDescription = {};
   }
 
   _initialize() {
@@ -37,7 +39,7 @@ export class ChannelSettingsCtrl {
       .then((channelInfoDescription) => {
         this.channelInfoDescription = channelInfoDescription;
         if (this.isLockedByOther()) {
-          this._showError('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: channelInfoDescription.lockedBy });
+          this.FeedbackService.showErrorOnSubpage('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: channelInfoDescription.lockedBy });
         }
       })
       .catch(() => {

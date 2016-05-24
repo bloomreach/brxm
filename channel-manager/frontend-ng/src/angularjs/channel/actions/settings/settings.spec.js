@@ -114,6 +114,7 @@ describe('ChannelSettings', () => {
     $compile($element)($scope);
     $scope.$digest();
 
+
     return $element.controller('channel-settings');
   }
 
@@ -178,18 +179,17 @@ describe('ChannelSettings', () => {
   it('displays an alert message when the current channel is locked', () => {
     ConfigService.cmsUser = 'admin';
     channelInfoDescription.lockedBy = 'tester';
-    const ChannelSettingsCtrl = compileDirectiveAndGetController();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: 'tester' },
-                                                           ChannelSettingsCtrl.feedbackParent);
+    compileDirectiveAndGetController();
+    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANNEL_SETTINGS_READONLY', { lockedBy: 'tester' });
 
-    FeedbackService.showError.calls.reset();
+    FeedbackService.showErrorOnSubpage.calls.reset();
     channelInfoDescription.lockedBy = 'admin';
     compileDirectiveAndGetController();
-    expect(FeedbackService.showError).not.toHaveBeenCalled();
+    expect(FeedbackService.showErrorOnSubpage).not.toHaveBeenCalled();
 
-    FeedbackService.showError.calls.reset();
+    FeedbackService.showErrorOnSubpage.calls.reset();
     delete channelInfoDescription.lockedBy;
     compileDirectiveAndGetController();
-    expect(FeedbackService.showError).not.toHaveBeenCalled();
+    expect(FeedbackService.showErrorOnSubpage).not.toHaveBeenCalled();
   });
 });
