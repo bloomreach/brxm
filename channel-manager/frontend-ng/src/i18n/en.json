@@ -6,6 +6,7 @@
   "CHANNEL_PROPERTIES_SAVE_SUCCESS": "Channel settings saved successfully",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Are you sure you want to remove the component '{{component}}' from this template?",
   "CONFIRM_DELETE_COMPONENT_TITLE": "Confirm remove",
+  "CONFIRM_DELETE_PAGE_MESSAGE": "Delete '{{page}}'?",
   "CONFIRM_DISCARD_SELECTED_CHANGES_MESSAGE": "Discard all selected changes?",
   "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Are you sure you want to discard all your unpublished changes to this channel?",
   "CONFIRM_DISCARD_CHANGES_TITLE": "Confirm discard changes",

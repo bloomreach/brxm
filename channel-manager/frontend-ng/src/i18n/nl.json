@@ -6,6 +6,7 @@
   "CHANNEL_PROPERTIES_SAVE_SUCCESS": "???",
   "CONFIRM_DELETE_COMPONENT_MESSAGE": "Weet u zeker dat u {0} wilt verwijderen?",
   "CONFIRM_DELETE_COMPONENT_TITLE": "Bevestig het verwijderen",
+  "CONFIRM_DELETE_PAGE_MESSAGE": "'{{page}}' verwijderen?",
   "CONFIRM_DISCARD_SELECTED_CHANGES_MESSAGE": "Maak de geselecteerde wijzigingen ongedaan?",
   "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Weet u zeker dat u al uw ongepubliceerde veranderingen in dit channel ongedaan wilt maken?",
   "CONFIRM_DISCARD_CHANGES_TITLE": "Bevestig ongedaan maken",

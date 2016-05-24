@@ -195,12 +195,6 @@ describe('PageActions', () => {
     expect(copyAction.isEnabled()).toBe(true);
   });
 
-  it('builds the action label correctly', () => {
-    SiteMapItemService.isEditable.and.returnValue(false);
-
-    SiteMapItemService.isEditable.and.returnValue(true);
-  });
-
   it('does nothing when not confirming the deletion of a page', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
     const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
