@@ -15,39 +15,27 @@
   -->
 
 <subpage-toolbar title="{{ 'SUBPAGE_CHANGEMANAGEMENT_TITLE' | translate }}"
-                 on-back="changeMan.onDone()">
+    on-back="changeMan.goBack()">
 </subpage-toolbar>
 
-<subpage-content layout="row" class="qa-change-management">
-  <form name="form"
-        flex="initial"
-        class="qa-manage-changes subpage-form"
-        ng-submit="form.$valid && changeMan.publishSelectedChanges()"
-        novalidate>
-    <div>
-      <p class="md-body-2">
-        <a ng-click="changeMan.selectAll()" class="qa-select-all">{{ 'SUBPAGE_CHANGEMANAGEMENT_SELECT_ALL' | translate }}</a> -
-        <a ng-click="changeMan.selectNone()" class="qa-select-none">{{ 'SUBPAGE_CHANGEMANAGEMENT_SELECT_NONE' | translate }}</a>
-      </p>
-    </div>
+<subpage-content class="qa-change-management"
+  layout-padding
+  layout-gt-sm
+  layout-align-gt-sm="center">
 
-    <div ng-repeat="user in changeMan.usersWithChanges">
-      <md-checkbox class="qa-toggle-user" ng-checked="changeMan.isChecked(user)"
-          ng-click="changeMan.toggle(user)">
-        {{ changeMan.getLabel(user) }}
-      </md-checkbox>
-    </div>
+  <md-list class="subpage-form">
+    <md-list-item>
+      <md-button class="md-secondary" ng-click="changeMan.discardAllChanges()">{{ 'BUTTON_DISCARD_ALL' | translate }}</md-button>
+      <md-button class="md-secondary md-primary" ng-click="changeMan.publishAllChanges()">{{ 'BUTTON_PUBLISH_ALL' | translate }}</md-button>
+    </md-list-item>
 
-    <div layout="row" layout-align="end center">
-      <md-button type="button"
-                 class="qa-discard"
-                 ng-click="changeMan.discardSelectedChanges()">
-        {{ 'SUBPAGE_CHANGEMANAGEMENT_DISCARD' | translate }}
-      </md-button>
-      <md-button type="submit"
-                 class="md-primary md-raised qa-publish">
-        {{ 'SUBPAGE_CHANGEMANAGEMENT_PUBLISH' | translate }}
-      </md-button>
-    </div>
-  </form>
+    <md-divider></md-divider>
+
+    <md-list-item ng-repeat="user in changeMan.usersWithChanges">
+      {{ changeMan.getLabel(user) }}
+
+      <md-button class="md-secondary" ng-click="changeMan.discardChanges(user)">{{ 'BUTTON_DISCARD' | translate }}</md-button>
+      <md-button class="md-secondary md-primary" ng-click="changeMan.publishChanges(user)">{{ 'BUTTON_PUBLISH' | translate }}</md-button>
+    </md-list-item>
+  </md-list>
 </subpage-content>

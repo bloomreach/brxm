@@ -37,24 +37,8 @@ export class ChangeManagementCtrl {
     this.HippoIframeService = HippoIframeService;
 
     this.usersWithChanges = ChannelService.getChannel().changedBySet.sort();
-    this.selectedUsers = [];
-    this.suffixYou = $translate.instant('SUBPAGE_CHANNELMANAGEMENT_SUFFIX_YOU');
-  }
-
-  selectAll() {
-    this.usersWithChanges.forEach((user) => {
-      if (!this.isChecked(user)) {
-        this._checkUser(user);
-      }
-    });
-  }
-
-  selectNone() {
-    this.usersWithChanges.forEach((user) => {
-      if (this.isChecked(user)) {
-        this._uncheckUser(user);
-      }
-    });
+    this.suffixYou = $translate.instant('SUBPAGE_CHANGEMANAGEMENT_SUFFIX_YOU');
+    this.hasManagedChanges = false;
   }
 
   getLabel(user) {
@@ -65,71 +49,79 @@ export class ChangeManagementCtrl {
     return label;
   }
 
-  toggle(user) {
-    if (this.selectedUsers.includes(user)) {
-      this._uncheckUser(user);
-    } else {
-      this._checkUser(user);
-    }
+  publishChanges(user) {
+    this.ChannelService.publishChanges([user])
+      .then(() => this._onSuccess())
+      .catch((response) => this._showError('ERROR_CHANGE_PUBLICATION_FAILED', response));
   }
 
-  isChecked(user) {
-    return this.selectedUsers.includes(user);
-  }
-
-  isNoneSelected() {
-    return this.selectedUsers.length === 0;
-  }
-
-  publishSelectedChanges() {
-    this.ChannelService.publishChanges(this.selectedUsers)
-      .then(() => this._resetSelection())
-      .catch((response) => {
-        // response might be undefined or null (for example when the network connection is lost)
-        response = response || {};
-
-        this.$log.info(response.message);
-        this.FeedbackService.showErrorOnSubpage('ERROR_CHANGE_PUBLICATION_FAILED', response.data);
-      });
-  }
-
-  discardSelectedChanges() {
-    this._confirmDiscard().then(() => {
-      this.ChannelService.discardChanges(this.selectedUsers)
-        .then(() => this._resetSelection())
-        .catch((response) => {
-          // response might be undefined or null (for example when the network connection is lost)
-          response = response || {};
-
-          this.$log.info(response.message);
-          this.FeedbackService.showErrorOnSubpage('ERROR_CHANGE_DISCARD_FAILED', response.data);
-        });
+  discardChanges(user) {
+    this._confirmDiscard(user).then(() => {
+      this.ChannelService.discardChanges([user])
+        .then(() => this._onSuccess())
+        .catch((response) => this._showError('ERROR_CHANGE_DISCARD_FAILED', response));
     });
   }
 
-  _confirmDiscard() {
+  publishAllChanges() {
+    this._confirmPublish().then(() => {
+      this.ChannelService.publishChanges(this.usersWithChanges)
+        .then(() => this._onSuccess())
+        .catch((response) => this._showError('ERROR_CHANGE_PUBLICATION_FAILED', response));
+    });
+  }
+
+  discardAllChanges() {
+    this._confirmDiscard().then(() => {
+      this.ChannelService.discardChanges(this.usersWithChanges)
+        .then(() => this._onSuccess())
+        .catch((response) => this._showError('ERROR_CHANGE_DISCARD_FAILED', response));
+    });
+  }
+
+  goBack() {
+    if (this.hasManagedChanges) {
+      this.CmsService.publish('channel-changed-in-angular');
+      this.HippoIframeService.reload();
+      this.hasManagedChanges = false;
+    }
+
+    this.onDone();
+  }
+
+  _onSuccess() {
+    this.hasManagedChanges = true;
+    this.usersWithChanges = this.ChannelService.getChannel().changedBySet.sort();
+
+    if (!this.usersWithChanges.length) {
+      this.goBack();
+    }
+  }
+
+  _confirmDiscard(user) {
+    const message = user ? 'CONFIRM_DISCARD_CHANGES_MESSAGE' : 'CONFIRM_DISCARD_ALL_CHANGES_MESSAGE';
     const confirm = this.DialogService.confirm()
-      .title(this.$translate.instant('CONFIRM_DISCARD_CHANGES_TITLE'))
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_SELECTED_CHANGES_MESSAGE'))
-      .ok(this.$translate.instant('BUTTON_YES'))
-      .cancel(this.$translate.instant('BUTTON_NO'));
+      .textContent(this.$translate.instant(message, { user }))
+      .ok(this.$translate.instant('BUTTON_DISCARD'))
+      .cancel(this.$translate.instant('BUTTON_CANCEL'));
 
     return this.DialogService.show(confirm);
   }
 
-  _resetSelection() {
-    this.selectedUsers = [];
-    this.CmsService.publish('channel-changed-in-angular');
-    this.HippoIframeService.reload();
-    this.onDone();
+  _confirmPublish() {
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_PUBLISH_ALL_CHANGES_MESSAGE'))
+      .ok(this.$translate.instant('BUTTON_PUBLISH'))
+      .cancel(this.$translate.instant('BUTTON_CANCEL'));
+
+    return this.DialogService.show(confirm);
   }
 
-  _checkUser(user) {
-    this.selectedUsers.push(user);
-  }
+  _showError(key, response) {
+    // response might be undefined or null (for example when the network connection is lost)
+    response = response || {};
 
-  _uncheckUser(user) {
-    const index = this.selectedUsers.indexOf(user);
-    this.selectedUsers.splice(index, 1);
+    this.$log.info(response.message);
+    this.FeedbackService.showError(key, response.data, this.feedbackParent);
   }
 }
