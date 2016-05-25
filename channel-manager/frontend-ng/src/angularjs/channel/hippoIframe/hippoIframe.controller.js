@@ -112,12 +112,11 @@ export class HippoIframeCtrl {
 
   _confirmDelete(selectedComponent) {
     const confirm = this.DialogService.confirm()
-      .title(this.$translate.instant('CONFIRM_DELETE_COMPONENT_TITLE'))
       .textContent(this.$translate.instant('CONFIRM_DELETE_COMPONENT_MESSAGE', {
         component: selectedComponent.getLabel(),
       }))
-      .ok(this.$translate.instant('BUTTON_YES'))
-      .cancel(this.$translate.instant('BUTTON_NO'));
+      .ok(this.$translate.instant('REMOVE'))
+      .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
   }

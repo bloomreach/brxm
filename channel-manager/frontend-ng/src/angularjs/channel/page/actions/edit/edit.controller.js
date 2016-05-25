@@ -109,7 +109,6 @@ export class PageEditCtrl {
       this.$mdDialog.show(
         this.$mdDialog.alert()
           .clickOutsideToClose(true)
-          .title(this.$translate.instant('SUBPAGE_PAGE_EDIT_ALERT_TITLE'))
           .textContent(textContent)
           .ok(this.$translate.instant('ALERT_OK'))
       );
