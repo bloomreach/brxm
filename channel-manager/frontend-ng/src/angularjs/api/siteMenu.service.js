@@ -51,6 +51,10 @@ export class SiteMenuService {
     return this.HstService.doPost({}, menuId, 'move', menuItemId, parentId, String(position));
   }
 
+  deleteMenuItem(menuId, menuItemId) {
+    return this.HstService.doPost({}, menuId, 'delete', menuItemId);
+  }
+
   saveMenuItem(menuId, menuItem) {
     const menuItemCopy = angular.copy(menuItem);
 
@@ -195,3 +199,4 @@ export class SiteMenuService {
     });
   }
 }
+

@@ -15,7 +15,7 @@
  */
 
 export class MenuEditorCtrl {
-  constructor($q, $filter, $scope, $translate, SiteMenuService, FormStateService, HippoIframeService) {
+  constructor($q, $filter, $scope, $translate, SiteMenuService, FormStateService, HippoIframeService, DialogService) {
     'ngInject';
 
     this.$q = $q;
@@ -24,6 +24,7 @@ export class MenuEditorCtrl {
     this.SiteMenuService = SiteMenuService;
     this.FormStateService = FormStateService;
     this.HippoIframeService = HippoIframeService;
+    this.DialogService = DialogService;
 
     this.isSaving = {};
 
@@ -85,6 +86,30 @@ export class MenuEditorCtrl {
     }
   }
 
+  stopEditingItem() {
+    this.editingItem = null;
+  }
+
+  setupItem(item) {
+    if (item.linkType === 'SITEMAPITEM') {
+      item.sitemapLink = item.link;
+    } else if (item.linkType === 'EXTERNAL') {
+      item.externalLink = item.link;
+    }
+    this.editingItem = item;
+  }
+
+  editItem(item) {
+    if (!this.editingItem || this.editingItem.id !== item.id) {
+      this.SiteMenuService.getMenuItem(this.menuUuid, item.id)
+        .then((retrievedItem) => {
+          this.setupItem(retrievedItem);
+        });
+    } else {
+      this.stopEditingItem();
+    }
+  }
+
   addItem() {
     this._saveIfDirty(this.selectedItem).then(() => {
       if (!this.selectedItem) {
@@ -140,5 +165,36 @@ export class MenuEditorCtrl {
       result.localParameters = angular.copy(menu.prototypeItem.localParameters);
     }
     return result;
+  }
+
+  saveItem(item) {
+    this.SiteMenuService.saveMenuItem(this.menuUuid, item).then(() => {
+      this.stopEditingItem(item);
+    }).catch(() => {
+      this.onError({ key: 'ERROR_MENU_ITEM_SAVE_FAILED' });
+    });
+  }
+
+  _doDelete(item) {
+    return this.SiteMenuService.deleteMenuItem(this.menuUuid, item.id).then(() => {
+      this.stopEditingItem(item);
+    }).catch(() => {
+      this.onError({ key: 'ERROR_MENU_ITEM_DELETE_FAILED' });
+    });
+  }
+
+  _confirmDelete(item) {
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_DELETE_MENU_ITEM_MESSAGE', {
+        menuItem: item.title,
+      }))
+      .ok(this.$translate.instant('DELETE'))
+      .cancel(this.$translate.instant('CANCEL'));
+
+    return this.DialogService.show(confirm);
+  }
+
+  deleteItem(item) {
+    this._confirmDelete(item).then(() => this._doDelete(item));
   }
 }
