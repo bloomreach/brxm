@@ -15,10 +15,6 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
-import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
-import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
-import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -66,6 +62,10 @@ import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
+import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
+import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
 
 public class VirtualHostsService implements MutableVirtualHosts {
 
