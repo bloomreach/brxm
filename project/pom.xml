@@ -71,7 +71,7 @@
     <spring.version>4.1.4.RELEASE</spring.version>
     <aspectjweaver.version>1.8.4</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.3.0</groovy.version>
-    <freemarker.version>2.3.22</freemarker.version>
+    <freemarker.version>2.3.24-incubating</freemarker.version>
     <jackrabbit.version>2.10.1</jackrabbit.version>
     <patched.jackrabbit.version>2.10.1-h11</patched.jackrabbit.version>
     <tika-core.version>1.3</tika-core.version>
