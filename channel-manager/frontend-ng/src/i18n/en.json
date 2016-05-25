@@ -1,10 +1,8 @@
 {
   "ALERT_OK": "OK",
-  "BUTTON_NO": "No",
-  "BUTTON_YES": "Yes",
   "CANCEL": "Cancel",
   "CHANNEL_PROPERTIES_SAVE_SUCCESS": "Channel settings saved successfully",
-  "CONFIRM_DELETE_COMPONENT_MESSAGE": "Remove the component '{{component}}' from this template?",
+  "CONFIRM_DELETE_COMPONENT_MESSAGE": "Remove component '{{component}}' from this template?",
   "CONFIRM_DELETE_PAGE_MESSAGE": "Delete '{{page}}'?",
   "CONFIRM_DISCARD_CHANGES_MESSAGE": "Discard changes by '{{user}}'?",
   "CONFIRM_DISCARD_ALL_CHANGES_MESSAGE": "Discard all changes?",
