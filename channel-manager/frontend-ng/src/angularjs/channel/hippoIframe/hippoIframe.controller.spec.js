@@ -46,7 +46,7 @@ describe('hippoIframeCtrl', () => {
     let $compile;
     module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$compile_, _$mdDialog_, _$q_, _DragDropService_, _OverlaySyncService_,
+    inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlaySyncService_,
             _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,
             _ChannelService_, _CmsService_, _HippoIframeService_, _DialogService_, _DomService_) => {
       $rootScope = _$rootScope_;
