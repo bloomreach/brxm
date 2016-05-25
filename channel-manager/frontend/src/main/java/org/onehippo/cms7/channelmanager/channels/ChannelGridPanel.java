@@ -19,8 +19,11 @@ package org.onehippo.cms7.channelmanager.channels;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.wicket.Localizer;
+import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -30,10 +33,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
+import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
+import org.wicketstuff.js.ext.util.ExtEventListener;
 import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
@@ -47,6 +53,11 @@ public class ChannelGridPanel extends ExtPanel {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(ChannelGridPanel.class);
+
+    public static final String EDIT_HST_CONFIG_EVENT = "edit-hst-config";
+    public static final String HST_CONFIG_EDITOR_COLUMN_ID = "hstConfigEditor";
+    private final boolean canModifyChannels;
+
     private ChannelStore store;
     private List<String> visibleFields;
     
@@ -58,14 +69,56 @@ public class ChannelGridPanel extends ExtPanel {
     @SuppressWarnings("unused")
     private String composerRestMountPath;
 
-    public ChannelGridPanel(IPluginConfig channelListConfig, String composerRestMountPath, ExtStoreFuture storeFuture) {
+    private static class EditHstConfigListener extends ExtEventListener {
+        private final HstConfigEditor hstConfigEditor;
+
+        public EditHstConfigListener(final HstConfigEditor hstConfigEditor) {
+            this.hstConfigEditor = hstConfigEditor;
+        }
+
+        private static Object getValue(final Map<String, JSONArray> parameters, final String key) throws JSONException {
+            JSONArray values = parameters.get(key);
+            if (values == null || values.length() == 0) {
+                return null;
+            }
+            return values.get(0);
+        }
+
+        @Override
+        public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
+            if (this.hstConfigEditor == null) {
+                return;
+            }
+            try {
+                final String paramChannelId = (String) getValue(parameters, "channelId");
+                final String paramHstMountPoint = (String) getValue(parameters, "hstMountPoint");
+                target.prependJavaScript("Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance').initEditor();");
+                this.hstConfigEditor.setMountPoint(target, paramChannelId, paramHstMountPoint);
+            } catch (JSONException e) {
+                throw new WicketRuntimeException("Invalid JSON parameters", e);
+            }
+        }
+    }
+
+    public ChannelGridPanel(IPluginConfig channelListConfig, String composerRestMountPath, ExtStoreFuture storeFuture, final HstConfigEditor hstConfigEditor) {
         this.store = (ChannelStore) storeFuture.getStore();
 
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
         this.composerRestMountPath = composerRestMountPath;
+        this.canModifyChannels = store.canModifyChannels();
 
         visibleFields = parseChannelFields(channelListConfig);
         visibleFields.removeAll(ChannelStore.INTERNAL_FIELDS);
+
+        addEventListener(EDIT_HST_CONFIG_EVENT, new EditHstConfigListener(hstConfigEditor));
+    }
+
+    @Override
+    protected ExtEventAjaxBehavior newExtEventBehavior(final String event) {
+        if (EDIT_HST_CONFIG_EVENT.equals(event)) {
+            return new ExtEventAjaxBehavior("channelId", "hstMountPoint");
+        }
+        return super.newExtEventBehavior(event);
     }
 
     static List<String> parseChannelFields(IPluginConfig channelListConfig) {
@@ -103,8 +156,13 @@ public class ChannelGridPanel extends ExtPanel {
     private JSONArray getColumnsConfig() throws JSONException {
         JSONArray columnsConfig = new JSONArray();
 
-        List<String> hiddenFields = new ArrayList<String>(ChannelStore.ALL_FIELD_NAMES);
+        List<String> hiddenFields = new ArrayList<>(ChannelStore.ALL_FIELD_NAMES);
         hiddenFields.removeAll(ChannelStore.INTERNAL_FIELDS);
+
+        if (!this.canModifyChannels) {
+            visibleFields.remove(HST_CONFIG_EDITOR_COLUMN_ID);
+            hiddenFields.remove(HST_CONFIG_EDITOR_COLUMN_ID);
+        }
 
         for (String columnfield : visibleFields) {
             columnsConfig.put(createColumnFieldConfig(columnfield, false));
@@ -144,16 +202,24 @@ public class ChannelGridPanel extends ExtPanel {
     }
 
     private void createHstConfigEditorFieldConfig(final JSONObject fieldConfig) throws JSONException {
-        final String hstConfigEditorTooltip = getLocalizer().getString("tooltip.hstconfigeditor", this);
-        final String hstConfigEditorLabel = getLocalizer().getString("action.hstconfigeditor", this);
+        final String tooltip = getLocalizer().getString("tooltip.hstconfigeditor", this);
+        final String labelAction = getLocalizer().getString("action.hstconfigeditor", this);
+        final String labelNotAvailable = getLocalizer().getString("action.hstconfigeditor.notavailable", this);
         fieldConfig.put("xtype", "templatecolumn");
 
         final StringBuilder templateBuilder = new StringBuilder();
+        templateBuilder.append("<tpl if=\"previewHstConfigExists=='true'\">");
         templateBuilder.append("<a href=\"#\" name=\"open-hstconfigeditor\" title=\"");
-        templateBuilder.append(hstConfigEditorTooltip);
-        templateBuilder.append("\">" + hstConfigEditorLabel + "</a>");
+        templateBuilder.append(tooltip);
+        templateBuilder.append("\">" + labelAction + "</a>");
+        templateBuilder.append("</tpl>");
 
-        fieldConfig.put("tpl", templateBuilder.toString());
+        // extjs 3.4 does not support 'else' operator in xtemplate
+        templateBuilder.append("<tpl if=\"previewHstConfigExists=='false'\">");
+        templateBuilder.append(labelNotAvailable);
+        templateBuilder.append("</tpl>");
+
+        fieldConfig.put("tpl",  templateBuilder.toString());
     }
 
     private void createUrlFieldConfig(final JSONObject fieldConfig) throws JSONException {
@@ -178,5 +244,4 @@ public class ChannelGridPanel extends ExtPanel {
         fieldConfig.put("xtype", "templatecolumn");
         fieldConfig.put("tpl", "<a href=\"#\" name=\"show-channel\" title=\"" + tooltipNamePrefix + " {name}\">{name}</a>");
     }
-
 }
