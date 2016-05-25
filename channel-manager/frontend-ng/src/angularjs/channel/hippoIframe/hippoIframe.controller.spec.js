@@ -81,7 +81,7 @@ describe('hippoIframeCtrl', () => {
     scope.$digest();
 
     hippoIframeCtrl = el.controller('hippo-iframe');
-    spyOn(hippoIframeCtrl, '_getIframeDOM').and.returnValue(iframeDom);
+    spyOn(hippoIframeCtrl, '_getIframeDom').and.returnValue(iframeDom);
   });
 
   it('unsubscribes "delete-component" event when the scope is destroyed', () => {
