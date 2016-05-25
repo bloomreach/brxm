@@ -15,10 +15,13 @@
  */
 package org.hippoecm.frontend.editor.viewer;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -31,6 +34,8 @@ import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,20 +65,46 @@ public class ComparePlugin extends RenderPlugin {
 
     @Override
     protected void onStart() {
-        super.onStart();
-        modelChanged();
+        Task onStartTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                onStartTask = HDC.getCurrentTask().startSubtask("ComparePlugin.onStart");
+                addModelInfoToDiagnosticsTaskAttributes(HDC.getCurrentTask());
+            }
+
+            super.onStart();
+            modelChanged();
+        } finally {
+            if (onStartTask != null) {
+                onStartTask.stop();
+            }
+        }
     }
 
     @Override
     public void onModelChanged() {
-        if (cluster != null) {
-            modelService.destroy();
-            modelService = null;
-            cluster.stop();
-            cluster = null;
+        Task onModelChangedTask = null;
+
+        try {
+            if (HDC.isStarted()) {
+                onModelChangedTask = HDC.getCurrentTask().startSubtask("ComparePlugin.onModelChanged");
+                addModelInfoToDiagnosticsTaskAttributes(HDC.getCurrentTask());
+            }
+
+            if (cluster != null) {
+                modelService.destroy();
+                modelService = null;
+                cluster.stop();
+                cluster = null;
+            }
+            createTemplate();
+            redraw();
+        } finally {
+            if (onModelChangedTask != null) {
+                onModelChangedTask.stop();
+            }
         }
-        createTemplate();
-        redraw();
     }
 
     protected void createTemplate() {
@@ -111,4 +142,19 @@ public class ComparePlugin extends RenderPlugin {
         }
     }
 
+    private void addModelInfoToDiagnosticsTaskAttributes(final Task task) {
+        final JcrNodeModel model = (JcrNodeModel) getDefaultModel();
+
+        if (model != null) {
+            try {
+                final Node node = model.getNode();
+                if (node != null) {
+                    task.setAttribute("editorModelType", node.getPrimaryNodeType().getName());
+                    task.setAttribute("editorModelPath", node.getPath());
+                }
+            } catch (Exception e) {
+                log.error("Failed to get model info of the EditorForm.", e);
+            }
+        }
+    }
 }
