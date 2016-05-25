@@ -14,12 +14,13 @@
   limitations under the License.
   -->
 
-<subpage-toolbar title="{{ pageCopy.subpageTitle }}"
+<subpage-toolbar flex="none"
+                 title="{{ pageCopy.subpageTitle }}"
                  on-back="pageCopy.onDone()"
                  mode="cancel">
 </subpage-toolbar>
 
-<subpage-content layout="row" class="qa-page-copy">
+<subpage-content flex layout="row" class="qa-page-copy">
   <form name="form"
         flex="initial"
         class="qa-subpage subpage-form"

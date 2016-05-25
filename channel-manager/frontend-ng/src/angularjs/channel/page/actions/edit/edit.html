@@ -14,12 +14,13 @@
   limitations under the License.
   -->
 
-<subpage-toolbar title="{{ pageEdit.subpageTitle }}"
+<subpage-toolbar flex="none"
+                 title="{{ pageEdit.subpageTitle }}"
                  on-back="pageEdit.onDone()"
                  mode="cancel">
 </subpage-toolbar>
 
-<subpage-content layout="row" class="qa-page-edit">
+<subpage-content flex layout="row" class="qa-page-edit">
   <form name="form"
         flex="initial"
         class="qa-subpage subpage-form"

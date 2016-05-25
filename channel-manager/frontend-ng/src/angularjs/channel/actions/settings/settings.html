@@ -14,12 +14,13 @@
   limitations under the License.
   -->
 
-<subpage-toolbar title="{{ channelSettings.subpageTitle }}"
+<subpage-toolbar flex="none"
+                 title="{{ channelSettings.subpageTitle }}"
                  on-back="channelSettings.onDone()"
                  mode="cancel">
 </subpage-toolbar>
 
-<subpage-content layout="row" class="qa-channel-settings">
+<subpage-content flex layout="row" class="qa-channel-settings">
   <form name="form"
         flex="initial"
         class="qa-subpage subpage-form"
