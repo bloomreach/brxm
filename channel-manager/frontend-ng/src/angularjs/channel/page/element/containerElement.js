@@ -44,6 +44,10 @@ export class ContainerElement extends PageStructureElement {
     return this.metaData[HstConstants.INHERITED] === 'true';
   }
 
+  getDragDirection() {
+    return this.metaData[HstConstants.XTYPE] === HstConstants.XTYPE_SPAN ? 'horizontal' : 'vertical';
+  }
+
   addComponent(component) {
     this.items.push(component);
     component.setContainer(this);

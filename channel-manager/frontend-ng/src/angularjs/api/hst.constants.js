@@ -36,5 +36,6 @@ export const HstConstants = {
   SITEMAPITEM_ID: 'HST-SitemapItem-Id',
   XTYPE: 'HST-XType',
   XTYPE_NOMARKUP: 'HST.NoMarkup',
+  XTYPE_SPAN: 'HST.Span',
   END_MARKER: 'HST-End',
 };

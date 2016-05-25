@@ -61,13 +61,13 @@ describe('DragDropService', () => {
     mockCommentData = {};
   });
 
-  function createContainer(number) {
+  function createContainer(number, xtype = 'HST.NoMarkup') {
     const iframeContainerComment = iframe.contents().find(`#iframeContainerComment${number}`)[0];
     const commentData = Object.assign(
       {
         uuid: `container${number}`,
         'HST-Type': 'CONTAINER_COMPONENT',
-        'HST-XType': 'HST.NoMarkup',
+        'HST-XType': xtype,
       },
       mockCommentData[`container${number}`]
     );
@@ -446,6 +446,17 @@ describe('DragDropService', () => {
         ]);
         done();
       }, 0);
+    });
+  });
+
+  it('knows the drag direction of a container', (done) => {
+    loadIframeFixture(() => {
+      expect(DragDropService._getDragDirection(container1.getBoxElement()[0])).toEqual('vertical');
+
+      const spanContainer = createContainer(5, 'HST.Span');
+      expect(DragDropService._getDragDirection(spanContainer.getBoxElement()[0])).toEqual('horizontal');
+
+      done();
     });
   });
 });
