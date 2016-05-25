@@ -198,7 +198,7 @@ public class HstLinkImpl implements HstLink {
     @Override
     public boolean isContainerResource() {
         if (Type.UNKNOWN == type) {
-            if (RequestContextProvider.get() == null) {
+            if (RequestContextProvider.get() == null || mount == null ) {
                 type = Type.CONTAINER_RESOURCE;
             } else if (!mount.isMapped()) {
                 type = Type.MOUNT_RESOURCE;
@@ -457,7 +457,7 @@ public class HstLinkImpl implements HstLink {
                 }
             }
 
-            if (mount.isMapped() && (mount.containsMultipleSchemes()
+            if (mount.isMapped() &&  (mount.containsMultipleSchemes()
                     || requestMount.containsMultipleSchemes()
                     || (requestMount.getVirtualHost().isCustomHttpsSupported() && farthestRequestScheme.equals("https")))) {
                 // in case (requestMount.getVirtualHost().isCustomHttpsSupported() && farthestRequestScheme.equals("https"))
