@@ -77,6 +77,7 @@ export class DragDropService {
       this.drake = this.iframe.dragula(iframeContainerElements, {
         ignoreInputTextSelection: false,
         mirrorContainer: $(MIRROR_WRAPPER_SELECTOR)[0],
+        direction: (el, target) => this._getDragDirection(target),
         moves: (el, source) => this._isContainerEnabled(source),
         accepts: (el, target) => this._isContainerEnabled(target),
       });
@@ -102,6 +103,11 @@ export class DragDropService {
 
     const dragulaJs = `${appRootUrl}scripts/dragula.min.js`;
     return this.DomService.addScript(iframe, dragulaJs);
+  }
+
+  _getDragDirection(containerElement) {
+    const container = this.PageStructureService.getContainerByIframeElement(containerElement);
+    return container.getDragDirection();
   }
 
   _isContainerEnabled(containerElement) {

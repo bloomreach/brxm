@@ -11,7 +11,7 @@
     "angular-translate-loader-static-files": "2.8.1",
     "angular-ui-router": "0.2.15",
     "angular-ui-tree": "2.15.0",
-    "dragula.js": "3.6.8",
+    "dragula.js": "git://github.com/onehippo/dragula.git#3.7.1-h1",
     "es6-shim": "0.35.0",
     "jquery": "2.2.0",
     "velocity": "1.2.3",
