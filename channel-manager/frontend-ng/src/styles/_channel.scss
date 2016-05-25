@@ -26,3 +26,34 @@
     cursor: not-allowed;
   }
 }
+
+md-input-container.input-container-picker {
+  img {
+    max-width: 100%;
+    &:not(.readonly) {
+      cursor: pointer;
+    }
+  }
+  .md-input {
+    order: 0;
+    &:not([disabled]) {
+      cursor: pointer;
+    }
+  }
+  .md-icon-button {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.help-icon {
+  cursor: default;
+  position: absolute;
+  top: 10px;
+  right: -24px;
+}
+
+md-tooltip.tooltip-multiline ._md-content {
+  height: auto;
+  white-space: pre;
+}

@@ -21,6 +21,7 @@
                  aria-label="channelProperty.label">
       {{ channelProperty.label }}
     </md-checkbox>
+    <help-icon text="{{ channelProperty.help }}"></help-icon>
   </md-input-container>
 
   <md-input-container ng-switch-when="DropDownList" class="md-block {{channelProperty.qaClass}}" flex>
@@ -31,17 +32,19 @@
         {{choice}}
       </md-option>
     </md-select>
+    <help-icon text="{{ channelProperty.help }}"></help-icon>
   </md-input-container>
 
   <md-input-container ng-switch-when="ImageSetPath" class="md-block input-container-picker {{channelProperty.qaClass}}">
     <label>{{ channelSettings.getLabel(field) }}</label>
     <div layout="row">
-      <input type="text"
-             ng-model="channelProperty.value"
-             ng-hide="channelProperty.value"
-             ng-click="channelProperty.showPicker()"
-             ng-disabled="channelProperty.readOnly">
       <div flex>
+        <input type="text"
+               readonly="readonly"
+               ng-model="channelProperty.value"
+               ng-hide="channelProperty.value"
+               ng-click="channelProperty.showPicker()"
+               ng-disabled="channelProperty.readOnly">
         <img ng-class="{ 'readonly': channelProperty.readOnly }"
              ng-if="channelProperty.value"
              ng-src="{{ channelProperty.getImageVariantPath() }}"
@@ -59,6 +62,7 @@
         <md-icon class="material-icons">search</md-icon>
       </md-button>
     </div>
+    <help-icon text="{{ channelProperty.help }}"></help-icon>
   </md-input-container>
 
   <md-input-container ng-switch-when="JcrPath" class="md-block input-container-picker {{channelProperty.qaClass}}">
@@ -83,11 +87,13 @@
         <md-icon class="material-icons">search</md-icon>
       </md-button>
     </div>
+    <help-icon text="{{ channelProperty.help }}"></help-icon>
   </md-input-container>
 
   <md-input-container ng-switch-default class="md-block {{channelProperty.qaClass}}" flex>
     <label>{{ channelProperty.label }}</label>
     <input type="text" ng-model="channelProperty.value"
            ng-disabled="channelProperty.readOnly">
+    <help-icon text="{{ channelProperty.help }}"></help-icon>
   </md-input-container>
 </div>

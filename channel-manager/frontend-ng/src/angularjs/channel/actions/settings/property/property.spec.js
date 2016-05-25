@@ -54,6 +54,7 @@ describe('ChannelProperty', () => {
       },
       i18nResources: {
         testField: 'Test Field',
+        'testField.help': 'Test Field help text',
       },
     };
   });
@@ -78,6 +79,7 @@ describe('ChannelProperty', () => {
 
     expect(ChannelPropertyCtrl.value).toBe('testValue');
     expect(ChannelPropertyCtrl.qaClass).toBe('qa-field-testField');
+    expect(ChannelPropertyCtrl.help).toBe('Test Field help text');
   });
 
   it('applies a fall-back strategy when determining the label', () => {

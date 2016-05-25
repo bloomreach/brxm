@@ -37,6 +37,8 @@ export class ChannelPropertyCtrl {
     this.PathService = PathService;
 
     this.label = this.data.i18nResources[this.field] || this.field;
+    this.help = this.data.i18nResources[`${this.field}.help`];
+
     this.annotation = this._getFirstFieldAnnotation();
     this.type = this._getType();
     this.qaClass = this._getQaClass();
