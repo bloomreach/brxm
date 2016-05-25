@@ -202,9 +202,6 @@ describe('PageActions', () => {
     DialogService.show.and.returnValue($q.reject());
     PageActionsCtrl.trigger(deleteAction);
     expect(DialogService.confirm).toHaveBeenCalled();
-    expect(confirmDialog.title).toHaveBeenCalled();
-    expect(confirmDialog.ok).toHaveBeenCalled();
-    expect(confirmDialog.cancel).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalledWith(confirmDialog);
     $rootScope.$digest();
     expect(SiteMapItemService.deleteItem).not.toHaveBeenCalled();
