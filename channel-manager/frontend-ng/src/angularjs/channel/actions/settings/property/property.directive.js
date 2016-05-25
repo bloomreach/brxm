@@ -22,6 +22,7 @@ export function channelPropertyDirective() {
     bindToController: {
       field: '@channelProperty',
       value: '=channelPropertyValue',
+      form: '=channelPropertiesForm',
       data: '=channelPropertiesData',
     },
     templateUrl: 'channel/actions/settings/property/property.html',

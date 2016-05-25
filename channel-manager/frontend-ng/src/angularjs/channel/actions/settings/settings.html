@@ -31,6 +31,7 @@
       <div ng-repeat="field in fieldGroup.value"
            channel-property="{{field}}"
            channel-property-value="channelSettings.values[field]"
+           channel-properties-form="form"
            channel-properties-data="channelSettings.channelInfoDescription">
       </div>
     </div>
@@ -39,6 +40,7 @@
          ng-repeat="field in channelSettings.getUngroupedFields()"
          channel-property="{{field}}"
          channel-property-value="channelSettings.values[field]"
+         channel-properties-form="form"
          channel-properties-data="channelSettings.channelInfoDescription">
     </div>
 
