@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.diagnosis;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -129,6 +130,11 @@ public class TestTaskLogFormatUtils {
         assertTrue(logData.contains("|- subtask_1 (5000ms):"));
         assertTrue(logData.contains("|  |- subtask_1_1 (3000ms):"));
         assertTrue(logData.contains("|  |  `- subtask_1_1_1 (1000ms):"));
+        assertFalse(logData.contains("|  |     |- subtask_1_1_1_1 (500ms):"));
+        assertFalse(logData.contains("|  |     |- subtask_1_1_1_2 (10ms):"));
+        assertFalse(logData.contains("|  |     |- subtask_1_1_1_3 (400ms):"));
+        assertFalse(logData.contains("|  |     |- subtask_1_1_1_4 (10ms):"));
+        assertFalse(logData.contains("|  |     `- subtask_1_1_1_5 (80ms):"));
         assertTrue(logData.contains("|  |- subtask_1_1_2 (1000ms):"));
         assertTrue(logData.contains("|  |- subtask_1_1_3 (1000ms):"));
         assertTrue(logData.contains("|  `- subtask_1_2 (2000ms):"));
@@ -139,6 +145,7 @@ public class TestTaskLogFormatUtils {
         assertTrue(logData.contains("- root (10000ms):"));
         assertTrue(logData.contains("|- subtask_1 (5000ms):"));
         assertTrue(logData.contains("|  |- subtask_1_1 (3000ms):"));
+        assertFalse(logData.contains("|  |  `- subtask_1_1_1 (1000ms):"));
         assertTrue(logData.contains("|  `- subtask_1_2 (2000ms):"));
         assertTrue(logData.contains("`- subtask_2 (5000ms):"));
 
@@ -146,6 +153,7 @@ public class TestTaskLogFormatUtils {
 
         assertTrue(logData.contains("- root (10000ms):"));
         assertTrue(logData.contains("|- subtask_1 (5000ms):"));
+        assertFalse(logData.contains("|  |- subtask_1_1 (3000ms):"));
         assertTrue(logData.contains("`- subtask_2 (5000ms):"));
 
         logData = TaskLogFormatUtils.getTaskLog(task, 0);
@@ -195,6 +203,7 @@ public class TestTaskLogFormatUtils {
         assertTrue(logData.contains("|  |  `- subtask_1_1_1 (1000ms):"));
         assertTrue(logData.contains("|  |     |- subtask_1_1_1_1 (500ms):"));
         assertTrue(logData.contains("|  |     |- subtask_1_1_1_3 (400ms):"));
+        assertFalse(logData.contains("|  |     |- subtask_1_1_1_4 (10ms):"));
         assertTrue(logData.contains("|  |     `- subtask_1_1_1_5 (80ms):"));
         assertTrue(logData.contains("|  |- subtask_1_1_2 (1000ms):"));
         assertTrue(logData.contains("|  |- subtask_1_1_3 (1000ms):"));
@@ -209,6 +218,8 @@ public class TestTaskLogFormatUtils {
         assertTrue(logData.contains("|  |  `- subtask_1_1_1 (1000ms):"));
         assertTrue(logData.contains("|  |     |- subtask_1_1_1_1 (500ms):"));
         assertTrue(logData.contains("|  |     |- subtask_1_1_1_3 (400ms):"));
+        assertFalse(logData.contains("|  |     |- subtask_1_1_1_4 (10ms):"));
+        assertFalse(logData.contains("|  |     `- subtask_1_1_1_5 (80ms):"));
         assertTrue(logData.contains("|  |- subtask_1_1_2 (1000ms):"));
         assertTrue(logData.contains("|  |- subtask_1_1_3 (1000ms):"));
         assertTrue(logData.contains("|  `- subtask_1_2 (2000ms):"));
@@ -232,6 +243,7 @@ public class TestTaskLogFormatUtils {
         assertTrue(logData.contains("|- subtask_1 (5000ms):"));
         assertTrue(logData.contains("|  |- subtask_1_1 (3000ms):"));
         assertTrue(logData.contains("|  |  `- subtask_1_1_1 (1000ms):"));
+        assertFalse(logData.contains("|  |     |- subtask_1_1_1_1 (500ms):"));
         assertTrue(logData.contains("|  |- subtask_1_1_2 (1000ms):"));
         assertTrue(logData.contains("|  |- subtask_1_1_3 (1000ms):"));
         assertTrue(logData.contains("|  `- subtask_1_2 (2000ms):"));
