@@ -15,7 +15,7 @@
   -->
 
 <div layout="column" flex ng-hide="channelCtrl.isSubpageOpen()">
-  <md-toolbar class="qa-toolbar">
+  <md-toolbar class="qa-toolbar" md-colors="::{ background: 'background-200' }">
     <div class="md-toolbar-tools">
       <channel-sidenav-toggle></channel-sidenav-toggle>
 
@@ -29,10 +29,13 @@
 
       <md-button ng-repeat="viewPort in channelCtrl.viewPorts"
                  ng-click="channelCtrl.selectViewPort(viewPort)"
-                 ng-class="{ 'md-accent': channelCtrl.isViewPortSelected(viewPort) }"
                  aria-label="{{ viewPort.titleKey | translate }}"
                  class="md-icon-button qa-button-viewport-{{viewPort.name}}">
-        <md-icon title="{{ viewPort.titleKey | translate }}" class="material-icons">{{viewPort.icon}}</md-icon>
+        <md-icon title="{{ viewPort.titleKey | translate }}"
+                 class="material-icons"
+                 md-colors="{ color: '{{ channelCtrl.getViewPortIconColor(viewPort) }}' }">
+          {{viewPort.icon}}
+        </md-icon>
       </md-button>
 
       <span flex></span>
@@ -40,20 +43,20 @@
       <changes-menu on-manage-changes="channelCtrl.showSubpage('manage-changes')"></changes-menu>
 
       <span class="button-group">
-        <md-button class="qa-button-edit"
-                   ng-class="{ 'md-accent md-raised': channelCtrl.isEditModeActive() }"
-                   ng-if="channelCtrl.isEditable()"
-                   ng-disabled="channelCtrl.isCreatingPreview"
-                   ng-click="channelCtrl.enterEditMode()">
-          {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
-        </md-button>
-
         <md-button class="qa-button-view"
-                   ng-class="{ 'md-accent md-raised': !channelCtrl.isEditModeActive() }"
+                   ng-class="{ 'md-raised': !channelCtrl.isEditModeActive() }"
                    ng-if="channelCtrl.isEditable()"
                    ng-disabled="channelCtrl.isCreatingPreview"
                    ng-click="channelCtrl.leaveEditMode()">
           {{ 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' | translate }}
+        </md-button>
+
+        <md-button class="qa-button-edit"
+                   ng-class="{ 'md-raised': channelCtrl.isEditModeActive() }"
+                   ng-if="channelCtrl.isEditable()"
+                   ng-disabled="channelCtrl.isCreatingPreview"
+                   ng-click="channelCtrl.enterEditMode()">
+          {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
         </md-button>
       </span>
     </div>

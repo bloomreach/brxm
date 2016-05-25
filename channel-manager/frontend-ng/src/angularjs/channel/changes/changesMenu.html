@@ -16,9 +16,11 @@
 
 <md-menu ng-if="changes.isShowChangesMenu()">
   <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANGES' | translate }}"
-      class="qa-button-changes"
-      ng-click="$mdOpenMenu($event)">
-    <md-icon class="material-icons">change_history</md-icon>
+             class="qa-button-changes"
+             ng-click="$mdOpenMenu($event)">
+      <md-icon class="material-icons" md-colors="::{ color: 'accent' }">
+        error_outline
+      </md-icon>
     {{ 'TOOLBAR_BUTTON_CHANGES' | translate }}
   </md-button>
 

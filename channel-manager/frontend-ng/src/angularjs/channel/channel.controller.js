@@ -152,4 +152,8 @@ export class ChannelCtrl {
       this.FeedbackService.showError(key, params);
     }
   }
+
+  getViewPortIconColor(viewPort) {
+    return this.isViewPortSelected(viewPort) ? 'primary' : 'background-A400';
+  }
 }
