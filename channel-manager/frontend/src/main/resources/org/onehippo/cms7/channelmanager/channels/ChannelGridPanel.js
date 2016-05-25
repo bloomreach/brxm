@@ -110,7 +110,7 @@
         },
 
         _onCellClick: function(grid, rowIndex, columnIndex, e) {
-            var record = this.getStore().getAt(rowIndex);
+            var record = this.getStore().getAt(rowIndex), hstMountPoint;
             switch (e.getTarget().name) {
                 case 'show-channel':
                     this.selectedChannelId = record.get('id');
@@ -127,7 +127,7 @@
                     );
                     break;
                 case 'open-hstconfigeditor':
-                    var hstMountPoint = record.get('hstMountPoint');
+                    hstMountPoint = record.get('hstMountPoint');
                     this.selectedChannelId = record.get('id');
                     e.stopEvent();
                     this.fireEvent('edit-hst-config', this.selectedChannelId, hstMountPoint);
