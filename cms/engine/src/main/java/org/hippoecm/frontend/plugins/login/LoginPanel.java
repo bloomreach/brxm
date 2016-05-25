@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,7 +42,6 @@ import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
@@ -244,13 +243,13 @@ public class LoginPanel extends Panel {
         }
     }
 
-    private void setCookieValue(final String cookieName, final String cookieValue, final int maxAge) {
+    protected void setCookieValue(final String cookieName, final String cookieValue, final int maxAge) {
         Cookie localeCookie = new Cookie(cookieName, cookieValue);
         localeCookie.setMaxAge(maxAge);
         WebApplicationHelper.retrieveWebResponse().addCookie(localeCookie);
     }
 
-    private String getCookieValue(final String cookieName) {
+    protected String getCookieValue(final String cookieName) {
         Cookie[] cookies = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {

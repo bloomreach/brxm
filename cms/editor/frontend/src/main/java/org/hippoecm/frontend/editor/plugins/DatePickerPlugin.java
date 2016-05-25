@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,22 +15,18 @@
  */
 package org.hippoecm.frontend.editor.plugins;
 
+import java.time.format.FormatStyle;
 import java.util.Date;
 
-import org.apache.wicket.datetime.StyleDateConverter;
-import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.datetime.DateTimeLabel;
 import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class DatePickerPlugin extends RenderPlugin<Date> {
-
-    private static final long serialVersionUID = 1L;
-
-    public static final String DATESTYLE = "LS";
 
     /**
      * @deprecated use {@link Mode#EDIT} instead.
@@ -55,7 +51,7 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
         if (mode == Mode.EDIT) {
             add(new DateFieldWidget(VALUE, valueModel, context, config));
         } else {
-            add(new DateLabel(VALUE, valueModel, new StyleDateConverter(DATESTYLE, true)));
+            add(new DateTimeLabel(VALUE, valueModel, FormatStyle.LONG, FormatStyle.SHORT));
         }
         setOutputMarkupId(true);
     }

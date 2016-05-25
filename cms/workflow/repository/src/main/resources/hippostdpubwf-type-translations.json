@@ -1,29 +1,11 @@
 {
-  "hippo:types" : {
-    "hippostdpubwf:document" : {
-      "en" : {
-        "jcr:name" : "Publishable",
-        "hippostd:state=published" : "Live",
-        "hippostd:state=unpublished" : "Offline",
-        "hippostd:state=draft" : "Draft"
-      },
-      "nl" : {
-        "jcr:name" : "Publiceerbaar",
-        "hippostd:state=published" : "Gepubliceerd",
-        "hippostd:state=unpublished" : "Niet gepubliceerd",
-        "hippostd:state=draft" : "Klad"
-      },
-      "de" : {
-        "jcr:name" : "Veröffentlichbar",
-        "hippostd:state=published" : "Veröffentlicht",
-        "hippostd:state=unpublished" : "Nicht veröffentlicht",
-        "hippostd:state=draft" : "Entwurf"
-      },
-      "fr" : {
-        "jcr:name" : "Publiable",
-        "hippostd:state=published" : "Publié",
-        "hippostd:state=unpublished" : "Non publié",
-        "hippostd:state=draft" : "Brouillon"
+  "hippo:types": {
+    "hippostdpubwf:document": {
+      "en": {
+        "hippostd:state=unpublished": "Offline",
+        "jcr:name": "Publishable",
+        "hippostd:state=published": "Live",
+        "hippostd:state=draft": "Draft"
       }
     }
   }

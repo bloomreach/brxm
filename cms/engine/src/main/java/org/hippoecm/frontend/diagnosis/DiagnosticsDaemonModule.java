@@ -44,6 +44,8 @@ public class DiagnosticsDaemonModule extends AbstractReconfigurableDaemonModule 
 
     private static final String DEPTH = "depth";
 
+    private static final String UNIT_THRESHOLD_MILLISEC = "unitThresholdMillisec";
+
     private static final String ALLOWED_ADDRESSES = "allowedAddresses";
 
     private static final String ALLOWED_USERS = "allowedUsers";
@@ -53,6 +55,8 @@ public class DiagnosticsDaemonModule extends AbstractReconfigurableDaemonModule 
     private long thresholdMillisec = -1L;
 
     private long depth = -1;
+
+    private long unitThresholdMillisec = -1L;
 
     private Set<String> allowedAddresses;
 
@@ -68,6 +72,7 @@ public class DiagnosticsDaemonModule extends AbstractReconfigurableDaemonModule 
             enabled = JcrUtils.getBooleanProperty(moduleConfig, ENABLED, false);
             thresholdMillisec = JcrUtils.getLongProperty(moduleConfig, THRESHOLD_MILLISEC, -1L);
             depth = JcrUtils.getLongProperty(moduleConfig, DEPTH, -1L);
+            unitThresholdMillisec = JcrUtils.getLongProperty(moduleConfig, UNIT_THRESHOLD_MILLISEC, -1L);
             allowedAddresses = new HashSet<>();
 
             String [] addrValues = JcrUtils.getMultipleStringProperty(moduleConfig, ALLOWED_ADDRESSES, null);
@@ -134,6 +139,11 @@ public class DiagnosticsDaemonModule extends AbstractReconfigurableDaemonModule 
             @Override
             public int getDepth() {
                 return (int) depth;
+            }
+
+            @Override
+            public long getUnitThresholdMillisec() {
+                return unitThresholdMillisec;
             }
         }, DiagnosticsService.class);
     }

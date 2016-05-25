@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.workflow.dialog;
 
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -35,14 +36,12 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.editor.workflow.model.DocumentMetadataEntry;
+import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.util.NodeIterable;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,9 +50,9 @@ import org.slf4j.LoggerFactory;
  */
 public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
 
-    private static final String DATE_STYLE = "MS";
-
     static final Logger log = LoggerFactory.getLogger(DocumentMetadataDialog.class);
+
+    private static final FormatStyle DATE_STYLE = FormatStyle.LONG;
 
     public DocumentMetadataDialog(WorkflowDescriptorModel model) {
         super(model);
@@ -85,7 +84,6 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
             publicationDataList.setVisible(false);
             publicationheader.setVisible(false);
         }
-
     }
 
     private Node getNode() throws RepositoryException {
@@ -147,20 +145,28 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
                 String state = variant.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
                 switch (state) {
                     case HippoStdNodeType.UNPUBLISHED:
-                        publicationMetadata.add(new DocumentMetadataEntry(getString("created-by"),
-                                variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY).getString()));
-                        publicationMetadata.add(new DocumentMetadataEntry(getString("creationdate"),
-                                formattedCalendarByStyle(variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE).getDate(), DATE_STYLE)));
-                        publicationMetadata.add(new DocumentMetadataEntry(getString("lastmodifiedby"),
-                                variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString()));
-                        publicationMetadata.add(new DocumentMetadataEntry(getString("lastmodificationdate"),
-                                formattedCalendarByStyle(variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE).getDate(), DATE_STYLE)));
+                        final String createdBy =
+                                variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY).getString();
+                        publicationMetadata.add(new DocumentMetadataEntry(getString("created-by"), createdBy));
+
+                        final String creationDate =
+                                printDateProperty(variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE));
+                        publicationMetadata.add(new DocumentMetadataEntry(getString("creationdate"), creationDate));
+
+                        final String lastModifiedBy =
+                                variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString();
+                        publicationMetadata.add(new DocumentMetadataEntry(getString("lastmodifiedby"), lastModifiedBy));
+
+                        final String lastModifiedDate =
+                                printDateProperty(variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE));
+                        publicationMetadata.add(new DocumentMetadataEntry(getString("lastmodificationdate"), lastModifiedDate));
                         break;
 
                     case HippoStdNodeType.PUBLISHED:
                         if (isLive(variant)) {
-                            publicationMetadata.add(new DocumentMetadataEntry(getString("publicationdate"),
-                                    formattedCalendarByStyle(variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE).getDate(), DATE_STYLE)));
+                            final String publicationDate =
+                                    printDateProperty(variant.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE));
+                            publicationMetadata.add(new DocumentMetadataEntry(getString("publicationdate"), publicationDate));
                         }
                         break;
                 }
@@ -170,6 +176,11 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
         }
 
         return publicationMetadata;
+    }
+
+    private String printDateProperty(final Property property) throws RepositoryException {
+        final Calendar date = property.getDate();
+        return DateTimePrinter.of(date).appendDST().print(DATE_STYLE);
     }
 
     private boolean isLive(Node variant) throws RepositoryException {
@@ -191,13 +202,5 @@ public class DocumentMetadataDialog extends Dialog<WorkflowDescriptor> {
                     translationNode.getProperty(HippoNodeType.HIPPO_MESSAGE).getString());
         }
         return names;
-    }
-
-    private String formattedCalendarByStyle(Calendar calendar, String patternStyle) {
-        if (calendar != null) {
-            DateTimeFormatter dtf = DateTimeFormat.forStyle(patternStyle).withLocale(getLocale());
-            return dtf.print(new DateTime(calendar));
-        }
-        return StringUtils.EMPTY;
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,9 +31,13 @@
   }
 
   .hippo-datepicker-reset {
-    margin-left: 8px;
-    padding-bottom: 7px;
+    padding-bottom: 5px;
     padding-top: 6px;
+    margin-left: 8px;
+
+    > span {
+      font-size: 13px;
+    }
   }
 
   .hippo-datepicker-time .hippo-datepicker-value-container {

@@ -1,17 +1,8 @@
 {
-  "hippo:types" : {
-    "hippostd:html" : {
-      "en" : {
-        "jcr:name" : "Rich Text Editor"
-      },
-      "nl" : {
-        "jcr:name" : "Uitgebreide Editor"
-      },
-      "de" : {
-        "jcr:name" : "Erweiterter Rich Text Editor"
-      },
-      "fr" : {
-        "jcr:name" : "Éditeur de texte riche"
+  "hippo:types": {
+    "hippostd:html": {
+      "en": {
+        "jcr:name": "Rich Text Editor"
       }
     }
   }

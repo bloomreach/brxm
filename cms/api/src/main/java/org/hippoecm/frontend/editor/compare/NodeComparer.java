@@ -29,6 +29,7 @@ import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,8 +188,10 @@ public class NodeComparer extends TypedComparer<Node> {
     }
     private ITypeDescriptor getNodeTypeDescriptor(final Node node) throws RepositoryException {
         final ITypeDescriptor configuredType = getType();
-        final String nodeTypeName = node.getPrimaryNodeType().getName();
-
+        String nodeTypeName = node.getPrimaryNodeType().getName();
+        if (nodeTypeName.equals(JcrConstants.NT_FROZEN_NODE)) {
+            nodeTypeName = node.getProperty(JcrConstants.JCR_FROZEN_PRIMARY_TYPE).getString();
+        }
         if (StringUtils.equals(configuredType.getName(), nodeTypeName)) {
             return configuredType;
         } else {
@@ -197,7 +200,7 @@ public class NodeComparer extends TypedComparer<Node> {
                 try {
                     return templateEngine.getType(nodeTypeName);
                 } catch (TemplateEngineException e) {
-                    log.error("Cannot obtain node type descriptor of '" + nodeTypeName + "' from the template engine", e);
+                    log.error("Cannot obtain node type descriptor of '{}' from the template engine", nodeTypeName, e);
                 }
             } else {
                 log.warn("Cannot obtain the type descriptor of the node type '{}' because the template engine is not set for the field at '{}'. Using the preconfigured type descriptor '{}'",

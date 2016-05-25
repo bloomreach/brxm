@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -20,5 +20,8 @@
   </sv:property>
   <sv:property sv:name="send.usage.statistics.to.hippo" sv:type="Boolean">
     <sv:value>true</sv:value>
+  </sv:property>
+  <sv:property sv:name="locales" sv:type="String" sv:multiple="true">
+    <sv:value>en</sv:value>
   </sv:property>
 </sv:node>

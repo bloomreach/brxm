@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.settings.GlobalSettings;
 import org.hippoecm.frontend.usagestatistics.UsageStatisticsSettings;
 
 public class LoginPlugin extends RenderPlugin {
@@ -54,9 +55,8 @@ public class LoginPlugin extends RenderPlugin {
     private static final String AUTOCOMPLETE = "signin.form.autocomplete";
     private static final String LOCALES = "locales";
     private static final String SUPPORTED_BROWSERS = "browsers.supported";
-
-    // Sorted by alphabetical order of the language name (see i18n properties), for a more user-friendly form
-    public static final String[] DEFAULT_LOCALES = {"en", "fr", "nl", "de"};
+    
+    public static final String[] DEFAULT_LOCALES = {"en"};
 
     private ResourceReference editionCss;
     private PageParameters parameters;
@@ -92,8 +92,8 @@ public class LoginPlugin extends RenderPlugin {
         add(termsAndConditions);
 
         final boolean autoComplete = getPluginConfig().getAsBoolean(AUTOCOMPLETE, true);
-        String[] localeArray = getPluginConfig().getStringArray(LOCALES);
-        if (localeArray == null) {
+        String[] localeArray = GlobalSettings.get().getStringArray(LOCALES);
+        if (localeArray == null || localeArray.length == 0) {
             localeArray = DEFAULT_LOCALES;
         }
         add(createLoginPanel("login-panel", autoComplete, Arrays.asList(localeArray), new LoginPluginHandler(termsAndConditions)));

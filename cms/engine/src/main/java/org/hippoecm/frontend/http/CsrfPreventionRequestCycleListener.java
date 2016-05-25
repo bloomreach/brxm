@@ -402,7 +402,8 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
         // check if the origin HTTP header matches the request URI
         if (!isLocalOrigin(request, origin))
         {
-            log.debug("Origin-header conflicts with request origin, {}", conflictingOriginAction);
+            log.info("Origin-header '{}' conflicts with request host '{}' : {}",
+                    getOriginHeaderOrigin(origin), getLocationHeaderOrigin(request),  conflictingOriginAction);
             switch (conflictingOriginAction)
             {
                 case ALLOW :
@@ -478,7 +479,12 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
         if (request == null)
             return false;
 
-        return origin.equalsIgnoreCase(request);
+        final boolean isLocal = origin.equalsIgnoreCase(request);
+        if (!isLocal && originHeader.startsWith("https:") && !request.startsWith("https:")) {
+            log.warn("Origin starts with https: but request starts with http:. If you are running behind a proxy, make " +
+                    "sure to set 'X-Forwarded-Proto: https' in the proxy");
+        }
+        return isLocal;
     }
 
     /**
@@ -533,6 +539,7 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
                 target.append(':');
                 target.append(port);
             }
+            log.debug("Origin : {}", target.toString());
             return target.toString();
         }
         catch (URISyntaxException e)
@@ -556,12 +563,16 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
         String host = request.getHeader("X-Forwarded-Host");
         if (host != null) {
             String[] hosts = host.split(",");
-            return getFarthestRequestScheme(request) + "://" + hosts[0];
+            final String location = getFarthestRequestScheme(request) + "://" + hosts[0];
+            log.debug("X-Forwarded-Host header found. Return location '{}'", location);
+            return location;
         }
 
         host = request.getHeader("Host");
         if (host != null && !"".equals(host)) {
-            return getFarthestRequestScheme(request) + "://" + host;
+            final String location = getFarthestRequestScheme(request) + "://" + host;
+            log.debug("Host header found. Return location '{}'", location);
+            return location;
         }
         
         // Build scheme://host:port from request
@@ -591,7 +602,8 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
             target.append(':');
             target.append(port);
         }
-
+        log.debug("Host '{}' from request.serverName is used because no 'Host' or 'X-Forwarded-Host' header found. " +
+                "Return location '{}'", target.toString());
         return target.toString();
     }
 
@@ -684,8 +696,8 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
     private void allowHandler(HttpServletRequest request, String origin, IRequestablePage page)
     {
         onAllowed(request, origin, page);
-        log.info("Possible CSRF attack, request URL: {}, Origin: {}, action: allowed",
-                request.getRequestURL(), origin);
+        log.info("Possible CSRF attack, client request location: {}, Origin: {}, action: allowed",
+                getLocationHeaderOrigin(request), origin);
     }
 
     /**
@@ -719,8 +731,8 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
     private void suppressHandler(HttpServletRequest request, String origin, IRequestablePage page)
     {
         onSuppressed(request, origin, page);
-        log.info("Possible CSRF attack, request URL: {}, Origin: {}, action: suppressed",
-                request.getRequestURL(), origin);
+        log.info("Possible CSRF attack, client request location: {}, Origin: {}, action: suppressed",
+                getLocationHeaderOrigin(request), origin);
         throw new RestartResponseException(page);
     }
 
@@ -755,9 +767,8 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
     private void abortHandler(HttpServletRequest request, String origin, IRequestablePage page)
     {
         onAborted(request, origin, page);
-        log.info(
-                "Possible CSRF attack, request URL: {}, Origin: {}, action: aborted with error {} {}",
-                new Object[] { request.getRequestURL(), origin, errorCode, errorMessage });
+        log.info("Possible CSRF attack, client request location: {}, Origin: {}, action: aborted with error {} {}",
+                new Object[] {getLocationHeaderOrigin(request), origin, errorCode, errorMessage });
         throw new AbortWithHttpErrorCodeException(errorCode, errorMessage);
     }
 
