@@ -1,27 +1,11 @@
 {
-  "hippo:cms" : {
-    "validators" : {
-      "en" : {
-        "non-empty" : "A mandatory string input field is empty",
-        "escaped" : "Invalid character present",
-        "email" : "Field doesn't match an email address",
-        "resource-required" : "You must upload a file"
-      },
-      "nl" : {
-        "non-empty" : "Een verplicht tekstveld is leeg",
-        "escaped" : "Ongeldig karakter aanwezig",
-        "email" : "Veld komt niet overeen met een e-mail adres",
-        "resource-required" : "U moet een bestand uploaden"
-      },
-      "de" : {
-        "non-empty" : "Ein String Feld ist leer",
-        "escaped" : "Ungültiges Zeichen verwendet",
-        "email" : "Keine gültige E-Mail-Adresse in Feld eingegeben"
-      },
-      "fr" : {
-        "non-empty" : "Une chaîne de caractère est vide",
-        "escaped" : "Un caractère invalide est présent",
-        "email" : "Le champ ne correspond pas à une adresse e-mail"
+  "hippo:cms": {
+    "validators": {
+      "en": {
+        "escaped": "Invalid character present",
+        "resource-required": "You must upload a file",
+        "non-empty": "A mandatory string input field is empty",
+        "email": "Field doesn't match an email address"
       }
     }
   }

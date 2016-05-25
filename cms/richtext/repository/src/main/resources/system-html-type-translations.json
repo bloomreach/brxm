@@ -1,17 +1,8 @@
 {
-  "hippo:types" : {
-    "hipposys:html" : {
-      "en" : {
-        "jcr:name" : "Formatted text"
-      },
-      "nl" : {
-        "jcr:name" : "Geformatteerde tekst"
-      },
-      "de" : {
-        "jcr:name" : "Formartierter Text"
-      },
-      "fr" : {
-        "jcr:name" : "Texte formatté"
+  "hippo:types": {
+    "hipposys:html": {
+      "en": {
+        "jcr:name": "Formatted text"
       }
     }
   }

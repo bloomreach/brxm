@@ -27,6 +27,7 @@ import org.hippoecm.frontend.model.UserCredentials;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -116,5 +117,9 @@ public class UserSessionTest extends PluginTest {
         assertFalse(deserJcrSession == jcrSession);
     }
 
+    @Test
+    public void returnsTimeZone() {
+        assertNotNull(UserSession.get().getTimeZone());
+    }
 
 }

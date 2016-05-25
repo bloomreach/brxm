@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,8 +56,7 @@ public class YuiDateTimeField extends DateTimeField {
     public static final String HOURS_LABEL = "hours-label";
     public static final String MINUTES_LABEL = "minutes-label";
 
-    private YuiDatePickerSettings settings;
-
+    private final YuiDatePickerSettings settings;
     private boolean todayLinkVisible = true;
 
     public YuiDateTimeField(String id, IModel<Date> model) {
@@ -120,7 +119,6 @@ public class YuiDateTimeField extends DateTimeField {
         //Add change behavior to super fields
         for (String name : new String[] { "date", "hours", "minutes", "amOrPmChoice" }) {
             get(name).add(new AjaxFormComponentUpdatingBehavior("onChange") {
-                private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void onUpdate(AjaxRequestTarget target) {
@@ -128,6 +126,7 @@ public class YuiDateTimeField extends DateTimeField {
                     send(YuiDateTimeField.this, Broadcast.BUBBLE, new UpdateFeedbackInfo(target));
                 }
 
+                @Override
                 protected void onError(AjaxRequestTarget target, RuntimeException e){
                     super.onError(target, e);
                     send(YuiDateTimeField.this, Broadcast.BUBBLE, new UpdateFeedbackInfo(target));

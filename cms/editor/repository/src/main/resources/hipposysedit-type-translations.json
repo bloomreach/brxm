@@ -1,17 +1,8 @@
 {
-  "hippo:types" : {
-    "hipposysedit:templatetype" : {
-      "en" : {
-        "jcr:name" : "Template"
-      },
-      "nl" : {
-        "jcr:name" : "Sjabloon"
-      },
-      "de" : {
-        "jcr:name" : "Schablone"
-      },
-      "fr" : {
-        "jcr:name" : "Modèle"
+  "hippo:types": {
+    "hipposysedit:templatetype": {
+      "en": {
+        "jcr:name": "Template"
       }
     }
   }
