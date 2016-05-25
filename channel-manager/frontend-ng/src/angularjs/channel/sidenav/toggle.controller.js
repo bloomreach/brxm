@@ -26,10 +26,6 @@ export class ChannelSidenavToggleCtrl {
     this.ChannelSidenavService.toggle();
   }
 
-  getIcon() {
-    return this.ChannelSidenavService.isOpen() ? 'first_page' : 'last_page';
-  }
-
   isSidenavOpen() {
     return this.ChannelSidenavService.isOpen();
   }

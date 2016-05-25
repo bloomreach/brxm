@@ -18,5 +18,7 @@
            aria-label="{{ 'TOOLBAR_BUTTON_SIDENAV' | translate }}"
            ng-click="toggle.toggleSidenav()"
            ng-class="{ 'md-accent': toggle.isSidenavOpen() }">
-  <md-icon title="{{ 'TOOLBAR_BUTTON_SIDENAV' | translate }}">{{ toggle.getIcon() }}</md-icon>
+  <md-icon title="{{ 'TOOLBAR_BUTTON_SIDENAV' | translate }}" md-colors="{color: 'background-A400'}">
+   menu
+  </md-icon>
 </md-button>
