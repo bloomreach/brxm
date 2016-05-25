@@ -7,6 +7,6 @@
   },
   "devDependencies": {
     "dom-autoscroller": "1.2.4",
-    "hippo-build": "git://github.com/onehippo/hippo-build.git#v0.0.39"
+    "hippo-build": "git://github.com/onehippo/hippo-build.git#v0.0.40"
   }
 }
