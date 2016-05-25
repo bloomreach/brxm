@@ -77,16 +77,16 @@ export class HippoIframeCtrl {
   onLoad() {
     // we insert the CSS for every page, because embedded links can come and go without reloading the page
     this._insertCss().then(() => {
-      // ignore parsing if the old iframe has been unloaded from DOM
-      if (!this._getIframeDOM()) {
-        return;
+      if (this._isIframeDomPresent()) {
+        this._parseHstComments();
+        this._updateDragDrop();
+        this._updateChannelIfSwitched().then(() => {
+          if (this._isIframeDomPresent()) {
+            this._parseLinks();
+            this.HippoIframeService.signalPageLoadCompleted();
+          }
+        });
       }
-      this._parseHstComments();
-      this._updateDragDrop();
-      this._updateChannelIfSwitched().then(() => {
-        this._parseLinks();
-        this.HippoIframeService.signalPageLoadCompleted();
-      });
     });
     // TODO: handle error.
     // show dialog explaining that for this channel, the CM can currently not be used,
@@ -147,7 +147,7 @@ export class HippoIframeCtrl {
   }
 
   _insertCss() {
-    const iframeWindow = this._getIframeDOM().defaultView;
+    const iframeWindow = this._getIframeDom().defaultView;
     const appRootUrl = this.DomService.getAppRootUrl();
     const hippoIframeCss = `${appRootUrl}styles/hippo-iframe.css`;
     return this.DomService.addCss(iframeWindow, hippoIframeCss);
@@ -156,7 +156,7 @@ export class HippoIframeCtrl {
   _parseHstComments() {
     this.PageStructureService.clearParsedElements();
     this.hstCommentsProcessorService.run(
-      this._getIframeDOM(),
+      this._getIframeDom(),
       this.PageStructureService.registerParsedElement.bind(this.PageStructureService)
     );
     this.PageStructureService.attachEmbeddedLinks();
@@ -171,12 +171,16 @@ export class HippoIframeCtrl {
     return this.$q.resolve();
   }
 
-  _getIframeDOM() {
+  _isIframeDomPresent() {
+    return !!this._getIframeDom();
+  }
+
+  _getIframeDom() {
     return this.iframeJQueryElement.contents()[0];
   }
 
   _parseLinks() {
-    const iframeDom = this._getIframeDOM();
+    const iframeDom = this._getIframeDom();
     const protocolAndHost = `${iframeDom.location.protocol}//${iframeDom.location.host}`;
     const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map((path) => protocolAndHost + path);
 
