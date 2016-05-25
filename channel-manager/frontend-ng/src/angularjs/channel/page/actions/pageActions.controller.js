@@ -127,7 +127,7 @@ export class PageActionsCtrl {
 
   _confirmDelete(page) {
     const confirm = this.DialogService.confirm()
-      .title(this.$translate.instant('CONFIRM_DELETE_PAGE_MESSAGE', { page }))
+      .textContent(this.$translate.instant('CONFIRM_DELETE_PAGE_MESSAGE', { page }))
       .ok(this.$translate.instant('DELETE'))
       .cancel(this.$translate.instant('CANCEL'));
 
