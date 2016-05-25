@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -154,7 +154,7 @@ public class HippoSearchManager extends SearchManager {
                 throws RepositoryException {
             final Constraint constraint;
             if (source instanceof Join) {
-                final Join join = (Join) getSource();
+                final Join join = (Join) source;
                 final Constraint leftAuthorization = getAuthorizationConstraint(factory, join.getLeft());
                 final Constraint rightAuthorization = getAuthorizationConstraint(factory, join.getRight());
                 constraint = factory.and(leftAuthorization, rightAuthorization);
