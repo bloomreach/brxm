@@ -62,7 +62,7 @@ public enum TargetPom {
             return BOOTSTRAP_CONTENT;
         } else if (type.equals(ESSENTIALS.name)) {
             return ESSENTIALS;
-        }else if (type.equals(BOOTSTRAP_WEB_FILES.name)) {
+        } else if (type.equals(BOOTSTRAP_WEB_FILES.name)) {
             return BOOTSTRAP_WEB_FILES;
         }
         return TargetPom.INVALID;
