@@ -23,9 +23,9 @@
 
       <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
 
-      <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
+      <div flex></div>
 
-      <span flex></span>
+      <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
       <md-button ng-repeat="viewPort in channelCtrl.viewPorts"
                  ng-click="channelCtrl.selectViewPort(viewPort)"
@@ -38,27 +38,27 @@
         </md-icon>
       </md-button>
 
-      <span flex></span>
+      <div flex></div>
 
       <changes-menu on-manage-changes="channelCtrl.showSubpage('manage-changes')"></changes-menu>
 
-      <span class="button-group">
-        <md-button class="qa-button-view"
-                   ng-class="{ 'md-raised': !channelCtrl.isEditModeActive() }"
+      <div class="button-group" layout>
+        <md-button class="qa-button-view md-raised"
+                   md-colors="{ background: '{{ channelCtrl.getViewButtonBgColor() }}' }"
                    ng-if="channelCtrl.isEditable()"
                    ng-disabled="channelCtrl.isCreatingPreview"
                    ng-click="channelCtrl.leaveEditMode()">
           {{ 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' | translate }}
         </md-button>
 
-        <md-button class="qa-button-edit"
-                   ng-class="{ 'md-raised': channelCtrl.isEditModeActive() }"
+        <md-button class="qa-button-edit md-raised"
+                   md-colors="{ background: '{{ channelCtrl.getEditButtonBgColor() }}' }"
                    ng-if="channelCtrl.isEditable()"
                    ng-disabled="channelCtrl.isCreatingPreview"
                    ng-click="channelCtrl.enterEditMode()">
           {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
         </md-button>
-      </span>
+      </div>
     </div>
   </md-toolbar>
 

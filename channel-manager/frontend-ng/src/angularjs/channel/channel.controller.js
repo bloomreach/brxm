@@ -71,6 +71,7 @@ export class ChannelCtrl {
     ComponentAdderService.setCatalogContainerItemClass('catalog-dd-container-item');
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
+    this.isEditMode = false;
   }
 
   selectViewPort(viewPort) {
@@ -155,5 +156,13 @@ export class ChannelCtrl {
 
   getViewPortIconColor(viewPort) {
     return this.isViewPortSelected(viewPort) ? 'primary' : 'background-A400';
+  }
+
+  getEditButtonBgColor() {
+    return this.isEditModeActive() ? 'background-50' : 'background-300';
+  }
+
+  getViewButtonBgColor() {
+    return this.isEditModeActive() ? 'background-300' : 'background-50';
   }
 }
