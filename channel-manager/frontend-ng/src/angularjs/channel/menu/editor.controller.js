@@ -92,9 +92,10 @@ export class MenuEditorCtrl {
     this.SiteMenuService.getMenu(this.menuUuid)
       .then((menu) => this._createBlankMenuItem(menu))
       .then((blankItem) => this.SiteMenuService.createMenuItem(this.menuUuid, blankItem))
-      .then(() => {
+      .then((newItem) => {
         this.FormStateService.setValid(true);
         this.isSaving.newItem = false;
+        this.setupItem(newItem);
       }).catch((error) => {
         this.isSaving.newItem = false;
         this.onError({ key: 'ERROR_MENU_CREATE_FAILED', params: [error] });

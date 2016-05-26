@@ -80,7 +80,8 @@ export class SiteMenuService {
     const parentId = menuId;
 
     return this.HstService.doPostWithParams(newItem, menuId, options, 'create', parentId)
-      .then(() => this.loadMenu(menuId));
+      .then((response) => response.data)
+      .then((newItemId) => this.loadMenu(menuId).then((menu) => this._findMenuItem(menu.items, newItemId)));
   }
 
   getPathToMenuItem(menuId, menuItemId) {
