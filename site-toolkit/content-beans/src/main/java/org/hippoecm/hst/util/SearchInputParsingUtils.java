@@ -207,7 +207,7 @@ public final class SearchInputParsingUtils {
                             }
                         } else {
                             char prevChar = sb.charAt(sb.length() - 1);
-                            if (prevChar == ' ') {
+                            if (prevChar == ' ' && containsNextCharAndIsNotSpecial(input, i)) {
                                 sb.append(c);
                             } else if (c == '-') {
                                 // check next char : only if next char is again a non-special char we include the '-'
@@ -243,7 +243,7 @@ public final class SearchInputParsingUtils {
         if (!input.equals(output)) {
             log.debug("Rewrote input '{}' to '{}'", input, output);
         }
-        return output;
+        return compressWhitespace(output);
     }
 
     private static boolean ignoreChar(final char c, final char[] ignore) {
