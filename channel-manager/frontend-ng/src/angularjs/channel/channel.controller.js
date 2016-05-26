@@ -159,10 +159,10 @@ export class ChannelCtrl {
   }
 
   getEditButtonBgColor() {
-    return this.isEditModeActive() ? 'background-50' : 'background-300';
+    return this.isEditModeActive() ? 'background-300' : 'background-50';
   }
 
   getViewButtonBgColor() {
-    return this.isEditModeActive() ? 'background-300' : 'background-50';
+    return this.isEditModeActive() ? 'background-50' : 'background-300';
   }
 }
