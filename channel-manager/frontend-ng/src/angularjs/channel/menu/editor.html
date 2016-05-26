@@ -25,24 +25,32 @@
        data-options="menuEditor.treeOptions"
        data-selected-item="menuEditor.selectedItem"
        data-draggable="true">
-    <span class="spacer">
-      <a class="hippo-tree-item-toggle"
-         data-nodrag stop-propagation
-         ng-click="hippoTree.toggle(this)"
-         ng-hide="childNodes().length === 0">
-        {{collapsed ? '+' : '-'}}
-      </a>
-      <span data-ng-show="childNodes().length === 0">&#9679;</span>
-    </span>
-    <span class="angular-ui-tree-title-wrapper">
-      <span class="angular-ui-tree-title qa-menu-tree-item">{{ item.title }}</span>
-    </span>
-    <div layout="row">
-      <md-button type="button"
-                 aria-label="{{ 'EDIT' | translate }}"
-                 ng-click="menuEditor.editItem(item)">
-        {{ 'EDIT' | translate }}
-      </md-button>
+    <div layout="row" layout-align="space-between center">
+      <div layout="row" layout-align="start center">
+        <md-button type="button"
+                   class="md-icon-button"
+                   ng-click="hippoTree.toggle(this)"
+                   aria-label="{{ 'EDIT' | translate }}"
+                   data-nodrag
+                   stop-propagation>
+          <md-icon class="material-icons step md-18">
+            <span ng-show="childNodes().length > 0 && collapsed">add_circle_outline</span>
+            <span ng-show="childNodes().length > 0 && !collapsed">remove_circle_outline</span>
+          </md-icon>
+        </md-button>
+        <div>{{ item.title }}</div>
+      </div>
+      <div>
+        <md-button type="button"
+                   class="md-icon-button"
+                   aria-label="{{ 'EDIT' | translate }}"
+                   ng-click="menuEditor.editItem(item)">
+          <md-icon class="material-icons step md-18">
+            <span ng-show="menuEditor.editingItem.id != item.id">keyboard_arrow_down</span>
+            <span ng-show="menuEditor.editingItem.id == item.id">keyboard_arrow_up</span>
+          </md-icon>
+        </md-button>
+      </div>
     </div>
     <div ng-if="menuEditor.editingItem == item">
       <form name="form"
