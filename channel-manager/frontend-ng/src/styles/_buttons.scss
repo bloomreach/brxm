@@ -12,73 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.md-toolbar-tools .md-button {
-  text-transform: none;
-}
-
-.button-group {
-  .md-button {
-    margin-right: 0;
-
-    &:not(:first-child) {
-      margin-left: 0;
-    }
-  }
-}
-
-.md-toolbar-tools .select-in-toolbar {
-  md-select {
-    margin: 0;
-  }
-  md-select:focus md-select-value {
-    color: $white;
-  }
-
-  md-select-value {
-    font-size: 14px;
-    font-weight: bold;
-    border-width: 0;
-
-    > span:not(._md-select-icon) {
-      // Chrome/Safari are 1px too low
-      transform: translate3d(0, 0, 0);
-      -webkit-transform: translate3d(0, -1px, 0) !important;
-    }
-  }
-
-  ._md-select-icon {
-    width: 14px;
-    transform: translate3d(0, 0, 0);
-  }
-
-  label {
-    font-size: 14px;
-    margin-right: 4px;
-  }
-}
-
-.md-button.alter-ego-btn {
-  min-width: 0;
-  margin-left: 0;
-}
-
-button .disabled-marker {
-  font-style: italic;
-}
-
-md-input-container.input-container-picker {
+.input-container-picker {
   img {
     max-width: 100%;
+
     &:not(.readonly) {
       cursor: pointer;
     }
   }
+
   .md-input {
     order: 0;
+
     &:not([disabled]) {
       cursor: pointer;
     }
   }
+
   .md-icon-button {
     margin-left: 0;
     margin-right: 0;

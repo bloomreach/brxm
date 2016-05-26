@@ -27,7 +27,7 @@
                  ng-click="pageActions.trigger(action)"
                  ng-disabled="!action.isEnabled()">
         {{ pageActions.getLabel(action) }}
-        <span class="disabled-marker">&nbsp;{{ pageActions.getPageNotEditableMarker(action) }}</span>
+        <span><i>&nbsp;{{ pageActions.getPageNotEditableMarker(action) }}</i></span>
       </md-button>
     </md-menu-item>
     <md-menu-divider></md-menu-divider>
@@ -37,7 +37,7 @@
                  ng-click="pageActions.trigger(pageActions.createAction)"
                  ng-disabled="!pageActions.createAction.isEnabled()">
         {{ pageActions.getLabel(pageActions.createAction) }}
-        <span class="disabled-marker">&nbsp;{{ pageActions.getSitemapNotEditableMarker() }}</span>
+        <span><i>&nbsp;{{ pageActions.getSitemapNotEditableMarker() }}</i></span>
       </md-button>
     </md-menu-item>
   </md-menu-content>
