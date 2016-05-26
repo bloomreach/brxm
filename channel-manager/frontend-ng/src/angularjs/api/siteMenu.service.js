@@ -52,7 +52,8 @@ export class SiteMenuService {
   }
 
   deleteMenuItem(menuId, menuItemId) {
-    return this.HstService.doPost({}, menuId, 'delete', menuItemId);
+    return this.HstService.doPost({}, menuId, 'delete', menuItemId)
+      .then(() => this.loadMenu(menuId));
   }
 
   saveMenuItem(menuId, menuItem) {
