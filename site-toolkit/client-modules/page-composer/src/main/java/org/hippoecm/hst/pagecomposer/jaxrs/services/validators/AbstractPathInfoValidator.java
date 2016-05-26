@@ -54,13 +54,15 @@ abstract class AbstractPathInfoValidator implements Validator {
         final String encoding = Optional.fromNullable(requestContext.getServletRequest().getCharacterEncoding()).or("UTF-8");
         if (containsInvalidChars(info, encoding)) {
             String msg = String.format("Invalid pathInfo '%s' because contains invalid (encoded) chars like " +
-                    " ':', ';', '?' or '\' or the pathInfo cannot be URL decoded.", info);
+                    " ':', ';', '?', '#' or '\' or the pathInfo cannot be URL decoded.", info);
+            log.info(msg);
             throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
         }
 
         if (containsEncodedDirectoryTraversalChars(info, encoding)) {
             String msg = String.format("Invalid pathInfo '%s' because contains invalid encoded chars like " +
                     " %%2f, %%5c or %%2e which are typically used for directory traversal (attacks)", info);
+            log.info(msg);
             throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
         }
 
@@ -97,7 +99,6 @@ abstract class AbstractPathInfoValidator implements Validator {
     public static boolean containsEncodedDirectoryTraversalChars(String pathInfo,final String characterEncoding) {
         pathInfo = pathInfo.toLowerCase();
         if (pathInfo.contains("%2f") || pathInfo.contains("%5c") || pathInfo.contains("%2e")) {
-            log.info("PathInfo '{}' contains invalid encoded '/' or '\\' or a '.'", pathInfo);
             return true;
         }
         return false;
@@ -105,22 +106,19 @@ abstract class AbstractPathInfoValidator implements Validator {
 
     public static boolean containsInvalidChars(String pathInfo, final String characterEncoding) {
         pathInfo = pathInfo.toLowerCase();
-        if (pathInfo.contains(":") || pathInfo.contains("\\") || pathInfo.contains("?") || pathInfo.contains(";")) {
-            log.info("PathInfo '{}' contains non allowed ':' or '\'", pathInfo);
+        if (pathInfo.contains(":") || pathInfo.contains("\\") || pathInfo.contains("?") || pathInfo.contains(";")|| pathInfo.contains("#")) {
             return true;
         }
         try {
             // for if the path info contains incomplete trailing escape (%) pattern, decoding will fail with an
             // IllegalArgumentException and the path info is incorrect
             final String decode = URLDecoder.decode(pathInfo, characterEncoding);
-            if (decode.contains(":") || decode.contains("\\") || decode.contains("?") || decode.contains(";")) {
-                log.info("PathInfo '{}' contains non allowed encoded ':' or '\'", pathInfo);
+            if (decode.contains(":") || decode.contains("\\") || decode.contains("?") || decode.contains(";") || decode.contains("#")) {
                 return true;
             }
         } catch (UnsupportedEncodingException | IllegalArgumentException e) {
             // for if the path info contains incomplete trailing escape (%) pattern, decoding will fail with an
             // IllegalArgumentException and the path info is incorrect
-            log.info("PathInfo '{}' cannot be decoded with '{}'.", pathInfo, characterEncoding);
             return true;
         }
         return false;

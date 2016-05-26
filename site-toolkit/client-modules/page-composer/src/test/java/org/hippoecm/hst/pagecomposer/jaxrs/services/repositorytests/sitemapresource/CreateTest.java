@@ -691,7 +691,7 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation(urlEncodedName, prototypeUUID);
         final SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.create(newFoo);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage() + " for " + checkURLEncodedChar,
                 expected.getStatusCode(), response.getStatus());
 
         if (expected != Response.Status.OK) {
@@ -710,8 +710,22 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
     }
 
+
     @Test
     public void test_validate_invalid_names() throws Exception {
+
+        initContext();
+        final String prototypeUUID = getPrototypePageUUID();
+
+        final String[] invalidChars = {"?", ":", ";", "#", "/", "\\"};
+
+        for (String invalidChar : invalidChars) {
+            createAndAssertions(prototypeUUID, invalidChar, Response.Status.BAD_REQUEST);
+        }
+    }
+
+    @Test
+    public void test_validate_invalid_encoded_names() throws Exception {
         initContext();
         final String prototypeUUID = getPrototypePageUUID();
 
@@ -724,16 +738,13 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         // %2E = .
         // %3F = ?
         // %3B = ;
+        // %23 = #
 
-        final String[] invalidURLEncodedChars = {"%3A", "%2F", "%2f", "%5c", "%5C", "%2e", "%2E", "%3F", "%3B"};
+        final String[] invalidURLEncodedChars = {"%3A", "%2F", "%2f", "%5c", "%5C", "%2e", "%2E", "%3F", "%3B", "%23"};
 
         for (String checkURLEncodedChar : invalidURLEncodedChars) {
             createAndAssertions(prototypeUUID, checkURLEncodedChar, Response.Status.BAD_REQUEST);
         }
 
-        final String[] checkInvalidChars = {"/", "\\"};
-        for (String invalidChar : checkInvalidChars) {
-            createAndAssertions(prototypeUUID, invalidChar, Response.Status.BAD_REQUEST);
-        }
     }
 }
