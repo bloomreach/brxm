@@ -140,6 +140,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
     // default threshold of -1 meaning no threshold
     private long diagnosticsThresholdMillis = -1;
 
+    // default subtask threshold of -1 meaning no threshold
+    private long diagnosticsUnitThresholdMillis = -1;
+
     private boolean diagnosticsEnabled;
 
     private boolean cacheable = false;
@@ -208,6 +211,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
         if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_THRESHOLD_MILLIS)) {
             diagnosticsThresholdMillis = vHostConfValueProvider.getLong(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_THRESHOLD_MILLIS);
+        }
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_UNIT_THRESHOLD_MILLIS)) {
+            diagnosticsUnitThresholdMillis = vHostConfValueProvider.getLong(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_UNIT_THRESHOLD_MILLIS);
         }
 
         String[] ips = vHostConfValueProvider.getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_FOR_IPS);
@@ -718,6 +724,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     public long getDiagnosticsThresholdMillis() {
         return diagnosticsThresholdMillis;
+    }
+
+    public long getDiagnosticsUnitThresholdMillis() {
+        return diagnosticsUnitThresholdMillis;
     }
 
     public boolean isCacheable() {

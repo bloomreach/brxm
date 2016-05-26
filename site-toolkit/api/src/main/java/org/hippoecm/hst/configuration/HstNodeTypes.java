@@ -156,6 +156,7 @@ public interface HstNodeTypes {
     String VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_FOR_IPS = "hst:diagnosticsforips";
     String VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_DEPTH = "hst:diagnosticsdepth";
     String VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_THRESHOLD_MILLIS = "hst:diagnosticsthresholdmillisec";
+    String VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_UNIT_THRESHOLD_MILLIS = "hst:diagnosticsunitthresholdmillisec";
 
     /**
      * @deprecated since CMS 7.9.1 not used any more
