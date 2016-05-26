@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const FIRST_CHILD = 'first';
 const NEXT_SIBLING = 'after';
 
 export class SiteMenuService {
@@ -70,34 +69,18 @@ export class SiteMenuService {
 
    * @param menuId The menu id
    * @param newItem The item to be created
-   * @param selectedItemId When specified, the item will be created either as an additional child, or as a sibling of the
-   *                       selected item if it does not have any children yet.
    * @returns {promise|Promise.promise|Q.promise}
    */
-  createMenuItem(menuId, newItem, selectedItemId) {
-    return this.getPathToMenuItem(menuId, selectedItemId).then((paths) => {
-      const options = {
-        position: NEXT_SIBLING,
-      };
-      let parentId = menuId;
+  createMenuItem(menuId, newItem) {
+    const lastItem = this.menu.items[this.menu.items.length - 1];
+    const options = {
+      position: NEXT_SIBLING,
+      sibling: lastItem,
+    };
+    const parentId = menuId;
 
-      if (paths && paths.length >= 1) {
-        let currentItem = paths.pop();
-        if (currentItem.items && currentItem.items.length > 0) {
-          parentId = currentItem.id;
-          options.position = FIRST_CHILD;
-          currentItem.collapsed = false;
-        } else if (paths.length >= 1) {
-          options.sibling = currentItem.id;
-          currentItem = paths.pop();
-          parentId = currentItem.id;
-        }
-      }
-
-      return this.HstService.doPostWithParams(newItem, menuId, options, 'create', parentId)
-        .then((response) => response.data)
-        .then((newItemId) => this.loadMenu(menuId).then((menu) => this._findMenuItem(menu.items, newItemId)));
-    });
+    return this.HstService.doPostWithParams(newItem, menuId, options, 'create', parentId)
+      .then(() => this.loadMenu(menuId));
   }
 
   getPathToMenuItem(menuId, menuItemId) {

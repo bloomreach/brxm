@@ -31,22 +31,11 @@ export class MenuEditorCtrl {
     SiteMenuService.loadMenu(this.menuUuid)
       .then((menu) => {
         this.items = menu.items;
-        this.selectedItem = this.items.length > 0 ? this.items[0] : undefined;
 
         $scope.$watch(
           () => menu.items,
           () => {
             this.items = menu.items;
-            $scope.$broadcast('menu-items-changed');
-          }
-        );
-
-        $scope.$watch(
-          () => this.selectedItem,
-          (current, last) => {
-            if (current && last && current.id !== last.id) {
-              this._saveIfDirty(last);
-            }
           }
         );
       })
@@ -69,21 +58,8 @@ export class MenuEditorCtrl {
           SiteMenuService.moveMenuItem(this.menuUuid, sourceId, destId, dest.index)
             .catch(() => this.onError({ key: 'ERROR_MENU_MOVE_FAILED' }));
         }
-
-        if (this.selectedItem.id !== sourceId) {
-          this._saveIfDirty(this.selectedItem).then(() => this.selectItem(sourceId));
-        }
       },
     };
-  }
-
-  selectItem(itemId) {
-    if (!this.selectedItem || this.selectedItem.id !== itemId) {
-      this.SiteMenuService.getMenuItem(this.menuUuid, itemId)
-        .then((item) => {
-          this.selectedItem = item;
-        });
-    }
   }
 
   stopEditingItem() {
@@ -111,47 +87,22 @@ export class MenuEditorCtrl {
   }
 
   addItem() {
-    this._saveIfDirty(this.selectedItem).then(() => {
-      if (!this.selectedItem) {
-        return;
-      }
+    this.isSaving.newItem = true;
 
-      this.isSaving.newItem = true;
-
-      this.SiteMenuService.getMenu(this.menuUuid)
-        .then((menu) => this._createBlankMenuItem(menu))
-        .then((blankItem) => this.SiteMenuService.createMenuItem(this.menuUuid, blankItem, this.selectedItem.id))
-        .then((newItem) => {
-          this.FormStateService.setValid(true);
-          this.isSaving.newItem = false;
-          this.selectedItem = newItem;
-        }).catch((error) => {
-          this.isSaving.newItem = false;
-          this.onError({ key: 'ERROR_MENU_CREATE_FAILED', params: [error] });
-        });
-    });
+    this.SiteMenuService.getMenu(this.menuUuid)
+      .then((menu) => this._createBlankMenuItem(menu))
+      .then((blankItem) => this.SiteMenuService.createMenuItem(this.menuUuid, blankItem))
+      .then(() => {
+        this.FormStateService.setValid(true);
+        this.isSaving.newItem = false;
+      }).catch((error) => {
+        this.isSaving.newItem = false;
+        this.onError({ key: 'ERROR_MENU_CREATE_FAILED', params: [error] });
+      });
   }
 
   onBack() {
     this.HippoIframeService.reload().then(this.onDone);
-  }
-
-  _saveIfDirty(item) {
-    if (this.FormStateService.isDirty()) {
-      if (!this.FormStateService.isValid()) {
-        return this.$q.reject();
-      }
-      const defer = this.$q.defer();
-      this.SiteMenuService.saveMenuItem(item).then(
-        () => defer.resolve(),
-        (error) => {
-          this.onError({ key: 'ERROR_MENU_SAVE_FAILED', params: [error] });
-          this.FormStateService.setValid(false);
-          defer.reject();
-        });
-      return defer.promise;
-    }
-    return this.$q.when();
   }
 
   _createBlankMenuItem(menu) {
