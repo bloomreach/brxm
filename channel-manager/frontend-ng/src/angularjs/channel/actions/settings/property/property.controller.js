@@ -53,11 +53,6 @@ export class ChannelPropertyCtrl {
     }
   }
 
-  getFieldErrorObject() {
-    const formField = this.form[this.field];
-    return formField && formField.$error;
-  }
-
   getDropDownListValues() {
     if (!this.annotation || this.annotation.type !== 'DropDownList') {
       this.$log.debug(`Field '${this.field}' is not a dropdown.`);

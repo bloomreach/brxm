@@ -33,7 +33,7 @@
         {{choice}}
       </md-option>
     </md-select>
-    <div ng-messages="channelProperty.getFieldErrorObject()">
+    <div ng-messages="channelProperty.error">
       <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
     </div>
   </md-input-container>
@@ -66,7 +66,7 @@
         <md-icon class="material-icons">search</md-icon>
       </md-button>
     </div>
-    <div ng-messages="channelProperty.getFieldErrorObject()">
+    <div ng-messages="channelProperty.error">
       <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
     </div>
   </md-input-container>
@@ -95,7 +95,7 @@
         <md-icon class="material-icons">search</md-icon>
       </md-button>
     </div>
-    <div ng-messages="channelProperty.getFieldErrorObject()">
+    <div ng-messages="channelProperty.error">
       <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
     </div>
   </md-input-container>
@@ -106,7 +106,7 @@
            ng-required="channelProperty.required"
            ng-model="channelProperty.value"
            ng-disabled="channelProperty.readOnly">
-    <div ng-messages="channelProperty.getFieldErrorObject()">
+    <div ng-messages="channelProperty.error">
       <div ng-message="required">{{ 'VALIDATION_REQUIRED' | translate }}</div>
     </div>
   </md-input-container>

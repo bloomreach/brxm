@@ -62,13 +62,13 @@ describe('ChannelProperty', () => {
     $scope = $rootScope.$new();
     $scope.field = field;
     $scope.value = value;
-    $scope.form = { };
+    $scope.fieldError = { };
     $scope.data = channelInfoDescription;
 
     $element = angular.element(`
       <div channel-property="{{field}}"
            channel-property-value="value"
-           channel-properties-form="form"
+           channel-properties-error="fieldError"
            channel-properties-data="data"></div>
     `);
     $compile($element)($scope);
