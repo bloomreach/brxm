@@ -24,127 +24,138 @@
        data-items="menuEditor.items"
        data-options="menuEditor.treeOptions"
        data-selected-item="menuEditor.selectedItem"
-       data-draggable="true">
-    <div layout="row" layout-align="space-between center">
-      <div layout="row" layout-align="start center">
-        <md-button type="button"
-                   class="md-icon-button"
-                   ng-click="hippoTree.toggle(this)"
-                   aria-label="{{ 'EDIT' | translate }}"
-                   data-nodrag
-                   stop-propagation>
-          <md-icon class="material-icons step md-18">
-            <span ng-show="childNodes().length > 0 && collapsed">add_circle_outline</span>
-            <span ng-show="childNodes().length > 0 && !collapsed">remove_circle_outline</span>
-          </md-icon>
-        </md-button>
-        <div>{{ item.title }}</div>
-      </div>
-      <div>
-        <md-button type="button"
-                   class="md-icon-button"
-                   aria-label="{{ 'EDIT' | translate }}"
-                   ng-click="menuEditor.editItem(item)">
-          <md-icon class="material-icons step md-18">
-            <span ng-show="menuEditor.editingItem.id != item.id">keyboard_arrow_down</span>
-            <span ng-show="menuEditor.editingItem.id == item.id">keyboard_arrow_up</span>
-          </md-icon>
-        </md-button>
-      </div>
-    </div>
-    <div ng-if="menuEditor.editingItem == item">
-      <form name="form"
-            flex
-            class="qa-subpage"
-            ng-submit="form.$valid && menuEditor.saveItem(item)"
-            novalidate>
-        <div layout="row">
-          <md-input-container flex>
-            <label>{{ 'TITLE' | translate }}</label>
-            <input name="title"
-                   ng-model="item.title"
-                   required>
-            <div ng-messages="form.title.$error">
-              <div ng-message="required">{{ 'TITLE_REQUIRED' | translate }}</div>
+       data-draggable="true"
+       flex>
+    <md-card>
+      <md-card-title>
+        <md-card-title-text>
+          <div class="md-headline" layout="row" layout-align="space-between center">
+            <div layout="row" layout-align="start center">
+              <md-button type="button"
+                         class="md-icon-button"
+                         ng-click="hippoTree.toggle(this)"
+                         aria-label="{{ 'EDIT' | translate }}"
+                         data-nodrag
+                         stop-propagation>
+                <md-icon class="material-icons step md-18">
+                  <span ng-show="childNodes().length > 0 && collapsed">add_circle_outline</span>
+                  <span ng-show="childNodes().length > 0 && !collapsed">remove_circle_outline</span>
+                </md-icon>
+              </md-button>
+              <div>{{ item.title }}</div>
             </div>
-          </md-input-container>
-        </div>
-        <div>
-          <md-radio-group ng-model="item.linkType">
-            <md-radio-button value="SITEMAPITEM">{{ 'SUBPAGE_MENU_EDITOR_INTERNAL_LINK' | translate }}</md-radio-button>
-            <md-radio-button value="EXTERNAL">{{ 'SUBPAGE_MENU_EDITOR_EXTERNAL_LINK' | translate }}</md-radio-button>
-            <md-radio-button value="NONE">{{ 'SUBPAGE_MENU_EDITOR_NO_LINK' | translate }}</md-radio-button>
-          </md-radio-group>
-        </div>
-        <div ng-if="item.linkType != 'NONE'">
-          <div ng-if="item.linkType == 'SITEMAPITEM'"
-               layout="row">
-            <md-input-container flex>
-              <label>{{ 'SUBPAGE_MENU_EDITOR_INTERNAL_LINK' | translate }}</label>
-              <input name="sitemapLink"
-                     ng-model="item.sitemapLink"
-                     ng-required="item.linkType == 'SITEMAPITEM'"
-                     disabled>
-              <div ng-messages="form.sitemapLink.$error">
-                <div ng-message="required">{{ 'LINK_REQUIRED' | translate }}</div>
-              </div>
-            </md-input-container>
             <div>
               <md-button type="button"
-                         ng-click="menuEditor.linkPick()">
-                {{ 'SELECT' | translate }}
+                         class="md-icon-button"
+                         aria-label="{{ 'EDIT' | translate }}"
+                         ng-click="menuEditor.editItem(item)">
+                <md-icon class="material-icons step md-18">
+                  <span ng-show="menuEditor.editingItem.id != item.id">keyboard_arrow_down</span>
+                  <span ng-show="menuEditor.editingItem.id == item.id">keyboard_arrow_up</span>
+                </md-icon>
               </md-button>
             </div>
           </div>
-          <div ng-if="item.linkType == 'EXTERNAL'"
-               layout="row">
-            <md-input-container flex>
-              <label>{{ 'SUBPAGE_MENU_EDITOR_EXTERNAL_LINK' | translate }}</label>
-              <input name="externalLink"
-                     ng-model="item.externalLink"
-                     ng-required="item.linkType == 'EXTERNAL'">
-              <div ng-messages="form.externalLink.$error">
-                <div ng-message="required">{{ 'LINK_REQUIRED' | translate }}</div>
-              </div>
-            </md-input-container>
-          </div>
-        </div>
-        <div ng-if="item.localParameters">
-          <md-switch ng-model="item.showLocalParameters" aria-label="{{ 'ADVANCED_SETTINGS' | translate }}">
-            {{ 'ADVANCED_SETTINGS' | translate }}
-          </md-switch>
-          <div ng-if="item.showLocalParameters == true">
-            <div layout="row" data-ng-repeat="(key, value) in item.localParameters">
+        </md-card-title-text>
+      </md-card-title>
+      <md-card-content>
+        <form name="form"
+              flex
+              class="qa-subpage"
+              ng-submit="form.$valid && menuEditor.saveItem(item)"
+              novalidate>
+          <div ng-if="menuEditor.editingItem == item">
+            <div layout="row">
               <md-input-container flex>
-                <label>{{ key }}</label>
-                <input type="text"
-                       ng-model="item.localParameters[key]">
+                <label>{{ 'TITLE' | translate }}</label>
+                <input name="title"
+                       ng-model="item.title"
+                       required>
+                <div ng-messages="form.title.$error">
+                  <div ng-message="required">{{ 'TITLE_REQUIRED' | translate }}</div>
+                </div>
               </md-input-container>
             </div>
+            <div>
+              <md-radio-group ng-model="item.linkType">
+                <md-radio-button value="SITEMAPITEM">{{ 'SUBPAGE_MENU_EDITOR_INTERNAL_LINK' | translate }}</md-radio-button>
+                <md-radio-button value="EXTERNAL">{{ 'SUBPAGE_MENU_EDITOR_EXTERNAL_LINK' | translate }}</md-radio-button>
+                <md-radio-button value="NONE">{{ 'SUBPAGE_MENU_EDITOR_NO_LINK' | translate }}</md-radio-button>
+              </md-radio-group>
+            </div>
+            <div ng-if="item.linkType != 'NONE'">
+              <div ng-if="item.linkType == 'SITEMAPITEM'"
+                   layout="row">
+                <md-input-container flex>
+                  <label>{{ 'SUBPAGE_MENU_EDITOR_INTERNAL_LINK' | translate }}</label>
+                  <input name="sitemapLink"
+                         ng-model="item.sitemapLink"
+                         ng-required="item.linkType == 'SITEMAPITEM'"
+                         disabled>
+                  <div ng-messages="form.sitemapLink.$error">
+                    <div ng-message="required">{{ 'LINK_REQUIRED' | translate }}</div>
+                  </div>
+                </md-input-container>
+                <div>
+                  <md-button type="button"
+                             ng-click="menuEditor.linkPick()">
+                    {{ 'SELECT' | translate }}
+                  </md-button>
+                </div>
+              </div>
+              <div ng-if="item.linkType == 'EXTERNAL'"
+                   layout="row">
+                <md-input-container flex>
+                  <label>{{ 'SUBPAGE_MENU_EDITOR_EXTERNAL_LINK' | translate }}</label>
+                  <input name="externalLink"
+                         ng-model="item.externalLink"
+                         ng-required="item.linkType == 'EXTERNAL'">
+                  <div ng-messages="form.externalLink.$error">
+                    <div ng-message="required">{{ 'LINK_REQUIRED' | translate }}</div>
+                  </div>
+                </md-input-container>
+              </div>
+            </div>
+            <div ng-if="item.localParameters">
+              <md-switch ng-model="item.showLocalParameters" aria-label="{{ 'ADVANCED_SETTINGS' | translate }}">
+                {{ 'ADVANCED_SETTINGS' | translate }}
+              </md-switch>
+              <div ng-if="item.showLocalParameters == true">
+                <div layout="row" data-ng-repeat="(key, value) in item.localParameters">
+                  <md-input-container flex>
+                    <label>{{ key }}</label>
+                    <input type="text"
+                           ng-model="item.localParameters[key]">
+                  </md-input-container>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <md-divider></md-divider>
-        <div layout="row" layout-align="space-between center">
+        </form>
+      </md-card-content>
+      <md-divider ng-if="menuEditor.editingItem == item"></md-divider>
+      <md-card-actions layout="row"
+                       layout-align="space-between center"
+                       ng-if="menuEditor.editingItem == item">
+        <md-button type="button"
+                   aria-label="{{ 'DELETE' | translate }}"
+                   ng-click="menuEditor.deleteItem(item)">
+          {{ 'DELETE' | translate }}
+        </md-button>
+        <div>
           <md-button type="button"
-                     aria-label="{{ 'DELETE' | translate }}"
-                     ng-click="menuEditor.deleteItem(item)">
-            {{ 'DELETE' | translate }}
+                     aria-label="{{ 'CANCEL' | translate }}"
+                     ng-click="menuEditor.stopEditingItem()">
+            {{ 'CANCEL' | translate }}
           </md-button>
-          <div>
-            <md-button type="button"
-                       aria-label="{{ 'CANCEL' | translate }}"
-                       ng-click="menuEditor.stopEditingItem()">
-              {{ 'CANCEL' | translate }}
-            </md-button>
-            <md-button type="submit"
-                       aria-label="{{ 'SAVE' | translate }}"
-                       class="md-raised md-primary">
-              {{ 'SAVE' | translate }}
-            </md-button>
-          </div>
+          <md-button type="submit"
+                     aria-label="{{ 'SAVE' | translate }}"
+                     class="md-raised md-primary">
+            {{ 'SAVE' | translate }}
+          </md-button>
         </div>
-      </form>
-    </div>
+      </md-card-actions>
+    </md-card>
   </div>
   <div class="empty-tree" ng-if="menuEditor.items.length === 0">{{ 'SUBPAGE_MENU_EDITOR_EMPTY_MENU' | translate }}</div>
   <div class="fab-space-holder"></div>
@@ -161,3 +172,4 @@
   </md-button>
 </subpage-content>
 
+<!-- make md-headline 20. Remove some spacing for this specific implimentation-->
