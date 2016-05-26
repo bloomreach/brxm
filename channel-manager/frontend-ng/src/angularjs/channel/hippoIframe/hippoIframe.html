@@ -45,7 +45,7 @@
           </div>
           <div ng-repeat="contentLink in iframe.getContentLinks()">
             <overlay-element structure-element="contentLink">
-              <md-button class="overlay-element-fab md-fab qa-content-link"
+              <md-button class="overlay-element-fab md-fab md-mini qa-content-link"
                          ng-click="iframe.openContent(contentLink)">
                 <md-icon class="material-icons">description</md-icon>
               </md-button>
@@ -53,7 +53,7 @@
           </div>
           <div ng-repeat="editMenuLink in iframe.getEditMenuLinks()">
             <overlay-element structure-element="editMenuLink">
-              <md-button class="overlay-element-fab md-fab qa-edit-menu-link"
+              <md-button class="overlay-element-fab md-fab md-mini qa-edit-menu-link"
                          ng-click="iframe.openMenuEditor(editMenuLink)">
                 <md-icon class="material-icons">menu</md-icon>
               </md-button>
