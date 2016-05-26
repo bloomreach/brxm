@@ -228,7 +228,13 @@ describe('SiteMenuService', () => {
     SiteMenuService.loadMenu('testUuid').then(() => {
       SiteMenuService.createMenuItem('testUuid', newMenuItem, 'testUuid').then(() => {
         expect(HstService.doPostWithParams)
-          .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+          .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
+            position: 'after',
+            sibling: {
+              id: '3',
+              title: 'Three',
+            },
+          }, 'create', 'testUuid');
         done();
       });
     });
@@ -239,7 +245,13 @@ describe('SiteMenuService', () => {
     SiteMenuService.loadMenu('testUuid').then(() => {
       SiteMenuService.createMenuItem('testUuid', newMenuItem, '1').then(() => {
         expect(HstService.doPostWithParams)
-          .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after', sibling: '1' }, 'create', 'testUuid');
+          .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
+            position: 'after',
+            sibling: {
+              id: '3',
+              title: 'Three',
+            },
+          }, 'create', 'testUuid');
         done();
       });
     });
@@ -249,7 +261,9 @@ describe('SiteMenuService', () => {
   it('should create a root menu item if parentId is not specified', (done) => {
     SiteMenuService.createMenuItem('testUuid', newMenuItem).then(() => {
       expect(HstService.doPostWithParams)
-        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
+          position: 'after',
+        }, 'create', 'testUuid');
       done();
     });
     $rootScope.$digest();
@@ -258,7 +272,9 @@ describe('SiteMenuService', () => {
   it('should create a root menu item if parentId is not found', (done) => {
     SiteMenuService.createMenuItem('testUuid', newMenuItem, 'non-existing').then(() => {
       expect(HstService.doPostWithParams)
-        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
+          position: 'after',
+        }, 'create', 'testUuid');
       done();
     });
     $rootScope.$digest();

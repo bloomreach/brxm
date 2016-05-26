@@ -72,11 +72,13 @@ export class SiteMenuService {
    * @returns {promise|Promise.promise|Q.promise}
    */
   createMenuItem(menuId, newItem) {
-    const lastItem = this.menu.items[this.menu.items.length - 1];
     const options = {
       position: NEXT_SIBLING,
-      sibling: lastItem,
     };
+    const lastItem = this.menu.items[this.menu.items.length - 1];
+    if (lastItem) {
+      options.sibling = lastItem;
+    }
     const parentId = menuId;
 
     return this.HstService.doPostWithParams(newItem, menuId, options, 'create', parentId)
