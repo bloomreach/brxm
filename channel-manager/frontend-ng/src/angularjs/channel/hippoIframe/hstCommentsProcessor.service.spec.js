@@ -65,8 +65,10 @@ describe('HstCommentsProcessorService', () => {
   });
 
   it('should not do anything where there is no document', () => {
-    hstCommentsProcessorService.run(undefined, () => {
-      fail('callback should not have been called');
-    });
+    expect(() => {
+      hstCommentsProcessorService.run(undefined, () => {
+        fail('callback should not have been called');
+      });
+    }).toThrow(new Error('DOM document is empty'));
   });
 });
