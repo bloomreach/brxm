@@ -19,6 +19,9 @@ export function channelSidenavToggleDirective() {
 
   return {
     restrict: 'E',
+    bindToController: {
+      disabled: '=',
+    },
     templateUrl: 'channel/sidenav/toggle.html',
     controller: 'ChannelSidenavToggleCtrl',
     controllerAs: 'toggle',

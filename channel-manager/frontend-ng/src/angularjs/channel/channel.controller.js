@@ -18,10 +18,12 @@ export class ChannelCtrl {
 
   constructor(
       $log,
+      $rootScope,
       $translate,
       $stateParams,
       ChannelService,
       ComponentAdderService,
+      CmsService,
       FeedbackService,
       HippoIframeService,
       PageMetaDataService,
@@ -31,6 +33,7 @@ export class ChannelCtrl {
     'ngInject';
 
     this.$log = $log;
+    this.$rootScope = $rootScope;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
@@ -71,6 +74,23 @@ export class ChannelCtrl {
     ComponentAdderService.setCatalogContainerItemClass('catalog-dd-container-item');
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
+
+    CmsService.subscribe('clear-channel', () => this._clear());
+  }
+
+  _clear() {
+    this.hideSubpage();
+    this.leaveEditMode();
+    this.ChannelService.clearChannel();
+    this.$rootScope.$digest();
+  }
+
+  isChannelLoaded() {
+    return this.ChannelService.hasChannel();
+  }
+
+  isPageLoaded() {
+    return this.HippoIframeService.isPageLoaded();
   }
 
   selectViewPort(viewPort) {

@@ -26,3 +26,10 @@
     cursor: not-allowed;
   }
 }
+
+// let a linear progress indicator float 'above' the bottom of a toolbar
+// instead of taking up extra space below the toolbar
+md-toolbar > md-progress-linear {
+  bottom: 0;
+  position: absolute;
+}

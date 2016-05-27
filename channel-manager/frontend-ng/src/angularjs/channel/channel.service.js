@@ -46,11 +46,19 @@ export class ChannelService {
 
     this.channel = {};
 
-    this.CmsService.subscribe('channel-changed-in-extjs', this._onChannelChanged, this);
+    this.CmsService.subscribe('channel-changed-in-extjs', () => this._onChannelChanged());
   }
 
   _onChannelChanged() {
     this.$rootScope.$apply(() => this.reload());
+  }
+
+  clearChannel() {
+    this.channel = {};
+  }
+
+  hasChannel() {
+    return !!this.channel.id;
   }
 
   reload(channelId = this.channel.id) {
