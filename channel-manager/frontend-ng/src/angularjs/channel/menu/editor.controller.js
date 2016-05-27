@@ -15,7 +15,7 @@
  */
 
 export class MenuEditorCtrl {
-  constructor($q, $filter, $scope, $translate, SiteMenuService, FormStateService, HippoIframeService) {
+  constructor($q, $filter, $scope, $translate, SiteMenuService, FormStateService, HippoIframeService, ChannelService) {
     'ngInject';
 
     this.$q = $q;
@@ -24,6 +24,7 @@ export class MenuEditorCtrl {
     this.SiteMenuService = SiteMenuService;
     this.FormStateService = FormStateService;
     this.HippoIframeService = HippoIframeService;
+    this.ChannelService = ChannelService;
 
     this.isSaving = {};
 
@@ -66,6 +67,7 @@ export class MenuEditorCtrl {
 
         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
           SiteMenuService.moveMenuItem(this.menuUuid, sourceId, destId, dest.index)
+            .then(() => { this.isMenuModified = true; })
             .catch(() => this.onError({ key: 'ERROR_MENU_MOVE_FAILED' }));
         }
 
@@ -100,6 +102,7 @@ export class MenuEditorCtrl {
           this.FormStateService.setValid(true);
           this.isSaving.newItem = false;
           this.selectedItem = newItem;
+          this.isMenuModified = true;
         }).catch((error) => {
           this.isSaving.newItem = false;
           this.onError({ key: 'ERROR_MENU_CREATE_FAILED', params: [error] });
@@ -108,7 +111,11 @@ export class MenuEditorCtrl {
   }
 
   onBack() {
-    this.HippoIframeService.reload().then(this.onDone);
+    if (this.isMenuModified) {
+      this.HippoIframeService.reload();
+      this.ChannelService.recordOwnChange();
+    }
+    this.onDone();
   }
 
   _saveIfDirty(item) {
@@ -118,7 +125,10 @@ export class MenuEditorCtrl {
       }
       const defer = this.$q.defer();
       this.SiteMenuService.saveMenuItem(item).then(
-        () => defer.resolve(),
+        () => {
+          this.isMenuModified = true;
+          defer.resolve();
+        },
         (error) => {
           this.onError({ key: 'ERROR_MENU_SAVE_FAILED', params: [error] });
           this.FormStateService.setValid(false);
