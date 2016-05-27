@@ -202,21 +202,14 @@ public class ChannelGridPanel extends ExtPanel {
     }
 
     private void createHstConfigEditorFieldConfig(final JSONObject fieldConfig) throws JSONException {
-        final String tooltip = getLocalizer().getString("tooltip.hstconfigeditor", this);
         final String labelAction = getLocalizer().getString("action.hstconfigeditor", this);
-        final String labelNotAvailable = getLocalizer().getString("action.hstconfigeditor.notavailable", this);
         fieldConfig.put("xtype", "templatecolumn");
 
         final StringBuilder templateBuilder = new StringBuilder();
         templateBuilder.append("<tpl if=\"previewHstConfigExists=='true'\">");
-        templateBuilder.append("<a href=\"#\" name=\"open-hstconfigeditor\" title=\"");
-        templateBuilder.append(tooltip);
-        templateBuilder.append("\">" + labelAction + "</a>");
-        templateBuilder.append("</tpl>");
-
-        // extjs 3.4 does not support 'else' operator in xtemplate
-        templateBuilder.append("<tpl if=\"previewHstConfigExists=='false'\">");
-        templateBuilder.append(labelNotAvailable);
+        templateBuilder.append("<a href=\"#\" name=\"open-hstconfigeditor\">");
+        templateBuilder.append(labelAction);
+        templateBuilder.append("</a>");
         templateBuilder.append("</tpl>");
 
         fieldConfig.put("tpl",  templateBuilder.toString());
