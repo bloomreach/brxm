@@ -138,17 +138,13 @@ public class RootPanel extends ExtPanel {
         channelManagerCard.setHeader(false);
         channelManagerCard.setLayout(new BorderLayout());
 
-        final ChannelOverview channelOverview = new ChannelOverview(channelListConfig, composerRestMountPath, this.channelStoreFuture, !blueprintStore.isEmpty());
+        final HstConfigEditor hstConfigEditor = createHstConfigEditor(context, config);
+
+        final ChannelOverview channelOverview = new ChannelOverview(channelListConfig, composerRestMountPath,
+                this.channelStoreFuture, !blueprintStore.isEmpty(),
+                hstConfigEditor);
         channelOverview.setRegion(BorderLayout.Region.CENTER);
         channelManagerCard.add(channelOverview);
-
-        final HstConfigEditor hstConfigEditor;
-        if (config.getAsBoolean(HST_CONFIG_EDITOR_DISABLED, false)) {
-            hstConfigEditor = null;
-        } else {
-            final boolean lockInheritedConfig = config.getAsBoolean(HST_CONFIG_EDITOR_LOCK_INHERITED_NODES, true);
-            hstConfigEditor = new HstConfigEditor(context, lockInheritedConfig);
-        }
 
         channelManagerCard.add(this.blueprintStore);
 
@@ -164,6 +160,15 @@ public class RootPanel extends ExtPanel {
 
         // card 3: folder picker
         add(new ExtLinkPicker(context));
+    }
+
+    private HstConfigEditor createHstConfigEditor(final IPluginContext context, final IPluginConfig config) {
+        if (config.getAsBoolean(HST_CONFIG_EDITOR_DISABLED, false)) {
+            return null;
+        } else {
+            final boolean lockInheritedConfig = config.getAsBoolean(HST_CONFIG_EDITOR_LOCK_INHERITED_NODES, true);
+            return new HstConfigEditor(context, lockInheritedConfig);
+        }
     }
 
     public void redraw() {

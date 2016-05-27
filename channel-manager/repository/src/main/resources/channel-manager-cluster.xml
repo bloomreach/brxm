@@ -30,6 +30,7 @@
         <sv:value>name</sv:value>
         <sv:value>url</sv:value>
         <sv:value>locale</sv:value>
+        <sv:value>hstConfigEditor</sv:value>
       </sv:property>
       <sv:property sv:name="sort.column" sv:type="String">
         <sv:value>name</sv:value>
