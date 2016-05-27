@@ -149,4 +149,8 @@ export class MenuEditorCtrl {
   deleteItem(item) {
     this._confirmDelete(item).then(() => this._doDelete(item));
   }
+
+  hasLocalParameters(item) {
+    return Object.keys(item.localParameters).length !== 0;
+  }
 }

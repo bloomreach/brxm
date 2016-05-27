@@ -116,7 +116,7 @@
               </md-input-container>
             </div>
           </div>
-          <div ng-if="item.localParameters">
+          <div ng-if="menuEditor.hasLocalParameters(item)">
             <md-switch ng-model="item.showLocalParameters" aria-label="{{ 'ADVANCED_SETTINGS' | translate }}">
               {{ 'ADVANCED_SETTINGS' | translate }}
             </md-switch>
