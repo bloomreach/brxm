@@ -39,8 +39,8 @@
                          data-nodrag
                          stop-propagation>
                 <md-icon class="material-icons step md-18">
-                  <span ng-show="childNodes().length > 0 && collapsed">add_circle_outline</span>
-                  <span ng-show="childNodes().length > 0 && !collapsed">remove_circle_outline</span>
+                  <span ng-show="childNodes().length > 0 && collapsed">add</span>
+                  <span ng-show="childNodes().length > 0 && !collapsed">remove</span>
                 </md-icon>
               </md-button>
               <div>{{ item.title }}</div>
@@ -51,8 +51,8 @@
                          aria-label="{{ 'EDIT' | translate }}"
                          ng-click="menuEditor.editItem(item)">
                 <md-icon class="material-icons step md-18">
-                  <span ng-show="menuEditor.editingItem.id != item.id">keyboard_arrow_down</span>
-                  <span ng-show="menuEditor.editingItem.id == item.id">keyboard_arrow_up</span>
+                  <span ng-show="menuEditor.editingItem.id != item.id">expand_more</span>
+                  <span ng-show="menuEditor.editingItem.id == item.id">expand_less</span>
                 </md-icon>
               </md-button>
             </div>
