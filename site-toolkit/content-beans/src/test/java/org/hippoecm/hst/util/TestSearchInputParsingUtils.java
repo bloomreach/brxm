@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -177,5 +177,12 @@ public class TestSearchInputParsingUtils {
         assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash-", true));
         assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash -", false));
         assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash -", true));
+    }
+
+    @Test
+    public void testSearchInputParsingUtils_parse_differentApostrophes() throws Exception {
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quic'k", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quic’k", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quic‘k", true));
     }
 }
