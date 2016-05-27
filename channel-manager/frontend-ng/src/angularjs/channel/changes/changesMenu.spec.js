@@ -87,6 +87,9 @@ describe('ChangesMenu', () => {
 
     ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser', 'testUser'] });
     expect(ChangesMenuCtrl.hasOwnChanges()).toBe(true);
+
+    ChannelService.getChannel.and.returnValue({});
+    expect(ChangesMenuCtrl.hasOwnChanges()).toBe(false);
   });
 
   it('enables the manage changes option when there are changes by other users', () => {
@@ -101,6 +104,9 @@ describe('ChangesMenu', () => {
 
     ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser', 'otherUser'] });
     expect(ChangesMenuCtrl.isManageChangesEnabled()).toBe(true);
+
+    ChannelService.getChannel.and.returnValue({});
+    expect(ChangesMenuCtrl.isManageChangesEnabled()).toBe(false);
 
     ConfigService.canManageChanges = false;
     ChangesMenuCtrl = createChangesMenuCtrl();
