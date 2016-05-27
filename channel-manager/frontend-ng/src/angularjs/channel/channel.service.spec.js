@@ -42,9 +42,12 @@ describe('ChannelService', () => {
       workspaceExists: true,
     };
 
-    SessionServiceMock = {
-      initialize: (channel) => $q.resolve(channel),
-    };
+    SessionServiceMock = jasmine.createSpyObj('SessionService', [
+      'initialize',
+      'hasWriteAccess',
+    ]);
+    SessionServiceMock.initialize.and.callFake((channel) => $q.when(channel));
+    SessionServiceMock.hasWriteAccess.and.returnValue(true);
 
     CatalogServiceMock = jasmine.createSpyObj('CatalogService', [
       'load',
@@ -143,10 +146,17 @@ describe('ChannelService', () => {
   });
 
   it('should not save a reference to the channel when load fails', () => {
-    spyOn(SessionServiceMock, 'initialize').and.returnValue($q.reject());
+    SessionServiceMock.initialize.and.returnValue($q.reject());
     ChannelService._load(channelMock);
     $rootScope.$digest();
     expect(ChannelService.getChannel()).not.toEqual(channelMock);
+  });
+
+  it('should not fetch pagemodel when session does not have write permission', () => {
+    SessionServiceMock.hasWriteAccess.and.returnValue(false);
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    expect(HstService.doGetWithParams).not.toHaveBeenCalledWith(channelMock.mountId, undefined, 'newpagemodel');
   });
 
   it('should save a reference to the channel when load succeeds', () => {
