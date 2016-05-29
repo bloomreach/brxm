@@ -34,7 +34,7 @@ export class HippoTreeCtrl {
     itemEl.toggle();
     item.collapsed = !item.collapsed;
 
-    if (item.collapsed && this.$filter('getByProperty')(item.items, 'id', this.selectedItem.id, 'items')) {
+    if (this.selectable !== false && item.collapsed && this.$filter('getByProperty')(item.items, 'id', this.selectedItem.id, 'items')) {
       this.selectItem(item);
     }
   }

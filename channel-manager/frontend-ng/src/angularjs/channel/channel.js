@@ -21,7 +21,7 @@ import { channelPageActionsModule } from './page/actions/actions';
 import { channelActionsModule } from './actions/actions';
 import { channelSidenavModule } from './sidenav/sidenav';
 import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
-import { channelMenuModule } from './menu/menu';
+import { channelMenuModule } from './menu/editor';
 import { channelMaskModule } from './mask/mask';
 import { channelRelevanceModule } from './relevance/relevance';
 import { config } from './channel.config';

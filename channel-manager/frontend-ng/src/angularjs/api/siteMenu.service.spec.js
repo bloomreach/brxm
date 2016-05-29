@@ -157,9 +157,8 @@ describe('SiteMenuService', () => {
     $rootScope.$digest();
   });
 
-  // getMenuItem
   it('should return a main menu item by id', (done) => {
-    SiteMenuService.getMenuItem('testUuid', '2').then((menuItem) => {
+    SiteMenuService.getEditableMenuItem('testUuid', '2').then((menuItem) => {
       expect(menuItem).toBeDefined();
       expect(menuItem.id).toEqual('2');
       done();
@@ -168,7 +167,7 @@ describe('SiteMenuService', () => {
   });
 
   it('should return a child menu item by id', (done) => {
-    SiteMenuService.getMenuItem('testUuid', 'child1').then((menuItem) => {
+    SiteMenuService.getEditableMenuItem('testUuid', 'child1').then((menuItem) => {
       expect(menuItem).toBeDefined();
       expect(menuItem.id).toEqual('child1');
       done();
@@ -177,7 +176,7 @@ describe('SiteMenuService', () => {
   });
 
   it('should return a child menu item by id with parameters', (done) => {
-    SiteMenuService.getMenuItem('testUuid', '1').then((menuItem) => {
+    SiteMenuService.getEditableMenuItem('testUuid', '1').then((menuItem) => {
       expect(menuItem.localParameters.cssclass).toEqual('bike');
       done();
     });
@@ -185,18 +184,18 @@ describe('SiteMenuService', () => {
   });
 
   it('should return null when getting an unknown menu item', (done) => {
-    SiteMenuService.getMenuItem('testUuid', 'nosuchitem').then((menuItem) => {
+    SiteMenuService.getEditableMenuItem('testUuid', 'nosuchitem').then((menuItem) => {
       expect(menuItem).toBeNull();
       done();
     });
     $rootScope.$digest();
   });
 
-  it('should update the returned menu data when the title of a menu item changes', (done) => {
+  it('should not update the returned menu data when the title of a menu item changes', (done) => {
     SiteMenuService.getMenu('testUuid').then((menu) => {
-      SiteMenuService.getMenuItem('testUuid', 'child1').then((child1) => {
+      SiteMenuService.getEditableMenuItem('testUuid', 'child1').then((child1) => {
         child1.title = 'New title';
-        expect(menu.items[1].items[0].title).toEqual('New title');
+        expect(menu.items[1].items[0].title).toEqual('Child 1');
         done();
       });
     });
@@ -204,7 +203,7 @@ describe('SiteMenuService', () => {
   });
 
   it('should return externalLink split from the normal link', (done) => {
-    SiteMenuService.getMenuItem('testUuid', '1').then((menuItem) => {
+    SiteMenuService.getEditableMenuItem('testUuid', '1').then((menuItem) => {
       expect(menuItem).toBeDefined();
       expect(menuItem.externalLink).toBeDefined();
       expect(menuItem.externalLink).toEqual('http://onehippo.org');
@@ -214,7 +213,7 @@ describe('SiteMenuService', () => {
   });
 
   it('should return sitemapLink split from the normal link', (done) => {
-    SiteMenuService.getMenuItem('testUuid', '2').then((menuItem) => {
+    SiteMenuService.getEditableMenuItem('testUuid', '2').then((menuItem) => {
       expect(menuItem).toBeDefined();
       expect(menuItem.sitemapLink).toBeDefined();
       expect(menuItem.sitemapLink).toEqual('home');
@@ -226,9 +225,15 @@ describe('SiteMenuService', () => {
   // Create item
   it('should create a menu item', (done) => {
     SiteMenuService.loadMenu('testUuid').then(() => {
-      SiteMenuService.createMenuItem('testUuid', newMenuItem, 'testUuid').then(() => {
+      SiteMenuService.createEditableMenuItem('testUuid', newMenuItem, 'testUuid').then(() => {
         expect(HstService.doPostWithParams)
-          .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+          .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
+            position: 'after',
+            sibling: {
+              id: '3',
+              title: 'Three',
+            },
+          }, 'create', 'testUuid');
         done();
       });
     });
@@ -237,9 +242,15 @@ describe('SiteMenuService', () => {
 
   it('should create a menu item after specified sibling', (done) => {
     SiteMenuService.loadMenu('testUuid').then(() => {
-      SiteMenuService.createMenuItem('testUuid', newMenuItem, '1').then(() => {
+      SiteMenuService.createEditableMenuItem('testUuid', newMenuItem, '1').then(() => {
         expect(HstService.doPostWithParams)
-          .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after', sibling: '1' }, 'create', 'testUuid');
+          .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
+            position: 'after',
+            sibling: {
+              id: '3',
+              title: 'Three',
+            },
+          }, 'create', 'testUuid');
         done();
       });
     });
@@ -247,18 +258,22 @@ describe('SiteMenuService', () => {
   });
 
   it('should create a root menu item if parentId is not specified', (done) => {
-    SiteMenuService.createMenuItem('testUuid', newMenuItem).then(() => {
+    SiteMenuService.createEditableMenuItem('testUuid', newMenuItem).then(() => {
       expect(HstService.doPostWithParams)
-        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
+          position: 'after',
+        }, 'create', 'testUuid');
       done();
     });
     $rootScope.$digest();
   });
 
   it('should create a root menu item if parentId is not found', (done) => {
-    SiteMenuService.createMenuItem('testUuid', newMenuItem, 'non-existing').then(() => {
+    SiteMenuService.createEditableMenuItem('testUuid', newMenuItem, 'non-existing').then(() => {
       expect(HstService.doPostWithParams)
-        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
+          position: 'after',
+        }, 'create', 'testUuid');
       done();
     });
     $rootScope.$digest();
