@@ -15,8 +15,9 @@
   -->
 
 <div ng-switch="channelProperty.type">
-  <md-input-container ng-switch-when="CheckBox" class="{{channelProperty.qaClass}}">
-    <md-checkbox ng-model="channelProperty.value"
+  <md-input-container ng-switch-when="CheckBox" class="{{channelProperty.qaClass}}" layout="row">
+    <md-checkbox flex
+                 ng-model="channelProperty.value"
                  ng-disabled="channelProperty.readOnly"
                  aria-label="channelProperty.label">
       {{ channelProperty.label }}
