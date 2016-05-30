@@ -34,8 +34,13 @@ export class HippoTreeCtrl {
     itemEl.toggle();
     item.collapsed = !item.collapsed;
 
+    // when collapsing an item with a selected (grand)child, select the item itself
     if (item.collapsed && this.$filter('getByProperty')(item.items, 'id', this.selectedItem.id, 'items')) {
       this.selectItem(item);
+    }
+
+    if (angular.isFunction(this.options.toggleItem)) {
+      this.options.toggleItem(item);
     }
   }
 
@@ -44,6 +49,17 @@ export class HippoTreeCtrl {
       item = this.$modelValue;
     }
     this.selectedItem = item;
+
+    if (angular.isFunction(this.options.selectItem)) {
+      this.options.selectItem(item);
+    }
+  }
+
+  displayItem(item) {
+    if (angular.isFunction(this.options.displayItem)) {
+      return this.options.displayItem(item);
+    }
+    return true;
   }
 
   _collectNodes(items, map) {

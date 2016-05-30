@@ -22,6 +22,7 @@
   <li ng-repeat="item in item.items"
       ui-tree-node
       ng-include="'ui/tree/items.renderer.html'"
+      ng-if="hippoTree.displayItem(item)"
       ng-class="{active: hippoTree.selectedItem.id === item.id}"
       data-collapsed="item.collapsed">
   </li>
