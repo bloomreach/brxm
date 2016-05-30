@@ -54,8 +54,6 @@ describe('SiteMenuService', () => {
     ],
   };
 
-  const newMenuItem = { id: 'child1' };
-
   beforeEach(() => {
     module('hippo-cm');
 
@@ -70,10 +68,10 @@ describe('SiteMenuService', () => {
     HstService.doGet.and.returnValue($q.when({ data: testMenu }));
 
     spyOn(HstService, 'doPost');
-    HstService.doPost.and.returnValue($q.when({ data: newMenuItem.id }));
+    HstService.doPost.and.returnValue($q.when({ data: 'child1' }));
 
     spyOn(HstService, 'doPostWithParams');
-    HstService.doPostWithParams.and.returnValue($q.when({ data: newMenuItem.id }));
+    HstService.doPostWithParams.and.returnValue($q.when({ data: 'child1' }));
   });
 
   it('successfully retrieves a menu', (done) => {
@@ -224,8 +222,13 @@ describe('SiteMenuService', () => {
 
   // Create item
   it('should create a menu item', (done) => {
+    const newMenuItem = {
+      linkType: 'SITEMAPITEM',
+      title: 'NEW_MENU_ITEM_TITLE',
+      link: '',
+    };
     SiteMenuService.loadMenu('testUuid').then(() => {
-      SiteMenuService.createEditableMenuItem('testUuid', newMenuItem, 'testUuid').then(() => {
+      SiteMenuService.createEditableMenuItem().then(() => {
         expect(HstService.doPostWithParams)
           .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
             position: 'after',
@@ -236,45 +239,6 @@ describe('SiteMenuService', () => {
           }, 'create', 'testUuid');
         done();
       });
-    });
-    $rootScope.$digest();
-  });
-
-  it('should create a menu item after specified sibling', (done) => {
-    SiteMenuService.loadMenu('testUuid').then(() => {
-      SiteMenuService.createEditableMenuItem('testUuid', newMenuItem, '1').then(() => {
-        expect(HstService.doPostWithParams)
-          .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
-            position: 'after',
-            sibling: {
-              id: '3',
-              title: 'Three',
-            },
-          }, 'create', 'testUuid');
-        done();
-      });
-    });
-    $rootScope.$digest();
-  });
-
-  it('should create a root menu item if parentId is not specified', (done) => {
-    SiteMenuService.createEditableMenuItem('testUuid', newMenuItem).then(() => {
-      expect(HstService.doPostWithParams)
-        .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
-          position: 'after',
-        }, 'create', 'testUuid');
-      done();
-    });
-    $rootScope.$digest();
-  });
-
-  it('should create a root menu item if parentId is not found', (done) => {
-    SiteMenuService.createEditableMenuItem('testUuid', newMenuItem, 'non-existing').then(() => {
-      expect(HstService.doPostWithParams)
-        .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
-          position: 'after',
-        }, 'create', 'testUuid');
-      done();
     });
     $rootScope.$digest();
   });

@@ -15,12 +15,10 @@
  */
 
 export class MenuEditorCtrl {
-  constructor($q, $filter, $scope, $translate, SiteMenuService, FormStateService, HippoIframeService, DialogService,
+  constructor($scope, $translate, SiteMenuService, FormStateService, HippoIframeService, DialogService,
               FeedbackService) {
     'ngInject';
 
-    this.$q = $q;
-    this.$filter = $filter;
     this.$translate = $translate;
     this.SiteMenuService = SiteMenuService;
     this.FormStateService = FormStateService;
@@ -89,8 +87,7 @@ export class MenuEditorCtrl {
     this.isSaving.newItem = true;
 
     this.SiteMenuService.getMenu(this.menuUuid)
-      .then((menu) => this._createBlankMenuItem(menu))
-      .then((blankItem) => this.SiteMenuService.createEditableMenuItem(this.menuUuid, blankItem))
+      .then(() => this.SiteMenuService.createEditableMenuItem())
       .then((editableItem) => {
         this.FormStateService.setValid(true);
         this.isSaving.newItem = false;
@@ -106,20 +103,6 @@ export class MenuEditorCtrl {
 
   onBack() {
     this.HippoIframeService.reload().then(this.onDone);
-  }
-
-  // TODO: Move this logic into the SiteMenuService. Don't make this controller worry about the prototypeItem.
-  _createBlankMenuItem(menu) {
-    const incFilter = this.$filter('incrementProperty');
-    const result = {
-      linkType: 'SITEMAPITEM',
-      title: incFilter(menu.items, 'title', this.$translate.instant('SUBPAGE_MENU_EDITOR_NEW_ITEM_TITLE'), 'items'),
-      link: '',
-    };
-    if (angular.isObject(menu.prototypeItem)) {
-      result.localParameters = angular.copy(menu.prototypeItem.localParameters);
-    }
-    return result;
   }
 
   saveItem() {

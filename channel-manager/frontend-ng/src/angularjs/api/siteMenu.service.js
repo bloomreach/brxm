@@ -17,9 +17,11 @@
 const NEXT_SIBLING = 'after';
 
 export class SiteMenuService {
-  constructor(HstService) {
+  constructor($filter, $translate, HstService) {
     'ngInject';
 
+    this.$filter = $filter;
+    this.$translate = $translate;
     this.HstService = HstService;
 
     this.menu = {
@@ -54,25 +56,36 @@ export class SiteMenuService {
       .then(() => this.loadMenu(menuId));
   }
 
-  saveMenuItem(menuId, menuItem) {
-    // TODO: does the back-end choke if we send it excessive data?
+  saveMenuItem(menuId, editableMenuItem) {
+    // We copy the editable menu item "back" such that we don't lose state in case the saving fails.
+    const menuItem = angular.copy(editableMenuItem);
+
     this._removeCollapsedProperties(menuItem);
     this._extractLinkFromSitemapLinkOrExternalLink(menuItem);
+
     return this.HstService.doPost(menuItem, menuId)
       .then(() => {
         this._replaceMenuItem(this.menu.items, menuItem);
       });
   }
 
+  _createBlankMenuItem() {
+    const incFilter = this.$filter('incrementProperty');
+    const result = {
+      linkType: 'SITEMAPITEM',
+      title: incFilter(this.menu.items, 'title', this.$translate.instant('NEW_MENU_ITEM_TITLE'), 'items'),
+      link: '',
+    };
+    if (angular.isObject(this.menu.prototypeItem)) {
+      result.localParameters = angular.copy(this.menu.prototypeItem.localParameters);
+    }
+    return result;
+  }
+
   /**
    * Create a new menu item.
-
-   * @param menuId The menu id
-   * @param newItem The item to be created
-   * @returns {promise|Promise.promise|Q.promise}
    */
-  // TJE: bad API: we pass in the menu ID, and then combine it with local state (this.menu...).
-  createEditableMenuItem(menuId, newItem) {
+  createEditableMenuItem() {
     const options = {
       position: NEXT_SIBLING,
     };
@@ -80,7 +93,9 @@ export class SiteMenuService {
     if (lastItem) {
       options.sibling = lastItem;
     }
+    const menuId = this.menu.id;
     const parentId = menuId;
+    const newItem = this._createBlankMenuItem();
 
     return this.HstService.doPostWithParams(newItem, menuId, options, 'create', parentId)
       .then((response) => response.data)

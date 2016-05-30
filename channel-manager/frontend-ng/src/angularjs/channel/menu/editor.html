@@ -73,7 +73,8 @@
               <label>{{ 'TITLE' | translate }}</label>
               <input name="title"
                      ng-model="menuEditor.editingItem.title"
-                     required>
+                     required
+                     focus-if>
               <div ng-messages="form.title.$error">
                 <div ng-message="required">{{ 'TITLE_REQUIRED' | translate }}</div>
               </div>
