@@ -61,6 +61,8 @@
   "EXPERIMENT_LABEL_COMPLETED": "Experiment completed",
   "EXPERIMENT_LABEL_CREATED": "Experiment created",
   "EXPERIMENT_LABEL_RUNNING": "Experiment running",
+  "IFRAME_EDIT_MENU": "Edit menu",
+  "IFRAME_OPEN_DOCUMENT": "Open document",
   "LINK_REQUIRED": "Link is required",
   "MOVE": "Move",
   "PUBLISH": "Publish",
