@@ -23,14 +23,15 @@
 
       <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
 
-      <relevance-view-as ng-show="channelCtrl.isChannelLoaded()" render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
+      <relevance-view-as ng-show="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded()"
+                         render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
       <span flex></span>
 
       <md-button ng-repeat="viewPort in channelCtrl.viewPorts"
                  ng-click="channelCtrl.selectViewPort(viewPort)"
                  ng-class="{ 'md-accent': channelCtrl.isViewPortSelected(viewPort) }"
-                 ng-disabled="!channelCtrl.isChannelLoaded()"
+                 ng-disabled="!channelCtrl.isChannelLoaded || !channelCtrl.isPageLoaded()"
                  aria-label="{{ viewPort.titleKey | translate }}"
                  class="md-icon-button qa-button-viewport-{{viewPort.name}}">
         <md-icon title="{{ viewPort.titleKey | translate }}" class="material-icons">{{viewPort.icon}}</md-icon>
@@ -46,7 +47,7 @@
         <md-button class="qa-button-edit"
                    ng-class="{ 'md-accent md-raised': channelCtrl.isEditModeActive() }"
                    ng-if="channelCtrl.isEditable()"
-                   ng-disabled="!channelCtrl.isChannelLoaded() || channelCtrl.isCreatingPreview"
+                   ng-disabled="!channelCtrl.isChannelLoaded() || !channelCtrl.isPageLoaded() || channelCtrl.isCreatingPreview"
                    ng-click="channelCtrl.enterEditMode()">
           {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
         </md-button>
@@ -54,7 +55,7 @@
         <md-button class="qa-button-view"
                    ng-class="{ 'md-accent md-raised': !channelCtrl.isEditModeActive() }"
                    ng-if="channelCtrl.isEditable()"
-                   ng-disabled="!channelCtrl.isChannelLoaded() || channelCtrl.isCreatingPreview"
+                   ng-disabled="!channelCtrl.isChannelLoaded() || !channelCtrl.isPageLoaded() || channelCtrl.isCreatingPreview"
                    ng-click="channelCtrl.leaveEditMode()">
           {{ 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' | translate }}
         </md-button>
