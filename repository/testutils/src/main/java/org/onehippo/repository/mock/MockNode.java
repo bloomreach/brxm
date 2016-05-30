@@ -275,9 +275,12 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public Property setProperty(final String name, final Value[] values) throws RepositoryException {
-        Property p = getPropertyOrAddNew(name, values[0].getType());
-        p.setValue(values);
-        return p;
+        if (values.length > 0) {
+            return setProperty(name, values, values[0].getType());
+        } else {
+            // If type cannot be inferred by the given value, then let's assume it as string in mock utils..
+            return setProperty(name, values, PropertyType.STRING);
+        }
     }
 
     @Override

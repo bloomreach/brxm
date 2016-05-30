@@ -15,6 +15,16 @@
  */
 package org.onehippo.repository.mock;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -46,19 +56,8 @@ import javax.jcr.version.VersionManager;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.util.ISO8601;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.util.JcrConstants;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class MockNodeTest {
 
@@ -611,6 +610,8 @@ public class MockNodeTest {
         node.setProperty("datearray1", new MockValue[] { new MockValue(PropertyType.DATE, "2013-10-30T00:00:00.000Z"), new MockValue(PropertyType.DATE, "2013-10-31T00:00:00.000Z") });
         node.setProperty("doublearray1", new MockValue[] { new MockValue(PropertyType.DOUBLE, "1.23"), new MockValue(PropertyType.DOUBLE, "4.56") });
         node.setProperty("bigdecimalarray1", new MockValue[] { new MockValue(PropertyType.DECIMAL, "1.23E3"), new MockValue(PropertyType.DECIMAL, "4.56E3") });
+        node.setProperty("emtpystringarray1", new MockValue[0], PropertyType.STRING);
+        node.setProperty("emtpystringarray2", new MockValue[0]);
 
         Value [] values = node.getProperty("stringarray1").getValues();
         assertEquals(2, values.length);
@@ -641,6 +642,11 @@ public class MockNodeTest {
         assertEquals(2, values.length);
         assertEquals(new BigDecimal("1.23E3"), values[0].getDecimal());
         assertEquals(new BigDecimal("4.56E3"), values[1].getDecimal());
+
+        values = node.getProperty("emtpystringarray1").getValues();
+        assertEquals(0, values.length);
+        values = node.getProperty("emtpystringarray2").getValues();
+        assertEquals(0, values.length);
     }
 
     @Test
