@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,16 +63,16 @@
                 p: 'Normaal',
                 pre: 'Voorgedefinieerd'
             },
-            it: {
-                address: 'Indirizzo',
-                h1: 'Titolo 1',
-                h2: 'Titolo 2',
-                h3: 'Titolo 3',
-                h4: 'Titolo 4',
-                h5: 'Titolo 5',
-                h6: 'Titolo 6',
-                p: 'Normale',
-                pre: 'Preformattato'
+            zh: {
+                address: 'ZH',
+                h1: 'ZH',
+                h2: 'ZH',
+                h3: 'ZH',
+                h4: 'ZH',
+                h5: 'ZH',
+                h6: 'ZH',
+                p: 'ZH',
+                pre: 'ZH'
             }
         },
         stylesSet, language, element, i, len;
