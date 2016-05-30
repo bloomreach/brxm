@@ -16,7 +16,7 @@
   
   <properties>
     <hippo.l10n-tooling.version>1.0.0-SNAPSHOT</hippo.l10n-tooling.version>
-    <locales>fr,nl,de</locales>
+    <locales>fr,nl,de,zh</locales>
     <locale/>
     <format>Default</format>
     <full>false</full>
@@ -112,6 +112,18 @@
                 <classesDirectory>${project.build.outputDirectory}/de</classesDirectory>
               </configuration>
             </execution>
+            <execution>
+              <!-- zh locale classifier build -->
+              <id>zh_jar</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+              <configuration>
+                <classifier>zh</classifier>
+                <classesDirectory>${project.build.outputDirectory}/zh</classesDirectory>
+              </configuration>
+            </execution>
           </executions>
         </plugin>
       </plugins>
@@ -160,6 +172,14 @@
         <includes>
           <include>**/*_de.*</include>
           <include>**/de.json</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>resources</directory>
+        <targetPath>zh</targetPath>
+        <includes>
+          <include>**/*_zh.*</include>
+          <include>**/zh.json</include>
         </includes>
       </resource>
     </resources>
