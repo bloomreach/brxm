@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -280,6 +280,7 @@ if (!YAHOO.hippo.DateTime) {
             },
 
             _localizeCalendar : function(calendar, lang) {
+                console.log(lang);
                 var locale = {
                     en: function(cfg) {
                         // defaults to English
@@ -309,6 +310,15 @@ if (!YAHOO.hippo.DateTime) {
                         cfg.setProperty("WEEKDAYS_MEDIUM",["dim", "lun", "mar", "mer", "jeu", "ven", "sam"]);
                         cfg.setProperty("WEEKDAYS_SHORT", ["di", "lu", "ma", "me", "je", "ve", "sa"]);
                         cfg.setProperty("WEEKDAYS_1CHAR", ["d", "l", "m", "m", "j", "v", "s"]);
+                        cfg.setProperty("START_WEEKDAY",  ["1"]);
+                    },
+                    zh: function(cfg) {
+                        cfg.setProperty("MONTHS_LONG",    ["ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH"]);
+                        cfg.setProperty("MONTHS_SHORT",   ["ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH"]);
+                        cfg.setProperty("WEEKDAYS_LONG",  ["ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH"]);
+                        cfg.setProperty("WEEKDAYS_MEDIUM",["ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH"]);
+                        cfg.setProperty("WEEKDAYS_SHORT", ["ZH", "ZH", "ZH", "ZH", "ZH", "ZH", "ZH"]);
+                        cfg.setProperty("WEEKDAYS_1CHAR", ["Z", "Z", "Z", "Z", "Z", "Z", "Z"]);
                         cfg.setProperty("START_WEEKDAY",  ["1"]);
                     }
                 }[lang];
