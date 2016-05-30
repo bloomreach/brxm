@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+$help-icon-width: 24px;
+
 .mask {
   height: 100%;
   left: 0;
@@ -50,10 +52,9 @@ md-input-container.input-container-picker {
   cursor: default;
   position: absolute;
   top: 10px;
-  right: -24px;
+  right: -$help-icon-width;
 }
 
-md-tooltip.tooltip-multiline ._md-content {
-  height: auto;
-  white-space: pre;
+.tooltip-help-icon ._md-content {
+  max-width: $subpage-max-width - $help-icon-width;  // avoid that help icon tooltips get wider than the subpage
 }

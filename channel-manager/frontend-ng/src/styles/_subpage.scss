@@ -17,5 +17,5 @@
 }
 
 .subpage-form {
-  width: 570px; // avoid that subpage forms get too wide
+  width: $subpage-max-width; // avoid that subpage forms get too wide
 }
