@@ -16,7 +16,7 @@
 
 export class MenuEditorCtrl {
   constructor($q, $filter, $scope, $translate, SiteMenuService, FormStateService, HippoIframeService, DialogService,
-              FeedbackService) {
+              FeedbackService, ChannelService) {
     'ngInject';
 
     this.$q = $q;
@@ -27,6 +27,7 @@ export class MenuEditorCtrl {
     this.HippoIframeService = HippoIframeService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
+    this.ChannelService = ChannelService;
 
     this.isSaving = {};
 
@@ -62,6 +63,7 @@ export class MenuEditorCtrl {
 
         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
           SiteMenuService.moveMenuItem(this.menuUuid, sourceId, destId, dest.index)
+            .then(() => { this.isMenuModified = true; })
             .catch(() => this.onError({ key: 'ERROR_MENU_MOVE_FAILED' }));
         }
       },
@@ -92,6 +94,7 @@ export class MenuEditorCtrl {
       .then((menu) => this._createBlankMenuItem(menu))
       .then((blankItem) => this.SiteMenuService.createEditableMenuItem(this.menuUuid, blankItem))
       .then((editableItem) => {
+        this.isMenuModified = true;
         this.FormStateService.setValid(true);
         this.isSaving.newItem = false;
         this._startEditingItem(editableItem);
@@ -105,7 +108,11 @@ export class MenuEditorCtrl {
   }
 
   onBack() {
-    this.HippoIframeService.reload().then(this.onDone);
+    if (this.isMenuModified) {
+      this.HippoIframeService.reload();
+      this.ChannelService.recordOwnChange();
+    }
+    this.onDone();
   }
 
   // TODO: Move this logic into the SiteMenuService. Don't make this controller worry about the prototypeItem.
@@ -124,7 +131,10 @@ export class MenuEditorCtrl {
 
   saveItem() {
     this.SiteMenuService.saveMenuItem(this.menuUuid, this.editingItem)
-      .then(() => this.stopEditingItem())
+      .then(() => {
+        this.isMenuModified = true;
+        this.stopEditingItem();
+      })
       .catch((response) => {
         response = response || {};
 
@@ -134,7 +144,10 @@ export class MenuEditorCtrl {
 
   _doDelete() {
     return this.SiteMenuService.deleteMenuItem(this.menuUuid, this.editingItem.id)
-      .then(() => this.stopEditingItem())
+      .then(() => {
+        this.isMenuModified = true;
+        this.stopEditingItem();
+      })
       .catch((response) => {
         response = response || {};
 
