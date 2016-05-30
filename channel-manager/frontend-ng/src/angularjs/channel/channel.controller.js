@@ -67,6 +67,14 @@ export class ChannelCtrl {
     return this.isEditMode;
   }
 
+  toggleEditMode() {
+    if (this.isEditMode) {
+      this.leaveEditMode();
+    } else {
+      this.enterEditMode();
+    }
+  }
+
   isEditable() {
     return this.SessionService.hasWriteAccess();
   }

@@ -35,23 +35,13 @@
 
       <changes-menu on-manage-changes="channelCtrl.showSubpage('manage-changes')"></changes-menu>
 
-      <div class="button-group" layout>
-        <md-button class="qa-button-view md-raised"
-                   md-colors="{ background: '{{ channelCtrl.getViewButtonBgColor() }}' }"
-                   ng-if="channelCtrl.isEditable()"
-                   ng-disabled="channelCtrl.isCreatingPreview"
-                   ng-click="channelCtrl.leaveEditMode()">
-          {{ 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' | translate }}
-        </md-button>
-
-        <md-button class="qa-button-edit md-raised"
-                   md-colors="{ background: '{{ channelCtrl.getEditButtonBgColor() }}' }"
-                   ng-if="channelCtrl.isEditable()"
-                   ng-disabled="channelCtrl.isCreatingPreview"
-                   ng-click="channelCtrl.enterEditMode()">
-          {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
-        </md-button>
-      </div>
+      <md-switch class="md-primary"
+        ng-if="channelCtrl.isEditable()"
+        ng-disabled="channelCtrl.isCreatingPreview"
+        ng-change="channelCtrl.toggleEditMode"
+        ng-model="channelCtrl.isEditMode">
+        {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
+      </md-switch>
     </div>
   </md-toolbar>
 
