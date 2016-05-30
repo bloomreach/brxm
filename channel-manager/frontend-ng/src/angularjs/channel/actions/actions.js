@@ -20,6 +20,7 @@ import { channelSettingsDirective } from './settings/settings.directive';
 import { ChannelSettingsCtrl } from './settings/settings.controller';
 import { channelPropertyDirective } from './settings/property/property.directive';
 import { ChannelPropertyCtrl } from './settings/property/property.controller';
+import { helpIconDirective } from './settings/property/helpIcon/helpIcon.directive';
 
 export const channelActionsModule = angular
   .module('hippo-cm.channel.actions', ['ngMessages'])
@@ -28,4 +29,5 @@ export const channelActionsModule = angular
   .controller('ChannelSettingsCtrl', ChannelSettingsCtrl)
   .directive('channelSettings', channelSettingsDirective)
   .controller('ChannelPropertyCtrl', ChannelPropertyCtrl)
-  .directive('channelProperty', channelPropertyDirective);
+  .directive('channelProperty', channelPropertyDirective)
+  .directive('helpIcon', helpIconDirective);

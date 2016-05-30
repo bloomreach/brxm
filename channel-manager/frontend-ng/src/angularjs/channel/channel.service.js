@@ -46,11 +46,19 @@ export class ChannelService {
 
     this.channel = {};
 
-    this.CmsService.subscribe('channel-changed-in-extjs', this._onChannelChanged, this);
+    this.CmsService.subscribe('channel-changed-in-extjs', () => this._onChannelChanged());
   }
 
   _onChannelChanged() {
     this.$rootScope.$apply(() => this.reload());
+  }
+
+  clearChannel() {
+    this.channel = {};
+  }
+
+  hasChannel() {
+    return !!this.channel.id;
   }
 
   reload(channelId = this.channel.id) {
@@ -97,7 +105,10 @@ export class ChannelService {
 
     this.CatalogService.load(this.getMountId());
     this.SiteMapService.load(channel.siteMapId);
-    this._augmentChannelWithPrototypeInfo();
+
+    if (this.SessionService.hasWriteAccess()) {
+      this._augmentChannelWithPrototypeInfo();
+    }
   }
 
   getChannel() {

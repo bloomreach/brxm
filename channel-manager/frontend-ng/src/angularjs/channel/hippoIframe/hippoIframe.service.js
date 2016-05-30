@@ -32,8 +32,14 @@ export class HippoIframeService {
     this.pageLoaded = false;
   }
 
+  isPageLoaded() {
+    return this.pageLoaded;
+  }
+
   load(renderPathInfo) {
     if (renderPathInfo !== this.renderPathInfo) {
+      this.pageLoaded = false;
+
       // navigate to a new page
       const targetSrc = this.ChannelService.makePath(renderPathInfo);
       if (targetSrc !== this.src) {

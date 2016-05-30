@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,19 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@import 'styles/variables';
-
-@import '../bower_components/angular-material/angular-material.scss';
-
-@import 'styles/buttons';
-@import 'styles/iframe';
-@import 'styles/overlay';
-@import 'styles/scale';
-@import 'styles/lists';
-@import 'styles/sidenav';
-@import 'styles/channel';
-@import 'styles/subpage';
-@import 'styles/tree';
-@import 'styles/picker';
-@import 'styles/listing';
-@import 'styles/tooltips';
+md-tooltip ._md-content {
+  background-color: $tooltip-bg !important;
+}

@@ -37,10 +37,18 @@ export class ChannelPropertyCtrl {
     this.PathService = PathService;
 
     this.label = this.data.i18nResources[this.field] || this.field;
+    this.help = this.data.i18nResources[`${this.field}.help`];
+
+    this.definition = this.data.propertyDefinitions[this.field];
+    if (!this.definition) {
+      $log.warn(`Property definition for field '${this.field}' not found. Please check your ChannelInfo class.`);
+    }
+
     this.annotation = this._getFirstFieldAnnotation();
     this.type = this._getType();
     this.qaClass = this._getQaClass();
     this.readOnly = this.data.lockedBy && this.data.lockedBy !== ConfigService.cmsUser;
+    this.required = this.definition && this.definition.isRequired;
 
     if (this._isPickerField()) {
       this.CmsService.subscribe('picked', this._onPicked, this);
@@ -102,8 +110,7 @@ export class ChannelPropertyCtrl {
       }
     }
 
-    const propertyDefinition = this._getPropertyDefinition();
-    if (propertyDefinition && propertyDefinition.valueType === 'BOOLEAN') {
+    if (this.definition && this.definition.valueType === 'BOOLEAN') {
       return WIDGET_TYPES.CheckBox;
     }
 
@@ -112,13 +119,7 @@ export class ChannelPropertyCtrl {
   }
 
   _getFirstFieldAnnotation() {
-    const propertyDefinition = this._getPropertyDefinition();
-    if (!propertyDefinition) {
-      this.$log.warn(`Property definition for field '${this.field}' not found. Please check your ChannelInfo class.`);
-      return undefined;
-    }
-
-    const fieldAnnotations = propertyDefinition.annotations;
+    const fieldAnnotations = this.definition && this.definition.annotations;
     if (!fieldAnnotations || fieldAnnotations.length === 0) {
       return undefined;
     }
@@ -126,10 +127,6 @@ export class ChannelPropertyCtrl {
       this.$log.warn(`Field '${this.field}' contains too many annotations. Please check your ChannelInfo class.`);
     }
     return fieldAnnotations[0];
-  }
-
-  _getPropertyDefinition() {
-    return this.data.propertyDefinitions[this.field];
   }
 
   // Replace (subsequent) space and double quote characters with a hyphen. We could do more, but for now this is good enough

@@ -54,6 +54,7 @@ describe('ChannelProperty', () => {
       },
       i18nResources: {
         testField: 'Test Field',
+        'testField.help': 'Test Field help text',
       },
     };
   });
@@ -62,10 +63,14 @@ describe('ChannelProperty', () => {
     $scope = $rootScope.$new();
     $scope.field = field;
     $scope.value = value;
+    $scope.fieldError = { };
     $scope.data = channelInfoDescription;
 
     $element = angular.element(`
-      <div channel-property="{{field}}" channel-property-value="value" channel-properties-data="data"></div>
+      <div channel-property="{{field}}"
+           channel-property-value="value"
+           channel-properties-error="fieldError"
+           channel-properties-data="data"></div>
     `);
     $compile($element)($scope);
     $scope.$digest();
@@ -78,6 +83,7 @@ describe('ChannelProperty', () => {
 
     expect(ChannelPropertyCtrl.value).toBe('testValue');
     expect(ChannelPropertyCtrl.qaClass).toBe('qa-field-testField');
+    expect(ChannelPropertyCtrl.help).toBe('Test Field help text');
   });
 
   it('applies a fall-back strategy when determining the label', () => {

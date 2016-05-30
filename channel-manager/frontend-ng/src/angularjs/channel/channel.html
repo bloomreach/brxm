@@ -17,19 +17,21 @@
 <div layout="column" flex ng-hide="channelCtrl.isSubpageOpen()">
   <md-toolbar class="qa-toolbar">
     <div class="md-toolbar-tools">
-      <channel-sidenav-toggle></channel-sidenav-toggle>
+      <channel-sidenav-toggle disabled="!channelCtrl.isChannelLoaded()"></channel-sidenav-toggle>
 
       <channel-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
 
       <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
 
-      <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
+      <relevance-view-as ng-show="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded()"
+                         render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
       <span flex></span>
 
       <md-button ng-repeat="viewPort in channelCtrl.viewPorts"
                  ng-click="channelCtrl.selectViewPort(viewPort)"
                  ng-class="{ 'md-accent': channelCtrl.isViewPortSelected(viewPort) }"
+                 ng-disabled="!channelCtrl.isChannelLoaded || !channelCtrl.isPageLoaded()"
                  aria-label="{{ viewPort.titleKey | translate }}"
                  class="md-icon-button qa-button-viewport-{{viewPort.name}}">
         <md-icon title="{{ viewPort.titleKey | translate }}" class="material-icons">{{viewPort.icon}}</md-icon>
@@ -37,13 +39,15 @@
 
       <span flex></span>
 
-      <changes-menu on-manage-changes="channelCtrl.showSubpage('manage-changes')"></changes-menu>
+      <changes-menu ng-show="channelCtrl.isChannelLoaded()"
+                    on-manage-changes="channelCtrl.showSubpage('manage-changes')">
+      </changes-menu>
 
       <span class="button-group">
         <md-button class="qa-button-edit"
                    ng-class="{ 'md-accent md-raised': channelCtrl.isEditModeActive() }"
                    ng-if="channelCtrl.isEditable()"
-                   ng-disabled="channelCtrl.isCreatingPreview"
+                   ng-disabled="!channelCtrl.isChannelLoaded() || !channelCtrl.isPageLoaded() || channelCtrl.isCreatingPreview"
                    ng-click="channelCtrl.enterEditMode()">
           {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
         </md-button>
@@ -51,12 +55,15 @@
         <md-button class="qa-button-view"
                    ng-class="{ 'md-accent md-raised': !channelCtrl.isEditModeActive() }"
                    ng-if="channelCtrl.isEditable()"
-                   ng-disabled="channelCtrl.isCreatingPreview"
+                   ng-disabled="!channelCtrl.isChannelLoaded() || !channelCtrl.isPageLoaded() || channelCtrl.isCreatingPreview"
                    ng-click="channelCtrl.leaveEditMode()">
           {{ 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' | translate }}
         </md-button>
       </span>
     </div>
+    <md-progress-linear md-mode="indeterminate"
+                        ng-disabled="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded()">
+    </md-progress-linear>
   </md-toolbar>
 
   <md-content layout="row" flex>
@@ -65,6 +72,7 @@
     <hippo-iframe
       flex
       layout="row"
+      ng-show="channelCtrl.isChannelLoaded()"
       edit-mode="channelCtrl.isEditMode"
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>

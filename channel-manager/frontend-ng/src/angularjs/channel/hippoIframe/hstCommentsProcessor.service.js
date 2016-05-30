@@ -28,7 +28,7 @@ export class HstCommentsProcessorService {
 
   run(document, callback) {
     if (!document) {
-      return;
+      throw new Error('DOM document is empty');
     }
     // IE doesn't support 'evaluate', see
     // https://developer.mozilla.org/en/docs/Web/API/Document/evaluate#Browser_compatibility

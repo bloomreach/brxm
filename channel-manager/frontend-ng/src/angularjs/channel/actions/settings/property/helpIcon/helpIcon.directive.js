@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-export function channelPropertyDirective() {
+export function helpIconDirective() {
   'ngInject';
 
   return {
-    restrict: 'A',
-    bindToController: {
-      field: '@channelProperty',
-      value: '=channelPropertyValue',
-      error: '=channelPropertiesError',
-      data: '=channelPropertiesData',
+    restrict: 'E',
+    scope: {
+      text: '@',
     },
-    templateUrl: 'channel/actions/settings/property/property.html',
-    controller: 'ChannelPropertyCtrl',
-    controllerAs: 'channelProperty',
+    templateUrl: 'channel/actions/settings/property/helpIcon/helpIcon.html',
   };
 }

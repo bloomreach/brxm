@@ -14,11 +14,12 @@
   limitations under the License.
   -->
 
-<subpage-toolbar title="{{ 'SUBPAGE_CHANGEMANAGEMENT_TITLE' | translate }}"
-    on-back="changeMan.goBack()">
+<subpage-toolbar flex="none"
+                 title="{{ 'SUBPAGE_CHANGEMANAGEMENT_TITLE' | translate }}"
+                 on-back="changeMan.goBack()">
 </subpage-toolbar>
 
-<subpage-content class="qa-change-management" flex>
+<subpage-content flex class="qa-change-management">
   <md-list>
     <md-list-item>
       <md-button class="md-secondary" ng-click="changeMan.discardAllChanges()">{{ 'DISCARD_ALL' | translate }}</md-button>

@@ -15,7 +15,8 @@
  */
 
 export class MenuEditorCtrl {
-  constructor($q, $filter, $scope, $translate, SiteMenuService, FormStateService, HippoIframeService, DialogService, PickerService) {
+  constructor($q, $filter, $scope, $translate, SiteMenuService, FormStateService, HippoIframeService, DialogService,
+              FeedbackService, ChannelService, PickerService) {
     'ngInject';
 
     this.$q = $q;
@@ -25,6 +26,8 @@ export class MenuEditorCtrl {
     this.FormStateService = FormStateService;
     this.HippoIframeService = HippoIframeService;
     this.DialogService = DialogService;
+    this.FeedbackService = FeedbackService;
+    this.ChannelService = ChannelService;
     this.PickerService = PickerService;
 
     this.isSaving = {};
@@ -32,22 +35,15 @@ export class MenuEditorCtrl {
     SiteMenuService.loadMenu(this.menuUuid)
       .then((menu) => {
         this.items = menu.items;
-        this.selectedItem = this.items.length > 0 ? this.items[0] : undefined;
 
+        // Currently, the SiteMenuService is loading and maintaining the menu structure.
+        // Creation or deletion of a menu item trigger a full reload of the menu, and the
+        // $watch below makes sure the MenuEditorCtrl becomes aware of these reloads.
+        // TODO: this is ugly, inefficient and hard to maintain. We should improve this.
         $scope.$watch(
           () => menu.items,
           () => {
             this.items = menu.items;
-            $scope.$broadcast('menu-items-changed');
-          }
-        );
-
-        $scope.$watch(
-          () => this.selectedItem,
-          (current, last) => {
-            if (current && last && current.id !== last.id) {
-              this._saveIfDirty(last);
-            }
           }
         );
       })
@@ -68,69 +64,48 @@ export class MenuEditorCtrl {
 
         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
           SiteMenuService.moveMenuItem(this.menuUuid, sourceId, destId, dest.index)
+            .then(() => { this.isMenuModified = true; })
             .catch(() => this.onError({ key: 'ERROR_MENU_MOVE_FAILED' }));
-        }
-
-        if (this.selectedItem.id !== sourceId) {
-          this._saveIfDirty(this.selectedItem).then(() => this.selectItem(sourceId));
         }
       },
     };
   }
 
-  selectItem(itemId) {
-    if (!this.selectedItem || this.selectedItem.id !== itemId) {
-      this.SiteMenuService.getMenuItem(this.menuUuid, itemId)
-        .then((item) => {
-          this.selectedItem = item;
-        });
-    }
+  _startEditingItem(item) {
+    this.editingItem = item;
   }
 
   stopEditingItem() {
     this.editingItem = null;
   }
 
-  setupItem(item) {
-    if (item.linkType === 'SITEMAPITEM') {
-      item.sitemapLink = item.link;
-    } else if (item.linkType === 'EXTERNAL') {
-      item.externalLink = item.link;
-    }
-    this.editingItem = item;
-  }
-
-  editItem(item) {
+  toggleEditState(item) {
     if (!this.editingItem || this.editingItem.id !== item.id) {
-      this.SiteMenuService.getMenuItem(this.menuUuid, item.id)
-        .then((retrievedItem) => {
-          this.setupItem(retrievedItem);
-        });
+      this.SiteMenuService.getEditableMenuItem(this.menuUuid, item.id)
+        .then((editableItem) => this._startEditingItem(editableItem));
     } else {
       this.stopEditingItem();
     }
   }
 
   addItem() {
-    this._saveIfDirty(this.selectedItem).then(() => {
-      if (!this.selectedItem) {
-        return;
-      }
+    this.isSaving.newItem = true;
 
-      this.isSaving.newItem = true;
+    this.SiteMenuService.getMenu(this.menuUuid)
+      .then((menu) => this._createBlankMenuItem(menu))
+      .then((blankItem) => this.SiteMenuService.createEditableMenuItem(this.menuUuid, blankItem))
+      .then((editableItem) => {
+        this.isMenuModified = true;
+        this.FormStateService.setValid(true);
+        this.isSaving.newItem = false;
+        this._startEditingItem(editableItem);
+      })
+      .catch((response) => {
+        response = response || {};
 
-      this.SiteMenuService.getMenu(this.menuUuid)
-        .then((menu) => this._createBlankMenuItem(menu))
-        .then((blankItem) => this.SiteMenuService.createMenuItem(this.menuUuid, blankItem, this.selectedItem.id))
-        .then((newItem) => {
-          this.FormStateService.setValid(true);
-          this.isSaving.newItem = false;
-          this.selectedItem = newItem;
-        }).catch((error) => {
-          this.isSaving.newItem = false;
-          this.onError({ key: 'ERROR_MENU_CREATE_FAILED', params: [error] });
-        });
-    });
+        this.isSaving.newItem = false;
+        this.onError({ key: 'ERROR_MENU_CREATE_FAILED', params: response.data });
+      });
   }
 
   linkPick(targetEvent) {
@@ -161,27 +136,14 @@ export class MenuEditorCtrl {
   }
 
   onBack() {
-    this.HippoIframeService.reload().then(this.onDone);
-  }
-
-  _saveIfDirty(item) {
-    if (this.FormStateService.isDirty()) {
-      if (!this.FormStateService.isValid()) {
-        return this.$q.reject();
-      }
-      const defer = this.$q.defer();
-      this.SiteMenuService.saveMenuItem(item).then(
-        () => defer.resolve(),
-        (error) => {
-          this.onError({ key: 'ERROR_MENU_SAVE_FAILED', params: [error] });
-          this.FormStateService.setValid(false);
-          defer.reject();
-        });
-      return defer.promise;
+    if (this.isMenuModified) {
+      this.HippoIframeService.reload();
+      this.ChannelService.recordOwnChange();
     }
-    return this.$q.when();
+    this.onDone();
   }
 
+  // TODO: Move this logic into the SiteMenuService. Don't make this controller worry about the prototypeItem.
   _createBlankMenuItem(menu) {
     const incFilter = this.$filter('incrementProperty');
     const result = {
@@ -195,26 +157,36 @@ export class MenuEditorCtrl {
     return result;
   }
 
-  saveItem(item) {
-    this.SiteMenuService.saveMenuItem(this.menuUuid, item).then(() => {
-      this.stopEditingItem(item);
-    }).catch(() => {
-      this.onError({ key: 'ERROR_MENU_ITEM_SAVE_FAILED' });
-    });
+  saveItem() {
+    this.SiteMenuService.saveMenuItem(this.menuUuid, this.editingItem)
+      .then(() => {
+        this.isMenuModified = true;
+        this.stopEditingItem();
+      })
+      .catch((response) => {
+        response = response || {};
+
+        this.FeedbackService.showErrorOnSubpage('ERROR_MENU_ITEM_SAVE_FAILED', response.data);
+      });
   }
 
-  _doDelete(item) {
-    return this.SiteMenuService.deleteMenuItem(this.menuUuid, item.id).then(() => {
-      this.stopEditingItem(item);
-    }).catch(() => {
-      this.onError({ key: 'ERROR_MENU_ITEM_DELETE_FAILED' });
-    });
+  _doDelete() {
+    return this.SiteMenuService.deleteMenuItem(this.menuUuid, this.editingItem.id)
+      .then(() => {
+        this.isMenuModified = true;
+        this.stopEditingItem();
+      })
+      .catch((response) => {
+        response = response || {};
+
+        this.FeedbackService.showErrorOnSubpage('ERROR_MENU_ITEM_DELETE_FAILED', response.data);
+      });
   }
 
-  _confirmDelete(item) {
+  _confirmDelete() {
     const confirm = this.DialogService.confirm()
       .textContent(this.$translate.instant('CONFIRM_DELETE_MENU_ITEM_MESSAGE', {
-        menuItem: item.title,
+        menuItem: this.editingItem.title,
       }))
       .ok(this.$translate.instant('DELETE'))
       .cancel(this.$translate.instant('CANCEL'));
@@ -222,7 +194,11 @@ export class MenuEditorCtrl {
     return this.DialogService.show(confirm);
   }
 
-  deleteItem(item) {
-    this._confirmDelete(item).then(() => this._doDelete(item));
+  deleteItem() {
+    this._confirmDelete().then(() => this._doDelete());
+  }
+
+  hasLocalParameters() {
+    return Object.keys(this.editingItem.localParameters).length !== 0;
   }
 }

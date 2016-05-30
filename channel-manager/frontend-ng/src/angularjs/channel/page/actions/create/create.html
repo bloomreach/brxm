@@ -14,12 +14,13 @@
   limitations under the License.
   -->
 
-<subpage-toolbar title="{{ 'SUBPAGE_PAGE_CREATE_TITLE' | translate }}"
+<subpage-toolbar flex="none"
+                 title="{{ 'SUBPAGE_PAGE_CREATE_TITLE' | translate }}"
                  on-back="pageCreate.onDone()"
                  mode="cancel">
 </subpage-toolbar>
 
-<subpage-content layout="row" class="qa-page-create" flex>
+<subpage-content flex layout="row" class="qa-page-add">
   <form name="form"
         flex="initial"
         class="qa-subpage"

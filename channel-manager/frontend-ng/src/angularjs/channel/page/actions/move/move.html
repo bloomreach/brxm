@@ -14,17 +14,18 @@
   limitations under the License.
   -->
 
-<subpage-toolbar title="{{ pageMove.subpageTitle }}"
+<subpage-toolbar flex="none"
+                 title="{{ pageMove.subpageTitle }}"
                  on-back="pageMove.onDone()"
                  mode="cancel">
 </subpage-toolbar>
 
-<subpage-content layout="row" class="qa-page-move" flex>
+<subpage-content flex layout="row" class="qa-page-move">
   <form name="form"
-               flex="initial"
-               class="qa-subpage"
-               ng-submit="form.$valid && pageMove.move()"
-               novalidate>
+        flex="initial"
+        class="qa-subpage"
+        ng-submit="form.$valid && pageMove.move()"
+        novalidate>
     <div layout="row">
       <md-input-container class="md-block" flex>
         <label>{{ 'SUBPAGE_PAGE_LABEL_URL_STEM' | translate }}</label>

@@ -26,3 +26,44 @@
     cursor: not-allowed;
   }
 }
+
+// let a linear progress indicator float 'above' the bottom of a toolbar
+// instead of taking up extra space below the toolbar
+md-toolbar > md-progress-linear {
+  bottom: 0;
+  position: absolute;
+}
+
+md-input-container.input-container-picker {
+  img {
+    max-width: 100%;
+    &:not(.readonly) {
+      cursor: pointer;
+    }
+  }
+  .md-input {
+    order: 0;
+    &:not([disabled]) {
+      cursor: pointer;
+    }
+  }
+  .md-icon-button {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.help-icon {
+  cursor: default;
+  position: absolute;
+  top: 10px;
+  right: -24px;
+}
+
+// avoid that help icon tooltips grow wider than the subpage; wrap text when necessary.
+.tooltip-help-icon ._md-content {
+  height: auto;
+  max-width: 500px;
+  text-overflow: initial;
+  white-space: initial;
+}

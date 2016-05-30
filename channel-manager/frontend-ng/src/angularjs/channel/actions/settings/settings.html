@@ -14,12 +14,13 @@
   limitations under the License.
   -->
 
-<subpage-toolbar title="{{ channelSettings.subpageTitle }}"
+<subpage-toolbar flex="none"
+                 title="{{ channelSettings.subpageTitle }}"
                  on-back="channelSettings.onDone()"
                  mode="cancel">
 </subpage-toolbar>
 
-<subpage-content layout="row" class="qa-channel-settings" flex>
+<subpage-content flex layout="row" class="qa-channel-settings">
   <form name="form"
         flex="initial"
         class="qa-subpage"
@@ -31,6 +32,7 @@
       <div ng-repeat="field in fieldGroup.value"
            channel-property="{{field}}"
            channel-property-value="channelSettings.values[field]"
+           channel-properties-error="form[field].$error"
            channel-properties-data="channelSettings.channelInfoDescription">
       </div>
     </div>
@@ -39,6 +41,7 @@
          ng-repeat="field in channelSettings.getUngroupedFields()"
          channel-property="{{field}}"
          channel-property-value="channelSettings.values[field]"
+         channel-properties-error="form[field].$error"
          channel-properties-data="channelSettings.channelInfoDescription">
     </div>
 

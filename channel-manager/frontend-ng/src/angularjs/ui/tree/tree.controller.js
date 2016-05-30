@@ -35,7 +35,7 @@ export class HippoTreeCtrl {
     item.collapsed = !item.collapsed;
 
     // when collapsing an item with a selected (grand)child, select the item itself
-    if (item.collapsed && this.$filter('getByProperty')(item.items, 'id', this.selectedItem.id, 'items')) {
+    if (this.selectable !== false && item.collapsed && this.$filter('getByProperty')(item.items, 'id', this.selectedItem.id, 'items')) {
       this.selectItem(item);
     }
 
