@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -70,33 +70,7 @@
                 }),
 
                 disableSelection: true,
-                trackMouseOver: false,
-
-                listeners: {
-                    cellclick: function(grid, rowIndex, columnIndex, e) {
-                        var record = this.getStore().getAt(rowIndex);
-                        switch (e.getTarget().name) {
-                            case 'show-channel':
-                                this.selectedChannelId = record.get('id');
-                                e.stopEvent();
-                                this.fireEvent('channel-selected', this.selectedChannelId, record);
-                                break;
-                            case 'show-preview':
-                                this.synchronousAjaxRequest(
-                                        record.get('contextPath') + this.composerRestMountPath + '/cafebabe-cafe-babe-cafe-babecafebabe./previewmode/' + record.get('hostname') + '?FORCE_CLIENT_HOST=true',
-                                        {
-                                            'CMS-User': this.cmsUser,
-                                            'FORCE_CLIENT_HOST': 'true'
-                                        }
-                                );
-                                break;
-                            case 'show-live':
-                                break;
-                        }
-                    },
-                    scope: this
-                }
-
+                trackMouseOver: false
             });
 
             Hippo.ChannelManager.ChannelGridPanel.superclass.constructor.call(this, config);
@@ -131,6 +105,36 @@
                     self.el.dom.style.height = (arguments[0].body.h - 55) + 'px';
                 }, true);
             }, this, {single: true});
+
+            this.on('cellclick', this._onCellClick);
+        },
+
+        _onCellClick: function(grid, rowIndex, columnIndex, e) {
+            var record = this.getStore().getAt(rowIndex), hstMountPoint;
+            switch (e.getTarget().name) {
+                case 'show-channel':
+                    this.selectedChannelId = record.get('id');
+                    e.stopEvent();
+                    this.fireEvent('channel-selected', this.selectedChannelId, record);
+                    break;
+                case 'show-preview':
+                    this.synchronousAjaxRequest(
+                      record.get('contextPath') + this.composerRestMountPath + '/cafebabe-cafe-babe-cafe-babecafebabe./previewmode/' + record.get('hostname') + '?FORCE_CLIENT_HOST=true',
+                      {
+                          'CMS-User': this.cmsUser,
+                          'FORCE_CLIENT_HOST': 'true'
+                      }
+                    );
+                    break;
+                case 'open-hstconfigeditor':
+                    hstMountPoint = record.get('hstMountPoint');
+                    this.selectedChannelId = record.get('id');
+                    e.stopEvent();
+                    this.fireEvent('edit-hst-config', this.selectedChannelId, hstMountPoint);
+                    break;
+                case 'show-live':
+                    break;
+            }
         },
 
         // Selects the row of the channel with this channel id. If no such channel exists, the selection will be cleared.

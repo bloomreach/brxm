@@ -24,6 +24,7 @@ import { getByPropertyFilter } from './filter/getByProperty.filter';
 import { incrementPropertyFilter } from './filter/incrementProperty.filter';
 import { illegalCharactersDirective } from './directive/illegalCharacters.directive';
 import { stopPropagationDirective } from './directive/stopPropagation.directive';
+import { scrollToIfDirective } from './directive/scrollToIf.directive';
 
 export const utilsModule = angular
   .module('hippo-cm.utils', [])
@@ -36,4 +37,5 @@ export const utilsModule = angular
   .filter('startWithSlash', startWithSlashFilter)
   .directive('illegalCharacters', illegalCharactersDirective)
   .directive('stopPropagation', stopPropagationDirective)
+  .directive('scrollToIf', scrollToIfDirective)
   .factory('FormStateService', FormStateServiceFactory);

@@ -23,6 +23,7 @@ export function hippoTreeDirective() {
     bindToController: {
       options: '=',
       items: '=',
+      selectable: '=',
       selectedItem: '=',
       draggable: '=',
     },
