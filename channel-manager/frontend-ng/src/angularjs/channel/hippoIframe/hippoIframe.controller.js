@@ -51,6 +51,8 @@ export class HippoIframeCtrl {
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
 
+    this.PageStructureService.clearParsedElements();
+
     this.iframeJQueryElement = $element.find('iframe');
     this.iframeJQueryElement.on('load', () => this.onLoad());
 

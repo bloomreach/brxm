@@ -59,6 +59,7 @@
     },
 
     loadChannel: function(channelId, initialPath) {
+      this.hostToIFrame.publish('clear-channel');
       this._setChannel(channelId).when(function(channelRecord) {
         this.hostToIFrame.publish('load-channel', channelRecord.json, initialPath);
       }.bind(this));
