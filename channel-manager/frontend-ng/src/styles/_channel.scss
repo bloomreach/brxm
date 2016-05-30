@@ -26,3 +26,37 @@
     cursor: not-allowed;
   }
 }
+
+md-input-container.input-container-picker {
+  img {
+    max-width: 100%;
+    &:not(.readonly) {
+      cursor: pointer;
+    }
+  }
+  .md-input {
+    order: 0;
+    &:not([disabled]) {
+      cursor: pointer;
+    }
+  }
+  .md-icon-button {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.help-icon {
+  cursor: default;
+  position: absolute;
+  top: 10px;
+  right: -24px;
+}
+
+// avoid that help icon tooltips grow wider than the subpage; wrap text when necessary.
+.tooltip-help-icon ._md-content {
+  height: auto;
+  max-width: $subpage-max-width;
+  text-overflow: initial;
+  white-space: initial;
+}
