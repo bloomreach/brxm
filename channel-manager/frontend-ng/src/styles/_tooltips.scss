@@ -18,7 +18,7 @@ md-tooltip {
     background-color: $tooltip-bg !important;
   }
 
-  .tooltip-multiline ._md-content {
+  &.tooltip-multiline ._md-content {
     height: auto;
     white-space: pre;
   }
