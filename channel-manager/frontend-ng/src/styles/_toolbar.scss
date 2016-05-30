@@ -12,6 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+md-toolbar {
+  &.hippo-toolbar {
+    background: $grey-200;
+    color: $text-dark;
+    min-height: 40px;
+
+    .md-icon-button {
+      height: 40px;
+      padding-bottom: 0;
+      padding-top: 0;
+      width: 48px;
+    }
+
+    md-icon {
+      height: 32px;
+      width: 32px;
+    }
+  }
+}
+
 .md-toolbar-tools .md-button {
   text-transform: none;
 }

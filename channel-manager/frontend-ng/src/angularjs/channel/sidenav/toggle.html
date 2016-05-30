@@ -15,10 +15,10 @@
   -->
 
 <md-button class="md-icon-button md-icon-button-sidenav qa-button-sidenav"
-           aria-label="{{ 'TOOLBAR_BUTTON_SIDENAV' | translate }}"
-           ng-click="toggle.toggleSidenav()"
-           ng-class="{ 'md-accent': toggle.isSidenavOpen() }">
-  <md-icon title="{{ 'TOOLBAR_BUTTON_SIDENAV' | translate }}" md-colors="{ color: 'background-A400' }">
-   menu
-  </md-icon>
+  aria-label="{{ 'TOOLBAR_BUTTON_SIDENAV' | translate }}"
+  ng-click="toggle.toggleSidenav()"
+  ng-class="{ 'md-accent': toggle.isSidenavOpen() }">
+  <md-icon title="{{ 'TOOLBAR_BUTTON_SIDENAV' | translate }}"
+    md-colors="{ color: 'background-A400' }"
+    md-svg-src="images/sidepanel.svg" />
 </md-button>
