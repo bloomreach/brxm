@@ -79,10 +79,11 @@ export class ChannelCtrl {
   }
 
   _clear() {
-    this.hideSubpage();
-    this.leaveEditMode();
-    this.ChannelService.clearChannel();
-    this.$rootScope.$digest();
+    this.$rootScope.$apply(() => {
+      this.hideSubpage();
+      this.leaveEditMode();
+      this.ChannelService.clearChannel();
+    });
   }
 
   isChannelLoaded() {
