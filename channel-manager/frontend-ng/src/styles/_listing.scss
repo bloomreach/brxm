@@ -13,7 +13,15 @@
 // limitations under the License.
 
 .hippo-listing {
-  border-left: 1px solid $black-shadow;
+  border-left: 1px solid $picker-border-color;
+
+  .md-subheader {
+    line-height: 18px;
+
+    span {
+      padding-left: 56px;
+    }
+  }
 }
 
 md-list-item.active {

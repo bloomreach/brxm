@@ -16,14 +16,10 @@
   width: 800px;
   min-height: 250px;
   height: 350px;
-  border-bottom: 1px solid $black-shadow;
+  border-bottom: 1px solid $picker-border-color;
 
   .md-subheader {
-    background-color: #F7F7F7;
-
-    span {
-      padding-left: 56px;
-    }
+    background-color: $picker-subheader-bgcolor;
   }
 
   .picker-type select {
