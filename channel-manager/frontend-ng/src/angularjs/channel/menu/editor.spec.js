@@ -28,14 +28,13 @@ describe('MenuEditor', () => {
   let DialogService;
   let FeedbackService;
   let HippoIframeService;
-  let FormStateService;
   let menu;
   let MenuEditorCtrl;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$q_, _$rootScope_, _$compile_, _SiteMenuService_, _DialogService_, _FeedbackService_, _HippoIframeService_, _FormStateService_) => {
+    inject((_$q_, _$rootScope_, _$compile_, _SiteMenuService_, _DialogService_, _FeedbackService_, _HippoIframeService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $compile = _$compile_;
@@ -43,7 +42,6 @@ describe('MenuEditor', () => {
       DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
-      FormStateService = _FormStateService_;
     });
 
     menu = { items: [] };
@@ -115,19 +113,7 @@ describe('MenuEditor', () => {
 
     describe('addItem', () => {
       it('should add an item', () => {
-        spyOn(SiteMenuService, 'getMenu').and.callFake(() => {
-          const deferred = $q.defer();
-          deferred.resolve();
-          return deferred.promise;
-        });
-        spyOn(SiteMenuService, 'createEditableMenuItem').and.callFake(() => {
-          const deferred = $q.defer();
-          deferred.resolve({
-            id: 15,
-          });
-          return deferred.promise;
-        });
-        spyOn(FormStateService, 'setValid');
+        spyOn(SiteMenuService, 'createEditableMenuItem').and.returnValue($q.when({ id: 15 }));
         spyOn(MenuEditorCtrl, '_startEditingItem');
 
         MenuEditorCtrl.menuUuid = 33;
@@ -135,84 +121,55 @@ describe('MenuEditor', () => {
           id: 12,
         };
         MenuEditorCtrl.addItem();
-        expect(SiteMenuService.getMenu).toHaveBeenCalledWith(33);
-        $rootScope.$apply();
+        expect(MenuEditorCtrl.isSaving.newItem).toBe(true);
         expect(SiteMenuService.createEditableMenuItem).toHaveBeenCalled();
         $rootScope.$apply();
-        expect(FormStateService.setValid).toHaveBeenCalledWith(true);
-        expect(MenuEditorCtrl.isSaving.newItem).toBe(false);
+        expect(MenuEditorCtrl.isSaving.newItem).toBeFalsy();
         expect(MenuEditorCtrl._startEditingItem).toHaveBeenCalledWith({
           id: 15,
         });
       });
+
       it('should fail when adding an item', () => {
-        spyOn(SiteMenuService, 'getMenu').and.callFake(() => {
-          const deferred = $q.defer();
-          deferred.reject({
-            data: 'bad!',
-          });
-          return deferred.promise;
-        });
+        const data = { key: 'value' };
+        const error = { data };
+        spyOn(SiteMenuService, 'createEditableMenuItem').and.returnValue($q.reject(error));
         spyOn(MenuEditorCtrl, 'onError');
 
         MenuEditorCtrl.menuUuid = 77;
 
         MenuEditorCtrl.addItem();
-        expect(SiteMenuService.getMenu).toHaveBeenCalledWith(77);
         $rootScope.$apply();
         expect(MenuEditorCtrl.onError).toHaveBeenCalledWith({
           key: 'ERROR_MENU_CREATE_FAILED',
-          params: 'bad!',
+          params: data,
         });
       });
     });
 
     describe('toggleEditState', () => {
       it('calls the appropriate function after checking if an item is already being edited', () => {
-        spyOn(SiteMenuService, 'getEditableMenuItem').and.callFake(() => {
-          const deferred = $q.defer();
-          deferred.resolve({
-            id: 15,
-          });
-          return deferred.promise;
-        });
+        spyOn(SiteMenuService, 'getEditableMenuItem').and.returnValue($q.when({ id: 15 }));
         spyOn(MenuEditorCtrl, '_startEditingItem');
 
-        MenuEditorCtrl.menuUuid = 66;
-        MenuEditorCtrl.editingItem = {
-          id: 12,
-        };
-        const item = {
-          id: 55,
-        };
-        MenuEditorCtrl.toggleEditState(item);
-        expect(SiteMenuService.getEditableMenuItem).toHaveBeenCalledWith(66, 55);
+        MenuEditorCtrl.editingItem = { id: 12 };
+        MenuEditorCtrl.toggleEditState({ id: 55 });
+        expect(SiteMenuService.getEditableMenuItem).toHaveBeenCalledWith(55);
         $rootScope.$apply();
-        expect(MenuEditorCtrl._startEditingItem).toHaveBeenCalledWith({
-          id: 15,
-        });
+        expect(MenuEditorCtrl._startEditingItem).toHaveBeenCalledWith({ id: 15 });
       });
+
       it('calls stops editing an item if an item is already being edited', () => {
         spyOn(MenuEditorCtrl, 'stopEditingItem');
-
-        MenuEditorCtrl.editingItem = {
-          id: 12,
-        };
-        const item = {
-          id: 12,
-        };
-        MenuEditorCtrl.toggleEditState(item);
+        MenuEditorCtrl.editingItem = { id: 12 };
+        MenuEditorCtrl.toggleEditState({ id: 12 });
         expect(MenuEditorCtrl.stopEditingItem).toHaveBeenCalled();
       });
     });
 
     describe('onBack', () => {
       it('sets the item to be the editing item', () => {
-        spyOn(HippoIframeService, 'reload').and.callFake(() => {
-          const deferred = $q.defer();
-          deferred.resolve();
-          return deferred.promise;
-        });
+        spyOn(HippoIframeService, 'reload').and.returnValue($q.when());
         spyOn(MenuEditorCtrl, 'onDone');
 
         MenuEditorCtrl.onBack();
@@ -224,71 +181,49 @@ describe('MenuEditor', () => {
 
     describe('saveItem', () => {
       it('calls SiteMenuService.saveMenuItem and then stops editing item', () => {
-        spyOn(SiteMenuService, 'saveMenuItem').and.callFake(() => {
-          const deferred = $q.defer();
-          deferred.resolve();
-          return deferred.promise;
-        });
+        spyOn(SiteMenuService, 'saveMenuItem').and.returnValue($q.when());
         spyOn(MenuEditorCtrl, 'stopEditingItem');
 
-        MenuEditorCtrl.menuUuid = 77;
-
         MenuEditorCtrl.saveItem();
-        expect(SiteMenuService.saveMenuItem).toHaveBeenCalledWith(77, MenuEditorCtrl.editingItem);
+        expect(SiteMenuService.saveMenuItem).toHaveBeenCalledWith(MenuEditorCtrl.editingItem);
         $rootScope.$apply();
         expect(MenuEditorCtrl.stopEditingItem).toHaveBeenCalled();
       });
+
       it('calls SiteMenuService.saveMenuItem and then catches itself if it fails', () => {
-        spyOn(SiteMenuService, 'saveMenuItem').and.callFake(() => {
-          const deferred = $q.defer();
-          deferred.reject({
-            data: 'bad!',
-          });
-          return deferred.promise;
-        });
+        const data = { key: 'value' };
+        const error = { data };
+        spyOn(SiteMenuService, 'saveMenuItem').and.returnValue($q.reject(error));
         spyOn(FeedbackService, 'showErrorOnSubpage');
 
-        MenuEditorCtrl.menuUuid = 77;
-
         MenuEditorCtrl.saveItem();
-        expect(SiteMenuService.saveMenuItem).toHaveBeenCalledWith(77, MenuEditorCtrl.editingItem);
+        expect(SiteMenuService.saveMenuItem).toHaveBeenCalledWith(MenuEditorCtrl.editingItem);
         $rootScope.$apply();
-        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_SAVE_FAILED', 'bad!');
+        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_SAVE_FAILED', data);
       });
     });
 
     describe('_doDelete', () => {
       it('calls SiteMenuService.deleteMenuItem and then stops editing item', () => {
-        spyOn(SiteMenuService, 'deleteMenuItem').and.callFake(() => {
-          const deferred = $q.defer();
-          deferred.resolve();
-          return deferred.promise;
-        });
+        spyOn(SiteMenuService, 'deleteMenuItem').and.returnValue($q.when());
         spyOn(MenuEditorCtrl, 'stopEditingItem');
 
-        MenuEditorCtrl.menuUuid = 55;
-
         MenuEditorCtrl._doDelete();
-        expect(SiteMenuService.deleteMenuItem).toHaveBeenCalledWith(55, 1);
+        expect(SiteMenuService.deleteMenuItem).toHaveBeenCalledWith(1);
         $rootScope.$apply();
         expect(MenuEditorCtrl.stopEditingItem).toHaveBeenCalled();
       });
+
       it('calls SiteMenuService.deleteMenuItem and then catches itself if it fails', () => {
-        spyOn(SiteMenuService, 'deleteMenuItem').and.callFake(() => {
-          const deferred = $q.defer();
-          deferred.reject({
-            data: 'bad!',
-          });
-          return deferred.promise;
-        });
+        const data = { key: 'value' };
+        const error = { data };
+        spyOn(SiteMenuService, 'deleteMenuItem').and.returnValue($q.reject(error));
         spyOn(FeedbackService, 'showErrorOnSubpage');
 
-        MenuEditorCtrl.menuUuid = 55;
-
         MenuEditorCtrl._doDelete();
-        expect(SiteMenuService.deleteMenuItem).toHaveBeenCalledWith(55, 1);
+        expect(SiteMenuService.deleteMenuItem).toHaveBeenCalledWith(1);
         $rootScope.$apply();
-        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_DELETE_FAILED', 'bad!');
+        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_DELETE_FAILED', data);
       });
     });
 
@@ -306,11 +241,7 @@ describe('MenuEditor', () => {
 
     describe('deleteItem', () => {
       it('calls _confirmDelete and then deletes the item', () => {
-        spyOn(MenuEditorCtrl, '_confirmDelete').and.callFake(() => {
-          const deferred = $q.defer();
-          deferred.resolve();
-          return deferred.promise;
-        });
+        spyOn(MenuEditorCtrl, '_confirmDelete').and.returnValue($q.when());
         spyOn(MenuEditorCtrl, '_doDelete');
 
         MenuEditorCtrl.deleteItem();

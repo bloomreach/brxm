@@ -15,13 +15,12 @@
  */
 
 export class MenuEditorCtrl {
-  constructor($scope, $translate, SiteMenuService, FormStateService, HippoIframeService, DialogService,
+  constructor($scope, $translate, SiteMenuService, HippoIframeService, DialogService,
               FeedbackService) {
     'ngInject';
 
     this.$translate = $translate;
     this.SiteMenuService = SiteMenuService;
-    this.FormStateService = FormStateService;
     this.HippoIframeService = HippoIframeService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
@@ -46,20 +45,16 @@ export class MenuEditorCtrl {
       .catch(() => this.onError({ key: 'ERROR_MENU_LOAD_FAILED' }));
 
     this.treeOptions = {
-      // created an issue for the Tree component, to add a disabled state
-      // link: https://github.com/JimLiu/angular-ui-tree/issues/63
-      // for now, simply don't accept any moves when the form is invalid
-      accept: () => FormStateService.isValid(),
       dropped: (event) => {
         const source = event.source;
         const sourceNodeScope = source.nodeScope;
         const sourceId = sourceNodeScope.$modelValue.id;
         const dest = event.dest;
         const destNodesScope = dest.nodesScope;
-        const destId = destNodesScope.$nodeScope ? destNodesScope.$nodeScope.$modelValue.id : this.menuUuid;
+        const destId = destNodesScope.$nodeScope ? destNodesScope.$nodeScope.$modelValue.id : undefined;
 
         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
-          SiteMenuService.moveMenuItem(this.menuUuid, sourceId, destId, dest.index)
+          SiteMenuService.moveMenuItem(sourceId, destId, dest.index)
             .catch(() => this.onError({ key: 'ERROR_MENU_MOVE_FAILED' }));
         }
       },
@@ -76,7 +71,7 @@ export class MenuEditorCtrl {
 
   toggleEditState(item) {
     if (!this.editingItem || this.editingItem.id !== item.id) {
-      this.SiteMenuService.getEditableMenuItem(this.menuUuid, item.id)
+      this.SiteMenuService.getEditableMenuItem(item.id)
         .then((editableItem) => this._startEditingItem(editableItem));
     } else {
       this.stopEditingItem();
@@ -85,20 +80,14 @@ export class MenuEditorCtrl {
 
   addItem() {
     this.isSaving.newItem = true;
-
-    this.SiteMenuService.getMenu(this.menuUuid)
-      .then(() => this.SiteMenuService.createEditableMenuItem())
-      .then((editableItem) => {
-        this.FormStateService.setValid(true);
-        this.isSaving.newItem = false;
-        this._startEditingItem(editableItem);
-      })
+    this.SiteMenuService.createEditableMenuItem()
+      .then((editableItem) => this._startEditingItem(editableItem))
       .catch((response) => {
         response = response || {};
 
-        this.isSaving.newItem = false;
         this.onError({ key: 'ERROR_MENU_CREATE_FAILED', params: response.data });
-      });
+      })
+      .finally(() => delete this.isSaving.newItem);
   }
 
   onBack() {
@@ -106,7 +95,7 @@ export class MenuEditorCtrl {
   }
 
   saveItem() {
-    this.SiteMenuService.saveMenuItem(this.menuUuid, this.editingItem)
+    this.SiteMenuService.saveMenuItem(this.editingItem)
       .then(() => this.stopEditingItem())
       .catch((response) => {
         response = response || {};
@@ -116,7 +105,7 @@ export class MenuEditorCtrl {
   }
 
   _doDelete() {
-    return this.SiteMenuService.deleteMenuItem(this.menuUuid, this.editingItem.id)
+    return this.SiteMenuService.deleteMenuItem(this.editingItem.id)
       .then(() => this.stopEditingItem())
       .catch((response) => {
         response = response || {};
