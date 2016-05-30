@@ -74,5 +74,27 @@ describe('MenuEditor', () => {
     $element.find('.qa-button-back').click();
     expect($scope.onDone).toHaveBeenCalled();
   });
-});
 
+  describe('MenuEditorCtrl', () => {
+    describe('hasLocalParameters', () => {
+      it('returns false if there are not local parameters', () => {
+        const MenuEditorCtrl = compileDirectiveAndGetController();
+        MenuEditorCtrl.editingItem = {
+          id: 1,
+          localParameters: {},
+        };
+        expect(MenuEditorCtrl.hasLocalParameters()).toBe(false);
+      });
+      it('returns true if there are local parameters', () => {
+        const MenuEditorCtrl = compileDirectiveAndGetController();
+        MenuEditorCtrl.editingItem = {
+          id: 1,
+          localParameters: {
+            test: 1,
+          },
+        };
+        expect(MenuEditorCtrl.hasLocalParameters()).toBe(true);
+      });
+    });
+  });
+});
