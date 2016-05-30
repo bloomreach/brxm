@@ -97,7 +97,10 @@ export class ChannelService {
 
     this.CatalogService.load(this.getMountId());
     this.SiteMapService.load(channel.siteMapId);
-    this._augmentChannelWithPrototypeInfo();
+
+    if (this.SessionService.hasWriteAccess()) {
+      this._augmentChannelWithPrototypeInfo();
+    }
   }
 
   getChannel() {
