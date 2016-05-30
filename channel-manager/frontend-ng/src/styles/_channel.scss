@@ -56,7 +56,7 @@ md-input-container.input-container-picker {
 // avoid that help icon tooltips grow wider than the subpage; wrap text when necessary.
 .tooltip-help-icon ._md-content {
   height: auto;
-  max-width: $subpage-max-width;
+  max-width: 500px;
   text-overflow: initial;
   white-space: initial;
 }
