@@ -28,13 +28,14 @@ describe('MenuEditor', () => {
   let DialogService;
   let FeedbackService;
   let HippoIframeService;
+  let FormStateService;
   let menu;
   let MenuEditorCtrl;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$q_, _$rootScope_, _$compile_, _SiteMenuService_, _DialogService_, _FeedbackService_, _HippoIframeService_) => {
+    inject((_$q_, _$rootScope_, _$compile_, _SiteMenuService_, _DialogService_, _FeedbackService_, _HippoIframeService_, _FormStateService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $compile = _$compile_;
@@ -42,6 +43,7 @@ describe('MenuEditor', () => {
       DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
+      FormStateService = _FormStateService_;
     });
 
     menu = { items: [] };
@@ -82,7 +84,7 @@ describe('MenuEditor', () => {
     expect($scope.onDone).toHaveBeenCalled();
   });
 
-  fdescribe('MenuEditorCtrl', () => {
+  describe('MenuEditorCtrl', () => {
     beforeEach(() => {
       MenuEditorCtrl = compileDirectiveAndGetController();
       MenuEditorCtrl.editingItem = {
@@ -108,6 +110,60 @@ describe('MenuEditor', () => {
         };
         MenuEditorCtrl.stopEditingItem();
         expect(MenuEditorCtrl.editingItem).toBe(null);
+      });
+    });
+
+    describe('addItem', () => {
+      it('should add an item', () => {
+        spyOn(SiteMenuService, 'getMenu').and.callFake(() => {
+          const deferred = $q.defer();
+          deferred.resolve();
+          return deferred.promise;
+        });
+        spyOn(SiteMenuService, 'createEditableMenuItem').and.callFake(() => {
+          const deferred = $q.defer();
+          deferred.resolve({
+            id: 15,
+          });
+          return deferred.promise;
+        });
+        spyOn(FormStateService, 'setValid');
+        spyOn(MenuEditorCtrl, '_startEditingItem');
+
+        MenuEditorCtrl.menuUuid = 33;
+        MenuEditorCtrl.editingItem = {
+          id: 12,
+        };
+        MenuEditorCtrl.addItem();
+        expect(SiteMenuService.getMenu).toHaveBeenCalledWith(33);
+        $rootScope.$apply();
+        expect(SiteMenuService.createEditableMenuItem).toHaveBeenCalled();
+        $rootScope.$apply();
+        expect(FormStateService.setValid).toHaveBeenCalledWith(true);
+        expect(MenuEditorCtrl.isSaving.newItem).toBe(false);
+        expect(MenuEditorCtrl._startEditingItem).toHaveBeenCalledWith({
+          id: 15,
+        });
+      });
+      it('should fail when adding an item', () => {
+        spyOn(SiteMenuService, 'getMenu').and.callFake(() => {
+          const deferred = $q.defer();
+          deferred.reject({
+            data: 'bad!',
+          });
+          return deferred.promise;
+        });
+        spyOn(MenuEditorCtrl, 'onError');
+
+        MenuEditorCtrl.menuUuid = 77;
+
+        MenuEditorCtrl.addItem();
+        expect(SiteMenuService.getMenu).toHaveBeenCalledWith(77);
+        $rootScope.$apply();
+        expect(MenuEditorCtrl.onError).toHaveBeenCalledWith({
+          key: 'ERROR_MENU_CREATE_FAILED',
+          params: 'bad!',
+        });
       });
     });
 
