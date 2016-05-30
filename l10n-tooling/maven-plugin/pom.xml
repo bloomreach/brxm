@@ -33,6 +33,7 @@
     <maven.shared.dependency.tree.version>3.0</maven.shared.dependency.tree.version>
     <commons-lang.version>2.6</commons-lang.version>
     <maven.plugin-annotations.version>3.4</maven.plugin-annotations.version>
+    <junit.version>4.12</junit.version>
   </properties>
 
   <dependencies>
@@ -81,6 +82,12 @@
       <version>${maven.shared.dependency.tree.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

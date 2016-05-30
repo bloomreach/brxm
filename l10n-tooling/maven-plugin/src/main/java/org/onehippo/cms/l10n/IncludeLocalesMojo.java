@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@ import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
+
+import static java.lang.String.format;
 
 @SuppressWarnings("unused")
 @Mojo(name = "include-locales", defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
@@ -97,7 +99,7 @@ public class IncludeLocalesMojo extends AbstractMojo {
                 validate(artifactPrefix);
             } catch (IllegalArgumentException e) {
                 invalidPrefixes.add(artifactPrefix);
-                getLog().warn(String.format("Skipping invalid artifact prefix '%s' : '%s'", artifactPrefix, e.getMessage()));
+                getLog().warn(format("Skipping invalid artifact prefix '%s' : '%s'", artifactPrefix, e.getMessage()));
             }
         }
         artifactPrefixes.removeAll(invalidPrefixes);
@@ -127,11 +129,16 @@ public class IncludeLocalesMojo extends AbstractMojo {
                         final String localeArtifactId = artifactPrefix.substring(artifactPrefix.indexOf(":") + 1) + "-l10n";
                         final Artifact localeArtifact = repositorySystem.createArtifactWithClassifier(artifact.getGroupId(), localeArtifactId, artifact.getBaseVersion(), "jar", locale);
                         try {
-                            if (canResolveArtifact(localeArtifact, repositorySystem, remoteRepositories, localRepository)) {
-                                project.getDependencyArtifacts().add(localeArtifact);
-                                getLog().info("Include localization module  " + localeArtifact);
+                            final Artifact resolvableLocaleArtifact = resolvableLocaleArtifact(localeArtifact, repositorySystem, remoteRepositories, localRepository);
+                            if (resolvableLocaleArtifact == null) {
+                                getLog().warn("Could not resolve localization module '" + localeArtifact + "' and also no fallback to lower micro version");
                             } else {
-                                getLog().warn("Could not resolve localization module " + localeArtifact);
+                                project.getDependencyArtifacts().add(resolvableLocaleArtifact);
+                                getLog().info("Include localization module '" + resolvableLocaleArtifact + "'.");
+                                if (getLog().isDebugEnabled() && !localeArtifact.getVersion().equals(resolvableLocaleArtifact.getVersion())) {
+                                    getLog().debug("Fallback localization module '" + resolvableLocaleArtifact + "' is found for " +
+                                            "'"+localeArtifact+"'");
+                                }
                             }
                         } catch (MojoExecutionException e) {
                             if (getLog().isDebugEnabled()) {
@@ -161,23 +168,82 @@ public class IncludeLocalesMojo extends AbstractMojo {
         }
     }
 
-    public static boolean canResolveArtifact(Artifact artifact, RepositorySystem repositorySystem, List remoteRepositories,
-                                       ArtifactRepository localRepository) throws MojoExecutionException {
+    public Artifact resolvableLocaleArtifact(Artifact localeArtifact, RepositorySystem repositorySystem, List remoteRepositories,
+                                                    ArtifactRepository localRepository) throws MojoExecutionException {
         ArtifactResolutionRequest request = new ArtifactResolutionRequest()
-                .setArtifact(artifact)
+                .setArtifact(localeArtifact)
                 .setRemoteRepositories(remoteRepositories)
                 .setLocalRepository(localRepository);
 
         ArtifactResolutionResult resolutionResult = repositorySystem.resolve(request);
 
         if (resolutionResult.hasExceptions()) {
-            throw new MojoExecutionException("Could not resolve artifact " + artifact, resolutionResult.getExceptions().get(0));
+            throw new MojoExecutionException("Could not resolve artifact " + localeArtifact, resolutionResult.getExceptions().get(0));
         }
 
-        if (resolutionResult.getArtifacts().size() != 1 || !resolutionResult.getArtifacts().iterator().next().isResolved()) {
-            return false;
+        Artifact result;
+        if (resolutionResult.getArtifacts().size() != 1 || !(result = resolutionResult.getArtifacts().iterator().next()).isResolved()) {
+            final Artifact fallbackLocaleArtifact = findFallbackLocaleArtifact(localeArtifact);
+            if (fallbackLocaleArtifact == null) {
+                return null;
+            }
+            return resolvableLocaleArtifact(fallbackLocaleArtifact, repositorySystem, remoteRepositories, localRepository);
         }
-        return true;
+        return result;
+    }
+
+    /**
+     * Returns the Artifact with version x.y.(z - 1) for {@code artifact} with version x.y.z. If 'z' is not a number but
+     * for example '4-SNAPSHOT' or '4-cmng-psp1-SNAPSHOT', first everything after the number gets removed and then the micro
+     * version gets lowered by 1. If no more fallback artifacts should be tried, {@code null} is returned
+     * @return fallback {@link Artifact} or {@code null} when no more fallback artifacts can be tried
+     */
+    Artifact findFallbackLocaleArtifact(final Artifact artifact) {
+        final String version = artifact.getBaseVersion();
+        if (StringUtils.isBlank(version)) {
+            getLog().error(format("Unexpected empty baseversion for '%'", artifact.toString()));
+            return null;
+        }
+        String[] majorMinorMicro = version.split("\\.");
+        if (majorMinorMicro.length != 3) {
+            getLog().info(format("Unexpected version formatting '%s' because expected MAJOR.MINOR.MICRO format where " +
+                    "MAJOR, MINOR are expected to be an integer and MICRO to start with an integer. Cannot try fallback locale artifacts.", version));
+            return null;
+        }
+        try {
+            final String previousMicroVersion = findPreviousMicroVersion(majorMinorMicro[2]);
+            if (previousMicroVersion == null) {
+                getLog().debug(String.format("no more fallback to lower micro version for artifact '%s'", artifact));
+                return null;
+            } else {
+                final String fallbackVersion = majorMinorMicro[0] + "." + majorMinorMicro[1] + "." + previousMicroVersion;
+                final Artifact fallback = repositorySystem.createArtifactWithClassifier(artifact.getGroupId(), artifact.getArtifactId(), fallbackVersion, "jar", artifact.getClassifier());
+                getLog().debug(String.format("Fallback to artifact '%s'", fallback));
+                return fallback;
+            }
+        } catch (IllegalArgumentException e) {
+            getLog().info(format("Unexpected version formatting '%s' because expected MAJOR.MINOR.MICRO format where " +
+                    "MAJOR, MINOR are expected to be an integer and MICRO to start with an integer. Cannot try fallback locale artifacts.", version));
+        }
+        return null;
+    }
+
+    /**
+     * @return the previous micro microVersion or {@link null} when micro microVersion is already 0 (or 0-x-y-x)
+     */
+    static String findPreviousMicroVersion(final String microVersion) {
+        if (microVersion == null || microVersion.length() == 0) {
+            throw new IllegalArgumentException("Unexpected micro microVersion since does not start with a number");
+        }
+        try {
+            final int currentVersion = Integer.parseInt(microVersion);
+            if (currentVersion == 0) {
+                return null;
+            }
+            return String.valueOf(currentVersion -1);
+        } catch (NumberFormatException e) {
+            return findPreviousMicroVersion(microVersion.substring(0, microVersion.length() -1));
+        }
     }
 
     private boolean isIncludedScope(final Artifact artifact) {
