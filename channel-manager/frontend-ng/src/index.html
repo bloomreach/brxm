@@ -32,7 +32,11 @@
   </head>
 
   <body ng-app="hippo-cm" ng-strict-di>
-    <div ui-view layout-fill></div>
+    <div ui-view layout-fill>
+      <md-toolbar>
+        <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+      </md-toolbar>
+    </div>
 
     <!-- build:js scripts/hippo-cm.min.js -->
     <script src="bower_components/es6-shim/es6-shim.js"></script>
