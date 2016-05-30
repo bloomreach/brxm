@@ -16,6 +16,7 @@ md-toolbar {
   &.hippo-toolbar {
     background: $grey-200;
     color: $text-dark;
+    height: 40px;
     min-height: 40px;
 
     .md-button {
@@ -38,30 +39,30 @@ md-toolbar {
     .md-toolbar-tools {
       font-size: 14px;
     }
-  }
 
-  .button-group {
-    .md-button {
-      margin-right: 0;
+    .button-group {
+      .md-button {
+        margin-right: 0;
 
-      &:not(:first-child) {
-        margin-left: 0;
+        &:not(:first-child) {
+          margin-left: 0;
+        }
       }
     }
-  }
 
-  md-select-value {
-    font-weight: bold;
-    margin-left: 4px;
-    position: relative;
-    top: 1px;
+    md-select-value {
+      font-weight: bold;
+      margin-left: 4px;
+      position: relative;
+      top: 1px;
 
-    md-icon {
-      color: $text-dark;
+      md-icon {
+        color: $text-dark;
+      }
     }
-  }
 
-  .alter-ego-btn {
-    margin-left: 0;
+    .alter-ego-btn {
+      margin-left: 0;
+    }
   }
 }
