@@ -18,6 +18,10 @@ md-toolbar {
     color: $text-dark;
     min-height: 40px;
 
+    .md-button {
+      text-transform: none;
+    }
+
     .md-icon-button {
       height: 40px;
       padding-bottom: 0;
@@ -29,11 +33,11 @@ md-toolbar {
       height: 32px;
       width: 32px;
     }
-  }
-}
 
-.md-toolbar-tools .md-button {
-  text-transform: none;
+    .md-toolbar-tools {
+      font-size: 14px;
+    }
+  }
 }
 
 .button-group {
@@ -50,6 +54,7 @@ md-toolbar {
   md-select {
     margin: 0;
   }
+
   md-select:focus md-select-value {
     color: $white;
   }
@@ -72,7 +77,6 @@ md-toolbar {
   }
 
   label {
-    font-size: 14px;
     margin-right: 4px;
   }
 }
