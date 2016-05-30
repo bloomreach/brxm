@@ -71,11 +71,10 @@
         background: $tree-active-bg;
         border-color: $tree-active-border-color;
         color: $tree-active-color;
-
-        .hippo-tree-item-toggle md-icon,
-        .angular-ui-tree-title-wrapper md-icon{
+        md-icon {
           color: $tree-active-color;
         }
+      }
     }
   }
 
@@ -102,19 +101,18 @@
     }
 
     .hippo-tree-item-toggle {
-      color: $tree-color;
       border: 0;
       padding: 0;
       display: inline-block;
 
-      &:hover {
-        text-decoration: none;
-        cursor: pointer;
-      }
-
       md-icon {
         transition-property: transform;
         transition-duration: 0.2s;
+
+        // TODO: temporary workaround for missing right-arrow
+        &.rotate-left {
+          transform: rotate(-90deg);
+        }
       }
     }
 
@@ -126,11 +124,8 @@
     .spacer {
       display: inline-block;
       vertical-align: top;
-      width: 20px;
-      color: $tree-icon-color;
-      padding-left: 4px;
+      width: 24px;
     }
-
   }
   .angular-ui-tree-placeholder {
     border-radius: $tree-border-radius;
@@ -155,9 +150,4 @@
 
 .no-padding {
   padding: 0;
-}
-
-// TODO: temporary workaround for missing right-arrow
-.rotate-left {
-  transform: rotate(-90deg);
 }
