@@ -30,6 +30,7 @@ md-toolbar {
     }
 
     md-icon {
+      color: $text-dark;
       height: 32px;
       width: 32px;
     }
@@ -38,51 +39,29 @@ md-toolbar {
       font-size: 14px;
     }
   }
-}
 
-.button-group {
-  .md-button {
-    margin-right: 0;
+  .button-group {
+    .md-button {
+      margin-right: 0;
 
-    &:not(:first-child) {
-      margin-left: 0;
+      &:not(:first-child) {
+        margin-left: 0;
+      }
     }
-  }
-}
-
-.md-toolbar-tools .select-in-toolbar {
-  md-select {
-    margin: 0;
-  }
-
-  md-select:focus md-select-value {
-    color: $white;
   }
 
   md-select-value {
-    font-size: 14px;
     font-weight: bold;
-    border-width: 0;
+    margin-left: 4px;
+    position: relative;
+    top: 1px;
 
-    > span:not(._md-select-icon) {
-      // Chrome/Safari are 1px too low
-      transform: translate3d(0, 0, 0);
-      -webkit-transform: translate3d(0, -1px, 0) !important;
+    md-icon {
+      color: $text-dark;
     }
   }
 
-  ._md-select-icon {
-    width: 14px;
-    transform: translate3d(0, 0, 0);
-  }
-
-  label {
-    margin-right: 4px;
+  .alter-ego-btn {
+    margin-left: 0;
   }
 }
-
-.md-button.alter-ego-btn {
-  min-width: 0;
-  margin-left: 0;
-}
-

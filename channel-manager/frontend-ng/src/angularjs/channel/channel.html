@@ -25,18 +25,11 @@
 
       <div flex></div>
 
-      <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
+      <div flex layout layout-align="start center">
+        <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
-      <md-button ng-repeat="viewPort in channelCtrl.viewPorts"
-                 ng-click="channelCtrl.selectViewPort(viewPort)"
-                 aria-label="{{ viewPort.titleKey | translate }}"
-                 class="md-icon-button qa-button-viewport-{{viewPort.name}}">
-        <md-icon title="{{ viewPort.titleKey | translate }}"
-                 class="material-icons"
-                 md-colors="{ color: '{{ channelCtrl.getViewPortIconColor(viewPort) }}' }">
-          {{viewPort.icon}}
-        </md-icon>
-      </md-button>
+        <viewport-toggle></viewport-toggle>
+      </div>
 
       <div flex></div>
 

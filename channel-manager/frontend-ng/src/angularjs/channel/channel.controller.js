@@ -41,29 +41,6 @@ export class ChannelCtrl {
     this.isEditMode = false;
     this.isCreatingPreview = false;
 
-    this.viewPorts = [
-      {
-        name: 'desktop',
-        icon: 'computer',
-        width: 0,
-        titleKey: 'VIEWPORT_WIDTH_DESKTOP',
-      },
-      {
-        name: 'tablet',
-        icon: 'tablet',
-        width: 720,
-        titleKey: 'VIEWPORT_WIDTH_TABLET',
-      },
-      {
-        name: 'phone',
-        icon: 'smartphone',
-        width: 320,
-        titleKey: 'VIEWPORT_WIDTH_PHONE',
-      },
-    ];
-
-    this.selectViewPort(this.viewPorts[0]);
-
     // reset service state to avoid weird scaling when controller is reloaded due to state change
     ScalingService.setPushWidth(0);
 
@@ -72,15 +49,6 @@ export class ChannelCtrl {
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
     this.isEditMode = false;
-  }
-
-  selectViewPort(viewPort) {
-    this.selectedViewPort = viewPort;
-    this.ScalingService.setViewPortWidth(viewPort.width);
-  }
-
-  isViewPortSelected(viewPort) {
-    return this.selectedViewPort === viewPort;
   }
 
   enterEditMode() {
@@ -152,10 +120,6 @@ export class ChannelCtrl {
     if (key) {
       this.FeedbackService.showError(key, params);
     }
-  }
-
-  getViewPortIconColor(viewPort) {
-    return this.isViewPortSelected(viewPort) ? 'primary' : 'background-A400';
   }
 
   getEditButtonBgColor() {

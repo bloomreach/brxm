@@ -54,6 +54,7 @@ describe('ChannelCtrl', () => {
         'getCatalog',
         'getSiteMapId',
       ]);
+
       ChannelService.createPreviewConfiguration.and.returnValue(resolvedPromise);
 
       ComponentsService = jasmine.createSpyObj('ComponentsService', [
@@ -69,7 +70,6 @@ describe('ChannelCtrl', () => {
       ScalingService = jasmine.createSpyObj('ScalingService', [
         'init',
         'setPushWidth',
-        'setViewPortWidth',
       ]);
 
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', [
@@ -87,6 +87,7 @@ describe('ChannelCtrl', () => {
         HippoIframeService,
       });
     });
+
     spyOn(FeedbackService, 'showError');
   });
 
@@ -96,15 +97,12 @@ describe('ChannelCtrl', () => {
 
   it('resets the ScalingService pushWidth state during initialization', () => {
     ScalingService.setPushWidth.calls.reset();
-    ScalingService.setViewPortWidth.calls.reset();
     inject(($controller) => {
       $controller('ChannelCtrl', {
         $scope: $rootScope.$new(),
         ScalingService,
       });
       expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
-      expect(ScalingService.setViewPortWidth).toHaveBeenCalledWith(0);
-      expect(ChannelCtrl.isViewPortSelected(ChannelCtrl.viewPorts[0])).toBe(true);
     });
   });
 

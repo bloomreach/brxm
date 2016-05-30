@@ -29,6 +29,7 @@ import { ChannelCtrl } from './channel.controller';
 import { ChannelService } from './channel.service';
 import { run } from './channel.run';
 import { CatalogComponentDirective } from './catalog.component.directive';
+import { channelViewportsModule } from './viewports/viewports';
 
 export const channelModule = angular
   .module('hippo-cm.channel', [
@@ -43,6 +44,7 @@ export const channelModule = angular
     channelMenuModule.name,
     channelMaskModule.name,
     channelRelevanceModule.name,
+    channelViewportsModule.name,
   ])
   .config(config)
   .controller('ChannelCtrl', ChannelCtrl)
