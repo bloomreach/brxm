@@ -15,7 +15,7 @@
  */
 
 export class MenuEditorCtrl {
-  constructor($q, $filter, $scope, $translate, SiteMenuService, FormStateService, HippoIframeService, DialogService) {
+  constructor($q, $filter, $scope, $translate, SiteMenuService, FormStateService, HippoIframeService, DialogService, PickerService) {
     'ngInject';
 
     this.$q = $q;
@@ -25,6 +25,7 @@ export class MenuEditorCtrl {
     this.FormStateService = FormStateService;
     this.HippoIframeService = HippoIframeService;
     this.DialogService = DialogService;
+    this.PickerService = PickerService;
 
     this.isSaving = {};
 
@@ -129,6 +130,33 @@ export class MenuEditorCtrl {
           this.isSaving.newItem = false;
           this.onError({ key: 'ERROR_MENU_CREATE_FAILED', params: [error] });
         });
+    });
+  }
+
+  linkPick(targetEvent) {
+    this.SiteMenuService.getMenu(this.menuUuid).then((menu) => {
+      const pickerTypes = [
+        {
+          id: menu.siteContentIdentifier,
+          name: 'Documents',
+          type: 'documents',
+        },
+        {
+          id: menu.siteMapIdentifier,
+          name: 'Pages (Sitemap Items)',
+          type: 'pages',
+        },
+      ];
+      const pickerCfg = {
+        locals: {
+          pickerTypes,
+          initialLink: this.selectedItem.link,
+        },
+        targetEvent,
+      };
+      this.PickerService.show(pickerCfg).then((selected) => {
+        this.selectedItem.link = this.selectedItem.sitemapLink = selected.pathInfo;
+      });
     });
   }
 

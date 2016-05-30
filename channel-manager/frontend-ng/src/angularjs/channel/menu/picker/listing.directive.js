@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { menuEditorDirective } from './editor.directive';
-import { MenuEditorCtrl } from './editor.controller';
-import { uiTreeModule } from '../../ui/tree/tree.js';
-import { pickerModule } from './picker/picker';
-
-export const channelMenuModule = angular
-  .module('hippo-cm.channel.menu', [
-    uiTreeModule.name,
-    pickerModule.name,
-  ])
-  .directive('menuEditor', menuEditorDirective)
-  .controller('MenuEditorCtrl', MenuEditorCtrl);
+export function listingDirective() {
+  return {
+    restrict: 'A',
+    bindToController: {
+      selectedItem: '=',
+      selectedDocument: '=',
+    },
+    templateUrl: 'channel/menu/picker/listing.html',
+    controller: 'ListingCtrl',
+    controllerAs: 'listing',
+  };
+}
