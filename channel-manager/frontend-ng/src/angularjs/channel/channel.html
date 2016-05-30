@@ -17,31 +17,31 @@
 <div layout="column" flex ng-hide="channelCtrl.isSubpageOpen()">
   <md-toolbar class="hippo-toolbar qa-toolbar">
     <div class="md-toolbar-tools">
-      <channel-sidenav-toggle></channel-sidenav-toggle>
+      <div flex="15" layout layout-align="start center">
+        <channel-sidenav-toggle></channel-sidenav-toggle>
 
-      <channel-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
+        <channel-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
 
-      <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
+        <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
+      </div>
 
-      <div flex></div>
-
-      <div flex layout layout-align="start center">
+      <div flex="70" layout layout-align="center center">
         <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
         <viewport-toggle></viewport-toggle>
       </div>
 
-      <div flex></div>
+      <div flex="15" layout layout-align="end center">
+        <changes-menu on-manage-changes="channelCtrl.showSubpage('manage-changes')"></changes-menu>
 
-      <changes-menu on-manage-changes="channelCtrl.showSubpage('manage-changes')"></changes-menu>
-
-      <md-switch class="md-primary"
-        ng-if="channelCtrl.isEditable()"
-        ng-disabled="channelCtrl.isCreatingPreview"
-        ng-change="channelCtrl.toggleEditMode"
-        ng-model="channelCtrl.isEditMode">
-        {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
-      </md-switch>
+        <md-switch class="md-primary"
+          ng-if="channelCtrl.isEditable()"
+          ng-disabled="channelCtrl.isCreatingPreview"
+          ng-change="channelCtrl.toggleEditMode"
+          ng-model="channelCtrl.isEditMode">
+          {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
+        </md-switch>
+      </div>
     </div>
   </md-toolbar>
 
