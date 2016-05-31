@@ -95,7 +95,7 @@ export class MenuEditorCtrl {
       .finally(() => delete this.isSaving.newItem);
   }
 
-  linkPick(targetEvent) {
+  showPicker(targetEvent) {
     this.SiteMenuService.loadMenu(this.menuUuid).then((menu) => {
       const pickerTypes = [
         {
