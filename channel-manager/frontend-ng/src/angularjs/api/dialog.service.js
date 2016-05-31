@@ -19,14 +19,12 @@ export class DialogService {
     'ngInject';
 
     this.$mdDialog = $mdDialog;
-
-    this._showMask = () => CmsService.publish('show-mask');
-    this._removeMask = () => CmsService.publish('remove-mask');
+    this.CmsService = CmsService;
   }
 
   confirm() {
     return this.$mdDialog.confirm({
-      onRemoving: this._removeMask,
+      onRemoving: () => this._removeMask(),
     });
   }
 
@@ -41,5 +39,13 @@ export class DialogService {
       this._removeMask();
     };
     return this.$mdDialog.show(dialog);
+  }
+
+  _showMask() {
+    this.CmsService.publish('show-mask');
+  }
+
+  _removeMask() {
+    this.CmsService.publish('remove-mask');
   }
 }
