@@ -17,9 +17,11 @@
 const NEXT_SIBLING = 'after';
 
 export class SiteMenuService {
-  constructor(HstService) {
+  constructor($filter, $translate, HstService) {
     'ngInject';
 
+    this.$filter = $filter;
+    this.$translate = $translate;
     this.HstService = HstService;
 
     this.menu = {
@@ -29,62 +31,73 @@ export class SiteMenuService {
     this.loadMenuPromise = null;
   }
 
-  getMenu(menuId) {
-    if (menuId !== this.menu.id) {
-      this.loadMenuPromise = null;
-    }
-    return this._loadMenu(menuId);
-  }
-
   loadMenu(menuId) {
     this.loadMenuPromise = null;
+    this.menu.id = menuId;
     return this._loadMenu(menuId);
   }
 
-  getEditableMenuItem(menuId, menuItemId) {
-    return this._loadMenu(menuId).then(() => this._makeEditableItem(menuItemId));
+  getEditableMenuItem(menuItemId) {
+    return this._loadMenu(this.menu.id).then(() => this._makeEditableItem(menuItemId));
   }
 
-  moveMenuItem(menuId, menuItemId, parentId, position) {
+  moveMenuItem(menuItemId, parentId, position) {
+    const menuId = this.menu.id;
+    parentId = parentId || menuId;
     return this.HstService.doPost({}, menuId, 'move', menuItemId, parentId, String(position));
   }
 
-  deleteMenuItem(menuId, menuItemId) {
-    return this.HstService.doPost({}, menuId, 'delete', menuItemId)
-      .then(() => this.loadMenu(menuId));
+  deleteMenuItem(menuItemId) {
+    return this.HstService.doPost({}, this.menu.id, 'delete', menuItemId)
+      .then(() => this.loadMenu(this.menu.id));
   }
 
-  saveMenuItem(menuId, menuItem) {
-    // TODO: does the back-end choke if we send it excessive data?
+  saveMenuItem(editableMenuItem) {
+    // We copy the editable menu item "back" such that we don't lose state in case the saving fails.
+    const menuItem = angular.copy(editableMenuItem);
+
     this._removeCollapsedProperties(menuItem);
     this._extractLinkFromSitemapLinkOrExternalLink(menuItem);
-    return this.HstService.doPost(menuItem, menuId)
+
+    return this.HstService.doPost(menuItem, this.menu.id)
       .then(() => {
         this._replaceMenuItem(this.menu.items, menuItem);
       });
   }
 
+  _createBlankMenuItem() {
+    const incFilter = this.$filter('incrementProperty');
+    const result = {
+      linkType: 'NONE',
+      title: incFilter(this.menu.items, 'title', this.$translate.instant('NEW_MENU_ITEM_TITLE'), 'items'),
+    };
+    if (angular.isObject(this.menu.prototypeItem)) {
+      result.localParameters = angular.copy(this.menu.prototypeItem.localParameters);
+    }
+    return result;
+  }
+
   /**
    * Create a new menu item.
-
-   * @param menuId The menu id
-   * @param newItem The item to be created
-   * @returns {promise|Promise.promise|Q.promise}
    */
-  // TJE: bad API: we pass in the menu ID, and then combine it with local state (this.menu...).
-  createEditableMenuItem(menuId, newItem) {
-    const options = {
-      position: NEXT_SIBLING,
-    };
-    const lastItem = this.menu.items[this.menu.items.length - 1];
-    if (lastItem) {
-      options.sibling = lastItem;
-    }
-    const parentId = menuId;
+  createEditableMenuItem() {
+    return this._loadMenu(this.menu.id)
+      .then(() => {
+        const options = {
+          position: NEXT_SIBLING,
+        };
+        const lastItem = this.menu.items[this.menu.items.length - 1];
+        if (lastItem) {
+          options.sibling = lastItem;
+        }
+        const menuId = this.menu.id;
+        const parentId = menuId;
+        const newItem = this._createBlankMenuItem();
 
-    return this.HstService.doPostWithParams(newItem, menuId, options, 'create', parentId)
-      .then((response) => response.data)
-      .then((newItemId) => this.loadMenu(menuId).then(() => this._makeEditableItem(newItemId)));
+        return this.HstService.doPostWithParams(newItem, menuId, options, 'create', parentId)
+          .then((response) => response.data)
+          .then((newItemId) => this.loadMenu(menuId).then(() => this._makeEditableItem(newItemId)));
+      });
   }
 
   getPathToMenuItem(menuId, menuItemId) {
