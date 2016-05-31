@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import { menuEditorDirective } from './editor.directive';
-import { MenuEditorCtrl } from './editor.controller';
-import { uiTreeModule } from './tree/tree.js';
-import { pickerModule } from './picker/picker';
 
-export const channelMenuModule = angular
-  .module('hippo-cm.channel.menu', [
+import { ListingCtrl } from './listing.controller';
+import { listingDirective } from './listing.directive';
+import { PickerService } from './picker.service';
+import { PickerCtrl } from './picker.controller';
+import { uiTreeModule } from '../tree/tree.js';
+
+export const pickerModule = angular
+  .module('hippo-cm.channel.menu.picker', [
     uiTreeModule.name,
-    pickerModule.name,
-    'focus-if',
   ])
-  .directive('menuEditor', menuEditorDirective)
-  .controller('MenuEditorCtrl', MenuEditorCtrl);
+  .controller('PickerCtrl', PickerCtrl)
+  .controller('ListingCtrl', ListingCtrl)
+  .service('PickerService', PickerService)
+  .directive('listing', listingDirective);

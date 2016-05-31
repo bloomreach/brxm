@@ -65,16 +65,12 @@ export class SiteMenuService {
       });
   }
 
-  _createBlankMenuItem() {
-    const incFilter = this.$filter('incrementProperty');
-    const result = {
-      linkType: 'NONE',
-      title: incFilter(this.menu.items, 'title', this.$translate.instant('NEW_MENU_ITEM_TITLE'), 'items'),
-    };
-    if (angular.isObject(this.menu.prototypeItem)) {
-      result.localParameters = angular.copy(this.menu.prototypeItem.localParameters);
-    }
-    return result;
+  getSiteContentIdentifier() {
+    return this.menu.siteContentIdentifier;
+  }
+
+  getSiteMapIdentifier() {
+    return this.menu.siteMapIdentifier;
   }
 
   /**
@@ -102,6 +98,18 @@ export class SiteMenuService {
 
   getPathToMenuItem(menuId, menuItemId) {
     return this._loadMenu(menuId).then((menu) => this._findPathToMenuItem(menu, menuItemId));
+  }
+
+  _createBlankMenuItem() {
+    const incFilter = this.$filter('incrementProperty');
+    const result = {
+      linkType: 'NONE',
+      title: incFilter(this.menu.items, 'title', this.$translate.instant('NEW_MENU_ITEM_TITLE'), 'items'),
+    };
+    if (angular.isObject(this.menu.prototypeItem)) {
+      result.localParameters = angular.copy(this.menu.prototypeItem.localParameters);
+    }
+    return result;
   }
 
   _makeEditableItem(id) {

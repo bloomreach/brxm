@@ -71,6 +71,9 @@
         background: $tree-active-bg;
         border-color: $tree-active-border-color;
         color: $tree-active-color;
+        md-icon {
+          color: $tree-active-color;
+        }
       }
     }
   }
@@ -93,7 +96,35 @@
 
     .angular-ui-tree-title {
       display: inline-block;
-      min-width: calc(100% - 42px);
+      min-width: calc(100% - 56px);
+      vertical-align: middle;
+    }
+
+    .hippo-tree-item-toggle {
+      border: 0;
+      padding: 0;
+      display: inline-block;
+
+      md-icon {
+        transition-property: transform;
+        transition-duration: 0.2s;
+
+        // TODO: temporary workaround for missing right-arrow
+        &.rotate-left {
+          transform: rotate(-90deg);
+        }
+      }
+    }
+
+    .angular-ui-tree-title-wrapper md-icon {
+      font-size: 20px;
+      line-height: 24px;
+    }
+
+    .spacer {
+      display: inline-block;
+      vertical-align: top;
+      width: 24px;
     }
   }
   .angular-ui-tree-placeholder {

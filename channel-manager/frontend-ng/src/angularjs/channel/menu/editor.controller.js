@@ -16,7 +16,7 @@
 
 export class MenuEditorCtrl {
   constructor($scope, $translate, SiteMenuService, HippoIframeService, DialogService,
-              FeedbackService, ChannelService) {
+              FeedbackService, ChannelService, PickerService) {
     'ngInject';
 
     this.$translate = $translate;
@@ -25,6 +25,7 @@ export class MenuEditorCtrl {
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.ChannelService = ChannelService;
+    this.PickerService = PickerService;
 
     this.isSaving = {};
 
@@ -101,6 +102,32 @@ export class MenuEditorCtrl {
         this.FeedbackService.showErrorOnSubpage('ERROR_MENU_CREATE_FAILED', response.data);
       })
       .finally(() => delete this.isSaving.newItem);
+  }
+
+  showPicker(targetEvent) {
+    const pickerTypes = [
+      {
+        id: this.SiteMenuService.getSiteContentIdentifier(),
+        name: 'Documents',
+        type: 'documents',
+      },
+      {
+        id: this.SiteMenuService.getSiteMapIdentifier(),
+        name: 'Pages (Sitemap Items)',
+        type: 'pages',
+      },
+    ];
+    const pickerCfg = {
+      locals: {
+        pickerTypes,
+        initialLink: this.editingItem.sitemapLink,
+      },
+      targetEvent,
+    };
+
+    this.PickerService.show(pickerCfg).then(({ pathInfo }) => {
+      this.editingItem.sitemapLink = this.editingItem.link = pathInfo;
+    });
   }
 
   onBack() {

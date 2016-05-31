@@ -26,6 +26,14 @@ $sheet-bgcolor: #fff;
 
 $list-item-active-bgcolor: rgba(158, 158, 158, 0.2);
 
+// Pallete colors
+$grey-100: #f4f4f5;
+$grey-400: #b8bcbf;
+
+// Picker
+$picker-subheader-bgcolor: $grey-100;
+$picker-border-color: $grey-400;
+
 // Tree
 $tree-bg:                                     $white;
 $tree-color:                                  $black;

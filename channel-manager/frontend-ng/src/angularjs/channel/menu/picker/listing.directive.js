@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-export function hippoTreeDirective() {
-  'ngInject';
-
+export function listingDirective() {
   return {
     restrict: 'A',
-    transclude: true,
     bindToController: {
-      options: '=',
-      items: '=',
-      selectable: '=',
       selectedItem: '=',
-      draggable: '=',
+      selectedDocument: '=',
     },
-    templateUrl: 'ui/tree/tree.html',
-    controller: 'HippoTreeCtrl',
-    controllerAs: 'hippoTree',
+    templateUrl: 'channel/menu/picker/listing.html',
+    controller: 'ListingCtrl',
+    controllerAs: 'listing',
   };
 }

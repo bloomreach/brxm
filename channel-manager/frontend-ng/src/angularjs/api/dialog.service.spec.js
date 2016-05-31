@@ -55,4 +55,23 @@ describe('DialogService', () => {
     confirmationDialog._options.onRemoving();
     expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('remove-mask');
   });
+
+  it('sends a remove-mask event to the CMS when showing a custom dialog', () => {
+    const dialogConfig = {};
+    spyOn(window.APP_TO_CMS, 'publish');
+    DialogService.show(dialogConfig);
+    expect(dialogConfig.onRemoving).toBeDefined();
+    dialogConfig.onRemoving();
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('remove-mask');
+  });
+
+  it('sends a remove-mask event to the CMS when showing a custom dialog with custom onRemoving option', () => {
+    const dialogConfig = { onRemoving: () => {} };
+    spyOn(window.APP_TO_CMS, 'publish');
+    const onRemovingSpy = spyOn(dialogConfig, 'onRemoving');
+    DialogService.show(dialogConfig);
+    dialogConfig.onRemoving();
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('remove-mask');
+    expect(onRemovingSpy).toHaveBeenCalled();
+  });
 });
