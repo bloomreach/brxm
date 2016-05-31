@@ -42,6 +42,10 @@ export class HstService {
       .then((response) => response.data.pages);
   }
 
+  getFeatures() {
+    return this.doGet(this.config.rootUuid, 'features');
+  }
+
   doGet(uuid, ...pathElements) {
     return this._callHst('GET', uuid, pathElements);
   }
