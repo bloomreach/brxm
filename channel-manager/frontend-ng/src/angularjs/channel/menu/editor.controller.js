@@ -96,30 +96,28 @@ export class MenuEditorCtrl {
   }
 
   showPicker(targetEvent) {
-    this.SiteMenuService.loadMenu(this.menuUuid).then((menu) => {
-      const pickerTypes = [
-        {
-          id: menu.siteContentIdentifier,
-          name: 'Documents',
-          type: 'documents',
-        },
-        {
-          id: menu.siteMapIdentifier,
-          name: 'Pages (Sitemap Items)',
-          type: 'pages',
-        },
-      ];
-      const pickerCfg = {
-        locals: {
-          pickerTypes,
-          initialLink: this.editingItem.sitemapLink,
-        },
-        targetEvent,
-      };
+    const pickerTypes = [
+      {
+        id: this.SiteMenuService.getSiteContentIdentifier(),
+        name: 'Documents',
+        type: 'documents',
+      },
+      {
+        id: this.SiteMenuService.getSiteMapIdentifier(),
+        name: 'Pages (Sitemap Items)',
+        type: 'pages',
+      },
+    ];
+    const pickerCfg = {
+      locals: {
+        pickerTypes,
+        initialLink: this.editingItem.sitemapLink,
+      },
+      targetEvent,
+    };
 
-      this.PickerService.show(pickerCfg).then(({ pathInfo }) => {
-        this.editingItem.sitemapLink = this.editingItem.link = pathInfo;
-      });
+    this.PickerService.show(pickerCfg).then(({ pathInfo }) => {
+      this.editingItem.sitemapLink = this.editingItem.link = pathInfo;
     });
   }
 
