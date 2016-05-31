@@ -26,7 +26,8 @@
 
 md-list-item.active {
   background-color: $blue;
-  p {
+  p,
+  md-icon {
     color: $white;
   }
 }
