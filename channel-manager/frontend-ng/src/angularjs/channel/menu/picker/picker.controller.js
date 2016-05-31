@@ -18,6 +18,10 @@ export class PickerCtrl {
   constructor($mdDialog, $filter, PickerService) {
     'ngInject';
 
+    if (!this.pickerTypes || this.pickerTypes.length === 0) {
+      throw new Error('No types defined for picker');
+    }
+
     this.$mdDialog = $mdDialog;
     this.PickerService = PickerService;
     this.$filter = $filter;
@@ -28,14 +32,7 @@ export class PickerCtrl {
 
     this.pickerType = this.pickerTypes[0];
     this.PickerService.getInitialData(this.pickerTypes[0].id, this.initialLink)
-      .then(() => {
-        if (this.items.length) {
-          this._navigateToSelected(this.items);
-          if (this.selectedItem === null) {
-            this.selectedItem = this.items[0];
-          }
-        }
-      });
+      .then(() => this._navigateToSelectedOrRoot());
 
     this.treeOptions = {
       displayItem: (item) => item.type === 'folder' || item.type === 'page',
@@ -54,26 +51,16 @@ export class PickerCtrl {
   }
 
   changePickerType() {
-    this.pickerTypes.some((type) => {
-      if (this.pickerType.type === type.type) {
-        this.PickerService.getInitialData(type.id)
-          .then(() => {
-            const root = this.items[0];
-            if (this.selectedItem !== null && this.selectedItem.type !== root.type) {
-              // reset selected state when switching picker types
-              this.selectedItem = null;
-              this.selectedDocument = null;
-            }
-            this._navigateToSelected(this.items);
-            if (this.selectedItem === null) {
-              this.selectedItem = root;
-            }
-          });
-
-        return true;
-      }
-      return false;
-    });
+    this.PickerService.getInitialData(this.pickerType.id)
+      .then(() => {
+        const root = this.items[0];
+        if (this.selectedItem !== null && this.selectedItem.type !== root.type) {
+          // reset selected state when switching picker types
+          this.selectedItem = null;
+          this.selectedDocument = null;
+        }
+        this._navigateToSelectedOrRoot();
+      });
   }
 
   cancel() {
@@ -84,6 +71,14 @@ export class PickerCtrl {
     this.$mdDialog.hide(this.selectedDocument);
   }
 
+  _navigateToSelectedOrRoot() {
+    if (this.items && this.items.length) {
+      this._navigateToSelected(this.items);
+      if (this.selectedItem === null) {
+        this.selectedItem = this.items[0];
+      }
+    }
+  }
   _navigateToSelected(items, parent) {
     angular.forEach(items, (item) => {
       if (item.selected) {
