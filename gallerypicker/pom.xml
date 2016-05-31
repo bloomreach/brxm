@@ -42,8 +42,6 @@
 
     <lib.commons-lang.version>2.6</lib.commons-lang.version>
     <lib.easymock.version>2.4</lib.easymock.version>
-
-    <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
   </properties>
 
   <repositories>
