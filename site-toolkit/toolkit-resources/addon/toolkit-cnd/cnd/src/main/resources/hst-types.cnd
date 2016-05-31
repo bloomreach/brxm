@@ -412,6 +412,8 @@
 - hst:diagnosticsdepth (long)
 // only log in case the total request takes longer than the threshold
 - hst:diagnosticsthresholdmillisec (long)
+// only log in case a subtask takes not less than unit-threshold
+- hst:diagnosticsunitthresholdmillisec (long)
 - hst:cacheable (boolean)
 - hst:defaultresourcebundleid (string)
 // since 7.9 default is true when missing

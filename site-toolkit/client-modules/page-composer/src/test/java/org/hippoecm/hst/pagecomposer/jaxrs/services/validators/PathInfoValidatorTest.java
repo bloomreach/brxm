@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,10 +47,10 @@ public class PathInfoValidatorTest {
                 "deny those requests because of security ", PathInfoValidator.containsEncodedDirectoryTraversalChars("te%5cst", "UTF-8"));
         assertTrue("forward slash encoded is not allowed because default tomcat / jboss " +
                 "deny those requests because of security ", PathInfoValidator.containsEncodedDirectoryTraversalChars("te%2est", "UTF-8"));
-        assertTrue("forward slash encoded is not allowed because default tomcat / jboss " +
-                "deny those requests because of security ", PathInfoValidator.containsEncodedDirectoryTraversalChars("test%", "UTF-8"));
-        assertTrue("forward slash encoded is not allowed because default tomcat / jboss " +
-                "deny those requests because of security ", PathInfoValidator.containsEncodedDirectoryTraversalChars("test%test", "UTF-8"));
+        assertTrue("% is not allowed " +
+                "deny those requests because of security ", PathInfoValidator.containsInvalidChars("test%", "UTF-8"));
+        assertTrue("% is not allowed " +
+                "deny those requests because of security ", PathInfoValidator.containsInvalidChars("test%test", "UTF-8"));
     }
 
     @Test

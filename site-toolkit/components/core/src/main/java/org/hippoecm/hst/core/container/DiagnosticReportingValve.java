@@ -42,7 +42,8 @@ public class DiagnosticReportingValve extends AbstractDiagnosticReportingValve {
                 }
 
                 final int diagnosticsDepth = virtualHostsService.getDiagnosticsDepth();
-                log.info("Diagnostic Summary:\n{}", TaskLogFormatUtils.getTaskLog(rootTask, diagnosticsDepth));
+                final long unitThreshold = virtualHostsService.getDiagnosticsUnitThresholdMillis();
+                log.info("Diagnostic Summary:\n{}", TaskLogFormatUtils.getTaskLog(rootTask, diagnosticsDepth, unitThreshold));
             } else {
                 log.info("Diagnostic Summary:\n{}", TaskLogFormatUtils.getTaskLog(rootTask));
             }

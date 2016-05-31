@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,8 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
+
+import com.google.common.base.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
@@ -180,28 +184,35 @@ public class SiteMapHelper extends AbstractHelper {
         }
         Node parent = session.getNodeByIdentifier(finalParentId);
 
-        final String encodedName = NodeNameCodec.encode(siteMapItem.getName());
-        validateTarget(session, parent.getPath() + "/" + encodedName, pageComposerContextService.getEditingPreviewSite().getSiteMap());
+        final String encoding = Optional.fromNullable(requestContext.getServletRequest().getCharacterEncoding()).or("UTF-8");
 
-        final Node newSitemapNode = parent.addNode(encodedName, NODETYPE_HST_SITEMAPITEM);
-        lockHelper.acquireLock(newSitemapNode, 0);
+        try {
+            final String urlDecodedName = URLDecoder.decode(siteMapItem.getName(), encoding);
+            final String encodedName = NodeNameCodec.encode(urlDecodedName);
+            validateTarget(session, parent.getPath() + "/" + encodedName, pageComposerContextService.getEditingPreviewSite().getSiteMap());
 
-        setSitemapItemProperties(siteMapItem, newSitemapNode);
-        // clone page definition
+            final Node newSitemapNode = parent.addNode(encodedName, NODETYPE_HST_SITEMAPITEM);
+            lockHelper.acquireLock(newSitemapNode, 0);
 
-        final Node prototypePage = session.getNodeByIdentifier(siteMapItem.getComponentConfigurationId());
-        final String targetPageNodeName = getSiteMapPathPrefixPart(newSitemapNode) + "-" + prototypePage.getName();
-        Node newPage = pagesHelper.create(prototypePage, targetPageNodeName);
+            setSitemapItemProperties(siteMapItem, newSitemapNode);
+            // clone page definition
 
-        newSitemapNode.setProperty(SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
-                NODENAME_HST_PAGES + "/" + newPage.getName());
+            final Node prototypePage = session.getNodeByIdentifier(siteMapItem.getComponentConfigurationId());
+            final String targetPageNodeName = getSiteMapPathPrefixPart(newSitemapNode) + "-" + prototypePage.getName();
+            Node newPage = pagesHelper.create(prototypePage, targetPageNodeName);
 
-        final Map<String, String> modifiedLocalParameters = siteMapItem.getLocalParameters();
-        setLocalParameters(newSitemapNode, modifiedLocalParameters);
+            newSitemapNode.setProperty(SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
+                    NODENAME_HST_PAGES + "/" + newPage.getName());
 
-        final Set<String> modifiedRoles = siteMapItem.getRoles();
-        setRoles(newSitemapNode, modifiedRoles);
-        return newSitemapNode;
+            final Map<String, String> modifiedLocalParameters = siteMapItem.getLocalParameters();
+            setLocalParameters(newSitemapNode, modifiedLocalParameters);
+
+            final Set<String> modifiedRoles = siteMapItem.getRoles();
+            setRoles(newSitemapNode, modifiedRoles);
+            return newSitemapNode;
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(String.format("Could not ULR  decode '%s'",siteMapItem.getName()), e);
+        }
     }
 
     /**

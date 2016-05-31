@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public class TestSearchInputParsingUtils {
         // allow wildcard false
         assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ?*qu??ic?k br?ow*?n fo*x jumps over the lazy dog", false));
 
-        assertEquals("The quick brown fox jumps  over   the lazy dog", SearchInputParsingUtils.parse("The (quick brown) (fox jumps) &( over ] ] [the lazy dog", true));
+        assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The (quick brown) (fox jumps) &( over ] ] [the lazy dog", true));
 
         assertEquals("The -quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The NOT quick brown fox jumps over the lazy dog", true));
 
@@ -161,5 +161,28 @@ public class TestSearchInputParsingUtils {
         assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", false));
         assertEquals("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", true, new char[]{'&'}));
         assertEquals("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", false, new char[]{'&'}));
+    }
+
+    @Test
+    public void testSearchInputParsingUtils_removeInvalidAndEscapeChars_removesTrailingExclamation() {
+        assertEquals("No exclamation",SearchInputParsingUtils.removeInvalidAndEscapeChars("No exclamation!", false));
+        assertEquals("No exclamation",SearchInputParsingUtils.removeInvalidAndEscapeChars("No exclamation!", true));
+        assertEquals("No exclamation",SearchInputParsingUtils.removeInvalidAndEscapeChars("No exclamation !", false));
+        assertEquals("No exclamation",SearchInputParsingUtils.removeInvalidAndEscapeChars("No exclamation !", true));
+    }
+
+    @Test
+    public void testSearchInputParsingUtils_removeInvalidAndEscapeChars_removesTrailingDash() {
+        assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash-", false));
+        assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash-", true));
+        assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash -", false));
+        assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash -", true));
+    }
+
+    @Test
+    public void testSearchInputParsingUtils_parse_differentApostrophes() throws Exception {
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quic'k", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quic’k", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quic‘k", true));
     }
 }
