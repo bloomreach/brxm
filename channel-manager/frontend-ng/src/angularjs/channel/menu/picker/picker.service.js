@@ -9,13 +9,13 @@ export class PickerService {
   }
 
   show(cfg) {
-    return this.DialogService.show(angular.extend({
+    return this.DialogService.show(angular.extend(cfg, {
       clickOutsideToClose: true,
       templateUrl: 'channel/menu/picker/picker.html',
       controller: 'PickerCtrl',
       controllerAs: 'picker',
       bindToController: true,
-    }, cfg));
+    }));
   }
 
   getTree() {
