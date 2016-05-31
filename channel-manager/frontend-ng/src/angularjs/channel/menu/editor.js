@@ -16,7 +16,7 @@
 
 import { menuEditorDirective } from './editor.directive';
 import { MenuEditorCtrl } from './editor.controller';
-import { uiTreeModule } from '../../ui/tree/tree.js';
+import { uiTreeModule } from './tree/tree.js';
 import { pickerModule } from './picker/picker';
 
 export const channelMenuModule = angular
