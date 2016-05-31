@@ -17,8 +17,7 @@
 <section>
   <md-subheader>{{ 'PICKER_LISTING_NAME' | translate }}</md-subheader>
   <md-list>
-    <md-list-item class="noright"
-                  ng-repeat="item in listing.selectedItem.items"
+    <md-list-item ng-repeat="item in listing.selectedItem.items"
                   ng-if="item.selectable"
                   ng-class="{active: listing.selectedDocument === item}"
                   scroll-to-if="listing.selectedDocument === item"
