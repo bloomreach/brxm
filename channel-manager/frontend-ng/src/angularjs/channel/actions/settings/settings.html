@@ -21,10 +21,10 @@
 </subpage-toolbar>
 
 <subpage-content flex layout="row" class="qa-channel-settings">
-  <form name="form"
+  <form name="channelSettings.form"
         flex="initial"
         class="qa-subpage"
-        ng-submit="form.$valid && channelSettings.save()"
+        ng-submit="channelSettings.saveIfValid()"
         novalidate>
     <div ng-repeat="fieldGroup in channelSettings.getFieldGroups()">
       <h3 class="md-title qa-fieldgroup">{{ channelSettings.getLabel(fieldGroup.titleKey) }}</h3>

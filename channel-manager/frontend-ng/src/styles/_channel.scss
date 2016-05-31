@@ -53,6 +53,18 @@ md-input-container.input-container-picker {
   }
 }
 
+// color required invalid select boxes red
+.md-input-invalid md-select.ng-invalid ._md-select-value._md-select-placeholder {
+  color: $select-invalid-color;
+}
+
+// mark required select boxes with an asterisk
+md-select.ng-invalid-required > md-select-value > span:after {
+  content: " *";
+  font-size: 13px;
+  vertical-align: top;
+}
+
 .help-icon {
   cursor: default;
   position: absolute;

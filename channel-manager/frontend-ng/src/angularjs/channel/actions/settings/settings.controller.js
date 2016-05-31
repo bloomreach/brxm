@@ -55,17 +55,29 @@ export class ChannelSettingsCtrl {
     return this.channelInfoDescription.lockedBy && this.channelInfoDescription.lockedBy !== this.ConfigService.cmsUser;
   }
 
-  save() {
-    this.ChannelService.setProperties(this.values);
-    this.ChannelService.saveChannel()
-      .then(() => {
-        this.HippoIframeService.reload();
-        this.ChannelService.recordOwnChange();
-        this.onSuccess({ key: 'CHANNEL_PROPERTIES_SAVE_SUCCESS' });
-      })
-      .catch(() => {
-        this.FeedbackService.showErrorOnSubpage('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
-      });
+  touchRequiredFields() {
+    if (this.form.$error.required) {
+      this.form.$error.required.forEach((requiredField) => requiredField.$setDirty());
+    }
+  }
+
+  saveIfValid() {
+    // Angular does not mark input containers with a select field as invalid unless they are dirty, so mark
+    // all required field as dirty upon save to ensure that invalid required select fields are also highlighted.
+    this.touchRequiredFields();
+
+    if (this.form.$valid) {
+      this.ChannelService.setProperties(this.values);
+      this.ChannelService.saveChannel()
+        .then(() => {
+          this.HippoIframeService.reload();
+          this.ChannelService.recordOwnChange();
+          this.onSuccess({ key: 'CHANNEL_PROPERTIES_SAVE_SUCCESS' });
+        })
+        .catch(() => {
+          this.FeedbackService.showErrorOnSubpage('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
+        });
+    }
   }
 
   getLabel(field) {
