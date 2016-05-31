@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -209,15 +209,24 @@ public class MountResource extends AbstractConfigResource {
     @Path("/edit/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response startEdit() {
-        final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
+        final PageComposerContextService pageComposerContextService = getPageComposerContextService();
+        final HstRequestContext requestContext = pageComposerContextService.getRequestContext();
 
         try {
-            final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
+            final HstSite editingPreviewSite = pageComposerContextService.getEditingPreviewSite();
             Session session = requestContext.getSession();
             if (editingPreviewSite.hasPreviewConfiguration()) {
                 return ok("Site can be edited now");
             }
             createPreviewChannelAndConfigurationNode();
+            ChannelEvent event = new ChannelEvent(
+                    ChannelEvent.ChannelEventType.PREVIEW_CREATION,
+                    Collections.emptyList(),
+                    pageComposerContextService.getEditingMount(),
+                    pageComposerContextService.getEditingPreviewSite(),
+                    requestContext);
+
+            publishSynchronousEvent(event);
             HstConfigurationUtils.persistChanges(session);
             log.info("Site '{}' can be edited now", editingPreviewSite.getConfigurationPath());
             return ok("Site can be edited now");
