@@ -23,7 +23,7 @@ export const channelMenuModule = angular
   .module('hippo-cm.channel.menu', [
     uiTreeModule.name,
     pickerModule.name,
-    'focus-if'
+    'focus-if',
   ])
   .directive('menuEditor', menuEditorDirective)
   .controller('MenuEditorCtrl', MenuEditorCtrl);

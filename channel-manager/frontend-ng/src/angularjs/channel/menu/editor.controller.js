@@ -96,7 +96,7 @@ export class MenuEditorCtrl {
   }
 
   linkPick(targetEvent) {
-    this.SiteMenuService.getMenu(this.menuUuid).then((menu) => {
+    this.SiteMenuService.loadMenu(this.menuUuid).then((menu) => {
       const pickerTypes = [
         {
           id: menu.siteContentIdentifier,
