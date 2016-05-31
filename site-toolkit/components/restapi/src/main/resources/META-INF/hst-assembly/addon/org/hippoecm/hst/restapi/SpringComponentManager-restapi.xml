@@ -191,6 +191,8 @@
     </property>
     <property name="processingValves">
       <list>
+        <ref bean="pageInfoRenderingValve" />
+        <ref bean="pageCachingValve" />
         <ref bean="restApiServiceValve" />
       </list>
     </property>
