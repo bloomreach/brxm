@@ -12,10 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.picker-content{
-  width: 800px;
-  min-height: 250px;
-  height: 350px;
+.picker-content {
+  width: 850px;
+
+  @media (max-width: $layout-breakpoint-sm - 1) {
+    width: 600px;
+  }
+
+  height: 500px;
   border-bottom: 1px solid $picker-border-color;
 
   .md-subheader {
