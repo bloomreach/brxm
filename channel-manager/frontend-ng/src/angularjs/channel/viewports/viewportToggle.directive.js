@@ -18,10 +18,7 @@ export function viewportToggleDirective() {
   return {
     restrict: 'E',
     templateUrl: 'channel/viewports/viewportToggle.html',
-    controller: 'ViewportToggleCtrl as toggleCtrl',
-    bindToController: {
-      viewports: '=',
-      onSelect: '@',
-    },
+    controller: 'ViewportToggleCtrl',
+    controllerAs: 'toggleCtrl',
   };
 }
