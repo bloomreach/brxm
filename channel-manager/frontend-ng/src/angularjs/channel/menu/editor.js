@@ -19,6 +19,6 @@ import { MenuEditorCtrl } from './editor.controller';
 import { uiTreeModule } from '../../ui/tree/tree.js';
 
 export const channelMenuModule = angular
-  .module('hippo-cm.channel.menu', [uiTreeModule.name])
+  .module('hippo-cm.channel.menu', [uiTreeModule.name, 'focus-if'])
   .directive('menuEditor', menuEditorDirective)
   .controller('MenuEditorCtrl', MenuEditorCtrl);

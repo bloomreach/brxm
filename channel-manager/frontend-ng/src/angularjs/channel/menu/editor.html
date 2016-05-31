@@ -30,7 +30,6 @@
        flex>
     <form name="form"
           flex
-          class="qa-subpage"
           ng-submit="form.$valid && menuEditor.saveItem()"
           novalidate>
       <md-card scroll-to-if="menuEditor.editingItem == item">
@@ -72,7 +71,8 @@
               <label>{{ 'TITLE' | translate }}</label>
               <input name="title"
                      ng-model="menuEditor.editingItem.title"
-                     required>
+                     required
+                     focus-if>
               <div ng-messages="form.title.$error">
                 <div ng-message="required">{{ 'TITLE_REQUIRED' | translate }}</div>
               </div>

@@ -18,7 +18,6 @@ import { DomService } from './dom.service';
 import { ThrottleService } from './throttle.service';
 import { FeedbackService } from './feedback.service';
 import { PathService } from './path.service';
-import { FormStateServiceFactory } from './formState.service';
 import { startWithSlashFilter } from './filter/startWithSlash.filter';
 import { getByPropertyFilter } from './filter/getByProperty.filter';
 import { incrementPropertyFilter } from './filter/incrementProperty.filter';
@@ -37,5 +36,4 @@ export const utilsModule = angular
   .filter('startWithSlash', startWithSlashFilter)
   .directive('illegalCharacters', illegalCharactersDirective)
   .directive('stopPropagation', stopPropagationDirective)
-  .directive('scrollToIf', scrollToIfDirective)
-  .factory('FormStateService', FormStateServiceFactory);
+  .directive('scrollToIf', scrollToIfDirective);
