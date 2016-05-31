@@ -69,6 +69,8 @@
   "PICKER_EMPTY_TREE": "No documents are available",
   "PICKER_LISTING_NAME": "Name",
   "PICKER_TITLE": "Select internal link",
+  "PICKER_TYPE_DOCUMENTS": "Documents",
+  "PICKER_TYPE_SITEMAP_ITEMS": "Pages (Sitemap Items)",
   "PUBLISH": "Publish",
   "PUBLISH_ALL": "Publish all",
   "REMOVE": "Remove",

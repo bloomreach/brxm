@@ -108,12 +108,12 @@ export class MenuEditorCtrl {
     const pickerTypes = [
       {
         id: this.SiteMenuService.getSiteContentIdentifier(),
-        name: 'Documents',
+        name: this.$translate.instant('PICKER_TYPE_DOCUMENTS'),
         type: 'documents',
       },
       {
         id: this.SiteMenuService.getSiteMapIdentifier(),
-        name: 'Pages (Sitemap Items)',
+        name: this.$translate.instant('PICKER_TYPE_SITEMAP_ITEMS'),
         type: 'pages',
       },
     ];

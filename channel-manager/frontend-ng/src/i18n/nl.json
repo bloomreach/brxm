@@ -52,6 +52,8 @@
   "PICKER_EMPTY_TREE": "Geen documenten beschikbaar",
   "PICKER_LISTING_NAME": "Naam",
   "PICKER_TITLE": "Kies een interne link",
+  "PICKER_TYPE_DOCUMENTS": "Documenten",
+  "PICKER_TYPE_SITEMAP_ITEMS": "Pagina's (Sitemap onderdelen)",
   "PUBLISH": "Publiceer",
   "PUBLISH_ALL": "Publiceer alles",
   "REMOVE": "???",
