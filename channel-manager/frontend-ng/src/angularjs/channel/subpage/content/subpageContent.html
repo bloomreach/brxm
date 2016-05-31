@@ -15,15 +15,16 @@
   -->
 
 <md-content layout="row"
-            layout-align="center"
             class="subpage-feedback-parent scroll-to-container qa-subpage"
             flex>
   <!--md-content is full height, internal div can scroll-->
-  <div flex="100"
-       flex-gt-xs="66"
-       flex-gt-sm="50"
-       flex-gt-md="33"
-       layout-padding>
-    <div ng-transclude flex></div>
+  <div flex layout="row" layout-align="center">
+    <div flex="100"
+         flex-gt-xs="66"
+         flex-gt-sm="50"
+         flex-gt-md="33"
+         layout-padding>
+      <div ng-transclude flex></div>
+    </div>
   </div>
 </md-content>
