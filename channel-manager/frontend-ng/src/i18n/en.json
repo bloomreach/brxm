@@ -4,7 +4,7 @@
   "CANCEL": "Cancel",
   "CHANNEL_PROPERTIES_SAVE_SUCCESS": "Channel settings saved successfully",
   "COLLAPSE": "Collapse",
-  "CONFIRM_DELETE_COMPONENT_MESSAGE": "Remove component '{{component}}' from this template?",
+  "CONFIRM_DELETE_COMPONENT_MESSAGE": "Delete component '{{component}}' from this template?",
   "CONFIRM_DELETE_PAGE_MESSAGE": "Delete '{{page}}'?",
   "CONFIRM_DELETE_MENU_ITEM_MESSAGE": "Delete '{{menuItem}}'?",
   "CONFIRM_DISCARD_CHANGES_MESSAGE": "Discard changes by '{{user}}'?",
