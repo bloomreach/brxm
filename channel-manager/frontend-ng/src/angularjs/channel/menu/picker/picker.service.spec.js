@@ -63,21 +63,11 @@ describe('PickerService', () => {
     PickerService.getInitialData('root', 'link').then((initialData) => {
       expect(initialData).not.toBeNull();
       expect(PickerService.getTree()).toEqual(initialData);
-      done();
-    });
-
-    expect(HstService.doGet).toHaveBeenCalledWith('root', 'picker', 'link');
-    $rootScope.$digest();
-  });
-
-  it('return a copy of remote initial data', (done) => {
-    PickerService.getInitialData('root').then((initialData) => {
-      expect(initialData).not.toBeNull();
-      expect(initialData[0]).not.toBe(testData);
       expect(initialData[0]).toEqual(testData);
       done();
     });
 
+    expect(HstService.doGet).toHaveBeenCalledWith('root', 'picker', 'link');
     $rootScope.$digest();
   });
 

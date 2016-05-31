@@ -24,7 +24,11 @@ export class PickerService {
 
   getInitialData(id, link) {
     return this.HstService.doGet(id, 'picker', link)
-      .then((response) => angular.copy([response.data], this.treeData.items));
+      .then((response) => {
+        this.treeData.items.splice(0, this.treeData.items.length);
+        this.treeData.items[0] = response.data;
+        return this.treeData.items;
+      });
   }
 
   getData(item) {
