@@ -43,7 +43,11 @@ export class MenuEditorCtrl {
           }
         );
       })
-      .catch(() => this.onError({ key: 'ERROR_MENU_LOAD_FAILED' }));
+      .catch((response) => {
+        response = response || {};
+
+        this.onError({ key: 'ERROR_MENU_LOAD_FAILED', params: response.data });
+      });
 
     this.treeOptions = {
       dropped: (event) => {
@@ -93,7 +97,8 @@ export class MenuEditorCtrl {
       })
       .catch((response) => {
         response = response || {};
-        this.onError({ key: 'ERROR_MENU_CREATE_FAILED', params: response.data });
+
+        this.FeedbackService.showErrorOnSubpage('ERROR_MENU_CREATE_FAILED', response.data);
       })
       .finally(() => delete this.isSaving.newItem);
   }

@@ -137,16 +137,11 @@ describe('MenuEditor', () => {
         const data = { key: 'value' };
         const error = { data };
         spyOn(SiteMenuService, 'createEditableMenuItem').and.returnValue($q.reject(error));
-        spyOn(MenuEditorCtrl, 'onError');
-
-        MenuEditorCtrl.menuUuid = 77;
+        spyOn(FeedbackService, 'showErrorOnSubpage');
 
         MenuEditorCtrl.addItem();
         $rootScope.$apply();
-        expect(MenuEditorCtrl.onError).toHaveBeenCalledWith({
-          key: 'ERROR_MENU_CREATE_FAILED',
-          params: data,
-        });
+        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_CREATE_FAILED', data);
       });
     });
 
