@@ -28,46 +28,45 @@
        data-selected-item="menuEditor.selectedItem"
        data-draggable="true"
        flex>
-    <md-card scroll-to-if="menuEditor.editingItem == item">
-      <md-card-title class="no-padding">
-        <md-card-title-text>
-          <div class="md-headline" layout="row" layout-align="space-between center">
-            <div layout="row" layout-align="start center">
-              <md-button type="button"
-                         class="md-icon-button"
-                         ng-click="hippoTree.toggle(this)"
-                         ng-disabled="childNodes().length == 0"
-                         aria-label="{{ (collapsed ? 'EXPAND' : 'COLLAPSE') | translate }}"
-                         data-nodrag
-                         stop-propagation>
-                <md-icon class="material-icons step md-18">
-                  <span ng-show="childNodes().length > 0 && collapsed">add</span>
-                  <span ng-show="childNodes().length > 0 && !collapsed">remove</span>
-                </md-icon>
-              </md-button>
-              <div>{{ item.title }}</div>
+    <form name="form"
+          flex
+          class="qa-subpage"
+          ng-submit="form.$valid && menuEditor.saveItem()"
+          novalidate>
+      <md-card scroll-to-if="menuEditor.editingItem == item">
+        <md-card-title class="no-padding">
+          <md-card-title-text>
+            <div class="md-headline" layout="row" layout-align="space-between center">
+              <div layout="row" layout-align="start center">
+                <md-button type="button"
+                           class="md-icon-button"
+                           ng-click="hippoTree.toggle(this)"
+                           ng-disabled="childNodes().length == 0"
+                           aria-label="{{ (collapsed ? 'EXPAND' : 'COLLAPSE') | translate }}"
+                           data-nodrag
+                           stop-propagation>
+                  <md-icon class="material-icons step md-18">
+                    <span ng-show="childNodes().length > 0 && collapsed">add</span>
+                    <span ng-show="childNodes().length > 0 && !collapsed">remove</span>
+                  </md-icon>
+                </md-button>
+                <div>{{ item.title }}</div>
+              </div>
+              <div>
+                <md-button type="button"
+                           class="md-icon-button"
+                           aria-label="{{ 'EDIT' | translate }}"
+                           ng-click="menuEditor.toggleEditState(item)">
+                  <md-icon class="material-icons step md-18">
+                    <span ng-show="menuEditor.editingItem.id != item.id">expand_more</span>
+                    <span ng-show="menuEditor.editingItem.id == item.id">expand_less</span>
+                  </md-icon>
+                </md-button>
+              </div>
             </div>
-            <div>
-              <md-button type="button"
-                         class="md-icon-button"
-                         aria-label="{{ 'EDIT' | translate }}"
-                         ng-click="menuEditor.toggleEditState(item)">
-                <md-icon class="material-icons step md-18">
-                  <span ng-show="menuEditor.editingItem.id != item.id">expand_more</span>
-                  <span ng-show="menuEditor.editingItem.id == item.id">expand_less</span>
-                </md-icon>
-              </md-button>
-            </div>
-          </div>
-        </md-card-title-text>
-      </md-card-title>
-      <form name="form"
-            flex
-            class="qa-subpage"
-            ng-if="menuEditor.editingItem.id == item.id"
-            ng-submit="form.$valid && menuEditor.saveItem()"
-            novalidate>
-        <md-card-content>
+          </md-card-title-text>
+        </md-card-title>
+        <md-card-content ng-if="menuEditor.editingItem.id == item.id">
           <div layout="row">
             <md-input-container flex>
               <label>{{ 'TITLE' | translate }}</label>
@@ -130,9 +129,10 @@
             </div>
           </div>
         </md-card-content>
-        <md-divider></md-divider>
+        <md-divider ng-if="menuEditor.editingItem.id == item.id"></md-divider>
         <md-card-actions layout="row"
-                         layout-align="space-between center">
+                         layout-align="space-between center"
+                         ng-if="menuEditor.editingItem.id == item.id">
           <md-button type="button"
                      aria-label="{{ 'DELETE' | translate }}"
                      ng-click="menuEditor.deleteItem()">
@@ -151,8 +151,8 @@
             </md-button>
           </div>
         </md-card-actions>
-      </form>
-    </md-card>
+      </md-card>
+    </form>
   </div>
   <div class="empty-tree" ng-if="menuEditor.items.length === 0">{{ 'SUBPAGE_MENU_EDITOR_EMPTY_MENU' | translate }}</div>
   <div class="fab-space-holder"></div>
