@@ -12,57 +12,55 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-md-toolbar {
-  &.hippo-toolbar {
-    background: $grey-200;
-    color: $text-dark;
+md-toolbar.hippo-toolbar {
+  background: $grey-200;
+  color: $text-dark;
+  height: 40px;
+  min-height: 40px;
+
+  .md-button {
+    text-transform: none;
+  }
+
+  .md-icon-button {
     height: 40px;
-    min-height: 40px;
+    padding-bottom: 0;
+    padding-top: 0;
+    width: 48px;
+  }
 
+  md-icon {
+    color: $text-dark;
+    height: 32px;
+    width: 32px;
+  }
+
+  .md-toolbar-tools {
+    font-size: 14px;
+  }
+
+  .button-group {
     .md-button {
-      text-transform: none;
-    }
+      margin-right: 0;
 
-    .md-icon-button {
-      height: 40px;
-      padding-bottom: 0;
-      padding-top: 0;
-      width: 48px;
+      &:not(:first-child) {
+        margin-left: 0;
+      }
     }
+  }
+
+  md-select-value {
+    font-weight: bold;
+    margin-left: 4px;
+    position: relative;
+    top: 1px;
 
     md-icon {
       color: $text-dark;
-      height: 32px;
-      width: 32px;
     }
+  }
 
-    .md-toolbar-tools {
-      font-size: 14px;
-    }
-
-    .button-group {
-      .md-button {
-        margin-right: 0;
-
-        &:not(:first-child) {
-          margin-left: 0;
-        }
-      }
-    }
-
-    md-select-value {
-      font-weight: bold;
-      margin-left: 4px;
-      position: relative;
-      top: 1px;
-
-      md-icon {
-        color: $text-dark;
-      }
-    }
-
-    .alter-ego-btn {
-      margin-left: 0;
-    }
+  .alter-ego-btn {
+    margin-left: 0;
   }
 }
