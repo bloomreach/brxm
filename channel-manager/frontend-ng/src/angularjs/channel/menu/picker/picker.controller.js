@@ -37,7 +37,7 @@ export class PickerCtrl {
     this.treeOptions = {
       displayItem: (item) => item.type === 'folder' || item.type === 'page',
       selectItem: (item) => {
-        if (!item.leaf && item.items.length < 1) {
+        if (!item.leaf && item.items.length === 0) {
           PickerService.getData(item);
         }
         this.selectedDocument = item.selectable ? item : null;
