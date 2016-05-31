@@ -28,13 +28,15 @@ describe('MenuEditor', () => {
   let DialogService;
   let FeedbackService;
   let HippoIframeService;
+  let ChannelService;
   let menu;
   let MenuEditorCtrl;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$q_, _$rootScope_, _$compile_, _SiteMenuService_, _DialogService_, _FeedbackService_, _HippoIframeService_) => {
+    inject((_$q_, _$rootScope_, _$compile_, _SiteMenuService_, _DialogService_, _FeedbackService_, _HippoIframeService_,
+            _ChannelService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $compile = _$compile_;
@@ -42,6 +44,7 @@ describe('MenuEditor', () => {
       DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
+      ChannelService = _ChannelService_;
     });
 
     menu = { items: [] };
@@ -168,13 +171,29 @@ describe('MenuEditor', () => {
     });
 
     describe('onBack', () => {
-      it('sets the item to be the editing item', () => {
-        spyOn(HippoIframeService, 'reload').and.returnValue($q.when());
+      it('returns to the main page with no changes', () => {
+        spyOn(HippoIframeService, 'reload');
+        spyOn(ChannelService, 'recordOwnChange');
+        spyOn(MenuEditorCtrl, 'onDone');
+
+        MenuEditorCtrl.onBack();
+        expect(HippoIframeService.reload).not.toHaveBeenCalled();
+        expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
+        expect(MenuEditorCtrl.onDone).toHaveBeenCalled();
+      });
+
+      it('returns to the mainpage with changes', () => {
+        spyOn(SiteMenuService, 'saveMenuItem').and.returnValue($q.when());
+        MenuEditorCtrl.saveItem();
+        $rootScope.$apply();
+
+        spyOn(HippoIframeService, 'reload');
+        spyOn(ChannelService, 'recordOwnChange');
         spyOn(MenuEditorCtrl, 'onDone');
 
         MenuEditorCtrl.onBack();
         expect(HippoIframeService.reload).toHaveBeenCalled();
-        $rootScope.$apply();
+        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
         expect(MenuEditorCtrl.onDone).toHaveBeenCalled();
       });
     });

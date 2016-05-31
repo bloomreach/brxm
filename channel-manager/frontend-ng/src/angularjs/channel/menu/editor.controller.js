@@ -57,7 +57,11 @@ export class MenuEditorCtrl {
         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
           SiteMenuService.moveMenuItem(sourceId, destId, dest.index)
             .then(() => { this.isMenuModified = true; })
-            .catch(() => this.onError({ key: 'ERROR_MENU_MOVE_FAILED' }));
+            .catch((response) => {
+              response = response || {};
+
+              this.FeedbackService.showErrorOnSubpage('ERROR_MENU_MOVE_FAILED', response.data);
+            });
         }
       },
     };
