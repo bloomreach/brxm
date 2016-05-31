@@ -23,8 +23,8 @@ export class PickerCtrl {
     }
 
     this.$mdDialog = $mdDialog;
-    this.PickerService = PickerService;
     this.$filter = $filter;
+    this.PickerService = PickerService;
 
     this.items = PickerService.getTree();
     this.selectedItem = null;
@@ -79,16 +79,18 @@ export class PickerCtrl {
       }
     }
   }
+
   _navigateToSelected(items, parent) {
-    angular.forEach(items, (item) => {
+    return items.some((item) => {
       if (item.selected) {
         this.selectedItem = parent;
         this.selectedDocument = item;
-        // TODO: break out?
+        return true;
       }
       if (item.items) {
-        this._navigateToSelected(item.items, item);
+        return this._navigateToSelected(item.items, item);
       }
+      return false;
     });
   }
 }
