@@ -125,12 +125,13 @@ export class MenuEditorCtrl {
       const pickerCfg = {
         locals: {
           pickerTypes,
-          initialLink: this.selectedItem.link,
+          initialLink: this.editingItem.sitemapLink,
         },
         targetEvent,
       };
-      this.PickerService.show(pickerCfg).then((selected) => {
-        this.selectedItem.link = this.selectedItem.sitemapLink = selected.pathInfo;
+
+      this.PickerService.show(pickerCfg).then(({ pathInfo }) => {
+        this.editingItem.sitemapLink = this.editingItem.link = pathInfo;
       });
     });
   }
