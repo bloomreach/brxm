@@ -44,7 +44,11 @@ export class MenuEditorCtrl {
           }
         );
       })
-      .catch(() => this.onError({ key: 'ERROR_MENU_LOAD_FAILED' }));
+      .catch((response) => {
+        response = response || {};
+
+        this.onError({ key: 'ERROR_MENU_LOAD_FAILED', params: response.data });
+      });
 
     this.treeOptions = {
       dropped: (event) => {
@@ -58,7 +62,11 @@ export class MenuEditorCtrl {
         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
           SiteMenuService.moveMenuItem(sourceId, destId, dest.index)
             .then(() => { this.isMenuModified = true; })
-            .catch(() => this.onError({ key: 'ERROR_MENU_MOVE_FAILED' }));
+            .catch((response) => {
+              response = response || {};
+
+              this.FeedbackService.showErrorOnSubpage('ERROR_MENU_MOVE_FAILED', response.data);
+            });
         }
       },
     };
@@ -90,7 +98,8 @@ export class MenuEditorCtrl {
       })
       .catch((response) => {
         response = response || {};
-        this.onError({ key: 'ERROR_MENU_CREATE_FAILED', params: response.data });
+
+        this.FeedbackService.showErrorOnSubpage('ERROR_MENU_CREATE_FAILED', response.data);
       })
       .finally(() => delete this.isSaving.newItem);
   }

@@ -114,7 +114,6 @@ describe('ChannelSettings', () => {
     $compile($element)($scope);
     $scope.$digest();
 
-
     return $element.controller('channel-settings');
   }
 
@@ -142,6 +141,26 @@ describe('ChannelSettings', () => {
 
     $element.find('.qa-button-back').click();
     expect($scope.onDone).toHaveBeenCalled();
+  });
+
+  it('marks required fields as dirty on save', () => {
+    channelInfoDescription.propertyDefinitions.dropDown.isRequired = true;
+    const ChannelSettingsCtrl = compileDirectiveAndGetController();
+    expect(ChannelSettingsCtrl.form.dropDown.$dirty).toEqual(false);
+
+    $element.find('.qa-action').click();
+
+    expect(ChannelSettingsCtrl.form.dropDown.$dirty).toEqual(true);
+  });
+
+  it('does not save settings when a required field is invalid', () => {
+    channelInfoDescription.propertyDefinitions.dropDown.isRequired = true;
+    spyOn(ChannelService, 'saveChannel');
+    compileDirectiveAndGetController();
+
+    $element.find('.qa-action').click();
+
+    expect(ChannelService.saveChannel).not.toHaveBeenCalled();
   });
 
   it('notifies the event "on-success" when saving is successful', () => {
