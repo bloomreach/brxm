@@ -45,10 +45,6 @@ describe('PickerService', () => {
     HstService.doGet.and.returnValue($q.when({ data: testData }));
   });
 
-  it('exists', () => {
-    expect(PickerService).toBeDefined();
-  });
-
   it('load initial data', (done) => {
     PickerService.getInitialData('root').then((initialData) => {
       expect(initialData).not.toBeNull();
