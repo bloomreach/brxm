@@ -15,12 +15,15 @@
   limitations under the License.
 -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
-<path fill="none" stroke="currentColor" stroke-width="1.1208" stroke-miterlimit="10" d="M4.457,7.955V6.197
-	c0-2.033,1.131-3.682,3.074-3.682l0,0c1.943,0,2.965,1.648,2.965,3.682v1.758"/>
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
 <g>
-	<path d="M11,9v5H4V9H11 M12,8H3v7h9V8L12,8z"/>
+	<path d="M11.5,3.937c2.231,0,3.563,1.519,3.563,4.063v3.063H7.937V8C7.937,5.456,9.269,3.937,11.5,3.937 M11.5,3
+		C8.674,3,7,5.042,7,8v4h9V8C16,5.042,14.327,3,11.5,3L11.5,3z"/>
 </g>
-<rect x="7" y="10" width="1" height="3"/>
+<g>
+	<path d="M17.077,11.923v8.154H5.923v-8.154H17.077 M18,11H5v10h13V11L18,11z"/>
+</g>
+<rect x="11" y="14" width="1" height="4"/>
 </svg>
