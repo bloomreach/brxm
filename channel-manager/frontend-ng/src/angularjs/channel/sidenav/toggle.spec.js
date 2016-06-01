@@ -25,10 +25,7 @@ describe('ChannelSidenavToggle', () => {
   let ChannelService;
 
   beforeEach(() => {
-    module('hippo-cm', ($provide) => {
-      // mock md-icon directive to ignore GET requests fetching SVG files
-      $provide.factory('mdIconDirective', () => angular.noop);
-    });
+    module('hippo-cm');
 
     inject((_$rootScope_, _$compile_, _ChannelSidenavService_, _ChannelService_) => {
       $rootScope = _$rootScope_;

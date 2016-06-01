@@ -111,5 +111,13 @@ function mockFallbackTranslations() {
   });
 }
 
+function mockMdIcon() {
+  module('hippo-cm', ($provide) => {
+    // mock md-icon directive to ignore GET requests fetching SVG files
+    $provide.factory('mdIconDirective', () => angular.noop);
+  });
+}
+
 beforeEach(mockHost);
 beforeEach(mockFallbackTranslations);
+beforeEach(mockMdIcon);
