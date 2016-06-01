@@ -24,7 +24,9 @@
     <md-content flex="33" flex-sm="50">
       <section>
         <md-subheader class="picker-type">
-          <md-select ng-model="picker.pickerType" ng-change="picker.changePickerType()">
+          <md-select aria-label="{{ 'PICKER_SELECT' | translate }}"
+                     ng-model="picker.pickerType"
+                     ng-change="picker.changePickerType()">
             <md-option ng-value="option" ng-repeat="option in picker.pickerTypes">{{ option.name }}</md-option>
           </md-select>
         </md-subheader>

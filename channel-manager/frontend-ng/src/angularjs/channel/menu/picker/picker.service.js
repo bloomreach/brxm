@@ -44,7 +44,7 @@ export class PickerService {
       .then((response) => {
         this.treeData.items.splice(0, this.treeData.items.length);
         this.treeData.items[0] = response.data;
-        return this.treeData.items;
+        return response.data.pickerType;
       });
   }
 

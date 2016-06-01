@@ -32,7 +32,10 @@ export class PickerCtrl {
 
     this.pickerType = this.pickerTypes[0];
     this.PickerService.getInitialData(this.pickerTypes[0].id, this.initialLink)
-      .then(() => this._navigateToSelectedOrRoot());
+      .then((pickerType) => {
+        this.pickerType = this.pickerTypes.find((pt) => pt.type === pickerType);
+        this._navigateToSelectedOrRoot();
+      });
 
     this.treeOptions = {
       displayItem: (item) => item.type === 'folder' || item.type === 'page',
