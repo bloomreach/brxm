@@ -40,6 +40,8 @@ import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.component.HstRequest.RESOURCE_PHASE;
+
 public class FormUtils {
     
     static Logger log = LoggerFactory.getLogger(FormUtils.class);
@@ -219,7 +221,11 @@ public class FormUtils {
                     }
                 }
                 session.save();
-                response.setRenderParameter(DEFAULT_UUID_NAME, postedFormDataNode.getIdentifier());
+                if (RESOURCE_PHASE.equals(request.getLifecyclePhase())) {
+                    log.debug("During {} a request does not (yet) support set render parameter. Skipping setting render parameter", RESOURCE_PHASE);
+                } else {
+                    response.setRenderParameter(DEFAULT_UUID_NAME, postedFormDataNode.getIdentifier());
+                }
                 if(storeFormResult != null) {
                     storeFormResult.populateResult(postedFormDataNode);
                 }
