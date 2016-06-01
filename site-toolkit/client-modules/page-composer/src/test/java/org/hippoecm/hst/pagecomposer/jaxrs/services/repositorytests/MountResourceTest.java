@@ -342,8 +342,10 @@ public class MountResourceTest extends AbstractMountResourceTest {
         private ChannelEvent handledEvent;
         @Subscribe
         public void onChannelEvent(ChannelEvent event) throws RepositoryException {
-            this.handledEvent = event;
-            event.setException(new ClientException("ClientException message", ClientError.UNKNOWN));
+            if (event.getChannelEventType() == PUBLISH || event.getChannelEventType() == DISCARD) {
+                this.handledEvent = event;
+                event.setException(new ClientException("ClientException message", ClientError.UNKNOWN));
+            }
         }
     }
 
@@ -403,7 +405,9 @@ public class MountResourceTest extends AbstractMountResourceTest {
     public static class ChannelEventListenerSettingIllegalStateException {
         @Subscribe
         public void onChannelEvent(ChannelEvent event) throws RepositoryException {
-            event.setException(new IllegalStateException("IllegalStateException message"));
+            if (event.getChannelEventType() == PUBLISH || event.getChannelEventType() == DISCARD) {
+                event.setException(new IllegalStateException("IllegalStateException message"));
+            }
         }
     }
 
