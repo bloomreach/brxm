@@ -181,8 +181,8 @@ public class IncludeLocalesMojo extends AbstractMojo {
             throw new MojoExecutionException("Could not resolve artifact " + localeArtifact, resolutionResult.getExceptions().get(0));
         }
 
-        Artifact result;
-        if (resolutionResult.getArtifacts().size() != 1 || !(result = resolutionResult.getArtifacts().iterator().next()).isResolved()) {
+        final Artifact result;
+        if (resolutionResult.getArtifacts().isEmpty() || !(result = resolutionResult.getArtifacts().iterator().next()).isResolved()) {
             final Artifact fallbackLocaleArtifact = findFallbackLocaleArtifact(localeArtifact);
             if (fallbackLocaleArtifact == null) {
                 return null;
