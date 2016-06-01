@@ -24,17 +24,17 @@ export class ViewportToggleCtrl {
     this.viewPorts = [
       {
         id: 'DESKTOP',
-        icon: 'computer',
+        icon: 'images/desktop.svg',
         width: 0,
       },
       {
         id: 'TABLET',
-        icon: 'tablet',
+        icon: 'images/tablet.svg',
         width: 720,
       },
       {
         id: 'PHONE',
-        icon: 'smartphone',
+        icon: 'images/phone.svg',
         width: 320,
       },
     ];

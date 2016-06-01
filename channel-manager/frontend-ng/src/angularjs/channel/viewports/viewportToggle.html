@@ -6,7 +6,7 @@
     ng-change="toggleCtrl.viewPortChanged()">
     <md-option ng-repeat="viewPort in toggleCtrl.viewPorts" ng-value="{{viewPort}}">
       <div layout="row" layout-align="start center">
-        <md-icon>{{ viewPort.icon }}</md-icon>
+        <md-icon md-svg-src="{{ viewPort.icon }}"></md-icon>
         <span class="viewport-name">{{ toggleCtrl.getDisplayName(viewPort) }}</span>
       </div>
     </md-option>
