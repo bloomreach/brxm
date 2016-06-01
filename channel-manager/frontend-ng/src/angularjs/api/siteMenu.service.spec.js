@@ -56,6 +56,11 @@ describe('SiteMenuService', () => {
     ],
   };
 
+  const newMenuItem = {
+    linkType: 'NONE',
+    title: 'NEW_MENU_ITEM_TITLE',
+  };
+
   beforeEach(() => {
     module('hippo-cm');
 
@@ -358,22 +363,28 @@ describe('SiteMenuService', () => {
 
   // Create item
   it('should create a menu item', (done) => {
-    const newMenuItem = {
-      linkType: 'NONE',
-      title: 'NEW_MENU_ITEM_TITLE',
-    };
-    SiteMenuService.loadMenu('testUuid').then(() => {
-      SiteMenuService.createEditableMenuItem().then(() => {
-        expect(HstService.doPostWithParams)
-          .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
-            position: 'after',
-            sibling: {
-              id: '3',
-              title: 'Three',
-            },
-          }, 'create', 'testUuid');
-        done();
-      });
+    SiteMenuService.createEditableMenuItem().then(() => {
+      expect(HstService.doPostWithParams)
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('should create a menu item as next sibling of marker item if it has no children', (done) => {
+    SiteMenuService.createEditableMenuItem({ id: 'child1' }).then(() => {
+      expect(HstService.doPostWithParams)
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after', sibling: 'child1' }, 'create', '2');
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('should create a menu item as first child of marker item if it has children', (done) => {
+    SiteMenuService.createEditableMenuItem({ id: '2' }).then(() => {
+      expect(HstService.doPostWithParams)
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'first' }, 'create', '2');
+      done();
     });
     $rootScope.$digest();
   });

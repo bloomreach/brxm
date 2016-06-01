@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+const FIRST_CHILD = 'first';
 const NEXT_SIBLING = 'after';
 
 export class SiteMenuService {
@@ -76,19 +77,32 @@ export class SiteMenuService {
   /**
    * Create a new menu item.
    */
-  createEditableMenuItem() {
-    return this._loadMenu(this.menu.id)
+  createEditableMenuItem(markerItem) {
+    const markerId = markerItem ? markerItem.id : null;
+    const menuId = this.menu.id;
+
+    return this._loadMenu(menuId)
       .then(() => {
-        const options = {
-          position: NEXT_SIBLING,
-        };
-        const lastItem = this.menu.items[this.menu.items.length - 1];
-        if (lastItem) {
-          options.sibling = lastItem;
-        }
-        const menuId = this.menu.id;
-        const parentId = menuId;
+        let parentId = menuId;
+        const options = { position: NEXT_SIBLING };
         const newItem = this._createBlankMenuItem();
+        const paths = this._findPathToMenuItem(this.menu, markerId);
+
+        if (paths && paths.length) {
+          let parentItem = paths.pop();
+          if (parentItem.items && parentItem.items.length) {
+            // if the parent has children, add the new node as first child
+            parentId = parentItem.id;
+            options.position = FIRST_CHILD;
+            // and ensure the parent is not collapsed
+            parentItem.collapsed = false;
+          } else if (paths.length >= 1) {
+            // if the parent has no children (yet), add the new node as next sibling of parent
+            options.sibling = parentItem.id;
+            parentItem = paths.pop();
+            parentId = parentItem.id;
+          }
+        }
 
         return this.HstService.doPostWithParams(newItem, menuId, options, 'create', parentId)
           .then((response) => response.data)

@@ -91,9 +91,10 @@ export class MenuEditorCtrl {
 
   addItem() {
     this.isSaving.newItem = true;
-    this.SiteMenuService.createEditableMenuItem()
+    this.SiteMenuService.createEditableMenuItem(this.selectedItem)
       .then((editableItem) => {
         this.isMenuModified = true;
+        this.selectedItem = editableItem;
         this._startEditingItem(editableItem);
       })
       .catch((response) => {
