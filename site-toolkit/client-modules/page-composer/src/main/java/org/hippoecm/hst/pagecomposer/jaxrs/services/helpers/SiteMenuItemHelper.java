@@ -40,6 +40,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.repository.util.NodeIterable;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENU;
+import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_HST_PROTOTYPEITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_REPOBASED;
@@ -218,12 +219,10 @@ public class SiteMenuItemHelper extends AbstractHelper {
 
     private String getSuccessorOfSourceNodeName(Node parent, String sourceName, Integer newIndex) throws RepositoryException {
         final List<String> childNodeNames = new ArrayList<>();
-        final NodeIterator childIterator = parent.getNodes();
-        while (childIterator.hasNext()) {
-            final Node child = childIterator.nextNode();
+        for (Node child : new NodeIterable(parent.getNodes())) {
             final String name = child.getName();
             // We need to disregard a potential prototype item, or the mapping from index to menu item name will fail.
-            if (!name.equals(HstNodeTypes.SITEMENUITEM_HST_PROTOTYPEITEM)) {
+            if (!name.equals(SITEMENUITEM_HST_PROTOTYPEITEM)) {
                 childNodeNames.add(name);
             }
         }
