@@ -17,10 +17,10 @@
 <span class="overlay-label"
       ng-class="{ 'overlay-label-with-icon': overlayElement.isLabelIconVisible() }"
       layout="row" layout-align="start center">
-  <md-icon class="overlay-label-icon"
+  <md-icon class="overlay-label-icon icon16"
+           md-svg-src="images/flask.svg"
            ng-if="overlayElement.isLabelIconVisible()"
            ng-attr-qa-experiment-id="{{overlayElement.getQaExperimentId()}}">
-    {{ overlayElement.getLabelIcon() }}
   </md-icon>
   <span class="overlay-label-text">{{ overlayElement.getLabelText() }}</span>
 </span>

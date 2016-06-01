@@ -32,10 +32,6 @@ export class ExperimentStateService {
     return component.metaData[EXPERIMENT_ID];
   }
 
-  getExperimentStateIcon(component) {
-    return this.hasExperiment(component) ? 'toys' : null;
-  }
-
   getExperimentStateLabel(component) {
     let label = null;
     if (this.hasExperiment(component)) {

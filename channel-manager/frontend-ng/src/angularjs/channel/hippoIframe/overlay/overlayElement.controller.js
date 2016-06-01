@@ -38,10 +38,6 @@ export class OverlayElementCtrl {
     return this._isComponent() && this.ExperimentStateService.hasExperiment(this.structureElement);
   }
 
-  getLabelIcon() {
-    return this.ExperimentStateService.getExperimentStateIcon(this.structureElement);
-  }
-
   getLabelText() {
     return this.ExperimentStateService.getExperimentStateLabel(this.structureElement) || this.structureElement.getLabel();
   }

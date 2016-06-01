@@ -47,6 +47,13 @@ overlay-element {
   }
 }
 
+.icon16 {
+  height: 16px;
+  min-height: 16px;
+  width: 16px;
+  min-width: 16px;
+}
+
 .overlay-label {
   border: 1px solid $half-white;
   color: $white;
@@ -58,11 +65,12 @@ overlay-element {
   display: none;
 
   .overlay-label-text {
-    padding: 0 6px;
+    padding-right: 6px;
     display: none;
   }
 
   .overlay-label-icon {
+    margin: -2px 4px 0 4px;
     color: $white;
     display: none;
   }
