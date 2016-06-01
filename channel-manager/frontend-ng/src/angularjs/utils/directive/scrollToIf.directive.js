@@ -51,24 +51,26 @@ export function scrollToIfDirective($timeout) {
       scope.$watch(attrs.scrollToIf, (value) => {
         if (value) {
           $timeout(() => {
-            const parent = getParentOfScrollItem(elem[0]);
-            const topPadding = parseInt(window.getComputedStyle(parent, null).getPropertyValue('padding-top'), 10) || 0;
-            const leftPadding = parseInt(window.getComputedStyle(parent, null).getPropertyValue('padding-left'), 10) || 0;
-            const elemOffsetTop = elem[0].offsetTop;
-            const elemOffsetLeft = elem[0].offsetLeft;
-            let elemHeight = elem[0].clientHeight;
-            const elemWidth = elem[0].clientWidth;
+            if (elem[0]) { // by now, the element could have gone away...
+              const parent = getParentOfScrollItem(elem[0]);
+              const topPadding = parseInt(window.getComputedStyle(parent, null).getPropertyValue('padding-top'), 10) || 0;
+              const leftPadding = parseInt(window.getComputedStyle(parent, null).getPropertyValue('padding-left'), 10) || 0;
+              const elemOffsetTop = elem[0].offsetTop;
+              const elemOffsetLeft = elem[0].offsetLeft;
+              let elemHeight = elem[0].clientHeight;
+              const elemWidth = elem[0].clientWidth;
 
-            if (elemOffsetTop < parent.scrollTop) {
-              parent.scrollTop = elemOffsetTop + topPadding;
-            } else if (elemOffsetTop + elemHeight > parent.scrollTop + parent.clientHeight) {
-              if (elemHeight > parent.clientHeight) {
-                elemHeight = elemHeight - (elemHeight - parent.clientHeight);
+              if (elemOffsetTop < parent.scrollTop) {
+                parent.scrollTop = elemOffsetTop + topPadding;
+              } else if (elemOffsetTop + elemHeight > parent.scrollTop + parent.clientHeight) {
+                if (elemHeight > parent.clientHeight) {
+                  elemHeight = elemHeight - (elemHeight - parent.clientHeight);
+                }
+                parent.scrollTop = elemOffsetTop + topPadding + elemHeight - parent.clientHeight;
               }
-              parent.scrollTop = elemOffsetTop + topPadding + elemHeight - parent.clientHeight;
-            }
-            if (elemOffsetLeft + elemWidth > parent.scrollLeft + parent.clientWidth) {
-              parent.scrollLeft = elemOffsetLeft + leftPadding;
+              if (elemOffsetLeft + elemWidth > parent.scrollLeft + parent.clientWidth) {
+                parent.scrollLeft = elemOffsetLeft + leftPadding;
+              }
             }
           }, 0);
         }
