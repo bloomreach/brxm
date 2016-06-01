@@ -64,12 +64,12 @@ describe('SubpageToolbar', () => {
   it('should show the back icon if the mode is not set to cancel', () => {
     mode = undefined;
     const SubpageToolbarCtrl = compileDirectiveAndGetController();
-    expect(SubpageToolbarCtrl.icon).toBe('keyboard_backspace');
+    expect(SubpageToolbarCtrl.icon).toBe('images/back.svg');
   });
 
-  it('should show the clear icon if the mode is set to cancel', () => {
+  it('should show the close icon if the mode is set to cancel', () => {
     mode = 'cancel';
     const SubpageToolbarCtrl = compileDirectiveAndGetController();
-    expect(SubpageToolbarCtrl.icon).toBe('clear');
+    expect(SubpageToolbarCtrl.icon).toBe('images/close.svg');
   });
 });

@@ -18,6 +18,6 @@ export class SubpageToolbarCtrl {
   constructor() {
     'ngInject';
 
-    this.icon = (this.mode === 'cancel') ? 'clear' : 'keyboard_backspace';
+    this.icon = (this.mode === 'cancel') ? 'images/close.svg' : 'images/back.svg';
   }
 }

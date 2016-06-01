@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   Copyright 2016 Hippo B.V. (http://www.onehippo.com)
 
@@ -12,15 +13,12 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  -->
-
-<md-toolbar class="hippo-toolbar qa-toolbar">
-  <div class="md-toolbar-tools">
-    <md-button class="qa-button-back md-icon-button" ng-click="onBack()">
-      <md-icon class="material-icons" md-svg-src="{{ toolbar.icon }}"></md-icon>
-    </md-button>
-    <span flex></span>
-    <h2>{{ title }}</h2>
-    <span flex></span>
-  </div>
-</md-toolbar>
+-->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+<g>
+	<line fill="none" stroke="currentColor" stroke-miterlimit="10" x1="6" y1="6" x2="26" y2="26"/>
+	<line fill="none" stroke="currentColor" stroke-miterlimit="10" x1="6" y1="26" x2="26" y2="6"/>
+</g>
+</svg>
