@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-export function channelPropertyDirective() {
+export function hippoTreeDirective() {
   'ngInject';
 
   return {
     restrict: 'A',
+    transclude: true,
     bindToController: {
-      field: '@channelProperty',
-      value: '=channelPropertyValue',
-      error: '=channelPropertiesError',
-      data: '=channelPropertiesData',
+      options: '=',
+      items: '=',
+      selectable: '=',
+      selectedItem: '=',
+      draggable: '=',
     },
-    templateUrl: 'channel/actions/settings/property/property.html',
-    controller: 'ChannelPropertyCtrl',
-    controllerAs: 'channelProperty',
+    templateUrl: 'channel/menu/tree/tree.html',
+    controller: 'HippoTreeCtrl',
+    controllerAs: 'hippoTree',
   };
 }

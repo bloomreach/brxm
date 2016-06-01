@@ -14,30 +14,15 @@
  * limitations under the License.
  */
 
-class FormStateService {
-
-  constructor() {
-    this.valid = true;
-    this.dirty = false;
-  }
-
-  setValid(value) {
-    this.valid = value;
-  }
-
-  isValid() {
-    return this.valid;
-  }
-
-  setDirty(value) {
-    this.dirty = value;
-  }
-
-  isDirty() {
-    return this.dirty;
-  }
-}
-
-export function FormStateServiceFactory() {
-  return new FormStateService();
+export function listingDirective() {
+  return {
+    restrict: 'A',
+    bindToController: {
+      selectedItem: '=',
+      selectedDocument: '=',
+    },
+    templateUrl: 'channel/menu/picker/listing.html',
+    controller: 'ListingCtrl',
+    controllerAs: 'listing',
+  };
 }

@@ -15,130 +15,171 @@
  */
 
 export class MenuEditorCtrl {
-  constructor($q, $filter, $scope, $translate, SiteMenuService, FormStateService, HippoIframeService) {
+  constructor($scope, $translate, SiteMenuService, HippoIframeService, DialogService,
+              FeedbackService, ChannelService, PickerService) {
     'ngInject';
 
-    this.$q = $q;
-    this.$filter = $filter;
     this.$translate = $translate;
     this.SiteMenuService = SiteMenuService;
-    this.FormStateService = FormStateService;
     this.HippoIframeService = HippoIframeService;
+    this.DialogService = DialogService;
+    this.FeedbackService = FeedbackService;
+    this.ChannelService = ChannelService;
+    this.PickerService = PickerService;
 
     this.isSaving = {};
 
     SiteMenuService.loadMenu(this.menuUuid)
       .then((menu) => {
         this.items = menu.items;
-        this.selectedItem = this.items.length > 0 ? this.items[0] : undefined;
 
+        // Currently, the SiteMenuService is loading and maintaining the menu structure.
+        // Creation or deletion of a menu item trigger a full reload of the menu, and the
+        // $watch below makes sure the MenuEditorCtrl becomes aware of these reloads.
+        // TODO: this is ugly, inefficient and hard to maintain. We should improve this.
         $scope.$watch(
           () => menu.items,
           () => {
             this.items = menu.items;
-            $scope.$broadcast('menu-items-changed');
-          }
-        );
-
-        $scope.$watch(
-          () => this.selectedItem,
-          (current, last) => {
-            if (current && last && current.id !== last.id) {
-              this._saveIfDirty(last);
-            }
           }
         );
       })
-      .catch(() => this.onError({ key: 'ERROR_MENU_LOAD_FAILED' }));
+      .catch((response) => {
+        response = response || {};
+
+        this.onError({ key: 'ERROR_MENU_LOAD_FAILED', params: response.data });
+      });
 
     this.treeOptions = {
-      // created an issue for the Tree component, to add a disabled state
-      // link: https://github.com/JimLiu/angular-ui-tree/issues/63
-      // for now, simply don't accept any moves when the form is invalid
-      accept: () => FormStateService.isValid(),
       dropped: (event) => {
         const source = event.source;
         const sourceNodeScope = source.nodeScope;
         const sourceId = sourceNodeScope.$modelValue.id;
         const dest = event.dest;
         const destNodesScope = dest.nodesScope;
-        const destId = destNodesScope.$nodeScope ? destNodesScope.$nodeScope.$modelValue.id : this.menuUuid;
+        const destId = destNodesScope.$nodeScope ? destNodesScope.$nodeScope.$modelValue.id : undefined;
 
         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
-          SiteMenuService.moveMenuItem(this.menuUuid, sourceId, destId, dest.index)
-            .catch(() => this.onError({ key: 'ERROR_MENU_MOVE_FAILED' }));
-        }
+          SiteMenuService.moveMenuItem(sourceId, destId, dest.index)
+            .then(() => { this.isMenuModified = true; })
+            .catch((response) => {
+              response = response || {};
 
-        if (this.selectedItem.id !== sourceId) {
-          this._saveIfDirty(this.selectedItem).then(() => this.selectItem(sourceId));
+              this.FeedbackService.showErrorOnSubpage('ERROR_MENU_MOVE_FAILED', response.data);
+            });
         }
       },
     };
   }
 
-  selectItem(itemId) {
-    if (!this.selectedItem || this.selectedItem.id !== itemId) {
-      this.SiteMenuService.getMenuItem(this.menuUuid, itemId)
-        .then((item) => {
-          this.selectedItem = item;
-        });
+  _startEditingItem(item) {
+    this.editingItem = item;
+  }
+
+  stopEditingItem() {
+    this.editingItem = null;
+  }
+
+  toggleEditState(item) {
+    if (!this.editingItem || this.editingItem.id !== item.id) {
+      this.SiteMenuService.getEditableMenuItem(item.id)
+        .then((editableItem) => this._startEditingItem(editableItem));
+    } else {
+      this.stopEditingItem();
     }
   }
 
   addItem() {
-    this._saveIfDirty(this.selectedItem).then(() => {
-      if (!this.selectedItem) {
-        return;
-      }
+    this.isSaving.newItem = true;
+    this.SiteMenuService.createEditableMenuItem()
+      .then((editableItem) => {
+        this.isMenuModified = true;
+        this._startEditingItem(editableItem);
+      })
+      .catch((response) => {
+        response = response || {};
 
-      this.isSaving.newItem = true;
+        this.FeedbackService.showErrorOnSubpage('ERROR_MENU_CREATE_FAILED', response.data);
+      })
+      .finally(() => delete this.isSaving.newItem);
+  }
 
-      this.SiteMenuService.getMenu(this.menuUuid)
-        .then((menu) => this._createBlankMenuItem(menu))
-        .then((blankItem) => this.SiteMenuService.createMenuItem(this.menuUuid, blankItem, this.selectedItem.id))
-        .then((newItem) => {
-          this.FormStateService.setValid(true);
-          this.isSaving.newItem = false;
-          this.selectedItem = newItem;
-        }).catch((error) => {
-          this.isSaving.newItem = false;
-          this.onError({ key: 'ERROR_MENU_CREATE_FAILED', params: [error] });
-        });
+  showPicker(targetEvent) {
+    const pickerTypes = [
+      {
+        id: this.SiteMenuService.getSiteContentIdentifier(),
+        name: this.$translate.instant('PICKER_TYPE_DOCUMENTS'),
+        type: 'documents',
+      },
+      {
+        id: this.SiteMenuService.getSiteMapIdentifier(),
+        name: this.$translate.instant('PICKER_TYPE_SITEMAP_ITEMS'),
+        type: 'pages',
+      },
+    ];
+    const pickerCfg = {
+      locals: {
+        pickerTypes,
+        initialLink: this.editingItem.sitemapLink,
+      },
+      targetEvent,
+    };
+
+    this.PickerService.show(pickerCfg).then(({ pathInfo }) => {
+      this.editingItem.sitemapLink = this.editingItem.link = pathInfo;
     });
   }
 
   onBack() {
-    this.HippoIframeService.reload().then(this.onDone);
+    if (this.isMenuModified) {
+      this.HippoIframeService.reload();
+      this.ChannelService.recordOwnChange();
+    }
+    this.onDone();
   }
 
-  _saveIfDirty(item) {
-    if (this.FormStateService.isDirty()) {
-      if (!this.FormStateService.isValid()) {
-        return this.$q.reject();
-      }
-      const defer = this.$q.defer();
-      this.SiteMenuService.saveMenuItem(item).then(
-        () => defer.resolve(),
-        (error) => {
-          this.onError({ key: 'ERROR_MENU_SAVE_FAILED', params: [error] });
-          this.FormStateService.setValid(false);
-          defer.reject();
-        });
-      return defer.promise;
-    }
-    return this.$q.when();
+  saveItem() {
+    this.SiteMenuService.saveMenuItem(this.editingItem)
+      .then(() => {
+        this.isMenuModified = true;
+        this.stopEditingItem();
+      })
+      .catch((response) => {
+        response = response || {};
+
+        this.FeedbackService.showErrorOnSubpage('ERROR_MENU_ITEM_SAVE_FAILED', response.data);
+      });
   }
 
-  _createBlankMenuItem(menu) {
-    const incFilter = this.$filter('incrementProperty');
-    const result = {
-      linkType: 'SITEMAPITEM',
-      title: incFilter(menu.items, 'title', this.$translate.instant('SUBPAGE_MENU_EDITOR_NEW_ITEM_TITLE'), 'items'),
-      link: '',
-    };
-    if (angular.isObject(menu.prototypeItem)) {
-      result.localParameters = angular.copy(menu.prototypeItem.localParameters);
-    }
-    return result;
+  _doDelete() {
+    return this.SiteMenuService.deleteMenuItem(this.editingItem.id)
+      .then(() => {
+        this.isMenuModified = true;
+        this.stopEditingItem();
+      })
+      .catch((response) => {
+        response = response || {};
+
+        this.FeedbackService.showErrorOnSubpage('ERROR_MENU_ITEM_DELETE_FAILED', response.data);
+      });
+  }
+
+  _confirmDelete() {
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_DELETE_MENU_ITEM_MESSAGE', {
+        menuItem: this.editingItem.title,
+      }))
+      .ok(this.$translate.instant('DELETE'))
+      .cancel(this.$translate.instant('CANCEL'));
+
+    return this.DialogService.show(confirm);
+  }
+
+  deleteItem() {
+    this._confirmDelete().then(() => this._doDelete());
+  }
+
+  hasLocalParameters() {
+    return Object.keys(this.editingItem.localParameters).length !== 0;
   }
 }

@@ -90,6 +90,10 @@ $sheet-bgcolor: #fff;
 
 $list-item-active-bgcolor: rgba(158, 158, 158, 0.2);
 
+// Picker
+$picker-subheader-bgcolor: $grey-100;
+$picker-border-color: $grey-400;
+
 // Tree
 $tree-bg:                                     $white;
 $tree-color:                                  $black;
@@ -107,3 +111,8 @@ $tree-active-color:                           $white;
 // DragDrop placeholder
 $tree-dd-bg:                                  $black-shadow;
 
+// Do not use transparent tooltips
+$tooltip-bg:                                  $black;
+
+// Style mdSelect
+$select-invalid-color:                        #f70029;

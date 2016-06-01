@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-const FIRST_CHILD = 'first';
 const NEXT_SIBLING = 'after';
 
 export class SiteMenuService {
-  constructor($q, HstService) {
+  constructor($filter, $translate, HstService) {
     'ngInject';
 
-    this.$q = $q;
+    this.$filter = $filter;
+    this.$translate = $translate;
     this.HstService = HstService;
 
     this.menu = {
@@ -31,72 +31,94 @@ export class SiteMenuService {
     this.loadMenuPromise = null;
   }
 
-  getMenu(menuId) {
-    if (menuId !== this.menu.id) {
-      this.loadMenuPromise = null;
-    }
-    return this._loadMenu(menuId);
-  }
-
   loadMenu(menuId) {
     this.loadMenuPromise = null;
+    this.menu.id = menuId;
     return this._loadMenu(menuId);
   }
 
-  getMenuItem(menuId, menuItemId) {
-    return this._loadMenu(menuId).then((menu) => this._findMenuItem(menu.items, menuItemId));
+  getEditableMenuItem(menuItemId) {
+    return this._loadMenu(this.menu.id).then(() => this._makeEditableItem(menuItemId));
   }
 
-  moveMenuItem(menuId, menuItemId, parentId, position) {
+  moveMenuItem(menuItemId, parentId, position) {
+    const menuId = this.menu.id;
+    parentId = parentId || menuId;
     return this.HstService.doPost({}, menuId, 'move', menuItemId, parentId, String(position));
   }
 
-  saveMenuItem(menuId, menuItem) {
-    const menuItemCopy = angular.copy(menuItem);
+  deleteMenuItem(menuItemId) {
+    return this.HstService.doPost({}, this.menu.id, 'delete', menuItemId)
+      .then(() => this.loadMenu(this.menu.id));
+  }
 
-    // TODO: needed?
-    this._removeCollapsedProperties(menuItemCopy);
-    this._extractLinkFromSitemapLinkOrExternalLink(menuItemCopy);
-    return this.HstService.doPost(menuItemCopy, menuId);
+  saveMenuItem(editableMenuItem) {
+    // We copy the editable menu item "back" such that we don't lose state in case the saving fails.
+    const menuItem = angular.copy(editableMenuItem);
+
+    this._removeCollapsedProperties(menuItem);
+    this._extractLinkFromSitemapLinkOrExternalLink(menuItem);
+
+    return this.HstService.doPost(menuItem, this.menu.id)
+      .then(() => {
+        this._replaceMenuItem(this.menu.items, menuItem);
+      });
+  }
+
+  getSiteContentIdentifier() {
+    return this.menu.siteContentIdentifier;
+  }
+
+  getSiteMapIdentifier() {
+    return this.menu.siteMapIdentifier;
   }
 
   /**
    * Create a new menu item.
-
-   * @param menuId The menu id
-   * @param newItem The item to be created
-   * @param selectedItemId When specified, the item will be created either as an additional child, or as a sibling of the
-   *                       selected item if it does not have any children yet.
-   * @returns {promise|Promise.promise|Q.promise}
    */
-  createMenuItem(menuId, newItem, selectedItemId) {
-    return this.getPathToMenuItem(menuId, selectedItemId).then((paths) => {
-      const options = {
-        position: NEXT_SIBLING,
-      };
-      let parentId = menuId;
-
-      if (paths && paths.length >= 1) {
-        let currentItem = paths.pop();
-        if (currentItem.items && currentItem.items.length > 0) {
-          parentId = currentItem.id;
-          options.position = FIRST_CHILD;
-          currentItem.collapsed = false;
-        } else if (paths.length >= 1) {
-          options.sibling = currentItem.id;
-          currentItem = paths.pop();
-          parentId = currentItem.id;
+  createEditableMenuItem() {
+    return this._loadMenu(this.menu.id)
+      .then(() => {
+        const options = {
+          position: NEXT_SIBLING,
+        };
+        const lastItem = this.menu.items[this.menu.items.length - 1];
+        if (lastItem) {
+          options.sibling = lastItem;
         }
-      }
+        const menuId = this.menu.id;
+        const parentId = menuId;
+        const newItem = this._createBlankMenuItem();
 
-      return this.HstService.doPostWithParams(newItem, menuId, options, 'create', parentId)
-        .then((response) => response.data)
-        .then((newItemId) => this.loadMenu(menuId).then((menu) => this._findMenuItem(menu.items, newItemId)));
-    });
+        return this.HstService.doPostWithParams(newItem, menuId, options, 'create', parentId)
+          .then((response) => response.data)
+          .then((newItemId) => this.loadMenu(menuId).then(() => this._makeEditableItem(newItemId)));
+      });
   }
 
   getPathToMenuItem(menuId, menuItemId) {
     return this._loadMenu(menuId).then((menu) => this._findPathToMenuItem(menu, menuItemId));
+  }
+
+  _createBlankMenuItem() {
+    const incFilter = this.$filter('incrementProperty');
+    const result = {
+      linkType: 'NONE',
+      title: incFilter(this.menu.items, 'title', this.$translate.instant('NEW_MENU_ITEM_TITLE'), 'items'),
+    };
+    if (angular.isObject(this.menu.prototypeItem)) {
+      result.localParameters = angular.copy(this.menu.prototypeItem.localParameters);
+    }
+    return result;
+  }
+
+  _makeEditableItem(id) {
+    let item = this._findMenuItem(this.menu.items, id);
+    if (item) {
+      item = angular.copy(item);
+      this._setSitemapLinkOrExternalLinkFromLink(item);
+    }
+    return item;
   }
 
   _loadMenu(menuId) {
@@ -128,19 +150,32 @@ export class SiteMenuService {
   }
 
   _findMenuItem(items, id) {
+    if (!angular.isArray(items)) {
+      return null;
+    }
+
     let found = null;
-
-    if (angular.isArray(items)) {
-      items.some((item) => {
-        found = item.id === id ? item : this._findMenuItem(item.items, id);
-        return found !== null;
-      });
-    }
-
-    if (found !== null) {
-      this._setSitemapLinkOrExternalLinkFromLink(found);
-    }
+    items.some((item) => {
+      found = item.id === id ? item : this._findMenuItem(item.items, id);
+      return found !== null;
+    });
     return found;
+  }
+
+  // lookup the existing menu item by ID and replace it with the updated item
+  _replaceMenuItem(items, item) {
+    if (angular.isArray(items)) {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].id === item.id) {
+          items[i] = item;
+          return true;
+        }
+        if (this._replaceMenuItem(items[i].items, item)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   _findPathToMenuItem(parent, id) {
@@ -195,3 +230,4 @@ export class SiteMenuService {
     });
   }
 }
+

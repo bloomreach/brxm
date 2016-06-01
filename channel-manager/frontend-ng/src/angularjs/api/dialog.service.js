@@ -24,14 +24,28 @@ export class DialogService {
 
   confirm() {
     return this.$mdDialog.confirm({
-      onRemoving: () => {
-        this.CmsService.publish('remove-mask');
-      },
+      onRemoving: () => this._removeMask(),
     });
   }
 
   show(dialog) {
-    this.CmsService.publish('show-mask');
+    this._showMask();
+
+    const oldOnRemoving = dialog.onRemoving;
+    dialog.onRemoving = () => {
+      if (angular.isFunction(oldOnRemoving)) {
+        oldOnRemoving.apply(dialog);
+      }
+      this._removeMask();
+    };
     return this.$mdDialog.show(dialog);
+  }
+
+  _showMask() {
+    this.CmsService.publish('show-mask');
+  }
+
+  _removeMask() {
+    this.CmsService.publish('remove-mask');
   }
 }

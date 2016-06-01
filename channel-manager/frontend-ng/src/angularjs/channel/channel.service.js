@@ -46,11 +46,19 @@ export class ChannelService {
 
     this.channel = {};
 
-    this.CmsService.subscribe('channel-changed-in-extjs', this._onChannelChanged, this);
+    this.CmsService.subscribe('channel-changed-in-extjs', () => this._onChannelChanged());
   }
 
   _onChannelChanged() {
     this.$rootScope.$apply(() => this.reload());
+  }
+
+  clearChannel() {
+    this.channel = {};
+  }
+
+  hasChannel() {
+    return !!this.channel.id;
   }
 
   reload(channelId = this.channel.id) {
@@ -64,26 +72,27 @@ export class ChannelService {
   }
 
   initialize() {
-    this.CmsService.subscribe('load-channel', (channel, initialPath) => {
-      this.HstService.getChannel(channel.id).then((updatedChannel) => {
-        this._load(updatedChannel).then((channelId) => {
-          const initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
-          this.$state.go('hippo-cm.channel', { channelId, initialRenderPath }, { reload: true });
-        });
-      });
-      // TODO: handle error.
-      // If this goes wrong, the CM won't work. display a toast explaining so
-      // and switch back to the channel overview.
-
-      this._loadGlobalFeatures();
-    });
+    this.CmsService.subscribe('load-channel', (channel, initialPath) => this._onLoadChannel(channel, initialPath));
 
     // Handle reloading of iframe by BrowserSync during development
     this.CmsService.publish('reload-channel');
   }
 
+  _onLoadChannel(channel, initialPath) {
+    this.HstService.getChannel(channel.id).then((updatedChannel) => {
+      this._loadGlobalFeatures();
+      this._load(updatedChannel).then((channelId) => {
+        const initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
+        this.$state.go('hippo-cm.channel', { channelId, initialRenderPath }, { reload: true });
+      });
+    });
+    // TODO: handle error.
+    // If this goes wrong, the CM won't work. display a toast explaining so
+    // and switch back to the channel overview.
+  }
+
   _loadGlobalFeatures() {
-    this.HstService.doGet(this.ConfigService.rootUuid, 'features')
+    this.HstService.getFeatures()
       .then((response) => {
         this.crossChannelPageCopySupported = response.data.crossChannelPageCopySupported;
       });
@@ -97,7 +106,10 @@ export class ChannelService {
 
     this.CatalogService.load(this.getMountId());
     this.SiteMapService.load(channel.siteMapId);
-    this._augmentChannelWithPrototypeInfo();
+
+    if (this.SessionService.hasWriteAccess()) {
+      this._augmentChannelWithPrototypeInfo();
+    }
   }
 
   getChannel() {

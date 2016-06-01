@@ -42,9 +42,12 @@ describe('ChannelService', () => {
       workspaceExists: true,
     };
 
-    SessionServiceMock = {
-      initialize: (channel) => $q.resolve(channel),
-    };
+    SessionServiceMock = jasmine.createSpyObj('SessionService', [
+      'initialize',
+      'hasWriteAccess',
+    ]);
+    SessionServiceMock.initialize.and.callFake((channel) => $q.when(channel));
+    SessionServiceMock.hasWriteAccess.and.returnValue(true);
 
     CatalogServiceMock = jasmine.createSpyObj('CatalogService', [
       'load',
@@ -95,9 +98,8 @@ describe('ChannelService', () => {
     };
 
     spyOn(CmsService, 'subscribe');
-    HstService.getChannel.and.returnValue($q.resolve(testChannel));
-    spyOn(ChannelService, '_load').and.callThrough();
-    spyOn(ChannelService, '_loadGlobalFeatures');
+    HstService.getChannel.and.returnValue($q.when(testChannel));
+    spyOn(HstService, 'getFeatures').and.callThrough();
     spyOn($state, 'go');
 
     ChannelService.initialize();
@@ -105,11 +107,11 @@ describe('ChannelService', () => {
 
     window.CMS_TO_APP.publish('load-channel', testChannel, '/testPath');
 
-    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
-    expect(ChannelService._loadGlobalFeatures).toHaveBeenCalled();
     $rootScope.$digest();
 
-    expect(ChannelService._load).toHaveBeenCalledWith(testChannel);
+    expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
+    expect(HstService.getFeatures).toHaveBeenCalled();
+    expect(SessionServiceMock.initialize).toHaveBeenCalledWith(testChannel);
     $rootScope.$digest();
 
     expect($state.go).toHaveBeenCalledWith(
@@ -143,10 +145,17 @@ describe('ChannelService', () => {
   });
 
   it('should not save a reference to the channel when load fails', () => {
-    spyOn(SessionServiceMock, 'initialize').and.returnValue($q.reject());
+    SessionServiceMock.initialize.and.returnValue($q.reject());
     ChannelService._load(channelMock);
     $rootScope.$digest();
     expect(ChannelService.getChannel()).not.toEqual(channelMock);
+  });
+
+  it('should not fetch pagemodel when session does not have write permission', () => {
+    SessionServiceMock.hasWriteAccess.and.returnValue(false);
+    ChannelService._load(channelMock);
+    $rootScope.$digest();
+    expect(HstService.doGetWithParams).not.toHaveBeenCalledWith(channelMock.mountId, undefined, 'newpagemodel');
   });
 
   it('should save a reference to the channel when load succeeds', () => {

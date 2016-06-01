@@ -18,7 +18,7 @@
   <md-toolbar class="hippo-toolbar qa-toolbar">
     <div class="md-toolbar-tools">
       <div flex="15" layout layout-align="start center">
-        <channel-sidenav-toggle></channel-sidenav-toggle>
+        <channel-sidenav-toggle disabled="!channelCtrl.isChannelLoaded()"></channel-sidenav-toggle>
 
         <channel-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
 
@@ -26,23 +26,28 @@
       </div>
 
       <div flex="70" layout layout-align="center center">
-        <relevance-view-as render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
+        <relevance-view-as ng-show="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded()"
+          render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
-        <viewport-toggle></viewport-toggle>
+        <viewport-toggle disabled="!channelCtrl.isChannelLoaded || !channelCtrl.isPageLoaded()"></viewport-toggle>
       </div>
 
       <div flex="15" layout layout-align="end center">
-        <changes-menu on-manage-changes="channelCtrl.showSubpage('manage-changes')"></changes-menu>
+        <changes-menu ng-show="channelCtrl.isChannelLoaded()"
+          on-manage-changes="channelCtrl.showSubpage('manage-changes')"></changes-menu>
 
         <md-switch class="md-primary"
           ng-if="channelCtrl.isEditable()"
-          ng-disabled="channelCtrl.isCreatingPreview"
+          ng-disabled="!channelCtrl.isChannelLoaded() || !channelCtrl.isPageLoaded() || channelCtrl.isCreatingPreview"
           ng-change="channelCtrl.toggleEditMode"
           ng-model="channelCtrl.isEditMode">
           {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
         </md-switch>
       </div>
     </div>
+    <md-progress-linear md-mode="indeterminate"
+                        ng-disabled="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded() && !channelCtrl.isCreatingPreview">
+    </md-progress-linear>
   </md-toolbar>
 
   <md-content layout="row" flex>
@@ -51,6 +56,7 @@
     <hippo-iframe
       flex
       layout="row"
+      ng-show="channelCtrl.isChannelLoaded()"
       edit-mode="channelCtrl.isEditMode"
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>

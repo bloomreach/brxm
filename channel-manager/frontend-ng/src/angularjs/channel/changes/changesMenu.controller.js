@@ -42,7 +42,7 @@ export class ChangesMenuCtrl {
   }
 
   _getChangedBySet() {
-    return this.ChannelService.getChannel().changedBySet;
+    return this.ChannelService.getChannel().changedBySet || [];
   }
 
   _hasChangesToManage() {

@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,19 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@import 'styles/variables';
+.picker-content {
+  width: 850px;
 
-@import '../bower_components/angular-material/angular-material.scss';
+  @media (max-width: $layout-breakpoint-sm - 1) {
+    width: 600px;
+  }
 
-@import 'styles/buttons';
-@import 'styles/iframe';
-@import 'styles/overlay';
-@import 'styles/scale';
-@import 'styles/lists';
-@import 'styles/sidenav';
-@import 'styles/channel';
-@import 'styles/subpage';
-@import 'styles/tree';
-@import 'styles/picker';
-@import 'styles/toolbar';
-@import 'styles/tooltips';
+  height: 500px;
+  border-bottom: 1px solid $picker-border-color;
+
+  .md-subheader {
+    background-color: $picker-subheader-bgcolor;
+  }
+
+  .picker-type select {
+    width: 100%;
+  }
+}

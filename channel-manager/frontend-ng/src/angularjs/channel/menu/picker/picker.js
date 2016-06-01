@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-export function channelPropertyDirective() {
-  'ngInject';
 
-  return {
-    restrict: 'A',
-    bindToController: {
-      field: '@channelProperty',
-      value: '=channelPropertyValue',
-      error: '=channelPropertiesError',
-      data: '=channelPropertiesData',
-    },
-    templateUrl: 'channel/actions/settings/property/property.html',
-    controller: 'ChannelPropertyCtrl',
-    controllerAs: 'channelProperty',
-  };
-}
+import { ListingCtrl } from './listing.controller';
+import { listingDirective } from './listing.directive';
+import { PickerService } from './picker.service';
+import { PickerCtrl } from './picker.controller';
+import { uiTreeModule } from '../tree/tree.js';
+
+export const pickerModule = angular
+  .module('hippo-cm.channel.menu.picker', [
+    uiTreeModule.name,
+  ])
+  .controller('PickerCtrl', PickerCtrl)
+  .controller('ListingCtrl', ListingCtrl)
+  .service('PickerService', PickerService)
+  .directive('listing', listingDirective);

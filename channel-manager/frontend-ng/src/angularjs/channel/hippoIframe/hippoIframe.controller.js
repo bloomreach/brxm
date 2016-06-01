@@ -51,6 +51,8 @@ export class HippoIframeCtrl {
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
 
+    this.PageStructureService.clearParsedElements();
+
     this.iframeJQueryElement = $element.find('iframe');
     this.iframeJQueryElement.on('load', () => this.onLoad());
 
@@ -119,7 +121,7 @@ export class HippoIframeCtrl {
       .textContent(this.$translate.instant('CONFIRM_DELETE_COMPONENT_MESSAGE', {
         component: selectedComponent.getLabel(),
       }))
-      .ok(this.$translate.instant('REMOVE'))
+      .ok(this.$translate.instant('DELETE'))
       .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);

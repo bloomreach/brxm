@@ -136,7 +136,8 @@ export class PageStructureElement {
     const endCommentNode = this.getEndComment()[0];
     let node = this.getStartComment()[0].nextSibling;
     while (node && node !== endCommentNode) {
-      if (node.contains(domElement)) {
+      // IE only supports contains() for elements, which have nodeType 1
+      if (node.nodeType === 1 && node.contains(domElement)) {
         return true;
       }
       node = node.nextSibling;

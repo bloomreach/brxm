@@ -25,3 +25,23 @@ md-list-item .component-icon {
 md-sidenav md-list {
   padding: 0;
 }
+
+.hippo-listing {
+  border-left: 1px solid $picker-border-color;
+
+  .md-subheader {
+    line-height: 18px;
+
+    span {
+      padding-left: 56px;
+    }
+  }
+
+  md-list-item.active {
+    background-color: $blue;
+    p,
+    md-icon {
+      color: $white;
+    }
+  }
+}

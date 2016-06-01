@@ -98,7 +98,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         changedBySet,
         defaultDevice,
         devices,
-        previewHstConfigExists
+        previewHstConfigExists,
+        hstConfigEditor
     }
 
     public static final List<String> ALL_FIELD_NAMES;

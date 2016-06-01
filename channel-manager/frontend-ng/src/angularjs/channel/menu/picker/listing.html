@@ -14,12 +14,17 @@
   limitations under the License.
   -->
 
-<md-button class="md-icon-button md-icon-button-sidenav qa-button-sidenav"
-  aria-label="{{ 'TOOLBAR_BUTTON_SIDENAV' | translate }}"
-  ng-disabled="toggle.disabled"
-  ng-click="toggle.toggleSidenav()"
-  ng-class="{ 'md-accent': toggle.isSidenavOpen() }">
-  <md-icon title="{{ 'TOOLBAR_BUTTON_SIDENAV' | translate }}"
-    md-colors="{ color: 'background-A400' }"
-    md-svg-src="{{ toggle.isSidenavOpen() ? 'images/sidenav-arrow-left.svg' : 'images/sidenav-arrow-right.svg' }}" />
-</md-button>
+<section>
+  <md-subheader>{{ 'PICKER_LISTING_NAME' | translate }}</md-subheader>
+  <md-list>
+    <md-list-item ng-repeat="item in listing.selectedItem.items"
+                  ng-if="item.selectable"
+                  ng-class="{active: listing.selectedDocument === item}"
+                  scroll-to-if="listing.selectedDocument === item"
+                  ng-click="listing.selectDocument(item)">
+      <md-icon class="material-icons">{{item.type == 'folder' ? 'folder' : 'description'}}</md-icon>
+      <p>{{item.displayName}}</p>
+    </md-list-item>
+  </md-list>
+</section>
+

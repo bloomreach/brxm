@@ -18,12 +18,12 @@ import { DomService } from './dom.service';
 import { ThrottleService } from './throttle.service';
 import { FeedbackService } from './feedback.service';
 import { PathService } from './path.service';
-import { FormStateServiceFactory } from './formState.service';
 import { startWithSlashFilter } from './filter/startWithSlash.filter';
 import { getByPropertyFilter } from './filter/getByProperty.filter';
 import { incrementPropertyFilter } from './filter/incrementProperty.filter';
 import { illegalCharactersDirective } from './directive/illegalCharacters.directive';
 import { stopPropagationDirective } from './directive/stopPropagation.directive';
+import { scrollToIfDirective } from './directive/scrollToIf.directive';
 
 export const utilsModule = angular
   .module('hippo-cm.utils', [])
@@ -36,4 +36,4 @@ export const utilsModule = angular
   .filter('startWithSlash', startWithSlashFilter)
   .directive('illegalCharacters', illegalCharactersDirective)
   .directive('stopPropagation', stopPropagationDirective)
-  .factory('FormStateService', FormStateServiceFactory);
+  .directive('scrollToIf', scrollToIfDirective);

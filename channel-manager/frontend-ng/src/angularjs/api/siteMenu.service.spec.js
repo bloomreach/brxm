@@ -44,6 +44,8 @@ describe('SiteMenuService', () => {
           {
             id: 'child1',
             title: 'Child 1',
+            linkType: 'SITEMAPITEM',
+            link: 'child/1',
           },
         ],
       },
@@ -53,8 +55,6 @@ describe('SiteMenuService', () => {
       },
     ],
   };
-
-  const newMenuItem = { id: 'child1' };
 
   beforeEach(() => {
     module('hippo-cm');
@@ -70,29 +70,133 @@ describe('SiteMenuService', () => {
     HstService.doGet.and.returnValue($q.when({ data: testMenu }));
 
     spyOn(HstService, 'doPost');
-    HstService.doPost.and.returnValue($q.when({ data: newMenuItem.id }));
+    HstService.doPost.and.returnValue($q.when({ data: 'child1' }));
 
     spyOn(HstService, 'doPostWithParams');
-    HstService.doPostWithParams.and.returnValue($q.when({ data: newMenuItem.id }));
+    HstService.doPostWithParams.and.returnValue($q.when({ data: 'child1' }));
+
+    // preload the default menu
+    $rootScope.$apply(() => SiteMenuService.loadMenu('testUuid'));
+    HstService.doGet.calls.reset();
   });
 
-  it('successfully retrieves a menu', (done) => {
-    const menu = { id: 'testUuid' };
-    HstService.doGet.and.returnValue($q.when({ data: menu }));
-    SiteMenuService.getMenu('testUuid')
-      .then((response) => {
-        expect(response).toEqual({ items: [], id: menu.id });
+  it('successfully loads a menu', (done) => {
+    SiteMenuService.loadMenu('localTestUuid')
+      .then((menu) => {
+        expect(menu.id).toBe(testMenu.id);
+        expect(menu.items.length).toBe(3);
         done();
       })
       .catch(() => fail());
-    expect(HstService.doGet).toHaveBeenCalledWith('testUuid');
+    expect(HstService.doGet).toHaveBeenCalledWith('localTestUuid');
     $rootScope.$digest();
   });
 
-  it('relays the server\'s response in case of a failure', (done) => {
+  it('relays a failure to load a menu', (done) => {
+    const response = { };
+    HstService.doGet.and.returnValue($q.reject(response));
+    SiteMenuService.loadMenu('localTestUuid')
+      .then(() => fail())
+      .catch((error) => {
+        expect(error).toBe(response);
+        done();
+      });
+    expect(HstService.doGet).toHaveBeenCalledWith('localTestUuid');
+    $rootScope.$digest();
+  });
+
+  it('retrieves a copy of a menu item', (done) => {
+    HstService.doGet.calls.reset();
+    SiteMenuService.getEditableMenuItem('2')
+      .then((item) => {
+        expect(item.id).toBe('2');
+        expect(item.collapsed).toBe(true);
+        expect(item.items.length).toBe(1);
+        expect(item.sitemapLink).toBe('home');
+        done();
+      })
+      .catch(() => fail());
+    expect(HstService.doGet).not.toHaveBeenCalled();
+    $rootScope.$digest();
+  });
+
+  it('waits for the menu to load when retrieving a menu item', (done) => {
+    SiteMenuService.loadMenu('testUuid');
+
+    // menu retrieval is in progress
+    HstService.doGet.calls.reset();
+    SiteMenuService.getEditableMenuItem('2')
+      .then((item) => {
+        expect(item.id).toBe('2');
+        done();
+      });
+
+    expect(HstService.doGet).not.toHaveBeenCalled();
+    $rootScope.$digest();
+
+    // try again, with failed retrieval
+    HstService.doGet.and.returnValue($q.reject());
+    SiteMenuService.loadMenu('testUuid');
+
+    SiteMenuService.getEditableMenuItem('2')
+      .then(() => fail())
+      .catch(() => done());
+    $rootScope.$digest();
+  });
+
+  it('handles the retrieval of an unknown menu item', (done) => {
+    SiteMenuService.getEditableMenuItem('unknown')
+      .then((item) => {
+        expect(item).toBe(null);
+        done();
+      })
+      .catch(() => fail());
+    $rootScope.$digest();
+  });
+
+  it('moves a menu item to a specific destination', (done) => {
+    const response = {};
+    HstService.doPost.and.returnValue($q.when(response));
+    SiteMenuService.moveMenuItem('a', 'b', 1)
+      .then((data) => {
+        expect(data).toBe(response);
+        done();
+      })
+      .catch(() => fail());
+    expect(HstService.doPost).toHaveBeenCalledWith({}, 'testUuid', 'move', 'a', 'b', '1');
+    $rootScope.$digest();
+  });
+
+  it('moves a menu item to the root', (done) => {
+    const response = {};
+    HstService.doPost.and.returnValue($q.reject(response));
+    SiteMenuService.moveMenuItem('a', undefined, 1)
+      .then(() => fail())
+      .catch((data) => {
+        expect(data).toBe(response);
+        done();
+      });
+    expect(HstService.doPost).toHaveBeenCalledWith({}, 'testUuid', 'move', 'a', 'testUuid', '1');
+    $rootScope.$digest();
+  });
+
+  it('reloads the menu upon successful deletion', (done) => {
+    HstService.doGet.calls.reset();
+    HstService.doPost.and.returnValue($q.when());
+    SiteMenuService.deleteMenuItem('2')
+      .then(() => {
+        expect(HstService.doGet).toHaveBeenCalledWith('testUuid');
+        done();
+      })
+      .catch(() => fail());
+    expect(HstService.doPost).toHaveBeenCalledWith({}, 'testUuid', 'delete', '2');
+    $rootScope.$digest();
+  });
+
+  it('relays a failure to delete a menu item', (done) => {
     const error = { };
-    HstService.doGet.and.returnValue($q.reject(error));
-    SiteMenuService.getMenu('testUuid')
+    HstService.doPost.and.returnValue($q.reject(error));
+    SiteMenuService.deleteMenuItem('2')
       .then(() => fail())
       .catch((response) => {
         expect(response).toBe(error);
@@ -101,74 +205,122 @@ describe('SiteMenuService', () => {
     $rootScope.$digest();
   });
 
-  it('caches a menu', (done) => {
-    const menu = { id: 'testUuid' };
-    HstService.doGet.and.returnValue($q.when({ data: menu }));
-    SiteMenuService.getMenu('testUuid')
+  it('saves changes to a menu item', (done) => {
+    const item = {
+      id: '2',
+      collapsed: false,
+      title: 'Parent',
+      linkType: 'SITEMAPITEM',
+      sitemapLink: 'test',
+      localParameters: {
+        key: 'value',
+      },
+      items: [
+        {
+          id: 'child',
+          collapsed: true,
+          title: 'Child',
+          linkType: 'EXTERNAL',
+          externalLink: 'External Link',
+        },
+      ],
+    };
+    SiteMenuService.saveMenuItem(item)
       .then(() => {
-        HstService.doGet.calls.reset();
-        SiteMenuService.getMenu('testUuid').then((response) => {
-          expect(response).toEqual({ items: [], id: menu.id });
-          expect(HstService.doGet).not.toHaveBeenCalled();
-          done();
-        });
+        SiteMenuService.getEditableMenuItem('2')
+          .then((editableItem) => {
+            expect(editableItem.title).toBe('Parent');
+            expect(editableItem.items[0].title).toBe('Child');
+            done();
+          });
       })
       .catch(() => fail());
-
+    const savedItem = HstService.doPost.calls.mostRecent().args[0];
+    expect(HstService.doPost.calls.mostRecent().args[1]).toBe('testUuid');
+    expect(savedItem.id).toBe('2');
+    expect(savedItem.collapsed).toBeUndefined();
+    expect(savedItem.sitemapLink).toBeUndefined();
+    expect(savedItem.link).toBe('test');
+    expect(savedItem.localParameters.key).toBe('value');
+    expect(savedItem.items.length).toBe(1);
+    expect(savedItem.items[0].externalLink).toBeUndefined();
+    expect(savedItem.items[0].link).toBe('External Link');
     $rootScope.$digest();
   });
 
-  it('should not return cached menu if menuId does not matches cached menuId', (done) => {
-    SiteMenuService.getMenu('testUuid')
-      .then(() => {
-        SiteMenuService.getMenu('testUuid2').then(() => {
-          expect(HstService.doGet).toHaveBeenCalledWith('testUuid2');
-          done();
-        });
-      })
-      .catch(() => fail());
-
-    $rootScope.$digest();
-  });
-
-  it('should load a menu from the server', (done) => {
-    const menu = { id: 'testUuid' };
-    HstService.doGet.and.returnValue($q.when({ data: menu }));
-    SiteMenuService.getMenu('testUuid')
-      .then(() => {
-        HstService.doGet.calls.reset();
-        SiteMenuService.loadMenu('testUuid').then((response) => {
-          expect(response).toEqual({ items: [], id: menu.id });
-          expect(HstService.doGet).toHaveBeenCalled();
-          done();
-        });
-      })
-      .catch(() => fail());
-
-    $rootScope.$digest();
-  });
-
-  it('should collapse node with childNodes on first load', (done) => {
-    SiteMenuService.getMenu('testUuid')
-      .then((menu) => {
-        expect(menu.items[1].collapsed).toBe(true);
+  it('relays a failure to save a menu item', (done) => {
+    const error = { };
+    HstService.doPost.and.returnValue($q.reject(error));
+    SiteMenuService.saveMenuItem({ })
+      .then(() => fail())
+      .catch((response) => {
+        expect(response).toBe(error);
         done();
       });
     $rootScope.$digest();
   });
 
-  // getMenuItem
-  it('should return a main menu item by id', (done) => {
-    SiteMenuService.getMenuItem('testUuid', '2').then((menuItem) => {
-      expect(menuItem).toBeDefined();
-      expect(menuItem.id).toEqual('2');
-      done();
-    });
+  it('creates a new menu item', (done) => {
+    SiteMenuService.createEditableMenuItem()
+      .then((item) => {
+        expect(HstService.doPostWithParams).toHaveBeenCalled();
+        const args = HstService.doPostWithParams.calls.mostRecent().args;
+        expect(args[0].linkType).toBe('NONE');
+        expect(args[0].title).toBeDefined();
+        expect(args[0].localParameters).toBeUndefined();
+        expect(args[1]).toBe('testUuid');
+        expect(args[2].position).toBe('after');
+        expect(args[3]).toBe('create');
+        expect(args[4]).toBe('testUuid');
+
+        expect(HstService.doGet).toHaveBeenCalled();
+        expect(item.id).toBe('child1');
+        expect(item.sitemapLink).toBe('child/1');
+        done();
+      })
+      .catch(() => fail());
+    HstService.doGet.calls.reset();
+    $rootScope.$digest();
+  });
+
+  it('waits for the menu to load before creating a new menu item', (done) => {
+    testMenu.prototypeItem = {
+      localParameters: {
+        key1: 'value1',
+        key2: undefined,
+      },
+    };
+    SiteMenuService.loadMenu('testUuid');
+
+    SiteMenuService.createEditableMenuItem()
+      .then((item) => {
+        expect(HstService.doPostWithParams).toHaveBeenCalled();
+        const args = HstService.doPostWithParams.calls.mostRecent().args;
+        expect(args[0].localParameters).toEqual({ key1: 'value1', key2: undefined });
+        delete testMenu.prototypeItem;
+
+        expect(item.id).toBe('child1');
+        done();
+      })
+      .catch(() => fail());
+    expect(HstService.doPostWithParams).not.toHaveBeenCalled();
+    $rootScope.$digest();
+  });
+
+  it('relays a failure to create a menu item', (done) => {
+    const error = { };
+    HstService.doPostWithParams.and.returnValue($q.reject(error));
+    SiteMenuService.createEditableMenuItem()
+      .then(() => fail())
+      .catch((response) => {
+        expect(response).toBe(error);
+        done();
+      });
     $rootScope.$digest();
   });
 
   it('should return a child menu item by id', (done) => {
-    SiteMenuService.getMenuItem('testUuid', 'child1').then((menuItem) => {
+    SiteMenuService.getEditableMenuItem('child1').then((menuItem) => {
       expect(menuItem).toBeDefined();
       expect(menuItem.id).toEqual('child1');
       done();
@@ -177,34 +329,15 @@ describe('SiteMenuService', () => {
   });
 
   it('should return a child menu item by id with parameters', (done) => {
-    SiteMenuService.getMenuItem('testUuid', '1').then((menuItem) => {
+    SiteMenuService.getEditableMenuItem('1').then((menuItem) => {
       expect(menuItem.localParameters.cssclass).toEqual('bike');
       done();
     });
     $rootScope.$digest();
   });
 
-  it('should return null when getting an unknown menu item', (done) => {
-    SiteMenuService.getMenuItem('testUuid', 'nosuchitem').then((menuItem) => {
-      expect(menuItem).toBeNull();
-      done();
-    });
-    $rootScope.$digest();
-  });
-
-  it('should update the returned menu data when the title of a menu item changes', (done) => {
-    SiteMenuService.getMenu('testUuid').then((menu) => {
-      SiteMenuService.getMenuItem('testUuid', 'child1').then((child1) => {
-        child1.title = 'New title';
-        expect(menu.items[1].items[0].title).toEqual('New title');
-        done();
-      });
-    });
-    $rootScope.$digest();
-  });
-
   it('should return externalLink split from the normal link', (done) => {
-    SiteMenuService.getMenuItem('testUuid', '1').then((menuItem) => {
+    SiteMenuService.getEditableMenuItem('1').then((menuItem) => {
       expect(menuItem).toBeDefined();
       expect(menuItem.externalLink).toBeDefined();
       expect(menuItem.externalLink).toEqual('http://onehippo.org');
@@ -214,7 +347,7 @@ describe('SiteMenuService', () => {
   });
 
   it('should return sitemapLink split from the normal link', (done) => {
-    SiteMenuService.getMenuItem('testUuid', '2').then((menuItem) => {
+    SiteMenuService.getEditableMenuItem('2').then((menuItem) => {
       expect(menuItem).toBeDefined();
       expect(menuItem.sitemapLink).toBeDefined();
       expect(menuItem.sitemapLink).toEqual('home');
@@ -225,47 +358,31 @@ describe('SiteMenuService', () => {
 
   // Create item
   it('should create a menu item', (done) => {
+    const newMenuItem = {
+      linkType: 'NONE',
+      title: 'NEW_MENU_ITEM_TITLE',
+    };
     SiteMenuService.loadMenu('testUuid').then(() => {
-      SiteMenuService.createMenuItem('testUuid', newMenuItem, 'testUuid').then(() => {
+      SiteMenuService.createEditableMenuItem().then(() => {
         expect(HstService.doPostWithParams)
-          .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+          .toHaveBeenCalledWith(newMenuItem, 'testUuid', {
+            position: 'after',
+            sibling: {
+              id: '3',
+              title: 'Three',
+            },
+          }, 'create', 'testUuid');
         done();
       });
-    });
-    $rootScope.$digest();
-  });
-
-  it('should create a menu item after specified sibling', (done) => {
-    SiteMenuService.loadMenu('testUuid').then(() => {
-      SiteMenuService.createMenuItem('testUuid', newMenuItem, '1').then(() => {
-        expect(HstService.doPostWithParams)
-          .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after', sibling: '1' }, 'create', 'testUuid');
-        done();
-      });
-    });
-    $rootScope.$digest();
-  });
-
-  it('should create a root menu item if parentId is not specified', (done) => {
-    SiteMenuService.createMenuItem('testUuid', newMenuItem).then(() => {
-      expect(HstService.doPostWithParams)
-        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
-      done();
-    });
-    $rootScope.$digest();
-  });
-
-  it('should create a root menu item if parentId is not found', (done) => {
-    SiteMenuService.createMenuItem('testUuid', newMenuItem, 'non-existing').then(() => {
-      expect(HstService.doPostWithParams)
-        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
-      done();
     });
     $rootScope.$digest();
   });
 
   // Save item
   it('should save a menu item', (done) => {
+    SiteMenuService.loadMenu('testUuid');
+    $rootScope.$digest();
+
     const menuItemToSave = {
       id: 'child1',
       items: [
@@ -307,7 +424,7 @@ describe('SiteMenuService', () => {
       title: 'New title',
     };
 
-    SiteMenuService.saveMenuItem('testUuid', menuItemToSave).then(() => {
+    SiteMenuService.saveMenuItem(menuItemToSave).then(() => {
       expect(HstService.doPost).toHaveBeenCalledWith(savedMenuItem, 'testUuid');
       done();
     });
@@ -315,17 +432,6 @@ describe('SiteMenuService', () => {
     $rootScope.$digest();
   });
 
-  // Move item
-  it('should move an item', (done) => {
-    SiteMenuService.moveMenuItem('testUuid', 'three', '1', 0).then(() => {
-      expect(HstService.doPost).toHaveBeenCalledWith({}, 'testUuid', 'move', 'three', '1', '0');
-      done();
-    });
-
-    $rootScope.$digest();
-  });
-
-  // find path to menu item
   it('should find the path to a menu item', (done) => {
     SiteMenuService.getPathToMenuItem('testUuid', 'child1').then((paths) => {
       expect(paths).toBeDefined();
