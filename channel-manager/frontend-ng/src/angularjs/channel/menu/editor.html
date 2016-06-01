@@ -33,7 +33,7 @@
           ng-submit="form.$valid && menuEditor.saveItem()"
           novalidate>
       <md-card scroll-to-if="menuEditor.editingItem == item">
-        <md-card-title class="no-padding">
+        <md-card-title class="no-padding" ng-class="{active: menuEditor.selectedItem.id === item.id}">
           <md-card-title-text>
             <div class="md-headline" layout="row" layout-align="space-between center">
               <div layout="row" layout-align="start center">

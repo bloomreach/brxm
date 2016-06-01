@@ -26,7 +26,17 @@
     background-color: $picker-subheader-bgcolor;
   }
 
-  .picker-type select {
-    width: 100%;
+  .picker-type {
+    background-color: $white;
+
+    > div {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    md-select {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
   }
 }
