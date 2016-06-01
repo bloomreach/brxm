@@ -22,7 +22,7 @@
                   ng-class="{active: listing.selectedDocument === item}"
                   scroll-to-if="listing.selectedDocument === item"
                   ng-click="listing.selectDocument(item)">
-      <md-icon class="material-icons">{{item.type == 'folder' ? 'folder' : 'description'}}</md-icon>
+      <md-icon md-svg-src="{{ item.type == 'folder' ? 'images/folder-closed.svg' : 'images/document.svg' }}"></md-icon>
       <p>{{item.displayName}}</p>
     </md-list-item>
   </md-list>
