@@ -50,10 +50,6 @@ export class OverlayElementCtrl {
     return this._isContainer() && this.structureElement.isDisabled();
   }
 
-  getLockIcon() {
-    return this.structureElement.isInherited() ? 'remove_circle_outline' : 'lock';
-  }
-
   getQaExperimentId() {
     return this._isComponent() ? this.ExperimentStateService.getExperimentId(this.structureElement) : undefined;
   }
