@@ -23,13 +23,10 @@
   <md-dialog-content layout="row" class="picker-content">
     <md-content flex="33" flex-sm="50">
       <section>
-        <md-subheader>
-          <div class="picker-type">
-            <select ng-model="picker.pickerType"
-                    ng-options="option.name for option in picker.pickerTypes"
-                    ng-change="picker.changePickerType()">
-            </select>
-          </div>
+        <md-subheader class="picker-type">
+          <md-select ng-model="picker.pickerType" ng-change="picker.changePickerType()">
+            <md-option ng-value="option" ng-repeat="option in picker.pickerTypes">{{ option.name }}</md-option>
+          </md-select>
         </md-subheader>
         <div hippo-tree
              ng-if="picker.items.length > 0"
