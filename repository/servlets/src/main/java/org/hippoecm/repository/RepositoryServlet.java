@@ -393,7 +393,7 @@ public class RepositoryServlet extends HttpServlet {
                     queryString = req.getParameter("text");
                     templateParams.put("originalQuery", queryString);
                     if(StringUtils.isNotBlank(queryString)) {
-                        queryString = "//*[jcr:contains(* , '" + queryString + "') ]";
+                        queryString = "//*[jcr:contains(. , '" + queryString + "') ]";
                     }
                     queryString = addOrderbyClause(queryString, true);
 
