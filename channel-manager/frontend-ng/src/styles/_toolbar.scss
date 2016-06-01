@@ -63,7 +63,7 @@ md-toolbar.hippo-toolbar {
   }
 
   md-select-value {
-    border-bottom-width: 0;
+    border-bottom-width: 0 !important;
     font-weight: bold;
     margin-left: 4px;
     position: relative;
