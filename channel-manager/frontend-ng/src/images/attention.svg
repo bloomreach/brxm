@@ -16,11 +16,8 @@
 -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
-<circle fill="currentColor" cx="15.779" cy="16.221" r="14.221"/>
-<g>
-	<path d="M13.364,23.324c0-0.656,0.199-1.152,0.598-1.488s0.979-0.504,1.741-0.504c0.736,0,1.305,0.172,1.708,0.516
-		c0.402,0.344,0.604,0.836,0.604,1.477c0,0.617-0.204,1.104-0.611,1.459s-0.975,0.533-1.702,0.533c-0.744,0-1.32-0.174-1.728-0.521
-		S13.364,23.957,13.364,23.324z M17.339,19.316h-3.244L13.417,7.867h4.599L17.339,19.316z"/>
-</g>
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<circle fill="currentColor" cx="12" cy="12" r="8"/>
+<rect x="11" y="15" width="2" height="2"/>
+<rect x="11" y="7" width="2" height="7"/>
 </svg>
