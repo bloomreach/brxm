@@ -39,7 +39,7 @@ export class PickerService {
     return this.treeData.items;
   }
 
-  getInitialData(id, link) {
+  loadDataForLink(id, link) {
     return this.HstService.doGet(id, 'picker', link)
       .then((response) => {
         this.treeData.items.splice(0, this.treeData.items.length);

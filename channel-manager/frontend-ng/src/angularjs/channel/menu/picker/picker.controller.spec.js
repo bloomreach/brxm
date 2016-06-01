@@ -49,14 +49,14 @@ describe('PickerCtrl', () => {
       $mdDialog = _$mdDialog_;
 
       PickerService = jasmine.createSpyObj('PickerService', [
-        'getInitialData',
+        'loadDataForLink',
         'getData',
         'getTree',
       ]);
 
       getCtrl = (pickerTypes, initialLink, data = testData) => {
         PickerService.getTree.and.returnValue([data]);
-        PickerService.getInitialData.and.returnValue(_$q_.when([data]));
+        PickerService.loadDataForLink.and.returnValue(_$q_.when('typeB'));
 
         const ctrl = $controller('PickerCtrl', {
           $scope: $rootScope.$new(),
@@ -77,7 +77,7 @@ describe('PickerCtrl', () => {
 
   it('should load initial data of first pickerType when created', () => {
     getCtrl(testPickerTypes);
-    expect(PickerService.getInitialData).toHaveBeenCalledWith('pickerTypeA', undefined);
+    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA', undefined);
   });
 
   it('should select the first root item if none is set with initialLink', () => {
@@ -92,7 +92,7 @@ describe('PickerCtrl', () => {
     testDataWithSelected.items[1].items[0].selected = true;
 
     const PickerCtrl = getCtrl(testPickerTypes, 'item2-1', testDataWithSelected);
-    expect(PickerService.getInitialData).toHaveBeenCalledWith('pickerTypeA', 'item2-1');
+    expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA', 'item2-1');
     expect(PickerCtrl.selectedItem).toBeDefined();
     expect(PickerCtrl.selectedItem).toEqual(testDataWithSelected.items[1]);
     expect(PickerCtrl.selectedDocument).toBeDefined();
@@ -103,12 +103,12 @@ describe('PickerCtrl', () => {
     it('should (re)load initial data when switching picker types', () => {
       const PickerCtrl = getCtrl(testPickerTypes);
       PickerCtrl.changePickerType();
-      expect(PickerService.getInitialData).toHaveBeenCalledWith('pickerTypeA');
-      PickerService.getInitialData.calls.reset();
+      expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeB');
+      PickerService.loadDataForLink.calls.reset();
 
-      PickerCtrl.pickerType = testPickerTypes[1];
+      PickerCtrl.pickerType = testPickerTypes[0];
       PickerCtrl.changePickerType();
-      expect(PickerService.getInitialData).toHaveBeenCalledWith('pickerTypeB');
+      expect(PickerService.loadDataForLink).toHaveBeenCalledWith('pickerTypeA');
     });
 
     it('should reset the selected document when switching picker types', () => {
