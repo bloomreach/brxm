@@ -146,6 +146,10 @@
   .md-headline {
     font-size: 20px;
   }
+
+  md-card-title.active {
+    background-color: $grey-200;
+  }
 }
 
 .no-padding {
