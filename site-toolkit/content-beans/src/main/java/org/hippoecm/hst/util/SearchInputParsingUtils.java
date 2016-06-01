@@ -1,6 +1,4 @@
-package org.hippoecm.hst.util;
-
-/**
+/*
  * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +13,7 @@ package org.hippoecm.hst.util;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.hippoecm.hst.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -37,20 +36,42 @@ public final class SearchInputParsingUtils {
     }
 
     /**
-     * Returns a parsed version of the input
+     * Returns a parsed version of the input.
      *
      * @param input                                the user input
      * @param allowSingleNonLeadingWildCardPerTerm if there is allowed one wildcard (* or ?) per term (however, still
      *                                             not allowed as leading for a term)
      * @return the parsed version of the <code>input</code>. When <code>input</code> is <code>null</code>,
      * <code>null</code> is returned
+     *
+     * Calls <code>#parse(input, allowSingleNonLeadingWildCardPerTerm, null, true)</code>
      */
     public static String parse(final String input, final boolean allowSingleNonLeadingWildCardPerTerm) {
-        return parse(input, allowSingleNonLeadingWildCardPerTerm, null/*ignore*/);
+        return parse(input, allowSingleNonLeadingWildCardPerTerm, null/*ignore*/, true);
     }
 
     /**
-     * Returns a parsed version of the input
+     * Returns a parsed version of the input.
+     *
+     * Calls <code>#parse(input, allowSingleNonLeadingWildCardPerTerm, null, retainWordBoundaries)</code>
+     *
+     * @param input                                the user input
+     * @param allowSingleNonLeadingWildCardPerTerm if there is allowed one wildcard (* or ?) per term (however, still
+     *                                             not allowed as leading for a term)
+     * @param retainWordBoundaries                 whether to retain characters such as ~ & ! when they appear in a
+     *                                             token as word boundaries or remove them, see also
+     *                                             {@link #isSpecialChar(char)}
+     * @return the parsed version of the <code>input</code>. When <code>input</code> is <code>null</code>,
+     * <code>null</code> is returned
+     */
+    public static String parse(final String input, final boolean allowSingleNonLeadingWildCardPerTerm, final boolean retainWordBoundaries) {
+        return parse(input, allowSingleNonLeadingWildCardPerTerm, null/*ignore*/, retainWordBoundaries);
+    }
+
+    /**
+     * Returns a parsed version of the input.
+     *
+     * Calls <code>#parse(input, allowSingleNonLeadingWildCardPerTerm, ignore, true)</code>
      *
      * @param input                                the user input
      * @param allowSingleNonLeadingWildCardPerTerm if there is allowed one wildcard (* or ?) per term (however, still
@@ -60,12 +81,29 @@ public final class SearchInputParsingUtils {
      * <code>null</code> is returned
      */
     public static String parse(final String input, final boolean allowSingleNonLeadingWildCardPerTerm, final char[] ignore) {
+        return parse(input, allowSingleNonLeadingWildCardPerTerm, ignore, false);
+    }
+
+    /**
+     * Returns a parsed version of the input.
+     *
+     * @param input                                the user input
+     * @param allowSingleNonLeadingWildCardPerTerm if there is allowed one wildcard (* or ?) per term (however, still
+     *                                             not allowed as leading for a term)
+     * @param ignore                               the chars that should not be parsed
+     * @param retainWordBoundaries                 whether to retain characters such as ~ & ! when they appear in a
+     *                                             token as word boundaries or remove them, see also
+     *                                             {@link #isSpecialChar(char)}
+     * @return the parsed version of the <code>input</code>. When <code>input</code> is <code>null</code>,
+     * <code>null</code> is returned
+     */
+    public static String parse(final String input, final boolean allowSingleNonLeadingWildCardPerTerm, final char[] ignore, final boolean retainWordBoundaries) {
         if (input == null) {
             return null;
         }
         String parsed = EncodingUtils.foldToASCIIReplacer(input);
         parsed = compressWhitespace(parsed);
-        parsed = removeInvalidAndEscapeChars(parsed, allowSingleNonLeadingWildCardPerTerm, ignore);
+        parsed = removeInvalidAndEscapeChars(parsed, allowSingleNonLeadingWildCardPerTerm, ignore, retainWordBoundaries);
         parsed = removeLeadingOrTrailingOrOperator(parsed);
         parsed = rewriteNotOperatorsToMinus(parsed);
         parsed = removeLeadingAndTrailingAndReplaceWithSpaceAndOperators(parsed);
@@ -74,7 +112,9 @@ public final class SearchInputParsingUtils {
     }
 
     /**
-     * Returns a parsed version of the input
+     * Returns a parsed version of the input.
+     *
+     * Calls <code>#parse(input, allowSingleNonLeadingWildCardPerTerm, maxLength, null, true)</code>
      *
      * @param input                                the user input
      * @param allowSingleNonLeadingWildCardPerTerm if there is allowed one wildcard (* or ?) per term (however, still
@@ -84,11 +124,13 @@ public final class SearchInputParsingUtils {
      * <code>null</code> is returned
      */
     public static String parse(final String input, final boolean allowSingleNonLeadingWildCardPerTerm, int maxLength) {
-        return parse(input, allowSingleNonLeadingWildCardPerTerm, maxLength, null/*ignore*/);
+        return parse(input, allowSingleNonLeadingWildCardPerTerm, maxLength, null/*ignore*/, true);
     }
 
     /**
-     * Returns a parsed version of the input
+     * Returns a parsed version of the input.
+     *
+     * Calls <code>#parse(input, allowSingleNonLeadingWildCardPerTerm, maxLength, ignore, true)</code>
      *
      * @param input                                the user input
      * @param allowSingleNonLeadingWildCardPerTerm if there is allowed one wildcard (* or ?) per term (however, still
@@ -99,10 +141,28 @@ public final class SearchInputParsingUtils {
      * <code>null</code> is returned
      */
     public static String parse(final String input, final boolean allowSingleNonLeadingWildCardPerTerm, final int maxLength, final char[] ignore) {
+        return parse(input, allowSingleNonLeadingWildCardPerTerm, maxLength, ignore, true);
+    }
+
+    /**
+     * Returns a parsed version of the input.
+     *
+     * @param input                                the user input
+     * @param allowSingleNonLeadingWildCardPerTerm if there is allowed one wildcard (* or ?) per term (however, still
+     *                                             not allowed as leading for a term)
+     * @param maxLength                            the maxLength of the returned parsed input
+     * @param ignore                               the chars that should not be parsed
+     * @param retainWordBoundaries                 whether to retain characters such as ~ & ! when they appear in a
+     *                                             token as word boundaries or remove them, see also
+     *                                             {@link #isSpecialChar(char)}
+     * @return the parsed version of the <code>input</code>. When <code>input</code> is <code>null</code>,
+     * <code>null</code> is returned
+     */
+    public static String parse(final String input, final boolean allowSingleNonLeadingWildCardPerTerm, final int maxLength, final char[] ignore, final boolean retainWordBoundaries) {
         if (input == null) {
             return null;
         }
-        String parsed = parse(input, allowSingleNonLeadingWildCardPerTerm, ignore);
+        String parsed = parse(input, allowSingleNonLeadingWildCardPerTerm, ignore, retainWordBoundaries);
         if (parsed.length() > maxLength) {
             parsed = parsed.substring(0, maxLength);
         }
@@ -153,7 +213,7 @@ public final class SearchInputParsingUtils {
      * @return formatted version of <code>input</code>
      */
     public static String removeInvalidAndEscapeChars(final String input, final boolean allowSingleNonLeadingWildCardPerTerm) {
-        return removeInvalidAndEscapeChars(input, allowSingleNonLeadingWildCardPerTerm, null/*ignore*/);
+        return removeInvalidAndEscapeChars(input, allowSingleNonLeadingWildCardPerTerm, null/*ignore*/, false);
     }
 
     /**
@@ -173,6 +233,28 @@ public final class SearchInputParsingUtils {
      * @return formatted version of <code>input</code>
      */
     public static String removeInvalidAndEscapeChars(final String input, final boolean allowSingleNonLeadingWildCardPerTerm, final char[] ignore) {
+        return removeInvalidAndEscapeChars(input, allowSingleNonLeadingWildCardPerTerm, ignore, false);
+    }
+
+    /**
+     * <p>
+     * Removes invalid chars, escapes some chars. If <code>allowSingleNonLeadingWildCard</code> is <code>true</code>,
+     * there is one single non leading <code>*</code> or <code>?</code> allowed. Note, that this wildcard is not allowed
+     * to be leading of a new word.
+     * </p>
+     * <p>
+     * Recommended is to remove all wildcards
+     * </p>
+     *
+     * @param input                                the user input
+     * @param allowSingleNonLeadingWildCardPerTerm if there is allowed one wildcard (* or ?) per term (however, still
+     *                                             not allowed as leading for a term)
+     * @param ignore                               the chars that should not be parsed
+     * @param retainWordBoundaries                 whether to retain special characters as word boundaries or remove
+     *                                             them
+     * @return formatted version of <code>input</code>
+     */
+    public static String removeInvalidAndEscapeChars(final String input, final boolean allowSingleNonLeadingWildCardPerTerm, final char[] ignore, final boolean retainWordBoundaries) {
         if (input == null) {
             throw new IllegalArgumentException("Input is not allowed to be null");
         }
@@ -189,7 +271,10 @@ public final class SearchInputParsingUtils {
                     sb.append('\\');
                     sb.append(c);
                 } else if (c == '\'') {
-                    // we strip ' because jackrabbit xpath builder breaks on \' (however it should be possible according spec)
+                    // the jackrabbit xpath builder breaks on \' (however it should be possible according spec)
+                    if (retainWordBoundaries) {
+                        sb.append(' ');
+                    } // else skip it to provide old behavior
                 } else if (c == ' ') {
                     // next term. set allowWildCardInCurrentTerm again to allowSingleNonLeadingWildCardPerTerm
                     allowWildCardInCurrentTerm = allowSingleNonLeadingWildCardPerTerm;
@@ -214,8 +299,11 @@ public final class SearchInputParsingUtils {
                                 if (containsNextCharAndIsNotSpecial(input, i)) {
                                     sb.append(c);
                                 }
+                            } else {
+                                if (retainWordBoundaries) {
+                                    sb.append(' ');
+                                } // else skip it to provide old behavior
                             }
-                            // else we remove the ~ , !, -
                         }
                     } else if (sb.length() > 0) {
                         // if one wildcard is allowed, it will be added but never as leading
@@ -230,6 +318,8 @@ public final class SearchInputParsingUtils {
                                     allowWildCardInCurrentTerm = false;
                                 }
                             }
+                        } else if (retainWordBoundaries && i != 0 && input.charAt(i-1) != ' ' && containsNextCharAndIsNotSpecial(input, i)) {
+                            sb.append(' ');
                         }
                     }
                 }
@@ -323,7 +413,7 @@ public final class SearchInputParsingUtils {
 
     /**
      * Compress whitespace (tab, newline, multiple spaces) by removing leading and trailing whitespace, and reducing
-     * inbetween whitespace to one space.
+     * in-between whitespace to one space.
      *
      * @param text the text to compress (may be null)
      * @return the compressed text, or null if the text to compress was null
