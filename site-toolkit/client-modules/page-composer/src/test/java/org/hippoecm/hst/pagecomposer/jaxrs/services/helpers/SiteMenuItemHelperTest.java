@@ -378,7 +378,7 @@ public class SiteMenuItemHelperTest {
 
         expect(parent.getNodes()).andReturn(childIterator);
         expect(childIterator.hasNext()).andReturn(true).andReturn(true).andReturn(false);
-        expect(childIterator.nextNode()).andReturn(node).andReturn(node);
+        expect(childIterator.next()).andReturn(node).andReturn(node);
         expect(node.getName()).andReturn("child-0").andReturn("node");
 
         expect(node.getParent()).andReturn(parent);
@@ -401,7 +401,7 @@ public class SiteMenuItemHelperTest {
 
         expect(parent.getNodes()).andReturn(childIterator);
         expect(childIterator.hasNext()).andReturn(true).andReturn(true).andReturn(false);
-        expect(childIterator.nextNode()).andReturn(node).andReturn(node);
+        expect(childIterator.next()).andReturn(node).andReturn(node);
         expect(node.getName()).andReturn("child-0").andReturn("node");
 
         expect(node.getParent()).andReturn(parent);
