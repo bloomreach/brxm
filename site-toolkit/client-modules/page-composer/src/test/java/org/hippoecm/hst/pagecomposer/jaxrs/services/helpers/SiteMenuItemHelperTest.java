@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -378,7 +378,7 @@ public class SiteMenuItemHelperTest {
 
         expect(parent.getNodes()).andReturn(childIterator);
         expect(childIterator.hasNext()).andReturn(true).andReturn(true).andReturn(false);
-        expect(childIterator.next()).andReturn(node).andReturn(node);
+        expect(childIterator.nextNode()).andReturn(node).andReturn(node);
         expect(node.getName()).andReturn("child-0").andReturn("node");
 
         expect(node.getParent()).andReturn(parent);
@@ -401,11 +401,12 @@ public class SiteMenuItemHelperTest {
 
         expect(parent.getNodes()).andReturn(childIterator);
         expect(childIterator.hasNext()).andReturn(true).andReturn(true).andReturn(false);
-        expect(childIterator.next()).andReturn(node).andReturn(node);
+        expect(childIterator.nextNode()).andReturn(node).andReturn(node);
         expect(node.getName()).andReturn("child-0").andReturn("node");
 
         expect(node.getParent()).andReturn(parent);
         expect(parent.isSame(parent)).andReturn(false);
+        expect(node.getName()).andReturn("node");
 
         mockGetAncestor();
         expectLastCall();
