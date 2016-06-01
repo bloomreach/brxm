@@ -64,12 +64,14 @@ describe('SubpageToolbar', () => {
   it('should show the back icon if the mode is not set to cancel', () => {
     mode = undefined;
     const SubpageToolbarCtrl = compileDirectiveAndGetController();
+    expect(SubpageToolbarCtrl.ariaLabel).toBe('TOOLBAR_BUTTON_BACK');
     expect(SubpageToolbarCtrl.icon).toBe('images/back.svg');
   });
 
   it('should show the close icon if the mode is set to cancel', () => {
     mode = 'cancel';
     const SubpageToolbarCtrl = compileDirectiveAndGetController();
+    expect(SubpageToolbarCtrl.ariaLabel).toBe('TOOLBAR_BUTTON_CLOSE');
     expect(SubpageToolbarCtrl.icon).toBe('images/close.svg');
   });
 });
