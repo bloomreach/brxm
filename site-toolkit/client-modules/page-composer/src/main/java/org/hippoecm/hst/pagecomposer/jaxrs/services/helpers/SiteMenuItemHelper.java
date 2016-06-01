@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,15 +28,11 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.LinkType;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -221,16 +217,16 @@ public class SiteMenuItemHelper extends AbstractHelper {
     }
 
     private String getSuccessorOfSourceNodeName(Node parent, String sourceName, Integer newIndex) throws RepositoryException {
-        final List<String> childNodeNames = Lists.transform(ImmutableList.copyOf(parent.getNodes()), new Function<Node, String>() {
-            @Override
-            public String apply(final Node input) {
-                try {
-                    return input.getName();
-                } catch (RepositoryException e) {
-                    throw new RuntimeRepositoryException(e);
-                }
+        final List<String> childNodeNames = new ArrayList<>();
+        final NodeIterator childIterator = parent.getNodes();
+        while (childIterator.hasNext()) {
+            final Node child = childIterator.nextNode();
+            final String name = child.getName();
+            // We need to disregard a potential prototype item, or the mapping from index to menu item name will fail.
+            if (!name.equals(HstNodeTypes.SITEMENUITEM_HST_PROTOTYPEITEM)) {
+                childNodeNames.add(name);
             }
-        });
+        }
         if (newIndex == 0) {
             // move to start
             return childNodeNames.isEmpty() ? null : childNodeNames.get(0);
