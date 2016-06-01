@@ -102,7 +102,7 @@
   "VALIDATION_ILLEGAL_CHARACTERS": "???",
   "VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT": "'/', ' ' en ':'",
   "VALIDATION_REQUIRED": "???",
-  "VIEWPORT_WIDTH_DESKTOP": "desktop",
-  "VIEWPORT_WIDTH_PHONE": "smartphone (320px)",
-  "VIEWPORT_WIDTH_TABLET": "tablet (720px)"
+  "VIEWPORT_DESKTOP": "Desktop",
+  "VIEWPORT_PHONE": "Smartphone",
+  "VIEWPORT_TABLET": "Tablet"
 }

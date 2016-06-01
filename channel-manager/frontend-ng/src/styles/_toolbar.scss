@@ -64,3 +64,12 @@ md-toolbar.hippo-toolbar {
     margin-left: 0;
   }
 }
+
+.viewport-name {
+  margin-left: 8px;
+
+  // hide the name of the selected viewport
+  md-select-value & {
+    display: none;
+  }
+}

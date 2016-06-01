@@ -109,7 +109,7 @@
   "VALIDATION_ILLEGAL_CHARACTERS": "One or more invalid characters ({{characters}}) have been entered",
   "VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT": "'/', ' ' and ':'",
   "VALIDATION_REQUIRED": "This is required",
-  "VIEWPORT_WIDTH_DESKTOP": "desktop",
-  "VIEWPORT_WIDTH_PHONE": "phone (320px)",
-  "VIEWPORT_WIDTH_TABLET": "tablet (720px)"
+  "VIEWPORT_DESKTOP": "Desktop",
+  "VIEWPORT_PHONE": "Phone",
+  "VIEWPORT_TABLET": "Tablet"
 }

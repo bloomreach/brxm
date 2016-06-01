@@ -2,12 +2,13 @@
   <md-select
     aria-label="{{ 'TOOLBAR_VIEW_ON_LABEL' | translate }}"
     ng-model="toggleCtrl.selectedViewPort"
-    ng-model-options="{trackBy: '$value.name'}"
+    ng-model-options="{trackBy: '$value.id'}"
     ng-change="toggleCtrl.viewPortChanged()">
     <md-option ng-repeat="viewPort in toggleCtrl.viewPorts" ng-value="{{viewPort}}">
-      <md-icon>
-        {{viewPort.icon}}
-      </md-icon>
+      <div layout="row" layout-align="start center">
+        <md-icon>{{ viewPort.icon }}</md-icon>
+        <span class="viewport-name">{{ toggleCtrl.getDisplayName(viewPort) }}</span>
+      </div>
     </md-option>
   </md-select>
 </div>

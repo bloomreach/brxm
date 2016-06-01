@@ -15,29 +15,27 @@
  */
 
 export class ViewportToggleCtrl {
-  constructor(ScalingService) {
+  constructor($translate, ScalingService) {
     'ngInject';
 
+    this.$translate = $translate;
     this.ScalingService = ScalingService;
 
     this.viewPorts = [
       {
-        name: 'desktop',
+        id: 'DESKTOP',
         icon: 'computer',
         width: 0,
-        titleKey: 'VIEWPORT_WIDTH_DESKTOP',
       },
       {
-        name: 'tablet',
+        id: 'TABLET',
         icon: 'tablet',
         width: 720,
-        titleKey: 'VIEWPORT_WIDTH_TABLET',
       },
       {
-        name: 'phone',
+        id: 'PHONE',
         icon: 'smartphone',
         width: 320,
-        titleKey: 'VIEWPORT_WIDTH_PHONE',
       },
     ];
 
@@ -47,6 +45,10 @@ export class ViewportToggleCtrl {
   activate() {
     this.selectedViewPort = this.viewPorts[0];
     this.viewPortChanged();
+  }
+
+  getDisplayName(viewport) {
+    return this.$translate.instant(`VIEWPORT_${viewport.id}`);
   }
 
   viewPortChanged() {
