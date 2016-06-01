@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+const ALTER_EGO_ID = 'hippo-alter-ego';
+
 export class ViewAsCtrl {
   constructor($scope, $element, $translate, CmsService, ConfigService, SessionService, HstService, HippoIframeService, PageMetaDataService, FeedbackService) {
     'ngInject';
@@ -80,14 +82,23 @@ export class ViewAsCtrl {
 
   makeDisplayName(variant) {
     if (variant.group) {
-      return `${variant.name}${this.$translate.instant('TOOLBAR_VIEW_AS_INFIX')}${variant.group}`;
+      const the = this.$translate.instant('TOOLBAR_VIEW_AS_INFIX');
+      return `${variant.name}${the}${variant.group}`;
     }
-
     return variant.name;
   }
 
-  editAlterEgo() {
-    const mainToolbarHeight = this.$element.parent().height();
-    this.CmsService.publish('edit-alter-ego', mainToolbarHeight);
+  makeSelectableDisplayName(variant) {
+    if (variant.id === ALTER_EGO_ID && this.selectedVariant.id === ALTER_EGO_ID) {
+      return this.$translate.instant('TOOLBAR_EDIT_ALTER_EGO');
+    }
+    return this.makeDisplayName(variant);
+  }
+
+  editVariant(variant) {
+    if (variant.id === ALTER_EGO_ID) {
+      const mainToolbarHeight = this.$element.parent().height();
+      this.CmsService.publish('edit-alter-ego', mainToolbarHeight);
+    }
   }
 }

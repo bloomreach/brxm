@@ -241,6 +241,27 @@ describe('ViewAsCtrl', () => {
     expect(ViewAsCtrl.makeDisplayName(variant2)).toBe('nameTOOLBAR_VIEW_AS_INFIXgroup');
   });
 
+  it('formats the selectable display name', () => {
+    const variant1 = { name: 'name-only' };
+    const variant2 = { name: 'name', group: 'group' };
+    const alterEgo = { name: 'Alter Ego', id: 'hippo-alter-ego' };
+
+    ViewAsCtrl = $controller('ViewAsCtrl', {
+      $scope: $rootScope.$new(),
+      $element,
+    });
+
+    ViewAsCtrl.selectedVariant = variant1;
+    expect(ViewAsCtrl.makeSelectableDisplayName(variant1)).toBe('name-only');
+    expect(ViewAsCtrl.makeSelectableDisplayName(variant2)).toBe('nameTOOLBAR_VIEW_AS_INFIXgroup');
+    expect(ViewAsCtrl.makeSelectableDisplayName(alterEgo)).toBe('Alter Ego');
+
+    ViewAsCtrl.selectedVariant = alterEgo;
+    expect(ViewAsCtrl.makeSelectableDisplayName(variant1)).toBe('name-only');
+    expect(ViewAsCtrl.makeSelectableDisplayName(variant2)).toBe('nameTOOLBAR_VIEW_AS_INFIXgroup');
+    expect(ViewAsCtrl.makeSelectableDisplayName(alterEgo)).toBe('TOOLBAR_EDIT_ALTER_EGO');
+  });
+
   it('edits the alter ego by publishing an edit-alter-ego event', () => {
     const mockToolbar = angular.element('<div style="height: 42px"></div>');
     const mockElement = angular.element('<div></div>');
@@ -252,11 +273,11 @@ describe('ViewAsCtrl', () => {
       $scope: $rootScope.$new(),
       $element: mockElement,
     });
-    ViewAsCtrl.editAlterEgo();
+    const alterEgo = { id: 'hippo-alter-ego' };
+    ViewAsCtrl.editVariant(alterEgo);
 
     expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('edit-alter-ego', 42);
   });
-
 
   it('reloads the iframe when the alter ego changed', () => {
     ViewAsCtrl = $controller('ViewAsCtrl', {

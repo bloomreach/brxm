@@ -15,20 +15,17 @@
   -->
 
 <div ng-if="viewAs.selectedVariant" layout="row" layout-align="start center" class="select-in-toolbar qa-view-as">
-  <label flex="none">{{ 'TOOLBAR_VIEW_AS_LABEL' | translate }}:</label>
+  <label flex="none">{{ 'TOOLBAR_VIEW_AS_LABEL' | translate }}</label>
   <md-select ng-model="viewAs.selectedVariant"
              ng-model-options="{trackBy: '$value.id'}"
-             aria-label="{{ 'TOOLBAR_VIEW_AS_LABEL' | translate }}">
-    <md-option ng-repeat="variant in viewAs.globalVariants" ng-value="{{variant}}">
-      {{viewAs.makeDisplayName(variant)}}
+             aria-label="{{ 'TOOLBAR_VIEW_AS_LABEL' | translate }}"
+             md-selected-text="viewAs.makeDisplayName(viewAs.selectedVariant)">
+    <md-option ng-repeat="variant in viewAs.globalVariants"
+               ng-value="{{variant}}"
+               ng-click="viewAs.editVariant(variant)">
+      {{ viewAs.makeSelectableDisplayName(variant) }}
     </md-option>
   </md-select>
-  <md-button class="alter-ego-btn md-icon-button"
-             ng-if="viewAs.selectedVariant.id === 'hippo-alter-ego'"
-             ng-click="viewAs.editAlterEgo()"
-             title="{{ EDIT_ALTER_EGO | translate }}">
-    <md-icon>edit</md-icon>
-  </md-button>
   <span>
     {{ 'TOOLBAR_VIEW_ON_LABEL' | translate }}
   </span>
