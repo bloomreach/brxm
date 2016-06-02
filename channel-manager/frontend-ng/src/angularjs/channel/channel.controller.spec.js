@@ -121,16 +121,16 @@ describe('ChannelCtrl', () => {
   });
 
   it('is not in edit mode by default', () => {
-    expect(ChannelCtrl.isEditModeActive()).toEqual(false);
+    expect(ChannelCtrl.isEditMode).toEqual(false);
   });
 
   it('enables and disables edit mode when toggling it', () => {
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
 
-    ChannelCtrl.enterEditMode();
-    expect(ChannelCtrl.isEditModeActive()).toEqual(true);
-    ChannelCtrl.leaveEditMode();
-    expect(ChannelCtrl.isEditModeActive()).toEqual(false);
+    ChannelCtrl.toggleEditMode();
+    expect(ChannelCtrl.isEditMode).toEqual(true);
+    ChannelCtrl.toggleEditMode();
+    expect(ChannelCtrl.isEditMode).toEqual(false);
   });
 
   it('creates preview configuration when it has not been created yet before enabling edit mode', () => {
@@ -142,25 +142,25 @@ describe('ChannelCtrl', () => {
     HippoIframeService.reload.and.returnValue(deferReload.promise);
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    ChannelCtrl.enterEditMode();
+    ChannelCtrl.toggleEditMode();
 
     expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
-    expect(ChannelCtrl.isEditModeActive()).toEqual(false);
+    expect(ChannelCtrl.isEditMode).toEqual(false);
     expect(HippoIframeService.reload).not.toHaveBeenCalled();
 
     deferCreatePreview.resolve(); // preview creation completed successfully, reload page
     $rootScope.$digest();
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
-    expect(ChannelCtrl.isEditModeActive()).toEqual(false);
+    expect(ChannelCtrl.isEditMode).toEqual(false);
     expect(HippoIframeService.reload).toHaveBeenCalled();
 
     deferReload.resolve(); // reload completed successfully, enter edit mode
     $rootScope.$digest();
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    expect(ChannelCtrl.isEditModeActive()).toEqual(true);
+    expect(ChannelCtrl.isEditMode).toEqual(true);
   });
 
   it('shows an error when the creation of the preview configuration fails', () => {
@@ -170,23 +170,23 @@ describe('ChannelCtrl', () => {
     ChannelService.createPreviewConfiguration.and.returnValue(deferCreatePreview.promise);
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    ChannelCtrl.enterEditMode();
+    ChannelCtrl.toggleEditMode();
 
     expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
-    expect(ChannelCtrl.isEditModeActive()).toEqual(false);
+    expect(ChannelCtrl.isEditMode).toEqual(false);
 
     deferCreatePreview.reject();
     $rootScope.$digest();
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    expect(ChannelCtrl.isEditModeActive()).toEqual(false);
+    expect(ChannelCtrl.isEditMode).toEqual(false);
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ENTER_EDIT');
   });
 
   it('does not create preview configuration when it has already been created when enabling edit mode', () => {
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
-    ChannelCtrl.enterEditMode();
+    ChannelCtrl.toggleEditMode();
     expect(ChannelService.createPreviewConfiguration).not.toHaveBeenCalled();
   });
 

@@ -39,8 +39,8 @@
         <md-switch class="md-primary"
           ng-if="channelCtrl.isEditable()"
           ng-disabled="!channelCtrl.isChannelLoaded() || !channelCtrl.isPageLoaded() || channelCtrl.isCreatingPreview"
-          ng-change="channelCtrl.toggleEditMode"
-          ng-model="channelCtrl.isEditMode">
+          ng-model="channelCtrl.editToggleState"
+          ng-change="channelCtrl.toggleEditMode()">
           {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
         </md-switch>
       </div>

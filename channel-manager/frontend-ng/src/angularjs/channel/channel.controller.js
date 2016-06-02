@@ -51,7 +51,10 @@ export class ChannelCtrl {
     ComponentAdderService.setCatalogContainerItemClass('catalog-dd-container-item');
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
-    this.isEditMode = false;
+
+    // editToggleState is only used as a 'fake' model for the toggle; isEditMode is updated in the onChange callback,
+    // which may happen asynchronously if preview configuration needs to be created.
+    this.editToggleState = this.isEditMode = false;
 
     CmsService.subscribe('clear-channel', () => this._clear());
   }
@@ -59,7 +62,7 @@ export class ChannelCtrl {
   _clear() {
     this.$rootScope.$apply(() => {
       this.hideSubpage();
-      this.leaveEditMode();
+      this._leaveEditMode();
       this.ChannelService.clearChannel();
     });
   }
@@ -72,7 +75,7 @@ export class ChannelCtrl {
     return this.HippoIframeService.isPageLoaded();
   }
 
-  enterEditMode() {
+  _enterEditMode() {
     if (!this.isEditMode && !this.ChannelService.hasPreviewConfiguration()) {
       this._createPreviewConfiguration();
     } else {
@@ -80,19 +83,15 @@ export class ChannelCtrl {
     }
   }
 
-  leaveEditMode() {
+  _leaveEditMode() {
     this.isEditMode = false;
-  }
-
-  isEditModeActive() {
-    return this.isEditMode;
   }
 
   toggleEditMode() {
     if (this.isEditMode) {
-      this.leaveEditMode();
+      this._leaveEditMode();
     } else {
-      this.enterEditMode();
+      this._enterEditMode();
     }
   }
 
