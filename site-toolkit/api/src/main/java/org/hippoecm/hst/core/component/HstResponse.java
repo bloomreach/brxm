@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -331,6 +331,13 @@ public interface HstResponse extends HttpServletResponse {
      * @param element the element that is a preamble
      */
     void addPreamble(Element element);
+
+    /**
+     * Add an epilogue comment, which gets rendered at the end of the render window.
+     *
+     * @param comment the comment node
+     */
+    void addEpilogue(Comment comment);
     
     /**
      * For single /subtree component rendering mode that has {@link HstComponentInfo#isStandalone()} equal to <code>false</code>, this

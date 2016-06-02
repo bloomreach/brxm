@@ -39,7 +39,7 @@ public final class InformationObjectsBuilder {
         ChannelInfoClassInfo channelInfoClassInfo = new ChannelInfoClassInfo();
 
         channelInfoClassInfo.setClassName(channelInfoClass.getName());
-        channelInfoClassInfo.setFieldsGroup(buildFieldGroupListInfo(channelInfoClass.getAnnotation(FieldGroupList.class)));
+        channelInfoClassInfo.setFieldGroups(buildFieldGroupListInfo(channelInfoClass.getAnnotation(FieldGroupList.class)));
         return channelInfoClassInfo;
     }
 

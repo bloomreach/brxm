@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ public class Channel implements Serializable {
     private String contextPath;
     private String cmsPreviewPrefix;
     private String mountPath;
+    private String channelPath;
 
     private String url; //Probably not needed for all channels ?
 
@@ -47,8 +48,11 @@ public class Channel implements Serializable {
     private Map<String, Object> properties = new HashMap<>();
     private String channelInfoClassName;
     private String mountId;
+    private String siteMapId;
     private String locale;
     private boolean previewHstConfigExists;
+    private boolean workspaceExists;
+    private boolean hasCustomProperties;
 
     // the set of users that have changes for the channel: Can be the channel node itself or some
     // hst configuration belonging to the channel
@@ -62,6 +66,7 @@ public class Channel implements Serializable {
     private Calendar lastModified;
 
     private int hashCode;
+
     /**
      * {@link Channel} default constructor it is required for REST de/serialization 
      */
@@ -87,6 +92,7 @@ public class Channel implements Serializable {
         contextPath = channel.contextPath;
         cmsPreviewPrefix = channel.cmsPreviewPrefix;
         mountPath = channel.mountPath;
+        channelPath = channel.channelPath;
         url = channel.url;
         hstMountPoint = channel.hstMountPoint;
         hstConfigPath = channel.hstConfigPath;
@@ -98,8 +104,11 @@ public class Channel implements Serializable {
         setProperties(mapClone);
         channelInfoClassName = channel.channelInfoClassName;
         mountId = channel.mountId;
+        siteMapId = channel.siteMapId;
         locale = channel.locale;
         previewHstConfigExists = channel.previewHstConfigExists;
+        workspaceExists = channel.workspaceExists;
+        hasCustomProperties = channel.hasCustomProperties;
         // not a deep clone: Not a problem! Note even the same instance is used, this is because
         // channel.changedBySet can be a ChannelLazyLoadingChangedBySet
         changedBySet = channel.changedBySet;
@@ -216,6 +225,14 @@ public class Channel implements Serializable {
         return this.mountPath;
     }
 
+    public void setChannelPath(final String channelPath) {
+        this.channelPath = channelPath;
+    }
+
+    public String getChannelPath() {
+        return channelPath;
+    }
+
     public void setProperties(Map<String, Object> properties){
         this.properties = properties;
     }
@@ -241,6 +258,14 @@ public class Channel implements Serializable {
 
     public String getMountId() {
         return this.mountId;
+    }
+
+    public void setSiteMapId(final String sitemapId) {
+        this.siteMapId = sitemapId;
+    }
+
+    public String getSiteMapId() {
+        return this.siteMapId;
     }
 
     public String getLocale() {
@@ -273,6 +298,22 @@ public class Channel implements Serializable {
 
     public void setPreviewHstConfigExists(final boolean previewHstConfigExists) {
         this.previewHstConfigExists = previewHstConfigExists;
+    }
+
+    public boolean isWorkspaceExists() {
+        return workspaceExists;
+    }
+
+    public void setWorkSpaceExists(final boolean workspaceExists) {
+        this.workspaceExists = workspaceExists;
+    }
+
+    public boolean getHasCustomProperties() {
+        return hasCustomProperties;
+    }
+
+    public void setHasCustomProperties(final boolean hasCustomProperties) {
+        this.hasCustomProperties = hasCustomProperties;
     }
 
     /**
@@ -373,6 +414,7 @@ public class Channel implements Serializable {
         result = 31 * result + (properties != null ? properties.hashCode() : 0);
         result = 31 * result + (channelInfoClassName != null ? channelInfoClassName.hashCode() : 0);
         result = 31 * result + (mountId != null ? mountId.hashCode() : 0);
+        result = 31 * result + (siteMapId != null ? siteMapId.hashCode() : 0);
         result = 31 * result + (locale != null ? locale.hashCode() : 0);
         result = 31 * result + (changedBySet != null ? changedBySet.hashCode() : 0);
         result = 31 * result + (defaultDevice != null ? defaultDevice.hashCode() : 0);
@@ -428,5 +470,4 @@ public class Channel implements Serializable {
 
         return b.toString();
     }
-
 }

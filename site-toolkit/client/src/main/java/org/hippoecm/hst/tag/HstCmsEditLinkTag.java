@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +36,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.EncodingUtils;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -248,7 +247,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
 
     private Map<?, ?> getAttributeMap(final String url,final  String nodeId) {
         final Map<String, Object> result = new HashMap<>();
-        result.put("type", "cmslink");
+        result.put(ChannelManagerConstants.HST_TYPE, "CONTENT_LINK");
         result.put("uuid", nodeId);
         result.put("url", url);
         return result;

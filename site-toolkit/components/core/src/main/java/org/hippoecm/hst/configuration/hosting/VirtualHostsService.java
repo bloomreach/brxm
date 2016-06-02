@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.ChannelPropertyMapper;
 import org.hippoecm.hst.configuration.channel.ChannelUtils;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
+import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
@@ -1061,11 +1062,18 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         final HstSite previewHstSite = mount.getPreviewHstSite();
         channel.setPreviewHstConfigExists(previewHstSite.hasPreviewConfiguration());
+        channel.setWorkSpaceExists(hasWorkspace(mount));
+        channel.setHasCustomProperties(hasChannelCustomProperties(channel, mount));
 
         String mountPath = mount.getMountPath();
         channel.setLocale(mount.getLocale());
         channel.setMountId(mount.getIdentifier());
         channel.setMountPath(mountPath);
+        channel.setChannelPath(mount.getChannelPath());
+
+        if (mount.getHstSite().getSiteMap() instanceof CanonicalInfo) {
+            channel.setSiteMapId(((CanonicalInfo)mount.getHstSite().getSiteMap()).getCanonicalIdentifier());
+        }
 
         VirtualHost virtualHost = mount.getVirtualHost();
         channel.setCmsPreviewPrefix(virtualHost.getVirtualHosts().getCmsPreviewPrefix());
@@ -1116,6 +1124,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
                         channelsRoot + channel.getName()+"-preview");
             }
             populatePreviewChannel(previewChannel, channel);
+            previewChannel.setChannelPath(mount.getPreviewChannelPath());
+            if (previewHstSite.getSiteMap() instanceof CanonicalInfo) {
+                previewChannel.setSiteMapId(((CanonicalInfo)previewHstSite.getSiteMap()).getCanonicalIdentifier());
+            }
             HstNode channelRootConfigNode = hstNodeLoadingCache.getNode(previewHstSite.getConfigurationPath());
             previewChannel.setChangedBySet(new ChannelLazyLoadingChangedBySet(channelRootConfigNode, previewHstSite, previewChannel, hstNodeLoadingCache));
             mount.setChannel(channel, previewChannel);
@@ -1124,10 +1136,31 @@ public class VirtualHostsService implements MutableVirtualHosts {
         log.info("Attaching channel {} to mount took {} ms ",channel, (System.currentTimeMillis() - start));
     }
 
+    private boolean hasChannelCustomProperties(final Channel channel, final ContextualizableMount mount) {
+        VirtualHost virtualHost = mount.getVirtualHost();
+
+        try {
+            return virtualHost.getVirtualHosts().getChannelInfoClass(virtualHost.getHostGroupName(), channel.getId()) != ChannelInfo.class;
+        } catch (ChannelException e) {
+            return false;
+        }
+    }
+
+    private boolean hasWorkspace(final Mount mount) {
+        final String workspacePath = mount.getHstSite().getConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
+        try (HstNodeLoadingCache.LazyCloseableSession session = hstNodeLoadingCache.createLazyCloseableSession()) {
+            return session.getSession().nodeExists(workspacePath);
+        } catch (Exception e) {
+            throw new ModelLoadingException("Failed to check if mount has a HST workspace: ", e);
+        }
+    }
+
     private void populatePreviewChannel(final Channel preview, final Channel channel) {
         preview.setContentRoot(channel.getContentRoot());
         preview.setHstConfigPath(channel.getHstConfigPath() + "-preview");
         preview.setPreviewHstConfigExists(channel.isPreviewHstConfigExists());
+        preview.setWorkSpaceExists(channel.isWorkspaceExists());
+        preview.setHasCustomProperties(channel.getHasCustomProperties());
         preview.setLocale(channel.getLocale());
         preview.setHstMountPoint(channel.getHstMountPoint());
         preview.setMountId(channel.getMountId());

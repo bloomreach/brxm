@@ -33,6 +33,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentServiceImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResourceAccessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -110,8 +112,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         final ContainerComponentResource containerComponentResource = createContainerResource();
         final Response response = containerComponentResource.createContainerItem(catalogItemUUID, 0);
-        assertEquals(((ExtResponseRepresentation)response.getEntity()).getMessage(),
-                Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals("New container item should be created", Response.Status.CREATED.getStatusCode(), response.getStatus());
 
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model
@@ -138,10 +139,14 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
     protected ContainerComponentResource createContainerResource() {
         final ContainerComponentResource containerComponentResource = new ContainerComponentResource();
-        containerComponentResource.setPageComposerContextService(mountResource.getPageComposerContextService());
-        ContainerHelper helper = new ContainerHelper();
-        helper.setPageComposerContextService(mountResource.getPageComposerContextService());
-        containerComponentResource.setContainerHelper(helper);
+        final PageComposerContextService pageComposerContextService = mountResource.getPageComposerContextService();
+
+        final ContainerHelper helper = new ContainerHelper();
+        helper.setPageComposerContextService(pageComposerContextService);
+
+        final ContainerComponentService containerComponentService = new ContainerComponentServiceImpl(pageComposerContextService, helper);
+        containerComponentResource.setContainerComponentService(containerComponentService);
+        containerComponentResource.setPageComposerContextService(pageComposerContextService);
         return containerComponentResource;
     }
 
@@ -201,8 +206,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         final ContainerComponentResource containerComponentResource = createContainerResource();
         final Response response = containerComponentResource.createContainerItem(catalogItemUUID, 0);
-        assertEquals(((ExtResponseRepresentation)response.getEntity()).getMessage(),
-                Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals("New container item should be created", Response.Status.CREATED.getStatusCode(), response.getStatus());
 
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model
@@ -489,8 +493,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
         final ContainerComponentResource containerComponentResource = createContainerResource();
         final Response response = containerComponentResource.createContainerItem(catalogItemUUID, 0);
-        assertEquals(((ExtResponseRepresentation)response.getEntity()).getMessage(),
-                Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
         // reload model through new request, and then modify a container
         // give time for jcr events to evict model

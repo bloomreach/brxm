@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
     private Element wrapperElement;
     private List<Comment> preambleComments = new ArrayList<Comment>();
     private List<Element> preambleElements = new ArrayList<Element>();
+    private List<Comment> epilogueComments = new ArrayList<Comment>();
     private boolean rendererSkipped;
 
     public HstURL createRenderURL() {
@@ -262,6 +263,8 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
         preambleElements.add(element);
     }
 
+    public void addEpilogue(Comment comment) { epilogueComments.add(comment); }
+
     public List<Comment> getPreambleComments() {
         return preambleComments;
     }
@@ -269,6 +272,8 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
     public List<Element> getPreambleElements() {
         return preambleElements;
     }
+
+    public List<Comment> getEpilogueComments() { return epilogueComments; }
 
     public boolean isRendererSkipped() {
         return rendererSkipped;

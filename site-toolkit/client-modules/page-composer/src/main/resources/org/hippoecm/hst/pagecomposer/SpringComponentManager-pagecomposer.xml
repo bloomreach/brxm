@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -17,6 +17,34 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+  <bean id="annotationJsonSerializer" class="org.hippoecm.hst.rest.custom.AnnotationJsonSerializer">
+    <constructor-arg type="java.lang.Class" value="java.lang.annotation.Annotation" />
+  </bean>
+
+  <bean id="jaxrsHstConfigJacksonJsonModule" class="com.fasterxml.jackson.databind.module.SimpleModule">
+    <constructor-arg value="JaxRSHstConfigJacksonJsonModule" />
+    <constructor-arg>
+      <bean class="com.fasterxml.jackson.core.util.VersionUtil" factory-method="parseVersion">
+        <constructor-arg value="${project.version}" />
+        <constructor-arg value="${project.groupId}" />
+        <constructor-arg value="${project.artifactId}" />
+      </bean>
+    </constructor-arg>
+    <constructor-arg>
+      <list>
+        <ref bean="annotationJsonSerializer"/>
+      </list>
+    </constructor-arg>
+  </bean>
+
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="jaxrsRestJacksonObjectMapper" />
+    <property name="targetMethod" value="registerModule" />
+    <property name="arguments">
+      <ref bean="jaxrsHstConfigJacksonJsonModule" />
+    </property>
+  </bean>
 
   <bean id="jaxrsHstConfigService" class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService">
     <constructor-arg value="jaxrsHstConfigService"/>
@@ -46,6 +74,21 @@
 
   <bean id="templateHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.TemplateHelper" parent="abstractHelper"/>
 
+  <bean id="containerComponentService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentServiceImpl">
+    <constructor-arg ref="pageComposerContextService"/>
+    <constructor-arg ref="containerHelper"/>
+  </bean>
+
+  <bean id="containerItemComponentService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentServiceImpl">
+    <constructor-arg ref="pageComposerContextService"/>
+    <constructor-arg ref="containerItemHelper"/>
+    <constructor-arg ref="pageComposerPropertyPresentationFactories"/>
+  </bean>
+
+  <bean id="channelService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelServiceImpl">
+    <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
+  </bean>
+
   <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper" parent="abstractHelper">
     <property name="pagesHelper" ref="pagesHelper"/>
     <property name="templateHelper" ref="templateHelper"/>
@@ -61,8 +104,7 @@
 
   <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" id="containerItemComponentResource"
         parent="abstractConfigResource">
-    <property name="containerItemHelper" ref="containerItemHelper"/>
-    <property name="propertyPresentationFactories" ref="pageComposerPropertyPresentationFactories"/>
+    <property name="containerItemComponentService" ref="containerItemComponentService"/>
   </bean>
 
   <!--
@@ -92,7 +134,7 @@
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource"  parent="abstractConfigResource">
-              <property name="containerHelper" ref="containerHelper"/>
+              <property name="containerComponentService" ref="containerComponentService"/>
             </bean>
           </constructor-arg>
         </bean>
@@ -141,6 +183,7 @@
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource" parent="abstractConfigResource">
               <property name="rootPath" value="${hst.configuration.rootPath}"/>
+              <property name="channelService" ref="channelService"/>
             </bean>
           </constructor-arg>
         </bean>

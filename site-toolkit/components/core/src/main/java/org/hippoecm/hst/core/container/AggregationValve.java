@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -475,6 +475,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         @Override public void addIntHeader(String name, int value) {}
         @Override public void addPreambleNode(Comment comment) {}
         @Override public void addPreambleNode(Element element) {}
+        @Override public void addEpilogueNode(Comment comment) {}
         @Override public void clear() {}
         @Override public boolean containsHeadElement(String keyHint) {return false;}
         @Override public boolean containsHeader(String name) {return false;}
@@ -534,6 +535,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         @Override public void addHeadElement(Element element, String keyHint) {}
         @Override public void addPreamble(Comment comment) {}
         @Override public void addPreamble(Element element) {}
+        @Override public void addEpilogue(Comment comment) {}
         @Override public boolean containsHeadElement(String keyHint) {return false;}
         @Override public HstURL createActionURL() {return null;}
         @Override public Comment createComment(String comment) {return null;}

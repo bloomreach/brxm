@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,10 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  */
 public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
 
-    private String typeFieldName;
+    /**
+     * The attribute that stores a value of {@link AnnotationType}
+     */
+    public static final String TYPE_ATTRIBUTE = "type";
 
     /**
      * {@link AnnotationJsonSerializer} constructor
@@ -43,28 +46,6 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
      */
     public AnnotationJsonSerializer(Class<Annotation> type) {
         super(type);
-
-        // Type field name is the name of the field used by the serializer to serialize meta information about the type
-        // being serialized
-        this.typeFieldName = "@class";
-    }
-
-    /**
-     * Retrieve the value type field name
-     * 
-     * @return The value of type field name
-     */
-    public String getTypeFieldName() {
-        return typeFieldName;
-    }
-
-    /**
-     * Set the value of type field name
-     * 
-     * @param typeFieldName - The value of type field name
-     */
-    public void setTypeFieldName(String typeFieldName) {
-        this.typeFieldName = typeFieldName;
     }
 
     @Override
@@ -81,7 +62,7 @@ public class AnnotationJsonSerializer extends StdSerializer<Annotation> {
         for (Class<?> iface : value.getClass().getInterfaces()) {
             if (iface.isAnnotation()) {
                 jgen.writeStartObject();
-                jgen.writeStringField(getTypeFieldName(), iface.getName());
+                jgen.writeStringField(TYPE_ATTRIBUTE, AnnotationType.fromClass(iface).toString());
                 for (Method method : iface.getDeclaredMethods()) {
                     if (isValidAnnotationMethod(method)) {
                         try {

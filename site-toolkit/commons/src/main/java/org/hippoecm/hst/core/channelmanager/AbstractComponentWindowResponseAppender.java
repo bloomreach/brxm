@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.channelmanager;
 
 import java.util.Map;
 
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -53,4 +54,8 @@ public abstract class AbstractComponentWindowResponseAppender implements Compone
         return comment;
     }
 
+    protected static boolean isContainerOrContainerItem(final HstComponentConfiguration compConfig) {
+        return HstComponentConfiguration.Type.CONTAINER_ITEM_COMPONENT.equals(compConfig.getComponentType())
+                || HstComponentConfiguration.Type.CONTAINER_COMPONENT.equals(compConfig.getComponentType());
+    }
 }

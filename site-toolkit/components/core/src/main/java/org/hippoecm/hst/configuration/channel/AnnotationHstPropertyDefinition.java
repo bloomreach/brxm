@@ -48,13 +48,11 @@ public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefiniti
      */
     public AnnotationHstPropertyDefinition(Parameter propAnnotation, Class<?> returnType, Annotation[] annotations) {
         super(propAnnotation.name());
-        init(propAnnotation, returnType, annotations, propAnnotation.required(), propAnnotation.defaultValue());
-    }
 
-    private void init(Annotation propAnnotation,Class<?> returnType, Annotation[] annotations, boolean required, String defaultValue) {
         type = getHstType(returnType);
-        this.required = required;
-        this.defaultValue = type.from(defaultValue);
+        this.required = propAnnotation.required();
+        this.defaultValue = type.from(propAnnotation.defaultValue());
+        this.hiddenInChannelManager = propAnnotation.hideInChannelManager();
 
         for (Annotation annotation : annotations) {
             if (annotation == propAnnotation) {
