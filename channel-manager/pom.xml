@@ -52,8 +52,6 @@
     <!-- test related -->
     <junit.version>4.5</junit.version>
     <easymock.version>3.0</easymock.version>
-
-    <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
   </properties>
 
   <repositories>
