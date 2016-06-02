@@ -64,7 +64,10 @@ describe('ChannelSidenavService', () => {
     expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
   });
 
-  it('forwards the is open check to the mdSidenav service', () => {
+  it('forwards the is-open check to the mdSidenav service', () => {
+    const element = angular.element('<div></div>');
+    ChannelSidenavService.initialize(element);
+
     sidenav.isOpen.and.returnValue(true);
     expect(ChannelSidenavService.isOpen()).toBe(true);
 
@@ -72,7 +75,15 @@ describe('ChannelSidenavService', () => {
     expect(ChannelSidenavService.isOpen()).toBe(false);
   });
 
+  it('the is-open check works when the sidenav has not been rendered yet', () => {
+    sidenav.isOpen.and.throwError('Sidenav cannot be found');
+    expect(ChannelSidenavService.isOpen()).toBeFalsy();
+  });
+
   it('closes the sidenav if it is open', () => {
+    const element = angular.element('<div></div>');
+    ChannelSidenavService.initialize(element);
+
     ScalingService.setPushWidth.calls.reset();
     sidenav.close.calls.reset();
     sidenav.isOpen.and.returnValue(true);

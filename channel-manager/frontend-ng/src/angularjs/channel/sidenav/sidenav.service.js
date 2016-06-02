@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
+const CHANNEL_SIDENAV_ID = 'channel-sidenav'; // must match with directive mark-up
+
 export class ChannelSidenavService {
   constructor($mdSidenav, ScalingService) {
     'ngInject';
 
     this.$mdSidenav = $mdSidenav;
     this.ScalingService = ScalingService;
-
-    this.id = 'channel-sidenav'; // must match with directive mark-up
   }
 
   initialize(sidenavJQueryElement) {
@@ -29,17 +29,17 @@ export class ChannelSidenavService {
   }
 
   toggle() {
-    this.$mdSidenav(this.id).toggle();
+    this.$mdSidenav(CHANNEL_SIDENAV_ID).toggle();
     this.ScalingService.setPushWidth(this.isOpen() ? this.sidenavJQueryElement.width() : 0);
   }
 
   isOpen() {
-    return this.$mdSidenav(this.id).isOpen();
+    return this.sidenavJQueryElement && this.$mdSidenav(CHANNEL_SIDENAV_ID).isOpen();
   }
 
   close() {
     if (this.isOpen()) {
-      this.$mdSidenav(this.id).close();
+      this.$mdSidenav(CHANNEL_SIDENAV_ID).close();
       this.ScalingService.setPushWidth(0);
     }
   }
