@@ -31,8 +31,11 @@ export class PickerCtrl {
     this.selectedDocument = null;
 
     this.pickerType = this.pickerTypes[0];
-    this.PickerService.getInitialData(this.pickerTypes[0].id, this.initialLink)
-      .then(() => this._navigateToSelectedOrRoot());
+    this.PickerService.loadDataForLink(this.pickerTypes[0].id, this.initialLink)
+      .then((pickerType) => {
+        this.pickerType = this.pickerTypes.find((pt) => pt.type === pickerType);
+        this._navigateToSelectedOrRoot();
+      });
 
     this.treeOptions = {
       displayItem: (item) => item.type === 'folder' || item.type === 'page',
@@ -51,7 +54,7 @@ export class PickerCtrl {
   }
 
   changePickerType() {
-    this.PickerService.getInitialData(this.pickerType.id)
+    this.PickerService.loadDataForLink(this.pickerType.id)
       .then(() => {
         const root = this.items[0];
         if (this.selectedItem !== null && this.selectedItem.type !== root.type) {

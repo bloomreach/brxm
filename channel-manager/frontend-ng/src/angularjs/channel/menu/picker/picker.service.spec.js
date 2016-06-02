@@ -28,6 +28,7 @@ describe('PickerService', () => {
       { id: 'item1' },
       { id: 'item2' },
     ],
+    pickerType: 'testPickerType',
   };
 
   beforeEach(() => {
@@ -46,8 +47,8 @@ describe('PickerService', () => {
   });
 
   it('load initial data', (done) => {
-    PickerService.getInitialData('root').then((initialData) => {
-      expect(initialData).not.toBeNull();
+    PickerService.loadDataForLink('root').then((pickerType) => {
+      expect(pickerType).toBe('testPickerType');
       done();
     });
 
@@ -56,10 +57,8 @@ describe('PickerService', () => {
   });
 
   it('load initial data for link', (done) => {
-    PickerService.getInitialData('root', 'link').then((initialData) => {
-      expect(initialData).not.toBeNull();
-      expect(PickerService.getTree()).toEqual(initialData);
-      expect(initialData[0]).toEqual(testData);
+    PickerService.loadDataForLink('root', 'link').then(() => {
+      expect(PickerService.getTree()[0]).toEqual(testData);
       done();
     });
 

@@ -39,12 +39,12 @@ export class PickerService {
     return this.treeData.items;
   }
 
-  getInitialData(id, link) {
+  loadDataForLink(id, link) {
     return this.HstService.doGet(id, 'picker', link)
       .then((response) => {
         this.treeData.items.splice(0, this.treeData.items.length);
         this.treeData.items[0] = response.data;
-        return this.treeData.items;
+        return response.data.pickerType;
       });
   }
 
