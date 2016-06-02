@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -196,6 +196,11 @@ public interface HstNodeTypes {
     String MOUNT_PROPERTY_SCHEME = "hst:scheme";
     String MOUNT_PROPERTY_MOUNTPOINT = "hst:mountpoint";
     String MOUNT_PROPERTY_ISMAPPED = "hst:ismapped";
+
+    /**
+     * @deprecated  Since 4.0.0 (CMS 11.0.0)
+     */
+    @Deprecated
     String MOUNT_PROPERTY_IS_SITE = "hst:isSite";
 
     String MOUNT_PROPERTY_ALIAS = "hst:alias";
