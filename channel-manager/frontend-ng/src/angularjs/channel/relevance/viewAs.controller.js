@@ -82,8 +82,8 @@ export class ViewAsCtrl {
 
   makeDisplayName(variant) {
     if (variant.group) {
-      const the = this.$translate.instant('TOOLBAR_VIEW_AS_INFIX');
-      return `${variant.name}${the}${variant.group}`;
+      const infix = this.$translate.instant('TOOLBAR_VIEW_AS_INFIX');
+      return `${variant.name}${infix}${variant.group}`;
     }
     return variant.name;
   }
