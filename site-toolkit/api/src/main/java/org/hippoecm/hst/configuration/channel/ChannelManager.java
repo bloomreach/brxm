@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,6 +44,9 @@ public interface ChannelManager {
     String persist(String blueprintId, Channel channel) throws ChannelException;
 
     /**
+     * @deprecated This method is deprecated by {{@link #save(String, Channel)}} since version 4.0.0.
+     *
+     * <br/>
      * Save channel properties.  If the URL path of the new channel is not empty, all
      * path-steps except the last one should already map to an existing mount.
      * <p>
@@ -58,7 +61,18 @@ public interface ChannelManager {
      * @throws ChannelException with type {@link ChannelException.Type#CHANNEL_LOCKED}, {@link ChannelException.Type#CHANNEL_OUT_OF_SYNC}
      * or {@link ChannelException.Type#UNKNOWN} when the channel could not be persisted.
      */
+    @Deprecated
     void save(Channel channel) throws ChannelException;
+
+    /**
+     * Save channel properties for the given host group. If the URL path of the new channel is not empty, all
+     * path-steps except the last one should already map to an existing mount.
+     *
+     * @param hostGroupName
+     * @param channel
+     * @throws ChannelException
+     */
+    void save(final String hostGroupName, final Channel channel) throws ChannelException;
 
     /**
      * Can the current user (set in HstSubject) create or modify channels.
@@ -78,5 +92,4 @@ public interface ChannelManager {
      * @param channelManagerEventListeners
      */
     void removeChannelManagerEventListeners(ChannelManagerEventListener ... channelManagerEventListeners);
-
 }

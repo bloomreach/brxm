@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -85,6 +85,7 @@ public class HstServletResponseState implements HstResponseState {
     protected List<KeyValue<String, Element>> headElements;
     protected List<Comment> preambleComments;
     protected List<Element> preambleElements;
+    protected List<Comment> epilogueComments;
     protected Element wrapperElement;
     protected boolean committed;
     protected boolean hasStatus;
@@ -683,6 +684,13 @@ public class HstServletResponseState implements HstResponseState {
         this.preambleElements.add(element);
     }
 
+    public void addEpilogueNode(Comment comment) {
+        if (epilogueComments == null) {
+            epilogueComments = new ArrayList<>();
+        }
+        epilogueComments.add(comment);
+    }
+
     public void setWrapperElement(Element element) {
         this.wrapperElement = element;
     }
@@ -820,7 +828,7 @@ public class HstServletResponseState implements HstResponseState {
                         len = contentLength;
                     }
 
-                    printPreambleComments(preambleComments);
+                    printComments(preambleComments);
                     printPreambleElements(preambleElements);
 
                     if (wrapperElement == null) {
@@ -832,6 +840,7 @@ public class HstServletResponseState implements HstResponseState {
                         WrapperElementUtils.writeWrapperElement(writer, wrapperElem, new String(byteOutputBuffer.toByteArray()).toCharArray(), 0, len);
                     }
                     writer.flush();
+                    printComments(epilogueComments);
                     outputStream.close();
                     outputStream = null;
                     byteOutputBuffer = null;
@@ -842,7 +851,7 @@ public class HstServletResponseState implements HstResponseState {
                         if (writer == null) {
                             writer = getParentWriter();
                         }
-                        printPreambleComments(preambleComments);
+                        printComments(preambleComments);
                         printPreambleElements(preambleElements);
                         if (wrapperElement == null) {
                             if (charOutputBuffer.getCount() > 0) {
@@ -853,6 +862,7 @@ public class HstServletResponseState implements HstResponseState {
                             WrapperElementUtils.writeWrapperElement(writer, wrapperElem, charOutputBuffer.getBuffer(), 0, charOutputBuffer.getCount());
                         }
                         writer.flush();
+                        printComments(epilogueComments);
                         printWriter.close();
 
                         printWriter = null;
@@ -860,8 +870,9 @@ public class HstServletResponseState implements HstResponseState {
                     }
                 } else {
                     if (!closed) {
-                        printPreambleComments(preambleComments);
+                        printComments(preambleComments);
                         printPreambleElements(preambleElements);
+                        printComments(epilogueComments);
                     }
                 }
             }
@@ -874,13 +885,13 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     /**
-     * Writes the list of preambles comments as comment into the output
-     * @param preambles the list of preamble comments to write
+     * Writes a list of comments as comment into the output
+     * @param comments the list of comments to write
      */
-    private void printPreambleComments(final List<Comment> preambles) throws IOException {
-        if (preambles != null) {
+    private void printComments(final List<Comment> comments) throws IOException {
+        if (comments != null) {
             final Writer writer = getParentWriter();
-            for (Comment comment : preambles) {
+            for (Comment comment : comments) {
                 writer.write("<!--" + comment.getTextContent() + "-->");
                 writer.flush();
             }
