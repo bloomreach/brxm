@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-/* eslint-disable prefer-const */
-
 describe('ViewAsCtrl', () => {
   'use strict';
 
