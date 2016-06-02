@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public interface ContentBeansTool {
     /**
      * @return <code>ObjectConverter</code> which is shareed across all threads
      */
-    public ObjectConverter getObjectConverter();
+    ObjectConverter getObjectConverter();
 
     /**
      * <p>
@@ -48,7 +48,8 @@ public interface ContentBeansTool {
      * @see org.hippoecm.hst.core.request.HstRequestContext#getObjectBeanManager(javax.jcr.Session) to re-use a cached one for
      * the current request
      */
-    public ObjectBeanManager createObjectBeanManager(Session session) throws IllegalStateException;
+    @SuppressWarnings("unused")
+    ObjectBeanManager createObjectBeanManager(Session session) throws IllegalStateException;
 
     /**
      *
@@ -65,7 +66,8 @@ public interface ContentBeansTool {
      * @see org.hippoecm.hst.core.request.HstRequestContext#getQueryManager(Session) to re-use a cached one for
      * the current request
      */
-    public HstQueryManager createQueryManager(Session session) throws IllegalStateException;
+    @SuppressWarnings("unused")
+    HstQueryManager createQueryManager(Session session) throws IllegalStateException;
 
 
 }
