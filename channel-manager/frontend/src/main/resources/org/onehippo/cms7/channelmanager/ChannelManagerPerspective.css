@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,6 @@
   font-size: 12px !important;
 }
 
-.page-editor-panel > .x-panel-bwrap > .x-panel-body {
-  border-bottom: 2px solid #39434c;
-}
-
 /* toolbar */
 .x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
   background: #e1e3e5 none;
@@ -56,10 +52,6 @@
 /* highlight the breadcrumb when it becomes active */
 #hippo-channelmanager-breadcrumb.x-toolbar.hippo-breadcrumb-active {
   background: #f7f7f7;
-}
-
-#pageEditorIFrame .x-panel-tbar .channel-manager-toolbar.x-toolbar {
-  border-bottom: 2px solid #39434c;
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
@@ -156,33 +148,6 @@
 .channel-manager .x-toolbar .breadcrumb-item.x-btn-over button {
   color: #39434c;
   text-decoration: underline;
-}
-
-/* notification window */
-.channel-manager .x-notification .x-window-tl,
-.x-notification .x-window-tc,
-.x-notification .x-window-tr,
-.channel-manager .x-notification .x-window-ml,
-.x-notification .x-window-mc,
-.x-notification .x-window-mr,
-.channel-manager .x-notification .x-window-bl,
-.x-notification .x-window-bc,
-.x-notification .x-window-br {
-  background-image: none;
-}
-
-.x-notification {
-  margin-top: 3px;
-}
-
-.channel-manager .x-notification .x-window-header {
-  padding: 0 0 1px 0
-}
-
-.channel-manager .x-notification .x-window-body {
-  padding: 10px 12px;
-  border: 1px solid #ccc7b0;
-  background-color: #fffada;
 }
 
 /* channel properties window */
@@ -329,219 +294,9 @@
   background-image: url("add-blue.svg");
 }
 
-.channel-manager .x-btn-small .edit-channel {
-  background-image: url("templatecomposer/button-edit.svg");
-}
-
-.channel-manager .x-btn-small .edit-channel {
-  background-image: url("templatecomposer/button-edit.svg");
-}
-
-.channel-manager .x-btn-small .edit-channel:hover {
-  background-image: url("templatecomposer/button-edit-blue.svg");
-}
-
-.channel-manager .x-btn-small .btn-pages {
-  background-image: url("templatecomposer/button-pages.svg");
-}
-
-.channel-manager .x-btn-small .btn-pages:hover {
-  background-image: url("templatecomposer/button-pages-blue.svg");
-}
-
-.channel-manager .x-btn-small .publish-channel {
-  background-image: url("templatecomposer/button-publish.svg");
-}
-
-.channel-manager .x-btn-small .publish-channel:hover {
-  background-image: url("templatecomposer/button-publish-blue.svg");
-}
-
-.channel-manager .x-btn-small .save-close-channel {
-  background-image: url("templatecomposer/button-save-close.svg");
-}
-
-.channel-manager .x-btn-small .save-close-channel:hover {
-  background-image: url("templatecomposer/button-save-close-blue.svg");
-}
-
-.channel-manager .x-btn-small .save-channel {
-  background-image: url("templatecomposer/button-save.svg");
-}
-
-.channel-manager .x-btn-small .save-channel:hover {
-  background-image: url("templatecomposer/button-save-blue.svg");
-}
-
-.channel-manager .x-btn-small .discard-channel {
-  background-image: url("templatecomposer/button-discard.svg");
-}
-
-.channel-manager .x-btn-small .discard-channel:hover {
-  background-image: url("templatecomposer/button-discard-blue.svg");
-}
-
-.channel-manager .x-btn-small .remove-lock {
-  background-image: url("templatecomposer/button-remove-lock.svg");
-}
-
-.channel-manager .x-btn-small .remove-lock:hover {
-  background-image: url("templatecomposer/button-remove-lock-blue.svg");
-}
-
-.channel-manager .x-btn-small .page-settings,
-.channel-manager .x-btn-small .channel-settings {
-  background-image: url("templatecomposer/gear.svg");
-}
-
-.channel-manager .x-btn-small .page-settings:hover,
-.channel-manager .x-btn-small .channel-settings:hover {
-  background-image: url("templatecomposer/gear-blue.svg");
-}
-
-.channel-manager .x-btn-small .channel-gear {
-  background-image: url("templatecomposer/button-url-navigation.svg");
-}
-
-.channel-manager .x-btn-small .channel-gear:hover {
-  background-image: url("templatecomposer/button-url-navigation-blue.svg");
-}
-
-.channel-manager .x-btn-small .expand {
-  background-image: url("templatecomposer/expand.svg");
-}
-
-.channel-manager .x-btn-small .expand:hover {
-  background-image: url("templatecomposer/expand-blue.svg");
-}
-
-.channel-manager .x-btn-small .collapse {
-  background-image: url("templatecomposer/collapse.svg");
-}
-
-.channel-manager .x-btn-small .collapse:hover {
-  background-image: url("templatecomposer/collapse-blue.svg");
-}
-
-.channel-manager .x-btn-small .components {
-  background-image: url("templatecomposer/components.svg");
-}
-
-.channel-manager .x-btn-small .components:hover {
-  background-image: url("templatecomposer/components-blue.svg");
-}
-
-.channel-manager .x-btn-small .components-close {
-  background-image: url("templatecomposer/chevron-up.svg");
-}
-
-.channel-manager .x-btn-small .components-close:hover {
-  background-image: url("templatecomposer/chevron-up-blue.svg");
-}
-
-/* toolkit window */
-.channel-manager .icon-toolbar-window .x-window-tl,
-.icon-toolbar-window .x-window-tc,
-.icon-toolbar-window .x-window-tr,
-.channel-manager .icon-toolbar-window .x-window-ml,
-.icon-toolbar-window .x-window-mc,
-.icon-toolbar-window .x-window-mr,
-.channel-manager .icon-toolbar-window .x-window-bl,
-.icon-toolbar-window .x-window-bc,
-.icon-toolbar-window .x-window-br {
-  background-image: none;
-}
-
-.channel-manager .icon-toolbar-window .x-window-header {
-  padding: 0;
-}
-
-.channel-manager .icon-toolbar-window .x-panel {
-  background: #f7f7f7;
-}
-
 .channel-manager .x-window .x-window-ml,
 .channel-manager .x-window .x-window-mr {
   padding: 0;
-}
-
-.channel-manager .icon-toolbar-window .x-window-body {
-  border-bottom: 1px solid #39434c;
-}
-
-/* template composer icon toolbar-grid */
-.channel-manager .toolbar-window {
-  overflow: hidden;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  position: relative;
-  background: #f7f7f7;
-}
-
-.channel-manager .toolbar-window li {
-  list-style-type: none;
-}
-
-.channel-manager .toolbar {
-  float: left;
-  padding: 0;
-  margin: 0;
-  white-space: nowrap;
-  background: #f7f7f7;
-}
-
-.channel-manager .toolbar .toolbar-item {
-  display: inline-block;
-  vertical-align: top;
-  width: 128px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.channel-manager .toolbar .item {
-  cursor: default;
-  margin: 8px auto;
-  padding: 0;
-}
-
-.channel-manager .toolbar .icon {
-  text-align: center;
-  height: 36px;
-}
-
-.channel-manager .toolbar .name {
-  text-align: center;
-  word-spacing: 128px;
-  display: block;
-  white-space: normal;
-}
-
-.channel-manager .toolbar-window .scroll-arrow {
-  z-index: 100;
-  cursor: pointer;
-  position: absolute;
-  width: 24px;
-  height: 100%;
-  text-align: center;
-}
-
-.channel-manager .toolbar-window .scroll-left {
-  left: 0;
-  background: url(templatecomposer/component-toolbar-arrow-left.svg) no-repeat center center transparent;
-}
-
-.channel-manager .toolbar-window .scroll-right {
-  right: 0;
-  background: url(templatecomposer/component-toolbar-arrow-right.svg) no-repeat center center transparent;
-}
-
-.channel-manager .toolbar-window .scroll-left:hover {
-  background: url(templatecomposer/component-toolbar-arrow-left-hover.svg) no-repeat center center transparent;
-}
-
-.channel-manager .toolbar-window .scroll-right:hover {
-  background: url(templatecomposer/component-toolbar-arrow-right-hover.svg) no-repeat center center transparent;
 }
 
 .channel-manager .x-grid3-cell-inner a {
@@ -565,6 +320,10 @@
   padding: 0 0 0 7px;
   position: absolute;
   right: 5px;
+  background-color: #ffffff;
+}
+
+#componentPropertiesWindow .x-window-body {
   background-color: #ffffff;
 }
 
@@ -602,21 +361,6 @@
 
 #createDocumentForm .x-panel-body {
   padding: 16px;
-}
-
-.channel-manager-mask.ext-el-mask {
-  background: url(loading.gif) no-repeat center;
-  -moz-opacity: 1;
-  opacity: 1;
-  -webkit-filter: none;
-  filter: none;
-}
-
-#pageEditorIFrame .ext-el-mask {
-  background: url(loading.gif) no-repeat center;
-  -moz-opacity: 0.9;
-  opacity: 0.9;
-  filter: alpha(opacity=90);
 }
 
 .channel-manager .channel-group-handle {
@@ -769,14 +513,6 @@
   border: none;
 }
 
-.channel-manager-toolbar .x-toolbar-right #template-composer-toolbar-variants-label,
-.channel-manager-toolbar .x-toolbar-right #template-composer-toolbar-alter-ego-button .x-btn-text {
-  font-size: 11px !important;
-  padding: 0;
-  position: relative;
-  top: 1px;
-}
-
 .channel-manager-toolbar .x-toolbar-right .x-btn-mc .icon-view {
   width: 26px;
 }
@@ -801,30 +537,24 @@
   overflow: auto;
 }
 
-.channel-manager-fullscreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-}
-
 .component-properties-editor > .x-panel-bwrap > .x-panel-body,
 .component-properties-editor > .x-panel-bwrap > .x-panel-body > .x-box-inner {
   overflow-y: auto;
 }
 
-.templateComposerPropertiesForm form {
+.componentPropertiesForm form {
   overflow-x: hidden !important;
 }
 
-.templateComposerPropertiesForm .x-item-disabled .x-form-trigger-over {
+.componentPropertiesForm .x-item-disabled .x-form-trigger-over {
   background-position: 50% 50% !important;
 }
 
-.ext-gecko .x-window-body .templateComposerPropertiesForm .x-form-item {
+.ext-gecko .x-window-body .componentPropertiesForm .x-form-item {
   overflow: hidden;
 }
 
-.ext-gecko .x-window-body .templateComposerPropertiesForm .x-form-item .x-form-element {
+.ext-gecko .x-window-body .componentPropertiesForm .x-form-item .x-form-element {
   padding-left: 0;
 }
 
@@ -836,79 +566,49 @@
   width: 425px !important;
 }
 
-.channel-manager-window-manage-changes {
-  text-align: left;
+/*
+ * The channel editor masks the surrounding CMS elements when the Angular app shows a modal. The added mask divs are
+ * styled and animated the same way as the mask created by Angular Material so all masks together look like a whole.
+ */
+@keyframes showMask {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.48;
+  }
 }
 
-.channel-manager-window-manage-changes .x-grid3-td-checker,
-.channel-manager-window-manage-changes .x-grid3-row-selected .x-grid3-td-checker {
-  background-image: none;
+@keyframes hideMask {
+  0% {
+    opacity: 0.48;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
-.channel-manager-window-manage-changes td.x-grid3-hd-over .x-grid3-hd-inner {
-  background: inherit;
+.channel-editor-mask {
+  background-color: #212121;
+  opacity: .48;
+  animation: showMask 450ms;
+  position: absolute;
 }
 
-.channel-manager-window-manage-changes .x-btn-small .publish-changes {
-  background-image: url("templatecomposer/button-publish.svg");
-  padding-top: 2px;
-  padding-bottom: 2px;
+.channel-editor-mask-removing {
+  animation: hideMask 400ms;
 }
 
-.channel-manager-window-manage-changes .x-btn-small .discard-changes {
-  background-image: url("templatecomposer/button-discard.svg");
-  padding-top: 2px;
-  padding-bottom: 2px;
+.channel-editor-mask-left {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 64px;
 }
 
-/* Dropdowns */
-.channel-manager .x-toolbar .xtb-text {
-  padding: 0;
-}
-
-.channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap {
-  margin: 8px;
-}
-
-.channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap .x-form-text {
-  height: 24px !important;
-  padding: 0 12px;
-  line-height: 24px;
-  border: none;
-  background: #ffffff;
-  border-radius: 3px 0 0 3px;
-}
-
-.channel-manager .channel-manager-toolbar .x-toolbar-cell .x-form-field-wrap .x-form-trigger {
-  height: 24px;
-  width: 23px;
-  border: none;
-  border-radius: 0 3px 3px 0;
-  background: url('templatecomposer/trigger.svg') no-repeat center center #b8bcbf;
-}
-
-.x-combo-list {
-  border-radius: 3px;
-  border: none !important;
-  border-top: 1px solid transparent !important;
-  box-shadow: 0 0 0 0 #000000,
-  10px 10px 30px -15px #000000,
-  0 10px 30px -15px #000000,
-  -10px 10px 30px -15px #000000;
-}
-
-.x-combo-list .x-combo-list-item {
-  padding: 4px;
-  border: none;
-}
-
-.x-combo-list .x-combo-list-item.x-combo-selected {
-  color: #ffffff;
-  border: none !important;
-  background-color: #39434c;
-}
-
-.x-shadow,
-.x-ie-shadow {
-  display: none !important;
+.channel-editor-mask-bottom {
+  height: 40px;
+  left: 64px;
+  right: 0;
+  bottom: 0;
 }

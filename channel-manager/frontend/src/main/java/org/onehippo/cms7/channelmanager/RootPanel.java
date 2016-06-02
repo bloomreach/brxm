@@ -30,13 +30,13 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeUtils;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditor;
 import org.onehippo.cms7.channelmanager.channels.BlueprintStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelStore;
 import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
 import org.onehippo.cms7.channelmanager.hstconfig.HstConfigEditor;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
-import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.channelmanager.widgets.ExtLinkPicker;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.layout.BorderLayout;
@@ -56,7 +56,7 @@ public class RootPanel extends ExtPanel {
 
     public enum CardId {
         CHANNEL_MANAGER(0),
-        TEMPLATE_COMPOSER(1),
+        CHANNEL_EDITOR(1),
         HST_CONFIG_EDITOR(2);
 
         private final int tabIndex;
@@ -78,7 +78,7 @@ public class RootPanel extends ExtPanel {
 
     private BlueprintStore blueprintStore;
     private ChannelStore channelStore;
-    private PageEditor pageEditor;
+    private ChannelEditor channelEditor;
     private ExtStoreFuture<Object> channelStoreFuture;
 
     private boolean redraw = false;
@@ -96,6 +96,9 @@ public class RootPanel extends ExtPanel {
     @ExtProperty
     private final String[] contextPaths;
 
+    @ExtProperty
+    private boolean showBreadcrumbInitially = false;
+
     @Override
     public void buildInstantiationJs(final StringBuilder js, final String extClass, final JSONObject properties) {
         js.append("try { ");
@@ -111,11 +114,11 @@ public class RootPanel extends ExtPanel {
         final IPluginConfig channelListConfig = config.getPluginConfig(CONFIG_CHANNEL_LIST);
 
         // card 1: template composer
-        final IPluginConfig pageEditorConfig = config.getPluginConfig(CONFIG_TEMPLATE_COMPOSER);
-        if (pageEditorConfig == null) {
+        final IPluginConfig editorConfig = config.getPluginConfig(CONFIG_TEMPLATE_COMPOSER);
+        if (editorConfig == null) {
             composerRestMountPath = DEFAULT_COMPOSER_REST_MOUNT_PATH;
         } else {
-            composerRestMountPath = pageEditorConfig.getString(COMPOSER_REST_MOUNT_PATH_PROPERTY, DEFAULT_COMPOSER_REST_MOUNT_PATH);
+            composerRestMountPath = editorConfig.getString(COMPOSER_REST_MOUNT_PATH_PROPERTY, DEFAULT_COMPOSER_REST_MOUNT_PATH);
         }
 
         final Map<String, IRestProxyService> liveRestProxyServices = RestProxyServicesManager.getLiveRestProxyServices(context, config);
@@ -131,31 +134,24 @@ public class RootPanel extends ExtPanel {
         // card 0: channel manager
         final ExtPanel channelManagerCard = new ExtPanel();
         channelManagerCard.setBorder(false);
-        channelManagerCard.setTitle(new Model<String>("Channel Manager"));
+        channelManagerCard.setTitle(Model.of(getString("channel-manager")));
         channelManagerCard.setHeader(false);
         channelManagerCard.setLayout(new BorderLayout());
 
-        final ChannelOverview channelOverview = new ChannelOverview(channelListConfig, composerRestMountPath, this.channelStoreFuture, !blueprintStore.isEmpty());
+        final HstConfigEditor hstConfigEditor = createHstConfigEditor(context, config);
+
+        final ChannelOverview channelOverview = new ChannelOverview(channelListConfig, composerRestMountPath,
+                this.channelStoreFuture, !blueprintStore.isEmpty(),
+                hstConfigEditor);
         channelOverview.setRegion(BorderLayout.Region.CENTER);
         channelManagerCard.add(channelOverview);
-
-        final HstConfigEditor hstConfigEditor;
-        if (config.getAsBoolean(HST_CONFIG_EDITOR_DISABLED, false)) {
-            hstConfigEditor = null;
-        } else {
-            final boolean lockInheritedConfig = config.getAsBoolean(HST_CONFIG_EDITOR_LOCK_INHERITED_NODES, true);
-            hstConfigEditor = new HstConfigEditor(context, lockInheritedConfig);
-        }
 
         channelManagerCard.add(this.blueprintStore);
 
         add(channelManagerCard);
 
-        // default contextpath just needs to be one of the available contextpaths for which a hst site webapp is available
-        final String defaultContextPath = liveRestProxyServices.isEmpty() ? "" : liveRestProxyServices.keySet().iterator().next();
-        pageEditor = new PageEditor(context, pageEditorConfig,
-                defaultContextPath, composerRestMountPath, hstConfigEditor, this.channelStoreFuture);
-        add(pageEditor);
+        channelEditor = new ChannelEditor(context, editorConfig, composerRestMountPath, channelStoreFuture, contextPaths);
+        add(channelEditor);
 
         // card 2: HST config editor
         if (hstConfigEditor != null) {
@@ -166,20 +162,28 @@ public class RootPanel extends ExtPanel {
         add(new ExtLinkPicker(context));
     }
 
+    private HstConfigEditor createHstConfigEditor(final IPluginContext context, final IPluginConfig config) {
+        if (config.getAsBoolean(HST_CONFIG_EDITOR_DISABLED, false)) {
+            return null;
+        } else {
+            final boolean lockInheritedConfig = config.getAsBoolean(HST_CONFIG_EDITOR_LOCK_INHERITED_NODES, true);
+            return new HstConfigEditor(context, lockInheritedConfig);
+        }
+    }
+
     public void redraw() {
         redraw = true;
     }
 
     public void render(final PluginRequestTarget target) {
-        pageEditor.render(target);
         channelStore.update();
         if (target != null) {
             if (redraw) {
                 selectActiveItem(target);
                 redraw = false;
             }
-            // show the channel manager breadcrumb when the channel manager perspective is active on the first page load
-            target.appendJavaScript("Ext.getCmp('rootPanel').showBreadcrumb();");
+        } else {
+            this.showBreadcrumbInitially = true;
         }
     }
 
@@ -220,8 +224,8 @@ public class RootPanel extends ExtPanel {
                 BREADCRUMB_ARROW)));
     }
 
-    public PageEditor getPageEditor() {
-        return this.pageEditor;
+    public ChannelEditor getChannelEditor() {
+        return this.channelEditor;
     }
 
     public void setActiveCard(CardId rootPanelCard) {

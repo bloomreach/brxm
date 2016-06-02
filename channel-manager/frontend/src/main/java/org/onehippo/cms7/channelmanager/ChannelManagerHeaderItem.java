@@ -27,20 +27,20 @@ import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.CmsHeaderItem;
+import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditorApiHeaderItem;
 import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelIconPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesWindow;
 import org.onehippo.cms7.channelmanager.common.CommonBundle;
-import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
 import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
 
 public class ChannelManagerHeaderItem extends HeaderItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final JavaScriptResourceReference ALL = new JavaScriptResourceReference(ChannelManagerHeaderItem.class,
-            "channel-manager-all.js");
+    private static final JavaScriptResourceReference BUNDLE = new JavaScriptResourceReference(ChannelManagerHeaderItem.class,
+            "channel-manager-bundle.js");
 
     private static final String ROOT_PANEL = "RootPanel.js";
     private static final String BLUEPRINT_LIST_PANEL = "BlueprintListPanel.js";
@@ -76,7 +76,7 @@ public class ChannelManagerHeaderItem extends HeaderItem {
 
     @Override
     public Iterable<? extends HeaderItem> getDependencies() {
-        return Arrays.asList(CmsHeaderItem.get(), ExtResourcesHeaderItem.get(), TemplateComposerApiHeaderItem.get());
+        return Arrays.asList(CmsHeaderItem.get(), ExtResourcesHeaderItem.get(), ChannelEditorApiHeaderItem.get());
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ChannelManagerHeaderItem extends HeaderItem {
                 JavaScriptHeaderItem.forReference(resourceReference).render(response);
             }
         } else {
-            JavaScriptHeaderItem.forReference(ALL).render(response);
+            JavaScriptHeaderItem.forReference(BUNDLE).render(response);
         }
     }
 

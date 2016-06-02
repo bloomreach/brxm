@@ -85,8 +85,13 @@
         this.toolbar.render(hippoFooter, 0);
 
         // only show the channel manager breadcrumb when channel manager is active
-        Hippo.Events.subscribe('CMSChannels', this.showBreadcrumb, this);
-        Hippo.Events.subscribe('CMSChannels-deactivated', this.hideBreadcrumb, this);
+        Hippo.Events.subscribe('CMSChannels', this._onActivate, this);
+        Hippo.Events.subscribe('CMSChannels-deactivated', this._onDeactivate, this);
+
+        // show the breadcrumb initially when needed
+        if (this.initialConfig.showBreadcrumbInitially) {
+          this._showBreadcrumb();
+        }
       }, this, {single: true});
 
       // get all child components
@@ -111,18 +116,18 @@
 
       channelSelectedHandler = function (channelId, record) {
         this.selectedChannelId = channelId;
-        // don't activate template composer when it is already active
-        if (this.layout.activeItem === Hippo.ChannelManager.TemplateComposer.Instance) {
+        // don't activate channel editor when it is already active
+        if (this.layout.activeItem === Hippo.ChannelManager.ChannelEditor.Instance) {
           return;
         }
-        Hippo.ChannelManager.TemplateComposer.Instance.browseTo({channelId: channelId});
-        Ext.getCmp('rootPanel').showTemplateComposer();
+        Hippo.ChannelManager.ChannelEditor.Instance.loadChannel(channelId);
+        self._showChannelEditor();
       };
 
       this.gridPanel.on('channel-selected', channelSelectedHandler, this);
       this.channelIconPanel.on('channel-selected', channelSelectedHandler, this);
 
-      Hippo.ChannelManager.TemplateComposer.Instance.on('mountChanged', function (data) {
+      Hippo.ChannelManager.ChannelEditor.Instance.on('mountChanged', function (data) {
         var channelRecord = this.gridPanel.getChannelByMountId(data.mountId),
           firstChange = data.oldMountId === null;
         if (!firstChange && this.selectedChannelId !== channelRecord.get('id')) {
@@ -131,6 +136,17 @@
       }, this);
 
       Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
+    },
+
+    _onActivate: function() {
+      this._showBreadcrumb();
+      if (this._isChannelEditorShown()) {
+        this.layout.activeItem.reloadPage();
+      }
+    },
+
+    _onDeactivate: function() {
+      this._hideBreadcrumb();
     },
 
     _initBreadcrumbAnimation: function () {
@@ -174,14 +190,14 @@
       }, this);
     },
 
-    hideBreadcrumb: function () {
+    _hideBreadcrumb: function () {
       this._initBreadcrumbAnimation();
       this.showBreadcrumbTask.cancel();
       this.toolbar.getEl().removeClass('hippo-breadcrumb-active');
       this.hideBreadcrumbTask.delay(500);
     },
 
-    showBreadcrumb: function () {
+    _showBreadcrumb: function () {
       this._initBreadcrumbAnimation();
       this.hideBreadcrumbTask.cancel();
       this.toolbar.getEl().addClass('hippo-breadcrumb-active');
@@ -219,7 +235,7 @@
       this.layout.setActiveItem(0);
     },
 
-    showTemplateComposer: function () {
+    _showChannelEditor: function () {
       this.toolbar.pushItem({
         card: this.items.get(1),
         click: function () {
@@ -228,6 +244,10 @@
         scope: this
       });
       this.layout.setActiveItem(1);
+    },
+
+    _isChannelEditorShown: function () {
+      return this.layout.activeItem === this.items.get(1);
     },
 
     showConfigEditor: function () {
@@ -302,10 +322,8 @@
             handler: function () {
               this.hide();
             }
-
           }
         ]
-
       };
 
       Ext.apply(this, Ext.apply(this.initialConfig, config));

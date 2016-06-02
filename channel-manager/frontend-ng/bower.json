@@ -1,0 +1,24 @@
+{
+  "name": "main",
+  "private": true,
+  "dependencies": {
+    "angular": "1.4.8",
+    "angular-animate": "1.4.8",
+    "angular-aria": "1.4.8",
+    "angular-material": "1.1.0-rc4",
+    "angular-messages": "1.4.8",
+    "angular-translate": "2.8.1",
+    "angular-translate-loader-static-files": "2.8.1",
+    "angular-ui-router": "0.2.15",
+    "angular-ui-tree": "2.15.0",
+    "dragula.js": "git://github.com/onehippo/dragula.git#3.7.1-h1",
+    "es6-shim": "0.35.0",
+    "jquery": "2.2.0",
+    "velocity": "1.2.3",
+    "ng-device-detector": "3.0.1",
+    "ng-focus-if": "1.0.5"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.4.8"
+  }
+}

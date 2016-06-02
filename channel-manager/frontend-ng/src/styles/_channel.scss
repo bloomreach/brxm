@@ -1,0 +1,81 @@
+// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+.mask {
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 100; // must be higher than sidenav (60)
+
+  &.masked {
+    pointer-events: auto;
+    cursor: not-allowed;
+  }
+}
+
+// let a linear progress indicator float 'above' the bottom of a toolbar
+// instead of taking up extra space below the toolbar
+md-toolbar > md-progress-linear {
+  bottom: 0;
+  position: absolute;
+}
+
+md-input-container.input-container-picker {
+  img {
+    max-width: 100%;
+    &:not(.readonly) {
+      cursor: pointer;
+    }
+  }
+  .md-input {
+    order: 0;
+    &:not([disabled]) {
+      cursor: pointer;
+    }
+  }
+  .md-icon-button {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+// color required invalid select boxes red
+.md-input-invalid md-select.ng-invalid ._md-select-value._md-select-placeholder {
+  color: $select-invalid-color;
+}
+
+// mark required select boxes with an asterisk
+md-select.ng-invalid-required > md-select-value > span:after {
+  content: " *";
+  font-size: 13px;
+  vertical-align: top;
+}
+
+.help-icon {
+  cursor: default;
+  position: absolute;
+  top: 10px;
+  right: -24px;
+}
+
+// avoid that help icon tooltips grow wider than the subpage; wrap text when necessary.
+.tooltip-help-icon ._md-content {
+  height: auto;
+  max-width: 500px;
+  text-overflow: initial;
+  white-space: initial;
+}

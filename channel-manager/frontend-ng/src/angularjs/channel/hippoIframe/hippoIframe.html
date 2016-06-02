@@ -1,0 +1,79 @@
+<!--
+  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<md-content class="channel-iframe-base" flex layout="row">
+  <div class="channel-iframe-canvas" flex layout="row">
+    <div class="channel-iframe-sheet" flex="grow" layout="row">
+      <div class="channel-iframe-scroll-x cm-scale" flex layout="row">
+        <iframe class="qa-view"
+                flex="noshrink"
+                ng-src="{{ iframe.getSrc() }}"></iframe>
+
+        <div class="overlay qa-overlay" component-adder>
+          <div ng-repeat="container in iframe.getContainers()" class="qa-container">
+            <overlay-element class="overlay-element-container"
+                             layout="row"
+                             ng-class="{
+                               'overlay-label-visible': container.isEmpty() || iframe.isDragging(),
+                               'overlay-element-container-visible': container.isEmpty() || container.isDisabled() || iframe.isDragging(),
+                               'overlay-permeable': iframe.isDraggingOrClicking() || container.isDisabled(),
+                             }"
+                             structure-element="container">
+            </overlay-element>
+
+            <div ng-repeat="component in container.getComponents()" class="qa-component">
+              <overlay-element class="overlay-element-component"
+                               layout="row"
+                               structure-element="component"
+                               ng-class="{ 'overlay-element-component-visible': !iframe.isDragging(), 'overlay-permeable': iframe.isDraggingOrClicking() }"
+                               ng-mousedown="iframe.startDragOrClick($event, component)">
+              </overlay-element>
+            </div>
+          </div>
+          <div ng-repeat="contentLink in iframe.getContentLinks()">
+            <overlay-element structure-element="contentLink">
+              <md-button class="overlay-element-fab md-fab md-mini md-hue-2 qa-content-link"
+                         ng-click="iframe.openContent(contentLink)">
+                <md-icon class="icon16"
+                         aria-label="{{'IFRAME_OPEN_DOCUMENT' | translate }}"
+                         md-svg-src="images/document.svg"></md-icon>
+                <md-tooltip md-direction="top">
+                  {{'IFRAME_OPEN_DOCUMENT' | translate}}
+                </md-tooltip>
+              </md-button>
+            </overlay-element>
+          </div>
+          <div ng-repeat="editMenuLink in iframe.getEditMenuLinks()">
+            <overlay-element structure-element="editMenuLink">
+              <md-button class="overlay-element-fab md-fab md-mini md-hue-2 qa-edit-menu-link"
+                         ng-click="iframe.openMenuEditor(editMenuLink)">
+                <md-icon class="icon16"
+                         aria-label="{{'IFRAME_EDIT_MENU' | translate }}"
+                         md-svg-src="images/edit-menu.svg">
+                </md-icon>
+                <md-tooltip md-direction="top">
+                  {{'IFRAME_EDIT_MENU' | translate}}
+                </md-tooltip>
+              </md-button>
+            </overlay-element>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="channel-dragula-mirror cm-scale"></div>
+  </div>
+</md-content>

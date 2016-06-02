@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -98,7 +98,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         changedBySet,
         defaultDevice,
         devices,
-        previewHstConfigExists
+        previewHstConfigExists,
+        hstConfigEditor
     }
 
     public static final List<String> ALL_FIELD_NAMES;

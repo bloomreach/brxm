@@ -1,7 +1,10 @@
+*.log
 *.iml
-/.idea/
-.project/
 .settings
+.idea/
+.project/
+.eslintrc
 target/
 node_modules/
-frontend/*.log
+bower_components/
+coverage/

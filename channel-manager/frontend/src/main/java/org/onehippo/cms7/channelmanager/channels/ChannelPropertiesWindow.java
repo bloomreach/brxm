@@ -329,7 +329,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
             return Collections.emptyList();
         }
 
-        List<FieldGroupInfo> fieldGroupList = channelInfoClassInfo.getFieldsGroup();
+        List<FieldGroupInfo> fieldGroupList = channelInfoClassInfo.getFieldGroups();
 
         if (fieldGroupList == null) {
             log.warn("Channel info class '{}' contains a '{}' annotation with a null value: no channel properties will be shown",

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -131,17 +131,17 @@
   </dependencyManagement>
 
   <modules>
+    <module>angularjs-api</module>
     <module>frontend-api</module>
+    <module>frontend-ng</module>
     <module>frontend</module>
     <module>repository</module>
-    <module>test</module>
-    <module>angularjs-api</module>
   </modules>
 
   <scm>
-    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-addon-channel-manager.git</connection>
-    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-addon-channel-manager.git</developerConnection>
-    <url>https://code.onehippo.org/cms-community/hippo-addon-channel-manager</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/channel-manager-4.0.x-cmng-psp1</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/channel-manager-4.0.x-cmng-psp1</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/channel-manager-4.0.x-cmng-psp1</url>
   </scm>
 
   <build>
@@ -198,9 +198,8 @@
             <configuration>
               <excludes combine.children="append">
                 <!-- 3rd-party licenses -->
-                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/*</exclude>
-                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/*</exclude>
-                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/device-skins.txt</exclude>
+                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugins/colorfield/*</exclude>
+                <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugins/vtabs/*</exclude>
 
                 <exclude>frontend/.*</exclude>
                 <exclude>frontend/*.md</exclude>
@@ -209,6 +208,15 @@
                 <exclude>frontend/node_modules/**/*</exclude>
                 <exclude>frontend/bower_components/**/*</exclude>
                 <exclude>frontend/DIST_LICENSE</exclude>
+
+                <exclude>frontend-ng/.*</exclude>
+                <exclude>frontend-ng/*.md</exclude>
+                <exclude>frontend-ng/dist/**/*</exclude>
+                <exclude>frontend-ng/tmp/**/*</exclude>
+                <exclude>frontend-ng/node_modules/**/*</exclude>
+                <exclude>frontend-ng/bower_components/**/*</exclude>
+                <exclude>frontend-ng/coverage/**/*</exclude>
+                <exclude>frontend-ng/DIST_LICENSE</exclude>
 
                 <exclude>angularjs-api/.*</exclude>
                 <exclude>angularjs-api/*.md</exclude>

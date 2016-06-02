@@ -36,10 +36,9 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IRestProxyService;
+import org.onehippo.cms7.channelmanager.channeleditor.ChannelEditorApiHeaderItem;
 import org.onehippo.cms7.channelmanager.restproxy.RestProxyServicesManager;
 import org.onehippo.cms7.channelmanager.service.IChannelManagerService;
-import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
-import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerApiHeaderItem;
 
 public class ChannelManagerPerspective extends Perspective implements IChannelManagerService {
 
@@ -114,7 +113,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
         super.renderHead(response);
 
         response.render(CssHeaderItem.forReference(CHANNEL_MANAGER_PERSPECTIVE_CSS));
-        response.render(TemplateComposerApiHeaderItem.get());
+        response.render(ChannelEditorApiHeaderItem.get());
     }
 
     public void removeRenderService(final IRenderService service) {
@@ -126,16 +125,10 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     }
 
     @Override
-    public void viewChannel(final String channelId, final String pathInfo,
-                            final String contextPath, final String cmsPreviewPrefix) {
+    public void viewChannel(final String channelId, final String channelPath) {
         if (siteIsUp) {
-            PageEditor pageEditor = rootPanel.getPageEditor();
-            pageEditor.setChannel(channelId);
-            pageEditor.setRenderPathInfo(pathInfo);
-            pageEditor.setRenderContextPath(contextPath);
-            pageEditor.setCmsPreviewPrefix(cmsPreviewPrefix);
-            pageEditor.setPreviewMode(true);
-            rootPanel.setActiveCard(RootPanel.CardId.TEMPLATE_COMPOSER);
+            rootPanel.getChannelEditor().viewChannel(channelId, channelPath);
+            rootPanel.setActiveCard(RootPanel.CardId.CHANNEL_EDITOR);
             focus(null);
         }
     }

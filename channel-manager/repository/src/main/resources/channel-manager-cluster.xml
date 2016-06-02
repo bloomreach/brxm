@@ -30,6 +30,7 @@
         <sv:value>name</sv:value>
         <sv:value>url</sv:value>
         <sv:value>locale</sv:value>
+        <sv:value>hstConfigEditor</sv:value>
       </sv:property>
       <sv:property sv:name="sort.column" sv:type="String">
         <sv:value>name</sv:value>
@@ -90,7 +91,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.onehippo.cms7.channelmanager.templatecomposer.PlainPropertiesEditor</sv:value>
+      <sv:value>org.onehippo.cms7.channelmanager.channeleditor.PlainComponentPropertiesEditor</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="templatecomposer-variant-adder">
@@ -98,7 +99,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.onehippo.cms7.channelmanager.templatecomposer.PlainVariantAdder</sv:value>
+      <sv:value>org.onehippo.cms7.channelmanager.channeleditor.PlainComponentVariantAdder</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
