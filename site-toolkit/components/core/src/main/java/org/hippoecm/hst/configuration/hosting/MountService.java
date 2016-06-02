@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isValidContextPath;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_IS_SITE;
 
 public class MountService implements ContextualizableMount, MutableMount {
 
@@ -178,9 +179,6 @@ public class MountService implements ContextualizableMount, MutableMount {
      * whether the context path should be in the url.
      */
     private boolean contextPathInUrl;
-
-    // by default, isSite = true
-    private boolean isSite = true;
 
     /**
      * whether the port number should be in the url.
@@ -436,10 +434,8 @@ public class MountService implements ContextualizableMount, MutableMount {
             this.isMapped = parent.isMapped();
         }
 
-        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_IS_SITE)) {
-            this.isSite = mount.getValueProvider().getBoolean(HstNodeTypes.MOUNT_PROPERTY_IS_SITE);
-        } else if(parent != null) {
-            this.isSite = parent.isSite();
+        if(mount.getValueProvider().hasProperty(MOUNT_PROPERTY_IS_SITE)) {
+            log.warn("Property '{}' has been deprecated and can be removed.", MOUNT_PROPERTY_IS_SITE);
         }
 
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_NAMEDPIPELINE)) {
@@ -789,8 +785,14 @@ public class MountService implements ContextualizableMount, MutableMount {
         return showPort;
     }
 
+    /**
+     * @deprecated  Since 4.0.0 (CMS 11.0.0)
+     */
+    @Deprecated
+    @Override
     public boolean isSite() {
-        return isSite;
+        log.warn("Mount#isSite has been deprecated.");
+        return false;
     }
 
     @Deprecated

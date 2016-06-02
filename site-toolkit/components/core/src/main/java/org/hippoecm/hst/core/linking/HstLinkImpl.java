@@ -281,14 +281,6 @@ public class HstLinkImpl implements HstLink {
             if (subPath != null) {
                 // subPath is allowed to be empty ""
                 path += subPathDelimeter + subPath;
-            } else if (mount != null && !mount.isSite()) {
-                // mount is configured to support subPath: Include the PATH_SUBPATH_DELIMITER for locations that that would be excluded by virtualhosts configuration
-                // like resources ending on .jpg or .pdf etc 
-                if (mount.getVirtualHost().getVirtualHosts().isHstFilterExcludedPath(path)) {
-                    // path should not be excluded for hst request processing because for example it is a REST call for a binary. Add the PATH_SUBPATH_DELIMITER
-                    // to avoid this
-                    path += subPathDelimeter;
-                }
             }
 
             HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(mount, requestContext.getBaseURL(), path);
