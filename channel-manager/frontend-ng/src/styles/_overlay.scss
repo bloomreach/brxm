@@ -65,12 +65,16 @@ overlay-element {
   display: none;
 
   .overlay-label-text {
-    padding-right: 6px;
+    padding: 0 6px;
     display: none;
   }
 
+  &.overlay-label-with-icon .overlay-label-text {
+    padding-left: 0;
+  }
+
   .overlay-label-icon {
-    margin: -2px 4px 0 4px;
+    margin: -2px 2px 0 2px;
     color: $white;
     display: none;
   }
