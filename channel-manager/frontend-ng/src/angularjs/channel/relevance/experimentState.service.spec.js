@@ -54,22 +54,6 @@ describe('ExperimentStateService', () => {
     })).not.toBeDefined();
   });
 
-  it('returns the experiment state icon for a component with an experiment', () => {
-    expect(ExperimentStateService.getExperimentStateIcon({
-      type: 'component',
-      metaData: {
-        'Targeting-experiment-id': '1234',
-      },
-    })).toBe('toys');
-  });
-
-  it('returns a null icon for a component without an experiment', () => {
-    expect(ExperimentStateService.getExperimentStateIcon({
-      type: 'component',
-      metaData: {},
-    })).toBeNull();
-  });
-
   it('returns the experiment state label for a component with an experiment', () => {
     spyOn($translate, 'instant').and.returnValue('Label');
     expect(ExperimentStateService.getExperimentStateLabel({
