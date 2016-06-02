@@ -161,6 +161,9 @@ public class TestSearchInputParsingUtils {
         assertEquals("The quick \\\"brown\\\" fox can t jump 32.3 feet, right?", SearchInputParsingUtils.parse("The quick (“brown”) fox can’t jump 32.3 feet, right?\n", true, true));
         assertEquals("The quick !brown*", SearchInputParsingUtils.parse("The quick! !brown*", true, true));
         assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown*", false, true));
+
+        assertEquals("The quick br own", SearchInputParsingUtils.parse("The quick br*'own", false, true));
+        assertEquals("The quick br* own", SearchInputParsingUtils.parse("The quick br*'own", true, true));
     }
 
     @Test
