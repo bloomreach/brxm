@@ -44,6 +44,9 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.DISCARD;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PREVIEW_CREATION;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PUBLISH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -230,6 +233,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
     public static class ChannelEventListener {
 
         private List<ChannelEvent> processed = new ArrayList<>();
+        private boolean previewCreatedEventProcessed;
         private boolean locksOnConfigurationPresentDuringEventDispatching;
         @Subscribe
         public void onChannelEvent(ChannelEvent event) throws RepositoryException {
@@ -244,9 +248,13 @@ public class MountResourceTest extends AbstractMountResourceTest {
             // 3 : siteMapHelper.publishChanges(userIds);
             // 4 : pagesHelper.publishChanges(userIds);
             // 5 : siteMenuHelper.publishChanges(userIds);
+            if (event.getChannelEventType() == DISCARD || event.getChannelEventType() == PUBLISH) {
+                locksOnConfigurationPresentDuringEventDispatching = lockForPresentBelow(session, event.getEditingPreviewSite().getConfigurationPath());
+                processed.add(event);
+            } else if (event.getChannelEventType() == PREVIEW_CREATION) {
+                previewCreatedEventProcessed = true;
+            }
 
-            locksOnConfigurationPresentDuringEventDispatching = lockForPresentBelow(session, event.getEditingPreviewSite().getConfigurationPath());
-            processed.add(event);
         }
 
         public List<ChannelEvent> getProcessed() {
@@ -271,6 +279,28 @@ public class MountResourceTest extends AbstractMountResourceTest {
             }
         }
         return false;
+    }
+
+    @Test
+    public void create_preview_channel_event() throws Exception {
+        final ChannelEventListener listener = new ChannelEventListener();
+        try {
+            HstServices.getComponentManager().registerEventSubscriber(listener);
+            mockNewRequest(session, "localhost", "");
+            mountResource.startEdit();
+            assertTrue(listener.previewCreatedEventProcessed);
+
+            // reset and 'startEdit again : since there is already a preview, this should not result in another
+            // PREVIEW_CREATED event
+            listener.previewCreatedEventProcessed = false;
+            // reset the request
+            mockNewRequest(session, "localhost", "");
+            mountResource.startEdit();
+            assertFalse(listener.previewCreatedEventProcessed);
+        } finally {
+            HstServices.getComponentManager().unregisterEventSubscriber(listener);
+        }
+
     }
 
     @Test
@@ -316,8 +346,10 @@ public class MountResourceTest extends AbstractMountResourceTest {
         private ChannelEvent handledEvent;
         @Subscribe
         public void onChannelEvent(ChannelEvent event) throws RepositoryException {
-            this.handledEvent = event;
-            event.setException(new ClientException("ClientException message", ClientError.UNKNOWN));
+            if (event.getChannelEventType() == PUBLISH || event.getChannelEventType() == DISCARD) {
+                this.handledEvent = event;
+                event.setException(new ClientException("ClientException message", ClientError.UNKNOWN));
+            }
         }
     }
 
@@ -377,7 +409,9 @@ public class MountResourceTest extends AbstractMountResourceTest {
     public static class ChannelEventListenerSettingIllegalStateException {
         @Subscribe
         public void onChannelEvent(ChannelEvent event) throws RepositoryException {
-            event.setException(new IllegalStateException("IllegalStateException message"));
+            if (event.getChannelEventType() == PUBLISH || event.getChannelEventType() == DISCARD) {
+                event.setException(new IllegalStateException("IllegalStateException message"));
+            }
         }
     }
 
