@@ -64,15 +64,15 @@
                 pre: 'Voorgedefinieerd'
             },
             zh: {
-                address: 'ZH',
-                h1: 'ZH',
-                h2: 'ZH',
-                h3: 'ZH',
-                h4: 'ZH',
-                h5: 'ZH',
-                h6: 'ZH',
-                p: 'ZH',
-                pre: 'ZH'
+                address: '地址',
+                h1: '标题一',
+                h2: '标题二',
+                h3: '标题三',
+                h4: '标题四',
+                h5: '标题五',
+                h6: '标题六',
+                p: '平常',
+                pre: '预定模式'
             }
         },
         stylesSet, language, element, i, len;
