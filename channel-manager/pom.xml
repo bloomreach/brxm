@@ -139,9 +139,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/channel-manager-4.0.x-cmng-psp1</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/channel-manager-4.0.x-cmng-psp1</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/branches/channel-manager-4.0.x-cmng-psp1</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-addon-channel-manager.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-addon-channel-manager.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-addon-channel-manager</url>
   </scm>
 
   <build>
