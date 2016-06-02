@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
 
 Licensed under the Apache License, Version 2.0 (the  "License");
 you may not use this file except in compliance with the License.
@@ -188,9 +188,6 @@ limitations under the License. -->
             <sv:property sv:name="hst:authenticated" sv:type="Boolean">
               <sv:value>false</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:isSite" sv:type="Boolean">
-              <sv:value>false</sv:value>
-            </sv:property>
             <sv:property sv:name="hst:mountassets" sv:type="String">
               <sv:value>restapi-assets</sv:value>
             </sv:property>
@@ -219,9 +216,6 @@ limitations under the License. -->
               <sv:property sv:name="hst:alias" sv:type="String">
                 <sv:value>restapi-gallery</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:isSite" sv:type="Boolean">
-                <sv:value>false</sv:value>
-              </sv:property>
               <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                 <sv:value>false</sv:value>
               </sv:property>
@@ -248,9 +242,6 @@ limitations under the License. -->
               <sv:property sv:name="hst:alias" sv:type="String">
                 <sv:value>restapi-assets</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:isSite" sv:type="Boolean">
-                <sv:value>false</sv:value>
-              </sv:property>
               <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                 <sv:value>false</sv:value>
               </sv:property>
@@ -268,9 +259,6 @@ limitations under the License. -->
             </sv:property>
             <sv:property sv:name="hst:alias" sv:type="String">
               <sv:value>restservices</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:isSite" sv:type="Boolean">
-              <sv:value>false</sv:value>
             </sv:property>
             <sv:property sv:name="hst:ismapped" sv:type="Boolean">
               <sv:value>true</sv:value>
@@ -340,9 +328,6 @@ limitations under the License. -->
               <sv:property sv:name="hst:authenticated" sv:type="Boolean">
                 <sv:value>false</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:isSite" sv:type="Boolean">
-                <sv:value>false</sv:value>
-              </sv:property>
               <sv:property sv:name="hst:mountassets" sv:type="String">
                 <sv:value>restapi-assets</sv:value>
               </sv:property>
@@ -371,9 +356,6 @@ limitations under the License. -->
                 <sv:property sv:name="hst:alias" sv:type="String">
                   <sv:value>restapi-gallery</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:isSite" sv:type="Boolean">
-                  <sv:value>false</sv:value>
-                </sv:property>
                 <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                   <sv:value>false</sv:value>
                 </sv:property>
@@ -400,9 +382,6 @@ limitations under the License. -->
                 <sv:property sv:name="hst:alias" sv:type="String">
                   <sv:value>restapi-assets</sv:value>
                 </sv:property>
-                <sv:property sv:name="hst:isSite" sv:type="Boolean">
-                  <sv:value>false</sv:value>
-                </sv:property>
                 <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                   <sv:value>false</sv:value>
                 </sv:property>
@@ -420,9 +399,6 @@ limitations under the License. -->
               </sv:property>
               <sv:property sv:name="hst:alias" sv:type="String">
                 <sv:value>restservices</sv:value>
-              </sv:property>
-              <sv:property sv:name="hst:isSite" sv:type="Boolean">
-                <sv:value>false</sv:value>
               </sv:property>
               <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                 <sv:value>true</sv:value>
