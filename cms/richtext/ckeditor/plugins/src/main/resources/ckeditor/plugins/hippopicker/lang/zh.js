@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 CKEDITOR.plugins.setLang( 'hippopicker', 'zh', {
-    imageTooltip: 'ZH',
-    internalLinkTooltip: 'ZH'
+    imageTooltip: '图片',
+    internalLinkTooltip: '外部链接'
 });
