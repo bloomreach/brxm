@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,22 +15,6 @@
  */
 package org.hippoecm.repository.security.group;
 
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
-import javax.transaction.NotSupportedException;
-
 import org.apache.jackrabbit.commons.iterator.NodeIteratorAdapter;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -40,9 +24,15 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SECURITYPROVIDER;
-import static org.hippoecm.repository.api.HippoNodeType.NT_GROUP;
-import static org.hippoecm.repository.api.HippoNodeType.NT_GROUPFOLDER;
+import javax.jcr.*;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+import javax.transaction.NotSupportedException;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.hippoecm.repository.api.HippoNodeType.*;
 import static org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 
@@ -225,18 +215,18 @@ public abstract class AbstractGroupManager implements GroupManager {
     /**
      * Sanitize the rawId: trim and convert to lowercase if needed. This
      * function does NOT encode the groupId.
-     * @param rawGruopId
+     * @param rawGroupId
      * @return the trimmed and if needed converted to lowercase groupId
      */
-    private String sanitizeId(String rawGruopId) {
-        if (rawGruopId == null) {
+    private String sanitizeId(final String rawGroupId) {
+        if (rawGroupId == null) {
             // anonymous
             return null;
         }
         if (isCaseSensitive()) {
-            return rawGruopId.trim();
+            return rawGroupId.trim();
         } else {
-            return rawGruopId.trim().toLowerCase();
+            return rawGroupId.trim().toLowerCase();
         }
     }
 
@@ -340,11 +330,11 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
         String userId = user.getName();
         Set<String> repositoryMemberships = getMembershipIds(userId, providerId);
-        Set<String> backendMemberships = new HashSet<String>();
+        Set<String> backendMemberships = new HashSet<>();
         for (String groupId : backendGetMemberships(user)) {
             backendMemberships.add(sanitizeId(groupId));
         }
-        Set<String> inSync = new HashSet<String>();
+        Set<String> inSync = new HashSet<>();
         for (String groupId : repositoryMemberships) {
             if (backendMemberships.contains(groupId)) {
                 inSync.add(groupId);
@@ -380,7 +370,7 @@ public abstract class AbstractGroupManager implements GroupManager {
             }
             return members;
         }
-        return Collections.emptySet();
+        return new HashSet<>();
     }
 
     public final void setMembers(Node group, Set<String> members) throws RepositoryException {
