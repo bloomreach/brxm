@@ -96,7 +96,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
                 }
                 HstSiteMapItemService service = (HstSiteMapItemService)item;
                 if(service.containsWildCard() && service.patternMatch(elements[0], service.getPrefix(), service.getPostfix())) {
-                    String parameter = getStrippedParameter((HstSiteMapItemService)service, elements[0]);
+                    String parameter = getStrippedParameter(service, elements[0]);
                     params.put(String.valueOf(params.size()+1), parameter);
                     matchedSiteMapItem =  resolveMatchingSiteMap(service, params, 1, elements);
                     if(matchedSiteMapItem != null) {
@@ -128,7 +128,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
                 }
                 HstSiteMapItemService service = (HstSiteMapItemService)item;
                 if(service.containsAny() && service.patternMatch(pathInfo, service.getPrefix(), service.getPostfix())) {
-                    String parameter = getStrippedParameter((HstSiteMapItemService)service, pathInfo);
+                    String parameter = getStrippedParameter(service, pathInfo);
                     params.put(String.valueOf(params.size()+1), parameter);
                     matchedSiteMapItem = item;
                     // we have a matching sitemap item.
