@@ -28,6 +28,7 @@
   "ERROR_CHANNEL_PROPERTIES_SAVE_FAILED": "Failed to save the channel setting",
   "ERROR_CHANNEL_SETTINGS_READONLY": "Settings locked by '{{lockedBy}}'.",
   "ERROR_CHANNEL_SWITCH_FAILED": "Failed to switch to destination channel.",
+  "ERROR_COMPONENT_DELETED": "Component '{{component}}' no longer exists.",
   "ERROR_DELETE_COMPONENT": "Cannot delete '{{component}}'.",
   "ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED": "Cannot delete '{{component}}': the container is locked by '{{lockedBy}}'.",
   "ERROR_DELETE_PAGE": "Failed to delete page",
