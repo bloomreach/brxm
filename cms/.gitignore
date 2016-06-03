@@ -5,6 +5,7 @@
 .classpath
 .project
 .settings
+.DS_Store
 node_modules/
 target/
 /api/repository/
