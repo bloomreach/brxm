@@ -81,7 +81,7 @@ public final class SearchInputParsingUtils {
      * <code>null</code> is returned
      */
     public static String parse(final String input, final boolean allowSingleNonLeadingWildCardPerTerm, final char[] ignore) {
-        return parse(input, allowSingleNonLeadingWildCardPerTerm, ignore, false);
+        return parse(input, allowSingleNonLeadingWildCardPerTerm, ignore, true);
     }
 
     /**
