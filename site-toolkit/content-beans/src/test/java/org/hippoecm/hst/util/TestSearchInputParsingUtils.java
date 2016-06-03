@@ -102,6 +102,7 @@ public class TestSearchInputParsingUtils {
         assertEquals("The qui ck !bro wn", SearchInputParsingUtils.parse("The qui!ck! !bro!wn!", false));
         assertEquals("The qui ck !bro wn", SearchInputParsingUtils.parse("The qui!ck! !bro!wn!", true));
         assertEquals("The quick !brown", SearchInputParsingUtils.parse("The qui!ck! !bro!wn!", true, false));
+        assertEquals("The qui ck !bro wn", SearchInputParsingUtils.parse("The qui!ck! !bro!wn!", true, true));
         assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown", false));
         assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown", true));
         assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown*", false));
