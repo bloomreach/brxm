@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,9 +52,17 @@ abstract class AbstractPathInfoValidator implements Validator {
         }
 
         final String encoding = Optional.fromNullable(requestContext.getServletRequest().getCharacterEncoding()).or("UTF-8");
+        if (containsInvalidChars(info, encoding)) {
+            String msg = String.format("Invalid pathInfo '%s' because contains invalid (encoded) chars like " +
+                    " ':', ';', '?', '#' or '\' or the pathInfo cannot be URL decoded.", info);
+            log.info(msg);
+            throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
+        }
+
         if (containsEncodedDirectoryTraversalChars(info, encoding)) {
             String msg = String.format("Invalid pathInfo '%s' because contains invalid encoded chars like " +
                     " %%2f, %%5c or %%2e which are typically used for directory traversal (attacks)", info);
+            log.info(msg);
             throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
         }
 
@@ -65,33 +73,52 @@ abstract class AbstractPathInfoValidator implements Validator {
         }
 
         HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        if (hstManager.isHstFilterExcludedPath(info)) {
-            String msg = String.format("PathInfo '%s' cannot be used because it is skipped through web.xml prefix or postfix " +
-                    "exclusions.", info);
-            log.info(msg);
-            throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
-        }
+        // the excluding of paths must be done against 'decoded' path info since for example info can now be
+        // test%40test while the excluding is test@test
+        try {
+            final String decodedPathInfo = URLDecoder.decode(info, encoding);
 
-        if (requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isHstFilterExcludedPath(info)) {
-            String msg = String.format("PathInfo '%s' cannot be used because it is skipped through prefix or postfix " +
-                    "exclusions on /hst:hst/hst:hosts configuration.", info);
-            log.info(msg);
-            throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
+            if (hstManager.isHstFilterExcludedPath(decodedPathInfo)) {
+                String msg = String.format("PathInfo '%s' cannot be used because it is skipped through web.xml prefix or postfix " +
+                        "exclusions.", info);
+                log.info(msg);
+                throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
+            }
+
+            if (requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isHstFilterExcludedPath(decodedPathInfo)) {
+                String msg = String.format("PathInfo '%s' cannot be used because it is skipped through prefix or postfix " +
+                        "exclusions on /hst:hst/hst:hosts configuration.", info);
+                log.info(msg);
+                throw new ClientException(msg, ClientError.INVALID_PATH_INFO);
+            }
+        } catch (UnsupportedEncodingException e) {
+            // cannot happen because #containsEncodedDirectoryTraversalChars in that case already returned true
         }
     }
 
-    public static boolean containsEncodedDirectoryTraversalChars(String pathInfo, String characterEncoding) {
+    public static boolean containsEncodedDirectoryTraversalChars(String pathInfo,final String characterEncoding) {
         pathInfo = pathInfo.toLowerCase();
         if (pathInfo.contains("%2f") || pathInfo.contains("%5c") || pathInfo.contains("%2e")) {
-            log.info("PathInfo '{}' contains invalid encoded '/' or '\\' or a '.'", pathInfo);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean containsInvalidChars(String pathInfo, final String characterEncoding) {
+        pathInfo = pathInfo.toLowerCase();
+        if (pathInfo.contains(":") || pathInfo.contains("\\") || pathInfo.contains("?") || pathInfo.contains(";")|| pathInfo.contains("#")) {
             return true;
         }
         try {
             // for if the path info contains incomplete trailing escape (%) pattern, decoding will fail with an
             // IllegalArgumentException and the path info is incorrect
-            URLDecoder.decode(pathInfo, characterEncoding);
+            final String decode = URLDecoder.decode(pathInfo, characterEncoding);
+            if (decode.contains(":") || decode.contains("\\") || decode.contains("?") || decode.contains(";") || decode.contains("#")) {
+                return true;
+            }
         } catch (UnsupportedEncodingException | IllegalArgumentException e) {
-            log.info("PathInfo '{}' cannot be decoded with '{}'.", pathInfo, characterEncoding);
+            // for if the path info contains incomplete trailing escape (%) pattern, decoding will fail with an
+            // IllegalArgumentException and the path info is incorrect
             return true;
         }
         return false;

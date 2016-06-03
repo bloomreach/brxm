@@ -67,7 +67,7 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         try {
             if (HDC.isStarted()) {
                 pipelineTask = HDC.getCurrentTask().startSubtask("Pipeline processing");
-                pipelineTask.setAttribute("pipeline", namedPipeline);
+                pipelineTask.setAttribute("pipeline", (namedPipeline == null) ? "DefaultSitePipeline" : namedPipeline);
             }
 
             tlCurrentRequestContainerConfig.set(requestContainerConfig);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -192,12 +192,17 @@ public class LocationMapResolver {
             Map<String,String> keyToPropertyPlaceHolderMap = ((HstSiteMapItemService)matchingSiteMapItem).getKeyToPropertyPlaceHolderMap();
             if(keyToPropertyPlaceHolderMap.containsKey(entry.getKey())) {
                 // translate key1 -> n1, key2 -> n2 etc
-                params.put(keyToPropertyPlaceHolderMap.get(entry.getKey()), entry.getValue());
+                final String key = keyToPropertyPlaceHolderMap.get(entry.getKey());
+                if (key == null || entry.getValue() == null) {
+                    params.put(key, entry.getValue());
+                }
             } else {
                 if(!keyToPropertyPlaceHolderMap.containsValue(entry.getKey())) {
                     // inherited params from current ctx: when the keyToPropertyPlaceHolderMap contains the entry.getKey() as value,
                     // the param is already mapped.
-                    params.put(entry.getKey(), entry.getValue());
+                    if (entry.getKey() == null || entry.getValue() == null) {
+                        params.put(entry.getKey(), entry.getValue());
+                    }
                 }
             }
         }

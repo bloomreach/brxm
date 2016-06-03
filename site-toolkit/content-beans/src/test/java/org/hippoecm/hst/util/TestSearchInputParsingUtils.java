@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package org.hippoecm.hst.util;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
-import org.junit.Test;
 
 
 public class TestSearchInputParsingUtils {
@@ -37,6 +37,7 @@ public class TestSearchInputParsingUtils {
     public void testNullArgument() throws Exception {
         assertNull(SearchInputParsingUtils.parse(null, true));
     }
+
     @Test
     public void testSearchInputParsingUtils_parse() throws Exception {
         assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The quick brown fox jumps over the lazy dog", true));
@@ -67,15 +68,16 @@ public class TestSearchInputParsingUtils {
         // allow wildcard false
         assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ?*qu??ic?k br?ow*?n fo*x jumps over the lazy dog", false));
 
-        assertEquals("The quick brown fox jumps  over   the lazy dog", SearchInputParsingUtils.parse("The (quick brown) (fox jumps) &( over ] ] [the lazy dog", true));
+        assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The (quick brown) (fox jumps) &( over ] ] [the lazy dog", true));
 
         assertEquals("The -quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The NOT quick brown fox jumps over the lazy dog", true));
 
         assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The \t\n quick brown fox \njumps \t over the lazy dog", true));
 
-        // prefix ~ is allowed for synonyms Jackrabbit. In middle of word, it is not allowed
+        // prefix ~ is allowed for synonyms Jackrabbit. In middle of word, it is considered whitespace, when preserveWordBound == false it is stripped
         assertEquals("The ~quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ~quick brown fox jumps over the lazy dog", true));
-        assertEquals("The ~quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ~qui~ck~ bro~wn fox jumps over the lazy dog", true));
+        assertEquals("The ~qui ck bro wn fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ~qui~ck~ bro~wn fox jumps over the lazy dog", true));
+        assertEquals("The ~quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ~qui~ck~ bro~wn fox jumps over the lazy dog", true, false));
 
         assertEquals("The quick", SearchInputParsingUtils.parse("The quick!*", true));
         assertEquals("The quick", SearchInputParsingUtils.parse("The quick!*", false));
@@ -86,8 +88,9 @@ public class TestSearchInputParsingUtils {
         assertEquals("The quick", SearchInputParsingUtils.parse("The quick!*!!", true));
         assertEquals("The quick", SearchInputParsingUtils.parse("The quick!!!*", false));
 
-        assertEquals("The quick", SearchInputParsingUtils.parse("The qu!ick!*!!", true));
-        assertEquals("The quick", SearchInputParsingUtils.parse("The qu!ick!!!*", false));
+        assertEquals("The qu ick", SearchInputParsingUtils.parse("The qu!ick!*!!", true));
+        assertEquals("The qu ick", SearchInputParsingUtils.parse("The qu!ick!!!*", false));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The qu!ick!!!*", false, false));
 
         assertEquals("The quick", SearchInputParsingUtils.parse("The quick!!!?", true));
         assertEquals("The quick", SearchInputParsingUtils.parse("The quick!?!!", true));
@@ -96,8 +99,10 @@ public class TestSearchInputParsingUtils {
 
         assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown", false));
         assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown", true));
-        assertEquals("The quick !brown", SearchInputParsingUtils.parse("The qui!ck! !bro!wn!", false));
-        assertEquals("The quick !brown", SearchInputParsingUtils.parse("The qui!ck! !bro!wn!", true));
+        assertEquals("The qui ck !bro wn", SearchInputParsingUtils.parse("The qui!ck! !bro!wn!", false));
+        assertEquals("The qui ck !bro wn", SearchInputParsingUtils.parse("The qui!ck! !bro!wn!", true));
+        assertEquals("The quick !brown", SearchInputParsingUtils.parse("The qui!ck! !bro!wn!", true, false));
+        assertEquals("The qui ck !bro wn", SearchInputParsingUtils.parse("The qui!ck! !bro!wn!", true, true));
         assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown", false));
         assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown", true));
         assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown*", false));
@@ -148,6 +153,21 @@ public class TestSearchInputParsingUtils {
     }
 
     @Test
+    public void testSearchInputParsingUtils_parse_retainWordBoundaries() throws Exception {
+        assertEquals("I me love Ben Jerrie s?", SearchInputParsingUtils.parse("I(me) love Ben&Jerrie's?", true, true));
+        assertEquals("I me love Ben Jerrie s", SearchInputParsingUtils.parse("I(me) love Ben&Jerrie's?", false, true));
+        assertEquals("Ime love BenJerries?", SearchInputParsingUtils.parse("I[me] love Ben&Jerrie's?", true, false));
+        assertEquals("Ime love BenJerries", SearchInputParsingUtils.parse("I[me] love Ben&Jerrie's?", false, false));
+        assertEquals("The quick \\\"brown\\\" fox can t jump 32.3 feet, right", SearchInputParsingUtils.parse("The quick (“brown”) fox can’t jump 32.3 feet, right?\n", false, true));
+        assertEquals("The quick \\\"brown\\\" fox can t jump 32.3 feet, right?", SearchInputParsingUtils.parse("The quick (“brown”) fox can’t jump 32.3 feet, right?\n", true, true));
+        assertEquals("The quick !brown*", SearchInputParsingUtils.parse("The quick! !brown*", true, true));
+        assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown*", false, true));
+
+        assertEquals("The quick br own", SearchInputParsingUtils.parse("The quick br*'own", false, true));
+        assertEquals("The quick br* own", SearchInputParsingUtils.parse("The quick br*'own", true, true));
+    }
+
+    @Test
     public void testSearchInputParsingUtils_removeLeadingWildCardsFromWords() throws Exception {
         assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.removeLeadingWildCardsFromWords("The quick brown fox jumps over the lazy dog"));
         assertEquals("The qui*ck brown fox jumps over the lazy dog", SearchInputParsingUtils.removeLeadingWildCardsFromWords("The qui*ck brown fox jumps over the lazy dog"));
@@ -157,9 +177,36 @@ public class TestSearchInputParsingUtils {
 
     @Test
     public void testSearchInputParsingUtils_parse_excludeAmpersand() throws Exception {
-        assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", true));
-        assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", false));
-        assertEquals("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", true, new char[]{'&'}));
-        assertEquals("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", false, new char[]{'&'}));
+        assertEquals("The quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", true, false));
+        assertEquals("The quick brown fox jumps o ver the l azy dog", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", true, true));
+        assertEquals("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", true, new char[]{'&'}, false));
+        assertEquals("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", SearchInputParsingUtils.parse("The &quick brown& fox jumps o&ver &&the l&&azy dog&&", true, new char[]{'&'}, true));
     }
+
+    @Test
+    public void testSearchInputParsingUtils_removeInvalidAndEscapeChars_removesTrailingExclamation() {
+        assertEquals("No exclamation",SearchInputParsingUtils.removeInvalidAndEscapeChars("No exclamation!", false));
+        assertEquals("No exclamation",SearchInputParsingUtils.removeInvalidAndEscapeChars("No exclamation!", true));
+        assertEquals("No exclamation",SearchInputParsingUtils.removeInvalidAndEscapeChars("No exclamation !", false));
+        assertEquals("No exclamation",SearchInputParsingUtils.removeInvalidAndEscapeChars("No exclamation !", true));
+    }
+
+    @Test
+    public void testSearchInputParsingUtils_removeInvalidAndEscapeChars_removesTrailingDash() {
+        assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash-", false));
+        assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash-", true));
+        assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash -", false));
+        assertEquals("No dash",SearchInputParsingUtils.removeInvalidAndEscapeChars("No dash -", true));
+    }
+
+    @Test
+    public void testSearchInputParsingUtils_parse_differentApostrophes() throws Exception {
+        assertEquals("The quic k", SearchInputParsingUtils.parse("The quic'k", true));
+        assertEquals("The quic k", SearchInputParsingUtils.parse("The quic’k", true));
+        assertEquals("The quic k", SearchInputParsingUtils.parse("The quic‘k", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quic'k", true, false));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quic’k", true, false));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quic‘k", true, false));
+    }
+
 }

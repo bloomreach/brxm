@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ public class StandardContainerComponent extends GenericHstComponent {
                 response.setRenderPath("classpath:span.ftl");
             } else if ("HST.vBox".equalsIgnoreCase(xtype)) {
                 response.setRenderPath("classpath:vbox.ftl");
+            } else if ("HST.NoMarkup".equalsIgnoreCase(xtype)) {
+                response.setRenderPath("classpath:nomarkup.ftl");
             } else {
                 response.setRenderPath("classpath:vbox.ftl");
             }

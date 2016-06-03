@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,14 +42,14 @@ public class ClientExceptionTest {
 
     @Test
     public void test_get_message_parameters() {
-        final ClientException e = new ClientException("item not found", null);
+        final ClientException e = new ClientException("item not found", ClientError.UNKNOWN);
         assertThat(e.getParameterMap().isEmpty(), is(true));
     }
 
     @Test
     public void test_get_formatted_message() {
         final Date now = new Date();
-        final ClientException e = new ClientException(String.format("%s not found at %s", "Something", now), null);
+        final ClientException e = new ClientException(String.format("%s not found at %s", "Something", now), ClientError.UNKNOWN);
         assertThat(e.getMessage(), is("Something not found at " + now));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.hippoecm.hst.core.channelmanager;
 
 import java.util.Map;
 
+import com.google.common.base.Strings;
+
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -30,19 +32,22 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public class CmsComponentComponentWindowAttributeContributor implements ComponentWindowAttributeContributor {
 
     @Override
-    public void contribute(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap) {
+    public void contributePreamble(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap) {
 
         HstComponentConfiguration compConfig = ((HstComponentConfiguration) window.getComponentInfo());
         final HstRequestContext requestContext = request.getRequestContext();
 
         populatingAttributesMap.put("uuid", compConfig.getCanonicalIdentifier());
         if (compConfig.getXType() != null) {
-            populatingAttributesMap.put("xtype", compConfig.getXType());
+            populatingAttributesMap.put(ChannelManagerConstants.HST_XTYPE, compConfig.getXType());
         }
         if (compConfig.isInherited()) {
-            populatingAttributesMap.put("inherited", "true");
+            populatingAttributesMap.put(ChannelManagerConstants.HST_INHERITED, "true");
         }
-        populatingAttributesMap.put("type", compConfig.getComponentType().toString());
+
+        final String componentType = compConfig.getComponentType().toString();
+        populatingAttributesMap.put(ChannelManagerConstants.HST_TYPE, componentType);
+        populatingAttributesMap.put(ChannelManagerConstants.HST_LABEL, getLabel(compConfig));
         HstURLFactory urlFactory = requestContext.getURLFactory();
         HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE, window.getReferenceNamespace(), null, requestContext);
         populatingAttributesMap.put("url", url.toString());
@@ -66,5 +71,21 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
             populatingAttributesMap.put(ChannelManagerConstants.HST_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
         }
 
+    }
+
+    @Override
+    public void contributeEpilogue(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap) {
+        HstComponentConfiguration config = ((HstComponentConfiguration) window.getComponentInfo());
+
+        populatingAttributesMap.put(ChannelManagerConstants.HST_END_MARKER, "true");
+        populatingAttributesMap.put("uuid", config.getCanonicalIdentifier());
+    }
+
+    private String getLabel(HstComponentConfiguration config) {
+        String label = config.getLabel();
+        if (Strings.isNullOrEmpty(label)) {
+            label = config.getName();
+        }
+        return label;
     }
 }

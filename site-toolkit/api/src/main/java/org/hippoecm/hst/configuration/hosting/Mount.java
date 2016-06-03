@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -219,11 +219,9 @@ public interface Mount {
     boolean isPortInUrl();
 
     /**
-     * When this method returns <code>false</code>, then {@link HstLink} will have the {@link HstManager#getPathSuffixDelimiter()}  included even for empty or <code>null</code> {@link HstLink#getSubPath()}, if and only if
-     * the {@link VirtualHosts#isHstFilterExcludedPath(String)} for the path to create a link for returns <code>true</code>. This is to avoid that for example a path that ends with .pdf will be skipped by the
-     * {@link HstRequestProcessor} due to {@link VirtualHosts#isHstFilterExcludedPath(String)} : This is undesirable in case of a REST link for a binary for example
-     * @return true when the {@link Mount} is meant to be a site (false in case of for example being used for REST calls)
+     * @deprecated  Since 4.0.0 (CMS 11.0.0)
      */
+    @Deprecated
     boolean isSite();
 
 

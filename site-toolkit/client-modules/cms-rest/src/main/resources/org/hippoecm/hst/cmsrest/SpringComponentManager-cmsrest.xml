@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@
 
   <bean id="annotationJsonSerializer" class="org.hippoecm.hst.rest.custom.AnnotationJsonSerializer">
     <constructor-arg type="java.lang.Class" value="java.lang.annotation.Annotation" />
-    <property name="typeFieldName" value="@class" />
   </bean>
 
   <bean id="cmsRestJacksonJsonModuleVersion" class="com.fasterxml.jackson.core.util.VersionUtil" factory-method="parseVersion">

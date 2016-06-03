@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,14 +52,13 @@ public class AnnotationJsonSerializerTest {
     @Before
     public void setUp() {
         final AnnotationJsonSerializer annotationJsonSerializer = new AnnotationJsonSerializer(Annotation.class); 
-        annotationJsonSerializer.setTypeFieldName("@class");
         // Unknown version is just used here for test in production code the version is injected based on the value
         // of the POM project version
         final SimpleModule cmsRestJacksonJsonModule = new SimpleModule("CmsRestJacksonJsonModule", Version.unknownVersion());
         cmsRestJacksonJsonModule.addSerializer(annotationJsonSerializer);
         cmsRestJacksonObjectMapper = new ObjectMapper();
         cmsRestJacksonObjectMapper.enableDefaultTyping();
-        cmsRestJacksonObjectMapper.enableDefaultTypingAsProperty(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE, "@class");
+        cmsRestJacksonObjectMapper.enableDefaultTypingAsProperty(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE, AnnotationJsonSerializer.TYPE_ATTRIBUTE);
         cmsRestJacksonObjectMapper.registerModule(cmsRestJacksonJsonModule);
     }
 

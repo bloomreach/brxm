@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,13 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.sitemapresource;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.ws.rs.core.Response;
 
@@ -35,7 +38,6 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -245,7 +247,6 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
                 Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     }
-
 
     @Test
     public void test_create_succeeds_if_component_id_is_prototype_page_of_inherited_config() throws Exception {
@@ -671,5 +672,79 @@ public class CreateTest extends AbstractSiteMapResourceTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
+    @Test
+    public void test_validate_valid_names() throws Exception {
+        initContext();
+        final String prototypeUUID = getPrototypePageUUID();
 
+        // "@", " ", "A"
+        final String[] checkURLEncodedChars = {"%40", "%20", "%41"};
+
+        for (String checkURLEncodedChar : checkURLEncodedChars) {
+            createAndAssertions(prototypeUUID, checkURLEncodedChar, Response.Status.OK);
+        }
+    }
+
+    private void createAndAssertions(final String prototypeUUID, final String checkURLEncodedChar, final Response.Status expected) throws RepositoryException, UnsupportedEncodingException {
+        final String urlEncodedName = "fo" + checkURLEncodedChar + "o";
+        final String decodedName = URLDecoder.decode(urlEncodedName, "utf-8");
+        final SiteMapItemRepresentation newFoo = createSiteMapItemRepresentation(urlEncodedName, prototypeUUID);
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.create(newFoo);
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage() + " for " + checkURLEncodedChar,
+                expected.getStatusCode(), response.getStatus());
+
+        if (expected != Response.Status.OK) {
+            return;
+        }
+
+        SiteMapPageRepresentation siteMapPageRepresentation = (SiteMapPageRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        final Node newSitemapItemNode = session.getNodeByIdentifier(siteMapPageRepresentation.getId());
+        assertEquals(decodedName, newSitemapItemNode.getName());
+
+        String newPageNodeName = decodedName + "-" + session.getNodeByIdentifier(getPrototypePageUUID()).getName();
+        assertEquals("hst:pages/"+newPageNodeName,
+                newSitemapItemNode.getProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID).getString());
+
+        assertTrue(session.nodeExists(getPreviewConfigurationWorkspacePagesPath() + "/" + newPageNodeName));
+    }
+
+
+    @Test
+    public void test_validate_invalid_names() throws Exception {
+
+        initContext();
+        final String prototypeUUID = getPrototypePageUUID();
+
+        final String[] invalidChars = {"?", ":", ";", "#", "/", "\\"};
+
+        for (String invalidChar : invalidChars) {
+            createAndAssertions(prototypeUUID, invalidChar, Response.Status.BAD_REQUEST);
+        }
+    }
+
+    @Test
+    public void test_validate_invalid_encoded_names() throws Exception {
+        initContext();
+        final String prototypeUUID = getPrototypePageUUID();
+
+        // %3A = :
+        // %2F = /
+        // %2f = /
+        // %5c = \
+        // %5C = \
+        // %2e = .
+        // %2E = .
+        // %3F = ?
+        // %3B = ;
+        // %23 = #
+
+        final String[] invalidURLEncodedChars = {"%3A", "%2F", "%2f", "%5c", "%5C", "%2e", "%2E", "%3F", "%3B", "%23"};
+
+        for (String checkURLEncodedChar : invalidURLEncodedChars) {
+            createAndAssertions(prototypeUUID, checkURLEncodedChar, Response.Status.BAD_REQUEST);
+        }
+
+    }
 }

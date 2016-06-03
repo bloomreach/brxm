@@ -510,6 +510,10 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
             return false;
         }
 
+        /**
+         * @deprecated  Since 4.0.0 (CMS 11.0.0)
+         */
+        @Deprecated
         @Override
         public boolean isSite() {
             return false;

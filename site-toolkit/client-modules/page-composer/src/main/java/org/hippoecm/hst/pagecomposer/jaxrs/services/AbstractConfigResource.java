@@ -82,6 +82,13 @@ public class AbstractConfigResource implements ComponentManagerAware {
         return Response.serverError().entity(entity).build();
     }
 
+    protected Response clientError(String msg, Object data) {
+        ExtResponseRepresentation entity = new ExtResponseRepresentation(data);
+        entity.setMessage(msg);
+        entity.setSuccess(false);
+        return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
+    }
+
     protected Response created(String msg) {
         ExtResponseRepresentation entity = new ExtResponseRepresentation();
         entity.setMessage(msg);

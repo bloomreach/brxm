@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.hippoecm.hst.core.channelmanager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +41,13 @@ public class CmsComponentWindowResponseAppenderTest {
 
     @Test
     public void testGetAttributeMap_without_attribute_contributors() {
-        assertThat(appender.getAttributeMap(null, null).size(), is(0));
+        final Map<String, String> preambleAttributeMap = new HashMap<>();
+        final Map<String, String> epilogueAttributeMap = new HashMap<>();
+
+        appender.populateAttributes(null, null, preambleAttributeMap, epilogueAttributeMap);
+
+        assertThat(preambleAttributeMap.size(), is(0));
+        assertThat(epilogueAttributeMap.size(), is(0));
     }
 
     @Test
@@ -48,8 +55,12 @@ public class CmsComponentWindowResponseAppenderTest {
 
         final ComponentWindowAttributeContributor contributor = new ComponentWindowAttributeContributor() {
             @Override
-            public void contribute(final HstComponentWindow window, final HstRequest request, final Map<String, String> populatingAttributesMap) {
+            public void contributePreamble(final HstComponentWindow window, final HstRequest request, final Map<String, String> populatingAttributesMap) {
                 populatingAttributesMap.put("foo","bar");
+            }
+            @Override
+            public void contributeEpilogue(final HstComponentWindow window, final HstRequest request, final Map<String, String> populatingAttributesMap) {
+                populatingAttributesMap.put("bar","foo");
             }
         };
 
@@ -57,8 +68,12 @@ public class CmsComponentWindowResponseAppenderTest {
         contributorList.add(contributor);
         appender.setAttributeContributors(contributorList);
 
-        final Map<String, String> attributeMap = appender.getAttributeMap(null, null);
-        assertEquals("bar", attributeMap.get("foo"));
+        final Map<String, String> preambleAttributeMap = new HashMap<>();
+        final Map<String, String> epilogueAttributeMap = new HashMap<>();
+
+        appender.populateAttributes(null, null, preambleAttributeMap, epilogueAttributeMap);
+        assertEquals("bar", preambleAttributeMap.get("foo"));
+        assertEquals("foo", epilogueAttributeMap.get("bar"));
     }
 
     @Test
@@ -66,15 +81,23 @@ public class CmsComponentWindowResponseAppenderTest {
 
         final ComponentWindowAttributeContributor contributor1 = new ComponentWindowAttributeContributor() {
             @Override
-            public void contribute(final HstComponentWindow window, final HstRequest request, final Map<String, String> populatingAttributesMap) {
+            public void contributePreamble(final HstComponentWindow window, final HstRequest request, final Map<String, String> populatingAttributesMap) {
                 populatingAttributesMap.put("foo1","bar1");
+            }
+            @Override
+            public void contributeEpilogue(final HstComponentWindow window, final HstRequest request, final Map<String, String> populatingAttributesMap) {
+                populatingAttributesMap.put("bar1","foo1");
             }
         };
 
         final ComponentWindowAttributeContributor contributor2 = new ComponentWindowAttributeContributor() {
             @Override
-            public void contribute(final HstComponentWindow window, final HstRequest request, final Map<String, String> populatingAttributesMap) {
+            public void contributePreamble(final HstComponentWindow window, final HstRequest request, final Map<String, String> populatingAttributesMap) {
                 populatingAttributesMap.put("foo2","bar2");
+            }
+            @Override
+            public void contributeEpilogue(final HstComponentWindow window, final HstRequest request, final Map<String, String> populatingAttributesMap) {
+                populatingAttributesMap.put("bar2","foo2");
             }
         };
 
@@ -84,9 +107,14 @@ public class CmsComponentWindowResponseAppenderTest {
 
         appender.setAttributeContributors(contributorList);
 
-        final Map<String, String> attributeMap = appender.getAttributeMap(null, null);
-        assertEquals("bar1", attributeMap.get("foo1"));
-        assertEquals("bar2", attributeMap.get("foo2"));
+        final Map<String, String> preambleAttributeMap = new HashMap<>();
+        final Map<String, String> epilogueAttributeMap = new HashMap<>();
+
+        appender.populateAttributes(null, null, preambleAttributeMap, epilogueAttributeMap);
+        assertEquals("bar1", preambleAttributeMap.get("foo1"));
+        assertEquals("bar2", preambleAttributeMap.get("foo2"));
+        assertEquals("foo1", epilogueAttributeMap.get("bar1"));
+        assertEquals("foo2", epilogueAttributeMap.get("bar2"));
     }
 
 }

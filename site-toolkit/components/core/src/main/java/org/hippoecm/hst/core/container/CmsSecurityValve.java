@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.SignatureException;
+import java.util.List;
 
 import javax.crypto.BadPaddingException;
 import javax.jcr.Credentials;
@@ -31,9 +32,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.sso.CredentialCipher;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_USER_ID_ATTR;
@@ -263,40 +268,55 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
     }
 
     private static String createCmsAuthenticationUrl(final HttpServletRequest servletRequest, final HstRequestContext requestContext, final String key) throws ContainerException {
-        String cmsUrl = servletRequest.getHeader("Referer");
-        if (cmsUrl == null) {
-            throw new ContainerException("Could not establish a SSO between CMS & site application because there is no 'Referer' header on the request");
-        }
-        if (cmsUrl.indexOf("?") > -1) {
-            // we do not need the query String for the cms url.
-            cmsUrl = cmsUrl.substring(0, cmsUrl.indexOf("?"));
-        }
-        if (!cmsUrl.endsWith("/")) {
-            cmsUrl += "/";
-        }
+        final String farthestRequestUrlPrefix = getFarthestUrlPrefix(servletRequest);
+        final String cmsLocation = getCmsLocationByPrefix(requestContext, farthestRequestUrlPrefix);
+        final String destinationURL = createDestinationUrl(servletRequest, requestContext, farthestRequestUrlPrefix);
 
-        final StringBuilder destinationURL = new StringBuilder();
-        final String cmsBaseUrl = getBaseUrl(cmsUrl);
-        destinationURL.append(cmsBaseUrl);
+        final StringBuilder authUrl = new StringBuilder(cmsLocation);
+        if (!cmsLocation.endsWith("/")) {
+            authUrl.append("/");
+        }
+        authUrl.append("auth?destinationUrl=").append(destinationURL);
+        if (key != null) {
+            authUrl.append("&key=").append(key);
+        }
+        return authUrl.toString();
+    }
+
+    private static String getFarthestUrlPrefix(final HttpServletRequest servletRequest) {
+        final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(servletRequest);
+        final String farthestRequestHost = HstRequestUtils.getFarthestRequestHost(servletRequest, false);
+        return farthestRequestScheme + "://" + farthestRequestHost;
+    }
+
+    private static String getCmsLocationByPrefix(final HstRequestContext requestContext, final String prefix) throws ContainerException {
+        final Mount mount = requestContext.getResolvedMount().getMount();
+        final List<String> cmsLocations = mount.getCmsLocations();
+        for (String cmsLocation : cmsLocations) {
+            if (cmsLocation.startsWith(prefix)) {
+                return cmsLocation;
+            }
+        }
+        throw new ContainerException("Could not establish a SSO between CMS & site application because no CMS location could be found that starts with '" + prefix + "'");
+    }
+
+    private static String createDestinationUrl(final HttpServletRequest servletRequest, final HstRequestContext requestContext, final String prefix) {
+        final StringBuilder destinationURL = new StringBuilder(prefix);
 
         // we append the request uri including the context path (normally this is /site/...)
         destinationURL.append(servletRequest.getRequestURI());
 
         if (requestContext.getPathSuffix() != null) {
-            String subPathDelimeter = requestContext.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
-            destinationURL.append(subPathDelimeter).append(requestContext.getPathSuffix());
+            final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+            final String subPathDelimiter = hstManager.getPathSuffixDelimiter();
+            destinationURL.append(subPathDelimiter).append(requestContext.getPathSuffix());
         }
 
-        String qString = servletRequest.getQueryString();
-        if (qString != null) {
-            destinationURL.append("?").append(qString);
+        final String queryString = servletRequest.getQueryString();
+        if (queryString != null) {
+            destinationURL.append("?").append(queryString);
         }
-
-        if (key == null) {
-            return cmsUrl + "auth?destinationUrl=" + destinationURL.toString();
-        } else {
-            return cmsUrl + "auth?destinationUrl=" + destinationURL.toString() + "&key=" + key;
-        }
+        return destinationURL.toString();
     }
 
     private static void updateHstSessionCookie(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse, final HttpSession session) {
