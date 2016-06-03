@@ -166,7 +166,7 @@ describe('DomService', () => {
 
   it('can calculate the scroll bar width', () => {
     const width = DomService.getScrollBarWidth();
-    expect(width).toBeGreaterThan(0);
+    expect(width).toBeGreaterThan(-1);
   });
 });
 
