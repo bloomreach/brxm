@@ -29,7 +29,7 @@
         <relevance-view-as ng-show="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded()"
           render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
-        <viewport-toggle disabled="!channelCtrl.isChannelLoaded || !channelCtrl.isPageLoaded()"></viewport-toggle>
+        <viewport-toggle disabled="!channelCtrl.isChannelLoaded || !channelCtrl.isPageLoaded() || channelCtrl.isCreatingPreview"></viewport-toggle>
       </div>
 
       <div flex="15" layout layout-align="end center">
