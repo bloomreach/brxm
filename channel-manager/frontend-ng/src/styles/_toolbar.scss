@@ -15,8 +15,8 @@
 md-toolbar.hippo-toolbar {
   background: $grey-200;
   color: $text-dark;
-  height: 40px;
-  min-height: 40px;
+  height: $toolbar-height;
+  min-height: $toolbar-height;
 
   md-progress-linear {
     height: 2px;
@@ -36,7 +36,7 @@ md-toolbar.hippo-toolbar {
 
   .md-icon-button {
     color: $text-dark;
-    height: 40px;
+    height: $toolbar-height;
     padding-bottom: 0;
     padding-top: 0;
     width: 48px;
@@ -48,6 +48,7 @@ md-toolbar.hippo-toolbar {
 
   .md-toolbar-tools {
     font-size: 14px;
+    height: $toolbar-height;
   }
 
   .button-group {
@@ -60,6 +61,11 @@ md-toolbar.hippo-toolbar {
     }
   }
 
+  md-select {
+    margin: 0;
+    padding-bottom: 6px;
+  }
+
   md-select-value {
     border-bottom-width: 0 !important;
     font-weight: bold;
@@ -70,6 +76,10 @@ md-toolbar.hippo-toolbar {
     md-icon {
       color: $text-dark;
     }
+  }
+
+  md-switch {
+    margin: 0;
   }
 }
 
