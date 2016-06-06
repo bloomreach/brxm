@@ -15,7 +15,7 @@
  */
 
 const findAncestor = (elem, className) => {
-  while (!elem.classList.contains(className)) {
+  while (elem && !elem.classList.contains(className)) {
     elem = elem.parentElement;
   }
   return elem;
@@ -51,8 +51,8 @@ export function scrollToIfDirective($timeout) {
       scope.$watch(attrs.scrollToIf, (value) => {
         if (value) {
           $timeout(() => {
-            if (elem[0]) { // by now, the element could have gone away...
-              const parent = getParentOfScrollItem(elem[0]);
+            const parent = getParentOfScrollItem(elem[0]);
+            if (parent) {
               const topPadding = parseInt(window.getComputedStyle(parent, null).getPropertyValue('padding-top'), 10) || 0;
               const leftPadding = parseInt(window.getComputedStyle(parent, null).getPropertyValue('padding-left'), 10) || 0;
               const elemOffsetTop = elem[0].offsetTop;
