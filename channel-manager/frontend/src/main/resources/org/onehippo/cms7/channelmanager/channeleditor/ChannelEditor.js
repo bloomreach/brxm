@@ -81,9 +81,11 @@
 
     _syncChannel: function() {
       this._reloadChannels().when(function (channelStore) {
-        var id = this.selectedChannel.id;
-        this.selectedChannel = channelStore.getById(id).json;
-        if (!this.selectedChannel) {
+        var id = this.selectedChannel.id,
+          channelRecord = channelStore.getById(id);
+        if (channelRecord) {
+          this.selectedChannel = channelRecord.json;
+        } else {
           // we may just have created the preview config of this channel
           this.selectedChannel = channelStore.getById(id + '-preview').json;
         }
