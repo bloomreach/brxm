@@ -62,6 +62,11 @@ export class HippoTreeCtrl {
     return true;
   }
 
+  isEmpty(itemEl) {
+    const item = itemEl.$modelValue;
+    return !item.items.length;
+  }
+
   _collectNodes(items, map) {
     angular.forEach(items, (item) => {
       map[item.id] = item;

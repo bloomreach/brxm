@@ -40,16 +40,16 @@
                 <md-button type="button"
                            class="md-icon-button"
                            ng-click="hippoTree.toggle(this)"
-                           ng-disabled="childNodes().length == 0"
+                           ng-if="!hippoTree.isEmpty(this)"
                            aria-label="{{ (collapsed ? 'EXPAND' : 'COLLAPSE') | translate }}"
                            data-nodrag
                            stop-propagation>
                   <md-icon class="material-icons step md-18">
-                    <span ng-show="childNodes().length > 0 && collapsed">add</span>
-                    <span ng-show="childNodes().length > 0 && !collapsed">remove</span>
+                    <span ng-show="!hippoTree.isEmpty(this) && collapsed">add</span>
+                    <span ng-show="!hippoTree.isEmpty(this) && !collapsed">remove</span>
                   </md-icon>
                 </md-button>
-                <div>{{ item.title }}</div>
+                <div ng-class="{'empty-tree-item': hippoTree.isEmpty(this)}">{{ item.title }} - {{collapsed}} -- {{childNodes().length}} -- {{hasChild()}}</div>
               </div>
               <div>
                 <md-button type="button"
