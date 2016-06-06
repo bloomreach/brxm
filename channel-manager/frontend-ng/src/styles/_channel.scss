@@ -76,6 +76,6 @@ md-select.ng-invalid-required > md-select-value > span:after {
 .tooltip-help-icon ._md-content {
   height: auto;
   max-width: 500px;
-  text-overflow: initial;
-  white-space: initial;
+  text-overflow: clip;
+  white-space: normal;
 }
