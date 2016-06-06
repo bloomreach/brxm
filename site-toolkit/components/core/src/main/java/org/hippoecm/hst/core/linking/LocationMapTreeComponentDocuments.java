@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -95,6 +95,10 @@ public class LocationMapTreeComponentDocuments implements LocationMapTree {
 
                 final Properties siteMapItemParameters = new Properties();
                 for (Map.Entry<String, String> param : siteMapItem.getParameters().entrySet()) {
+                    if (param.getKey() == null || param.getValue() == null) {
+                        // Properties (Hashtable) throws NPE on null key or value
+                        continue;
+                    }
                     siteMapItemParameters.put(param.getKey(), param.getValue());
                 }
                 final PropertyParser pp = new PropertyParser(siteMapItemParameters);

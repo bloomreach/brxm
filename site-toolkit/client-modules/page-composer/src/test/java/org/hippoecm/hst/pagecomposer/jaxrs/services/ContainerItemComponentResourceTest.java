@@ -1,167 +1,393 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
- * 
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- * 
- *       http://www.apache.org/licenses/LICENSE-2.0
- * 
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  */
+
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.HashSet;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.xml.bind.JAXBException;
 
-import org.apache.cxf.jaxrs.impl.MetadataMap;
+import org.easymock.EasyMock;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.UnknownClientException;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.repository.mock.MockNode;
-import org.onehippo.repository.mock.MockNodeFactory;
+import org.onehippo.jaxrs.cxf.CXFTest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static com.jayway.restassured.http.ContentType.JSON;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.verify;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 
-public class ContainerItemComponentResourceTest {
+public class ContainerItemComponentResourceTest extends CXFTest {
 
-    private static final String HST_PARAMETERVALUES = "hst:parametervalues";
-    private static final String HST_PARAMETERNAMES = "hst:parameternames";
-    private static final String HST_PARAMETERNAMEPREFIXES = "hst:parameternameprefixes";
+    public static final String MOCK_REST_PATH = "test-containeritemcomponent/";
+    private ContainerItemComponentService containerItemComponentService;
+
     private ContainerItemComponentResource containerItemComponentResource;
-    private ContainerItemHelper helper;
+
+    /**
+     * Override the @Path annotation in the {@link ContainerItemComponentResource} for ease of testing
+     */
+    @Path(MOCK_REST_PATH)
+    private static class ContainerItemComponentResourceWithMockPath extends ContainerItemComponentResource {
+    }
 
     @Before
-    public void setUp() throws Exception {
-        containerItemComponentResource = new ContainerItemComponentResource();
+    public void setUp() {
+        containerItemComponentService = EasyMock.createNiceMock(ContainerItemComponentService.class);
 
-        helper = new ContainerItemHelper();
-        final PageComposerContextService pageComposerContextService = new PageComposerContextService();
-        helper.setPageComposerContextService(pageComposerContextService);
+        containerItemComponentResource = new ContainerItemComponentResourceWithMockPath();
+        containerItemComponentResource.setContainerItemComponentService(containerItemComponentService);
+
+        Config config = createDefaultConfig(JsonPojoMapperProvider.class)
+                .addServerSingleton(containerItemComponentResource);
+        setup(config);
     }
 
     @Test
-    public void testGetParametersForEmptyPrefix() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
-        MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-test-component.xml");
+    public void can_get_all_variants() throws RepositoryException {
+        EasyMock.expect(containerItemComponentService.getVariants())
+                .andReturn(new HashSet<>(Arrays.asList("foo-variant", "bah-variant")));
 
-        List<ContainerItemComponentPropertyRepresentation> result = containerItemComponentResource.doGetParameters(node,
-                                                                                                                   null,
-                                                                                                                   "").getProperties();
-        assertEquals(2, result.size());
-        assertNameValueDefault(result.get(0), "parameterOne", "bar", "");
-        assertNameValueDefault(result.get(1), "parameterTwo", "", "test");
+        EasyMock.replay(containerItemComponentService);
+
+        when()
+            .get(MOCK_REST_PATH)
+        .then()
+            .statusCode(200)
+            .body("data", containsInAnyOrder("foo-variant", "bah-variant"));
     }
 
     @Test
-    public void testGetParametersForDefaultPrefix() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
-        MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-test-component.xml");
+    public void gets_all_variants_with_a_client_side_error() throws RepositoryException {
+        EasyMock.expect(containerItemComponentService.getVariants())
+                .andThrow(new UnknownClientException("bad request"));
 
-        List<ContainerItemComponentPropertyRepresentation> result = containerItemComponentResource.doGetParameters(node, null, "hippo-default").getProperties();
-        assertEquals(2, result.size());
-        assertNameValueDefault(result.get(0), "parameterOne", "bar", "");
-        assertNameValueDefault(result.get(1), "parameterTwo", "", "test");
+        EasyMock.replay(containerItemComponentService);
+
+        when()
+            .get(MOCK_REST_PATH)
+        .then()
+            .statusCode(400)
+            .body("data.error", equalTo(ClientError.UNKNOWN.toString()),
+                    "data.parameterMap.errorReason", equalTo("bad request"));
     }
 
     @Test
-    public void testGetParametersForPrefix() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
-        MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-test-component.xml");
+    public void gets_all_variants_with_a_server_side_error() throws RepositoryException {
+        EasyMock.expect(containerItemComponentService.getVariants())
+                .andThrow(new RepositoryException("foo error"));
 
-        List<ContainerItemComponentPropertyRepresentation> result = containerItemComponentResource.doGetParameters(node, null, "prefix").getProperties();
-        assertEquals(2, result.size());
-        assertNameValueDefault(result.get(0), "parameterOne", "baz", "");
-        assertNameValueDefault(result.get(1), "parameterTwo", "", "test");
-    }
+        EasyMock.replay(containerItemComponentService);
 
-    private static void assertNameValueDefault(ContainerItemComponentPropertyRepresentation property, String name, String value, String defaultValue) {
-        assertEquals("Wrong name", name, property.getName());
-        assertEquals("Wrong value", value, property.getValue());
-        assertEquals("Wrong default value", defaultValue, property.getDefaultValue());
+        when()
+            .get(MOCK_REST_PATH)
+        .then()
+            .statusCode(500)
+            .body("data.error", equalTo(ClientError.UNKNOWN.toString()),
+                    "data.parameterMap.errorReason", equalTo("foo error"));
     }
 
     @Test
-    public void testVariantCreation() throws RepositoryException, JAXBException, IOException {
-        Node node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-empty-component.xml");
+    public void can_retain_variants() throws RepositoryException {
+        EasyMock.expect(containerItemComponentService.retainVariants(new HashSet<>(Arrays.asList("foo", "bah")), 1234))
+                .andReturn(new HashSet<>(Arrays.asList("deleted-1", "deleted-2")));
+        EasyMock.replay(containerItemComponentService);
 
-        MultivaluedMap<String, String> params;
+        given()
+                .contentType(JSON)
+                .body(Arrays.asList("foo", "bah"))
+                .header("lastModifiedTimestamp", 1234)
+        .when()
+            .post(MOCK_REST_PATH)
+        .then()
+            .statusCode(200)
+            .body("message", equalTo("Removed variants:"),
+                    "data", hasItem("deleted-1"),
+                    "data", hasItem("deleted-2"));
 
-        // 1. add a non annotated parameter for 'default someNonAnnotatedParameter = lux
-        params = new MetadataMap<String, String>();
-        params.add("parameterOne", "bar");
-        params.add("someNonAnnotatedParameter", "lux");
-
-        HstComponentParameters componentParameters = new HstComponentParameters(node, helper);
-        containerItemComponentResource.doSetParameters(componentParameters, null, params, 0);
-
-        assertTrue(node.hasProperty(HST_PARAMETERNAMES));
-        assertTrue(node.hasProperty(HST_PARAMETERVALUES));
-        // do not contain HST_PARAMETERNAMEPREFIXES
-        assertTrue(!node.hasProperty(HST_PARAMETERNAMEPREFIXES));
-
-        Map<String, String> defaultAnnotated =  ContainerItemComponentResource.getAnnotatedDefaultValues(node);
-        assertTrue(defaultAnnotated.containsKey("parameterOne"));
-        assertEquals(defaultAnnotated.get("parameterOne"), "");
-        assertTrue(defaultAnnotated.containsKey("parameterTwo"));
-        assertEquals(defaultAnnotated.get("parameterTwo"), "test");
-
-
-        Set<String> variants =  new ContainerItemComponentResource().doGetVariants(node);
-        assertTrue(variants.size() == 1);
-        assertTrue(variants.contains("hippo-default"));
-
-        // 2. create a new variant 'lux' : The creation of the variant should 
-        // pick up the explicitly defined parameters from 'default' that are ALSO annotated (thus parameterOne, and NOT someNonAnnotatedParameter) PLUS
-        // the implicit parameters from the DummyInfo (parameterTwo but not parameterOne because already from 'default')
-
-        containerItemComponentResource.doCreateVariant(node, new HstComponentParameters(node, helper), "newvar", 0);
-        assertTrue(node.hasProperty(HST_PARAMETERNAMES));
-        assertTrue(node.hasProperty(HST_PARAMETERVALUES));
-        // now it must contain HST_PARAMETERNAMEPREFIXES
-        assertTrue(node.hasProperty(HST_PARAMETERNAMEPREFIXES));
-
-        variants = new ContainerItemComponentResource().doGetVariants(node);
-        assertTrue(variants.size() == 2);
-        assertTrue(variants.contains("hippo-default"));
-        assertTrue(variants.contains("newvar"));
-
-        componentParameters = new HstComponentParameters(node, helper);
-        assertTrue(componentParameters.hasParameter("newvar", "parameterOne"));
-        assertEquals("bar", componentParameters.getValue("newvar", "parameterOne"));
-        assertTrue(componentParameters.hasParameter("newvar", "parameterTwo"));
-        // from  @Parameter(name = "parameterTwo", required = true, defaultValue = "test")
-        assertEquals("test", componentParameters.getValue("newvar", "parameterTwo"));
-        assertFalse(componentParameters.hasParameter("newvar", "someNonAnnotatedParameter"));
-
-        // 3. try to remove the new variant
-        containerItemComponentResource.doDeleteVariant(new HstComponentParameters(node, helper), "newvar", 0);
-        variants = new ContainerItemComponentResource().doGetVariants(node);
-        assertTrue(variants.size() == 1);
-        assertTrue(variants.contains("hippo-default"));
-
-        // 4. try to remove the 'default' variant : this should not be allowed
-        boolean removeSucceeded = true;
-        try {
-            containerItemComponentResource.doDeleteVariant(new HstComponentParameters(node, helper), "hippo-default", 0);
-            fail("Default variant should not be possible to be removed");
-        } catch (IllegalStateException e) {
-            removeSucceeded = false;
-        }
-        assertFalse("Remove should not have succeeded", removeSucceeded);
+        verify(containerItemComponentService);
     }
 
+    @Test
+    public void can_get_a_variant() throws RepositoryException, ServerErrorException {
+        final ContainerItemComponentRepresentation mockVariant = new ContainerItemComponentRepresentation();
+        final ContainerItemComponentPropertyRepresentation cicpp = new ContainerItemComponentPropertyRepresentation();
+        cicpp.setName("Foo Variant");
+        mockVariant.setProperties(Arrays.asList(cicpp));
+        EasyMock.expect(containerItemComponentService.getVariant("foo-variant", "en"))
+                .andReturn(mockVariant);
+
+        EasyMock.replay(containerItemComponentService);
+
+        when()
+            .get(MOCK_REST_PATH + "foo-variant/en")
+        .then()
+            .statusCode(200)
+            .body("properties", hasItem(hasEntry("name", "Foo Variant")));
+    }
+
+    @Test
+    public void get_a_variant_with_server_side_error() throws RepositoryException, ServerErrorException {
+        EasyMock.expect(containerItemComponentService.getVariant("foo-variant", "en"))
+                .andThrow(new RepositoryException("foo error"));
+
+        EasyMock.replay(containerItemComponentService);
+
+        when()
+            .get(MOCK_REST_PATH + "foo-variant/en")
+        .then()
+            .statusCode(204);
+    }
+
+
+    @Test
+    public void can_update_a_variant() throws RepositoryException, ServerErrorException {
+        final MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.put("key1", Arrays.asList("value1"));
+        params.put("key2", Arrays.asList("value2"));
+
+        containerItemComponentService.updateVariant("foo-variant", 1234, params);
+        EasyMock.replay(containerItemComponentService);
+
+        given()
+            .contentType(JSON)
+            .header("lastModifiedTimestamp", 1234)
+            .body(params)
+        .when()
+            .put(MOCK_REST_PATH + "foo-variant")
+        .then()
+            .statusCode(200)
+            .body("message", equalTo("Parameters for 'foo-variant' saved successfully."));
+
+        verify(containerItemComponentService);
+    }
+
+    @Test
+    public void can_update_and_rename_a_variant() throws RepositoryException, ServerErrorException {
+        final MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.put("key1", Arrays.asList("value1"));
+        params.put("key2", Arrays.asList("value2"));
+
+        containerItemComponentService.moveAndUpdateVariant("foo-variant", "bah-variant", 1234, params);
+        EasyMock.replay(containerItemComponentService);
+
+        given()
+            .contentType(JSON)
+            .header("Move-To", "bah-variant")
+            .header("lastModifiedTimestamp", 1234)
+            .body(params)
+        .when()
+            .put(MOCK_REST_PATH + "foo-variant")
+        .then()
+            .statusCode(200)
+            .body("message", equalTo("Parameters renamed from 'foo-variant' to 'bah-variant' and saved successfully."));
+
+        verify(containerItemComponentService);
+    }
+
+    @Test
+    public void cannot_update_and_rename_a_variant_when_its_container_is_locked() throws RepositoryException, ServerErrorException {
+        final MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.put("key1", Arrays.asList("value1"));
+        params.put("key2", Arrays.asList("value2"));
+
+        containerItemComponentService.moveAndUpdateVariant("foo-variant", "bah-variant", 1234, params);
+        EasyMock.expectLastCall().andThrow(new ClientException("bad request", ClientError.ITEM_ALREADY_LOCKED));
+        EasyMock.replay(containerItemComponentService);
+
+        given()
+            .contentType(JSON)
+            .header("Move-To", "bah-variant")
+            .header("lastModifiedTimestamp", 1234)
+            .body(params)
+        .when()
+            .put(MOCK_REST_PATH + "foo-variant")
+        .then()
+            .statusCode(400)
+            .body("message", equalTo("Unable to set the parameters of component"),
+                    "data.error", equalTo("ITEM_ALREADY_LOCKED"));
+
+        verify(containerItemComponentService);
+    }
+
+    @Test
+    public void cannot_update_and_rename_a_variant_when_server_has_error() throws RepositoryException, ServerErrorException {
+        final MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
+        params.put("key1", Arrays.asList("value1"));
+        params.put("key2", Arrays.asList("value2"));
+
+        final Exception mockException = createNiceMock(Exception.class);
+        containerItemComponentService.moveAndUpdateVariant("foo-variant", "bah-variant", 1234, params);
+        EasyMock.expectLastCall().andThrow(new RepositoryException("something wrong at server", mockException));
+        EasyMock.replay(containerItemComponentService, mockException);
+
+        given()
+            .contentType(JSON)
+            .header("Move-To", "bah-variant")
+            .header("lastModifiedTimestamp", 1234)
+            .body(params)
+        .when()
+            .put(MOCK_REST_PATH + "foo-variant")
+        .then()
+            .statusCode(500)
+            .body("message", equalTo("Unable to set the parameters of component"),
+                    "data.error", equalTo("UNKNOWN"),
+                    "data.parameterMap.errorReason", equalTo("something wrong at server"));
+
+        verify(containerItemComponentService);
+    }
+
+    @Test
+    public void can_create_a_new_variant() throws RepositoryException, ServerErrorException {
+        containerItemComponentService.createVariant("foo-variant", 1234);
+        EasyMock.replay(containerItemComponentService);
+
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .post(MOCK_REST_PATH + "foo-variant")
+        .then()
+            .statusCode(201)
+            .body("message", equalTo("Variant 'foo-variant' created successfully"));
+
+        verify(containerItemComponentService);
+    }
+
+    @Test
+    public void cannot_create_an_existing_variant() throws RepositoryException, ServerErrorException {
+        containerItemComponentService.createVariant("foo-variant", 1234);
+        EasyMock.expectLastCall().andThrow(new ClientException("bad request", ClientError.ITEM_EXISTS));
+        EasyMock.replay(containerItemComponentService);
+
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .post(MOCK_REST_PATH + "foo-variant")
+        .then()
+            .statusCode(400)
+            .body("message", equalTo("Could not create variant 'foo-variant'"),
+                    "data.error", equalTo("ITEM_EXISTS"));
+
+        verify(containerItemComponentService);
+    }
+
+    @Test
+    public void cannot_create_a_variant_when_container_is_locked() throws RepositoryException, ServerErrorException {
+        containerItemComponentService.createVariant("foo-variant", 1234);
+        EasyMock.expectLastCall().andThrow(new ClientException("bad request", ClientError.ITEM_ALREADY_LOCKED));
+        EasyMock.replay(containerItemComponentService);
+
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .post(MOCK_REST_PATH + "foo-variant")
+        .then()
+            .statusCode(400)
+            .body("message", equalTo("Could not create variant 'foo-variant'"),
+                    "data.error", equalTo("ITEM_ALREADY_LOCKED"));
+
+        verify(containerItemComponentService);
+    }
+
+    @Test
+    public void cannot_create_a_new_variant_when_sever_has_error() throws RepositoryException, ServerErrorException {
+        final Exception mockException = createNiceMock(Exception.class);
+        containerItemComponentService.createVariant("foo-variant", 1234);
+        EasyMock.expectLastCall().andThrow(new ServerErrorException("something wrong at server", mockException));
+        EasyMock.replay(containerItemComponentService, mockException);
+
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .post(MOCK_REST_PATH + "foo-variant")
+        .then()
+            .statusCode(500)
+            .body("message", equalTo("Could not create variant 'foo-variant'"),
+                    "data.error", equalTo("UNKNOWN"),
+                    "data.parameterMap.errorReason", equalTo("something wrong at server"));
+
+        verify(containerItemComponentService);
+    }
+
+    @Test
+    public void can_delete_a_variant() throws RepositoryException, ServerErrorException {
+        containerItemComponentService.deleteVariant("foo-variant", 1234);
+        EasyMock.replay(containerItemComponentService);
+
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .delete(MOCK_REST_PATH + "foo-variant")
+        .then()
+            .statusCode(200)
+            .body("message", equalTo("Variant 'foo-variant' deleted successfully"));
+
+        verify(containerItemComponentService);
+    }
+
+    @Test
+    public void cannot_delete_a_variant_when_its_container_is_locked() throws RepositoryException, ServerErrorException {
+        containerItemComponentService.deleteVariant("foo-variant", 1234);
+        EasyMock.expectLastCall().andThrow(new ClientException("bad request", ClientError.ITEM_ALREADY_LOCKED));
+
+        EasyMock.replay(containerItemComponentService);
+
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .delete(MOCK_REST_PATH + "foo-variant")
+        .then()
+            .statusCode(400)
+            .body("message", equalTo("Could not delete variant 'foo-variant'"),
+                    "data.error", equalTo("ITEM_ALREADY_LOCKED"));
+
+        verify(containerItemComponentService);
+    }
+
+    @Test
+    public void cannot_delete_a_variant_when_server_has_error() throws RepositoryException, ServerErrorException {
+        final Exception mockException = createNiceMock(Exception.class);
+        containerItemComponentService.deleteVariant("foo-variant", 1234);
+        EasyMock.expectLastCall().andThrow(new RepositoryException("something wrong at server", mockException));
+        EasyMock.replay(containerItemComponentService, mockException);
+
+        given()
+            .header("lastModifiedTimestamp", 1234)
+        .when()
+            .delete(MOCK_REST_PATH + "foo-variant")
+        .then()
+            .statusCode(500)
+            .body("message", equalTo("Could not delete variant 'foo-variant'"),
+                    "data.error", equalTo("UNKNOWN"),
+                    "data.parameterMap.errorReason", equalTo("something wrong at server"));
+
+        verify(containerItemComponentService);
+    }
 }

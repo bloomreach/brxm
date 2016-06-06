@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
@@ -37,7 +36,6 @@ import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import junit.framework.Assert;
-import static junit.framework.Assert.assertNull;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_REFERECENCECOMPONENT;
 import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_XTYPE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENT;
@@ -113,10 +111,10 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
             // override the config identifier to now set the container from the prototype as REQUEST_CONFIG_NODE_IDENTIFIER
             ctx.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, container.getCanonicalIdentifier());
             final long versionStamp = 0;
-            final Response addedItem = containerResource.createContainerItem(testContext.catalogItem.getIdentifier(),
+            final Response addedItemResponse = containerResource.createContainerItem(testContext.catalogItem.getIdentifier(),
                     versionStamp);
-            assertEquals(Response.Status.OK.getStatusCode(), addedItem.getStatus());
-            ContainerItemRepresentation cir = (ContainerItemRepresentation)((ExtResponseRepresentation) addedItem.getEntity()).getData();
+            assertEquals(Response.Status.CREATED.getStatusCode(), addedItemResponse.getStatus());
+            ContainerItemRepresentation cir = (ContainerItemRepresentation) addedItemResponse.getEntity();
             assertTrue(
                     cir.getPath().startsWith("/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/foo-prototype-page/" + relContainerPath));
             testContext.addedPageContainerItems.add(cir);
@@ -415,6 +413,61 @@ public class ReApplyPrototypesTest  extends AbstractSiteMapResourceTest {
                 "added a postfix '2' since there are already two with same name.",
                 newContainer1.hasNode("catalog-item2"));
         assertEquals(0, newContainer2.getNodes().getSize());
+    }
+
+    @Test
+    public void test_reapply_prototype_with_simple_component_in_location_of_container() throws Exception {
+        final String[] secondPrototype = new String[] {
+                "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx", NODETYPE_HST_COMPONENT,
+                    COMPONENT_PROPERTY_REFERECENCECOMPONENT, "hst:abstractpages/basepage",
+                    "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main", NODETYPE_HST_COMPONENT,
+                        "hst:template", "prototype",
+                        "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/container1", NODETYPE_HST_COMPONENT,
+                        "/hst:hst/hst:configurations/unittestproject/hst:prototypepages/protoxxx/main/container2", NODETYPE_HST_CONTAINERCOMPONENT,
+                            COMPONENT_PROPERTY_XTYPE, "HST.vBox"
+        };
+        final String[] relContainerPathsForItem = {"main/container1", "main/container2"};
+
+        final TestContext testContext = initContextAndFixture(secondPrototype, relContainerPathsForItem);
+
+        reapplyPrototype(testContext, testContext.secondPrototypeUUID);
+
+        final SiteMapItemRepresentation updatedFoo = getSiteMapItemRepresentation(session, "foo");
+        final String newFooPageId = updatedFoo.getComponentConfigurationId();
+
+        final HstComponentConfiguration updatedFooPage = mountResource.getPageComposerContextService().getEditingPreviewSite()
+                .getComponentsConfiguration().getComponentConfiguration(newFooPageId);
+
+        Node updatedFooPageNode = session.getNodeByIdentifier(updatedFooPage.getCanonicalIdentifier());
+
+        final Node newComponent = updatedFooPageNode.getNode("main/container1");
+        final Node newContainer = updatedFooPageNode.getNode("main/container2");
+
+        /*
+         *
+         * Since the page before re-applying prototype container
+         * + main
+         *    + container1
+         *        + catalog-item
+         *    + container2
+         *        + catalog-item
+         *
+         * AND it got mapped to secondPrototype:
+         *
+         * + protoxxx
+         *   + main
+         *      + container1 (is not of type containercomponent)
+         *      + container2
+         *        + catalog-item
+         *        + catalog-item1
+         *
+         * We expect all catalog items to be moved to 'holder1' (the first container, since there is no primary container
+         * specified on secondPrototype). The container2/catalog-item should be relocated to container2/catalog-item2
+         */
+
+        assertTrue(newContainer.hasNode("catalog-item"));
+        assertTrue(newContainer.hasNode("catalog-item1"));
+        assertEquals(0, newComponent.getNodes().getSize());
     }
 
     @Test

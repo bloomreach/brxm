@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,13 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.jcr.Credentials;
-import javax.jcr.Node;
-import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.Value;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +33,7 @@ import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.GenericRequestContextWrapper;
 import org.hippoecm.hst.container.HstContainerRequest;
 import org.hippoecm.hst.container.HstContainerRequestImpl;
@@ -50,14 +48,11 @@ import org.hippoecm.hst.core.container.Pipelines;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.jaxrs.services.AbstractJaxrsSpringTestCase;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Before;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
@@ -154,11 +149,18 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
     }
     
     public HstMutableRequestContext createRequestContext(String siteMapItemRelativeContentPath) {
+        HstSiteMapItem hstSiteMapItem = EasyMock.createNiceMock(HstSiteMapItem.class);
+        EasyMock.expect(hstSiteMapItem.isCacheable()).andReturn(false).anyTimes();
+        EasyMock.expect(hstSiteMapItem.getId()).andReturn("42").anyTimes();
+
         ResolvedSiteMapItem resolvedSiteMapItem = EasyMock.createNiceMock(ResolvedSiteMapItem.class);
         EasyMock.expect(resolvedSiteMapItem.getResolvedMount()).andReturn(resolvedMount).anyTimes();
         EasyMock.expect(resolvedSiteMapItem.getRelativeContentPath()).andReturn(siteMapItemRelativeContentPath).anyTimes();
+        EasyMock.expect(resolvedSiteMapItem.getHstSiteMapItem()).andReturn(hstSiteMapItem).anyTimes();
         
+        EasyMock.replay(hstSiteMapItem);
         EasyMock.replay(resolvedSiteMapItem);
+
         HstMutableRequestContext requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create();
         
         requestContext.setServletContext(servletContext);

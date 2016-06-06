@@ -64,16 +64,9 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
             context.invokeNext();
             return;
         }
-
-        Task task = null;
-
         try {
-            if (HDC.isStarted()) {
-                task = HDC.getCurrentTask().startSubtask("PageCachingValve");
-            }
 
             appendRequestInfoToCacheKey(context);
-
             HstPageInfo pageInfo = getPageInfoFromCacheOrBuild(context);
 
             if (pageInfo == null) {
@@ -85,10 +78,6 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
             throw new ContainerException("Cache exception : ", e);
         } catch (Exception e) {
             throw new ContainerException(e);
-        } finally {
-            if (task != null) {
-                task.stop();
-            }
         }
     }
 

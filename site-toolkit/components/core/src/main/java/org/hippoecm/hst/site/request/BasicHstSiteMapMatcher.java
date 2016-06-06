@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
@@ -57,8 +58,14 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
 
     
     public ResolvedSiteMapItem match(String pathInfo, ResolvedMount resolvedMount) throws NotFoundException {
-        HstSite hstSite = resolvedMount.getMount().getHstSite();
-       
+
+        final Mount mount = resolvedMount.getMount();
+        if (!mount.isMapped()) {
+            throw new NotFoundException(String.format("Cannot match '%s' to a sitemap item for mount '%s' because the mount is not " +
+                    "mapped and thus does not have an associated sitemap.", pathInfo, mount));
+        }
+
+        HstSite hstSite = mount.getHstSite();
         Properties params = new Properties();
         
         pathInfo = PathUtils.normalizePath(pathInfo);
@@ -89,7 +96,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
                 }
                 HstSiteMapItemService service = (HstSiteMapItemService)item;
                 if(service.containsWildCard() && service.patternMatch(elements[0], service.getPrefix(), service.getPostfix())) {
-                    String parameter = getStrippedParameter((HstSiteMapItemService)service, elements[0]);
+                    String parameter = getStrippedParameter(service, elements[0]);
                     params.put(String.valueOf(params.size()+1), parameter);
                     matchedSiteMapItem =  resolveMatchingSiteMap(service, params, 1, elements);
                     if(matchedSiteMapItem != null) {
@@ -121,7 +128,7 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
                 }
                 HstSiteMapItemService service = (HstSiteMapItemService)item;
                 if(service.containsAny() && service.patternMatch(pathInfo, service.getPrefix(), service.getPostfix())) {
-                    String parameter = getStrippedParameter((HstSiteMapItemService)service, pathInfo);
+                    String parameter = getStrippedParameter(service, pathInfo);
                     params.put(String.valueOf(params.size()+1), parameter);
                     matchedSiteMapItem = item;
                     // we have a matching sitemap item.

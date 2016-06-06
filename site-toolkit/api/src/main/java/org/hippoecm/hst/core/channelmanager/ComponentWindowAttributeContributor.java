@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,14 @@ public interface ComponentWindowAttributeContributor {
      * @param request      the current request
      * @param populatingAttributesMap a map containing attributes as key-value pairs
      */
-    void contribute(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap);
+    void contributePreamble(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap);
 
+    /**
+     * Populate an attributes map to be used as a preamble comment for the given component.
+     *
+     * @param window       a hst component window for which to contribute attributes
+     * @param request      the current request
+     * @param populatingAttributesMap a map containing attributes as key-value pairs
+     */
+    void contributeEpilogue(HstComponentWindow window, HstRequest request, Map<String, String> populatingAttributesMap);
 }

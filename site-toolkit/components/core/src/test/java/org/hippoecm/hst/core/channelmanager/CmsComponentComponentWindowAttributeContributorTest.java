@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,10 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hippoecm.hst.configuration.components.HstComponentConfiguration.Type.CONTAINER_COMPONENT;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_INHERITED;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_XTYPE;
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_END_MARKER;
 import static org.junit.Assert.assertThat;
 
 public class CmsComponentComponentWindowAttributeContributorTest {
@@ -57,8 +61,7 @@ public class CmsComponentComponentWindowAttributeContributorTest {
     }
 
     @Test
-    public void testContribute() {
-
+    public void testContributePreamble() {
         final HstComponentConfiguration config = mock(HstComponentConfiguration.class);
         expect(window.getComponentInfo()).andReturn(config);
         expect(window.getReferenceNamespace()).andReturn("reference-namespace");
@@ -72,15 +75,29 @@ public class CmsComponentComponentWindowAttributeContributorTest {
         replay(mocks.toArray());
 
         final Map<String, String> map = new HashMap<>();
-        contributor.contribute(window, request, map);
+        contributor.contributePreamble(window, request, map);
 
-        assertThat(map.containsKey("xtype"), is(false));
-        assertThat(map.containsKey("inherited"), is(false));
+        assertThat(map.containsKey(HST_XTYPE), is(false));
+        assertThat(map.containsKey(HST_INHERITED), is(false));
 
         assertThat(map.containsKey("uuid"), is(true));
-        assertThat(map.containsKey("type"), is(true));
+        assertThat(map.containsKey(HST_TYPE), is(true));
         assertThat(map.containsKey("refNS"), is(true));
         assertThat(map.containsKey("url"), is(true));
+    }
+
+    @Test
+    public void testContributeEpilogue() {
+        final HstComponentConfiguration config = mock(HstComponentConfiguration.class);
+        expect(window.getComponentInfo()).andReturn(config);
+        expect(config.getComponentType()).andReturn(CONTAINER_COMPONENT);
+        replay(mocks.toArray());
+
+        final Map<String, String> map = new HashMap<>();
+        contributor.contributeEpilogue(window, request, map);
+
+        assertThat(map.containsKey("uuid"), is(true));
+        assertThat(map.containsKey(HST_END_MARKER), is(true));
     }
 
     private <T> T mock(final Class<T> type) {

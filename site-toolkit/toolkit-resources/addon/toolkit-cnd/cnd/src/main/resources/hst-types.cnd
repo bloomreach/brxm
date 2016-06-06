@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -99,6 +99,7 @@
 - hst:lockedon (date)
 - hst:lastmodified (date)
 - hst:lastmodifiedby (string)
+- hst:label (string)
 + * (hst:containeritemcomponent)
 
 [hst:containeritempackage] > nt:base, mix:referenceable orderable
@@ -315,8 +316,7 @@
 - hst:pagenotfound (string)
 - hst:locale (string)
 - hst:versioninpreviewheader (boolean)
-// when false, links that would normally be excluded for hst request 
-// processing (for example .pdf) get a ./ appended automatically
+// hst:isSite property deprecated and not used any more
 - hst:isSite (boolean)
 - hst:authenticated (boolean)
 - hst:roles (string) multiple
@@ -411,6 +411,8 @@
 - hst:diagnosticsdepth (long)
 // only log in case the total request takes longer than the threshold
 - hst:diagnosticsthresholdmillisec (long)
+// only log in case a subtask takes not less than unit-threshold
+- hst:diagnosticsunitthresholdmillisec (long)
 - hst:cacheable (boolean)
 - hst:defaultresourcebundleid (string)
 // since 7.9 default is true when missing

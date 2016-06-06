@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.component;
 
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.easymock.EasyMock;
@@ -29,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.w3c.dom.Node;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -142,6 +144,17 @@ public class TestHstResponse {
         
         assertEquals("left-one", StringUtils.join(new TreeSet<Object>(servletResponse.getHeaders("set-one")), ";"));
         assertEquals("right-two", StringUtils.join(new TreeSet<Object>(servletResponse.getHeaders("set-two")), ";"));
+    }
+
+    @Test
+    public void testEpilogue() throws Exception {
+        rootHstResponse.addEpilogue(rootHstResponse.createComment("testing 1"));
+        rootHstResponse.addEpilogue(rootHstResponse.createComment("testing 2"));
+
+        assertEquals("testing 1;testing 2", rootResponseState.epilogueComments
+                .stream()
+                .map(Node::getTextContent)
+                .collect(Collectors.joining(";")));
     }
     
 }

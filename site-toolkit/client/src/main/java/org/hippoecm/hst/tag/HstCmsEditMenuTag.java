@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.CommonMenu;
 import org.slf4j.Logger;
@@ -141,7 +142,7 @@ public class HstCmsEditMenuTag extends TagSupport {
     private Map<?, ?> getAttributeMap(final HstSiteMenuConfiguration siteMenuConfiguration) {
         final String canonicalIdentifier = ((CanonicalInfo) siteMenuConfiguration).getCanonicalIdentifier();
         final Map<String, Object> result = new HashMap<>();
-        result.put("type", "menu");
+        result.put(ChannelManagerConstants.HST_TYPE, "EDIT_MENU_LINK");
         result.put("uuid", canonicalIdentifier);
         final String lockedBy = ((ConfigurationLockInfo)siteMenuConfiguration).getLockedBy();
         if (lockedBy != null) {

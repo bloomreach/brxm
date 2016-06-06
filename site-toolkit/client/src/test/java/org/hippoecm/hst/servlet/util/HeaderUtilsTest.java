@@ -16,6 +16,11 @@
 package org.hippoecm.hst.servlet.util;
 
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.hippoecm.hst.servlet.utils.BinaryPage;
 import org.hippoecm.hst.servlet.utils.HeaderUtils;
@@ -99,8 +104,10 @@ public class HeaderUtilsTest {
     @Test
     public void testSetLastModified() {
         HeaderUtils.setLastModifiedHeaders(response, page);
-        Long mod = Long.valueOf(response.getHeader("Last-Modified"));
-        assertEquals(1234L, mod.longValue());
+        String mod = response.getHeader("Last-Modified");
+        // header must conform to RFC 1123 date format (please note that milliseconds are lost)
+        final SimpleDateFormat rfc1123DateFormat = getRFC1123DateFormat();
+        assertEquals(rfc1123DateFormat.format(new Date(1234L)), mod);
     }
 
     @Test
@@ -112,11 +119,21 @@ public class HeaderUtilsTest {
     }
 
     @Test
-    public void testSetExpires() {
+    public void testSetExpires() throws ParseException {
         HeaderUtils.setExpiresHeaders(response, page);
-        Long expires = Long.valueOf(response.getHeader("Expires"));
-        assertTrue(expires > System.currentTimeMillis());
+        String expires = response.getHeader("Expires");
+        final SimpleDateFormat rfc1123DateFormat = getRFC1123DateFormat();
+
+
+        assertTrue(rfc1123DateFormat.parse(expires).getTime() > System.currentTimeMillis());
         assertNotNull(response.getHeader("Cache-Control"));
+    }
+
+    private SimpleDateFormat getRFC1123DateFormat() {
+        // header must conform to RFC 1123 date format (please note that milliseconds are lost)
+        final SimpleDateFormat rfc1123DateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
+        rfc1123DateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return rfc1123DateFormat;
     }
 
     @Test

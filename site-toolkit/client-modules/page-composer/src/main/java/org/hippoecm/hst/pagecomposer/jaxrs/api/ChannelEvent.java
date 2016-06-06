@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,8 @@ public class ChannelEvent extends RuntimeExceptionEvent {
 
     public enum ChannelEventType {
         PUBLISH,
-        DISCARD
+        DISCARD,
+        PREVIEW_CREATION
     }
 
     private final ChannelEventType channelEventType;
@@ -97,7 +98,9 @@ public class ChannelEvent extends RuntimeExceptionEvent {
     }
 
     /**
-     * @return the preview {@link HstSite} that is being modified during this request
+     * @return the preview {@link HstSite} that is being modified during this request. Note that in case of PREVIEW_CREATION
+     * the returned {@link HstSite} is the <strong>live</strong> site because the preview site was not yet present during
+     * the creation of the request context
      */
     public HstSite getEditingPreviewSite() {
         return editingPreviewSite;

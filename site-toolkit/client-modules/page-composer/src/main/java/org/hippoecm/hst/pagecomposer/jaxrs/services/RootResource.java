@@ -1,5 +1,5 @@
 /*
-*  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -16,14 +16,16 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.FormParam;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -32,28 +34,31 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.channel.Channel;
-import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.FeaturesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.util.stream.Collectors.toList;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
-import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
 
     private static final Logger log = LoggerFactory.getLogger(RootResource.class);
     private String rootPath;
+
+    private ChannelService channelService;
+
+    public void setChannelService(final ChannelService channelService) {
+        this.channelService = channelService;
+    }
 
     public void setRootPath(final String rootPath) {
         this.rootPath = rootPath;
@@ -76,15 +81,8 @@ public class RootResource extends AbstractConfigResource {
     @Path("/channels")
     public Response getChannels(@QueryParam("previewConfigRequired") final boolean previewConfigRequired,
                                 @QueryParam("workspaceRequired") final boolean workspaceRequired) {
-        final HstRequestContext requestContext = RequestContextProvider.get();
-        final VirtualHost virtualHost = requestContext.getResolvedMount().getMount().getVirtualHost();
         try {
-            final List<Channel> channels = virtualHost.getVirtualHosts().getChannels(virtualHost.getHostGroupName())
-                    .values()
-                    .stream()
-                    .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
-                    .filter(channel -> workspaceFiltered(channel, workspaceRequired))
-                    .collect(toList());
+          final List<Channel> channels = this.channelService.getChannels(previewConfigRequired, workspaceRequired);
             return ok("Fetched channels successful", channels);
         } catch (RuntimeRepositoryException e) {
             log.warn("Could not determine authorization", e);
@@ -92,11 +90,55 @@ public class RootResource extends AbstractConfigResource {
         }
     }
 
-    private boolean previewConfigRequiredFiltered(final Channel channel, final boolean previewConfigRequired) {
-        if (!previewConfigRequired) {
-            return true;
+    @GET
+    @Path("/channels/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getChannel(@PathParam("id") String channelId) {
+        try {
+            final Channel channel = channelService.getChannel(channelId);
+            return Response.ok().entity(channel).build();
+        } catch (RuntimeRepositoryException e) {
+            final String error = "Could not determine authorization";
+            log.warn(error, e);
+            return Response.serverError().entity(error).build();
         }
-        return channel.isPreview();
+    }
+
+    @GET
+    @Path("/channels/{id}/info")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getChannelInfoDescription(@PathParam("id") String channelId, @QueryParam("locale") String locale) {
+        if (StringUtils.isEmpty(locale)) {
+            locale = Locale.ENGLISH.getLanguage();
+        }
+        try {
+            final ChannelInfoDescription channelInfoDescription = channelService.getChannelInfoDescription(channelId, locale);
+            return Response.ok().entity(channelInfoDescription).build();
+        } catch (ChannelException e) {
+            final String error = "Could not get channel setting information";
+            log.warn(error, e);
+            return Response.serverError().entity(error).build();
+        }
+    }
+
+    /**
+     * Update field setting properties of a channel
+     */
+    @PUT
+    @Path("/channels/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response saveChannel(@PathParam("id") String channelId, final Channel channel) {
+        try {
+            final Session session = RequestContextProvider.get().getSession();
+            this.channelService.saveChannel(session, channelId, channel);
+            HstConfigurationUtils.persistChanges(session);
+
+            return Response.ok().entity(channel).build();
+        } catch (RepositoryException | IllegalStateException | ChannelException e) {
+            log.error("Failed to saveChannel channel", e);
+            return Response.serverError().build();
+        }
     }
 
     @GET
@@ -105,33 +147,19 @@ public class RootResource extends AbstractConfigResource {
         final Boolean crossChannelPageCopySupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("cross.channel.page.copy.supported", false);
         final FeaturesRepresentation featuresRepresentation = new FeaturesRepresentation();
         featuresRepresentation.setCrossChannelPageCopySupported(crossChannelPageCopySupported);
-        final String msg = String.format("Fetched features");
-        return ok(msg, featuresRepresentation);
-    }
-
-    private boolean workspaceFiltered(final Channel channel, final boolean required) throws RuntimeRepositoryException {
-        if (!required) {
-            return true;
-        }
-        final HstRequestContext requestContext = RequestContextProvider.get();
-        final Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(channel.getMountId());
-        final String workspacePath = mount.getHstSite().getConfigurationPath() + "/" + HstNodeTypes.NODENAME_HST_WORKSPACE;
-        try {
-            final boolean workspacePathExists = RequestContextProvider.get().getSession().nodeExists(workspacePath);
-            return workspacePathExists;
-        } catch (RepositoryException e) {
-            throw new RuntimeRepositoryException(e);
-        }
+        return ok("Fetched features", featuresRepresentation);
     }
 
     @GET
-    @Path("/composermode/{renderingHost}/")
+    @Path("/composermode/{renderingHost}/{mountId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response composerModeGet(@Context HttpServletRequest servletRequest,
-                                    @PathParam("renderingHost") String renderingHost) {
+                                    @PathParam("renderingHost") String renderingHost,
+                                    @PathParam("mountId") String mountId) {
         HttpSession session = servletRequest.getSession(true);
         session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
+        session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
         boolean canWrite;
         try {
             HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
@@ -161,9 +189,9 @@ public class RootResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/setvariant/")
+    @Path("/setvariant/{variantId}/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setVariant(@Context HttpServletRequest servletRequest, @FormParam("variant") String variant) {
+    public Response setVariant(@Context HttpServletRequest servletRequest, @PathParam("variantId") String variant) {
         servletRequest.getSession().setAttribute(ContainerConstants.RENDER_VARIANT, variant);
         log.info("Variant '{}' set", variant);
         return ok("Variant set");

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,24 +15,17 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -41,22 +34,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.LocaleUtils;
-import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.container.RequestContextProvider;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
-import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor.getPopulatedProperties;
-import static org.hippoecm.hst.pagecomposer.jaxrs.util.MissingParametersInfo.defaultMissingParametersInfo;
 
 /**
  * The REST resource handler for the nodes that are of the type "hst:containeritemcomponent". This is specified using
@@ -66,19 +52,12 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.util.MissingParametersInfo.def
  */
 @Path("/hst:containeritemcomponent/")
 public class ContainerItemComponentResource extends AbstractConfigResource {
-
     private static Logger log = LoggerFactory.getLogger(ContainerItemComponentResource.class);
-    private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
 
-    private ContainerItemHelper containerItemHelper;
-    private List<PropertyRepresentationFactory> propertyPresentationFactories;
+    private ContainerItemComponentService containerItemComponentService;
 
-    public void setContainerItemHelper(final ContainerItemHelper containerItemHelper) {
-        this.containerItemHelper = containerItemHelper;
-    }
-
-    public void setPropertyPresentationFactories(List<PropertyRepresentationFactory> propertyPresentationFactories) {
-        this.propertyPresentationFactories = propertyPresentationFactories;
+    public void setContainerItemComponentService(final ContainerItemComponentService containerItemComponentService) {
+        this.containerItemComponentService = containerItemComponentService;
     }
 
     /**
@@ -91,21 +70,20 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getVariants() {
+
         try {
-            final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
-            Set<String> variants = doGetVariants(containerItem);
+            Set<String> variants = this.containerItemComponentService.getVariants();
             log.info("Available variants: {}", variants);
             return ok("Available variants: ", variants);
+        } catch (ClientException e){
+            log.warn("Unable to get the parameters of the component", e);
+            return clientError("Unable to get the parameters of the component", e.getErrorStatus());
         } catch (RepositoryException e) {
             log.error("Unable to get the parameters of the component", e);
-            throw new WebApplicationException(e);
+            return error("Unable to get the parameters of the component", ErrorStatus.unknown(e.getMessage()));
         }
     }
 
-    protected Set<String> doGetVariants(final Node containerItem) throws RepositoryException {
-        HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
-        return componentParameters.getPrefixes();
-    }
 
     /**
      * Retains all given variants. All other variants from this container item are removed.
@@ -120,49 +98,16 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     public Response retainVariants(final String[] variants,
                                    final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {
-            Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
-            Set<String> removedVariants = doRetainVariants(containerItem, variants, versionStamp);
-            log.info("Removed variants: {}", removedVariants.toString());
+            final HashSet<String> retainedVariants = new HashSet<>(Arrays.asList(variants));
+            final Set<String> removedVariants = this.containerItemComponentService.retainVariants(retainedVariants, versionStamp);
             return ok("Removed variants:", removedVariants);
         } catch (RepositoryException e) {
             log.error("Unable to cleanup the variants of the component", e);
-            throw new WebApplicationException(e);
+            return error("Unable to cleanup the variants of the component", ErrorStatus.unknown(e.getMessage()));
         } catch (IllegalStateException e) {
             log.error("Unable to cleanup the variants of the component", e);
             throw new WebApplicationException(e);
         }
-
-    }
-
-    /**
-     * Removes all variants that are not provided.
-     *
-     * @param containerItem the container item node
-     * @param variants      the variants to keep
-     * @return a list of variants that have been removed
-     * @throws RepositoryException when some repository exception happened
-     */
-    private Set<String> doRetainVariants(final Node containerItem,
-                                         final String[] variants,
-                                         final long versionStamp) throws RepositoryException, IllegalStateException {
-        final Set<String> keepVariants = new HashSet<>();
-        keepVariants.addAll(Arrays.asList(variants));
-
-        final HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
-        final Set<String> removed = new HashSet<>();
-
-        for (String variant : componentParameters.getPrefixes()) {
-            if (!keepVariants.contains(variant) && componentParameters.removePrefix(variant)) {
-                log.debug("Removed configuration for variant {} of container item {}", variant, containerItem.getIdentifier());
-                removed.add(variant);
-            }
-        }
-
-        if (!removed.isEmpty()) {
-            componentParameters.save(versionStamp);
-        }
-        log.info("Removed variants '{}'", removed.toString());
-        return removed;
     }
 
     /**
@@ -175,161 +120,45 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @GET
     @Path("/{variant}/{locale}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ContainerItemComponentRepresentation getParameters(final @PathParam("variant") String variant,
-                                                              final @PathParam("locale") String localeString) {
+    public ContainerItemComponentRepresentation getVariant(final @PathParam("variant") String variant,
+                               final @PathParam("locale") String localeString) {
         try {
-            Locale locale;
-            try {
-                locale = LocaleUtils.toLocale(localeString);
-            } catch (IllegalArgumentException e) {
-                log.warn("Failed to create Locale from string '{}'. Using default locale", localeString);
-                locale = Locale.getDefault();
-            }
-            return doGetParameters(getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT), locale, variant);
+            return this.containerItemComponentService.getVariant(variant, localeString);
         } catch (Exception e) {
             log.warn("Failed to retrieve parameters.", e);
         }
         return null;
     }
 
-    ContainerItemComponentRepresentation doGetParameters(final Node node,
-                                                         final Locale locale,
-                                                         final String prefix) throws RepositoryException, ClassNotFoundException {
-        return represent(node, locale, prefix);
-    }
-
-
-    /**
-     * Constructs a component node wrapper
-     *
-     * @param node   JcrNode for a component.
-     * @param locale the locale to get localized names, can be null
-     * @param prefix the parameter prefix
-     * @throws RepositoryException    Thrown if the repository exception occurred during reading of the properties.
-     * @throws ClassNotFoundException thrown when this class can't instantiate the component class.
-     */
-    private ContainerItemComponentRepresentation represent(final Node node,
-                                                           final Locale locale,
-                                                           final String prefix) throws RepositoryException, ClassNotFoundException {
-        List<ContainerItemComponentPropertyRepresentation> properties = new ArrayList<>();
-
-        String contentPath = "";
-        final HstRequestContext requestContext = RequestContextProvider.get();
-        if (requestContext != null) {
-            contentPath = getPageComposerContextService().getEditingMount().getContentPath();
-        }
-        //Get the properties via annotation on the component class
-        String componentClassName = null;
-        if (node.hasProperty(HST_COMPONENTCLASSNAME)) {
-            componentClassName = node.getProperty(HST_COMPONENTCLASSNAME).getString();
-        }
-        final ParametersInfo parametersInfo;
-        if (componentClassName != null) {
-            Class<?> componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
-            if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
-                parametersInfo = componentClass.getAnnotation(ParametersInfo.class);
-            } else {
-                parametersInfo = defaultMissingParametersInfo;
-            }
-        } else {
-            parametersInfo = defaultMissingParametersInfo;
-        }
-
-        properties = getPopulatedProperties(parametersInfo, locale, contentPath, prefix, node,
-                containerItemHelper, propertyPresentationFactories);
-
-        ContainerItemComponentRepresentation representation = new ContainerItemComponentRepresentation();
-        representation.setProperties(properties);
-        return representation;
-    }
-
-    /**
-     * Saves parameters for the given variant.
-     *
-     * @param variant the variant to store parameters for
-     * @param params  the parameters to store
-     * @return whether saving the parameters went successfully or not.
-     */
-    @POST
-    @Path("/{variant}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response setParameters(final @PathParam("variant") String variant,
-                                  final @HeaderParam("lastModifiedTimestamp") long versionStamp,
-                                  final MultivaluedMap<String, String> params) {
-        try {
-            final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
-            HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
-            doSetParameters(componentParameters, variant, params, versionStamp);
-            log.info("Parameters for '{}' saved successfully.", variant);
-            return ok("Parameters for '" + variant + "' saved successfully.", null);
-        } catch (IllegalStateException e) {
-            log.warn("Could not save parameters for variant '{}'", variant, e);
-            return error(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.warn("Could not save parameters for variant '{}'", variant, e);
-            return error(e.getMessage());
-        } catch (RepositoryException e) {
-            log.warn("Could not save parameters for variant '{}'", variant, e);
-            throw new WebApplicationException(e);
-        }
-    }
-
     /**
      * Saves parameters for the given new variant, and also removes the old variant. This effectively renames the old
      * variant to the new one.
      *
-     * @param oldVariant the old variant to remove
-     * @param newVariant the new variant to store parameters for
+     * @param variantId the old variant to remove
+     * @param newVariantId the new variant to store parameters for
      * @param params     the parameters to store
      * @return whether saving the parameters went successfully or not.
      */
-    @POST
-    @Path("/{oldVariant}/rename/{newVariant}")
+    @PUT
+    @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response setParametersAndRenameVariant(final @PathParam("oldVariant") String oldVariant,
-                                                  final @PathParam("newVariant") String newVariant,
-                                                  final @HeaderParam("lastModifiedTimestamp") long versionStamp,
-                                                  final MultivaluedMap<String, String> params) {
+    public Response moveAndUpdateVariant(final @PathParam("variantId") String variantId,
+                                         final @HeaderParam("Move-To") String  newVariantId,
+                                         final @HeaderParam("lastModifiedTimestamp") long versionStamp,
+                                         final MultivaluedMap<String, String> params) {
         try {
-            final Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
-            HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
-            componentParameters.removePrefix(oldVariant);
-            doSetParameters(componentParameters, newVariant, params, versionStamp);
-            log.info("Parameters renamed from '{}' to '{}' and saved successfully.", oldVariant, newVariant);
-            return ok("Parameters renamed from '" + oldVariant + "' to '" + newVariant + "' and saved successfully.", null);
-        } catch (IllegalStateException e) {
-            logParameterSettingFailed(e);
-            return error(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            logParameterSettingFailed(e);
-            return error(e.getMessage());
-        } catch (RepositoryException e) {
-            logParameterSettingFailed(e);
-            log.warn("Unable to set the parameters of component", e);
-            throw new WebApplicationException(e);
-        }
-    }
-
-    private void logParameterSettingFailed(final Exception e) {
-        log.warn("Unable to set the parameters of component", e);
-    }
-
-    void doSetParameters(final HstComponentParameters componentParameters,
-                         final String prefix,
-                         final MultivaluedMap<String, String> parameters,
-                         final long versionStamp) throws RepositoryException, IllegalStateException {
-        componentParameters.removePrefix(prefix);
-        for (String parameterName : parameters.keySet()) {
-            // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
-            // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
-            // has been replaced by a request header.
-            if (!"FORCE_CLIENT_HOST".equals(parameterName)) {
-                String parameterValue = parameters.getFirst(parameterName);
-                componentParameters.setValue(prefix, parameterName, parameterValue);
+            if (StringUtils.isEmpty(newVariantId)) {
+                this.containerItemComponentService.updateVariant(variantId, versionStamp, params);
+                return ok("Parameters for '" + variantId + "' saved successfully.");
+            } else {
+                this.containerItemComponentService.moveAndUpdateVariant(variantId, newVariantId, versionStamp, params);
+                return ok("Parameters renamed from '" + variantId + "' to '" + newVariantId + "' and saved successfully.");
             }
+        } catch (ClientException e) {
+            return clientError("Unable to set the parameters of component", e.getErrorStatus());
+        } catch (RepositoryException e) {
+            return error("Unable to set the parameters of component", ErrorStatus.unknown(e.getMessage()));
         }
-        componentParameters.save(versionStamp);
-        log.info("Succesfully set componentParameters.");
     }
 
     /**
@@ -340,142 +169,42 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}. If created, we return {@link
      * AbstractConfigResource#created(String)} </p>
      *
-     * @param variant the variant to create
+     * @param variantId the variant to create
      * @return If the variant already exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}.
      * If created, we return {@link AbstractConfigResource#created(String)}
      */
     @POST
-    @Path("/{variant}/default")
+    @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createVariant(final @PathParam("variant") String variant,
+    public Response createVariant(final @PathParam("variantId") String variantId,
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
 
         try {
-            Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
-            HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
-            if (componentParameters.hasPrefix(variant)) {
-                return conflict("Cannot create variant '" + variant + "' because it already exists");
-            }
-            doCreateVariant(containerItem, componentParameters, variant, versionStamp);
-            log.info("Variant '{}' created successfully", variant);
-            return created("Variant '" + variant + "' created successfully");
-        } catch (IllegalStateException e) {
-            log.warn("Could not create variant '{}'", variant, e);
-            return error(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.warn("Could not create variant '{}'", variant, e);
-            return error(e.getMessage());
-        } catch (RepositoryException e) {
-            log.error("Unable to create new variant '{}'", variant, e);
-            throw new WebApplicationException(e);
+            this.containerItemComponentService.createVariant(variantId, versionStamp);
+            return created("Variant '" + variantId + "' created successfully");
+        } catch (ClientException e) {
+            return clientError("Could not create variant '" + variantId + "'", e.getErrorStatus());
+        } catch (RepositoryException | ServerErrorException e) {
+            log.error("Could not create variant '{}'", variantId, e);
+            return error("Could not create variant '" + variantId + "'", ErrorStatus.unknown(e.getMessage()));
         }
-    }
-
-    /**
-     * Creates a new variant. The new variant will consists of all the explicitly configured 'default' parameters and
-     * values <b>MERGED</b> with all default annotated parameters (and their values) that are not explicitly configured
-     * as 'default' parameter.
-     *
-     * @param containerItem       the node of the current container item
-     * @param componentParameters the component parameters of the current container item
-     * @param variantId           the id of the variant to create
-     * @throws RepositoryException when something went wrong in the repository
-     */
-    void doCreateVariant(final Node containerItem,
-                         final HstComponentParameters componentParameters,
-                         final String variantId,
-                         final long versionStamp) throws RepositoryException, IllegalStateException {
-        Map<String, String> annotatedParameters = getAnnotatedDefaultValues(containerItem);
-
-        for (String parameterName : annotatedParameters.keySet()) {
-            String value = componentParameters.hasDefaultParameter(parameterName) ? componentParameters.getDefaultValue(parameterName) : annotatedParameters.get(parameterName);
-            componentParameters.setValue(variantId, parameterName, value);
-        }
-        componentParameters.save(versionStamp);
     }
 
     @DELETE
-    @Path("/{variant}")
+    @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteVariant(final @PathParam("variant") String variant,
+    public Response deleteVariant(final @PathParam("variantId") String variantId,
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {
-            Node containerItem = getPageComposerContextService().getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
-            HstComponentParameters componentParameters = new HstComponentParameters(containerItem, containerItemHelper);
-            if (!componentParameters.hasPrefix(variant)) {
-                return conflict("Cannot delete variant '" + variant + "' because it does not exist");
-            }
-            doDeleteVariant(componentParameters, variant, versionStamp);
-
-            log.info("Variant '{}' deleted successfully", variant);
-            return ok("Variant '" + variant + "' deleted successfully");
-        } catch (IllegalStateException e) {
-            log.warn("Could not delete variant '{}'", variant, e);
-            return error(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.warn("Could not delete variant '{}'", variant, e);
-            return error(e.getMessage());
+            this.containerItemComponentService.deleteVariant(variantId, versionStamp);
+            return ok("Variant '" + variantId + "' deleted successfully");
+        } catch (ClientException e) {
+            log.warn("Could not delete variant '{}'", variantId, e);
+            return clientError("Could not delete variant '" + variantId + "'", e.getErrorStatus());
         } catch (RepositoryException e) {
-            log.error("Could not delete variant '{}'", variant, e);
-            throw new WebApplicationException(e);
+            log.error("Could not delete variant '{}'", variantId, e);
+            final ErrorStatus errorStatus = ErrorStatus.unknown(e.getMessage());
+            return error("Could not delete variant '" + variantId + "'", errorStatus);
         }
     }
-
-    /**
-     * Deletes all parameters of a variant.
-     *
-     * @param componentParameters the component parameters of the current container item
-     * @param variantId           the variant to remove
-     * @throws IllegalArgumentException when the variant is the 'default' variant
-     * @throws RepositoryException
-     */
-    void doDeleteVariant(final HstComponentParameters componentParameters,
-                         final String variantId, long versionStamp)
-            throws IllegalArgumentException, RepositoryException, IllegalStateException {
-        if (!componentParameters.removePrefix(variantId)) {
-            throw new IllegalStateException("Variant '" + variantId + "' could not be removed");
-        }
-        componentParameters.save(versionStamp);
-    }
-
-    /**
-     * Returns the {@link Map} of annotated parameter name as key and annotated default value as value. Parameters with
-     * empty default value are also represented in the returned map.
-     *
-     * @param node the current container item node
-     * @return the Map of all {@link Parameter} names and their default value
-     */
-    static Map<String, String> getAnnotatedDefaultValues(Node node) {
-        try {
-            String componentClassName = null;
-            if (node.hasProperty(HST_COMPONENTCLASSNAME)) {
-                componentClassName = node.getProperty(HST_COMPONENTCLASSNAME).getString();
-            }
-
-            if (componentClassName != null) {
-                Class<?> componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
-                if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
-                    ParametersInfo parametersInfo = componentClass.getAnnotation(ParametersInfo.class);
-                    Class<?> classType = parametersInfo.type();
-                    if (classType == null) {
-                        return Collections.emptyMap();
-                    }
-                    Map<String, String> result = new HashMap<String, String>();
-                    for (Method method : classType.getMethods()) {
-                        if (method.isAnnotationPresent(Parameter.class)) {
-                            Parameter annotation = method.getAnnotation(Parameter.class);
-                            result.put(annotation.name(), annotation.defaultValue());
-                        }
-                    }
-                    return result;
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Failed to load annotated default values", e);
-        } catch (ClassNotFoundException e) {
-            log.error("Failed to load annotated default values", e);
-        }
-        return Collections.emptyMap();
-    }
-
 }
