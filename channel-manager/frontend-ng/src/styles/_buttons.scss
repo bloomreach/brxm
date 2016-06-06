@@ -34,10 +34,15 @@
     margin-right: 0;
   }
 }
+
 .md-button.md-fab.md-fab-bottom-right {
   position: fixed;
 }
+
 .fab-space-holder {
   margin-bottom: 80px;
 }
 
+.md-icon-button[disabled] > md-icon {
+  color: $grey-500 !important;
+}
