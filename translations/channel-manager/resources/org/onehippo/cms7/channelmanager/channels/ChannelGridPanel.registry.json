@@ -64,6 +64,14 @@
     "menu.show.groups" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "action.hstconfigeditor" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED"
+      }
     }
   }
 }

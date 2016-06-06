@@ -112,6 +112,14 @@
     "channelexception.mount.exists" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "field.hstConfigEditor" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED"
+      }
     }
   }
 }
