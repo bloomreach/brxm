@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -309,6 +309,15 @@ if (!YAHOO.hippo.DateTime) {
                         cfg.setProperty("WEEKDAYS_MEDIUM",["dim", "lun", "mar", "mer", "jeu", "ven", "sam"]);
                         cfg.setProperty("WEEKDAYS_SHORT", ["di", "lu", "ma", "me", "je", "ve", "sa"]);
                         cfg.setProperty("WEEKDAYS_1CHAR", ["d", "l", "m", "m", "j", "v", "s"]);
+                        cfg.setProperty("START_WEEKDAY",  ["1"]);
+                    },
+                    zh: function(cfg) {
+                        cfg.setProperty("MONTHS_LONG",    ["一月份", "二月份", "三月份", "四月份", "五月份", "六月份", "七月份", "八月份", "九月份", "十月份", "十一月份", "十二月份"]);
+                        cfg.setProperty("MONTHS_SHORT",   ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+                        cfg.setProperty("WEEKDAYS_LONG",  ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"]);
+                        cfg.setProperty("WEEKDAYS_MEDIUM",["周日", "周一", "周二", "周三", "周四", "周五", "周六"]);
+                        cfg.setProperty("WEEKDAYS_SHORT", ["周日", "周一", "周二", "周三", "周四", "周五", "周六"]);
+                        cfg.setProperty("WEEKDAYS_1CHAR", ["日", "一", "二", "三", "四", "五", "六"]);
                         cfg.setProperty("START_WEEKDAY",  ["1"]);
                     }
                 }[lang];

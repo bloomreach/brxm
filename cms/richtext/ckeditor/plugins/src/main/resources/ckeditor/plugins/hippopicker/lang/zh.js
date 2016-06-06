@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-CKEDITOR.plugins.setLang( 'hippopicker', 'it', {
-    imageTooltip: 'Immagine',
-    internalLinkTooltip: 'Collegamento interno'
+CKEDITOR.plugins.setLang( 'hippopicker', 'zh', {
+    imageTooltip: '图片',
+    internalLinkTooltip: '外部链接'
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -331,7 +331,7 @@
 
         icons: 'pickinternallink,pickimage',
         hidpi: true,
-        lang: 'de,en,fr,it,nl',
+        lang: 'de,en,fr,nl,zh',
 
         init: function(editor) {
             var config = editor.config.hippopicker;
