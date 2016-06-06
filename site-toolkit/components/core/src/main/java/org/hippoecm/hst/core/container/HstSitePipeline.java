@@ -31,6 +31,8 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.order.ObjectOrderer;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,7 +152,7 @@ public class HstSitePipeline implements Pipeline
             }
         }
 
-        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, mergedProcessingValves);
+        invokeValves(requestContainerConfig, requestContext, mergedProcessingValves, true);
     }
 
     public void cleanup(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
@@ -162,12 +164,13 @@ public class HstSitePipeline implements Pipeline
             }
         }
 
-        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, mergedCleanupValves);
+        invokeValves(requestContainerConfig, requestContext, mergedCleanupValves, false);
     }
     
-    private void invokeValves(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve [] valves) throws ContainerException {
+    private void invokeValves(final HstContainerConfig requestContainerConfig, final HstRequestContext requestContext,
+                              final Valve [] valves, final boolean withDiagnostics) throws ContainerException {
         if (valves != null && valves.length > 0) {
-            new Invocation(requestContainerConfig, requestContext, valves).invokeNext();
+            new Invocation(requestContainerConfig, requestContext, valves, withDiagnostics).invokeNext();
         }
     }
 
@@ -246,6 +249,7 @@ public class HstSitePipeline implements Pipeline
     {
 
         private final Valve[] valves;
+        private boolean withDiagnostics;
 
         private final HstContainerConfig requestContainerConfig;
         private HstComponentWindow rootComponentWindow;
@@ -254,11 +258,19 @@ public class HstSitePipeline implements Pipeline
         private final PageCacheContext pageCacheContext = new PageCacheContextImpl();
 
         private int at = 0;
+        private Task pipelineTask;
 
-        public Invocation(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, Valve[] valves) {
+        public Invocation(final HstContainerConfig requestContainerConfig, final HstRequestContext requestContext,
+                          final Valve[] valves) {
+            this(requestContainerConfig, requestContext, valves, false);
+        }
+
+        public Invocation(final HstContainerConfig requestContainerConfig, final HstRequestContext requestContext,
+                          final Valve[] valves, final boolean withDiagnostics) {
             this.requestContainerConfig = requestContainerConfig;
             this.requestContext = requestContext;
             this.valves = valves;
+            this.withDiagnostics = withDiagnostics;
         }
 
         public void invokeNext() throws ContainerException {
@@ -266,7 +278,20 @@ public class HstSitePipeline implements Pipeline
             {
                 Valve next = valves[at];
                 at++;
-                next.invoke(this);
+                try {
+                    if (HDC.isStarted() && withDiagnostics) {
+                        if (pipelineTask != null) {
+                            pipelineTask.stop();
+                        }
+                        pipelineTask = HDC.getCurrentTask().startSubtask("Invoke Valve " +next.getClass().getName());
+                    }
+                    next.invoke(this);
+                } finally {
+                    if (pipelineTask != null) {
+                        pipelineTask.stop();
+                        pipelineTask = null;
+                    }
+                }
             }
         }
 
