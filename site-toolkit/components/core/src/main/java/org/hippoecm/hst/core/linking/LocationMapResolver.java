@@ -193,14 +193,14 @@ public class LocationMapResolver {
             if(keyToPropertyPlaceHolderMap.containsKey(entry.getKey())) {
                 // translate key1 -> n1, key2 -> n2 etc
                 final String key = keyToPropertyPlaceHolderMap.get(entry.getKey());
-                if (key == null || entry.getValue() == null) {
+                if (key != null && entry.getValue() != null) {
                     params.put(key, entry.getValue());
                 }
             } else {
                 if(!keyToPropertyPlaceHolderMap.containsValue(entry.getKey())) {
                     // inherited params from current ctx: when the keyToPropertyPlaceHolderMap contains the entry.getKey() as value,
                     // the param is already mapped.
-                    if (entry.getKey() == null || entry.getValue() == null) {
+                    if (entry.getKey() != null && entry.getValue() != null) {
                         params.put(entry.getKey(), entry.getValue());
                     }
                 }
