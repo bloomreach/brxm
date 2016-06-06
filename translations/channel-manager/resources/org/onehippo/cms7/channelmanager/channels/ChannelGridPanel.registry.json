@@ -66,11 +66,12 @@
       "locales" : null
     },
     "action.hstconfigeditor" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     }
   }

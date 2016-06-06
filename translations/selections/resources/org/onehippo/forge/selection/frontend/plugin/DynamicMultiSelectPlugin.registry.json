@@ -6,11 +6,12 @@
       "locales" : null
     },
     "select" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     }
   }

@@ -1,0 +1,8 @@
+{"hippo:types": {
+  "selection:BooleanRadioGroup": {"zh": {"jcr:name": "布尔广播集团"}},
+  "selection:DynamicDropdown": {"zh": {"jcr:name": "动态下拉菜单"}},
+  "selection:listitem": {"zh": {"jcr:name": "值列表项"}},
+  "selection:RadioGroup": {"zh": {"jcr:name": "广播组"}},
+  "selection:StaticDropdown": {"zh": {"jcr:name": "静态下拉菜单"}},
+  "selection:valuelist": {"zh": {"jcr:name": "数值列表"}}
+}}

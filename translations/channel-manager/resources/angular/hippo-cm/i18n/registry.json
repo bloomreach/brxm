@@ -2,15 +2,16 @@
   "bundleType" : "ANGULAR",
   "keyData" : {
     "CONFIRM_DISCARD_CHANGES_MESSAGE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_PAGE_LOCKED_BY" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -18,7 +19,7 @@
       }
     },
     "TOOLBAR_SWITCH_VIEWER_MODE_EDIT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -26,7 +27,7 @@
       }
     },
     "ERROR_PAGE_COPY_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -34,15 +35,16 @@
       }
     },
     "CREATE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_MENU_EDITOR_TITLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -50,7 +52,7 @@
       }
     },
     "CONFIRM_OPEN_EXTERNAL_LINK" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -58,7 +60,7 @@
       }
     },
     "TOOLBAR_BUTTON_SIDENAV" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -66,31 +68,34 @@
       }
     },
     "PICKER_TITLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_CHANGE_PUBLICATION_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "CONFIRM_DELETE_COMPONENT_MESSAGE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "VIEWPORT_TABLET" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -98,7 +103,7 @@
       }
     },
     "CHANNEL_PROPERTIES_SAVE_SUCCESS" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -106,39 +111,43 @@
       }
     },
     "SUBPAGE_MENU_EDITOR_EXTERNAL_LINK" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "DISCARD" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "TOOLBAR_BUTTON_CLOSE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "LINK_REQUIRED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "EXPERIMENT_LABEL_COMPLETED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -146,31 +155,34 @@
       }
     },
     "SUBPAGE_MENU_EDITOR_INTERNAL_LINK" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "EXPAND" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "PUBLISH" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "VALIDATION_ILLEGAL_CHARACTERS" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -178,7 +190,7 @@
       }
     },
     "ERROR_PAGE_PATH_EXISTS" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -186,31 +198,34 @@
       }
     },
     "SUBPAGE_CHANGEMANAGEMENT_TITLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_CHANGEMANAGEMENT_SUFFIX_YOU" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_PAGE_LABEL_URL_STEM" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "CONTAINER_LOCKED_BY" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -218,7 +233,7 @@
       }
     },
     "TOOLBAR_BUTTON_PAGE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -226,7 +241,7 @@
       }
     },
     "ERROR_PAGE_CREATION_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -234,31 +249,34 @@
       }
     },
     "IFRAME_EDIT_MENU" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "PICKER_SELECT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "CONFIRM_DELETE_MENU_ITEM_MESSAGE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -266,7 +284,7 @@
       }
     },
     "ERROR_RELEVANCE_VARIANT_SELECTION_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -274,23 +292,25 @@
       }
     },
     "TOOLBAR_MENU_PAGE_CREATE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_ADD_COMPONENT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -298,7 +318,7 @@
       }
     },
     "ALERT_OK" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -306,7 +326,7 @@
       }
     },
     "ERROR_PAGE_SAVE_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -314,15 +334,16 @@
       }
     },
     "DELETE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_PAGE_EDIT_TITLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -330,7 +351,7 @@
       }
     },
     "VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -338,23 +359,25 @@
       }
     },
     "COLLAPSE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "REMOVE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "TOOLBAR_MENU_PAGE_MOVE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -362,39 +385,43 @@
       }
     },
     "SAVE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "DISCARD_ALL" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "IFRAME_OPEN_DOCUMENT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "CONFIRM_DISCARD_ALL_CHANGES_MESSAGE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "EXPERIMENT_LABEL_RUNNING" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -402,7 +429,7 @@
       }
     },
     "ERROR_ENTER_EDIT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -410,7 +437,7 @@
       }
     },
     "ERROR_PAGE_PARENT_MISSING" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -418,7 +445,7 @@
       }
     },
     "ERROR_UPDATE_COMPONENT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -426,15 +453,16 @@
       }
     },
     "ERROR_MENU_ITEM_SAVE_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -442,15 +470,16 @@
       }
     },
     "PICKER_TYPE_SITEMAP_ITEMS" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_PUBLISH_CHANGES" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -458,15 +487,16 @@
       }
     },
     "PICKER_LISTING_NAME" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SIDENAV_TAB_SITEMAP" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -474,7 +504,7 @@
       }
     },
     "TOOLBAR_MENU_PAGE_EDIT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -482,15 +512,16 @@
       }
     },
     "COPY" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_PAGE_COPY_LABEL_CHANNEL" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -498,7 +529,7 @@
       }
     },
     "TOOLBAR_BUTTON_BACK" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -506,47 +537,52 @@
       }
     },
     "ERROR_COMPONENT_DELETED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_MENU_EDITOR_NO_LINK" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REMOVAL" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "CANCEL" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "PICKER_EMPTY_TREE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_PAGE_MODEL_RETRIEVAL_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -554,7 +590,7 @@
       }
     },
     "ERROR_PAGE_ADD_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -562,7 +598,7 @@
       }
     },
     "ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -570,15 +606,16 @@
       }
     },
     "TITLE_REQUIRED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "VIEWPORT_DESKTOP" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -586,7 +623,7 @@
       }
     },
     "ERROR_CHANNEL_SWITCH_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -594,15 +631,16 @@
       }
     },
     "ERROR_MENU_ITEM_DELETE_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -610,7 +648,7 @@
       }
     },
     "ERROR_PAGE_PATH_INVALID" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -618,31 +656,34 @@
       }
     },
     "ERROR_MENU_SAME_NAME_SIBLING" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_MENU_SAVE_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_CHANNEL_SETTINGS_READONLY" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "TOOLBAR_SWITCH_VIEWER_MODE_VIEW" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -650,7 +691,7 @@
       }
     },
     "EXPERIMENT_LABEL_CREATED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -658,7 +699,7 @@
       }
     },
     "TOOLBAR_BUTTON_CHANGES" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -666,7 +707,7 @@
       }
     },
     "ERROR_DELETE_PAGE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -674,7 +715,7 @@
       }
     },
     "CONTAINER_INHERITED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -682,7 +723,7 @@
       }
     },
     "ERROR_PAGE_COPY_TARGET_EXISTS" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -690,7 +731,7 @@
       }
     },
     "TOOLBAR_MENU_MANAGE_CHANGES" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -698,23 +739,25 @@
       }
     },
     "CONFIRM_PUBLISH_ALL_CHANGES_MESSAGE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "DONE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_PAGE_LABEL_LAST_PATHINFO_ELEMENT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -722,7 +765,7 @@
       }
     },
     "TOOLBAR_MENU_CHANGES_DISCARD" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -730,15 +773,16 @@
       }
     },
     "ADVANCED_SETTINGS" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "TOOLBAR_EDIT_ALTER_EGO" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -746,7 +790,7 @@
       }
     },
     "TOOLBAR_MENU_PAGE_DELETE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -754,7 +798,7 @@
       }
     },
     "SIDENAV_TAB_COMPONENTS" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -762,15 +806,16 @@
       }
     },
     "TOOLBAR_VIEW_AS_LABEL" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -778,7 +823,7 @@
       }
     },
     "VIEWPORT_PHONE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -786,15 +831,16 @@
       }
     },
     "SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_PAGE_MOVE_TITLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -802,7 +848,7 @@
       }
     },
     "SUBPAGE_PAGE_COPY_LABEL_URL_STEM" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -810,7 +856,7 @@
       }
     },
     "SUBPAGE_PAGE_COPY_TITLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -818,15 +864,16 @@
       }
     },
     "SUBPAGE_PAGE_LABEL_TEMPLATE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "VALIDATION_REQUIRED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -834,7 +881,7 @@
       }
     },
     "ERROR_CHANNEL_PROPERTIES_SAVE_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -842,7 +889,7 @@
       }
     },
     "SUBPAGE_CHANNEL_EDIT_TITLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -850,7 +897,7 @@
       }
     },
     "SUBPAGE_PAGE_EDIT_LABEL_PRIMARY_DOCUMENT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -858,31 +905,34 @@
       }
     },
     "TOOLBAR_BUTTON_CHANNEL_SETTINGS" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_MENU_EDITOR_EMPTY_MENU" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REPOSITIONING" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "TOOLBAR_MENU_CHANGES_PUBLISH" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -890,15 +940,16 @@
       }
     },
     "ERROR_CHANGE_DISCARD_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_PAGE_MOVE_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -906,23 +957,25 @@
       }
     },
     "TOOLBAR_VIEW_ON_LABEL" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_MENU_LOCKED_BY" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "TOOLBAR_MENU_PAGE_PAGE_NOT_EDITABLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -930,7 +983,7 @@
       }
     },
     "ERROR_MOVE_COMPONENT_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -938,7 +991,7 @@
       }
     },
     "ERROR_MENU_LOAD_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -946,7 +999,7 @@
       }
     },
     "ERROR_SITEMAP_ITEM_RETRIEVAL_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -954,7 +1007,7 @@
       }
     },
     "ERROR_DELETE_COMPONENT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -962,7 +1015,7 @@
       }
     },
     "TOOLBAR_SWITCH_VIEWER_MODE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -970,15 +1023,16 @@
       }
     },
     "PICKER_TYPE_DOCUMENTS" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -986,15 +1040,16 @@
       }
     },
     "SUBPAGE_CHANNEL_SETTINGS_TITLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "TOOLBAR_MENU_PAGE_SITEMAP_NOT_EDITABLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1002,7 +1057,7 @@
       }
     },
     "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1010,7 +1065,7 @@
       }
     },
     "TOOLBAR_VIEW_AS_INFIX" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1018,7 +1073,7 @@
       }
     },
     "ERROR_SITEMAP_RETRIEVAL_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1026,7 +1081,7 @@
       }
     },
     "SUBPAGE_PAGE_EDIT_PRIMARY_DOCUMENT_VALUE_NONE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1034,71 +1089,79 @@
       }
     },
     "NEW_MENU_ITEM_TITLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "MOVE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "PUBLISH_ALL" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_PAGE_CREATE_TITLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "CONFIRM_DELETE_PAGE_MESSAGE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "ERROR_MENU_MOVE_FAILED" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "SUBPAGE_PAGE_LABEL_TITLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "TITLE" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
       }
     },
     "TOOLBAR_MENU_PAGE_COPY" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",

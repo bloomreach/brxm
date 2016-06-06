@@ -62,7 +62,7 @@
       "locales" : null
     },
     "channel-manager" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",

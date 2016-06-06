@@ -1,0 +1,10 @@
+{"hippo:types": {
+  "hippogallery:exampleAssetSet": {"zh": {"jcr:name": "文件"}},
+  "hippogallery:exampleImageSet": {"zh": {"jcr:name": "图片"}},
+  "hippogallery:image": {"zh": {"jcr:name": "图片"}},
+  "hippogallery:imageset": {"zh":   {
+    "hippogallery:thumbnail": "缩略图",
+    "hippogallery:original": "原图",
+    "jcr:name": "图片"
+  }}
+}}

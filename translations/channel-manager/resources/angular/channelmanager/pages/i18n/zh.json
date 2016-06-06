@@ -1,0 +1,22 @@
+{
+  "TECHNICAL_ERROR": "发生一个技术错误",
+  "ITEM_NOT_CORRECT_LOCATION": "发生内部错误：请求提供错误站点地图页面。",
+  "PAGE_TEMPLATE": "页面模板",
+  "URL_REQUIRED": "URL为必填字段",
+  "CHOOSE_A_TEMPLATE": "选择一个模板",
+  "CREATE_NEW_PAGE": "创建新页面",
+  "ADD_NEW_PAGE": "添加新页面",
+  "URL": "URL",
+  "LANDING_PAGES": "登录页面",
+  "ITEM_NAME_NOT_UNIQUE": "URL已在使用中",
+  "ILLEGAL_CHARACTERS": "不允许使用这些字符：{{ illegalCharacters }}",
+  "ITEM_EXISTS_OUTSIDE_WORKSPACE": "已存在包含该URL的页面。",
+  "CANCEL": "取消",
+  "ADD_NEW_PAGE_DISABLED_TOOLTIP": "如需添加一个页面，首先点击“编辑”",
+  "INVALID_NAME": "URL无效",
+  "PAGE_TITLE": "页面标题",
+  "CREATE_PAGE": "创建页面",
+  "TITLE_REQUIRED": "标题为必填字段",
+  "NO_RESULTS": "为发现...模板",
+  "SELECT_OPTION": "请选择一个模板"
+}

@@ -1,0 +1,9 @@
+{"hippo:types": {
+  "hipposys:String": {"zh": {"jcr:name": "字符串"}},
+  "hipposys:Text": {"zh": {"jcr:name": "文本"}},
+  "hipposys:Label": {"zh": {"jcr:name": "标签"}},
+  "hipposys:Boolean": {"zh": {"jcr:name": "布尔数据"}},
+  "hipposys:Date": {"zh": {"jcr:name": "日期"}},
+  "hipposys:Long": {"zh": {"jcr:name": "整数"}},
+  "hipposys:Double": {"zh": {"jcr:name": "十进制数"}}
+}}
