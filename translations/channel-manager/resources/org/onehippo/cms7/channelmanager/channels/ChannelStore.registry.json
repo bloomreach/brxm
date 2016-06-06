@@ -115,9 +115,7 @@
     },
     "field.hstConfigEditor" : {
       "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED"
-      }
+      "locales" : null
     }
   }
 }
