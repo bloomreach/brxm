@@ -4,6 +4,14 @@
     "unselect" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "select" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED"
+      }
     }
   }
 }
