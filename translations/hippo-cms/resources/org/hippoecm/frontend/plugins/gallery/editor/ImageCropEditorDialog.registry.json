@@ -11,7 +11,11 @@
     },
     "fit-view" : {
       "status" : "CLEAN",
-      "locales" : null
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED"
+      }
     },
     "thumbnail-size" : {
       "status" : "CLEAN",
