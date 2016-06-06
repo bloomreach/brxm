@@ -41,7 +41,7 @@ describe('SubpageToolbar', () => {
     $scope.onBack = jasmine.createSpy('onBack');
     $scope.title = 'testTitle';
     $scope.mode = mode;
-    $element = angular.element('<subpage-toolbar title="{{title}}" on-back="onBack()" mode="{{mode}}"> </subpage-toolbar>');
+    $element = angular.element('<subpage-toolbar data-title="{{title}}" on-back="onBack()" mode="{{mode}}"> </subpage-toolbar>');
     $compile($element)($scope);
     $scope.$digest();
 
