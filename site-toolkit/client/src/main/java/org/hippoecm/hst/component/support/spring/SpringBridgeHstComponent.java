@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +47,11 @@ import org.springframework.web.servlet.FrameworkServlet;
  * parameter value with the parameter name, 'spring-delegated-bean-param-name'.
  * This bridge component will retrieve the bean from the spring web application context by the
  * bean name.
- * If you want to change the default parameter name, then you can achieve that 
+ * If you want to change the default parameter name, then you can achieve that
  * by configuring the parameter name with an added "hst-" prefix in the web.xml.
  * For example, if you want to change the default parameter name to 'my-bean-param', then
  * you can configure this like the following:
- * 
+ *
  * <xmp>
  *  <webapp ...>
  *    <!--
@@ -64,7 +66,7 @@ import org.springframework.web.servlet.FrameworkServlet;
  *    -->
  *  </webapp>
  * </xmp>
- * 
+ *
  * With the above setting, you need to set the parameters with name, 'my-bean-param' in the
  * component configurations in the repository.
  * </p>
@@ -89,7 +91,7 @@ import org.springframework.web.servlet.FrameworkServlet;
  * Spring MVC Servlet derived from <code>org.springframework.web.servlet.FrameworkServlet</code>
  * such as <code>org.hippoecm.hst.component.support.spring.mvc.HstDispatcherServlet</code> or
  * <code>org.springframework.web.servlet.DispatcherServlet</code>, instead of the root web
- * application context, then the fully qualified bean name must be prefixed by the servlet 
+ * application context, then the fully qualified bean name must be prefixed by the servlet
  * context attribute name prefix (see {@link FrameworkServlet#SERVLET_CONTEXT_PREFIX}).
  * </p>
  * <p>
@@ -111,7 +113,7 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
     protected AbstractApplicationContext delegatedBeanApplicationContext;
     protected HstComponent delegatedBean;
 
-    private ServletContext servletContext; 
+    private ServletContext servletContext;
 
     @Override
     public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
@@ -145,17 +147,38 @@ public class SpringBridgeHstComponent extends GenericHstComponent implements App
 
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        getDelegatedBean(request).doAction(request, response);
+        final HstComponent delegatee = getDelegatedBean(request);
+
+        if (HDC.isStarted()) {
+            final Task curTask = HDC.getCurrentTask();
+            curTask.setAttribute("SpringBridgeHstComponent.delegatee", delegatee.getClass().toString());
+        }
+
+        delegatee.doAction(request, response);
     }
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
-        getDelegatedBean(request).doBeforeRender(request, response);
+        final HstComponent delegatee = getDelegatedBean(request);
+
+        if (HDC.isStarted()) {
+            final Task curTask = HDC.getCurrentTask();
+            curTask.setAttribute("SpringBridgeHstComponent.delegatee", delegatee.getClass().toString());
+        }
+
+        delegatee.doBeforeRender(request, response);
     }
 
     @Override
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
-        getDelegatedBean(request).doBeforeServeResource(request, response);
+        final HstComponent delegatee = getDelegatedBean(request);
+
+        if (HDC.isStarted()) {
+            final Task curTask = HDC.getCurrentTask();
+            curTask.setAttribute("SpringBridgeHstComponent.delegatee", delegatee.getClass().toString());
+        }
+
+        delegatee.doBeforeServeResource(request, response);
     }
 
     protected String getParameter(String name, HstRequest request) {
