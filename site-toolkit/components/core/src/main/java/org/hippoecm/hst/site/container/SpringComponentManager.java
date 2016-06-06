@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -262,14 +262,14 @@ public class SpringComponentManager implements ComponentManager {
                         try {
                             return (T) rootWebAppContext.getBean(name);
                         } catch (Exception e2) {
-                            log.warn("The requested bean '{}' doesn't exist in HST spring component manager nor in " +
+                            log.info("The requested bean '{}' doesn't exist in HST spring component manager nor in " +
                                     "the fallback root application context.", name);
                         }
                     } else {
-                        log.warn("The requested bean '{}' doesn't exist.", name);
+                        log.info("The requested bean '{}' doesn't exist.", name);
                     }
                 } else {
-                    log.warn("The requested bean '{}' doesn't exist.", name);
+                    log.info("The requested bean '{}' doesn't exist.", name);
                 }
             }
         } else {
@@ -294,7 +294,7 @@ public class SpringComponentManager implements ComponentManager {
             try {
                 bean = (T) moduleInstance.getComponent(name);
             } catch (Exception e) {
-                log.warn("The requested bean doesn't exist: '{}' in the addon module context, '{}'.",
+                log.info("The requested bean doesn't exist: '{}' in the addon module context, '{}'.",
                          name, ArrayUtils.toString(addonModuleNames));
             }
         }
