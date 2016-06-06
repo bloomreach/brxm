@@ -23,8 +23,7 @@
     _formStates: {},
 
     constructor: function (config) {
-      var buttons = [],
-        windowWidth = config.width;
+      var windowWidth = config.width;
 
       this.componentPropertiesPanel = new Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel({
         id: 'componentPropertiesPanel',
@@ -79,10 +78,7 @@
         cls: 'btn btn-default qa-close-button',
         text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-close'],
         scope: this,
-        handler: function () {
-          this.componentPropertiesPanel.clearComponent();
-          this.hide();
-        }
+        handler: this.close
       });
 
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesWindow.superclass.constructor.call(this, Ext.apply(config, {
@@ -105,6 +101,7 @@
       this.addEvents('save', 'close', 'variantDeleted', 'propertiesChanged');
 
       this.on('hide', this.componentPropertiesPanel.onHide, this.componentPropertiesPanel);
+      this.on('beforeclose', this.componentPropertiesPanel.renderInitialComponentState, this.componentPropertiesPanel);
     },
 
     _adjustHeight: function (propertiesPanelVisibleHeight) {
@@ -159,11 +156,6 @@
       this.componentPropertiesPanel.setComponent(component, container, page);
       this._enableDeleteComponentButton(!container.isDisabled);
       this.show();
-    },
-
-    onComponentRemoved: function () {
-      // clear recorded changes because the component has been removed.
-      this.componentPropertiesPanel.clearComponent(true);
     },
 
     _enableDeleteComponentButton: function (enabled) {

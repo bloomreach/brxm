@@ -47,9 +47,8 @@
       this.iframeToHost.subscribe('channel-changed-in-angular', this._reloadChannels, this);
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
+      this.iframeToHost.subscribe('delete-component-properties', this._deleteComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-picker', this._showPicker, this);
-      this.iframeToHost.subscribe('component-removed', this._onComponentRemoved, this);
-      this.iframeToHost.subscribe('reset-component-properties', this._resetComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('open-content', this._openDocumentEditor, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
       this.iframeToHost.subscribe('remove-mask', this._unmaskSurroundings, this);
@@ -83,10 +82,10 @@
     _syncChannel: function() {
       this._reloadChannels().when(function (channelStore) {
         var id = this.selectedChannel.id;
-        this.selectedChannel = channelStore.getById(id);
+        this.selectedChannel = channelStore.getById(id).json;
         if (!this.selectedChannel) {
           // we may just have created the preview config of this channel
-          this.selectedChannel = channelStore.getById(id + '-preview');
+          this.selectedChannel = channelStore.getById(id + '-preview').json;
         }
         this.hostToIFrame.publish('channel-changed-in-extjs');
       }.bind(this));
@@ -96,21 +95,25 @@
       this.hostToIFrame.publish('render-component', componentId, propertiesMap);
     },
 
-    _onComponentChanged: function (componentId) {
+    _renderInitialComponentState: function(componentId) {
       this._renderComponent(componentId, {});
+    },
+
+    _onComponentChanged: function (componentId) {
+      this._renderInitialComponentState(componentId);
       this._syncChannel();
     },
 
     _onComponentLocked: function(data) {
-      this._resetComponentPropertiesWindow();
+      this._deleteComponentPropertiesWindow();
       this.hostToIFrame.publish('reload-channel', data);
     },
 
-    _resetComponentPropertiesWindow: function() {
+    _deleteComponentPropertiesWindow: function() {
       if (this.componentPropertiesWindow) {
         this.componentPropertiesWindow.destroy();
       }
-      this.componentPropertiesWindow = this._createComponentPropertiesWindow();
+      delete this.componentPropertiesWindow;
     },
 
     _openDocumentEditor: function(uuid) {
@@ -143,7 +146,7 @@
     _initialize: function(channel) {
       this.selectedChannel = channel;
 
-      this._resetComponentPropertiesWindow();
+      this._deleteComponentPropertiesWindow();
 
       // update breadcrumb
       this.setTitle(channel.name);
@@ -158,7 +161,6 @@
         width: 525,
         height: 350,
         closable: true,
-        closeAction: 'hide',
         collapsible: false,
         constrainHeader: true,
         renderTo: this.el,
@@ -177,6 +179,7 @@
           hide: function() {
             this.hostToIFrame.publish('hide-component-properties');
           },
+          close: this._deleteComponentPropertiesWindow,
           scope: this
         }
       });
@@ -188,6 +191,9 @@
     },
 
     _showComponentProperties: function(selected) {
+      if (!this.componentPropertiesWindow) {
+        this.componentPropertiesWindow = this._createComponentPropertiesWindow();
+      }
       this.componentPropertiesWindow.showComponent(
         selected.component,
         selected.container,
@@ -202,10 +208,6 @@
 
     _onPicked: function(path, displayValue) {
       this.hostToIFrame.publish('picked', this.pickedField, path, displayValue);
-    },
-
-    _onComponentRemoved: function() {
-      this.componentPropertiesWindow.onComponentRemoved();
     },
 
     _maskSurroundings: function() {

@@ -108,14 +108,6 @@
       this.fireEvent('onLoad');
     },
 
-    clearComponent: function (componentRemoved) {
-      if (!componentRemoved) {
-        // only re-render the initial state if the component is not removed
-        this._renderInitialComponentState();
-      }
-      this.hasComponent = false;
-    },
-
     _setNewComponent: function (component, container, page) {
       if (this.componentVariants !== null) {
         this.componentVariants.un('invalidated', this.updateUI, this);
@@ -213,11 +205,11 @@
         this.componentVariants.get().when(function (variants) {
           var initialVariantId = this._getBestMatchingVariantId('', variants);
           if (isActiveTabDirty || initialVariantId !== this._getCurrentVariantId()) {
-            this._renderInitialComponentState();
+            this.renderInitialComponentState();
           }
         }.createDelegate(this));
       } else if (isActiveTabDirty) {
-        this._renderInitialComponentState();
+        this.renderInitialComponentState();
       }
     },
 
@@ -287,7 +279,7 @@
       this.fireEvent('propertiesChanged', this.componentId, propertiesMap);
     },
 
-    _renderInitialComponentState: function () {
+    renderInitialComponentState: function () {
       this.fireEvent('propertiesChanged', this.componentId, {});
     },
 

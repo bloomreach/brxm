@@ -111,8 +111,8 @@ export class HippoIframeCtrl {
     return () => this.PageStructureService.removeComponentById(componentId)
       .then(
         ({ oldContainer, newContainer }) => this.DragDropService.replaceContainer(oldContainer, newContainer),
-        // inform extjs to reset the component properties dialog if deletion is failed
-        () => this.CmsService.publish('reset-component-properties')
+        // inform extjs to delete the component properties dialog if deletion fails
+        () => this.CmsService.publish('delete-component-properties')
       );
   }
 
