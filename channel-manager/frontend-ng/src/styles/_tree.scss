@@ -43,6 +43,7 @@
 .angular-ui-tree-drag {
   border-radius: $tree-border-radius;
   box-sizing: border-box;
+  cursor: grabbing;
   filter: alpha(opacity=90);
   opacity: 0.9;
   pointer-events: none;
@@ -54,8 +55,18 @@
 .angular-ui-tree-handle {
   .drag-enabled & {
     cursor: move;
+    cursor: grab;
   }
-  cursor: pointer;
+
+  .hippo-tree-is-dragging & {
+    cursor: move;
+    cursor: grabbing;
+  }
+}
+
+.hippo-tree-is-dragging {
+  cursor: move;
+  cursor: grabbing;
 }
 
 .has-styling {
