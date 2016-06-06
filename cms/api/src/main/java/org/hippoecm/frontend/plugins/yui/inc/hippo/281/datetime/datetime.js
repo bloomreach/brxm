@@ -280,7 +280,6 @@ if (!YAHOO.hippo.DateTime) {
             },
 
             _localizeCalendar : function(calendar, lang) {
-                console.log(lang);
                 var locale = {
                     en: function(cfg) {
                         // defaults to English
