@@ -47,7 +47,7 @@
       this.iframeToHost.subscribe('channel-changed-in-angular', this._reloadChannels, this);
       this.iframeToHost.subscribe('switch-channel', this._setChannel, this);
       this.iframeToHost.subscribe('show-component-properties', this._showComponentProperties, this);
-      this.iframeToHost.subscribe('delete-component-properties', this._deleteComponentPropertiesWindow, this);
+      this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-picker', this._showPicker, this);
       this.iframeToHost.subscribe('open-content', this._openDocumentEditor, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
@@ -105,11 +105,11 @@
     },
 
     _onComponentLocked: function(data) {
-      this._deleteComponentPropertiesWindow();
+      this._destroyComponentPropertiesWindow();
       this.hostToIFrame.publish('reload-channel', data);
     },
 
-    _deleteComponentPropertiesWindow: function() {
+    _destroyComponentPropertiesWindow: function() {
       if (this.componentPropertiesWindow) {
         this.componentPropertiesWindow.destroy();
       }
@@ -146,7 +146,7 @@
     _initialize: function(channel) {
       this.selectedChannel = channel;
 
-      this._deleteComponentPropertiesWindow();
+      this._destroyComponentPropertiesWindow();
 
       // update breadcrumb
       this.setTitle(channel.name);
@@ -179,7 +179,7 @@
           hide: function() {
             this.hostToIFrame.publish('hide-component-properties');
           },
-          close: this._deleteComponentPropertiesWindow,
+          close: this._destroyComponentPropertiesWindow,
           scope: this
         }
       });
