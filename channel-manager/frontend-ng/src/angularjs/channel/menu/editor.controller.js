@@ -28,6 +28,7 @@ export class MenuEditorCtrl {
     this.PickerService = PickerService;
 
     this.isSaving = {};
+    this.isDragging = false;
 
     SiteMenuService.loadMenu(this.menuUuid)
       .then((menu) => {
@@ -51,6 +52,12 @@ export class MenuEditorCtrl {
       });
 
     this.treeOptions = {
+      dragStart: () => {
+        this.isDragging = true;
+      },
+      dragStop: () => {
+        this.isDragging = false;
+      },
       dropped: (event) => {
         const source = event.source;
         const sourceNodeScope = source.nodeScope;
