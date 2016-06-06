@@ -60,6 +60,14 @@
     "error-new-channel-url-format" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "channel-manager" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED"
+      }
     }
   }
 }
