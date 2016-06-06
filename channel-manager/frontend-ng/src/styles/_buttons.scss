@@ -43,6 +43,12 @@
   margin-bottom: 80px;
 }
 
-.md-icon-button[disabled] > md-icon {
-  color: $grey-500 !important;
+.md-icon-button {
+  > md-icon {
+    color: $text-dark;
+  }
+
+  &[disabled] > md-icon {
+    color: $grey-500;
+  }
 }
