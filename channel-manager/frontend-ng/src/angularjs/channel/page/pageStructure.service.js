@@ -215,7 +215,6 @@ export class PageStructureService {
 
   _onAfterRemoveComponent() {
     this.ChannelService.recordOwnChange();
-    this.CmsService.publish('component-removed');
   }
 
   getContainerByIframeElement(containerIFrameElement) {
