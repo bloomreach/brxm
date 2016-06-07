@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -38,8 +38,8 @@
             });
         },
 
-        initEditor: function() {
-            Ext.getCmp('rootPanel').showConfigEditor();
+        initEditor: function(channelId) {
+            Ext.getCmp('rootPanel').showConfigEditor(channelId);
             document.getElementById('Hippo.ChannelManager.HstConfigEditor.Instance').className = 'x-panel';
         }
 
