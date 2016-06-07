@@ -268,6 +268,8 @@
         scope: this
       });
       this.layout.setActiveItem(2);
+
+      Hippo.Events.publish('CMSHstConfigEditor');
     }
   });
 
