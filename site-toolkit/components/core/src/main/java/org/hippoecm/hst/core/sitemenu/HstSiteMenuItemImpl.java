@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -134,7 +134,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
     }
 
     public HstLink getHstLink() {
-        if(targetMount == null) {
+        if (targetMount == null) {
             log.warn("Cannot create link for sitemenu item '{}' of menu '{}' because target mount is null. Return null", name, hstSiteMenu.getName());
             return null;
         }
@@ -144,7 +144,7 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
             return linkCreator.create(hstSiteMapItemPath, targetMount);
         }
         if (externalLink == null) {
-            log.warn("Sitemenu item '{}' of menu '{}' does not contain an hstSiteMapItemRefId, an hstSiteMapItemPath or an externalLink. Cannot create link for sitemenu item, return null", name, hstSiteMenu.getName());
+            log.debug("Sitemenu item '{}' of menu '{}' does not contain an hstSiteMapItemRefId, an hstSiteMapItemPath or an externalLink. Cannot create link for sitemenu item, return null", name, hstSiteMenu.getName());
         }
         return null;
     }
