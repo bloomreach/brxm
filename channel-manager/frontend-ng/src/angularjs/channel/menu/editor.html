@@ -44,10 +44,7 @@
                            aria-label="{{ (collapsed ? 'EXPAND' : 'COLLAPSE') | translate }}"
                            data-nodrag
                            stop-propagation>
-                  <md-icon class="material-icons step md-18">
-                    <span ng-show="!hippoTree.isEmpty(this) && collapsed">add</span>
-                    <span ng-show="!hippoTree.isEmpty(this) && !collapsed">remove</span>
-                  </md-icon>
+                  <md-icon class="material-icons step md-18">{{ collapsed ? 'add' : 'remove' }}</md-icon>
                 </md-button>
                 <div ng-class="{'empty-tree-item': hippoTree.isEmpty(this)}">{{ item.title }}</div>
               </div>
