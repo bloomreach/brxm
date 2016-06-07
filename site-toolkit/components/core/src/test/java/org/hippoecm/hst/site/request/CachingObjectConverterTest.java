@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,14 @@
  */
 package org.hippoecm.hst.site.request;
 
+import javax.jcr.Node;
+import javax.jcr.Session;
+
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.beans.standard.HippoFolder;
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -23,14 +31,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-
-import javax.jcr.Node;
-import javax.jcr.Session;
-
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.standard.HippoFolder;
-import org.junit.Before;
-import org.junit.Test;
 
 public class CachingObjectConverterTest {
 

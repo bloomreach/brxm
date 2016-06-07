@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.google.common.base.Optional;
+
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -30,8 +32,6 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 
 /**
@@ -48,12 +48,12 @@ class CachingObjectConverter implements ObjectConverter {
 
     private final ObjectCache objectCache;
 
-    protected CachingObjectConverter(ObjectConverter delegatee) {
+    protected CachingObjectConverter(final ObjectConverter delegatee) {
         this(delegatee, HstServices.isAvailable() ? HstServices.getComponentManager().getContainerConfiguration()
                 .getInt("caching.object.converter.maxsize", DEFAULT_MAX_CACHE_SIZE) : DEFAULT_MAX_CACHE_SIZE);
     }
 
-    protected CachingObjectConverter(ObjectConverter delegatee, final int maxCacheSize) {
+    protected CachingObjectConverter(final ObjectConverter delegatee, final int maxCacheSize) {
         objectCache = new ObjectCache(maxCacheSize);
         this.delegatee = delegatee;
     }
