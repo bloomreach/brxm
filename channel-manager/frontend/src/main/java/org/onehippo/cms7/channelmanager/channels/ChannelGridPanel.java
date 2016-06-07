@@ -92,7 +92,7 @@ public class ChannelGridPanel extends ExtPanel {
             try {
                 final String paramChannelId = (String) getValue(parameters, "channelId");
                 final String paramHstMountPoint = (String) getValue(parameters, "hstMountPoint");
-                target.prependJavaScript("Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance').initEditor();");
+                target.prependJavaScript("Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance').initEditor('" + paramChannelId + "');");
                 this.hstConfigEditor.setMountPoint(target, paramChannelId, paramHstMountPoint);
             } catch (JSONException e) {
                 throw new WicketRuntimeException("Invalid JSON parameters", e);
