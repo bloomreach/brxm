@@ -150,16 +150,22 @@
   padding: 0;
 }
 
-.expansion-panel {
+.expansion-panel,
+.angular-ui-tree-handle {
   .angular-ui-tree-placeholder {
     margin: 8px;
   }
+
   .md-headline {
     font-size: 20px;
   }
 
   md-card-title.active {
     background-color: $grey-200;
+  }
+
+  .empty-tree-item {
+    margin-left: 52px;
   }
 }
 
