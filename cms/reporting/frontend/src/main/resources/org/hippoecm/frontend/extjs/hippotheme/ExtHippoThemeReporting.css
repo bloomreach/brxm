@@ -46,7 +46,7 @@
 }
 
 .hippo-reporting-perspective .x-grid3-header {
-    background-color: #e1e3e5;
+    background-color: #e8e8ea;
     background-image: none;
 }
 
@@ -80,5 +80,5 @@
 .hippo-reporting-perspective .x-panel-bbar .x-toolbar {
     border: none;
     background-image: none;
-    background-color: #e1e3e5;
+    background-color: #e8e8ea;
 }

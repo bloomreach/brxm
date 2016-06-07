@@ -509,7 +509,7 @@ span.down-16 {
 }
 
 #global-feedback-container {
-  border: 1px solid #e1e3e5;
+  border: 1px solid #e8e8ea;
   background-color: #fffada;
   color: #39434c;
   padding-top: 2px;
@@ -590,7 +590,7 @@ body.hippo-root div.yui-log-container {
 }
 
 .hippo-window-form td a.action {
-  color: #0086f8;
+  color: #0877d1;
   width: 38px;
   float: right;
   margin-right: 10px;
