@@ -54,8 +54,7 @@
                            aria-label="{{ 'EDIT' | translate }}"
                            ng-click="menuEditor.toggleEditState(item)">
                   <md-icon class="material-icons step md-18">
-                    <span ng-show="menuEditor.editingItem.id != item.id">expand_more</span>
-                    <span ng-show="menuEditor.editingItem.id == item.id">expand_less</span>
+                    {{ menuEditor.editingItem.id === item.id ? 'expand_less' : 'expand_more' }}
                   </md-icon>
                 </md-button>
               </div>
