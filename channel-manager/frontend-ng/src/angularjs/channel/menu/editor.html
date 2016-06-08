@@ -26,7 +26,7 @@
        data-items="menuEditor.items"
        data-options="menuEditor.treeOptions"
        data-selected-item="menuEditor.selectedItem"
-       data-draggable="true"
+       data-draggable="!menuEditor.isLockedByOther()"
        ng-class="{
          'hippo-tree-is-dragging': menuEditor.isDragging,
        }"
@@ -71,6 +71,7 @@
                 <label>{{ 'TITLE' | translate }}</label>
                 <input name="title"
                        ng-model="menuEditor.editingItem.title"
+                       ng-disabled="menuEditor.isLockedByOther()"
                        required
                        focus-if>
                 <div ng-messages="form.title.$error">
@@ -80,9 +81,12 @@
             </div>
             <div>
               <md-radio-group ng-model="menuEditor.editingItem.linkType">
-                <md-radio-button value="SITEMAPITEM">{{ 'SUBPAGE_MENU_EDITOR_INTERNAL_LINK' | translate }}</md-radio-button>
-                <md-radio-button value="EXTERNAL">{{ 'SUBPAGE_MENU_EDITOR_EXTERNAL_LINK' | translate }}</md-radio-button>
-                <md-radio-button value="NONE">{{ 'SUBPAGE_MENU_EDITOR_NO_LINK' | translate }}</md-radio-button>
+                <md-radio-button ng-disabled="menuEditor.isLockedByOther()"
+                                 value="SITEMAPITEM">{{ 'SUBPAGE_MENU_EDITOR_INTERNAL_LINK' | translate }}</md-radio-button>
+                <md-radio-button ng-disabled="menuEditor.isLockedByOther()"
+                                 value="EXTERNAL">{{ 'SUBPAGE_MENU_EDITOR_EXTERNAL_LINK' | translate }}</md-radio-button>
+                <md-radio-button ng-disabled="menuEditor.isLockedByOther()"
+                                 value="NONE">{{ 'SUBPAGE_MENU_EDITOR_NO_LINK' | translate }}</md-radio-button>
               </md-radio-group>
             </div>
             <div ng-if="menuEditor.editingItem.linkType == 'SITEMAPITEM'"
@@ -99,6 +103,7 @@
               </md-input-container>
               <div>
                 <md-button type="button"
+                           ng-disabled="menuEditor.isLockedByOther()"
                            ng-click="menuEditor.showPicker($event)">
                   {{ 'SELECT' | translate }}
                 </md-button>
@@ -110,6 +115,7 @@
                 <label>{{ 'SUBPAGE_MENU_EDITOR_EXTERNAL_LINK' | translate }}</label>
                 <input name="externalLink"
                        ng-model="menuEditor.editingItem.externalLink"
+                       ng-disabled="menuEditor.isLockedByOther()"
                        required>
                 <div ng-messages="form.externalLink.$error">
                   <div ng-message="required">{{ 'LINK_REQUIRED' | translate }}</div>
@@ -124,7 +130,8 @@
                 <md-input-container flex>
                   <label>{{ key }}</label>
                   <input type="text"
-                         ng-model="menuEditor.editingItem.localParameters[key]">
+                         ng-model="menuEditor.editingItem.localParameters[key]"
+                         ng-disabled="menuEditor.isLockedByOther()">
                 </md-input-container>
               </div>
             </div>
@@ -133,17 +140,20 @@
           <md-card-actions layout="row"
                            layout-align="space-between center">
             <md-button type="button"
+                       ng-disabled="menuEditor.isLockedByOther()"
                        aria-label="{{ 'DELETE' | translate }}"
                        ng-click="menuEditor.deleteItem()">
               {{ 'DELETE' | translate }}
             </md-button>
             <div>
               <md-button type="button"
+                         ng-disabled="menuEditor.isLockedByOther()"
                          aria-label="{{ 'CANCEL' | translate }}"
                          ng-click="menuEditor.stopEditingItem()">
                 {{ 'CANCEL' | translate }}
               </md-button>
               <md-button type="submit"
+                         ng-disabled="menuEditor.isLockedByOther()"
                          aria-label="{{ 'SAVE' | translate }}"
                          class="md-raised md-primary">
                 {{ 'SAVE' | translate }}
@@ -158,7 +168,7 @@
   <div class="fab-space-holder"></div>
   <md-button class="md-fab md-fab-bottom-right md-accent qa-menu-item-add"
              ng-click="menuEditor.addItem()"
-             ng-disabled="menuEditor.isSaving.newItem">
+             ng-disabled="menuEditor.isLockedByOther() || menuEditor.isSaving.newItem">
     <md-icon aria-label="{{'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate }}"
              class="material-icons step md-18">
       add

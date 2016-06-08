@@ -16,7 +16,7 @@
 
 export class MenuEditorCtrl {
   constructor($scope, $translate, SiteMenuService, HippoIframeService, DialogService,
-              FeedbackService, ChannelService, PickerService) {
+              FeedbackService, ChannelService, PickerService, ConfigService) {
     'ngInject';
 
     this.$translate = $translate;
@@ -26,14 +26,19 @@ export class MenuEditorCtrl {
     this.FeedbackService = FeedbackService;
     this.ChannelService = ChannelService;
     this.PickerService = PickerService;
+    this.ConfigService = ConfigService;
 
     this.isSaving = {};
     this.isDragging = false;
+    this.menu = {};
 
     SiteMenuService.loadMenu(this.menuUuid)
       .then((menu) => {
+        this.menu = menu;
         this.items = menu.items;
-
+        if (this.isLockedByOther()) {
+          this.FeedbackService.showErrorOnSubpage('ERROR_MENU_LOCKED_BY', { lockedBy: menu.lockedBy });
+        }
         // Currently, the SiteMenuService is loading and maintaining the menu structure.
         // Creation or deletion of a menu item trigger a full reload of the menu, and the
         // $watch below makes sure the MenuEditorCtrl becomes aware of these reloads.
@@ -71,8 +76,7 @@ export class MenuEditorCtrl {
             .then(() => { this.isMenuModified = true; })
             .catch((response) => {
               response = response || {};
-
-              this.FeedbackService.showErrorOnSubpage('ERROR_MENU_MOVE_FAILED', response.data);
+              this._handleError(response, 'ERROR_MENU_MOVE_FAILED');
             });
         }
       },
@@ -81,6 +85,10 @@ export class MenuEditorCtrl {
 
   _startEditingItem(item) {
     this.editingItem = item;
+  }
+
+  isLockedByOther() {
+    return this.menu.lockedBy && this.menu.lockedBy !== this.ConfigService.cmsUser;
   }
 
   stopEditingItem() {
@@ -106,8 +114,7 @@ export class MenuEditorCtrl {
       })
       .catch((response) => {
         response = response || {};
-
-        this.FeedbackService.showErrorOnSubpage('ERROR_MENU_CREATE_FAILED', response.data);
+        this._handleError(response, 'ERROR_MENU_CREATE_FAILED');
       })
       .finally(() => delete this.isSaving.newItem);
   }
@@ -154,9 +161,24 @@ export class MenuEditorCtrl {
       })
       .catch((response) => {
         response = response || {};
-
-        this.FeedbackService.showErrorOnSubpage('ERROR_MENU_ITEM_SAVE_FAILED', response.data);
+        this._handleError(response, 'ERROR_MENU_ITEM_SAVE_FAILED');
       });
+  }
+
+  _handleError(errorResponse, defaultMessageKey) {
+    let messageKey;
+    switch (errorResponse.errorCode) {
+      case 'ITEM_ALREADY_LOCKED':
+        messageKey = 'ERROR_MENU_LOCKED_BY';
+        break;
+      case 'ITEM_NAME_NOT_UNIQUE':
+      case 'ITEM_NAME_NOT_UNIQUE_IN_ROOT':
+        messageKey = 'ERROR_MENU_SAME_NAME_SIBLING';
+        break;
+      default:
+        messageKey = defaultMessageKey;
+    }
+    this.FeedbackService.showErrorOnSubpage(messageKey, errorResponse.data);
   }
 
   _doDelete() {
