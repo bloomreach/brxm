@@ -20,7 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.RuntimeConfigurationType;
@@ -36,6 +35,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.CmsHeaderItem;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,7 +56,7 @@ public class CKEditorPanel extends Panel {
             return Collections.singleton(CmsHeaderItem.get());
         }
     };
-    private static final String CKEDITOR_TIMESTAMP = RandomStringUtils.randomAlphanumeric(4);
+    private static final String CKEDITOR_TIMESTAMP = WebApplicationHelper.APPLICATION_HASH;
     private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
     private static final String CONFIG_STYLES_SET_LANGUAGE_PARAM = "{language}";
 
