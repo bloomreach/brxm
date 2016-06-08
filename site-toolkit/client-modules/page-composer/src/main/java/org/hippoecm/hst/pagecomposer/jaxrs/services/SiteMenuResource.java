@@ -48,8 +48,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMENU + "/")
 @Produces(MediaType.APPLICATION_JSON)
