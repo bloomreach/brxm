@@ -17,8 +17,7 @@
 <md-button class="md-icon-button md-icon-button-sidenav qa-button-sidenav"
   aria-label="{{ 'TOOLBAR_BUTTON_SIDENAV' | translate }}"
   ng-disabled="toggle.disabled"
-  ng-click="toggle.toggleSidenav()"
-  ng-class="{ 'md-accent': toggle.isSidenavOpen() }">
+  ng-click="toggle.toggleSidenav()">
   <md-icon title="{{ 'TOOLBAR_BUTTON_SIDENAV' | translate }}"
     md-svg-src="{{ toggle.isSidenavOpen() ? 'images/sidenav-arrow-left.svg' : 'images/sidenav-arrow-right.svg' }}" />
 </md-button>
