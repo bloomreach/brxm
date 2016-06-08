@@ -80,20 +80,17 @@ public class TestHstResponse {
         rootComponentWindow.setName("root");
         HstRequest rootHstRequest = new HstRequestImpl(servletRequest, requestContext, rootComponentWindow, HstRequest.RENDER_PHASE);
         rootResponseState = new HstServletResponseState(servletRequest, servletResponse, rootComponentWindow);
-        rootComponentWindow.setResponseState(rootResponseState);
         rootHstResponse = new HstResponseImpl(servletRequest, servletResponse, requestContext, rootComponentWindow, rootResponseState, null);
 
         leftComponentWindow = new MockHstComponentWindow();
         leftComponentWindow.setName("left");
         leftHstResponseState = new HstServletResponseState(rootHstRequest, rootHstResponse, leftComponentWindow);
-        leftComponentWindow.setResponseState(leftHstResponseState);
         leftHstResponse = new HstResponseImpl(servletRequest, rootHstResponse, requestContext, leftComponentWindow, leftHstResponseState, rootHstResponse);
 
         MockHstComponentWindow rightComponentWindow = new MockHstComponentWindow();
         rightComponentWindow.setName("right");
         rightHstResponseState = new HstServletResponseState(rootHstRequest, rootHstResponse, rightComponentWindow);
         rightHstResponse = new HstResponseImpl(servletRequest, rootHstResponse, requestContext, rightComponentWindow, rightHstResponseState, rootHstResponse);
-        rightComponentWindow.setResponseState(rightHstResponseState);
 
         rootComponentWindow.getChildWindowMap().put(leftComponentWindow.getName(), leftComponentWindow);
         rootComponentWindow.getChildWindowMap().put(rightComponentWindow.getName(), rightComponentWindow);
@@ -184,9 +181,7 @@ public class TestHstResponse {
         MockHstComponentWindow subLeftComponentWindow = new MockHstComponentWindow();
         subLeftComponentWindow.setName("sub-left");
         HstResponseState subLeftHstResponseState = new HstServletResponseState(servletRequest, leftHstResponse, subLeftComponentWindow);
-        subLeftComponentWindow.setResponseState(leftHstResponseState);
         HstResponse subLeftHstResponse = new HstResponseImpl(servletRequest, leftHstResponse, requestContext, subLeftComponentWindow, subLeftHstResponseState, leftHstResponse);
-        subLeftComponentWindow.setResponseState(subLeftHstResponseState);
 
         leftComponentWindow.getChildWindowMap().put(subLeftComponentWindow.getName(), subLeftComponentWindow);
 

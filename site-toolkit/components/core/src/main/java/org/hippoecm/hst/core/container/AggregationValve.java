@@ -303,8 +303,10 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             response = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window,
                     responseState, topComponentHstResponse);
         } else {
-            // use a noop responseState and noop response
-            responseState = new NoopHstServletResponseState();
+            // use a normal response state that can gather for example request headers, exceptins, or redirect locations
+            // the constructor is needed because it bind the response state to <code>window</code>
+            new HstServletResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, window);
+            // use a noop response
             response = new NoopHstResponseImpl();
         }
 
@@ -314,8 +316,6 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
         requestMap.put(window, request);
         responseMap.put(window, response);
-
-        ((HstComponentWindowImpl) window).setResponseState(responseState);
 
         Map<String, HstComponentWindow> childWindowMap = window.getChildWindowMap();
 
@@ -465,62 +465,6 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         // check whether the component itself is asyn
         return window.getComponentInfo().isAsync();
 
-    }
-
-    private class NoopHstServletResponseState implements HstResponseState {
-        @Override public void addCookie(Cookie cookie) {}
-        @Override public void addDateHeader(String name, long date) {}
-        @Override public void addHeadElement(Element element, String keyHint) {}
-        @Override public void addHeader(String name, String value) {}
-        @Override public void addIntHeader(String name, int value) {}
-        @Override public void addPreambleNode(Comment comment) {}
-        @Override public void addPreambleNode(Element element) {}
-        @Override public void addEpilogueNode(Comment comment) {}
-        @Override public void clear() {}
-        @Override public boolean containsHeadElement(String keyHint) {return false;}
-        @Override public boolean containsHeader(String name) {return false;}
-        @Override public Comment createComment(String comment) {return null;}
-        @Override public Element createElement(String tagName) {return null;}
-        @Override public void flush() throws IOException {}
-        @Override public void flush(final Writer writer) throws IOException {}
-        @Override public void flushBuffer() throws IOException {}
-        @Override public void forward(String pathInfo) throws IOException {}
-        @Override public int getBufferSize() {return 0;}
-        @Override public String getCharacterEncoding() {return null;}
-        @Override public String getContentType() {return null;}
-        @Override public int getErrorCode() {return 0;}
-        @Override public String getErrorMessage() {return null;}
-        @Override public String getForwardPathInfo() {return null;}
-        @Override public List<Element> getHeadElements() {return null;}
-        @Override public Locale getLocale() {return null;}
-        @Override public ServletOutputStream getOutputStream() throws IOException {return null;}
-        @Override public String getRedirectLocation() {return null;}
-        @Override public Element getWrapperElement() {return null;}
-        @Override public PrintWriter getWriter() throws IOException {return null;}
-        @Override public boolean isActionResponse() {return false;}
-        @Override public boolean isCommitted() {return false;}
-        @Override public boolean isMimeResponse() {return false;}
-        @Override public boolean isRenderResponse() {return false;}
-        @Override public boolean isResourceResponse() {return false;}
-        @Override public boolean isStateAwareResponse() {return false;}
-        @Override public void reset() {}
-        @Override public void resetBuffer() {}
-        @Override public void sendError(int errorCode, String errorMessage) throws IOException {}
-        @Override public void sendError(int errorCode) throws IOException {}
-        @Override public void sendRedirect(String redirectLocation) throws IOException {}
-        @Override public void setBufferSize(int size) {}
-        @Override public void setCharacterEncoding(String charset) {}
-        @Override public void setContentLength(int len) {}
-        @Override public void setContentType(String type) {}
-        @Override public void setDateHeader(String name, long date) {}
-        @Override public void setHeader(String name, String value) {}
-        @Override public void setIntHeader(String name, int value) {}
-        @Override public void setLocale(Locale locale) {}
-        @Override public void setStatus(int statusCode, String message) {}
-        @Override public void setStatus(int statusCode) {}
-        @Override public int getStatus() {return 0;}
-        @Override public void setWrapperElement(Element element) {}
-        @Override public boolean isFlushed() { return true;}
     }
 
     private class NoopHstResponseImpl implements HstResponse {

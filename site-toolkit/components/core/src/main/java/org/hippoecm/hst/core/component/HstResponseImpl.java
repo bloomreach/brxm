@@ -411,12 +411,7 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     }
 
     public void flushChildContent(String name) throws IOException {
-        HstComponentWindow childWindow = this.componentWindow.getChildWindow(name);
-        if (childWindow == null) {
-            log.debug("Cannot find child window with name '{}' for current window '{}'. Skip child.", name, this.componentWindow.getName());
-        } else {
-            childWindow.getResponseState().flush();
-        }
+        flushChildContent(name, null);
     }
 
     public void flushChildContent(String name, Writer writer) throws IOException {

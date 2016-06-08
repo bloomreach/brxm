@@ -258,7 +258,7 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
 
     protected HstComponentWindow findErrorCodeSendingWindow(HstComponentWindow [] sortedComponentWindows) {
         for (HstComponentWindow window : sortedComponentWindows) {
-            if (((HstComponentWindowImpl) window).getResponseState().getErrorCode() > 0) {
+            if (window.getResponseState().getErrorCode() > 0) {
                 return window;
             }
         }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,7 +57,6 @@ public class ActionValve extends AbstractBaseOrderableValve {
         HstResponseState responseState = new HstServletResponseState(servletRequest, servletResponse, window);
         HstRequest request = new HstRequestImpl(servletRequest, requestContext, window, HstRequest.ACTION_PHASE);
         HstResponseImpl response = new HstResponseImpl(servletRequest, servletResponse, requestContext, window, responseState, null);
-        ((HstComponentWindowImpl) window).setResponseState(responseState);
 
         getComponentInvoker().invokeAction(context.getRequestContainerConfig(), request, response);
 

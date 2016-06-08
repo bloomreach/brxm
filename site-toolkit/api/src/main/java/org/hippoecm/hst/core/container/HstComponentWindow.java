@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -176,9 +176,14 @@ public interface HstComponentWindow {
     HstComponentWindow getChildWindowByReferenceName(String referenceName);
     
     /**
-     * Returns the response state of this component window
+     * Returns the response state of this component window. Can be {@code null} in case of for example a NOOP {@link  HstResponse}
      */
     HstResponseState getResponseState();
+
+    /**
+     * @param responseState the response state to set
+     */
+    void setResponseState(HstResponseState responseState);
     
     HstComponentInfo getComponentInfo();
     
