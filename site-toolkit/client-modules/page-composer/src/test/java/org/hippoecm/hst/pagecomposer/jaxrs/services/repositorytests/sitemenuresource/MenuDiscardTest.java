@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,7 +131,7 @@ public class MenuDiscardTest extends AbstractMenuResourceTest{
         final SiteMenuItemRepresentation newsItem = getSiteMenuItemRepresentation(session, "main", "News");
         final SiteMenuItemRepresentation contactItem = getSiteMenuItemRepresentation(session, "main", "Contact");
         String oldPath = session.getNodeByIdentifier(newsItem.getId()).getPath();
-        resource.move(newsItem.getId(), contactItem.getId(), 0);
+        resource.move(contactItem.getId(), 0, newsItem.getId());
         String newPath = session.getNodeByIdentifier(contactItem.getId()).getPath() + "/News";
 
         mountResource.discardChanges();

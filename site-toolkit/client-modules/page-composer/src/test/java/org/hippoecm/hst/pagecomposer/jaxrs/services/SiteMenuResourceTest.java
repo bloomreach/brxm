@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,6 +61,7 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_SITEMENUITEM;
 import static org.junit.Assert.assertThat;
@@ -124,16 +126,12 @@ public class SiteMenuResourceTest {
     }
 
     @Test
-    public void testGetMenu() throws RepositoryException {
+    public void get_menu() throws RepositoryException {
         mockCreateMandatoryWorkspaceNodesIfMissing();
         mockGetPreviewSite();
         mockGetPreValidators();
         mockGetSiteMenu("menuId");
-        expect(menuConfig.getCanonicalIdentifier()).andReturn("uuid-of-menu");
-        expect(menuConfig.getName()).andReturn("menuMane");
-        final List<HstSiteMenuItemConfiguration> children = Collections.emptyList();
-        expect(menuConfig.getSiteMenuConfigurationItems()).andReturn(children);
-        expect(menuConfig.getPrototypeItem()).andReturn(null);
+        mockMenuConfig(null, null);
         expect(session.hasPendingChanges()).andReturn(false);
         expect(pageComposerContextService.getEditingMount()).andReturn(mount);
         expect(pageComposerContextService.getSiteContentIdentifier(mount)).andReturn("uuid-of-content");
@@ -147,6 +145,45 @@ public class SiteMenuResourceTest {
         final ExtResponseRepresentation entity = ExtResponseRepresentation.class.cast(response.getEntity());
         assertThat(entity.getData(), is(SiteMenuRepresentation.class));
         assertThat(entity.isSuccess(), is(true));
+    }
+
+    private void mockMenuConfig(final String lockedBy, final Calendar lockedOn) {
+        expect(menuConfig.getCanonicalIdentifier()).andReturn("uuid-of-menu");
+        expect(menuConfig.getName()).andReturn("menuMane");
+        expect(menuConfig.getLockedBy()).andReturn(lockedBy);
+        expect(menuConfig.getLockedOn()).andReturn(lockedOn);
+        final List<HstSiteMenuItemConfiguration> children = Collections.emptyList();
+        expect(menuConfig.getSiteMenuConfigurationItems()).andReturn(children);
+        expect(menuConfig.getPrototypeItem()).andReturn(null);
+    }
+
+    @Test
+    public void get_menu_locked_by_other() throws RepositoryException {
+        mockCreateMandatoryWorkspaceNodesIfMissing();
+        mockGetPreviewSite();
+        mockGetPreValidators();
+        mockGetSiteMenu("menuId");
+        final Calendar lockedOn = Calendar.getInstance();
+        mockMenuConfig("admin", lockedOn);
+        expect(session.hasPendingChanges()).andReturn(false);
+        expect(pageComposerContextService.getEditingMount()).andReturn(mount);
+        expect(pageComposerContextService.getSiteContentIdentifier(mount)).andReturn("uuid-of-content");
+        expect(mount.getHstSite()).andReturn(site);
+        expect(site.getSiteMap()).andReturn(siteMap);
+        expect(siteMap.getCanonicalIdentifier()).andReturn("uuid-of-siteMap");
+        replay(mocks);
+
+        final Response response = siteMenuResource.getMenu();
+        assertThat(response.getStatus(), is(OK));
+        final Object entity = response.getEntity();
+        assertThat(entity, is(ExtResponseRepresentation.class));
+        final ExtResponseRepresentation extResponse = (ExtResponseRepresentation) entity;
+
+        assertThat(extResponse.isSuccess(), is(true));
+        assertThat(extResponse.getData(), is(SiteMenuRepresentation.class));
+        final SiteMenuRepresentation siteMenu = (SiteMenuRepresentation) extResponse.getData();
+        assertThat(siteMenu.getLockedBy(), is("admin"));
+        assertThat(siteMenu.getLockedOn(), is(lockedOn));
     }
 
     @Test
@@ -281,7 +318,7 @@ public class SiteMenuResourceTest {
         expect(session.hasPendingChanges()).andReturn(false);
         replay(mocks);
 
-        final Response response = siteMenuResource.move(sourceId, parentTargetId, childTargetIndex);
+        final Response response = siteMenuResource.move(parentTargetId, childTargetIndex, sourceId);
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 
