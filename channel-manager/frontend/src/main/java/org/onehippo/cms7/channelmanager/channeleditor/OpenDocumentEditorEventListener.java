@@ -25,6 +25,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
@@ -74,13 +75,14 @@ class OpenDocumentEditorEventListener extends ExtEventListener {
             final JcrNodeModel documentHandleModel = new JcrNodeModel(documentHandle);
             IEditor<?> editor = editorManager.getEditor(documentHandleModel);
             if (editor == null) {
-                editor = editorManager.openPreview(documentHandleModel);
+                editor = editorManager.openEditor(documentHandleModel);
             }
+            editor.setMode(IEditor.Mode.EDIT);
             editor.focus();
         } catch (ItemNotFoundException e) {
             ChannelEditor.log.warn("Could not find document with uuid '{}'", documentHandleUuid, e);
-        } catch (RepositoryException|ServiceException e) {
-            ChannelEditor.log.warn("Failed to open document editor for document with uuid '{}'", documentHandleUuid, e);
+        } catch (EditorException|RepositoryException|ServiceException e) {
+            ChannelEditor.log.warn("Failed to open editor for document with uuid '{}'", documentHandleUuid, e);
         }
     }
 }
