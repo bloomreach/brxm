@@ -41,20 +41,27 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.hst.util.WrapperElementUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Comment;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import static org.hippoecm.hst.util.NullWriter.NULL_WRITER;
+
 /**
  * Temporarily holds the current state of a HST response
  */
 public class HstServletResponseState implements HstResponseState {
+
+    private static final Logger log = LoggerFactory.getLogger(HstServletResponseState.class);
 
     private static class CharArrayWriterBuffer extends CharArrayWriter {
         private char [] getBuffer() {
@@ -100,17 +107,20 @@ public class HstServletResponseState implements HstResponseState {
     protected String errorMessage;
     protected int statusCode;
 
-    protected HttpServletRequest request;
-    protected HttpServletResponse parentResponse;
-
+    protected final HttpServletRequest request;
+    protected final HttpServletResponse parentResponse;
+    protected final HstComponentWindow window;
 
     private String redirectLocation;
 
     private String forwardPathInfo;
 
-    public HstServletResponseState(HttpServletRequest request, HttpServletResponse parentResponse) {
+    public HstServletResponseState(final HttpServletRequest request,
+                                   final HttpServletResponse parentResponse,
+                                   final HstComponentWindow window) {
         this.request = request;
         this.parentResponse = parentResponse;
+        this.window = window;
 
         HstRequestContext requestContext = HstRequestUtils.getHstRequestContext(request);
 
@@ -731,6 +741,24 @@ public class HstServletResponseState implements HstResponseState {
         doFlush(writer);
     }
 
+    private static void flushUnflushedChildrenHeaders(final HstComponentWindow hcw) throws IOException {
+        if (hcw == null) {
+            return;
+        }
+        for (String name : hcw.getChildWindowNames()) {
+            HstComponentWindow child = hcw.getChildWindow(name);
+            if (child == null) {
+                continue;
+            }
+            if (child.isVisible() && !child.getResponseState().isFlushed()) {
+                log.info("Child window '{}' of window '{}' never got flushed. Flushing its possible present response headers now.",
+                        child.getName(), hcw.getName());
+                // if this child contains unflushed children, those children will be triggered by child#doFlush
+                child.getResponseState().flush(NULL_WRITER);
+            }
+        }
+    }
+
     /**
      * @param writer The writer to write to or {@code null}. The writer MUST be {@code null} when invoked from {@link #flush()}
      *               because if {@code getParentWriter()} gets invoked in {@link #flush()}, the backing http servlet response already
@@ -742,6 +770,8 @@ public class HstServletResponseState implements HstResponseState {
             // Just ignore...
             return;
         }
+
+        flushUnflushedChildrenHeaders(window);
 
         flushed = true;
 
@@ -828,8 +858,8 @@ public class HstServletResponseState implements HstResponseState {
                         len = contentLength;
                     }
 
-                    printComments(preambleComments);
-                    printPreambleElements(preambleElements);
+                    printComments(preambleComments, writer);
+                    printPreambleElements(preambleElements, writer);
 
                     if (wrapperElement == null) {
                         if (len > 0) {
@@ -840,7 +870,7 @@ public class HstServletResponseState implements HstResponseState {
                         WrapperElementUtils.writeWrapperElement(writer, wrapperElem, new String(byteOutputBuffer.toByteArray()).toCharArray(), 0, len);
                     }
                     writer.flush();
-                    printComments(epilogueComments);
+                    printComments(epilogueComments, writer);
                     outputStream.close();
                     outputStream = null;
                     byteOutputBuffer = null;
@@ -851,8 +881,8 @@ public class HstServletResponseState implements HstResponseState {
                         if (writer == null) {
                             writer = getParentWriter();
                         }
-                        printComments(preambleComments);
-                        printPreambleElements(preambleElements);
+                        printComments(preambleComments, writer);
+                        printPreambleElements(preambleElements, writer);
                         if (wrapperElement == null) {
                             if (charOutputBuffer.getCount() > 0) {
                                 writer.write(charOutputBuffer.getBuffer(), 0, charOutputBuffer.getCount());
@@ -862,17 +892,18 @@ public class HstServletResponseState implements HstResponseState {
                             WrapperElementUtils.writeWrapperElement(writer, wrapperElem, charOutputBuffer.getBuffer(), 0, charOutputBuffer.getCount());
                         }
                         writer.flush();
-                        printComments(epilogueComments);
+                        printComments(epilogueComments, writer);
                         printWriter.close();
 
                         printWriter = null;
+
                         charOutputBuffer = null;
                     }
                 } else {
                     if (!closed) {
-                        printComments(preambleComments);
-                        printPreambleElements(preambleElements);
-                        printComments(epilogueComments);
+                        printComments(preambleComments, getParentWriter());
+                        printPreambleElements(preambleElements, getParentWriter());
+                        printComments(epilogueComments, getParentWriter());
                     }
                 }
             }
@@ -887,10 +918,10 @@ public class HstServletResponseState implements HstResponseState {
     /**
      * Writes a list of comments as comment into the output
      * @param comments the list of comments to write
+     * @param writer the write to write the preamble elements to
      */
-    private void printComments(final List<Comment> comments) throws IOException {
+    private void printComments(final List<Comment> comments, final Writer writer) throws IOException {
         if (comments != null) {
-            final Writer writer = getParentWriter();
             for (Comment comment : comments) {
                 writer.write("<!--" + comment.getTextContent() + "-->");
                 writer.flush();
@@ -902,10 +933,10 @@ public class HstServletResponseState implements HstResponseState {
      * Writes the list of preambles elements into the output. Note that only the Element itself and its text gets printed : Not any
      * descendant elements *in* the Element.
      * @param preambles the list of preamble elements to write
+     * @param writer the write to write the preamble elements to
      */
-    private void printPreambleElements(final List<Element> preambles) throws IOException {
+    private void printPreambleElements(final List<Element> preambles, final Writer writer) throws IOException {
         if (preambles != null) {
-            final Writer writer = getParentWriter();
             char[] chars = null;
             int len = 0;
             if (byteOutputBuffer != null) {

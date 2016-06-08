@@ -54,7 +54,7 @@ public class ActionValve extends AbstractBaseOrderableValve {
 
         final HstComponentWindow window = context.getRootComponentWindow();
 
-        HstResponseState responseState = new HstServletResponseState(servletRequest, servletResponse);
+        HstResponseState responseState = new HstServletResponseState(servletRequest, servletResponse, window);
         HstRequest request = new HstRequestImpl(servletRequest, requestContext, window, HstRequest.ACTION_PHASE);
         HstResponseImpl response = new HstResponseImpl(servletRequest, servletResponse, requestContext, window, responseState, null);
         ((HstComponentWindowImpl) window).setResponseState(responseState);

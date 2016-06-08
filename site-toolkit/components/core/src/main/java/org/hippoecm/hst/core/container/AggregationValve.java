@@ -299,7 +299,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         HstResponseState responseState;
         if (isComponentWindowRendered) {
             responseState = new HstServletResponseState((HttpServletRequest) servletRequest,
-                    (HttpServletResponse) servletResponse);
+                    (HttpServletResponse) servletResponse, window);
             response = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window,
                     responseState, topComponentHstResponse);
         } else {
