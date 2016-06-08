@@ -103,7 +103,7 @@ public class MenuCRUDTest extends AbstractMenuResourceTest {
         final SiteMenuItemRepresentation newsItem = getSiteMenuItemRepresentation(session, "main", "News");
         final SiteMenuItemRepresentation contactItem = getSiteMenuItemRepresentation(session, "main", "Contact");
         String oldPath = session.getNodeByIdentifier(newsItem.getId()).getPath();
-        final Response move = resource.move(contactItem.getId(), 0, newsItem.getId());
+        final Response move = resource.move(newsItem.getId(), contactItem.getId(), 0);
         assertEquals(Response.Status.OK.getStatusCode(), move.getStatus());
         assertFalse(session.nodeExists(oldPath));
         String newPath = session.getNodeByIdentifier(contactItem.getId()).getPath() + "/News";

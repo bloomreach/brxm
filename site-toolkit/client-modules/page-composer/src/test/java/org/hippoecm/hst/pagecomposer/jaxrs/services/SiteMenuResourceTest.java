@@ -318,7 +318,7 @@ public class SiteMenuResourceTest {
         expect(session.hasPendingChanges()).andReturn(false);
         replay(mocks);
 
-        final Response response = siteMenuResource.move(parentTargetId, childTargetIndex, sourceId);
+        final Response response = siteMenuResource.move(sourceId, parentTargetId, childTargetIndex);
         assertThat(response.getStatus(), is(OK));
         assertThat(response.getEntity(), is(ExtResponseRepresentation.class));
 

@@ -100,7 +100,7 @@ public class MenuPublicationTest extends AbstractMenuResourceTest{
         final SiteMenuItemRepresentation newsItem = getSiteMenuItemRepresentation(session, "main", "News");
         final SiteMenuItemRepresentation contactItem = getSiteMenuItemRepresentation(session, "main", "Contact");
         String oldPath = session.getNodeByIdentifier(newsItem.getId()).getPath();
-        resource.move(contactItem.getId(), 0, newsItem.getId());
+        resource.move(newsItem.getId(), contactItem.getId(), 0);
         String newPath = session.getNodeByIdentifier(contactItem.getId()).getPath() + "/News";
 
         mountResource.publish();
