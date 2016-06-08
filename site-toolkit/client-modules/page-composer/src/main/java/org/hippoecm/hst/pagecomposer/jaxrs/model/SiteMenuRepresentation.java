@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
+import org.hippoecm.hst.configuration.internal.ConfigurationLockInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfigurationService;
@@ -35,6 +36,9 @@ public class SiteMenuRepresentation {
     private String id;
     private String name;
     private long lastModifiedTimestamp;
+
+    private String lockedBy;
+    private Calendar lockedOn;
 
     private String siteContentIdentifier;
     private String siteMapIdentifier;
@@ -54,6 +58,7 @@ public class SiteMenuRepresentation {
         }
         id = ((CanonicalInfo) siteMenuConfiguration).getCanonicalIdentifier();
         name = siteMenuConfiguration.getName();
+        retrieveLockedInfo(siteMenuConfiguration);
         this.siteContentIdentifier = siteContentIdentifier;
 
         final HstSiteMap siteMap = mount.getHstSite().getSiteMap();
@@ -73,6 +78,14 @@ public class SiteMenuRepresentation {
 
         HstSiteMenuItemConfiguration prototypeConfiguration = ((HstSiteMenuConfigurationService) siteMenuConfiguration).getPrototypeItem();
         prototypeItem = prototypeConfiguration != null ? new SiteMenuItemRepresentation(prototypeConfiguration, mount) : null;
+    }
+
+    private void retrieveLockedInfo(final HstSiteMenuConfiguration siteMenuConfiguration) {
+        if (siteMenuConfiguration instanceof ConfigurationLockInfo) {
+            ConfigurationLockInfo configLockInfo = (ConfigurationLockInfo)siteMenuConfiguration;
+            this.lockedBy = configLockInfo.getLockedBy();
+            this.lockedOn = configLockInfo.getLockedOn();
+        }
     }
 
     public String getId() {
@@ -130,5 +143,13 @@ public class SiteMenuRepresentation {
 
     public void setChildren(final List<SiteMenuItemRepresentation> children) {
         this.children = children;
+    }
+
+    public String getLockedBy() {
+        return lockedBy;
+    }
+
+    public Calendar getLockedOn() {
+        return lockedOn;
     }
 }
