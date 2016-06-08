@@ -29,14 +29,19 @@ describe('MenuEditor', () => {
   let FeedbackService;
   let HippoIframeService;
   let ChannelService;
+  let ConfigService;
   let menu;
   let MenuEditorCtrl;
+  const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
+  dialog.textContent.and.returnValue(dialog);
+  dialog.ok.and.returnValue(dialog);
+  dialog.cancel.and.returnValue(dialog);
 
   beforeEach(() => {
     module('hippo-cm');
 
     inject((_$q_, _$rootScope_, _$compile_, _SiteMenuService_, _DialogService_, _FeedbackService_, _HippoIframeService_,
-            _ChannelService_) => {
+            _ChannelService_, _ConfigService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $compile = _$compile_;
@@ -45,11 +50,20 @@ describe('MenuEditor', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       ChannelService = _ChannelService_;
+      ConfigService = _ConfigService_;
     });
 
     menu = { items: [] };
 
+    spyOn(SiteMenuService, 'deleteMenuItem').and.returnValue($q.when());
+    spyOn(SiteMenuService, 'getEditableMenuItem').and.callFake((id) => $q.when({ id }));
     spyOn(SiteMenuService, 'loadMenu').and.returnValue($q.when(menu));
+    spyOn(SiteMenuService, 'saveMenuItem').and.returnValue($q.when());
+    spyOn(ChannelService, 'recordOwnChange');
+    spyOn(ChannelService, 'reload');
+    spyOn(DialogService, 'confirm').and.returnValue(dialog);
+    spyOn(DialogService, 'show').and.returnValue($q.when());
+    spyOn(FeedbackService, 'showErrorOnSubpage');
   });
 
   function compileDirectiveAndGetController() {
@@ -83,6 +97,21 @@ describe('MenuEditor', () => {
 
     $element.find('.qa-button-back').click();
     expect($scope.onDone).toHaveBeenCalled();
+  });
+
+  it('checks the locking status of the loaded menu', () => {
+    ConfigService.cmsUser = 'testUser';
+
+    MenuEditorCtrl = compileDirectiveAndGetController();
+    expect(MenuEditorCtrl.isLockedByOther()).toBeFalsy();
+
+    menu.lockedBy = 'testUser';
+    MenuEditorCtrl = compileDirectiveAndGetController();
+    expect(MenuEditorCtrl.isLockedByOther()).toBe(false);
+
+    menu.lockedBy = 'anotherUser';
+    MenuEditorCtrl = compileDirectiveAndGetController();
+    expect(MenuEditorCtrl.isLockedByOther()).toBe(true);
   });
 
   describe('MenuEditorCtrl', () => {
@@ -137,17 +166,24 @@ describe('MenuEditor', () => {
         const data = { key: 'value' };
         const error = { data };
         spyOn(SiteMenuService, 'createEditableMenuItem').and.returnValue($q.reject(error));
-        spyOn(FeedbackService, 'showErrorOnSubpage');
 
         MenuEditorCtrl.addItem();
         $rootScope.$apply();
         expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_CREATE_FAILED', data);
       });
+
+      it('flashes a catch-all toast when the add request is rejected for no specific reason', () => {
+        spyOn(SiteMenuService, 'createEditableMenuItem').and.returnValue($q.reject());
+
+        MenuEditorCtrl.addItem();
+        $rootScope.$digest();
+        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_CREATE_FAILED', undefined);
+      });
     });
 
     describe('toggleEditState', () => {
       it('calls the appropriate function after checking if an item is already being edited', () => {
-        spyOn(SiteMenuService, 'getEditableMenuItem').and.returnValue($q.when({ id: 15 }));
+        SiteMenuService.getEditableMenuItem.and.returnValue($q.when({ id: 15 }));
         spyOn(MenuEditorCtrl, '_startEditingItem');
 
         MenuEditorCtrl.editingItem = { id: 12 };
@@ -168,7 +204,6 @@ describe('MenuEditor', () => {
     describe('onBack', () => {
       it('returns to the main page with no changes', () => {
         spyOn(HippoIframeService, 'reload');
-        spyOn(ChannelService, 'recordOwnChange');
         spyOn(MenuEditorCtrl, 'onDone');
 
         MenuEditorCtrl.onBack();
@@ -178,12 +213,10 @@ describe('MenuEditor', () => {
       });
 
       it('returns to the mainpage with changes', () => {
-        spyOn(SiteMenuService, 'saveMenuItem').and.returnValue($q.when());
         MenuEditorCtrl.saveItem();
         $rootScope.$apply();
 
         spyOn(HippoIframeService, 'reload');
-        spyOn(ChannelService, 'recordOwnChange');
         spyOn(MenuEditorCtrl, 'onDone');
 
         MenuEditorCtrl.onBack();
@@ -194,74 +227,161 @@ describe('MenuEditor', () => {
     });
 
     describe('saveItem', () => {
-      it('calls SiteMenuService.saveMenuItem and then stops editing item', () => {
-        spyOn(SiteMenuService, 'saveMenuItem').and.returnValue($q.when());
-        spyOn(MenuEditorCtrl, 'stopEditingItem');
+      it('saves and closes the menu item open for editing', () => {
+        // select the item to be deleted
+        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $rootScope.$digest();
 
+        // save the selected item
         MenuEditorCtrl.saveItem();
         expect(SiteMenuService.saveMenuItem).toHaveBeenCalledWith(MenuEditorCtrl.editingItem);
-        $rootScope.$apply();
-        expect(MenuEditorCtrl.stopEditingItem).toHaveBeenCalled();
+        $rootScope.$digest();
+        expect(MenuEditorCtrl.editingItem).toBeNull();
+
+        // update channel when leaving the subpage after modification
+        MenuEditorCtrl.onBack();
+        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
       });
 
-      it('calls SiteMenuService.saveMenuItem and then catches itself if it fails', () => {
+      it('flashes a toast if the item name already exists', () => {
         const data = { key: 'value' };
-        const error = { data };
-        spyOn(SiteMenuService, 'saveMenuItem').and.returnValue($q.reject(error));
-        spyOn(FeedbackService, 'showErrorOnSubpage');
+        SiteMenuService.saveMenuItem.and.returnValue($q.reject({ errorCode: 'ITEM_NAME_NOT_UNIQUE', data }));
 
+        // select the item to be deleted
+        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $rootScope.$digest();
+
+        // save the selected item
         MenuEditorCtrl.saveItem();
-        expect(SiteMenuService.saveMenuItem).toHaveBeenCalledWith(MenuEditorCtrl.editingItem);
-        $rootScope.$apply();
+        $rootScope.$digest();
+
+        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_SAME_NAME_SIBLING', data);
+        expect(MenuEditorCtrl.editingItem).not.toBeNull();
+
+        // Try again for similar back-end error
+        SiteMenuService.saveMenuItem.and.returnValue($q.reject({ errorCode: 'ITEM_NAME_NOT_UNIQUE_IN_ROOT', data }));
+
+        // save the selected item
+        MenuEditorCtrl.saveItem();
+        $rootScope.$digest();
+
+        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_SAME_NAME_SIBLING', data);
+        expect(MenuEditorCtrl.editingItem).not.toBeNull();
+      });
+
+      it('flashes a catch-all toast when the save request is rejected for another reason', () => {
+        const data = { key: 'value' };
+        SiteMenuService.saveMenuItem.and.returnValue($q.reject({ errorCode: 'ANOTHER_REASON', data }));
+
+        // select the item to be deleted
+        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $rootScope.$digest();
+
+        // save the selected item
+        MenuEditorCtrl.saveItem();
+        $rootScope.$digest();
+
         expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_SAVE_FAILED', data);
       });
-    });
 
-    describe('_doDelete', () => {
-      it('calls SiteMenuService.deleteMenuItem and then stops editing item', () => {
-        spyOn(SiteMenuService, 'deleteMenuItem').and.returnValue($q.when());
-        spyOn(MenuEditorCtrl, 'stopEditingItem');
+      it('flashes a catch-all toast when the save request is rejected without a specific reason', () => {
+        SiteMenuService.saveMenuItem.and.returnValue($q.reject());
 
-        MenuEditorCtrl._doDelete();
-        expect(SiteMenuService.deleteMenuItem).toHaveBeenCalledWith(1);
-        $rootScope.$apply();
-        expect(MenuEditorCtrl.stopEditingItem).toHaveBeenCalled();
-      });
+        // select the item to be deleted
+        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $rootScope.$digest();
 
-      it('calls SiteMenuService.deleteMenuItem and then catches itself if it fails', () => {
-        const data = { key: 'value' };
-        const error = { data };
-        spyOn(SiteMenuService, 'deleteMenuItem').and.returnValue($q.reject(error));
-        spyOn(FeedbackService, 'showErrorOnSubpage');
+        // save the selected item
+        MenuEditorCtrl.saveItem();
+        $rootScope.$digest();
 
-        MenuEditorCtrl._doDelete();
-        expect(SiteMenuService.deleteMenuItem).toHaveBeenCalledWith(1);
-        $rootScope.$apply();
-        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_DELETE_FAILED', data);
-      });
-    });
-
-    describe('_confirmDelete', () => {
-      it('calls the dialog service', () => {
-        spyOn(DialogService, 'confirm').and.callThrough();
-        spyOn(DialogService, 'show');
-
-        MenuEditorCtrl._confirmDelete();
-        expect(DialogService.confirm).toHaveBeenCalled();
-        $rootScope.$apply();
-        expect(DialogService.show).toHaveBeenCalled();
+        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_SAVE_FAILED', undefined);
       });
     });
 
     describe('deleteItem', () => {
-      it('calls _confirmDelete and then deletes the item', () => {
-        spyOn(MenuEditorCtrl, '_confirmDelete').and.returnValue($q.when());
-        spyOn(MenuEditorCtrl, '_doDelete');
+      it('deletes the item open for editing', () => {
+        // select the item to be deleted
+        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $rootScope.$digest();
 
+        // now request deletion
         MenuEditorCtrl.deleteItem();
-        expect(MenuEditorCtrl._confirmDelete).toHaveBeenCalled();
-        $rootScope.$apply();
-        expect(MenuEditorCtrl._doDelete).toHaveBeenCalled();
+        expect(DialogService.confirm).toHaveBeenCalled();
+        expect(DialogService.show).toHaveBeenCalled();
+
+        // confirm deletion
+        $rootScope.$digest();
+        expect(SiteMenuService.deleteMenuItem).toHaveBeenCalledWith('clickedId');
+        // backend reports successful deletion
+        expect(MenuEditorCtrl.editingItem).toBeNull();
+
+        // update channel when leaving the subpage after modification
+        MenuEditorCtrl.onBack();
+        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+      });
+
+      it('doesn\'t delete the item is deletion is not confirmed', () => {
+        DialogService.show.and.returnValue($q.reject());
+
+        // select the item to be deleted
+        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $rootScope.$digest();
+
+        // now request deletion
+        MenuEditorCtrl.deleteItem();
+        expect(DialogService.show).toHaveBeenCalled();
+
+        // cancel deletion
+        $rootScope.$digest();
+        expect(SiteMenuService.deleteMenuItem).not.toHaveBeenCalled();
+      });
+
+      it('reloads the menu and channel when the deletion request is rejected because the menu is locked', () => {
+        const data = { lockedBy: 'tester' };
+        SiteMenuService.deleteMenuItem.and.returnValue($q.reject({ errorCode: 'ITEM_ALREADY_LOCKED', data }));
+        SiteMenuService.loadMenu.calls.reset();
+
+        // select the item to be deleted
+        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $rootScope.$digest();
+
+        // request and confirm deletion
+        MenuEditorCtrl.deleteItem();
+        $rootScope.$digest();
+
+        expect(SiteMenuService.loadMenu).toHaveBeenCalledWith('testUuid');
+        expect(ChannelService.reload).toHaveBeenCalled();
+        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_LOCKED_BY', data);
+      });
+
+      it('flashes a catch-all toast when the deletion request is rejected for another reason', () => {
+        const data = { key: 'value' };
+        SiteMenuService.deleteMenuItem.and.returnValue($q.reject({ errorCode: 'ANOTHER_REASON', data }));
+
+        // select the item to be deleted
+        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $rootScope.$digest();
+
+        // request and confirm deletion
+        MenuEditorCtrl.deleteItem();
+        $rootScope.$digest();
+
+        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_DELETE_FAILED', data);
+      });
+
+      it('flashes a catch-all toast when the deletion request is rejected without a specific reason', () => {
+        SiteMenuService.deleteMenuItem.and.returnValue($q.reject());
+
+        // select the item to be deleted
+        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
+        $rootScope.$digest();
+
+        // request and confirm deletion
+        MenuEditorCtrl.deleteItem();
+        $rootScope.$digest();
+
+        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_DELETE_FAILED', undefined);
       });
     });
 

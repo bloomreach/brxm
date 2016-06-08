@@ -50,6 +50,7 @@ export class MenuEditorCtrl {
       .catch((response) => {
         response = response || {};
 
+        HippoIframeService.reload(); // Make sure EditMenu buttons are up-to-date.
         this.onError({ key: 'ERROR_MENU_LOAD_FAILED', params: response.data });
       });
 
@@ -177,6 +178,7 @@ export class MenuEditorCtrl {
       case 'ITEM_ALREADY_LOCKED':
         messageKey = 'ERROR_MENU_LOCKED_BY';
         this._loadMenu();
+        this.ChannelService.reload(); // pull in recent 'changedBySet' for Change Management
         break;
       case 'ITEM_NAME_NOT_UNIQUE':
       case 'ITEM_NAME_NOT_UNIQUE_IN_ROOT':
@@ -196,8 +198,7 @@ export class MenuEditorCtrl {
       })
       .catch((response) => {
         response = response || {};
-
-        this.FeedbackService.showErrorOnSubpage('ERROR_MENU_ITEM_DELETE_FAILED', response.data);
+        this._handleError(response, 'ERROR_MENU_ITEM_DELETE_FAILED');
       });
   }
 

@@ -107,19 +107,15 @@ export class ChannelCtrl {
   _createPreviewConfiguration() {
     this.isCreatingPreview = true;
     this.ChannelService.createPreviewConfiguration().then(() => {
-      this._reloadChannel();
+      this.HippoIframeService.reload().then(() => {
+        this.isEditMode = true;
+      })
+      .finally(() => {
+        this.isCreatingPreview = false;
+      });
     }).catch(() => {
       this.isCreatingPreview = false;
       this.FeedbackService.showError('ERROR_ENTER_EDIT');
-    });
-  }
-
-  _reloadChannel() {
-    return this.HippoIframeService.reload().then(() => {
-      this.isEditMode = true;
-    })
-    .finally(() => {
-      this.isCreatingPreview = false;
     });
   }
 
@@ -151,7 +147,6 @@ export class ChannelCtrl {
     this.hideSubpage();
     if (key) {
       this.FeedbackService.showError(key, params);
-      this._reloadChannel();
     }
   }
 
