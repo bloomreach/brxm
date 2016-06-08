@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.site.request;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -24,11 +23,13 @@ import javax.jcr.Session;
 
 import com.google.common.base.Optional;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterAware;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +42,19 @@ class CachingObjectConverter implements ObjectConverter {
 
     private static final Logger log = LoggerFactory.getLogger(CachingObjectConverter.class);
 
+    private static final int DEFAULT_MAX_CACHE_SIZE = 100;
+
     private final ObjectConverter delegatee;
 
-    private final ObjectCache objectCache = new ObjectCache();
+    private final ObjectCache objectCache;
 
-    protected CachingObjectConverter(ObjectConverter delegatee) {
+    protected CachingObjectConverter(final ObjectConverter delegatee) {
+        this(delegatee, HstServices.isAvailable() ? HstServices.getComponentManager().getContainerConfiguration()
+                .getInt("caching.object.converter.maxsize", DEFAULT_MAX_CACHE_SIZE) : DEFAULT_MAX_CACHE_SIZE);
+    }
+
+    protected CachingObjectConverter(final ObjectConverter delegatee, final int maxCacheSize) {
+        objectCache = new ObjectCache(maxCacheSize);
         this.delegatee = delegatee;
     }
 
@@ -148,7 +157,12 @@ class CachingObjectConverter implements ObjectConverter {
     }
 
     private class ObjectCache {
-        private final Map<CacheKey, Optional<Object>> cache = new HashMap<CacheKey, Optional<Object>>();
+
+        private final Map<CacheKey, Optional<Object>> cache;
+
+        ObjectCache(final int maxSize) {
+            cache = new LRUMap(maxSize);
+        }
 
         public Optional<Object> get(final CacheKey key) {
             return cache.get(key);
