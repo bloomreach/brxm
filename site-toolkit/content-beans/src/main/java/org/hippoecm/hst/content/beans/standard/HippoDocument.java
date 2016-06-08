@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -131,7 +131,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean {
     public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations(Class<T> beanMappingClass) {
         if(!availableTranslationsMappingClassInitialized) {
             availableTranslationsMappingClassInitialized = true;
-            availableTranslationsMappingClass = new AvailableTranslations(getNode(), getObjectConverter());
+            availableTranslationsMappingClass = new AvailableTranslations(getNode());
             ((AvailableTranslations)availableTranslationsMappingClass).setBeanMappingClass(beanMappingClass);
         }
         return (HippoAvailableTranslationsBean<T>)availableTranslationsMappingClass;

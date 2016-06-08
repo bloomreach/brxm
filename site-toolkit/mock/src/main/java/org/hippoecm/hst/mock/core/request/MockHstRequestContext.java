@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
@@ -513,6 +514,11 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     public void setContentBeansTool(final ContentBeansTool contentBeansTool) {
         checkStateValidity();
         this.contentBeansTool = contentBeansTool;
+    }
+
+    @Override
+    public ObjectConverter getObjectConverter() {
+        return getContentBeansTool().getObjectConverter();
     }
 
     @Override

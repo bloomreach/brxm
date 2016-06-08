@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,18 +16,15 @@
 package org.hippoecm.hst.content.beans.standard;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
 
-import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.content.service.translation.HippoTranslationBeanService;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,18 +40,21 @@ public class AvailableTranslations<K extends HippoBean> implements HippoAvailabl
     private static final Logger log = LoggerFactory.getLogger(AvailableTranslations.class);
 
     final private Node node;
-    final private ObjectConverter objectConverter;
     private Map<String, K> translations;
     private Class<K> beanMappingClass;
 
+    public AvailableTranslations(Node node) {
+        this.node = node;
+    }
     /**
      * @param node the <code>node</code> to get the translations for
+     * @deprecated Deprecated since CMS 11.0.0 (HST 4.0.0). Use {@link #AvailableTranslations(Node)} instead.
      */
-    public AvailableTranslations(Node node, ObjectConverter objectConverter) {
+    @Deprecated
+    public AvailableTranslations(final Node node, final ObjectConverter objectConverter) {
         this.node = node;
-        this.objectConverter = objectConverter;
-    } 
-    
+    }
+
     public List<String> getAvailableLocales() {
         populate();
         return new ArrayList<String>(translations.keySet());
@@ -65,10 +65,9 @@ public class AvailableTranslations<K extends HippoBean> implements HippoAvailabl
         return translations.get(locale);
     }
 
-
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public List<K> getTranslations() {
-        populate();        
+        populate();
         return new ArrayList(translations.values());
     }
 
@@ -76,20 +75,19 @@ public class AvailableTranslations<K extends HippoBean> implements HippoAvailabl
         populate();
         return translations.get(locale) != null;
     }
-    
 
     @SuppressWarnings("unchecked")
     private void populate() {
-        if(translations != null) {
+        if (translations != null) {
             return;
         }
         try {
             populateTranslations();
-        } catch(RepositoryException e) {
+        } catch (RepositoryException e) {
             log.warn("Exception while trying to fetch translations.", e);
         }
     }
-    
+
     /**
      * Sets the <code>beanMappingClass</code> for this {@link org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean}. Only translations of type
      * <code>beanMappingClass</code> will be returned
@@ -97,47 +95,19 @@ public class AvailableTranslations<K extends HippoBean> implements HippoAvailabl
      */
     public void setBeanMappingClass(Class<K> beanMappingClass) {
         this.beanMappingClass = beanMappingClass;
-     }
+    }
 
     private void populateTranslations() throws RepositoryException {
-        translations = new LinkedHashMap<String,K>();
         if (!node.hasProperty(HippoTranslationNodeType.ID)) {
-            log.debug("No translations for '{}' since property '{}' not available", node.getPath(), HippoTranslationNodeType.ID);
+            log.debug("No translations for '{}' since property '{}' not available", node.getPath(),
+                    HippoTranslationNodeType.ID);
             return;
         }
-        String id = node.getProperty(HippoTranslationNodeType.ID).getString();
 
-        String xpath = "//element(*,"+HippoTranslationNodeType.NT_TRANSLATED+")["+HippoTranslationNodeType.ID+" = '"+id+"']";
+        final HippoTranslationBeanService translationBeanService = HstServices.getComponentManager()
+                .getComponent(HippoTranslationBeanService.class.getName());
 
-        Query query = node.getSession().getWorkspace().getQueryManager().createQuery(xpath, "xpath");
-        final QueryResult result = query.execute();
-        final NodeIterator nodeIterator = result.getNodes();
-        while (nodeIterator.hasNext()) {
-            javax.jcr.Node translation = nodeIterator.nextNode();
-            if (translation == null) {
-                continue;
-            }
-            if (!translation.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                log.debug("Skipping node '{}' because does not contain property '{}'", translation.getPath(), HippoTranslationNodeType.LOCALE);
-                continue;
-            }
-            String locale = translation.getProperty(HippoTranslationNodeType.LOCALE).getString();
-            try {
-                Object bean = this.objectConverter.getObject(translation);
-                if (bean != null) {
-                    if (beanMappingClass != null) {
-                        if(beanMappingClass.isAssignableFrom(bean.getClass())) {
-                            translations.put(locale,(K) bean);
-                        } else {
-                            log.debug("Skipping bean of type '{}' because not of beanMappingClass '{}'", bean.getClass().getName(), beanMappingClass.getName());
-                        }
-                    } else {
-                        translations.put(locale, (K) bean);
-                    }
-                }
-            } catch (ObjectBeanManagerException e) {
-                log.warn("Skipping bean: {}", e);
-            }
-        }
+        String translationId = node.getProperty(HippoTranslationNodeType.ID).getString();
+        translations = translationBeanService.getTranslationBeans(node.getSession(), translationId, beanMappingClass);
     }
 }

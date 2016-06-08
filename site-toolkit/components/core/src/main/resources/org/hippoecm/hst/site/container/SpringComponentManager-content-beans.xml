@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
  <!--
-     Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+     Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
      
      Licensed under the Apache License, Version 2.0 (the  "License");
      you may not use this file except in compliance with the License.
@@ -30,6 +30,10 @@
   <bean id="org.hippoecm.hst.content.rewriter.ContentRewriterFactory"
         class="org.hippoecm.hst.content.rewriter.impl.ContentRewriterFactoryImpl">
     <property name="defaultContentRewriterClassName" value="${default.hst.contentrewriter.class}" />
+  </bean>
+
+  <bean id="org.hippoecm.hst.content.service.translation.HippoTranslationBeanService"
+        class="org.hippoecm.hst.content.service.translation.HippoTranslationBeanServiceImpl">
   </bean>
 
 </beans>
