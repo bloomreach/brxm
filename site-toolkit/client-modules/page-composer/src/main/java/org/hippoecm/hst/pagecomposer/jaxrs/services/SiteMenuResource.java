@@ -144,16 +144,16 @@ public class SiteMenuResource extends AbstractConfigResource {
      * Move an item from <code>sourceId</code> to become a child of the parent <code>parentId</code> at the position
      * <code>childIndex></code>
      *
-     * @param parentId
-     * @param sourceId
-     * @param childIndex
-     * @return
+     * @param sourceId ID of the menu item to move
+     * @param parentId ID of the menu item that will become the parent of the moved item.
+     * @param childIndex Index (zero-based) of the moved menu item within the new parent.
+     * @return A response with the ID of the moved item, or an error.
      */
     @PUT
     @Path("/{parentId}/{index}")
-    public Response move(final @PathParam("parentId") String parentId,
-                         final @PathParam("index") Integer childIndex,
-                         final @HeaderParam("Move-From") String sourceId) {
+    public Response move(final @HeaderParam("Move-From") String sourceId,
+                         final @PathParam("parentId") String parentId,
+                         final @PathParam("index") Integer childIndex) {
 
         final Validator preValidator = ValidatorBuilder.builder()
                 .add(getDefaultMenuModificationValidator())
