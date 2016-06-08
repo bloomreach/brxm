@@ -23,7 +23,11 @@ export function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $
     url: '/',
     templateUrl: 'hippo-cm.html',
     resolve: {
-      translations: function translations($translate, ConfigService) {
+      translations: ($translate, ConfigService) => {
+        $translateProvider.useStaticFilesLoader({
+          prefix: 'i18n/',
+          suffix: `.json?antiCache=${ConfigService.antiCache}`,
+        });
         return $translate.use(ConfigService.locale)
           .catch(() => {
             $translate.use($translate.fallbackLanguage());
@@ -33,10 +37,6 @@ export function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $
     abstract: true,
   });
 
-  $translateProvider.useStaticFilesLoader({
-    prefix: 'i18n/',
-    suffix: '.json',
-  });
   $translateProvider.fallbackLanguage('en');
   $translateProvider.useSanitizeValueStrategy('escaped');
 

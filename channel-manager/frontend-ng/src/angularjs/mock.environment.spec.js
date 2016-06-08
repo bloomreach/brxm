@@ -78,7 +78,9 @@ function createMessageBus() {
 }
 
 function mockHost() {
-  window.APP_CONFIG = {};
+  window.APP_CONFIG = {
+    antiCache: '123',
+  };
   window.APP_TO_CMS = createMessageBus();
   window.CMS_TO_APP = createMessageBus();
 
