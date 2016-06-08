@@ -23,6 +23,7 @@ export class HippoIframeCtrl {
     $translate,
     ChannelService,
     CmsService,
+    ConfigService,
     DialogService,
     DomService,
     DragDropService,
@@ -42,6 +43,7 @@ export class HippoIframeCtrl {
     this.linkProcessorService = linkProcessorService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
     this.CmsService = CmsService;
+    this.ConfigService = ConfigService;
     this.ChannelService = ChannelService;
     this.DialogService = DialogService;
     this.DomService = DomService;
@@ -147,7 +149,7 @@ export class HippoIframeCtrl {
   _insertCss() {
     const iframeWindow = this._getIframeDom().defaultView;
     const appRootUrl = this.DomService.getAppRootUrl();
-    const hippoIframeCss = `${appRootUrl}styles/hippo-iframe.css`;
+    const hippoIframeCss = `${appRootUrl}styles/hippo-iframe.css?antiCache=${this.ConfigService.antiCache}`;
     return this.DomService.addCss(iframeWindow, hippoIframeCss);
   }
 
