@@ -50,7 +50,7 @@ public interface CommonMenuItem {
     ResolvedSiteMapItem resolveToSiteMapItem();
 
     /**
-     * @deprecated Not used since CMS 11.0 (HST 3.0.0). Use @{link #resolveToSiteMapItem()}.
+     * @deprecated Not used since CMS 11.0 (HST 4.0.0). Use @{link #resolveToSiteMapItem()}.
      */
     @Deprecated
     ResolvedSiteMapItem resolveToSiteMapItem(HstRequest request);
