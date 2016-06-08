@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.sitemenu;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -26,7 +27,7 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractMenuItem implements CommonMenuItem{
+public abstract class AbstractMenuItem implements CommonMenuItem {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractMenuItem.class);
 
@@ -74,7 +75,7 @@ public abstract class AbstractMenuItem implements CommonMenuItem{
         return selected;
     }
 
-    public ResolvedSiteMapItem resolveToSiteMapItem(HstRequest request) {
+    public ResolvedSiteMapItem resolveToSiteMapItem() {
         if(this.resolvedSiteMapItem != null) {
             return resolvedSiteMapItem.resolvedItem;
         }
@@ -82,14 +83,24 @@ public abstract class AbstractMenuItem implements CommonMenuItem{
             log.warn("Cannot resolve to sitemap item because HstLink is null or empty. Return null");
             return null;
         }
-        HstRequestContext ctx = request.getRequestContext();
+        HstRequestContext requestContext = RequestContextProvider.get();
         try {
-            resolvedSiteMapItem = new ResolvedSiteMapItemWrapper(ctx.getSiteMapMatcher().match(this.getHstLink().getPath(), ctx.getResolvedSiteMapItem().getResolvedMount()));
+            resolvedSiteMapItem = new ResolvedSiteMapItemWrapper(
+                    requestContext.getSiteMapMatcher().match(this.getHstLink().getPath(),
+                    requestContext.getResolvedSiteMapItem().getResolvedMount()));
         }  catch (NotFoundException e) {
             log.warn("Cannot resolve to sitemap item because '{}'. Return null.", e.getMessage());
             return null;
         }
         return resolvedSiteMapItem.resolvedItem;
+    }
+
+    /**
+     * @deprecated Not used since CMS 11.0 (HST 3.0.0). Use @{link #resolveToSiteMapItem()}.
+     */
+    @Deprecated
+    public ResolvedSiteMapItem resolveToSiteMapItem(HstRequest request) {
+        return resolveToSiteMapItem();
     }
 
     private static class ResolvedSiteMapItemWrapper {
