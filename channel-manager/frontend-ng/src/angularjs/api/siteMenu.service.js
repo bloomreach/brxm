@@ -45,11 +45,11 @@ export class SiteMenuService {
   moveMenuItem(menuItemId, parentId, position) {
     const menuId = this.menu.id;
     parentId = parentId || menuId;
-    return this.HstService.doPost({}, menuId, 'move', menuItemId, parentId, String(position));
+    return this.HstService.doPutWithHeaders(menuId, { 'Move-From': menuItemId }, parentId, String(position));
   }
 
   deleteMenuItem(menuItemId) {
-    return this.HstService.doPost({}, this.menu.id, 'delete', menuItemId)
+    return this.HstService.doDelete(this.menu.id, menuItemId)
       .then(() => this.loadMenu(this.menu.id));
   }
 
@@ -104,7 +104,7 @@ export class SiteMenuService {
           }
         }
 
-        return this.HstService.doPostWithParams(newItem, menuId, options, 'create', parentId)
+        return this.HstService.doPostWithParams(newItem, menuId, options, parentId)
           .then((response) => response.data)
           .then((newItemId) => this.loadMenu(menuId).then(() => this._makeEditableItem(newItemId)));
       });
