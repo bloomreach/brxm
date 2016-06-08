@@ -192,6 +192,7 @@ describe('ChannelCtrl', () => {
 
   it('correctly shows and hides subpages', () => {
     expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+    HippoIframeService.reload.and.returnValue($q.when());
 
     ChannelCtrl.showSubpage('test');
     expect(ChannelCtrl.isSubpageOpen()).toBe(true);

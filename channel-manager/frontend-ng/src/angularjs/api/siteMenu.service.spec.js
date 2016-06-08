@@ -77,8 +77,14 @@ describe('SiteMenuService', () => {
     spyOn(HstService, 'doPost');
     HstService.doPost.and.returnValue($q.when({ data: 'child1' }));
 
+    spyOn(HstService, 'doDelete');
+    HstService.doDelete.and.returnValue($q.when({ data: 'child1' }));
+
     spyOn(HstService, 'doPostWithParams');
     HstService.doPostWithParams.and.returnValue($q.when({ data: 'child1' }));
+
+    spyOn(HstService, 'doPutWithHeaders');
+    HstService.doPutWithHeaders.and.returnValue($q.when({ data: 'child1' }));
 
     // preload the default menu
     $rootScope.$apply(() => SiteMenuService.loadMenu('testUuid'));
@@ -160,47 +166,47 @@ describe('SiteMenuService', () => {
   });
 
   it('moves a menu item to a specific destination', (done) => {
-    const response = {};
-    HstService.doPost.and.returnValue($q.when(response));
+    const response = { data: 'b' };
+    HstService.doPutWithHeaders.and.returnValue($q.when(response));
     SiteMenuService.moveMenuItem('a', 'b', 1)
       .then((data) => {
         expect(data).toBe(response);
         done();
       })
       .catch(() => fail());
-    expect(HstService.doPost).toHaveBeenCalledWith({}, 'testUuid', 'move', 'a', 'b', '1');
+    expect(HstService.doPutWithHeaders).toHaveBeenCalledWith('testUuid', { 'Move-From': 'a' }, 'b', '1');
     $rootScope.$digest();
   });
 
   it('moves a menu item to the root', (done) => {
     const response = {};
-    HstService.doPost.and.returnValue($q.reject(response));
+    HstService.doPutWithHeaders.and.returnValue($q.reject(response));
     SiteMenuService.moveMenuItem('a', undefined, 1)
       .then(() => fail())
       .catch((data) => {
         expect(data).toBe(response);
         done();
       });
-    expect(HstService.doPost).toHaveBeenCalledWith({}, 'testUuid', 'move', 'a', 'testUuid', '1');
+    expect(HstService.doPutWithHeaders).toHaveBeenCalledWith('testUuid', { 'Move-From': 'a' }, 'testUuid', '1');
     $rootScope.$digest();
   });
 
   it('reloads the menu upon successful deletion', (done) => {
     HstService.doGet.calls.reset();
-    HstService.doPost.and.returnValue($q.when());
+    HstService.doDelete.and.returnValue($q.when());
     SiteMenuService.deleteMenuItem('2')
       .then(() => {
         expect(HstService.doGet).toHaveBeenCalledWith('testUuid');
         done();
       })
       .catch(() => fail());
-    expect(HstService.doPost).toHaveBeenCalledWith({}, 'testUuid', 'delete', '2');
+    expect(HstService.doDelete).toHaveBeenCalledWith('testUuid', '2');
     $rootScope.$digest();
   });
 
   it('relays a failure to delete a menu item', (done) => {
     const error = { };
-    HstService.doPost.and.returnValue($q.reject(error));
+    HstService.doDelete.and.returnValue($q.reject(error));
     SiteMenuService.deleteMenuItem('2')
       .then(() => fail())
       .catch((response) => {
@@ -275,8 +281,7 @@ describe('SiteMenuService', () => {
         expect(args[0].localParameters).toBeUndefined();
         expect(args[1]).toBe('testUuid');
         expect(args[2].position).toBe('after');
-        expect(args[3]).toBe('create');
-        expect(args[4]).toBe('testUuid');
+        expect(args[3]).toBe('testUuid');
 
         expect(HstService.doGet).toHaveBeenCalled();
         expect(item.id).toBe('child1');
@@ -365,7 +370,7 @@ describe('SiteMenuService', () => {
   it('should create a menu item', (done) => {
     SiteMenuService.createEditableMenuItem().then(() => {
       expect(HstService.doPostWithParams)
-        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'create', 'testUuid');
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after' }, 'testUuid');
       done();
     });
     $rootScope.$digest();
@@ -374,7 +379,7 @@ describe('SiteMenuService', () => {
   it('should create a menu item as next sibling of marker item if it has no children', (done) => {
     SiteMenuService.createEditableMenuItem({ id: 'child1' }).then(() => {
       expect(HstService.doPostWithParams)
-        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after', sibling: 'child1' }, 'create', '2');
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'after', sibling: 'child1' }, '2');
       done();
     });
     $rootScope.$digest();
@@ -383,7 +388,7 @@ describe('SiteMenuService', () => {
   it('should create a menu item as first child of marker item if it has children', (done) => {
     SiteMenuService.createEditableMenuItem({ id: '2' }).then(() => {
       expect(HstService.doPostWithParams)
-        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'first' }, 'create', '2');
+        .toHaveBeenCalledWith(newMenuItem, 'testUuid', { position: 'first' }, '2');
       done();
     });
     $rootScope.$digest();

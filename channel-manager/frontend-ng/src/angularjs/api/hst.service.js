@@ -70,6 +70,14 @@ export class HstService {
     return this._callHst('PUT', uuid, pathElements, data);
   }
 
+  doPutWithHeaders(uuid, headers, ...pathElements) {
+    return this._callHst('PUT', uuid, pathElements, undefined, undefined, headers);
+  }
+
+  doDelete(uuid, ...pathElements) {
+    return this._callHst('DELETE', uuid, pathElements);
+  }
+
   _callHst(method, uuid, pathElements, data, params, headers) {
     const url = this._createApiUrl(uuid, pathElements, params);
 
