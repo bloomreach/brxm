@@ -55,13 +55,20 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     protected HstResponse topParentHstResponse;
     protected String renderPath;
 
-    public HstResponseImpl(HttpServletRequest request, HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow, HstResponseState responseState, HstResponse topParentHstResponse) {
+    public HstResponseImpl(final HttpServletRequest request,
+                           final HttpServletResponse response,
+                           final HstRequestContext requestContext,
+                           final HstComponentWindow componentWindow,
+                           final HstResponse topParentHstResponse) {
         super(response);
         this.request = request;
         this.response = response;
         this.requestContext = requestContext;
         this.componentWindow = componentWindow;
-        this.responseState = responseState;
+        this.responseState = componentWindow.getResponseState();
+        if (responseState == null) {
+            throw new IllegalStateException(String.format("HstResponseState for window '%s' is null.", componentWindow.getName()));
+        }
         this.topParentHstResponse = topParentHstResponse;
     }
     

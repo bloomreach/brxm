@@ -121,7 +121,6 @@ public class HstServletResponseState implements HstResponseState {
         this.request = request;
         this.parentResponse = parentResponse;
         this.window = window;
-        window.setResponseState(this);
 
         HstRequestContext requestContext = HstRequestUtils.getHstRequestContext(request);
 

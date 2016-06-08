@@ -40,7 +40,6 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
-import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
@@ -288,24 +287,20 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             final HstComponentWindow rootRenderingWindow,
             final HstRequestContext requestContext,
             final ServletRequest servletRequest,
-            final ServletResponse servletResponse,
+            final ServletResponse parentResponse, // parentResponse of <code>window</code> parameter
             final Map<HstComponentWindow, HstRequest> requestMap,
             final Map<HstComponentWindow, HstResponse> responseMap,
             HstResponse topComponentHstResponse,
             boolean isComponentWindowRendered) {
 
         HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RENDER_PHASE);
+        window.bindResponseState((HttpServletRequest) servletRequest,(HttpServletResponse) parentResponse);
+
         HstResponse response;
-        HstResponseState responseState;
         if (isComponentWindowRendered) {
-            responseState = new HstServletResponseState((HttpServletRequest) servletRequest,
-                    (HttpServletResponse) servletResponse, window);
-            response = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, window,
-                    responseState, topComponentHstResponse);
+            response = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) parentResponse,
+                    requestContext, window, topComponentHstResponse);
         } else {
-            // use a normal response state that can gather for example request headers, exceptins, or redirect locations
-            // the constructor is needed because it bind the response state to <code>window</code>
-            new HstServletResponseState((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, window);
             // use a noop response
             response = new NoopHstResponseImpl();
         }
@@ -328,7 +323,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                     // as long as the componentWindow does not have its renderer invoked, we keep the 
                     // servletResponse for the child component window, until we have the first component window
                     // that is rendered
-                    responseForChild = servletResponse;
+                    responseForChild = parentResponse;
                 }
                 boolean isChildComponentWindowRendered = isComponentWindowRendered || entry.getValue() == rootRenderingWindow;
                 createHstRequestResponseForWindows(entry.getValue(), rootRenderingWindow, requestContext, servletRequest, responseForChild,

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,11 +25,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstComponentMetadata;
 import org.hippoecm.hst.core.component.HstResponseState;
+import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.mock.util.IteratorEnumeration;
 
@@ -163,9 +167,17 @@ public class MockHstComponentWindow implements HstComponentWindow {
     public HstResponseState getResponseState() {
         return responseState;
     }
-    
-    public void setResponseState(HstResponseState responseState) {
+
+    public void setResponseState(final HstResponseState responseState) {
         this.responseState = responseState;
+    }
+
+    @Override
+    public void bindResponseState(final HttpServletRequest request, final HttpServletResponse parentResponse) {
+        if (responseState != null) {
+            return;
+        }
+        responseState = new HstServletResponseState(request, parentResponse, this);
     }
 
     public String getServeResourcePath() {

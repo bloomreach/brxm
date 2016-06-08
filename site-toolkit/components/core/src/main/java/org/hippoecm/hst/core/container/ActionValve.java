@@ -28,7 +28,6 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
-import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -53,13 +52,13 @@ public class ActionValve extends AbstractBaseOrderableValve {
         final HttpServletResponse servletResponse = context.getServletResponse();
 
         final HstComponentWindow window = context.getRootComponentWindow();
-
-        HstResponseState responseState = new HstServletResponseState(servletRequest, servletResponse, window);
+        window.bindResponseState(servletRequest, servletResponse);
         HstRequest request = new HstRequestImpl(servletRequest, requestContext, window, HstRequest.ACTION_PHASE);
-        HstResponseImpl response = new HstResponseImpl(servletRequest, servletResponse, requestContext, window, responseState, null);
+        HstResponseImpl response = new HstResponseImpl(servletRequest, servletResponse, requestContext, window, null);
 
         getComponentInvoker().invokeAction(context.getRequestContainerConfig(), request, response);
 
+        final HstResponseState responseState = window.getResponseState();
         // page error handling...
         PageErrors pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
         if (pageErrors != null) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseImpl;
+import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstURL;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,12 +73,15 @@ public class AsynchronousComponentWindowRendererIT extends AbstractContainerURLP
         HstContainerURL containerURL = this.urlProvider.parseURL(request, response, requestContext.getResolvedMount());
         requestContext.setBaseURL(containerURL);
 
+        final HstResponseState responseState = createNiceMock(HstResponseState.class);
         HstComponentWindow componentLeftWindow = createNiceMock(HstComponentWindow.class);
+        expect(componentLeftWindow.getResponseState()).andReturn(responseState);
         expect(componentLeftWindow.getReferenceNamespace()).andReturn(leftChildWindow.getReferenceNamespace()).anyTimes();
         replay(componentLeftWindow);
 
         HstRequest requestLeftChildWindow = new HstRequestImpl(request, requestContext, leftChildWindow, HstRequest.RENDER_PHASE);
-        HstResponseImpl responseLeftWindow = new HstResponseImpl(request, response, requestContext, componentLeftWindow, null, null);
+
+        HstResponseImpl responseLeftWindow = new HstResponseImpl(request, response, requestContext, componentLeftWindow, null);
 
         {
             final HstURL asyncComponentRenderingLeftChildURL = asynchronousComponentWindowRenderer.createAsyncComponentRenderingURL(requestLeftChildWindow, responseLeftWindow);

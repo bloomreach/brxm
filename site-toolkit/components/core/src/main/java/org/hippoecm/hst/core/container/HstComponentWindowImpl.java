@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.collections.IteratorUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
@@ -31,6 +34,7 @@ import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstComponentMetadata;
 import org.hippoecm.hst.core.component.HstResponseState;
+import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -202,7 +206,16 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     public String getReferenceNamespace() {
         return referenceNamespace;
     }
-    
+
+    @Override
+    public void bindResponseState(final HttpServletRequest request, final HttpServletResponse parentResponse) {
+        if (responseState != null) {
+            log.warn("Window '{}' already has a responseState. Return", getName());
+            return;
+        }
+        responseState = new HstServletResponseState(request, parentResponse, this);
+    }
+
     public HstResponseState getResponseState() {
         return responseState;
     }
@@ -261,10 +274,6 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         }
         
         return (Enumeration<String>) IteratorUtils.asEnumeration(Collections.emptySet().iterator());
-    }
-    
-    public void setResponseState(HstResponseState responseState) {
-        this.responseState = responseState;
     }
 
     @Override
