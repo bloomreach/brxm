@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,20 +37,24 @@ public interface CommonMenuItem {
     HstLink getHstLink();
     
     /**
-     * When this method does not return null, then by default {@link #getHstLink()} will return <code>null</code> even if the sitemenu item
-     * has a sitemap reference path defined
+     * When this method does not return null, then by default {@link #getHstLink()} will return <code>null</code> even
+     * if the sitemenu item has a sitemap reference path defined
      * @return an external (http/https etc) link or <code>null</code> if no external link is defined
      */
     String getExternalLink();
-    
 
     /**
-     * @return the <code>{@link ResolvedSiteMapItem}</code> belonging to this SiteMenuItem or <code>null</code> if it cannot be resolved 
-     * in the <code>{@link HstSiteMap}</code>
+     * @return the <code>{@link ResolvedSiteMapItem}</code> belonging to this SiteMenuItem or <code>null</code> if it
+     * cannot be resolved in the <code>{@link HstSiteMap}</code>
      */
+    ResolvedSiteMapItem resolveToSiteMapItem();
+
+    /**
+     * @deprecated Not used since CMS 11.0 (HST 4.0.0). Use @{link #resolveToSiteMapItem()}.
+     */
+    @Deprecated
     ResolvedSiteMapItem resolveToSiteMapItem(HstRequest request);
-    
-    
+
     /**
      * A sitemenu item is expanded if one of its descendants is selected or if it is selected itself
      * @return <code>true</code> if the SiteMenuItem is expanded
@@ -80,6 +84,5 @@ public interface CommonMenuItem {
      * @return <code>true</code> is the SiteMenuItem is selected
      */
     boolean isSelected();
-    
-    
+
 }

@@ -11,9 +11,14 @@ target/
 /api/src/main/java/org/hippoecm/hst/core/jcr/pool/SessionDecorator.class
 /build.properties
 /client/bin/
+/client-modules/page-composer/log4j.log
 /commons/bin/
 /commons/log4j.log
+/components/core/.lock
+/components/core/workspaces/
+/components/restapi/.lock
 /components/restapi/log4j.log
+/components/restapi/workspaces/
 /integration/tests/bin/
 /integration/war/bin/
 /repository/
