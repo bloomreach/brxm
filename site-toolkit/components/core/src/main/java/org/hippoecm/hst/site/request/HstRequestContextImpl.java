@@ -899,7 +899,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         return hstQueryManagerFactory.createQueryManager(session, getObjectConverter());
     }
 
-    private ObjectConverter getObjectConverter() {
+    public ObjectConverter getObjectConverter() {
         final ObjectConverter converter = getContentBeansTool().getObjectConverter();
         if (cachingObjectConverterEnabled) {
             return new CachingObjectConverter(converter);

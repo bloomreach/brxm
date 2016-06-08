@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -605,7 +605,7 @@ public class HippoItem implements HippoBean {
     public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations() {
         if (!availableTranslationsInitialized) {
             availableTranslationsInitialized = true;
-            availableTranslations = new AvailableTranslations<T>(getNode(), getObjectConverter());
+            availableTranslations = new AvailableTranslations<T>(getNode());
         }
         return availableTranslations;
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,16 +40,19 @@ public class AvailableTranslations<K extends HippoBean> implements HippoAvailabl
     private static final Logger log = LoggerFactory.getLogger(AvailableTranslations.class);
 
     final private Node node;
-    final private ObjectConverter objectConverter;
     private Map<String, K> translations;
     private Class<K> beanMappingClass;
 
+    public AvailableTranslations(Node node) {
+        this.node = node;
+    }
     /**
      * @param node the <code>node</code> to get the translations for
+     * @deprecated Deprecated since CMS 11.0.0 (HST 4.0.0). Use {@link #AvailableTranslations(Node)} instead.
      */
-    public AvailableTranslations(Node node, ObjectConverter objectConverter) {
+    @Deprecated
+    public AvailableTranslations(final Node node, final ObjectConverter objectConverter) {
         this.node = node;
-        this.objectConverter = objectConverter;
     }
 
     public List<String> getAvailableLocales() {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
@@ -378,6 +379,11 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     @Override
     public ContentBeansTool getContentBeansTool() {
         return context.getContentBeansTool();
+    }
+
+    @Override
+    public ObjectConverter getObjectConverter() {
+        return context.getObjectConverter();
     }
 
     @Override

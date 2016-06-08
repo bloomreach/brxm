@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
@@ -349,6 +350,15 @@ public interface HstRequestContext {
      * {@link HstRequestContext#getContentBeansTool()} during execution of a {@link org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler}
      */
     ContentBeansTool getContentBeansTool();
+
+    /**
+     * Returns the {@link ObjectConverter} for the current {@link HstRequestContext}. Note the returned {@link ObjectConverter}
+     * is likely to be a different one than returned vua {@link ContentBeansTool#getObjectConverter() getContentBeansTool().getObjectConverter()}
+     * because the latter is a non-caching object converter while this {@link #getObjectConverter()} returns possibly
+     * a caching object converter
+     * @return the {@link ObjectConverter} for the current {@link HstRequestContext}
+     */
+    ObjectConverter getObjectConverter();
 
     /**
      * @return the root content path relative to the root node for the {@link org.hippoecm.hst.core.request.ResolvedMount} belonging to the current

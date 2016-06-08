@@ -1,5 +1,5 @@
 /**
- * Copyright 2016-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public interface HippoTranslationBeanService {
      * @return all the Hippo Translation Beans keyed by locale string in the same {@code translationId}
      * @throws RepositoryException if any repository exception occurs
      */
-    public <T extends HippoBean> Map<String, T> getTranslationBeans(Session session, String translationId,
+    <T extends HippoBean> Map<String, T> getTranslationBeans(Session session, String translationId,
             Class<T> beanMappingClass) throws RepositoryException;
 
     /**
@@ -47,6 +47,6 @@ public interface HippoTranslationBeanService {
      * @return all the Hippo Translation nodes in the same {@code translationId}
      * @throws RepositoryException if any repository exception occurs
      */
-    public List<Node> getTranslationNodes(Session session, String translationId) throws RepositoryException;
+    List<Node> getTranslationNodes(Session session, String translationId) throws RepositoryException;
 
 }
