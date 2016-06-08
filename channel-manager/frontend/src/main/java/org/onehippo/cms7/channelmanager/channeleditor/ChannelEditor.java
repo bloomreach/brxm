@@ -19,6 +19,7 @@ import java.security.AccessControlException;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Session;
@@ -51,6 +52,7 @@ public class ChannelEditor extends ExtPanel {
     private static final String OPEN_DOCUMENT_EDITOR_EVENT = "open-document-editor";
 
     @ExtProperty
+    @SuppressWarnings("unused")
     private Boolean debug = false;
 
     @ExtProperty
@@ -88,6 +90,10 @@ public class ChannelEditor extends ExtPanel {
     @ExtProperty
     @SuppressWarnings("unused")
     private Boolean hideHstConfigEditor;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private static final String ANTI_CACHE =  RandomStringUtils.randomAlphanumeric(4);
 
     private ExtStoreFuture<Object> channelStoreFuture;
 

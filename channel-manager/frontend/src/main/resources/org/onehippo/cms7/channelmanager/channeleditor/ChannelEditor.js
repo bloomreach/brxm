@@ -24,7 +24,7 @@
     constructor: function(config) {
       this.apiUrlPrefix = config.apiUrlPrefix;
       this.title = null;
-      this.antiCache = new Date().getTime();
+      this.antiCache = config.ANTI_CACHE;
 
       Hippo.ChannelManager.ChannelEditor.Resources = config.resources;
 
