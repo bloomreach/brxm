@@ -30,12 +30,11 @@ export class MenuEditorCtrl {
 
     this.isSaving = {};
     this.isDragging = false;
-    this.menu = {};
 
     this._loadMenu()
       .then((menu) => {
         if (this.isLockedByOther()) {
-          this.FeedbackService.showErrorOnSubpage('ERROR_MENU_LOCKED_BY', { lockedBy: menu.lockedBy });
+          this.FeedbackService.showErrorOnSubpage('ERROR_MENU_LOCKED_BY', { lockedBy: this.lockedBy });
         }
         // Currently, the SiteMenuService is loading and maintaining the menu structure.
         // Creation or deletion of a menu item trigger a full reload of the menu, and the
@@ -84,7 +83,7 @@ export class MenuEditorCtrl {
   _loadMenu() {
     return this.SiteMenuService.loadMenu(this.menuUuid)
       .then((menu) => {
-        this.menu = menu;
+        this.lockedBy = menu.lockedBy;
         this.items = menu.items;
         return menu;
       });
@@ -95,7 +94,7 @@ export class MenuEditorCtrl {
   }
 
   isLockedByOther() {
-    return this.menu.lockedBy && this.menu.lockedBy !== this.ConfigService.cmsUser;
+    return this.lockedBy && this.lockedBy !== this.ConfigService.cmsUser;
   }
 
   stopEditingItem() {
