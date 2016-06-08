@@ -32,10 +32,8 @@ export class MenuEditorCtrl {
     this.isDragging = false;
     this.menu = {};
 
-    SiteMenuService.loadMenu(this.menuUuid)
+    this._loadMenu()
       .then((menu) => {
-        this.menu = menu;
-        this.items = menu.items;
         if (this.isLockedByOther()) {
           this.FeedbackService.showErrorOnSubpage('ERROR_MENU_LOCKED_BY', { lockedBy: menu.lockedBy });
         }
@@ -81,6 +79,15 @@ export class MenuEditorCtrl {
         }
       },
     };
+  }
+
+  _loadMenu() {
+    return this.SiteMenuService.loadMenu(this.menuUuid)
+      .then((menu) => {
+        this.menu = menu;
+        this.items = menu.items;
+        return menu;
+      });
   }
 
   _startEditingItem(item) {
@@ -170,6 +177,7 @@ export class MenuEditorCtrl {
     switch (errorResponse.errorCode) {
       case 'ITEM_ALREADY_LOCKED':
         messageKey = 'ERROR_MENU_LOCKED_BY';
+        this._loadMenu();
         break;
       case 'ITEM_NAME_NOT_UNIQUE':
       case 'ITEM_NAME_NOT_UNIQUE_IN_ROOT':
