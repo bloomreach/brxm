@@ -190,7 +190,7 @@ public interface HstComponentWindow {
     void bindResponseState(HttpServletRequest request, HttpServletResponse parentResponse);
 
     /**
-     * Returns the response state of this component window. Can be {@code null} in case of for example a NOOP {@link  HstResponse}
+     * Returns the response state of this component window.
      */
     HstResponseState getResponseState();
 
