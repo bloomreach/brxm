@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -245,44 +245,31 @@ public class TestHstLinkTag {
     }
 
     @Test
-    public void hst_link_by_path_with_illegal_prefix_gets_prefix_stripped() throws Exception {
+    public void hst_link_by_path_that_starts_with_https() throws Exception {
         final String testPath = "http://www.onehippo.org/css/style.css?foo=bar&page=3";
         init(testPath);
-
-        hstLink = new HstLinkImpl(testPath, null) {
-            @Override
-            public String toUrlForm(final HstRequestContext requestContext, final boolean fullyQualified) {
-                return "www.onehippo.org/css/style.css";
-            }
-        };
-        expect(linkCreator.create(eq("www.onehippo.org/css/style.css"), isNull())).andReturn(hstLink).once();
+        expect(linkCreator.create(eq("http://www.onehippo.org/css/style.css"), isNull())).andReturn(hstLink).once();
         replay(resolvedMount, linkCreator);
 
         linkTag.setEscapeXml(false);
         linkTag.doEndTag();
         String link = (String) pageContext.getAttribute("result");
-        assertEquals("Illegal prefix should be removed", "www.onehippo.org/css/style.css?foo=bar&page=3", link);
+        assertEquals("http://www.onehippo.org/css/style.css?foo=bar&page=3", link);
         verify(linkCreator);
     }
 
     @Test
-    public void hst_link_by_path_with_illegal_prefixes_gets_prefixes_stripped() throws Exception {
+    public void hst_link_by_path_that_starts_with_multiple_https_http_prefixes() throws Exception {
         final String testPath = "http:http://https://www.onehippo.org/css/style.css?foo=bar&page=3";
         init(testPath);
 
-        hstLink = new HstLinkImpl(testPath, null) {
-            @Override
-            public String toUrlForm(final HstRequestContext requestContext, final boolean fullyQualified) {
-                return "www.onehippo.org/css/style.css";
-            }
-        };
-        expect(linkCreator.create(eq("www.onehippo.org/css/style.css"), isNull())).andReturn(hstLink).once();
+        expect(linkCreator.create(eq("http:http://https://www.onehippo.org/css/style.css"), isNull())).andReturn(hstLink).once();
         replay(resolvedMount, linkCreator);
 
         linkTag.setEscapeXml(false);
         linkTag.doEndTag();
         String link = (String) pageContext.getAttribute("result");
-        assertEquals("Illegal prefix should be removed", "www.onehippo.org/css/style.css?foo=bar&page=3", link);
+        assertEquals("http:http://https://www.onehippo.org/css/style.css?foo=bar&page=3", link);
         verify(linkCreator);
     }
 
