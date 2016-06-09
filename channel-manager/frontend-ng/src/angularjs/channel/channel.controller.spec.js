@@ -127,9 +127,9 @@ describe('ChannelCtrl', () => {
   it('enables and disables edit mode when toggling it', () => {
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
 
-    ChannelCtrl.toggleEditMode();
+    ChannelCtrl.enableEditMode();
     expect(ChannelCtrl.isEditMode).toEqual(true);
-    ChannelCtrl.toggleEditMode();
+    ChannelCtrl.disableEditMode();
     expect(ChannelCtrl.isEditMode).toEqual(false);
   });
 
@@ -142,7 +142,7 @@ describe('ChannelCtrl', () => {
     HippoIframeService.reload.and.returnValue(deferReload.promise);
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    ChannelCtrl.toggleEditMode();
+    ChannelCtrl.enableEditMode();
 
     expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
@@ -170,7 +170,7 @@ describe('ChannelCtrl', () => {
     ChannelService.createPreviewConfiguration.and.returnValue(deferCreatePreview.promise);
 
     expect(ChannelCtrl.isCreatingPreview).toEqual(false);
-    ChannelCtrl.toggleEditMode();
+    ChannelCtrl.enableEditMode();
 
     expect(ChannelService.createPreviewConfiguration).toHaveBeenCalled();
     expect(ChannelCtrl.isCreatingPreview).toEqual(true);
@@ -186,7 +186,7 @@ describe('ChannelCtrl', () => {
 
   it('does not create preview configuration when it has already been created when enabling edit mode', () => {
     ChannelService.hasPreviewConfiguration.and.returnValue(true);
-    ChannelCtrl.toggleEditMode();
+    ChannelCtrl.enableEditMode();
     expect(ChannelService.createPreviewConfiguration).not.toHaveBeenCalled();
   });
 

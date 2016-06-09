@@ -1,4 +1,4 @@
-// Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@import 'styles/variables';
+.button-toggle {
+  margin: 0 8px;
 
-@import '../bower_components/angular-material/angular-material.scss';
+  .md-button {
+    background-color: $grey-50;
+    color: $text-dark;
+    line-height: 24px;
+    margin: 0;
+    min-height: 24px;
 
-@import 'styles/button-toggle';
-@import 'styles/buttons';
-@import 'styles/iframe';
-@import 'styles/overlay';
-@import 'styles/scale';
-@import 'styles/lists';
-@import 'styles/sidenav';
-@import 'styles/channel';
-@import 'styles/subpage';
-@import 'styles/tree';
-@import 'styles/picker';
-@import 'styles/toolbar';
-@import 'styles/tooltips';
+    &:first-child {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+    &:last-child {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+    }
+
+    &.button-active {
+      background-color: $grey-600;
+      color: $text-light;
+    }
+  }
+}
+

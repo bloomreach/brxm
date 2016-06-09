@@ -75,7 +75,7 @@ export class ChannelCtrl {
     return this.HippoIframeService.isPageLoaded();
   }
 
-  _enterEditMode() {
+  enableEditMode() {
     if (!this.isEditMode && !this.ChannelService.hasPreviewConfiguration()) {
       this._createPreviewConfiguration();
     } else {
@@ -83,16 +83,8 @@ export class ChannelCtrl {
     }
   }
 
-  _leaveEditMode() {
+  disableEditMode() {
     this.isEditMode = false;
-  }
-
-  toggleEditMode() {
-    if (this.isEditMode) {
-      this._leaveEditMode();
-    } else {
-      this._enterEditMode();
-    }
   }
 
   isEditable() {
@@ -148,13 +140,5 @@ export class ChannelCtrl {
     if (key) {
       this.FeedbackService.showError(key, params);
     }
-  }
-
-  getEditButtonBgColor() {
-    return this.isEditModeActive() ? 'background-300' : 'background-50';
-  }
-
-  getViewButtonBgColor() {
-    return this.isEditModeActive() ? 'background-50' : 'background-300';
   }
 }

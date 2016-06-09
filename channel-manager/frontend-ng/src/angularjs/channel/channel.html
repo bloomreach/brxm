@@ -34,19 +34,30 @@
 
       <div flex="15" layout layout-align="end center">
         <changes-menu ng-show="channelCtrl.isChannelLoaded()"
-          on-manage-changes="channelCtrl.showSubpage('manage-changes')"></changes-menu>
+          on-manage-changes="channelCtrl.showSubpage('manage-changes')">
+        </changes-menu>
 
-        <md-switch class="md-primary"
-          ng-if="channelCtrl.isEditable()"
-          ng-disabled="!channelCtrl.isChannelLoaded() || !channelCtrl.isPageLoaded() || channelCtrl.isCreatingPreview"
-          ng-model="channelCtrl.editToggleState"
-          ng-change="channelCtrl.toggleEditMode()">
-          {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
-        </md-switch>
+        <div class="button-toggle" layout>
+          <md-button class="qa-button-view"
+                     ng-class="{ 'button-active': !channelCtrl.isEditMode }"
+                     ng-if="channelCtrl.isEditable()"
+                     ng-disabled="channelCtrl.isCreatingPreview"
+                     ng-click="channelCtrl.disableEditMode()">
+            {{ 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' | translate }}
+          </md-button>
+
+          <md-button class="qa-button-edit"
+                     ng-class="{ 'button-active': channelCtrl.isEditMode }"
+                     ng-if="channelCtrl.isEditable()"
+                     ng-disabled="channelCtrl.isCreatingPreview"
+                     ng-click="channelCtrl.enableEditMode()">
+            {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
+          </md-button>
+        </div>
       </div>
     </div>
     <md-progress-linear md-mode="indeterminate"
-                        ng-disabled="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded() && !channelCtrl.isCreatingPreview">
+      ng-disabled="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded() && !channelCtrl.isCreatingPreview">
     </md-progress-linear>
   </md-toolbar>
 
