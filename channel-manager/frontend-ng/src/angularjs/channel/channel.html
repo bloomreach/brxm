@@ -17,7 +17,7 @@
 <div layout="column" flex ng-hide="channelCtrl.isSubpageOpen()">
   <md-toolbar class="hippo-toolbar qa-toolbar">
     <div class="md-toolbar-tools">
-      <div flex="15" layout layout-align="start center">
+      <div flex="20" layout layout-align="start center">
         <channel-sidenav-toggle
           disabled="channelCtrl.isControlsDisabled()">
         </channel-sidenav-toggle>
@@ -27,14 +27,14 @@
         <page-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></page-actions>
       </div>
 
-      <div flex="70" layout layout-align="center center">
+      <div flex="60" layout layout-align="center center">
         <relevance-view-as ng-show="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded()"
           render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
         <viewport-toggle disabled="channelCtrl.isControlsDisabled()"></viewport-toggle>
       </div>
 
-      <div flex="15" layout layout-align="end center">
+      <div flex="20" layout layout-align="end center">
         <changes-menu ng-show="channelCtrl.isChannelLoaded()"
           on-manage-changes="channelCtrl.showSubpage('manage-changes')">
         </changes-menu>
