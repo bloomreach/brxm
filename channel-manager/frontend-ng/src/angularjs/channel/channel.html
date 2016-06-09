@@ -18,7 +18,9 @@
   <md-toolbar class="hippo-toolbar qa-toolbar">
     <div class="md-toolbar-tools">
       <div flex="15" layout layout-align="start center">
-        <channel-sidenav-toggle disabled="!channelCtrl.isChannelLoaded()"></channel-sidenav-toggle>
+        <channel-sidenav-toggle
+          disabled="channelCtrl.isControlsDisabled()">
+        </channel-sidenav-toggle>
 
         <channel-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
 
@@ -29,7 +31,7 @@
         <relevance-view-as ng-show="channelCtrl.isChannelLoaded() && channelCtrl.isPageLoaded()"
           render-variant="channelCtrl.getRenderVariant()"></relevance-view-as>
 
-        <viewport-toggle disabled="!channelCtrl.isChannelLoaded || !channelCtrl.isPageLoaded() || channelCtrl.isCreatingPreview"></viewport-toggle>
+        <viewport-toggle disabled="channelCtrl.isControlsDisabled()"></viewport-toggle>
       </div>
 
       <div flex="15" layout layout-align="end center">
@@ -41,15 +43,15 @@
           <md-button class="qa-button-view"
                      ng-class="{ 'button-active': !channelCtrl.isEditMode }"
                      ng-if="channelCtrl.isEditable()"
-                     ng-disabled="channelCtrl.isCreatingPreview"
+                     ng-disabled="channelCtrl.isControlsDisabled()"
                      ng-click="channelCtrl.disableEditMode()">
-            {{ 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' | translate }}
+                     {{ 'TOOLBAR_SWITCH_VIEWER_MODE_VIEW' | translate }}
           </md-button>
 
           <md-button class="qa-button-edit"
                      ng-class="{ 'button-active': channelCtrl.isEditMode }"
                      ng-if="channelCtrl.isEditable()"
-                     ng-disabled="channelCtrl.isCreatingPreview"
+                     ng-disabled="channelCtrl.isControlsDisabled()"
                      ng-click="channelCtrl.enableEditMode()">
             {{ 'TOOLBAR_SWITCH_VIEWER_MODE_EDIT' | translate }}
           </md-button>
