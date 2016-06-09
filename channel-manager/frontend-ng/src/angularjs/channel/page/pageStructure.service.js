@@ -453,7 +453,18 @@ export class PageStructureService {
   }
 
   reloadChannel(errorResponse) {
-    const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED' ? 'ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED' : 'ERROR_UPDATE_COMPONENT';
+    let errorKey;
+    switch (errorResponse.error) {
+      case 'ITEM_ALREADY_LOCKED':
+        errorKey = 'ERROR_UPDATE_COMPONENT_ITEM_ALREADY_LOCKED';
+        break;
+      case 'ITEM_NOT_FOUND':
+        errorKey = 'ERROR_COMPONENT_DELETED';
+        break;
+      default:
+        errorKey = 'ERROR_UPDATE_COMPONENT';
+    }
+
     this._showFeedbackAndReload(errorKey, errorResponse.parameterMap);
   }
 }

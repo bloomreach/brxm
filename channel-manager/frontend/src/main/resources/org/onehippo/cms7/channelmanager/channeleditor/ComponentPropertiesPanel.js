@@ -68,7 +68,7 @@
     initComponent: function () {
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel.superclass.initComponent.apply(this, arguments);
 
-      this.addEvents('visibleHeightChanged', 'onLoad', 'componentChanged');
+      this.addEvents('visibleHeightChanged', 'onLoad', 'componentChanged', 'loadFailed');
 
       this.on('beforetabchange', function (panel, newTab, currentTab) {
         var proceed;
@@ -134,7 +134,20 @@
 
       this.componentVariants.on('invalidated', this.updateUI, this);
 
-      this.updateUI();
+      this.updateUI().otherwise(function (response) {
+        var jsonData = Ext.util.JSON.decode(response.responseText),
+          data = {};
+
+        if (jsonData && jsonData.message && jsonData.message.startsWith('javax.jcr.ItemNotFoundException')) {
+          data.error = 'ITEM_NOT_FOUND';
+          data.parameterMap = {
+            component: component.label
+          };
+        } else {
+          data.error = 'UNKNOWN';
+        }
+        this.fireEvent('loadFailed', data);
+      }.bind(this));
     },
 
     updateUI: function (changedVariantIds, activeVariantId) {
@@ -147,7 +160,7 @@
       this.firePropertiesChangedEvents = false;
       this.beginUpdate();
       this.removeAll();
-      this.componentVariants.get().when(function (variants) {
+      return this.componentVariants.get().when(function (variants) {
         this._initTabs(variants, reusableTabs);
         this.adjustBodyWidth(this.tabWidth);
 
@@ -156,10 +169,7 @@
         this._selectBestMatchingTab(activeVariantId, variants).then(function () {
           this._loadTabs().always(this.endUpdate.bind(this));
         }.bind(this));
-      }.bind(this)).otherwise(function (response) {
-        Hippo.Msg.alert('Failed to get variants.', 'Only the default variant will be available: ' + response.status + ':' + response.statusText);
-        this.endUpdate();
-      }.bind(this));
+      }.bind(this)).otherwise(this.endUpdate.bind(this));
     },
 
     _getTabs: function () {

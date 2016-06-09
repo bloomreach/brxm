@@ -27,7 +27,7 @@
 
       this.componentPropertiesPanel = new Hippo.ChannelManager.ChannelEditor.ComponentPropertiesPanel({
         id: 'componentPropertiesPanel',
-        bubbleEvents: ['save', 'deleteComponent', 'variantDeleted', 'propertiesChanged', 'componentChanged', 'componentLocked'],
+        bubbleEvents: ['save', 'deleteComponent', 'variantDeleted', 'propertiesChanged', 'componentChanged', 'componentLocked', 'loadFailed'],
         resources: config.resources,
         locale: config.locale,
         composerRestMountUrl: config.composerRestMountUrl,
