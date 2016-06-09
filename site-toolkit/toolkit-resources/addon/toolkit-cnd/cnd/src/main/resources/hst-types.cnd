@@ -68,6 +68,7 @@
 - hst:async (boolean)
 - hst:asyncmode (string)
 - hst:cacheable (boolean)
+- hst:suppresswastemessage (boolean)
 
 
 [hst:containercomponentreference] > nt:base orderable

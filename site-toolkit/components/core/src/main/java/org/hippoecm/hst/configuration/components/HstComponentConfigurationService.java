@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.hippoecm.hst.core.internal.StringPool;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.ConfigurationUtils.createPrefixedParameterName;
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
 
 public class HstComponentConfigurationService implements HstComponentConfiguration, ConfigurationLockInfo {
 
@@ -146,7 +147,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      */
     private Boolean cacheable = null;
 
-
+    private Boolean suppressWasteMessage = null;
 
     /**
      * Optional iconPath relative to webapp for sites. If not configured, it is <code>null</code>. It does not inherit
@@ -331,6 +332,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         if (node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
             this.cacheable = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
+        }
+
+        if (node.getValueProvider().hasProperty(COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE)) {
+            this.suppressWasteMessage = node.getValueProvider().getBoolean(COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE);
         }
 
         if (type == Type.CONTAINER_COMPONENT) {
@@ -644,6 +649,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     @Override
+    public boolean isSuppressWasteMessage() {
+        return suppressWasteMessage == null ? false : suppressWasteMessage;
+    }
+
+    @Override
     public String getLabel() {
         return label;
     }
@@ -705,6 +715,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.async = child.async;
         copy.asyncMode = child.asyncMode;
         copy.cacheable = child.cacheable;
+        copy.suppressWasteMessage = child.suppressWasteMessage;
         copy.parameters = new LinkedHashMap<String, String>(child.parameters);
         copy.parameterNamePrefixSet = new HashSet<String>(child.parameterNamePrefixSet);
         // localParameters have no merging, but for copy, the localParameters are copied 
@@ -806,6 +817,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (this.cacheable == null) {
                     this.cacheable = referencedComp.cacheable;
+                }
+                if (suppressWasteMessage == null) {
+                    this.suppressWasteMessage = referencedComp.suppressWasteMessage;
                 }
 
                 if (this.lockedBy == null) {
@@ -938,6 +952,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.cacheable == null) {
             this.cacheable = childToMerge.cacheable;
+        }
+        if (this.suppressWasteMessage == null) {
+            this.suppressWasteMessage = childToMerge.suppressWasteMessage;
         }
         if (this.lockedBy == null) {
             this.lockedBy = childToMerge.lockedBy;

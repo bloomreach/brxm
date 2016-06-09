@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.components;
 
+import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstURL;
 
 
@@ -81,4 +82,11 @@ public interface HstComponentInfo {
      */
     boolean isCompositeCacheable();
 
+    /**
+     * When the {@link HstResponseState HstComponentWindow#getResponseState()} of this {@link HstComponentInfo} is not flushed
+     * by its parent rendering, a warning message about possible waste detection can be logged. If you want to
+     * suppress this message, {@link #isSuppressWasteMessage()} should return {@code true}
+     * @return {@code true} when possible waste messages about this component should be suppressed
+     */
+    boolean isSuppressWasteMessage();
 }

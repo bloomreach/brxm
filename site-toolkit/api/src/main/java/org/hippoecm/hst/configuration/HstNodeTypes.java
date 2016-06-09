@@ -97,6 +97,7 @@ public interface HstNodeTypes {
     String COMPONENT_PROPERTY_ICON_PATH = "hst:iconpath";
     String COMPONENT_PROPERTY_LABEL = "hst:label";
     String COMPONENT_PROPERTY_COMPONENT_FILTER_TAG = "hst:componentfiltertag";
+    String COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE = "hst:suppresswastemessage";
 
     String TEMPLATE_PROPERTY_RENDERPATH = "hst:renderpath";
     String TEMPLATE_PROPERTY_IS_NAMED = "hst:isnamed";

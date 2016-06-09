@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.channelmanager.ComponentWindowResponseAppender;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
@@ -45,6 +46,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE;
 
 /**
  * AggregationValve
@@ -293,12 +296,12 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             HstResponse topComponentHstResponse,
             boolean isComponentWindowRendered) {
 
-        HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RENDER_PHASE);
-        window.bindResponseState((HttpServletRequest) servletRequest,(HttpServletResponse) parentResponse);
+        HstRequest request = new HstRequestImpl((HttpServletRequest)servletRequest, requestContext, window, HstRequest.RENDER_PHASE);
+        window.bindResponseState((HttpServletRequest)servletRequest, (HttpServletResponse)parentResponse);
 
         HstResponse response;
         if (isComponentWindowRendered) {
-            response = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) parentResponse,
+            response = new HstResponseImpl((HttpServletRequest)servletRequest, (HttpServletResponse)parentResponse,
                     requestContext, window, topComponentHstResponse);
         } else {
             // use a noop response
@@ -377,7 +380,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
                             if (asynchronousComponentWindowRenderer == null) {
                                 log.warn("Unsupported asyncMode '{}' found for '{}'. Using default asyncMode '{}' instead. " +
-                                        "Supported asyncModes are '{}'.",
+                                                "Supported asyncModes are '{}'.",
                                         new String[]{asyncMode, window.getComponentInfo().getId(), defaultAsynchronousComponentWindowRenderingMode, asynchronousComponentWindowRendererMap.keySet().toString()});
                             }
                         }
@@ -427,7 +430,65 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             }
             HstResponse response = responseMap.get(window);
             getComponentInvoker().invokeRender(requestContainerConfig, request, response);
+
+            logPossibleWaste(responseMap, window);
         }
+    }
+
+    /**
+     * Note that HstServletResponseState#flushUnflushedChildrenHeaders(org.hippoecm.hst.core.container.HstComponentWindow) always
+     * flushes all components in the end, resulting in finally HstServletResponseState#isFlushed to always return {@code true},
+     * *but* at this point in processing, a child component might not yet be flushed because never referenced by an
+     * &lt;hst:include&gt; tag.
+     */
+    private void logPossibleWaste(final Map<HstComponentWindow, HstResponse> responseMap, final HstComponentWindow window) {
+        if (!log.isWarnEnabled()) {
+            return;
+        }
+        if (window.getChildWindowMap() == null) {
+            return;
+        }
+        for (HstComponentWindow childWindow : window.getChildWindowMap().values()) {
+            final HstResponse childResponse = responseMap.get(childWindow);
+            if (!(childResponse instanceof HstResponseImpl)) {
+                continue;
+            }
+            final HstResponseImpl childResponseImpl = (HstResponseImpl)childResponse;
+            if (!childWindow.getResponseState().isFlushed() && !childWindow.getComponentInfo().isSuppressWasteMessage()
+                    && StringUtils.isNotBlank(getRenderer(childWindow, childResponseImpl))) {
+                if (childResponse.getHeadElements() == null || childResponse.getHeadElements().isEmpty()) {
+                    // there is a window with a renderer but the content is never included in its ancestor component : That
+                    // is a waste. Hence this warning
+                    log.warn("POSSIBLE WASTE DETECTED in request '{}' : Component '{}' gets rendered but never adds anything to the response. Its " +
+                                    "renderer '{}' is never flushed to a parent component. This might be" +
+                                    " waste you are not aware of. If it is on purpose, for example because the component does only some" +
+                                    " processing that does not involve direct response contribution, you can mark the component with '{} = true'.",
+                            RequestContextProvider.get().getServletRequest(), childWindow.getComponent().getComponentConfiguration().getCanonicalPath(),
+                            getRenderer(childWindow, childResponseImpl), COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE);
+                } else {
+                    // there is a window with a renderer but the content is never included in its ancestor component apart from some
+                    // head elements : this is potential waste and unintended behavior has this info
+                    log.info("POSSIBLE WASTE DETECTED  in request '{}' : Component '{}' gets rendered but except for some head element(s) adds nothing to the response. " +
+                                    "Its renderer '{}' is never flushed to a parent component. This component might be waste." +
+                                    " If it is on purpose, for example because the component does only some" +
+                                    " processing that does not involve direct response contribution, you can mark the component with '{} = true'.",
+                            RequestContextProvider.get().getServletRequest(), childWindow.getComponent().getComponentConfiguration().getCanonicalPath(),
+                            getRenderer(childWindow, childResponseImpl), COMPONENT_PROPERTY_SUPPRESS_WASTE_MESSAGE);
+                }
+            }
+        }
+    }
+
+    private String getRenderer(final HstComponentWindow window, final HstResponseImpl hstResponse) {
+        String dispatchUrl = hstResponse.getRenderPath();
+        if (StringUtils.isNotBlank(dispatchUrl)) {
+            return dispatchUrl;
+        }
+        dispatchUrl = window.getRenderPath();
+        if (StringUtils.isNotBlank(dispatchUrl)) {
+            return dispatchUrl;
+        }
+        return window.getNamedRenderer();
     }
 
     /**
@@ -470,72 +531,282 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         public boolean isRendererSkipped() {
             return true;
         }
-        @Override public void addCookie(Cookie cookie) {}
-        @Override public void addHeadElement(Element element, String keyHint) {}
-        @Override public void addPreamble(Comment comment) {}
-        @Override public void addPreamble(Element element) {}
-        @Override public void addEpilogue(Comment comment) {}
-        @Override public boolean containsHeadElement(String keyHint) {return false;}
-        @Override public HstURL createActionURL() {return null;}
-        @Override public Comment createComment(String comment) {return null;}
-        @Override public HstURL createComponentRenderingURL() {return null;}
-        @Override public Element createElement(String tagName) {return null;}
-        @Override public HstURL createNavigationalURL(String pathInfo) {return null;}
-        @Override public HstURL createRenderURL() {return null;}
-        @Override public HstURL createResourceURL() {return null;}
-        @Override public HstURL createResourceURL(String referenceNamespace) {return null;}
-        @Override public void flushChildContent(String name) throws IOException {}
-        @Override public void flushChildContent(final String name, final Writer writer) throws IOException {}
-        @Override public void forward(String pathInfo) throws IOException {}
-        @Override public List<String> getChildContentNames() {return null;}
-        @Override public List<Element> getHeadElements() {return null;}
-        @Override public String getNamespace() {return null;}
-        @Override public Element getWrapperElement() {return null;}
-        @Override public void sendError(int sc, String msg) throws IOException {}
-        @Override public void sendError(int sc) throws IOException {}
-        @Override public void sendRedirect(String location) throws IOException {}
-        @Override public void setRenderParameter(String key, String value) {}
-        @Override public void setRenderParameter(String key, String[] values) {}
-        @Override public void setRenderParameters(Map<String, String[]> parameters) {}
-        @Override public void setRenderPath(String renderPath) {}
-        @Override public void setServeResourcePath(String serveResourcePath) {}
-        @Override public void setStatus(int sc) {}
-        @Override public void setWrapperElement(Element element) {}
-        @Override public void addDateHeader(String name, long date) {}
-        @Override public void addHeader(String name, String value) {}
-        @Override public void addIntHeader(String name, int value) {}
-        @Override public boolean containsHeader(String name) {return false;}
-        @Override public String encodeRedirectURL(String url) {return null;}
-        @Override public String encodeRedirectUrl(String url) {return null;}
-        @Override public String encodeURL(String url) {return null;}
-        @Override public String encodeUrl(String url) {return null;}
-        @Override public void setDateHeader(String name, long date) {}
-        @Override public void setHeader(String name, String value) {}
-        @Override public void setIntHeader(String name, int value) {}
-        @Override public void setStatus(int sc, String sm) {}
-        @Override public void flushBuffer() throws IOException {}
-        @Override public int getBufferSize() {return 0;}
-        @Override public String getCharacterEncoding() {return null;}
-        @Override public String getContentType() {return null;}
-        @Override public Locale getLocale() {return null;}
-        @Override public ServletOutputStream getOutputStream() throws IOException {return null;}
-        @Override public PrintWriter getWriter() throws IOException {return null;}
-        @Override public boolean isCommitted() {return false;}
-        @Override public void reset() {}
-        @Override public void resetBuffer() {}
-        @Override public void setBufferSize(int size) {}
-        @Override public void setCharacterEncoding(String charset) {}
-        @Override public void setContentLength(int len) {}
-        @Override public void setContentType(String type) {}
-        @Override public void setLocale(Locale loc) {}
+
+        @Override
+        public void addCookie(Cookie cookie) {
+        }
+
+        @Override
+        public void addHeadElement(Element element, String keyHint) {
+        }
+
+        @Override
+        public void addPreamble(Comment comment) {
+        }
+
+        @Override
+        public void addPreamble(Element element) {
+        }
+
+        @Override
+        public void addEpilogue(Comment comment) {
+        }
+
+        @Override
+        public boolean containsHeadElement(String keyHint) {
+            return false;
+        }
+
+        @Override
+        public HstURL createActionURL() {
+            return null;
+        }
+
+        @Override
+        public Comment createComment(String comment) {
+            return null;
+        }
+
+        @Override
+        public HstURL createComponentRenderingURL() {
+            return null;
+        }
+
+        @Override
+        public Element createElement(String tagName) {
+            return null;
+        }
+
+        @Override
+        public HstURL createNavigationalURL(String pathInfo) {
+            return null;
+        }
+
+        @Override
+        public HstURL createRenderURL() {
+            return null;
+        }
+
+        @Override
+        public HstURL createResourceURL() {
+            return null;
+        }
+
+        @Override
+        public HstURL createResourceURL(String referenceNamespace) {
+            return null;
+        }
+
+        @Override
+        public void flushChildContent(String name) throws IOException {
+        }
+
+        @Override
+        public void flushChildContent(final String name, final Writer writer) throws IOException {
+        }
+
+        @Override
+        public void forward(String pathInfo) throws IOException {
+        }
+
+        @Override
+        public List<String> getChildContentNames() {
+            return null;
+        }
+
+        @Override
+        public List<Element> getHeadElements() {
+            return null;
+        }
+
+        @Override
+        public String getNamespace() {
+            return null;
+        }
+
+        @Override
+        public Element getWrapperElement() {
+            return null;
+        }
+
+        @Override
+        public void sendError(int sc, String msg) throws IOException {
+        }
+
+        @Override
+        public void sendError(int sc) throws IOException {
+        }
+
+        @Override
+        public void sendRedirect(String location) throws IOException {
+        }
+
+        @Override
+        public void setRenderParameter(String key, String value) {
+        }
+
+        @Override
+        public void setRenderParameter(String key, String[] values) {
+        }
+
+        @Override
+        public void setRenderParameters(Map<String, String[]> parameters) {
+        }
+
+        @Override
+        public void setRenderPath(String renderPath) {
+        }
+
+        @Override
+        public void setServeResourcePath(String serveResourcePath) {
+        }
+
+        @Override
+        public void setStatus(int sc) {
+        }
+
+        @Override
+        public void setWrapperElement(Element element) {
+        }
+
+        @Override
+        public void addDateHeader(String name, long date) {
+        }
+
+        @Override
+        public void addHeader(String name, String value) {
+        }
+
+        @Override
+        public void addIntHeader(String name, int value) {
+        }
+
+        @Override
+        public boolean containsHeader(String name) {
+            return false;
+        }
+
+        @Override
+        public String encodeRedirectURL(String url) {
+            return null;
+        }
+
+        @Override
+        public String encodeRedirectUrl(String url) {
+            return null;
+        }
+
+        @Override
+        public String encodeURL(String url) {
+            return null;
+        }
+
+        @Override
+        public String encodeUrl(String url) {
+            return null;
+        }
+
+        @Override
+        public void setDateHeader(String name, long date) {
+        }
+
+        @Override
+        public void setHeader(String name, String value) {
+        }
+
+        @Override
+        public void setIntHeader(String name, int value) {
+        }
+
+        @Override
+        public void setStatus(int sc, String sm) {
+        }
+
+        @Override
+        public void flushBuffer() throws IOException {
+        }
+
+        @Override
+        public int getBufferSize() {
+            return 0;
+        }
+
+        @Override
+        public String getCharacterEncoding() {
+            return null;
+        }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public Locale getLocale() {
+            return null;
+        }
+
+        @Override
+        public ServletOutputStream getOutputStream() throws IOException {
+            return null;
+        }
+
+        @Override
+        public PrintWriter getWriter() throws IOException {
+            return null;
+        }
+
+        @Override
+        public boolean isCommitted() {
+            return false;
+        }
+
+        @Override
+        public void reset() {
+        }
+
+        @Override
+        public void resetBuffer() {
+        }
+
+        @Override
+        public void setBufferSize(int size) {
+        }
+
+        @Override
+        public void setCharacterEncoding(String charset) {
+        }
+
+        @Override
+        public void setContentLength(int len) {
+        }
+
+        @Override
+        public void setContentType(String type) {
+        }
+
+        @Override
+        public void setLocale(Locale loc) {
+        }
 
         /*
          * Servlet Spec 3.0 APIs
          */
-        public int getStatus() { return HttpServletResponse.SC_OK; }
-        public String getHeader(String name) { return null; }
-        public Collection<String> getHeaders(String name) { return Collections.emptyList(); }
-        public Collection<String> getHeaderNames() { return Collections.emptyList(); }
+        public int getStatus() {
+            return HttpServletResponse.SC_OK;
+        }
+
+        public String getHeader(String name) {
+            return null;
+        }
+
+        public Collection<String> getHeaders(String name) {
+            return Collections.emptyList();
+        }
+
+        public Collection<String> getHeaderNames() {
+            return Collections.emptyList();
+        }
     }
 
 }

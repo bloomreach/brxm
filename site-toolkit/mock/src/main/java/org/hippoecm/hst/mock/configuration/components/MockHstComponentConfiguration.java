@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -277,6 +277,11 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration,
     @Override
     public boolean isCompositeCacheable() {
         return compositeCacheable;
+    }
+
+    @Override
+    public boolean isSuppressWasteMessage() {
+        return false;
     }
 
     public void setCompositeCacheable(boolean compositeCacheable) {
