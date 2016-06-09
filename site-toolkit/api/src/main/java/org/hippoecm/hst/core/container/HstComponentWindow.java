@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,9 @@ package org.hippoecm.hst.core.container;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponent;
@@ -174,12 +177,23 @@ public interface HstComponentWindow {
      * @return the child component window which has the referenceName
      */
     HstComponentWindow getChildWindowByReferenceName(String referenceName);
-    
+
     /**
-     * Returns the response state of this component window
+     * Creates and binds the {@link HstResponseState} to this {@link HstComponentWindow}. After this method has been
+     * invoked, {@link #getResponseState()} will return the bound {@link HstResponseState}.
+     * If {@link #bindResponseState(HttpServletRequest, HttpServletResponse)} gets invoked for a second (or more) time,
+     * the method won't change any state and directly return
+     * @param request the HttpServletRequest request
+     * @param parentResponse the HttpServletResponse response of the parent window or in case of the root window the http
+     *                       response of the container
+     */
+    void bindResponseState(HttpServletRequest request, HttpServletResponse parentResponse);
+
+    /**
+     * Returns the response state of this component window. Can be {@code null} in case of for example a NOOP {@link  HstResponse}
      */
     HstResponseState getResponseState();
-    
+
     HstComponentInfo getComponentInfo();
     
     Object getAttribute(String name);

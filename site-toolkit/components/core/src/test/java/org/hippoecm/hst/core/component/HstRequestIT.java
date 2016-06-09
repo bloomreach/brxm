@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -151,8 +151,7 @@ public class HstRequestIT extends AbstractSpringTestCase {
         assertEquals(Locale.KOREAN, hstRequest.getLocale());
         assertEquals(Locale.KOREAN, hstRequest.getLocales().nextElement());
     }
-    
-    @Ignore
+
     private static HstComponentConfiguration createHstComponentConfigurationProxy(Map<String, Object> propsInput) {
         ProxyFactory proxyFactory = new ProxyFactory();
         final Map<String, Object> props = propsInput;

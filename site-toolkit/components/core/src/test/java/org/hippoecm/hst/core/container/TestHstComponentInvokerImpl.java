@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.hippoecm.hst.core.component.HstParameterValueConverter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
+import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -56,6 +57,7 @@ public class TestHstComponentInvokerImpl {
     private HstURLFactory hstUrlFactory;
     private HstContainerURLProvider hstContainerURLProvider;
     private HstComponent hstComponent;
+    private HstResponseState responseState;
     private HstComponentWindow componentWindow;
     private HstRequestContext requestContext;
     private HstParameterInfoProxyFactory hstParameterInfoProxyFactory;
@@ -78,10 +80,12 @@ public class TestHstComponentInvokerImpl {
         hstComponent = createNiceMock(HstComponent.class);
         expect(hstComponent.getComponentConfiguration()).andReturn(componentConfiguration);
 
+        responseState = createNiceMock(HstResponseState.class);
+
         componentWindow = createNiceMock(HstComponentWindow.class);
         expect(componentWindow.getComponent()).andReturn(hstComponent).anyTimes();
-
         expect(componentWindow.getRenderPath()).andReturn("window-renderer.ftl").anyTimes();
+        expect(componentWindow.getResponseState()).andReturn(responseState);
 
         requestContext = createNiceMock(HstRequestContext.class);
         expect(requestContext.getURLFactory()).andReturn(hstUrlFactory).anyTimes();
@@ -102,7 +106,7 @@ public class TestHstComponentInvokerImpl {
         expect(requestContext.getParameterInfoProxyFactory()).andReturn(hstParameterInfoProxyFactory).anyTimes();
 
         Object[] mocks = {hstContainerConfig, hstUrlFactory, hstContainerURLProvider, hstComponent, componentWindow,
-                componentConfiguration, resolvedSiteMapItem, requestContext};
+                responseState, componentConfiguration, resolvedSiteMapItem, requestContext};
         replay(mocks);
 
         invokeDispatchResult = new InvokeDispatchResult();
@@ -122,7 +126,7 @@ public class TestHstComponentInvokerImpl {
                 anyObject())).andReturn("window-renderer-variant.ftl");
 
         Object[] mocks = {hstContainerConfig, hstUrlFactory, hstContainerURLProvider, hstComponent, componentWindow,
-                componentConfiguration, resolvedSiteMapItem, requestContext};
+                responseState, componentConfiguration, resolvedSiteMapItem, requestContext};
         replay(mocks);
 
         invokeDispatchResult = new InvokeDispatchResult();
@@ -149,7 +153,7 @@ public class TestHstComponentInvokerImpl {
                 anyObject())).andReturn("window-renderer-professional.ftl");
 
         Object[] mocks = {hstContainerConfig, hstUrlFactory, hstContainerURLProvider, hstComponent, componentWindow,
-                componentConfiguration, resolvedSiteMapItem, requestContext};
+                responseState, componentConfiguration, resolvedSiteMapItem, requestContext};
         replay(mocks);
 
         invokeDispatchResult = new InvokeDispatchResult();
@@ -182,7 +186,7 @@ public class TestHstComponentInvokerImpl {
 
     private void invokeComponentInvoker(final InvokeDispatchResult invokeDispatchResult) throws ContainerException {
         HstRequestImpl hstRequest = new HstRequestImpl(request, requestContext, componentWindow, HstRequest.RENDER_PHASE);
-        HstResponseImpl hstResponse = new HstResponseImpl(request, response, requestContext, componentWindow, null, null);
+        HstResponseImpl hstResponse = new HstResponseImpl(request, response, requestContext, componentWindow, null);
 
         HstComponentInvoker invoker = new HstComponentInvokerImpl() {
             @Override

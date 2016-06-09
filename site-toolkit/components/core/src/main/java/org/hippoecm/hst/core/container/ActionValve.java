@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
-import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -53,14 +52,13 @@ public class ActionValve extends AbstractBaseOrderableValve {
         final HttpServletResponse servletResponse = context.getServletResponse();
 
         final HstComponentWindow window = context.getRootComponentWindow();
-
-        HstResponseState responseState = new HstServletResponseState(servletRequest, servletResponse);
+        window.bindResponseState(servletRequest, servletResponse);
         HstRequest request = new HstRequestImpl(servletRequest, requestContext, window, HstRequest.ACTION_PHASE);
-        HstResponseImpl response = new HstResponseImpl(servletRequest, servletResponse, requestContext, window, responseState, null);
-        ((HstComponentWindowImpl) window).setResponseState(responseState);
+        HstResponseImpl response = new HstResponseImpl(servletRequest, servletResponse, requestContext, window, null);
 
         getComponentInvoker().invokeAction(context.getRequestContainerConfig(), request, response);
 
+        final HstResponseState responseState = window.getResponseState();
         // page error handling...
         PageErrors pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
         if (pageErrors != null) {
