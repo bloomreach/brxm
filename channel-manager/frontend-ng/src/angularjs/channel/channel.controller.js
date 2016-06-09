@@ -67,6 +67,10 @@ export class ChannelCtrl {
     });
   }
 
+  isControlsDisabled() {
+    return this.isCreatingPreview || !this.isChannelLoaded() || !this.isPageLoaded();
+  }
+
   isChannelLoaded() {
     return this.ChannelService.hasChannel();
   }
