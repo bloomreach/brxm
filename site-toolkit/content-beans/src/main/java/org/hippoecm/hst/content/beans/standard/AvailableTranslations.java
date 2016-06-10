@@ -102,7 +102,7 @@ public class AvailableTranslations<K extends HippoBean> implements HippoAvailabl
         if (!node.hasProperty(HippoTranslationNodeType.ID)) {
             log.debug("No translations for '{}' since property '{}' not available", node.getPath(),
                     HippoTranslationNodeType.ID);
-            translations = Collections.EMPTY_MAP;
+            translations = Collections.emptyMap();
             return;
         }
 
