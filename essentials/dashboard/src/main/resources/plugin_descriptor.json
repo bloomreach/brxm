@@ -355,7 +355,7 @@
     {
         "@type": "plugin",
         "id": "galleryPlugin",
-        "name": "Gallery manager",
+        "name": "Gallery Manager",
         "icon" : "/essentials/images/icons/gallery-manager.png",
         "introduction": "Manage your project's Image Sets.",
         "restClasses": ["org.onehippo.cms7.essentials.plugins.gallery.GalleryPluginResource"],
