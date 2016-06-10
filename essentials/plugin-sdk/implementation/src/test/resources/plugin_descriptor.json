@@ -42,7 +42,7 @@
         
         "enabled": false,
         "@type": "plugin",
-        "introduction": "Configuration of Hippo image sets",
+        "introduction": "Configuration of Hippo Image Sets",
         "name": "Gallery plugin",
         "id": "galleryPlugin",
 

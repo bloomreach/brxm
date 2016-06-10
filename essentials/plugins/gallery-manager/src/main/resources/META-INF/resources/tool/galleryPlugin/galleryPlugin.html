@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@
             </div>
             <div class="solid-child left-footer">
                 <button class="btn btn-default btn-block" data-ng-click="addImageSet()">
-                    + Add image set
+                    + Add Image Set
                 </button>
             </div>
         </div>
@@ -44,15 +44,16 @@
             <div class="alert alert-warning">
                 <p>
                     Hippo CMS stores several variants of each uploaded image.
-                    All variants of an image are together called an image set, and can be seen in the
-                    image gallery in the CMS. Read more about image sets here:
-                    <a target='_blank' href='http://www.onehippo.org/library/concepts/images-and-assets/create-a-custom-image-set.html'>
-                        http://www.onehippo.org/library/concepts/images-and-assets/create-a-custom-image-set.html
-                    </a>
+                    All variants of an image are together called an Image Set, and can be uploaded in the
+                    <a target='_blank' href='https://www.onehippo.org/library/end-user-manual/images.html'>Images section</a> of the Content perspective in the CMS.
                 </p>
                 <p>
-                    No image sets have been created yet (beyond the CMS' default image set). You need to create
-                    a custom image set first before you can use the Gallery Manager.
+                    No custom Image Sets have been created yet, there is only the default Hippo Image Set. You can create
+                    custom Image Sets with this Gallery Manager tool.
+                </p>
+                <p>
+                    This tool will create all the <a target='_blank' href='https://www.onehippo.org/library/concepts/images-and-assets/create-a-custom-image-set.html'>technical configuration</a>
+                    for the custom Image Sets.
                 </p>
             </div>
         </div>
@@ -63,7 +64,7 @@
             </div>
             <h1>{{selectedImageSet.nameAfterPrefix}}</h1>
             <dl>
-                <dt>Full image set name</dt>
+                <dt>Full Image Set name</dt>
                 <dd>{{selectedImageSet.name}}</dd>
             </dl>
             <table class="table table-hover">
@@ -101,22 +102,22 @@
     <!--Image Set Add Modal Window-->
     <script type="text/ng-template" id="imageSetAddModal.html">
         <div class="modal-header">
-            <h3 class="modal-title">Create a new image set</h3>
+            <h3 class="modal-title">Create a new Image Set</h3>
         </div>
         <form name="imageSetAddForm">
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="imageSetAddName">Image set name</label>
+                    <label for="imageSetAddName">Image Set name</label>
                     <input type="text" class="form-control" id="imageSetAddName" name="name"
                            ng-model="name" required ng-pattern="/^[a-zA-Z]{2,}$/" autofocus
-                           uib-tooltip="Image set names must consist of two or more alphabetic characters."
+                           uib-tooltip="Image Set names must consist of two or more alphabetic characters"
                            tooltip-placement="top" tooltip-trigger="mouseenter">
                 </div>
                 <div class="checkbox">
                     <label uib-tooltip="{{updateHint}}"
                            tooltip-placement="top" tooltip-trigger="mouseenter">
                         <input type="checkbox" ng-model="updateExisting">
-                        Update existing image sets and regenerate HST beans
+                        Update existing Image Sets and regenerate HippoBeans
                     </label>
                 </div>
             </div>
@@ -139,8 +140,8 @@
                     <label for="variantAddName">Variant name</label>
                     <input type="text" class="form-control" id="variantAddName" name="name"
                            ng-model="name" required ng-pattern="/^[a-zA-Z]{2,}$/" autofocus
+                           uib-tooltip="Variant names must be unique and consist of two or more alphabetic characters"
                            variant-name image-set="imageSet">
-                    <span class="help-block">Variant names must be unique and consist of two or more alphabetic characters.</span>
                 </div>
             </div>
             <div class="modal-footer">
@@ -203,7 +204,7 @@
                         <div class="col-xs-9">
                             <input type="text" class="form-control" id="variantEditWidth"
                                    ng-model="variant.width" required ng-pattern="/^\d+$/" autofocus
-                                   uib-tooltip="A width constraint is expressed in units of px. A value of 0 means no width constraint."
+                                   uib-tooltip="A width constraint is expressed in units of px. A value of 0 means no width constraint"
                                    tooltip-placement="top" tooltip-trigger="mouseenter">
                         </div>
                     </div>
@@ -212,7 +213,7 @@
                         <div class="col-xs-9">
                             <input type="text" class="form-control" id="variantEditHeight"
                                    ng-model="variant.height" required ng-pattern="/^\d+$/"
-                                   uib-tooltip="A height constraint is expressed in units of px. A value of 0 means no height constraint."
+                                   uib-tooltip="A height constraint is expressed in units of px. A value of 0 means no height constraint"
                                    tooltip-placement="top" tooltip-trigger="mouseenter">
                         </div>
                     </div>

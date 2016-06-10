@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@
 
             $scope.updateExisting = true;
             $scope.updateHint = "Selecting this checkbox has the effect that all images existing in the CMS "
-                              + "will be converted to this image set. Image (link) fields of document beans will "
+                              + "will be converted to this Image Set. Image (link) fields of document beans will "
                               + "be updated to this image set, too.";
 
             $scope.create = function() {
@@ -200,7 +200,7 @@
             var endpoint = $rootScope.REST.dynamic + "galleryplugin";
             $scope.imageSets = [];
             $scope.selectedImageSet = null;
-            $scope.feedback = "You have changed image sets and may want to update your HST image set beans now. "
+            $scope.feedback = "You have changed Image Sets and may want to update your Hippo Image Set beans now. "
                 + "You can use the BeanWriter tool for this. Also, this changed the CMS configuration. "
                 + "If you are logged in to the CMS, please log in again before uploading new images.";
 
