@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.observation.Event;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +43,7 @@ import org.onehippo.cms7.services.webfiles.WebFile;
 import org.onehippo.cms7.services.webfiles.WebFileBundle;
 import org.onehippo.cms7.services.webfiles.WebFileException;
 import org.onehippo.cms7.services.webfiles.WebFileNotFoundException;
+import org.onehippo.cms7.services.webfiles.WebFileTagNotFoundException;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +74,10 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         final HttpServletResponse response = context.getServletResponse();
 
         try {
-            final WebFile webFile = getWebFile(requestContext);
-            setHeaders(response, webFile);
+            final CacheableWebFile webFile = getWebFile(requestContext);
+            // only set client cache headers in case version was present in request
+            final boolean includeCacheHeaders = webFile.getVersion() != null;
+            setHeaders(response, webFile, includeCacheHeaders);
             writeWebFile(response, webFile);
         } catch (WebFileException e) {
             final HttpServletRequest request = context.getServletRequest();
@@ -91,7 +95,7 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         context.invokeNext();
     }
 
-    private WebFile getWebFile(final HstRequestContext requestContext) throws RepositoryException, ContainerException, IOException, WebFileException {
+    private CacheableWebFile getWebFile(final HstRequestContext requestContext) throws RepositoryException, ContainerException, IOException, WebFileException {
         final WebFilesService service = getWebFilesService();
 
         final Session session = requestContext.getSession();
@@ -126,12 +130,14 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         }
 
         final String contentPath = "/" + relativeContentPath;
-        final String version = getVersion(requestContext, contentPath);
-        final String cacheKey = createCacheKey(bundleName, contentPath, version);
+        final String version = getVersion(requestContext);
+
+        final String cacheKey = WebFilesService.JCR_ROOT_PATH + "/" + bundleName + contentPath;
 
         if (negativeWebFileCache.getIfPresent(cacheKey) != null) {
             throw new WebFileNotFoundException("Negative cache contains requested web file.");
         }
+
         final CacheElement cacheElement = webFileCache.get(cacheKey);
         if (cacheElement == null) {
             return cacheWebFile(webFileBundle, contentPath, version, cacheKey);
@@ -144,8 +150,8 @@ public class WebFileValve extends AbstractBaseOrderableValve {
             throws ContainerException, RepositoryException, WebFileException, IOException {
         final String bundleName = WebFileUtils.getBundleName(requestContext);
 
-        final String version = getVersion(requestContext, WHITE_LIST_CONTENT_PATH);
-        final String cacheKey = createCacheKey(bundleName, WHITE_LIST_CONTENT_PATH, version);
+        final String version = getVersion(requestContext);
+        final String cacheKey= WebFilesService.JCR_ROOT_PATH + "/" + bundleName + WHITE_LIST_CONTENT_PATH;
 
         try {
             final CacheElement cacheElement = webFileCache.get(cacheKey);
@@ -181,51 +187,42 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         return service;
     }
 
-    private String getVersion(final HstRequestContext requestContext, final String contentPath) throws WebFileException {
+    private String getVersion(final HstRequestContext requestContext) throws WebFileException {
         final String version = requestContext.getResolvedSiteMapItem().getParameter("version");
         if (version == null) {
-            String msg = String.format("Cannot serve web file '%s' for mount '%s' because sitemap item" +
-                            "'%s' does not contain version param.", contentPath,
-                    requestContext.getResolvedMount().getMount(),
-                    requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getQualifiedId());
-            throw new WebFileException(msg);
+            log.info("Version is null. Serving latest WebFile version and don't set any cache headers on the response");
         }
         return version;
     }
 
-    static String createCacheKey(final String bundleName, final String contentPath, final String version) {
-        final StringBuilder cacheKeyBuilder = new StringBuilder(bundleName).append('\uFFFF');
-        cacheKeyBuilder.append(version).append(contentPath);
-        return cacheKeyBuilder.toString();
-    }
-
-    private WebFile cacheWebFile(final WebFileBundle webFileBundle, final String contentPath, final String version, final String cacheKey) throws IOException {
+    private CacheableWebFile cacheWebFile(final WebFileBundle webFileBundle, final String contentPath, final String version, final String cacheKey) throws IOException {
         try {
             final WebFile webFile = getWebFileFromBundle(webFileBundle, contentPath, version);
-            final CacheableWebFile cacheableWebFile = new CacheableWebFile(webFile);
+            final CacheableWebFile cacheableWebFile = new CacheableWebFile(webFile, version);
             final CacheElement element = webFileCache.createElement(cacheKey, cacheableWebFile);
             webFileCache.put(element);
             return cacheableWebFile;
-        } catch (WebFileNotFoundException e) {
+        } catch (WebFileException e) {
             if (log.isDebugEnabled()) {
                 log.info("Cannot serve binary for '{}'.", contentPath, e);
             } else {
                 log.info("Cannot serve binary for '{}' : ", contentPath, e.toString());
             }
             negativeWebFileCache.put(cacheKey, Boolean.TRUE);
+            clearBlockingLock(cacheKey);
             throw e;
          } catch (Exception e) {
-            throw e;
-        } finally {
             clearBlockingLock(cacheKey);
+            throw e;
         }
     }
 
     private WebFile getWebFileFromBundle(final WebFileBundle webFileBundle, final String contentPath, final String version) throws IOException {
-        if (version.equals(webFileBundle.getAntiCacheValue())) {
+        if (version == null || version.equals(webFileBundle.getAntiCacheValue())) {
             return webFileBundle.get(contentPath);
         } else {
-            return webFileBundle.get(contentPath, version);
+            throw new WebFileTagNotFoundException("Currently only version == null or version equal to anti cache value " +
+                    "is supported");
         }
     }
 
@@ -239,13 +236,16 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         webFileCache.put(element);
     }
 
-    private static void setHeaders(final HttpServletResponse response, final WebFile webFile) throws RepositoryException {
+    private static void setHeaders(final HttpServletResponse response, final WebFile webFile,
+                                   final boolean includeCacheHeaders) throws RepositoryException {
         // no need for ETag since expires 1 year
         response.setHeader("Content-Length", Long.toString(webFile.getBinary().getSize()));
         response.setContentType(webFile.getMimeType());
-        // one year ahead max, see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
-        response.setDateHeader("Expires", ONE_YEAR_MILLISECONDS + System.currentTimeMillis());
-        response.setHeader("Cache-Control", "max-age=" + ONE_YEAR_SECONDS);
+        if (includeCacheHeaders) {
+            // one year ahead max, see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21
+            response.setDateHeader("Expires", ONE_YEAR_MILLISECONDS + System.currentTimeMillis());
+            response.setHeader("Cache-Control", "max-age=" + ONE_YEAR_SECONDS);
+        }
     }
 
     private static void writeWebFile(final HttpServletResponse response, final WebFile webFile) throws IOException {
@@ -256,4 +256,12 @@ public class WebFileValve extends AbstractBaseOrderableValve {
         }
     }
 
+    public void onEvent(final Event event) throws RepositoryException {
+        final String path = event.getPath();
+        final boolean remove = webFileCache.remove(path);
+        if (remove) {
+            log.debug("Removed '{}' from webFileCache", path);
+        }
+        negativeWebFileCache.invalidate(path);
+    }
 }
