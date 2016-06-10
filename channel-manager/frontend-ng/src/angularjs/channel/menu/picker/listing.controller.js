@@ -18,4 +18,38 @@ export class ListingCtrl {
   selectDocument(document) {
     this.selectedDocument = document;
   }
+
+  _getDocumentStatusIcon(item) {
+    console.log(item.state);
+    const docState = item.state;
+    let iconPath;
+
+    switch (docState) {
+      case 'new':
+        iconPath = 'images/document-status-new.svg';
+        break;
+      case 'changed':
+        iconPath = 'images/document-status-changed.svg';
+        break;
+      case 'live':
+        iconPath = 'images/document-status-live.svg';
+        break;
+      default:
+        iconPath = 'images/document.svg';
+    }
+
+    return iconPath;
+  }
+
+  getItemIcon(item) {
+    let iconPath;
+
+    if (item.type === 'folder') {
+      iconPath = 'images/folder-closed.svg';
+    } else {
+      iconPath = this._getDocumentStatusIcon(item);
+    }
+
+    return iconPath;
+  }
 }
