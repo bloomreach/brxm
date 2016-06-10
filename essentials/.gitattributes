@@ -755,6 +755,7 @@ plugins/gallery-manager/src/main/java/org/onehippo/cms7/essentials/plugins/galle
 plugins/gallery-manager/src/main/java/org/onehippo/cms7/essentials/plugins/gallery/ImageModel.java -text
 plugins/gallery-manager/src/main/java/org/onehippo/cms7/essentials/plugins/gallery/TranslationModel.java -text
 plugins/gallery-manager/src/main/resources/ImageSetUpdater.groovy -text
+plugins/gallery-manager/src/main/resources/META-INF/resources/tool/galleryPlugin/galleryPlugin.css -text
 plugins/gallery-manager/src/main/resources/META-INF/resources/tool/galleryPlugin/galleryPlugin.html -text
 plugins/gallery-manager/src/main/resources/META-INF/resources/tool/galleryPlugin/galleryPlugin.js -text
 plugins/gallery-manager/src/main/resources/META-INF/web-fragment.xml -text

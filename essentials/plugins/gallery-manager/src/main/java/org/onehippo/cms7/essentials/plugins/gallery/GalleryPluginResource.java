@@ -273,7 +273,7 @@ public class GalleryPluginResource extends BaseResource {
         final String imageVariantName = values.get("imageVariantName");
         final String selectedImageSet = values.get("selectedImageSet");
         if (Strings.isNullOrEmpty(imageVariantName) || Strings.isNullOrEmpty(selectedImageSet)) {
-            return createErrorMessage("Image set name or image variant name were empty", response);
+            return createErrorMessage("Image Set name or image variant name were empty", response);
         }
         GalleryModel ourModel = null;
         final List<GalleryModel> models = fetchExisting(servletContext);
