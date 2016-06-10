@@ -22,6 +22,13 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
 
+  <!--
+  HSTTWO-3623: Demonstration purpose, simple cacheable custom HippoTranslationBeanService component.
+               The following bean override will replace the default HippoTranslationBeanService to cache
+               translation ID vs translation node ID set for performance.
+               You can comment out the following bean to use the default one.
+  -->
+
   <bean id="org.hippoecm.hst.content.service.translation.HippoTranslationBeanService"
         class="org.hippoecm.hst.demo.content.service.ExampleCachingHippoTranslationBeanService">
   </bean>
