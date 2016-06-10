@@ -34,6 +34,9 @@ export class HstService {
   }
 
   getChannel(id) {
+    if (!id) {
+      throw new Error('Channel id must be defined');
+    }
     return this.doGet(this.config.rootUuid, 'channels', id);
   }
 
