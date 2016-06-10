@@ -29,10 +29,11 @@ import org.hippoecm.hst.content.service.translation.HippoTranslationBeanService;
 import org.hippoecm.hst.content.service.translation.HippoTranslationBeanServiceImpl;
 
 /**
- * Demonstration purpose {@link HippoTranslationBeanService} component implementation,
- * which caches translation ID vs translation document nodes mappings for performance.
+ * Demonstration purpose, very simple {@link HippoTranslationBeanService} component implementation,
+ * which caches translation ID vs translation document node ID set mappings for performance.
  */
-public class ExampleCachingHippoTranslationBeanService extends HippoTranslationBeanServiceImpl {
+public class ExampleCachingHippoTranslationBeanService extends HippoTranslationBeanServiceImpl
+        implements CachingHippoTranslationBeanService {
 
     private final Map<String, List<String>> translationIdNodeIdsCacheMap = new ConcurrentHashMap<>();
 
@@ -70,4 +71,8 @@ public class ExampleCachingHippoTranslationBeanService extends HippoTranslationB
         }
     }
 
+    @Override
+    public void clearCache() {
+        translationIdNodeIdsCacheMap.clear();
+    }
 }
