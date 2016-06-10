@@ -63,7 +63,8 @@
         <span class="icon-bar"></span>
       </button>
       <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge badge-primary notification-badge">{{TOTAL_NEEDS_ATTENTION}}</span>
-      <a class="navbar-brand" href="${pageContext.request.contextPath}">Hippo setup</a>
+      <a class="navbar-brand" href="${pageContext.request.contextPath}"
+         title="version: ${project.version}">Hippo setup</a>
       <p class="navbar-text navbar-title">
         {{getPageTitle()}}
       </p>
@@ -114,15 +115,8 @@
 
 
 <div class="main-content">
-  <div class="container-fluid flex-column">
-    <div class="flex-child flex-column" ui-view autoscroll="false">
-      <h2>initializing...</h2>
-    </div>
-    <div class="solid-child">
-      <p class="text-center" id="footer">
-        <em>version: ${project.version}</em>
-      </p>
-    </div>
+  <div class="container-fluid flex-column" ui-view>
+    <h2>initializing...</h2>
   </div>
 </div>
 <!-- Include the loader.js script -->

@@ -14,9 +14,9 @@
   limitations under the License.
   -->
 
-<div class="panel panel-default flex-column flex-child" ng-controller="GalleryManagerMainCtrl">
+<div class="panel panel-default flex-column flex-child full-page" ng-controller="GalleryManagerMainCtrl">
     <div class="panel-heading">
-        <h3>Gallery Manager</h3>
+        <h2>Gallery Manager</h2>
     </div>
     <div class="flex-row flex-child">
         <!-- left side: list of all image sets -->
@@ -62,11 +62,8 @@
                 <hippo-icon name="times" class="pull-right" ng-click="showFeedback = !showFeedback"></hippo-icon>
                 <p>{{feedback}}</p>
             </div>
-            <h1>{{selectedImageSet.nameAfterPrefix}}</h1>
-            <dl>
-                <dt>Full Image Set name</dt>
-                <dd>{{selectedImageSet.name}}</dd>
-            </dl>
+            <h3>{{selectedImageSet.nameAfterPrefix}}</h3>
+            <p>Full Image Set name: {{selectedImageSet.name}}</p>
             <table class="table table-hover">
                 <thead>
                     <tr>
