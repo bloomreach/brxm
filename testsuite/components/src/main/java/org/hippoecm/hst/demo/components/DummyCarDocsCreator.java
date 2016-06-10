@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -72,12 +72,6 @@ public class DummyCarDocsCreator {
             
             Node handle = crFolder.addNode(randomCar.brand + "-" + cal.getTimeInMillis(), "hippo:handle"); 
             handle.addMixin("mix:referenceable");
-            handle.addMixin("hippo:translated");
-            
-            Node translation = handle.addNode("hippo:translation","hippo:translation");
-            translation.setProperty("hippo:message", randomCar.brand + "-" + cal.getTimeInMillis());
-            translation.setProperty("hippo:language", "");
-            
             Node doc = handle.addNode(randomCar.brand + "-"+cal.getTimeInMillis(), "demosite:productdocument");
             doc.addMixin("mix:referenceable");
             

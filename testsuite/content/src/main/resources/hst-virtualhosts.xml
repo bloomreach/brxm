@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-  Copyright (C) 2010-2014 Hippo B.V. Licensed under the Apache License,
+  Copyright (C) 2010-2016 Hippo B.V. Licensed under the Apache License,
   Version 2.0 (the "License"); you may not use this file except in
   compliance with the License. You may obtain a copy of the License at
 
@@ -188,9 +188,6 @@
           <sv:property sv:name="hst:roles" sv:type="String">
             <sv:value>everybody</sv:value>
           </sv:property>
-          <sv:property sv:name="hst:isSite" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
           <sv:property sv:name="hst:subjectbasedsession"
             sv:type="Boolean">
             <sv:value>true</sv:value>
@@ -216,9 +213,6 @@
             </sv:property>
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/content/gallery</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:isSite" sv:type="Boolean">
-              <sv:value>false</sv:value>
             </sv:property>
             <sv:property sv:name="hst:types" sv:type="String">
               <sv:value>rest</sv:value>
@@ -246,9 +240,6 @@
             <sv:property sv:name="hst:mountpoint" sv:type="String">
               <sv:value>/content/assets</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:isSite" sv:type="Boolean">
-              <sv:value>false</sv:value>
-            </sv:property>
             <sv:property sv:name="hst:types" sv:type="String">
               <sv:value>rest</sv:value>
             </sv:property>
@@ -260,9 +251,6 @@
           </sv:property>
           <sv:property sv:name="hst:alias" sv:type="String">
             <sv:value>restservices</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:isSite" sv:type="Boolean">
-            <sv:value>false</sv:value>
           </sv:property>
           <sv:property sv:name="hst:ismapped" sv:type="Boolean">
             <sv:value>true</sv:value>
@@ -337,9 +325,6 @@
               sv:type="String">
               <sv:value>JaxrsRestContentPipeline</sv:value>
             </sv:property>
-            <sv:property sv:name="hst:isSite" sv:type="Boolean">
-              <sv:value>false</sv:value>
-            </sv:property>
             <sv:property sv:name="hst:authenticated"
               sv:type="Boolean">
               <sv:value>false</sv:value>
@@ -374,9 +359,6 @@
               <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                 <sv:value>false</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:isSite" sv:type="Boolean">
-                <sv:value>false</sv:value>
-              </sv:property>
               <sv:property sv:name="hst:mountpoint" sv:type="String">
                 <sv:value>/content/gallery</sv:value>
               </sv:property>
@@ -402,9 +384,6 @@
               <sv:property sv:name="hst:types" sv:type="String">
                 <sv:value>preview-rest</sv:value>
               </sv:property>
-              <sv:property sv:name="hst:isSite" sv:type="Boolean">
-                <sv:value>false</sv:value>
-              </sv:property>
               <sv:property sv:name="hst:ismapped" sv:type="Boolean">
                 <sv:value>false</sv:value>
               </sv:property>
@@ -419,9 +398,6 @@
             </sv:property>
             <sv:property sv:name="hst:alias" sv:type="String">
               <sv:value>restservices</sv:value>
-            </sv:property>
-            <sv:property sv:name="hst:isSite" sv:type="Boolean">
-              <sv:value>false</sv:value>
             </sv:property>
             <sv:property sv:name="hst:ismapped" sv:type="Boolean">
               <sv:value>true</sv:value>

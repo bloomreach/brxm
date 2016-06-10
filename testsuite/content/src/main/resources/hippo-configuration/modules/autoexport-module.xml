@@ -7,7 +7,7 @@
       <sv:value>autoexport:config</sv:value>
     </sv:property>
     <sv:property sv:name="autoexport:enabled" sv:type="Boolean">
-      <sv:value>true</sv:value>
+      <sv:value>false</sv:value>
     </sv:property>
     <sv:property sv:name="autoexport:excluded" sv:type="String" sv:multiple="true">
       <sv:value>/hst:hst/hst:configurations/*-preview</sv:value>

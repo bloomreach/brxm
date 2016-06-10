@@ -29,19 +29,11 @@ limitations under the License. -->
     </sv:property>
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
       <sv:value>mix:referenceable</sv:value>
-      <sv:value>hippo:translated</sv:value>
+      <sv:value>hippo:named</sv:value>
     </sv:property>
-    <sv:node sv:name="hippo:translation">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:translation</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:language" sv:type="String">
-        <sv:value/>
-      </sv:property>
-      <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Home Page</sv:value>
-      </sv:property>
-    </sv:node>
+    <sv:property sv:name="hippo:name" sv:type="String">
+      <sv:value>Home Page</sv:value>
+    </sv:property>
     <sv:node sv:name="homepage">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>intranet:textdocument</sv:value>

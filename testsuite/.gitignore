@@ -99,6 +99,4 @@ solr/.settings
 solr/target
 /storage
 /target
-usage-statistics-logger/*.iml
-usage-statistics-logger/target
 /velocity.log

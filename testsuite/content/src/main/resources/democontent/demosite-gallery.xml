@@ -1,6 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" sv:name="gallery" h:merge="combine">
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"  xmlns:h="http://www.onehippo.org/jcr/xmlimport" sv:name="gallery"  h:merge="combine">
   <sv:property sv:name="hippostd:gallerytype" sv:type="String" h:merge="override" sv:multiple="true">
+    <sv:value>demosite:qaimageset</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippogallery:stdImageGallery</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+    <sv:value>mix:referenceable</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>4e557532-98ff-4673-a2a9-5cdbb2822eed</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+    <sv:value>new-image-folder</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippostd:gallerytype" sv:type="String" sv:multiple="true">
     <sv:value>demosite:qaimageset</sv:value>
   </sv:property>
   <sv:node sv:name="images">
@@ -23,18 +37,18 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
         <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>2ae887e8-bbec-44da-82b4-c3b2c55a522b</sv:value>
       </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippo:discriminator" sv:type="String"/>
+      <sv:property sv:name="hippo:discriminator" sv:type="String" sv:multiple="true"/>
       <sv:node sv:name="screenshot_cms_small.jpg">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>demosite:qaimageset</sv:value>
         </sv:property>
-        <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
+        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
           <sv:value>live</sv:value>
           <sv:value>preview</sv:value>
         </sv:property>
@@ -110,18 +124,18 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippo:handle</sv:value>
       </sv:property>
-      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
         <sv:value>mix:referenceable</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:uuid" sv:type="String">
         <sv:value>07464293-3c92-4ebe-8f01-89bd3e92a0bf</sv:value>
       </sv:property>
-      <sv:property sv:multiple="true" sv:name="hippo:discriminator" sv:type="String"/>
+      <sv:property sv:name="hippo:discriminator" sv:type="String" sv:multiple="true"/>
       <sv:node sv:name="nopic.gif">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>demosite:qaimageset</sv:value>
         </sv:property>
-        <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
+        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
           <sv:value>live</sv:value>
           <sv:value>preview</sv:value>
         </sv:property>
