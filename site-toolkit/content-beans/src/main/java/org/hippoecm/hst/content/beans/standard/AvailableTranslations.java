@@ -16,6 +16,7 @@
 package org.hippoecm.hst.content.beans.standard;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -101,6 +102,7 @@ public class AvailableTranslations<K extends HippoBean> implements HippoAvailabl
         if (!node.hasProperty(HippoTranslationNodeType.ID)) {
             log.debug("No translations for '{}' since property '{}' not available", node.getPath(),
                     HippoTranslationNodeType.ID);
+            translations = Collections.EMPTY_MAP;
             return;
         }
 
