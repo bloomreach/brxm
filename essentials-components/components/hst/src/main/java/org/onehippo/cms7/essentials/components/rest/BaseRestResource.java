@@ -167,7 +167,7 @@ public abstract class BaseRestResource extends AbstractResource {
         final HstQueryResult results = query.execute();
         final HippoBeanIterator beans = results.getHippoBeans();
         List<T> retval = new ArrayList<>();
-        if (beans.hasNext()) {
+        while (beans.hasNext()) {
             @SuppressWarnings({UNCHECKED})
             final T bean = (T)beans.nextHippoBean();
             if (bean != null) {
