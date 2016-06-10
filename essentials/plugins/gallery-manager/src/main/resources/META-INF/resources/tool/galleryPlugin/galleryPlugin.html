@@ -22,7 +22,7 @@
         <!-- left side: list of all image sets -->
         <div class="solid-child flex-column left-col">
             <div class="flex-child">
-                <div class="left-heading">Image Sets</div>
+                <div class="left-heading">Image Set Definitions</div>
                 <div class="list-group">
                     <a href="#" title="{{imageSet.name}}" class="list-group-item"
                        data-ng-class="{'active': isSelected(imageSet)}"
@@ -35,7 +35,7 @@
             </div>
             <div class="solid-child left-footer">
                 <button class="btn btn-default btn-block" data-ng-click="addImageSet()">
-                    + Add Image Set
+                    + Add Image Set Definition
                 </button>
             </div>
         </div>
@@ -48,7 +48,7 @@
                     <a target='_blank' href='https://www.onehippo.org/library/end-user-manual/images.html'>Images section</a> of the Content perspective in the CMS.
                 </p>
                 <p>
-                    No custom Image Sets have been created yet, there is only the default Hippo Image Set. You can create
+                    No custom Image Set Definitions have been created yet, there is only the default Hippo Image Set. You can create
                     custom Image Sets with this Gallery Manager tool.
                 </p>
                 <p>
@@ -99,7 +99,7 @@
     <!--Image Set Add Modal Window-->
     <script type="text/ng-template" id="imageSetAddModal.html">
         <div class="modal-header">
-            <h3 class="modal-title">Create a new Image Set</h3>
+            <h3 class="modal-title">Create a new Image Set definition</h3>
         </div>
         <form name="imageSetAddForm">
             <div class="modal-body">
@@ -107,14 +107,14 @@
                     <label for="imageSetAddName">Image Set name</label>
                     <input type="text" class="form-control" id="imageSetAddName" name="name"
                            ng-model="name" required ng-pattern="/^[a-zA-Z]{2,}$/" autofocus
-                           uib-tooltip="Image Set names must consist of two or more alphabetic characters"
+                           uib-tooltip="Image Set names must unique and consist of two or more alphabetic characters"
                            tooltip-placement="top" tooltip-trigger="mouseenter">
                 </div>
                 <div class="checkbox">
                     <label uib-tooltip="{{updateHint}}"
                            tooltip-placement="top" tooltip-trigger="mouseenter">
                         <input type="checkbox" ng-model="updateExisting">
-                        Update existing Image Sets and regenerate HippoBeans
+                        Update existing Images to match this new Definition and regenerate HippoBeans
                     </label>
                 </div>
             </div>

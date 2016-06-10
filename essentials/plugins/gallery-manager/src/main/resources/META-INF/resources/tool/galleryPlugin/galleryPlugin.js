@@ -60,7 +60,7 @@
 
             $scope.updateExisting = true;
             $scope.updateHint = "Selecting this checkbox has the effect that all images existing in the CMS "
-                              + "will be converted to this Image Set. Image (link) fields of document beans will "
+                              + "will be converted to this Image Set Definition. Image (link) fields of document beans will "
                               + "be updated to this image set, too.";
 
             $scope.create = function() {
