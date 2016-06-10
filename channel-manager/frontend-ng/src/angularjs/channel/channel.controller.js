@@ -62,7 +62,7 @@ export class ChannelCtrl {
   _clear() {
     this.$rootScope.$apply(() => {
       this.hideSubpage();
-      this._leaveEditMode();
+      this.disableEditMode();
       this.ChannelService.clearChannel();
     });
   }
