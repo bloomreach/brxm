@@ -1,0 +1,20 @@
+{
+  "hippo:templates" : {
+    "en" : {
+      "new-news-document" : "new news item",
+      "new-news-folder" : "new news item folder"
+    },
+    "nl" : {
+      "new-news-document" : "nieuw nieuwsbericht",
+      "new-news-folder" : "nieuwe nieuwsmap"
+    },
+    "de" : {
+      "new-news-document" : "Neue News",
+      "new-news-folder" : "Neuer News-Ordner"
+    },
+    "fr" : {
+      "new-news-document" : "nouveau message d'info",
+      "new-news-folder" : "nouveau dossier messages d'info"
+    }
+  }
+}

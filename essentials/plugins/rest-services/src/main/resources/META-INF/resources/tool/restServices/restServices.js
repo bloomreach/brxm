@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,16 +19,36 @@
     angular.module('hippo.essentials')
         .controller('restServicesCtrl', function ($scope, $sce, $log, $rootScope, $http) {
             $scope.endpoint = $rootScope.REST.dynamic + 'restservices/';
-            $scope.restName = "";
+            $scope.genericRestName = "api";
+            $scope.manualRestName = "api-manual";
             $scope.documentTypes = [];
             $scope.checkedDocuments = 0;
+            $scope.isGenericContentRestApiEnabled = true;
+            $scope.isManualRestResourcesEnabled = false;
 
-            $scope.onChangeRestName = function () {
-                updateEndPoints();
+            $scope.onChangeManualRestName = function () {
+                updateManualEndPoints();
             };
             $scope.checked = function (doc) {
                 updateCheckedDocuments();
                 return doc.checked;
+            };
+            $scope.isDataValid = function() {
+                if (!$scope.isGenericContentRestApiEnabled && !$scope.isManualRestResourcesEnabled) {
+                    return false; // need to enable at least one mount.
+                }
+                if ($scope.isGenericContentRestApiEnabled && $scope.isManualRestResourcesEnabled
+                    && $scope.genericRestName === $scope.manualRestName) {
+                    return false; // mount names must be mutually exclusive.
+                }
+                if ($scope.isGenericContentRestApiEnabled && $scope.genericRestForm.$invalid) {
+                    return false; // invalid data for generic REST api.
+                }
+                if ($scope.isManualRestResourcesEnabled
+                    && ($scope.manualRestForm.$invalid || $scope.checkedDocuments === 0)) {
+                    return false; // invalid data for manual REST api.
+                }
+                return true;
             };
             $scope.runRestSetup = function () {
                 // check if we have selected documents:
@@ -38,12 +58,17 @@
                         files.push(docType.fullPath);
                     }
                 });
-                var fileString = files.join(',');
-                var payload = Essentials.addPayloadData("restName", $scope.restName, null);
-                Essentials.addPayloadData("restType", "plain", payload);
-                Essentials.addPayloadData("javaFiles", fileString, payload);
-                $http.post($scope.endpoint, payload).success(function (data) {
-                    // TODO: display reboot message and instruction sets executed
+                var payload = {
+                    values: {
+                        genericApiEnabled: $scope.isGenericContentRestApiEnabled,
+                        genericRestName: $scope.genericRestName,
+                        manualApiEnabled: $scope.isManualRestResourcesEnabled,
+                        manualRestName: $scope.manualRestName,
+                        javaFiles: files.join(',')
+                    }
+                };
+                $http.post($scope.endpoint, payload).success(function () {
+                    // empty
                 });
             };
 
@@ -53,7 +78,7 @@
                         $scope.documentTypes.push(docType);
                     }
                 });
-                updateEndPoints();
+                updateManualEndPoints();
             });
 
             //############################################
@@ -68,12 +93,12 @@
                 });
                 $scope.checkedDocuments = checkedDocuments;
             }
-            function updateEndPoints() {
+            function updateManualEndPoints() {
                 angular.forEach($scope.documentTypes, function (docType) {
                     if (docType.javaName) {
-                        if ($scope.restName) {
+                        if ($scope.manualRestName) {
                             docType.endpoint = "http://localhost:8080/site/"
-                            + $scope.restName + "/" + docType.javaName.split('.')[0] + '/';
+                            + $scope.manualRestName + "/" + docType.javaName.split('.')[0] + '/';
                         } else {
                             delete docType.endpoint;
                         }

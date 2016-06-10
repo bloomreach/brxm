@@ -29,6 +29,9 @@
     <xml action="copy" source="xml/namespaces/blogpost.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="xml/namespaces/author.xml" target="/hippo:namespaces/{{namespace}}"/>
     <xml action="copy" source="xml/namespaces/account.xml" target="/hippo:namespaces/{{namespace}}"/>
+    <!-- translations -->
+    <translations source="json/translations/blogtypes-translations.json" />
+    <translations source="json/translations/blogtemplates-translations.json" />
     <!-- beans-->
     <file action="copy" source="java/Author.txt" target="{{beansFolder}}/Author.java"/>
     <file action="copy" source="java/Blogpost.txt" target="{{beansFolder}}/Blogpost.java"/>

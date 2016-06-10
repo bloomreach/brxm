@@ -21,13 +21,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>10.2.0-SNAPSHOT</version>
+    <version>11.0.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Essentials</name>
   <description>Hippo Essentials</description>
   <artifactId>hippo-essentials</artifactId>
-  <version>2.2.0-gallery-manager-SNAPSHOT</version>
+  <version>3.0.0-gallery-manager-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -45,6 +45,7 @@
     <filesync.override>false</filesync.override>
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
 
+    <maven.plugin.jacoco.version>0.7.5.201505241946</maven.plugin.jacoco.version>
     <!-- Tells Sonar to run the unit tests -->
     <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
     <!-- Tells Sonar to use JaCoCo as the code coverage tool -->
@@ -53,9 +54,9 @@
 
   </properties>
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/essentials-2.2.0-gallery-manager</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/essentials-2.2.0-gallery-manager</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/branches/essentials-2.2.0-gallery-manager</url>
+    <connection>scm:git:https://code.onehippo.org/cms-community/hippo-essentials.git</connection>
+    <developerConnection>scm:git:git@code.onehippo.org:cms-community/hippo-essentials.git</developerConnection>
+    <url>https://code.onehippo.org/cms-community/hippo-essentials</url>
   </scm>
 
   <modules>
@@ -162,7 +163,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.7.2.201409121644</version>
+        <version>${maven.plugin.jacoco.version}</version>
         <executions>
           <execution>
             <id>jacoco-initialize</id>
@@ -229,6 +230,7 @@
                 <exclude>**/*.md</exclude>
                 <exclude>*/.idea/**</exclude>
                 <exclude>*/.bowerrc/**</exclude>
+                <exclude>*/.npmrc/**</exclude>
                 <exclude>**/*.svg</exclude>
                 <exclude>**/*.woff</exclude>
                 <exclude>**/*.ttf</exclude>

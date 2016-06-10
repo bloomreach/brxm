@@ -1,0 +1,20 @@
+{
+  "hippo:templates": {
+    "en":   {
+      "new-poll-folder": "new poll folder",
+      "new-poll-document": "new poll document"
+    },
+    "nl":   {
+      "new-poll-folder": "nieuwe pollmap",
+      "new-poll-document": "nieuwe poll"
+    },
+    "de":   {
+      "new-poll-folder": "Neuer Poll-Ordner",
+      "new-poll-document": "Neue Poll"
+    },
+    "fr":   {
+      "new-poll-folder": "nouveau dossier sondage",
+      "new-poll-document": "nouveau sondage"
+    }
+  }
+}

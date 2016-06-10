@@ -1,0 +1,28 @@
+{
+  "hippo:templates": {
+    "en":     {
+      "new-faq-item-folder": "new FAQ item folder",
+      "new-faq-list": "new FAQ list",
+      "new-faq-item": "new FAQ item",
+      "new-faq-list-document-folder": "new FAQ list folder",
+    },
+    "nl": {
+      "new-faq-item-folder": "nieuwe FAQ item map",
+      "new-faq-list": "nieuwe FAQ lijst",
+      "new-faq-item": "nieuw FAQ item",
+      "new-faq-list-document-folder": "nieuwe FAQ lijst map",
+    },
+    "de": {
+      "new-faq-item-folder": "Neues FAQ-Item-Ordner",
+      "new-faq-list": "Neue FAQ-Liste",
+      "new-faq-item": "Neues FAQ-Item",
+      "new-faq-list-document-folder": "Neuer FAQ-Listen-Ordner",
+    },
+    "fr": {
+      "new-faq-item-folder": "nouveau dossier élément FAQ",
+      "new-faq-list": "nouvelle liste FAQ",
+      "new-faq-item": "nouvel élément FAQ",
+      "new-faq-list-document-folder": "nouveau dossier liste FAQ",
+    }
+  }
+}

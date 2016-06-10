@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import com.google.common.base.Strings;
 public enum TargetPom {
 
 
-    INVALID(null), SITE("site"), CMS("cms"), BOOTSTRAP("bootstrap"), BOOTSTRAP_CONFIG("config"), BOOTSTRAP_CONTENT("content"), ESSENTIALS("essentials"), PROJECT("project");
+    INVALID(null), SITE("site"), CMS("cms"), BOOTSTRAP("bootstrap"), BOOTSTRAP_WEB_FILES("webfiles"), BOOTSTRAP_CONFIG("config"), BOOTSTRAP_CONTENT("content"), ESSENTIALS("essentials"), PROJECT("project");
     private final String name;
 
     TargetPom(final String name) {
@@ -62,6 +62,8 @@ public enum TargetPom {
             return BOOTSTRAP_CONTENT;
         } else if (type.equals(ESSENTIALS.name)) {
             return ESSENTIALS;
+        } else if (type.equals(BOOTSTRAP_WEB_FILES.name)) {
+            return BOOTSTRAP_WEB_FILES;
         }
         return TargetPom.INVALID;
 

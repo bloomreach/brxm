@@ -31,6 +31,9 @@
     <!-- queries -->
     <xml action="copy" source="xml/configuration/new-banner-folder.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
     <xml action="copy" source="xml/configuration/new-banner-document.xml" target="/hippo:configuration/hippo:queries/hippo:templates"/>
+    <!-- type translations -->
+    <translations source="json/translations/bannerdocument-translations.json" />
+    <translations source="json/translations/bannertemplates-translations.json" />
   </instructionSet>
 
   <!--
