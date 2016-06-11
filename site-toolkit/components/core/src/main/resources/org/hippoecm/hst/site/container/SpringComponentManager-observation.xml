@@ -168,8 +168,9 @@
           </property>
           <property name="noLocal" value="false"/>
           <property name="eventListener">
-            <bean parent="baseEventListener" class="org.hippoecm.hst.cache.PageCacheEventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.cache.webfiles.WebFilesEventListener">
               <property name="pageCache" ref="pageCache"/>
+              <property name="webFileValve" ref="webFileValve"/>
             </bean>
           </property>
         </bean>

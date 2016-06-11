@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,14 +34,16 @@ public class CacheableWebFile implements WebFile, Serializable {
     private final Calendar lastModified;
     private final String mimeType;
     private final Binary binary;
+    private final String version;
 
-    public CacheableWebFile(final WebFile resource) throws IOException {
+    public CacheableWebFile(final WebFile resource, final String version) throws IOException {
         path = resource.getPath();
         name = resource.getName();
         encoding = resource.getEncoding();
         lastModified = resource.getLastModified();
         mimeType = resource.getMimeType();
         binary = new CacheableBinary(resource.getBinary());
+        this.version = version;
     }
 
     @Override
@@ -72,5 +74,9 @@ public class CacheableWebFile implements WebFile, Serializable {
     @Override
     public Binary getBinary() {
         return binary;
+    }
+
+    public String getVersion() {
+        return version;
     }
 }
