@@ -12,7 +12,6 @@
     "permission.denied" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED"
       }
     },

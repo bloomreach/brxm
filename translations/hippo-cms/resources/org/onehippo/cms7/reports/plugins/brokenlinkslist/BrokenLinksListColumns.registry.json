@@ -32,7 +32,6 @@
     "httpstatus" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED"
       }
     },
@@ -47,7 +46,6 @@
     "exception-javax.net.ssl.SSLPeerUnverifiedException" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED"
       }
     },

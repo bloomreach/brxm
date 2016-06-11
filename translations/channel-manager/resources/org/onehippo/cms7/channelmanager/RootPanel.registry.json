@@ -64,7 +64,6 @@
     "channel-manager" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED"
       }
     }

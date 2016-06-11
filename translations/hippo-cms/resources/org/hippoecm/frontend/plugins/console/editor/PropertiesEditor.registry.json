@@ -4,21 +4,18 @@
     "property.value.add" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED"
       }
     },
     "property.value.remove" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED"
       }
     },
     "property.remove" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED"
       }
     }

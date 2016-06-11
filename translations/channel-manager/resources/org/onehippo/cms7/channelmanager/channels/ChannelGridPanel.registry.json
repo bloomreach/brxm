@@ -68,7 +68,6 @@
     "action.hstconfigeditor" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED"
       }
     }

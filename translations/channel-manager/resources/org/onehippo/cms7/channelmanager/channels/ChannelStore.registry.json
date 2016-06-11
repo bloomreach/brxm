@@ -44,7 +44,6 @@
     "field.channelNodeLockedBy" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED"
       }
     },

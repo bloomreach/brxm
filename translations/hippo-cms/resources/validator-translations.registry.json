@@ -12,7 +12,6 @@
     "hippo:cms.validators/resource-required" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED"
       }
     },

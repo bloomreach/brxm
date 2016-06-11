@@ -2,22 +2,16 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "add.label" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "title" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "remove.label" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }
