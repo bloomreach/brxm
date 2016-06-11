@@ -6,10 +6,8 @@
       "locales" : null
     },
     "intro" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "title" : {
       "status" : "CLEAN",

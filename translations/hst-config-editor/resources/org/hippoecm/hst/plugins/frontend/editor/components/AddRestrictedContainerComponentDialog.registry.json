@@ -2,28 +2,20 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "name.label" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "node-unique-validator.error" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "dialog.intro" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "dialog.title" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

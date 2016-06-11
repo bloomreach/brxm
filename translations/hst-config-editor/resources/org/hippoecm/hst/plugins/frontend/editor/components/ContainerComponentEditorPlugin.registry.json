@@ -2,52 +2,36 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "componentClassName.label" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "xtype.label" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "add.label" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "intro" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "component.legend.details" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "title" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "xtype.changed" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "remove.label" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

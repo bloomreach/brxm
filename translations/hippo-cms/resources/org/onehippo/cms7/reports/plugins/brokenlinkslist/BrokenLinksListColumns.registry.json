@@ -33,8 +33,7 @@
       "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "fr" : "UNRESOLVED"
       }
     },
     "column-lastModificationDate-header" : {
@@ -49,8 +48,7 @@
       "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "fr" : "UNRESOLVED"
       }
     },
     "httpstatus-500" : {

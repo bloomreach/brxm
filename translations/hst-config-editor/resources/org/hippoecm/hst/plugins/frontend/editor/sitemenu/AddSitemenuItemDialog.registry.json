@@ -6,10 +6,8 @@
       "locales" : null
     },
     "dialog.intro" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "name" : {
       "status" : "CLEAN",

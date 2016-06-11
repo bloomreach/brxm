@@ -6,10 +6,8 @@
       "locales" : null
     },
     "button-upload-label" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "select-file-label" : {
       "status" : "CLEAN",

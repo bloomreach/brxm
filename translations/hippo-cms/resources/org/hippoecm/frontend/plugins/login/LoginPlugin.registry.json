@@ -17,8 +17,7 @@
       "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "fr" : "UNRESOLVED"
       }
     },
     "access.denied" : {
@@ -41,8 +40,7 @@
       "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "fr" : "UNRESOLVED"
       }
     },
     "password" : {

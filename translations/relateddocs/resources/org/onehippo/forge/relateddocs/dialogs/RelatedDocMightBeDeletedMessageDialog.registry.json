@@ -5,16 +5,14 @@
       "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "fr" : "UNRESOLVED"
       }
     },
     "relateddoc-might-be-deleted-title" : {
       "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "fr" : "UNRESOLVED"
       }
     }
   }

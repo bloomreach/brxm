@@ -5,8 +5,7 @@
       "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "fr" : "UNRESOLVED"
       }
     },
     "close" : {
@@ -17,8 +16,7 @@
       "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "fr" : "UNRESOLVED"
       }
     }
   }

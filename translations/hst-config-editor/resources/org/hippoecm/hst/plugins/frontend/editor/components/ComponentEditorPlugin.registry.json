@@ -46,10 +46,8 @@
       "locales" : null
     },
     "intro" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "nl" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "parameter.overrides.label" : {
       "status" : "CLEAN",
