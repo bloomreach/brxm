@@ -24,8 +24,6 @@ import org.hippoecm.hst.cache.HstCacheException;
 import org.hippoecm.hst.cache.HstPageInfo;
 import org.hippoecm.hst.cache.UncacheableHstPageInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.diagnosis.HDC;
-import org.hippoecm.hst.diagnosis.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +90,7 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
      */
     protected HstPageInfo getPageInfoFromCacheOrBuild(final ValveContext context) throws Exception {
         final PageCacheKey keyPage = context.getPageCacheContext().getPageCacheKey();
-        CacheElement element = pageCache.get(keyPage, new Callable<CacheElement>() {
+        CacheElement element =  pageCache.get(keyPage, new Callable<CacheElement>() {
             @Override
             public CacheElement call() throws Exception {
                 HstPageInfo pageInfo = createHstPageInfoByInvokingNextValve(context, pageCache.getTimeToLiveSeconds());
@@ -106,7 +104,12 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
                         return pageCache.createUncacheableElement(keyPage, pageInfo);
                     } else {
                         log.debug("Caching request '{}' with keyPage '{}'", context.getServletRequest().getRequestURI(), keyPage);
-                        return pageCache.createElement(keyPage, pageInfo);
+                        final CacheElement elem = pageCache.createElement(keyPage, pageInfo);
+                        final Long expiresHeader = pageInfo.getExpiresInSeconds();
+                        if (expiresHeader != null) {
+                            elem.setTimeToLiveSeconds(expiresHeader.intValue());
+                        }
+                        return elem;
                     }
                 } else {
                     log.debug("PageInfo was not ok(200). Putting null into cache with keyPage {} ", keyPage);

@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,20 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.james.mime4j.util.MimeUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.ehcache.constructs.web.Header;
 import net.sf.ehcache.constructs.web.PageInfo;
@@ -36,6 +42,8 @@ import net.sf.ehcache.constructs.web.PageInfo;
  * a Serializable representation of a {@link HttpServletResponse}.
  */
 public class HstPageInfo extends PageInfo {
+
+    private static final Logger log = LoggerFactory.getLogger(HstPageInfo.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -87,13 +95,12 @@ public class HstPageInfo extends PageInfo {
                     isNoCachePresentOrExpiresImmediately = Boolean.TRUE;
                 } else if ("Expires".equalsIgnoreCase(header.getName())) {
                     try {
-                        long expires = Long.parseLong(String.valueOf(header.getValue()));
-    
-                        if (expires <= 0) {
+                        final long time = getTime(header);
+                        if (time <= System.currentTimeMillis()) {
                             isNoCachePresentOrExpiresImmediately = Boolean.TRUE;
                         }
-                    } catch (NumberFormatException e) {
-                        // could not parse expires to long, ignore
+                    } catch (ParseException e) {
+                        log.warn("Could not parse 'Expires' header because has value '{}'.", header.getValue());
                     }
                 }
             }
@@ -101,6 +108,25 @@ public class HstPageInfo extends PageInfo {
         }
 
         return isNoCachePresentOrExpiresImmediately.booleanValue();
+    }
+
+    /**
+     * @return Returns expires in seconds until now if present and otherwise null
+     */
+    public Long getExpiresInSeconds() {
+        final List<Header<? extends Serializable>> headers = getHeaders();
+        for (Header<? extends Serializable> header : headers) {
+            if ("Expires".equalsIgnoreCase(header.getName())) {
+                try {
+                    final long time = getTime(header);
+                    return  (time - System.currentTimeMillis()) / 1000;
+                } catch (ParseException e) {
+                    log.warn("Could not parse 'Expires' header because has value '{}'.", header.getValue());
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 
     public void writeContent(final HttpServletResponse response) throws IOException
@@ -111,4 +137,17 @@ public class HstPageInfo extends PageInfo {
         out.write(body);
         out.flush();
     }
+
+    private long getTime(final Header expiresHeader) throws ParseException {
+        final SimpleDateFormat rfc1123DateFormat = getRFC1123DateFormat();
+        return rfc1123DateFormat.parse(String.valueOf(expiresHeader.getValue())).getTime();
+    }
+
+    static SimpleDateFormat getRFC1123DateFormat() {
+        // header must conform to RFC 1123 date format (please note that milliseconds are lost)
+        final SimpleDateFormat rfc1123DateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
+        rfc1123DateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return rfc1123DateFormat;
+    }
+
 }

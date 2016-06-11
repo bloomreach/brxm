@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.HstPageInfo;
 import org.hippoecm.hst.cache.UncacheableHstPageInfo;
@@ -128,7 +129,12 @@ public class ESIPageInfoScanningValve extends AbstractBaseOrderableValve {
                             if (pageInfo.isNoCachePresentOrExpiresImmediately() || pageInfo instanceof UncacheableHstPageInfo) {
                                 pageCache.put(pageCache.createUncacheableElement(pageCacheKey, esiPageInfo));
                             } else {
-                                pageCache.put(pageCache.createElement(pageCacheKey, esiPageInfo));
+                                final CacheElement elem = pageCache.createElement(pageCacheKey, esiPageInfo);
+                                final Long expiresHeader = pageInfo.getExpiresInSeconds();
+                                if (expiresHeader != null) {
+                                    elem.setTimeToLiveSeconds(expiresHeader.intValue());
+                                }
+                                pageCache.put(elem);
                             }
                         }
 

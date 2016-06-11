@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ public class HstCacheEhCacheImpl implements HstCache {
             if (element == null) {
                 element = createElement(key, null);
                 put(element);
-            } else if (!element.isCacheable() || postCallInvalidationCounter != preCallInvalidationCounter){
+            } else if (postCallInvalidationCounter != preCallInvalidationCounter){
                 put(createElement(key, null));
             } else {
                 put(element);
@@ -108,6 +108,11 @@ public class HstCacheEhCacheImpl implements HstCache {
     }
 
     public void put(CacheElement element) {
+        if (!element.isCacheable()) {
+            final CacheElement uncacheable = createElement(element.getKey(), null);
+            ehcache.put(((CacheElementEhCacheImpl) uncacheable).element);
+            return;
+        }
         CacheElementEhCacheImpl cacheElem = (CacheElementEhCacheImpl) element;
         ehcache.put(cacheElem.element);
     }
@@ -135,7 +140,7 @@ public class HstCacheEhCacheImpl implements HstCache {
 
     public int getMaxSize() {
         return new Long(ehcache.getCacheConfiguration().getMaxEntriesLocalHeap()).intValue()
-                + ehcache.getCacheConfiguration().getMaxElementsOnDisk();
+                + (int)ehcache.getCacheConfiguration().getMaxEntriesLocalDisk();
     }
 
 }
