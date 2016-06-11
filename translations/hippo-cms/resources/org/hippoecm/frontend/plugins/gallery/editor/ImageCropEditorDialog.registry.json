@@ -10,10 +10,8 @@
       "locales" : null
     },
     "fit-view" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "thumbnail-size" : {
       "status" : "CLEAN",

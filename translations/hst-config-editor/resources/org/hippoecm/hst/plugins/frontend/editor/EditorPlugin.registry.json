@@ -2,32 +2,24 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "locked.by.you" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "locked.by" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "add.label" : {
       "status" : "CLEAN",
       "locales" : null
     },
     "locked.at" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "readonly.reason" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

@@ -2,16 +2,12 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "relateddoc-might-be-deleted-text" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "relateddoc-might-be-deleted-title" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

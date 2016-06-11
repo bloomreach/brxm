@@ -10,10 +10,8 @@
       "locales" : null
     },
     "permission.denied" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "exception,type=org.hippoecm.repository.api.WorkflowException,message=Cannot move document to same folder" : {
       "status" : "CLEAN",

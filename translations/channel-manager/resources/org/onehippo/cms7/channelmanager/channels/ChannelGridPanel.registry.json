@@ -66,10 +66,8 @@
       "locales" : null
     },
     "action.hstconfigeditor" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

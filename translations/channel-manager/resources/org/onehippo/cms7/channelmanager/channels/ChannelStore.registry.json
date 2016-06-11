@@ -42,10 +42,8 @@
       "locales" : null
     },
     "field.channelNodeLockedBy" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "field.id" : {
       "status" : "CLEAN",

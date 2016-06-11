@@ -14,10 +14,8 @@
       "locales" : null
     },
     "page.title" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "access.denied" : {
       "status" : "CLEAN",
@@ -36,10 +34,8 @@
       "locales" : null
     },
     "edition.label" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "password" : {
       "status" : "CLEAN",

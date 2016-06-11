@@ -62,10 +62,8 @@
       "locales" : null
     },
     "channel-manager" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

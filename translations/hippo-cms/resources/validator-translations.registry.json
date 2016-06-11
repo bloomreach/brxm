@@ -10,10 +10,8 @@
       "locales" : null
     },
     "hippo:cms.validators/resource-required" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:cms.validators/non-empty" : {
       "status" : "CLEAN",

@@ -1,0 +1,7 @@
+{"hippo:types": {"seosupport:seo": {"fr": {
+  "seosupport:seodescription#hint": "Texte à utiliser dans la balise de description",
+  "seosupport:seotitle": "Titre SEO",
+  "jcr:name": "SEO",
+  "seosupport:seotitle#hint": "Texte à utiliser dans la balise de titre",
+  "seosupport:seodescription": "Description SEO"
+}}}}

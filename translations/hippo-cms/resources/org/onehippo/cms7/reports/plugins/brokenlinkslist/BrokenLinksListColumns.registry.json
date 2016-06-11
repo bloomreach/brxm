@@ -30,10 +30,8 @@
       "locales" : null
     },
     "httpstatus" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "column-lastModificationDate-header" : {
       "status" : "CLEAN",
@@ -44,10 +42,8 @@
       "locales" : null
     },
     "exception-javax.net.ssl.SSLPeerUnverifiedException" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "fr" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "httpstatus-500" : {
       "status" : "CLEAN",
