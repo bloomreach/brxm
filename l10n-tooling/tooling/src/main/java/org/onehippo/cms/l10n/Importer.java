@@ -78,8 +78,11 @@ public class Importer {
                     final ResourceBundle referenceBundle = module.getRegistry().getResourceBundle(fqKey.bundleName, "en", registryInfo);
                     final Map<String, String> referenceEntries = referenceBundle.getEntries();
                     if (!referenceEntries.containsKey(fqKey.key) || !referenceEntries.get(fqKey.key).equals(reference)) {
-                        log.warn("Reference value of key {} does not match: import file contains {}, current value is {}", 
+                        log.warn("Not importing key {} as reference value does not match: import file contains \"{}\", current value is \"{}\"",
                                 fqKey.key, reference, referenceEntries.get(fqKey.key));
+                    } else if (!SanityChecker.containSameSubstitutionPatterns(reference, translation)) {
+                        log.warn("Not importing key {} as reference and translation do not contain the same of substitution patterns; reference \"{}\", translation \"{}\"",
+                                fqKey.key, reference, translation);
                     } else {
                         resourceBundle.getEntries().put(fqKey.key, translation);
                         resourceBundle.save();
@@ -90,7 +93,7 @@ public class Importer {
             }
         }
     }
-    
+
     private static class FQKey {
         
         private final String moduleId;
