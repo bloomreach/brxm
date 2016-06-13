@@ -216,7 +216,7 @@ describe('HstService', () => {
     expect(catchSpy).toHaveBeenCalledWith(channelA);
   });
 
-  fit('throws exception when get a channel without id', () => {
+  it('throws exception when get a channel without id', () => {
     expect(() => hstService.getChannel()).toThrowError('Channel id must be defined');
     expect(() => hstService.getChannel('')).toThrowError('Channel id must be defined');
   });
