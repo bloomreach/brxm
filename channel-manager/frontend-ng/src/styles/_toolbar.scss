@@ -86,6 +86,15 @@ md-toolbar.hippo-toolbar {
   md-switch {
     margin: 0;
   }
+
+  .changes-button {
+    md-icon {
+      color: $orange-a400;
+      position: relative;
+      left: 6px;
+      bottom: 1px;
+    }
+  }
 }
 
 .viewport-name {
