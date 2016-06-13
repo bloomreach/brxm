@@ -15,6 +15,21 @@
  */
 package org.hippoecm.repository.security.group;
 
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.jcr.InvalidItemStateException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+import javax.transaction.NotSupportedException;
+
 import org.apache.jackrabbit.commons.iterator.NodeIteratorAdapter;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -24,25 +39,18 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.*;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
-import javax.transaction.NotSupportedException;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.hippoecm.repository.api.HippoNodeType.*;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SECURITYPROVIDER;
+import static org.hippoecm.repository.api.HippoNodeType.NT_GROUP;
+import static org.hippoecm.repository.api.HippoNodeType.NT_GROUPFOLDER;
 import static org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER;
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 
 /**
- * Abstract group manager for managing groups. 
- * 
-* The rawGroupId's are the id's as provided by the backend. The groupId's 
-* are the normalized id's. All id's MUST be normalized before they are
-* stored in the database.
-*/
+ * Abstract group manager for managing groups.
+ * <p>
+ * The rawGroupId's are the id's as provided by the backend. The groupId's are the normalized id's. All id's MUST be
+ * normalized before they are stored in the database.
+ */
 public abstract class AbstractGroupManager implements GroupManager {
 
     /**
@@ -124,8 +132,7 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     /**
-     * Create a group node. Use the getNodeType to determine the type the node
-     * should be.
+     * Create a group node. Use the getNodeType to determine the type the node should be.
      */
     public final Node createGroup(String rawGroupId) throws RepositoryException {
         if (!isInitialized()) {
@@ -148,7 +155,7 @@ public abstract class AbstractGroupManager implements GroupManager {
             }
         }
         Node group = groupsNode.addNode(NodeNameCodec.encode(groupId, true), getNodeType());
-        group.setProperty(HippoNodeType.HIPPO_MEMBERS, new Value[] {});
+        group.setProperty(HippoNodeType.HIPPO_MEMBERS, new Value[]{});
         if (!INTERNAL_PROVIDER.equals(providerId)) {
             group.setProperty(HIPPO_SECURITYPROVIDER, providerId);
             log.debug("Group: {} created by {} ", groupId, providerId);
@@ -189,8 +196,9 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     /**
-     * Helper for building group path including the groupname itself. Takes care of the encoding
-     * of the path AND the groupId (the eventual node name)
+     * Helper for building group path including the groupname itself. Takes care of the encoding of the path AND the
+     * groupId (the eventual node name)
+     *
      * @param rawGroupId unencoded groupId
      * @return the fully encoded normalized path
      */
@@ -213,8 +221,8 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     /**
-     * Sanitize the rawId: trim and convert to lowercase if needed. This
-     * function does NOT encode the groupId.
+     * Sanitize the rawId: trim and convert to lowercase if needed. This function does NOT encode the groupId.
+     *
      * @param rawGroupId
      * @return the trimmed and if needed converted to lowercase groupId
      */
@@ -258,7 +266,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
         return createGroup(rawGroupId);
     }
-    
+
     protected final void updateSyncDate(Node group) throws RepositoryException {
         if (group.isNodeType(HippoNodeType.NT_EXTERNALUSER)) {
             group.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
