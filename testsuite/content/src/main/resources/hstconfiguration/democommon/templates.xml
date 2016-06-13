@@ -1,21 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-
-    Copyright (C) 2010 - 2012 Hippo B.V.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<sv:node sv:name="hst:templates" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:templates">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:templates</sv:value>
   </sv:property>
@@ -47,11 +30,11 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:renderpath" sv:type="String">
-      <sv:value>DateTimeServlet</sv:value>
-    </sv:property>
     <sv:property sv:name="hst:isnamed" sv:type="Boolean">
       <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>DateTimeServlet</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="threecolumnlayout">
@@ -83,7 +66,7 @@
       <sv:value>hst:template</sv:value>
     </sv:property>
     <sv:property sv:name="hst:script" sv:type="String">
-      <sv:value xmlns:h="http://www.onehippo.org/jcr/xmlimport" 
+      <sv:value xmlns:h="http://www.onehippo.org/jcr/xmlimport"
                 h:file="/hstconfiguration/democommon/binaries/homepage.ftl" />
     </sv:property>
   </sv:node>
@@ -111,15 +94,11 @@
       <sv:value>jsp/components/main/alllinkforanewsitem.jsp</sv:value>
     </sv:property>
   </sv:node>
-
   <sv:node sv:name="detailpage">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
     </sv:property>
     <sv:property sv:name="hst:renderpath" sv:type="String">
-      <!--
-<sv:value>jsp/components/main/detailpage.jsp</sv:value>
-      -->
       <sv:value>ftl/components/main/detailpage.ftl</sv:value>
     </sv:property>
   </sv:node>
@@ -131,7 +110,7 @@
       <sv:value>jsp/components/main/detailimagevariantpage.jsp</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="detailwikipage" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+  <sv:node sv:name="detailwikipage">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
     </sv:property>
@@ -187,7 +166,6 @@
       <sv:value>jsp/components/main/solrfaceting.jsp</sv:value>
     </sv:property>
   </sv:node>
-
   <sv:node sv:name="todolist">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
@@ -228,7 +206,6 @@
       <sv:value>jsp/components/main/gogreenindexer.jsp</sv:value>
     </sv:property>
   </sv:node>
-
   <sv:node sv:name="facetedaddproduct">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
@@ -355,6 +332,14 @@
     </sv:property>
     <sv:property sv:name="hst:renderpath" sv:type="String">
       <sv:value>/examples/esisingle.jsp</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="wikipediatranslations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/components/main/wikipediatranslations.jsp</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

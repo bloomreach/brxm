@@ -1,21 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
-
-    Copyright (C) 2010 - 2012 Hippo B.V.
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-            http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
--->
-<sv:node sv:name="hst:sitemap" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hst:sitemap">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:sitemap</sv:value>
   </sv:property>
@@ -26,11 +9,11 @@
     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
       <sv:value>hst:pages/home</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>common/home-page</sv:value>
-    </sv:property>
     <sv:property sv:name="hst:refId" sv:type="String">
       <sv:value>homeId</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+      <sv:value>common/home-page</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="about">
@@ -40,11 +23,11 @@
     <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
       <sv:value>hst:pages/detailpage</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-      <sv:value>common/about-us</sv:value>
-    </sv:property>
     <sv:property sv:name="hst:refId" sv:type="String">
       <sv:value>aboutId</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+      <sv:value>common/about-us</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="mashup">
@@ -86,14 +69,14 @@
       <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
         <sv:value>hst:pages/detailpage</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-        <sv:value>news/${1}</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:parameternames" sv:type="String">
+      <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
         <sv:value>go-back-link</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:parametervalues" sv:type="String">
+      <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
         <sv:value>/news</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>news/${1}</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -125,14 +108,14 @@
       <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
         <sv:value>hst:pages/detailpage</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-        <sv:value>news/${1}</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:parameternames" sv:type="String">
+      <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
         <sv:value>go-back-link</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:parametervalues" sv:type="String">
+      <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
         <sv:value>/news1</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>news/${1}</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -164,18 +147,17 @@
       <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
         <sv:value>hst:pages/detailpage</sv:value>
       </sv:property>
+      <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
+        <sv:value>go-back-link</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
+        <sv:value>/news2</sv:value>
+      </sv:property>
       <sv:property sv:name="hst:relativecontentpath" sv:type="String">
         <sv:value>news/${1}</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:parameternames" sv:type="String">
-        <sv:value>go-back-link</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:parametervalues" sv:type="String">
-        <sv:value>/news2</sv:value>
-      </sv:property>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="newsctxonly">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -224,20 +206,19 @@
           <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
             <sv:value>hst:pages/detailpage</sv:value>
           </sv:property>
-          <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-            <sv:value>news/${3}</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:parameternames" sv:type="String">
+          <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
             <sv:value>go-back-link</sv:value>
           </sv:property>
-          <sv:property sv:name="hst:parametervalues" sv:type="String">
+          <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
             <sv:value>/newsctxonly</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+            <sv:value>news/${3}</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="newsimagevariant">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -266,18 +247,17 @@
       <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
         <sv:value>hst:pages/detailimagevariantpage</sv:value>
       </sv:property>
+      <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
+        <sv:value>go-back-link</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
+        <sv:value>/newsimagevariant</sv:value>
+      </sv:property>
       <sv:property sv:name="hst:relativecontentpath" sv:type="String">
         <sv:value>news/${1}</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:parameternames" sv:type="String">
-        <sv:value>go-back-link</sv:value>
-      </sv:property>
-      <sv:property sv:name="hst:parametervalues" sv:type="String">
-        <sv:value>/newsimagevariant</sv:value>
-      </sv:property>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="alllinkforanewsitem">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -286,7 +266,6 @@
       <sv:value>hst:pages/alllinkforanewsitem</sv:value>
     </sv:property>
   </sv:node>
-
   <sv:node sv:name="rss.xml">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -298,7 +277,6 @@
       <sv:value>news</sv:value>
     </sv:property>
   </sv:node>
-
   <sv:node sv:name="algebra">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -307,7 +285,6 @@
       <sv:value>hst:pages/algebra</sv:value>
     </sv:property>
   </sv:node>
-
   <sv:node sv:name="search">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -316,7 +293,6 @@
       <sv:value>hst:pages/searchpage</sv:value>
     </sv:property>
   </sv:node>
-
   <sv:node sv:name="faceted">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -350,7 +326,6 @@
       </sv:property>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="solrindexer">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -359,8 +334,6 @@
       <sv:value>hst:pages/solrindexer</sv:value>
     </sv:property>
   </sv:node>
-
-
   <sv:node sv:name="solrsearch">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -369,8 +342,6 @@
       <sv:value>hst:pages/solrsearchpage</sv:value>
     </sv:property>
   </sv:node>
-
-
   <sv:node sv:name="solrfaceting">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -382,21 +353,17 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemapitem</sv:value>
       </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>c690a04a-9211-4e2b-b759-ca7890b65fd6</sv:value>
-      </sv:property>
       <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
         <sv:value>hst:pages/solrfacetingpage</sv:value>
       </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parameternames" sv:type="String">
+      <sv:property sv:name="hst:parameternames" sv:type="String" sv:multiple="true">
         <sv:value>facetpath</sv:value>
       </sv:property>
-      <sv:property sv:multiple="true" sv:name="hst:parametervalues" sv:type="String">
+      <sv:property sv:name="hst:parametervalues" sv:type="String" sv:multiple="true">
         <sv:value>${1}</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="error">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -421,7 +388,6 @@
       <sv:value>hst:components/bodyhome/content/todolist</sv:value>
     </sv:property>
   </sv:node>
-
   <sv:node sv:name="gogreen-rest-product-indexer">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -495,6 +461,17 @@
         <sv:value>wikipedia/${1}</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="translations">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
+        <sv:value>hst:pages/wikipediatranslations</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:relativecontentpath" sv:type="String">
+        <sv:value>wikipedia</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="products">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -536,16 +513,14 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid"
-                 sv:type="String">
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
       <sv:value>hst:pages/contactspringpage</sv:value>
     </sv:property>
     <sv:node sv:name="thankyou">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemapitem</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:componentconfigurationid"
-                   sv:type="String">
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
         <sv:value>hst:pages/thankyou</sv:value>
       </sv:property>
       <sv:property sv:name="hst:refId" sv:type="String">
@@ -553,21 +528,18 @@
       </sv:property>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="contact-spring-context">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
     </sv:property>
-    <sv:property sv:name="hst:componentconfigurationid"
-                 sv:type="String">
+    <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
       <sv:value>hst:pages/contactspringcontextpage</sv:value>
     </sv:property>
     <sv:node sv:name="thankyou">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemapitem</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:componentconfigurationid"
-                   sv:type="String">
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
         <sv:value>hst:pages/thankyou</sv:value>
       </sv:property>
       <sv:property sv:name="hst:refId" sv:type="String">
@@ -575,7 +547,6 @@
       </sv:property>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="contact-dispatch">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -587,17 +558,14 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemapitem</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:componentconfigurationid"
-                   sv:type="String">
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
         <sv:value>hst:pages/thankyou</sv:value>
       </sv:property>
-
       <sv:property sv:name="hst:refId" sv:type="String">
         <sv:value>contact-dispatch-thankyou</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
-
   <sv:node sv:name="contact-springmvc">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -609,8 +577,7 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemapitem</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:componentconfigurationid"
-                   sv:type="String">
+      <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
         <sv:value>hst:pages/thankyou</sv:value>
       </sv:property>
       <sv:property sv:name="hst:refId" sv:type="String">
@@ -618,7 +585,6 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <!-- Example how to use sitemap item handlers -->
   <sv:node sv:name="dummy">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -627,13 +593,11 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:sitemapitem</sv:value>
       </sv:property>
-      <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String">
+      <sv:property sv:name="hst:sitemapitemhandlerids" sv:type="String" sv:multiple="true">
         <sv:value>dummy</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
-
-  <!-- External Spring MVC Integration Example -->
   <sv:node sv:name="springapp">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -658,7 +622,6 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <!-- Example plain (non-content-mapped) RESTful sitemap item configuration -->
   <sv:node sv:name="topproducts">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:sitemapitem</sv:value>
@@ -680,5 +643,4 @@
       </sv:property>
     </sv:node>
   </sv:node>
-
 </sv:node>
