@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         String timestamp = String.valueOf(System.nanoTime());
 
         KeyValue[] headers = new KeyValue[1] ;
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",timestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",timestamp);
         MockHttpServletResponse response = executeRequest("/news", headers);
 
         assertTrue("HeaderComponentWithResponseHeaders should had set 'timestamp' header equal timestamp attribute",
@@ -91,7 +91,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
 
         String newTimestamp = String.valueOf(System.nanoTime());
         // replace with new timestamp. Since /news is cached, we do not expect the new timestamp on the response
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",newTimestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",newTimestamp);
         response = executeRequest("/news", headers);
 
         assertTrue("Because page is from cache, timestamp should be equal to the earlier rendered page",
@@ -104,17 +104,45 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
     }
 
     @Test
+    public void testCachedPage_with_TTL_equal_to_expires() throws Exception {
+        String timestamp = String.valueOf(System.nanoTime());
+
+        KeyValue[] headers = new KeyValue[2] ;
+        headers[0] = new DefaultKeyValue<>("timestamp",timestamp);
+        // cache for 3 seconds since expires is 3 seconds
+        headers[1] = new DefaultKeyValue<>("Expires", System.currentTimeMillis() + 3000L);
+        MockHttpServletResponse response = executeRequest("/news", headers);
+
+        assertTrue("HeaderComponentWithResponseHeaders should had set 'timestamp' header equal timestamp attribute",
+                timestamp.equals(response.getHeader("timestamp")));
+
+        String newTimestamp = String.valueOf(System.nanoTime());
+        // replace with new timestamp. Since /news is cached, we do not expect the new timestamp on the response
+        headers[0] = new DefaultKeyValue<>("timestamp",newTimestamp);
+        response = executeRequest("/news", headers);
+
+        assertTrue("Because page is from cache, timestamp should be equal to the earlier rendered page",
+                timestamp.equals(response.getHeader("timestamp")));
+
+        // wait 3 seconds: Now, TTL of the cached page should have expired and thus now 'newTimestamp' is expected
+        Thread.sleep(3000);
+        response = executeRequest("/news", headers);
+        assertFalse("Page should not have been cached any more because TTL expired", timestamp.equals(response.getHeader("timestamp")));
+        assertTrue("Page should not have been cached any more because TTL expired and thus new timestamp expected", newTimestamp.equals(response.getHeader("timestamp")));
+    }
+
+    @Test
     public void testPragmaNoCacheIsNotCached() throws ContainerException, UnsupportedEncodingException {
         String timestamp = String.valueOf(System.nanoTime());
 
         KeyValue[] headers = new KeyValue[2];
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",timestamp);
-        headers[1] = new DefaultKeyValue<String, String>("Pragma","no-cache");
+        headers[0] = new DefaultKeyValue<>("timestamp",timestamp);
+        headers[1] = new DefaultKeyValue<>("Pragma","no-cache");
 
         executeRequest("/news", headers);
 
         String newTimestamp = String.valueOf(System.nanoTime());
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",newTimestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",newTimestamp);
         MockHttpServletResponse response = executeRequest("/news", headers);
         assertFalse("Page should not have been cached and thus a different timestamp because of Pragma no-cache",
                 timestamp.equals(response.getHeader("timestamp")));
@@ -125,13 +153,13 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         String timestamp = String.valueOf(System.nanoTime());
 
         KeyValue[] headers = new KeyValue[2];
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",timestamp);
-        headers[1] = new DefaultKeyValue<String, String>("Cache-Control","no-cache");
+        headers[0] = new DefaultKeyValue<>("timestamp",timestamp);
+        headers[1] = new DefaultKeyValue<>("Cache-Control","no-cache");
 
         executeRequest("/news", headers);
 
         String newTimestamp = String.valueOf(System.nanoTime());
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",newTimestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",newTimestamp);
         MockHttpServletResponse response = executeRequest("/news", headers);
         assertFalse("Page should not have been cached and thus a different timestamp because of Cache-Control no-cache",
                 timestamp.equals(response.getHeader("timestamp")));
@@ -142,13 +170,13 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         String timestamp = String.valueOf(System.nanoTime());
 
         KeyValue[] headers = new KeyValue[2];
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",timestamp);
-        headers[1] = new DefaultKeyValue<String, String>("Expires","0");
+        headers[0] = new DefaultKeyValue<>("timestamp",timestamp);
+        headers[1] = new DefaultKeyValue<>("Expires", 0L);
 
         executeRequest("/news", headers);
 
         String newTimestamp = String.valueOf(System.nanoTime());
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",newTimestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",newTimestamp);
         MockHttpServletResponse response = executeRequest("/news", headers);
         assertFalse("Page should not have been cached and thus a different timestamp because of Expires 0",
                 timestamp.equals(response.getHeader("timestamp")));
@@ -159,13 +187,13 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         String timestamp = String.valueOf(System.nanoTime());
 
         KeyValue[] headers = new KeyValue[2];
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",timestamp);
-        headers[1] = new DefaultKeyValue<String, String>("Expires","-1");
+        headers[0] = new DefaultKeyValue<>("timestamp",timestamp);
+        headers[1] = new DefaultKeyValue<>("Expires", -1L);
 
         executeRequest("/news", headers);
 
         String newTimestamp = String.valueOf(System.nanoTime());
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",newTimestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",newTimestamp);
         MockHttpServletResponse response = executeRequest("/news", headers);
         assertFalse("Page should not have been cached and thus a different timestamp because of Expires -1",
                 timestamp.equals(response.getHeader("timestamp")));
@@ -175,7 +203,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
     public void testNoCacheHeadersBeforePageCacheValveResultDoNotInfluenceCaching() throws Exception {
         String timestamp = String.valueOf(System.nanoTime());
         KeyValue[] headers = new KeyValue[1];
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",timestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",timestamp);
 
         MockHttpServletRequest request = createServletRequest("/news");
         request.setAttribute("headers", headers);
@@ -184,7 +212,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         // set no-cache headers BEFORE caching valve should not influence caching!
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Cache-Control", "no-cache");
-        response.setHeader("Expires", "-1");
+        response.setDateHeader("Expires", -1L);
 
         // now execute request where caching headers already have been set
         executeRequest(request, response);
@@ -196,7 +224,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         // replace with new timestamp. Since /news is cached, we do not expect the new timestamp on the response
         // EVEN though no-cache headers were used in previous request : This is because the cache headers were set
         // BEFORE the page caching valve
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",newTimestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",newTimestamp);
         response = executeRequest("/news", headers);
 
         assertTrue("Because page is from cache, timestamp should be equal to the earlier rendered page",
@@ -210,9 +238,9 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         String timestamp = String.valueOf(System.nanoTime());
 
         KeyValue[] headers = new KeyValue[1] ;
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",timestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",timestamp);
         KeyValue[] cookies = new KeyValue[1];
-        cookies[0] = new DefaultKeyValue<String, String>("foo","bar");
+        cookies[0] = new DefaultKeyValue<>("foo","bar");
 
         MockHttpServletResponse response = executeRequest("/news", headers, cookies);
 
@@ -222,7 +250,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
 
         String newTimestamp = String.valueOf(System.nanoTime());
         // replace with new timestamp. Since /news is cached, we do not expect the new timestamp on the response
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",newTimestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",newTimestamp);
         response = executeRequest("/news", headers, cookies);
 
         assertFalse("Because page is not from cache due to cookies, timestamp should NOT be equal to the earlier rendered page",
@@ -230,7 +258,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         assertTrue(newTimestamp.equals(response.getHeader("timestamp")));
         assertTrue(response.getCookie("foo").getValue().equals("bar"));
 
-        cookies[0] = new DefaultKeyValue<String, String>("foo","lux");
+        cookies[0] = new DefaultKeyValue<>("foo","lux");
         response = executeRequest("/news", headers, cookies);
         assertTrue(response.getCookie("foo").getValue().equals("lux"));
     }
@@ -239,7 +267,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
     public void testPagesWhereCookiesAreSetBeforePageCacheValveDoNotInfluenceCaching() throws Exception {
         String timestamp = String.valueOf(System.nanoTime());
         KeyValue[] headers = new KeyValue[1];
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",timestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",timestamp);
 
         MockHttpServletRequest request = createServletRequest("/news");
         request.setAttribute("headers", headers);
@@ -258,7 +286,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         // replace with new timestamp. Since /news is cached, we do not expect the new timestamp on the response
         // EVEN though cookies were used in previous request : This is because the cookies were set
         // BEFORE the page caching valve
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",newTimestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",newTimestamp);
         response = executeRequest("/news", headers);
 
         assertTrue("Because page is from cache, timestamp should be equal to the earlier rendered page",
@@ -276,7 +304,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
     public void testPagesWithComponentRunTimeExceptionAreCached() throws ContainerException {
         String timestamp = String.valueOf(System.nanoTime());
         KeyValue[] headers = new KeyValue[1];
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",timestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",timestamp);
 
         MockHttpServletRequest request = createServletRequest("/news");
         request.setAttribute("headers", headers);
@@ -288,7 +316,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
         // now do the request without the exception
 
         String newTimestamp = String.valueOf(System.nanoTime());
-        headers[0] = new DefaultKeyValue<String, String>("timestamp",newTimestamp);
+        headers[0] = new DefaultKeyValue<>("timestamp",newTimestamp);
         request = createServletRequest("/news");
         request.setAttribute("headers", headers);
         response = createServletResponse();
@@ -413,7 +441,7 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
             }
             String timestamp = String.valueOf(System.nanoTime());
             KeyValue[] headers = new KeyValue[1];
-            headers[0] = new DefaultKeyValue<String, String>("timestamp",timestamp);
+            headers[0] = new DefaultKeyValue<>("timestamp",timestamp);
             return executeRequest("/news", headers);
         }
     }
@@ -424,7 +452,11 @@ public class PageCachingValveIT extends AbstractPipelineTestCase {
             KeyValue[] headers =  (KeyValue[])request.getAttribute("headers");
             if (headers != null) {
                 for (KeyValue header : headers) {
-                    response.setHeader(String.valueOf(header.getKey()), String.valueOf(header.getValue()));
+                    if (header.getKey().equals("Expires")) {
+                        response.setDateHeader(String.valueOf(header.getKey()), new Long(String.valueOf(header.getValue())));
+                    } else {
+                        response.setHeader(String.valueOf(header.getKey()), String.valueOf(header.getValue()));
+                    }
                 }
             }
 
