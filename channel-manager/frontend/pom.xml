@@ -174,22 +174,17 @@
         <artifactId>jslint-maven-plugin</artifactId>
         <configuration>
           <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
-          <disallowInsecureCharsInRegExp>false</disallowInsecureCharsInRegExp>
           <predefinedVars>
             ActiveXObject,
-            Class,
             Ext,
             G_vmlCanvasManager,
             Hippo,
             HST,
             jQuery,
-            SVGAnimatedString,
-            XPathResult,
             YAHOO,
             window
           </predefinedVars>
           <sourceJsFolder>${basedir}/src/main/resources</sourceJsFolder>
-          <tolerateEval>true</tolerateEval>
         </configuration>
       </plugin>
       <plugin>
