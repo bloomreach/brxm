@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.hippoecm.repository.security.group;
 
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,12 +46,11 @@ import static org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER
 import static org.hippoecm.repository.util.JcrUtils.getStringProperty;
 
 /**
- * Abstract group manager for managing groups. 
- * 
-* The rawGroupId's are the id's as provided by the backend. The groupId's 
-* are the normalized id's. All id's MUST be normalized before they are
-* stored in the database.
-*/
+ * Abstract group manager for managing groups.
+ * <p>
+ * The rawGroupId's are the id's as provided by the backend. The groupId's are the normalized id's. All id's MUST be
+ * normalized before they are stored in the database.
+ */
 public abstract class AbstractGroupManager implements GroupManager {
 
     /**
@@ -134,8 +132,7 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     /**
-     * Create a group node. Use the getNodeType to determine the type the node
-     * should be.
+     * Create a group node. Use the getNodeType to determine the type the node should be.
      */
     public final Node createGroup(String rawGroupId) throws RepositoryException {
         if (!isInitialized()) {
@@ -158,7 +155,7 @@ public abstract class AbstractGroupManager implements GroupManager {
             }
         }
         Node group = groupsNode.addNode(NodeNameCodec.encode(groupId, true), getNodeType());
-        group.setProperty(HippoNodeType.HIPPO_MEMBERS, new Value[] {});
+        group.setProperty(HippoNodeType.HIPPO_MEMBERS, new Value[]{});
         if (!INTERNAL_PROVIDER.equals(providerId)) {
             group.setProperty(HIPPO_SECURITYPROVIDER, providerId);
             log.debug("Group: {} created by {} ", groupId, providerId);
@@ -199,8 +196,9 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     /**
-     * Helper for building group path including the groupname itself. Takes care of the encoding
-     * of the path AND the groupId (the eventual node name)
+     * Helper for building group path including the groupname itself. Takes care of the encoding of the path AND the
+     * groupId (the eventual node name)
+     *
      * @param rawGroupId unencoded groupId
      * @return the fully encoded normalized path
      */
@@ -223,20 +221,20 @@ public abstract class AbstractGroupManager implements GroupManager {
     }
 
     /**
-     * Sanitize the rawId: trim and convert to lowercase if needed. This
-     * function does NOT encode the groupId.
-     * @param rawGruopId
+     * Sanitize the rawId: trim and convert to lowercase if needed. This function does NOT encode the groupId.
+     *
+     * @param rawGroupId
      * @return the trimmed and if needed converted to lowercase groupId
      */
-    private String sanitizeId(String rawGruopId) {
-        if (rawGruopId == null) {
+    private String sanitizeId(final String rawGroupId) {
+        if (rawGroupId == null) {
             // anonymous
             return null;
         }
         if (isCaseSensitive()) {
-            return rawGruopId.trim();
+            return rawGroupId.trim();
         } else {
-            return rawGruopId.trim().toLowerCase();
+            return rawGroupId.trim().toLowerCase();
         }
     }
 
@@ -268,7 +266,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
         return createGroup(rawGroupId);
     }
-    
+
     protected final void updateSyncDate(Node group) throws RepositoryException {
         if (group.isNodeType(HippoNodeType.NT_EXTERNALUSER)) {
             group.setProperty(HippoNodeType.HIPPO_LASTSYNC, Calendar.getInstance());
@@ -340,11 +338,11 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
         String userId = user.getName();
         Set<String> repositoryMemberships = getMembershipIds(userId, providerId);
-        Set<String> backendMemberships = new HashSet<String>();
+        Set<String> backendMemberships = new HashSet<>();
         for (String groupId : backendGetMemberships(user)) {
             backendMemberships.add(sanitizeId(groupId));
         }
-        Set<String> inSync = new HashSet<String>();
+        Set<String> inSync = new HashSet<>();
         for (String groupId : repositoryMemberships) {
             if (backendMemberships.contains(groupId)) {
                 inSync.add(groupId);
@@ -380,7 +378,7 @@ public abstract class AbstractGroupManager implements GroupManager {
             }
             return members;
         }
-        return Collections.emptySet();
+        return new HashSet<>();
     }
 
     public final void setMembers(Node group, Set<String> members) throws RepositoryException {
