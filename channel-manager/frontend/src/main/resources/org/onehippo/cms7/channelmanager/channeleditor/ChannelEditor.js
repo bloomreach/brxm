@@ -106,7 +106,7 @@
       this._syncChannel();
     },
 
-    _onComponentLocked: function(data) {
+    _closeDialogAndNotifyReloadChannel: function(data) {
       this._destroyComponentPropertiesWindow();
       this.hostToIFrame.publish('reload-channel', data);
     },
@@ -177,7 +177,8 @@
           deleteComponent: this._deleteComponent,
           propertiesChanged: this._renderComponent,
           componentChanged: this._onComponentChanged,
-          componentLocked: this._onComponentLocked,
+          loadFailed: this._closeDialogAndNotifyReloadChannel,
+          componentLocked: this._closeDialogAndNotifyReloadChannel,
           hide: function() {
             this.hostToIFrame.publish('hide-component-properties');
           },
