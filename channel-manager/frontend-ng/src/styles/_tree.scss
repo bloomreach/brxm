@@ -70,7 +70,14 @@
 }
 
 .has-styling {
+  .spacer {
+    display: inline-block;
+    vertical-align: top;
+    width: 24px;
+  }
+
   .angular-ui-tree-node {
+    cursor: pointer;
     display: block;
     line-height: 20px;
     margin-top: 3px;
@@ -90,15 +97,16 @@
   }
 
   .angular-ui-tree-handle {
-    .drag-enabled & {
-      border: 1px solid $tree-border-color;
-      border-radius: $tree-border-radius;
-    }
     background-clip: padding-box;
     background-color: $tree-bg;
     box-sizing: border-box;
     font-size: $tree-font-size;
     padding: 1px 2px;
+
+    .drag-enabled & {
+      border: 1px solid $tree-border-color;
+      border-radius: $tree-border-radius;
+    }
 
     &:hover {
       background: $tree-hover-bg;
@@ -131,18 +139,14 @@
       font-size: 20px;
       line-height: 24px;
     }
-
-    .spacer {
-      display: inline-block;
-      vertical-align: top;
-      width: 24px;
-    }
   }
+
   .angular-ui-tree-placeholder {
     border-radius: $tree-border-radius;
     margin-top: 4px;
   }
 }
+
 
 .angular-ui-tree-placeholder {
   background: $tree-dd-bg;

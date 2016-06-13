@@ -19,10 +19,13 @@
   <md-list>
     <md-list-item ng-repeat="item in listing.selectedItem.items"
                   ng-if="item.selectable"
-                  ng-class="{active: listing.selectedDocument === item}"
+                  ng-class="{
+                  active: listing.selectedDocument === item,
+                  document: item.type !== 'folder'
+                  }"
                   scroll-to-if="listing.selectedDocument === item"
                   ng-click="listing.selectDocument(item)">
-      <md-icon md-svg-src="{{ item.type == 'folder' ? 'images/folder-closed.svg' : 'images/document.svg' }}"></md-icon>
+      <md-icon md-svg-src="{{ listing.getItemIcon(item) }}"></md-icon>
       <p>{{item.displayName}}</p>
     </md-list-item>
   </md-list>
