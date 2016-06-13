@@ -79,7 +79,7 @@ $text-light: rgba(255, 255, 255, .87);
 //TODO Clean these variables, replace with color palette
 $white: #fff;
 $black: #000;
-$blue: #0877d1;
+$blue: $blue-500;
 $blue-shadow: rgba(0, 94, 171, 0.25);
 $black-shadow: rgba(0, 0, 0, 0.25);
 $half-white: rgba(255, 255, 255, 0.50);
@@ -94,6 +94,7 @@ $list-item-active-bgcolor: rgba(158, 158, 158, 0.2);
 // Picker
 $picker-subheader-bgcolor: $grey-100;
 $picker-border-color: $grey-400;
+$picker-actions-color: $grey-100;
 
 // Tree
 $tree-bg:                                     $white;

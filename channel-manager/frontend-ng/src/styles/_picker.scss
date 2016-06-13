@@ -39,6 +39,10 @@
       margin-bottom: 0;
     }
   }
+
+  + md-dialog-actions {
+    background-color: $picker-actions-color;
+  }
 }
 
 // TODO: get proper icons that fit
