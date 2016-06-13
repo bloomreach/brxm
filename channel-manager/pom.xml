@@ -40,8 +40,6 @@
     <hippo.hst.version>4.0.0-SNAPSHOT</hippo.hst.version>
     <hippo.commons.version>3.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.addon-hst-configuration-editor.version>3.0.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
-    <hippo.frontend.plugins.version>3.0.0-SNAPSHOT</hippo.frontend.plugins.version>
-    <hippo.frontend.theme.version>3.0.0-SNAPSHOT</hippo.frontend.theme.version>
 
     <commons-lang.version>2.6</commons-lang.version>
     <lib.json.version>20090211</lib.json.version>
@@ -201,22 +199,11 @@
                 <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugins/colorfield/*</exclude>
                 <exclude>frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugins/vtabs/*</exclude>
 
-                <exclude>frontend/.*</exclude>
-                <exclude>frontend/*.md</exclude>
-                <exclude>frontend/dist/**/*</exclude>
-                <exclude>frontend/tmp/**/*</exclude>
-                <exclude>frontend/node_modules/**/*</exclude>
-                <exclude>frontend/bower_components/**/*</exclude>
-                <exclude>frontend/DIST_LICENSE</exclude>
-
                 <exclude>frontend-ng/.*</exclude>
                 <exclude>frontend-ng/*.md</exclude>
-                <exclude>frontend-ng/dist/**/*</exclude>
-                <exclude>frontend-ng/tmp/**/*</exclude>
                 <exclude>frontend-ng/node_modules/**/*</exclude>
                 <exclude>frontend-ng/bower_components/**/*</exclude>
                 <exclude>frontend-ng/coverage/**/*</exclude>
-                <exclude>frontend-ng/DIST_LICENSE</exclude>
 
                 <exclude>angularjs-api/.*</exclude>
                 <exclude>angularjs-api/*.md</exclude>
@@ -224,7 +211,6 @@
                 <exclude>angularjs-api/tmp/**/*</exclude>
                 <exclude>angularjs-api/node_modules/**/*</exclude>
                 <exclude>angularjs-api/bower_components/**/*</exclude>
-                <exclude>angularjs-api/DIST_LICENSE</exclude>
 
                 <!-- repository content XML -->
                 <exclude>repository/src/main/resources/**/*.xml</exclude>
