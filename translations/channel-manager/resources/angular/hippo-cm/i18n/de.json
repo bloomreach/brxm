@@ -124,7 +124,7 @@
   "SUBPAGE_CHANNEL_SETTINGS_TITLE": "Einstellungen von '{{channelName}}'",
   "TOOLBAR_MENU_PAGE_SITEMAP_NOT_EDITABLE": "Sitemap nicht bearbeitbar",
   "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED": "Informationen über Channel-Einstellungen konnten nicht abgerufen werden",
-  "TOOLBAR_VIEW_AS_INFIX": ", der ",
+  "TOOLBAR_VIEW_AS_INFIX": ", the ",
   "ERROR_SITEMAP_RETRIEVAL_FAILED": "Sitemap für aktuellen Channel konnte nicht abgerufen werden.",
   "SUBPAGE_PAGE_EDIT_PRIMARY_DOCUMENT_VALUE_NONE": "Keines",
   "NEW_MENU_ITEM_TITLE": "Unbenannt",
