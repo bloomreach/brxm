@@ -20,7 +20,6 @@ export class ListingCtrl {
   }
 
   _getDocumentStatusIcon(item) {
-    console.log(item.state);
     const docState = item.state;
     let iconPath;
 
