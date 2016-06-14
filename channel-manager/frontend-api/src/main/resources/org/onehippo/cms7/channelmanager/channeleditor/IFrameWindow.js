@@ -44,6 +44,18 @@
             iframeConfig: config.iframeConfig
           }
         ],
+        listeners: {
+          'afterrender': function (self) {
+            var messageBus = self.getIFramePanel().iframeToHost;
+            messageBus.subscribe('close', function () {
+              // make sure AngularJS in the iframe is properly destroyed by changing the
+              // location to about:blank before removing the iframe element from the DOM
+              var iframePanel = Ext.getCmp(self.iframePanelId);
+              iframePanel.on('locationchanged', self.close, self, { single: true });
+              iframePanel.setLocation('about:blank');
+            });
+          }
+        }
       });
 
       Hippo.ChannelManager.ChannelEditor.IFrameWindow.superclass.constructor.call(this, config);
