@@ -169,7 +169,7 @@ describe('hippoIframeCtrl', () => {
     hippoIframeCtrl.onLoad();
     $rootScope.$digest();
 
-    expect(DomService.addCss).toHaveBeenCalledWith(window, 'http://cms.example.com/app/root/styles/hippo-iframe.css');
+    expect(DomService.addCss).toHaveBeenCalledWith(window, 'http://cms.example.com/app/root/styles/hippo-iframe.css?antiCache=123');
     expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
     expect(hstCommentsProcessorService.run).toHaveBeenCalled();
     expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();

@@ -30,6 +30,7 @@ import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
@@ -51,6 +52,7 @@ public class ChannelEditor extends ExtPanel {
     private static final String OPEN_DOCUMENT_EDITOR_EVENT = "open-document-editor";
 
     @ExtProperty
+    @SuppressWarnings("unused")
     private Boolean debug = false;
 
     @ExtProperty
@@ -88,6 +90,10 @@ public class ChannelEditor extends ExtPanel {
     @ExtProperty
     @SuppressWarnings("unused")
     private Boolean hideHstConfigEditor;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private static final String ANTI_CACHE = WebApplicationHelper.APPLICATION_HASH;
 
     private ExtStoreFuture<Object> channelStoreFuture;
 

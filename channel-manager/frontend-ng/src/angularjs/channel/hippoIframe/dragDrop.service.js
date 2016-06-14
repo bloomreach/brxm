@@ -21,12 +21,13 @@ const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 
 export class DragDropService {
 
-  constructor($rootScope, $q, DomService, HstService, PageStructureService, ScalingService, ChannelService,
-              ScrollService, FeedbackService) {
+  constructor($rootScope, $q, ConfigService, DomService, HstService, PageStructureService, ScalingService,
+              ChannelService, ScrollService, FeedbackService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.$q = $q;
+    this.ConfigService = ConfigService;
     this.DomService = DomService;
     this.HstService = HstService;
     this.PageStructureService = PageStructureService;
@@ -98,10 +99,10 @@ export class DragDropService {
   _injectDragula(iframe) {
     const appRootUrl = this.DomService.getAppRootUrl();
 
-    const dragulaCss = `${appRootUrl}styles/dragula.min.css`;
+    const dragulaCss = `${appRootUrl}styles/dragula.min.css?antiCache=${this.ConfigService.antiCache}`;
     this.DomService.addCss(iframe, dragulaCss);
 
-    const dragulaJs = `${appRootUrl}scripts/dragula.min.js`;
+    const dragulaJs = `${appRootUrl}scripts/dragula.min.js?antiCache=${this.ConfigService.antiCache}`;
     return this.DomService.addScript(iframe, dragulaJs);
   }
 
