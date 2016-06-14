@@ -363,4 +363,16 @@ describe('HstService', () => {
     $httpBackend.flush();
     expect(catchSpy).toHaveBeenCalledWith(error);
   });
+
+  it('reports user activity to the CMS when the backend is called', () => {
+    spyOn(window.APP_TO_CMS, 'publish');
+    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/some-uuid./one/two/three`, {
+      'CMS-User': 'testUser',
+      FORCE_CLIENT_HOST: 'true',
+      Accept: 'application/json, text/plain, */*',
+    }).respond(200);
+    hstService.doGet('some-uuid', 'one', 'two', 'three');
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('user-activity');
+    $httpBackend.flush();
+  });
 });

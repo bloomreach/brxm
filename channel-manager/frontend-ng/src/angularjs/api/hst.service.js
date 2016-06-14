@@ -18,12 +18,13 @@ let q;
 let http;
 
 export class HstService {
-  constructor($q, $http, ConfigService, PathService) {
+  constructor($q, $http, CmsService, ConfigService, PathService) {
     'ngInject';
 
     q = $q;
     http = $http;
 
+    this.CmsService = CmsService;
     this.config = ConfigService;
     this.PathService = PathService;
   }
@@ -87,6 +88,8 @@ export class HstService {
     headers = headers || {};
     headers['CMS-User'] = this.config.cmsUser;
     headers.FORCE_CLIENT_HOST = 'true';
+
+    this.CmsService.publish('user-activity');
 
     return q((resolve, reject) => {
       http({ method, url, headers, data })
