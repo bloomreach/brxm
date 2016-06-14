@@ -50,6 +50,10 @@ export class ScalingService {
 
   setViewPortWidth(viewPortWidth) {
     this.OverlaySyncService.setViewPortWidth(viewPortWidth);
+    this.sync();
+  }
+
+  sync() {
     this._updateScaling(false);
     this.OverlaySyncService.syncIframe();
   }
@@ -104,7 +108,7 @@ export class ScalingService {
    * @param animate  flag indicating that any change should be animated.
    */
   _updateScaling(animate) {
-    if (!this.hippoIframeJQueryElement) {
+    if (!this.hippoIframeJQueryElement || !this.hippoIframeJQueryElement.is(':visible')) {
       return;
     }
 

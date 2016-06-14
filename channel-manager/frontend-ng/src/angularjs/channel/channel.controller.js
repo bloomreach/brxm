@@ -21,6 +21,7 @@ export class ChannelCtrl {
       $rootScope,
       $translate,
       $stateParams,
+      $timeout,
       ChannelService,
       ComponentAdderService,
       CmsService,
@@ -34,6 +35,7 @@ export class ChannelCtrl {
 
     this.$log = $log;
     this.$rootScope = $rootScope;
+    this.$timeout = $timeout;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
@@ -129,6 +131,9 @@ export class ChannelCtrl {
 
   hideSubpage() {
     delete this.currentSubpage;
+    this.$timeout(() => {
+      this.ScalingService.sync();
+    }, 0);
   }
 
   onSubpageSuccess(key, params) {

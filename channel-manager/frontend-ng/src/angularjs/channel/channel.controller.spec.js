@@ -28,15 +28,17 @@ describe('ChannelCtrl', () => {
   let ChannelCtrl;
   let HippoIframeService;
   let $rootScope;
+  let $timeout;
   let $q;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$q_, _FeedbackService_, _SessionService_) => {
+    inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_, _SessionService_) => {
       const resolvedPromise = _$q_.when();
 
       $rootScope = _$rootScope_;
+      $timeout = _$timeout_;
       $q = _$q_;
       FeedbackService = _FeedbackService_;
       SessionService = _SessionService_;
@@ -70,6 +72,7 @@ describe('ChannelCtrl', () => {
       ScalingService = jasmine.createSpyObj('ScalingService', [
         'init',
         'setPushWidth',
+        'sync',
       ]);
 
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', [
@@ -199,6 +202,8 @@ describe('ChannelCtrl', () => {
 
     ChannelCtrl.hideSubpage();
     expect(ChannelCtrl.isSubpageOpen()).toBe(false);
+    $timeout.flush();
+    expect(ScalingService.sync).toHaveBeenCalled();
 
     ChannelCtrl.showSubpage('test');
     ChannelCtrl.onSubpageError('key', { param: 'value' });
