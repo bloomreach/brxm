@@ -84,14 +84,12 @@
     min-height: 20px;
     padding: 0;
 
-    &.active {
-      & > .angular-ui-tree-handle {
-        background: $tree-active-bg;
-        border-color: $tree-active-border-color;
+    &.active > div:first-child {
+      background: $tree-active-bg;
+      border-color: $tree-active-border-color;
+      color: $tree-active-color;
+      md-icon {
         color: $tree-active-color;
-        md-icon {
-          color: $tree-active-color;
-        }
       }
     }
   }
@@ -112,38 +110,37 @@
       background: $tree-hover-bg;
       text-decoration: none;
     }
-
-    .angular-ui-tree-title {
-      display: inline-block;
-      min-width: calc(100% - 56px);
-      vertical-align: middle;
-    }
-
-    .hippo-tree-item-toggle {
-      border: 0;
-      padding: 0;
-      display: inline-block;
-
-      md-icon {
-        transition-property: transform;
-        transition-duration: 0.2s;
-
-        // TODO: temporary workaround for missing right-arrow
-        &.rotate-left {
-          transform: rotate(-90deg);
-        }
-      }
-    }
-
-    .angular-ui-tree-title-wrapper md-icon {
-      font-size: 20px;
-      line-height: 24px;
-    }
   }
 
   .angular-ui-tree-placeholder {
     border-radius: $tree-border-radius;
     margin-top: 4px;
+  }
+
+  .angular-ui-tree-title {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .hippo-tree-item-toggle {
+    border: 0;
+    padding: 0;
+    display: inline-block;
+
+    md-icon {
+      transition-property: transform;
+      transition-duration: 0.2s;
+
+      // TODO: temporary workaround for missing right-arrow
+      &.rotate-left {
+        transform: rotate(-90deg);
+      }
+    }
+  }
+
+  .angular-ui-tree-title-wrapper md-icon {
+    font-size: 20px;
+    line-height: 24px;
   }
 }
 

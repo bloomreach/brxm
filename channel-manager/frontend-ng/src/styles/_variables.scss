@@ -84,7 +84,6 @@ $OpenSansPath: '../fonts';
 //TODO Clean these variables, replace with color palette
 $white: #fff;
 $black: #000;
-$blue: #0877d1;
 $blue-shadow: rgba(0, 94, 171, 0.25);
 $black-shadow: rgba(0, 0, 0, 0.25);
 $half-white: rgba(255, 255, 255, 0.50);
@@ -99,6 +98,7 @@ $list-item-active-bgcolor: rgba(158, 158, 158, 0.2);
 // Picker
 $picker-subheader-bgcolor: $grey-100;
 $picker-border-color: $grey-400;
+$picker-actions-color: $grey-100;
 
 // Tree
 $tree-bg:                                     $white;
@@ -110,7 +110,7 @@ $tree-font-size:                              13px;
 $tree-hover-bg:                               $half-white;
 
 // Active tree item
-$tree-active-bg:                              $blue;
+$tree-active-bg:                              $blue-500;
 $tree-active-border-color:                    $blue-shadow;
 $tree-active-color:                           $white;
 
