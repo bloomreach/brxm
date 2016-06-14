@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,10 +51,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
-import org.hippoecm.hst.configuration.channel.ChannelNotFoundException;
 import org.hippoecm.hst.rest.ChannelService;
-import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
-import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -106,7 +102,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     public static final List<String> INTERNAL_FIELDS;
 
     static {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         for (ChannelField field : ChannelField.values()) {
             names.add(field.name());
         }
@@ -118,7 +114,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                         ChannelField.previewHstConfigExists.name()));
     }
 
-    public static enum SortOrder {ascending, descending}
+    public enum SortOrder {ascending, descending}
 
     /**
      * The first serialized version of this source. Version {@value}.
@@ -175,12 +171,12 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
         props.put("storeId", this.storeId);
 
-        final Map<String, String> sortInfo = new HashMap<String, String>();
+        final Map<String, String> sortInfo = new HashMap<>();
         sortInfo.put("field", this.sortFieldName);
         sortInfo.put("direction", this.sortOrder.equals(SortOrder.ascending) ? "ASC" : "DESC");
         props.put("sortInfo", sortInfo);
 
-        final Map<String, String> baseParams = new HashMap<String, String>();
+        final Map<String, String> baseParams = new HashMap<>();
         baseParams.put("xaction", "read");
         props.put("baseParams", baseParams);
 
@@ -248,7 +244,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         String type = channel.getType();
         object.put("channelType", type);
 
-        final Map<String, String> channelFieldValuesWithType = new HashMap<String, String>();
+        final Map<String, String> channelFieldValuesWithType = new HashMap<>();
         channelFieldValuesWithType.put("type", channel.getType());
 
         String channelIconUrl = getChannelIconUrl(channelFieldValuesWithType, getChannelTypeIconPath());
@@ -262,7 +258,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         if (StringUtils.isNotEmpty(channel.getLocale())) {
             object.put("channelRegion", channel.getLocale());
 
-            final Map<String, String> channelFieldValuesWithRegion = new HashMap<String, String>();
+            final Map<String, String> channelFieldValuesWithRegion = new HashMap<>();
             channelFieldValuesWithRegion.put("region", channel.getLocale());
 
             String regionIconUrl = getChannelIconUrl(channelFieldValuesWithRegion, getChannelRegionIconPath());
@@ -287,7 +283,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             try {
                 if (session.nodeExists(channelIconPath)) {
                     String url = encodeUrl("binaries" + channelIconPath);
-                    return requestCycle.getResponse().encodeURL(url).toString();
+                    return requestCycle.getResponse().encodeURL(url);
                 }
             } catch (RepositoryException repositoryException) {
                 log.error("Error getting the channel icon resource url.", repositoryException);
@@ -343,8 +339,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
         Channel channel = null;
         try {
-            for (Iterator<Channel> channels = getChannels().iterator(); channels.hasNext(); ) {
-                channel = channels.next();
+            for (final Channel c : getChannels()) {
+                channel = c;
                 properties = getChannelResourceValues(channel);
                 String header = properties.getProperty(fieldName);
                 if (header != null) {
@@ -432,26 +428,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         return Collections.unmodifiableList(new ArrayList<>(channels.values()));
     }
 
-    public Channel getChannel(String id) throws ChannelNotFoundException {
-        if (channels == null) {
-            loadChannels();
-        }
-
-        Channel channel = channels.get(id);
-        if (channel == null) {
-            log.warn("No channel found with id '{}'!", id);
-            throw new ChannelNotFoundException("No channel found with id '" + id + "'");
-        }
-
-        return channel;
-    }
-
-    public List<HstPropertyDefinitionInfo> getChannelPropertyDefinitions(Channel channel) {
-        final IRestProxyService restProxy = getRestProxy(channel);
-        ChannelService channelService = restProxy.createSecureRestProxy(ChannelService.class);
-        return channelService.getChannelPropertyDefinitions(channel.getId());
-    }
-
     public Properties getChannelResourceValues(final Channel channel) throws ChannelException {
         return getCachedChannelResources(channel);
     }
@@ -474,26 +450,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         final ChannelService channelService = getRestProxy(channel).createSecureRestProxy(ChannelService.class);
         final String locale = Session.get().getLocale().toString();
         return channelService.getChannelResourceValues(channel.getId(), locale);
-    }
-
-    public void saveChannel(Channel channel) throws ActionFailedException {
-        ChannelService channelService = getRestProxy(channel).createSecureRestProxy(ChannelService.class);
-
-        try {
-            channelService.save(channel);
-        } catch (ChannelException ce) {
-            throw createActionFailedException(ce, channel);
-        }
-    }
-
-    /**
-     * @param channel the channel to get the ChannelInfo class for
-     * @return the ChannelInfo class for the given channel, or <code>null</code> if the channel does not have a custom
-     * ChannelInfo class or the channel manager could not be loaded (e.g. because the site is down).
-     */
-    public ChannelInfoClassInfo getChannelInfoClassInfo(Channel channel) throws ChannelException {
-        ChannelService channelService = getRestProxy(channel).createSecureRestProxy(ChannelService.class);
-        return channelService.getChannelInfoClassInfo(channel.getId());
     }
 
     public void update() {
@@ -521,22 +477,19 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             final IRestProxyService restProxyService = entry.getValue();
             final String contextPath = entry.getKey();
             final ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
-            restProxyJobs.add(new Callable<List<Channel>>() {
-                @Override
-                public List<Channel> call() throws Exception {
-                    final List<Channel> result = channelService.getChannels();
-                    final List<Channel> checkedChannels = new ArrayList<>(result.size());
-                    for (Channel channel : result) {
-                        if (!contextPath.equals(channel.getContextPath())) {
-                            log.warn("Skipping channel '{}' which  is fetched via wrong rest proxy as the " +
-                                            "contextPath of the rest proxy is '{}' and from the channel it is '{}'.",
-                                    channel, contextPath, channel.getContextPath());
-                        } else {
-                            checkedChannels.add(channel);
-                        }
+            restProxyJobs.add(() -> {
+                final List<Channel> result = channelService.getChannels();
+                final List<Channel> checkedChannels = new ArrayList<>(result.size());
+                for (Channel channel : result) {
+                    if (!contextPath.equals(channel.getContextPath())) {
+                        log.warn("Skipping channel '{}' which  is fetched via wrong rest proxy as the " +
+                                        "contextPath of the rest proxy is '{}' and from the channel it is '{}'.",
+                                channel, contextPath, channel.getContextPath());
+                    } else {
+                        checkedChannels.add(channel);
                     }
-                    return checkedChannels;
                 }
+                return checkedChannels;
             });
         }
         final List<Future<List<Channel>>> futures = submitJobs(restProxyJobs);
@@ -582,7 +535,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                 } else {
                     log.info(
                             "Ignoring locale '{}' of the content root path '{}' of channel '{}': the locale does not define a language",
-                            new Object[]{locale, contentRoot, channelName});
+                            locale, contentRoot, channelName);
                 }
             }
         }
