@@ -88,6 +88,9 @@ md-toolbar.hippo-toolbar {
   }
 
   .changes-button {
+    margin-left: 0;
+    margin-right: 4px;
+    padding-right: 20px;
     md-icon {
       color: $orange-a400;
       position: relative;
