@@ -36,7 +36,7 @@ describe('ScalingService', () => {
     canvasJQueryElement = $j('.channel-iframe-canvas');
     elementsToScale = jasmine.createSpyObj('elementsToScale', ['velocity', 'css', 'scrollTop']);
 
-    iframeJQueryElement = jasmine.createSpyObj('iframeJQueryElement', ['find', 'css', 'velocity']);
+    iframeJQueryElement = jasmine.createSpyObj('iframeJQueryElement', ['find', 'css', 'velocity', 'is']);
     iframeJQueryElement.find.and.callFake((selector) => {
       if (selector === '.cm-scale') {
         return elementsToScale;
@@ -44,6 +44,7 @@ describe('ScalingService', () => {
       return $j(`#test-hippo-iframe ${selector}`);
     });
     iframeJQueryElement.css.and.callFake(() => '0');
+    iframeJQueryElement.is.and.returnValue(true);
   });
 
   afterEach(() => {
@@ -256,5 +257,17 @@ describe('ScalingService', () => {
     expect(elementsToScale.velocity.calls.mostRecent().args).toEqual(['finish']);
     expect(elementsToScale.css.calls.mostRecent().args).toEqual(['transform', 'scale(1)']);
     expect(ScalingService.getScaleFactor()).toBe(1);
+  });
+
+  it('should skip scaling if the iframe element is not visible', () => {
+    iframeJQueryElement.is.and.returnValue(false);
+    canvasJQueryElement.width(400);
+
+    ScalingService.init(iframeJQueryElement);
+    ScalingService.setPushWidth(100);
+
+    expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
+    expect(elementsToScale.velocity).not.toHaveBeenCalled();
+    expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
 });
