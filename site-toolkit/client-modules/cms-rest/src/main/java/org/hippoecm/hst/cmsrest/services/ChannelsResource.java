@@ -1,5 +1,5 @@
 /*
-*  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -23,11 +23,8 @@ import java.util.Properties;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
-import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.rest.ChannelService;
-import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
-import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,20 +66,6 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     }
 
     @Override
-    public void save(Channel channel) throws ChannelException {
-        try {
-            if (!channel.isPreview()) {
-                log.warn("Error while trying to save channel {}: Can only save preview channels", channel);
-                throw new ChannelException("Error while trying to save channel + " + channel.getId() + " : Can only save preview channels ");
-            }
-            channelManager.save(channel);
-        } catch (ChannelException ce) {
-            log.info("Error while saving a channel - Channel: {} - {} : {}", channel, ce.getClass().getName(), ce.toString());
-            throw ce;
-        }
-    }
-
-    @Override
     public String persist(String blueprintId, Channel channel) throws ChannelException {
         try {
             return channelManager.persist(blueprintId, channel);
@@ -93,42 +76,8 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     }
 
     @Override
-    public List<HstPropertyDefinitionInfo> getChannelPropertyDefinitions(String id) {
-        return InformationObjectsBuilder.buildHstPropertyDefinitionInfos(getVirtualHosts().getPropertyDefinitions(getHostGroupNameForCmsHost(), id));
-    }
-
-    @Override
-    public Channel getChannel(String id) throws ChannelException {
-        final Channel channel = getVirtualHosts().getChannelById(getHostGroupNameForCmsHost(), id);
-        if (channel == null) {
-            log.warn("Failed to retrieve a channel with id '{}'", id);
-            throw new ChannelException("Failed to retrieve a channel with id '" + id + "'");
-        }
-        return channel;
-    }
-
-    @Override
     public boolean canUserModifyChannels() {
         return channelManager.canUserModifyChannels();
-    }
-
-    @Override
-    public ChannelInfoClassInfo getChannelInfoClassInfo(String id) throws ChannelException {
-        try {
-            Class<? extends ChannelInfo> channelInfoClass = getVirtualHosts().getChannelInfoClass(getHostGroupNameForCmsHost(), id);
-            ChannelInfoClassInfo channelInfoClassInfo = null;
-            if (channelInfoClass != null) {
-                channelInfoClassInfo = InformationObjectsBuilder.buildChannelInfoClassInfo(channelInfoClass);
-            }
-            return channelInfoClassInfo;
-        } catch (ChannelException e) {
-            if (log.isDebugEnabled()) {
-                log.info("Failed to retrieve channel info class for channel with id '{}'",id, e);
-            } else {
-                log.info("Failed to retrieve channel info class for channel with id '{}'",id, e.toString());
-            }
-            throw e;
-        }
     }
 
     @Override
