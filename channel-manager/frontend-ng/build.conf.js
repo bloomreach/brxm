@@ -33,6 +33,10 @@ const customConfig = {
       src: 'src/styles/hippo-iframe.css',
       dest: `${targetDir}styles`,
     },
+    {
+      src: 'bower_components/open-sans-fontface/fonts/Regular/*',
+      dest: `${targetDir}fonts/Regular`,
+    },
   ],
   systemjsOptions: {
     transpiler: 'babel',

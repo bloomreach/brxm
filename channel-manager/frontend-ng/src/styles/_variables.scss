@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Blue palette
+// Color palettes
 $blue-50: #cfe7fc;
 $blue-100: #94c9f7;
 $blue-200: #5faff5;
@@ -27,7 +27,7 @@ $blue-a100: #99cfff;
 $blue-a200: #4da0ff;
 $blue-a400: #267dff;
 $blue-a700: #0357ff;
-// Orange palette
+
 $orange-50: #fce1cf;
 $orange-100: #f7ba94;
 $orange-200: #f59356;
@@ -42,7 +42,7 @@ $orange-a100: #ffc099;
 $orange-a200: #ff9659;
 $orange-a400: #ff751a;
 $orange-a700: #ff5203;
-// Red palette
+
 $red-50: #fccfcf;
 $red-100: #fc8c8c;
 $red-200: #fa5151;
@@ -57,7 +57,7 @@ $red-a100: #f99;
 $red-a200: #ff596a;
 $red-a400: #ff334e;
 $red-a700: #f70029;
-// Grey palette
+
 $grey-50: #fff;
 $grey-100: #f4f4f5;
 $grey-200: #e8e8ea;
@@ -72,9 +72,14 @@ $grey-a100: #fff;
 $grey-a200: #000;
 $grey-a400: #303030;
 $grey-a700: #39434c;
-// Contrast colors
+
+// Text colors
 $text-dark: rgba(0, 0, 0, .87);
 $text-light: rgba(255, 255, 255, .87);
+
+// Typography
+$font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
+$OpenSansPath: '../fonts';
 
 //TODO Clean these variables, replace with color palette
 $white: #fff;
