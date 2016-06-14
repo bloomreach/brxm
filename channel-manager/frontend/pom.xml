@@ -203,7 +203,6 @@
                 <include>${channel.manager.package}/BlueprintListPanel.js</include>
                 <include>${channel.manager.package}/ChannelFormPanel.js</include>
                 <include>${channel.manager.package}/channels/ChannelOverview.js</include>
-                <include>${channel.manager.package}/channels/ChannelPropertiesWindow.js</include>
                 <include>${channel.manager.package}/channels/ChannelGridPanel.js</include>
                 <include>${channel.manager.package}/channels/ChannelIconPanel.js</include>
               </includes>
