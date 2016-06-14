@@ -80,7 +80,7 @@ export class DragDropService {
         mirrorContainer: $(MIRROR_WRAPPER_SELECTOR)[0],
         direction: (el, target) => this._getDragDirection(target),
         moves: (el, source) => this._isContainerEnabled(source),
-        accepts: (el, target) => this._isContainerEnabled(target),
+        accepts: (el, target, source) => this._isContainerEnabled(target) && this._isContainerEnabled(source),
       });
       this.drake.on('drag', () => this._onStartDrag());
       this.drake.on('cloned', (clone, original) => this._onMirrorCreated(clone, original));
