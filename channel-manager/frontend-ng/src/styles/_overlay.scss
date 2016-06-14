@@ -24,7 +24,7 @@
 }
 
 @mixin overlay-border-component($suffix:"") {
-  border: 1px solid $blue unquote($suffix);
+  border: 1px solid $blue-500 unquote($suffix);
   box-shadow: inset 0 0 0 1px $half-white unquote($suffix);
 }
 
@@ -111,7 +111,7 @@ overlay-element {
   cursor: pointer;
 
   > .overlay-label {
-    background: $blue;
+    background: $blue-500;
   }
 
   &:hover {

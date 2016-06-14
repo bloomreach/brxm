@@ -79,7 +79,6 @@ $text-light: rgba(255, 255, 255, .87);
 //TODO Clean these variables, replace with color palette
 $white: #fff;
 $black: #000;
-$blue: $blue-500;
 $blue-shadow: rgba(0, 94, 171, 0.25);
 $black-shadow: rgba(0, 0, 0, 0.25);
 $half-white: rgba(255, 255, 255, 0.50);
@@ -106,7 +105,7 @@ $tree-font-size:                              13px;
 $tree-hover-bg:                               $half-white;
 
 // Active tree item
-$tree-active-bg:                              $blue;
+$tree-active-bg:                              $blue-500;
 $tree-active-border-color:                    $blue-shadow;
 $tree-active-color:                           $white;
 
