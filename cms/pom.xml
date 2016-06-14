@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>28-SNAPSHOT</version>
+    <version>28</version>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
@@ -112,7 +112,7 @@
 
     <xerces.version>2.8.1</xerces.version>
     <wicket.version>6.19.0</wicket.version>
-    <wicket-extjs.version>0.25.2-SNAPSHOT</wicket-extjs.version>
+    <wicket-extjs.version>0.25.2</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <httpclient.version>4.2.2</httpclient.version>
 
@@ -127,7 +127,7 @@
     <yui.sources.version>1.01.12</yui.sources.version>
     <hippo.htmldiff.version>1.01.04</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.05</hippo.jcrdiff.version>
-    <hippo.ckeditor.version>4.5.5-h2-SNAPSHOT</hippo.ckeditor.version>
+    <hippo.ckeditor.version>4.5.5-h2</hippo.ckeditor.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
     <sf.htmlcleaner.version>2.12</sf.htmlcleaner.version>
