@@ -35,6 +35,7 @@ if (!YAHOO.hippo.ImageCropper) {
 
         YAHOO.hippo.ImageCropper = function(id, config) {
             YAHOO.hippo.ImageCropper.superclass.constructor.apply(this, arguments);
+            this.oldMaskSize = null;
             this.container = this.el.parentNode;
             this.rendered = false;
             this.originalImage = this.el;
@@ -94,6 +95,9 @@ if (!YAHOO.hippo.ImageCropper) {
                     if (this.fitView) {
                         this.scaleToFit(this.calculateRatio(this));
                     } else {
+                        if(this.oldMaskSize) {
+                            this.resizeMask(this.oldMaskSize.r, this.oldMaskSize.w, this.oldMaskSize.h);
+                        }
                         this.reset();
                     }
                     return;
@@ -130,15 +134,19 @@ if (!YAHOO.hippo.ImageCropper) {
             // this phase of the render method should only start after the image has loaded completely
             _render: function() {
 
+                if (this.leftCropArea !== null) {
+                    this.leftCropAreaRegion = Dom.getRegion(this.leftCropArea);
+                }
+                var ratio = this.calculateRatio(this);
                 this.cropper = new YAHOO.widget.ImageCropper(this.id,
                         {
                             keyTick: 4,
                             initialXY: [this.initialX, this.initialY],
-                            initHeight: this.initialHeight,
-                            initWidth: this.initialWidth,
+                            initHeight: this.initialHeight * ratio.r,
+                            initWidth: this.initialWidth * ratio.r,
                             ratio: this.fixedDimension === 'both',
-                            minWidth: this.minimumWidth,
-                            minHeight: this.minimumHeight,
+                            minWidth: this.minimumWidth * ratio.r,
+                            minHeight: this.minimumHeight * ratio.r,
                             status: this.status
                         }
                 );
@@ -147,13 +155,9 @@ if (!YAHOO.hippo.ImageCropper) {
                 this.updateRegionInputValue(this.cropper.getCropCoords());
                 this.updatePreviewLabel(this.thumbnailWidth, this.thumbnailHeight);
 
-                if (this.leftCropArea !== null) {
-                    this.leftCropAreaRegion = Dom.getRegion(this.leftCropArea);
-                }
-
                 this.subscribe();
                 if (this.fitView) {
-                    this.scaleToFit(this.calculateRatio(this));
+                    this.scaleToFit(ratio);
                 }
             },
 
@@ -328,7 +332,31 @@ if (!YAHOO.hippo.ImageCropper) {
                     // fix background behind the mask, so crop result (preview) is shown properly:
                     var back = this.cropper._resizeMaskEl;
                     Dom.setStyle(back, "background-size", ratio.w + 'px ' + ratio.h + 'px');
+                    // rescale mask when in fit view, NOTE: fullscreen rescaling is triggered within render method
+                    if(this.fitView) {
+                        var cropCoords = this.cropper.getCropCoords();
+                        this.oldMaskSize = {r: 1, w: cropCoords.width, h: cropCoords.height};
+                        this.resizeMask(ratio.r, cropCoords.width, cropCoords.height)
+                    }
                 }
+            },
+            resizeMask:function(ratio,w,h){
+                var cropper = this.cropper;
+                var height = h * ratio;
+                var width = w * ratio;
+                var elResize = cropper.getResizeEl();
+                setSize(elResize, width, height, ratio);
+                var elMaskAll = cropper.getWrapEl();
+                setSize(elMaskAll, width, height, ratio);
+                var elMask = cropper.getResizeMaskEl();
+                setSize(elMask, width, height, ratio);
+                var handles = cropper.getResizeObject().getActiveHandleEl();
+                setSize(handles, width, height);
+                function setSize(el, width, height, ratio) {
+                    Dom.setStyle(el, 'width', width + 'px');
+                    Dom.setStyle(el, 'height', height + 'px');
+                }
+
             },
             reset: function() {
                 if (this.initOriginal(this)) {
