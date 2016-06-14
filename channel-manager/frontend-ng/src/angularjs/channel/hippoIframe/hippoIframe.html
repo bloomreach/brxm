@@ -45,7 +45,7 @@
           </div>
           <div ng-repeat="contentLink in iframe.getContentLinks()">
             <overlay-element structure-element="contentLink">
-              <md-button class="overlay-element-fab md-fab md-mini md-hue-2 qa-content-link"
+              <md-button class="overlay-element-fab overlay-element-fab-content-link md-fab md-mini md-hue-2 qa-content-link"
                          ng-click="iframe.openContent(contentLink)">
                 <md-icon aria-label="{{'IFRAME_OPEN_DOCUMENT' | translate }}"
                          md-svg-src="images/edit-document.svg"></md-icon>

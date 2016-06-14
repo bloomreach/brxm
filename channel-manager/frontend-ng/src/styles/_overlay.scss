@@ -134,6 +134,15 @@ overlay-element {
 
 .overlay-element-fab {
   margin: 0;
+  > md-icon {
+    // visually move the edit-menu and open-content icons to the middle of the FAB button
+    margin-top: 1px;
+  }
+}
+
+.overlay-element-fab-content-link > md-icon {
+  // visually move the open-content icon to the middle of the FAB button
+  margin-left: 5px;
 }
 
 .overlay-lock-icon {
