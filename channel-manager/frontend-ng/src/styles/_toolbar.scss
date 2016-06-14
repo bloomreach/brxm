@@ -34,12 +34,24 @@ md-toolbar.hippo-toolbar {
     text-transform: none;
   }
 
+  channel-actions .md-button,
+  page-actions .md-button {
+    min-width: 0;
+    margin: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  channel-actions .md-button {
+    margin-left: 8px;
+  }
+
   .md-icon-button {
     color: $text-dark;
     height: $toolbar-height;
-    padding-bottom: 0;
-    padding-top: 0;
-    width: 48px;
+    padding: 0;
+    margin: 0;
+    width: 26px;
   }
 
   md-icon {
