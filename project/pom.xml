@@ -107,7 +107,8 @@
     <maven.plugin.surefire-report.version>2.19.1</maven.plugin.surefire-report.version>
     <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
     <maven.plugin.war.version>2.6</maven.plugin.war.version>
-    <maven.plugin.enforcer.version>1.4.1</maven.plugin.enforcer.version>
+    <!-- don't bump enforcer to 1.4.1 (yet), see commit message -->
+    <maven.plugin.enforcer.version>1.4</maven.plugin.enforcer.version>
     <maven.build.helper.version>1.10</maven.build.helper.version>
 
     <!-- if you want a remote debugging on a different a address
