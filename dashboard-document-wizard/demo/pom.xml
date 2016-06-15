@@ -26,10 +26,11 @@
   <name>Hippo Plugin Dashboard Document Wizard Demo</name>
   <description>Hippo Plugin Dashboard Document Wizard Demo</description>
   <artifactId>hippo-plugin-dashboard-document-wizard-demo</artifactId>
-  <version>2.2.0-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
+    <essentials.version>3.0.0-SNAPSHOT</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
     <commons.lang.version>2.6</commons.lang.version>
@@ -52,6 +53,11 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-components-hst</artifactId>
+        <version>${essentials.version}</version>
+      </dependency>
 
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
