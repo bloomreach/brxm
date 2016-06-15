@@ -576,4 +576,27 @@
       <sv:value>translations.json</sv:value>
     </sv:property>
   </sv:node>
+  <!-- Remove autoreload and webfiles modules since webfiles are not used in this demo -->
+  <sv:node sv:name="selections-remove-autoreload-module">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>32060</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:modules/autoreload</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="selections-remove-webfiles-module">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>32060</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentdelete" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:modules/webfiles</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>
