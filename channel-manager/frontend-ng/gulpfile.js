@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-const hippoBuild = require('hippo-build');
+const frontendBuild = require('frontend-build');
 const customConfig = require('./build.conf.js');
 const gulp = require('gulp');
 
-hippoBuild.buildTasks(customConfig, gulp);
+frontendBuild.buildTasks(customConfig, gulp);

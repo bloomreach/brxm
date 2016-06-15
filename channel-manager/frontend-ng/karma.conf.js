@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-const hippoBuild = require('hippo-build');
+const frontendBuild = require('frontend-build');
 const customConfig = require('./build.conf.js');
-const cfg = hippoBuild.buildConfig(customConfig);
+const cfg = frontendBuild.buildConfig(customConfig);
 
 module.exports = function karmaConfig(config) {
   const options = cfg.karma;
