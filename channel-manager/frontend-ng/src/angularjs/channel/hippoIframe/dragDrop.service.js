@@ -37,6 +37,7 @@ export class DragDropService {
     this.FeedbackService = FeedbackService;
 
     this.draggingOrClicking = false;
+    this.dropping = false;
   }
 
   init(iframeJQueryElement, baseJQueryElement) {
@@ -62,6 +63,7 @@ export class DragDropService {
       this.drake.destroy();
       this.drake = null;
       this.draggingOrClicking = false;
+      this.dropping = false;
     }
   }
 
@@ -79,8 +81,8 @@ export class DragDropService {
         ignoreInputTextSelection: false,
         mirrorContainer: $(MIRROR_WRAPPER_SELECTOR)[0],
         direction: (el, target) => this._getDragDirection(target),
-        moves: (el, source) => this._isContainerEnabled(source),
-        accepts: (el, target, source) => this._isContainerEnabled(target) && this._isContainerEnabled(source),
+        moves: (el, source) => !this.dropping && this._isContainerEnabled(source),
+        accepts: (el, target) => this._isContainerEnabled(target),
       });
       this.drake.on('drag', () => this._onStartDrag());
       this.drake.on('cloned', (clone, original) => this._onMirrorCreated(clone, original));
@@ -185,6 +187,8 @@ export class DragDropService {
   }
 
   _onDrop(movedElement, targetContainerElement, sourceContainerElement, targetNextComponentElement) {
+    this.dropping = true;
+
     const sourceContainer = this.PageStructureService.getContainerByIframeElement(sourceContainerElement);
     const movedComponent = sourceContainer.getComponentByIframeElement(movedElement);
     const targetContainer = this.PageStructureService.getContainerByIframeElement(targetContainerElement);
@@ -210,7 +214,9 @@ export class DragDropService {
         component: movedComponent.getLabel(),
       }))
       .finally(() => {
-        changedContainers.forEach((container) => this._renderContainer(container));
+        this._renderContainers(changedContainers).finally(() => {
+          this.dropping = false;
+        });
       });
   }
 
@@ -218,8 +224,14 @@ export class DragDropService {
     return this.HstService.updateHstComponent(container.getId(), container.getHstRepresentation());
   }
 
+  _renderContainers(containers) {
+    const renderPromises = [];
+    containers.forEach((container) => renderPromises.push(this._renderContainer(container)));
+    return this.$q.all(renderPromises);
+  }
+
   _renderContainer(container) {
-    this.PageStructureService.renderContainer(container)
+    return this.PageStructureService.renderContainer(container)
       .then((newContainer) => this.replaceContainer(container, newContainer));
   }
 
