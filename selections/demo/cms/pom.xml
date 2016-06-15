@@ -100,6 +100,19 @@
     <finalName>cms</finalName>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Hippo-Release-Version>${hippo.release.version}</Hippo-Release-Version>
+              <Project-Version>${project.version}</Project-Version>
+              <Project-Build>${buildNumber}</Project-Build>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
         <configuration>
