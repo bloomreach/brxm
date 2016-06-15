@@ -30,6 +30,7 @@
   <packaging>pom</packaging>
 
   <properties>
+    <essentials.version>3.0.0-SNAPSHOT</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.1</taglibs.version>
     <commons.lang.version>2.6</commons.lang.version>
@@ -52,6 +53,22 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Essentials components dependencies -->
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
+        <version>${essentials.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-components-cms</artifactId>
+        <version>${essentials.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-essentials-components-hst</artifactId>
+        <version>${essentials.version}</version>
+      </dependency>
 
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>
