@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.LocaleUtils;
-import org.onehippo.repository.bootstrap.InitializeItem;
 
 import net.sf.json.JSONObject;
 
@@ -94,7 +93,7 @@ public class BundleFileInfo {
     }
 
     public static BundleFileInfo readInfo(final InputStream in) throws RepositoryException, IOException {
-        final JSONObject json = JSONObject.fromObject(IOUtils.toString(in));
+        final JSONObject json = JSONObject.fromObject(IOUtils.toString(in, "UTF-8"));
         return new BundleFileInfo(parse(json, new Stack<>()));
     }
 
