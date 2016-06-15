@@ -53,17 +53,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Essentials components dependencies -->
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-essentials-plugin-sdk-api</artifactId>
-        <version>${essentials.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-essentials-components-cms</artifactId>
-        <version>${essentials.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-essentials-components-hst</artifactId>
