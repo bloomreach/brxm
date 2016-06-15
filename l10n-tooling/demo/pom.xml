@@ -19,7 +19,7 @@
 
   <parent>
     <groupId>org.onehippo.cms.l10n</groupId>
-    <artifactId>hippo-cms-l10n-tooling-parent</artifactId>
+    <artifactId>hippo-cms-l10n-tooling-project</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   
