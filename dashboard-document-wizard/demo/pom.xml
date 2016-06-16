@@ -20,13 +20,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>11.0.0-SNAPSHOT</version>
+    <version>11.1.0-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Plugin Dashboard Document Wizard Demo</name>
   <description>Hippo Plugin Dashboard Document Wizard Demo</description>
   <artifactId>hippo-plugin-dashboard-document-wizard-demo</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -103,7 +103,7 @@
       </plugin>
     </plugins>
   </build>
-  
+
   <profiles>
 
     <profile>
@@ -194,7 +194,7 @@
         </plugins>
       </build>
     </profile>
-    
+
   </profiles>
 
 </project>
