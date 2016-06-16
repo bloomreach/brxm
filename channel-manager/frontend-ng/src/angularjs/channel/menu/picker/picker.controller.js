@@ -40,15 +40,11 @@ export class PickerCtrl {
     this.treeOptions = {
       displayItem: (item) => item.type === 'folder' || item.type === 'page',
       selectItem: (item) => {
-        if (!item.leaf && item.items.length === 0) {
-          PickerService.getData(item);
-        }
+        PickerService.getData(item);
         this.selectedDocument = item.selectable ? item : null;
       },
       toggleItem: (item) => {
-        if (item.collapsed === false && item.items.length === 0) {
-          PickerService.getData(item);
-        }
+        PickerService.getData(item);
       },
     };
   }

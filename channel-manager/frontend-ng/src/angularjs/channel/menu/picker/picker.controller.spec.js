@@ -159,37 +159,21 @@ describe('PickerCtrl', () => {
       expect(PickerCtrl.treeOptions.displayItem({ type: 'page' })).toBe(true);
     });
 
-    it('should load child items when item is expanded and child items length is zero', () => {
+    it('should load child items when item is expanded', () => {
       const PickerCtrl = getCtrl(testPickerTypes);
       const item = { collapsed: true, items: [] };
 
       PickerCtrl.treeOptions.toggleItem(item);
-      expect(PickerService.getData).not.toHaveBeenCalled();
 
-      item.collapsed = false;
-      item.items.push({});
-      PickerCtrl.treeOptions.toggleItem(item);
-      expect(PickerService.getData).not.toHaveBeenCalled();
-
-      item.items = [];
-      PickerCtrl.treeOptions.toggleItem(item);
       expect(PickerService.getData).toHaveBeenCalledWith(item);
     });
 
-    it('should load child items when selecting a non-leaf node with zero children', () => {
+    it('should load child items when item is selected', () => {
       const PickerCtrl = getCtrl(testPickerTypes);
       const item = { leaf: true, items: [] };
 
       PickerCtrl.treeOptions.selectItem(item);
-      expect(PickerService.getData).not.toHaveBeenCalled();
 
-      item.leaf = false;
-      item.items.push({});
-      PickerCtrl.treeOptions.selectItem(item);
-      expect(PickerService.getData).not.toHaveBeenCalled();
-
-      item.items = [];
-      PickerCtrl.treeOptions.selectItem(item);
       expect(PickerService.getData).toHaveBeenCalledWith(item);
     });
 
