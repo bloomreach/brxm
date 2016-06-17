@@ -90,6 +90,14 @@
       <sv:value>jsp/one-column/main/content.jsp</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="search.main.content">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:template</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:renderpath" sv:type="String">
+      <sv:value>jsp/search/main/content.jsp</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="two-columns.main.content">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:template</sv:value>
