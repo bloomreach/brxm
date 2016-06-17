@@ -5,6 +5,7 @@
 * [NodeJS](http://nodejs.org/) (NodeJS)
 * [Node Package Manager](https://npmjs.org/) (NPM, comes installed with NodeJS)
 * [Git](http://git-scm.com/)
+* [Chrome](http://google.chrome.com)
 
 ### Dependencies
 * [Bower](http://bower.io/) (front-end package manager)
@@ -31,7 +32,7 @@ Run the commands below in the project root directory.
 ### List all gulp tasks available
   $ gulp --tasks
 
-### Run unit tests
+### Run unit tests (Chrome needs to be installed)
   $ gulp test
 
 ### Build application for development
