@@ -64,13 +64,13 @@
         Note that there is *no* dependency management for the version properties below.
     -->
     <google-api-services-analytics.version>v3-rev116-1.20.0</google-api-services-analytics.version>
-    <cxf.version>3.0.3</cxf.version>
+    <cxf.version>3.1.6</cxf.version>
     <jaxrs.version>2.0.1</jaxrs.version>
     <jackson.version>1.9.13</jackson.version>
     <jackson2.version>2.4.5</jackson2.version>
     <spring.version>4.2.6.RELEASE</spring.version>
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
-    <groovy.version>2.4.7</groovy.version>
+    <groovy.version>2.3.0</groovy.version>
     <freemarker.version>2.3.24-incubating</freemarker.version>
     <jackrabbit.version>2.10.1</jackrabbit.version>
     <patched.jackrabbit.version>2.10.1-h11</patched.jackrabbit.version>
