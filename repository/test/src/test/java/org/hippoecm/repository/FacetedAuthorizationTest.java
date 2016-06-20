@@ -17,6 +17,8 @@ package org.hippoecm.repository;
 
 import java.security.AccessControlException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
@@ -923,6 +925,113 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         // Nodes 'nothing0/subread' and 'nothing0/subwrite' are counted but not instantiated.
         // The hierarchical constraint (can read parent) is not taken into account.
         assertEquals(12L, ((HippoNodeIterator) iter).getTotalSize());
+    }
+
+
+    private void queryAssertions(final Map<String, Long[]> queriesWithExpectedHitSizes) throws RepositoryException {
+        for (Map.Entry<String, Long[]> entry : queriesWithExpectedHitSizes.entrySet()) {
+            final String xpath = entry.getKey();
+            final Long[] expectedSizes = entry.getValue();
+            {
+                // admin
+                QueryManager queryManager = session.getWorkspace().getQueryManager();
+                Query query = queryManager.createQuery(xpath, Query.XPATH);
+                assertEquals(String.format("Query '%s' should had resulted %s hits", xpath, expectedSizes[0].longValue()),
+                        expectedSizes[0].longValue(), query.execute().getNodes().getSize());
+            }
+            {
+                // user
+                QueryManager queryManager = userSession.getWorkspace().getQueryManager();
+                Query query = queryManager.createQuery(xpath, Query.XPATH);
+                assertEquals(String.format("Query '%s' should had resulted %s hits", xpath, expectedSizes[1].longValue()), expectedSizes[1].longValue(), query.execute().getNodes().getSize());
+            }
+        }
+    }
+
+
+    @Test
+    public void parent_axis_query_result_should_not_count_result_from_unreadable_document() throws Exception {
+
+        // Note below the '/..' at the end, indicating to return parent nodes
+        final Map<String, Long[]> queriesWithExpectedHitSizes = new HashMap<>();
+        queriesWithExpectedHitSizes.put("//element(*,hippo:authtestdocument)[@authtest='nothing']", new Long[] {new Long(4), new Long(0)});
+        queriesWithExpectedHitSizes.put("//element(*,hippo:authtestdocument)[@authtest='nothing'] order by @jcr:score", new Long[] {new Long(4), new Long(0)});
+        queriesWithExpectedHitSizes.put("//element(*,hippo:authtestdocument)[@authtest='nothing']/..", new Long[] {new Long(4), new Long(0)});
+        queriesWithExpectedHitSizes.put("//element(*,hippo:authtestdocument)[@authtest='nothing']/.. order by @jcr:score", new Long[] {new Long(4), new Long(0)});
+
+        queryAssertions(queriesWithExpectedHitSizes);
+    }
+
+    @Test
+    public void child_axis_queries_result_should_not_count_children_of_unreadable_document() throws Exception {
+
+        final Map<String, Long[]> queriesWithExpectedHitSizes = new HashMap<>();
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata/readdoc0", new Long[] {new Long(1), new Long(1)});
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata/readdoc0/*", new Long[] {new Long(3), new Long(2)});
+        queriesWithExpectedHitSizes.put("//element(*,hippo:authtestdocument)[@authtest='nothing']/subread", new Long[] {new Long(1), new Long(0)});
+        queriesWithExpectedHitSizes.put("//element(*,hippo:authtestdocument)[@authtest='nothing']/subread order by @jcr:score", new Long[] {new Long(1), new Long(0)});
+        queriesWithExpectedHitSizes.put("//element(*,hippo:authtestdocument)[@authtest='nothing']/* order by @jcr:score", new Long[] {new Long(3), new Long(0)});
+        queriesWithExpectedHitSizes.put("/jcr:root//*/element(*,hippo:authtestdocument)[@authtest='nothing']/*", new Long[] {new Long(3), new Long(0)});
+        queriesWithExpectedHitSizes.put("/jcr:root//*/element(*,hippo:authtestdocument)[@authtest='nothing']/* order by @jcr:score", new Long[] {new Long(3), new Long(0)});
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata//element(*,hippo:authtestdocument)[@authtest='nothing']/* order by @jcr:score", new Long[] {new Long(3), new Long(0)});
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata/element(*,hippo:authtestdocument)[@authtest='nothing']/* order by @jcr:score", new Long[] {new Long(3), new Long(0)});
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata[nothing0/@authtest='nothing']/nothing0/*", new Long[] {new Long(3), new Long(0)});
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata[nothing0/@authtest='nothing']/*/*", new Long[] {new Long(15), new Long(0)});
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata[nothing0/@authtest='nothing']/*[@authtest='nothing']/*", new Long[] {new Long(3), new Long(0)});
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata[readdoc0/@authtest='canread']/readdoc0/subread", new Long[] {new Long(1), new Long(1)});
+
+        // for query below, the userSession should be able to read /testdata/writedoc0/subread and /testdata/readdoc0/subread
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata[readdoc0/@authtest='canread']/*/subread", new Long[] {new Long(3), new Long(2)});
+
+        queryAssertions(queriesWithExpectedHitSizes);
+
+        session.getNode("/testdata/readdoc0/subnothing").addNode("subread", "hippo:authtestdocument").setProperty("authtest", "canread");
+        session.save();
+
+        QueryManager queryManager = userSession.getWorkspace().getQueryManager();
+        final String xpath = "/jcr:root/testdata/readdoc0/*/subread";
+        Query query = queryManager.createQuery(xpath, Query.XPATH);
+        // expected 0 hits because /testdata/readdoc0/subnothing/subread is not reabable for userSession
+        assertEquals(String.format("Query '%s' should had resulted in 0 hits", xpath), 0L, query.execute().getNodes().getSize());
+    }
+
+    @Test
+    public void authorization_child_axis_queries_combined_with_parent_axis_queries() throws Exception {
+        final Map<String, Long[]> queriesWithExpectedHitSizes = new HashMap<>();
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata/readdoc0/..", new Long[] {new Long(1), new Long(1)});
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata/readdoc0/*/..", new Long[] {new Long(1), new Long(1)});
+        queriesWithExpectedHitSizes.put("//element(*,hippo:authtestdocument)[@authtest='nothing']/subread/..", new Long[] {new Long(1), new Long(0)});
+        queriesWithExpectedHitSizes.put("//element(*,hippo:authtestdocument)[@authtest='nothing']/subread/.. order by @jcr:score", new Long[] {new Long(1), new Long(0)});
+        queriesWithExpectedHitSizes.put("//element(*,hippo:authtestdocument)[@authtest='nothing']/*/.. order by @jcr:score", new Long[] {new Long(1), new Long(0)});
+
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata/nothing0/*[../@authtest='nothing']", new Long[] {new Long(3), new Long(0)});
+
+        // for query below, the userSession should be able to read /testdata/writedoc0 and /testdata/readdoc0
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata[readdoc0/@authtest='canread']/*/subread/..", new Long[] {new Long(3), new Long(2)});
+
+        queryAssertions(queriesWithExpectedHitSizes);
+    }
+
+    @Test
+    public void deref_query_should_not_count_unauthorized_hits() throws RepositoryException {
+        final Node readdoc = session.getNode("/testdata/readdoc0");
+        final Node nothingdoc = session.getNode("/testdata/nothing0");
+        nothingdoc.addMixin("mix:referenceable");
+        // create link from 'readdoc0' to 'nothing0'
+        readdoc.setProperty("hippo:linkto", nothingdoc);
+        session.save();
+
+        final Map<String, Long[]> queriesWithExpectedHitSizes = new HashMap<>();
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata/readdoc0/jcr:deref(@hippo:linkto, '*')", new Long[] {new Long(1), new Long(0)});
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata/readdoc0/jcr:deref(@hippo:linkto, '*')/*", new Long[] {new Long(3), new Long(0)});
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata/readdoc0/jcr:deref(@hippo:linkto, '*')/..", new Long[] {new Long(1), new Long(0)});
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata/readdoc0/jcr:deref(@hippo:linkto, '*')/../..", new Long[] {new Long(1), new Long(0)});
+        queriesWithExpectedHitSizes.put("//*/jcr:deref(@hippo:linkto, '*')", new Long[] {new Long(1), new Long(0)});
+        queriesWithExpectedHitSizes.put("//*/jcr:deref(@hippo:linkto, '*')/*", new Long[] {new Long(3), new Long(0)});
+        queriesWithExpectedHitSizes.put("//*/jcr:deref(@hippo:linkto, '*')/..", new Long[] {new Long(1), new Long(0)});
+
+        queryAssertions(queriesWithExpectedHitSizes);
+
     }
 
     @Test

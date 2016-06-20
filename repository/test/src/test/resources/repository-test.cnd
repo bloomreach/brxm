@@ -31,6 +31,7 @@
 - * (String) multiple
 
 [hippo:authtestdocument] > hippo:document
+- hippo:linkto (reference)
 - *
 - * multiple
 + * (nt:base) = hippo:authtestdocument multiple

@@ -92,6 +92,9 @@ public class HippoSortedLuceneQueryHits extends AbstractQueryHits {
      */
     private int numHits;
 
+    /**
+     * authorizationFilter which can be {@code null} in case there is no filter to apply
+     */
     private final Filter authorizationFilter;
 
     /**

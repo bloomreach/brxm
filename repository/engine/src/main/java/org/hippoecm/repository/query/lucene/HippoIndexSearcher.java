@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.io.IOException;
 
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.query.lucene.JackrabbitIndexSearcher;
-import org.apache.jackrabbit.core.query.lucene.JackrabbitQuery;
 import org.apache.jackrabbit.core.query.lucene.LuceneQueryHits;
 import org.apache.jackrabbit.core.query.lucene.QueryHits;
 import org.apache.jackrabbit.core.state.ItemStateManager;
@@ -34,7 +33,7 @@ public class HippoIndexSearcher extends JackrabbitIndexSearcher {
     private final CachingMultiReaderQueryFilter authorizationFilter;
 
     public HippoIndexSearcher(SessionImpl s, IndexReader r, ItemStateManager ism, final CachingMultiReaderQueryFilter authorizationFilter) {
-        super(s, r, ism);
+        super(s, r, ism, authorizationFilter);
         reader = r;
         this.authorizationFilter = authorizationFilter;
     }
@@ -43,9 +42,6 @@ public class HippoIndexSearcher extends JackrabbitIndexSearcher {
     public QueryHits evaluate(Query query, final Sort sort, final long resultFetchHint) throws IOException {
         query = query.rewrite(reader);
         QueryHits hits = null;
-        if (query instanceof JackrabbitQuery) {
-            hits = ((JackrabbitQuery) query).execute(this, getSession(), sort);
-        }
         if (hits == null) {
             boolean noSort = sort.getSort().length == 0;
             if (noSort && authorizationFilter == null) {
