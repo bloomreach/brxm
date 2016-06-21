@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,10 @@
 package org.hippoecm.frontend.plugins.jquery.upload.single;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehaviorListener;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -93,6 +95,12 @@ public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
             @Override
             protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {
                 SingleFileUploadWidget.this.onAfterUpload(file, fileUploadInfo);
+                final List<String> errorMessages = fileUploadInfo.getErrorMessages();
+                // only fire event if there are no error messages
+                if (errorMessages != null && errorMessages.size() == 0) {
+                    MarkupContainer markupContainer = getParent();
+                    BinaryWorkflowUtils.fireUploadEvent(markupContainer);
+                }
             }
 
             protected void onUploadError(final FileUploadInfo fileUploadInfo) {
