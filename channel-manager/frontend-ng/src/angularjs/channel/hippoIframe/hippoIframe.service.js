@@ -55,7 +55,7 @@ export class HippoIframeService {
     }
   }
 
-  _extractRenderPathInfo() {
+  _determineRenderPathInfo() {
     try {
       const path = this.iframeJQueryElement[0].contentWindow.location.pathname;
       return this.ChannelService.extractRenderPathInfo(path);
@@ -90,7 +90,7 @@ export class HippoIframeService {
 
   // called by the hippoIframe controller when the processing of the loaded page is completed.
   signalPageLoadCompleted() {
-    this.renderPathInfo = this._extractRenderPathInfo();
+    this.renderPathInfo = this._determineRenderPathInfo();
     this.pageLoaded = true;
 
     const deferred = this.deferredReload;
