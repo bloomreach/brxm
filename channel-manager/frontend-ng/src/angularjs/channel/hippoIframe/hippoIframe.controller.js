@@ -80,6 +80,7 @@ export class HippoIframeCtrl {
 
   onLoad() {
     // we insert the CSS for every page, because embedded links can come and go without reloading the page
+    this.PageStructureService.clearParsedElements();
     this._insertCss().then(() => {
       if (this._isIframeDomPresent()) {
         this._parseHstComments();
@@ -91,6 +92,9 @@ export class HippoIframeCtrl {
           }
         });
       }
+    }, () => {
+      // stop progress indicator
+      this.HippoIframeService.signalPageLoadCompleted();
     });
     // TODO: handle error.
     // show dialog explaining that for this channel, the CM can currently not be used,
@@ -147,14 +151,21 @@ export class HippoIframeCtrl {
   }
 
   _insertCss() {
-    const iframeWindow = this._getIframeDom().defaultView;
-    const appRootUrl = this.DomService.getAppRootUrl();
-    const hippoIframeCss = `${appRootUrl}styles/hippo-iframe.css?antiCache=${this.ConfigService.antiCache}`;
-    return this.DomService.addCss(iframeWindow, hippoIframeCss);
+    try {
+      const iframeDom = this._getIframeDom();
+      if (!iframeDom) {
+        return this.$q.reject();
+      }
+      const iframeWindow = iframeDom.defaultView;
+      const appRootUrl = this.DomService.getAppRootUrl();
+      const hippoIframeCss = `${appRootUrl}styles/hippo-iframe.css?antiCache=${this.ConfigService.antiCache}`;
+      return this.DomService.addCss(iframeWindow, hippoIframeCss);
+    } catch (e) {
+      return this.$q.reject();
+    }
   }
 
   _parseHstComments() {
-    this.PageStructureService.clearParsedElements();
     this.hstCommentsProcessorService.run(
       this._getIframeDom(),
       this.PageStructureService.registerParsedElement.bind(this.PageStructureService)

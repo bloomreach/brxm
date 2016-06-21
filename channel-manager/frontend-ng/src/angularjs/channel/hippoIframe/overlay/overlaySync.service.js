@@ -16,10 +16,11 @@
 
 export class OverlaySyncService {
 
-  constructor($rootScope, $window, ThrottleService, DomService) {
+  constructor($rootScope, $log, $window, ThrottleService, DomService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
+    this.$log = $log;
     this.$window = $window;
     this.DomService = DomService;
 
@@ -53,14 +54,18 @@ export class OverlaySyncService {
   _onLoad() {
     this.syncIframe();
 
-    const iframeWindow = this._getIframeWindow();
-    this.observer.observe(iframeWindow.document, {
+    const document = this._getIframeDocument();
+    if (!document) {
+      this.$log.warn('Cannot find document inside iframe');
+      return;
+    }
+    this.observer.observe(document, {
       childList: true,
       attributes: true,
       characterData: true,
       subtree: true,
     });
-    $(iframeWindow).on('unload', () => this._onUnLoad());
+    $(this._getIframeWindow()).on('unload', () => this._onUnLoad());
     $(this.$window).on('resize.overlaysync', () => this.syncIframe());
   }
 
@@ -87,7 +92,7 @@ export class OverlaySyncService {
 
   _syncDimensions() {
     if (this.$iframe && this.$overlay) {
-      const doc = this._getIframeWindow().document;
+      const doc = this._getIframeDocument();
 
       if (doc) {
         // Avoid scrollbars from the site as they are controlled by the application.
@@ -181,6 +186,15 @@ export class OverlaySyncService {
 
   _getIframeWindow() {
     return this.$iframe[0].contentWindow;
+  }
+
+  _getIframeDocument() {
+    try {
+      return this._getIframeWindow().document;
+    } catch (e) {
+      // ignore if cannot get document in the iframe
+      return undefined;
+    }
   }
 
 }
