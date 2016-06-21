@@ -185,8 +185,8 @@ describe('OverlaySyncService', () => {
       expect($iframe.width()).toEqual(1200);
       expect($overlay.width()).toEqual(1200);
 
-      expect($iframe.height()).toEqual(615);
-      expect($overlay.height()).toEqual(615);
+      expect($iframe.height()).toEqual(600);
+      expect($overlay.height()).toEqual(600);
       expect($scrollX.height()).toEqual(615);
       done();
     });

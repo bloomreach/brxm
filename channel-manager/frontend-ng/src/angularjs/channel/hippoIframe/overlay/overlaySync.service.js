@@ -102,6 +102,7 @@ export class OverlaySyncService {
         const currentScrollTop = this.$base.scrollTop();
 
         // reset the height
+        this.$sheet.height('');
         this.$iframe.height('');
         this.$scrollX.height('');
 
@@ -153,14 +154,19 @@ export class OverlaySyncService {
   }
 
   _syncHeight(iframeDocument, isHorizontalScrollBarVisible) {
-    let height = $(iframeDocument.body).height();
-    if (isHorizontalScrollBarVisible) {
-      height += this.DomService.getScrollBarWidth();
-    }
+    // because we set 'overflow: hidden on the <html> element of a site (to be able to control scrolling), we need to
+    // query both the <html> and the <body> height to find an accurate value
+    const htmlHeight = $(iframeDocument.documentElement).height();
+    const bodyHeight = $(iframeDocument.body).height();
+    const height = Math.max(htmlHeight, bodyHeight);
+
+    this.$sheet.height(height);
     this.$iframe.height(height);
     this.$overlay.height(height);
-    // setting the absolute height on scrollX ensures that the scroll-position can be maintained when scaling
-    this.$scrollX.height(height);
+
+    // setting the absolute height on scrollX ensures that the scroll-position will be maintained when scaling
+    const scrollHeight = height + (isHorizontalScrollBarVisible ? this.DomService.getScrollBarWidth() : 0);
+    this.$scrollX.height(scrollHeight);
   }
 
   _syncOverlayElements() {
