@@ -22,6 +22,7 @@ public interface ChannelManagerConstants {
     String HST_XTYPE = "HST-XType";
     String HST_PATH_INFO = "HST-Path-Info";
     String HST_CHANNEL_ID = "HST-Channel-Id";
+    String HST_CONTEXT_PATH = "HST-Context-Path";
     String HST_MOUNT_ID = "HST-Mount-Id";
     String HST_SITE_ID = "HST-Site-Id";
     String HST_PAGE_ID = "HST-Page-Id";

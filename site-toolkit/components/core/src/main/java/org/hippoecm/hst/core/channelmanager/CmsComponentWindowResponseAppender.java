@@ -117,6 +117,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         pageMetaData.put(ChannelManagerConstants.HST_TYPE, ChannelManagerConstants.HST_TYPE_PAGE_META_DATA);
         pageMetaData.put(ChannelManagerConstants.HST_PATH_INFO, requestContext.getBaseURL().getPathInfo());
         pageMetaData.put(ChannelManagerConstants.HST_CHANNEL_ID, mount.getChannel().getId());
+        pageMetaData.put(ChannelManagerConstants.HST_CONTEXT_PATH, mount.getContextPath());
         response.addEpilogue(createCommentWithAttr(pageMetaData, response));
     }
 
