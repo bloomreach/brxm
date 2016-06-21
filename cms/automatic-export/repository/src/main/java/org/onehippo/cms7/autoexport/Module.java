@@ -124,9 +124,9 @@ final class Module {
         for (File file : directory.listFiles()) {
             if (file.isDirectory()) {
                 detectOrphanedFiles(file, bootstrapFiles);
-            } else if (file.getName().endsWith(".xml") || file.getName().endsWith(".cnd") || file.getName().endsWith(".json") && !file.getName().endsWith("hippoecm-extension.xml")) {
+            } else if ((file.getName().endsWith(".xml") || file.getName().endsWith(".cnd") || file.getName().endsWith(".json")) && !file.getName().endsWith("hippoecm-extension.xml")) {
                 if (!bootstrapFiles.contains(file)) {
-                    log.warn("Found orphaned bootstrap file {}", file.getPath());
+                    log.warn("Detected possibly orphaned bootstrap configuration file {}", file.getPath());
                 }
             }
         }

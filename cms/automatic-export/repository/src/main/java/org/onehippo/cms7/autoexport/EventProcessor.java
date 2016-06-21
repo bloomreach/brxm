@@ -382,7 +382,10 @@ public class EventProcessor implements EventListener {
         defaultModule.getExtension().export();
     }
 
-    List<Module> getModules() {
-        return modules;
+    void checkModules() {
+        defaultModule.check();
+        for (Module module : modules) {
+            module.check();
+        }
     }
 }
