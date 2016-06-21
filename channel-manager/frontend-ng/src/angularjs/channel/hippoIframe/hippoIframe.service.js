@@ -55,8 +55,14 @@ export class HippoIframeService {
     }
   }
 
-  _extractRenderPathInfo(path) {
-    this.renderPathInfo = this.ChannelService.extractRenderPathInfo(path);
+  _extractRenderPathInfo() {
+    try {
+      const path = this.iframeJQueryElement[0].contentWindow.location.pathname;
+      return this.ChannelService.extractRenderPathInfo(path);
+    } catch (ignoredError) {
+      // if pathname is not found, reset render path
+      return undefined;
+    }
   }
 
   getSrc() {
@@ -84,7 +90,7 @@ export class HippoIframeService {
 
   // called by the hippoIframe controller when the processing of the loaded page is completed.
   signalPageLoadCompleted() {
-    this._extractRenderPathInfo(this.iframeJQueryElement[0].contentWindow.location.pathname);
+    this.renderPathInfo = this._extractRenderPathInfo();
     this.pageLoaded = true;
 
     const deferred = this.deferredReload;
