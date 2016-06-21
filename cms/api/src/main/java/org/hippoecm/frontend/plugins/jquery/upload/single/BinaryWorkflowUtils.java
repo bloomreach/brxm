@@ -69,7 +69,7 @@ public final class BinaryWorkflowUtils {
             }
             final String returnType = "node";
             final Boolean system = isSystemUser(node);
-            final String documentType = getDocumentType(node);
+            final String documentType = getDocumentType(handle);
             event.user(node.getSession().getUserID()).action(ACTION).result(returnValue).system(system);
 
             event
