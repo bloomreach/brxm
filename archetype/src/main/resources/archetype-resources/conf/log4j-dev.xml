@@ -94,10 +94,10 @@
     <level value="warn"/>
   </logger>
 
-  <!-- org.hippoecm.frontend.diagnosis package leaves logs only when configuration at
-       /hippo:configuration/hippo:modules/diagnosis is updated in repo or HDC logging is enabled there
+  <!-- DiagnosticsRequestCycleListener only logs when diagnostics is enabled in the repository at
+       /hippo:configuration/hippo:modules/diagnosis
        hence can be here on level 'info' -->
-  <logger additivity="false" name="org.hippoecm.frontend.diagnosis">
+  <logger name="org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener">
     <level value="info"/>
   </logger>
 
