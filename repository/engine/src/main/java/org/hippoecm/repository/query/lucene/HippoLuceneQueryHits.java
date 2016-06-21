@@ -52,7 +52,11 @@ public class HippoLuceneQueryHits implements QueryHits {
 
     public HippoLuceneQueryHits(IndexReader reader, Filter filter, IndexSearcher searcher, Query query) throws IOException {
         this.reader = reader;
-        this.filter = filter.getDocIdSet(reader).iterator();
+        if (filter == null) {
+            this.filter = null;
+        } else {
+            this.filter = filter.getDocIdSet(reader).iterator();
+        }
         // We rely on Scorer#nextDoc() and Scorer#advance(int) so enable
         // scoreDocsInOrder
         this.scorer = query.weight(searcher).scorer(reader, true, false);

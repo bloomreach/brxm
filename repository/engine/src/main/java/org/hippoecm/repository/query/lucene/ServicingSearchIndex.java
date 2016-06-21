@@ -90,6 +90,8 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import static org.hippoecm.repository.query.lucene.QueryHelper.isMatchAllDocsQuery;
+
 public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ServicingSearchIndex.class);
@@ -166,6 +168,10 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         CachingMultiReaderQueryFilter filter = cache.getIfPresent(userId);
         InternalHippoSession internalHippoSession = (InternalHippoSession) session;
         BooleanQuery query = internalHippoSession.getAuthorizationQuery().getQuery();
+        if (query.getClauses().length == 1 && isMatchAllDocsQuery(query.getClauses()[0].getQuery())) {
+            // optimization : return a null filter in case it matches all docs
+            return null;
+        }
         if (filter != null && !filter.getQuery().equals(query)) {
             cache.invalidate(userId);
             filter = null;
