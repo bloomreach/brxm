@@ -15,7 +15,7 @@
   <packaging>pom</packaging>
   
   <properties>
-    <hippo.l10n-tooling.version>1.1.0-SNAPSHOT</hippo.l10n-tooling.version>
+    <hippo.l10n-tooling.version>1.0.1-SNAPSHOT</hippo.l10n-tooling.version>
     <locales>fr,nl,de,zh</locales>
     <locale/>
     <format>Default</format>
