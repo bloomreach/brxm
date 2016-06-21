@@ -936,14 +936,14 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
                 // admin
                 QueryManager queryManager = session.getWorkspace().getQueryManager();
                 Query query = queryManager.createQuery(xpath, Query.XPATH);
-                assertEquals(String.format("Query '%s' should had resulted %s hits", xpath, expectedSizes[0].longValue()),
+                assertEquals(String.format("Query '%s' should had resulted in %s hits.", xpath, expectedSizes[0].longValue()),
                         expectedSizes[0].longValue(), query.execute().getNodes().getSize());
             }
             {
                 // user
                 QueryManager queryManager = userSession.getWorkspace().getQueryManager();
                 Query query = queryManager.createQuery(xpath, Query.XPATH);
-                assertEquals(String.format("Query '%s' should had resulted %s hits", xpath, expectedSizes[1].longValue()), expectedSizes[1].longValue(), query.execute().getNodes().getSize());
+                assertEquals(String.format("Query '%s' should had resulted in %s hits.", xpath, expectedSizes[1].longValue()), expectedSizes[1].longValue(), query.execute().getNodes().getSize());
             }
         }
     }
@@ -988,11 +988,10 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         session.getNode("/testdata/readdoc0/subnothing").addNode("subread", "hippo:authtestdocument").setProperty("authtest", "canread");
         session.save();
 
-        QueryManager queryManager = userSession.getWorkspace().getQueryManager();
-        final String xpath = "/jcr:root/testdata/readdoc0/*/subread";
-        Query query = queryManager.createQuery(xpath, Query.XPATH);
-        // expected 0 hits because /testdata/readdoc0/subnothing/subread is not reabable for userSession
-        assertEquals(String.format("Query '%s' should had resulted in 0 hits", xpath), 0L, query.execute().getNodes().getSize());
+        queriesWithExpectedHitSizes.clear();
+        queriesWithExpectedHitSizes.put("/jcr:root/testdata/readdoc0/*/subread", new Long[] {new Long(1), new Long(0)});
+
+        queryAssertions(queriesWithExpectedHitSizes);
     }
 
     @Test
