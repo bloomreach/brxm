@@ -40,6 +40,10 @@ export class PageMetaDataService {
     return this.data[this.HST.CHANNEL_ID];
   }
 
+  getContextPath() {
+    return this.data[this.HST.CONTEXT_PATH];
+  }
+
   getRenderVariant() {
     return this.data[this.HST.RENDER_VARIANT];
   }

@@ -24,6 +24,7 @@ export const HstConstants = {
   TYPE_EDIT_MENU_LINK: 'EDIT_MENU_LINK',
   PATH_INFO: 'HST-Path-Info',
   CHANNEL_ID: 'HST-Channel-Id',
+  CONTEXT_PATH: 'HST-Context-Path',
   INHERITED: 'HST-Inherited',
   HAS_PREVIEW_CONFIGURATION: 'HST-Site-HasPreviewConfig',
   LABEL: 'HST-Label',

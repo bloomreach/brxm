@@ -79,6 +79,7 @@ export class ChannelService {
   }
 
   _onLoadChannel(channel, initialPath) {
+    this.ConfigService.setContextPathForChannel(channel.contextPath);
     this.HstService.getChannel(channel.id).then((updatedChannel) => {
       this._loadGlobalFeatures();
       this._load(updatedChannel).then((channelId) => {
@@ -181,7 +182,8 @@ export class ChannelService {
     return this.channel.name;
   }
 
-  switchToChannel(id) {
+  switchToChannel(contextPath, id) {
+    this.ConfigService.setContextPathForChannel(contextPath);
     return this.HstService.getChannel(id)
       .then((channel) => {
         this._setChannel(channel);

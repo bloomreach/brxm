@@ -36,4 +36,9 @@ describe('ConfigService', () => {
     expect(ConfigService.apiUrlPrefix).toEqual('https://127.0.0.1:9080/web/one/two');
     expect(ConfigService.contextPath).toEqual('/one');
   });
+
+  it('sets the context path correctly', () => {
+    ConfigService.setContextPathForChannel('testpath');
+    expect(ConfigService.contextPath).toBe('testpath');
+  });
 });
