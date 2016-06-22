@@ -97,6 +97,7 @@ describe('ChannelService', () => {
       id: 'testChannelId',
       mountPath: '/testMount',
       siteMapId: 'testSiteMapId',
+      contextPath: 'testContextPath',
     };
 
     spyOn(CmsService, 'subscribe');
@@ -111,6 +112,7 @@ describe('ChannelService', () => {
 
     $rootScope.$digest();
 
+    expect(ConfigServiceMock.setContextPathForChannel).toHaveBeenCalledWith('testContextPath');
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
     expect(HstService.getFeatures).toHaveBeenCalled();
     expect(SessionServiceMock.initialize).toHaveBeenCalledWith(testChannel);
