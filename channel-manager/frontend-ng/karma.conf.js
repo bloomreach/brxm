@@ -22,22 +22,22 @@ module.exports = function karmaConfig(config) {
   const options = cfg.karma;
 
   options.systemjs.includeFiles = [
-    `${cfg.bowerDir}/angular/angular.js`,
-    `${cfg.bowerDir}/angular-animate/angular-animate.js`,
-    `${cfg.bowerDir}/angular-aria/angular-aria.js`,
-    `${cfg.bowerDir}/angular-material/angular-material.js`,
-    `${cfg.bowerDir}/angular-messages/angular-messages.js`,
-    `${cfg.bowerDir}/angular-ui-router/release/angular-ui-router.js`,
-    `${cfg.bowerDir}/angular-ui-tree/dist/angular-ui-tree.min.js`,
-    `${cfg.bowerDir}/angular-translate/angular-translate.js`,
-    `${cfg.bowerDir}/angular-translate-loader-static-files/angular-translate-loader-static-files.js`,
-    `${cfg.bowerDir}/angular-mocks/angular-mocks.js`,
-    `${cfg.bowerDir}/jquery/dist/jquery.js`,
-    `${cfg.bowerDir}/velocity/velocity.js`,
-    `${cfg.bowerDir}/dragula.js/dist/dragula.js`,
-    `${cfg.bowerDir}/re-tree/re-tree.js`,
-    `${cfg.bowerDir}/ng-device-detector/ng-device-detector.js`,
-    `${cfg.bowerDir}/ng-focus-if/focusIf.js`,
+    `${cfg.npmDir}/angular/angular.js`,
+    `${cfg.npmDir}/angular-animate/angular-animate.js`,
+    `${cfg.npmDir}/angular-aria/angular-aria.js`,
+    `${cfg.npmDir}/angular-material/angular-material.js`,
+    `${cfg.npmDir}/angular-messages/angular-messages.js`,
+    `${cfg.npmDir}/angular-ui-router/release/angular-ui-router.js`,
+    `${cfg.npmDir}/angular-ui-tree/dist/angular-ui-tree.min.js`,
+    `${cfg.npmDir}/angular-translate/dist/angular-translate.js`,
+    `${cfg.npmDir}/angular-translate-loader-static-files/angular-translate-loader-static-files.js`,
+    `${cfg.npmDir}/angular-mocks/angular-mocks.js`,
+    `${cfg.npmDir}/jquery/dist/jquery.js`,
+    `${cfg.npmDir}/velocity-animate/velocity.js`,
+    `${cfg.npmDir}/dragula/dist/dragula.js`,
+    `${cfg.npmDir}/re-tree/re-tree.js`,
+    `${cfg.npmDir}/ng-device-detector/ng-device-detector.js`,
+    `${cfg.npmDir}/ng-focus-if/focusIf.js`,
   ];
 
   options.systemjs.config.map = cfg.systemjsOptions.map;
@@ -46,7 +46,7 @@ module.exports = function karmaConfig(config) {
     `${cfg.srcDir}/angularjs/mock.environment.spec.js`,
     cfg.src.fixtures,
     {
-      pattern: `${cfg.bowerDir}/dragula.js/dist/dragula.min.+(css|js)`,
+      pattern: `${cfg.npmDir}/dragula/dist/dragula.min.+(css|js)`,
       included: false,
     },
     {
@@ -55,8 +55,8 @@ module.exports = function karmaConfig(config) {
     },
   ].concat(options.files);
 
-  options.proxies['/styles/dragula.min.css'] = `/base/${cfg.bowerDir}/dragula.js/dist/dragula.min.css`;
-  options.proxies['/scripts/dragula.min.js'] = `/base/${cfg.bowerDir}/dragula.js/dist/dragula.min.js`;
+  options.proxies['/styles/dragula.min.css'] = `/base/${cfg.npmDir}/dragula/dist/dragula.min.css`;
+  options.proxies['/scripts/dragula.min.js'] = `/base/${cfg.npmDir}/dragula/dist/dragula.min.js`;
 
   config.set(options);
 };
