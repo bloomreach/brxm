@@ -83,8 +83,8 @@ mvn clean && mvn validate -Ppedantic
 
 ### Create and install archetype locally:
 ```shell
-git clone git@code.onehippo.org:cms-community/hippo-essentials.git
-cd hippo-essentials
+git clone git@code.onehippo.org:cms-community/hippo-project-archetype.git
+cd hippo-project-archetype
 mvn clean install
 ```
 
