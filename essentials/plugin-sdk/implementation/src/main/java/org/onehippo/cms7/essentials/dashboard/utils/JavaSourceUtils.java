@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -608,6 +608,17 @@ public final class JavaSourceUtils {
         addImport(path, "org.hippoecm.hst.content.beans.standard.HippoGalleryImageBean");
 
 
+    }
+
+
+    public static void addBeanMethodHippoResource(final Path path, final String methodName, final String propertyName, final boolean multiple) {
+        if (multiple) {
+            addParameterizedMethod(methodName, "List", "HippoResourceBean", path, "getBeans", propertyName);
+            addImport(path, List.class.getName());
+        } else {
+            addTwoArgumentsMethod("getBean", "HippoResourceBean", path, methodName, propertyName);
+        }
+        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoResourceBean");
     }
 
     public static void addBeanMethodHippoImageSet(final Path path, final String methodName, final String propertyName, final boolean multiple) {
