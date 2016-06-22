@@ -73,4 +73,11 @@ describe('PageMetaDataService', () => {
     });
     expect(PageMetaDataService.getSiteMapItemId()).toBe('sitemapItemX');
   });
+
+  it('provides the context path of the current page', () => {
+    PageMetaDataService.add({
+      'HST-Context-Path': 'contextPath',
+    });
+    expect(PageMetaDataService.getContextPath()).toBe('contextPath');
+  });
 });
