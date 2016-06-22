@@ -147,7 +147,6 @@ public abstract class BaseTest {
             context.setBeansPackageName("org.onehippo.cms7.essentials.dashboard.test.beans");
             context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");
             context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
-            context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
             context.setProjectPackageName("org.onehippo.cms7.essentials.dashboard.test");
             final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
             context.setProjectSettings(projectSettings);

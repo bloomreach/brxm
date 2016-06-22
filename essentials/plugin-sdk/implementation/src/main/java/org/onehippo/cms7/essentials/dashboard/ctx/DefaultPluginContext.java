@@ -162,7 +162,7 @@ public class DefaultPluginContext implements PluginContext {
     }
 
     @Override
-    public String projectPackageName() {
+    public String getProjectPackageName() {
         return projectPackage;
     }
 

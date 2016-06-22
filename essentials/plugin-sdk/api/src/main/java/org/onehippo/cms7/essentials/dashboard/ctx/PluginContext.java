@@ -114,7 +114,7 @@ public interface PluginContext extends Serializable {
      *
      * @return project package name, might be null if not configured
      */
-    String projectPackageName();
+    String getProjectPackageName();
 
     /**
      * Package name used for REST components
