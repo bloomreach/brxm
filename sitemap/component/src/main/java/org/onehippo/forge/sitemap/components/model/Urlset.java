@@ -62,8 +62,6 @@ public class Urlset {
 
     public static final int MAX_SUPPORTED_URLS_PER_FILE = 50000;
 
-    private final Object lock = new Object();
-
     private List<Url> urls;
 
     public Urlset() {
@@ -108,10 +106,8 @@ public class Urlset {
      * @param url the Url to add
      */
     public void addUrlThatDoesntExistInTheListYet(Url url) {
-        synchronized (lock) {
-            if (!urls.contains(url)) {
-                urls.add(url);
-            }
+        if (!urls.contains(url)) {
+            urls.add(url);
         }
     }
 

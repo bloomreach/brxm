@@ -226,9 +226,8 @@ public class SitemapGenerator {
      * @return The Urlset containing the urls of the sitemap items
      */
     public Urlset createUrlSetBasedOnHstSiteMap() {
-        Urlset urlset = new Urlset();
 
-        createAndStartWorkers(urlset);
+        createAndStartWorkers();
 
         fillInitialWorkQueue();
 
@@ -245,8 +244,21 @@ public class SitemapGenerator {
             throw new IllegalStateException("Error occurred while trying to generate the site map", lastWorkerException);
         }
 
+        Urlset urlset = combineUrlSetsFromWorkers();
+
         return urlset;
     }
+
+    private Urlset combineUrlSetsFromWorkers() {
+        final Urlset combinedUrlset = new Urlset();
+        for (SitemapGeneratorWorker worker : workers) {
+            for (Url url : worker.getUrlset().getUrls()) {
+                combinedUrlset.addUrlThatDoesntExistInTheListYet(url);
+            }
+        }
+        return combinedUrlset;
+    }
+
 
     private void stopWorkers() {
         for (SitemapGeneratorWorker worker : workers) {
@@ -279,12 +291,12 @@ public class SitemapGenerator {
         }
     }
 
-    private List<SitemapGeneratorWorker> createAndStartWorkers(Urlset urlset) {
+    private List<SitemapGeneratorWorker> createAndStartWorkers() {
         // Initialize the workers
         workers = new ArrayList<SitemapGeneratorWorker>();
         for (int i = 0 ; i < amountOfWorkers; i++) {
             SitemapGeneratorWorker worker = new SitemapGeneratorWorker(
-                    this, mount, urlset, requestContext,
+                    this, mount, requestContext,
                     objectConverter, urlInformationProvider
             );
             worker.start();

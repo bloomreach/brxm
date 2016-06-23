@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,12 +99,11 @@ public class SitemapGeneratorWorker extends Thread {
      * Constructor.
      *
      * @param generator              the Sitemap generator
-     * @param urlset                 the Urlset which contains all the Urls
      * @param requestContext         the Hst Request context
      * @param objectConverter        the Object converter converts any kind of beans into JCR nodes & properties
      * @param urlInformationProvider the Url information provider
      */
-    public SitemapGeneratorWorker(final SitemapGenerator generator, final Mount mount, final Urlset urlset,
+    public SitemapGeneratorWorker(final SitemapGenerator generator, final Mount mount,
                                   final HstRequestContext requestContext, final ObjectConverter objectConverter,
                                   final UrlInformationProvider urlInformationProvider) {
 
@@ -116,7 +115,7 @@ public class SitemapGeneratorWorker extends Thread {
 
         this.generator = generator;
         this.mount = mount;
-        this.urlset = urlset;
+        this.urlset = new Urlset();
         this.objectConverter = objectConverter;
         this.requestContext = requestContext;
         this.urlInformationProvider = urlInformationProvider;
@@ -129,6 +128,10 @@ public class SitemapGeneratorWorker extends Thread {
         } catch (RepositoryException e) {
             throw new IllegalStateException("Cannot create SitemapGenerator due to a repository exception", e);
         }
+    }
+
+    public Urlset getUrlset() {
+        return urlset;
     }
 
     /**
