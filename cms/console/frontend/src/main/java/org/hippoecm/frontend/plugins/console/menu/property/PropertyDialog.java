@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
+import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
@@ -360,7 +361,10 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
         } catch (ConstraintViolationException e) {
             error("It is not allowed to add the property '" + name + "' on this node.");
-            log.error(e.getClass().getName() + " : " + e.getMessage());
+            log.info(e.getClass().getName() + " : " + e.getMessage());
+        } catch (ValueFormatException e) {
+            error(e.toString());
+            log.info(e.getClass().getName() + " : " + e.getMessage());
         } catch (RepositoryException e) {
             error(e.toString());
             log.error(e.getClass().getName() + " : " + e.getMessage(), e);
@@ -382,29 +386,19 @@ public class PropertyDialog extends AbstractDialog<Node> {
         return propertyName.equals("*");
     }
 
-    private Value getJcrValue(final int propertyType) {
-        try {
-            String value = values.get(0);
-            return getValueFactory().createValue(value == null ? "" : value, propertyType);
-        } catch (RepositoryException ex) {
-            log.info(ex.getMessage());
-        }
-        return null;
+    private Value getJcrValue(final int propertyType) throws RepositoryException {
+        String value = values.get(0);
+        return getValueFactory().createValue(value == null ? "" : value, propertyType);
     }
 
-    private Value[] getJcrValues(final int propertyType) {
-        try {
-            ValueFactory factory = getValueFactory();
-            Value[] jcrValues = new Value[values.size()];
-            for (int i = 0; i < jcrValues.length; i++) {
-                String value = values.get(i);
-                jcrValues[i] = factory.createValue(value == null ? "" : value, propertyType);
-            }
-            return jcrValues;
-        } catch (RepositoryException e) {
-            log.info(e.getMessage());
+    private Value[] getJcrValues(final int propertyType) throws RepositoryException {
+        ValueFactory factory = getValueFactory();
+        Value[] jcrValues = new Value[values.size()];
+        for (int i = 0; i < jcrValues.length; i++) {
+            String value = values.get(i);
+            jcrValues[i] = factory.createValue(value == null ? "" : value, propertyType);
         }
-        return null;
+        return jcrValues;
     }
 
     private ValueFactory getValueFactory() throws RepositoryException {
