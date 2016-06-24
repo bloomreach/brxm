@@ -2,9 +2,9 @@
   "name": "hippo-cm",
   "dependencies": {
     "abbrev": {
-      "version": "1.0.7",
+      "version": "1.0.9",
       "from": "abbrev@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/abbrev/-/abbrev-1.0.7.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/abbrev/-/abbrev-1.0.9.tgz"
     },
     "accepts": {
       "version": "1.2.13",
@@ -149,14 +149,14 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/array-slice/-/array-slice-0.2.3.tgz"
     },
     "array-union": {
-      "version": "1.0.1",
+      "version": "1.0.2",
       "from": "array-union@>=1.0.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/array-union/-/array-union-1.0.1.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/array-union/-/array-union-1.0.2.tgz"
     },
     "array-uniq": {
-      "version": "1.0.2",
+      "version": "1.0.3",
       "from": "array-uniq@>=1.0.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/array-uniq/-/array-uniq-1.0.2.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/array-uniq/-/array-uniq-1.0.3.tgz"
     },
     "array-unique": {
       "version": "0.2.1",
@@ -199,18 +199,18 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/async/-/async-1.5.2.tgz"
     },
     "async-done": {
-      "version": "1.2.1",
-      "from": "async-done@>=1.1.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/async-done/-/async-done-1.2.1.tgz"
+      "version": "1.2.2",
+      "from": "async-done@>=1.2.0 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/async-done/-/async-done-1.2.2.tgz"
     },
     "async-each": {
-      "version": "0.1.6",
-      "from": "async-each@>=0.1.6 <0.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/async-each/-/async-each-0.1.6.tgz"
+      "version": "1.0.0",
+      "from": "async-each@>=1.0.0 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/async-each/-/async-each-1.0.0.tgz"
     },
     "async-each-series": {
       "version": "0.1.1",
-      "from": "async-each-series@>=0.1.1 <0.2.0",
+      "from": "async-each-series@0.1.1",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/async-each-series/-/async-each-series-0.1.1.tgz"
     },
     "async-foreach": {
@@ -232,6 +232,11 @@
           "version": "0.1.5",
           "from": "end-of-stream@>=0.1.4 <0.2.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/end-of-stream/-/end-of-stream-0.1.5.tgz"
+        },
+        "next-tick": {
+          "version": "0.2.2",
+          "from": "next-tick@>=0.2.2 <0.3.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/next-tick/-/next-tick-0.2.2.tgz"
         }
       }
     },
@@ -331,9 +336,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/babylon/-/babylon-5.8.38.tgz"
     },
     "bach": {
-      "version": "0.4.2",
-      "from": "bach@>=0.4.1 <0.5.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/bach/-/bach-0.4.2.tgz"
+      "version": "0.5.0",
+      "from": "bach@>=0.5.0 <0.6.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/bach/-/bach-0.5.0.tgz"
     },
     "backo2": {
       "version": "1.0.2",
@@ -393,7 +398,14 @@
     "bin-version-check": {
       "version": "2.1.0",
       "from": "bin-version-check@>=2.1.0 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/bin-version-check/-/bin-version-check-2.1.0.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/bin-version-check/-/bin-version-check-2.1.0.tgz",
+      "dependencies": {
+        "semver": {
+          "version": "4.3.6",
+          "from": "semver@>=4.0.3 <5.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/semver/-/semver-4.3.6.tgz"
+        }
+      }
     },
     "bin-wrapper": {
       "version": "3.0.2",
@@ -409,11 +421,6 @@
       "version": "1.4.1",
       "from": "binary-extensions@>=1.0.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/binary-extensions/-/binary-extensions-1.4.1.tgz"
-    },
-    "bindings": {
-      "version": "1.2.1",
-      "from": "bindings@>=1.2.0 <1.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/bindings/-/bindings-1.2.1.tgz"
     },
     "bl": {
       "version": "1.0.3",
@@ -443,19 +450,14 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/bluebird/-/bluebird-2.10.2.tgz"
     },
     "body-parser": {
-      "version": "1.15.1",
+      "version": "1.15.2",
       "from": "body-parser@>=1.12.4 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/body-parser/-/body-parser-1.15.1.tgz",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/body-parser/-/body-parser-1.15.2.tgz",
       "dependencies": {
         "http-errors": {
-          "version": "1.4.0",
-          "from": "http-errors@>=1.4.0 <1.5.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/http-errors/-/http-errors-1.4.0.tgz"
-        },
-        "qs": {
-          "version": "6.1.0",
-          "from": "qs@6.1.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/qs/-/qs-6.1.0.tgz"
+          "version": "1.5.0",
+          "from": "http-errors@>=1.5.0 <1.6.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/http-errors/-/http-errors-1.5.0.tgz"
         }
       }
     },
@@ -766,6 +768,11 @@
           "from": "rimraf@>=2.2.0 <2.3.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/rimraf/-/rimraf-2.2.8.tgz"
         },
+        "rx": {
+          "version": "2.5.3",
+          "from": "rx@>=2.2.27 <3.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/rx/-/rx-2.5.3.tgz"
+        },
         "semver": {
           "version": "2.3.2",
           "from": "semver@>=2.3.0 <2.4.0",
@@ -975,13 +982,13 @@
       }
     },
     "brace-expansion": {
-      "version": "1.1.4",
+      "version": "1.1.5",
       "from": "brace-expansion@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/brace-expansion/-/brace-expansion-1.1.4.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/brace-expansion/-/brace-expansion-1.1.5.tgz"
     },
     "braces": {
       "version": "1.8.5",
-      "from": "braces@>=1.8.1 <2.0.0",
+      "from": "braces@>=1.8.2 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/braces/-/braces-1.8.5.tgz"
     },
     "breakable": {
@@ -990,13 +997,13 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/breakable/-/breakable-1.0.0.tgz"
     },
     "browser-sync": {
-      "version": "2.11.1",
-      "from": "browser-sync@2.11.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/browser-sync/-/browser-sync-2.11.1.tgz",
+      "version": "2.13.0",
+      "from": "browser-sync@2.13.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/browser-sync/-/browser-sync-2.13.0.tgz",
       "dependencies": {
         "fs-extra": {
           "version": "0.26.7",
-          "from": "fs-extra@>=0.26.2 <0.27.0",
+          "from": "fs-extra@0.26.7",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/fs-extra/-/fs-extra-0.26.7.tgz"
         }
       }
@@ -1007,19 +1014,24 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/browser-sync-client/-/browser-sync-client-2.4.2.tgz"
     },
     "browser-sync-ui": {
-      "version": "0.5.19",
-      "from": "browser-sync-ui@>=0.5.16 <0.6.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/browser-sync-ui/-/browser-sync-ui-0.5.19.tgz"
+      "version": "0.6.0",
+      "from": "browser-sync-ui@0.6.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/browser-sync-ui/-/browser-sync-ui-0.6.0.tgz"
     },
     "browserslist": {
-      "version": "1.3.2",
+      "version": "1.3.3",
       "from": "browserslist@>=1.3.1 <1.4.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/browserslist/-/browserslist-1.3.2.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/browserslist/-/browserslist-1.3.3.tgz"
     },
     "bs-recipes": {
       "version": "1.2.2",
-      "from": "bs-recipes@>=1.0.5 <2.0.0",
+      "from": "bs-recipes@1.2.2",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/bs-recipes/-/bs-recipes-1.2.2.tgz"
+    },
+    "buffer-crc32": {
+      "version": "0.2.5",
+      "from": "buffer-crc32@>=0.2.3 <0.3.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/buffer-crc32/-/buffer-crc32-0.2.5.tgz"
     },
     "buffer-shims": {
       "version": "1.0.0",
@@ -1041,20 +1053,15 @@
       "from": "bufferstreams@>=1.1.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/bufferstreams/-/bufferstreams-1.1.0.tgz"
     },
-    "bufferutil": {
-      "version": "1.2.1",
-      "from": "bufferutil@>=1.2.0 <1.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/bufferutil/-/bufferutil-1.2.1.tgz"
-    },
     "builtin-modules": {
       "version": "1.1.1",
       "from": "builtin-modules@>=1.0.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/builtin-modules/-/builtin-modules-1.1.1.tgz"
     },
     "bytes": {
-      "version": "2.3.0",
-      "from": "bytes@2.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/bytes/-/bytes-2.3.0.tgz"
+      "version": "2.4.0",
+      "from": "bytes@2.4.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/bytes/-/bytes-2.4.0.tgz"
     },
     "caller-path": {
       "version": "0.1.0",
@@ -1072,9 +1079,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/callsites/-/callsites-0.2.0.tgz"
     },
     "camel-case": {
-      "version": "1.2.2",
-      "from": "camel-case@>=1.1.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/camel-case/-/camel-case-1.2.2.tgz"
+      "version": "3.0.0",
+      "from": "camel-case@>=3.0.0 <4.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/camel-case/-/camel-case-3.0.0.tgz"
     },
     "camelcase": {
       "version": "1.2.1",
@@ -1082,14 +1089,21 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/camelcase/-/camelcase-1.2.1.tgz"
     },
     "camelcase-keys": {
-      "version": "1.0.0",
-      "from": "camelcase-keys@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/camelcase-keys/-/camelcase-keys-1.0.0.tgz"
+      "version": "2.1.0",
+      "from": "camelcase-keys@>=2.0.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/camelcase-keys/-/camelcase-keys-2.1.0.tgz",
+      "dependencies": {
+        "camelcase": {
+          "version": "2.1.1",
+          "from": "camelcase@>=2.0.0 <3.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/camelcase/-/camelcase-2.1.1.tgz"
+        }
+      }
     },
     "caniuse-db": {
-      "version": "1.0.30000479",
+      "version": "1.0.30000488",
       "from": "caniuse-db@>=1.0.30000444 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/caniuse-db/-/caniuse-db-1.0.30000479.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/caniuse-db/-/caniuse-db-1.0.30000488.tgz"
     },
     "capture-stack-trace": {
       "version": "1.0.0",
@@ -1109,7 +1123,14 @@
     "caw": {
       "version": "1.2.0",
       "from": "caw@>=1.0.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/caw/-/caw-1.2.0.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/caw/-/caw-1.2.0.tgz",
+      "dependencies": {
+        "object-assign": {
+          "version": "3.0.0",
+          "from": "object-assign@>=3.0.0 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-3.0.0.tgz"
+        }
+      }
     },
     "center-align": {
       "version": "0.1.3",
@@ -1127,9 +1148,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/chalk/-/chalk-1.1.3.tgz"
     },
     "change-case": {
-      "version": "2.3.1",
-      "from": "change-case@>=2.3.0 <2.4.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/change-case/-/change-case-2.3.1.tgz"
+      "version": "3.0.0",
+      "from": "change-case@>=3.0.0 <3.1.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/change-case/-/change-case-3.0.0.tgz"
     },
     "chmodr": {
       "version": "0.1.0",
@@ -1137,9 +1158,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/chmodr/-/chmodr-0.1.0.tgz"
     },
     "chokidar": {
-      "version": "1.4.1",
-      "from": "chokidar@1.4.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/chokidar/-/chokidar-1.4.1.tgz"
+      "version": "1.5.1",
+      "from": "chokidar@1.5.1",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/chokidar/-/chokidar-1.5.1.tgz"
     },
     "clap": {
       "version": "1.1.1",
@@ -1147,9 +1168,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/clap/-/clap-1.1.1.tgz"
     },
     "clean-css": {
-      "version": "3.4.17",
+      "version": "3.4.18",
       "from": "clean-css@>=3.4.0 <3.5.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/clean-css/-/clean-css-3.4.17.tgz",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/clean-css/-/clean-css-3.4.18.tgz",
       "dependencies": {
         "commander": {
           "version": "2.8.1",
@@ -1209,14 +1230,14 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/code-point-at/-/code-point-at-1.0.0.tgz"
     },
     "color": {
-      "version": "0.11.1",
+      "version": "0.11.2",
       "from": "color@>=0.11.0 <0.12.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/color/-/color-0.11.1.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/color/-/color-0.11.2.tgz"
     },
     "color-convert": {
-      "version": "0.5.3",
-      "from": "color-convert@>=0.5.3 <0.6.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/color-convert/-/color-convert-0.5.3.tgz"
+      "version": "1.3.1",
+      "from": "color-convert@>=1.3.0 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/color-convert/-/color-convert-1.3.1.tgz"
     },
     "color-name": {
       "version": "1.1.1",
@@ -1314,7 +1335,7 @@
     },
     "connect": {
       "version": "3.4.1",
-      "from": "connect@>=3.4.0 <4.0.0",
+      "from": "connect@3.4.1",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/connect/-/connect-3.4.1.tgz"
     },
     "connect-history-api-fallback": {
@@ -1328,13 +1349,13 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/console-stream/-/console-stream-0.1.1.tgz"
     },
     "constant-case": {
-      "version": "1.1.2",
-      "from": "constant-case@>=1.1.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/constant-case/-/constant-case-1.1.2.tgz"
+      "version": "2.0.0",
+      "from": "constant-case@>=2.0.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/constant-case/-/constant-case-2.0.0.tgz"
     },
     "content-type": {
       "version": "1.0.2",
-      "from": "content-type@>=1.0.1 <1.1.0",
+      "from": "content-type@>=1.0.2 <1.1.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/content-type/-/content-type-1.0.2.tgz"
     },
     "convert-source-map": {
@@ -1357,9 +1378,14 @@
       "from": "create-error-class@>=3.0.1 <4.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/create-error-class/-/create-error-class-3.0.2.tgz"
     },
+    "cross-spawn": {
+      "version": "3.0.1",
+      "from": "cross-spawn@>=3.0.0 <4.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/cross-spawn/-/cross-spawn-3.0.1.tgz"
+    },
     "cross-spawn-async": {
       "version": "2.2.4",
-      "from": "cross-spawn-async@>=2.1.9 <3.0.0",
+      "from": "cross-spawn-async@>=2.1.1 <3.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/cross-spawn-async/-/cross-spawn-async-2.2.4.tgz"
     },
     "cryptiles": {
@@ -1373,16 +1399,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/css-color-names/-/css-color-names-0.0.3.tgz"
     },
     "cssnano": {
-      "version": "3.7.0",
+      "version": "3.7.1",
       "from": "cssnano@>=3.0.0 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/cssnano/-/cssnano-3.7.0.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/cssnano/-/cssnano-3.7.1.tgz"
     },
     "csso": {
       "version": "2.0.0",
@@ -1625,16 +1644,9 @@
       }
     },
     "del": {
-      "version": "2.2.0",
+      "version": "2.2.1",
       "from": "del@>=2.0.2 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/del/-/del-2.2.0.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/del/-/del-2.2.1.tgz"
     },
     "delayed-stream": {
       "version": "1.0.0",
@@ -1699,21 +1711,14 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/dom-serialize/-/dom-serialize-2.2.1.tgz"
     },
     "dot-case": {
-      "version": "1.1.2",
-      "from": "dot-case@>=1.1.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/dot-case/-/dot-case-1.1.2.tgz"
+      "version": "2.1.0",
+      "from": "dot-case@>=2.1.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/dot-case/-/dot-case-2.1.0.tgz"
     },
     "download": {
       "version": "4.4.3",
       "from": "download@>=4.1.2 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/download/-/download-4.4.3.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/download/-/download-4.4.3.tgz"
     },
     "duplexer": {
       "version": "0.1.1",
@@ -1756,13 +1761,13 @@
     },
     "easy-extender": {
       "version": "2.3.2",
-      "from": "easy-extender@>=2.3.1 <3.0.0",
+      "from": "easy-extender@2.3.2",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/easy-extender/-/easy-extender-2.3.2.tgz"
     },
     "eazy-logger": {
-      "version": "2.1.3",
-      "from": "eazy-logger@>=2.1.2 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/eazy-logger/-/eazy-logger-2.1.3.tgz"
+      "version": "3.0.2",
+      "from": "eazy-logger@3.0.2",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/eazy-logger/-/eazy-logger-3.0.2.tgz"
     },
     "ee-first": {
       "version": "1.1.1",
@@ -1774,59 +1779,59 @@
       "from": "emitter-steward@>=1.0.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/emitter-steward/-/emitter-steward-1.0.0.tgz"
     },
-    "encodeurl": {
-      "version": "1.0.1",
-      "from": "encodeurl@>=1.0.1 <1.1.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/encodeurl/-/encodeurl-1.0.1.tgz"
-    },
     "end-of-stream": {
       "version": "1.1.0",
       "from": "end-of-stream@>=1.1.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/end-of-stream/-/end-of-stream-1.1.0.tgz"
     },
     "engine.io": {
-      "version": "1.5.4",
-      "from": "engine.io@1.5.4",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/engine.io/-/engine.io-1.5.4.tgz",
+      "version": "1.6.9",
+      "from": "engine.io@1.6.9",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/engine.io/-/engine.io-1.6.9.tgz",
       "dependencies": {
-        "debug": {
-          "version": "1.0.3",
-          "from": "debug@1.0.3",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/debug/-/debug-1.0.3.tgz"
+        "accepts": {
+          "version": "1.1.4",
+          "from": "accepts@1.1.4",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/accepts/-/accepts-1.1.4.tgz"
         },
-        "ms": {
-          "version": "0.6.2",
-          "from": "ms@0.6.2",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/ms/-/ms-0.6.2.tgz"
+        "mime-db": {
+          "version": "1.12.0",
+          "from": "mime-db@>=1.12.0 <1.13.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/mime-db/-/mime-db-1.12.0.tgz"
+        },
+        "mime-types": {
+          "version": "2.0.14",
+          "from": "mime-types@>=2.0.4 <2.1.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/mime-types/-/mime-types-2.0.14.tgz"
+        },
+        "negotiator": {
+          "version": "0.4.9",
+          "from": "negotiator@0.4.9",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/negotiator/-/negotiator-0.4.9.tgz"
         }
       }
     },
     "engine.io-client": {
-      "version": "1.5.4",
-      "from": "engine.io-client@1.5.4",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/engine.io-client/-/engine.io-client-1.5.4.tgz",
-      "dependencies": {
-        "debug": {
-          "version": "1.0.4",
-          "from": "debug@1.0.4",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/debug/-/debug-1.0.4.tgz"
-        },
-        "ms": {
-          "version": "0.6.2",
-          "from": "ms@0.6.2",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/ms/-/ms-0.6.2.tgz"
-        },
-        "parseuri": {
-          "version": "0.0.4",
-          "from": "parseuri@0.0.4",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/parseuri/-/parseuri-0.0.4.tgz"
-        }
-      }
+      "version": "1.6.9",
+      "from": "engine.io-client@1.6.9",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/engine.io-client/-/engine.io-client-1.6.9.tgz"
     },
     "engine.io-parser": {
-      "version": "1.2.2",
-      "from": "engine.io-parser@1.2.2",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/engine.io-parser/-/engine.io-parser-1.2.2.tgz"
+      "version": "1.2.4",
+      "from": "engine.io-parser@1.2.4",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/engine.io-parser/-/engine.io-parser-1.2.4.tgz",
+      "dependencies": {
+        "has-binary": {
+          "version": "0.1.6",
+          "from": "has-binary@0.1.6",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-binary/-/has-binary-0.1.6.tgz"
+        },
+        "isarray": {
+          "version": "0.0.1",
+          "from": "isarray@0.0.1",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/isarray/-/isarray-0.0.1.tgz"
+        }
+      }
     },
     "ent": {
       "version": "2.2.0",
@@ -1851,9 +1856,9 @@
       }
     },
     "es5-shim": {
-      "version": "4.4.2",
-      "from": "es5-shim@>=4.4.1 <4.5.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/es5-shim/-/es5-shim-4.4.2.tgz"
+      "version": "4.5.9",
+      "from": "es5-shim@>=4.5.8 <4.6.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/es5-shim/-/es5-shim-4.5.9.tgz"
     },
     "es6-iterator": {
       "version": "2.0.0",
@@ -1871,9 +1876,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/es6-set/-/es6-set-0.1.4.tgz"
     },
     "es6-shim": {
-      "version": "0.34.4",
-      "from": "es6-shim@>=0.34.0 <0.35.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/es6-shim/-/es6-shim-0.34.4.tgz"
+      "version": "0.35.1",
+      "from": "es6-shim@>=0.35.0 <0.36.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/es6-shim/-/es6-shim-0.35.1.tgz"
     },
     "es6-symbol": {
       "version": "3.1.0",
@@ -1928,14 +1933,14 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/escope/-/escope-3.6.0.tgz"
     },
     "eslint": {
-      "version": "2.11.1",
-      "from": "eslint@2.11.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/eslint/-/eslint-2.11.1.tgz",
+      "version": "2.13.1",
+      "from": "eslint@2.13.1",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/eslint/-/eslint-2.13.1.tgz",
       "dependencies": {
         "glob": {
-          "version": "7.0.3",
+          "version": "7.0.5",
           "from": "glob@>=7.0.3 <8.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.3.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.5.tgz"
         },
         "globals": {
           "version": "9.8.0",
@@ -1946,6 +1951,11 @@
           "version": "4.13.1",
           "from": "lodash@>=4.0.0 <5.0.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash/-/lodash-4.13.1.tgz"
+        },
+        "minimatch": {
+          "version": "3.0.2",
+          "from": "minimatch@>=3.0.2 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         },
         "user-home": {
           "version": "2.0.0",
@@ -1970,13 +1980,13 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/esniff/-/esniff-1.0.0.tgz"
     },
     "espree": {
-      "version": "3.1.4",
-      "from": "espree@3.1.4",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/espree/-/espree-3.1.4.tgz",
+      "version": "3.1.6",
+      "from": "espree@>=3.1.6 <4.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/espree/-/espree-3.1.6.tgz",
       "dependencies": {
         "acorn": {
           "version": "3.2.0",
-          "from": "acorn@>=3.1.0 <4.0.0",
+          "from": "acorn@>=3.2.0 <4.0.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/acorn/-/acorn-3.2.0.tgz"
         }
       }
@@ -1995,11 +2005,6 @@
           "version": "4.1.1",
           "from": "estraverse@>=4.1.0 <4.2.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/estraverse/-/estraverse-4.1.1.tgz"
-        },
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
         }
       }
     },
@@ -2025,7 +2030,7 @@
     },
     "event-stream": {
       "version": "3.3.2",
-      "from": "event-stream@>=3.0.0 <4.0.0",
+      "from": "event-stream@3.3.2",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/event-stream/-/event-stream-3.3.2.tgz"
     },
     "eventemitter3": {
@@ -2034,9 +2039,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/eventemitter3/-/eventemitter3-1.2.0.tgz"
     },
     "exec-buffer": {
-      "version": "2.0.1",
-      "from": "exec-buffer@>=2.0.0 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/exec-buffer/-/exec-buffer-2.0.1.tgz"
+      "version": "3.0.0",
+      "from": "exec-buffer@>=3.0.0 <4.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/exec-buffer/-/exec-buffer-3.0.0.tgz"
     },
     "exec-series": {
       "version": "1.0.2",
@@ -2049,6 +2054,11 @@
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/async-each-series/-/async-each-series-1.1.0.tgz"
         }
       }
+    },
+    "execa": {
+      "version": "0.3.0",
+      "from": "execa@>=0.3.0 <0.4.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/execa/-/execa-0.3.0.tgz"
     },
     "executable": {
       "version": "1.1.0",
@@ -2111,6 +2121,11 @@
           "version": "0.3.0",
           "from": "mkdirp@0.3.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/mkdirp/-/mkdirp-0.3.0.tgz"
+        },
+        "qs": {
+          "version": "0.4.2",
+          "from": "qs@>=0.4.0 <0.5.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/qs/-/qs-0.4.2.tgz"
         }
       }
     },
@@ -2147,30 +2162,16 @@
     "figures": {
       "version": "1.7.0",
       "from": "figures@>=1.3.5 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/figures/-/figures-1.7.0.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.1.0 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/figures/-/figures-1.7.0.tgz"
     },
     "file-entry-cache": {
       "version": "1.2.4",
       "from": "file-entry-cache@>=1.1.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/file-entry-cache/-/file-entry-cache-1.2.4.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/file-entry-cache/-/file-entry-cache-1.2.4.tgz"
     },
     "file-type": {
       "version": "3.8.0",
-      "from": "file-type@>=3.1.0 <4.0.0",
+      "from": "file-type@>=3.8.0 <4.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/file-type/-/file-type-3.8.0.tgz"
     },
     "filename-regex": {
@@ -2218,29 +2219,7 @@
     "find-versions": {
       "version": "1.2.1",
       "from": "find-versions@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/find-versions/-/find-versions-1.2.1.tgz",
-      "dependencies": {
-        "camelcase": {
-          "version": "2.1.1",
-          "from": "camelcase@>=2.0.0 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/camelcase/-/camelcase-2.1.1.tgz"
-        },
-        "camelcase-keys": {
-          "version": "2.1.0",
-          "from": "camelcase-keys@>=2.0.0 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/camelcase-keys/-/camelcase-keys-2.1.0.tgz"
-        },
-        "meow": {
-          "version": "3.7.0",
-          "from": "meow@>=3.5.0 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/meow/-/meow-3.7.0.tgz"
-        },
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/find-versions/-/find-versions-1.2.1.tgz"
     },
     "findup-sync": {
       "version": "0.3.0",
@@ -2297,18 +2276,6 @@
       "from": "formidable@>=1.0.0 <1.1.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/formidable/-/formidable-1.0.17.tgz"
     },
-    "foxy": {
-      "version": "11.1.5",
-      "from": "foxy@>=11.1.2 <12.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/foxy/-/foxy-11.1.5.tgz",
-      "dependencies": {
-        "resp-modifier": {
-          "version": "4.0.4",
-          "from": "resp-modifier@>=4.0.2 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/resp-modifier/-/resp-modifier-4.0.4.tgz"
-        }
-      }
-    },
     "fresh": {
       "version": "0.3.0",
       "from": "fresh@>=0.3.0 <0.4.0",
@@ -2320,9 +2287,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/from/-/from-0.1.3.tgz"
     },
     "frontend-build": {
-      "version": "1.0.0",
-      "from": "frontend-build@1.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/frontend-build/-/frontend-build-1.0.0.tgz"
+      "version": "1.0.1",
+      "from": "frontend-build@1.0.1",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/frontend-build/-/frontend-build-1.0.1.tgz"
     },
     "fs-access": {
       "version": "1.0.0",
@@ -2339,10 +2306,15 @@
       "from": "fs-readdir-recursive@>=0.1.0 <0.2.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/fs-readdir-recursive/-/fs-readdir-recursive-0.1.2.tgz"
     },
+    "fs.realpath": {
+      "version": "1.0.0",
+      "from": "fs.realpath@>=1.0.0 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/fs.realpath/-/fs.realpath-1.0.0.tgz"
+    },
     "fstream": {
-      "version": "1.0.9",
+      "version": "1.0.10",
       "from": "fstream@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/fstream/-/fstream-1.0.9.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/fstream/-/fstream-1.0.10.tgz"
     },
     "fstream-ignore": {
       "version": "1.0.5",
@@ -2350,9 +2322,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/fstream-ignore/-/fstream-ignore-1.0.5.tgz",
       "dependencies": {
         "minimatch": {
-          "version": "3.0.0",
+          "version": "3.0.2",
           "from": "minimatch@>=3.0.0 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.0.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         }
       }
     },
@@ -2416,11 +2388,6 @@
           "from": "isarray@0.0.1",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/isarray/-/isarray-0.0.1.tgz"
         },
-        "micromatch": {
-          "version": "2.3.8",
-          "from": "micromatch@>=2.3.7 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/micromatch/-/micromatch-2.3.8.tgz"
-        },
         "readable-stream": {
           "version": "1.0.34",
           "from": "readable-stream@>=1.0.33-1 <1.1.0-0",
@@ -2433,10 +2400,10 @@
         }
       }
     },
-    "global": {
-      "version": "2.0.1",
-      "from": "https://github.com/component/global/archive/v2.0.1.tar.gz",
-      "resolved": "https://github.com/component/global/archive/v2.0.1.tar.gz"
+    "glob-watcher": {
+      "version": "3.0.0",
+      "from": "glob-watcher@>=3.0.0 <4.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob-watcher/-/glob-watcher-3.0.0.tgz"
     },
     "globals": {
       "version": "6.4.1",
@@ -2444,19 +2411,19 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/globals/-/globals-6.4.1.tgz"
     },
     "globby": {
-      "version": "4.1.0",
-      "from": "globby@>=4.0.0 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/globby/-/globby-4.1.0.tgz",
+      "version": "5.0.0",
+      "from": "globby@>=5.0.0 <6.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/globby/-/globby-5.0.0.tgz",
       "dependencies": {
         "glob": {
-          "version": "6.0.4",
-          "from": "glob@>=6.0.1 <7.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-6.0.4.tgz"
+          "version": "7.0.5",
+          "from": "glob@>=7.0.3 <8.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.5.tgz"
         },
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
+        "minimatch": {
+          "version": "3.0.2",
+          "from": "minimatch@>=3.0.2 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         }
       }
     },
@@ -2499,10 +2466,10 @@
       "from": "glogg@>=1.0.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/glogg/-/glogg-1.0.0.tgz"
     },
-    "gonzales-pe-sl": {
-      "version": "3.2.8",
-      "from": "gonzales-pe-sl@3.2.8",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gonzales-pe-sl/-/gonzales-pe-sl-3.2.8.tgz",
+    "gonzales-pe": {
+      "version": "3.3.4",
+      "from": "gonzales-pe@3.3.4",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gonzales-pe/-/gonzales-pe-3.3.4.tgz",
       "dependencies": {
         "minimist": {
           "version": "1.1.3",
@@ -2520,17 +2487,12 @@
           "version": "0.1.4",
           "from": "duplexer2@>=0.1.4 <0.2.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/duplexer2/-/duplexer2-0.1.4.tgz"
-        },
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
         }
       }
     },
     "graceful-fs": {
       "version": "4.1.4",
-      "from": "graceful-fs@>=4.1.2 <5.0.0",
+      "from": "graceful-fs@>=4.1.4 <5.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/graceful-fs/-/graceful-fs-4.1.4.tgz"
     },
     "graceful-readlink": {
@@ -2540,8 +2502,8 @@
     },
     "gulp": {
       "version": "4.0.0-alpha.2",
-      "from": "git://github.com/gulpjs/gulp.git#73eced0969af4d1e87cea1d7172f90b557b8f7b5",
-      "resolved": "git://github.com/gulpjs/gulp.git#73eced0969af4d1e87cea1d7172f90b557b8f7b5",
+      "from": "git://github.com/gulpjs/gulp.git#cf0bddf1416e381f926a2b59a1a7c9238495bfa4",
+      "resolved": "git://github.com/gulpjs/gulp.git#cf0bddf1416e381f926a2b59a1a7c9238495bfa4",
       "dependencies": {
         "camelcase": {
           "version": "2.1.1",
@@ -2566,9 +2528,16 @@
       }
     },
     "gulp-angular-templatecache": {
-      "version": "1.8.0",
-      "from": "gulp-angular-templatecache@1.8.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-angular-templatecache/-/gulp-angular-templatecache-1.8.0.tgz"
+      "version": "2.0.0",
+      "from": "gulp-angular-templatecache@2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-angular-templatecache/-/gulp-angular-templatecache-2.0.0.tgz",
+      "dependencies": {
+        "jsesc": {
+          "version": "2.2.0",
+          "from": "jsesc@2.2.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/jsesc/-/jsesc-2.2.0.tgz"
+        }
+      }
     },
     "gulp-autoprefixer": {
       "version": "3.1.0",
@@ -2598,28 +2567,14 @@
       }
     },
     "gulp-cssnano": {
-      "version": "2.1.1",
-      "from": "gulp-cssnano@2.1.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-cssnano/-/gulp-cssnano-2.1.1.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "version": "2.1.2",
+      "from": "gulp-cssnano@2.1.2",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-cssnano/-/gulp-cssnano-2.1.2.tgz"
     },
     "gulp-debug": {
       "version": "2.1.2",
       "from": "gulp-debug@2.1.2",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-debug/-/gulp-debug-2.1.2.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-debug/-/gulp-debug-2.1.2.tgz"
     },
     "gulp-decompress": {
       "version": "1.2.0",
@@ -2629,14 +2584,7 @@
     "gulp-eslint": {
       "version": "2.0.0",
       "from": "gulp-eslint@2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-eslint/-/gulp-eslint-2.0.0.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-eslint/-/gulp-eslint-2.0.0.tgz"
     },
     "gulp-filter": {
       "version": "4.0.0",
@@ -2645,42 +2593,28 @@
     },
     "gulp-footer": {
       "version": "1.0.5",
-      "from": "gulp-footer@>=1.0.0 <2.0.0",
+      "from": "gulp-footer@1.0.5",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-footer/-/gulp-footer-1.0.5.tgz"
     },
     "gulp-header": {
       "version": "1.8.2",
-      "from": "gulp-header@>=1.0.0 <2.0.0",
+      "from": "gulp-header@1.8.2",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-header/-/gulp-header-1.8.2.tgz"
     },
     "gulp-htmlmin": {
-      "version": "1.3.0",
-      "from": "gulp-htmlmin@1.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-htmlmin/-/gulp-htmlmin-1.3.0.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "version": "2.0.0",
+      "from": "gulp-htmlmin@2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-htmlmin/-/gulp-htmlmin-2.0.0.tgz"
     },
     "gulp-if": {
-      "version": "2.0.0",
-      "from": "gulp-if@2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-if/-/gulp-if-2.0.0.tgz"
+      "version": "2.0.1",
+      "from": "gulp-if@2.0.1",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-if/-/gulp-if-2.0.1.tgz"
     },
     "gulp-imagemin": {
-      "version": "2.4.0",
-      "from": "gulp-imagemin@2.4.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-imagemin/-/gulp-imagemin-2.4.0.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "version": "3.0.1",
+      "from": "gulp-imagemin@3.0.1",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-imagemin/-/gulp-imagemin-3.0.1.tgz"
     },
     "gulp-insert-lines": {
       "version": "0.0.4",
@@ -2701,13 +2635,13 @@
     },
     "gulp-match": {
       "version": "1.0.2",
-      "from": "gulp-match@>=1.0.0 <2.0.0",
+      "from": "gulp-match@>=1.0.2 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-match/-/gulp-match-1.0.2.tgz",
       "dependencies": {
         "minimatch": {
-          "version": "3.0.0",
+          "version": "3.0.2",
           "from": "minimatch@>=3.0.0 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.0.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         }
       }
     },
@@ -2727,33 +2661,19 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-rename/-/gulp-rename-1.2.2.tgz"
     },
     "gulp-rev": {
-      "version": "7.0.0",
-      "from": "gulp-rev@7.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-rev/-/gulp-rev-7.0.0.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "version": "7.1.0",
+      "from": "gulp-rev@7.1.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-rev/-/gulp-rev-7.1.0.tgz"
     },
     "gulp-sass": {
-      "version": "2.2.0",
-      "from": "gulp-sass@2.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-sass/-/gulp-sass-2.2.0.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "version": "2.3.2",
+      "from": "gulp-sass@2.3.2",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-sass/-/gulp-sass-2.3.2.tgz"
     },
     "gulp-sass-lint": {
-      "version": "1.1.1",
-      "from": "gulp-sass-lint@1.1.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-sass-lint/-/gulp-sass-lint-1.1.1.tgz"
+      "version": "1.2.0",
+      "from": "gulp-sass-lint@1.2.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-sass-lint/-/gulp-sass-lint-1.2.0.tgz"
     },
     "gulp-sourcemaps": {
       "version": "1.6.0",
@@ -2763,12 +2683,34 @@
     "gulp-uglify": {
       "version": "1.5.3",
       "from": "gulp-uglify@1.5.3",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-uglify/-/gulp-uglify-1.5.3.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-uglify/-/gulp-uglify-1.5.3.tgz",
+      "dependencies": {
+        "async": {
+          "version": "0.2.10",
+          "from": "async@>=0.2.6 <0.3.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/async/-/async-0.2.10.tgz"
+        },
+        "uglify-js": {
+          "version": "2.6.2",
+          "from": "uglify-js@2.6.2",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/uglify-js/-/uglify-js-2.6.2.tgz"
+        },
+        "window-size": {
+          "version": "0.1.0",
+          "from": "window-size@0.1.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/window-size/-/window-size-0.1.0.tgz"
+        },
+        "yargs": {
+          "version": "3.10.0",
+          "from": "yargs@>=3.10.0 <3.11.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/yargs/-/yargs-3.10.0.tgz"
+        }
+      }
     },
     "gulp-usemin": {
-      "version": "0.3.21",
-      "from": "gulp-usemin@0.3.21",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-usemin/-/gulp-usemin-0.3.21.tgz",
+      "version": "0.3.23",
+      "from": "gulp-usemin@0.3.23",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-usemin/-/gulp-usemin-0.3.23.tgz",
       "dependencies": {
         "ansi-regex": {
           "version": "0.2.1",
@@ -2844,6 +2786,11 @@
           "from": "has-ansi@>=0.1.0 <0.2.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-ansi/-/has-ansi-0.1.0.tgz"
         },
+        "lodash.defaults": {
+          "version": "2.4.1",
+          "from": "lodash.defaults@>=2.4.1 <2.5.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.defaults/-/lodash.defaults-2.4.1.tgz"
+        },
         "lodash.escape": {
           "version": "2.4.1",
           "from": "lodash.escape@>=2.4.1 <2.5.0",
@@ -2875,6 +2822,11 @@
           "version": "1.0.0",
           "from": "minimatch@>=1.0.0 <2.0.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-1.0.0.tgz"
+        },
+        "object-assign": {
+          "version": "3.0.0",
+          "from": "object-assign@>=3.0.0 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-3.0.0.tgz"
         },
         "readable-stream": {
           "version": "2.0.6",
@@ -2922,9 +2874,14 @@
     },
     "gulp-util": {
       "version": "3.0.7",
-      "from": "gulp-util@>=3.0.0 <4.0.0",
+      "from": "gulp-util@3.0.7",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/gulp-util/-/gulp-util-3.0.7.tgz",
       "dependencies": {
+        "object-assign": {
+          "version": "3.0.0",
+          "from": "object-assign@>=3.0.0 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-3.0.0.tgz"
+        },
         "vinyl": {
           "version": "0.5.3",
           "from": "vinyl@>=0.5.0 <0.6.0",
@@ -2960,21 +2917,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-ansi/-/has-ansi-2.0.0.tgz"
     },
     "has-binary": {
-      "version": "0.1.6",
-      "from": "has-binary@0.1.6",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-binary/-/has-binary-0.1.6.tgz",
-      "dependencies": {
-        "isarray": {
-          "version": "0.0.1",
-          "from": "isarray@0.0.1",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/isarray/-/isarray-0.0.1.tgz"
-        }
-      }
-    },
-    "has-binary-data": {
-      "version": "0.1.3",
-      "from": "has-binary-data@0.1.3",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-binary-data/-/has-binary-data-0.1.3.tgz",
+      "version": "0.1.7",
+      "from": "has-binary@0.1.7",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-binary/-/has-binary-0.1.7.tgz",
       "dependencies": {
         "isarray": {
           "version": "0.0.1",
@@ -2989,9 +2934,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-color/-/has-color-0.1.7.tgz"
     },
     "has-cors": {
-      "version": "1.0.3",
-      "from": "has-cors@1.0.3",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-cors/-/has-cors-1.0.3.tgz"
+      "version": "1.1.0",
+      "from": "has-cors@1.1.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-cors/-/has-cors-1.1.0.tgz"
     },
     "has-flag": {
       "version": "1.0.0",
@@ -3019,9 +2964,14 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/hawk/-/hawk-3.1.3.tgz"
     },
     "he": {
+      "version": "1.1.0",
+      "from": "he@>=1.1.0 <1.2.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/he/-/he-1.1.0.tgz"
+    },
+    "header-case": {
       "version": "1.0.0",
-      "from": "he@>=1.0.0 <1.1.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/he/-/he-1.0.0.tgz"
+      "from": "header-case@>=1.0.0 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/header-case/-/header-case-1.0.0.tgz"
     },
     "hoek": {
       "version": "2.16.3",
@@ -3044,9 +2994,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/html-comment-regex/-/html-comment-regex-1.1.0.tgz"
     },
     "html-minifier": {
-      "version": "1.5.0",
-      "from": "html-minifier@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/html-minifier/-/html-minifier-1.5.0.tgz"
+      "version": "2.1.5",
+      "from": "html-minifier@>=2.1.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/html-minifier/-/html-minifier-2.1.5.tgz"
     },
     "http-errors": {
       "version": "1.3.1",
@@ -3055,7 +3005,7 @@
     },
     "http-proxy": {
       "version": "1.13.3",
-      "from": "http-proxy@>=1.9.0 <2.0.0",
+      "from": "http-proxy@1.13.3",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/http-proxy/-/http-proxy-1.13.3.tgz"
     },
     "http-signature": {
@@ -3069,79 +3019,50 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/iconv-lite/-/iconv-lite-0.4.13.tgz"
     },
     "ignore": {
-      "version": "3.1.2",
+      "version": "3.1.3",
       "from": "ignore@>=3.1.2 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/ignore/-/ignore-3.1.2.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/ignore/-/ignore-3.1.3.tgz"
     },
     "imagemin": {
-      "version": "4.0.0",
-      "from": "imagemin@>=4.0.0 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/imagemin/-/imagemin-4.0.0.tgz"
+      "version": "5.2.1",
+      "from": "imagemin@>=5.0.0 <6.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/imagemin/-/imagemin-5.2.1.tgz",
+      "dependencies": {
+        "glob": {
+          "version": "6.0.4",
+          "from": "glob@>=6.0.1 <7.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-6.0.4.tgz"
+        },
+        "globby": {
+          "version": "4.1.0",
+          "from": "globby@>=4.0.0 <5.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/globby/-/globby-4.1.0.tgz"
+        }
+      }
     },
     "imagemin-gifsicle": {
-      "version": "4.2.0",
-      "from": "imagemin-gifsicle@>=4.0.0 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/imagemin-gifsicle/-/imagemin-gifsicle-4.2.0.tgz",
-      "dependencies": {
-        "isarray": {
-          "version": "0.0.1",
-          "from": "isarray@0.0.1",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/isarray/-/isarray-0.0.1.tgz"
-        },
-        "readable-stream": {
-          "version": "1.0.34",
-          "from": "readable-stream@>=1.0.33-1 <1.1.0-0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/readable-stream/-/readable-stream-1.0.34.tgz"
-        },
-        "through2": {
-          "version": "0.6.5",
-          "from": "through2@>=0.6.1 <0.7.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/through2/-/through2-0.6.5.tgz"
-        }
-      }
+      "version": "5.1.0",
+      "from": "imagemin-gifsicle@>=5.0.0 <6.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/imagemin-gifsicle/-/imagemin-gifsicle-5.1.0.tgz"
     },
     "imagemin-jpegtran": {
-      "version": "4.3.2",
-      "from": "imagemin-jpegtran@>=4.0.0 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/imagemin-jpegtran/-/imagemin-jpegtran-4.3.2.tgz"
+      "version": "5.0.2",
+      "from": "imagemin-jpegtran@>=5.0.0 <6.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/imagemin-jpegtran/-/imagemin-jpegtran-5.0.2.tgz"
     },
     "imagemin-optipng": {
-      "version": "4.3.0",
-      "from": "imagemin-optipng@>=4.0.0 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/imagemin-optipng/-/imagemin-optipng-4.3.0.tgz",
-      "dependencies": {
-        "isarray": {
-          "version": "0.0.1",
-          "from": "isarray@0.0.1",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/isarray/-/isarray-0.0.1.tgz"
-        },
-        "readable-stream": {
-          "version": "1.0.34",
-          "from": "readable-stream@>=1.0.33-1 <1.1.0-0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/readable-stream/-/readable-stream-1.0.34.tgz"
-        },
-        "through2": {
-          "version": "0.6.5",
-          "from": "through2@>=0.6.1 <0.7.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/through2/-/through2-0.6.5.tgz"
-        }
-      }
+      "version": "5.1.0",
+      "from": "imagemin-optipng@>=5.1.0 <6.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/imagemin-optipng/-/imagemin-optipng-5.1.0.tgz"
     },
     "imagemin-svgo": {
-      "version": "4.2.1",
-      "from": "imagemin-svgo@>=4.0.0 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/imagemin-svgo/-/imagemin-svgo-4.2.1.tgz",
-      "dependencies": {
-        "is-svg": {
-          "version": "1.1.1",
-          "from": "is-svg@>=1.0.0 <2.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/is-svg/-/is-svg-1.1.1.tgz"
-        }
-      }
+      "version": "5.1.0",
+      "from": "imagemin-svgo@>=5.1.0 <6.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/imagemin-svgo/-/imagemin-svgo-5.1.0.tgz"
     },
     "immutable": {
       "version": "3.8.1",
-      "from": "immutable@>=3.7.4 <4.0.0",
+      "from": "immutable@3.8.1",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/immutable/-/immutable-3.8.1.tgz"
     },
     "imurmurhash": {
@@ -3155,9 +3076,16 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/in-publish/-/in-publish-2.0.0.tgz"
     },
     "indent-string": {
-      "version": "1.2.2",
-      "from": "indent-string@>=1.1.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/indent-string/-/indent-string-1.2.2.tgz"
+      "version": "2.1.0",
+      "from": "indent-string@>=2.1.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/indent-string/-/indent-string-2.1.0.tgz",
+      "dependencies": {
+        "repeating": {
+          "version": "2.0.1",
+          "from": "repeating@>=2.0.0 <3.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/repeating/-/repeating-2.0.1.tgz"
+        }
+      }
     },
     "indexes-of": {
       "version": "1.0.1",
@@ -3236,6 +3164,11 @@
           "from": "lodash@>=2.4.1 <2.5.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash/-/lodash-2.4.2.tgz"
         },
+        "lodash.debounce": {
+          "version": "2.4.1",
+          "from": "lodash.debounce@>=2.4.1 <3.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.debounce/-/lodash.debounce-2.4.1.tgz"
+        },
         "mute-stream": {
           "version": "0.0.4",
           "from": "mute-stream@0.0.4",
@@ -3262,6 +3195,11 @@
               "resolved": "https://maven.onehippo.com/content/groups/npm-all/strip-ansi/-/strip-ansi-2.0.1.tgz"
             }
           }
+        },
+        "rx": {
+          "version": "2.5.3",
+          "from": "rx@>=2.2.27 <3.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/rx/-/rx-2.5.3.tgz"
         },
         "strip-ansi": {
           "version": "0.3.0",
@@ -3559,11 +3497,6 @@
           "version": "2.7.2",
           "from": "esprima@^2.1.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/esprima/-/esprima-2.7.2.tgz"
-        },
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
         }
       }
     },
@@ -3573,9 +3506,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/isstream/-/isstream-0.1.2.tgz"
     },
     "istanbul": {
-      "version": "0.4.3",
+      "version": "0.4.4",
       "from": "istanbul@>=0.4.0 <0.5.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/istanbul/-/istanbul-0.4.3.tgz",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/istanbul/-/istanbul-0.4.4.tgz",
       "dependencies": {
         "esprima": {
           "version": "2.7.2",
@@ -3608,11 +3541,6 @@
       "version": "2.1.9",
       "from": "js-base64@>=2.1.9 <3.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/js-base64/-/js-base64-2.1.9.tgz"
-    },
-    "js-string-escape": {
-      "version": "1.0.1",
-      "from": "js-string-escape@>=1.0.0 <1.1.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/js-string-escape/-/js-string-escape-1.0.1.tgz"
     },
     "js-tokens": {
       "version": "1.0.1",
@@ -3672,161 +3600,41 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/jsonpointer/-/jsonpointer-2.0.0.tgz"
     },
     "junk": {
-      "version": "1.0.2",
+      "version": "1.0.3",
       "from": "junk@>=1.0.0 <1.1.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/junk/-/junk-1.0.2.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/junk/-/junk-1.0.3.tgz"
     },
     "karma": {
       "version": "0.13.22",
       "from": "karma@0.13.22",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma/-/karma-0.13.22.tgz",
       "dependencies": {
-        "accepts": {
-          "version": "1.1.4",
-          "from": "accepts@1.1.4",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/accepts/-/accepts-1.1.4.tgz"
-        },
         "core-js": {
           "version": "2.4.0",
           "from": "core-js@>=2.1.0 <3.0.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/core-js/-/core-js-2.4.0.tgz"
         },
-        "engine.io": {
-          "version": "1.6.9",
-          "from": "engine.io@1.6.9",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/engine.io/-/engine.io-1.6.9.tgz"
-        },
-        "engine.io-client": {
-          "version": "1.6.9",
-          "from": "engine.io-client@1.6.9",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/engine.io-client/-/engine.io-client-1.6.9.tgz"
-        },
-        "engine.io-parser": {
-          "version": "1.2.4",
-          "from": "engine.io-parser@1.2.4",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/engine.io-parser/-/engine.io-parser-1.2.4.tgz",
-          "dependencies": {
-            "has-binary": {
-              "version": "0.1.6",
-              "from": "has-binary@0.1.6",
-              "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-binary/-/has-binary-0.1.6.tgz"
-            }
-          }
-        },
         "glob": {
-          "version": "7.0.3",
+          "version": "7.0.5",
           "from": "glob@>=7.0.0 <8.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.3.tgz"
-        },
-        "has-binary": {
-          "version": "0.1.7",
-          "from": "has-binary@0.1.7",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-binary/-/has-binary-0.1.7.tgz"
-        },
-        "has-cors": {
-          "version": "1.1.0",
-          "from": "has-cors@1.1.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/has-cors/-/has-cors-1.1.0.tgz"
-        },
-        "isarray": {
-          "version": "0.0.1",
-          "from": "isarray@0.0.1",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/isarray/-/isarray-0.0.1.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.5.tgz"
         },
         "mime": {
           "version": "1.3.4",
           "from": "mime@>=1.3.4 <2.0.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/mime/-/mime-1.3.4.tgz"
         },
-        "mime-db": {
-          "version": "1.12.0",
-          "from": "mime-db@>=1.12.0 <1.13.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/mime-db/-/mime-db-1.12.0.tgz"
-        },
-        "mime-types": {
-          "version": "2.0.14",
-          "from": "mime-types@>=2.0.4 <2.1.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/mime-types/-/mime-types-2.0.14.tgz"
-        },
         "minimatch": {
-          "version": "3.0.0",
+          "version": "3.0.2",
           "from": "minimatch@>=3.0.0 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.0.tgz"
-        },
-        "negotiator": {
-          "version": "0.4.9",
-          "from": "negotiator@0.4.9",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/negotiator/-/negotiator-0.4.9.tgz"
-        },
-        "parseuri": {
-          "version": "0.0.4",
-          "from": "parseuri@0.0.4",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/parseuri/-/parseuri-0.0.4.tgz"
-        },
-        "socket.io": {
-          "version": "1.4.6",
-          "from": "socket.io@>=1.4.5 <2.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io/-/socket.io-1.4.6.tgz"
-        },
-        "socket.io-adapter": {
-          "version": "0.4.0",
-          "from": "socket.io-adapter@0.4.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io-adapter/-/socket.io-adapter-0.4.0.tgz",
-          "dependencies": {
-            "socket.io-parser": {
-              "version": "2.2.2",
-              "from": "socket.io-parser@2.2.2",
-              "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io-parser/-/socket.io-parser-2.2.2.tgz",
-              "dependencies": {
-                "debug": {
-                  "version": "0.7.4",
-                  "from": "debug@0.7.4",
-                  "resolved": "https://maven.onehippo.com/content/groups/npm-all/debug/-/debug-0.7.4.tgz"
-                }
-              }
-            }
-          }
-        },
-        "socket.io-client": {
-          "version": "1.4.6",
-          "from": "socket.io-client@1.4.6",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io-client/-/socket.io-client-1.4.6.tgz",
-          "dependencies": {
-            "component-emitter": {
-              "version": "1.2.0",
-              "from": "component-emitter@1.2.0",
-              "resolved": "https://maven.onehippo.com/content/groups/npm-all/component-emitter/-/component-emitter-1.2.0.tgz"
-            }
-          }
-        },
-        "socket.io-parser": {
-          "version": "2.2.6",
-          "from": "socket.io-parser@2.2.6",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io-parser/-/socket.io-parser-2.2.6.tgz",
-          "dependencies": {
-            "json3": {
-              "version": "3.3.2",
-              "from": "json3@3.3.2",
-              "resolved": "https://maven.onehippo.com/content/groups/npm-all/json3/-/json3-3.3.2.tgz"
-            }
-          }
-        },
-        "to-array": {
-          "version": "0.1.4",
-          "from": "to-array@0.1.4",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/to-array/-/to-array-0.1.4.tgz"
-        },
-        "ws": {
-          "version": "1.0.1",
-          "from": "ws@1.0.1",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/ws/-/ws-1.0.1.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         }
       }
     },
     "karma-chrome-launcher": {
-      "version": "0.2.2",
-      "from": "karma-chrome-launcher@0.2.2",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-chrome-launcher/-/karma-chrome-launcher-0.2.2.tgz"
+      "version": "1.0.1",
+      "from": "karma-chrome-launcher@1.0.1",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-chrome-launcher/-/karma-chrome-launcher-1.0.1.tgz"
     },
     "karma-coverage": {
       "version": "0.5.5",
@@ -3834,21 +3642,21 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-coverage/-/karma-coverage-0.5.5.tgz",
       "dependencies": {
         "minimatch": {
-          "version": "3.0.0",
+          "version": "3.0.2",
           "from": "minimatch@>=3.0.0 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.0.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         }
       }
     },
     "karma-es6-shim": {
-      "version": "0.2.3",
-      "from": "karma-es6-shim@0.2.3",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-es6-shim/-/karma-es6-shim-0.2.3.tgz"
+      "version": "1.0.0",
+      "from": "karma-es6-shim@1.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-es6-shim/-/karma-es6-shim-1.0.0.tgz"
     },
     "karma-jasmine": {
-      "version": "0.3.7",
-      "from": "karma-jasmine@0.3.7",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-jasmine/-/karma-jasmine-0.3.7.tgz"
+      "version": "1.0.2",
+      "from": "karma-jasmine@1.0.2",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-jasmine/-/karma-jasmine-1.0.2.tgz"
     },
     "karma-jasmine-jquery": {
       "version": "0.1.1",
@@ -3856,21 +3664,14 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-jasmine-jquery/-/karma-jasmine-jquery-0.1.1.tgz"
     },
     "karma-mocha-reporter": {
-      "version": "2.0.0",
-      "from": "karma-mocha-reporter@2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-mocha-reporter/-/karma-mocha-reporter-2.0.0.tgz",
-      "dependencies": {
-        "chalk": {
-          "version": "1.1.1",
-          "from": "chalk@1.1.1",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/chalk/-/chalk-1.1.1.tgz"
-        }
-      }
+      "version": "2.0.4",
+      "from": "karma-mocha-reporter@2.0.4",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-mocha-reporter/-/karma-mocha-reporter-2.0.4.tgz"
     },
     "karma-ng-html2js-preprocessor": {
-      "version": "0.2.1",
-      "from": "karma-ng-html2js-preprocessor@0.2.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-ng-html2js-preprocessor/-/karma-ng-html2js-preprocessor-0.2.1.tgz"
+      "version": "1.0.0",
+      "from": "karma-ng-html2js-preprocessor@1.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-ng-html2js-preprocessor/-/karma-ng-html2js-preprocessor-1.0.0.tgz"
     },
     "karma-systemjs": {
       "version": "0.12.0",
@@ -3878,9 +3679,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/karma-systemjs/-/karma-systemjs-0.12.0.tgz",
       "dependencies": {
         "minimatch": {
-          "version": "3.0.0",
+          "version": "3.0.2",
           "from": "minimatch@>=3.0.0 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.0.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         }
       }
     },
@@ -3940,16 +3741,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/levn/-/levn-0.3.0.tgz"
     },
     "liftoff": {
-      "version": "2.2.1",
+      "version": "2.2.4",
       "from": "liftoff@>=2.1.0 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/liftoff/-/liftoff-2.2.1.tgz",
-      "dependencies": {
-        "extend": {
-          "version": "2.0.1",
-          "from": "extend@>=2.0.1 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/extend/-/extend-2.0.1.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/liftoff/-/liftoff-2.2.4.tgz"
     },
     "limiter": {
       "version": "1.1.0",
@@ -3963,12 +3757,12 @@
     },
     "load-json-file": {
       "version": "1.1.0",
-      "from": "load-json-file@>=1.0.0 <2.0.0",
+      "from": "load-json-file@>=1.1.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/load-json-file/-/load-json-file-1.1.0.tgz"
     },
     "localtunnel": {
       "version": "1.8.1",
-      "from": "localtunnel@>=1.7.0 <2.0.0",
+      "from": "localtunnel@1.8.1",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/localtunnel/-/localtunnel-1.8.1.tgz",
       "dependencies": {
         "cliui": {
@@ -3993,19 +3787,9 @@
       "from": "lodash@>=3.10.0 <4.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash/-/lodash-3.10.1.tgz"
     },
-    "lodash._arraycopy": {
-      "version": "3.0.0",
-      "from": "lodash._arraycopy@>=3.0.0 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._arraycopy/-/lodash._arraycopy-3.0.0.tgz"
-    },
-    "lodash._arrayeach": {
-      "version": "3.0.0",
-      "from": "lodash._arrayeach@>=3.0.0 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._arrayeach/-/lodash._arrayeach-3.0.0.tgz"
-    },
     "lodash._baseclone": {
       "version": "4.5.7",
-      "from": "lodash._baseclone@>=4.0.0 <5.0.0",
+      "from": "lodash._baseclone@>=4.5.0 <4.6.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._baseclone/-/lodash._baseclone-4.5.7.tgz"
     },
     "lodash._basecopy": {
@@ -4018,20 +3802,25 @@
       "from": "lodash._baseeach@>=4.1.0 <4.2.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._baseeach/-/lodash._baseeach-4.1.3.tgz"
     },
+    "lodash._basefilter": {
+      "version": "4.0.1",
+      "from": "lodash._basefilter@>=4.0.0 <4.1.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._basefilter/-/lodash._basefilter-4.0.1.tgz"
+    },
     "lodash._baseflatten": {
       "version": "4.2.1",
       "from": "lodash._baseflatten@>=4.2.0 <4.3.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._baseflatten/-/lodash._baseflatten-4.2.1.tgz"
     },
-    "lodash._basefor": {
-      "version": "3.0.3",
-      "from": "lodash._basefor@>=3.0.0 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._basefor/-/lodash._basefor-3.0.3.tgz"
-    },
     "lodash._baseiteratee": {
       "version": "4.7.0",
       "from": "lodash._baseiteratee@>=4.7.0 <4.8.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._baseiteratee/-/lodash._baseiteratee-4.7.0.tgz"
+    },
+    "lodash._basereduce": {
+      "version": "3.0.2",
+      "from": "lodash._basereduce@>=3.0.0 <3.1.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._basereduce/-/lodash._basereduce-3.0.2.tgz"
     },
     "lodash._baseslice": {
       "version": "4.0.0",
@@ -4047,16 +3836,6 @@
       "version": "3.0.0",
       "from": "lodash._basevalues@>=3.0.0 <4.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._basevalues/-/lodash._basevalues-3.0.0.tgz"
-    },
-    "lodash._bindcallback": {
-      "version": "3.0.1",
-      "from": "lodash._bindcallback@>=3.0.0 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._bindcallback/-/lodash._bindcallback-3.0.1.tgz"
-    },
-    "lodash._createassigner": {
-      "version": "3.1.1",
-      "from": "lodash._createassigner@>=3.0.0 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._createassigner/-/lodash._createassigner-3.1.1.tgz"
     },
     "lodash._createwrapper": {
       "version": "3.2.0",
@@ -4147,15 +3926,18 @@
     },
     "lodash.assign": {
       "version": "4.0.9",
-      "from": "lodash.assign@*",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.assign/-/lodash.assign-4.0.9.tgz",
-      "dependencies": {
-        "lodash.keys": {
-          "version": "4.0.7",
-          "from": "lodash.keys@>=4.0.0 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.keys/-/lodash.keys-4.0.7.tgz"
-        }
-      }
+      "from": "lodash.assign@>=4.0.3 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.assign/-/lodash.assign-4.0.9.tgz"
+    },
+    "lodash.assigninwith": {
+      "version": "4.0.7",
+      "from": "lodash.assigninwith@>=4.0.0 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.assigninwith/-/lodash.assigninwith-4.0.7.tgz"
+    },
+    "lodash.assignwith": {
+      "version": "4.0.7",
+      "from": "lodash.assignwith@>=4.0.6 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.assignwith/-/lodash.assignwith-4.0.7.tgz"
     },
     "lodash.capitalize": {
       "version": "4.1.1",
@@ -4163,14 +3945,14 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.capitalize/-/lodash.capitalize-4.1.1.tgz"
     },
     "lodash.clonedeep": {
-      "version": "4.3.1",
-      "from": "lodash.clonedeep@4.3.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.clonedeep/-/lodash.clonedeep-4.3.1.tgz"
+      "version": "4.3.2",
+      "from": "lodash.clonedeep@>=4.3.2 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.clonedeep/-/lodash.clonedeep-4.3.2.tgz"
     },
     "lodash.debounce": {
-      "version": "2.4.1",
-      "from": "lodash.debounce@>=2.4.1 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.debounce/-/lodash.debounce-2.4.1.tgz"
+      "version": "4.0.6",
+      "from": "lodash.debounce@>=4.0.6 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.debounce/-/lodash.debounce-4.0.6.tgz"
     },
     "lodash.deburr": {
       "version": "4.0.0",
@@ -4178,21 +3960,34 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.deburr/-/lodash.deburr-4.0.0.tgz"
     },
     "lodash.defaults": {
-      "version": "2.4.1",
-      "from": "lodash.defaults@>=2.4.1 <2.5.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.defaults/-/lodash.defaults-2.4.1.tgz",
-      "dependencies": {
-        "lodash.keys": {
-          "version": "2.4.1",
-          "from": "lodash.keys@>=2.4.1 <2.5.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.keys/-/lodash.keys-2.4.1.tgz"
-        }
-      }
+      "version": "4.0.1",
+      "from": "lodash.defaults@>=4.0.1 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.defaults/-/lodash.defaults-4.0.1.tgz"
     },
     "lodash.escape": {
       "version": "3.2.0",
       "from": "lodash.escape@>=3.0.0 <4.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.escape/-/lodash.escape-3.2.0.tgz"
+    },
+    "lodash.filter": {
+      "version": "4.4.0",
+      "from": "lodash.filter@>=4.1.0 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.filter/-/lodash.filter-4.4.0.tgz"
+    },
+    "lodash.flatten": {
+      "version": "4.2.0",
+      "from": "lodash.flatten@>=4.0.0 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.flatten/-/lodash.flatten-4.2.0.tgz"
+    },
+    "lodash.foreach": {
+      "version": "4.3.0",
+      "from": "lodash.foreach@>=4.0.0 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.foreach/-/lodash.foreach-4.3.0.tgz"
+    },
+    "lodash.initial": {
+      "version": "4.0.4",
+      "from": "lodash.initial@>=4.0.1 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.initial/-/lodash.initial-4.0.4.tgz"
     },
     "lodash.isarguments": {
       "version": "3.0.8",
@@ -4207,14 +4002,7 @@
     "lodash.isequal": {
       "version": "4.2.0",
       "from": "lodash.isequal@>=4.0.0 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.isequal/-/lodash.isequal-4.2.0.tgz",
-      "dependencies": {
-        "lodash.keys": {
-          "version": "4.0.7",
-          "from": "lodash.keys@>=4.0.0 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.keys/-/lodash.keys-4.0.7.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.isequal/-/lodash.isequal-4.2.0.tgz"
     },
     "lodash.isfunction": {
       "version": "2.4.1",
@@ -4226,35 +4014,30 @@
       "from": "lodash.isobject@>=2.4.1 <2.5.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.isobject/-/lodash.isobject-2.4.1.tgz"
     },
-    "lodash.isplainobject": {
-      "version": "3.2.0",
-      "from": "lodash.isplainobject@>=3.0.0 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.isplainobject/-/lodash.isplainobject-3.2.0.tgz"
-    },
-    "lodash.istypedarray": {
-      "version": "3.0.6",
-      "from": "lodash.istypedarray@>=3.0.0 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.istypedarray/-/lodash.istypedarray-3.0.6.tgz"
-    },
     "lodash.kebabcase": {
       "version": "4.0.1",
       "from": "lodash.kebabcase@>=4.0.0 <5.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.kebabcase/-/lodash.kebabcase-4.0.1.tgz"
     },
     "lodash.keys": {
-      "version": "3.1.2",
-      "from": "lodash.keys@>=3.0.0 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.keys/-/lodash.keys-3.1.2.tgz"
+      "version": "4.0.7",
+      "from": "lodash.keys@>=4.0.0 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.keys/-/lodash.keys-4.0.7.tgz"
     },
     "lodash.keysin": {
-      "version": "3.0.8",
-      "from": "lodash.keysin@>=3.0.0 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.keysin/-/lodash.keysin-3.0.8.tgz"
+      "version": "4.1.4",
+      "from": "lodash.keysin@>=4.0.0 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.keysin/-/lodash.keysin-4.1.4.tgz"
     },
-    "lodash.merge": {
-      "version": "3.3.2",
-      "from": "lodash.merge@>=3.3.1 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.merge/-/lodash.merge-3.3.2.tgz"
+    "lodash.last": {
+      "version": "3.0.0",
+      "from": "lodash.last@>=3.0.0 <4.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.last/-/lodash.last-3.0.0.tgz"
+    },
+    "lodash.map": {
+      "version": "4.4.0",
+      "from": "lodash.map@>=4.1.0 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.map/-/lodash.map-4.4.0.tgz"
     },
     "lodash.now": {
       "version": "2.4.1",
@@ -4281,6 +4064,11 @@
       "from": "lodash.partial@>=3.1.0 <4.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.partial/-/lodash.partial-3.1.1.tgz"
     },
+    "lodash.reduce": {
+      "version": "4.4.0",
+      "from": "lodash.reduce@>=4.1.0 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.reduce/-/lodash.reduce-4.4.0.tgz"
+    },
     "lodash.rest": {
       "version": "4.0.3",
       "from": "lodash.rest@>=4.0.0 <5.0.0",
@@ -4305,6 +4093,11 @@
           "version": "3.0.1",
           "from": "lodash._basetostring@>=3.0.0 <4.0.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash._basetostring/-/lodash._basetostring-3.0.1.tgz"
+        },
+        "lodash.keys": {
+          "version": "3.1.2",
+          "from": "lodash.keys@>=3.0.0 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.keys/-/lodash.keys-3.1.2.tgz"
         }
       }
     },
@@ -4312,11 +4105,6 @@
       "version": "3.1.1",
       "from": "lodash.templatesettings@>=3.0.0 <4.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.templatesettings/-/lodash.templatesettings-3.1.1.tgz"
-    },
-    "lodash.toplainobject": {
-      "version": "3.0.0",
-      "from": "lodash.toplainobject@>=3.0.0 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.toplainobject/-/lodash.toplainobject-3.0.0.tgz"
     },
     "lodash.tostring": {
       "version": "4.1.3",
@@ -4346,9 +4134,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.words/-/lodash.words-4.1.1.tgz"
     },
     "log4js": {
-      "version": "0.6.36",
+      "version": "0.6.37",
       "from": "log4js@>=0.6.31 <0.7.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/log4js/-/log4js-0.6.36.tgz",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/log4js/-/log4js-0.6.37.tgz",
       "dependencies": {
         "isarray": {
           "version": "0.0.1",
@@ -4359,6 +4147,11 @@
           "version": "1.0.34",
           "from": "readable-stream@>=1.0.2 <1.1.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/readable-stream/-/readable-stream-1.0.34.tgz"
+        },
+        "semver": {
+          "version": "4.3.6",
+          "from": "semver@>=4.3.3 <4.4.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/semver/-/semver-4.3.6.tgz"
         }
       }
     },
@@ -4373,9 +4166,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/longest/-/longest-1.0.1.tgz"
     },
     "loud-rejection": {
-      "version": "1.4.1",
+      "version": "1.5.0",
       "from": "loud-rejection@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/loud-rejection/-/loud-rejection-1.4.1.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/loud-rejection/-/loud-rejection-1.5.0.tgz"
     },
     "lower-case": {
       "version": "1.1.3",
@@ -4414,7 +4207,7 @@
     },
     "map-obj": {
       "version": "1.0.1",
-      "from": "map-obj@>=1.0.0 <2.0.0",
+      "from": "map-obj@>=1.0.1 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/map-obj/-/map-obj-1.0.1.tgz"
     },
     "map-stream": {
@@ -4425,14 +4218,7 @@
     "matchdep": {
       "version": "1.0.1",
       "from": "matchdep@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/matchdep/-/matchdep-1.0.1.tgz",
-      "dependencies": {
-        "micromatch": {
-          "version": "2.3.8",
-          "from": "micromatch@>=2.3.7 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/micromatch/-/micromatch-2.3.8.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/matchdep/-/matchdep-1.0.1.tgz"
     },
     "media-typer": {
       "version": "0.3.0",
@@ -4458,13 +4244,18 @@
           "version": "0.1.4",
           "from": "es6-weak-map@>=0.1.4 <0.2.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/es6-weak-map/-/es6-weak-map-0.1.4.tgz"
+        },
+        "next-tick": {
+          "version": "0.2.2",
+          "from": "next-tick@>=0.2.2 <0.3.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/next-tick/-/next-tick-0.2.2.tgz"
         }
       }
     },
     "meow": {
-      "version": "3.3.0",
-      "from": "meow@3.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/meow/-/meow-3.3.0.tgz"
+      "version": "3.7.0",
+      "from": "meow@>=3.3.0 <4.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/meow/-/meow-3.7.0.tgz"
     },
     "merge": {
       "version": "1.2.0",
@@ -4477,16 +4268,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/merge-stream/-/merge-stream-1.0.0.tgz"
     },
     "micromatch": {
-      "version": "2.3.5",
-      "from": "micromatch@2.3.5",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/micromatch/-/micromatch-2.3.5.tgz",
-      "dependencies": {
-        "lazy-cache": {
-          "version": "0.2.7",
-          "from": "lazy-cache@>=0.2.3 <0.3.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/lazy-cache/-/lazy-cache-0.2.7.tgz"
-        }
-      }
+      "version": "2.3.8",
+      "from": "micromatch@2.3.8",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/micromatch/-/micromatch-2.3.8.tgz"
     },
     "mime": {
       "version": "1.2.4",
@@ -4556,9 +4340,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/multimatch/-/multimatch-2.1.0.tgz",
       "dependencies": {
         "minimatch": {
-          "version": "3.0.0",
+          "version": "3.0.2",
           "from": "minimatch@>=3.0.0 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.0.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         }
       }
     },
@@ -4579,7 +4363,7 @@
     },
     "nan": {
       "version": "2.3.5",
-      "from": "nan@>=2.0.5 <3.0.0",
+      "from": "nan@>=2.3.2 <3.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/nan/-/nan-2.3.5.tgz"
     },
     "ncname": {
@@ -4593,9 +4377,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/negotiator/-/negotiator-0.5.3.tgz"
     },
     "next-tick": {
-      "version": "0.2.2",
-      "from": "next-tick@>=0.2.2 <0.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/next-tick/-/next-tick-0.2.2.tgz"
+      "version": "1.0.0",
+      "from": "next-tick@>=1.0.0 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/next-tick/-/next-tick-1.0.0.tgz"
     },
     "ng-annotate": {
       "version": "1.2.1",
@@ -4613,6 +4397,11 @@
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/convert-source-map/-/convert-source-map-1.1.3.tgz"
         }
       }
+    },
+    "no-case": {
+      "version": "2.3.0",
+      "from": "no-case@>=2.2.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/no-case/-/no-case-2.3.0.tgz"
     },
     "node-fs": {
       "version": "0.1.7",
@@ -4649,34 +4438,19 @@
       }
     },
     "node-sass": {
-      "version": "3.7.0",
-      "from": "node-sass@>=3.4.1 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/node-sass/-/node-sass-3.7.0.tgz",
+      "version": "3.8.0",
+      "from": "node-sass@>=3.4.2 <4.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/node-sass/-/node-sass-3.8.0.tgz",
       "dependencies": {
-        "camelcase": {
-          "version": "2.1.1",
-          "from": "camelcase@>=2.0.0 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/camelcase/-/camelcase-2.1.1.tgz"
-        },
-        "camelcase-keys": {
-          "version": "2.1.0",
-          "from": "camelcase-keys@>=2.0.0 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/camelcase-keys/-/camelcase-keys-2.1.0.tgz"
-        },
         "glob": {
-          "version": "7.0.3",
+          "version": "7.0.5",
           "from": "glob@>=7.0.3 <8.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.3.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.5.tgz"
         },
-        "meow": {
-          "version": "3.7.0",
-          "from": "meow@>=3.7.0 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/meow/-/meow-3.7.0.tgz"
-        },
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
+        "minimatch": {
+          "version": "3.0.2",
+          "from": "minimatch@>=3.0.2 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         }
       }
     },
@@ -4724,12 +4498,12 @@
     },
     "normalize-package-data": {
       "version": "2.3.5",
-      "from": "normalize-package-data@>=2.3.4 <3.0.0",
+      "from": "normalize-package-data@>=2.3.2 <3.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/normalize-package-data/-/normalize-package-data-2.3.5.tgz"
     },
     "normalize-path": {
       "version": "2.0.1",
-      "from": "normalize-path@>=2.0.0 <3.0.0",
+      "from": "normalize-path@>=2.0.1 <3.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/normalize-path/-/normalize-path-2.0.1.tgz"
     },
     "normalize-range": {
@@ -4740,29 +4514,29 @@
     "normalize-url": {
       "version": "1.5.3",
       "from": "normalize-url@>=1.4.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/normalize-url/-/normalize-url-1.5.3.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        },
-        "query-string": {
-          "version": "4.2.2",
-          "from": "query-string@>=4.1.0 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/query-string/-/query-string-4.2.2.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/normalize-url/-/normalize-url-1.5.3.tgz"
     },
     "now-and-later": {
       "version": "0.0.6",
       "from": "now-and-later@0.0.6",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/now-and-later/-/now-and-later-0.0.6.tgz"
     },
+    "npm-run-path": {
+      "version": "1.0.0",
+      "from": "npm-run-path@>=1.0.0 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/npm-run-path/-/npm-run-path-1.0.0.tgz"
+    },
     "npmconf": {
       "version": "2.1.2",
       "from": "npmconf@>=2.0.1 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/npmconf/-/npmconf-2.1.2.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/npmconf/-/npmconf-2.1.2.tgz",
+      "dependencies": {
+        "semver": {
+          "version": "4.3.6",
+          "from": "semver@>=2.0.0 <3.0.0||>=3.0.0 <4.0.0||>=4.0.0 <5.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/semver/-/semver-4.3.6.tgz"
+        }
+      }
     },
     "npmlog": {
       "version": "2.0.4",
@@ -4790,19 +4564,14 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/oauth-sign/-/oauth-sign-0.8.2.tgz"
     },
     "object-assign": {
-      "version": "3.0.0",
-      "from": "object-assign@>=3.0.0 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-3.0.0.tgz"
+      "version": "4.1.0",
+      "from": "object-assign@>=4.1.0 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
     },
     "object-component": {
       "version": "0.0.3",
       "from": "object-component@0.0.3",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-component/-/object-component-0.0.3.tgz"
-    },
-    "object-keys": {
-      "version": "1.0.1",
-      "from": "object-keys@1.0.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-keys/-/object-keys-1.0.1.tgz"
     },
     "object-path": {
       "version": "0.9.2",
@@ -4837,19 +4606,7 @@
     "opn": {
       "version": "3.0.3",
       "from": "opn@>=3.0.2 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/opn/-/opn-3.0.3.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
-    },
-    "opt-merger": {
-      "version": "1.1.1",
-      "from": "opt-merger@>=1.1.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/opt-merger/-/opt-merger-1.1.1.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/opn/-/opn-3.0.3.tgz"
     },
     "optimist": {
       "version": "0.6.1",
@@ -4862,11 +4619,6 @@
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimist/-/minimist-0.0.10.tgz"
         }
       }
-    },
-    "optional": {
-      "version": "0.1.3",
-      "from": "optional@>=0.1.0 <0.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/optional/-/optional-0.1.3.tgz"
     },
     "optionator": {
       "version": "0.8.1",
@@ -4941,9 +4693,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/osx-release/-/osx-release-1.1.0.tgz"
     },
     "output-file-sync": {
-      "version": "1.1.1",
+      "version": "1.1.2",
       "from": "output-file-sync@>=1.1.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/output-file-sync/-/output-file-sync-1.1.1.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/output-file-sync/-/output-file-sync-1.1.2.tgz"
     },
     "p-throttler": {
       "version": "0.1.0",
@@ -4975,9 +4727,9 @@
       }
     },
     "param-case": {
-      "version": "1.1.2",
-      "from": "param-case@>=1.1.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/param-case/-/param-case-1.1.2.tgz"
+      "version": "2.1.0",
+      "from": "param-case@>=2.1.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/param-case/-/param-case-2.1.0.tgz"
     },
     "parse-glob": {
       "version": "3.0.4",
@@ -4986,7 +4738,7 @@
     },
     "parse-json": {
       "version": "2.2.0",
-      "from": "parse-json@>=2.1.0 <3.0.0",
+      "from": "parse-json@>=2.2.0 <3.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/parse-json/-/parse-json-2.2.0.tgz"
     },
     "parsejson": {
@@ -5000,9 +4752,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/parseqs/-/parseqs-0.0.2.tgz"
     },
     "parseuri": {
-      "version": "0.0.2",
-      "from": "parseuri@0.0.2",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/parseuri/-/parseuri-0.0.2.tgz"
+      "version": "0.0.4",
+      "from": "parseuri@0.0.4",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/parseuri/-/parseuri-0.0.4.tgz"
     },
     "parseurl": {
       "version": "1.3.1",
@@ -5010,14 +4762,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/parseurl/-/parseurl-1.3.1.tgz"
     },
     "pascal-case": {
-      "version": "1.1.2",
-      "from": "pascal-case@>=1.1.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/pascal-case/-/pascal-case-1.1.2.tgz"
-    },
-    "path": {
-      "version": "0.12.7",
-      "from": "path@>=0.0.0 <1.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/path/-/path-0.12.7.tgz"
+      "version": "2.0.0",
+      "from": "pascal-case@>=2.0.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/pascal-case/-/pascal-case-2.0.0.tgz"
     },
     "path-array": {
       "version": "1.0.1",
@@ -5025,9 +4772,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/path-array/-/path-array-1.0.1.tgz"
     },
     "path-case": {
-      "version": "1.1.2",
-      "from": "path-case@>=1.1.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/path-case/-/path-case-1.1.2.tgz"
+      "version": "2.1.0",
+      "from": "path-case@>=2.1.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/path-case/-/path-case-2.1.0.tgz"
     },
     "path-exists": {
       "version": "1.0.0",
@@ -5043,6 +4790,11 @@
       "version": "1.0.1",
       "from": "path-is-inside@>=1.0.1 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/path-is-inside/-/path-is-inside-1.0.1.tgz"
+    },
+    "path-key": {
+      "version": "1.0.0",
+      "from": "path-key@>=1.0.0 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/path-key/-/path-key-1.0.0.tgz"
     },
     "path-type": {
       "version": "1.1.0",
@@ -5076,15 +4828,8 @@
     },
     "pkg-conf": {
       "version": "1.1.3",
-      "from": "pkg-conf@>=1.1.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/pkg-conf/-/pkg-conf-1.1.3.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "from": "pkg-conf@>=1.1.2 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/pkg-conf/-/pkg-conf-1.1.3.tgz"
     },
     "plur": {
       "version": "2.1.2",
@@ -5193,19 +4938,12 @@
     "postcss-minify-font-values": {
       "version": "1.0.5",
       "from": "postcss-minify-font-values@>=1.0.2 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/postcss-minify-font-values/-/postcss-minify-font-values-1.0.5.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/postcss-minify-font-values/-/postcss-minify-font-values-1.0.5.tgz"
     },
     "postcss-minify-gradients": {
-      "version": "1.0.2",
+      "version": "1.0.3",
       "from": "postcss-minify-gradients@>=1.0.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/postcss-minify-gradients/-/postcss-minify-gradients-1.0.2.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/postcss-minify-gradients/-/postcss-minify-gradients-1.0.3.tgz"
     },
     "postcss-minify-params": {
       "version": "1.0.4",
@@ -5248,9 +4986,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/postcss-reduce-transforms/-/postcss-reduce-transforms-1.0.3.tgz"
     },
     "postcss-selector-parser": {
-      "version": "2.0.0",
+      "version": "2.1.0",
       "from": "postcss-selector-parser@>=2.0.0 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/postcss-selector-parser/-/postcss-selector-parser-2.0.0.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/postcss-selector-parser/-/postcss-selector-parser-2.1.0.tgz"
     },
     "postcss-svgo": {
       "version": "2.1.3",
@@ -5302,11 +5040,6 @@
       "from": "private@>=0.1.6 <0.2.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/private/-/private-0.1.6.tgz"
     },
-    "process": {
-      "version": "0.11.5",
-      "from": "process@>=0.11.1 <0.12.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/process/-/process-0.11.5.tgz"
-    },
     "process-nextick-args": {
       "version": "1.0.7",
       "from": "process-nextick-args@>=1.0.6 <1.1.0",
@@ -5316,6 +5049,11 @@
       "version": "1.1.8",
       "from": "progress@>=1.1.8 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/progress/-/progress-1.1.8.tgz"
+    },
+    "promise.pipe": {
+      "version": "3.0.0",
+      "from": "promise.pipe@>=3.0.0 <4.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/promise.pipe/-/promise.pipe-3.0.0.tgz"
     },
     "promptly": {
       "version": "0.2.0",
@@ -5367,14 +5105,14 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/q/-/q-1.4.1.tgz"
     },
     "qs": {
-      "version": "0.4.2",
-      "from": "qs@>=0.4.0 <0.5.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/qs/-/qs-0.4.2.tgz"
+      "version": "6.2.0",
+      "from": "qs@6.2.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/qs/-/qs-6.2.0.tgz"
     },
     "query-string": {
-      "version": "2.4.2",
-      "from": "query-string@>=2.4.0 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/query-string/-/query-string-2.4.2.tgz"
+      "version": "4.2.2",
+      "from": "query-string@>=4.1.0 <5.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/query-string/-/query-string-4.2.2.tgz"
     },
     "randomatic": {
       "version": "1.1.5",
@@ -5382,14 +5120,14 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/randomatic/-/randomatic-1.1.5.tgz"
     },
     "range-parser": {
-      "version": "1.2.0",
-      "from": "range-parser@>=1.2.0 <1.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/range-parser/-/range-parser-1.2.0.tgz"
+      "version": "1.0.3",
+      "from": "range-parser@>=1.0.3 <1.1.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/range-parser/-/range-parser-1.0.3.tgz"
     },
     "raw-body": {
-      "version": "2.1.6",
-      "from": "raw-body@>=2.1.6 <2.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/raw-body/-/raw-body-2.1.6.tgz"
+      "version": "2.1.7",
+      "from": "raw-body@>=2.1.7 <2.2.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/raw-body/-/raw-body-2.1.7.tgz"
     },
     "rc": {
       "version": "1.1.6",
@@ -5427,9 +5165,16 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/readable-stream/-/readable-stream-2.1.4.tgz"
     },
     "readdirp": {
-      "version": "2.0.0",
+      "version": "2.0.1",
       "from": "readdirp@>=2.0.0 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/readdirp/-/readdirp-2.0.0.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/readdirp/-/readdirp-2.0.1.tgz",
+      "dependencies": {
+        "minimatch": {
+          "version": "3.0.2",
+          "from": "minimatch@>=3.0.2 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
+        }
+      }
     },
     "readline2": {
       "version": "1.0.1",
@@ -5443,25 +5188,13 @@
     },
     "rechoir": {
       "version": "0.6.2",
-      "from": "rechoir@>=0.6.0 <0.7.0",
+      "from": "rechoir@>=0.6.2 <0.7.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/rechoir/-/rechoir-0.6.2.tgz"
     },
     "redent": {
       "version": "1.0.0",
       "from": "redent@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/redent/-/redent-1.0.0.tgz",
-      "dependencies": {
-        "indent-string": {
-          "version": "2.1.0",
-          "from": "indent-string@>=2.1.0 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/indent-string/-/indent-string-2.1.0.tgz"
-        },
-        "repeating": {
-          "version": "2.0.1",
-          "from": "repeating@>=2.0.0 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/repeating/-/repeating-2.0.1.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/redent/-/redent-1.0.0.tgz"
     },
     "redeyed": {
       "version": "0.4.4",
@@ -5614,9 +5347,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/resolve-from/-/resolve-from-1.0.1.tgz"
     },
     "resp-modifier": {
-      "version": "5.0.2",
-      "from": "resp-modifier@>=5.0.0 <6.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/resp-modifier/-/resp-modifier-5.0.2.tgz"
+      "version": "6.0.1",
+      "from": "resp-modifier@6.0.1",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/resp-modifier/-/resp-modifier-6.0.1.tgz"
     },
     "restore-cursor": {
       "version": "1.0.1",
@@ -5649,9 +5382,14 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/rimraf/-/rimraf-2.5.2.tgz",
       "dependencies": {
         "glob": {
-          "version": "7.0.3",
+          "version": "7.0.5",
           "from": "glob@>=7.0.0 <8.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.3.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.5.tgz"
+        },
+        "minimatch": {
+          "version": "3.0.2",
+          "from": "minimatch@>=3.0.2 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         }
       }
     },
@@ -5683,9 +5421,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/run-async/-/run-async-0.1.0.tgz"
     },
     "rx": {
-      "version": "2.5.3",
-      "from": "rx@>=2.2.27 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/rx/-/rx-2.5.3.tgz"
+      "version": "4.1.0",
+      "from": "rx@4.1.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/rx/-/rx-4.1.0.tgz"
     },
     "rx-lite": {
       "version": "3.1.2",
@@ -5693,51 +5431,51 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/rx-lite/-/rx-lite-3.1.2.tgz"
     },
     "sass-graph": {
-      "version": "2.1.1",
+      "version": "2.1.2",
       "from": "sass-graph@>=2.1.1 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/sass-graph/-/sass-graph-2.1.1.tgz",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/sass-graph/-/sass-graph-2.1.2.tgz",
       "dependencies": {
-        "camelcase": {
-          "version": "2.1.1",
-          "from": "camelcase@>=2.0.1 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/camelcase/-/camelcase-2.1.1.tgz"
-        },
-        "cliui": {
-          "version": "3.2.0",
-          "from": "cliui@>=3.0.3 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/cliui/-/cliui-3.2.0.tgz"
-        },
         "glob": {
-          "version": "6.0.4",
-          "from": "glob@>=6.0.4 <7.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-6.0.4.tgz"
+          "version": "7.0.5",
+          "from": "glob@>=7.0.0 <8.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.5.tgz"
         },
         "lodash": {
           "version": "4.13.1",
           "from": "lodash@>=4.0.0 <5.0.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash/-/lodash-4.13.1.tgz"
         },
-        "yargs": {
-          "version": "3.32.0",
-          "from": "yargs@>=3.8.0 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/yargs/-/yargs-3.32.0.tgz"
+        "minimatch": {
+          "version": "3.0.2",
+          "from": "minimatch@>=3.0.2 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         }
       }
     },
     "sass-lint": {
-      "version": "1.7.0",
-      "from": "sass-lint@>=1.3.2 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/sass-lint/-/sass-lint-1.7.0.tgz",
+      "version": "1.8.0",
+      "from": "sass-lint@>=1.8.0 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/sass-lint/-/sass-lint-1.8.0.tgz",
       "dependencies": {
-        "fs-extra": {
-          "version": "0.29.0",
-          "from": "fs-extra@>=0.29.0 <0.30.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/fs-extra/-/fs-extra-0.29.0.tgz"
-        },
         "glob": {
-          "version": "7.0.3",
+          "version": "7.0.5",
           "from": "glob@>=7.0.0 <8.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.3.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.5.tgz"
+        },
+        "globule": {
+          "version": "1.0.0",
+          "from": "globule@>=1.0.0 <2.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/globule/-/globule-1.0.0.tgz"
+        },
+        "lodash": {
+          "version": "4.9.0",
+          "from": "lodash@>=4.9.0 <4.10.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash/-/lodash-4.9.0.tgz"
+        },
+        "minimatch": {
+          "version": "3.0.2",
+          "from": "minimatch@>=3.0.2 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         }
       }
     },
@@ -5759,9 +5497,9 @@
       }
     },
     "semver": {
-      "version": "4.3.6",
-      "from": "semver@>=4.2.0 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/semver/-/semver-4.3.6.tgz"
+      "version": "5.1.0",
+      "from": "semver@>=2.0.0 <3.0.0||>=3.0.0 <4.0.0||>=4.0.0 <5.0.0||>=5.0.0 <6.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/semver/-/semver-5.1.0.tgz"
     },
     "semver-diff": {
       "version": "0.1.0",
@@ -5778,7 +5516,14 @@
     "semver-greatest-satisfied-range": {
       "version": "1.0.0",
       "from": "semver-greatest-satisfied-range@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/semver-greatest-satisfied-range/-/semver-greatest-satisfied-range-1.0.0.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/semver-greatest-satisfied-range/-/semver-greatest-satisfied-range-1.0.0.tgz",
+      "dependencies": {
+        "semver": {
+          "version": "4.3.6",
+          "from": "semver@>=4.2.0 <5.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/semver/-/semver-4.3.6.tgz"
+        }
+      }
     },
     "semver-regex": {
       "version": "1.0.0",
@@ -5788,46 +5533,49 @@
     "semver-truncate": {
       "version": "1.1.0",
       "from": "semver-truncate@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/semver-truncate/-/semver-truncate-1.1.0.tgz",
-      "dependencies": {
-        "semver": {
-          "version": "5.1.0",
-          "from": "semver@>=5.0.3 <6.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/semver/-/semver-5.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/semver-truncate/-/semver-truncate-1.1.0.tgz"
     },
     "send": {
-      "version": "0.14.1",
-      "from": "send@0.14.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/send/-/send-0.14.1.tgz",
+      "version": "0.13.2",
+      "from": "send@0.13.2",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/send/-/send-0.13.2.tgz",
       "dependencies": {
-        "http-errors": {
-          "version": "1.5.0",
-          "from": "http-errors@>=1.5.0 <1.6.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/http-errors/-/http-errors-1.5.0.tgz"
-        },
         "mime": {
           "version": "1.3.4",
           "from": "mime@1.3.4",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/mime/-/mime-1.3.4.tgz"
+        },
+        "statuses": {
+          "version": "1.2.1",
+          "from": "statuses@>=1.2.1 <1.3.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/statuses/-/statuses-1.2.1.tgz"
         }
       }
     },
     "sentence-case": {
-      "version": "1.1.3",
-      "from": "sentence-case@>=1.1.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/sentence-case/-/sentence-case-1.1.3.tgz"
+      "version": "2.1.0",
+      "from": "sentence-case@>=2.1.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/sentence-case/-/sentence-case-2.1.0.tgz"
     },
     "serve-index": {
       "version": "1.7.3",
-      "from": "serve-index@>=1.7.0 <2.0.0",
+      "from": "serve-index@1.7.3",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/serve-index/-/serve-index-1.7.3.tgz"
     },
     "serve-static": {
-      "version": "1.11.1",
-      "from": "serve-static@>=1.10.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/serve-static/-/serve-static-1.11.1.tgz"
+      "version": "1.10.3",
+      "from": "serve-static@1.10.3",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/serve-static/-/serve-static-1.10.3.tgz"
+    },
+    "server-destroy": {
+      "version": "1.0.1",
+      "from": "server-destroy@1.0.1",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/server-destroy/-/server-destroy-1.0.1.tgz"
+    },
+    "set-blocking": {
+      "version": "1.0.0",
+      "from": "set-blocking@>=1.0.0 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/set-blocking/-/set-blocking-1.0.0.tgz"
     },
     "set-immediate-shim": {
       "version": "1.0.1",
@@ -5860,9 +5608,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/sigmund/-/sigmund-1.0.1.tgz"
     },
     "signal-exit": {
-      "version": "2.1.2",
-      "from": "signal-exit@>=2.1.2 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/signal-exit/-/signal-exit-2.1.2.tgz"
+      "version": "3.0.0",
+      "from": "signal-exit@>=3.0.0 <4.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/signal-exit/-/signal-exit-3.0.0.tgz"
     },
     "simple-fmt": {
       "version": "0.1.0",
@@ -5885,9 +5633,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/slice-ansi/-/slice-ansi-0.0.4.tgz"
     },
     "snake-case": {
-      "version": "1.1.2",
-      "from": "snake-case@>=1.1.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/snake-case/-/snake-case-1.1.2.tgz"
+      "version": "2.1.0",
+      "from": "snake-case@>=2.1.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/snake-case/-/snake-case-2.1.0.tgz"
     },
     "sntp": {
       "version": "1.0.9",
@@ -5895,41 +5643,19 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/sntp/-/sntp-1.0.9.tgz"
     },
     "socket.io": {
-      "version": "1.3.7",
-      "from": "socket.io@1.3.7",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io/-/socket.io-1.3.7.tgz",
-      "dependencies": {
-        "debug": {
-          "version": "2.1.0",
-          "from": "debug@2.1.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/debug/-/debug-2.1.0.tgz"
-        },
-        "ms": {
-          "version": "0.6.2",
-          "from": "ms@0.6.2",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/ms/-/ms-0.6.2.tgz"
-        }
-      }
+      "version": "1.4.6",
+      "from": "socket.io@1.4.6",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io/-/socket.io-1.4.6.tgz"
     },
     "socket.io-adapter": {
-      "version": "0.3.1",
-      "from": "socket.io-adapter@0.3.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io-adapter/-/socket.io-adapter-0.3.1.tgz",
+      "version": "0.4.0",
+      "from": "socket.io-adapter@0.4.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io-adapter/-/socket.io-adapter-0.4.0.tgz",
       "dependencies": {
-        "debug": {
-          "version": "1.0.2",
-          "from": "debug@1.0.2",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/debug/-/debug-1.0.2.tgz"
-        },
         "isarray": {
           "version": "0.0.1",
           "from": "isarray@0.0.1",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/isarray/-/isarray-0.0.1.tgz"
-        },
-        "ms": {
-          "version": "0.6.2",
-          "from": "ms@0.6.2",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/ms/-/ms-0.6.2.tgz"
         },
         "socket.io-parser": {
           "version": "2.2.2",
@@ -5946,31 +5672,31 @@
       }
     },
     "socket.io-client": {
-      "version": "1.3.7",
-      "from": "socket.io-client@1.3.7",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io-client/-/socket.io-client-1.3.7.tgz",
+      "version": "1.4.6",
+      "from": "socket.io-client@1.4.6",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io-client/-/socket.io-client-1.4.6.tgz",
       "dependencies": {
-        "debug": {
-          "version": "0.7.4",
-          "from": "debug@0.7.4",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/debug/-/debug-0.7.4.tgz"
+        "component-emitter": {
+          "version": "1.2.0",
+          "from": "component-emitter@1.2.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/component-emitter/-/component-emitter-1.2.0.tgz"
         }
       }
     },
     "socket.io-parser": {
-      "version": "2.2.4",
-      "from": "socket.io-parser@2.2.4",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io-parser/-/socket.io-parser-2.2.4.tgz",
+      "version": "2.2.6",
+      "from": "socket.io-parser@2.2.6",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/socket.io-parser/-/socket.io-parser-2.2.6.tgz",
       "dependencies": {
-        "debug": {
-          "version": "0.7.4",
-          "from": "debug@0.7.4",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/debug/-/debug-0.7.4.tgz"
-        },
         "isarray": {
           "version": "0.0.1",
           "from": "isarray@0.0.1",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/isarray/-/isarray-0.0.1.tgz"
+        },
+        "json3": {
+          "version": "3.3.2",
+          "from": "json3@3.3.2",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/json3/-/json3-3.3.2.tgz"
         }
       }
     },
@@ -6160,6 +5886,11 @@
       "from": "strip-dirs@>=1.0.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/strip-dirs/-/strip-dirs-1.1.1.tgz"
     },
+    "strip-eof": {
+      "version": "1.0.0",
+      "from": "strip-eof@>=1.0.0 <2.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/strip-eof/-/strip-eof-1.0.0.tgz"
+    },
     "strip-indent": {
       "version": "1.0.1",
       "from": "strip-indent@>=1.0.1 <2.0.0",
@@ -6211,14 +5942,19 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/systemjs-builder/-/systemjs-builder-0.15.13.tgz",
       "dependencies": {
         "bluebird": {
-          "version": "3.4.0",
+          "version": "3.4.1",
           "from": "bluebird@>=3.3.4 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/bluebird/-/bluebird-3.4.0.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/bluebird/-/bluebird-3.4.1.tgz"
         },
         "glob": {
-          "version": "7.0.3",
+          "version": "7.0.5",
           "from": "glob@>=7.0.3 <8.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.3.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-7.0.5.tgz"
+        },
+        "minimatch": {
+          "version": "3.0.2",
+          "from": "minimatch@>=3.0.2 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.2.tgz"
         }
       }
     },
@@ -6228,9 +5964,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/table/-/table-3.7.8.tgz",
       "dependencies": {
         "bluebird": {
-          "version": "3.4.0",
+          "version": "3.4.1",
           "from": "bluebird@>=3.1.1 <4.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/bluebird/-/bluebird-3.4.0.tgz"
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/bluebird/-/bluebird-3.4.1.tgz"
         },
         "lodash": {
           "version": "4.13.1",
@@ -6353,12 +6089,19 @@
     "timers-ext": {
       "version": "0.1.0",
       "from": "timers-ext@>=0.1.0 <0.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/timers-ext/-/timers-ext-0.1.0.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/timers-ext/-/timers-ext-0.1.0.tgz",
+      "dependencies": {
+        "next-tick": {
+          "version": "0.2.2",
+          "from": "next-tick@>=0.2.2 <0.3.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/next-tick/-/next-tick-0.2.2.tgz"
+        }
+      }
     },
     "title-case": {
-      "version": "1.1.2",
-      "from": "title-case@>=1.1.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/title-case/-/title-case-1.1.2.tgz"
+      "version": "2.1.0",
+      "from": "title-case@>=2.1.0 <3.0.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/title-case/-/title-case-2.1.0.tgz"
     },
     "tmp": {
       "version": "0.0.23",
@@ -6371,9 +6114,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/to-absolute-glob/-/to-absolute-glob-0.1.1.tgz"
     },
     "to-array": {
-      "version": "0.1.3",
-      "from": "to-array@0.1.3",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/to-array/-/to-array-0.1.3.tgz"
+      "version": "0.1.4",
+      "from": "to-array@0.1.4",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/to-array/-/to-array-0.1.4.tgz"
     },
     "to-fast-properties": {
       "version": "1.0.2",
@@ -6471,7 +6214,7 @@
     },
     "type-is": {
       "version": "1.6.13",
-      "from": "type-is@>=1.6.12 <1.7.0",
+      "from": "type-is@>=1.6.13 <1.7.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/type-is/-/type-is-1.6.13.tgz"
     },
     "typedarray": {
@@ -6481,18 +6224,13 @@
     },
     "ua-parser-js": {
       "version": "0.7.10",
-      "from": "ua-parser-js@>=0.7.9 <0.8.0",
+      "from": "ua-parser-js@0.7.10",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/ua-parser-js/-/ua-parser-js-0.7.10.tgz"
     },
-    "ucfirst": {
-      "version": "1.0.0",
-      "from": "ucfirst@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/ucfirst/-/ucfirst-1.0.0.tgz"
-    },
     "uglify-js": {
-      "version": "2.6.2",
+      "version": "2.6.4",
       "from": "uglify-js@>=2.6.0 <2.7.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/uglify-js/-/uglify-js-2.6.2.tgz",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/uglify-js/-/uglify-js-2.6.4.tgz",
       "dependencies": {
         "async": {
           "version": "0.2.10",
@@ -6537,9 +6275,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/underscore/-/underscore-1.7.0.tgz"
     },
     "undertaker": {
-      "version": "0.13.2",
-      "from": "undertaker@>=0.13.0 <0.14.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/undertaker/-/undertaker-0.13.2.tgz"
+      "version": "0.15.0",
+      "from": "undertaker@>=0.15.0 <0.16.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/undertaker/-/undertaker-0.15.0.tgz"
     },
     "undertaker-registry": {
       "version": "1.0.0",
@@ -6650,11 +6388,6 @@
         }
       }
     },
-    "utf-8-validate": {
-      "version": "1.2.1",
-      "from": "utf-8-validate@>=1.2.0 <1.3.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/utf-8-validate/-/utf-8-validate-1.2.1.tgz"
-    },
     "utf8": {
       "version": "2.1.0",
       "from": "utf8@2.1.0",
@@ -6703,14 +6436,7 @@
     "vinyl-assign": {
       "version": "1.2.1",
       "from": "vinyl-assign@>=1.0.1 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/vinyl-assign/-/vinyl-assign-1.2.1.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.1 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/vinyl-assign/-/vinyl-assign-1.2.1.tgz"
     },
     "vinyl-file": {
       "version": "1.3.0",
@@ -6720,14 +6446,7 @@
     "vinyl-fs": {
       "version": "2.4.3",
       "from": "vinyl-fs@>=2.0.0 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/vinyl-fs/-/vinyl-fs-2.4.3.tgz",
-      "dependencies": {
-        "object-assign": {
-          "version": "4.1.0",
-          "from": "object-assign@>=4.0.0 <5.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/object-assign/-/object-assign-4.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/vinyl-fs/-/vinyl-fs-2.4.3.tgz"
     },
     "vinyl-sourcemaps-apply": {
       "version": "0.2.1",
@@ -6767,14 +6486,7 @@
     "win-release": {
       "version": "1.1.1",
       "from": "win-release@>=1.0.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/win-release/-/win-release-1.1.1.tgz",
-      "dependencies": {
-        "semver": {
-          "version": "5.1.0",
-          "from": "semver@>=5.0.1 <6.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/semver/-/semver-5.1.0.tgz"
-        }
-      }
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/win-release/-/win-release-1.1.1.tgz"
     },
     "window-size": {
       "version": "0.1.4",
@@ -6812,9 +6524,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/write/-/write-0.2.1.tgz"
     },
     "ws": {
-      "version": "0.8.0",
-      "from": "ws@0.8.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/ws/-/ws-0.8.0.tgz"
+      "version": "1.0.1",
+      "from": "ws@1.0.1",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/ws/-/ws-1.0.1.tgz"
     },
     "xdg-basedir": {
       "version": "1.0.1",
@@ -6825,11 +6537,6 @@
       "version": "1.0.0",
       "from": "xml-char-classes@>=1.0.0 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/xml-char-classes/-/xml-char-classes-1.0.0.tgz"
-    },
-    "xmlhttprequest": {
-      "version": "1.5.0",
-      "from": "https://github.com/rase-/node-XMLHttpRequest/archive/a6b6f2.tar.gz",
-      "resolved": "https://github.com/rase-/node-XMLHttpRequest/archive/a6b6f2.tar.gz"
     },
     "xmlhttprequest-ssl": {
       "version": "1.5.1",
@@ -6857,18 +6564,18 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/yallist/-/yallist-2.0.0.tgz"
     },
     "yargs": {
-      "version": "4.3.1",
-      "from": "yargs@4.3.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/yargs/-/yargs-4.3.1.tgz",
+      "version": "4.7.1",
+      "from": "yargs@4.7.1",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/yargs/-/yargs-4.7.1.tgz",
       "dependencies": {
         "camelcase": {
-          "version": "2.1.1",
-          "from": "camelcase@>=2.0.1 <3.0.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/camelcase/-/camelcase-2.1.1.tgz"
+          "version": "3.0.0",
+          "from": "camelcase@>=3.0.0 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/camelcase/-/camelcase-3.0.0.tgz"
         },
         "cliui": {
           "version": "3.2.0",
-          "from": "cliui@>=3.0.3 <4.0.0",
+          "from": "cliui@>=3.2.0 <4.0.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/cliui/-/cliui-3.2.0.tgz"
         },
         "window-size": {
@@ -6880,7 +6587,7 @@
     },
     "yargs-parser": {
       "version": "2.4.0",
-      "from": "yargs-parser@>=2.1.1 <3.0.0",
+      "from": "yargs-parser@>=2.4.0 <3.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/yargs-parser/-/yargs-parser-2.4.0.tgz",
       "dependencies": {
         "camelcase": {
@@ -6891,9 +6598,9 @@
       }
     },
     "yauzl": {
-      "version": "2.5.0",
+      "version": "2.6.0",
       "from": "yauzl@>=2.2.1 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/yauzl/-/yauzl-2.5.0.tgz"
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/yauzl/-/yauzl-2.6.0.tgz"
     },
     "yeast": {
       "version": "0.1.2",

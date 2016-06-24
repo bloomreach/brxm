@@ -5,8 +5,10 @@
   "scripts": {
     "gulp": "gulp"
   },
+  "dependencies": {
+    "dom-autoscroller": "1.2.4"
+  },
   "devDependencies": {
-    "dom-autoscroller": "1.2.4",
-    "frontend-build": "1.0.0"
+    "frontend-build": "1.0.1"
   }
 }
