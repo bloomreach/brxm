@@ -314,7 +314,7 @@ test/
     Zope Public License	                                    2.0
 
 ------------------------------------------------------------------------------------------------------------------------
-frontend/src/main/java/org/onehippo/cms7/channelmanager/channeleditor/plugins/colorfield/**
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugins/colorfield/**
 
     Copyright (c) <2011> <Ryan Petrello>
 
@@ -337,7 +337,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channeleditor/plugins/co
     SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-frontend/src/main/java/org/onehippo/cms7/channelmanager/channeleditor/plugins/vtabs/**
+frontend/src/main/resources/org/onehippo/cms7/channelmanager/channeleditor/plugins/vtabs/**
 
     Licensed under the MIT License, without specific license text provided.
     For general information about the MIT License: http://opensource.org/licenses/mit-license.php
