@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -242,6 +244,12 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             type = galleryTypes.get(0);
             typeComponent = new DropDownChoice<>("type", new PropertyModel<>(this, "type"), galleryTypes,
                     new TypeChoiceRenderer(this)).setNullValid(false).setRequired(true);
+            // needed to keep dropdown selection:
+            typeComponent.add(new AjaxFormComponentUpdatingBehavior("onchange") {
+                @Override
+                protected void onUpdate(AjaxRequestTarget art) {
+                }
+            });
         } else if (galleryTypes != null && galleryTypes.size() == 1) {
             type = galleryTypes.get(0);
             typeComponent = new Label("type", type).setVisible(false);
