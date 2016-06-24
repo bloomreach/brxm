@@ -21,16 +21,18 @@ import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
+import org.apache.wicket.util.template.TextTemplate;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.PluginUserSession;
@@ -39,6 +41,9 @@ public class UserTimezoneLoginPlugin extends SimpleLoginPlugin {
 
     public static final String SHOW_TIMEZONES_CONFIG_PARAM = "show.timezones";
     public static final String SELECTED_TIMEZONES_CONFIG_PARAM = "selected-timezones";
+
+    private static final ResourceReference JSTZ_JS = new JavaScriptResourceReference(UserTimezoneLoginPlugin.class, "jstz.min.js");
+    private static final TextTemplate INIT_JS = new PackageTextTemplate(UserTimezoneLoginPlugin.class, "timezones-init.js");
 
     public UserTimezoneLoginPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -109,16 +114,14 @@ public class UserTimezoneLoginPlugin extends SimpleLoginPlugin {
             }
         }
 
-
         @Override
-        public void renderHead(final HtmlHeaderContainer container) {
-            super.renderHead(container);
+        public void renderHead(final IHeaderResponse response) {
+            super.renderHead(response);
             if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
-                container.getHeaderResponse().render(JavaScriptReferenceHeaderItem.forReference(new JavaScriptResourceReference(getClass(), "jstz.min.js")));
-                container.getHeaderResponse().render(OnLoadHeaderItem.forScript(new PackageTextTemplate(getClass(), "timezones-init.js").asString()));
+                response.render(JavaScriptReferenceHeaderItem.forReference(JSTZ_JS));
+                response.render(OnLoadHeaderItem.forScript(INIT_JS.asString()));
             }
         }
-
 
         @Override
         protected void loginSuccess() {
