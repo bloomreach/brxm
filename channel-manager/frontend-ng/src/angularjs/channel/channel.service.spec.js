@@ -28,6 +28,7 @@ describe('ChannelService', () => {
   let HstService;
   let channelMock;
   let CmsService;
+  let ConfigServiceMock;
   let $state;
 
   beforeEach(() => {
@@ -54,13 +55,14 @@ describe('ChannelService', () => {
       'getComponents',
     ]);
 
-    const ConfigServiceMock = {
+    ConfigServiceMock = {
       apiUrlPrefix: '/testApiUrlPrefix',
       rootUuid: 'testRootUuid',
       cmsUser: 'testUser',
       contextPaths: ['/testContextPath1', '/'],
       locale: 'en',
     };
+    ConfigServiceMock.setContextPathForChannel = jasmine.createSpy('setContextPathForChannel');
 
     module(($provide) => {
       $provide.value('SessionService', SessionServiceMock);
@@ -95,6 +97,7 @@ describe('ChannelService', () => {
       id: 'testChannelId',
       mountPath: '/testMount',
       siteMapId: 'testSiteMapId',
+      contextPath: 'testContextPath',
     };
 
     spyOn(CmsService, 'subscribe');
@@ -109,6 +112,7 @@ describe('ChannelService', () => {
 
     $rootScope.$digest();
 
+    expect(ConfigServiceMock.setContextPathForChannel).toHaveBeenCalledWith('testContextPath');
     expect(HstService.getChannel).toHaveBeenCalledWith(testChannel.id);
     expect(HstService.getFeatures).toHaveBeenCalled();
     expect(SessionServiceMock.initialize).toHaveBeenCalledWith(testChannel);
@@ -258,11 +262,12 @@ describe('ChannelService', () => {
     $rootScope.$digest();
 
     HstService.getChannel.and.callFake(() => $q.resolve(channelB));
-    ChannelService.switchToChannel(channelB.id);
+    ChannelService.switchToChannel('/b', channelB.id);
     $rootScope.$digest();
 
     expect(ChannelService.getId()).toEqual(channelB.id);
     expect(ChannelService.getChannel()).toEqual(channelB);
+    expect(ConfigServiceMock.setContextPathForChannel).toHaveBeenCalledWith('/b');
   });
 
   // TODO: add a test where the server returns an error upon the ChannelService's request for channel details.

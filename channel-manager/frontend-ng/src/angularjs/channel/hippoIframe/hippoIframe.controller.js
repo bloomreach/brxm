@@ -176,7 +176,7 @@ export class HippoIframeCtrl {
   _updateChannelIfSwitched() {
     const channelId = this.PageMetaDataService.getChannelId();
     if (channelId && channelId !== this.ChannelService.getId()) {
-      return this.ChannelService.switchToChannel(channelId);
+      return this.ChannelService.switchToChannel(this.PageMetaDataService.getContextPath(), channelId);
     }
 
     return this.$q.resolve();

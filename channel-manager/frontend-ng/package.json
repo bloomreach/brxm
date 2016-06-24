@@ -27,6 +27,6 @@
   },
   "devDependencies": {
     "angular-mocks": "1.4.8",
-    "frontend-build": "1.0.0"
+    "frontend-build": "1.0.2"
   }
 }
