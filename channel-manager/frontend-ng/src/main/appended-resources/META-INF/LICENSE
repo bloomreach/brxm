@@ -1,8 +1,15 @@
 ========================================================================================================================
 
-Hippo Angular Channel Manager Frontend Next Generation includes a number of sub-components with
-separate copyright notices and license terms. Your use of the code for the these sub-components is subject
-to the terms and conditions of the following licenses.
+Addon Channel Manager Frontend Next Generation includes and bundles the following sub-components which are available and
+licensed under the Apache License, Version 2.0. Your use of the code for these sub-components is subject to the terms
+and conditions of the Apache License, Version 2.0, as specified in the license text above:
+
+angular/hippo-cm/fonts/Regular/**
+
+
+For both the above listed sub-components or other bundled sub-components also additional or separate copyright notices
+and license terms may apply. Your use of the code for these sub-components is also subject to the terms and conditions
+as described below:
 
 ------------------------------------------------------------------------------------------------------------------------
 angular/hippo-cm/scripts/dragula.min.js
@@ -30,21 +37,36 @@ angular/hippo-cm/styles/dragula.min.css
     CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-angular/hippo-cm/fonts/Regular/**
-
-    Apache License version 2.0
-    https://github.com/FontFaceKit/open-sans
-
-------------------------------------------------------------------------------------------------------------------------
 angular/hippo-cm/scripts/hippo-cm*.min.js
 angular/hippo-cm/styles/hippo-cm-*.min.css
 
     These files include and merge a number of 3rd party resources with separate copyright notices and license terms.
     Your use of (parts of) these external resources is subject to the terms and conditions of their specific license.
 
-    https://material.angularjs.org
     http://angularjs.org
+        The MIT License
 
+        Copyright (c) 2010-2015 Google, Inc. http://angularjs.org
+
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+
+        The above copyright notice and this permission notice shall be included in
+        all copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+        THE SOFTWARE.
+
+    https://material.angularjs.org
         The MIT License
 
         Copyright (c) 2014 Google, Inc. http://angularjs.org
@@ -326,3 +348,25 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
 
         THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+    https://www.npmjs.com/package/dom-autoscroller
+        The MIT License (MIT)
+
+        Copyright (c) 2016 Quentin Engles
+
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
