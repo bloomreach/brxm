@@ -39,6 +39,11 @@
     font-weight: bold;
   }
 
+  em strong, strong em {
+    font-style: italic;
+    font-weight: bold;
+  }
+
   sub {
     vertical-align: sub;
   }

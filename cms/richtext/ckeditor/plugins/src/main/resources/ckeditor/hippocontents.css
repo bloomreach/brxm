@@ -76,6 +76,11 @@
     font-weight: bold;
 }
 
+.cke_wysiwyg_div.cke_editable em strong, .cke_wysiwyg_div.cke_editable strong em {
+    font-style: italic;
+    font-weight: bold;
+}
+
 .cke_wysiwyg_div.cke_editable sub {
     vertical-align: sub;
 }
