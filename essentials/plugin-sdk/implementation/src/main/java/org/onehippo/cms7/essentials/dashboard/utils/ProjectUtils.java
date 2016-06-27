@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -164,6 +164,14 @@ public final class ProjectUtils {
     }
 
     /**
+     * Returns Webfiles root folder e.g. {@code /home/foo/myproject/bootstrap/webfiles}
+     *
+     * @return Webfiles project folder
+     */
+    public static File getBootstrapWebfilesFolder(final PluginContext context) {
+        return getFolder(context.getProjectSettings().getBootstrapModule() + File.separator + "webfiles");
+    }
+    /**
      * Returns Essentials root folder e.g. {@code /home/foo/myproject/essentials}
      *
      * @return Essentials project folder
@@ -245,6 +253,8 @@ public final class ProjectUtils {
                 return getPomForDir(ProjectUtils.getBootstrapContentFolder(context));
             case ESSENTIALS:
                 return getPomForDir(ProjectUtils.getEssentialsFolderName(context));
+            case BOOTSTRAP_WEB_FILES:
+                return getPomForDir(ProjectUtils.getBootstrapWebfilesFolder(context));
         }
         return null;
 

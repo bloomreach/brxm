@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 package org.onehippo.cms7.essentials.dashboard.ctx;
-
 
 import java.io.File;
 import java.nio.file.Path;
@@ -66,6 +65,7 @@ public class DefaultPluginContext implements PluginContext {
     private transient File siteFile;
     private String componentsPackage;
     private String beansPackage;
+    private String projectPackage;
     private String restPackage;
     private String projectNamespace;
     private Map<String, Object> placeholderData;
@@ -78,6 +78,7 @@ public class DefaultPluginContext implements PluginContext {
             setComponentsPackageName(document.getSelectedComponentsPackage());
             setRestPackageName(document.getSelectedRestPackage());
             setProjectNamespacePrefix(document.getProjectNamespace());
+            setProjectPackageName(document.getSelectedProjectPackage());
         }
     }
 
@@ -158,6 +159,11 @@ public class DefaultPluginContext implements PluginContext {
     @Override
     public String beansPackageName() {
         return beansPackage;
+    }
+
+    @Override
+    public String getProjectPackageName() {
+        return projectPackage;
     }
 
     @Override
@@ -243,19 +249,21 @@ public class DefaultPluginContext implements PluginContext {
     @Override
     public void setBeansPackageName(final String beansPackage) {
         this.beansPackage = beansPackage;
+    }
 
+    @Override
+    public void setProjectPackageName(final String projectPackage) {
+        this.projectPackage = projectPackage;
     }
 
     @Override
     public String getProjectNamespacePrefix() {
-
         return projectNamespace;
     }
 
     @Override
     public void setProjectNamespacePrefix(final String namespace) {
         this.projectNamespace = namespace;
-
     }
 
     @Override
@@ -387,6 +395,7 @@ public class DefaultPluginContext implements PluginContext {
         placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_PACKAGE, beansPackage);
         placeholderData.put(EssentialConst.PLACEHOLDER_REST_PACKAGE, restPackage);
         placeholderData.put(EssentialConst.PLACEHOLDER_COMPONENTS_PACKAGE, componentsPackage);
+        placeholderData.put(EssentialConst.PLACEHOLDER_PROJECT_PACKAGE, projectPackage);
         // folders
         placeholderData.put(EssentialConst.PLACEHOLDER_BEANS_FOLDER, getBeansPackagePath().toString());
         placeholderData.put(EssentialConst.PLACEHOLDER_REST_FOLDER, getRestPackagePath().toString());

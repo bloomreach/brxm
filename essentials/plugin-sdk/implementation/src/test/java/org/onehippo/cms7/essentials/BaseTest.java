@@ -121,7 +121,6 @@ public abstract class BaseTest {
     protected PluginContext getPluginContextFile() {
         if (context == null) {
 
-
             final String basePath = projectRoot.toString();
             System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, basePath);
             final File file = new File(basePath);
@@ -148,7 +147,7 @@ public abstract class BaseTest {
             context.setBeansPackageName("org.onehippo.cms7.essentials.dashboard.test.beans");
             context.setComponentsPackageName("org.onehippo.cms7.essentials.dashboard.test.components");
             context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
-            context.setRestPackageName("org.onehippo.cms7.essentials.dashboard.test.rest");
+            context.setProjectPackageName("org.onehippo.cms7.essentials.dashboard.test");
             final ProjectSettingsBean projectSettings = new ProjectSettingsBean();
             context.setProjectSettings(projectSettings);
 

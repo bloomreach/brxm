@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ public class BeanWriterResource extends BaseResource {
             if(path !=null){
                 final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
                 if (annotation == null || Strings.isNullOrEmpty(annotation.getInternalName())) {
-                    messages.add(new ErrorMessageRestful("Could not find selected image set: " + imageSet));
+                    messages.add(new ErrorMessageRestful("Could not find selected Image Set: " + imageSet));
                 } else {
                     contentBeansService.convertImageMethods(annotation.getInternalName());
                 }
@@ -104,7 +104,7 @@ public class BeanWriterResource extends BaseResource {
         if (messages.getItems().size() == 0) {
             messages.add(new MessageRestful("All beans were up to date"));
         } else {
-            final String message = "HST Beans changed, project rebuild needed";
+            final String message = "Hippo Beans are changed, project rebuild needed";
             eventBus.post(new RebuildEvent("beanwriter", message));
             messages.add(new MessageRestful(message));
         }
