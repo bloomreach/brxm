@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
@@ -76,15 +75,11 @@ public class TimeZoneLoginPlugin extends SimpleLoginPlugin {
 
             if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
 
-                //Get available timezones
-                String[] selectedTimeZonesFromPreferences = getPluginConfig().getStringArray(SELECTED_TIMEZONES_CONFIG_PARAM);
-                List<String> availableTimeZonesList = new ArrayList<>(Arrays.asList(
-                    ArrayUtils.isEmpty(selectedTimeZonesFromPreferences) ?  TimeZone.getAvailableIDs() : selectedTimeZonesFromPreferences));
-
+                List<String> availableTimeZones = getAvailableTimeZones();
 
                 //Check if user has previously selected a timezone
                 String cookieTimeZone = getCookieValue(TIMEZONE_COOKIE);
-                if (cookieTimeZone != null && availableTimeZonesList.contains(cookieTimeZone)) {
+                if (cookieTimeZone != null && availableTimeZones.contains(cookieTimeZone)) {
                     selectedTimeZone = cookieTimeZone;
                     ((PluginUserSession) getSession()).getClientInfo().getProperties().setTimeZone(
                             TimeZone.getTimeZone(selectedTimeZone));
@@ -95,10 +90,10 @@ public class TimeZoneLoginPlugin extends SimpleLoginPlugin {
                         new PropertyModel<String>(this, "selectedTimeZone") {
                             @Override
                             public void setObject(final String object) {
-                                super.setObject(availableTimeZonesList.contains(object) ? object : "GMT");
+                                super.setObject(availableTimeZones.contains(object) ? object : "GMT");
                             }
                         },
-                        availableTimeZonesList,
+                        availableTimeZones,
                         new IChoiceRenderer<String>() {
                             @Override
                             public String getDisplayValue(final String object) {
@@ -131,6 +126,14 @@ public class TimeZoneLoginPlugin extends SimpleLoginPlugin {
                         TimeZone.getTimeZone(selectedTimeZone));
             }
             super.loginSuccess();
+        }
+
+        private List<String> getAvailableTimeZones() {
+            String[] timeZones = getPluginConfig().getStringArray(SELECTED_TIMEZONES_CONFIG_PARAM);
+            if (ArrayUtils.isEmpty(timeZones)) {
+                timeZones = TimeZone.getAvailableIDs();
+            }
+            return Arrays.asList(timeZones);
         }
     }
 }
