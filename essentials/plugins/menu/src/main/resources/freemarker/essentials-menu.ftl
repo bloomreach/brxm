@@ -2,16 +2,18 @@
 
 <#-- @ftlvariable name="menu" type="org.hippoecm.hst.core.sitemenu.HstSiteMenu" -->
 <#if menu??>
-<ul class="nav nav-pills">
-    <#list menu.siteMenuItems as item>
-        <#if  item.selected || item.expanded>
+<div class="has-edit-button">
+  <ul class="nav nav-pills has-edit-button">
+      <#list menu.siteMenuItems as item>
+          <#if  item.selected || item.expanded>
             <li class="active"><a href="<@hst.link link=item.hstLink/>">${item.name?html}</a></li>
-        <#else>
+          <#else>
             <li><a href="<@hst.link link=item.hstLink/>">${item.name?html}</a></li>
-        </#if>
-    </#list>
-</ul>
-<@hst.cmseditmenu menu=menu/>
+          </#if>
+      </#list>
+  </ul>
+  <@hst.cmseditmenu menu=menu/>
+</div>
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
 <img src="<@hst.link path="/images/essentials/catalog-component-icons/menu.png" />"> Click to edit Menu
