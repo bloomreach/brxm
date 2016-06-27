@@ -15,15 +15,6 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.jcr.Item;
-import javax.jcr.Node;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
@@ -56,13 +47,13 @@ import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.IValidationService;
-import org.hippoecm.frontend.validation.ModelPath;
-import org.hippoecm.frontend.validation.ModelPathElement;
-import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.frontend.validation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Item;
+import javax.jcr.Node;
+import java.util.*;
 
 public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> extends ListViewPlugin<Node> implements
         ITemplateFactory<C> {
@@ -339,9 +330,12 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             if (engine != null) {
                 ITypeDescriptor subType = field.getTypeDescriptor();
                 AbstractProvider<P, C> provider = newProvider(field, subType, model);
+
                 if (IEditor.Mode.EDIT == mode && (provider.size() == 0)
-                        && (!field.isMultiple() || field.getValidators().contains("required")) &&
-                        !field.getValidators().contains("optional")) {
+                        && (!field.isMultiple() || field.getValidators().contains("required"))
+                        && !field.getValidators().contains("optional")
+                        && !subType.isType("hippo:compound")
+                ) {
                     provider.addNew();
                 }
                 return provider;
