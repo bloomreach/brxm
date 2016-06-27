@@ -16,20 +16,25 @@
 package org.hippoecm.frontend.plugins.yui.datetime;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.wicket.model.IModel;
 
-public class YuiDateField extends YuiDateTimeField {
+/**
+ * The component to represent only the date section of the {@link Date} object value in GMT timezone.
+ */
+public class YuiGMTDateField extends YuiDateTimeField {
 
-    public YuiDateField(String id, IModel<Date> model) {
-        this(id, model, null);
-    }
-
-    public YuiDateField(String id, IModel<Date> model, YuiDatePickerSettings settings) {
+    public YuiGMTDateField(String id, IModel<Date> model, YuiDatePickerSettings settings) {
         super(id, model, settings);
 
         get(HOURS).setVisibilityAllowed(false);
         get(MINUTES).setVisibilityAllowed(false);
         get(AM_OR_PM_CHOICE).setVisibilityAllowed(false);
+    }
+
+    @Override
+    protected TimeZone getClientTimeZone() {
+        return TimeZone.getTimeZone("GMT");
     }
 }
