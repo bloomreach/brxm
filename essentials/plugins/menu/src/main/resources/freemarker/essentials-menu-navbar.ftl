@@ -2,7 +2,7 @@
 
 <#-- @ftlvariable name="menu" type="org.hippoecm.hst.core.sitemenu.HstSiteMenu" -->
 <#if menu??>
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default has-edit-button">
   <ul class="nav navbar-nav">
       <#list menu.siteMenuItems as item>
           <#if !item.hstLink?? && !item.externalLink??>
@@ -25,8 +25,8 @@
           </#if>
       </#list>
   </ul>
+  <@hst.cmseditmenu menu=menu/>
 </nav>
-    <@hst.cmseditmenu menu=menu/>
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
 <img src="<@hst.link path="/images/essentials/catalog-component-icons/menu.png" />"> Click to edit Menu
