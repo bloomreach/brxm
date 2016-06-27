@@ -13,9 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var tz = jstz.determine();
-var timezoneSelect = $("#timezone");
+(function($, jstz) {
+  'use strict';
 
-if (timezoneSelect.prop("selectedIndex") == 0) {
-  timezoneSelect.val(tz.name());
-}
+  var timezoneSelect = $('#timezone');
+  if (timezoneSelect.prop('selectedIndex') === 0) {
+    var tz = jstz.determine();
+    if (tz) {
+      var tzName = tz.name();
+      timezoneSelect.find('option').filter(function() {
+        return $(this).text() === tzName;
+      }).prop('selected', true);
+    }
+  }
+})(jQuery, jstz);
