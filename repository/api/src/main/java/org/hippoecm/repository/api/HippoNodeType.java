@@ -198,6 +198,8 @@ public interface HippoNodeType {
 
     public static final String NT_NAMED = "hippo:named";
 
+    public static final String NT_COMPOUND = "hippo:compound";
+
     public static final String HIPPO_ACTIVE = "hipposys:active";
 
     public static final String HIPPO_SYSTEM = "hipposys:system";
