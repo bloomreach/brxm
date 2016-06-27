@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.io.Charsets;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.repository.bootstrap.util.BundleFileInfo;
 import org.onehippo.repository.bootstrap.util.BundleInfo;
@@ -38,7 +39,7 @@ public class TranslationsUtils {
     private TranslationsUtils() {}
 
     public static void importTranslations(String json, Session session) throws RepositoryException, IOException {
-        final Collection<BundleInfo> bundleInfos = BundleFileInfo.readInfo(new ByteArrayInputStream(json.getBytes("UTF-8"))).getBundleInfos();
+        final Collection<BundleInfo> bundleInfos = BundleFileInfo.readInfo(new ByteArrayInputStream(json.getBytes(Charsets.UTF_8))).getBundleInfos();
         for (BundleInfo bundleInfo : bundleInfos) {
             getOrCreateResourceBundle(bundleInfo, session);
         }
