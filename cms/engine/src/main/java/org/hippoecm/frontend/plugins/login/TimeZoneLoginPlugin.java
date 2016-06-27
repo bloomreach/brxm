@@ -37,32 +37,41 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.PluginUserSession;
 
-public class UserTimezoneLoginPlugin extends SimpleLoginPlugin {
+public class TimeZoneLoginPlugin extends SimpleLoginPlugin {
+
+    private static final TextTemplate INIT_JS = new PackageTextTemplate(TimeZoneLoginPlugin.class, "timezones-init.js");
+    private static final ResourceReference JSTZ_JS = new JavaScriptResourceReference(TimeZoneLoginPlugin.class, "jstz.min.js");
 
     public static final String SHOW_TIMEZONES_CONFIG_PARAM = "show.timezones";
     public static final String SELECTED_TIMEZONES_CONFIG_PARAM = "selected-timezones";
 
-    private static final ResourceReference JSTZ_JS = new JavaScriptResourceReference(UserTimezoneLoginPlugin.class, "jstz.min.js");
-    private static final TextTemplate INIT_JS = new PackageTextTemplate(UserTimezoneLoginPlugin.class, "timezones-init.js");
-
-    public UserTimezoneLoginPlugin(final IPluginContext context, final IPluginConfig config) {
+    public TimeZoneLoginPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
+            response.render(JavaScriptReferenceHeaderItem.forReference(JSTZ_JS));
+            response.render(OnLoadHeaderItem.forScript(INIT_JS.asString()));
+        }
     }
 
     @Override
     protected LoginPanel createLoginPanel(final String id, final boolean autoComplete, final List<String> locales,
                                           final LoginHandler handler) {
-        return new UserTimezoneLoginForm(id, autoComplete, locales, handler);
+        return new TimeZoneLoginForm(id, autoComplete, locales, handler);
     }
 
-    class UserTimezoneLoginForm extends CaptchaForm {
+    class TimeZoneLoginForm extends CaptchaForm {
 
         private static final String TIMEZONE_COOKIE = "tzcookie";
         private static final int TIMEZONE_COOKIE_MAX_AGE = 365 * 24 * 3600; // expire one year from now
 
         public String selectedTimeZone;
 
-        public UserTimezoneLoginForm(final String id, final boolean autoComplete, final List<String> locales, final LoginHandler handler) {
+        public TimeZoneLoginForm(final String id, final boolean autoComplete, final List<String> locales, final LoginHandler handler) {
             super(id, autoComplete, locales, handler);
 
             if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
@@ -74,15 +83,15 @@ public class UserTimezoneLoginPlugin extends SimpleLoginPlugin {
 
 
                 //Check if user has previously selected a timezone
-                String cookieTimezone = getCookieValue(TIMEZONE_COOKIE);
-                if (cookieTimezone != null && availableTimeZonesList.contains(cookieTimezone)) {
-                    selectedTimeZone = cookieTimezone;
+                String cookieTimeZone = getCookieValue(TIMEZONE_COOKIE);
+                if (cookieTimeZone != null && availableTimeZonesList.contains(cookieTimeZone)) {
+                    selectedTimeZone = cookieTimeZone;
                     ((PluginUserSession) getSession()).getClientInfo().getProperties().setTimeZone(
                             TimeZone.getTimeZone(selectedTimeZone));
                 }
 
                 //add the timezone dropdown
-                DropDownChoice<String> timezone = new DropDownChoice<>("timezone",
+                DropDownChoice<String> timeZone = new DropDownChoice<>("timezone",
                         new PropertyModel<String>(this, "selectedTimeZone") {
                             @Override
                             public void setObject(final String object) {
@@ -103,23 +112,14 @@ public class UserTimezoneLoginPlugin extends SimpleLoginPlugin {
                         }
                 );
 
-                timezone.setNullValid(true);
+                timeZone.setNullValid(true);
 
                 form.add(new Label("timezone-label", new ResourceModel("timezone-label", "Timezone:")));
-                form.add(timezone);
+                form.add(timeZone);
 
             } else {
                 form.add(new Label("timezone-label").setVisible(false));
                 form.add(new Label("timezone").setVisible(false));
-            }
-        }
-
-        @Override
-        public void renderHead(final IHeaderResponse response) {
-            super.renderHead(response);
-            if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
-                response.render(JavaScriptReferenceHeaderItem.forReference(JSTZ_JS));
-                response.render(OnLoadHeaderItem.forScript(INIT_JS.asString()));
             }
         }
 
