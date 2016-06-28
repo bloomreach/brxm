@@ -15,12 +15,12 @@
 @import 'styles/variables';
 
 // Open Sans font
-@import '../bower_components/open-sans-fontface/sass/variables';
-@import '../bower_components/open-sans-fontface/sass/mixins';
-@import '../bower_components/open-sans-fontface/sass/Regular';
+@import '../node_modules/open-sans-fontface/sass/variables';
+@import '../node_modules/open-sans-fontface/sass/mixins';
+@import '../node_modules/open-sans-fontface/sass/Regular';
 
 // Angular Material framework
-@import '../bower_components/angular-material/angular-material.scss';
+@import '../node_modules/angular-material/angular-material.scss';
 
 @import 'styles/button-toggle';
 @import 'styles/buttons';

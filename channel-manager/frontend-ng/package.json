@@ -6,9 +6,26 @@
     "gulp": "gulp"
   },
   "dependencies": {
-    "dom-autoscroller": "1.2.4"
+    "angular": "1.4.8",
+    "angular-animate": "1.4.8",
+    "angular-aria": "1.4.8",
+    "angular-material": "1.1.0-rc.5",
+    "angular-messages": "1.4.8",
+    "angular-translate": "2.8.1",
+    "angular-translate-loader-static-files": "2.8.1",
+    "angular-ui-router": "0.2.15",
+    "angular-ui-tree": "2.15.0",
+    "dragula": "git://github.com/onehippo/dragula.git#hippo",
+    "dom-autoscroller": "1.2.4",
+    "es6-shim": "0.35.0",
+    "jquery": "2.2.0",
+    "ng-device-detector": "3.0.1",
+    "ng-focus-if": "1.0.5",
+    "open-sans-fontface": "git+https://github.com/FontFaceKit/open-sans.git#1.4.2",
+    "velocity-animate": "1.2.3"
   },
   "devDependencies": {
-    "frontend-build": "1.0.1"
+    "angular-mocks": "1.4.8",
+    "frontend-build": "2.0.0"
   }
 }
