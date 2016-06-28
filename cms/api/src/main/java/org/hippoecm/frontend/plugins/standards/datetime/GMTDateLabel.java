@@ -22,18 +22,38 @@ import java.time.ZonedDateTime;
 import java.time.format.FormatStyle;
 import java.util.Date;
 
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
 
 /**
  * Label component to render a date (year-month-day) of the {@link Date} object in GMT timezone.
  */
 public class GMTDateLabel extends ZonedDateLabel {
-    public GMTDateLabel(final String id, Date date, final FormatStyle dateStyle) {
-        super(id, toGMTDate(date), dateStyle);
+
+    private static class GMTZonedDateTimeModel extends AbstractReadOnlyModel<ZonedDateTime> {
+        private final IModel<Date> dateModel;
+
+        GMTZonedDateTimeModel(IModel<Date> dateModel) {
+            this.dateModel = dateModel;
+        }
+        @Override
+        public ZonedDateTime getObject() {
+            if (dateModel == null) {
+                return null;
+            }
+            final Date date = dateModel.getObject();
+            return (date != null) ? date.toInstant().atZone(ZoneId.of("GMT")) : null;
+        }
+
+        @Override
+        public void detach() {
+            if (this.dateModel != null) {
+                this.dateModel.detach();;
+            }
+        }
     }
 
-    public static Model<ZonedDateTime> toGMTDate(Date date) {
-        final ZonedDateTime gmtDate = date == null ? null : date.toInstant().atZone(ZoneId.of("GMT"));
-        return Model.of(gmtDate);
+    public GMTDateLabel(final String id, IModel<Date> dateModel, final FormatStyle dateStyle) {
+        super(id, new GMTZonedDateTimeModel(dateModel), dateStyle);
     }
 }

@@ -20,6 +20,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
@@ -34,15 +35,15 @@ import org.apache.wicket.model.IModel;
 public class ZonedDateLabel extends Label {
 
     public ZonedDateLabel(final String id, final IModel<ZonedDateTime> model, final FormatStyle dateStyle) {
-        super(id, new ZonedDateTimeModel(model, dateStyle));
+        super(id, new ZonedDateTimePrinterModel(model, dateStyle));
     }
 
-    private static class ZonedDateTimeModel extends AbstractReadOnlyModel<String> {
+    private static class ZonedDateTimePrinterModel extends AbstractReadOnlyModel<String> {
         private final IModel<ZonedDateTime> model;
         private final FormatStyle dateStyle;
 
-        public ZonedDateTimeModel(final IModel<ZonedDateTime> zonedDateTimeModel, final FormatStyle dateStyle) {
-            this.model = zonedDateTimeModel;
+        ZonedDateTimePrinterModel(final IModel<ZonedDateTime> model, final FormatStyle dateStyle) {
+            this.model = model;
             this.dateStyle = dateStyle;
         }
 
