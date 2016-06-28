@@ -17,7 +17,7 @@ you can run the build tasks with the following command:
   $ npm run gulp [some task]
 
 ### Installation
-#### Install Gulp CLI and Bower globally
+#### Install Gulp CLI globally
   $ npm install -g gulp-cli
 
 #### Install project dependencies

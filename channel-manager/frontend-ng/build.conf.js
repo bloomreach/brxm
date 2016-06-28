@@ -43,11 +43,11 @@ const customConfig = {
   ],
   copyFiles: [
     {
-      src: 'node_modules/dragula/dist/dragula.min.css',
+      src: `${npmDir}/dragula/dist/dragula.min.css`,
       dest: `${targetDir}styles`,
     },
     {
-      src: 'node_modules/dragula/dist/dragula.min.js',
+      src: `${npmDir}/dragula/dist/dragula.min.js`,
       dest: `${targetDir}scripts`,
     },
     {
