@@ -3,7 +3,7 @@
 <#-- @ftlvariable name="menu" type="org.hippoecm.hst.core.sitemenu.HstSiteMenu" -->
 <#if menu??>
 <div class="has-edit-button">
-    <ul class="nav nav-pills has-edit-button">
+    <ul class="nav nav-pills">
         <#list menu.siteMenuItems as item>
             <#if !item.hstLink?? && !item.externalLink??>
                 <#if item.selected || item.expanded>
