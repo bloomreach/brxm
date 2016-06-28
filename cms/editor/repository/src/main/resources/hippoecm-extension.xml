@@ -421,6 +421,12 @@
     <sv:property sv:name="hippo:resourcebundles" sv:type="String">
       <sv:value>system-type-translations.json</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>4.1.0.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
   </sv:node>
 
   <sv:node sv:name="hippo-cms-hipposysedit-type-translations">
