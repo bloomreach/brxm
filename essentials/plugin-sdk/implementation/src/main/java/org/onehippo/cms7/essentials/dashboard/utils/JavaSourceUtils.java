@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -988,6 +988,26 @@ public final class JavaSourceUtils {
         return false;
     }
 
+    public static HippoEssentialsGeneratedObject  getHippoEssentialsAnnotation(final Path beanPath, final MethodDeclaration node) {
+        @SuppressWarnings({UNCHECKED, RAWTYPES})
+        final List modifiers = node.modifiers();
+        if (modifiers == null) {
+            return null;
+        }
+        for (Object modifier : modifiers) {
+            if (modifier instanceof NormalAnnotation) {
+                final NormalAnnotation annotation = (NormalAnnotation) modifier;
+                final Name typeName = annotation.getTypeName();
+                final String fullyQualifiedName = typeName.getFullyQualifiedName();
+                if (!fullyQualifiedName.equals(HippoEssentialsGenerated.class.getSimpleName())
+                        && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getCanonicalName())) {
+                    continue;
+                }
+                return populateGeneratedObject(beanPath, annotation);
+            }
+        }
+        return null;
+    }
     public static String  getHippoEssentialsAnnotation(final MethodDeclaration node) {
         @SuppressWarnings({UNCHECKED, RAWTYPES})
         final List modifiers = node.modifiers();
@@ -1044,6 +1064,8 @@ public final class JavaSourceUtils {
 
     private static HippoEssentialsGeneratedObject populateGeneratedObject(final Path path, final NormalAnnotation annotation) {
         final HippoEssentialsGeneratedObject o = new HippoEssentialsGeneratedObject();
+        // set default:
+        o.setAllowModifications(true);
         o.setFilePath(path);
         @SuppressWarnings(RAWTYPES)
         final List values = annotation.values();

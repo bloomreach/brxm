@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -741,10 +741,12 @@ public class ContentBeansService {
         if (existing.contains(name)) {
             log.debug("Property already exists {}. Checking if method signature has changed e.g. single value to multiple", name);
             final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(beanPath);
-            final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(beanPath);
-            final boolean allowUpdate = annotation != null && annotation.isAllowModifications();
+
+
             final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
             for (EssentialsGeneratedMethod generatedMethod : generatedMethods) {
+                final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoEssentialsAnnotation(beanPath, generatedMethod.getMethodDeclaration());
+                final boolean allowUpdate = annotation != null && annotation.isAllowModifications();
                 final String internalName = generatedMethod.getInternalName();
                 if (name.equals(internalName)) {
                     // check if single/multiple  changed:
