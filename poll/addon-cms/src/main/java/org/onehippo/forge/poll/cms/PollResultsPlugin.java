@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -220,7 +220,7 @@ public class PollResultsPlugin extends RenderPlugin<Object> implements IHeaderCo
 
         // find handle parent
         Node handle = pollNode;
-        while (!handle.isNodeType(HippoNodeType.NT_HANDLE)) {
+        while (!handle.getPath().equals("/") && !handle.isNodeType(HippoNodeType.NT_HANDLE)) {
             handle = handle.getParent();
         }
 
