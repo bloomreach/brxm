@@ -24,7 +24,7 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <files>
     <file>
-      <source>bower.json</source>
+      <source>package.json</source>
     </file>
   </files>
   <fileSets>

@@ -15,31 +15,32 @@
  */
 
 const targetDir = 'target/classes/angular/hippo-cm/';
-const npmSources = [
-  'es6-shim/es6-shim.js',
-  'jquery/dist/jquery.js',
-  'velocity-animate/velocity.js',
-  'dragula/dist/dragula.js',
-  'dragula/dist/dragula.css',
-  'angular/angular.js',
-  'angular-animate/angular-animate.js',
-  'angular-aria/angular-aria.js',
-  'angular-material/angular-material.js',
-  'angular-messages/angular-messages.js',
-  'angular-translate/dist/angular-translate.js',
-  'angular-translate-loader-static-files/angular-translate-loader-static-files.js',
-  'angular-ui-router/release/angular-ui-router.js',
-  'angular-ui-tree/dist/angular-ui-tree.min.js',
-  're-tree/re-tree.js',
-  'ng-device-detector/ng-device-detector.js',
-  'ng-focus-if/focusIf.js',
-];
+const npmDir = 'node_modules';
 
 const customConfig = {
   env: {
     maven: true,
   },
   distDir: targetDir,
+  dependencies: [
+    'es6-shim/es6-shim.js',
+    'jquery/dist/jquery.js',
+    'velocity-animate/velocity.js',
+    'dragula/dist/dragula.css',
+    'dragula/dist/dragula.js',
+    'angular/angular.js',
+    'angular-animate/angular-animate.js',
+    'angular-aria/angular-aria.js',
+    'angular-material/angular-material.js',
+    'angular-messages/angular-messages.js',
+    'angular-translate/dist/angular-translate.js',
+    'angular-translate-loader-static-files/angular-translate-loader-static-files.js',
+    'angular-ui-router/release/angular-ui-router.js',
+    'angular-ui-tree/dist/angular-ui-tree.min.js',
+    're-tree/re-tree.js',
+    'ng-device-detector/ng-device-detector.js',
+    'ng-focus-if/focusIf.js',
+  ],
   copyFiles: [
     {
       src: 'node_modules/dragula/dist/dragula.min.css',
@@ -54,7 +55,7 @@ const customConfig = {
       dest: `${targetDir}styles`,
     },
     {
-      src: 'node_modules/open-sans-fontface/fonts/Regular/*',
+      src: `${npmDir}/open-sans-fontface/fonts/Regular/*`,
       dest: `${targetDir}fonts/Regular`,
     },
   ],
@@ -62,20 +63,11 @@ const customConfig = {
     transpiler: 'babel',
     defaultJSExtensions: true,
     map: {
-      'dom-autoscroller': 'node_modules/dom-autoscroller/index.js',
-      'pointer-point': 'node_modules/pointer-point/index.js',
-      'more-events': 'node_modules/more-events/index.js',
+      'dom-autoscroller': `${npmDir}/dom-autoscroller/index.js`,
+      'pointer-point': `${npmDir}/pointer-point/index.js`,
+      'more-events': `${npmDir}/more-events/index.js`,
     },
   },
 };
-
-npmSources.forEach((src) => {
-  const last = src.lastIndexOf('/');
-  const path = last > -1 ? src.substring(0, last) : '';
-  customConfig.copyFiles.push({
-    src: `node_modules/${src}`,
-    dest: `${targetDir}node_modules/${path}`,
-  });
-});
 
 module.exports = customConfig;

@@ -18,7 +18,6 @@
     "dragula": "git://github.com/onehippo/dragula.git#hippo",
     "dom-autoscroller": "1.2.4",
     "es6-shim": "0.35.0",
-    "frontend-build": "1.0.0",
     "jquery": "2.2.0",
     "ng-device-detector": "3.0.1",
     "ng-focus-if": "1.0.5",
@@ -27,6 +26,6 @@
   },
   "devDependencies": {
     "angular-mocks": "1.4.8",
-    "frontend-build": "1.0.2"
+    "frontend-build": "2.0.0"
   }
 }
