@@ -28,9 +28,8 @@ public class YuiGMTDateField extends YuiDateTimeField {
     public YuiGMTDateField(String id, IModel<Date> model, YuiDatePickerSettings settings) {
         super(id, model, settings);
 
+        // hiding the "hours" component hides the entire "hours" wicket:enclosure
         get(HOURS).setVisibilityAllowed(false);
-        get(MINUTES).setVisibilityAllowed(false);
-        get(AM_OR_PM_CHOICE).setVisibilityAllowed(false);
     }
 
     @Override

@@ -36,6 +36,7 @@ public class GMTDateLabel extends ZonedDateLabel {
         GMTZonedDateTimeModel(IModel<Date> dateModel) {
             this.dateModel = dateModel;
         }
+
         @Override
         public ZonedDateTime getObject() {
             if (dateModel == null) {
@@ -48,7 +49,7 @@ public class GMTDateLabel extends ZonedDateLabel {
         @Override
         public void detach() {
             if (this.dateModel != null) {
-                this.dateModel.detach();;
+                this.dateModel.detach();
             }
         }
     }

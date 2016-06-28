@@ -15,7 +15,6 @@
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="system"
          xmlns:esv="http://www.onehippo.org/jcr/xmlimport" esv:merge="combine">
-  <!-- "CalendarDate" type -->
   <sv:node sv:name="CalendarDate">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposysedit:templatetype</sv:value>
@@ -80,5 +79,4 @@
       </sv:node>
     </sv:node>
   </sv:node>
-  <!-- end "CalendarDate" type -->
 </sv:node>
