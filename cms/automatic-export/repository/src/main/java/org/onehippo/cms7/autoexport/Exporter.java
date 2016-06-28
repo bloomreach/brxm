@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -128,7 +128,7 @@ final class Exporter {
             }
             final JSONObject jsonObject = ResourceBundlesJSONSerializer.resourceBundlesToJSON(session, item.getDelta().getRootInstruction());
             final String json = jsonObject.toString(2);
-            FileUtils.writeStringToFile(file, json);
+            FileUtils.writeStringToFile(file, json, "UTF-8");
         } catch (IOException | RepositoryException e) {
             log.error("Exporting {} failed", item.getResourceBundles(), e);
         }
