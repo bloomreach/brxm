@@ -1,12 +1,12 @@
 /*
- * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,6 +23,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.Cookie;
+
+import com.google.common.base.Strings;
 
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
@@ -41,13 +43,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Provider that can be instantiated within a component to add poll functionality by composition.
- *
+ * <p>
  * The provider retrieves a poll document as configured by component parameter 'poll-docsPath'.
  * The type of document bean that is retrieved is determined by the parameter 'poll-docClass' and defaults to
  * "org.onehippo.forge.poll.contentbean.PollDocument".
- *
+ * <p>
  * If the 'poll-docsPath' points to a poll document of the correct class, it returns that document directly.
- *
+ * <p>
  * If the 'poll-docsPath' points to a folder, it uses that folder as scope to search for documents that are of the
  * correct class. It then takes the first of these documents and returns it.
  */
@@ -66,7 +68,7 @@ public class PollProvider {
     private static final Class<? extends HippoDocumentBean> PARAM_DOCS_CLASS_DEFAULT = PollDocument.class;
     private static final String PARAM_DOC_POLL_COMPOUND_NAME_DEFAULT = "poll:poll";
 
-    private static final int POLL_COOKIE_MAX_AGE = 3600*24*365;
+    private static final int POLL_COOKIE_MAX_AGE = 3600 * 24 * 365;
     private static final String POLL_COOKIE_NAME_PREFIX = "Hippo.PollProvider.";
 
     private static final String POLL_DATA_NODE_PREVIEW = "preview";
@@ -74,7 +76,9 @@ public class PollProvider {
     // search limit for poll documents, arbitrarily initialized
     private int queryLimit = 100;
 
-    /** Setting for query limit */
+    /**
+     * Setting for query limit
+     */
     @SuppressWarnings("unused")
     public void setQueryLimit(final int queryLimit) {
         this.queryLimit = queryLimit;
@@ -85,7 +89,7 @@ public class PollProvider {
      */
     public void doAction(final HstRequest request,
                          final HstResponse response,
-                         final PollComponentInfo pollComponentInfo) throws RepositoryException{
+                         final PollComponentInfo pollComponentInfo) throws RepositoryException {
 
         Session persistableSession = request.getRequestContext().getSession();
 
@@ -125,8 +129,8 @@ public class PollProvider {
     public void doBeforeRender(final HstRequest request, final HstResponse response, final PollComponentInfo pollComponentInfo) {
 
         // prevent back button from showing form again
-        response.setHeader("Cache-Control","no-cache,no-store,max-age=0");
-        response.setHeader("Pragma","no-cache");
+        response.setHeader("Cache-Control", "no-cache,no-store,max-age=0");
+        response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
 
         final HippoDocumentBean pollDocument = getPollDocument(request, pollComponentInfo);
@@ -143,11 +147,10 @@ public class PollProvider {
 
             if ((persistedValue != null) && !NO_COOKIE_SUPPORT.equals(persistedValue)) {
                 request.setAttribute(POLL_VOTE_SUCCESS, true);
-            }
-            else {
+            } else {
 
                 // just voted? store attributes and cookie when success
-                final String voteSuccess  = request.getParameter(POLL_VOTE_SUCCESS);
+                final String voteSuccess = request.getParameter(POLL_VOTE_SUCCESS);
                 if (voteSuccess != null) {
                     request.setAttribute(POLL_VOTE_SUCCESS, Boolean.parseBoolean(voteSuccess));
                 }
@@ -164,8 +167,7 @@ public class PollProvider {
                     // client accept the cookie. Also, this circumvents issues with including the
                     // cookie in the redirected GET request.
                     setPersistentValue(request, response, pollDocument.getName(), option);
-                }
-                else {
+                } else {
 
                     // prepare form data (poll document path)
                     request.setAttribute(POLL_DOCUMENT_PATH, getPollDocumentPath(pollDocument, request));
@@ -191,11 +193,11 @@ public class PollProvider {
     /**
      * Cast a vote to an option of a poll compound in a poll document, and persist it.
      *
-     * @param request the HST request
+     * @param request            the HST request
      * @param persistableSession JCR session with write rights
-     * @param pollDocumentPath the poll document's path, relative from content root
-     * @param optionId the id of the option to vote
-     * @param pollComponentInfo poll component parameter interface
+     * @param pollDocumentPath   the poll document's path, relative from content root
+     * @param optionId           the id of the option to vote
+     * @param pollComponentInfo  poll component parameter interface
      */
     public boolean castVote(final HstRequest request, final Session persistableSession,
                             final String pollDocumentPath, final String optionId,
@@ -217,16 +219,13 @@ public class PollProvider {
                     persistableSession.save();
 
                     return true;
-                }
-                catch (RepositoryException e) {
+                } catch (RepositoryException e) {
                     logger.error("RepositoryException while saving a vote", e);
-                }
-                finally {
+                } finally {
                     lockHelper.unlock(votesNode);
                 }
-            }
-            else {
-                logger.warn("Could not get a lock on node while saving a vote; document path is " + pollDocumentPath + ", optionId is " + optionId);
+            } else {
+                logger.warn("Could not get a lock on node while saving a vote; document path is {}, optionId is {}", pollDocumentPath, optionId);
             }
         }
 
@@ -257,13 +256,11 @@ public class PollProvider {
                         try {
                             currentNode.addNode(pathItem, "poll:polldata");
                             persistableSession.save();
-                        }
-                        finally {
+                        } finally {
                             lockHelper.unlock(currentNode);
                         }
-                    }
-                    else {
-                        logger.warn("Could not get a lock on node while creating poll data path " + pollDataPath + "; item is " + pathItem);
+                    } else {
+                        logger.warn("Could not get a lock on node while creating poll data path {}; item is {}", pollDataPath, pathItem);
                         return null;
                     }
                 }
@@ -277,22 +274,19 @@ public class PollProvider {
                     try {
                         currentNode.addNode(optionId, "poll:votes");
                         persistableSession.save();
-                    }
-                    finally {
+                    } finally {
                         lockHelper.unlock(currentNode);
                     }
-                }
-                else {
-                    logger.warn("Could not get a lock on node while creating option node: poll data path is " + pollDataPath);
+                } else {
+                    logger.warn("Could not get a lock on node while creating option node: poll data path is {}", pollDataPath);
                     return null;
                 }
             }
 
             return currentNode.getNode(optionId);
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             logger.error(e.getClass().getName() + ": cannot create path from base path '" + baseDataPath
-                            + "' and document path '" + pollDocumentPath + "' and option '" + optionId + "'", e);
+                    + "' and document path '" + pollDocumentPath + "' and option '" + optionId + "'", e);
         }
         return null;
     }
@@ -300,10 +294,10 @@ public class PollProvider {
     /**
      * Get the path to where the data (votes) is saved, relative to the JCR root, so without a leading slash.
      *
-     * @param baseDataPath the configured base data path, usually 'polldata'
+     * @param baseDataPath     the configured base data path, usually 'polldata'
      * @param pollDocumentPath the path of the poll document, relative to site content root
-     * @param request HST request
-     * @param rootNode JCR root node
+     * @param request          HST request
+     * @param rootNode         JCR root node
      */
     protected String getPollDataPath(final String baseDataPath, final String pollDocumentPath,
                                      final HstRequest request, final Node rootNode) throws RepositoryException {
@@ -340,18 +334,19 @@ public class PollProvider {
             if (repRoot.hasNode(pollDataPath)) {
                 return repRoot.getNode(pollDataPath);
             }
-        }
-        catch (RepositoryException re) {
+        } catch (RepositoryException re) {
             logger.error("Cannot get poll data node", re);
         }
 
         return null;
     }
 
-    /** Get the configured or default base data path where to store votes */
+    /**
+     * Get the configured or default base data path where to store votes
+     */
     protected String getBaseDataPath(HstRequest request, final PollComponentInfo pollComponentInfo) {
         String baseDataPath = pollComponentInfo.getPollDataPath();
-        if (baseDataPath == null || baseDataPath.equals("")) {
+        if (Strings.isNullOrEmpty(baseDataPath)) {
             baseDataPath = PARAM_DATA_PATH_DEFAULT;
         }
 
@@ -363,10 +358,12 @@ public class PollProvider {
         return baseDataPath;
     }
 
-    /** Get the persisted value that was voted for. */
+    /**
+     * Get the persisted value that was voted for.
+     */
     protected String getPersistentValue(HstRequest request, String pollDocumentName) {
 
-        if (request.getCookies() == null){
+        if (request.getCookies() == null) {
             return NO_COOKIE_SUPPORT;
         }
 
@@ -381,7 +378,9 @@ public class PollProvider {
         return null;
     }
 
-    /** Persist the value that was voted for. */
+    /**
+     * Persist the value that was voted for.
+     */
     protected void setPersistentValue(final HstRequest request, final HstResponse response,
                                       final String pollDocumentName, final String value) {
 
@@ -390,13 +389,14 @@ public class PollProvider {
             Cookie cookie = new Cookie(name, value);
             cookie.setMaxAge(POLL_COOKIE_MAX_AGE);
             response.addCookie(cookie);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
     }
 
-    /** Helper function to keep cookie name in sync between read and write ops. */
+    /**
+     * Helper function to keep cookie name in sync between read and write ops.
+     */
     protected String getCookieName(final HstRequest request, final String pollDocumentName) {
 
         String cookieName = POLL_COOKIE_NAME_PREFIX + pollDocumentName.replace(" ", ".");
@@ -411,7 +411,7 @@ public class PollProvider {
      * Get the poll document path, relative from site content root.
      * This is also where to store it's data from the polldata directory.
      */
-    protected  String getPollDocumentPath(final HippoDocumentBean pollDocument, final HstRequest request) {
+    protected String getPollDocumentPath(final HippoDocumentBean pollDocument, final HstRequest request) {
         try {
             final String handlePath = stripSlash(pollDocument.getNode().getParent().getPath());
             final String contentBasePath = stripSlash(request.getRequestContext().getSiteContentBasePath());
@@ -419,8 +419,7 @@ public class PollProvider {
                 throw new IllegalStateException("Path " + handlePath + " must start with " + contentBasePath);
             }
             return stripSlash(handlePath.substring(contentBasePath.length()));
-        }
-        catch (RepositoryException e) {
+        } catch (RepositoryException e) {
             logger.error("Cannot determine handle path of document " + pollDocument.getPath(), e);
             return null;
         }
@@ -446,17 +445,17 @@ public class PollProvider {
             if (bean != null) {
                 return bean;
             }
-            logger.error("Bean could not be found by path {}, relative to site content root {}", path, siteBasePath);
-        }
-        else {
+            if (!path.equals("/")) {
+                logger.warn("Bean could not be found by path {}, relative to site content root {}", path, siteBasePath);
+            }
+        } else {
             final HippoBean currentDocument = request.getRequestContext().getContentBean();
             if (currentDocument != null) {
                 HippoDocumentBean bean = currentDocument.getParentBean().getBean(path);
                 if (bean != null) {
                     logger.error("Bean could not be found by path {} relative to {}", path, currentDocument.getParentBean().getPath());
                 }
-            }
-            else {
+            } else {
                 logger.error("Bean could not be found by relative path {} because the current content bean is null", path);
             }
         }
@@ -464,7 +463,9 @@ public class PollProvider {
         return null;
     }
 
-    /** Get the bean class of the poll documents to search for. */
+    /**
+     * Get the bean class of the poll documents to search for.
+     */
     protected Class<? extends HippoDocumentBean> getPollDocumentClass(final HstRequest request,
                                                                       final PollComponentInfo pollComponentInfo) {
 
@@ -472,20 +473,21 @@ public class PollProvider {
         if (beanClass != null && !beanClass.equals("")) {
             try {
                 return (Class<? extends HippoDocumentBean>) Class.forName(beanClass);
-            }
-            catch (ClassNotFoundException cnfe) {
-                logger.error("Class " + beanClass + " extending HippoDocumentBean could not be found");
+            } catch (ClassNotFoundException cnfe) {
+                logger.error("Class {} extending HippoDocumentBean could not be found", beanClass);
             }
         }
 
         return PARAM_DOCS_CLASS_DEFAULT;
     }
 
-    /** Get the field name of the poll compound within the document. */
+    /**
+     * Get the field name of the poll compound within the document.
+     */
     protected String getPollCompoundName(final HstRequest request,
                                          final PollComponentInfo pollComponentInfo) {
         final String pollCompoundName = pollComponentInfo.getPollCompoundName();
-        return (pollCompoundName == null || pollCompoundName.equals(""))
+        return (Strings.isNullOrEmpty(pollCompoundName))
                 ? PARAM_DOC_POLL_COMPOUND_NAME_DEFAULT : pollCompoundName;
     }
 
@@ -495,8 +497,8 @@ public class PollProvider {
     protected List<HippoDocumentBean> searchPollDocuments(final HstRequest request,
                                                           final PollComponentInfo pollComponentInfo) {
 
-        String docsPath = pollComponentInfo.getPollDocsPath();
-        if (docsPath == null || docsPath.equals("")) {
+        final String docsPath = pollComponentInfo.getPollDocsPath();
+        if (Strings.isNullOrEmpty(docsPath)) {
             logger.error("Parameter 'poll-docsPath' must be configured");
             return null;
         }
@@ -530,15 +532,16 @@ public class PollProvider {
             }
 
             return beans;
-        }
-        catch (QueryException qe) {
+        } catch (QueryException qe) {
             logger.error("Querying for scope " + documentOrScope.getPath() + " and " + beanClass + " failed", qe);
             return null;
         }
     }
 
 
-    /** Get votes that are stored in repository as a bean for the view. */
+    /**
+     * Get votes that are stored in repository as a bean for the view.
+     */
     protected PollVotesBean getPollVotesBean(final HstRequest request, final HippoDocumentBean pollDocument,
                                              final Node pollDataNode, final PollComponentInfo pollComponentInfo) {
 
@@ -548,7 +551,7 @@ public class PollProvider {
         final Poll pollCompound = pollDocument.getBean(pollCompoundName);
 
         if (pollCompound == null) {
-            logger.warn("Cannot get compound type by name " + pollCompoundName);
+            logger.warn("Cannot get compound type by name {}", pollCompoundName);
             return null;
         }
 
@@ -569,8 +572,7 @@ public class PollProvider {
 
                 bean.addOptionVotes(option.getValue(), option.getLabel(), votesCount);
             }
-        }
-        catch (RepositoryException re) {
+        } catch (RepositoryException re) {
             logger.error("Error setting votes from data, pollDocument path is " + pollDocument.getPath(), re);
         }
 
@@ -587,11 +589,10 @@ public class PollProvider {
     protected static String preventXSS(final String input) {
         if (input == null) {
             return "";
-        }
-        else {
+        } else {
             return input.trim().replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-                .replaceAll("eval\\((.*)\\)", "")
-                .replaceAll("[\"'][\\s]*javascript:(.*)[\"']", "\"\"");
+                    .replaceAll("eval\\((.*)\\)", "")
+                    .replaceAll("[\"'][\\s]*javascript:(.*)[\"']", "\"\"");
         }
     }
 }
