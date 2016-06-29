@@ -18,6 +18,7 @@ package org.onehippo.cms.l10n;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,12 +53,11 @@ class AngularResourceBundleLoader extends ResourceBundleLoader {
                 }
             }
         }
-
     }
 
     private String loadJsonResource(String resource) throws IOException {
         try (StringWriter writer = new StringWriter(); InputStream in = classLoader.getResourceAsStream(resource)) {
-            IOUtils.copy(in, writer);
+            IOUtils.copy(in, writer, StandardCharsets.UTF_8);
             return writer.toString();
         }
     }
