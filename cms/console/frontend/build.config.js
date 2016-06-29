@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 
 module.exports = {
-    bower:       'target/bower_components',
-    file:        'hippo-console-theme',
+    npmDir:      'node_modules',
     faresources: 'target/classes/org/hippoecm/frontend/plugins/console/fontawesome',
-    src:         'src/main/styling',
-    tmp:         'target/.tmp'
 };
