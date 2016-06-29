@@ -234,8 +234,8 @@ module.exports = function (grunt) {
         src: '<%= build.tmp %>'
       },
 
-      // clean bower components
-      bower: {
+      // clean npm components
+      npm: {
         src: '<%= build.npmDir %>'
       },
 
