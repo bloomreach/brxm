@@ -15,9 +15,6 @@
  */
 
 module.exports = {
-    bower:       'target/bower_components',
-    file:        'hippo-console-theme',
+    npmDir:      'node_modules',
     faresources: 'target/classes/org/hippoecm/frontend/plugins/console/fontawesome',
-    src:         'src/main/styling',
-    tmp:         'target/.tmp'
 };

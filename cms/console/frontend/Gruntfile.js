@@ -15,8 +15,6 @@
  */
 'use strict';
 
-var fs = require('fs');
-
 module.exports = function (grunt) {
 
     // load all grunt tasks automatically
@@ -34,49 +32,25 @@ module.exports = function (grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: '<%= build.bower %>/fontawesome/fonts',
+                        cwd: '<%= build.npmDir %>/font-awesome/fonts',
                         src: ['**/*.{otf,eot,svg,ttf,woff,woff2}'],
-                        dest: '<%= build.faresources %>/fonts'
+                        dest: '<%= build.faresources %>/fonts',
                     },
                     {
                         expand: true,
-                        cwd: '<%= build.bower %>/fontawesome/css',
+                        cwd: '<%= build.npmDir %>/font-awesome/css',
                         src: ['**/*.{css,map}'],
-                        dest: '<%= build.faresources %>/css'
+                        dest: '<%= build.faresources %>/css',
                     }
                 ]
             }
         },
 
         clean: {
-            // clean tmp folder
-            tmp: {
-                src: '<%= build.tmp %>'
-            },
-
-            // clean bower components
-            bower: {
-                src: '<%= build.bower %>'
-            },
-
-            // clean up copied font and css files
             copies: {
                 src: '<%= build.faresources %>'
             }
         },
-
-        // Execute shell commands
-        shell: {
-            options: {
-                stdout: true,
-                stderr: true
-            },
-
-            // Notify user when reloading. Currently only works on OSX with terminal-notifier installed (brew install terminal-notifier)
-            notify: {
-                command: "command -v terminal-notifier >/dev/null 2>&1 && terminal-notifier -group 'Hippo Console' -title 'Grunt build' -subtitle 'Finished' -message 'LiveReloading' || echo 'done'"
-            }
-        }
     });
 
     grunt.registerTask('default', 'install');
@@ -85,7 +59,6 @@ module.exports = function (grunt) {
     grunt.registerTask('build', 'Build the theme', [
         'clean:copies',
         'copy:binaries',
-        'clean:tmp'
     ]);
 
     // install

@@ -205,7 +205,7 @@
         </configuration>
       </plugin>
 
-      <!-- Use NPM/Bower to install/build Hippo Console theme -->
+      <!-- Use NPM to install/build Hippo Console theme -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -218,15 +218,6 @@
             <configuration>
               <executable>npm</executable>
               <commandlineArgs>install</commandlineArgs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>bower-install</id>
-            <phase>process-resources</phase>
-            <goals><goal>exec</goal></goals>
-            <configuration>
-              <executable>bower</executable>
-              <commandlineArgs>install ${commandline.offline} --no-color</commandlineArgs>
             </configuration>
           </execution>
           <execution>
