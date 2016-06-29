@@ -36,7 +36,7 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
     public static final String CONFIG_JS = "fileupload-gallery-config.js";
 
     public static final String[] JQUERY_FILEUPLOAD_UI_EXT_SCRIPTS = {
-            // the jquery.fileupload-ui.js file is fetched by bower
+            // the jquery.fileupload-ui.js file is fetched by npm
             "multiple/jquery.fileupload-ui.js",
             "multiple/jquery.fileupload-ui-gallery.js"
     };

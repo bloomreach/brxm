@@ -59,7 +59,7 @@
       <artifactId>hippo-theme</artifactId>
       <version>${hippo.frontend.theme.version}</version>
       <classifier>distribution</classifier>
-      <type>zip</type>
+      <type>tar.gz</type>
       <scope>provided</scope>
     </dependency>
 
@@ -285,14 +285,14 @@
         </configuration>
       </plugin>
 
-      <!-- Fetch Hippo-specific Bower dependencies using Maven -->
+      <!-- Fetch Hippo-specific npm dependencies using Maven -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>${maven.plugin.dependency.version}</version>
         <executions>
           <execution>
-            <id>fetch-bower-dependencies</id>
+            <id>fetch-npm-dependencies</id>
             <phase>initialize</phase>
             <goals><goal>copy-dependencies</goal></goals>
             <configuration>
@@ -305,7 +305,7 @@
         </executions>
       </plugin>
 
-      <!-- Use NPM/Bower to install/build Hippo theme -->
+      <!-- Use NPM to install/build Hippo theme -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -318,15 +318,6 @@
             <configuration>
               <executable>npm</executable>
               <commandlineArgs>install</commandlineArgs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>bower-install</id>
-            <phase>process-resources</phase>
-            <goals><goal>exec</goal></goals>
-            <configuration>
-              <executable>bower</executable>
-              <commandlineArgs>install ${commandline.offline} --no-color</commandlineArgs>
             </configuration>
           </execution>
           <execution>

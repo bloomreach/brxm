@@ -21,11 +21,11 @@
  * http://www.sencha.com/license
  */
 // Bootstrap variables and mixins
-@import "../../../../../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_variables";
-@import "../../../../../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_mixins";
+@import "../../../../../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables";
+@import "../../../../../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_mixins";
 // Hippo Theme variables and mixins
-@import "../../../../../../../../target/bower_components/hippo-theme/src/styles/_variables";
-@import "../../../../../../../../target/bower_components/hippo-theme/src/styles/_mixins";
+@import "../../../../../../../../node_modules/hippo-theme/src/styles/_variables";
+@import "../../../../../../../../node_modules/hippo-theme/src/styles/_mixins";
 // Variable overrides
 @import "../../../../../../styling/styles/_variables";
 

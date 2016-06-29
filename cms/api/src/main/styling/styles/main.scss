@@ -15,23 +15,23 @@
  */
 
 // Bootstrap variables and mixins
-@import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_variables";
-@import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_mixins";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_mixins";
 
 // Hippo Theme variables and mixins
-@import "../../../../target/bower_components/hippo-theme/src/styles/_variables";
-@import "../../../../target/bower_components/hippo-theme/src/styles/_mixins";
+@import "../../../../node_modules/hippo-theme/src/styles/_variables";
+@import "../../../../node_modules/hippo-theme/src/styles/_mixins";
 
 // Variable overrides
 @import "_variables";
 @import "_mixins";
 
 // Vendor styling
-@import "../../../../target/bower_components/open-sans-fontface/open-sans.scss";
-@import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_buttons";
-@import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_tables";
-@import "../../../../target/bower_components/bootstrap-sass/assets/stylesheets/bootstrap/_alerts";
-@import "../../../../target/bower_components/retina.js/src/_retina.scss";
+@import "../../../../node_modules/open-sans-fontface/open-sans.scss";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_buttons";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_tables";
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_alerts";
+@import "../../../../node_modules/retinajs/src/_retina.scss";
 
 // Core styling
 @import "_legacy";
