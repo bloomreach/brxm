@@ -139,10 +139,10 @@ module.exports = function (grunt) {
       },
       css: {
         src: [
-          '<%= build.bower %>/normalize.css/normalize.css',
-          '<%= build.bower %>/jquery-selectric/public/selectric.css',
-          '<%= build.bower %>/jquery-file-upload/css/jquery.fileupload.css',
-          '<%= build.bower %>/jquery-file-upload/css/jquery.fileupload-ui.css',
+          '<%= build.npmDir %>/normalize.css/normalize.css',
+          '<%= build.npmDir %>/selectric/public/selectric.css',
+          '<%= build.npmDir %>/blueimp-file-upload/css/jquery.fileupload.css',
+          '<%= build.npmDir %>/blueimp-file-upload/css/jquery.fileupload-ui.css',
           '<%= build.tmp %>/css/<%= build.file %>.css'
         ],
         dest: '<%= build.skin %>/css/<%= build.file %>.css',
@@ -150,17 +150,17 @@ module.exports = function (grunt) {
       },
       js: {
         src: [
-          '<%= build.bower %>/jquery-file-upload/js/vendor/jquery.ui.widget.js',
-          '<%= build.bower %>/jquery-selectric/public/jquery.selectric.js',
-          '<%= build.bower %>/blueimp-canvas-to-blob/js/canvas-to-blob.js',
-          '<%= build.bower %>/blueimp-load-image/js/load-image.js',
-          '<%= build.bower %>/blueimp-load-image/js/load-image-meta.js',
-          '<%= build.bower %>/blueimp-tmpl/js/tmpl.js',
-          '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload.js',
-          '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload-process.js',
-          '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload-validate.js',
-          '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload-image.js',
-          '<%= build.bower %>/jquery-file-upload/js/jquery.iframe-transport.js'
+          '<%= build.npmDir %>/blueimp-file-upload/js/vendor/jquery.ui.widget.js',
+          '<%= build.npmDir %>/selectric/public/jquery.selectric.js',
+          '<%= build.npmDir %>/blueimp-canvas-to-blob/js/canvas-to-blob.js',
+          '<%= build.npmDir %>/blueimp-load-image/js/load-image.js',
+          '<%= build.npmDir %>/blueimp-load-image/js/load-image-meta.js',
+          '<%= build.npmDir %>/blueimp-tmpl/js/tmpl.js',
+          '<%= build.npmDir %>/blueimp-file-upload/js/jquery.fileupload.js',
+          '<%= build.npmDir %>/blueimp-file-upload/js/jquery.fileupload-process.js',
+          '<%= build.npmDir %>/blueimp-file-upload/js/jquery.fileupload-validate.js',
+          '<%= build.npmDir %>/blueimp-file-upload/js/jquery.fileupload-image.js',
+          '<%= build.npmDir %>/blueimp-file-upload/js/jquery.iframe-transport.js'
         ],
         dest: '<%= build.skin %>/js/<%= build.file %>.js',
         nonull: true
@@ -176,7 +176,7 @@ module.exports = function (grunt) {
       static_mappings: {
         files: [
           {
-            src: '<%= build.bower %>/jquery-file-upload/js/jquery.fileupload-ui.js',
+            src: '<%= build.npmDir %>/blueimp-file-upload/js/jquery.fileupload-ui.js',
             dest: '<%= build.fileupload.target %>/multiple/jquery.fileupload-ui.js'
           },
           {
@@ -196,7 +196,7 @@ module.exports = function (grunt) {
         files: [
           {
             expand: true,
-            cwd: '<%= build.bower %>/open-sans-fontface/fonts',
+            cwd: '<%= build.npmDir %>/open-sans-fontface/fonts',
             src: ['**/*.{otf,eot,svg,ttf,woff}'],
             dest: '<%= build.skin %>/fonts/open-sans/'
           },
@@ -213,14 +213,14 @@ module.exports = function (grunt) {
             // so it can be used in the java code.
             expand: true,
             nonull: true,
-            cwd: '<%= build.bower %>/hippo-theme/dist/images/',
+            cwd: '<%= build.npmDir %>/hippo-theme/dist/images/',
             src: ['hippo-icon-sprite.svg'],
             dest: '<%= build.images %>/icons/'
           },
           {
             expand: true,
             nonull: true,
-            cwd: '<%= build.bower %>/jquery-file-upload/',
+            cwd: '<%= build.npmDir %>/blueimp-file-upload/',
             src: ['img/*'],
             dest: '<%= build.skin %>'
           }
@@ -234,9 +234,9 @@ module.exports = function (grunt) {
         src: '<%= build.tmp %>'
       },
 
-      // clean bower components
-      bower: {
-        src: '<%= build.bower %>'
+      // clean npm components
+      npm: {
+        src: '<%= build.npmDir %>'
       },
 
       // clean up copied image, font and css files
