@@ -200,8 +200,9 @@
 
                 <exclude>frontend-ng/.*</exclude>
                 <exclude>frontend-ng/*.md</exclude>
-                <exclude>frontend-ng/node_modules/**/*</exclude>
-                <exclude>frontend-ng/bower_components/**/*</exclude>
+
+                <!-- Generated or pulled-in files which are not cleaned up -->
+                <exclude>**/node_modules/**/*</exclude>
                 <exclude>frontend-ng/coverage/**/*</exclude>
 
                 <!-- repository content XML -->
