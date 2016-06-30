@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -97,10 +97,12 @@ public abstract class AbstractJcrTypeStore implements IStore<ITypeDescriptor> {
                 } else {
                     log.debug("No nodetype description found for " + name);
                 }
-            } catch (RepositoryException e) {
-                log.error(e.getMessage());
-            } catch (StoreException e) {
-                log.error(e.getMessage());
+            } catch (RepositoryException | StoreException e) {
+                if (log.isDebugEnabled()) {
+                    log.info("Unable to find nodetype description for '{}'", name, e);
+                } else {
+                    log.info("Unable to find nodetype description for '{}' : {}", name, e.toString());
+                }
             }
         }
         return result;

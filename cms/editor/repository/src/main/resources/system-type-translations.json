@@ -25,6 +25,11 @@
         "jcr:name": "Date"
       }
     },
+    "hipposys:CalendarDate": {
+      "en": {
+        "jcr:name": "CalendarDate"
+      }
+    },
     "hipposys:Long": {
       "en": {
         "jcr:name": "Integer Number"

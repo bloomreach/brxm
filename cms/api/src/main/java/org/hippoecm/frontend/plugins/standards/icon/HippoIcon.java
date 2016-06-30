@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.standards.icon;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
@@ -204,10 +204,9 @@ public abstract class HippoIcon extends Panel {
      */
     public abstract void addCssClass(final String cssClass);
 
-
     private static abstract class BaseIcon<T> extends HippoIcon {
 
-        private List<String> extraCssClasses;
+        private Set<String> extraCssClasses;
 
         private BaseIcon(final String id, final IModel<T> model) {
             super(id, model);
@@ -217,13 +216,19 @@ public abstract class HippoIcon extends Panel {
         @Override
         public void addCssClass(final String cssClass) {
             if (extraCssClasses == null) {
-                extraCssClasses = new LinkedList<>();
+                extraCssClasses = new HashSet<>();
             }
             extraCssClasses.add(cssClass);
         }
 
         protected String getExtraCssClasses() {
             return extraCssClasses == null ? StringUtils.EMPTY : StringUtils.join(extraCssClasses, " ");
+        }
+
+        void copyExtraCssClasses(BaseIcon<?> source) {
+            if (source.extraCssClasses != null) {
+                this.extraCssClasses = new HashSet<>(source.extraCssClasses);
+            }
         }
 
         @SuppressWarnings("unchecked")
@@ -327,6 +332,7 @@ public abstract class HippoIcon extends Panel {
 
         private ResourceIcon(final String newId, final ResourceIcon original) {
             this(newId, original.getIcon(), original.width, original.height);
+            copyExtraCssClasses(original);
         }
 
         @Override

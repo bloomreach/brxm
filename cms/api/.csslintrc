@@ -1,8 +1,6 @@
 {
   "bulletproof-font-face": 2,
   "display-property-grouping": 2,
-  "duplicate-background-images": 2,
-  "duplicate-properties": 2,
   "empty-rules": 2,
   "errors": 2,
   "gradients": 2,
@@ -20,6 +18,8 @@
   "box-model": false,
   "box-sizing": false,
   "compatible-vendor-prefixes": false,
+  "duplicate-background-images": false,
+  "duplicate-properties": false,
   "fallback-colors": false,
   "floats": false,
   "font-faces": false,

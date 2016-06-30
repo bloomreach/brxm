@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class GalleryFileUploadBehavior extends FileUploadBehavior {
     public static final String CONFIG_JS = "fileupload-gallery-config.js";
 
     public static final String[] JQUERY_FILEUPLOAD_UI_EXT_SCRIPTS = {
-            // the jquery.fileupload-ui.js file is fetched by bower
+            // the jquery.fileupload-ui.js file is fetched by npm
             "multiple/jquery.fileupload-ui.js",
             "multiple/jquery.fileupload-ui-gallery.js"
     };

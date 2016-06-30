@@ -18,10 +18,12 @@ package org.hippoecm.frontend.editor.plugins;
 import java.time.format.FormatStyle;
 import java.util.Date;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.datetime.DateTimeLabel;
+import org.hippoecm.frontend.plugins.standards.datetime.GMTDateLabel;
 import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -49,11 +51,21 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
         IModel<Date> valueModel = getModel();
         final Mode mode = Mode.fromString(config.getString(MODE), Mode.VIEW);
         if (mode == Mode.EDIT) {
-            add(new DateFieldWidget(VALUE, valueModel, context, config));
+            add(newDateFieldWidget(context, config, valueModel));
         } else {
-            add(new DateTimeLabel(VALUE, valueModel, FormatStyle.LONG, FormatStyle.SHORT));
+            add(newLabel(valueModel));
         }
         setOutputMarkupId(true);
+    }
+
+    private DateFieldWidget newDateFieldWidget(final IPluginContext context, final IPluginConfig config, final IModel<Date> valueModel) {
+        return new DateFieldWidget(VALUE, valueModel, context, config);
+    }
+
+    private Label newLabel(final IModel<Date> valueModel) {
+        final boolean isHideTime = getPluginConfig().getAsBoolean(DateFieldWidget.CONFIG_HIDE_TIME, false);
+        return isHideTime ? new GMTDateLabel(VALUE, valueModel, FormatStyle.LONG) :
+                new DateTimeLabel(VALUE, valueModel, FormatStyle.LONG, FormatStyle.SHORT);
     }
 
 }

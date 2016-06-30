@@ -86,7 +86,11 @@ public class IconRenderUtil {
         final String nodeTypeIconName = StringUtils.replace(type.getName(), ":", "-");
         final ResourceReference reference = BrowserStyle.getIconOrNull(nodeTypeIconName, size);
         if (reference != null) {
-            return HippoIcon.fromResource(id, reference, size);
+            final HippoIcon icon = HippoIcon.fromResource(id, reference, size);
+            icon.addCssClass("hi");
+            icon.addCssClass("hi-custom-node-type");
+            icon.addCssClass("hi-" + size.name().toLowerCase());
+            return icon;
         }
         return HippoIcon.fromSprite(id, defaultIcon, size);
     }

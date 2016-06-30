@@ -1,6 +1,18 @@
 {
-  "name": "hippo-cms-theme",
+  "name": "hippo-cms-api",
   "private": true,
+  "dependencies": {
+    "blueimp-canvas-to-blob": "3.1.0",
+    "blueimp-file-upload": "9.9.4",
+    "blueimp-load-image": "2.1.0",
+    "blueimp-tmpl": "3.1.0",
+    "bootstrap-sass": "3.3.4",
+    "hippo-theme": "./target/dependency/hippo-theme.tar.gz",
+    "normalize.css": "3.0.2",
+    "open-sans-fontface": "1.4.0",
+    "retinajs": "2.0.1",
+    "selectric": "1.9.2"
+  },
   "devDependencies": {
     "grunt": "0.4.5",
     "grunt-autoprefixer": "3.0.3",
