@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.plugins.tagging;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,8 +40,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
 import org.apache.commons.io.IOUtils;
-import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
 import org.onehippo.cms7.essentials.dashboard.rest.BaseResource;
@@ -114,14 +113,14 @@ public class TaggingResource extends BaseResource {
                     final String tagsPath = fieldImportPath + '/' + TAGS_FIELD;
                     if (!session.nodeExists(tagsPath)) {
                         final String fieldData = TemplateUtils.replaceStringPlaceholders(templateTags, templateData);
-                        session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                        session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                     }
 
                     // import suggest field:
                     final String suggestPath = fieldImportPath + '/' + TAGSUGGEST_FIELD;
                     if (!session.nodeExists(suggestPath)) {
                         final String suggestData = TemplateUtils.replaceStringPlaceholders(templateSuggest, templateData);
-                        session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                        session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                     }
 
                     // import field translations

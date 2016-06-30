@@ -23,6 +23,7 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,7 +41,6 @@ import javax.xml.bind.Unmarshaller;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Strings;
 
-import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
@@ -93,7 +93,7 @@ public final class GlobalUtils {
             if (stream == null) {
                 return null;
             }
-            return IOUtils.toString(stream, Charsets.UTF_8);
+            return IOUtils.toString(stream, StandardCharsets.UTF_8);
         } catch (IOException e) {
             log.error("Error reading files", e);
         } finally {
@@ -126,7 +126,7 @@ public final class GlobalUtils {
     public static StringBuilder readTextFile(final Path path) {
         final StringBuilder builder = new StringBuilder();
         try {
-            final List<String> strings = Files.readAllLines(path, Charsets.UTF_8);
+            final List<String> strings = Files.readAllLines(path, StandardCharsets.UTF_8);
             for (String string : strings) {
                 builder.append(string).append(System.getProperty("line.separator"));
             }
@@ -143,7 +143,7 @@ public final class GlobalUtils {
      * @param path    path to save file to
      */
     public static void writeToFile(final CharSequence content, final Path path) {
-        try (BufferedWriter writer = Files.newBufferedWriter(path, Charsets.UTF_8)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.append(content);
             writer.flush();
         } catch (IOException e) {
