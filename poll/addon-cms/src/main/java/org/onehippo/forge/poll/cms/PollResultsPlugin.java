@@ -130,49 +130,51 @@ public class PollResultsPlugin extends RenderPlugin<Object> implements IHeaderCo
         try {
             final Session jcrSession = getSession().getJcrSession();
             final Node pollNode = (Node) getModelObject();
-
-            // find the poll compound that this plugin works on
-            Node pollCompoundNode = pollNode;
-            if (!pollCompoundNode.isNodeType(NAMESPACE_POLL_COMPOUND)) {
-                final NodeIterator it = pollNode.getNodes();
-                while (it.hasNext()) {
-                    final Node next =  it.nextNode();
-                    if (next.isNodeType(NAMESPACE_POLL_COMPOUND)) {
-                        pollCompoundNode = next;
-                        break;
+            if (pollNode.getName().equals(HippoNodeType.HIPPO_PROTOTYPE)) {
+                log.debug("skip collecting poll results for the prototype node {}", pollNode.getPath());
+            } else {
+                // find the poll compound that this plugin works on
+                Node pollCompoundNode = pollNode;
+                if (!pollCompoundNode.isNodeType(NAMESPACE_POLL_COMPOUND)) {
+                    final NodeIterator it = pollNode.getNodes();
+                    while (it.hasNext()) {
+                        final Node next = it.nextNode();
+                        if (next.isNodeType(NAMESPACE_POLL_COMPOUND)) {
+                            pollCompoundNode = next;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if (!pollCompoundNode.isNodeType(NAMESPACE_POLL_COMPOUND)) {
-                throw new WicketRuntimeException("PollResultsPlugin plugin should be configured to a " + NAMESPACE_POLL_COMPOUND
-                        + "compound node, or a parent (document) node containing such compound. Current node type is " +
-                        pollNode.getPrimaryNodeType().getName() + ", path is " + pollNode.getPath());
-            }
-
-            // Load all possible options in the result map, give them the default count 0
-            NodeIterator optionNodes = pollCompoundNode.getNodes(NAMESPACE_POLL_OPTION);
-            while (optionNodes.hasNext()) {
-                final Node next = (Node) optionNodes.next();
-                final String value = next.getProperty(NAMESPACE_POLL_VALUE).getString();
-                results.put(value, 0L);
-            }
-
-            final String pollDataPath = getPollDataPath(pollNode);
-
-            if (jcrSession.nodeExists(pollDataPath)) {
-
-                // Load all option counts from the polldata folder (the actual results)
-                final Node resultNode = jcrSession.getNode(pollDataPath);
-                final NodeIterator voteNodes = resultNode.getNodes();
-                while (voteNodes.hasNext()) {
-                    final Node next = (Node) voteNodes.next();
-                    results.put(next.getName(), next.getProperty(NAMESPACE_POLL_COUNT).getLong());
+                if (!pollCompoundNode.isNodeType(NAMESPACE_POLL_COMPOUND)) {
+                    throw new WicketRuntimeException("PollResultsPlugin plugin should be configured to a " + NAMESPACE_POLL_COMPOUND
+                            + "compound node, or a parent (document) node containing such compound. Current node type is " +
+                            pollNode.getPrimaryNodeType().getName() + ", path is " + pollNode.getPath());
                 }
-            }
-            else {
-                log.info("Could not find results node on full path location {}. " +
-                        "Please update the configuration of the PollComponent", pollDataPath);
+
+                // Load all possible options in the result map, give them the default count 0
+                NodeIterator optionNodes = pollCompoundNode.getNodes(NAMESPACE_POLL_OPTION);
+                while (optionNodes.hasNext()) {
+                    final Node next = (Node) optionNodes.next();
+                    final String value = next.getProperty(NAMESPACE_POLL_VALUE).getString();
+                    results.put(value, 0L);
+                }
+
+                final String pollDataPath = getPollDataPath(pollNode);
+
+                if (jcrSession.nodeExists(pollDataPath)) {
+
+                    // Load all option counts from the polldata folder (the actual results)
+                    final Node resultNode = jcrSession.getNode(pollDataPath);
+                    final NodeIterator voteNodes = resultNode.getNodes();
+                    while (voteNodes.hasNext()) {
+                        final Node next = (Node) voteNodes.next();
+                        results.put(next.getName(), next.getProperty(NAMESPACE_POLL_COUNT).getLong());
+                    }
+                } else {
+                    log.info("Could not find results node on full path location {}. " +
+                            "Please update the configuration of the PollComponent", pollDataPath);
+                }
             }
 
         } catch (RepositoryException e) {
