@@ -21,14 +21,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hippo Channel Manager Frontend NG</title>
 
-    <link href="images/favicon.ico" rel="icon" type="image/x-icon"/>
+    <!--<link href="images/favicon.ico" rel="icon" type="image/x-icon"/>-->
 
     <!-- build:css styles/hippo-cm.min.css -->
-    <link rel="stylesheet" href="node_modules/dragula/dist/dragula.css">
-    <link rel="stylesheet" href="styles/index.css">
+    <!--<link rel="stylesheet" href="node_modules/dragula/dist/dragula.css">
+    <link rel="stylesheet" href="styles/index.css">-->
     <!-- endbuild -->
 
     <link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <% if (htmlWebpackPlugin.options.pushState) { %><base href="/"><% } %>
   </head>
 
   <body ng-app="hippo-cm" ng-strict-di>
@@ -39,6 +40,7 @@
     </div>
 
     <!-- build:js scripts/hippo-cm.min.js -->
+    <!--
     <script src="node_modules/es6-shim/es6-shim.js"></script>
     <script src="node_modules/jquery/dist/jquery.js"></script>
     <script src="node_modules/velocity-animate/velocity.js"></script>
@@ -58,6 +60,7 @@
 
     <script src="node_modules/systemjs/dist/system-polyfills.js"></script>
     <script src="scripts/index.js"></script>
+    -->
     <!-- endbuild -->
   </body>
 </html>
