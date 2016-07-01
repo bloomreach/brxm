@@ -15,6 +15,6 @@
  */
 
 module.exports = {
-    bower: 'target/bower_components',
-    dashboardtarget: 'target/dashboard/components'
+  npmDir: 'node_modules',
+  dashboardtarget: 'target/dashboard/components',
 };

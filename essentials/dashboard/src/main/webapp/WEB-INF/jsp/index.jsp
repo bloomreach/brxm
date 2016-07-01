@@ -26,14 +26,15 @@
   </script>
   <script src="${pageContext.request.contextPath}/components/jquery/dist/jquery.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular/angular.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/components/chosen/chosen.jquery.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/components/angular-chosen-localytics/chosen.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap-tpls.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/chosen-npm/public/chosen.jquery.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/angular-chosen-localytics/dist/angular-chosen.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/angular-ui-bootstrap/ui-bootstrap-tpls.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular-ui-router/release/angular-ui-router.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/components/angular-sanitize/angular-sanitize.min.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/angular-sanitize/angular-sanitize.js?v=${project.version}"></script>
 
   <%-- HIPPO THEME DEPS --%>
-  <script src="${pageContext.request.contextPath}/components/angular-aria/angular-aria.min.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/angular-aria/angular-aria.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/angular-animate/angular-animate.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/js/lib/angular-ui-tree.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/google-code-prettify/src/prettify.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/hippo-theme/dist/js/main.js?v=${project.version}"></script>

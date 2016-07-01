@@ -45,7 +45,7 @@
       <artifactId>hippo-theme</artifactId>
       <version>${hippo.frontend.theme.version}</version>
       <classifier>distribution</classifier>
-      <type>zip</type>
+      <type>tar.gz</type>
       <scope>provided</scope>
     </dependency>
 
@@ -87,15 +87,6 @@
             <configuration>
               <executable>npm</executable>
               <commandlineArgs>install</commandlineArgs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>bower-install</id>
-            <phase>process-resources</phase>
-            <goals><goal>exec</goal></goals>
-            <configuration>
-              <executable>bower</executable>
-              <commandlineArgs>install --no-color</commandlineArgs>
             </configuration>
           </execution>
           <execution>
