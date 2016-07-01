@@ -446,7 +446,7 @@ public class PollProvider {
                 return bean;
             }
             if (!path.equals("/")) {
-                logger.warn("Bean could not be found by path {}, relative to site content root {}", path, siteBasePath);
+                logger.warn("Bean could not be found by path {}, relative to site content root {}", relPath.substring(1), siteBasePath);
             }
         } else {
             final HippoBean currentDocument = request.getRequestContext().getContentBean();
