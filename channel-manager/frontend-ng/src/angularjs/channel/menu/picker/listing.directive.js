@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import template from './listing.html';
+
 export function listingDirective() {
   return {
     restrict: 'A',
@@ -21,7 +23,7 @@ export function listingDirective() {
       selectedItem: '=',
       selectedDocument: '=',
     },
-    templateUrl: 'channel/menu/picker/listing.html',
+    template,
     controller: 'ListingCtrl',
     controllerAs: 'listing',
   };

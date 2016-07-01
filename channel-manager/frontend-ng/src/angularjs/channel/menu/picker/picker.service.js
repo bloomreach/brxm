@@ -15,6 +15,8 @@
  *
  */
 
+import template from './picker.html';
+
 export class PickerService {
 
   constructor(DialogService, HstService) {
@@ -28,7 +30,7 @@ export class PickerService {
   show(cfg) {
     return this.DialogService.show(angular.extend(cfg, {
       clickOutsideToClose: true,
-      templateUrl: 'channel/menu/picker/picker.html',
+      template,
       controller: 'PickerCtrl',
       controllerAs: 'picker',
       bindToController: true,

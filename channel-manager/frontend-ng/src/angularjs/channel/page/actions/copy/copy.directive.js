@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import template from './copy.html';
+
 export function pageCopyDirective() {
   'ngInject';
 
@@ -22,7 +24,7 @@ export function pageCopyDirective() {
     bindToController: {
       onDone: '&',
     },
-    templateUrl: 'channel/page/actions/copy/copy.html',
+    template,
     controller: 'PageCopyCtrl',
     controllerAs: 'pageCopy',
   };

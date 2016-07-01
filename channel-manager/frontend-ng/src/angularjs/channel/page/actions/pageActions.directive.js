@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import template from './pageActions.html';
+
 export function pageActionsDirective() {
   'ngInject';
 
@@ -22,7 +24,7 @@ export function pageActionsDirective() {
     bindToController: {
       onActionSelected: '&',
     },
-    templateUrl: 'channel/page/actions/pageActions.html',
+    template,
     controller: 'PageActionsCtrl',
     controllerAs: 'pageActions',
   };

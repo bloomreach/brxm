@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import template from './overlayElement.html';
+
 export function overlayElementDirective() {
   'ngInject';
 
@@ -22,7 +24,7 @@ export function overlayElementDirective() {
     bindToController: {
       structureElement: '=',
     },
-    templateUrl: 'channel/hippoIframe/overlay/overlayElement.html',
+    template,
     transclude: true,
     controller: 'OverlayElementCtrl',
     controllerAs: 'overlayElement',

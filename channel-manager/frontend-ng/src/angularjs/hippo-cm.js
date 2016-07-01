@@ -23,7 +23,6 @@ export const hippoCmng = angular
     'ngMaterial',
     'pascalprecht.translate',
     'ui.router',
-    'templates',
     channelManagerApi.name,
     channelModule.name,
   ])
