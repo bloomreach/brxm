@@ -994,20 +994,9 @@ public final class JavaSourceUtils {
         if (modifiers == null) {
             return null;
         }
-        for (Object modifier : modifiers) {
-            if (modifier instanceof NormalAnnotation) {
-                final NormalAnnotation annotation = (NormalAnnotation) modifier;
-                final Name typeName = annotation.getTypeName();
-                final String fullyQualifiedName = typeName.getFullyQualifiedName();
-                if (!fullyQualifiedName.equals(HippoEssentialsGenerated.class.getSimpleName())
-                        && !fullyQualifiedName.equals(HippoEssentialsGenerated.class.getCanonicalName())) {
-                    continue;
-                }
-                return populateGeneratedObject(beanPath, annotation);
-            }
-        }
-        return null;
+        return getGeneratedObject(modifiers, beanPath);
     }
+
     public static String  getHippoEssentialsAnnotation(final MethodDeclaration node) {
         @SuppressWarnings({UNCHECKED, RAWTYPES})
         final List modifiers = node.modifiers();
@@ -1047,6 +1036,10 @@ public final class JavaSourceUtils {
     public static HippoEssentialsGeneratedObject getHippoGeneratedAnnotation(final Path path) {
         @SuppressWarnings({UNCHECKED, RAWTYPES})
         final List modifiers = getClassAnnotations(path);
+        return getGeneratedObject(modifiers, path);
+    }
+
+    private static HippoEssentialsGeneratedObject getGeneratedObject(final List modifiers, final Path path) {
         for (Object modifier : modifiers) {
             if (modifier instanceof NormalAnnotation) {
                 final NormalAnnotation annotation = (NormalAnnotation) modifier;
