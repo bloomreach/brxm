@@ -142,7 +142,9 @@ export class DomService {
         width: outerWidth,
         overflow: 'scroll',
       }).appendTo('body');
-      const widthWithScroll = $('<div>').css('width', '100%').appendTo($outer).outerWidth();
+      const widthWithScroll = $('<div>').css('width', '100%')
+        .appendTo($outer)
+        .outerWidth();
       $outer.remove();
       this._scrollBarWidth = outerWidth - widthWithScroll;
     }

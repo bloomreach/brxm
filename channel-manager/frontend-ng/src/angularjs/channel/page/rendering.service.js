@@ -37,15 +37,9 @@ export class RenderingService {
 
   fetchComponentMarkup(component, propertiesMap) {
     function toUrlEncodedFormData(json) {
-      const keyValuePairs = [];
-      for (const property in json) {
-        if (json.hasOwnProperty(property)) {
-          const key = encodeURIComponent(property);
-          const value = encodeURIComponent(json[property]);
-          keyValuePairs.push(`${key}=${value}`);
-        }
-      }
-      return keyValuePairs.join('&');
+      return Object.keys(json)
+                   .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(json[key])}`)
+                   .join('&');
     }
 
     return this.$http({
