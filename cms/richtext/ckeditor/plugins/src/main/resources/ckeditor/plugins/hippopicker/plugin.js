@@ -16,8 +16,7 @@
 (function() {
     "use strict";
 
-    var disableLinkButton = false;
-    var CLICK_DELAY = 300;
+    var disableLinkButton = false, CLICK_DELAY = 300;
     function iterate(object, func) {
         var property;
         for (property in object) {
