@@ -1,0 +1,10 @@
+// Open Sans font
+@import '~open-sans-fontface/sass/variables';
+$OpenSansPath: '~open-sans-fontface/fonts'; 
+
+@import '~open-sans-fontface/sass/mixins';
+@import '~open-sans-fontface/sass/Regular';
+
+// Angular Material framework
+@import '~angular-material/angular-material.scss';
+
