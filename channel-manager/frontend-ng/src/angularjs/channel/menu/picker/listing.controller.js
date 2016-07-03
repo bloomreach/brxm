@@ -25,16 +25,16 @@ export class ListingCtrl {
 
     switch (docState) {
       case 'new':
-        iconPath = 'images/document-status-new.svg';
+        iconPath = '/cms/angular/public/images/document-status-new.svg';
         break;
       case 'changed':
-        iconPath = 'images/document-status-changed.svg';
+        iconPath = '/cms/angular/public/images/document-status-changed.svg';
         break;
       case 'live':
-        iconPath = 'images/document-status-live.svg';
+        iconPath = '/cms/angular/public/images/document-status-live.svg';
         break;
       default:
-        iconPath = 'images/document.svg';
+        iconPath = '/cms/angular/public/images/document.svg';
     }
 
     return iconPath;
@@ -44,7 +44,7 @@ export class ListingCtrl {
     let iconPath;
 
     if (item.type === 'folder') {
-      iconPath = 'images/folder-closed.svg';
+      iconPath = '/cms/angular/public/images/folder-closed.svg';
     } else {
       iconPath = this._getDocumentStatusIcon(item);
     }
