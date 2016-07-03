@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import template from './channel.html';
+import templateUrl from './channel.html';
 
 export function config($stateProvider) {
   'ngInject';
@@ -22,7 +22,7 @@ export function config($stateProvider) {
   $stateProvider.state('hippo-cm.channel', {
     url: '/channel/:channelId/',
     controller: 'ChannelCtrl as channelCtrl',
-    template,
+    templateUrl,
     params: {
       initialRenderPath: '',
     },

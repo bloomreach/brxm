@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import template from './listing.html';
+import templateUrl from './listing.html';
 
 export function listingDirective() {
   return {
@@ -23,7 +23,7 @@ export function listingDirective() {
       selectedItem: '=',
       selectedDocument: '=',
     },
-    template,
+    templateUrl,
     controller: 'ListingCtrl',
     controllerAs: 'listing',
   };

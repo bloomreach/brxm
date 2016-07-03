@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import template from './create.html';
+import templateUrl from './create.html';
 
 export function pageCreateDirective() {
   'ngInject';
@@ -24,7 +24,7 @@ export function pageCreateDirective() {
     bindToController: {
       onDone: '&',
     },
-    template,
+    templateUrl,
     controller: 'PageCreateCtrl',
     controllerAs: 'pageCreate',
   };

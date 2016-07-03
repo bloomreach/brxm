@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import template from './overlayElement.html';
+import templateUrl from './overlayElement.html';
 
 export function overlayElementDirective() {
   'ngInject';
@@ -24,7 +24,7 @@ export function overlayElementDirective() {
     bindToController: {
       structureElement: '=',
     },
-    template,
+    templateUrl,
     transclude: true,
     controller: 'OverlayElementCtrl',
     controllerAs: 'overlayElement',

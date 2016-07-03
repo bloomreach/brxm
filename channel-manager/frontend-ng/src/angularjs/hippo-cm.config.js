@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import template from './hippo-cm.html';
+import templateUrl from './hippo-cm.html';
 
 export function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $translateProvider) {
   'ngInject';
@@ -23,11 +23,11 @@ export function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $
 
   $stateProvider.state('hippo-cm', {
     url: '/',
-    template,
+    templateUrl,
     resolve: {
       translations: ($translate, ConfigService) => {
         $translateProvider.useStaticFilesLoader({
-          prefix: 'i18n/',
+          prefix: '/cms/angular/public/i18n/',
           suffix: `.json?antiCache=${ConfigService.antiCache}`,
         });
         return $translate.use(ConfigService.locale)

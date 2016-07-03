@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import template from './viewAs.html';
+import templateUrl from './viewAs.html';
 
 export function ViewAsDirective() {
   'ngInject';
@@ -25,7 +25,7 @@ export function ViewAsDirective() {
       renderVariant: '=',
     },
     scope: {},
-    template,
+    templateUrl,
     controller: 'ViewAsCtrl',
     controllerAs: 'viewAs',
   };

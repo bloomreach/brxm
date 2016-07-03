@@ -15,7 +15,7 @@
  *
  */
 
-import template from './picker.html';
+import templateUrl from './picker.html';
 
 export class PickerService {
 
@@ -30,7 +30,7 @@ export class PickerService {
   show(cfg) {
     return this.DialogService.show(angular.extend(cfg, {
       clickOutsideToClose: true,
-      template,
+      templateUrl,
       controller: 'PickerCtrl',
       controllerAs: 'picker',
       bindToController: true,

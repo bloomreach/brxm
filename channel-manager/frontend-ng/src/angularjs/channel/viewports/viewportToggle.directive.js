@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import template from './viewportToggle.html';
+import templateUrl from './viewportToggle.html';
 
 export function viewportToggleDirective() {
   return {
     restrict: 'E',
-    template,
+    templateUrl,
     bindToController: {
       disabled: '=',
     },
