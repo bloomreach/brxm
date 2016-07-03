@@ -14,4 +14,7 @@
  * limitations under the License.
  */
 
+require('./vendor.scss');
+require('./index.scss');
+
 export { hippoCmng } from './angularjs/hippo-cm.js';
