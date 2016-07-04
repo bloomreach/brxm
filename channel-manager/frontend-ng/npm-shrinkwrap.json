@@ -69,9 +69,9 @@
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/angular-aria/-/angular-aria-1.4.8.tgz"
     },
     "angular-material": {
-      "version": "1.1.0-rc.5",
-      "from": "angular-material@1.1.0-rc.5",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/angular-material/-/angular-material-1.1.0-rc.5.tgz"
+      "version": "1.1.0-rc4-master-06e7e99",
+      "from": "angular-material@1.1.0-rc4-master-06e7e99",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/angular-material/-/angular-material-1.1.0-rc4-master-06e7e99.tgz"
     },
     "angular-messages": {
       "version": "1.4.8",
