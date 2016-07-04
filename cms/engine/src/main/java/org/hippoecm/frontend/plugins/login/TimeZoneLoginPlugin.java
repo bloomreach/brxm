@@ -73,13 +73,13 @@ public class TimeZoneLoginPlugin extends SimpleLoginPlugin {
         public TimeZoneLoginForm(final String id, final boolean autoComplete, final List<String> locales, final LoginHandler handler) {
             super(id, autoComplete, locales, handler);
 
-            String[] timeZones = getPluginConfig().getStringArray(SELECTED_TIMEZONES_CONFIG_PARAM);
-            if (ArrayUtils.isEmpty(timeZones)) {
-                timeZones = TimeZone.getAvailableIDs();
-            }
-            availableTimeZones = Arrays.asList(timeZones);
-
             if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
+                String[] timeZones = getPluginConfig().getStringArray(SELECTED_TIMEZONES_CONFIG_PARAM);
+                if (ArrayUtils.isEmpty(timeZones)) {
+                    timeZones = TimeZone.getAvailableIDs();
+                }
+                availableTimeZones = Arrays.asList(timeZones);
+
                 // Check if user has previously selected a timezone
                 final String cookieTimeZone = getCookieValue(TIMEZONE_COOKIE);
                 if (cookieTimeZone != null && availableTimeZones.contains(cookieTimeZone)) {
@@ -103,7 +103,8 @@ public class TimeZoneLoginPlugin extends SimpleLoginPlugin {
 
         @Override
         protected void loginSuccess() {
-            if (selectedTimeZone != null && availableTimeZones.contains(selectedTimeZone)) {
+            if (selectedTimeZone != null && availableTimeZones != null &&
+                    availableTimeZones.contains(selectedTimeZone)) {
                 setCookieValue(TIMEZONE_COOKIE, selectedTimeZone, TIMEZONE_COOKIE_MAX_AGE);
                 final TimeZone timeZone = TimeZone.getTimeZone(selectedTimeZone);
                 UserSession.get().getClientInfo().getProperties().setTimeZone(timeZone);
