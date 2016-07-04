@@ -68,13 +68,18 @@ public class TimeZoneLoginPlugin extends SimpleLoginPlugin {
         private static final int TIMEZONE_COOKIE_MAX_AGE = 365 * 24 * 3600; // expire one year from now
 
         private String selectedTimeZone;
+        private List<String> availableTimeZones;
 
         public TimeZoneLoginForm(final String id, final boolean autoComplete, final List<String> locales, final LoginHandler handler) {
             super(id, autoComplete, locales, handler);
 
-            if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
-                final List<String> availableTimeZones = getAvailableTimeZones();
+            String[] timeZones = getPluginConfig().getStringArray(SELECTED_TIMEZONES_CONFIG_PARAM);
+            if (ArrayUtils.isEmpty(timeZones)) {
+                timeZones = TimeZone.getAvailableIDs();
+            }
+            availableTimeZones = Arrays.asList(timeZones);
 
+            if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
                 // Check if user has previously selected a timezone
                 final String cookieTimeZone = getCookieValue(TIMEZONE_COOKIE);
                 if (cookieTimeZone != null && availableTimeZones.contains(cookieTimeZone)) {
@@ -98,20 +103,12 @@ public class TimeZoneLoginPlugin extends SimpleLoginPlugin {
 
         @Override
         protected void loginSuccess() {
-            if (selectedTimeZone != null && getAvailableTimeZones().contains(selectedTimeZone)) {
+            if (selectedTimeZone != null && availableTimeZones.contains(selectedTimeZone)) {
                 setCookieValue(TIMEZONE_COOKIE, selectedTimeZone, TIMEZONE_COOKIE_MAX_AGE);
                 final TimeZone timeZone = TimeZone.getTimeZone(selectedTimeZone);
                 UserSession.get().getClientInfo().getProperties().setTimeZone(timeZone);
             }
             super.loginSuccess();
-        }
-
-        private List<String> getAvailableTimeZones() {
-            String[] timeZones = getPluginConfig().getStringArray(SELECTED_TIMEZONES_CONFIG_PARAM);
-            if (ArrayUtils.isEmpty(timeZones)) {
-                timeZones = TimeZone.getAvailableIDs();
-            }
-            return Arrays.asList(timeZones);
         }
     }
 }
