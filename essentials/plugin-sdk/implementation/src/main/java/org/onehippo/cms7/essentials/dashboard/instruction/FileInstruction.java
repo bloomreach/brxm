@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
@@ -31,6 +32,10 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.eventbus.EventBus;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -46,13 +51,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.eventbus.EventBus;
 @Component
 @XmlRootElement(name = "file", namespace = EssentialConst.URI_ESSENTIALS_INSTRUCTIONS)
 public class FileInstruction extends PluginInstruction {
-
 
     public static final Set<String> VALID_ACTIONS = new ImmutableSet.Builder<String>()
             .add(COPY)
@@ -140,7 +141,7 @@ public class FileInstruction extends PluginInstruction {
             } else {
                 final String content = GlobalUtils.readStreamAsText(stream);
                 final String replacedData = TemplateUtils.replaceTemplateData(content, context.getPlaceholderData());
-                FileUtils.copyInputStreamToFile(IOUtils.toInputStream(replacedData), destination);
+                FileUtils.copyInputStreamToFile(IOUtils.toInputStream(replacedData, StandardCharsets.UTF_8), destination);
             }
             sendEvents();
             return InstructionStatus.SUCCESS;

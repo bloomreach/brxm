@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class TranslationsUtils {
     private TranslationsUtils() {}
 
     public static void importTranslations(String json, Session session) throws RepositoryException, IOException {
-        final Collection<BundleInfo> bundleInfos = BundleFileInfo.readInfo(new ByteArrayInputStream(json.getBytes())).getBundleInfos();
+        final Collection<BundleInfo> bundleInfos = BundleFileInfo.readInfo(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))).getBundleInfos();
         for (BundleInfo bundleInfo : bundleInfos) {
             getOrCreateResourceBundle(bundleInfo, session);
         }
