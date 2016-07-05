@@ -128,7 +128,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
             MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
             mBeanServer.unregisterMBean(ObjectName.getInstance(REPOSITORY_STATS_JMX_NAME));
         } catch (JMException e) {
-            log.error("Unable to register RepositoryStat", e);
+            log.warn("Unable to register RepositoryStat", e);
         }
     }
 
