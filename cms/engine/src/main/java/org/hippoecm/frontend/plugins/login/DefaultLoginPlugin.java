@@ -35,15 +35,15 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 
-public class TimeZoneLoginPlugin extends SimpleLoginPlugin {
+public class DefaultLoginPlugin extends SimpleLoginPlugin {
 
-    private static final TextTemplate INIT_JS = new PackageTextTemplate(TimeZoneLoginPlugin.class, "timezones-init.js");
-    private static final ResourceReference JSTZ_JS = new JavaScriptResourceReference(TimeZoneLoginPlugin.class, "jstz.min.js");
+    private static final TextTemplate INIT_JS = new PackageTextTemplate(DefaultLoginPlugin.class, "timezones-init.js");
+    private static final ResourceReference JSTZ_JS = new JavaScriptResourceReference(DefaultLoginPlugin.class, "jstz.min.js");
 
     public static final String SHOW_TIMEZONES_CONFIG_PARAM = "show.timezones";
     public static final String SELECTED_TIMEZONES_CONFIG_PARAM = "selected-timezones";
 
-    public TimeZoneLoginPlugin(final IPluginContext context, final IPluginConfig config) {
+    public DefaultLoginPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
     }
 
@@ -59,10 +59,10 @@ public class TimeZoneLoginPlugin extends SimpleLoginPlugin {
     @Override
     protected LoginPanel createLoginPanel(final String id, final boolean autoComplete, final List<String> locales,
                                           final LoginHandler handler) {
-        return new TimeZoneLoginForm(id, autoComplete, locales, handler);
+        return new LoginForm(id, autoComplete, locales, handler);
     }
 
-    protected class TimeZoneLoginForm extends CaptchaForm {
+    protected class LoginForm extends CaptchaForm {
 
         private static final String TIMEZONE_COOKIE = "tzcookie";
         private static final int TIMEZONE_COOKIE_MAX_AGE = 365 * 24 * 3600; // expire one year from now
@@ -70,7 +70,7 @@ public class TimeZoneLoginPlugin extends SimpleLoginPlugin {
         private String selectedTimeZone;
         private List<String> availableTimeZones;
 
-        public TimeZoneLoginForm(final String id, final boolean autoComplete, final List<String> locales, final LoginHandler handler) {
+        public LoginForm(final String id, final boolean autoComplete, final List<String> locales, final LoginHandler handler) {
             super(id, autoComplete, locales, handler);
 
             if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
