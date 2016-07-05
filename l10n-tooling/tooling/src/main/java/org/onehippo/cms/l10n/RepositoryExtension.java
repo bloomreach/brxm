@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -73,9 +74,9 @@ public class RepositoryExtension {
     }
     
     public void addResourceBundlesItem(ResourceBundle bundle) throws IOException {
-        final String template = IOUtils.toString(getClass().getResourceAsStream("resourcebundles-item-template.xml"));
+        final String template = IOUtils.toString(getClass().getResourceAsStream("resourcebundles-item-template.xml"), StandardCharsets.UTF_8);
         final String item = template.replace("${itemName}", getItemName(bundle)).replace("${fileName}", bundle.getFileName());
-        final Document itemDoc = parse(IOUtils.toInputStream(item));
+        final Document itemDoc = parse(IOUtils.toInputStream(item, StandardCharsets.UTF_8));
         final Node itemElt = document.importNode(itemDoc.getDocumentElement(), true);
         document.getDocumentElement().appendChild(itemElt);
         items.add(getItemName(bundle));

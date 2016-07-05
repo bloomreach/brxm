@@ -18,6 +18,7 @@ package org.onehippo.cms.l10n;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,7 +68,7 @@ class RepositoryResourceBundleLoader extends ResourceBundleLoader {
                     if (bundleEntry != null) {
                         // ... such hippo:resourcebundle files contain multiple resource bundles ... collect them
                         try (InputStream inputStream = zipFile.getInputStream(bundleEntry)) {
-                            final String json = IOUtils.toString(inputStream);
+                            final String json = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
                             final JSONObject jsonObject = JSONObject.fromObject(json);
                             // ... the resource bundle representations need to contain enough information
                             // to assemble a new hippo:resourcebundle file for a different language later

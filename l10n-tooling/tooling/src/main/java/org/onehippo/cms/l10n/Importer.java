@@ -17,8 +17,10 @@ package org.onehippo.cms.l10n;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +52,10 @@ public class Importer {
             modules.put(module.getName(), module);
         }
         final File csv = new File(baseDir, fileName);
-        try (final BufferedReader reader = new BufferedReader(new FileReader(csv))) {
+        try (final FileInputStream fileInputStream = new FileInputStream(csv);
+             final InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+             final BufferedReader reader = new BufferedReader(inputStreamReader))
+        {
             final CSVParser parser = new CSVParser(reader, CSVFormat.valueOf(format));
             final List<CSVRecord> records = parser.getRecords();
             for (int i = 1; i < records.size(); i++) {

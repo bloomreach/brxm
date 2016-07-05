@@ -17,6 +17,7 @@ package org.onehippo.cms.l10n;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -50,12 +51,12 @@ public class AngularResourceBundle extends ResourceBundle {
             createFileIfNotExists(file);
             final JSONObject o = new JSONObject();
             o.putAll(getEntries());
-            FileUtils.write(file, o.toString(2));
+            FileUtils.write(file, o.toString(2), StandardCharsets.UTF_8);
         }
 
         @Override
         protected void deserialize() throws IOException {
-            final String jsonString = FileUtils.readFileToString(file);
+            final String jsonString = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             final JSONObject jsonObject = JSONObject.fromObject(jsonString);
             for (Object key : jsonObject.keySet()) {
                 entries.put(key.toString(), jsonObject.get(key).toString());

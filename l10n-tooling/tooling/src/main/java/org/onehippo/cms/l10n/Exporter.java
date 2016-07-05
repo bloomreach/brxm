@@ -16,8 +16,10 @@
 package org.onehippo.cms.l10n;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
@@ -64,7 +66,9 @@ public class Exporter {
             }
         }
         final File csv = new File(baseDir, "export_" + locale + ".csv");
-        try (final FileWriter writer = new FileWriter(csv)) {
+        try (final FileOutputStream fos = new FileOutputStream(csv);
+             final OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8))
+        {
             final String englishHeader = Locale.ENGLISH.getDisplayName(new Locale(locale));
             final String translationLanguageHeader = new Locale(locale).getDisplayName(new Locale(locale));
             final CSVFormat csvFormat = CSVFormat.valueOf(format).withHeader("Key", englishHeader, translationLanguageHeader);

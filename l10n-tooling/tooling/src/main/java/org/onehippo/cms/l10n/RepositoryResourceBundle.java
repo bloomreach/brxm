@@ -18,6 +18,7 @@ package org.onehippo.cms.l10n;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -109,7 +110,7 @@ public class RepositoryResourceBundle extends ResourceBundle {
     static Iterable<ResourceBundle> createAllInstances(final String fileName, final File file, final String locale) throws IOException {
         final Collection<ResourceBundle> bundles = new ArrayList<>();
         try (FileInputStream in = new FileInputStream(file)) {
-            final String json = IOUtils.toString(in);
+            final String json = IOUtils.toString(in, StandardCharsets.UTF_8);
             final JSONObject jsonObject = JSONObject.fromObject(json);
             RepositoryResourceBundleLoader.collectResourceBundles(jsonObject, fileName, Collections.singletonList(locale), new RepositoryResourceBundleLoader.Path(), bundles);
         }
@@ -125,7 +126,7 @@ public class RepositoryResourceBundle extends ResourceBundle {
         protected void serialize() throws IOException {
             final JSONObject o;
             if (file.exists()) {
-                final String json = FileUtils.readFileToString(file);
+                final String json = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 o = JSONObject.fromObject(json);
             } else {
                 o = new JSONObject();
@@ -144,7 +145,7 @@ public class RepositoryResourceBundle extends ResourceBundle {
             current = (JSONObject) current.get(locale);
             current.clear();
             current.putAll(entries);
-            FileUtils.write(file, o.toString(2));
+            FileUtils.write(file, o.toString(2), StandardCharsets.UTF_8);
             if (!locale.equals("en")) {
                 final File extensionFile = getExtensionFile();
                 final RepositoryExtension extension;
@@ -164,7 +165,7 @@ public class RepositoryResourceBundle extends ResourceBundle {
 
         @Override
         protected void deserialize() throws IOException {
-            final String json = FileUtils.readFileToString(file);
+            final String json = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             JSONObject obj = JSONObject.fromObject(json);
 
             // navigate to the right bundle in the json file
@@ -194,7 +195,7 @@ public class RepositoryResourceBundle extends ResourceBundle {
             if (!file.exists()) {
                 return;
             }
-            final String json = FileUtils.readFileToString(file);
+            final String json = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             final Stack<JSONObject> stack = new Stack<>();
             final JSONObject o = JSONObject.fromObject(json);
             JSONObject current = o;
@@ -230,12 +231,12 @@ public class RepositoryResourceBundle extends ResourceBundle {
                     }
                 }
             } else {
-                FileUtils.write(file, o.toString(2));
+                FileUtils.write(file, o.toString(2), StandardCharsets.UTF_8);
             }
         }
         
         private boolean exists() throws IOException {
-            final String json = FileUtils.readFileToString(file);
+            final String json = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
             JSONObject obj = JSONObject.fromObject(json);
 
             // navigate to the right bundle in the json file
