@@ -1,0 +1,14 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "timezone-label" : {
+      "status" : "ADDED",
+      "locales" : {
+        "fr": "UNRESOLVED",
+        "de": "UNRESOLVED",
+        "nl": "UNRESOLVED",
+        "zh": "UNRESOLVED"
+      }
+    }
+  }
+}
