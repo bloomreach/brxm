@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class XmlUtilsTest extends BaseResourceTest {
         final XmlNode xmlNode = findPluginNode(templateDocuments);
         final String xml = XmlUtils.xmlNodeToString(xmlNode);
         assertNotNull(xml);
-        final XmlNode myXml = XmlUtils.parseXml(IOUtils.toInputStream(xml));
+        final XmlNode myXml = XmlUtils.parseXml(IOUtils.toInputStream(xml, StandardCharsets.UTF_8));
         assertNotNull(myXml);
     }
 
