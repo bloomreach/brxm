@@ -32,6 +32,9 @@
         <sv:property sv:name="hst:mountpoint" sv:type="String">
           <sv:value>/hst:hst/hst:sites/${rootArtifactId.replace($hyphen,$empty)}</sv:value>
         </sv:property>
+        <sv:property sv:name="hst:homepage" sv:type="String">
+          <sv:value>root</sv:value>
+        </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>
