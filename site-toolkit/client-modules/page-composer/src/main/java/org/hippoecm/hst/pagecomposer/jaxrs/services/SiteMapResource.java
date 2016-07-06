@@ -258,6 +258,8 @@ public class SiteMapResource extends AbstractConfigResource {
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
                 .add(validatorFactory.getNodePathPrefixValidator(getPreviewConfigurationPath(), getPageComposerContextService().getRequestConfigIdentifier(),
                         HstNodeTypes.NODETYPE_HST_SITEMAP))
+                .add(validatorFactory.getNameValidator(targetName))
+                .add(validatorFactory.getNamePathInfoValidator(targetName))
                 .add(validatorFactory.getConfigurationExistsValidator(siteMapItemUUID, siteMapHelper));
 
 

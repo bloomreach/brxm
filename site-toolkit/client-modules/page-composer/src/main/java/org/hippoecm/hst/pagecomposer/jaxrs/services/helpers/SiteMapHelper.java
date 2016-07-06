@@ -107,7 +107,7 @@ public class SiteMapHelper extends AbstractHelper {
 
         lockHelper.acquireLock(siteMapItemNode, 0);
 
-        final String modifiedName = NodeNameCodec.encode(siteMapItem.getName());
+        final String modifiedName = getURLDecodedJcrEncodedName(siteMapItem.getName());
 
         moveIfNeeded(itemId, siteMapItem.getParentId(), modifiedName);
 
@@ -152,6 +152,7 @@ public class SiteMapHelper extends AbstractHelper {
 
         final Set<String> modifiedRoles = siteMapItem.getRoles();
         setRoles(siteMapItemNode, modifiedRoles);
+
     }
 
     private HstComponentConfiguration getHstComponentConfiguration(final Node siteMapItemNode) throws RepositoryException {
@@ -184,44 +185,37 @@ public class SiteMapHelper extends AbstractHelper {
         }
         Node parent = session.getNodeByIdentifier(finalParentId);
 
-        final String encoding = Optional.fromNullable(requestContext.getServletRequest().getCharacterEncoding()).or("UTF-8");
+        final String encodedName = getURLDecodedJcrEncodedName(siteMapItem.getName());
+        validateTarget(session, parent.getPath() + "/" + encodedName, pageComposerContextService.getEditingPreviewSite().getSiteMap());
 
-        try {
-            final String urlDecodedName = URLDecoder.decode(siteMapItem.getName(), encoding);
-            final String encodedName = NodeNameCodec.encode(urlDecodedName);
-            validateTarget(session, parent.getPath() + "/" + encodedName, pageComposerContextService.getEditingPreviewSite().getSiteMap());
+        final Node newSitemapNode = parent.addNode(encodedName, NODETYPE_HST_SITEMAPITEM);
+        lockHelper.acquireLock(newSitemapNode, 0);
 
-            final Node newSitemapNode = parent.addNode(encodedName, NODETYPE_HST_SITEMAPITEM);
-            lockHelper.acquireLock(newSitemapNode, 0);
+        setSitemapItemProperties(siteMapItem, newSitemapNode);
+        // clone page definition
 
-            setSitemapItemProperties(siteMapItem, newSitemapNode);
-            // clone page definition
+        final Node prototypePage = session.getNodeByIdentifier(siteMapItem.getComponentConfigurationId());
+        final String targetPageNodeName = getSiteMapPathPrefixPart(newSitemapNode) + "-" + prototypePage.getName();
+        Node newPage = pagesHelper.create(prototypePage, targetPageNodeName);
 
-            final Node prototypePage = session.getNodeByIdentifier(siteMapItem.getComponentConfigurationId());
-            final String targetPageNodeName = getSiteMapPathPrefixPart(newSitemapNode) + "-" + prototypePage.getName();
-            Node newPage = pagesHelper.create(prototypePage, targetPageNodeName);
+        newSitemapNode.setProperty(SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
+                NODENAME_HST_PAGES + "/" + newPage.getName());
 
-            newSitemapNode.setProperty(SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
-                    NODENAME_HST_PAGES + "/" + newPage.getName());
+        final Map<String, String> modifiedLocalParameters = siteMapItem.getLocalParameters();
+        setLocalParameters(newSitemapNode, modifiedLocalParameters);
 
-            final Map<String, String> modifiedLocalParameters = siteMapItem.getLocalParameters();
-            setLocalParameters(newSitemapNode, modifiedLocalParameters);
-
-            final Set<String> modifiedRoles = siteMapItem.getRoles();
-            setRoles(newSitemapNode, modifiedRoles);
-            return newSitemapNode;
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException(String.format("Could not ULR  decode '%s'",siteMapItem.getName()), e);
-        }
+        final Set<String> modifiedRoles = siteMapItem.getRoles();
+        setRoles(newSitemapNode, modifiedRoles);
+        return newSitemapNode;
     }
 
     /**
      * utility method to create a <strong>shallow copy</strong> of {@code siteMapItemId} : Shallow copy means that
      * child pages of {@code siteMapItemId} are not copied
      *
-     *
-     * @param mountId the target mount for the copy. If <code>null</code>, the current edited mount is used
-     * @param sourceSiteMapItemUUID  the uuid of the {@code siteMapItem} to copy, not allowed to be <code>null</code>
+     * @param mountId               the target mount for the copy. If <code>null</code>, the current edited mount is
+     *                              used
+     * @param sourceSiteMapItemUUID the uuid of the {@code siteMapItem} to copy, not allowed to be <code>null</code>
      * @param targetSiteMapItemUUID the uuid of the target siteMapItem, can be {@code null} in which case the same
      *                              location as {@code siteMapItem} will be used, only with name {@code targetName}
      * @param targetName            the name of the copy, not allowed to be {@code null}
@@ -258,11 +252,12 @@ public class SiteMapHelper extends AbstractHelper {
 
         final Node workspaceSiteMapNode = session.getNode(previewWorkspaceSiteMapPath);
 
+        final String encodedName = getURLDecodedJcrEncodedName(targetName);
         final String target;
         if (targetSiteMapItemUUID != null) {
-            target = session.getNodeByIdentifier(targetSiteMapItemUUID).getPath() + "/" + targetName;
+            target = session.getNodeByIdentifier(targetSiteMapItemUUID).getPath() + "/" + encodedName;
         } else {
-            target = workspaceSiteMapNode.getPath() + "/" + targetName;
+            target = workspaceSiteMapNode.getPath() + "/" + encodedName;
         }
         String nonWorkspaceLocation = target.replace("/" + NODENAME_HST_WORKSPACE + "/", "/");
 
@@ -273,7 +268,7 @@ public class SiteMapHelper extends AbstractHelper {
         }
 
         validateTarget(session, target, targetMount.getHstSite().getSiteMap());
-        final Node newSiteMapNode = shallowCopy(session, sourceSiteMapItemUUID, substringBeforeLast(target, "/"), targetName);
+        final Node newSiteMapNode = shallowCopy(session, sourceSiteMapItemUUID, substringBeforeLast(target, "/"), encodedName);
         lockHelper.acquireLock(newSiteMapNode, 0);
 
         // copy the page definition
@@ -293,10 +288,10 @@ public class SiteMapHelper extends AbstractHelper {
 
         final String prefix = getPreviewConfigurationPath() + "/" + NODENAME_HST_PAGES + "/" + sourcePageNodeNamePrefix + "-";
         String targetPageName;
-        if (sourcePage.getCanonicalStoredLocation().startsWith(prefix)){
-            targetPageName = targetName + "-" + sourcePage.getCanonicalStoredLocation().substring(prefix.length());
+        if (sourcePage.getCanonicalStoredLocation().startsWith(prefix)) {
+            targetPageName = encodedName + "-" + sourcePage.getCanonicalStoredLocation().substring(prefix.length());
         } else {
-            targetPageName = targetName;
+            targetPageName = encodedName;
         }
         if (targetSiteMapItem != null) {
             String targetPathInfo = HstSiteMapUtils.getPath(targetSiteMapItem);
@@ -316,7 +311,7 @@ public class SiteMapHelper extends AbstractHelper {
 
     private void createWorkspaceSiteMapInPreviewAndLive(final String previewWorkspaceSiteMapPath, final Session session) throws RepositoryException {
         final String previewWorkspacePath = substringBeforeLast(previewWorkspaceSiteMapPath, "/");
-        final String liveWorkspacePath = previewWorkspacePath.replace("-preview/","/");
+        final String liveWorkspacePath = previewWorkspacePath.replace("-preview/", "/");
         session.getNode(previewWorkspacePath).addNode(NODENAME_HST_SITEMAP, NODETYPE_HST_SITEMAP);
         if (!session.nodeExists(liveWorkspacePath + "/" + NODETYPE_HST_SITEMAP)) {
             session.getNode(liveWorkspacePath).addNode(NODENAME_HST_SITEMAP, NODETYPE_HST_SITEMAP);
@@ -324,7 +319,8 @@ public class SiteMapHelper extends AbstractHelper {
     }
 
     /**
-     * copies the node for <code>sourceSiteMapItemUUID</code> to the node for <code>targetSiteMapItemUUID</code>. The copied
+     * copies the node for <code>sourceSiteMapItemUUID</code> to the node for <code>targetSiteMapItemUUID</code>. The
+     * copied
      * node will have name <code>targetName</code>. The node is copied <strong>without</strong> its children!
      */
     private Node shallowCopy(final Session session, final String sourceSiteMapItemUUID,
@@ -366,7 +362,7 @@ public class SiteMapHelper extends AbstractHelper {
         String pathInfo = HstSiteMapUtils.getPath(hstSiteMapItem);
         if (pathInfo.contains(HstNodeTypes.WILDCARD) || pathInfo.contains(HstNodeTypes.ANY)) {
             String message = String.format("Cannot copy a page for siteMapItem '%s' because it contains " +
-                    "wildcards and this is not supported.", ((CanonicalInfo) hstSiteMapItem).getCanonicalPath());
+                    "wildcards and this is not supported.", ((CanonicalInfo)hstSiteMapItem).getCanonicalPath());
             throw new ClientException(message, ClientError.ITEM_CANNOT_BE_CLONED, Collections.singletonMap("errorReason", message));
         }
         return hstSiteMapItem;
@@ -455,7 +451,7 @@ public class SiteMapHelper extends AbstractHelper {
         if (!(siteMapItem instanceof CanonicalInfo)) {
             return null;
         }
-        if (((CanonicalInfo) siteMapItem).getCanonicalIdentifier().equals(siteMapItemId)) {
+        if (((CanonicalInfo)siteMapItem).getCanonicalIdentifier().equals(siteMapItemId)) {
             return siteMapItem;
         }
         for (HstSiteMapItem child : siteMapItem.getChildren()) {
@@ -514,7 +510,7 @@ public class SiteMapHelper extends AbstractHelper {
             }
         }
 
-        final CanonicalInfo canonical = (CanonicalInfo) siteMap;
+        final CanonicalInfo canonical = (CanonicalInfo)siteMap;
         if (canonical.isWorkspaceConfiguration()) {
             // the hst:sitemap node is from workspace so there is no non workspace sitemap for current site (inherited one
             // does not have precendence)
@@ -605,6 +601,21 @@ public class SiteMapHelper extends AbstractHelper {
             workspaceSiteMapId = configNode.getNode(relSiteMapPath).getIdentifier();
         }
         return workspaceSiteMapId;
+    }
+
+
+    private String getURLDecodedJcrEncodedName(final String name) {
+        final String encoding = getEncoding(pageComposerContextService.getRequestContext());
+        try {
+            final String urlDecodedName = URLDecoder.decode(name, encoding);
+            return NodeNameCodec.encode(urlDecodedName);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(String.format("Could not ULR  decode '%s'", name), e);
+        }
+    }
+
+    private String getEncoding(final HstRequestContext requestContext) {
+        return Optional.fromNullable(requestContext.getServletRequest().getCharacterEncoding()).or("UTF-8");
     }
 
 }

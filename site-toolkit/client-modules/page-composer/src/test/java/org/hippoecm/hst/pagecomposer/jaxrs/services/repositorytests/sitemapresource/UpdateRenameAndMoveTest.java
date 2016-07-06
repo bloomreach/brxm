@@ -569,6 +569,38 @@ public class UpdateRenameAndMoveTest extends AbstractSiteMapResourceTest {
     }
 
     @Test
+    public void validate_invalid_renames() throws Exception {
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        for (String invalidChar : new String[]{"?", ";", "#", "\\"}) {
+            invalidRenameAssertions(home, invalidChar, "Invalid pathInfo");
+        }
+        for (String invalidChar : new String[]{":", "/"}) {
+            invalidRenameAssertions(home, invalidChar, "is invalid");
+        }
+        // %3A = :
+        // %2F = /
+        // %2f = /
+        // %5c = \
+        // %5C = \
+        // %2e = .
+        // %2E = .
+        // %3F = ?
+        // %3B = ;
+        // %23 = #
+        for (String checkURLEncodedChar : new String[]{"%3A", "%2F", "%2f", "%5c", "%5C", "%2e", "%2E", "%3F", "%3B", "%23"}) {
+            invalidRenameAssertions(home, checkURLEncodedChar, "Invalid pathInfo");
+        }
+    }
+
+    private void invalidRenameAssertions(final SiteMapItemRepresentation home, final String invalidChar, final String messagePart) {
+        home.setName("ho" + invalidChar+"me");
+        final SiteMapResource siteMapResource = createResource();
+        Response response = siteMapResource.update(home);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        assertTrue(((ExtResponseRepresentation) response.getEntity()).getMessage().contains(messagePart));
+    }
+
+    @Test
     public void test_move_succeeds() throws Exception {
         moveAndAssertHomeToNews(null, null);
     }

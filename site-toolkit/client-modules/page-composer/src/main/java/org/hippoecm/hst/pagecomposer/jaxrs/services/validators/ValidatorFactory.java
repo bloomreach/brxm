@@ -97,6 +97,10 @@ public class ValidatorFactory {
         return new NameValidator(name);
     }
 
+    public Validator getNamePathInfoValidator(String name) {
+        return new NamePathInfoValidator(name);
+    }
+
     public Validator getPathInfoValidator(final SiteMapItemRepresentation siteMapItem,
                                           final String parentId,
                                           final SiteMapHelper siteMapHelper) {
@@ -142,4 +146,16 @@ public class ValidatorFactory {
         }
     }
 
+    private static final class NamePathInfoValidator extends AbstractPathInfoValidator {
+
+        private final String name;
+        private NamePathInfoValidator(final String name) {
+            this.name = name;
+        }
+
+        @Override
+        protected String getPathInfo() throws ClientException {
+            return name;
+        }
+    }
 }
