@@ -205,7 +205,7 @@
       <sv:value>2.27.00</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="cms-login-time-zone-plugin">
+  <sv:node sv:name="cms-login-class-set-default-login-plugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
