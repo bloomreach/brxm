@@ -45,14 +45,15 @@ export class PageEditCtrl {
                                      ? this.item.primaryDocumentRepresentation.path : '';
     this.primaryDocument = this.availableDocuments.find((dr) => dr.path === currentPrimaryDocumentPath) || documentNone;
     this.prototypes = [];
+    this.errorMap = {
+      ITEM_ALREADY_LOCKED: 'ERROR_PAGE_LOCKED_BY',
+    };
 
     this.ChannelService.getNewPageModel()
       .then((data) => {
         this.prototypes = data.prototypes;
       })
-      .catch(() => {
-        this.FeedbackService.showErrorOnSubpage('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
-      });
+      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
   }
 
   save() {
@@ -76,22 +77,7 @@ export class PageEditCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch((response) => {
-        // response might be undefined or null (for example when the network connection is lost)
-        response = response || {};
-
-        let messageKey;
-        switch (response.errorCode) {
-          case 'ITEM_ALREADY_LOCKED':
-            messageKey = 'ERROR_PAGE_LOCKED_BY';
-            break;
-          default:
-            messageKey = 'ERROR_PAGE_SAVE_FAILED';
-            break;
-        }
-
-        this.FeedbackService.showErrorOnSubpage(messageKey, response.data);
-      });
+      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_SAVE_FAILED', this.errorMap));
   }
 
   hasPrototypes() {

@@ -66,7 +66,7 @@ describe('PageActionCreate', () => {
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(ChannelService, 'recordOwnChange');
-    spyOn(FeedbackService, 'showErrorOnSubpage');
+    spyOn(FeedbackService, 'showErrorResponseOnSubpage');
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapService, 'create').and.returnValue($q.when({ renderPathInfo: 'renderPathInfo' }));
     spyOn(SiteMapService, 'load');
@@ -126,7 +126,8 @@ describe('PageActionCreate', () => {
     compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
+    expect(FeedbackService.showErrorResponseOnSubpage)
+      .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
   });
 
   it('gracefully handles absend prototypes or locations', () => {
@@ -179,50 +180,19 @@ describe('PageActionCreate', () => {
     });
     $rootScope.$digest();
 
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith(
-      'ERROR_PAGE_CREATION_FAILED',
-      undefined
-    );
+    expect(FeedbackService.showErrorResponseOnSubpage)
+      .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_CREATION_FAILED', PageCreateCtrl.errorMap);
   });
 
   it('correctly dispatches the error from the server when trying to create a new page', () => {
     const PageCreateCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
-    const lockedError = {
-      errorCode: 'ITEM_ALREADY_LOCKED',
-      data: { lockedBy: 'tobi' },
-    };
-    SiteMapService.create.and.returnValue($q.reject(lockedError));
+    const response = { key: 'value' };
+    SiteMapService.create.and.returnValue($q.reject(response));
     PageCreateCtrl.create();
     $rootScope.$digest();
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith(
-      'ERROR_PAGE_LOCKED_BY',
-      lockedError.data
-    );
-
-    SiteMapService.create.and.returnValue($q.reject({ errorCode: 'ITEM_NOT_IN_PREVIEW' }));
-    PageCreateCtrl.create();
-    $rootScope.$digest();
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith(
-      'ERROR_PAGE_PARENT_MISSING',
-      undefined
-    );
-
-    SiteMapService.create.and.returnValue($q.reject({ errorCode: 'ITEM_NAME_NOT_UNIQUE' }));
-    PageCreateCtrl.create();
-    $rootScope.$digest();
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith(
-      'ERROR_PAGE_PATH_EXISTS',
-      undefined
-    );
-
-    SiteMapService.create.and.returnValue($q.reject({ errorCode: 'INVALID_PATH_INFO' }));
-    PageCreateCtrl.create();
-    $rootScope.$digest();
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith(
-      'ERROR_PAGE_PATH_INVALID',
-      undefined
-    );
+    expect(FeedbackService.showErrorResponseOnSubpage)
+      .toHaveBeenCalledWith(response, 'ERROR_PAGE_CREATION_FAILED', PageCreateCtrl.errorMap);
   });
 });

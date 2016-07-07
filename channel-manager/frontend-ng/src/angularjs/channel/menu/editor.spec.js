@@ -63,7 +63,7 @@ describe('MenuEditor', () => {
     spyOn(ChannelService, 'reload');
     spyOn(DialogService, 'confirm').and.returnValue(dialog);
     spyOn(DialogService, 'show').and.returnValue($q.when());
-    spyOn(FeedbackService, 'showErrorOnSubpage');
+    spyOn(FeedbackService, 'showErrorResponseOnSubpage');
   });
 
   function compileDirectiveAndGetController() {
@@ -163,13 +163,13 @@ describe('MenuEditor', () => {
       });
 
       it('should fail when adding an item', () => {
-        const data = { key: 'value' };
-        const error = { data };
-        spyOn(SiteMenuService, 'createEditableMenuItem').and.returnValue($q.reject(error));
+        const response = { key: 'value' };
+        spyOn(SiteMenuService, 'createEditableMenuItem').and.returnValue($q.reject(response));
 
         MenuEditorCtrl.addItem();
         $rootScope.$apply();
-        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_CREATE_FAILED', data);
+        expect(FeedbackService.showErrorResponseOnSubpage)
+          .toHaveBeenCalledWith(response, 'ERROR_MENU_CREATE_FAILED', MenuEditorCtrl.errorMap);
       });
 
       it('flashes a catch-all toast when the add request is rejected for no specific reason', () => {
@@ -177,7 +177,8 @@ describe('MenuEditor', () => {
 
         MenuEditorCtrl.addItem();
         $rootScope.$digest();
-        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_CREATE_FAILED', undefined);
+        expect(FeedbackService.showErrorResponseOnSubpage)
+          .toHaveBeenCalledWith(undefined, 'ERROR_MENU_CREATE_FAILED', MenuEditorCtrl.errorMap);
       });
     });
 
@@ -244,8 +245,8 @@ describe('MenuEditor', () => {
       });
 
       it('flashes a toast if the item name already exists', () => {
-        const data = { key: 'value' };
-        SiteMenuService.saveMenuItem.and.returnValue($q.reject({ errorCode: 'ITEM_NAME_NOT_UNIQUE', data }));
+        let response = { key: 'value' };
+        SiteMenuService.saveMenuItem.and.returnValue($q.reject(response));
 
         // select the item to be deleted
         MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
@@ -255,33 +256,9 @@ describe('MenuEditor', () => {
         MenuEditorCtrl.saveItem();
         $rootScope.$digest();
 
-        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_SAME_NAME_SIBLING', data);
+        expect(FeedbackService.showErrorResponseOnSubpage)
+          .toHaveBeenCalledWith(response, 'ERROR_MENU_ITEM_SAVE_FAILED', MenuEditorCtrl.errorMap);
         expect(MenuEditorCtrl.editingItem).not.toBeNull();
-
-        // Try again for similar back-end error
-        SiteMenuService.saveMenuItem.and.returnValue($q.reject({ errorCode: 'ITEM_NAME_NOT_UNIQUE_IN_ROOT', data }));
-
-        // save the selected item
-        MenuEditorCtrl.saveItem();
-        $rootScope.$digest();
-
-        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_SAME_NAME_SIBLING', data);
-        expect(MenuEditorCtrl.editingItem).not.toBeNull();
-      });
-
-      it('flashes a catch-all toast when the save request is rejected for another reason', () => {
-        const data = { key: 'value' };
-        SiteMenuService.saveMenuItem.and.returnValue($q.reject({ errorCode: 'ANOTHER_REASON', data }));
-
-        // select the item to be deleted
-        MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
-        $rootScope.$digest();
-
-        // save the selected item
-        MenuEditorCtrl.saveItem();
-        $rootScope.$digest();
-
-        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_SAVE_FAILED', data);
       });
 
       it('flashes a catch-all toast when the save request is rejected without a specific reason', () => {
@@ -295,7 +272,8 @@ describe('MenuEditor', () => {
         MenuEditorCtrl.saveItem();
         $rootScope.$digest();
 
-        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_SAVE_FAILED', undefined);
+        expect(FeedbackService.showErrorResponseOnSubpage)
+          .toHaveBeenCalledWith(undefined, 'ERROR_MENU_ITEM_SAVE_FAILED', MenuEditorCtrl.errorMap);
       });
     });
 
@@ -338,8 +316,8 @@ describe('MenuEditor', () => {
       });
 
       it('reloads the menu and channel when the deletion request is rejected because the menu is locked', () => {
-        const data = { lockedBy: 'tester' };
-        SiteMenuService.deleteMenuItem.and.returnValue($q.reject({ errorCode: 'ITEM_ALREADY_LOCKED', data }));
+        const response = { errorCode: 'ITEM_ALREADY_LOCKED', data: { lockedBy: 'tester' } };
+        SiteMenuService.deleteMenuItem.and.returnValue($q.reject(response));
         SiteMenuService.loadMenu.calls.reset();
 
         // select the item to be deleted
@@ -352,12 +330,13 @@ describe('MenuEditor', () => {
 
         expect(SiteMenuService.loadMenu).toHaveBeenCalledWith('testUuid');
         expect(ChannelService.reload).toHaveBeenCalled();
-        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_LOCKED_BY', data);
+        expect(FeedbackService.showErrorResponseOnSubpage)
+          .toHaveBeenCalledWith(response, 'ERROR_MENU_ITEM_DELETE_FAILED', MenuEditorCtrl.errorMap);
       });
 
       it('flashes a catch-all toast when the deletion request is rejected for another reason', () => {
-        const data = { key: 'value' };
-        SiteMenuService.deleteMenuItem.and.returnValue($q.reject({ errorCode: 'ANOTHER_REASON', data }));
+        const response = { errorCode: 'ANOTHER_REASON', data: { key: 'value' } };
+        SiteMenuService.deleteMenuItem.and.returnValue($q.reject(response));
 
         // select the item to be deleted
         MenuEditorCtrl.toggleEditState({ id: 'clickedId' });
@@ -367,7 +346,8 @@ describe('MenuEditor', () => {
         MenuEditorCtrl.deleteItem();
         $rootScope.$digest();
 
-        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_DELETE_FAILED', data);
+        expect(FeedbackService.showErrorResponseOnSubpage)
+          .toHaveBeenCalledWith(response, 'ERROR_MENU_ITEM_DELETE_FAILED', MenuEditorCtrl.errorMap);
       });
 
       it('flashes a catch-all toast when the deletion request is rejected without a specific reason', () => {
@@ -381,7 +361,8 @@ describe('MenuEditor', () => {
         MenuEditorCtrl.deleteItem();
         $rootScope.$digest();
 
-        expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_MENU_ITEM_DELETE_FAILED', undefined);
+        expect(FeedbackService.showErrorResponseOnSubpage)
+          .toHaveBeenCalledWith(undefined, 'ERROR_MENU_ITEM_DELETE_FAILED', MenuEditorCtrl.errorMap);
       });
     });
 

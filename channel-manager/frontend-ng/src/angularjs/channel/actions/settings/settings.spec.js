@@ -99,6 +99,7 @@ describe('ChannelSettings', () => {
     spyOn(ChannelService, 'getChannel').and.returnValue(channel);
     spyOn(ChannelService, 'getChannelInfoDescription').and.returnValue($q.when(channelInfoDescription));
     spyOn(FeedbackService, 'showErrorOnSubpage');
+    spyOn(FeedbackService, 'showErrorResponseOnSubpage');
   });
 
   function compileDirectiveAndGetController() {
@@ -184,7 +185,7 @@ describe('ChannelSettings', () => {
     $element.find('.qa-action').click();
 
     expect(ChannelService.saveChannel).toHaveBeenCalled();
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
+    expect(FeedbackService.showErrorResponseOnSubpage).toHaveBeenCalledWith(undefined, 'ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
   });
 
   it('applies a fall-back strategy when determining a field label', () => {

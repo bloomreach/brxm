@@ -17,26 +17,55 @@
 const HIDE_DELAY_IN_MS = 3000;
 
 export class FeedbackService {
-  constructor($translate, $mdToast) {
+  constructor($interpolate, $log, $translate, $mdToast) {
     'ngInject';
 
+    this.$interpolate = $interpolate;
+    this.$log = $log;
     this.$translate = $translate;
     this.$mdToast = $mdToast;
   }
 
-  showError(errorKey, params, parentJQueryElement = $('hippo-iframe')) {
+  showError(key, params, parentJQueryElement) {
+    const text = this.$translate.instant(key, params);
+    this._show(text, parentJQueryElement);
+  }
+
+  showErrorOnSubpage(key, params) {
+    this._showOnSubpage(this.$translate.instant(key, params));
+  }
+
+  showErrorResponseOnSubpage(response = {}, defaultKey, errorMap = {}) {
+    if (response.message) {
+      this.$log.info(response.message);
+    }
+
+    let text;
+    if (response.data && response.data.userMessage) {
+      const template = response.data.userMessage;
+      delete response.data.userMessage;
+      text = this.$interpolate(template)(response.data);
+    } else {
+      const key = errorMap[response.errorCode] || defaultKey;
+      text = this.$translate.instant(key, response.data);
+    }
+
+    this._showOnSubpage(text);
+  }
+
+  _showOnSubpage(text) {
+    const feedbackParent = $('.subpage-feedback-parent');
+    this._show(text, feedbackParent);
+  }
+
+  _show(text, parentJQueryElement = $('hippo-iframe')) {
     this.$mdToast.show(
       this.$mdToast.simple()
-        .textContent(this.$translate.instant(errorKey, params))
+        .textContent(text)
         .position('top right')
         .hideDelay(HIDE_DELAY_IN_MS)
         .parent(parentJQueryElement)
     );
-  }
-
-  showErrorOnSubpage(errorKey, params) {
-    const feedbackParent = $('.subpage-feedback-parent');
-    this.showError(errorKey, params, feedbackParent);
   }
 }
 
