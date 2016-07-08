@@ -15,6 +15,17 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.jcr.Item;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeTypeManager;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
@@ -47,13 +58,13 @@ import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.validation.*;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.IValidationService;
+import org.hippoecm.frontend.validation.ModelPath;
+import org.hippoecm.frontend.validation.ModelPathElement;
+import org.hippoecm.frontend.validation.Violation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Item;
-import javax.jcr.Node;
-import java.util.*;
 
 public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> extends ListViewPlugin<Node> implements
         ITemplateFactory<C> {
@@ -331,13 +342,17 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 ITypeDescriptor subType = field.getTypeDescriptor();
                 AbstractProvider<P, C> provider = newProvider(field, subType, model);
 
-                if (IEditor.Mode.EDIT == mode && (provider.size() == 0)
-                        && (!field.isMultiple() || field.getValidators().contains("required"))
-                        && !field.getValidators().contains("optional")
-                        && !subType.isType("hippo:compound")
-                ) {
-                    provider.addNew();
+                try {
+                    if (IEditor.Mode.EDIT == mode && provider.size() == 0
+                            && (!field.isMultiple() || field.getValidators().contains("required"))
+                            && !field.getValidators().contains("optional")
+                            && isNotAbstractNodeType(subType.getType())) {
+                        provider.addNew();
+                    }
+                } catch (RepositoryException e) {
+                    log.warn("error determining whether type "+subType.getType()+ " is abstract", e);
                 }
+
                 return provider;
             } else {
                 log.warn("No engine found to display new model");
@@ -572,4 +587,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         return provider.size();
     }
 
+    private boolean isNotAbstractNodeType(final String type) throws RepositoryException {
+        NodeTypeManager nodeTypeManager = getSession().getJcrSession().getWorkspace().getNodeTypeManager();
+        return !nodeTypeManager.getNodeType(type).isAbstract();
+    }
 }
