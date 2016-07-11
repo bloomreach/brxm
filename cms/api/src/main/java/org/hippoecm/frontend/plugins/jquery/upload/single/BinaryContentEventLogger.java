@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.hippoecm.frontend.plugins.jquery.upload.single;
 
 import javax.jcr.Node;
@@ -44,16 +43,17 @@ public final class BinaryContentEventLogger {
      *
      * @param node asset or gallery node.
      * @param category workflow category name e.g. cms
-     * @param action name of the workflow action e.g. upload
-     * @param interaction name of workflow interaction e.g. image-gallery
+     * @param type type of workflow e.g. image or resource
+     * @param action name of the workflow action e.g. upload or crop
      * @throws RepositoryException
      */
-    public static void fireBinaryChangedEvent(final Node node, final String category, String action, final String interaction) throws RepositoryException {
+    public static void fireBinaryChangedEvent(final Node node, final String category, final String type, String action) throws RepositoryException {
         if (node == null) {
             log.warn("Cannot publish event for null");
             return;
         }
-        HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+
+        final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
         if (eventBus != null) {
             final HippoWorkflowEvent event = new HippoWorkflowEvent();
             final Node handle = getHandle(node);
@@ -61,12 +61,20 @@ public final class BinaryContentEventLogger {
                 log.warn("Handle was null for node: {}", node.getPath());
                 return;
             }
+
             final String documentType = getDocumentType(node);
             event.user(node.getSession().getUserID()).action(action).system(false);
-            event.subjectPath(node.getPath()).subjectId(node.getIdentifier())
-                    .interactionId(node.getIdentifier()).interaction(getInteraction(category, action, interaction)).workflowCategory(WORKFLOW_CATEGORY)
-                    .workflowName(action).documentType(documentType);
+            event.subjectPath(node.getPath())
+                    .subjectId(node.getIdentifier())
+                    .interactionId(node.getIdentifier())
+                    .interaction(getInteraction(category, type, action))
+                    .workflowCategory(category)
+                    .workflowName(action)
+                    .documentType(documentType);
             eventBus.post(event);
+        }
+        else {
+            log.warn("No event bus service found by class {}", HippoEventBus.class.getName());
         }
     }
 
@@ -75,10 +83,11 @@ public final class BinaryContentEventLogger {
      * Find first component with backing JcrNodeModel and fire an upload event.
      *
      * @param component top component in component chain
-     * @param action name of the workflow action e.g. upload
-     * @param interaction name of workflow interaction e.g. image-gallery
+     * @param category workflow category e.g. cms
+     * @param type type of workflow e.g. image or resource
+     * @param action name of the workflow action e.g. upload or crop
      */
-    public static void fireUploadEvent(final MarkupContainer component, final String category, final String action, final String interaction) {
+    public static void fireUploadEvent(final MarkupContainer component, final String category, final String type, final String action) {
         MarkupContainer markupContainer = component;
         while (markupContainer != null) {
             IModel<?> model = markupContainer.getDefaultModel();
@@ -88,7 +97,7 @@ public final class BinaryContentEventLogger {
                 try {
                     Session session = subjectNode.getSession();
                     session.save();
-                    fireBinaryChangedEvent(subjectNode, category, action, interaction);
+                    fireBinaryChangedEvent(subjectNode, category, type, action);
                 } catch (RepositoryException e) {
                     log.error("Error saving session", e);
                 }
@@ -98,8 +107,8 @@ public final class BinaryContentEventLogger {
         }
     }
 
-    private static String getInteraction(final String category, final String action, final String interaction) throws RepositoryException {
-        return category + ':' + interaction + ':' + action;
+    private static String getInteraction(final String category, final String type, final String action) throws RepositoryException {
+        return category + ':' + type + ':' + action;
     }
 
     private static String getDocumentType(final Node subject) {

@@ -78,9 +78,10 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
     private static final int MAX_PREVIEW_WIDTH = 200;
     private static final int MAX_PREVIEW_HEIGHT = 300;
     private static final long serialVersionUID = 1L;
-    private static final String ACTION_CROP = "crop";
-    private static final String INTERACTION_TYPE_GALLERY = "image-gallery";
+
     private static final String WORKFLOW_CATEGORY = "cms";
+    private static final String INTERACTION_TYPE_IMAGE = "image";
+    private static final String ACTION_CROP = "crop";
 
     @SuppressWarnings("unused")
     private String region;
@@ -329,7 +330,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
             cropped.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, dimension.getHeight());
             session = cropped.getSession();
             session.save();
-            BinaryContentEventLogger.fireBinaryChangedEvent(cropped, WORKFLOW_CATEGORY, ACTION_CROP,INTERACTION_TYPE_GALLERY);
+            BinaryContentEventLogger.fireBinaryChangedEvent(cropped, WORKFLOW_CATEGORY, INTERACTION_TYPE_IMAGE, ACTION_CROP);
         } catch (GalleryException | IOException | RepositoryException ex) {
             log.error("Unable to create thumbnail image", ex);
             error(ex);
