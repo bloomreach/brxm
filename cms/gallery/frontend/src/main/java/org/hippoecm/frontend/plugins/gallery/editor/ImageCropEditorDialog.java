@@ -47,7 +47,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.gallery.editor.crop.ImageCropBehavior;
@@ -70,13 +70,15 @@ import net.sf.json.JSONObject;
  * ImageCropEditorDialog shows a modal dialog with simple image editor in it, the only operation available currently is
  * "cropping". The ImageCropEditorDialog will replace the current variant with the result of the image editing actions.
  */
-public class ImageCropEditorDialog extends AbstractDialog<Node> {
+public class ImageCropEditorDialog extends Dialog<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(ImageCropEditorDialog.class);
 
+    private static final IValueMap DIALOG_SIZE = new ValueMap("width=855,height=565").makeImmutable();
+    private static final String DIALOG_TITLE = "edit-image-dialog-title";
+
     private static final int MAX_PREVIEW_WIDTH = 200;
     private static final int MAX_PREVIEW_HEIGHT = 300;
-    private static final long serialVersionUID = 1L;
 
     private static final String WORKFLOW_CATEGORY = "cms";
     private static final String INTERACTION_TYPE_IMAGE = "image";
@@ -93,6 +95,9 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
 
     public ImageCropEditorDialog(IModel<Node> jcrImageNodeModel, GalleryProcessor galleryProcessor) {
         super(jcrImageNodeModel);
+
+        setSize(DIALOG_SIZE);
+        setTitleKey(DIALOG_TITLE);
 
         this.galleryProcessor = galleryProcessor;
         Node thumbnailImageNode = jcrImageNodeModel.getObject();
@@ -170,14 +175,10 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         final ImageCropBehavior imageCropBehavior = new ImageCropBehavior(cropSettings);
         final IModel<Boolean> fitViewModel = new PropertyModel<>(this, "fitView");
         final AjaxCheckBox fitViewCheckbox = new AjaxCheckBox("fit-view", fitViewModel) {
-            private static final long serialVersionUID = 1L;
-
-
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
                 executeJavascript(target, imageCropBehavior);
             }
-
         };
         fitViewCheckbox.setOutputMarkupId(true);
         add(fitViewCheckbox);
@@ -185,8 +186,6 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         final Label fitViewLabel = new Label("fit-view-label", new StringResourceModel("fit-view", this, null));
         fitViewLabel.setOutputMarkupId(true);
         final AjaxLink fitViewLink = new AjaxLink("fit-view-link") {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 // toggle fitView flag
@@ -278,16 +277,6 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
     }
 
     @Override
-    public IValueMap getProperties() {
-        return new ValueMap("width=855,height=565").makeImmutable();
-    }
-
-    @Override
-    public IModel<String> getTitle() {
-        return new StringResourceModel("edit-image-dialog-title", ImageCropEditorDialog.this, null);
-    }
-
-    @Override
     protected void onOk() {
         JSONObject jsonObject = JSONObject.fromObject(region);
 
@@ -341,7 +330,6 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
             } else {
                 log.debug("No scaling parameters specified for {}, using original image", galleryProcessor.getScalingParametersMap().get(getModelObject().getName()));
             }
-
 
             final Node cropped = getModelObject();
             cropped.setProperty(JcrConstants.JCR_DATA, ResourceHelper.getValueFactory(cropped).createBinary(stored));
