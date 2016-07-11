@@ -16,7 +16,8 @@
 (function () {
   "use strict";
 
-  var disableLinkButton = false, CLICK_DELAY = 300;
+  var skipToolbarButtonUpdate = false,
+      PREVENT_DBLCLICK_DELAY = 300;
 
   function iterate(object, func) {
     var property;
@@ -109,14 +110,14 @@
     }
 
     function openInternalLinkPickerDialog(selectedLink) {
-      // disable button state for CLICK_DELAY, to prevent double clicking:
-      disableLinkButton = true;
+      // disable button state for PREVENT_DBLCLICK_DELAY, to prevent double clicking:
+      skipToolbarButtonUpdate = true;
       editor.getCommand('pickInternalLink').setState(CKEDITOR.TRISTATE_DISABLED);
       setTimeout(function () {
-        disableLinkButton = false;
-      }, CLICK_DELAY);
-      var callbackParameters = getElementParameters(selectedLink, LINK_ATTRIBUTES_PARAMETER_MAP);
+        skipToolbarButtonUpdate = false;
+      }, PREVENT_DBLCLICK_DELAY);
 
+      var callbackParameters = getElementParameters(selectedLink, LINK_ATTRIBUTES_PARAMETER_MAP);
       Wicket.Ajax.post({
         u: callbackUrl,
         ep: callbackParameters
@@ -141,7 +142,7 @@
     }
 
     function updateToolbarButtonState() {
-      if (disableLinkButton) {
+      if (skipToolbarButtonUpdate) {
         return;
       }
       var state = CKEDITOR.TRISTATE_OFF,
