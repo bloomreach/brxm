@@ -26,9 +26,13 @@
   float: left;
 }
 
+.left-crop-area .yui-skin-sam .yui-crop .yui-resize {
+  border: 1px dashed #666;
+}
+
 .right-crop-area {
   float: right;
-  border-left: 1px solid #999999;
+  border-left: 1px solid #999;
   max-width: 216px;
   width: 216px;
   padding: 5px 5px 5px 12px;
