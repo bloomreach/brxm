@@ -1039,8 +1039,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 channelsByHostGroup.put(hostGroupName, channelsForHostGroup);
             }
             if (channelsForHostGroup.containsKey(channel.getId())) {
-                String msg = String.format("Channel '%s' is referenced by multiple mounts within hostgroup '%s'. Within " +
-                        "a single hostgroup, a channel is only allowed to be referenced by a ons single mount.",
+                String msg = String.format("Channel '%s' is referenced by multiple mounts within host group '%s'. " +
+                        "Within a single host group, a channel is only allowed to be referenced by a single mount.",
                         channel.getId(), hostGroupName);
                 throw new ChannelException(msg);
             }
