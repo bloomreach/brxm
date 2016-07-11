@@ -77,13 +77,6 @@
 /* YUI has a bug when the image is small but the cropping mask large. It repeats the image...*/
 .yui-crop-resize-mask {
   background-repeat: no-repeat;
-  image-rendering: optimizeSpeed;             /* STOP SMOOTHING, GIVE ME SPEED  */
-  image-rendering: -moz-crisp-edges;          /* Firefox                        */
-  image-rendering: -o-crisp-edges;            /* Opera                          */
-  image-rendering: -webkit-optimize-contrast; /* Chrome (and eventually Safari) */
-  image-rendering: pixelated;                 /* Chrome */
-  image-rendering: optimize-contrast;         /* CSS3 Proposed                  */
-  -ms-interpolation-mode: nearest-neighbor;   /* IE8+                           */
 }
 
 .yui-resize-status {
