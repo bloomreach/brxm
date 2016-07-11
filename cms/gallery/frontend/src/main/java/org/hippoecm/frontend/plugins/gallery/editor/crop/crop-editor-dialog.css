@@ -19,11 +19,11 @@
   width: 590px;
   height: 470px;
   overflow: auto;
-  margin:5px;
+  margin: 5px;
 }
 
 .left-crop-area .yui-skin-sam {
-  float:left;
+  float: left;
 }
 
 .right-crop-area {
@@ -33,9 +33,9 @@
   width: 216px;
   padding: 5px 5px 5px 12px;
   margin: 5px 0;
-  min-height: 454px;  
+  min-height: 454px;
   height: 454px;
-  overflow:auto;  
+  overflow: auto;
 }
 
 .right-crop-area .preview-container {
@@ -70,44 +70,47 @@
   margin-right: 10px;
 }
 
-
 /* YUI has a bug when the image is small but the cropping mask large. It repeats the image...*/
 .yui-crop-resize-mask {
-    background-repeat: no-repeat;
+  background-repeat: no-repeat;
 }
 
 .yui-resize-status {
-    background-color: #FFEE69;
-    border: 1px solid #A6982B;
-    border-top-color: #D4C237;
-    color: #000000;
-    z-index:100000;
+  background-color: #ffee69;
+  border: 1px solid #a6982b;
+  border-top-color: #d4c237;
+  color: #000000;
+  z-index: 100000;
 }
 
 .yui-resize-status strong, .yui-resize-status em {
-    clear: both;
-    display: block;
-    float: left;
-    padding: 1px;
-    text-align: center;
+  clear: both;
+  display: block;
+  float: left;
+  padding: 1px;
+  text-align: center;
 }
 
 .yui-resize-status strong, .yui-resize-status em {
-    font-style: normal;
-    font-weight: normal;
-    padding: 1px;
+  font-style: normal;
+  font-weight: normal;
+  padding: 1px;
 }
 
 .modal_fullscreen .right-crop-area {
-    display: none;
+  display: none;
 }
 
 .modal_fullscreen .modal_fullscreen_content {
-    background-color: #fff;
+  background-color: #f7f7f7;
 }
 
 .modal_fullscreen .left-crop-area {
-    overflow: auto;
-    width: auto;
-    height: auto;
+  overflow: auto;
+  width: auto;
+  height: auto;
+}
+
+.left-crop-area .yui-crop .yui-draggable.yui-resize-knob.yui-resize {
+  background-color: #f7f7f7;
 }
