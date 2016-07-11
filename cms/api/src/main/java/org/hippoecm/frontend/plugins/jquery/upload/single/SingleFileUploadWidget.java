@@ -36,6 +36,8 @@ import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationS
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.frontend.plugins.jquery.upload.single.BinaryContentEventLogger.ACTION_UPLOAD;
+
 /**
  * The single-file-upload widget using jquery-file-upload
  * @see AbstractFileUploadWidget
@@ -44,7 +46,9 @@ public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
     final Logger log = LoggerFactory.getLogger(SingleFileUploadWidget.class);
 
     private final String UPLOADING_SCRIPT_TEMPLATE = "$('#${componentMarkupId}').data('blueimp-fileupload').uploadFile();";
-
+    public static final String ACTION_UPLOAD = "upload";
+    private static final String INTERACTION_TYPE_ASSETS = "assets-gallery";
+    private static final String WORKFLOW_CATEGORY = "cms";
     private SingleFileUploadBar fileUploadBar;
     private AjaxFileUploadBehavior ajaxFileUploadBehavior;
 
@@ -99,7 +103,7 @@ public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
                 // only fire event if there are no error messages
                 if (errorMessages != null && errorMessages.size() == 0) {
                     MarkupContainer markupContainer = getParent();
-                    BinaryWorkflowUtils.fireUploadEvent(markupContainer);
+                    BinaryContentEventLogger.fireUploadEvent(markupContainer,WORKFLOW_CATEGORY, ACTION_UPLOAD, INTERACTION_TYPE_ASSETS);
                 }
             }
 

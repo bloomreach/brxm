@@ -16,7 +16,6 @@
 
 package org.hippoecm.frontend.plugins.jquery.upload.single;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -24,36 +23,32 @@ import javax.jcr.Session;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.repository.events.HippoWorkflowEvent;
-import org.onehippo.repository.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
-public final class BinaryWorkflowUtils {
+public final class BinaryContentEventLogger {
 
-    private static final Logger log = LoggerFactory.getLogger(BinaryWorkflowUtils.class);
-    private static final String INTERACTION_TYPE_ASSETS = "assets-gallery";
-    private static final String INTERACTION_TYPE_GALLERY = "image-gallery";
-    private static final String WORKFLOW_NAME = "upload";
-    private static final String WORKFLOW_CATEGORY = "workflow";
-    private static final String ACTION = "fileUpload";
+    private static final Logger log = LoggerFactory.getLogger(BinaryContentEventLogger.class);
 
-    private BinaryWorkflowUtils() {
+    private BinaryContentEventLogger() {
     }
 
     /**
      * Post a HippoEvent for specific asset or gallery node.
      *
      * @param node asset or gallery node.
+     * @param category workflow category name e.g. cms
+     * @param action name of the workflow action e.g. upload
+     * @param interaction name of workflow interaction e.g. image-gallery
      * @throws RepositoryException
      */
-    public static void postBinaryChangedEvent(final Node node) throws RepositoryException {
+    public static void fireBinaryChangedEvent(final Node node, final String category, String action, final String interaction) throws RepositoryException {
         if (node == null) {
             log.warn("Cannot publish event for null");
             return;
@@ -61,58 +56,41 @@ public final class BinaryWorkflowUtils {
         HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
         if (eventBus != null) {
             final HippoWorkflowEvent event = new HippoWorkflowEvent();
-            final String returnValue = getReturnValue(node);
             final Node handle = getHandle(node);
             if (handle == null) {
                 log.warn("Handle was null for node: {}", node.getPath());
                 return;
             }
-            final String returnType = "node";
-            final Boolean system = isSystemUser(node);
-            final String documentType = getDocumentType(handle);
-            event.user(node.getSession().getUserID()).action(ACTION).result(returnValue).system(system);
-
-            event
-                    // TODO: check if we needed e.g. back porting
-                    //.handleUuid(handle.getIdentifier())
-                    .returnType(returnType).returnValue(returnValue).subjectPath(node.getPath()).subjectId(node.getIdentifier())
-                    .interactionId(node.getIdentifier()).interaction(getInteraction(node)).workflowCategory(WORKFLOW_CATEGORY)
-                    .workflowName(WORKFLOW_NAME).documentType(documentType);
+            final String documentType = getDocumentType(node);
+            event.user(node.getSession().getUserID()).action(action).system(false);
+            event.subjectPath(node.getPath()).subjectId(node.getIdentifier())
+                    .interactionId(node.getIdentifier()).interaction(getInteraction(category, action, interaction)).workflowCategory(WORKFLOW_CATEGORY)
+                    .workflowName(action).documentType(documentType);
             eventBus.post(event);
         }
     }
 
 
-    public static void looseSessionChanges(final Session session) {
-        try {
-            if (session != null) {
-                session.refresh(false);
-            }
-        } catch (RepositoryException e) {
-            log.error("Error cleaning up session", e);
-        }
-    }
-
     /**
      * Find first component with backing JcrNodeModel and fire an upload event.
      *
      * @param component top component in component chain
+     * @param action name of the workflow action e.g. upload
+     * @param interaction name of workflow interaction e.g. image-gallery
      */
-    public static void fireUploadEvent(final MarkupContainer component) {
+    public static void fireUploadEvent(final MarkupContainer component, final String category, final String action, final String interaction) {
         MarkupContainer markupContainer = component;
         while (markupContainer != null) {
             IModel<?> model = markupContainer.getDefaultModel();
             if (model instanceof JcrNodeModel) {
                 final JcrNodeModel nodeModel = (JcrNodeModel) model;
                 final Node subjectNode = nodeModel.getNode();
-                Session session = null;
                 try {
-                    session = subjectNode.getSession();
+                    Session session = subjectNode.getSession();
                     session.save();
-                    postBinaryChangedEvent(subjectNode);
+                    fireBinaryChangedEvent(subjectNode, category, action, interaction);
                 } catch (RepositoryException e) {
                     log.error("Error saving session", e);
-                    looseSessionChanges(session);
                 }
                 return;
             }
@@ -120,12 +98,8 @@ public final class BinaryWorkflowUtils {
         }
     }
 
-    private static String getInteraction(final Node node) throws RepositoryException {
-        final String path = node.getPath();
-        if (path.startsWith("/content/assets")) {
-            return INTERACTION_TYPE_ASSETS;
-        }
-        return INTERACTION_TYPE_GALLERY;
+    private static String getInteraction(final String category, final String action, final String interaction) throws RepositoryException {
+        return category + ':' + interaction + ':' + action;
     }
 
     private static String getDocumentType(final Node subject) {
@@ -142,29 +116,6 @@ public final class BinaryWorkflowUtils {
         } catch (RepositoryException ignore) {
         }
         return null;
-    }
-
-    private static Boolean isSystemUser(final Node node) {
-
-        try {
-            final String userName = node.getSession().getUserID();
-            final SecurityService securityService = ((HippoWorkspace) node.getSession().getWorkspace()).getSecurityService();
-            return securityService.hasUser(userName) && securityService.getUser(userName).isSystemUser();
-        } catch (ItemNotFoundException ignore) {
-            // If hasUser returns true, we expect getUser to return a user, so it is very unlikely that
-            // securityService.getUser(userName) will throw this exception
-        } catch (RepositoryException e) {
-            log.error("Failed to determine system status of event", e);
-        }
-        return null;
-    }
-
-    private static String getReturnValue(final Node node) throws RepositoryException {
-        return "node[uuid=" +
-                node.getIdentifier() +
-                ",path='" +
-                node.getPath() +
-                "']";
     }
 
     private static Node getHandle(final Node node) {
