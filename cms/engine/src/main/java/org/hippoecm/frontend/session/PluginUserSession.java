@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -70,6 +70,7 @@ public class PluginUserSession extends UserSession {
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(UserSession.class);
+    public static final String SESSION_CMS_APP_COUNT = "session-cms:appCount";
 
     private static UserCredentials fallbackCredentials;
     private IModel<Session> jcrSessionModel;
@@ -94,7 +95,7 @@ public class PluginUserSession extends UserSession {
     }
 
     public static PluginUserSession get() {
-        return (PluginUserSession) UserSession.get();
+        return (PluginUserSession)UserSession.get();
     }
 
     public PluginUserSession(Request request) {
@@ -108,7 +109,7 @@ public class PluginUserSession extends UserSession {
                 Session session = getJcrSessionInternal();
                 if (session != null) {
                     try {
-                        return ((HippoSession) session).getSessionClassLoader();
+                        return ((HippoSession)session).getSessionClassLoader();
                     } catch (RepositoryException ex) {
                         log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                     }
@@ -126,7 +127,7 @@ public class PluginUserSession extends UserSession {
                 Session jcrSession = getJcrSessionInternal();
                 if (jcrSession != null) {
                     try {
-                        HippoWorkspace workspace = (HippoWorkspace) jcrSession.getWorkspace();
+                        HippoWorkspace workspace = (HippoWorkspace)jcrSession.getWorkspace();
                         return workspace.getWorkflowManager();
                     } catch (RepositoryException ex) {
                         ex.printStackTrace();
@@ -178,7 +179,7 @@ public class PluginUserSession extends UserSession {
     public Session getJcrSession() {
         Session session = getJcrSessionInternal();
         if (session == null) {
-            Main main = (Main) Application.get();
+            Main main = (Main)Application.get();
             if (fallbackCredentials == null) {
                 try {
                     main.getRepository(); // side effect of reinitializing fallback credentials
@@ -248,7 +249,8 @@ public class PluginUserSession extends UserSession {
         try {
             UserCredentials userCreds = getUserCredentialsFromRequestAttribute();
             login(userCreds, new JcrSessionModel(userCreds));
-        } catch (LoginException ignore) {}
+        } catch (LoginException ignore) {
+        }
     }
 
     /**
@@ -256,8 +258,8 @@ public class PluginUserSession extends UserSession {
      * For example, Web SSO Agent can set a UserCredentials for the user as request attribute.
      */
     protected UserCredentials getUserCredentialsFromRequestAttribute() {
-        HttpServletRequest request = ((HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest());
-        return (UserCredentials) request.getAttribute(UserCredentials.class.getName());
+        HttpServletRequest request = ((HttpServletRequest)RequestCycle.get().getRequest().getContainerRequest());
+        return (UserCredentials)request.getAttribute(UserCredentials.class.getName());
     }
 
     @Override
@@ -273,7 +275,7 @@ public class PluginUserSession extends UserSession {
         final IPluginConfigService application = factory.getApplication(getApplicationName());
         if (application != null && !application.isSaveOnExitEnabled()) {
             if (jcrSessionModel instanceof JcrSessionModel) {
-                ((JcrSessionModel) jcrSessionModel).setSaveOnExit(false);
+                ((JcrSessionModel)jcrSessionModel).setSaveOnExit(false);
             }
         }
     }
@@ -298,7 +300,7 @@ public class PluginUserSession extends UserSession {
         Session jcrSession = null;
         if (sessionModel instanceof JcrSessionModel) {
             try {
-                jcrSession = ((JcrSessionModel) sessionModel).getSessionObject();
+                jcrSession = ((JcrSessionModel)sessionModel).getSessionObject();
             } catch (javax.jcr.LoginException ex) {
                 handleLoginException(ex);
             }
@@ -324,12 +326,13 @@ public class PluginUserSession extends UserSession {
         } else {
             // Set the username to facilitate two-factor authentication filters
             getHttpSession().setAttribute("hippo:username", credentials.getUsername());
+            increaseAppCount();
             pageId = 1;
         }
     }
 
     private HttpSession getHttpSession() {
-        return ((ServletWebRequest) RequestCycle.get().getRequest()).getContainerRequest().getSession();
+        return ((ServletWebRequest)RequestCycle.get().getRequest()).getContainerRequest().getSession();
     }
 
     protected void checkApplicationPermission(final Session jcrSession) throws LoginException {
@@ -356,14 +359,18 @@ public class PluginUserSession extends UserSession {
 
             getHttpSession().removeAttribute("hippo:username");
 
-            invalidate();
+            final int appCount = decreaseAppCount();
             dirty();
+            if (appCount == 0) {
+                invalidate();
+            }
         } finally {
             if (logoutTask != null) {
                 logoutTask.stop();
             }
         }
     }
+
 
     public Credentials getCredentials() {
         return credentials.getJcrCredentials();
@@ -412,7 +419,7 @@ public class PluginUserSession extends UserSession {
     }
 
     private IApplicationFactory getApplicationFactory(Session session) {
-        return ((Main) Main.get()).getApplicationFactory(session);
+        return ((Main)Main.get()).getApplicationFactory(session);
     }
 
     /**
@@ -424,7 +431,7 @@ public class PluginUserSession extends UserSession {
         try {
             Session jcrSession = getJcrSessionInternal();
             if (jcrSession != null) {
-                result = (HippoNode) jcrSession.getRootNode();
+                result = (HippoNode)jcrSession.getRootNode();
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
@@ -524,8 +531,33 @@ public class PluginUserSession extends UserSession {
 
     @Override
     public HippoRepository getHippoRepository() throws RepositoryException {
-        Main main = (Main) Application.get();
+        Main main = (Main)Application.get();
         return main.getRepository();
     }
+
+    private int increaseAppCount() {
+        final Integer appCount = (Integer)getHttpSession().getAttribute(SESSION_CMS_APP_COUNT);
+        if (appCount == null) {
+            getHttpSession().setAttribute(SESSION_CMS_APP_COUNT, new Integer(1));
+            return 1;
+        } else {
+            final int newValue = appCount.intValue() + 1;
+            getHttpSession().setAttribute(SESSION_CMS_APP_COUNT, new Integer(newValue));
+            return newValue;
+        }
+    }
+
+    private int decreaseAppCount() {
+        final Integer appCounter = (Integer)getHttpSession().getAttribute(SESSION_CMS_APP_COUNT);
+        if (appCounter == null || appCounter.intValue() <= 1) {
+            getHttpSession().removeAttribute(SESSION_CMS_APP_COUNT);
+            return 0;
+        } else {
+            final int newValue = appCounter.intValue() - 1;
+            getHttpSession().setAttribute(SESSION_CMS_APP_COUNT, new Integer(newValue));
+            return newValue;
+        }
+    }
+
 
 }
