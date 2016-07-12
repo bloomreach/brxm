@@ -586,10 +586,12 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private boolean isNotAbstractNodeType(final String type) {
         try {
             final NodeTypeManager nodeTypeManager = getSession().getJcrSession().getWorkspace().getNodeTypeManager();
-            return !nodeTypeManager.getNodeType(type).isAbstract();
+            if (nodeTypeManager.hasNodeType(type)) {
+                return !nodeTypeManager.getNodeType(type).isAbstract();
+            }
         } catch (RepositoryException e) {
             log.error("Exception determining whether type " + type + " is abstract", e);
-            return false;
         }
+        return true;
     }
 }
