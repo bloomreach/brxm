@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -699,5 +699,36 @@ public class PageCopyTest extends AbstractSiteMapResourceTest {
         }
     }
 
+    @Test
+    public void validate_invalid_copy_names() throws Exception {
+        final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "home");
+        for (String invalidChar : new String[]{"?", ";", "#", "\\"}) {
+            invalidCopyNameAssertions(home, invalidChar, "Invalid pathInfo");
+        }
+        for (String invalidChar : new String[]{":", "/"}) {
+            invalidCopyNameAssertions(home, invalidChar, "is invalid");
+        }
+        // %3A = :
+        // %2F = /
+        // %2f = /
+        // %5c = \
+        // %5C = \
+        // %2e = .
+        // %2E = .
+        // %3F = ?
+        // %3B = ;
+        // %23 = #
+        for (String checkURLEncodedChar : new String[]{"%3A", "%2F", "%2f", "%5c", "%5C", "%2e", "%2E", "%3F", "%3B", "%23"}) {
+            invalidCopyNameAssertions(home, checkURLEncodedChar, "Invalid pathInfo");
+        }
+    }
+
+    private void invalidCopyNameAssertions(final SiteMapItemRepresentation home, final String invalidChar, final String messagePart) {
+        SiteMapResource siteMapResource = createResource();
+        final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
+        final Response copy = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), null, "ho" + invalidChar+"me");
+        assertEquals(BAD_REQUEST.getStatusCode(), copy.getStatus());
+        assertTrue(((ExtResponseRepresentation) copy.getEntity()).getMessage().contains(messagePart));
+    }
 
 }
