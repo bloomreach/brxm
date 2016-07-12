@@ -342,15 +342,11 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 ITypeDescriptor subType = field.getTypeDescriptor();
                 AbstractProvider<P, C> provider = newProvider(field, subType, model);
 
-                try {
-                    if (IEditor.Mode.EDIT == mode && provider.size() == 0
-                            && (!field.isMultiple() || field.getValidators().contains("required"))
-                            && !field.getValidators().contains("optional")
-                            && isNotAbstractNodeType(subType.getType())) {
-                        provider.addNew();
-                    }
-                } catch (RepositoryException e) {
-                    log.warn("error determining whether type "+subType.getType()+ " is abstract", e);
+                if (IEditor.Mode.EDIT == mode && provider.size() == 0
+                        && (!field.isMultiple() || field.getValidators().contains("required"))
+                        && !field.getValidators().contains("optional")
+                        && isNotAbstractNodeType(subType.getType())) {
+                    provider.addNew();
                 }
 
                 return provider;
@@ -587,8 +583,13 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         return provider.size();
     }
 
-    private boolean isNotAbstractNodeType(final String type) throws RepositoryException {
-        NodeTypeManager nodeTypeManager = getSession().getJcrSession().getWorkspace().getNodeTypeManager();
-        return !nodeTypeManager.getNodeType(type).isAbstract();
+    private boolean isNotAbstractNodeType(final String type) {
+        try {
+            final NodeTypeManager nodeTypeManager = getSession().getJcrSession().getWorkspace().getNodeTypeManager();
+            return !nodeTypeManager.getNodeType(type).isAbstract();
+        } catch (RepositoryException e) {
+            log.error("Exception determining whether type " + type + " is abstract", e);
+            return false;
+        }
     }
 }
