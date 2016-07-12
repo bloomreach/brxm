@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,11 +15,6 @@
  */
 package org.onehippo.repository.mock;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +29,11 @@ import javax.jcr.Value;
 import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class MockNodeFactoryTest {
 
@@ -113,6 +113,7 @@ public class MockNodeFactoryTest {
         assertEquals("child", child.getName());
         assertEquals("/child", child.getPath());
         assertEquals(root, child.getParent());
+        assertEquals("10065434-57ea-4153-8165-e7a22288c05d", child.getIdentifier());
         assertTrue(child.hasProperties());
         assertTrue(child.hasProperty("childProperty"));
 
@@ -160,7 +161,7 @@ public class MockNodeFactoryTest {
 
         NodeIterator iterator = root.getNodes();
 
-        List<String> expectedNodeNames = new ArrayList<String>(2);
+        List<String> expectedNodeNames = new ArrayList<>(2);
         expectedNodeNames.addAll(Arrays.asList("child1", "child2"));
 
         for (int i = 0; i < 2; i++) {

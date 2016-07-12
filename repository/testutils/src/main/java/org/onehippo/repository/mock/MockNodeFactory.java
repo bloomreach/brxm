@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,14 +58,9 @@ public class MockNodeFactory {
      * @throws RepositoryException
      */
     public static MockNode fromXml(URL resource)  throws IOException, JAXBException, RepositoryException {
-        InputStream inputStream = null;
-
-        try {
-            inputStream = resource.openStream();
+        try (InputStream inputStream = resource.openStream()) {
             XmlNode xmlNode = parseXml(inputStream);
             return createMockNode(xmlNode);
-        } finally {
-            inputStream.close();
         }
     }
 
@@ -88,9 +83,13 @@ public class MockNodeFactory {
     }
 
     private static void setProperty(final MockNode mockNode, final XmlProperty xmlProperty) throws RepositoryException {
-        if (xmlProperty.getName().equals("jcr:primaryType")) {
-            mockNode.setPrimaryType(xmlProperty.getValue());
-            return;
+        switch(xmlProperty.getName()) {
+            case "jcr:primaryType":
+                mockNode.setPrimaryType(xmlProperty.getValue());
+                return;
+            case "jcr:uuid":
+                mockNode.setIdentifier(xmlProperty.getValue());
+                return;
         }
 
         if (xmlProperty.isMultiple()) {

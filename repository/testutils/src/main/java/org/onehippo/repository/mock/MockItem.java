@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.onehippo.repository.mock;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
+import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.slf4j.Logger;
@@ -159,8 +161,11 @@ public abstract class MockItem implements Item {
     }
 
     @Override
-    public void accept(final ItemVisitor visitor) {
-        throw new UnsupportedOperationException();
+    public void accept(final ItemVisitor visitor) throws RepositoryException {
+        if (this.isNode()) {
+            visitor.visit((Node) this);
+        } else {
+            visitor.visit((Property) this);
+        }
     }
-
 }

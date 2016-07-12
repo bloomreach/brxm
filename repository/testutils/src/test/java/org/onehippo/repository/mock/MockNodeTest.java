@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import java.util.Set;
 
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -53,6 +54,7 @@ import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
 import javax.jcr.version.VersionManager;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.util.ISO8601;
@@ -202,7 +204,7 @@ public class MockNodeTest {
 
         assertEquals(2, iterator.getSize());
 
-        Map<String, String> expected = new HashMap<String, String>();
+        Map<String, String> expected = new HashMap<>();
         expected.put("prop1", "value1");
         expected.put("prop2", "value2");
 
@@ -493,7 +495,7 @@ public class MockNodeTest {
         handle.addNode("document1", "nt:unstructured");
         handle.addNode("hippo:request", "nt:unstructured");
 
-        Set<String> variantPaths = new HashSet<String>();
+        Set<String> variantPaths = new HashSet<>();
         NodeIterator nodeIt = handle.getNodes("document*");
         assertEquals(3, nodeIt.getSize());
 
@@ -542,7 +544,7 @@ public class MockNodeTest {
         node.setProperty("prop2", "value2");
         node.setProperty("hippo:holder", "editor");
 
-        Set<String> propPaths = new HashSet<String>();
+        Set<String> propPaths = new HashSet<>();
         PropertyIterator propIt = node.getProperties("prop*");
         assertEquals(2, propIt.getSize());
 
@@ -821,36 +823,12 @@ public class MockNodeTest {
         node.addNode("child", "nt:unstructured");
         final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
         versionManager.checkin(node.getPath());
-        assertVersionException(new Code() {
-            public void execute() throws RepositoryException {
-                node.setProperty("test", "bar");
-            }
-        });
-        assertVersionException(new Code() {
-            public void execute() throws RepositoryException {
-                node.getProperty("test").remove();
-            }
-        });
-        assertVersionException(new Code() {
-            public void execute() throws RepositoryException {
-                node.addNode("foo", "nt:unstructured");
-            }
-        });
-        assertVersionException(new Code() {
-            public void execute() throws RepositoryException {
-                node.getNode("child").remove();
-            }
-        });
-        assertVersionException(new Code() {
-            public void execute() throws RepositoryException {
-                node.remove();
-            }
-        });
-        assertVersionException(new Code() {
-            public void execute() throws RepositoryException {
-                node.setPrimaryType("bar");
-            }
-        });
+        assertVersionException(() -> node.setProperty("test", "bar"));
+        assertVersionException(() -> node.getProperty("test").remove());
+        assertVersionException(() -> node.addNode("foo", "nt:unstructured"));
+        assertVersionException(() -> node.getNode("child").remove());
+        assertVersionException(node::remove);
+        assertVersionException(() -> node.setPrimaryType("bar"));
     }
 
     @Test(expected = UnsupportedRepositoryOperationException.class)
@@ -951,6 +929,26 @@ public class MockNodeTest {
         assertEquals("a", version.getFrozenNode().getProperty("testProp").getString());
     }
 
+    @Test
+    public void rootIsNotVirtual() throws RepositoryException {
+        assertFalse(MockNode.root().isVirtual());
+    }
+
+    @Test
+    public void virtualNode() throws RepositoryException, IOException, JAXBException {
+        MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeTest-virtual-node.xml");
+        MockNode virtualNode = root.getNode("virtualNode");
+        assertTrue(virtualNode.isVirtual());
+    }
+
+    @Test
+    public void acceptNode() throws RepositoryException {
+        MockNode root = MockNode.root();
+        TestItemVisitor testVisitor = new TestItemVisitor();
+        root.accept(testVisitor);
+        assertTrue(testVisitor.visited);
+    }
+
     private static void assertNoParent(String message, Item item) throws RepositoryException {
         try {
             item.getParent();
@@ -969,7 +967,21 @@ public class MockNodeTest {
     }
 
     private interface Code {
-        public void execute() throws RepositoryException;
+        void execute() throws RepositoryException;
     }
 
+    private static class TestItemVisitor implements ItemVisitor {
+
+        boolean visited = false;
+
+        @Override
+        public void visit(final Property property) throws RepositoryException {
+            fail();
+        }
+
+        @Override
+        public void visit(final Node node) throws RepositoryException {
+            visited = true;
+        }
+    }
 }
