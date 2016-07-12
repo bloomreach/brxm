@@ -259,6 +259,13 @@
     }
 
     function openImagePickerDialog(imgElement) {
+      var command = editor.getCommand('pickImage');
+      command.toggleState();
+
+      setTimeout(function () {
+        command.toggleState();
+      }, PREVENT_DBLCLICK_DELAY);
+
       var callbackParameters = {};
 
       if (imgElement !== null) {
