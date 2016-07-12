@@ -42,7 +42,7 @@ components/angular-sanitize/*
         THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-components/angular-bootstrap/*
+components/angular-ui-bootstrap/*
 
     The MIT License
 
@@ -141,7 +141,7 @@ components/angular-ui-tree/**
     CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-components/chosen/**
+components/chosen-npm/public/**
 
     Chosen
 
