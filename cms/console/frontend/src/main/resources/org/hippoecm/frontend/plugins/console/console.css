@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -648,6 +648,16 @@ li.hippo-console-menu-actions-save.session-changes a {
 }
 
 .hippo-console-editor .property .remove-icon {
+  color: #f44336;
+  font-size: 20px;
+}
+
+.hippo-console-editor .property-value .check-ok {
+  color: #4caf50;
+  font-size: 18px;
+}
+
+.hippo-console-editor .property-value .check-false {
   color: #f44336;
   font-size: 20px;
 }
