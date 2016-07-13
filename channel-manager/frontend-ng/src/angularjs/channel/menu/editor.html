@@ -122,12 +122,12 @@
                 </div>
               </md-input-container>
             </div>
-            <div ng-if="menuEditor.hasLocalParameters()">
+            <div ng-if="menuEditor.hasLocalParameters()" class="qa-advanced-settings">
               <md-switch ng-model="menuEditor.showLocalParameters" aria-label="{{ 'ADVANCED_SETTINGS' | translate }}">
                 {{ 'ADVANCED_SETTINGS' | translate }}
               </md-switch>
               <div ng-if="menuEditor.showLocalParameters" layout="row" data-ng-repeat="(key, value) in menuEditor.editingItem.localParameters">
-                <md-input-container flex>
+                <md-input-container flex class="qa-property">
                   <label>{{ key }}</label>
                   <input type="text"
                          ng-model="menuEditor.editingItem.localParameters[key]"
