@@ -210,8 +210,13 @@
       "locales" : null
     },
     "ERROR_UPDATE_COMPONENT" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED"
+      }
     },
     "ERROR_MENU_ITEM_SAVE_FAILED" : {
       "status" : "CLEAN",
