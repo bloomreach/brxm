@@ -35,7 +35,9 @@ export class FeedbackService {
     this._showOnSubpage(this.$translate.instant(key, params));
   }
 
-  showErrorResponseOnSubpage(response = {}, defaultKey, errorMap = {}) {
+  /* eslint-disable no-param-reassign */
+  showErrorResponseOnSubpage(response, defaultKey, errorMap = {}) {
+    response = response || {};
     if (response.message) {
       this.$log.info(response.message);
     }
