@@ -269,7 +269,6 @@
         command.toggleState();
       }, PREVENT_DBLCLICK_DELAY);
 
-
       if (imgElement !== null) {
         callbackParameters = getElementParameters(imgElement, IMAGE_ATTRIBUTE_PARAMETER_MAP);
       }
@@ -289,7 +288,7 @@
     });
 
     editor.addCommand('pickImage', {
-      exec: function (editor) {
+      exec: function () {
         openImagePickerDialog(getSelectedImageOrNull());
       }
     });
