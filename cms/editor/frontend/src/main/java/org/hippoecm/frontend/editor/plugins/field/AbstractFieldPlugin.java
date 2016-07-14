@@ -23,6 +23,8 @@ import java.util.Set;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeTypeManager;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -339,11 +341,14 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             if (engine != null) {
                 ITypeDescriptor subType = field.getTypeDescriptor();
                 AbstractProvider<P, C> provider = newProvider(field, subType, model);
-                if (IEditor.Mode.EDIT == mode && (provider.size() == 0)
-                        && (!field.isMultiple() || field.getValidators().contains("required")) &&
-                        !field.getValidators().contains("optional")) {
+
+                if (IEditor.Mode.EDIT == mode && provider.size() == 0
+                        && (!field.isMultiple() || field.getValidators().contains("required"))
+                        && !field.getValidators().contains("optional")
+                        && isNotAbstractNodeType(subType.getType())) {
                     provider.addNew();
                 }
+
                 return provider;
             } else {
                 log.warn("No engine found to display new model");
@@ -578,4 +583,15 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         return provider.size();
     }
 
+    private boolean isNotAbstractNodeType(final String type) {
+        try {
+            final NodeTypeManager nodeTypeManager = getSession().getJcrSession().getWorkspace().getNodeTypeManager();
+            if (nodeTypeManager.hasNodeType(type)) {
+                return !nodeTypeManager.getNodeType(type).isAbstract();
+            }
+        } catch (RepositoryException e) {
+            log.error("Exception determining whether type " + type + " is abstract", e);
+        }
+        return true;
+    }
 }

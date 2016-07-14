@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
                 Node node;
                 if (prototype != null) {
                     HippoSession session = (HippoSession) UserSession.get().getJcrSession();
-                    node = session.copy(prototype.getNode(), parent.getPath() + "/" + descriptor.getPath());
+                    node = JcrUtils.copy(session, prototype.getNode().getPath(), parent.getPath() + "/" + descriptor.getPath());
                 } else {
                     log.info("No prototype available to initialize child node for field {} with type {}", descriptor
                             .getName(), descriptor.getTypeDescriptor().getType());
@@ -89,7 +90,7 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
                 log.warn("No parent available to initialize child node");
             }
         } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+            log.error("Error creating child node", ex);
         }
     }
 
@@ -109,13 +110,13 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
                         Item item = (Item) itemModel.getObject();
 
                         // remove the item
-                        log.info("removing item " + item.getPath());
+                        log.info("removing item {}", item.getPath());
                         item.remove();
                     } else {
-                        log.info("item " + itemModel.getPath() + " does not exist");
+                        log.info("item {} does not exist", itemModel.getPath());
                     }
                 } catch (RepositoryException ex) {
-                    log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                    log.error(ex.getMessage(), ex);
                 }
             } else {
                 currentModel.detach();
@@ -144,7 +145,7 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
                         log.error("Unable to reorder children", ex);
                     }
                 } else {
-                    log.warn("No predecessor found for " + model);
+                    log.warn("No predecessor found for {}", model);
                 }
                 elements = null;
                 return;
@@ -157,7 +158,7 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
         if (predecessor != null) {
             predecessor.detach();
         }
-        log.warn("could not find " + model);
+        log.warn("could not find {}", model);
     }
 
     @Override
@@ -181,7 +182,7 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
             return;
         }
 
-        elements = new LinkedList<JcrNodeModel>();
+        elements = new LinkedList<>();
         try {
             Node node = (Node) getItemModel().getObject();
             if (node != null) {
