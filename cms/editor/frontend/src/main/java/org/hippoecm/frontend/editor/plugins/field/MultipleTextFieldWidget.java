@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -140,6 +141,12 @@ public class MultipleTextFieldWidget extends Panel {
 
         @Override
         public void detach() {
+            if (cluster != null && cluster instanceof IDetachable) {
+                ((IDetachable) cluster).detach();
+            }
+            if (config != null && config instanceof IDetachable) {
+                ((IDetachable) config).detach();
+            }
         }
     }
 
@@ -167,6 +174,9 @@ public class MultipleTextFieldWidget extends Panel {
 
         @Override
         public void detach() {
+            if (model != null) {
+                model.detach();
+            }
         }
     }
 
