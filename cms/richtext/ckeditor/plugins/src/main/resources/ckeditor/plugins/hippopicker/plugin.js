@@ -262,16 +262,16 @@
       var callbackParameters = {},
           command;
 
-      command = editor.getCommand('pickImage');
-      command.toggleState();
-
-      setTimeout(function () {
-        command.toggleState();
-      }, PREVENT_DBLCLICK_DELAY);
-
       if (imgElement !== null) {
         callbackParameters = getElementParameters(imgElement, IMAGE_ATTRIBUTE_PARAMETER_MAP);
       }
+
+      command = editor.getCommand('pickImage');
+      command.setState(CKEDITOR.TRISTATE_DISABLED);
+
+      setTimeout(function () {
+        command.setState(CKEDITOR.TRISTATE_OFF);
+      }, PREVENT_DBLCLICK_DELAY);
 
       Wicket.Ajax.post({
         u: callbackUrl,
