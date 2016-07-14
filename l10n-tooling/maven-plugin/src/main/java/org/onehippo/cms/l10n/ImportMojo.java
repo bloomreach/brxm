@@ -25,7 +25,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 
-@Mojo(name = "import-csv", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyResolution = RUNTIME)
+@Mojo(name = "import", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyResolution = RUNTIME)
 public class ImportMojo extends AbstractL10nMojo {
 
     @Parameter(required = true)
@@ -33,8 +33,21 @@ public class ImportMojo extends AbstractL10nMojo {
     
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        final ImportFileReader reader;
+
+        switch (getFileFormat()) {
+            case CSV:
+                reader = new CsvImportFileReader(getCSVFormat());
+                break;
+            case Excel:
+                reader = new ExcelImportFileReader();
+                break;
+            default:
+                throw new MojoExecutionException("Unrecognized format");
+        }
+
         try {
-            new Importer(getBaseDir(), getCSVFormat())._import(file, getLocale());
+            new Importer(getBaseDir(), reader)._import(file, getLocale());
         } catch (IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }

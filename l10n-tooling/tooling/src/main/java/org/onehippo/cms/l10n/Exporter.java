@@ -16,16 +16,10 @@
 package org.onehippo.cms.l10n;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 
 import static org.onehippo.cms.l10n.KeyData.KeyStatus.ADDED;
 import static org.onehippo.cms.l10n.KeyData.KeyStatus.UPDATED;
@@ -34,11 +28,11 @@ import static org.onehippo.cms.l10n.KeyData.LocaleStatus.UNRESOLVED;
 public class Exporter {
 
     private final File baseDir;
-    private final String format;
+    private final ExportFileWriter exportFileWriter;
 
-    Exporter(final File baseDir, final String format) {
+    Exporter(final File baseDir, final ExportFileWriter exportFileWriter) {
         this.baseDir = baseDir;
-        this.format = format;
+        this.exportFileWriter = exportFileWriter;
     }
 
     File export(final String locale) throws IOException {
@@ -46,38 +40,37 @@ public class Exporter {
     }
 
     File export(final String locale, final boolean full) throws IOException {
-        final Collection<Translation> pending = new ArrayList<>();
+        final List<String[]> exportData = new ArrayList<>();
+        final String englishHeader = Locale.ENGLISH.getDisplayName(new Locale(locale));
+        final String translationLanguageHeader = new Locale(locale).getDisplayName(new Locale(locale));
+        exportData.add(new String[] { "Key", englishHeader, translationLanguageHeader });
+
         for (Module module : new ModuleLoader(baseDir).loadModules()) {
             final Registry registry = module.getRegistry();
             for (final RegistryInfo registryInfo : registry.getRegistryInfos()) {
                 registryInfo.load();
                 for (final String key : registryInfo.getKeys()) {
                     final KeyData data = registryInfo.getKeyData(key);
+
                     if (full) {
-                        pending.add(new Translation(module, registryInfo, key, locale));
+                        final Translation translation = new Translation(module, registryInfo, key, locale);
+                        exportData.add(new String[] { translation.getFQKey(), translation.getReferenceValue(), translation.getTranslation() });
                     } else {
                         if (data.getStatus() == ADDED || data.getStatus() == UPDATED) {
                             if (data.getLocaleStatus(locale) == UNRESOLVED) {
-                                pending.add(new Translation(module, registryInfo, key, locale));
+                                final Translation translation = new Translation(module, registryInfo, key, locale);
+                                exportData.add(new String[] { translation.getFQKey(), translation.getReferenceValue(), translation.getTranslation() });
                             }
                         }
                     }
                 }
             }
         }
-        final File csv = new File(baseDir, "export_" + locale + ".csv");
-        try (final FileOutputStream fos = new FileOutputStream(csv);
-             final OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8))
-        {
-            final String englishHeader = Locale.ENGLISH.getDisplayName(new Locale(locale));
-            final String translationLanguageHeader = new Locale(locale).getDisplayName(new Locale(locale));
-            final CSVFormat csvFormat = CSVFormat.valueOf(format).withHeader("Key", englishHeader, translationLanguageHeader);
-            final CSVPrinter printer = new CSVPrinter(writer, csvFormat);
-            for (final Translation translation : pending) {
-                printer.printRecord(translation.getFQKey(), translation.getReferenceValue(), translation.getTranslation());
-            }
-        }
-        return csv;
+
+        final File exportFile = new File(baseDir, "export_" + locale + "." + exportFileWriter.getFileExtension());
+        exportFileWriter.write(exportFile, exportData);
+
+        return exportFile;
     }
     
 }

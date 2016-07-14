@@ -46,7 +46,7 @@ public abstract class AbstractL10nMojo extends AbstractMojo {
     @Parameter
     private String locale;
     
-    @Parameter(defaultValue = "Default")
+    @Parameter(defaultValue = "excel")
     private String format;
     
     @Parameter
@@ -54,7 +54,11 @@ public abstract class AbstractL10nMojo extends AbstractMojo {
     
     @Component
     protected MavenProject project;
-    
+
+    protected enum FileFormat {
+        Excel, CSV
+    }
+
     protected final String getModuleName() throws IOException {
         return getBaseDir().getName();
     }
@@ -90,16 +94,33 @@ public abstract class AbstractL10nMojo extends AbstractMojo {
         return locale;
     }
 
-    protected final String getCSVFormat() throws MojoExecutionException {
+    protected final FileFormat getFileFormat() throws MojoExecutionException {
         if (StringUtils.isEmpty(format)) {
             throw new MojoExecutionException("No format specified");
         }
-        try {
-            CSVFormat.valueOf(format);
-        } catch (IllegalArgumentException e) {
-            throw new MojoExecutionException("Unrecognized format: " + format);
+        if (format.equals("excel")) {
+            return FileFormat.Excel;
         }
-        return format;
+        if (format.equals("csv") || format.startsWith("csv,")) {
+            return FileFormat.CSV;
+        }
+        throw new MojoExecutionException("Unrecognized format: " + format);
+    }
+
+    protected final String getCSVFormat() throws MojoExecutionException {
+        if (!format.contains(",")) {
+            return "Default";
+        }
+        final String csvFormat = StringUtils.substringAfter(format, ",");
+        if (StringUtils.isEmpty(csvFormat)) {
+            throw new MojoExecutionException("No CSV format specified");
+        }
+        try {
+            CSVFormat.valueOf(csvFormat);
+        } catch (IllegalArgumentException e) {
+            throw new MojoExecutionException("Unrecognized CSV format: " + csvFormat);
+        }
+        return csvFormat;
     }
     
     protected final ClassLoader getResourcesClassLoader() throws MalformedURLException {

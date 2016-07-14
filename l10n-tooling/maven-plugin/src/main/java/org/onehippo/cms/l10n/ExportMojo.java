@@ -25,7 +25,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 
-@Mojo(name = "export-csv", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyResolution = RUNTIME)
+@Mojo(name = "export", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyResolution = RUNTIME)
 public class ExportMojo extends AbstractL10nMojo {
 
     @Parameter(defaultValue = "false")
@@ -33,8 +33,21 @@ public class ExportMojo extends AbstractL10nMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        final ExportFileWriter writer;
+
+        switch (getFileFormat()) {
+            case CSV:
+                writer = new CsvExportFileWriter(getCSVFormat());
+                break;
+            case Excel:
+                writer = new ExcelExportFileWriter();
+                break;
+            default:
+                throw new MojoExecutionException("Unrecognized format");
+        }
+
         try {
-            new Exporter(getBaseDir(), getCSVFormat()).export(getLocale(), Boolean.valueOf(full));
+            new Exporter(getBaseDir(), writer).export(getLocale(), Boolean.valueOf(full));
         } catch (IOException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }

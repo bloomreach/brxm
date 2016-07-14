@@ -69,7 +69,12 @@
       <artifactId>maven-model</artifactId>
       <version>${maven.version}</version>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
