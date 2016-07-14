@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,72 +33,77 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.repository.security.JvmCredentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>A servlet that can be used to check if the repository is up-and-running. This
  * is especially useful for load balancer checks. The check does the following steps:</p>
  * <ul>
- *   <li>Check for static custom return message, else</li>
- *   <ul>
- *     <li>obtain the repository with the connection string</li>
- *     <li>obtain the session with the specified username and password or an anonymous session</li>
- *     <li>try to read the check node</li>
- *     <li>try to write to the repository if enabled</li>
- *     <li>logout and close jcr session</li>
- *   </ul>
- *   <li>logout and close http session</li>
+ * <li>Check for static custom return message, else</li>
+ * <ul>
+ * <li>obtain the repository with the connection string</li>
+ * <li>obtain the session with the specified username and password or an anonymous session</li>
+ * <li>try to read the check node</li>
+ * <li>try to write to the repository if enabled</li>
+ * <li>logout and close jcr session</li>
  * </ul>
- * <p>On success the servlet prints "Ok" and returns a 200 status, on failure, the error is 
+ * <li>logout and close http session</li>
+ * </ul>
+ * <p>On success the servlet prints "Ok" and returns a 200 status, on failure, the error is
  * printed and a 500 (internal server error) status is returned.</p>
  * <p>In case the custom message is provided, a service unavailable error (503) is returned</p>
- * 
+ * <p>
  * <p>To enable the servlet add the following to your web.xml. Set the username to anonymous or leave out the username
-  * for anonymous checks.</p>
+ * for anonymous checks.</p>
  * <code><![CDATA[
-    <servlet>
-      <servlet-name>PingServlet</servlet-name>
-      <servlet-class>org.hippoecm.repository.PingServlet</servlet-class>
-      <init-param>
-        <param-name>repository-address</param-name>
-        <param-value>rmi://localhost:1099/hipporepository</param-value>
-      </init-param>
-      <init-param>
-        <param-name>check-username</param-name>
-        <param-value>admin</param-value>
-      </init-param>
-      <init-param>
-        <param-name>check-password</param-name>
-        <param-value>admin</param-value>
-      </init-param>
-      <init-param>
-        <param-name>check-node</param-name>
-        <param-value>content/documents</param-value>
-      </init-param>
-      <init-param>
-        <param-name>write-check-enable</param-name>
-        <param-value>false</param-value>
-      </init-param>
-      <init-param>
-        <param-name>write-check-node</param-name>
-        <param-value>pingcheck</param-value>
-      </init-param>
-      <!-- enable while doing upgrades
-        init-param>
-        <param-name>custom-message</param-name>
-        <param-value>Down for upgrade</param-value>
-      </init-param -->
-    </servlet>
-    <servlet-mapping>
-      <servlet-name>PingServlet</servlet-name>
-      <url-pattern>/ping/*</url-pattern>
-    </servlet-mapping>
+ * <servlet>
+ * <servlet-name>PingServlet</servlet-name>
+ * <servlet-class>org.hippoecm.repository.PingServlet</servlet-class>
+ * <init-param>
+ * <param-name>repository-address</param-name>
+ * <param-value>rmi://localhost:1099/hipporepository</param-value>
+ * </init-param>
+ * <init-param>
+ * <param-name>check-username</param-name>
+ * <param-value>admin</param-value>
+ * </init-param>
+ * <init-param>
+ * <param-name>check-password</param-name>
+ * <param-value>admin</param-value>
+ * </init-param>
+ * <init-param>
+ * <param-name>check-node</param-name>
+ * <param-value>content/documents</param-value>
+ * </init-param>
+ * <init-param>
+ * <param-name>write-check-enable</param-name>
+ * <param-value>false</param-value>
+ * </init-param>
+ * <init-param>
+ * <param-name>write-check-node</param-name>
+ * <param-value>pingcheck</param-value>
+ * </init-param>
+ * <!-- enable while doing upgrades
+ * init-param>
+ * <param-name>custom-message</param-name>
+ * <param-value>Down for upgrade</param-value>
+ * </init-param -->
+ * </servlet>
+ * <servlet-mapping>
+ * <servlet-name>PingServlet</servlet-name>
+ * <url-pattern>/ping/*</url-pattern>
+ * </servlet-mapping>
  * ]]></code>
- *
  */
 public class PingServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    /** Servlet parameters */
+    private static final Logger log = LoggerFactory.getLogger(PingServlet.class);
+
+    /**
+     * Servlet parameters
+     */
     private static final String REPOSITORY_ADDRESS_PARAM = "repository-address";
     private static final String USERNAME_PARAM = "check-username";
     private static final String PASSWORD_PARAM = "check-password";
@@ -107,7 +112,9 @@ public class PingServlet extends HttpServlet {
     private static final String WRITE_PATH_PARAM = "write-check-path";
     private static final String CUSTOM_MESSAGE_PARAM = "custom-message";
 
-    /** Default values */
+    /**
+     * Default values
+     */
     private static final String DEFAULT_REPOSITORY_ADDRESS = "vm://";
     private static final String DEFAULT_USERNAME = "anonymous";
     private static final String DEFAULT_PASSWORD = "";
@@ -116,7 +123,9 @@ public class PingServlet extends HttpServlet {
     private static final String DEFAULT_WRITE_PATH = "pingcheck";
     private static final String DEFAULT_CLUSTER_NODE_ID = "default";
 
-    /** Running config */
+    /**
+     * Running config
+     */
     private String repositoryLocation;
     private String username;
     private String password;
@@ -125,8 +134,11 @@ public class PingServlet extends HttpServlet {
     private String writeTestPath;
     private boolean writeTestEnabled = false;
 
-    /** Local vars */
-    private volatile HippoRepository repository;
+    /**
+     * Local vars
+     */
+    private HippoRepository repository;
+    private Session session;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -138,6 +150,16 @@ public class PingServlet extends HttpServlet {
         writeTestPath = makePathRelative(getParameter(config, WRITE_PATH_PARAM, DEFAULT_WRITE_PATH));
         writeTestEnabled = isTrueOrYes(getParameter(config, WRITE_ENABLE_PARAM, DEFAULT_WRITE_ENABLE));
         customMessage = getParameter(config, CUSTOM_MESSAGE_PARAM, null);
+    }
+
+    @Override
+    public void destroy() {
+        try {
+            closeSession(session);
+        } catch (Exception e) {
+            // ignore failing logout during destroy
+        }
+        super.destroy();
     }
 
     private String getParameter(ServletConfig config, String paramName, String defaultValue) {
@@ -181,7 +203,9 @@ public class PingServlet extends HttpServlet {
         }
 
         try {
+            final long start = System.nanoTime();
             doRepositoryChecks();
+            log.info("Repository checks took {} ms", ((System.nanoTime() - start) / 1000000.0));
         } catch (PingException e) {
             resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
             resultMessage = e.getMessage();
@@ -231,17 +255,12 @@ public class PingServlet extends HttpServlet {
     }
 
     private synchronized void doRepositoryChecks() throws PingException {
-        Session session = null;
-        try {
-            session = obtainSession();
-            doReadTest(session);
-            doWriteTestIfEnabled(session);
-        } finally {
-            closeSession(session);
-        }
+        Session session = obtainSession();
+        doReadTest(session);
+        doWriteTestIfEnabled(session);
     }
 
-    private void obtainRepository() throws PingException {
+    private synchronized void obtainRepository() throws PingException {
         try {
             repository = HippoRepositoryFactory.getHippoRepository(repositoryLocation);
         } catch (RepositoryException e) {
@@ -252,20 +271,27 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private Session obtainSession() throws PingException {
+    private synchronized Session obtainSession() throws PingException {
+        if (session != null && session.isLive()) {
+            return session;
+        }
         if (repository == null) {
             obtainRepository();
         }
+        long start = System.nanoTime();
         try {
             if (username.isEmpty() || "anonymous".equalsIgnoreCase(username)) {
-                return repository.login();
+                session = repository.login();
+                return session;
             }
             if (StringUtils.isBlank(password)) {
                 // try as jvm enabled user
                 final JvmCredentials credentials = JvmCredentials.getCredentials(username);
-                return repository.login(credentials);
+                session = repository.login(credentials);
+                return session;
             } else {
-                return repository.login(username, password.toCharArray());
+                session = repository.login(username, password.toCharArray());
+                return session;
             }
         } catch (LoginException e) {
             String msg = "FAILURE - Wrong credentials for obtaining session from repository in ping servlet : " + ""
@@ -279,6 +305,8 @@ public class PingServlet extends HttpServlet {
                     + USERNAME_PARAM + "' and" + " '" + PASSWORD_PARAM
                     + "' configured as an init-param or context-param?";
             throw new PingException(msg, e);
+        } finally {
+            log.info("Took {} ms to obtain new jcr session.", ((System.nanoTime() - start) / 1000000.0));
         }
     }
 
