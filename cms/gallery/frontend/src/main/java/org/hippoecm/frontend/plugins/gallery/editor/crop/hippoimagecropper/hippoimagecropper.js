@@ -35,11 +35,9 @@ if (!YAHOO.hippo.ImageCropper) {
 
     YAHOO.hippo.ImageCropper = function (id, config) {
       YAHOO.hippo.ImageCropper.superclass.constructor.apply(this, arguments);
-      this.rendered = false;
       this.originalImage = this.el;
       // flag which indicates when crop window is in full screen mode
       this.fullScreenMode = false;
-      this.fitFullScreenSize = config.fitView;
       // NOTE: this are 0 at this stage, re-initialized in render method
       this.original_width = this.originalImage.offsetWidth;
       this.original_height = this.originalImage.offsetHeight;
