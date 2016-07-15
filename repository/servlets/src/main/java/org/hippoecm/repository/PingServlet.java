@@ -53,48 +53,49 @@ import org.slf4j.LoggerFactory;
  * <p>On success the servlet prints "Ok" and returns a 200 status, on failure, the error is
  * printed and a 500 (internal server error) status is returned.</p>
  * <p>In case the custom message is provided, a service unavailable error (503) is returned</p>
- * <p>
+ *
  * <p>To enable the servlet add the following to your web.xml. Set the username to anonymous or leave out the username
  * for anonymous checks.</p>
  * <code><![CDATA[
- * <servlet>
- * <servlet-name>PingServlet</servlet-name>
- * <servlet-class>org.hippoecm.repository.PingServlet</servlet-class>
- * <init-param>
- * <param-name>repository-address</param-name>
- * <param-value>rmi://localhost:1099/hipporepository</param-value>
- * </init-param>
- * <init-param>
- * <param-name>check-username</param-name>
- * <param-value>admin</param-value>
- * </init-param>
- * <init-param>
- * <param-name>check-password</param-name>
- * <param-value>admin</param-value>
- * </init-param>
- * <init-param>
- * <param-name>check-node</param-name>
- * <param-value>content/documents</param-value>
- * </init-param>
- * <init-param>
- * <param-name>write-check-enable</param-name>
- * <param-value>false</param-value>
- * </init-param>
- * <init-param>
- * <param-name>write-check-node</param-name>
- * <param-value>pingcheck</param-value>
- * </init-param>
- * <!-- enable while doing upgrades
- * init-param>
- * <param-name>custom-message</param-name>
- * <param-value>Down for upgrade</param-value>
- * </init-param -->
- * </servlet>
- * <servlet-mapping>
- * <servlet-name>PingServlet</servlet-name>
- * <url-pattern>/ping/*</url-pattern>
- * </servlet-mapping>
+    <servlet>
+      <servlet-name>PingServlet</servlet-name>
+      <servlet-class>org.hippoecm.repository.PingServlet</servlet-class>
+      <init-param>
+        <param-name>repository-address</param-name>
+        <param-value>rmi://localhost:1099/hipporepository</param-value>
+      </init-param>
+      <init-param>
+        <param-name>check-username</param-name>
+        <param-value>admin</param-value>
+      </init-param>
+      <init-param>
+        <param-name>check-password</param-name>
+        <param-value>admin</param-value>
+      </init-param>
+      <init-param>
+        <param-name>check-node</param-name>
+        <param-value>content/documents</param-value>
+      </init-param>
+      <init-param>
+        <param-name>write-check-enable</param-name>
+        <param-value>false</param-value>
+      </init-param>
+      <init-param>
+        <param-name>write-check-node</param-name>
+        <param-value>pingcheck</param-value>
+      </init-param>
+      <!-- enable while doing upgrades
+        init-param>
+        <param-name>custom-message</param-name>
+        <param-value>Down for upgrade</param-value>
+      </init-param -->
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>PingServlet</servlet-name>
+      <url-pattern>/ping/*</url-pattern>
+    </servlet-mapping>
  * ]]></code>
+ *
  */
 public class PingServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
