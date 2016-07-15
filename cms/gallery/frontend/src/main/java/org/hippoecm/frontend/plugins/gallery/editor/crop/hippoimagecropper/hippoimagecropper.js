@@ -35,8 +35,6 @@ if (!YAHOO.hippo.ImageCropper) {
 
     YAHOO.hippo.ImageCropper = function (id, config) {
       YAHOO.hippo.ImageCropper.superclass.constructor.apply(this, arguments);
-      this.oldMaskSize = null;
-      this.container = this.el.parentNode;
       this.rendered = false;
       this.originalImage = this.el;
       // flag which indicates when crop window is in full screen mode
@@ -85,25 +83,6 @@ if (!YAHOO.hippo.ImageCropper) {
     YAHOO.extend(YAHOO.hippo.ImageCropper, YAHOO.hippo.Widget, {
 
       render: function () {
-        /**
-         * NOTE: render is called second time from wicket component, through update() method.
-         * We use this only to reset fitView (so, no additional rendering processing is needed)
-         */
-        if (this.rendered) {
-          // just toggle fullscreen view:
-          this.fitView = !this.fitView;
-          if (this.fitView) {
-            this.scaleToFit(this.calculateRatio(this));
-          } else {
-            if (this.oldMaskSize) {
-              this.resizeMask(this.oldMaskSize.r, this.oldMaskSize.w, this.oldMaskSize.h);
-            }
-            this.reset();
-          }
-          return;
-        }
-        this.rendered = true;
-
         var scalingFactor;
         if (this.previewVisible) {
           this.previewImage = Dom.getFirstChild(this.imagePreviewContainerId);
@@ -135,6 +114,10 @@ if (!YAHOO.hippo.ImageCropper) {
       _render: function () {
 
         if (this.leftCropArea !== null) {
+          var dialogCenter = this.leftCropArea.parentNode;
+          var dialogCenterRegion = Dom.getRegion(dialogCenter);
+          // set height of left crop area to dialog-center height
+          Dom.setStyle(this.leftCropArea, 'height', (dialogCenterRegion.height - 10) + 'px');
           this.leftCropAreaRegion = Dom.getRegion(this.leftCropArea);
         }
         var ratio = this.calculateRatio(this);
@@ -173,31 +156,37 @@ if (!YAHOO.hippo.ImageCropper) {
 
       normalSize: function (type, args, me) {
         me.fullScreenMode = false;
-        Dom.setStyle(me.leftCropArea, 'width', me.leftCropAreaRegion.width + 'px');
-        Dom.setStyle(me.leftCropArea, 'height', me.leftCropAreaRegion.height + 'px');
-        if (me.fitView) {
-          me.scaleToFit(me.calculateRatio(me));
-        }
+        me._setLeftCropAreaSize(me.leftCropAreaRegion.width, me.leftCropAreaRegion.height);
       },
 
-      // left crop area has margin 5px so subtract 10px from width&height to prevent unwanted scrollbars
+      // left crop area has left&top margin 10px so subtract 10px from width&height to prevent unwanted scrollbars.
+      // Subtract 48px from height to ensure the buttons in the footer are visible.
       fullSize: function (type, args, me) {
         me.fullScreenMode = true;
         var dim = args[0];
-        Dom.setStyle(me.leftCropArea, 'width', (dim.w - 10) + 'px');
-        Dom.setStyle(me.leftCropArea, 'height', (dim.h - 10) + 'px');
-        if (me.fitView) {
-          me.scaleToFit(me.calculateRatio(me));
+        me._setLeftCropAreaSize(dim.w - 20, (dim.h - 10) - 48);
+      },
+
+      fullResize: function (type, args, me) {
+        var dim = args[0];
+        me._setLeftCropAreaSize(dim.w - 20, (dim.h - 10) - 48);
+      },
+
+      fitInView: function(fitView) {
+        this.fitView = fitView;
+
+        if (this.fitView) {
+          this.scaleToFit(this.calculateRatio(this));
+        } else {
+          this.reset();
         }
       },
 
-      // left crop area has margin 5px so subtract 10px from width&height to prevent unwanted scrollbars
-      fullResize: function (type, args, me) {
-        var dim = args[0];
-        Dom.setStyle(me.leftCropArea, 'width', (dim.w - 10) + 'px');
-        Dom.setStyle(me.leftCropArea, 'height', (dim.h - 10) + 'px');
-        if (me.fitView) {
-          me.scaleToFit(me.calculateRatio(me));
+      _setLeftCropAreaSize: function(width, height) {
+        Dom.setStyle(this.leftCropArea, 'width', width + 'px');
+        Dom.setStyle(this.leftCropArea, 'height', height + 'px');
+        if (this.fitView) {
+          this.scaleToFit(this.calculateRatio(this));
         }
       },
 
@@ -316,55 +305,25 @@ if (!YAHOO.hippo.ImageCropper) {
         return {w: me.original_width * ratio, h: me.original_height * ratio, r: ratio};
       },
 
-      fitSize: function (el, ratio) {
-        Dom.setStyle(el, 'width', ratio.w + 'px');
-        Dom.setStyle(el, 'height', ratio.h + 'px');
-      },
-
       scaleToFit: function (ratio) {
         /**
          * when in full screen, check if enabled, and if so enable fullScreenScaled.
          * also check if image is bigger than view size and resize if so
          */
+        var scaleEl = this.cropper.getWrapEl().parentNode;
         if (ratio.r < 1) {
-          this.fitSize(this.container, ratio);
-          this.fitSize(this.originalImage, ratio);
-          this.fitSize(this.cropper._mask, ratio);
-          this.fitSize(this.cropper._wrap, ratio);
-          // fix background behind the mask, so crop result (preview) is shown properly:
-          var back = this.cropper._resizeMaskEl;
-          Dom.setStyle(back, "background-size", ratio.w + 'px ' + ratio.h + 'px');
-          // rescale mask when in fit view, NOTE: fullscreen rescaling is triggered within render method
-          if (this.fitView) {
-            var cropCoords = this.cropper.getCropCoords();
-            this.oldMaskSize = {r: 1, w: cropCoords.width, h: cropCoords.height};
-            this.resizeMask(ratio.r, cropCoords.width, cropCoords.height)
-          }
+          Dom.setStyle(scaleEl, 'transform', 'scale(' + ratio.r + ')');
+          Dom.addClass(scaleEl.parentNode, 'scaled');
+        } else {
+          // reset
+          Dom.setStyle(scaleEl, 'transform', 'scale(1)');
+          Dom.removeClass(scaleEl.parentNode, 'scaled');
         }
-      },
-
-      resizeMask: function (ratio, w, h) {
-        var cropper = this.cropper;
-        var height = h * ratio;
-        var width = w * ratio;
-        var elResize = cropper.getResizeEl();
-        setSize(elResize, width, height, ratio);
-        var elMaskAll = cropper.getWrapEl();
-        setSize(elMaskAll, width, height, ratio);
-        var elMask = cropper.getResizeMaskEl();
-        setSize(elMask, width, height, ratio);
-        var handles = cropper.getResizeObject().getActiveHandleEl();
-        setSize(handles, width, height);
-        function setSize(el, width, height, ratio) {
-          Dom.setStyle(el, 'width', width + 'px');
-          Dom.setStyle(el, 'height', height + 'px');
-        }
-
       },
 
       reset: function () {
         if (this.initOriginal(this)) {
-          this.scaleToFit({w: this.original_width, h: this.original_height, r: 0.1})
+          this.scaleToFit({w: this.original_width, h: this.original_height, r: 1})
         }
       },
 

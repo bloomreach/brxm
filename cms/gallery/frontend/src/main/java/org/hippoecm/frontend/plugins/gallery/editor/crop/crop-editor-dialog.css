@@ -16,10 +16,9 @@
 
 .left-crop-area {
   float: left;
-  width: 590px;
-  height: 470px;
+  width: 580px;
   overflow: auto;
-  margin: 5px;
+  margin: 10px 0 0 10px;
 }
 
 .left-crop-area .yui-skin-sam {
@@ -30,15 +29,20 @@
   border: 1px dashed #666;
 }
 
+.left-crop-area.scaled {
+  overflow: hidden;
+}
+.left-crop-area.scaled > .yui-skin-sam {
+  transform-origin: top left;
+}
+
 .right-crop-area {
   float: right;
-  border-left: 1px solid #999;
   max-width: 216px;
   width: 216px;
   padding: 5px 5px 5px 12px;
   margin: 5px 0;
-  min-height: 454px;
-  height: 454px;
+  min-height: 200px;
   overflow: auto;
 }
 
