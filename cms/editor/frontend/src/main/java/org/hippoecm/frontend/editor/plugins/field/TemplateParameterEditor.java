@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.string.Strings;
@@ -36,10 +37,13 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 public class TemplateParameterEditor extends Panel {
 
     private static final long serialVersionUID = 1L;
+    private final IClusterConfig cluster;
 
     public TemplateParameterEditor(String id, final IModel<IPluginConfig> model, final IClusterConfig cluster, final boolean editable) {
         super(id, model);
-        List<PropertyDescriptor> properties = new ArrayList<>(Collections2.filter(cluster.getPropertyDescriptors(), new Predicate<PropertyDescriptor>() {
+        this.cluster = cluster;
+
+        List<PropertyDescriptor> properties = new ArrayList<>(Collections2.filter(this.cluster.getPropertyDescriptors(), new Predicate<PropertyDescriptor>() {
             @Override
             public boolean apply(PropertyDescriptor descriptor) {
                 return !"mode".equals(descriptor.getName());
@@ -92,4 +96,11 @@ public class TemplateParameterEditor extends Panel {
         });
     }
 
+    @Override
+    protected void onDetach() {
+        if (cluster != null && cluster instanceof IDetachable) {
+            ((IDetachable) cluster).detach();
+        }
+        super.onDetach();
+    }
 }

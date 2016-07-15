@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -27,7 +26,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.model.KeyMapModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
@@ -46,12 +46,15 @@ public class FieldPluginEditor extends Panel {
 
         cssProvider = new CssProvider();
 
+        final IModel<String> captionModel = new KeyMapModel(model, "caption");
+        final IModel<String> hintModel = new KeyMapModel(model, "hint");
+
         if (editable) {
-            add(new TextFieldWidget("caption-editor", new PropertyModel<>(model, "caption")));
-            add(new TextAreaWidget("hint-editor", new PropertyModel<>(model, "hint")));
+            add(new TextFieldWidget("caption-editor", captionModel));
+            add(new TextAreaWidget("hint-editor", hintModel));
         } else {
-            add(new Label("caption-editor", new PropertyModel<String>(model, "caption")));
-            add(new Label("hint-editor", new PropertyModel<String>(model, "hint")));
+            add(new Label("caption-editor", captionModel));
+            add(new Label("hint-editor", hintModel));
         }
         add(new RefreshingView<String>("css") {
 
