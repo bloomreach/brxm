@@ -122,6 +122,7 @@ public class PingServlet extends HttpServlet {
     private static final String DEFAULT_WRITE_ENABLE = "false";
     private static final String DEFAULT_WRITE_PATH = "pingcheck";
     private static final String DEFAULT_CLUSTER_NODE_ID = "default";
+    public static final String NEW_SESSION_REQUIRED_PARAM = "newSession";
 
     /**
      * Running config
@@ -138,7 +139,7 @@ public class PingServlet extends HttpServlet {
      * Local vars
      */
     private HippoRepository repository;
-    private Session session;
+    private Session instanceSession;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -155,9 +156,9 @@ public class PingServlet extends HttpServlet {
     @Override
     public void destroy() {
         try {
-            closeSession(session);
+            closeSession(instanceSession);
         } catch (Exception e) {
-            // ignore failing logout during destroy
+            log.warn("Exception during #destroy : ", e);
         }
         super.destroy();
     }
@@ -204,8 +205,9 @@ public class PingServlet extends HttpServlet {
 
         try {
             final long start = System.nanoTime();
-            doRepositoryChecks();
-            log.info("Repository checks took {} ms", ((System.nanoTime() - start) / 1000000.0));
+            final String newSessionRequired = request.getParameter(NEW_SESSION_REQUIRED_PARAM);
+            doRepositoryChecks("true".equalsIgnoreCase(newSessionRequired));
+            log.debug("Repository checks took {} ms", ((System.nanoTime() - start) / 1000000.0));
         } catch (PingException e) {
             resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
             resultMessage = e.getMessage();
@@ -254,13 +256,27 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private synchronized void doRepositoryChecks() throws PingException {
-        Session session = obtainSession();
-        doReadTest(session);
-        doWriteTestIfEnabled(session);
+    private synchronized void doRepositoryChecks(final boolean newSessionRequired) throws PingException {
+        Session session = null;
+        try {
+            if (newSessionRequired) {
+                session = createSession();
+            } else {
+                session = obtainInstanceSession();
+            }
+            doReadTest(session);
+            doWriteTestIfEnabled(session);
+        } finally {
+            if (newSessionRequired && session != null && session.isLive()) {
+                session.logout();
+            }
+        }
     }
 
     private synchronized void obtainRepository() throws PingException {
+        if (repository != null) {
+            return;
+        }
         try {
             repository = HippoRepositoryFactory.getHippoRepository(repositoryLocation);
         } catch (RepositoryException e) {
@@ -271,14 +287,11 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private synchronized Session obtainSession() throws PingException {
-        if (session != null && session.isLive()) {
-            return session;
-        }
-        if (repository == null) {
-            obtainRepository();
-        }
+
+    private Session createSession() throws PingException {
+        obtainRepository();
         long start = System.nanoTime();
+        Session session = null;
         try {
             if (username.isEmpty() || "anonymous".equalsIgnoreCase(username)) {
                 session = repository.login();
@@ -306,8 +319,18 @@ public class PingServlet extends HttpServlet {
                     + "' configured as an init-param or context-param?";
             throw new PingException(msg, e);
         } finally {
-            log.info("Took {} ms to obtain new jcr session.", ((System.nanoTime() - start) / 1000000.0));
+            if (session != null) {
+                log.debug("Took {} ms to create new jcr session.", ((System.nanoTime() - start) / 1000000.0));
+            }
         }
+    }
+
+    private synchronized Session obtainInstanceSession() throws PingException {
+        if (instanceSession != null && instanceSession.isLive()) {
+            return instanceSession;
+        }
+        instanceSession = createSession();
+        return instanceSession;
     }
 
     private void closeSession(Session session) {
