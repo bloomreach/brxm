@@ -46,10 +46,8 @@ public class FieldPluginEditor extends Panel {
 
         cssProvider = new CssProvider();
 
-        final IPluginConfig pluginConfig = model.getObject();
-
-        final IModel<String> captionModel = new KeyMapModel<>(pluginConfig, "caption");
-        final IModel<String> hintModel = new KeyMapModel<>(pluginConfig, "hint");
+        final IModel<String> captionModel = new KeyMapModel(model, "caption");
+        final IModel<String> hintModel = new KeyMapModel(model, "hint");
 
         if (editable) {
             add(new TextFieldWidget("caption-editor", captionModel));

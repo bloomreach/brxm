@@ -17,6 +17,7 @@
 
 package org.hippoecm.frontend.model;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.wicket.model.IModel;
@@ -27,27 +28,28 @@ import org.apache.wicket.model.IModel;
  * @param <K> type of the key in the map
  * @param <V> type of the value object in the map
  */
-public class KeyMapModel<K, V> implements IModel<V> {
+public class KeyMapModel<K extends Serializable, V> implements IModel<V> {
 
     private final K key;
-    private final Map<K, V> map;
+    private final IModel<? extends Map<K, V>> mapModel;
 
-    public KeyMapModel(final Map map, final K key) {
-        this.map = map;
+    public KeyMapModel(final IModel<? extends Map<K, V>> mapModel, final K key) {
+        this.mapModel = mapModel;
         this.key = key;
     }
 
     @Override
     public V getObject() {
-        return map.get(key);
+        return mapModel.getObject().get(key);
     }
 
     @Override
     public void setObject(final V object) {
-        map.put(key, object);
+        mapModel.getObject().put(key, object);
     }
 
     @Override
     public void detach() {
+        mapModel.detach();
     }
 }
