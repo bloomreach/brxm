@@ -174,8 +174,14 @@ if (!YAHOO.hippo.ImageCropper) {
         this.fitView = fitView;
 
         if (this.fitView) {
+          this.scrollTop = this.leftCropArea.scrollTop;
+          this.scrollLeft = this.leftCropArea.scrollLeft;
+          this.leftCropArea.scrollTop = 0;
+          this.leftCropArea.scrollLeft = 0;
           this.scaleToFit(this.calculateRatio(this));
         } else {
+          this.leftCropArea.scrollTop = this.scrollTop;
+          this.leftCropArea.scrollLeft = this.scrollLeft;
           this.reset();
         }
       },
