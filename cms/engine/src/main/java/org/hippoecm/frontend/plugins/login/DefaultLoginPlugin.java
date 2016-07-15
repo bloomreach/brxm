@@ -90,7 +90,7 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
                 final DropDownChoice<String> timeZone = new DropDownChoice<>("timezone",
                         PropertyModel.of(this, "selectedTimeZone"), availableTimeZones);
 
-                timeZone.setNullValid(true);
+                timeZone.setNullValid(false);
 
                 form.add(new Label("timezone-label", new ResourceModel("timezone-label", "Time zone:")));
                 form.add(timeZone);
