@@ -29,7 +29,8 @@
   border: 1px dashed #666;
 }
 
-.left-crop-area.scaled {
+.left-crop-area.scaled,
+.modal_fullscreen .left-crop-area.scaled {
   overflow: hidden;
 }
 .left-crop-area.scaled > .yui-skin-sam {
