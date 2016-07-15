@@ -41,7 +41,7 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
     private static final ResourceReference JSTZ_JS = new JavaScriptResourceReference(DefaultLoginPlugin.class, "jstz.min.js");
 
     public static final String SHOW_TIMEZONES_CONFIG_PARAM = "show.timezones";
-    public static final String SELECTED_TIMEZONES_CONFIG_PARAM = "selected-timezones";
+    public static final String SELECTABLE_TIMEZONES_CONFIG_PARAM = "selectable-timezones";
 
     public DefaultLoginPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -74,7 +74,7 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
             super(id, autoComplete, locales, handler);
 
             if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
-                String[] timeZones = getPluginConfig().getStringArray(SELECTED_TIMEZONES_CONFIG_PARAM);
+                String[] timeZones = getPluginConfig().getStringArray(SELECTABLE_TIMEZONES_CONFIG_PARAM);
                 if (ArrayUtils.isEmpty(timeZones)) {
                     timeZones = TimeZone.getAvailableIDs();
                 }
