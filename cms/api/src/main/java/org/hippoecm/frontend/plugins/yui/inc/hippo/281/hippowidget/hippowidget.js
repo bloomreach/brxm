@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * @description
  * <p>
@@ -26,143 +27,143 @@
 
 YAHOO.namespace('hippo');
 
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    if (!YAHOO.hippo.Widget) {
+  if (!YAHOO.hippo.Widget) {
 
-        var Dom = YAHOO.util.Dom,
-            Lang = YAHOO.lang,
-            HippoDom = YAHOO.hippo.Dom,
-            exists = function(_o) {
-                return !Lang.isUndefined(_o) && _o !== null;
-            };
+    var Dom = YAHOO.util.Dom,
+      Lang = YAHOO.lang,
+      HippoDom = YAHOO.hippo.Dom,
+      exists = function (_o) {
+        return !Lang.isUndefined(_o) && _o !== null;
+      };
 
-        YAHOO.hippo.WidgetManagerImpl = function() {
-            this.NAME = 'HippoWidget';
-        };
+    YAHOO.hippo.WidgetManagerImpl = function () {
+      this.NAME = 'HippoWidget';
+    };
 
-        YAHOO.hippo.WidgetManagerImpl.prototype = {
+    YAHOO.hippo.WidgetManagerImpl.prototype = {
 
-            register : function(id, config, Instance) {
-                var name = this.NAME,
-                    widget = Dom.get(id);
+      register: function (id, config, Instance) {
+        var name = this.NAME,
+          widget = Dom.get(id);
 
-                if (widget === null || widget === undefined) {
-                    return;
-                }
+        if (widget === null || widget === undefined) {
+          return;
+        }
 
-                if (Lang.isUndefined(widget[name])) {
-                    try {
-                        widget[name] = new Instance(id, config);
-                    } catch(e) {
-                        YAHOO.log('Could not instantiate widget of type ' + Instance, 'error');
-                    }
-                }
-            },
+        if (Lang.isUndefined(widget[name])) {
+          try {
+            widget[name] = new Instance(id, config);
+          } catch (e) {
+            YAHOO.log('Could not instantiate widget of type ' + Instance, 'error');
+          }
+        }
+      },
 
-            update : function(id) {
-                var widget = this.getWidget(id);
-                if (widget !== null) {
-                    widget.update();
-                }
-            },
+      update: function (id) {
+        var widget = this.getWidget(id);
+        if (widget !== null) {
+          widget.update();
+        }
+      },
 
-            getWidget : function(id) {
-                var widgetEl = Dom.get(id);
-                if (Lang.isValue(widgetEl)) {
-                    var widget = widgetEl[this.NAME];
-                    if (Lang.isValue(widget)) {
-                        return widget;
-                    }
-                }
-                return null;
-            }
-        };
+      getWidget: function (id) {
+        var widgetEl = Dom.get(id);
+        if (Lang.isValue(widgetEl)) {
+          var widget = widgetEl[this.NAME];
+          if (Lang.isValue(widget)) {
+            return widget;
+          }
+        }
+        return null;
+      }
+    };
 
-        YAHOO.hippo.Widget = function(id, config) {
-            this.id = id;
-            this.config = config;
+    YAHOO.hippo.Widget = function (id, config) {
+      this.id = id;
+      this.config = config;
 
-            this.el = Dom.get(id);
-            this.unit = null;
-            this.helper = HippoDom;
+      this.el = Dom.get(id);
+      this.unit = null;
+      this.helper = HippoDom;
 
-            if (Lang.isFunction(this.config.calculateWidthAndHeight)) {
-                this.calculateWidthAndHeight = this.config.calculateWidthAndHeight;
-            }
+      if (Lang.isFunction(this.config.calculateWidthAndHeight)) {
+        this.calculateWidthAndHeight = this.config.calculateWidthAndHeight;
+      }
 
-            var self = this;
-            YAHOO.hippo.LayoutManager.registerRenderListener(this.el, this, function(sizes, unit) {
-                self.render(sizes, unit);
-            }, true);
-            YAHOO.hippo.LayoutManager.registerResizeListener(this.el, this, function(sizes) {
-                self.resize(sizes);
-            }, false);
-            YAHOO.hippo.HippoAjax.registerDestroyFunction(this.el, function() {
-                self.destroy();
-            }, this);
-        };
+      var self = this;
+      YAHOO.hippo.LayoutManager.registerRenderListener(this.el, this, function (sizes, unit) {
+        self.render(sizes, unit);
+      }, true);
+      YAHOO.hippo.LayoutManager.registerResizeListener(this.el, this, function (sizes) {
+        self.resize(sizes);
+      }, false);
+      YAHOO.hippo.HippoAjax.registerDestroyFunction(this.el, function () {
+        self.destroy();
+      }, this);
+    };
 
-        YAHOO.hippo.Widget.prototype = {
+    YAHOO.hippo.Widget.prototype = {
 
-            resize: function(sizes) {
-                var dim = this.calculateWidthAndHeight(sizes);
-                this.performResize(dim);
-            },
+      resize: function (sizes) {
+        var dim = this.calculateWidthAndHeight(sizes);
+        this.performResize(dim);
+      },
 
-            performResize : function(dim) {
-                this._setWidth(dim.width);
-                this._setHeight(dim.height);
-            },
+      performResize: function (dim) {
+        this._setWidth(dim.width);
+        this._setHeight(dim.height);
+      },
 
-            _setWidth : function(w) {
-                Dom.setStyle(this.el, 'width', w + 'px');
-            },
+      _setWidth: function (w) {
+        Dom.setStyle(this.el, 'width', w + 'px');
+      },
 
-            _setHeight : function(h) {
-                Dom.setStyle(this.el, 'height', h + 'px');
-            },
+      _setHeight: function (h) {
+        Dom.setStyle(this.el, 'height', h + 'px');
+      },
 
-            render : function(sizes, unit) {
-                var parent, reg;
+      render: function (sizes, unit) {
+        var parent, reg;
 
-                this.unit = exists(unit) ? unit : YAHOO.hippo.LayoutManager.findLayoutUnit(this.el);
-                if (this.unit !== null) {
-                    this.resize(exists(sizes) ? sizes: this.unit.getSizes());
-                } else {
-                    //We're not inside a layout unit to provide us with dimension details, thus the
-                    //resize event will never be called. For providing an initial size, the first ancestor
-                    //with a classname is used.
-                    parent = Dom.getAncestorBy(this.el, function(node) {
-                        return Lang.isValue(node.className) && Lang.trim(node.className).length > 0;
-                    });
+        this.unit = exists(unit) ? unit : YAHOO.hippo.LayoutManager.findLayoutUnit(this.el);
+        if (this.unit !== null) {
+          this.resize(exists(sizes) ? sizes : this.unit.getSizes());
+        } else {
+          //We're not inside a layout unit to provide us with dimension details, thus the
+          //resize event will never be called. For providing an initial size, the first ancestor
+          //with a classname is used.
+          parent = Dom.getAncestorBy(this.el, function (node) {
+            return Lang.isValue(node.className) && Lang.trim(node.className).length > 0;
+          });
 
-                    if (exists(parent)) {
-                        reg = Dom.getRegion(parent);
-                        this.resize({wrap: {w: reg.width, h: reg.height}});
-                    }
-                }
-            },
+          if (exists(parent)) {
+            reg = Dom.getRegion(parent);
+            this.resize({wrap: {w: reg.width, h: reg.height}});
+          }
+        }
+      },
 
-            update : function() {
-                this.render();
-            },
+      update: function () {
+        this.render();
+      },
 
-            destroy : function() {
-                YAHOO.hippo.LayoutManager.unregisterRenderListener(this.el, this);
-                YAHOO.hippo.LayoutManager.unregisterResizeListener(this.el, this);
-            },
+      destroy: function () {
+        YAHOO.hippo.LayoutManager.unregisterRenderListener(this.el, this);
+        YAHOO.hippo.LayoutManager.unregisterResizeListener(this.el, this);
+      },
 
-            calculateWidthAndHeight : function(sizes) {
-                return {width: sizes.wrap.w, height: sizes.wrap.h};
-            }
-        };
+      calculateWidthAndHeight: function (sizes) {
+        return {width: sizes.wrap.w, height: sizes.wrap.h};
+      }
+    };
 
-        YAHOO.hippo.WidgetManager = new YAHOO.hippo.WidgetManagerImpl();
+    YAHOO.hippo.WidgetManager = new YAHOO.hippo.WidgetManagerImpl();
 
-        YAHOO.register("hippowidget", YAHOO.hippo.WidgetManager, {
-            version: "2.8.1", build: "19"
-        });
-    }
+    YAHOO.register("hippowidget", YAHOO.hippo.WidgetManager, {
+      version: "2.8.1", build: "19"
+    });
+  }
 }());
