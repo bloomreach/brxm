@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -66,12 +66,22 @@ public class WidgetBehavior extends AbstractYuiBehavior {
         return component.getMarkupId();
     }
 
+    public String getUpdateScript() {
+        return "YAHOO.hippo.WidgetManager.update('" + getMarkupId() + "');";
+    }
+
     protected WidgetTemplate getTemplate() {
         return template;
     }
 
-    public String getUpdateScript() {
-        return "YAHOO.hippo.WidgetManager.update('" + getMarkupId() + "');";
+    public String execWidgetFunction(final String function) {
+        return "var w = YAHOO.hippo.WidgetManager.getWidget('" + getMarkupId() + "');\n" +
+               "if (w !== null) {\n" +
+                "   w." + function + ";\n" +
+                "} else {" +
+                "  console.error('Failed to lookup widget with id " + getMarkupId()
+                + ", skipping execution of function " + function + "');\n" +
+                "}";
     }
 
 }

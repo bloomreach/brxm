@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,13 +62,21 @@ YAHOO.namespace('hippo');
             },
 
             update : function(id) {
-                var widget = Dom.get(id);
-                if (widget === null || widget === undefined) {
-                    return;
+                var widget = this.getWidget(id);
+                if (widget !== null) {
+                    widget.update();
                 }
-                if (!Lang.isUndefined(widget[this.NAME])) {
-                   widget[this.NAME].update();
+            },
+
+            getWidget : function(id) {
+                var widgetEl = Dom.get(id);
+                if (Lang.isValue(widgetEl)) {
+                    var widget = widgetEl[this.NAME];
+                    if (Lang.isValue(widget)) {
+                        return widget;
+                    }
                 }
+                return null;
             }
         };
 
