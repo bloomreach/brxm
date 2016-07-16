@@ -24,7 +24,10 @@ import java.util.Locale;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
+import org.apache.jackrabbit.api.JackrabbitValue;
+import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.link.ResourceLink;
@@ -44,7 +47,6 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.dialog.BinaryUploadDialog;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,6 +89,28 @@ public class BinaryEditor extends Panel {
         final IDialogService service = pluginContext.getService(IDialogService.class.getName(), IDialogService.class);
         final DialogLink uploadLink = new DialogLink("binary-upload-link", new Model<>("Upload binary"), factory, service);
         add(uploadLink);
+
+        // Jackrabbit Binary Content Identifier if this Binary is in BinaryStore.
+        final String contentIdentity = getJackrabbitContentIdentity(model);
+        final String contentIdentityLabelValue = contentIdentity == null ? "" : "(Content Identity: " + contentIdentity + ")";
+        final Label contentIdentityLabel = new Label("content-identity", contentIdentityLabelValue);
+        add(contentIdentityLabel);
+    }
+
+    private String getJackrabbitContentIdentity(final JcrPropertyModel model) {
+        String contentId = null;
+
+        try {
+            final Value value = model.getProperty().getValue();
+
+            if (value instanceof JackrabbitValue) {
+                contentId = ((JackrabbitValue) value).getContentIdentity();
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to get Jackrabbit Binary Value Content Identity.", e);
+        }
+
+        return contentId;
     }
 
     private static String getSizeString(final Bytes bytes) {
