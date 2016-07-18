@@ -1,0 +1,121 @@
+{
+  "angular-animate@1.4.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular.js"
+  },
+  "angular-aria@1.4.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular.js"
+  },
+  "angular-material@1.1.0-rc4-master-06e7e99": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/material",
+    "licenseFile": "node_modules/angular-material/LICENSE"
+  },
+  "angular-messages@1.4.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular.js"
+  },
+  "angular-translate-loader-static-files@2.8.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular-translate/bower-angular-translate-loader-static-files"
+  },
+  "angular-translate@2.8.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular-translate/angular-translate",
+    "licenseFile": "node_modules/angular-translate/LICENSE"
+  },
+  "angular-ui-router@0.2.15": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular-ui/ui-router",
+    "licenseFile": "node_modules/angular-ui-router/LICENSE"
+  },
+  "angular-ui-tree@2.15.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular-ui-tree/angular-ui-tree",
+    "licenseFile": "node_modules/angular-ui-tree/LICENSE"
+  },
+  "angular@1.4.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/angular/angular.js"
+  },
+  "atoa@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bevacqua/atoa",
+    "licenseFile": "node_modules/atoa/license"
+  },
+  "contra@1.9.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bevacqua/contra",
+    "licenseFile": "node_modules/contra/LICENSE"
+  },
+  "crossvent@1.5.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bevacqua/crossvent",
+    "licenseFile": "node_modules/crossvent/LICENSE"
+  },
+  "custom-event@1.0.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/webmodules/custom-event"
+  },
+  "dom-autoscroller@1.2.4": {
+    "licenses": "MIT",
+    "repository": "https://github.com/hollowdoor/dom_autoscroller",
+    "licenseFile": "node_modules/dom-autoscroller/LICENSE"
+  },
+  "dragula@3.7.1-h1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/onehippo/dragula",
+    "licenseFile": "node_modules/dragula/license"
+  },
+  "es6-shim@0.35.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/paulmillr/es6-shim",
+    "licenseFile": "node_modules/es6-shim/LICENSE"
+  },
+  "hippo-cm@": {
+    "licenses": "UNKNOWN"
+  },
+  "jquery@2.2.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/jquery/jquery",
+    "licenseFile": "node_modules/jquery/LICENSE.txt"
+  },
+  "more-events@1.3.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/hollowdoor/more_events"
+  },
+  "ng-device-detector@3.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/srfrnk/ng-device-detector",
+    "licenseFile": "node_modules/ng-device-detector/license.txt"
+  },
+  "ng-focus-if@1.0.5": {
+    "licenses": "MIT",
+    "repository": "https://github.com/hiebj/ng-focus-if",
+    "licenseFile": "node_modules/ng-focus-if/LICENSE"
+  },
+  "open-sans-fontface@1.4.2": {
+    "licenses": "Apache License version 2.0",
+    "repository": "https://github.com/FontFaceKit/open-sans"
+  },
+  "pointer-point@2.4.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/hollowdoor/pointer_point"
+  },
+  "re-tree@0.0.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/srfrnk/re-tree",
+    "licenseFile": "node_modules/re-tree/license.txt"
+  },
+  "ticky@1.0.1": {
+    "licenses": "MIT",
+    "repository": "https://github.com/bevacqua/ticky",
+    "licenseFile": "node_modules/ticky/license"
+  },
+  "velocity-animate@1.2.3": {
+    "licenses": "MIT",
+    "repository": "https://github.com/julianshapiro/velocity",
+    "licenseFile": "node_modules/velocity-animate/LICENSE.md"
+  }
+}
