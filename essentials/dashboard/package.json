@@ -1,4 +1,6 @@
 {
+  "name": "hippo-essentials",
+  "license": "Apache-2.0",
   "private": true,
   "dependencies": {
     "angular": "1.4.8",
