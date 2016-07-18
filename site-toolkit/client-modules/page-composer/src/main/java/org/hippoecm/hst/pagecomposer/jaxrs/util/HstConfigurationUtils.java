@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,6 +50,9 @@ public class HstConfigurationUtils {
         if (!session.hasPendingChanges()) {
             return;
         }
+        // for logging use pruned paths because the non-pruned path changes can be very large
+        String[] prunedPathChanges = JcrSessionUtils.getPendingChangePaths(session, true);
+
         // never prune for getting changes since needed for hstNode model reloading
         String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, false);
 
@@ -62,7 +65,7 @@ public class HstConfigurationUtils {
             invalidator.eventPaths(pathsToBeChanged);
         }
         //only log when the save is successful
-        logEvent("write-changes",session.getUserID(),StringUtils.join(pathsToBeChanged, ","));
+        logEvent("write-changes",session.getUserID(),StringUtils.join(prunedPathChanges, ","));
     }
 
 
