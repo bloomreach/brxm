@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CMS_ONLY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_EXECUTED;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MODULECONFIG;
 
@@ -53,9 +54,25 @@ public class ModuleManager {
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
     private Future keepAliveFuture;
     private volatile boolean execute = true;
+    private final boolean isWebappCms;
 
-    public ModuleManager(Session session) {
+    public ModuleManager(final Session session) {
         this.session = session;
+        boolean cms;
+        try {
+            Class.forName("org.hippoecm.frontend.Main", false, getClass().getClassLoader());
+            cms = true;
+            log.info("Current application is CMS webapp : Modules that require CMS code will be initialized");
+        } catch (ClassNotFoundException e) {
+            log.info("Current application is not a CMS webapp : Modules that require CMS code *won't* be initialized");
+            cms = false;
+        }
+        isWebappCms = cms;
+    }
+
+    ModuleManager(final Session session, final boolean isWebappCms) {
+        this.session = session;
+        this.isWebappCms = isWebappCms;
     }
 
     public void start() throws RepositoryException {
@@ -94,6 +111,11 @@ public class ModuleManager {
             moduleName = node.getName();
             final String className = JcrUtils.getStringProperty(node, HIPPOSYS_CLASSNAME, null);
             final Calendar executed = JcrUtils.getDateProperty(node, HIPPO_EXECUTED, null);
+            final Boolean cmsOnly = JcrUtils.getBooleanProperty(node, HIPPO_CMS_ONLY, Boolean.FALSE);
+            if (cmsOnly && !isWebappCms) {
+                log.info("Skipping '{}' because requires CMS webapp but current webapp is not a CMS webapp", moduleName);
+                return null;
+            }
             if (className != null && executed == null) {
                 try {
                     final Class<?> moduleClass = Class.forName(className);
