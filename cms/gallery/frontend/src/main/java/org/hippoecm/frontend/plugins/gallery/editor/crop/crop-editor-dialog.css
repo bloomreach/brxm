@@ -29,14 +29,6 @@
   border: 1px dashed #666;
 }
 
-.left-crop-area.scaled,
-.modal_fullscreen .left-crop-area.scaled {
-  overflow: hidden;
-}
-.left-crop-area.scaled > .yui-skin-sam {
-  transform-origin: top left;
-}
-
 .right-crop-area {
   float: right;
   max-width: 216px;

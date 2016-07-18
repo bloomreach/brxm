@@ -35,6 +35,8 @@ if (!YAHOO.hippo.ImageCropper) {
 
     YAHOO.hippo.ImageCropper = function (id, config) {
       YAHOO.hippo.ImageCropper.superclass.constructor.apply(this, arguments);
+      this.oldMaskSize = null;
+      this.container = this.el.parentNode;
       this.originalImage = this.el;
       // flag which indicates when crop window is in full screen mode
       this.fullScreenMode = false;
@@ -174,14 +176,11 @@ if (!YAHOO.hippo.ImageCropper) {
         this.fitView = fitView;
 
         if (this.fitView) {
-          this.scrollTop = this.leftCropArea.scrollTop;
-          this.scrollLeft = this.leftCropArea.scrollLeft;
-          this.leftCropArea.scrollTop = 0;
-          this.leftCropArea.scrollLeft = 0;
           this.scaleToFit(this.calculateRatio(this));
         } else {
-          this.leftCropArea.scrollTop = this.scrollTop;
-          this.leftCropArea.scrollLeft = this.scrollLeft;
+          if (this.oldMaskSize) {
+            this.resizeMask(this.oldMaskSize.r, this.oldMaskSize.w, this.oldMaskSize.h);
+          }
           this.reset();
         }
       },
@@ -314,14 +313,43 @@ if (!YAHOO.hippo.ImageCropper) {
          * when in full screen, check if enabled, and if so enable fullScreenScaled.
          * also check if image is bigger than view size and resize if so
          */
-        var scaleEl = this.cropper.getWrapEl().parentNode;
         if (ratio.r < 1) {
-          Dom.setStyle(scaleEl, 'transform', 'scale(' + ratio.r + ')');
-          Dom.addClass(scaleEl.parentNode, 'scaled');
-        } else {
-          // reset
-          Dom.setStyle(scaleEl, 'transform', 'scale(1)');
-          Dom.removeClass(scaleEl.parentNode, 'scaled');
+          this.fitSize(this.container, ratio);
+          this.fitSize(this.originalImage, ratio);
+          this.fitSize(this.cropper._mask, ratio);
+          this.fitSize(this.cropper._wrap, ratio);
+          // fix background behind the mask, so crop result (preview) is shown properly:
+          var back = this.cropper._resizeMaskEl;
+          Dom.setStyle(back, "background-size", ratio.w + 'px ' + ratio.h + 'px');
+          // rescale mask when in fit view, NOTE: fullscreen rescaling is triggered within render method
+          if (this.fitView) {
+            var cropCoords = this.cropper.getCropCoords();
+            this.oldMaskSize = {r: 1, w: cropCoords.width, h: cropCoords.height};
+            this.resizeMask(ratio.r, cropCoords.width, cropCoords.height)
+          }
+        }
+      },
+
+      fitSize: function (el, ratio) {
+        Dom.setStyle(el, 'width', ratio.w + 'px');
+        Dom.setStyle(el, 'height', ratio.h + 'px');
+      },
+
+      resizeMask: function (ratio, w, h) {
+        var cropper = this.cropper;
+        var height = h * ratio;
+        var width = w * ratio;
+        var elResize = cropper.getResizeEl();
+        setSize(elResize, width, height, ratio);
+        var elMaskAll = cropper.getWrapEl();
+        setSize(elMaskAll, width, height, ratio);
+        var elMask = cropper.getResizeMaskEl();
+        setSize(elMask, width, height, ratio);
+        var handles = cropper.getResizeObject().getActiveHandleEl();
+        setSize(handles, width, height);
+        function setSize(el, width, height, ratio) {
+          Dom.setStyle(el, 'width', width + 'px');
+          Dom.setStyle(el, 'height', height + 'px');
         }
       },
 
