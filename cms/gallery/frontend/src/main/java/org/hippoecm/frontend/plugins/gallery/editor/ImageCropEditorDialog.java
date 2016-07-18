@@ -34,7 +34,6 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -182,24 +181,6 @@ public class ImageCropEditorDialog extends Dialog<Node> {
         };
         fitViewCheckbox.setOutputMarkupId(true);
         add(fitViewCheckbox);
-        // add label
-        final Label fitViewLabel = new Label("fit-view-label", new StringResourceModel("fit-view", this, null));
-        fitViewLabel.setOutputMarkupId(true);
-        final AjaxLink fitViewLink = new AjaxLink("fit-view-link") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                // toggle fitView flag
-                fitView = !fitView;
-                target.add(fitViewCheckbox);
-                fitViewCheckbox.modelChanged();
-
-                executeFitInView(target, imageCropBehavior);
-            }
-        };
-        fitViewLink.setOutputMarkupId(true);
-        add(fitViewLink);
-        fitViewLink.add(fitViewLabel);
-
 
         originalImage.add(imageCropBehavior);
         originalImage.setOutputMarkupId(true);
