@@ -31,23 +31,24 @@ if (!YAHOO.hippo.ImageCropper) {
   (function () {
     "use strict";
 
-    var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
+    var Dom = YAHOO.util.Dom,
+      Lang = YAHOO.lang,
+      VIEW_MARGIN = 10,
+      DIALOG_FOOTER_HEIGHT = 48;
 
     YAHOO.hippo.ImageCropper = function (id, config) {
       YAHOO.hippo.ImageCropper.superclass.constructor.apply(this, arguments);
-      this.oldMaskSize = null;
       this.container = this.el.parentNode;
       this.originalImage = this.el;
-      // flag which indicates when crop window is in full screen mode
       this.fullScreenMode = false;
-      // NOTE: this are 0 at this stage, re-initialized in render method
+      this.fitView = config.fitView;
+
+      // NOTE: these are 0 at this stage, re-initialized in render method
       this.original_width = this.originalImage.offsetWidth;
       this.original_height = this.originalImage.offsetHeight;
+
       this.regionInputId = config.regionInputId;
       this.imagePreviewContainerId = config.imagePreviewContainerId;
-      // add spacing around image, otherwise it will fill full available view:
-      this.viewMarginWidth = 0;
-      this.viewMarginHeight = 0;
       this.initialX = config.initialX;
       this.initialY = config.initialY;
       this.initialWidth = config.initialWidth;
@@ -88,7 +89,7 @@ if (!YAHOO.hippo.ImageCropper) {
           this.previewImage = Dom.getFirstChild(this.imagePreviewContainerId);
           this.previewContainer = Dom.get(this.imagePreviewContainerId);
 
-          //initial values
+          // initial values
           Dom.setStyle(this.previewImage, 'top', '-' + this.initialX + 'px');
           Dom.setStyle(this.previewImage, 'left', '-' + this.initialY + 'px');
 
@@ -98,7 +99,7 @@ if (!YAHOO.hippo.ImageCropper) {
 
         }
         this.previewLabelTemplate = Dom.get(this.thumbnailSizeLabelId).innerHTML;
-        // Call second render phase after image has loaded completely and add a timeout
+        // call second render phase after image has loaded completely and add a timeout
         // to force IE to behave the same all the time.
         var img = new Image();
         var self = this;
@@ -112,88 +113,85 @@ if (!YAHOO.hippo.ImageCropper) {
 
       // this phase of the render method should only start after the image has loaded completely
       _render: function () {
+        this.original_width = this.originalImage.offsetWidth;
+        this.original_height = this.originalImage.offsetHeight;
+
+        this.ratio = 1;
 
         if (this.leftCropArea !== null) {
           var dialogCenter = this.leftCropArea.parentNode;
           var dialogCenterRegion = Dom.getRegion(dialogCenter);
           // set height of left crop area to dialog-center height
-          Dom.setStyle(this.leftCropArea, 'height', (dialogCenterRegion.height - 10) + 'px');
+          Dom.setStyle(this.leftCropArea, 'height', (dialogCenterRegion.height - (2 * VIEW_MARGIN)) + 'px');
           this.leftCropAreaRegion = Dom.getRegion(this.leftCropArea);
         }
-        var ratio = this.calculateRatio(this);
+
         this.cropper = new YAHOO.widget.ImageCropper(this.id,
           {
             keyTick: 4,
             initialXY: [this.initialX, this.initialY],
-            initHeight: this.initialHeight * ratio.r,
-            initWidth: this.initialWidth * ratio.r,
+            initHeight: this.initialHeight,
+            initWidth: this.initialWidth,
             ratio: this.fixedDimension === 'both',
-            minWidth: this.minimumWidth * ratio.r,
-            minHeight: this.minimumHeight * ratio.r,
+            minWidth: this.minimumWidth,
+            minHeight: this.minimumHeight,
             status: this.status
           }
         );
-        this.initImageSize(this);
         this.cropper.on('moveEvent', this.onMove, null, this);
         this.updateRegionInputValue(this.cropper.getCropCoords());
         this.updatePreviewLabel(this.thumbnailWidth, this.thumbnailHeight);
 
         this.subscribe();
         if (this.fitView) {
-          this.scaleToFit(ratio);
+          this._scaleToFit(this.ratio);
         }
       },
 
       subscribe: function () {
-        var e;
         if (Wicket.Window.current) {
-          e = Wicket.Window.current.event;
-          e.afterInitScreen.subscribe(this.normalSize, this);
-          e.afterFullScreen.subscribe(this.fullSize, this);
-          e.resizeFullScreen.subscribe(this.fullResize, this);
+          var e = Wicket.Window.current.event;
+          e.afterInitScreen.subscribe(this._normalSize, this);
+          e.afterFullScreen.subscribe(this._fullSize, this);
+          e.resizeFullScreen.subscribe(this._fullResize, this);
         }
       },
 
-      normalSize: function (type, args, me) {
+      _normalSize: function (type, args, me) {
         me.fullScreenMode = false;
         me._setLeftCropAreaSize(me.leftCropAreaRegion.width, me.leftCropAreaRegion.height);
+        me._scaleToFit();
       },
 
-      // left crop area has left&top margin 10px so subtract 10px from width&height to prevent unwanted scrollbars.
-      // Subtract 48px from height to ensure the buttons in the footer are visible.
-      fullSize: function (type, args, me) {
+      _fullSize: function (type, args, me) {
         me.fullScreenMode = true;
-        var dim = args[0];
-        me._setLeftCropAreaSize(dim.w - 20, (dim.h - 10) - 48);
+        me._setFullSize(args[0]);
       },
 
-      fullResize: function (type, args, me) {
-        var dim = args[0];
-        me._setLeftCropAreaSize(dim.w - 20, (dim.h - 10) - 48);
+      _fullResize: function (type, args, me) {
+        me._setFullSize(args[0]);
       },
 
+      _setFullSize: function(dim) {
+        // Left crop area has left & top margin so subtract it from width & height to prevent unwanted scrollbars.
+        // Subtract footer height from height to ensure the buttons in the footer are visible.
+        var margin = 2 * VIEW_MARGIN;
+        this._setLeftCropAreaSize(dim.w - margin, dim.h - margin - DIALOG_FOOTER_HEIGHT);
+        this._scaleToFit();
+      },
+
+      // Called from Wicket
       fitInView: function(fitView) {
         this.fitView = fitView;
-
-        if (this.fitView) {
-          this.scaleToFit(this.calculateRatio(this));
-        } else {
-          if (this.oldMaskSize) {
-            this.resizeMask(this.oldMaskSize.r, this.oldMaskSize.w, this.oldMaskSize.h);
-          }
-          this.reset();
-        }
+        this._scaleToFit();
       },
 
       _setLeftCropAreaSize: function(width, height) {
         Dom.setStyle(this.leftCropArea, 'width', width + 'px');
         Dom.setStyle(this.leftCropArea, 'height', height + 'px');
-        if (this.fitView) {
-          this.scaleToFit(this.calculateRatio(this));
-        }
       },
 
-      onMove: function (e) {
+      onMove: function () {
         var coords = this.cropper.getCropCoords();
         this.updateRegionInputValue(coords);
         this.updatePreviewImage(coords);
@@ -295,85 +293,70 @@ if (!YAHOO.hippo.ImageCropper) {
         Dom.get(this.thumbnailSizeLabelId).innerHTML = label;
       },
 
-      calculateRatio: function (me) {
-        var fs = me.fullScreenMode;
-        // need this check here because of timing issue:
-        // it happens that original image size is 0 (async loading issue):
-        if (!me.initOriginal(me)) {
-          return;
+      _scaleToFit: function () {
+        // undo old scaling of cropper
+        this._scaleCropper(1 / this.ratio);
+
+        // scale image
+        this.ratio = this._calculateRatio();
+
+        var scaledImageWidth = this.original_width * this.ratio;
+        var scaledImageHeight = this.original_height * this.ratio;
+
+        function fit(el) {
+          Dom.setStyle(el, 'width', scaledImageWidth + 'px');
+          Dom.setStyle(el, 'height', scaledImageHeight + 'px');
         }
-        var maxWidth = fs ? Dom.getViewportWidth() - this.viewMarginWidth : me.leftCropAreaRegion.width;
-        var maxHeight = fs ? Dom.getViewportHeight() - this.viewMarginHeight : me.leftCropAreaRegion.height;
-        var ratio = Math.min(maxWidth / me.original_width, maxHeight / me.original_height);
-        return {w: me.original_width * ratio, h: me.original_height * ratio, r: ratio};
+
+        fit(this.container);
+        fit(this.originalImage);
+        fit(this.cropper.getMaskEl());
+        fit(this.cropper.getWrapEl());
+
+        // fix background behind the mask, so crop result (preview) is shown properly
+        var croppedImageEl = this.cropper.getResizeMaskEl();
+        Dom.setStyle(croppedImageEl, "background-size", scaledImageWidth + 'px ' + scaledImageHeight + 'px');
+
+        this._scaleCropper(this.ratio);
       },
 
-      scaleToFit: function (ratio) {
-        /**
-         * when in full screen, check if enabled, and if so enable fullScreenScaled.
-         * also check if image is bigger than view size and resize if so
-         */
-        if (ratio.r < 1) {
-          this.fitSize(this.container, ratio);
-          this.fitSize(this.originalImage, ratio);
-          this.fitSize(this.cropper._mask, ratio);
-          this.fitSize(this.cropper._wrap, ratio);
-          // fix background behind the mask, so crop result (preview) is shown properly:
-          var back = this.cropper._resizeMaskEl;
-          Dom.setStyle(back, "background-size", ratio.w + 'px ' + ratio.h + 'px');
-          // rescale mask when in fit view, NOTE: fullscreen rescaling is triggered within render method
-          if (this.fitView) {
-            var cropCoords = this.cropper.getCropCoords();
-            this.oldMaskSize = {r: 1, w: cropCoords.width, h: cropCoords.height};
-            this.resizeMask(ratio.r, cropCoords.width, cropCoords.height)
-          }
+      _scaleCropper: function (ratio) {
+        var coords, resizeObj, resizeEl, width, height, left, top;
+
+        coords = this.cropper.getCropCoords();
+        resizeObj = this.cropper.getResizeObject();
+        resizeEl = this.cropper.getResizeEl();
+
+        width = coords.width * ratio;
+        height = coords.height * ratio;
+        left = coords.left * ratio;
+        top = coords.top * ratio;
+
+        resizeObj.set('width', width);
+        resizeObj.set('height', height);
+
+        Dom.setStyle(resizeEl, 'left', left + 'px');
+        Dom.setStyle(resizeEl, 'top', top + 'px');
+
+        resizeObj._setCache();
+        this.cropper._handleResizeMaskEl();
+        this.cropper._syncBackgroundPosition();
+     },
+
+      _calculateRatio: function () {
+        if (!this.fitView) {
+          return 1;
         }
-      },
+        var maxWidth = this.fullScreenMode ? Dom.getViewportWidth() - (2 * VIEW_MARGIN) : this.leftCropAreaRegion.width;
+        var maxHeight = this.fullScreenMode ? Dom.getViewportHeight() - (2 * VIEW_MARGIN) : this.leftCropAreaRegion.height;
+        var ratio = Math.min(maxWidth / this.original_width, maxHeight / this.original_height);
 
-      fitSize: function (el, ratio) {
-        Dom.setStyle(el, 'width', ratio.w + 'px');
-        Dom.setStyle(el, 'height', ratio.h + 'px');
-      },
-
-      resizeMask: function (ratio, w, h) {
-        var cropper = this.cropper;
-        var height = h * ratio;
-        var width = w * ratio;
-        var elResize = cropper.getResizeEl();
-        setSize(elResize, width, height, ratio);
-        var elMaskAll = cropper.getWrapEl();
-        setSize(elMaskAll, width, height, ratio);
-        var elMask = cropper.getResizeMaskEl();
-        setSize(elMask, width, height, ratio);
-        var handles = cropper.getResizeObject().getActiveHandleEl();
-        setSize(handles, width, height);
-        function setSize(el, width, height, ratio) {
-          Dom.setStyle(el, 'width', width + 'px');
-          Dom.setStyle(el, 'height', height + 'px');
+        // don't make images larger than the original
+        if (ratio > 1) {
+          ratio = 1;
         }
-      },
 
-      reset: function () {
-        if (this.initOriginal(this)) {
-          this.scaleToFit({w: this.original_width, h: this.original_height, r: 1})
-        }
-      },
-
-      validSize: function (me) {
-        return me.original_width != 0 && me.original_height != 0;
-      },
-
-      initOriginal: function (me) {
-        if (!me.validSize(me)) {
-          me.initImageSize(me);
-          return me.validSize(me);
-        }
-        return true;
-      },
-
-      initImageSize: function (me) {
-        me.original_width = me.originalImage.offsetWidth;
-        me.original_height = me.originalImage.offsetHeight;
+        return ratio;
       }
     });
   })();
