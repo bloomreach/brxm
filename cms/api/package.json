@@ -1,5 +1,6 @@
 {
   "name": "hippo-cms-api",
+  "license": "Apache-2.0",
   "private": true,
   "dependencies": {
     "blueimp-canvas-to-blob": "3.1.0",
