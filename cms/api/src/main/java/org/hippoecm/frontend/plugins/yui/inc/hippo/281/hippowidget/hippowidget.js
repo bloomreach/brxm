@@ -70,9 +70,11 @@ YAHOO.namespace('hippo');
       },
 
       getWidget: function (id) {
-        var widgetEl = Dom.get(id);
+        var widgetEl, widget;
+
+        widgetEl = Dom.get(id);
         if (Lang.isValue(widgetEl)) {
-          var widget = widgetEl[this.NAME];
+          widget = widgetEl[this.NAME];
           if (Lang.isValue(widget)) {
             return widget;
           }
