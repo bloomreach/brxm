@@ -15,11 +15,14 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
@@ -41,7 +44,7 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
     private static final ResourceReference JSTZ_JS = new JavaScriptResourceReference(DefaultLoginPlugin.class, "jstz.min.js");
 
     public static final String SHOW_TIMEZONES_CONFIG_PARAM = "show.timezones";
-    public static final String SELECTABLE_TIMEZONES_CONFIG_PARAM = "selectable-timezones";
+    public static final String SELECTABLE_TIMEZONES_CONFIG_PARAM = "selectable.timezones";
 
     public DefaultLoginPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -74,11 +77,7 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
             super(id, autoComplete, locales, handler);
 
             if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
-                String[] timeZones = getPluginConfig().getStringArray(SELECTABLE_TIMEZONES_CONFIG_PARAM);
-                if (ArrayUtils.isEmpty(timeZones)) {
-                    timeZones = TimeZone.getAvailableIDs();
-                }
-                availableTimeZones = Arrays.asList(timeZones);
+                availableTimeZones = getSelectableTimezones(getPluginConfig().getStringArray(SELECTABLE_TIMEZONES_CONFIG_PARAM));
 
                 // Check if user has previously selected a timezone
                 final String cookieTimeZone = getCookieValue(TIMEZONE_COOKIE);
@@ -111,5 +110,18 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
             }
             super.loginSuccess();
         }
+    }
+
+    protected List<String> getSelectableTimezones(String[] configuredSelectableTimezones) {
+        List<String> allJavaTimezones = Arrays.asList(TimeZone.getAvailableIDs());
+        List<String> selectableTimezones = new ArrayList<>();
+
+        if (configuredSelectableTimezones != null) {
+            selectableTimezones = Arrays.asList(configuredSelectableTimezones).stream()
+                    .filter(StringUtils::isNotBlank)
+                    .filter(allJavaTimezones::contains)
+                    .collect(Collectors.toList());
+        }
+        return selectableTimezones.isEmpty() ? allJavaTimezones : selectableTimezones;
     }
 }
