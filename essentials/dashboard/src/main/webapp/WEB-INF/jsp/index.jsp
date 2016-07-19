@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" session="false" pageEncoding="UTF-8" %>
 <%--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@
   </script>
   <script src="${pageContext.request.contextPath}/components/jquery/dist/jquery.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular/angular.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/components/chosen/chosen.jquery.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/components/angular-chosen-localytics/chosen.js?v=${project.version}"></script>
-  <script src="${pageContext.request.contextPath}/components/angular-bootstrap/ui-bootstrap-tpls.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/chosen-npm/public/chosen.jquery.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/angular-chosen-localytics/dist/angular-chosen.js?v=${project.version}"></script>
+  <script src="${pageContext.request.contextPath}/components/angular-ui-bootstrap/ui-bootstrap-tpls.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular-ui-router/release/angular-ui-router.js?v=${project.version}"></script>
   <script src="${pageContext.request.contextPath}/components/angular-sanitize/angular-sanitize.min.js?v=${project.version}"></script>
 
@@ -63,7 +63,8 @@
         <span class="icon-bar"></span>
       </button>
       <span ng-show="TOTAL_NEEDS_ATTENTION > 0" class="badge badge-primary notification-badge">{{TOTAL_NEEDS_ATTENTION}}</span>
-      <a class="navbar-brand" href="${pageContext.request.contextPath}">Hippo setup</a>
+      <a class="navbar-brand" href="${pageContext.request.contextPath}"
+         title="version: ${project.version}">Hippo setup</a>
       <p class="navbar-text navbar-title">
         {{getPageTitle()}}
       </p>
@@ -80,7 +81,7 @@
       </div>
     </div>
 
-    <div class="navbar-collapse collapse hippo-sidenav ng-scope" ng-controller="mainMenuCtrl" uib-collapse="isCollapsed" ng-hide="INTRODUCTION_DISPLAYED">
+    <div class="navbar-collapse collapse hippo-sidenav ng-scope" ng-controller="mainMenuCtrl" collapse="isCollapsed" ng-hide="INTRODUCTION_DISPLAYED">
       <ul class="nav navbar-nav" ng-hide="INTRODUCTION_DISPLAYED">
         <li ng-class="{true:'active', false:''}[isPageSelected('#/library')]">
           <a href="#/library">
@@ -114,17 +115,8 @@
 
 
 <div class="main-content">
-  <div class="container-fluid">
-  <div class="row">
-    <div class="col-lg-12" ui-view autoscroll="false">
-      <h2>initializing...</h2>
-    </div>
-  </div>
-    <div class="col-lg-12">
-    <p class="text-center" id="footer">
-      <em>version: ${project.version}</em>
-    </p>
-  </div>
+  <div class="container-fluid flex-column" ui-view>
+    <h2>initializing...</h2>
   </div>
 </div>
 <!-- Include the loader.js script -->
