@@ -30,7 +30,6 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
@@ -323,7 +322,7 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
 
 
             final Node cropped = getModelObject();
-            cropped.setProperty(JcrConstants.JCR_DATA, ResourceHelper.getValueFactory(cropped).createBinary(stored));//newBinaryFromBytes(cropped, bytes));
+            cropped.setProperty(JcrConstants.JCR_DATA, ResourceHelper.getValueFactory(cropped).createBinary(stored));
             cropped.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
             cropped.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, dimension.getWidth());
             cropped.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, dimension.getHeight());
@@ -363,10 +362,5 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
             normalized.setSize(width, thumbnailDimension.height);
         }
         return normalized;
-    }
-
-    private Binary newBinaryFromBytes(final Node node, final ByteArrayOutputStream baos) throws RepositoryException {
-        InputStream is = new ByteArrayInputStream(baos.toByteArray());
-        return ResourceHelper.getValueFactory(node).createBinary(is);
     }
 }
