@@ -274,7 +274,6 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
         int height = jsonObject.getInt("height");
         int left = jsonObject.getInt("left");
         int width = jsonObject.getInt("width");
-        Session session = null;
         try {
             Node originalImageNode = getModelObject().getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
             String mimeType = originalImageNode.getProperty(JcrConstants.JCR_MIMETYPE).getString();
@@ -328,8 +327,8 @@ public class ImageCropEditorDialog extends AbstractDialog<Node> {
             cropped.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
             cropped.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, dimension.getWidth());
             cropped.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, dimension.getHeight());
-            session = cropped.getSession();
-            session.save();
+            cropped.getSession().save();
+
             BinaryContentEventLogger.fireBinaryChangedEvent(cropped, WORKFLOW_CATEGORY, INTERACTION_TYPE_IMAGE, ACTION_CROP);
         } catch (GalleryException | IOException | RepositoryException ex) {
             log.error("Unable to create thumbnail image", ex);
