@@ -89,3 +89,40 @@ You may run the following command:
 Adding a debugger like Yourkit
 =============================
 -Dcargo.jvm.args="-Xmx200m -Xms200m -agentpath:/usr/local/yourkit/yjp-9.0.9/bin/linux-x86-64/libyjpagent.so"
+
+
+Clustered Setup Against MySQL
+===============================================
+
+The testsuite can be used to very easily run a clustered setup up where the repository and targeting data
+are stored in MySQL
+
+To run the testsuite clustered against MySQL, do the following:
+
+Make sure you have MySQL accessible. Default configuration is:
+
+  <mysql.username>root</mysql.username>
+  <mysql.password></mysql.password>
+  <mysql.host>localhost:3306</mysql.host>
+  <mysql.repo.db>repositoryDS</mysql.repo.db>
+  <mysql.targeting.db>targetingDS</mysql.targeting.db>
+
+Make sure the MySQL server contains the database 'repositoryDS'. If you want different settings,
+change them in /pom.xml 'mysql' profile
+
+After building the testsuite, copy the 'testsuite' folder to 'testsuite-node2' folder (different location)
+
+Then startup as follows:
+
+testsuite mvn -P cargo.run,mysql
+testsuite-node2$ mvn -P cargo.run,mysql,node2
+
+After this, the website is available at localhost:8080/site AND at localhost:9080/site. CMSes are
+available at localhost:8080/cms and localhost:9080/cms. Note that the cms at localhost:9080/cms does not display
+channels in the channel mngr. This is because this setup with cargo
+is of course not a real production supported setup. It serves to validate repository clustering.
+
+The clustering of course does show changes made via localhost:9080/cms on the site on port 8080.
+
+Last thing: Please realize that an http session is regardless port number. So localhost:8080 and localhost:9080 share
+the same cookies. Imho, a browser flaw. Best to use different browser to circumvent this

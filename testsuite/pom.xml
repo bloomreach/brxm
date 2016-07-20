@@ -62,6 +62,11 @@
 
     <hippo.cms.locales>nl,de,fr,zh</hippo.cms.locales>
 
+    <!-- properties for clustering setup support -->
+    <cluster.node>node1</cluster.node>
+    <mysql.version>5.1.39</mysql.version>
+    <!-- end clustering support properties -->
+
   </properties>
 
   <repositories>
@@ -281,6 +286,103 @@
     </profile>
 
     <profile>
+      <id>mysql</id>
+      <properties>
+        <mysql.driver>com.mysql.jdbc.Driver</mysql.driver>
+        <mysql.username>root</mysql.username>
+        <mysql.password></mysql.password>
+        <mysql.host>localhost:3306</mysql.host>
+        <mysql.repo.db>repositoryDS</mysql.repo.db>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>${mysql.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <configuration>
+              <configuration>
+                <properties combine.children="append">
+                  <mysql.driver>${mysql.driver}</mysql.driver>
+                  <mysql.username>${mysql.username}</mysql.username>
+                  <mysql.password>${mysql.password}</mysql.password>
+                  <mysql.host>${mysql.host}</mysql.host>
+                  <mysql.repo.db>${mysql.repo.db}</mysql.repo.db>
+                </properties>
+                <configfiles combine.children="append">
+                  <configfile>
+                    <file>${project.basedir}/conf/context-mysql.xml</file>
+                    <todir>conf/</todir>
+                    <tofile>context.xml</tofile>
+                  </configfile>
+                  <configfile>
+                    <!-- copy to target to have a '@mysql.repo.db@' substituted file -->
+                    <file>${project.basedir}/conf/repository-mysql.xml</file>
+                    <todir>conf/</todir>
+                    <tofile>repository-mysql.xml</tofile>
+                  </configfile>
+                </configfiles>
+              </configuration>
+              <container>
+                <systemProperties combine.children="append">
+                  <!-- we use repository-mysql.xml from 'target' because that one has '@mysql.repo.db@' substituted -->
+                  <repo.config>file:${project.basedir}/target/tomcat${cargo.tomcat.major.version}x/conf/repository-mysql.xml</repo.config>
+                  <org.apache.jackrabbit.core.cluster.node_id>${cluster.node}</org.apache.jackrabbit.core.cluster.node_id>
+                  <!-- disable auto export and web files watch: -->
+                  <project.basedir/>
+                </systemProperties>
+                <dependencies>
+                  <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <classpath>extra</classpath>
+                  </dependency>
+                </dependencies>
+              </container>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>node2</id>
+      <properties>
+        <cluster.node>node2</cluster.node>
+        <repo.bootstrap>true</repo.bootstrap>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <configuration>
+              <configuration>
+                <properties combine.children="append">
+                  <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>
+                  <cargo.servlet.port>9080</cargo.servlet.port>
+                  <cargo.tomcat.ajp.port>9010</cargo.tomcat.ajp.port>
+                  <cargo.jvmargs>
+                    <![CDATA[-Xdebug -Xrunjdwp:transport=dt_socket,address=9000,server=y,suspend=n -noverify ${javaagent}]]>
+                  </cargo.jvmargs>
+                  <cargo.rmi.port>9206</cargo.rmi.port>
+                </properties>
+              </configuration>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
       <id>dist</id>
       <dependencies>
         <dependency>
@@ -334,6 +436,7 @@
             <inherited>false</inherited>
             <configuration>
               <excludes combine.children="append">
+                <exclude>conf/catalina-logging.properties</exclude>
                 <exclude>solr/src/main/webapp/**</exclude>
                 <!-- covered by 3rd-party licenses in the LICENSE file -->
                 <exclude>intranet-bootstrap/webfiles/src/main/resources/intranet/css/style.css</exclude>
