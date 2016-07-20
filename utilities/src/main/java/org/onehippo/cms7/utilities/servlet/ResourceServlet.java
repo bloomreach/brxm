@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -145,7 +145,8 @@ import org.slf4j.LoggerFactory;
  * ^/.*\\.svg,
  * ^/.*\\.swf,
  * ^/.*\\.ttf,
- * ^/.*\\.woff
+ * ^/.*\\.woff,
+ * ^/.*\\.woff2
  *     <pre></td>
  *   </tr>
  *   <tr>
@@ -179,6 +180,7 @@ import org.slf4j.LoggerFactory;
  * .swf = application/x-shockwave-flash
  * .ttf = application/x-font-ttf,
  * .woff = application/font-woff,
+ * .woff2 = font/woff2
  *     </pre></td>
  *   </tr>
  *   <tr>
@@ -229,6 +231,7 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.swf"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.ttf"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.woff"));
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.woff2"));
     }
     
     private static final Map<String, String> DEFAULT_MIME_TYPES = new HashMap<String, String>();
@@ -248,6 +251,13 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_MIME_TYPES.put(".swf", "application/x-shockwave-flash");
         DEFAULT_MIME_TYPES.put(".ttf", "application/x-font-ttf");
         DEFAULT_MIME_TYPES.put(".woff", "application/font-woff");
+
+        /**
+         * The default MIME type of woff2 font is from "WOFF File Format 2.0 (Candidate Recommendation 15 March 2016)".
+         *
+         * @see <a href="https://www.w3.org/TR/WOFF2/#IMT">WOFF File Format 2.0 - Internet Media Type Registration</a>
+         */
+        DEFAULT_MIME_TYPES.put(".woff2", "font/woff2");
     }
     
     private static final Set<Pattern> DEFAULT_COMPRESSED_MIME_TYPES = new HashSet<Pattern>();
