@@ -74,7 +74,8 @@
     "licenseFile": "node_modules/es6-shim/LICENSE"
   },
   "hippo-cm@": {
-    "licenses": "UNKNOWN"
+    "licenses": "Apache-2.0",
+    "licenseFile": "license-summary.json"
   },
   "jquery@2.2.0": {
     "licenses": "MIT",
