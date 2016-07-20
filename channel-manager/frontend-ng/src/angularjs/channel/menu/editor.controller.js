@@ -107,7 +107,10 @@ export class MenuEditorCtrl {
   toggleEditState(item) {
     if (!this.editingItem || this.editingItem.id !== item.id) {
       this.SiteMenuService.getEditableMenuItem(item.id)
-        .then((editableItem) => this._startEditingItem(editableItem));
+        .then((editableItem) => {
+          this.isAdding = false;
+          this._startEditingItem(editableItem);
+        });
     } else {
       this.stopEditingItem();
     }
@@ -118,6 +121,7 @@ export class MenuEditorCtrl {
     this.SiteMenuService.createEditableMenuItem(this.selectedItem)
       .then((editableItem) => {
         this.isMenuModified = true;
+        this.isAdding = true;
         this.selectedItem = editableItem;
         this._startEditingItem(editableItem);
       })

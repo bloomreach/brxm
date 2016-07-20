@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { menuEditorDirective } from './editor.directive';
-import { selectAllOnFocusDirective } from './selectAllOnFocus.directive';
-import { MenuEditorCtrl } from './editor.controller';
-import { uiTreeModule } from './tree/tree.js';
-import { pickerModule } from './picker/picker';
+export function selectAllOnFocusDirective() {
+  'ngInject';
 
-export const channelMenuModule = angular
-  .module('hippo-cm.channel.menu', [
-    uiTreeModule.name,
-    pickerModule.name,
-    'focus-if',
-  ])
-  .directive('menuEditor', menuEditorDirective)
-  .directive('selectAllOnFocus', selectAllOnFocusDirective)
-  .controller('MenuEditorCtrl', MenuEditorCtrl);
+  return {
+    restrict: 'A',
+    link: (scope, element) => {
+      element.focus(() => {
+        const domElement = element[0];
+        if (angular.isFunction(domElement.select)) {
+          domElement.select();
+        }
+      });
+    },
+  };
+}
