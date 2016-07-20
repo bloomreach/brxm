@@ -101,7 +101,7 @@ describe('PageActionCopy', () => {
     spyOn(ChannelService, 'recordOwnChange');
     spyOn(ChannelService, 'getId').and.returnValue('channelB');
     spyOn(FeedbackService, 'showError');
-    spyOn(FeedbackService, 'showErrorOnSubpage');
+    spyOn(FeedbackService, 'showErrorResponseOnSubpage');
     spyOn(HippoIframeService, 'load');
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
@@ -180,7 +180,8 @@ describe('PageActionCopy', () => {
 
     expect(PageCopyCtrl.locations).toEqual([]);
     expect(PageCopyCtrl.location).toBeUndefined();
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED');
+    expect(FeedbackService.showErrorResponseOnSubpage)
+      .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED');
   });
 
   it('successfully retrieves the locations for the selected channel', () => {
@@ -325,16 +326,17 @@ describe('PageActionCopy', () => {
   it('fails to copy a page', () => {
     const PageCopyCtrl = compileDirectiveAndGetController();
 
-    SiteMapService.copy.and.returnValue($q.reject({ }));
+    SiteMapService.copy.and.returnValue($q.reject());
     PageCopyCtrl.copy();
     $rootScope.$digest();
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_COPY_FAILED', undefined);
+    expect(FeedbackService.showErrorResponseOnSubpage)
+      .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_COPY_FAILED', PageCopyCtrl.errorMap);
 
-    const data = { key: 'value' };
-    SiteMapService.copy.and.returnValue($q.reject({ message: 'bla', data, errorCode: 'ITEM_CANNOT_BE_CLONED' }));
+    const response = { key: 'value' };
+    SiteMapService.copy.and.returnValue($q.reject(response));
     PageCopyCtrl.copy();
     $rootScope.$digest();
-    expect($log.info).toHaveBeenCalledWith('bla');
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_COPY_TARGET_EXISTS', data);
+    expect(FeedbackService.showErrorResponseOnSubpage)
+      .toHaveBeenCalledWith(response, 'ERROR_PAGE_COPY_FAILED', PageCopyCtrl.errorMap);
   });
 });

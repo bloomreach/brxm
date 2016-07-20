@@ -32,6 +32,9 @@ export class PageCopyCtrl {
     this.illegalCharacters = '/ :';
     this.illegalCharactersMessage = $translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
       { characters: $translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
+    this.errorMap = {
+      ITEM_CANNOT_BE_CLONED: 'ERROR_PAGE_COPY_TARGET_EXISTS',
+    };
 
     // The PageActionsCtrl has retrieved the page meta-data when opening the page menu.
     // Now, it is available through the SiteMapItemService.
@@ -66,23 +69,7 @@ export class PageCopyCtrl {
       .then((data) => {
         this._returnToNewUrl(data.renderPathInfo);
       })
-      .catch((response) => {
-        // response might be undefined or null (for example when the network connection is lost)
-        response = response || {};
-
-        this.$log.info(response.message);
-        let messageKey;
-        switch (response.errorCode) {
-          case 'ITEM_CANNOT_BE_CLONED':
-            messageKey = 'ERROR_PAGE_COPY_TARGET_EXISTS';
-            break;
-          default:
-            messageKey = 'ERROR_PAGE_COPY_FAILED';
-            break;
-        }
-
-        this.FeedbackService.showErrorOnSubpage(messageKey, response.data);
-      });
+      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_COPY_FAILED', this.errorMap));
   }
 
   _returnToNewUrl(renderPathInfo) {
@@ -118,8 +105,6 @@ export class PageCopyCtrl {
           this.location = this.locations[0];
         }
       })
-      .catch(() => {
-        this.FeedbackService.showErrorOnSubpage('ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED');
-      });
+      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED'));
   }
 }

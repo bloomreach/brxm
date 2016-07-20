@@ -87,7 +87,7 @@ describe('PageActionEdit', () => {
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(ChannelService, 'recordOwnChange');
-    spyOn(FeedbackService, 'showErrorOnSubpage');
+    spyOn(FeedbackService, 'showErrorResponseOnSubpage');
     spyOn(HippoIframeService, 'reload');
     spyOn(SiteMapItemService, 'get').and.returnValue(siteMapItem);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(true);
@@ -148,7 +148,7 @@ describe('PageActionEdit', () => {
     $rootScope.$digest();
 
     expect(PageEditCtrl.prototypes).toEqual([]);
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
+    expect(FeedbackService.showErrorResponseOnSubpage).toHaveBeenCalledWith(undefined, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
   });
 
   it('calls the callback when navigating back', () => {
@@ -187,11 +187,8 @@ describe('PageActionEdit', () => {
   });
 
   it('tells the user that the page is already locked', () => {
-    const error = {
-      errorCode: 'ITEM_ALREADY_LOCKED',
-      data: { lockedBy: 'tobi' },
-    };
-    SiteMapItemService.updateItem.and.returnValue($q.reject(error));
+    const response = { key: 'value' };
+    SiteMapItemService.updateItem.and.returnValue($q.reject(response));
     const PageEditCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
@@ -207,12 +204,13 @@ describe('PageActionEdit', () => {
     expect(SiteMapItemService.updateItem).toHaveBeenCalledWith(savedItem, 'siteMapId');
     $rootScope.$digest();
 
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_LOCKED_BY', error.data);
+    expect(FeedbackService.showErrorResponseOnSubpage)
+      .toHaveBeenCalledWith(response, 'ERROR_PAGE_SAVE_FAILED', PageEditCtrl.errorMap);
     expect($scope.onDone).not.toHaveBeenCalled();
   });
 
   it('flashes a toast when saving failed', () => {
-    SiteMapItemService.updateItem.and.returnValue($q.reject({ }));
+    SiteMapItemService.updateItem.and.returnValue($q.reject());
     const PageEditCtrl = compileDirectiveAndGetController();
     $rootScope.$digest();
 
@@ -231,7 +229,8 @@ describe('PageActionEdit', () => {
     expect(SiteMapItemService.updateItem).toHaveBeenCalledWith(savedItem, 'siteMapId');
     $rootScope.$digest();
 
-    expect(FeedbackService.showErrorOnSubpage).toHaveBeenCalledWith('ERROR_PAGE_SAVE_FAILED', undefined);
+    expect(FeedbackService.showErrorResponseOnSubpage)
+      .toHaveBeenCalledWith(undefined, 'ERROR_PAGE_SAVE_FAILED', PageEditCtrl.errorMap);
     expect($scope.onDone).not.toHaveBeenCalled();
   });
 

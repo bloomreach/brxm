@@ -52,14 +52,14 @@ export class ChangeManagementCtrl {
   publishChanges(user) {
     this.ChannelService.publishChanges([user])
       .then(() => this._onSuccess())
-      .catch((response) => this._showError('ERROR_CHANGE_PUBLICATION_FAILED', response));
+      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_CHANGE_PUBLICATION_FAILED'));
   }
 
   discardChanges(user) {
     this._confirmDiscard(user).then(() => {
       this.ChannelService.discardChanges([user])
         .then(() => this._onSuccess())
-        .catch((response) => this._showError('ERROR_CHANGE_DISCARD_FAILED', response));
+        .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_CHANGE_DISCARD_FAILED'));
     });
   }
 
@@ -67,7 +67,7 @@ export class ChangeManagementCtrl {
     this._confirmPublish().then(() => {
       this.ChannelService.publishChanges(this.usersWithChanges)
         .then(() => this._onSuccess())
-        .catch((response) => this._showError('ERROR_CHANGE_PUBLICATION_FAILED', response));
+        .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_CHANGE_PUBLICATION_FAILED'));
     });
   }
 
@@ -75,7 +75,7 @@ export class ChangeManagementCtrl {
     this._confirmDiscard().then(() => {
       this.ChannelService.discardChanges(this.usersWithChanges)
         .then(() => this._onSuccess())
-        .catch((response) => this._showError('ERROR_CHANGE_DISCARD_FAILED', response));
+        .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_CHANGE_DISCARD_FAILED'));
     });
   }
 
@@ -115,13 +115,5 @@ export class ChangeManagementCtrl {
       .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
-  }
-
-  _showError(key, response) {
-    // response might be undefined or null (for example when the network connection is lost)
-    response = response || {};
-
-    this.$log.info(response.message);
-    this.FeedbackService.showErrorOnSubpage(key, response.data);
   }
 }

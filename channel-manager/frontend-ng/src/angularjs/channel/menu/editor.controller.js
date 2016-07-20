@@ -30,6 +30,11 @@ export class MenuEditorCtrl {
 
     this.isSaving = {};
     this.isDragging = false;
+    this.errorMap = {
+      ITEM_ALREADY_LOCKED: 'ERROR_MENU_LOCKED_BY',
+      ITEM_NAME_NOT_UNIQUE: 'ERROR_MENU_SAME_NAME_SIBLING',
+      ITEM_NAME_NOT_UNIQUE_IN_ROOT: 'ERROR_MENU_SAME_NAME_SIBLING',
+    };
 
     this._loadMenu()
       .then((menu) => {
@@ -72,10 +77,7 @@ export class MenuEditorCtrl {
         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
           SiteMenuService.moveMenuItem(sourceId, destId, dest.index)
             .then(() => { this.isMenuModified = true; })
-            .catch((response) => {
-              response = response || {};
-              this._handleError(response, 'ERROR_MENU_MOVE_FAILED');
-            });
+            .catch((response) => this._handleError(response, 'ERROR_MENU_MOVE_FAILED'));
         }
       },
     };
@@ -119,10 +121,7 @@ export class MenuEditorCtrl {
         this.selectedItem = editableItem;
         this._startEditingItem(editableItem);
       })
-      .catch((response) => {
-        response = response || {};
-        this._handleError(response, 'ERROR_MENU_CREATE_FAILED');
-      })
+      .catch((response) => this._handleError(response, 'ERROR_MENU_CREATE_FAILED'))
       .finally(() => delete this.isSaving.newItem);
   }
 
@@ -166,28 +165,16 @@ export class MenuEditorCtrl {
         this.isMenuModified = true;
         this.stopEditingItem();
       })
-      .catch((response) => {
-        response = response || {};
-        this._handleError(response, 'ERROR_MENU_ITEM_SAVE_FAILED');
-      });
+      .catch((response) => this._handleError(response, 'ERROR_MENU_ITEM_SAVE_FAILED'));
   }
 
-  _handleError(errorResponse, defaultMessageKey) {
-    let messageKey;
-    switch (errorResponse.errorCode) {
-      case 'ITEM_ALREADY_LOCKED':
-        messageKey = 'ERROR_MENU_LOCKED_BY';
-        this._loadMenu();
-        this.ChannelService.reload(); // pull in recent 'changedBySet' for Change Management
-        break;
-      case 'ITEM_NAME_NOT_UNIQUE':
-      case 'ITEM_NAME_NOT_UNIQUE_IN_ROOT':
-        messageKey = 'ERROR_MENU_SAME_NAME_SIBLING';
-        break;
-      default:
-        messageKey = defaultMessageKey;
+  _handleError(response, defaultKey) {
+    this.FeedbackService.showErrorResponseOnSubpage(response, defaultKey, this.errorMap);
+
+    if (response && response.errorCode === 'ITEM_ALREADY_LOCKED') {
+      this._loadMenu();
+      this.ChannelService.reload(); // pull in recent 'changedBySet' for Change Management
     }
-    this.FeedbackService.showErrorOnSubpage(messageKey, errorResponse.data);
   }
 
   _doDelete() {
@@ -196,10 +183,7 @@ export class MenuEditorCtrl {
         this.isMenuModified = true;
         this.stopEditingItem();
       })
-      .catch((response) => {
-        response = response || {};
-        this._handleError(response, 'ERROR_MENU_ITEM_DELETE_FAILED');
-      });
+      .catch((response) => this._handleError(response, 'ERROR_MENU_ITEM_DELETE_FAILED'));
   }
 
   _confirmDelete() {

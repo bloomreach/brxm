@@ -32,6 +32,12 @@ export class PageCreateCtrl {
     this.illegalCharacters = '/ :';
     this.illegalCharactersMessage = $translate.instant('VALIDATION_ILLEGAL_CHARACTERS',
             { characters: $translate.instant('VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT') });
+    this.errorMap = {
+      ITEM_ALREADY_LOCKED: 'ERROR_PAGE_LOCKED_BY',
+      ITEM_NOT_IN_PREVIEW: 'ERROR_PAGE_PARENT_MISSING',
+      ITEM_NAME_NOT_UNIQUE: 'ERROR_PAGE_PATH_EXISTS',
+      INVALID_PATH_INFO: 'ERROR_PAGE_PATH_INVALID',
+    };
 
     $scope.$watch('pageCreate.title', () => {
       if (this.updateLastPathInfoElementAutomatically) {
@@ -46,9 +52,7 @@ export class PageCreateCtrl {
         this.locations = data.locations;
         this.location = (data.locations.length > 0) ? data.locations[0] : undefined;
       })
-      .catch(() => {
-        this.FeedbackService.showErrorOnSubpage('ERROR_PAGE_MODEL_RETRIEVAL_FAILED');
-      });
+      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
   }
 
   create() {
@@ -66,35 +70,7 @@ export class PageCreateCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch((response) => {
-        // response might be undefined or null (for example when the network connection is lost)
-        response = response || {};
-
-        if (response.message) {
-          this.$log.info(response.message);
-        }
-
-        let messageKey;
-        switch (response.errorCode) {
-          case 'ITEM_ALREADY_LOCKED':
-            messageKey = 'ERROR_PAGE_LOCKED_BY';
-            break;
-          case 'ITEM_NOT_IN_PREVIEW':
-            messageKey = 'ERROR_PAGE_PARENT_MISSING';
-            break;
-          case 'ITEM_NAME_NOT_UNIQUE':
-            messageKey = 'ERROR_PAGE_PATH_EXISTS';
-            break;
-          case 'INVALID_PATH_INFO':
-            messageKey = 'ERROR_PAGE_PATH_INVALID';
-            break;
-          default:
-            messageKey = 'ERROR_PAGE_CREATION_FAILED';
-            break;
-        }
-
-        this.FeedbackService.showErrorOnSubpage(messageKey, response.data);
-      });
+      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_CREATION_FAILED', this.errorMap));
   }
 
   disableAutomaticLastPathInfoElementUpdate() {

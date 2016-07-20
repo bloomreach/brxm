@@ -74,8 +74,8 @@ export class ChannelSettingsCtrl {
           this.ChannelService.recordOwnChange();
           this.onSuccess({ key: 'CHANNEL_PROPERTIES_SAVE_SUCCESS' });
         })
-        .catch(() => {
-          this.FeedbackService.showErrorOnSubpage('ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
+        .catch((response) => {
+          this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_CHANNEL_PROPERTIES_SAVE_FAILED');
         });
     }
   }
