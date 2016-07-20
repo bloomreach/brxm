@@ -321,22 +321,19 @@ if (!YAHOO.hippo.ImageCropper) {
       },
 
       _scaleCropper: function (ratio) {
-        var coords, resizeObj, resizeEl, width, height, left, top;
+        var coords, resizeObj, resizeEl;
 
         coords = this.cropper.getCropCoords();
         resizeObj = this.cropper.getResizeObject();
+
+        resizeObj.set('width', coords.width * ratio);
+        resizeObj.set('height', coords.height * ratio);
+        resizeObj.set('minWidth', resizeObj.get('minWidth') * ratio);
+        resizeObj.set('minHeight', resizeObj.get('minHeight') * ratio);
+
         resizeEl = this.cropper.getResizeEl();
-
-        width = coords.width * ratio;
-        height = coords.height * ratio;
-        left = coords.left * ratio;
-        top = coords.top * ratio;
-
-        resizeObj.set('width', width);
-        resizeObj.set('height', height);
-
-        Dom.setStyle(resizeEl, 'left', left + 'px');
-        Dom.setStyle(resizeEl, 'top', top + 'px');
+        Dom.setStyle(resizeEl, 'left', (coords.left * ratio) + 'px');
+        Dom.setStyle(resizeEl, 'top', (coords.top * ratio) + 'px');
 
         resizeObj._setCache();
         this.cropper._handleResizeMaskEl();
