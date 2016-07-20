@@ -35,7 +35,7 @@ public class WatchFilesUtils {
 
     public static Path getProjectBaseDir() {
         final String projectBaseDir = System.getProperty(PROJECT_BASEDIR_PROPERTY);
-        if (projectBaseDir != null) {
+        if (projectBaseDir != null && !projectBaseDir.isEmpty()) {
             final Path baseDir = FileSystems.getDefault().getPath(projectBaseDir);
             if (Files.isDirectory(baseDir)) {
                 return baseDir;
@@ -43,7 +43,7 @@ public class WatchFilesUtils {
                 log.warn("Watching web files is disabled: environment variable '{}' does not point to a directory", PROJECT_BASEDIR_PROPERTY);
             }
         } else {
-            log.info("Watching web files is disabled: environment variable '{}' not set", PROJECT_BASEDIR_PROPERTY);
+            log.info("Watching web files is disabled: environment variable '{}' not set or empty", PROJECT_BASEDIR_PROPERTY);
         }
         return null;
     }
