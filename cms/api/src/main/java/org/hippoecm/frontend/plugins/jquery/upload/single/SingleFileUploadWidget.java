@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.hippoecm.frontend.plugins.jquery.upload.single;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.IBehaviorListener;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -42,6 +43,10 @@ public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
     final Logger log = LoggerFactory.getLogger(SingleFileUploadWidget.class);
 
     private final String UPLOADING_SCRIPT_TEMPLATE = "$('#${componentMarkupId}').data('blueimp-fileupload').uploadFile();";
+
+    private static final String WORKFLOW_CATEGORY = "cms";
+    private static final String INTERACTION_TYPE = "resource";
+    private static final String ACTION_UPLOAD = "upload";
 
     private SingleFileUploadBar fileUploadBar;
     private AjaxFileUploadBehavior ajaxFileUploadBehavior;
@@ -93,6 +98,12 @@ public abstract class SingleFileUploadWidget extends AbstractFileUploadWidget {
             @Override
             protected void onAfterUpload(final FileItem file, final FileUploadInfo fileUploadInfo) {
                 SingleFileUploadWidget.this.onAfterUpload(file, fileUploadInfo);
+                final List<String> errorMessages = fileUploadInfo.getErrorMessages();
+                // only fire event if there are no error messages
+                if (errorMessages != null && errorMessages.size() == 0) {
+                    MarkupContainer markupContainer = getParent();
+                    BinaryContentEventLogger.fireUploadEvent(markupContainer, WORKFLOW_CATEGORY, INTERACTION_TYPE, ACTION_UPLOAD);
+                }
             }
 
             protected void onUploadError(final FileUploadInfo fileUploadInfo) {
