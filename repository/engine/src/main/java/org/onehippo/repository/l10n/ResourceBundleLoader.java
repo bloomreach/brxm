@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 package org.onehippo.repository.l10n;
 
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.jcr.Node;
@@ -143,6 +145,29 @@ class ResourceBundleLoader {
         return property.getType() == PropertyType.STRING;
     }
 
+    private static class ResourceBundleDecorator extends java.util.ResourceBundle {
+        private ResourceBundle repositoryResourceBundle;
+
+        public ResourceBundleDecorator(ResourceBundle repositoryResourceBundle) {
+            this.repositoryResourceBundle = repositoryResourceBundle;
+
+            final ResourceBundle parent = repositoryResourceBundle.getParent();
+            if (parent != null) {
+                setParent(new ResourceBundleDecorator(parent));
+            }
+        }
+
+        @Override
+        protected Object handleGetObject(final String key) {
+            return repositoryResourceBundle.getString(key);
+        }
+
+        @Override
+        public Enumeration<String> getKeys() {
+            return Collections.enumeration(repositoryResourceBundle.getKeys());
+        }
+    }
+
     private static class ResourceBundleImpl implements ResourceBundle {
         private final String name;
         private final Locale locale;
@@ -176,6 +201,21 @@ class ResourceBundleLoader {
             return null;
         }
 
+        @Override
+        public Set<String> getKeys() {
+            return strings.keySet();
+        }
+
+        @Override
+        public ResourceBundle getParent() {
+            return parent;
+        }
+
+        @Override
+        public java.util.ResourceBundle toJavaResourceBundle() {
+            return new ResourceBundleDecorator(this);
+        }
+
         private void putString(final String key, final String value) {
             strings.put(key, value);
         }
@@ -189,4 +229,5 @@ class ResourceBundleLoader {
         }
 
     }
+
 }

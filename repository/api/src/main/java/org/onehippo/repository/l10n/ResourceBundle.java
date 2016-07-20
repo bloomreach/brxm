@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,9 @@
  */
 package org.onehippo.repository.l10n;
 
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * A {@link ResourceBundle} is a set of Strings identified by keys
@@ -47,5 +49,17 @@ public interface ResourceBundle {
      * @return  the String identified by a {@code key}
      */
     String getString(String key);
+
+    default Set<String> getKeys() {
+        return Collections.emptySet();
+    }
+
+    default ResourceBundle getParent() {
+        return null;
+    }
+
+    default java.util.ResourceBundle toJavaResourceBundle() {
+        return null;
+    }
 
 }
