@@ -48,6 +48,8 @@ describe('PathService', () => {
     expect(PathService.concatPaths('one')).toEqual('one');
     expect(PathService.concatPaths('', 'two ')).toEqual('two');
     expect(PathService.concatPaths('one', '')).toEqual('one');
+    expect(PathService.concatPaths('one', undefined)).toEqual('one');
+    expect(PathService.concatPaths('one', null)).toEqual('one');
     expect(PathService.concatPaths(undefined, 'two')).toEqual('two');
     expect(PathService.concatPaths('one', '')).toEqual('one');
     expect(PathService.concatPaths('', 'two')).toEqual('two');

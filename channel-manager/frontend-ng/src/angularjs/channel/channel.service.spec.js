@@ -194,6 +194,18 @@ describe('ChannelService', () => {
     expect(ChannelService.makePath()).toEqual('/cmsPreviewPrefix');
   });
 
+  it('should create paths that start with a slash if the channel\'s webapp runs as ROOT.war and hence the contextPath is an empty string', () => {
+    const contextPath = '';
+    ChannelService._load({ contextPath });
+    $rootScope.$digest();
+    expect(ChannelService.makePath()).toEqual('/');
+
+    const cmsPreviewPrefix = 'cmsPreviewPrefix';
+    ChannelService._load({ contextPath, cmsPreviewPrefix });
+    $rootScope.$digest();
+    expect(ChannelService.makePath()).toEqual('/cmsPreviewPrefix');
+  });
+
   it('should return a preview path that starts with the contextPath', () => {
     const contextPath = '/contextPath';
     const mountPath = '/';

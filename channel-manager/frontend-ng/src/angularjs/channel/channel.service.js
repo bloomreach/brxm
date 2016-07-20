@@ -127,11 +127,7 @@ export class ChannelService {
   }
 
   _makeContextPrefix(contextPath) {
-    let path = contextPath;
-    if (this.channel.cmsPreviewPrefix) {
-      path = this.PathService.concatPaths(path, this.channel.cmsPreviewPrefix);
-    }
-    return path;
+    return this.PathService.concatPaths('/', contextPath, this.channel.cmsPreviewPrefix);
   }
 
   getPreviewPaths() {
