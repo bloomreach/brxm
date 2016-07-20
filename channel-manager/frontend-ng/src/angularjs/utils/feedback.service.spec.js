@@ -83,6 +83,14 @@ describe('FeedbackService', () => {
     expect(toast.parent.calls.mostRecent().args[0]).toBeDefined();
   });
 
+  it('handles null error responses', () => {
+    FeedbackService.showErrorResponseOnSubpage(null, 'defaultKey');
+
+    expect($log.info).not.toHaveBeenCalled();
+    expect($translate.instant).toHaveBeenCalledWith('defaultKey', undefined);
+    expect(toast.parent.calls.mostRecent().args[0]).toBeDefined();
+  });
+
   it('logs messages at info level', () => {
     const response = { message: 'test log message' };
     FeedbackService.showErrorResponseOnSubpage(response, 'defaultKey');
