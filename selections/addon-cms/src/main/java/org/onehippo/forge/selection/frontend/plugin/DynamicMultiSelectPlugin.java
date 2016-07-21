@@ -555,24 +555,27 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     }
 
     /**
+     * TODO: UnselectLink and SelectLink should be combined and declared as static private classes.
+     * It should be done in the next major release, i.e., 5.x.
+     */
+
+    /**
      * Link unselect all values from a select list.
      */
     protected class UnselectLink extends AjaxLink {
 
         private ListMultipleChoice multiselect;
-        private IModel model;
 
         UnselectLink(String id, ListMultipleChoice multiselect, IModel model) {
-            super(id);
+            super(id, model);
             this.multiselect = multiselect;
-            this.model = model;
         }
 
         @Override
         public void onClick(AjaxRequestTarget target) {
 
             // clear model
-            this.model.setObject(null);
+            setModelObject(null);
 
             // make the multiselect update to remove selected items
             target.add(this.multiselect);
@@ -585,19 +588,17 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     protected class SelectLink extends AjaxLink {
 
         private ListMultipleChoice multiselect;
-        private IModel model;
 
         SelectLink(String id, ListMultipleChoice multiselect, IModel model) {
-            super(id);
+            super(id, model);
             this.multiselect = multiselect;
-            this.model = model;
         }
 
         @Override
         public void onClick(AjaxRequestTarget target) {
 
             // select all options
-            this.model.setObject(multiselect.getChoices());
+            setModelObject(multiselect.getChoices());
 
             // make the multiselect update to remove selected items
             target.add(this.multiselect);
