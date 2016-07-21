@@ -56,7 +56,7 @@ public class ParametersInfoProcessor {
 
     static final Logger log = LoggerFactory.getLogger(ParametersInfoProcessor.class);
 
-    private final static String COMPONENT_INFO_TRANSLATION_LOCATION = "hippo:hst.componentinfo";
+    private final static String COMPONENT_PARAMETERS_TRANSLATION_LOCATION = "hippo:hst.componentparameters";
 
     private final static Set<CacheKey> failedBundlesToLoad = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -378,7 +378,7 @@ public class ParametersInfoProcessor {
 
         final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
         if (localizationService != null) {
-            final String bundleName = COMPONENT_INFO_TRANSLATION_LOCATION + "." + clazz.getName();
+            final String bundleName = COMPONENT_PARAMETERS_TRANSLATION_LOCATION + "." + clazz.getName();
             final org.onehippo.repository.l10n.ResourceBundle repositoryResourceBundle =
                     localizationService.getResourceBundle(bundleName, localeOrDefault);
             if (repositoryResourceBundle != null) {

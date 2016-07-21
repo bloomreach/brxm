@@ -60,10 +60,10 @@ public class RepositoryParametersInfoProcessorTest extends RepositoryTestCase {
     }
 
     private static final String configurationRoot =
-            "/hippo:configuration/hippo:translations/hippo:hst/componentinfo/org.hippoecm.hst.pagecomposer.jaxrs.model.RepositoryParametersInfoProcessorTest$TestParameterInfo";
+            "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org.hippoecm.hst.pagecomposer.jaxrs.model.RepositoryParametersInfoProcessorTest$TestParameterInfo";
     private static final String[] contents = {
         "/hippo:configuration/hippo:translations/hippo:hst", "hipposys:resourcebundles",
-        "/hippo:configuration/hippo:translations/hippo:hst/componentinfo", "hipposys:resourcebundles",
+        "/hippo:configuration/hippo:translations/hippo:hst/componentparameters", "hipposys:resourcebundles",
         configurationRoot,          "hipposys:resourcebundles",
         configurationRoot + "/en",  "hipposys:resourcebundle",
             "englishOnlyGroup",     "englishOnlyGroup EN",
