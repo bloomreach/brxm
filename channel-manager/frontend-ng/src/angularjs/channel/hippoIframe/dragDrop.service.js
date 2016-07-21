@@ -50,7 +50,14 @@ export class DragDropService {
 
   _onLoad() {
     this.iframe = this.iframeJQueryElement[0].contentWindow;
-    $(this.iframe).one('unload', () => this._destroyDragula());
+    if (!this.iframe) {
+      return;
+    }
+    try {
+      $(this.iframe).one('unload', () => this._destroyDragula());
+    } catch (ignoredException) {
+      // IE11: ignored access denied exception in IE11
+    }
   }
 
   _destroyDragula() {
