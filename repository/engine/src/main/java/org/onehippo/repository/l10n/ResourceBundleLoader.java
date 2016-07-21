@@ -64,8 +64,8 @@ class ResourceBundleLoader {
         }
     }
 
-    private ResourceBundle resolveParent(ResourceBundleImpl bundle) {
-        ResourceBundle result = null;
+    private ResourceBundleImpl resolveParent(ResourceBundleImpl bundle) {
+        ResourceBundleImpl result = null;
         for (ResourceBundleImpl parent : bundles.values()) {
             if (parent == bundle) {
                 continue;
@@ -146,12 +146,12 @@ class ResourceBundleLoader {
     }
 
     private static class ResourceBundleDecorator extends java.util.ResourceBundle {
-        private ResourceBundle repositoryResourceBundle;
+        private ResourceBundleImpl repositoryResourceBundle;
 
-        public ResourceBundleDecorator(ResourceBundle repositoryResourceBundle) {
+        public ResourceBundleDecorator(ResourceBundleImpl repositoryResourceBundle) {
             this.repositoryResourceBundle = repositoryResourceBundle;
 
-            final ResourceBundle parent = repositoryResourceBundle.getParent();
+            final ResourceBundleImpl parent = repositoryResourceBundle.getParent();
             if (parent != null) {
                 setParent(new ResourceBundleDecorator(parent));
             }
@@ -172,7 +172,7 @@ class ResourceBundleLoader {
         private final String name;
         private final Locale locale;
         private final Map<String, String> strings = new HashMap<>();
-        private ResourceBundle parent;
+        private ResourceBundleImpl parent;
 
         private ResourceBundleImpl(final String name, final Locale locale) {
             this.name = name;
@@ -202,16 +202,6 @@ class ResourceBundleLoader {
         }
 
         @Override
-        public Set<String> getKeys() {
-            return strings.keySet();
-        }
-
-        @Override
-        public ResourceBundle getParent() {
-            return parent;
-        }
-
-        @Override
         public java.util.ResourceBundle toJavaResourceBundle() {
             return new ResourceBundleDecorator(this);
         }
@@ -224,7 +214,15 @@ class ResourceBundleLoader {
             return new ResourceBundleKey(name, locale);
         }
 
-        private void setParent(ResourceBundle parent) {
+        private Set<String> getKeys() {
+            return strings.keySet();
+        }
+
+        private ResourceBundleImpl getParent() {
+            return parent;
+        }
+
+        private void setParent(ResourceBundleImpl parent) {
             this.parent = parent;
         }
 
