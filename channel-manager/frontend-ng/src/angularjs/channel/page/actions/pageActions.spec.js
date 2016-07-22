@@ -195,6 +195,14 @@ describe('PageActions', () => {
     expect(copyAction.isEnabled()).toBe(true);
   });
 
+  fit('disables the copy action if the page is undefined', () => {
+    const PageActionsCtrl = compileDirectiveAndGetController();
+    const copyAction = PageActionsCtrl.actions.find((action) => action.id === 'copy');
+
+    SiteMapItemService.get.and.returnValue(undefined);
+    expect(copyAction.isEnabled()).toBe(false);
+  });
+
   it('does nothing when not confirming the deletion of a page', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
     const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
