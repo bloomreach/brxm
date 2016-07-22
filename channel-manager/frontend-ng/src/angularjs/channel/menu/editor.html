@@ -73,7 +73,8 @@
                        ng-model="menuEditor.editingItem.title"
                        ng-disabled="menuEditor.isLockedByOther()"
                        required
-                       focus-if>
+                       select-all-on-focus
+                       focus-if="menuEditor.isAdding">
                 <div ng-messages="form.title.$error">
                   <div ng-message="required">{{ 'TITLE_REQUIRED' | translate }}</div>
                 </div>
