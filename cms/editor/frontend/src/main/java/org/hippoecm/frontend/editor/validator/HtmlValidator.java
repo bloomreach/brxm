@@ -35,7 +35,7 @@ public class HtmlValidator implements IClusterable {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String[] VALID_ELEMENTS = new String[] {"img", "object", "embed", "form", "applet"};
+    public static final String[] VALID_ELEMENTS = new String[] {"img", "object", "embed", "form", "applet","iframe"};
 
     static class Handler extends DefaultHandler {
         boolean valid = false;
