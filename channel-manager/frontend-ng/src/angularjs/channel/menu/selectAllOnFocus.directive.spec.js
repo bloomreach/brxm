@@ -26,7 +26,7 @@ describe('selectAllOnFocusDirective', () => {
     $compile = _$compile_;
   }));
 
-  it('selects all content when focus', () => {
+  it('selects all content on focus', () => {
     const $scope = $rootScope.$new();
     const $element = angular.element('<input select-all-on-focus value="foo bah"></input>');
     const valueLength = $element.val().length;
