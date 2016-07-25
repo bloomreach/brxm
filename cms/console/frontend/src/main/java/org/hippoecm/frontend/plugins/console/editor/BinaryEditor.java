@@ -28,11 +28,14 @@ import javax.jcr.Value;
 
 import org.apache.jackrabbit.api.JackrabbitValue;
 import org.apache.jackrabbit.commons.JcrUtils;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.lang.Bytes;
@@ -58,8 +61,10 @@ public class BinaryEditor extends Panel {
     private static final long ONE_MB = ONE_KB * ONE_KB;
     private static final long ONE_GB = ONE_KB * ONE_MB;
 
+    private String contentIdentity = "";
+
     public BinaryEditor(String id, JcrPropertyModel model, final IPluginContext pluginContext) {
-        super(id);
+        super(id, model);
         final IResourceStream stream = new BinaryResourceStream(model);
 
         // download
@@ -91,26 +96,44 @@ public class BinaryEditor extends Panel {
         add(uploadLink);
 
         // Jackrabbit Binary Content Identifier if this Binary is in BinaryStore.
-        final String contentIdentity = getJackrabbitContentIdentity(model);
-        final String contentIdentityLabelValue = contentIdentity == null ? "" : "(Content Identity: " + contentIdentity + ")";
-        final Label contentIdentityLabel = new Label("content-identity", contentIdentityLabelValue);
-        add(contentIdentityLabel);
+        final Label contentIdentityValueLabel = new Label("content-identity-value",
+                new PropertyModel<String>(this, "contentIdentity"));
+        contentIdentityValueLabel.setOutputMarkupPlaceholderTag(true);
+        contentIdentityValueLabel.setVisible(false);
+        add(contentIdentityValueLabel);
+        final AjaxLink contentIdentityShowLink = new AjaxLink("content-identity-show-link") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                setContentIdentity(retrieveJackrabbitContentIdentity());
+                target.add(contentIdentityValueLabel.setVisible(true));
+                target.add(this.setVisible(false));
+            }
+        };
+        add(contentIdentityShowLink);
     }
 
-    private String getJackrabbitContentIdentity(final JcrPropertyModel model) {
-        String contentId = null;
+    public String getContentIdentity() {
+        return contentIdentity;
+    }
+
+    public void setContentIdentity(String contentIdentity) {
+        this.contentIdentity = contentIdentity;
+    }
+
+    private String retrieveJackrabbitContentIdentity() {
+        String contentIdentity = "";
 
         try {
-            final Value value = model.getProperty().getValue();
+            final Value value = ((JcrPropertyModel) getDefaultModel()).getProperty().getValue();
 
             if (value instanceof JackrabbitValue) {
-                contentId = ((JackrabbitValue) value).getContentIdentity();
+                contentIdentity = ((JackrabbitValue) value).getContentIdentity();
             }
         } catch (RepositoryException e) {
             log.error("Failed to get Jackrabbit Binary Value Content Identity.", e);
         }
 
-        return contentId;
+        return contentIdentity;
     }
 
     private static String getSizeString(final Bytes bytes) {
