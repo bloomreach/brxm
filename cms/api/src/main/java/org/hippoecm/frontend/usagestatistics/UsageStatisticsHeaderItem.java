@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,9 @@ import java.util.TreeMap;
 
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
+import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.HippoHeaderItem;
@@ -57,15 +59,20 @@ public class UsageStatisticsHeaderItem extends HippoHeaderItem {
     @Override
     public void render(final Response response) {
         if (UsageStatisticsSettings.get().isEnabled()) {
-            createUsageStatisticsReporter().render(response);
+            final Request request = RequestCycle.get().getRequest();
+            createUsageStatisticsReporter(request).render(response);
         }
         createLoginEventScript().render(response);
     }
 
-    private HeaderItem createUsageStatisticsReporter() {
+    private HeaderItem createUsageStatisticsReporter(final Request request) {
         final Map<String, String> scriptParams = new TreeMap<>();
         final String url = UsageStatisticsExternalUrl.get();
         scriptParams.put("externalScriptUrl", url);
+
+        scriptParams.put("uniqueUserId", UsageStatisticsUtils.getUniqueUserId(request));
+        scriptParams.put("language", UsageStatisticsUtils.getLanguage());
+
         log.info("Including external script for reporting usage statistics: {}", url);
 
         final PackageTextTemplate usageStatistics = new PackageTextTemplate(UsageStatisticsHeaderItem.class, USAGE_STATISTICS_JS);

@@ -21,8 +21,13 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.wicket.request.Request;
+import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UsageStatisticsUtils {
+    private static final Logger log = LoggerFactory.getLogger(UsageStatisticsUtils.class);
 
     private static final LoadingCache<String, String> CACHE = CacheBuilder.newBuilder()
             .maximumSize(50)
@@ -43,5 +48,18 @@ public class UsageStatisticsUtils {
      */
     public static String encryptParameterValue(final String plain) {
         return CACHE.getUnchecked(plain);
+    }
+
+    public static String getUniqueUserId(final Request request) {
+        final String hostName = request.getUrl().getHost();
+        final String userID = UserSession.get().getJcrSession().getUserID();
+
+        log.debug("Generate unique user id based on '{}' and '{}'", userID, hostName);
+
+        return DigestUtils.sha256Hex(userID + hostName);
+    }
+
+    public static String getLanguage() {
+        return UserSession.get().getLocale().getLanguage();
     }
 }
