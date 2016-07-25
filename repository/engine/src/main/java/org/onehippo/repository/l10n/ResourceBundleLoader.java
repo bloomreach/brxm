@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 package org.onehippo.repository.l10n;
 
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import javax.jcr.Node;
@@ -62,8 +64,8 @@ class ResourceBundleLoader {
         }
     }
 
-    private ResourceBundle resolveParent(ResourceBundleImpl bundle) {
-        ResourceBundle result = null;
+    private ResourceBundleImpl resolveParent(ResourceBundleImpl bundle) {
+        ResourceBundleImpl result = null;
         for (ResourceBundleImpl parent : bundles.values()) {
             if (parent == bundle) {
                 continue;
@@ -143,11 +145,34 @@ class ResourceBundleLoader {
         return property.getType() == PropertyType.STRING;
     }
 
+    private static class ResourceBundleDecorator extends java.util.ResourceBundle {
+        private ResourceBundleImpl repositoryResourceBundle;
+
+        public ResourceBundleDecorator(ResourceBundleImpl repositoryResourceBundle) {
+            this.repositoryResourceBundle = repositoryResourceBundle;
+
+            final ResourceBundleImpl parent = repositoryResourceBundle.getParent();
+            if (parent != null) {
+                setParent(new ResourceBundleDecorator(parent));
+            }
+        }
+
+        @Override
+        protected Object handleGetObject(final String key) {
+            return repositoryResourceBundle.getString(key);
+        }
+
+        @Override
+        public Enumeration<String> getKeys() {
+            return Collections.enumeration(repositoryResourceBundle.getKeys());
+        }
+    }
+
     private static class ResourceBundleImpl implements ResourceBundle {
         private final String name;
         private final Locale locale;
         private final Map<String, String> strings = new HashMap<>();
-        private ResourceBundle parent;
+        private ResourceBundleImpl parent;
 
         private ResourceBundleImpl(final String name, final Locale locale) {
             this.name = name;
@@ -176,6 +201,11 @@ class ResourceBundleLoader {
             return null;
         }
 
+        @Override
+        public java.util.ResourceBundle toJavaResourceBundle() {
+            return new ResourceBundleDecorator(this);
+        }
+
         private void putString(final String key, final String value) {
             strings.put(key, value);
         }
@@ -184,9 +214,18 @@ class ResourceBundleLoader {
             return new ResourceBundleKey(name, locale);
         }
 
-        private void setParent(ResourceBundle parent) {
+        private Set<String> getKeys() {
+            return strings.keySet();
+        }
+
+        private ResourceBundleImpl getParent() {
+            return parent;
+        }
+
+        private void setParent(ResourceBundleImpl parent) {
             this.parent = parent;
         }
 
     }
+
 }
