@@ -94,4 +94,12 @@
     <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
   </Versioning>
 
+  <DataStore class="org.apache.jackrabbit.core.data.db.DbDataStore">
+    <param name="url" value="jdbc:h2:file:${rep.home}/datastore/db"/>
+    <param name="databaseType" value="h2"/>
+    <param name="driver" value="org.h2.Driver"/>
+    <param name="minRecordLength" value="1024"/>
+    <param name="copyWhenReading" value="true"/>
+  </DataStore>
+
 </Repository>
