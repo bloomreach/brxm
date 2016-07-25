@@ -71,6 +71,7 @@ describe('PageActions', () => {
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(SiteMapService, 'load');
     spyOn(SiteMapItemService, 'get').and.returnValue({ name: 'name' });
+    spyOn(SiteMapItemService, 'hasItem').and.returnValue(true);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(false);
     spyOn(SiteMapItemService, 'isLocked').and.returnValue(false);
     spyOn(SiteMapItemService, 'deleteItem');
@@ -195,11 +196,11 @@ describe('PageActions', () => {
     expect(copyAction.isEnabled()).toBe(true);
   });
 
-  fit('disables the copy action if the page is undefined', () => {
+  it('disables the copy action if the page is undefined', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
     const copyAction = PageActionsCtrl.actions.find((action) => action.id === 'copy');
 
-    SiteMapItemService.get.and.returnValue(undefined);
+    SiteMapItemService.hasItem.and.returnValue(false);
     expect(copyAction.isEnabled()).toBe(false);
   });
 

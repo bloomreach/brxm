@@ -53,7 +53,7 @@ export class PageActionsCtrl {
   }
 
   _isCopyEnabled() {
-    if (!this.SiteMapItemService.get()) {
+    if (!this.SiteMapItemService.hasItem()) {
       return false;
     }
     if (this.SiteMapItemService.isLocked()) {
