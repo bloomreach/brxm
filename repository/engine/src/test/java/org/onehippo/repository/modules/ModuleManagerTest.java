@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,9 @@ import org.onehippo.repository.util.JcrConstants;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CMS_ONLY;
 
 public class ModuleManagerTest extends RepositoryTestCase {
 
@@ -89,6 +91,23 @@ public class ModuleManagerTest extends RepositoryTestCase {
         moduleManager.cancelModule(registration);
         assertTrue("Module was expected to be cancelled", module.cancelled);
         assertTrue("Module was expected to be executed", module.done);
+    }
+
+    @Test
+    public void testCMSRequiredModule() throws Exception {
+        testModule.setProperty("hipposys:className", CancelTestModule.class.getName());
+        testModule.setProperty(HIPPO_CMS_ONLY, true);
+        session.save();
+        {
+            final ModuleManager moduleManager = new ModuleManager(session);
+            final ModuleRegistration registration = moduleManager.registerModule(testModule);
+            assertNull(registration);
+        }
+        {
+            final ModuleManager moduleManager = new ModuleManager(session, true);
+            final ModuleRegistration registration = moduleManager.registerModule(testModule);
+            assertNotNull(registration);
+        }
     }
 
     public static class BasicTestModule implements ConfigurableDaemonModule, ExecutableDaemonModule {
