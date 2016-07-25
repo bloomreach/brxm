@@ -1,5 +1,6 @@
 {
   "name": "hippo-console-theme",
+  "license": "Apache-2.0",
   "private": true,
   "dependencies": {
     "font-awesome": "4.6.3"

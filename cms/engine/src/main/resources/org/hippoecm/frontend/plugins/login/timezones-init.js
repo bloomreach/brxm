@@ -16,14 +16,11 @@
 (function($, jstz) {
   'use strict';
 
-  var timezoneSelect = $('#timezone');
-  if (timezoneSelect.prop('selectedIndex') === 0) {
-    var tz = jstz.determine();
-    if (tz) {
-      var tzName = tz.name();
-      timezoneSelect.find('option').filter(function() {
-        return $(this).text() === tzName;
-      }).prop('selected', true);
-    }
+  var tz = jstz.determine();
+  if (tz) {
+    var tzName = tz.name();
+    $('#timezone').find('option').filter(function () {
+      return $(this).text() === tzName;
+    }).prop('selected', true);
   }
 })(jQuery, jstz);

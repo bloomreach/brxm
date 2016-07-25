@@ -342,7 +342,9 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                 TreeMap<String, String> arguments = new TreeMap<>();
                                 arguments.put("name", nodeName);
                                 arguments.put("localName", localName);
-
+                                if (StringUtils.isNotBlank(addDocumentModel.getLanguage())) {
+                                    arguments.put(HippoTranslationNodeType.LOCALE, addDocumentModel.getLanguage());
+                                }
                                 String path = workflow.add(category, addDocumentModel.getPrototype(), arguments);
                                 onWorkflowAdded(path);
                                 JcrNodeModel nodeModel = new JcrNodeModel(path);

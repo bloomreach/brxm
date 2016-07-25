@@ -15,16 +15,18 @@
  */
 package org.hippoecm.frontend.plugins.login;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
@@ -41,19 +43,11 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
     private static final ResourceReference JSTZ_JS = new JavaScriptResourceReference(DefaultLoginPlugin.class, "jstz.min.js");
 
     public static final String SHOW_TIMEZONES_CONFIG_PARAM = "show.timezones";
-    public static final String SELECTED_TIMEZONES_CONFIG_PARAM = "selected-timezones";
+    public static final String SELECTABLE_TIMEZONES_CONFIG_PARAM = "selectable.timezones";
+    public static final List<String> ALL_JAVA_TIMEZONES = Arrays.asList(TimeZone.getAvailableIDs());
 
     public DefaultLoginPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
-            response.render(JavaScriptReferenceHeaderItem.forReference(JSTZ_JS));
-            response.render(OnLoadHeaderItem.forScript(INIT_JS.asString()));
-        }
     }
 
     @Override
@@ -69,28 +63,28 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
 
         private String selectedTimeZone;
         private List<String> availableTimeZones;
+        private boolean useBrowserTimeZoneIfAvailable;
 
         public LoginForm(final String id, final boolean autoComplete, final List<String> locales, final LoginHandler handler) {
             super(id, autoComplete, locales, handler);
 
-            if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
-                String[] timeZones = getPluginConfig().getStringArray(SELECTED_TIMEZONES_CONFIG_PARAM);
-                if (ArrayUtils.isEmpty(timeZones)) {
-                    timeZones = TimeZone.getAvailableIDs();
-                }
-                availableTimeZones = Arrays.asList(timeZones);
+            final IPluginConfig config = getPluginConfig();
+            if (config.getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
+                availableTimeZones = getSelectableTimezones(config.getStringArray(SELECTABLE_TIMEZONES_CONFIG_PARAM));
 
                 // Check if user has previously selected a timezone
                 final String cookieTimeZone = getCookieValue(TIMEZONE_COOKIE);
-                if (cookieTimeZone != null && availableTimeZones.contains(cookieTimeZone)) {
+                if (isTimeZoneValid(cookieTimeZone)) {
                     selectedTimeZone = cookieTimeZone;
+                } else {
+                    selectedTimeZone = availableTimeZones.get(0);
+                    useBrowserTimeZoneIfAvailable = true;
                 }
 
                 // Add the timezone dropdown
-                final DropDownChoice<String> timeZone = new DropDownChoice<>("timezone",
-                        PropertyModel.of(this, "selectedTimeZone"), availableTimeZones);
-
-                timeZone.setNullValid(true);
+                final PropertyModel<String> selected = PropertyModel.of(this, "selectedTimeZone");
+                final DropDownChoice<String> timeZone = new DropDownChoice<>("timezone", selected, availableTimeZones);
+                timeZone.setNullValid(false);
 
                 form.add(new Label("timezone-label", new ResourceModel("timezone-label", "Time zone:")));
                 form.add(timeZone);
@@ -102,14 +96,41 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
         }
 
         @Override
+        public void renderHead(HtmlHeaderContainer container) {
+            super.renderHead(container);
+            if (getPluginConfig().getBoolean(SHOW_TIMEZONES_CONFIG_PARAM) && useBrowserTimeZoneIfAvailable) {
+                container.getHeaderResponse().render(JavaScriptReferenceHeaderItem.forReference(JSTZ_JS));
+                container.getHeaderResponse().render(OnLoadHeaderItem.forScript(INIT_JS.asString()));
+            }
+        }
+
+        @Override
         protected void loginSuccess() {
-            if (selectedTimeZone != null && availableTimeZones != null &&
-                    availableTimeZones.contains(selectedTimeZone)) {
-                setCookieValue(TIMEZONE_COOKIE, selectedTimeZone, TIMEZONE_COOKIE_MAX_AGE);
+            if (isTimeZoneValid(selectedTimeZone)) {
                 final TimeZone timeZone = TimeZone.getTimeZone(selectedTimeZone);
+                // Store selected timezone in session and cookie
                 UserSession.get().getClientInfo().getProperties().setTimeZone(timeZone);
+                setCookieValue(TIMEZONE_COOKIE, selectedTimeZone, TIMEZONE_COOKIE_MAX_AGE);
             }
             super.loginSuccess();
+        }
+
+        private boolean isTimeZoneValid(String timeZone) {
+            return timeZone != null && availableTimeZones != null
+                    && availableTimeZones.contains(timeZone);
+        }
+
+        private List<String> getSelectableTimezones(final String[] configuredSelectableTimezones) {
+            List<String> selectableTimezones = new ArrayList<>();
+
+            if (configuredSelectableTimezones != null) {
+                selectableTimezones = Arrays.stream(configuredSelectableTimezones)
+                        .filter(StringUtils::isNotBlank)
+                        .filter(ALL_JAVA_TIMEZONES::contains)
+                        .collect(Collectors.toList());
+            }
+
+            return selectableTimezones.isEmpty() ? ALL_JAVA_TIMEZONES : selectableTimezones;
         }
     }
 }

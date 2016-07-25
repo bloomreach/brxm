@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
 
         final GalleryProcessor processor = DefaultGalleryProcessor.getGalleryProcessor(context, getPluginConfig());
 
+        boolean upscalingEnabled = false;
         boolean isOriginal = true;
         boolean isOriginalImageWidthSmallerThanThumbWidth = false;
         boolean isOriginalImageHeightSmallerThanThumbHeight = false;
@@ -84,6 +85,8 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
             isOriginalImageWidthSmallerThanThumbWidth = thumbnailDimension.getWidth() > originalImageDimension.getWidth();
             isOriginalImageHeightSmallerThanThumbHeight = thumbnailDimension.getHeight() > originalImageDimension.getHeight();
 
+            upscalingEnabled = processor.isUpscalingEnabled(jcrImageNodeModel.getObject());
+
         } catch (RepositoryException | GalleryException | NullPointerException e) {
             error(e);
             log.error("Cannot retrieve dimensions of original or thumbnail image", e);
@@ -93,10 +96,15 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
         Label cropButton = new Label("crop-button", new StringResourceModel("crop-button-label", this, null));
         cropButton.setVisible(mode == IEditor.Mode.EDIT && !isOriginal);
 
+
+        final boolean isUpdateDisabled =
+                isOriginal
+                || areExceptionsThrown
+                || (isOriginalImageWidthSmallerThanThumbWidth && !upscalingEnabled)
+                || (isOriginalImageHeightSmallerThanThumbHeight && !upscalingEnabled);
+
         if (mode == IEditor.Mode.EDIT) {
-            if (!isOriginal && !areExceptionsThrown
-                    && !isOriginalImageWidthSmallerThanThumbWidth
-                    && !isOriginalImageHeightSmallerThanThumbHeight) {
+            if (!isUpdateDisabled) {
 
                 cropButton.add(new AjaxEventBehavior("onclick") {
                     @Override
@@ -107,18 +115,14 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
                 });
             }
 
-            String cropButtonClass = isOriginal
-                    || areExceptionsThrown
-                    || isOriginalImageWidthSmallerThanThumbWidth
-                    || isOriginalImageHeightSmallerThanThumbHeight
-                    ? "crop-button inactive" : "crop-button active";
+            final String cropButtonClass = isUpdateDisabled ? "crop-button inactive" : "crop-button active";
 
             cropButton.add(new AttributeAppender("class", Model.of(cropButtonClass), " "));
 
             String buttonTipProperty =
                     areExceptionsThrown ? "crop-button-tip-inactive-error" :
-                            isOriginalImageWidthSmallerThanThumbWidth ? "crop-button-tip-inactive-width" :
-                                    isOriginalImageHeightSmallerThanThumbHeight ? "crop-button-tip-inactive-height" :
+                            isOriginalImageWidthSmallerThanThumbWidth && !upscalingEnabled ? "crop-button-tip-inactive-width" :
+                                    isOriginalImageHeightSmallerThanThumbHeight && !upscalingEnabled ? "crop-button-tip-inactive-height" :
                                             "crop-button-tip";
 
             cropButton.add(TitleAttribute.append(new StringResourceModel(buttonTipProperty, this, null)));

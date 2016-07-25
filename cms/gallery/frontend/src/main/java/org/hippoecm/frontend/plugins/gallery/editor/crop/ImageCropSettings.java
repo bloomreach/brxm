@@ -34,6 +34,8 @@ public class ImageCropSettings extends WidgetSettings {
     
     private int initialX = 10;
     private int initialY = 10;
+    private int initialWidth = 100;
+    private int initialHeight = 100;
     private int minimumWidth = 16;
     private int minimumHeight = 16;
 
@@ -62,6 +64,9 @@ public class ImageCropSettings extends WidgetSettings {
         this.originalHeight = (int) originalImageDimension.getHeight();
         this.thumbnailWidth = (int) thumbnailDimension.getWidth();
         this.thumbnailHeight = (int) thumbnailDimension.getHeight();
+
+        this.initialWidth = this.thumbnailWidth;
+        this.initialHeight = this.thumbnailHeight;
 
         this.upscalingEnabled = upscalingEnabled;
         this.fitView = fitView;
@@ -132,6 +137,22 @@ public class ImageCropSettings extends WidgetSettings {
 
     public void setInitialY(int initialY) {
         this.initialY = initialY;
+    }
+
+    public int getInitialWidth() {
+        return initialWidth;
+    }
+
+    public void setInitialWidth(final int initialWidth) {
+        this.initialWidth = initialWidth;
+    }
+
+    public int getInitialHeight() {
+        return initialHeight;
+    }
+
+    public void setInitialHeight(final int initialHeight) {
+        this.initialHeight = initialHeight;
     }
 
     public int getMinimumWidth() {
