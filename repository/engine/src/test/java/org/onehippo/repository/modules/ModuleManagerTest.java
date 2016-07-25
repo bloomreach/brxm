@@ -98,7 +98,6 @@ public class ModuleManagerTest extends RepositoryTestCase {
         testModule.setProperty("hipposys:className", CancelTestModule.class.getName());
         testModule.setProperty(HIPPO_CMS_ONLY, true);
         session.save();
-        session.save();
         {
             final ModuleManager moduleManager = new ModuleManager(session);
             final ModuleRegistration registration = moduleManager.registerModule(testModule);

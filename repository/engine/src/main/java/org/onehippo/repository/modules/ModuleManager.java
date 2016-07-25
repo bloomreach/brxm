@@ -54,7 +54,7 @@ public class ModuleManager {
     private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
     private Future keepAliveFuture;
     private volatile boolean execute = true;
-    private final boolean isWebappCms;
+    private final boolean isCmsWebapp;
 
     public ModuleManager(final Session session) {
         this.session = session;
@@ -67,12 +67,12 @@ public class ModuleManager {
             log.info("Current application is not a CMS webapp : Modules that require CMS code *won't* be initialized");
             cms = false;
         }
-        isWebappCms = cms;
+        isCmsWebapp = cms;
     }
 
-    ModuleManager(final Session session, final boolean isWebappCms) {
+    ModuleManager(final Session session, final boolean isCmsWebapp) {
         this.session = session;
-        this.isWebappCms = isWebappCms;
+        this.isCmsWebapp = isCmsWebapp;
     }
 
     public void start() throws RepositoryException {
@@ -112,7 +112,7 @@ public class ModuleManager {
             final String className = JcrUtils.getStringProperty(node, HIPPOSYS_CLASSNAME, null);
             final Calendar executed = JcrUtils.getDateProperty(node, HIPPO_EXECUTED, null);
             final Boolean cmsOnly = JcrUtils.getBooleanProperty(node, HIPPO_CMS_ONLY, Boolean.FALSE);
-            if (cmsOnly && !isWebappCms) {
+            if (cmsOnly && !isCmsWebapp) {
                 log.info("Skipping '{}' because requires CMS webapp but current webapp is not a CMS webapp", moduleName);
                 return null;
             }
