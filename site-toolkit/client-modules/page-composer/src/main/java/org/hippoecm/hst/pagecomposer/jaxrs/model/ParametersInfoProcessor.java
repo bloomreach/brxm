@@ -303,15 +303,22 @@ public class ParametersInfoProcessor {
         String resourceKey = key + "#" + subValue;
         for (ResourceBundle bundle : bundles) {
             if (bundle.containsKey(resourceKey)) {
-                return bundle.getString(resourceKey);
+                final String value = bundle.getString(resourceKey);
+                log.trace("Found translation in repository resource bundle: {} --> {}", resourceKey, value);
+                return value;
             }
         }
+
         resourceKey = key + "/" + subValue;
         for (ResourceBundle bundle : bundles) {
             if (bundle.containsKey(resourceKey)) {
-                return bundle.getString(resourceKey);
+                final String value = bundle.getString(resourceKey);
+                log.trace("Found translation in Java resource bundle: {} --> {}", resourceKey, value);
+                return value;
             }
         }
+
+        log.trace("Did not find translation for key '{}' and sub value '{}', using sub value", key, subValue);
         return subValue;
     }
 
