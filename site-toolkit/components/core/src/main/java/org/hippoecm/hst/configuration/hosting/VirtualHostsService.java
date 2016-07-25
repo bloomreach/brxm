@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -859,7 +860,13 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 }
             }
 
-            return ResourceBundle.getBundle(channelInfoClassName, locale);
+            try {
+                return ResourceBundle.getBundle(channelInfoClassName, locale);
+            } catch (MissingResourceException e) {
+                log.info("Could not load repository or Java resource bundle for class '{}' and locale '{}', using " +
+                         "untranslated labels for channel properties.", channelInfoClassName, locale);
+                return null;
+            }
         }
         return null;
     }

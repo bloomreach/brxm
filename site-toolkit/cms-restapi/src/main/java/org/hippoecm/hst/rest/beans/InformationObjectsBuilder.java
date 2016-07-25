@@ -95,13 +95,15 @@ public final class InformationObjectsBuilder {
     public static Properties buildResourceBundleProperties(ResourceBundle resourceBundle) {
         Properties properties = new Properties();
 
-        for (String key : resourceBundle.keySet()) {
-            final String value = resourceBundle.getString(key);
-            if (key == null || value == null) {
-                // Properties does not support null key or value
-                continue;
+        if (resourceBundle != null) {
+            for (String key : resourceBundle.keySet()) {
+                final String value = resourceBundle.getString(key);
+                if (key == null || value == null) {
+                    // Properties does not support null key or value
+                    continue;
+                }
+                properties.put(key, value);
             }
-            properties.put(key, value);
         }
 
         return properties;
