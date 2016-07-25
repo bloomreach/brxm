@@ -50,7 +50,16 @@ export class DragDropService {
 
   _onLoad() {
     this.iframe = this.iframeJQueryElement[0].contentWindow;
-    $(this.iframe).one('unload', () => this._destroyDragula());
+    if (!this.iframe) {
+      return;
+    }
+    try {
+      $(this.iframe).one('unload', () => this._destroyDragula());
+    } catch (ignoredException) {
+      // IE11: ignore an "access denied" exception when the site returns a 404 page and IE displays its own
+      // "friendly HTTP error message" page instead (can be configured in IE and is enabled by default).
+      // We cannot access anything on such custom pages.
+    }
   }
 
   _destroyDragula() {

@@ -71,6 +71,7 @@ describe('PageActions', () => {
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(SiteMapService, 'load');
     spyOn(SiteMapItemService, 'get').and.returnValue({ name: 'name' });
+    spyOn(SiteMapItemService, 'hasItem').and.returnValue(true);
     spyOn(SiteMapItemService, 'isEditable').and.returnValue(false);
     spyOn(SiteMapItemService, 'isLocked').and.returnValue(false);
     spyOn(SiteMapItemService, 'deleteItem');
@@ -193,6 +194,14 @@ describe('PageActions', () => {
 
     ChannelService.getPageModifiableChannels.and.returnValue(['dummy']);
     expect(copyAction.isEnabled()).toBe(true);
+  });
+
+  it('disables the copy action if the page is undefined', () => {
+    const PageActionsCtrl = compileDirectiveAndGetController();
+    const copyAction = PageActionsCtrl.actions.find((action) => action.id === 'copy');
+
+    SiteMapItemService.hasItem.and.returnValue(false);
+    expect(copyAction.isEnabled()).toBe(false);
   });
 
   it('does nothing when not confirming the deletion of a page', () => {
