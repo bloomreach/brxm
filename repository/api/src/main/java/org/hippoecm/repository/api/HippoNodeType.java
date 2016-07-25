@@ -255,6 +255,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_EXECUTED = "hipposys:executed";
 
+    public static final String HIPPO_CMS_ONLY = "hipposys:cmsonly";
+
     public static final String HIPPO_EXTENSIONSOURCE = "hipposys:extensionsource";
 
    /**
