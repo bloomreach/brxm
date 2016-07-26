@@ -88,6 +88,9 @@ public class RepositoryParametersInfoProcessorTest extends RepositoryTestCase {
     public void importTranslations() throws Exception {
         build(contents, session);
         session.save();
+
+        // allow the resource bundle to be loaded by the LocalizationModule
+        Thread.sleep(1000);
     }
 
     @Test
