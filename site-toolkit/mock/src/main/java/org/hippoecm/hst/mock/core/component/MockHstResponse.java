@@ -210,6 +210,11 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
         return containing;
     }
 
+    @Override
+    public void addProcessedHeadElement(final Element headElement) {
+
+    }
+
     public void setRenderPath(String renderPath) {
         this.renderPath = renderPath;
     }

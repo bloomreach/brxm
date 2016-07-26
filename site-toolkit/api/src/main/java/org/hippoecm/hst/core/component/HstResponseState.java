@@ -133,6 +133,8 @@ public interface HstResponseState
     
     boolean containsHeadElement(String keyHint);
 
+    void addProcessedHeadElement(Element headElement);
+
     public void addPreambleNode(Comment comment);
 
     /**

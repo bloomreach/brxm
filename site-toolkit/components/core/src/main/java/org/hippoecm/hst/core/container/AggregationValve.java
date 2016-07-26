@@ -558,6 +558,10 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         }
 
         @Override
+        public void addProcessedHeadElement(final Element headElement) {
+        }
+
+        @Override
         public HstURL createActionURL() {
             return null;
         }

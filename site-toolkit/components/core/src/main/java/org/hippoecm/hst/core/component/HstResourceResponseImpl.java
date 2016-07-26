@@ -112,7 +112,12 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     public boolean containsHeadElement(String keyHint) {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke containsHeadElement().");
     }
-    
+
+    @Override
+    public void addProcessedHeadElement(final Element headElement) {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke addProcessedHeadElement().");
+    }
+
     public void setRenderPath(String renderPath) {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke setRenderPath().");
     }
