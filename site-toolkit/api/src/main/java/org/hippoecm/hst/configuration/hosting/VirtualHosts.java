@@ -271,6 +271,7 @@ public interface VirtualHosts {
     /**
      * The resource bundle for the channel info.  It contains the display names for fields
      * and values.
+     * @return The ResourceBundle or null if the resource bundle could not be found
      */
     ResourceBundle getResourceBundle(Channel channel, Locale locale);
 

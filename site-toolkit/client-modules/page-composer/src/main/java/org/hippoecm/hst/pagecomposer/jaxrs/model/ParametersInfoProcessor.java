@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,12 +47,16 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ParametersInfoProcessor {
 
     static final Logger log = LoggerFactory.getLogger(ParametersInfoProcessor.class);
+
+    private final static String COMPONENT_PARAMETERS_TRANSLATION_LOCATION = "hippo:hst.componentparameters";
 
     private final static Set<CacheKey> failedBundlesToLoad = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -210,8 +214,7 @@ public class ParametersInfoProcessor {
                     final String[] displayValues = new String[values.length];
 
                     for (int i = 0; i < values.length; i++) {
-                        final String resourceKey = propAnnotation.name() + "/" + values[i];
-                        displayValues[i] = getResourceValue(resourceBundles, resourceKey, values[i]);
+                        displayValues[i] = getResourceSubValue(resourceBundles, propAnnotation.name(), values[i]);
                     }
 
                     prop.setDropDownListValues(values);
@@ -287,8 +290,6 @@ public class ParametersInfoProcessor {
         return orderedByFieldGroupProperties;
     }
 
-
-
     private static String getResourceValue(ResourceBundle[] bundles, String key, String defaultValue) {
         for (ResourceBundle bundle : bundles) {
             if (bundle.containsKey(key)) {
@@ -296,6 +297,29 @@ public class ParametersInfoProcessor {
             }
         }
         return defaultValue;
+    }
+
+    private static String getResourceSubValue(ResourceBundle[] bundles, String key, String subValue) {
+        String resourceKey = key + "#" + subValue;
+        for (ResourceBundle bundle : bundles) {
+            if (bundle.containsKey(resourceKey)) {
+                final String value = bundle.getString(resourceKey);
+                log.trace("Found translation in repository resource bundle: {} --> {}", resourceKey, value);
+                return value;
+            }
+        }
+
+        resourceKey = key + "/" + subValue;
+        for (ResourceBundle bundle : bundles) {
+            if (bundle.containsKey(resourceKey)) {
+                final String value = bundle.getString(resourceKey);
+                log.trace("Found translation in Java resource bundle: {} --> {}", resourceKey, value);
+                return value;
+            }
+        }
+
+        log.trace("Did not find translation for key '{}' and sub value '{}', using sub value", key, subValue);
+        return subValue;
     }
 
     /**
@@ -358,6 +382,17 @@ public class ParametersInfoProcessor {
         if (failedBundlesToLoad.contains(bundleKey)) {
             return null;
         }
+
+        final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
+        if (localizationService != null) {
+            final String bundleName = COMPONENT_PARAMETERS_TRANSLATION_LOCATION + "." + clazz.getName();
+            final org.onehippo.repository.l10n.ResourceBundle repositoryResourceBundle =
+                    localizationService.getResourceBundle(bundleName, localeOrDefault);
+            if (repositoryResourceBundle != null) {
+                return repositoryResourceBundle.toJavaResourceBundle();
+            }
+        }
+
         try {
             return ResourceBundle.getBundle(typeName, localeOrDefault);
         } catch (MissingResourceException e) {

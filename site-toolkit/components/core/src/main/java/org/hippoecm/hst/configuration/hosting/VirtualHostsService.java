@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -61,6 +62,8 @@ import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
 import org.hippoecm.hst.util.PathUtils;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +76,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private static final Logger log = LoggerFactory.getLogger(VirtualHostsService.class);
 
     private final static String WILDCARD = "_default_";
+    private final static String CHANNEL_PARAMETERS_TRANSLATION_LOCATION = "hippo:hst.channelparameters";
 
     private HstManagerImpl hstManager;
     private HstNodeLoadingCache hstNodeLoadingCache;
@@ -846,7 +850,23 @@ public class VirtualHostsService implements MutableVirtualHosts {
     public ResourceBundle getResourceBundle(final Channel channel, final Locale locale) {
         String channelInfoClassName = channel.getChannelInfoClassName();
         if (channelInfoClassName != null) {
-            return ResourceBundle.getBundle(channelInfoClassName, locale);
+            final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
+            if (localizationService != null) {
+                final String bundleName = CHANNEL_PARAMETERS_TRANSLATION_LOCATION + "." + channelInfoClassName;
+                final org.onehippo.repository.l10n.ResourceBundle repositoryResourceBundle =
+                        localizationService.getResourceBundle(bundleName, locale);
+                if (repositoryResourceBundle != null) {
+                    return repositoryResourceBundle.toJavaResourceBundle();
+                }
+            }
+
+            try {
+                return ResourceBundle.getBundle(channelInfoClassName, locale);
+            } catch (MissingResourceException e) {
+                log.info("Could not load repository or Java resource bundle for class '{}' and locale '{}', using " +
+                         "untranslated labels for channel properties.", channelInfoClassName, locale);
+                return null;
+            }
         }
         return null;
     }
