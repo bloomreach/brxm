@@ -60,10 +60,16 @@ public class RepositoryParametersInfoProcessorTest extends RepositoryTestCase {
     }
 
     private static final String configurationRoot =
-            "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org.hippoecm.hst.pagecomposer.jaxrs.model.RepositoryParametersInfoProcessorTest$TestParameterInfo";
+            "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs/model/RepositoryParametersInfoProcessorTest$TestParameterInfo";
     private static final String[] contents = {
         "/hippo:configuration/hippo:translations/hippo:hst", "hipposys:resourcebundles",
         "/hippo:configuration/hippo:translations/hippo:hst/componentparameters", "hipposys:resourcebundles",
+        "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org", "hipposys:resourcebundles",
+        "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm", "hipposys:resourcebundles",
+        "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst", "hipposys:resourcebundles",
+        "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer", "hipposys:resourcebundles",
+        "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs", "hipposys:resourcebundles",
+        "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs/model", "hipposys:resourcebundles",
         configurationRoot,          "hipposys:resourcebundles",
         configurationRoot + "/en",  "hipposys:resourcebundle",
             "englishOnlyGroup",     "englishOnlyGroup EN",
