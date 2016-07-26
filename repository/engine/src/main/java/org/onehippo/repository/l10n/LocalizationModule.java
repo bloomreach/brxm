@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,12 +65,12 @@ public class LocalizationModule implements DaemonModule {
                 return bundle;
             }
         }, LocalizationService.class);
-        loadBundles(session);
+        loadBundles();
         listener = new ModuleConfigurationListener();
         listener.start();
     }
 
-    private void loadBundles(final Session session) throws RepositoryException {
+    private synchronized void loadBundles() throws RepositoryException {
         bundles = ResourceBundleLoader.load(session.getNode(TRANSLATIONS_PATH));
     }
 
@@ -109,7 +109,7 @@ public class LocalizationModule implements DaemonModule {
         @Override
         public void onEvent(final EventIterator events) {
             try {
-                loadBundles(session);
+                loadBundles();
             } catch (RepositoryException e) {
                 log.error("Failed to reload resource bundles", e);
             }
