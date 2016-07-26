@@ -26,6 +26,10 @@ export function selectAllOnFocusDirective() {
           domElement.select();
         }
       });
+      element.mouseup((event) => {
+        // Safari immediately deselects all when the mouseup event happens, so prevent that
+        event.preventDefault();
+      });
     },
   };
 }
