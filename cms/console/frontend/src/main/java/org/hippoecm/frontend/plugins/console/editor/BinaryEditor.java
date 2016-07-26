@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,12 +24,18 @@ import java.util.Locale;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
+import org.apache.jackrabbit.api.JackrabbitValue;
+import org.apache.jackrabbit.commons.JcrUtils;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.lang.Bytes;
@@ -44,7 +50,6 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.console.dialog.BinaryUploadDialog;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,8 +61,10 @@ public class BinaryEditor extends Panel {
     private static final long ONE_MB = ONE_KB * ONE_KB;
     private static final long ONE_GB = ONE_KB * ONE_MB;
 
+    private String contentIdentity = "";
+
     public BinaryEditor(String id, JcrPropertyModel model, final IPluginContext pluginContext) {
-        super(id);
+        super(id, model);
         final IResourceStream stream = new BinaryResourceStream(model);
 
         // download
@@ -87,6 +94,46 @@ public class BinaryEditor extends Panel {
         final IDialogService service = pluginContext.getService(IDialogService.class.getName(), IDialogService.class);
         final DialogLink uploadLink = new DialogLink("binary-upload-link", new Model<>("Upload binary"), factory, service);
         add(uploadLink);
+
+        // Jackrabbit Binary Content Identifier if this Binary is in BinaryStore.
+        final Label contentIdentityValueLabel = new Label("content-identity-value",
+                new PropertyModel<String>(this, "contentIdentity"));
+        contentIdentityValueLabel.setOutputMarkupPlaceholderTag(true);
+        contentIdentityValueLabel.setVisible(false);
+        add(contentIdentityValueLabel);
+        final AjaxLink contentIdentityShowLink = new AjaxLink("content-identity-show-link") {
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                setContentIdentity(retrieveJackrabbitContentIdentity());
+                target.add(contentIdentityValueLabel.setVisible(true));
+                target.add(this.setVisible(false));
+            }
+        };
+        add(contentIdentityShowLink);
+    }
+
+    public String getContentIdentity() {
+        return contentIdentity;
+    }
+
+    public void setContentIdentity(String contentIdentity) {
+        this.contentIdentity = contentIdentity;
+    }
+
+    private String retrieveJackrabbitContentIdentity() {
+        String contentIdentity = "";
+
+        try {
+            final Value value = ((JcrPropertyModel) getDefaultModel()).getProperty().getValue();
+
+            if (value instanceof JackrabbitValue) {
+                contentIdentity = ((JackrabbitValue) value).getContentIdentity();
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to get Jackrabbit Binary Value Content Identity.", e);
+        }
+
+        return contentIdentity;
     }
 
     private static String getSizeString(final Bytes bytes) {
