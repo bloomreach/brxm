@@ -45,6 +45,7 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
 
     private String namespace;
     private List<KeyValue<String, Element>> headElements = new LinkedList<KeyValue<String, Element>>();
+    private List<Element> processedElements = new ArrayList<>();
     private Map<String, String []> renderParameters;
     private String renderPath;
     private String serveResourcePath;
@@ -212,7 +213,11 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
 
     @Override
     public void addProcessedHeadElement(final Element headElement) {
+        processedElements.add(headElement);
+    }
 
+    public List<Element> getProcessedHeadElements() {
+        return processedElements;
     }
 
     public void setRenderPath(String renderPath) {

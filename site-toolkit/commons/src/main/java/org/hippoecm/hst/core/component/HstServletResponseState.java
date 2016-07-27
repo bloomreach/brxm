@@ -54,6 +54,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
 import static org.hippoecm.hst.util.NullWriter.NULL_WRITER;
 
 /**
@@ -853,12 +854,13 @@ public class HstServletResponseState implements HstResponseState {
                 }
             }
 
-            if (headElements != null && isComponentRenderingResponse) {
+            if (headElements != null && isComponentRenderingResponse && HstRequestUtils.getHstRequestContext(request).isCmsRequest()) {
                 // check whether there are head elements that are not included in the response already by
                 // a head contributions tag
                 for (KeyValue<String, Element> entry : headElements) {
                     if (processedElements == null || !processedElements.contains(entry.getValue())) {
-                        final Comment comment = createComment(" unprocessed-head-elements-present ");
+                        final Comment comment = createComment(" { \"unprocessed-head-elements-present\" : \"true\", \"" +
+                                 HST_TYPE+"\" : \"HST_INFO\" } ");
                         addEpilogueNode(comment);
                         log.info("Found unprocessed head element contribution(s) for component rendering call.");
                         break;
