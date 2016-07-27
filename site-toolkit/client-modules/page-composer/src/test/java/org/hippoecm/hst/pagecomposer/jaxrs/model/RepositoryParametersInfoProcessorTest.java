@@ -63,7 +63,7 @@ public class RepositoryParametersInfoProcessorTest extends AbstractPageComposerT
     }
 
     private static final String configurationRoot =
-            "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.RepositoryParametersInfoProcessorTest$TestParameterInfo";
+            "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests/RepositoryParametersInfoProcessorTest$TestParameterInfo";
     private static final String[] contents = {
             "/hippo:configuration/hippo:translations/hippo:hst", "hipposys:resourcebundles",
             "/hippo:configuration/hippo:translations/hippo:hst/componentparameters", "hipposys:resourcebundles",
@@ -72,19 +72,20 @@ public class RepositoryParametersInfoProcessorTest extends AbstractPageComposerT
             "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst", "hipposys:resourcebundles",
             "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer", "hipposys:resourcebundles",
             "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs", "hipposys:resourcebundles",
-            "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs/model", "hipposys:resourcebundles",
+            "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs/services", "hipposys:resourcebundles",
+            "/hippo:configuration/hippo:translations/hippo:hst/componentparameters/org/hippoecm/hst/pagecomposer/jaxrs/services/repositorytests", "hipposys:resourcebundles",
             configurationRoot,          "hipposys:resourcebundles",
             configurationRoot + "/en",  "hipposys:resourcebundle",
-            "englishOnlyGroup",     "englishOnlyGroup EN",
-            "bothGroup",            "bothGroup EN",
-            "englishOnly",          "englishOnly EN",
-            "both",                 "both EN",
-            "dropdown#englishOnly", "dropdown#englishOnly EN",
-            "dropdown#both",        "dropdown#both EN",
+                "englishOnlyGroup",     "englishOnlyGroup EN",
+                "bothGroup",            "bothGroup EN",
+                "englishOnly",          "englishOnly EN",
+                "both",                 "both EN",
+                "dropdown#englishOnly", "dropdown#englishOnly EN",
+                "dropdown#both",        "dropdown#both EN",
             configurationRoot + "/nl",  "hipposys:resourcebundle",
-            "bothGroup",            "bothGroup NL",
-            "both",                 "both NL",
-            "dropdown#both",        "dropdown#both NL"
+                "bothGroup",            "bothGroup NL",
+                "both",                 "both NL",
+                "dropdown#both",        "dropdown#both NL"
     };
 
     @Before
@@ -97,10 +98,9 @@ public class RepositoryParametersInfoProcessorTest extends AbstractPageComposerT
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void removeTranslations() throws Exception {
         session.getNode("/hippo:configuration/hippo:translations/hippo:hst").remove();
         session.save();
-        super.tearDown();
     }
 
     @Test
