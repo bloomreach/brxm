@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
   "use strict";
 
   var EXTERNAL_SCRIPT_URL = window.location.protocol + '//' + '${externalScriptUrl}',
+    UNIQUE_USER_ID = '${uniqueUserId}',
+    LANGUAGE = '${language}',
     EXTERNAL_LOAD_TIMEOUT_MS = 10000,
     eventQueue = [];
 
@@ -40,7 +42,10 @@
 
   loadExternalScript(function() {
     Hippo.Events.unmonitor(queueEvent);
-    Hippo.Events.publish('start-usage-statistics', eventQueue);
+    Hippo.Events.publish('start-usage-statistics', eventQueue, {
+      userId: UNIQUE_USER_ID,
+      language: LANGUAGE
+    });
     eventQueue = null;
   });
 
