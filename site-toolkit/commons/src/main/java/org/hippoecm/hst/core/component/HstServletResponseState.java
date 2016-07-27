@@ -859,7 +859,7 @@ public class HstServletResponseState implements HstResponseState {
                 // a head contributions tag
                 for (KeyValue<String, Element> entry : headElements) {
                     if (processedElements == null || !processedElements.contains(entry.getValue())) {
-                        final Comment comment = createComment(" { \"unprocessed-head-elements-present\" : \"true\", \"" +
+                        final Comment comment = createComment(" { \"unprocessed-head-elements-present\" : true, \"" +
                                  HST_TYPE+"\" : \"HST_INFO\" } ");
                         addEpilogueNode(comment);
                         log.info("Found unprocessed head element contribution(s) for component rendering call.");
