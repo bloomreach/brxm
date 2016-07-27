@@ -17,6 +17,7 @@ package org.onehippo.cms.l10n;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.junit.Test;
@@ -29,14 +30,17 @@ public class RepositoryResourceBundleLoaderTest {
     public void testLoadBundles() throws Exception {
         final Collection<ResourceBundle> bundles = new RepositoryResourceBundleLoader(
                 Arrays.asList("en"), getClass().getClassLoader()).loadBundles();
-        assertEquals(1, bundles.size());
-        ResourceBundle bundle = bundles.iterator().next();
+        assertEquals(2, bundles.size());
+        final Iterator<ResourceBundle> bundleIterator = bundles.iterator();
+        ResourceBundle bundle = bundleIterator.next();
         assertEquals("bundle", bundle.getName());
         assertEquals(1, bundle.getEntries().size());
         Map.Entry<String, String> entry = bundle.getEntries().entrySet().iterator().next();
         assertEquals("key", entry.getKey());
         assertEquals("value", entry.getValue());
         assertEquals("en", bundle.getLocale());
+        bundle = bundleIterator.next();
+        assertEquals("anotherBundle", bundle.getName());
     }
 
 }

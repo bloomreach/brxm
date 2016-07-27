@@ -26,7 +26,7 @@ public class InitializeRegistryTest extends RegistrarTest {
     
     @Test
     public void testInitializeRegistry() throws IOException {
-        assertEquals(4, getPendingTranslationCount(registry));
+        assertEquals(5, getPendingTranslationCount(registry));
 
         RegistryInfo registryInfo = registry.getRegistryInfo("angular/dummy/i18n/registry.json");
         assertEquals(UNRESOLVED, registryInfo.getKeyData("key").getLocaleStatus("fr"));
@@ -35,6 +35,16 @@ public class InitializeRegistryTest extends RegistrarTest {
         assertEquals(UNRESOLVED, registryInfo.getKeyData("key_en_nl").getLocaleStatus("fr"));
         assertEquals(UNRESOLVED, registryInfo.getKeyData("key_en_only").getLocaleStatus("nl"));
         assertEquals(UNRESOLVED, registryInfo.getKeyData("key_en_only").getLocaleStatus("fr"));
+
+        registryInfo = registry.getRegistryInfo("dummy-repository-translations.registry.json");
+        assertEquals(UNRESOLVED, registryInfo.getKeyData("anotherBundle/key").getLocaleStatus("fr"));
+    }
+
+    @Test
+    public void running_initialize_again_should_result_in_unchanged_registry() throws IOException {
+        initializeRegistry();
+
+        testInitializeRegistry();
     }
 
 }
