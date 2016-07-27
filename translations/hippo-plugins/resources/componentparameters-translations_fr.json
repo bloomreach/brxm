@@ -1,0 +1,16 @@
+{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"cms7": {"essentials": {"components": {"info": {
+  "EssentialsCarouselComponentInfo": {"fr":   {
+    "group.documents": "Documents carrousel",
+    "group.settings": "Paramètres carrousel"
+  }},
+  "EssentialsGoogleMapsComponentInfo": {"fr":   {
+    "mapType#TERRAIN": "Informations topographiques",
+    "mapType.help": "Le type de carte à afficher",
+    "mapType#ROADMAP": "Carte routière",
+    "mapType#HYBRID": "Mélange de normal et satellite",
+    "location": "Informations lieu",
+    "location.help": "Pour le lieu, vous pouvez fournir une adresse ou utiliser la longitude et la latitude",
+    "map.options": "Options de carte",
+    "mapType#SATELLITE": "Satellite Google Earth"
+  }}
+}}}}}}}}}
