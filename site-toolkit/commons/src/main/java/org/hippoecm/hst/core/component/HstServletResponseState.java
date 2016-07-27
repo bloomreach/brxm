@@ -54,6 +54,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
 import static org.hippoecm.hst.util.NullWriter.NULL_WRITER;
 
 /**
@@ -77,6 +78,7 @@ public class HstServletResponseState implements HstResponseState {
     protected boolean isRenderResponse;
     protected boolean isResourceResponse;
     protected boolean isMimeResponse;
+    private final boolean isComponentRenderingResponse;
     protected boolean isStateAwareResponse;
 
     protected Locale defaultLocale;
@@ -90,6 +92,7 @@ public class HstServletResponseState implements HstResponseState {
     protected Map<String, List<String>> setHeaders;
     protected List<Cookie> cookies;
     protected List<KeyValue<String, Element>> headElements;
+    protected List<Element> processedElements;
     protected List<Comment> preambleComments;
     protected List<Element> preambleElements;
     protected List<Comment> epilogueComments;
@@ -127,6 +130,8 @@ public class HstServletResponseState implements HstResponseState {
         isActionResponse = (requestContext.getBaseURL().getActionWindowReferenceNamespace() != null);
         isResourceResponse = (requestContext.getBaseURL().getResourceWindowReferenceNamespace() != null);
         isRenderResponse = (!this.isActionResponse && !this.isResourceResponse);
+
+        isComponentRenderingResponse = (requestContext.getBaseURL().getComponentRenderingWindowReferenceNamespace() != null);
 
         isStateAwareResponse = isActionResponse;
         isMimeResponse = isRenderResponse || isResourceResponse;
@@ -668,6 +673,18 @@ public class HstServletResponseState implements HstResponseState {
         return containing;
     }
 
+    @Override
+    public void addProcessedHeadElement(final Element headElement) {
+        if (parentResponse instanceof HstResponse) {
+            ((HstResponse) parentResponse).addProcessedHeadElement(headElement);
+        } else {
+            if (processedElements == null) {
+                processedElements = new ArrayList<>();
+            }
+            processedElements.add(headElement);
+        }
+    }
+
     public List<Element> getHeadElements() {
         List<Element> elements = new LinkedList<Element>();
 
@@ -837,12 +854,18 @@ public class HstServletResponseState implements HstResponseState {
                 }
             }
 
-            if (headElements != null) {
+            if (headElements != null && isComponentRenderingResponse && HstRequestUtils.getHstRequestContext(request).isCmsRequest()) {
+                // check whether there are head elements that are not included in the response already by
+                // a head contributions tag
                 for (KeyValue<String, Element> entry : headElements) {
-                    addResponseHeadElement(entry.getValue(), entry.getKey());
+                    if (processedElements == null || !processedElements.contains(entry.getValue())) {
+                        final Comment comment = createComment(" { \"unprocessed-head-elements-present\" : \"true\", \"" +
+                                 HST_TYPE+"\" : \"HST_INFO\" } ");
+                        addEpilogueNode(comment);
+                        log.info("Found unprocessed head element contribution(s) for component rendering call.");
+                        break;
+                    }
                 }
-
-                headElements = null;
             }
 
             if (!hasError && redirectLocation == null) {
@@ -1009,12 +1032,6 @@ public class HstServletResponseState implements HstResponseState {
 
     protected void setResponseHeader(String name, String value) {
         this.parentResponse.setHeader(name, value);
-    }
-
-    protected void addResponseHeadElement(Element element, String keyHint) {
-        if (this.parentResponse instanceof HstResponse) {
-            ((HstResponse) this.parentResponse).addHeadElement(element, keyHint);
-        }
     }
 
     protected void setResponseStatus(int status) {

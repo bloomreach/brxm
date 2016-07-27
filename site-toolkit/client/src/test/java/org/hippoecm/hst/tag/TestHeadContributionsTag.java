@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,9 @@
  */
 package org.hippoecm.hst.tag;
 
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.container.ModifiableRequestContextProvider;
+import javax.servlet.jsp.JspException;
+
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.mock.core.component.MockHstRequest;
 import org.hippoecm.hst.mock.core.component.MockHstResponse;
 import org.junit.Before;
@@ -28,9 +26,6 @@ import org.springframework.mock.web.MockPageContext;
 import org.springframework.mock.web.MockServletContext;
 import org.w3c.dom.Element;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -211,6 +206,25 @@ public class TestHeadContributionsTag {
         hstResponse.getHeadElements().clear();
         final int after = hstResponse.getHeadElements().size();
         assertEquals(before, after);
+    }
+
+    @Test
+    public void response_head_elements_being_processsed() throws JspException {
+        assertEquals(0, hstResponse.getProcessedHeadElements().size());
+        tag.doStartTag();
+        tag.doEndTag();
+        tag.release();
+        assertEquals(4, hstResponse.getProcessedHeadElements().size());
+    }
+
+    @Test
+    public void response_head_elements__not_all_being_processsed() throws JspException {
+        tag.setCategoryIncludes("cat1");
+        assertEquals(0, hstResponse.getProcessedHeadElements().size());
+        tag.doStartTag();
+        tag.doEndTag();
+        tag.release();
+        assertEquals(1, hstResponse.getProcessedHeadElements().size());
     }
 
 }

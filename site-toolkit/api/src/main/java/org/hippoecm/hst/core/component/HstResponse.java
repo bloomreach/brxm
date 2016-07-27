@@ -164,7 +164,9 @@ public interface HstResponse extends HttpServletResponse {
      * @param keyHint
      */
     boolean containsHeadElement(String keyHint);
-    
+
+    void addProcessedHeadElement(Element headElement);
+
      /**
      * Sets the renderPath dynamically.
      * Normally, the renderPath is set in the configuration, but it can be
