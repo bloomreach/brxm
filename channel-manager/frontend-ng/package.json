@@ -17,7 +17,7 @@
     "angular-ui-router": "0.2.15",
     "angular-ui-tree": "2.15.0",
     "dom-autoscroller": "1.2.4",
-    "dragula": "git://github.com/onehippo/dragula.git#hippo",
+    "dragula": "3.7.1",
     "es6-shim": "0.35.0",
     "jquery": "2.2.0",
     "ng-device-detector": "3.0.1",

@@ -140,6 +140,7 @@ describe('DragDropService', () => {
       expect(DragDropService.drake).not.toBeNull();
       $(iframeWindow).trigger('unload');
       expect(DragDropService.drake).toBeNull();
+      expect(DragDropService.dragulaOptions).toBeNull();
       expect(DragDropService.isDragging()).toBeFalsy();
       done();
     });
@@ -449,12 +450,14 @@ describe('DragDropService', () => {
     });
   });
 
-  it('knows the drag direction of a container', (done) => {
+  it('updates the drag direction of a container', (done) => {
     loadIframeFixture(() => {
-      expect(DragDropService._getDragDirection(container1.getBoxElement()[0])).toEqual('vertical');
+      DragDropService._updateDragDirection(container1.getBoxElement()[0]);
+      expect(DragDropService.dragulaOptions.direction).toEqual('vertical');
 
       const spanContainer = createContainer(5, 'HST.Span');
-      expect(DragDropService._getDragDirection(spanContainer.getBoxElement()[0])).toEqual('horizontal');
+      DragDropService._updateDragDirection(spanContainer.getBoxElement()[0]);
+      expect(DragDropService.dragulaOptions.direction).toEqual('horizontal');
 
       done();
     });
