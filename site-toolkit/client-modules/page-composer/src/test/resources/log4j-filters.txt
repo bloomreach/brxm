@@ -23,3 +23,4 @@ Could not create variant 'foo-variant'
 Could not delete variant 'foo-variant'
 Could not get channel setting information
 Failed to saveChannel channel
+Could not load switch template resource bundle
