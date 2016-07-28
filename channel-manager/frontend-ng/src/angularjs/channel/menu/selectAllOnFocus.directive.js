@@ -23,12 +23,9 @@ export function selectAllOnFocusDirective() {
       element.focus(() => {
         const domElement = element[0];
         if (angular.isFunction(domElement.select)) {
-          domElement.select();
+          // Safari fix: #select() call is put inside #setTimeout() to be executed after all mouse events
+          setTimeout(() => domElement.select());
         }
-      });
-      element.one('mouseup', (event) => {
-        // Safari immediately deselects all when the mouseup event happens, so only prevent that for one time
-        event.preventDefault();
       });
     },
   };

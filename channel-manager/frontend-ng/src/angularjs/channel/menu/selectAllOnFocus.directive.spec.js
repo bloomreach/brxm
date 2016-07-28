@@ -34,8 +34,9 @@ describe('selectAllOnFocusDirective', () => {
     $scope.$digest();
 
     $element.triggerHandler('focus');
-
-    expect($element[0].selectionStart).toEqual(0);
-    expect($element[0].selectionEnd).toEqual(valueLength);
+    setTimeout(() => {
+      expect($element[0].selectionStart).toEqual(0);
+      expect($element[0].selectionEnd).toEqual(valueLength);
+    });
   });
 });
