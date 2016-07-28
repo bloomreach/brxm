@@ -40,6 +40,7 @@ import org.hippoecm.frontend.session.UserSession;
 public class DefaultLoginPlugin extends SimpleLoginPlugin {
 
     private static final TextTemplate INIT_JS = new PackageTextTemplate(DefaultLoginPlugin.class, "timezones-init.js");
+    // jstz.min.js is fetched by npm
     private static final ResourceReference JSTZ_JS = new JavaScriptResourceReference(DefaultLoginPlugin.class, "jstz.min.js");
 
     public static final String SHOW_TIMEZONES_CONFIG_PARAM = "show.timezones";
