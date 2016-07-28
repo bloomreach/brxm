@@ -71,6 +71,7 @@ export class DragDropService {
     if (this.drake) {
       this.drake.destroy();
       this.drake = null;
+      this.dragulaOptions = null;
       this.draggingOrClicking = false;
       this.dropping = false;
     }
@@ -86,15 +87,17 @@ export class DragDropService {
         .filter((container) => !container.isDisabled())
         .map((container) => container.getBoxElement()[0]);
 
-      this.drake = this.iframe.dragula(iframeContainerElements, {
+      this.dragulaOptions = {
         ignoreInputTextSelection: false,
         mirrorContainer: $(MIRROR_WRAPPER_SELECTOR)[0],
-        direction: (el, target) => this._getDragDirection(target),
         moves: (el, source) => !this.dropping && this._isContainerEnabled(source),
         accepts: (el, target) => this._isContainerEnabled(target),
-      });
-      this.drake.on('drag', () => this._onStartDrag());
+      };
+
+      this.drake = this.iframe.dragula(iframeContainerElements, this.dragulaOptions);
+      this.drake.on('drag', (el, source) => this._onStartDrag(source));
       this.drake.on('cloned', (clone, original) => this._onMirrorCreated(clone, original));
+      this.drake.on('over', (el, container) => this._updateDragDirection(container));
       this.drake.on('dragend', (el) => this._onStopDragOrClick(el));
       this.drake.on('drop', (el, target, source, sibling) => this._onDrop(el, target, source, sibling));
 
@@ -115,11 +118,6 @@ export class DragDropService {
 
     const dragulaJs = `${appRootUrl}scripts/dragula.min.js?antiCache=${this.ConfigService.antiCache}`;
     return this.DomService.addScript(iframe, dragulaJs);
-  }
-
-  _getDragDirection(containerElement) {
-    const container = this.PageStructureService.getContainerByIframeElement(containerElement);
-    return container.getDragDirection();
   }
 
   _isContainerEnabled(containerElement) {
@@ -167,7 +165,9 @@ export class DragDropService {
     return this.drake && this.drake.dragging;
   }
 
-  _onStartDrag() {
+  _onStartDrag(containerElement) {
+    this._updateDragDirection(containerElement);
+
     // make Angular evaluate isDragging() again
     this._digestIfNeeded();
   }
@@ -178,6 +178,11 @@ export class DragDropService {
 
     const iframeOffset = this.iframeJQueryElement.offset();
     $(MIRROR_WRAPPER_SELECTOR).offset(iframeOffset);
+  }
+
+  _updateDragDirection(containerElement) {
+    const container = this.PageStructureService.getContainerByIframeElement(containerElement);
+    this.dragulaOptions.direction = container.getDragDirection();
   }
 
   _onStopDragOrClick(element) {
