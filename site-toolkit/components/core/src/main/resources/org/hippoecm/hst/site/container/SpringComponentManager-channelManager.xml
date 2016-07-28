@@ -69,4 +69,6 @@
     </property>
   </bean>
 
+  <bean id="org.hippoecm.hst.util.JsonSerializer" class="org.hippoecm.hst.core.util.JsonSerializerImpl"/>
+
 </beans>

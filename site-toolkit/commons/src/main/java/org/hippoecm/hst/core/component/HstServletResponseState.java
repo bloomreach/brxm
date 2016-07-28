@@ -25,6 +25,7 @@ import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,6 +33,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -43,8 +47,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.DefaultKeyValue;
+import org.hippoecm.hst.util.HeadElementUtils;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.util.JsonSerializer;
 import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.hst.util.WrapperElementUtils;
 import org.slf4j.Logger;
@@ -54,7 +61,6 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
 import static org.hippoecm.hst.util.NullWriter.NULL_WRITER;
 
 /**
@@ -854,18 +860,8 @@ public class HstServletResponseState implements HstResponseState {
                 }
             }
 
-            if (headElements != null && isComponentRenderingResponse && HstRequestUtils.getHstRequestContext(request).isCmsRequest()) {
-                // check whether there are head elements that are not included in the response already by
-                // a head contributions tag
-                for (KeyValue<String, Element> entry : headElements) {
-                    if (processedElements == null || !processedElements.contains(entry.getValue())) {
-                        final Comment comment = createComment(" { \"unprocessed-head-elements-present\" : true, \"" +
-                                 HST_TYPE+"\" : \"HST_INFO\" } ");
-                        addEpilogueNode(comment);
-                        log.info("Found unprocessed head element contribution(s) for component rendering call.");
-                        break;
-                    }
-                }
+            if (HstRequestUtils.getHstRequestContext(request).isCmsRequest()) {
+                addHeadContributionsReport();
             }
 
             if (!hasError && redirectLocation == null) {
@@ -1054,5 +1050,70 @@ public class HstServletResponseState implements HstResponseState {
         DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(new Date(date));
+    }
+
+    private void addHeadContributionsReport() {
+        final JsonSerializer jsonSerializer = HstServices.getComponentManager().getComponent(JsonSerializer.class);
+        if (headElements != null && !headElements.isEmpty()) {
+
+            // check whether there are head elements that are not included in the response already by
+            // a head contributions tag
+            final List<String> unProcessed = mapElementsToString(getUnProcessedElementContributions());
+            if (!unProcessed.isEmpty()) {
+                HeadContributionsReport report = new HeadContributionsReport("HST_UNPROCESSED_HEAD_CONTRIBUTIONS", unProcessed);
+                final Comment comment = createComment(jsonSerializer.toJson(report));
+                addEpilogueNode(comment);
+            }
+
+            final List<String> processed = mapElementsToString(processedElements);
+            if (!processed.isEmpty()) {
+                HeadContributionsReport report = new HeadContributionsReport("HST_PROCESSED_HEAD_CONTRIBUTIONS", processed);
+                final Comment comment = createComment(jsonSerializer.toJson(report));
+                addEpilogueNode(comment);
+            }
+
+        }
+    }
+
+    private List<Element> getUnProcessedElementContributions() {
+        return  headElements.stream()
+                .filter(entry -> processedElements == null || !processedElements.contains(entry.getValue()))
+                .map(entry -> entry.getValue())
+                .collect(Collectors.toList());
+    }
+
+    private List<String> mapElementsToString(final List<Element> elements) {
+        if (elements == null || elements.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return elements.stream()
+                .map(element -> HeadElementUtils.toHtmlString(new HeadElementImpl(element)))
+                .collect(Collectors.toList());
+    }
+
+    private class HeadContributionsReport {
+        private String type;
+        private List<String> headElements;
+
+        public HeadContributionsReport(final String type, final List<String> headElements) {
+            this.type = type;
+            this.headElements = headElements;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(final String type) {
+            this.type = type;
+        }
+
+        public List<String> getHeadElements() {
+            return headElements;
+        }
+
+        public void setHeadElements(final List<String> headElements) {
+            this.headElements = headElements;
+        }
     }
 }
