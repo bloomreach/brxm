@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,14 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.property;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
 
@@ -35,12 +37,13 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ParameterType;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
 import org.hippoecm.hst.util.WebFileUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +53,9 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
 
     private static final Logger log = LoggerFactory.getLogger(SwitchTemplatePropertyRepresentationFactory.class);
 
-    private final static  String SWITCH_TEMPLATE_I18N_KEY = "switch.template";
+    private final String SWITCH_TEMPLATE_RESOURCE_BUNDLE = "hippo:channelmanager.switch-template";
+
+    private final static String SWITCH_TEMPLATE_I18N_KEY = "switch.template";
     private final static String CHOOSE_TEMPLATE_I18N_KEY = "choose.template";
     private final static String MISSING_TEMPLATE_I18N_KEY = "missing.template";
     private static final String FTL_SUFFIX = ".ftl";
@@ -174,7 +179,7 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
 
                 if (variantWebFilePaths.size() > 1 || templateParamWebFile == TemplateParamWebFile.CONFIGURED_BUT_NON_EXISTING) {
                     // add switch template property representation and populate the values
-                    final ResourceBundle switchTemplateResourceBundle = ParametersInfoProcessor.getResourceBundle(SwitchTemplatePropertyRepresentationFactory.class, locale);
+                    final ResourceBundle switchTemplateResourceBundle = loadSwitchTemplateResourceBundle(locale);
                     final ResourceBundle variantsResourceBundle = loadTemplateVariantsResourceBundle(session, freeMarkerVariantsFolderPath, locale);
                     final ContainerItemComponentPropertyRepresentation switchTemplateComponentProperty =
                             createSwitchTemplateComponentPropertyRepresentation(switchTemplateResourceBundle,
@@ -199,6 +204,33 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
             }
         }
         return null;
+    }
+
+    private ResourceBundle loadSwitchTemplateResourceBundle(final Locale locale) {
+        final Locale localeOrDefault;
+        if (locale == null) {
+            localeOrDefault = LocalizationService.DEFAULT_LOCALE;
+        } else {
+            localeOrDefault = locale;
+        }
+
+        final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
+        if (localizationService != null) {
+            final org.onehippo.repository.l10n.ResourceBundle repositoryResourceBundle =
+                    localizationService.getResourceBundle(SWITCH_TEMPLATE_RESOURCE_BUNDLE, localeOrDefault);
+            if (repositoryResourceBundle != null) {
+                return repositoryResourceBundle.toJavaResourceBundle();
+            }
+        }
+
+        log.warn("Could not load switch template resource bundle");
+
+        // the fallback to property files is for unit tests only
+        try {
+            return ResourceBundle.getBundle(SwitchTemplatePropertyRepresentationFactory.class.getName(), localeOrDefault);
+        } catch (MissingResourceException e) {
+            return null;
+        }
     }
 
     private static boolean hasWebFileFreeMarkerTemplate(final HstComponentConfiguration componentConfiguration) {
@@ -237,6 +269,15 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
         return null;
     }
 
+    private static String getResourceBundleValueOrDefault(final ResourceBundle bundle, final String key) {
+        if (bundle != null) {
+            if (bundle.containsKey(key)) {
+                return bundle.getString(key);
+            }
+        }
+        return key;
+    }
+
     private static ContainerItemComponentPropertyRepresentation createSwitchTemplateComponentPropertyRepresentation(
                                                         final ResourceBundle switchTemplateResourceBundle,
                                                         final String defaultTemplatePath,
@@ -246,9 +287,9 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
         final ContainerItemComponentPropertyRepresentation prop = new ContainerItemComponentPropertyRepresentation();
         prop.setName(TEMPLATE_PARAM_NAME);
         prop.setDefaultValue(defaultTemplatePath);
-        prop.setLabel(switchTemplateResourceBundle.getString(SWITCH_TEMPLATE_I18N_KEY));
+        prop.setLabel(getResourceBundleValueOrDefault(switchTemplateResourceBundle, SWITCH_TEMPLATE_I18N_KEY));
         prop.setType(ParameterType.VALUE_FROM_LIST);
-        prop.setGroupLabel(switchTemplateResourceBundle.getString(CHOOSE_TEMPLATE_I18N_KEY));
+        prop.setGroupLabel(getResourceBundleValueOrDefault(switchTemplateResourceBundle, CHOOSE_TEMPLATE_I18N_KEY));
 
         final String[] dropDownValues = variantWebFilePaths.toArray(new String[variantWebFilePaths.size()]);
         prop.setDropDownListValues(dropDownValues);
@@ -282,7 +323,8 @@ public class SwitchTemplatePropertyRepresentationFactory implements PropertyRepr
                 i18nTemplateFileName = templateFileName;
             }
 
-            final String displayValue = String.format(switchTemplateResourceBundle.getString(MISSING_TEMPLATE_I18N_KEY),
+            final String displayValue = MessageFormat.format(
+                    getResourceBundleValueOrDefault(switchTemplateResourceBundle, MISSING_TEMPLATE_I18N_KEY),
                     i18nTemplateFileName);
             final String[] augmentedDropDownListValues = new String[dropDownListValues.length + 1];
             final String[] augmentedDropDownListDisplayValues = new String[dropDownListValues.length + 1];
