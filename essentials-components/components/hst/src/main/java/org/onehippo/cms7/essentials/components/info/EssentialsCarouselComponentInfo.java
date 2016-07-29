@@ -58,7 +58,7 @@ public interface EssentialsCarouselComponentInfo {
     @Parameter(name = "carouselWidth", defaultValue = "700", required = true, displayName = "Carousel width")
     Integer getCarouselWidth();
 
-    @Parameter(name = "interval", defaultValue = "5000", required = true, displayName = "Carousel interval (milli seconds)")
+    @Parameter(name = "interval", defaultValue = "3000", required = true, displayName = "Carousel interval (milli seconds)")
     Integer getInterval();
 
     @Color
