@@ -345,6 +345,11 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         return contained;
     }
 
+    @Override
+    public void addProcessedHeadElement(final Element headElement) {
+        responseState.addProcessedHeadElement(headElement);
+    }
+
     public void addPreamble(Comment comment) {
         responseState.addPreambleNode(comment);
     }
@@ -445,5 +450,5 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     public boolean isRendererSkipped() {
         return false;
     }
-    
+
 }
