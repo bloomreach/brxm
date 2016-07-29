@@ -54,6 +54,7 @@
     /* Since positioning the image, we need to help out the caption */
     .carousel-caption {
       z-index: 10;
+      background: rgba(51, 122, 183, 0.7);
     }
 
     /* Declare heights because of positioning of img element */
