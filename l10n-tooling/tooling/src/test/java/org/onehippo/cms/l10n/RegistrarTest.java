@@ -47,10 +47,7 @@ public class RegistrarTest {
         resources = temporaryFolder.newFolder("resources");
         new Extractor(resources, "module", extractorLocales, classLoader, new String[] {}).extract();
 
-        registrar = new Registrar(temporaryFolder.getRoot(), "module", registrarLocales, classLoader, new String[]{});
-        registrar.initialize();
-
-        registry = registrar.getRegistry();
+        initializeRegistry();
     }
 
     protected int getPendingTranslationCount(Registry registry) throws IOException {
@@ -73,5 +70,13 @@ public class RegistrarTest {
 
         return count;
     }
-    
+
+    protected void initializeRegistry() throws IOException {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        registrar = new Registrar(temporaryFolder.getRoot(), "module", registrarLocales, classLoader, new String[]{});
+        registrar.initialize();
+
+        registry = registrar.getRegistry();
+    }
+
 }

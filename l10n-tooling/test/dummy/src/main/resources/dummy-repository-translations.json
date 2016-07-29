@@ -9,5 +9,13 @@
     "fr" : {
       "key" : "valeur"
     }
+  },
+  "anotherBundle" : {
+    "en" : {
+      "key" : "value"
+    },
+    "nl" : {
+      "key": "waarde"
+    }
   }
 }

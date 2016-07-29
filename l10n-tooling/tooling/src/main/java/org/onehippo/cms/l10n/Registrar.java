@@ -89,16 +89,17 @@ class Registrar {
         for (ResourceBundleLoader bundleLoader : getResourceBundleLoaders(Collections.singletonList("en"), classLoader, excludes)) {
             for (ResourceBundle sourceBundle : bundleLoader.loadBundles()) {
                 RegistryInfo registryInfo = registry.getRegistryInfoForBundle(sourceBundle);
-                if (registryInfo.exists()) {
-                    continue;
-                }
                 registryInfo.setBundleType(sourceBundle.getType());
                 for (String sourceKey : sourceBundle.getEntries().keySet()) {
-                    KeyData keyData = new KeyData(UPDATED);
-                    for (String locale : locales) {
-                        keyData.setLocaleStatus(locale, UNRESOLVED);
+                    final String registryKey = registryKey(sourceBundle, sourceKey);
+                    KeyData keyData = registryInfo.getKeyData(registryKey);
+                    if (keyData == null) {
+                        keyData = new KeyData(UPDATED);
+                        for (String locale : locales) {
+                            keyData.setLocaleStatus(locale, UNRESOLVED);
+                        }
+                        registryInfo.putKeyData(registryKey, keyData);
                     }
-                    registryInfo.putKeyData(registryKey(sourceBundle, sourceKey), keyData);
                 }
 
                 registryInfo.save();
