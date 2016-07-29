@@ -32,11 +32,11 @@ public class JsonSerializerImpl implements JsonSerializer {
             return new ObjectMapper().writeValueAsString(value);
         } catch (JsonProcessingException e) {
             if (log.isDebugEnabled()) {
-                log.warn("Could not process value to Json.", e);
+                log.warn("Could not serialize value to JSON", e);
             } else {
-                log.warn("Could not process value to Json : {}", e.toString());
+                log.warn("Could not serialize value to JSON: {}", e.toString());
             }
-            throw new JsonSerializationException("Could not process value to Json.", e);
+            throw new JsonSerializationException("Could not serialize value to JSON", e);
         }
     }
 }
