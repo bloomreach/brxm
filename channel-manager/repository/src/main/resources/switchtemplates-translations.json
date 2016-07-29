@@ -1,0 +1,26 @@
+{
+  "hippo:channelmanager": {
+    "switch-template": {
+      "en": {
+        "choose.template": "Choose a template",
+        "switch.template": "Template",
+        "missing.template": "Missing template ''{0}''"
+      },
+      "de": {
+        "choose.template": "Wählen Sie ein Template",
+        "switch.template": "Template",
+        "missing.template": "Fehlendes Template ''{0}''"
+      },
+      "fr": {
+        "choose.template": "Choisissez un modèle",
+        "switch.template": "Modèle",
+        "missing.template": "Modèle manquant ''{0}''"
+      },
+      "nl": {
+        "choose.template": "Kies een template",
+        "switch.template": "Template",
+        "missing.template": "Ontbrekende template ''{0}''"
+      }
+    }
+  }
+}
