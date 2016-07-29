@@ -356,7 +356,6 @@
       <id>node2</id>
       <properties>
         <cluster.node>node2</cluster.node>
-        <repo.bootstrap>true</repo.bootstrap>
       </properties>
 
       <build>
