@@ -50,7 +50,7 @@ module.exports = function karmaConfig(config) {
       included: false,
     },
     {
-      pattern: `${cfg.npmDir}/+(dom-autoscroller|pointer-point|more-events)/index.js`,
+      pattern: `${cfg.npmDir}/+(dom-autoscroller|create-point-cb)/index.js`,
       included: false,
     },
   ].concat(options.files);
