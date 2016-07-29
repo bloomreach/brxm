@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletOutputStream;
@@ -1058,9 +1056,9 @@ public class HstServletResponseState implements HstResponseState {
 
             // check whether there are head elements that are not included in the response already by
             // a head contributions tag
-            final List<String> unProcessed = mapElementsToString(getUnProcessedElementContributions());
-            if (!unProcessed.isEmpty()) {
-                HeadContributionsReport report = new HeadContributionsReport("HST_UNPROCESSED_HEAD_CONTRIBUTIONS", unProcessed);
+            final List<String> unprocessed = mapElementsToString(getUnprocessedElementContributions());
+            if (!unprocessed.isEmpty()) {
+                HeadContributionsReport report = new HeadContributionsReport("HST_UNPROCESSED_HEAD_CONTRIBUTIONS", unprocessed);
                 final Comment comment = createComment(jsonSerializer.toJson(report));
                 addEpilogueNode(comment);
             }
@@ -1075,7 +1073,7 @@ public class HstServletResponseState implements HstResponseState {
         }
     }
 
-    private List<Element> getUnProcessedElementContributions() {
+    private List<Element> getUnprocessedElementContributions() {
         return  headElements.stream()
                 .filter(entry -> processedElements == null || !processedElements.contains(entry.getValue()))
                 .map(entry -> entry.getValue())
