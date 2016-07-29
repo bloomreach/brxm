@@ -31,6 +31,7 @@ import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -63,6 +64,10 @@ public class RootResourceTest extends AbstractResourceTest {
      */
     @Path(MOCK_REST_PATH)
     private static class RootResourceWithMockPath extends RootResource {
+        @Override
+        protected void resetSession() {
+            // override to mock this method
+        }
     }
 
     @Before
@@ -225,6 +230,37 @@ public class RootResourceTest extends AbstractResourceTest {
 
         verify(channelService);
         assertThat(capturedArgument.getValue().getProperties().get("foo"), equalTo("bah"));
+    }
+
+    @Test
+    public void can_delete_a_channel() throws ChannelException, RepositoryException {
+        channelService.deleteChannel(eq(mockSession), eq("channel-foo"));
+        expectLastCall();
+        replay(channelService);
+
+        given()
+            .contentType(JSON)
+        .when()
+            .delete(MOCK_REST_PATH + "channels/channel-foo")
+        .then()
+            .statusCode(200);
+        verify(channelService);
+    }
+
+    @Test
+    public void cannot_delete_non_existent_channel() throws ChannelException, RepositoryException {
+        channelService.deleteChannel(eq(mockSession), eq("channel-foo"));
+        expectLastCall().andThrow(new ChannelNotFoundException("channel-foo"));
+        replay(channelService);
+
+        given()
+            .contentType(JSON)
+        .when()
+            .delete(MOCK_REST_PATH + "channels/channel-foo")
+        .then()
+            .statusCode(404)
+            .body("parameters[0]", equalTo("channel-foo"));
+        verify(channelService);
     }
 
     private static Annotation createDropDownListAnnotation(String... values) {

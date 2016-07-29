@@ -23,6 +23,7 @@ import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -37,6 +38,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
@@ -137,6 +139,28 @@ public class RootResource extends AbstractConfigResource {
             return Response.ok().entity(channel).build();
         } catch (RepositoryException | IllegalStateException | ChannelException e) {
             log.error("Failed to saveChannel channel", e);
+            return Response.serverError().build();
+        }
+    }
+
+    @DELETE
+    @Path("/channels/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteChannel(@PathParam("id") String channelId) {
+        try {
+            final Session session = RequestContextProvider.get().getSession();
+            this.channelService.deleteChannel(session, channelId);
+            HstConfigurationUtils.persistChanges(session);
+
+            return Response.ok().build();
+        } catch (ChannelNotFoundException e) {
+            log.error(e.getMessage());
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(e).build();
+        } catch (RepositoryException | ChannelException e) {
+            log.error(e.getMessage());
+            resetSession();
             return Response.serverError().build();
         }
     }
