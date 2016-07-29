@@ -1051,8 +1051,8 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     private void addHeadContributionsReport() {
-        final JsonSerializer jsonSerializer = HstServices.getComponentManager().getComponent(JsonSerializer.class);
         if (headElements != null && !headElements.isEmpty()) {
+            final JsonSerializer jsonSerializer = HstServices.getComponentManager().getComponent(JsonSerializer.class);
 
             // check whether there are head elements that are not included in the response already by
             // a head contributions tag
@@ -1074,9 +1074,9 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     private List<Element> getUnprocessedElementContributions() {
-        return  headElements.stream()
+        return headElements.stream()
                 .filter(entry -> processedElements == null || !processedElements.contains(entry.getValue()))
-                .map(entry -> entry.getValue())
+                .map(KeyValue::getValue)
                 .collect(Collectors.toList());
     }
 
@@ -1089,9 +1089,10 @@ public class HstServletResponseState implements HstResponseState {
                 .collect(Collectors.toList());
     }
 
-    private class HeadContributionsReport {
-        private String type;
-        private List<String> headElements;
+    private static class HeadContributionsReport {
+
+        private final String type;
+        private final List<String> headElements;
 
         public HeadContributionsReport(final String type, final List<String> headElements) {
             this.type = type;
@@ -1102,16 +1103,8 @@ public class HstServletResponseState implements HstResponseState {
             return type;
         }
 
-        public void setType(final String type) {
-            this.type = type;
-        }
-
         public List<String> getHeadElements() {
             return headElements;
-        }
-
-        public void setHeadElements(final List<String> headElements) {
-            this.headElements = headElements;
         }
     }
 }
