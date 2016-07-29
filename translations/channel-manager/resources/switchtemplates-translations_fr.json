@@ -1,0 +1,5 @@
+{"hippo:channelmanager": {"switch-template": {"fr": {
+  "choose.template": "Choisissez un modèle",
+  "switch.template": "Modèle",
+  "missing.template": "Modèle manquant ''{0}''"
+}}}}
