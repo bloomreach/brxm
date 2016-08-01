@@ -1,0 +1,16 @@
+{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"cms7": {"essentials": {"components": {"info": {
+  "EssentialsCarouselComponentInfo": {"nl":   {
+    "group.documents": "Carousel documenten",
+    "group.settings": "Carousel instellingen"
+  }},
+  "EssentialsGoogleMapsComponentInfo": {"nl":   {
+    "mapType#TERRAIN": "Terrein informatie",
+    "mapType.help": "Het type kaart die getoond moet worden",
+    "mapType#ROADMAP": "Wegenkaart",
+    "mapType#HYBRID": "Mengsel van normaal en satelliet",
+    "location": "Locatie informatie",
+    "location.help": "Om de plaats aan te geven, geef of een adres of specificeer de lengte- en breedtegraad",
+    "map.options": "Kaart opties",
+    "mapType#SATELLITE": "Google Earth satelliet"
+  }}
+}}}}}}}}}

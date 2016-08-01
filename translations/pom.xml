@@ -66,6 +66,7 @@
   
   <modules>
     <module>hippo-cms</module>
+    <module>hippo-plugins</module>
     <module>channel-manager</module>
     <module>hst-config-editor</module>
     <module>content-blocks</module>
