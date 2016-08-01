@@ -59,6 +59,7 @@
     <hippo.utilities.version>3.1.0-SNAPSHOT</hippo.utilities.version>
 
     <!-- Hippo standard plugin versions -->
+    <hippo.plugins.version>3.1.0-SNAPSHOT</hippo.plugins.version>
     <hippo.plugin.content-blocks.version>3.1.0-SNAPSHOT</hippo.plugin.content-blocks.version>
     <hippo.plugin.content-tagging.version>6.1.0-SNAPSHOT</hippo.plugin.content-tagging.version>
     <hippo.plugin.dashboard-document-wizard.version>3.1.0-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
@@ -886,6 +887,7 @@
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-robotstxt</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-selections</artifactPrefix>
                   <artifactPrefix>org.onehippo.cms7:hippo-plugin-taxonomy</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugins</artifactPrefix>
                 </artifactPrefixes>
                 <locales>${hippo.cms.locales}</locales>
               </configuration>
