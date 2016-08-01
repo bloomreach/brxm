@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
    
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -74,19 +74,12 @@
     <sv:property sv:name="hippotranslation:locale" sv:type="String">
       <sv:value>en</sv:value>
     </sv:property>
-    
     <sv:node sv:name="{{namespace}}:content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hippostd:html</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:content" sv:type="String">
-        <sv:value>&lt;html&gt;
-          &lt;body&gt;
-
-          &lt;p&gt;Banner description&lt;/p&gt;
-
-          &lt;/body&gt;
-          &lt;/html&gt;</sv:value>
+        <sv:value>&lt;p&gt;Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.&lt;/p&gt;</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="{{namespace}}:image">
@@ -94,7 +87,7 @@
         <sv:value>hippogallerypicker:imagelink</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:docbase" sv:type="String">
-        <sv:value>db5907cc-e507-460e-b54d-de5d5c784e0a</sv:value>
+        <sv:value>dc6c2247-d3f4-4be0-976e-749b69927eee</sv:value>
       </sv:property>
       <sv:property sv:multiple="true" sv:name="hippo:facets" sv:type="String"/>
       <sv:property sv:multiple="true" sv:name="hippo:modes" sv:type="String"/>
