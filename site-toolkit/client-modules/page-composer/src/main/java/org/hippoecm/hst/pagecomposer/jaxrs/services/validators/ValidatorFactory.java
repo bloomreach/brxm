@@ -111,6 +111,10 @@ public class ValidatorFactory {
         return new ItemNotSameOrDescendantOfValidator(validateUUID, targetUUID);
     }
 
+    public Validator getHasNoChildMountNodeValidator(final String mountId) {
+        return new HasNoChildMountNodeValidator(mountId);
+    }
+
     private static final class SiteMapItemBasedPathInfoValidator extends AbstractPathInfoValidator {
 
         private final SiteMapItemRepresentation siteMapItem;
