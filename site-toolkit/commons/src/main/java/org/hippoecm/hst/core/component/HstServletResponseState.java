@@ -43,6 +43,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
@@ -1099,6 +1102,7 @@ public class HstServletResponseState implements HstResponseState {
             this.headElements = headElements;
         }
 
+        @JsonProperty(ChannelManagerConstants.HST_TYPE)
         public String getType() {
             return type;
         }
