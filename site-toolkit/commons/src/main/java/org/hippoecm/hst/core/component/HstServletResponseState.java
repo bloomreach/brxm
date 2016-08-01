@@ -163,13 +163,13 @@ public class HstServletResponseState implements HstResponseState {
 
     protected List<String> getAddedHeaderList(String name, boolean create) {
         if (addedHeaders == null) {
-            addedHeaders = new HashMap<String, List<String>>();
+            addedHeaders = new HashMap<>();
         }
 
         List<String> headerList = addedHeaders.get(name);
 
         if (headerList == null && create) {
-            headerList = new ArrayList<String>();
+            headerList = new ArrayList<>();
             addedHeaders.put(name, headerList);
         }
 
@@ -178,13 +178,13 @@ public class HstServletResponseState implements HstResponseState {
 
     protected List<String> getSetHeaderList(String name, boolean create) {
         if (setHeaders == null) {
-            setHeaders = new HashMap<String, List<String>>();
+            setHeaders = new HashMap<>();
         }
 
         List<String> headerList = setHeaders.get(name);
 
         if (headerList == null && create) {
-            headerList = new ArrayList<String>();
+            headerList = new ArrayList<>();
             setHeaders.put(name, headerList);
         }
 
@@ -225,7 +225,7 @@ public class HstServletResponseState implements HstResponseState {
     public void addCookie(Cookie cookie) {
         if (!committed) {
             if (cookies == null) {
-                cookies = new ArrayList<Cookie>();
+                cookies = new ArrayList<>();
             }
             cookies.add(cookie);
         }
@@ -645,12 +645,12 @@ public class HstServletResponseState implements HstResponseState {
                 ((HstResponse) parentResponse).addHeadElement(element, keyHint);
             } else {
                 if (this.headElements == null) {
-                    this.headElements = new ArrayList<KeyValue<String, Element>>();
+                    this.headElements = new ArrayList<>();
                 }
 
                 if (element == null) {
                     if (keyHint != null) {
-                        KeyValue<String, Element> kvPair = new DefaultKeyValue<String, Element>(keyHint, null, true);
+                        KeyValue<String, Element> kvPair = new DefaultKeyValue<>(keyHint, null, true);
                         this.headElements.remove(kvPair);
                     } else {
                         // If element is null and keyHint is null, remove all head elements.
@@ -660,7 +660,7 @@ public class HstServletResponseState implements HstResponseState {
                     return;
                 }
 
-                KeyValue<String, Element> kvPair = new DefaultKeyValue<String, Element>(keyHint, element, true);
+                KeyValue<String, Element> kvPair = new DefaultKeyValue<>(keyHint, element, true);
 
                 if (!this.headElements.contains(kvPair)) {
                     this.headElements.add(kvPair);
@@ -673,7 +673,7 @@ public class HstServletResponseState implements HstResponseState {
         boolean containing = false;
 
         if (this.headElements != null && keyHint != null) {
-            KeyValue<String, Element> kvPair = new DefaultKeyValue<String, Element>(keyHint, null, true);
+            KeyValue<String, Element> kvPair = new DefaultKeyValue<>(keyHint, null, true);
             containing = this.headElements.contains(kvPair);
         }
 
@@ -693,7 +693,7 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     public List<Element> getHeadElements() {
-        List<Element> elements = new LinkedList<Element>();
+        List<Element> elements = new LinkedList<>();
 
         if (this.headElements != null) {
             for (KeyValue<String, Element> kv : this.headElements) {
@@ -706,14 +706,14 @@ public class HstServletResponseState implements HstResponseState {
 
     public void addPreambleNode(Comment comment) {
         if (this.preambleComments == null) {
-            this.preambleComments = new ArrayList<Comment>();
+            this.preambleComments = new ArrayList<>();
         }
         this.preambleComments.add(comment);
     }
 
     public void addPreambleNode(Element element) {
         if (this.preambleElements == null) {
-            this.preambleElements = new ArrayList<Element>();
+            this.preambleElements = new ArrayList<>();
         }
         this.preambleElements.add(element);
     }
