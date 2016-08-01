@@ -55,8 +55,8 @@
     <dependencies>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-essentials-components-hst</artifactId>
-        <version>${essentials.version}</version>
+        <artifactId>hippo-plugins-components-hst</artifactId>
+        <version>${hippo.plugins.version}</version>
       </dependency>
 
       <!-- other predefined runtime scope versioned dependencies -->
