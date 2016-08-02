@@ -59,6 +59,7 @@ export class PageStructureService {
     this.containers = [];
     this.contentLinks = [];
     this.editMenuLinks = [];
+    this.headContributions = [];
     this.PageMetaDataService.clear();
   }
 
@@ -72,6 +73,10 @@ export class PageStructureService {
         break;
       case this.HST.TYPE_PAGE:
         this._registerPageMetaData(metaData);
+        break;
+      case this.HST.TYPE_PROCESSED_HEAD_CONTRIBUTIONS:
+      case this.HST.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
+        this._registerHeadContributions(metaData);
         break;
       default:
         this._registerEmbeddedLink(commentDomElement, metaData);
@@ -102,6 +107,10 @@ export class PageStructureService {
   _registerPageMetaData(metaData) {
     delete metaData[this.HST.TYPE];
     this.PageMetaDataService.add(metaData);
+  }
+
+  _registerHeadContributions(metaData) {
+    this.headContributions = this.headContributions.concat(metaData[this.HST.HEAD_ELEMENTS]);
   }
 
   _registerEmbeddedLink(commentDomElement, metaData) {
@@ -255,7 +264,13 @@ export class PageStructureService {
     const component = this.getComponentById(componentId);
     if (component) {
       this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
-        this._updateComponent(componentId, response.data);
+        const updatedComponent = this._updateComponent(componentId, response.data);
+        if ($.isEmptyObject(propertiesMap) && this.containsNewHeadContributions(updatedComponent)) {
+          this.$log.info(`Updated '${updatedComponent.getLabel()}' component needs additional head contributions, reloading page`);
+          this.HippoIframeService.reload();
+        } else {
+          this.OverlaySyncService.syncIframe();
+        }
       });
       // TODO handle error
       // show error message that component rendering failed.
@@ -275,6 +290,7 @@ export class PageStructureService {
     this._removeEmbeddedLinksInComponent(oldComponent);
     const jQueryNodeCollection = oldComponent.replaceDOM(newMarkup);
     const newComponent = this._createComponent(jQueryNodeCollection, container);
+
     if (newComponent) {
       container.replaceComponent(oldComponent, newComponent);
     } else {
@@ -282,7 +298,7 @@ export class PageStructureService {
     }
     this.attachEmbeddedLinks();
 
-    this.OverlaySyncService.syncIframe();
+    return newComponent;
   }
 
   /**
@@ -306,6 +322,14 @@ export class PageStructureService {
 
     this.attachEmbeddedLinks();
     return newContainer;
+  }
+
+  containsNewHeadContributions(pageStructureElement) {
+    if (!pageStructureElement) {
+      return false;
+    }
+    const elementHeadContributions = pageStructureElement.getHeadContributions();
+    return elementHeadContributions.some((contribution) => !this.headContributions.includes(contribution));
   }
 
   _removeEmbeddedLinksInContainer(container) {
@@ -402,6 +426,13 @@ export class PageStructureService {
             }
             break;
 
+          case this.HST.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
+            if (container) {
+              const unprocessedElements = metaData[this.HST.HEAD_ELEMENTS];
+              container.setHeadContributions(unprocessedElements);
+            }
+            break;
+
           default:
             this._registerEmbeddedLink(commentDomElement, metaData);
             break;
@@ -431,6 +462,13 @@ export class PageStructureService {
             component = new ComponentElement(commentDomElement, metaData, container, this.hstCommentsProcessorService);
           } catch (exception) {
             this.$log.debug(exception, metaData);
+          }
+          break;
+
+        case this.HST.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
+          if (component) {
+            const unprocessedElements = metaData[this.HST.HEAD_ELEMENTS];
+            component.setHeadContributions(unprocessedElements);
           }
           break;
 

@@ -156,6 +156,10 @@ describe('PageStructureService', () => {
     registerParsedElement(childComment($j(selector, $document)[0]));
   };
 
+  const registerHeadContributions = (selector) => {
+    registerParsedElement(childComment($j(selector, $document)[0]));
+  };
+
   it('registers containers in the correct order', () => {
     const container1 = registerVBoxContainer();
     const container2 = registerNoMarkupContainer();
@@ -216,20 +220,34 @@ describe('PageStructureService', () => {
     expect(PageStructureService.getEditMenuLinks()[0].getUuid()).toBe('menu-in-page');
   });
 
+  it('registers processed and unprocessed head contributions', () => {
+    registerHeadContributions('#processed-head-contributions');
+    registerHeadContributions('#unprocessed-head-contributions');
+
+    expect(PageStructureService.headContributions).toEqual([
+      '<title>processed</title>',
+      '<script>window.processed = true</script>',
+      '<link href="unprocessed.css">',
+    ]);
+  });
+
   it('clears the page structure', () => {
     registerVBoxContainer();
     registerEmbeddedLink('#content-in-page');
     registerEmbeddedLink('#edit-menu-in-page');
+    registerHeadContributions('#processed-head-contributions');
 
     expect(PageStructureService.getContainers().length).toEqual(1);
     expect(PageStructureService.getContentLinks().length).toEqual(1);
     expect(PageStructureService.getEditMenuLinks().length).toBe(1);
+    expect(PageStructureService.headContributions.length).toBe(2);
 
     PageStructureService.clearParsedElements();
 
     expect(PageStructureService.getContainers().length).toEqual(0);
     expect(PageStructureService.getContentLinks().length).toEqual(0);
     expect(PageStructureService.getEditMenuLinks().length).toBe(0);
+    expect(PageStructureService.headContributions.length).toBe(0);
   });
 
   it('registers additional elements', () => {
@@ -648,6 +666,100 @@ describe('PageStructureService', () => {
     expect($log.error).toHaveBeenCalled();
   });
 
+  it('knows that a re-rendered component contains new head contributions', () => {
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+        <p id="updated-component-with-new-head-contribution">
+        </p>
+      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+      <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.newScript=true</script>"] } -->
+      `;
+    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(HippoIframeService, 'reload');
+
+    const propertiesMap = { };
+    PageStructureService.renderComponent('aaaa', propertiesMap);
+    $rootScope.$digest();
+
+    const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
+    expect(PageStructureService.containsNewHeadContributions(updatedComponent)).toBe(true);
+    expect(HippoIframeService.reload).toHaveBeenCalled();
+  });
+
+  it('knows that a re-rendered component does not contain new head contributions', () => {
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+        <p id="updated-component-with-new-head-contribution">
+        </p>
+      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+      `;
+    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(HippoIframeService, 'reload');
+
+    const propertiesMap = {};
+    PageStructureService.renderComponent('aaaa', propertiesMap);
+    $rootScope.$digest();
+
+    const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
+    expect(PageStructureService.containsNewHeadContributions(updatedComponentA)).toBe(false);
+    expect(HippoIframeService.reload).not.toHaveBeenCalled();
+  });
+
+  it('knows that a re-rendered component does not contain new head contributions if they have already been rendered by the page', () => {
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+    registerHeadContributions('#processed-head-contributions');
+
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+        <p id="updated-component-with-new-head-contribution">
+        </p>
+      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+      <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.processed = true</script>"] } -->
+      `;
+    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(HippoIframeService, 'reload');
+
+    const propertiesMap = { };
+    PageStructureService.renderComponent('aaaa', propertiesMap);
+    $rootScope.$digest();
+
+    const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
+    expect(PageStructureService.containsNewHeadContributions(updatedComponent)).toBe(false);
+    expect(HippoIframeService.reload).not.toHaveBeenCalled();
+  });
+
+  it('does not reload the page when a component is re-rendered with custom properties', () => {
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+        <p id="updated-component-with-new-head-contribution">
+        </p>
+      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+      <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.newScript=true</script>"] } -->
+      `;
+    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    spyOn(HippoIframeService, 'reload');
+
+    const propertiesMap = {
+      parameter: 'customValue',
+    };
+    PageStructureService.renderComponent('aaaa', propertiesMap);
+    $rootScope.$digest();
+
+    const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
+    expect(PageStructureService.containsNewHeadContributions(updatedComponent)).toBe(true);
+    expect(HippoIframeService.reload).not.toHaveBeenCalled();
+  });
+
   it('retrieves a container by overlay element', () => {
     registerVBoxContainer();
     const container = PageStructureService.getContainers()[0];
@@ -699,6 +811,81 @@ describe('PageStructureService', () => {
       expect(PageStructureService.getContentLinks()[1].getUuid()).toBe('new-content-in-container-vbox');
       expect(PageStructureService.getContentLinks()[1].getEnclosingElement()).toBe(newContainer);
 
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('known that a re-rendered container contains new head contributions', (done) => {
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+
+    const container = PageStructureService.getContainers()[0];
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+      <div id="container-vbox">
+        <div id="componentA">
+          <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          <p id="test">Some markup in component A</p>
+          <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+        </div>
+      </div>
+      <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
+      <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.newScript=true</script>"] } -->
+      `;
+    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    PageStructureService.renderContainer(container).then((newContainer) => {
+      expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(true);
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('knows that a re-rendered container does not contain new head contributions', (done) => {
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+
+    const container = PageStructureService.getContainers()[0];
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+      <div id="container-vbox">
+        <div id="componentA">
+          <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          <p id="test">Some markup in component A</p>
+          <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+        </div>
+      </div>
+      <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
+      `;
+    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    PageStructureService.renderContainer(container).then((newContainer) => {
+      expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(false);
+      done();
+    });
+    $rootScope.$digest();
+  });
+
+  it('known that a re-rendered container does not contain new head contributions if they have already been rendered by the page', (done) => {
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+    registerHeadContributions('#processed-head-contributions');
+
+    const container = PageStructureService.getContainers()[0];
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+      <div id="container-vbox">
+        <div id="componentA">
+          <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          <p id="test">Some markup in component A</p>
+          <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+        </div>
+      </div>
+      <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
+      <!-- { "HST-Type": "HST_UNPROCESSED_HEAD_CONTRIBUTIONS", "headElements": ["<script>window.processed = true</script>"] } -->
+      `;
+    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    PageStructureService.renderContainer(container).then((newContainer) => {
+      expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(false);
       done();
     });
     $rootScope.$digest();

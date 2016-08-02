@@ -98,7 +98,11 @@ export class HstCommentsProcessorService {
   }
 
   _isHstComment(data) {
-    return data !== null && data.startsWith(' {') && data.endsWith('} ') && data.includes(HST.TYPE);
+    if (data === null) {
+      return false;
+    }
+    const trimmedData = data.trim();
+    return trimmedData.startsWith('{') && trimmedData.endsWith('}') && trimmedData.includes(HST.TYPE);
   }
 
   _isHstEndMarker(data) {

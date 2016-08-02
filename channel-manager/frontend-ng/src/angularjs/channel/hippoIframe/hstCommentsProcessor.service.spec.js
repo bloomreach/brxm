@@ -48,6 +48,7 @@ describe('HstCommentsProcessorService', () => {
       { 'HST-Type': 'CONTAINER_COMPONENT', name: 'Container-1' },
       { 'HST-Type': 'CONTAINER_ITEM_COMPONENT', name: 'Container-1-Item-1' },
       { 'HST-Type': 'PAGE-META-DATA', name: 'Page-1' },
+      { 'HST-Type': 'HST_UNPROCESSED_HEAD_CONTRIBUTIONS', headElements: ['<title>test</title>'] },
     ]);
   });
 
