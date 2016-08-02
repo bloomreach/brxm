@@ -97,7 +97,15 @@ public class LoginPanel extends Panel {
         HttpSession session = WebApplicationHelper.retrieveWebRequest().getContainerRequest().getSession(true);
         ConcurrentLoginFilter.validateSession(session, username, false);
 
-        userSession.setLocale(new Locale(selectedLocale));
+        userSession.setLocale(getSelectedLocale());
+    }
+
+    private Locale getSelectedLocale() {
+        if (selectedLocale.equals(Locale.CHINESE.getLanguage())) {
+            // always use simplified Chinese, Wicket does not known Chinese without a country
+            return Locale.SIMPLIFIED_CHINESE;
+        }
+        return new Locale(selectedLocale);
     }
 
     protected void loginFailed(final Cause cause) {
@@ -167,7 +175,7 @@ public class LoginPanel extends Panel {
             } else {
                 selectedLocale = defaultLocale;
             }
-            getSession().setLocale(new Locale(selectedLocale));
+            getSession().setLocale(getSelectedLocale());
 
             addLabelledComponent(new Label("locale-label", new ResourceModel("locale-label")));
             add(locale = new DropDownChoice<>("locale",
@@ -194,8 +202,9 @@ public class LoginPanel extends Panel {
                 protected void onUpdate(AjaxRequestTarget target) {
                     // Store locale in cookie
                     setCookieValue(LOCALE_COOKIE, selectedLocale, LOCALE_COOKIE_MAXAGE);
+
                     // and update the session locale
-                    getSession().setLocale(new Locale(selectedLocale));
+                    getSession().setLocale(getSelectedLocale());
 
                     // redraw labels, feedback panel and provided components
                     labels.stream().filter(Component::isVisible).forEach(target::add);
