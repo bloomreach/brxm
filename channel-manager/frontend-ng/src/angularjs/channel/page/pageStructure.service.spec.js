@@ -711,7 +711,7 @@ describe('PageStructureService', () => {
     expect(HippoIframeService.reload).not.toHaveBeenCalled();
   });
 
-  it('knows that a re-rendered component does not contains new head contributions if they have already been rendered by the page', () => {
+  it('knows that a re-rendered component does not contain new head contributions if they have already been rendered by the page', () => {
     registerVBoxContainer();
     registerVBoxComponent('componentA');
     registerHeadContributions('#processed-head-contributions');
