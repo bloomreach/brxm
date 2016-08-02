@@ -9,34 +9,34 @@
   <files>
     <file>
       <source>cms/target/cms.war</source>
-      <outputDirectory>/webapps</outputDirectory>
+      <outputDirectory>webapps</outputDirectory>
       <destName>cms.war</destName>
     </file>
     <file>
       <source>site/target/site.war</source>
-      <outputDirectory>/webapps</outputDirectory>
+      <outputDirectory>webapps</outputDirectory>
       <destName>site.war</destName>
     </file>
     <file>
       <source>conf/log4j-prod.xml</source>
-      <outputDirectory>/conf</outputDirectory>
+      <outputDirectory>conf</outputDirectory>
       <destName>log4j.xml</destName>
     </file>
     <file>
       <source>conf/log4j.dtd</source>
-      <outputDirectory>/conf</outputDirectory>
+      <outputDirectory>conf</outputDirectory>
       <destName>log4j.dtd</destName>
     </file>
     <file>
       <source>conf/context.xml</source>
-      <outputDirectory>/conf</outputDirectory>
+      <outputDirectory>conf</outputDirectory>
       <destName>context.xml</destName>
     </file>
   </files>
   <dependencySets>
     <dependencySet>
       <useProjectArtifact>false</useProjectArtifact>
-      <outputDirectory>/common/lib</outputDirectory>
+      <outputDirectory>common/lib</outputDirectory>
       <scope>provided</scope>
       <includes>
         <include>javax.jcr:jcr</include>
@@ -46,7 +46,7 @@
     </dependencySet>
     <dependencySet>
       <useProjectArtifact>false</useProjectArtifact>
-      <outputDirectory>/shared/lib</outputDirectory>
+      <outputDirectory>shared/lib</outputDirectory>
       <scope>provided</scope>
       <includes>
         <include>org.onehippo.cms7:hippo-cms7-commons</include>
