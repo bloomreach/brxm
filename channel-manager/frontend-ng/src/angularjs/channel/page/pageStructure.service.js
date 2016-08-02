@@ -328,13 +328,8 @@ export class PageStructureService {
     if (!pageStructureElement) {
       return false;
     }
-    const headContributions = pageStructureElement.getHeadContributions();
-    for (const headContribution of headContributions) {
-      if (!this.headContributions.includes(headContribution)) {
-        return true;
-      }
-    }
-    return false;
+    const elementHeadContributions = pageStructureElement.getHeadContributions();
+    return elementHeadContributions.some((contribution) => !this.headContributions.includes(contribution));
   }
 
   _removeEmbeddedLinksInContainer(container) {
