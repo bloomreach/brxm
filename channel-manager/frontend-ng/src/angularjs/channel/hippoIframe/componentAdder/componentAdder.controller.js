@@ -79,7 +79,7 @@ export class ComponentAdderCtrl {
             PageStructureService.addComponentToContainer(this.selectedCatalogItem, container)
               .then((newComponent) => {
                 if (PageStructureService.containsNewHeadContributions(newComponent.getContainer())) {
-                  $log.info(`New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`, newComponent);
+                  $log.info(`New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`);
                   HippoIframeService.reload().then(() => {
                     PageStructureService.showComponentProperties(newComponent);
                   });
