@@ -113,8 +113,8 @@ After building the testsuite, copy the 'testsuite' folder to 'testsuite-node2' f
 
 Then startup as follows:
 
-testsuite mvn -P cargo.run,mysql
-testsuite-node2$ mvn -P cargo.run,mysql,node2
+~/myprojects/testsuite $ mvn -P cargo.run,mysql
+~/myprojects/testsuite-node2 $ mvn -P cargo.run,mysql,node2
 
 After this, the website is available at localhost:8080/site AND at localhost:9080/site. CMSes are
 available at localhost:8080/cms and localhost:9080/cms. Note that the cms at localhost:9080/cms does not display
