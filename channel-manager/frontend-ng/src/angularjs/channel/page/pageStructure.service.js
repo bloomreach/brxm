@@ -317,9 +317,8 @@ export class PageStructureService {
   _updateContainer(oldContainer, newMarkup) {
     this._removeEmbeddedLinksInContainer(oldContainer);
 
-    const newDom = oldContainer.replaceDOM(newMarkup);
-    const newContainer = this._createContainer(newDom);
-    this._replaceContainer(oldContainer, newContainer);
+    // consider following three actions to be an atomic operation
+    const newContainer = this._replaceContainer(oldContainer, this._createContainer(oldContainer.replaceDOM(newMarkup)));
 
     this.attachEmbeddedLinks();
     return newContainer;
@@ -387,13 +386,14 @@ export class PageStructureService {
     const index = this.containers.indexOf(oldContainer);
     if (index === -1) {
       this.$log.warn('Cannot find container', oldContainer);
-      return;
+      return null;
     }
     if (newContainer) {
       this.containers[index] = newContainer;
     } else {
       this.containers.splice(index, 1);
     }
+    return newContainer;
   }
 
   /**
