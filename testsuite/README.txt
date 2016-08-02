@@ -104,10 +104,9 @@ Make sure you have MySQL accessible. Default configuration is:
   <mysql.username>root</mysql.username>
   <mysql.password></mysql.password>
   <mysql.host>localhost:3306</mysql.host>
-  <mysql.repo.db>repositoryDS</mysql.repo.db>
-  <mysql.targeting.db>targetingDS</mysql.targeting.db>
+  <mysql.repo.db>testsuite</mysql.repo.db>
 
-Make sure the MySQL server contains the database 'repositoryDS'. If you want different settings,
+Make sure the MySQL server contains the database 'testsuite'. If you want different settings,
 change them in /pom.xml 'mysql' profile
 
 After building the testsuite, copy the 'testsuite' folder to 'testsuite-node2' folder (different location)

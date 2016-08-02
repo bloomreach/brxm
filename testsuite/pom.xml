@@ -292,7 +292,7 @@
         <mysql.username>root</mysql.username>
         <mysql.password></mysql.password>
         <mysql.host>localhost:3306</mysql.host>
-        <mysql.repo.db>repositoryDS</mysql.repo.db>
+        <mysql.repo.db>testsuite</mysql.repo.db>
       </properties>
       <dependencies>
         <dependency>
