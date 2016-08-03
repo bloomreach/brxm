@@ -31,18 +31,6 @@
                       "document6": "Carousel item 6",
                       "group.settings": "Carousel settings",
                       "group.documents": "Carousel documents"
-                    },
-                    "de": {
-                      "group.settings": "Karrussel-Einstellungen",
-                      "group.documents": "Karussell-Dokumente"
-                    },
-                    "fr": {
-                      "group.settings": "Paramètres carrousel",
-                      "group.documents": "Documents carrousel"
-                    },
-                    "nl": {
-                      "group.settings": "Carousel instellingen",
-                      "group.documents": "Carousel documenten"
                     }
                   },
                   "EssentialsDocumentComponentInfo": {
@@ -80,36 +68,6 @@
                       "mapType#ROADMAP": "Road map",
                       "mapType#HYBRID": "Mixture of normal and satellite",
                       "map.options": "Map options"
-                    },
-                    "de": {
-                      "location.help": "Für den Standort können Sie entweder eine Adresse angeben oder Längen- und Breitengrad angeben.",
-                      "location": "Standortinformationen",
-                      "mapType.help": "Anzuzeigender Kartentyp",
-                      "mapType#TERRAIN": "Geländeinformationen",
-                      "mapType#SATELLITE": "Google-Earth-Satellit",
-                      "mapType#ROADMAP": "Straßenkarte",
-                      "mapType#HYBRID": "Kombination normal und Satellit",
-                      "map.options": "Landkartenoptionen"
-                    },
-                    "fr": {
-                      "location.help": "Pour le lieu, vous pouvez fournir une adresse ou utiliser la longitude et la latitude",
-                      "location": "Informations lieu",
-                      "mapType.help": "Le type de carte à afficher",
-                      "mapType#TERRAIN": "Informations topographiques",
-                      "mapType#SATELLITE": "Satellite Google Earth",
-                      "mapType#ROADMAP": "Carte routière",
-                      "mapType#HYBRID": "Mélange de normal et satellite",
-                      "map.options": "Options de carte"
-                    },
-                    "nl": {
-                      "location.help": "Om de plaats aan te geven, geef of een adres of specificeer de lengte- en breedtegraad",
-                      "location": "Locatie informatie",
-                      "mapType.help": "Het type kaart die getoond moet worden",
-                      "mapType#TERRAIN": "Terrein informatie",
-                      "mapType#SATELLITE": "Google Earth satelliet",
-                      "mapType#ROADMAP": "Wegenkaart",
-                      "mapType#HYBRID": "Mengsel van normaal en satelliet",
-                      "map.options": "Kaart opties"
                     }
                   },
                   "EssentialsImageComponentInfo": {
