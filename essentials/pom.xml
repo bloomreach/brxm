@@ -60,7 +60,6 @@
   </scm>
 
   <modules>
-    <module>components</module>
     <module>plugin-sdk</module>
     <module>plugins</module>
     <module>dashboard-dependencies</module>
