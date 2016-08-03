@@ -36,7 +36,7 @@ public class CommonsInstructionPackage extends TemplateSupportInstructionPackage
         // add provided dependency to webfiles artifact so we have freemarker autocompletion support
         final EssentialsDependency dependency = new DependencyRestful();
         dependency.setGroupId("org.onehippo.cms7");
-        dependency.setArtifactId("hippo-plugins-components-hst");
+        dependency.setArtifactId("hippo-essentials-components-hst");
         dependency.setScope("provided");
         dependency.setTargetPom(TargetPom.BOOTSTRAP_WEB_FILES.getName());
         DependencyUtils.addDependency(context, dependency);
