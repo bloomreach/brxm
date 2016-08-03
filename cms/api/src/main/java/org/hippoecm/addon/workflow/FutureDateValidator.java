@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,15 +15,14 @@
  */
 package org.hippoecm.addon.workflow;
 
-import java.text.DateFormat;
+import java.time.format.FormatStyle;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.AbstractValidator;
-import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
 
 public class FutureDateValidator extends AbstractValidator<Date> {
 
@@ -35,10 +34,8 @@ public class FutureDateValidator extends AbstractValidator<Date> {
 
     private String resourceKey;
 
-
     public FutureDateValidator() {
     }
-
 
     public boolean validateOnNullValue() {
         return true;
@@ -69,20 +66,15 @@ public class FutureDateValidator extends AbstractValidator<Date> {
         if (date == null) {
             return map;
         }
-        UserSession session = UserSession.get();
-        Locale locale = session.getLocale();
 
-        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, locale);
-        map.put(INPUTDATE_LABEL, df.format(date));
+        final String dateLabel = DateTimePrinter.of(date).print(FormatStyle.LONG, FormatStyle.MEDIUM);
+        map.put(INPUTDATE_LABEL, dateLabel);
 
         return map;
     }
-
 
     @Override
     protected String resourceKey() {
         return resourceKey;
     }
-
-
 }
