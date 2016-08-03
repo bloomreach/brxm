@@ -48,7 +48,9 @@
   </scm>
 
   <modules>
-    <module>components</module>
+    <module>cms</module>
+    <module>hst</module>
+    <module>repository</module>
   </modules>
 
   <repositories>
