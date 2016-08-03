@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.login;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
@@ -62,14 +63,16 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
         private static final int TIMEZONE_COOKIE_MAX_AGE = 365 * 24 * 3600; // expire one year from now
 
         private String selectedTimeZone;
-        private List<String> availableTimeZones;
+        private List<String> availableTimeZones = Collections.emptyList();
         private boolean useBrowserTimeZoneIfAvailable;
 
         public LoginForm(final String id, final boolean autoComplete, final List<String> locales, final LoginHandler handler) {
             super(id, autoComplete, locales, handler);
 
             final IPluginConfig config = getPluginConfig();
-            if (config.getBoolean(SHOW_TIMEZONES_CONFIG_PARAM)) {
+            final boolean isTimeZoneVisible = config.getBoolean(SHOW_TIMEZONES_CONFIG_PARAM);
+
+            if (isTimeZoneVisible) {
                 availableTimeZones = getSelectableTimezones(config.getStringArray(SELECTABLE_TIMEZONES_CONFIG_PARAM));
 
                 // Check if user has previously selected a timezone
@@ -80,19 +83,17 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
                     selectedTimeZone = availableTimeZones.get(0);
                     useBrowserTimeZoneIfAvailable = true;
                 }
-
-                // Add the timezone dropdown
-                final PropertyModel<String> selected = PropertyModel.of(this, "selectedTimeZone");
-                final DropDownChoice<String> timeZone = new DropDownChoice<>("timezone", selected, availableTimeZones);
-                timeZone.setNullValid(false);
-
-                form.add(new Label("timezone-label", new ResourceModel("timezone-label", "Time zone:")));
-                form.add(timeZone);
-
-            } else {
-                form.add(new Label("timezone-label").setVisible(false));
-                form.add(new Label("timezone").setVisible(false));
             }
+
+            // Add the time zone dropdown
+            final PropertyModel<String> selected = PropertyModel.of(this, "selectedTimeZone");
+            final DropDownChoice<String> timeZone = new DropDownChoice<>("timezone", selected, availableTimeZones);
+            timeZone.setNullValid(false);
+
+            final Label timeZoneLabel = new Label("timezone-label", new ResourceModel("timezone-label", "Time zone:"));
+            timeZoneLabel.setVisible(isTimeZoneVisible);
+            form.addLabelledComponent(timeZoneLabel);
+            form.add(timeZone);
         }
 
         @Override
