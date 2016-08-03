@@ -149,10 +149,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "ALERT_OK" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "ERROR_PAGE_SAVE_FAILED" : {
       "status" : "CLEAN",
       "locales" : null
@@ -555,6 +551,10 @@
       "locales" : null
     },
     "TOOLBAR_MENU_PAGE_COPY" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "OK" : {
       "status" : "CLEAN",
       "locales" : null
     }
