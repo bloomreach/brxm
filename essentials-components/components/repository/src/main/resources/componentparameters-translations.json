@@ -172,7 +172,9 @@
                   "EssentialsSortable": {
                     "en": {
                       "sortField": "Sort field",
-                      "sortOrder": "Sort order"
+                      "sortOrder": "Sort order",
+                      "sortOrder#asc": "Ascending",
+                      "sortOrder#desc": "Descending"
                     }
                   },
                   "EssentialsVideoComponentInfo": {
