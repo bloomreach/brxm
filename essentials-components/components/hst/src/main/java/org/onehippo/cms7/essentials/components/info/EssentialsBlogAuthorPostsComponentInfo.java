@@ -38,8 +38,4 @@ public interface EssentialsBlogAuthorPostsComponentInfo {
     @Parameter(name = "sortField", required = true, defaultValue = "hippostdpubwf:publicationDate", displayName = "Sort field")
     String getSortField();
 
-   /* @Parameter(name = "sortOrder", required = false, defaultValue = "desc", displayName = "Sort order", description = "Order results ascending or descending")
-    @DropDownList(value = {"asc", "desc"})
-    String getSortOrder();*/
-
 }
