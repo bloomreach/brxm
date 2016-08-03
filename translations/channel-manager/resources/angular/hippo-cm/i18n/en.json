@@ -123,6 +123,7 @@
   "PICKER_TYPE_DOCUMENTS": "Documents",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Failed to retrieve the list of global variants",
   "SUBPAGE_CHANNEL_SETTINGS_TITLE": "Settings of '{{channelName}}'",
+  "SUBPAGE_MENU_EDITOR_SELECT_INTERNAL_LINK": "Select",
   "TOOLBAR_MENU_PAGE_SITEMAP_NOT_EDITABLE": "sitemap not editable",
   "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED": "Failed to retrieve information on channel settings",
   "TOOLBAR_VIEW_AS_INFIX": ", the ",

@@ -121,6 +121,7 @@
   "PICKER_TYPE_DOCUMENTS": "Documents",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "La liste des variantes globales n'a pas pu être récupérée",
   "SUBPAGE_CHANNEL_SETTINGS_TITLE": "Paramètres de '{{channelName}}'",
+  "SUBPAGE_MENU_EDITOR_SELECT_INTERNAL_LINK": "Sélectionner",
   "TOOLBAR_MENU_PAGE_SITEMAP_NOT_EDITABLE": "plan du site non modifiable",
   "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED": "Les informations sur les paramètres de canal n'ont pas pu être récupérées",
   "TOOLBAR_VIEW_AS_INFIX": ", the ",

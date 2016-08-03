@@ -122,6 +122,7 @@
   "PICKER_TYPE_DOCUMENTS": "Dokumente",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "Liste globaler Varianten konnte nicht abgerufen werden",
   "SUBPAGE_CHANNEL_SETTINGS_TITLE": "Einstellungen von '{{channelName}}'",
+  "SUBPAGE_MENU_EDITOR_SELECT_INTERNAL_LINK": "Auswählen",
   "TOOLBAR_MENU_PAGE_SITEMAP_NOT_EDITABLE": "Sitemap nicht bearbeitbar",
   "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED": "Informationen über Channel-Einstellungen konnten nicht abgerufen werden",
   "TOOLBAR_VIEW_AS_INFIX": ", the ",
