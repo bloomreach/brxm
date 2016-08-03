@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,26 +46,26 @@ public interface EssentialsCarouselComponentInfo {
     //############################################
     // CAROUSEL SETTINGS
     //############################################
-    @Parameter(name = "pause", displayName = "Pause carousel on mouse enter", defaultValue = "true")
+    @Parameter(name = "pause", defaultValue = "true")
     Boolean getPause();
 
-    @Parameter(name = "cycle", displayName = "Cycle carousel continuously", defaultValue = "true")
+    @Parameter(name = "cycle", defaultValue = "true")
     Boolean getCycle();
 
-    @Parameter(name = "carouselHeight", defaultValue = "250", required = true, displayName = "Carousel height")
+    @Parameter(name = "carouselHeight", defaultValue = "250", required = true)
     Integer getCarouselHeight();
 
-    @Parameter(name = "carouselWidth", defaultValue = "700", required = true, displayName = "Carousel width")
+    @Parameter(name = "carouselWidth", defaultValue = "700", required = true)
     Integer getCarouselWidth();
 
-    @Parameter(name = "interval", defaultValue = "3000", required = true, displayName = "Carousel interval (milli seconds)")
+    @Parameter(name = "interval", defaultValue = "3000", required = true)
     Integer getInterval();
 
     @Color
-    @Parameter(name = "carouselBackgroundColor", defaultValue = "#FFFFFF", required = true, displayName = "Carousel background color)")
+    @Parameter(name = "carouselBackgroundColor", defaultValue = "#FFFFFF", required = true)
     String getCarouselBackgroundColor();
 
-    @Parameter(name = "showNavigation", defaultValue = "true", displayName = "Show carousel navigation")
+    @Parameter(name = "showNavigation", defaultValue = "true")
     Boolean getShowNavigation();
 
 
@@ -74,27 +74,27 @@ public interface EssentialsCarouselComponentInfo {
     //############################################
 
 
-    @Parameter(name = "document1", required = true, displayName = "Carousel item 1")
+    @Parameter(name = "document1", required = true)
     @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem1();
 
-    @Parameter(name = "document2", required = false, displayName = "Carousel item 2")
+    @Parameter(name = "document2", required = false)
     @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem2();
 
-    @Parameter(name = "document3", required = false, displayName = "Carousel item 3")
+    @Parameter(name = "document3", required = false)
     @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem3();
 
-    @Parameter(name = "document4", required = false, displayName = "Carousel item 4")
+    @Parameter(name = "document4", required = false)
     @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem4();
 
-    @Parameter(name = "document5", required = false, displayName = "Carousel item 5")
+    @Parameter(name = "document5", required = false)
     @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem5();
 
-    @Parameter(name = "document6", required = false, displayName = "Carousel item 6")
+    @Parameter(name = "document6", required = false)
     @JcrPath(isRelative = true, pickerInitialPath = BANNERS_INITIAL_PATH, pickerSelectableNodeTypes = {HIPPO_DOCUMENT}, pickerConfiguration = CMS_PICKERS_DOCUMENTS_ONLY)
     String getCarouselItem6();
 }

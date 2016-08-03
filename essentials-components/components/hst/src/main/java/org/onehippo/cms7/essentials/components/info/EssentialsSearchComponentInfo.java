@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ public interface EssentialsSearchComponentInfo extends EssentialsListComponentIn
 
     // override default to "on"
     @Override
-    @Parameter(name = "showPagination", required = false, defaultValue = "on", displayName = "Show pagination")
+    @Parameter(name = "showPagination", required = false, defaultValue = "on")
     Boolean getShowPagination();
 
     // override require to false
     @Override
-    @Parameter(name = "documentTypes", required = false, displayName = "Document types (comma separated)")
+    @Parameter(name = "documentTypes", required = false)
     String getDocumentTypes();
 
 }

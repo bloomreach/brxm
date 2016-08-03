@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,30 +32,30 @@ import org.hippoecm.hst.core.parameters.Parameter;
 
 public interface EssentialsGoogleMapsComponentInfo {
 
-    @Parameter(name = "latitude", required = false, displayName = "Latitude")
+    @Parameter(name = "latitude", required = false)
     double getLatitude();
 
-    @Parameter(name = "longitude", required = false, displayName = "Longitude")
+    @Parameter(name = "longitude", required = false)
     double getLongitude();
 
     @DropDownList(value = {"0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21"})
-    @Parameter(name = "zoomFactor", required = true, defaultValue = "8", displayName = "Zoom factor")
+    @Parameter(name = "zoomFactor", required = true, defaultValue = "8")
     String getZoomFactor();
 
-    @Parameter(name = "mapType", required = false, displayName = "Map type",defaultValue = "ROADMAP")
+    @Parameter(name = "mapType", required = false, defaultValue = "ROADMAP")
     @DropDownList(value = {"ROADMAP","SATELLITE","TERRAIN","HYBRID"})
     String getMapType();
 
-    @Parameter(name = "width", required = true, defaultValue = "400", displayName = "Width (in pixels)")
+    @Parameter(name = "width", required = true, defaultValue = "400")
     int getWidth();
 
-    @Parameter(name = "height", required = true, defaultValue = "400", displayName = "Height (in pixels)")
+    @Parameter(name = "height", required = true, defaultValue = "400")
     int getHeight();
 
-    @Parameter(name = "address", required = false, defaultValue = "", displayName = "Location / Address")
+    @Parameter(name = "address", required = false, defaultValue = "")
     String getAddress();
 
-    @Parameter(name = "apiKey", required = false, displayName = "Google Maps API Key")
+    @Parameter(name = "apiKey", required = false)
     String getApiKey();
 
 }

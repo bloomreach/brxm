@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
  * @version "$Id$"
  */
 public interface EssentialsBlogAuthorPostsComponentInfo {
-    @Parameter(name = "postScope", required = false, displayName = "Blog posts location")
+    @Parameter(name = "postScope", required = false)
     @JcrPath(
             pickerConfiguration = "cms-pickers/documents",
             pickerSelectableNodeTypes = {"hippostd:folder"},
@@ -32,10 +32,10 @@ public interface EssentialsBlogAuthorPostsComponentInfo {
     String getScope();
 
 
-    @Parameter(name = "pageSize", required = true, defaultValue = "3", displayName = "Nr. of posts to show", description = "Nr of items per page")
+    @Parameter(name = "pageSize", required = true, defaultValue = "3", description = "Nr of items per page")
     int getPageSize();
 
-    @Parameter(name = "sortField", required = true, defaultValue = "hippostdpubwf:publicationDate", displayName = "Sort field")
+    @Parameter(name = "sortField", required = true, defaultValue = "hippostdpubwf:publicationDate")
     String getSortField();
 
 }

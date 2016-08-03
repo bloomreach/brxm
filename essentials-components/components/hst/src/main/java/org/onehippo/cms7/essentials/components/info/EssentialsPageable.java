@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,9 @@ import org.hippoecm.hst.core.parameters.Parameter;
 public interface EssentialsPageable {
 
 
-    @Parameter(name = "pageSize", required = true, defaultValue = "10", displayName = "Page size", description = "Nr of items per page")
+    @Parameter(name = "pageSize", required = true, defaultValue = "10", description = "Nr of items per page")
     int getPageSize();
 
-    @Parameter(name = "showPagination", required = false, displayName = "Show pagination")
+    @Parameter(name = "showPagination", required = false)
     Boolean getShowPagination();
 }
