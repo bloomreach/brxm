@@ -15,9 +15,9 @@
  */
 package org.hippoecm.addon.workflow;
 
-import java.time.Instant;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.time.format.FormatStyle;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
 
@@ -25,16 +25,25 @@ import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.AbstractValidator;
 import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
 
+/**
+ * Validate if the date value is in the future. The fraction time after minute is not counted.
+ *
+ */
 public class FutureDateValidator extends AbstractValidator<Date> {
 
     public static final String EMPTY_DATE = "date.empty";
     public static final String DATE_IN_THE_PAST = "date.in.past";
     public static final String INPUTDATE_LABEL = "inputdate";
-    public static final int SECONDS_ADDED_TO_CORRECT_FOR_UNSET_SECOND_BY_DATETIMEFIELD = 59;
 
     private String resourceKey;
+    private final Clock clock;
 
     public FutureDateValidator() {
+        this(Clock.systemDefaultZone());
+    }
+
+    public FutureDateValidator(final Clock clock) {
+        this.clock = clock;
     }
 
     public boolean validateOnNullValue() {
@@ -50,10 +59,11 @@ public class FutureDateValidator extends AbstractValidator<Date> {
             return;
         }
 
-        final Instant publicationDate = date.toInstant();
-        publicationDate.plus(SECONDS_ADDED_TO_CORRECT_FOR_UNSET_SECOND_BY_DATETIMEFIELD, ChronoUnit.SECONDS);
+        final LocalDateTime publicationDateTime = date.toInstant()
+                .atZone(clock.getZone()).toLocalDateTime()
+                .plusMinutes(1); // 1 minute up to round up second fraction.
 
-        if (publicationDate.isBefore(Instant.now())) {
+        if (publicationDateTime.isBefore(LocalDateTime.now(clock))) {
             resourceKey = DATE_IN_THE_PAST;
             error(dateIValidatable);
         }
