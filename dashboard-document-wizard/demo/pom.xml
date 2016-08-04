@@ -53,11 +53,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-plugins-components-hst</artifactId>
-        <version>${hippo.plugins.version}</version>
-      </dependency>
 
       <!-- other predefined runtime scope versioned dependencies -->
       <dependency>

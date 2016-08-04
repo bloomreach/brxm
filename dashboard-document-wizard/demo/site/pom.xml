@@ -83,7 +83,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-plugins-components-hst</artifactId>
+      <artifactId>hippo-essentials-components-hst</artifactId>
     </dependency>
   </dependencies>
   <build>
