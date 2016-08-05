@@ -17,7 +17,8 @@
 import autoScrollerFactory from 'dom-autoscroller';
 
 export class ComponentAdderCtrl {
-  constructor($scope, $log, $element, ComponentAdderService, PageStructureService, CatalogService, DragDropService) {
+  constructor($scope, $log, $element, ComponentAdderService, PageStructureService, CatalogService, DragDropService,
+              HippoIframeService) {
     'ngInject';
 
     this.PageStructureService = PageStructureService;
@@ -77,10 +78,16 @@ export class ComponentAdderCtrl {
           if (container) {
             PageStructureService.addComponentToContainer(this.selectedCatalogItem, container)
               .then((newComponent) => {
-                DragDropService.replaceContainer(container, newComponent.getContainer());
-                PageStructureService.showComponentProperties(newComponent);
+                if (PageStructureService.containsNewHeadContributions(newComponent.getContainer())) {
+                  $log.info(`New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`);
+                  HippoIframeService.reload().then(() => {
+                    PageStructureService.showComponentProperties(newComponent);
+                  });
+                } else {
+                  DragDropService.replaceContainer(container, newComponent.getContainer());
+                  PageStructureService.showComponentProperties(newComponent);
+                }
               });
-            // error is handled inside PageStructureService.
           } else {
             $log.debug(`Cannot add catalog item ${this.selectedCatalogItem.id} because container cannot be found for the overlay element or has been locked by a different user`, target);
           }

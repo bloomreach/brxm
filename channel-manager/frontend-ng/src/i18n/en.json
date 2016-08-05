@@ -1,6 +1,5 @@
 {
   "ADVANCED_SETTINGS": "Advanced settings",
-  "ALERT_OK": "OK",
   "CANCEL": "Cancel",
   "CHANNEL_PROPERTIES_SAVE_SUCCESS": "Channel settings saved successfully",
   "COLLAPSE": "Collapse",
@@ -69,6 +68,7 @@
   "LINK_REQUIRED": "Link is required",
   "MOVE": "Move",
   "NEW_MENU_ITEM_TITLE": "Untitled",
+  "OK": "OK",
   "PICKER_EMPTY_TREE": "No documents are available",
   "PICKER_LISTING_NAME": "Name",
   "PICKER_SELECT": "Select link type",
@@ -91,6 +91,7 @@
   "SUBPAGE_MENU_EDITOR_EXTERNAL_LINK": "External link",
   "SUBPAGE_MENU_EDITOR_INTERNAL_LINK": "Internal link",
   "SUBPAGE_MENU_EDITOR_NO_LINK": "No link",
+  "SUBPAGE_MENU_EDITOR_SELECT_INTERNAL_LINK": "Select",
   "SUBPAGE_PAGE_COPY_LABEL_CHANNEL": "Destination channel",
   "SUBPAGE_PAGE_COPY_LABEL_URL_STEM": "Destination URL",
   "SUBPAGE_PAGE_COPY_TITLE": "Copy page '{{pageName}}'",

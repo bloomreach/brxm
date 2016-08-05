@@ -1,0 +1,11 @@
+{
+  "hippo:channelmanager": {
+    "switch-template": {
+      "en": {
+        "choose.template": "Choose a template",
+        "switch.template": "Template",
+        "missing.template": "Missing template ''{0}''"
+      }
+    }
+  }
+}

@@ -96,7 +96,7 @@ export class PageEditCtrl {
         this.$mdDialog.alert()
           .clickOutsideToClose(true)
           .textContent(textContent)
-          .ok(this.$translate.instant('ALERT_OK'))
+          .ok(this.$translate.instant('OK'))
       );
     }
   }

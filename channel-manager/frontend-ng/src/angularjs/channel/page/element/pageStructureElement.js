@@ -21,6 +21,7 @@ export class PageStructureElement {
     this.type = type;
     this.metaData = metaData;
     this.jQueryElements = {};
+    this.headContributions = [];
 
     this.setStartComment($(startCommentDomElement));
     this.setEndComment($(endCommentDomElement));
@@ -74,7 +75,7 @@ export class PageStructureElement {
 
   /**
    * Replace container DOM elements with the given markup
-   * @return the jQuery element refering to the inserted markup in the DOM document
+   * @return the jQuery element referring to the inserted markup in the DOM document
    */
   replaceDOM(htmlFragment) {
     const endCommentNode = this.getEndComment()[0];
@@ -143,5 +144,13 @@ export class PageStructureElement {
       node = node.nextSibling;
     }
     return false;
+  }
+
+  setHeadContributions(headContributions) {
+    this.headContributions = headContributions;
+  }
+
+  getHeadContributions() {
+    return this.headContributions;
   }
 }

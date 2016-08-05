@@ -20,11 +20,20 @@ describe('selectAllOnFocusDirective', () => {
   let $rootScope;
   let $compile;
 
-  beforeEach(module('hippo-cm.channel.menu'));
-  beforeEach(inject((_$rootScope_, _$compile_) => {
-    $rootScope = _$rootScope_;
-    $compile = _$compile_;
-  }));
+  beforeEach(() => {
+    module('hippo-cm.channel.menu');
+
+    inject((_$rootScope_, _$compile_) => {
+      $rootScope = _$rootScope_;
+      $compile = _$compile_;
+    });
+
+    jasmine.clock().install();
+  });
+
+  afterEach(() => {
+    jasmine.clock().uninstall();
+  });
 
   it('selects all content on focus', () => {
     const $scope = $rootScope.$new();
@@ -34,6 +43,8 @@ describe('selectAllOnFocusDirective', () => {
     $scope.$digest();
 
     $element.triggerHandler('focus');
+
+    jasmine.clock().tick(1);
 
     expect($element[0].selectionStart).toEqual(0);
     expect($element[0].selectionEnd).toEqual(valueLength);

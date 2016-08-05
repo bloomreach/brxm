@@ -64,8 +64,7 @@ const customConfig = {
     defaultJSExtensions: true,
     map: {
       'dom-autoscroller': `${npmDir}/dom-autoscroller/index.js`,
-      'pointer-point': `${npmDir}/pointer-point/index.js`,
-      'more-events': `${npmDir}/more-events/index.js`,
+      'create-point-cb': `${npmDir}/create-point-cb/index.js`,
     },
   },
 };
