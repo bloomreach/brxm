@@ -73,7 +73,7 @@
     <hippo.plugin.sitemap.version>3.1.0-SNAPSHOT</hippo.plugin.sitemap.version>
     <hippo.plugin.taxonomy.version>3.1.0-SNAPSHOT</hippo.plugin.taxonomy.version>
 
-    <hippo.maven.plugin.l10n>1.0.0</hippo.maven.plugin.l10n>
+    <hippo.maven.plugin.l10n>1.0.1-SNAPSHOT</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
     <hippo.cms.locales/>
   </properties>
@@ -889,20 +889,20 @@
               </goals>
               <configuration>
                 <artifactPrefixes>
-                  <artifactPrefix>org.onehippo.cms7:hippo-addon-channel-manager</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-content-blocks</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-content-tagging</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-dashboard-document-wizard</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-gallerypicker</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-cms</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-addon-hst-configuration-editor</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-poll</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-relateddocs</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-resourcebundle-editor</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-robotstxt</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-selections</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-taxonomy</artifactPrefix>
-                  <artifactPrefix>org.onehippo.cms7:hippo-essentials-components</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-addon-channel-manager,hippo-addon-channel-manager-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-content-blocks,hippo-plugin-content-blocks-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-content-tagging,hippo-plugin-content-tagging-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-dashboard-document-wizard,hippo-plugin-dashboard-document-wizard-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-gallerypicker,hippo-plugin-gallerypicker-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-cms-engine,hippo-cms-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-addon-hst-configuration-editor,hippo-addon-hst-configuration-editor-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-poll,hippo-plugin-poll-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-relateddocs,hippo-plugin-relateddocs-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-resourcebundle-editor,hippo-plugin-resourcebundle-editor-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-robotstxt,hippo-plugin-robotstxt-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-selections,hippo-plugin-selections-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-plugin-taxonomy,hippo-plugin-taxonomy-l10n</artifactPrefix>
+                  <artifactPrefix>org.onehippo.cms7:hippo-essentials-components,hippo-essentials-components-l10n</artifactPrefix>
                 </artifactPrefixes>
                 <locales>${hippo.cms.locales}</locales>
               </configuration>
