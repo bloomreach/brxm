@@ -311,6 +311,15 @@ if (!YAHOO.hippo.DateTime) {
                         cfg.setProperty("WEEKDAYS_1CHAR", ["d", "l", "m", "m", "j", "v", "s"]);
                         cfg.setProperty("START_WEEKDAY",  ["1"]);
                     },
+                    es: function(cfg) {
+                        cfg.setProperty("MONTHS_LONG",    ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]);
+                        cfg.setProperty("MONTHS_SHORT",   ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]);
+                        cfg.setProperty("WEEKDAYS_LONG",  ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]);
+                        cfg.setProperty("WEEKDAYS_MEDIUM",["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]);
+                        cfg.setProperty("WEEKDAYS_SHORT", ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"]);
+                        cfg.setProperty("WEEKDAYS_1CHAR", ["D", "L", "M", "MX", "M", "V", "D"]);
+                        cfg.setProperty("START_WEEKDAY",  ["1"]);
+                    },
                     zh: function(cfg) {
                         cfg.setProperty("MONTHS_LONG",    ["一月份", "二月份", "三月份", "四月份", "五月份", "六月份", "七月份", "八月份", "九月份", "十月份", "十一月份", "十二月份"]);
                         cfg.setProperty("MONTHS_SHORT",   ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);

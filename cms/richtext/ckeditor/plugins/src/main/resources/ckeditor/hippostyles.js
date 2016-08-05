@@ -63,6 +63,17 @@
                 p: 'Normaal',
                 pre: 'Voorgedefinieerd'
             },
+            es: {
+                address: 'Dirección',
+                h1: 'Encabezado 1',
+                h2: 'Encabezado 2',
+                h3: 'Encabezado 3',
+                h4: 'Encabezado 4',
+                h5: 'Encabezado 5',
+                h6: 'Encabezado 6',
+                p: 'Normal',
+                pre: 'Texto preformateado'
+            },
             zh: {
                 address: '地址',
                 h1: '标题一',
