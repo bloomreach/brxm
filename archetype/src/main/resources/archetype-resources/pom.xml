@@ -75,7 +75,7 @@
     <maven.plugins.filesync.version>1.0.0</maven.plugins.filesync.version>
     <repo.bootstrap>true</repo.bootstrap>
 
-    <hippo.cms.locales>nl,de,fr,zh</hippo.cms.locales>
+    <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
 
   </properties>
 
