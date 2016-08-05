@@ -15,9 +15,9 @@
  */
 package org.hippoecm.addon.workflow;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.format.FormatStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
 
@@ -36,14 +36,8 @@ public class FutureDateValidator extends AbstractValidator<Date> {
     public static final String INPUTDATE_LABEL = "inputdate";
 
     private String resourceKey;
-    private final Clock clock;
 
     public FutureDateValidator() {
-        this(Clock.systemDefaultZone());
-    }
-
-    public FutureDateValidator(final Clock clock) {
-        this.clock = clock;
     }
 
     public boolean validateOnNullValue() {
@@ -59,11 +53,11 @@ public class FutureDateValidator extends AbstractValidator<Date> {
             return;
         }
 
-        final LocalDateTime publicationDateTime = date.toInstant()
-                .atZone(clock.getZone()).toLocalDateTime()
-                .plusMinutes(1); // 1 minute up to round up second fraction.
+        final Instant publicationDateTime = date.toInstant()
+                .plus(1, ChronoUnit.MINUTES); // 1 minute up to round up second fraction.
 
-        if (publicationDateTime.isBefore(LocalDateTime.now(clock))) {
+        final Instant now = Instant.now();
+        if (publicationDateTime.isBefore(now)) {
             resourceKey = DATE_IN_THE_PAST;
             error(dateIValidatable);
         }

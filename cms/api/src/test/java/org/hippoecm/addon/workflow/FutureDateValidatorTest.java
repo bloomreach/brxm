@@ -17,36 +17,42 @@
 
 package org.hippoecm.addon.workflow;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.Validatable;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(FutureDateValidator.class)
 public class FutureDateValidatorTest {
 
-    // Fixed the time zone to test
-    final ZoneOffset zoneOffset = ZoneOffset.of("+2");
-    final ZoneId currentZone = ZoneId.of(zoneOffset.getId());
-
     private FutureDateValidator validator;
+    private Instant fixedTimeValue;
 
     @Before
     public void setUp() {
-        // Fixed clock to a specific time 2016-08-04T11:50:20.100+02
-        final Clock fixedClock = Clock.fixed(LocalDateTime.of(2016, 8, 4, 11, 50, 20, 100).toInstant(zoneOffset), currentZone);
+        // A fixed time value 2016-08-04T11:50:20.100Z is used to mock Instant#now() method
+        fixedTimeValue = ZonedDateTime.of(2016, 8, 4, 11, 50, 20, 100, ZoneId.of("Z")).toInstant();
+        PowerMock.mockStatic(Instant.class);
+        EasyMock.expect(Instant.now()).andReturn(fixedTimeValue);
+        PowerMock.replayAll();
 
-        validator = new FutureDateValidator(fixedClock) {
+        validator = new FutureDateValidator() {
             @Override
             protected Map<String, Object> variablesMap(final IValidatable<Date> validatable) {
                 // Mock this method
@@ -56,9 +62,18 @@ public class FutureDateValidatorTest {
     }
 
     @Test
+    public void current_datetime_value_should_be_mocked() {
+        final Instant now = Instant.now();
+        assertThat(now, is(fixedTimeValue));
+        PowerMock.verify(Instant.class);
+    }
+
+    @Test
     public void valid_if_value_is_in_the_future() {
-        final Validatable validatable = new Validatable(from(LocalDateTime.of(2016, 8, 4, 11, 51), currentZone));
+        final Validatable validatable = new Validatable(createDate(2016, 8, 4, 11, 51));
         validator.onValidate(validatable);
+
+        PowerMock.verify(Instant.class);
         assertThat(validatable.isValid(), is(true));
     }
 
@@ -73,24 +88,26 @@ public class FutureDateValidatorTest {
 
     @Test
     public void invalid_if_date_value_is_in_the_past_with_one_second_less() {
-        // 2016-08-04T11:49:00+02
-        final Validatable validatable = new Validatable(from(LocalDateTime.of(2016, 8, 4, 11, 49), currentZone));
+        // 2016-08-04T11:49:00Z
+        final Validatable validatable = new Validatable(createDate(2016, 8, 4, 11, 49));
         validator.onValidate(validatable);
 
+        PowerMock.verify(Instant.class);
         assertThat(validatable.isValid(), is(false));
         assertThat(validator.resourceKey(), is(FutureDateValidator.DATE_IN_THE_PAST));
     }
 
     @Test
     public void invalid_if_date_value_is_current_time_without_second_fraction() {
-        // 2016-08-04T11:50:00+02
-        final Validatable validatable = new Validatable(from(LocalDateTime.of(2016, 8, 4, 11, 50), currentZone));
+        // 2016-08-04T11:50:00Z
+        final Validatable validatable = new Validatable(createDate(2016, 8, 4, 11, 50));
         validator.onValidate(validatable);
 
+        PowerMock.verify(Instant.class);
         assertThat(validatable.isValid(), is(true));
     }
 
-    private static Date from(LocalDateTime localDateTime, ZoneId zoneId) {
-        return Date.from(localDateTime.atZone(zoneId).toInstant());
+    private static Date createDate(final int year, final int month, final int day, final int hour, final int min) {
+        return Date.from(ZonedDateTime.of(year, month, day, hour, min, 0, 0, ZoneId.of("Z")).toInstant());
     }
 }
