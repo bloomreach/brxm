@@ -101,7 +101,7 @@
     </dependency>
     <dependency>
       <groupId>org.easymock</groupId>
-      <artifactId>easymockclassextension</artifactId>
+      <artifactId>easymock</artifactId>
       <version>${easymock.version}</version>
       <scope>test</scope>
     </dependency>
