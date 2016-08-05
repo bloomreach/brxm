@@ -153,9 +153,18 @@
           <include>**/*.js</include>
         </includes>
       </resource>
+      <!-- package resources fetched via NPM -->
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/node_modules/jstimezonedetect/dist</directory>
+        <targetPath>${basedir}/target/classes/org/hippoecm/frontend/plugins/login</targetPath>
+        <includes>
+          <include>jstz.min.js</include>
+        </includes>
+      </resource>
     </resources>
     <plugins>
-      <!-- Use NPM to install external js dependencies -->
+      <!-- Use NPM to fetch external JavaScript dependencies -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -168,15 +177,6 @@
             <configuration>
               <executable>npm</executable>
               <commandlineArgs>install</commandlineArgs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>grunt-build</id>
-            <phase>process-resources</phase>
-            <goals><goal>exec</goal></goals>
-            <configuration>
-              <executable>grunt</executable>
-              <commandlineArgs>build --no-color</commandlineArgs>
             </configuration>
           </execution>
         </executions>
