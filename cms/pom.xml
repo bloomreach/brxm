@@ -91,7 +91,7 @@
     <hippo.repository.version>4.1.0-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
-    <easymock.version>2.4</easymock.version>
+    <easymock.version>3.4</easymock.version>
     <htmlunit.version>2.7</htmlunit.version>
     <junit.version>4.10</junit.version>
     <xmlunit.version>1.3</xmlunit.version>
@@ -359,7 +359,7 @@
 
       <dependency>
         <groupId>org.easymock</groupId>
-        <artifactId>easymockclassextension</artifactId>
+        <artifactId>easymock</artifactId>
         <version>${easymock.version}</version>
         <scope>test</scope>
       </dependency>
