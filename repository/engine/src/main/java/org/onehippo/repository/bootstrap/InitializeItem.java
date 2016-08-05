@@ -586,7 +586,20 @@ public class InitializeItem {
         return Boolean.parseBoolean(reloadProperty);
     }
 
+    private static boolean canBeUpstreamItem(final InitializeItem item) throws RepositoryException {
+        for (InitializeInstruction upstreamInstruction : item.getInstructions()) {
+            // only ContentResource InitializeItems are potential upstream items
+            if (upstreamInstruction instanceof ContentResourceInstruction) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     boolean isDownstreamItem(final InitializeItem upstreamItem) throws RepositoryException {
+        if (!canBeUpstreamItem(upstreamItem)) {
+            return false;
+        }
         if (itemNode.isSame(upstreamItem.getItemNode())) {
             return false;
         }
