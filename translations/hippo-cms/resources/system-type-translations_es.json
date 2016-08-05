@@ -1,0 +1,9 @@
+{"hippo:types": {
+  "hipposys:String": {"es": {"jcr:name": "Cadena"}},
+  "hipposys:Text": {"es": {"jcr:name": "Texto"}},
+  "hipposys:Label": {"es": {"jcr:name": "Etiqueta"}},
+  "hipposys:Boolean": {"es": {"jcr:name": "Booleana"}},
+  "hipposys:Date": {"es": {"jcr:name": "Fecha"}},
+  "hipposys:Long": {"es": {"jcr:name": "Número entero"}},
+  "hipposys:Double": {"es": {"jcr:name": "Número decimal"}}
+}}

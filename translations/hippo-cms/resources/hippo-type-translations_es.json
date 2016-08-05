@@ -1,0 +1,6 @@
+{"hippo:types": {
+  "hippo:query": {"es": {"jcr:name": "Consulta"}},
+  "hippo:resource": {"es": {"jcr:name": "Recurso"}},
+  "hippo:facetselect": {"es": {"jcr:name": "Enlace "}},
+  "hippo:mirror": {"es": {"jcr:name": "Enlace"}}
+}}

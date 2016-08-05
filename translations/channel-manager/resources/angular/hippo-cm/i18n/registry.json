@@ -162,7 +162,7 @@
       "locales" : null
     },
     "VALIDATION_ILLEGAL_CHARACTERS_PATH_INFO_ELEMENT" : {
-      "status" : "UPDATED",
+      "status" : "CLEAN",
       "locales" : null
     },
     "COLLAPSE" : {
@@ -459,7 +459,7 @@
       "locales" : null
     },
     "ERROR_MENU_LOCKED_BY" : {
-      "status" : "UPDATED",
+      "status" : "CLEAN",
       "locales" : null
     },
     "TOOLBAR_MENU_PAGE_PAGE_NOT_EDITABLE" : {
@@ -555,12 +555,16 @@
       "locales" : null
     },
     "OK" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "es" : "UNRESOLVED"
+      }
     },
     "SUBPAGE_MENU_EDITOR_SELECT_INTERNAL_LINK" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }

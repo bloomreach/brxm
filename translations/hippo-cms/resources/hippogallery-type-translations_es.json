@@ -1,0 +1,10 @@
+{"hippo:types": {
+  "hippogallery:exampleAssetSet": {"es": {"jcr:name": "Archivo"}},
+  "hippogallery:exampleImageSet": {"es": {"jcr:name": "Imagen"}},
+  "hippogallery:image": {"es": {"jcr:name": "Imagen"}},
+  "hippogallery:imageset": {"es":   {
+    "hippogallery:thumbnail": "Miniatura",
+    "hippogallery:original": "Original",
+    "jcr:name": "Imagen"
+  }}
+}}

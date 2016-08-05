@@ -1,0 +1,21 @@
+{"hippo:types": {
+  "hippostd:folder": {"es": {"jcr:name": "carpeta"}},
+  "hippostd:directory": {"es": {"jcr:name": "carpeta sin ordenar"}},
+  "hippostd:publishable": {"es":   {
+    "hippostd:state=unpublished": "No publicado",
+    "jcr:name": "Publicable",
+    "hippostd:state=published": "Publicado",
+    "hippostd:state=draft": "Borrador"
+  }},
+  "hippostd:taggable": {"es": {"jcr:name": "Se permite etiquetas"}},
+  "hippostd:date": {"es":   {
+    "hippostd:dayofweek=1": "lunes",
+    "hippostd:dayofweek=2": "martes",
+    "hippostd:dayofweek=5": "viernes",
+    "hippostd:dayofweek=6": "sábado",
+    "hippostd:dayofweek=3": "miércoles",
+    "hippostd:dayofweek=4": "jueves",
+    "jcr:name": "Fecha compuesta",
+    "hippostd:dayofweek=7": "domingo"
+  }}
+}}

@@ -1,0 +1,13 @@
+{"hippo:types": {
+  "robotstxt:robotstxt": {"es":   {
+    "robotstxt:sitemap#hint": "Una o más URL completas señalan hacia un mapa de sitio XML",
+    "robotstxt:sitemap": "Mapa del sitio",
+    "jcr:name": "Configuración robots.txt",
+    "robotstxt:section": "Sección"
+  }},
+  "robotstxt:section": {"es":   {
+    "robotstxt:useragent": "Agente de usuario",
+    "robotstxt:disallow": "No permitir",
+    "jcr:name": "Sección"
+  }}
+}}
