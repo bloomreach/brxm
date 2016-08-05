@@ -351,7 +351,7 @@
 
         icons: 'pickinternallink,pickimage',
         hidpi: true,
-        lang: 'de,en,fr,nl,zh',
+        lang: 'de,en,fr,nl,es,zh',
 
     init: function (editor) {
       var config = editor.config.hippopicker;
