@@ -17,7 +17,9 @@ package org.onehippo.cms.l10n;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.Artifact;
@@ -82,6 +84,8 @@ public class IncludeLocalesMojo extends AbstractMojo {
     @Parameter
     private List<String> artifactPrefixes;
 
+    private Map<String, String> artifactPrefixToLocaleArtifact;
+
     @SuppressWarnings("unused")
     @Component
     RepositorySystem repositorySystem;
@@ -94,15 +98,8 @@ public class IncludeLocalesMojo extends AbstractMojo {
         String[] localeArray = StringUtils.split(locales, " ,\t\f\r\n");
 
         List<String> invalidPrefixes = new ArrayList<>();
-        for (String artifactPrefix : artifactPrefixes) {
-            try {
-                validate(artifactPrefix);
-            } catch (IllegalArgumentException e) {
-                invalidPrefixes.add(artifactPrefix);
-                getLog().warn(format("Skipping invalid artifact prefix '%s' : '%s'", artifactPrefix, e.getMessage()));
-            }
-        }
-        artifactPrefixes.removeAll(invalidPrefixes);
+
+        artifactPrefixToLocaleArtifact = map(artifactPrefixes);
 
         try {
             ProjectBuildingRequest buildingRequest =
@@ -122,12 +119,12 @@ public class IncludeLocalesMojo extends AbstractMojo {
         final String artifactName = artifact.getGroupId() + ":" + artifact.getArtifactId();
         if (isIncludedScope(artifact)) {
             String resolvedArtifactPrefix = null;
-            for (String artifactPrefix : artifactPrefixes) {
-                if (artifactName.equals(artifactPrefix) || artifactName.startsWith(artifactPrefix+"-")) {
+            for (String artifactPrefix : artifactPrefixToLocaleArtifact.keySet()) {
+
+                if (artifactName.equals(artifactPrefix) || artifactName.startsWith(artifactPrefix + "-")) {
                     resolvedArtifactPrefix = artifactPrefix;
                     for (String locale : localeArray) {
-                        final String localeArtifactId = artifactPrefix.substring(artifactPrefix.indexOf(":") + 1) + "-l10n";
-                        final Artifact localeArtifact = repositorySystem.createArtifactWithClassifier(artifact.getGroupId(), localeArtifactId, artifact.getBaseVersion(), "jar", locale);
+                        final Artifact localeArtifact = repositorySystem.createArtifactWithClassifier(artifact.getGroupId(), artifactPrefixToLocaleArtifact.get(artifactPrefix), artifact.getBaseVersion(), "jar", locale);
                         try {
                             final Artifact resolvableLocaleArtifact = resolvableLocaleArtifact(localeArtifact, repositorySystem, remoteRepositories, localRepository);
                             if (resolvableLocaleArtifact == null) {
@@ -137,7 +134,7 @@ public class IncludeLocalesMojo extends AbstractMojo {
                                 getLog().info("Include localization module '" + resolvableLocaleArtifact + "'.");
                                 if (getLog().isDebugEnabled() && !localeArtifact.getVersion().equals(resolvableLocaleArtifact.getVersion())) {
                                     getLog().debug("Fallback localization module '" + resolvableLocaleArtifact + "' is found for " +
-                                            "'"+localeArtifact+"'");
+                                            "'" + localeArtifact + "'");
                                 }
                             }
                         } catch (MojoExecutionException e) {
@@ -154,7 +151,7 @@ public class IncludeLocalesMojo extends AbstractMojo {
             if (resolvedArtifactPrefix != null) {
                 // avoid multiple inclusion of say 'org.onehippo.cms7:hippo-cms-l10n:jar:nl:4.0.0-SNAPSHOT:runtime' jar
                 // once a artifactPrefixe has been resolved, it can be removed since needs to added just once
-                artifactPrefixes.remove(resolvedArtifactPrefix);
+                artifactPrefixToLocaleArtifact.remove(resolvedArtifactPrefix);
             }
         }
 
@@ -169,7 +166,7 @@ public class IncludeLocalesMojo extends AbstractMojo {
     }
 
     public Artifact resolvableLocaleArtifact(Artifact localeArtifact, RepositorySystem repositorySystem, List remoteRepositories,
-                                                    ArtifactRepository localRepository) throws MojoExecutionException {
+                                             ArtifactRepository localRepository) throws MojoExecutionException {
         ArtifactResolutionRequest request = new ArtifactResolutionRequest()
                 .setArtifact(localeArtifact)
                 .setRemoteRepositories(remoteRepositories)
@@ -240,9 +237,9 @@ public class IncludeLocalesMojo extends AbstractMojo {
             if (currentVersion == 0) {
                 return null;
             }
-            return String.valueOf(currentVersion -1);
+            return String.valueOf(currentVersion - 1);
         } catch (NumberFormatException e) {
-            return findPreviousMicroVersion(microVersion.substring(0, microVersion.length() -1));
+            return findPreviousMicroVersion(microVersion.substring(0, microVersion.length() - 1));
         }
     }
 
@@ -250,13 +247,38 @@ public class IncludeLocalesMojo extends AbstractMojo {
         return artifact.getScope() == null || artifact.getScope().equals("runtime") || artifact.getScope().equals("compile") || artifact.getScope().equals("sytem");
     }
 
-    private void validate(final String artifactPrefix) {
+    Map<String, String> map(final List<String> artifactPrefixes) {
+        Map<String, String> mapping = new HashMap<>();
+
+        for (String artifactPrefix : artifactPrefixes) {
+            try {
+                validate(artifactPrefix);
+                final int index = artifactPrefix.indexOf(",");
+                mapping.put(artifactPrefix.substring(0, index), artifactPrefix.substring(index + 1));
+            } catch (IllegalArgumentException e) {
+                getLog().warn(format("Skipping invalid artifact prefix '%s' : '%s'", artifactPrefix, e.getMessage()));
+            }
+        }
+        return mapping;
+    }
+
+    /**
+     * artifactPrefix must contain a : before the comma and after the comma not a : is allowed. There must be a comma
+     * present
+     */
+    void validate(final String artifactPrefix) {
         if (StringUtils.isBlank(artifactPrefix)) {
             throw new IllegalArgumentException("Skipping artifactPrefix because empty");
         }
         if (!artifactPrefix.contains(":")) {
-            throw new IllegalArgumentException("Skipping artifactPrefix because not of pattern '<groupId>:<artifactId>'");
+            throw new IllegalArgumentException("Skipping artifactPrefix because not of pattern '<groupId>:<artifactId>,<localeArtifactId>'");
+        }
+        if (!artifactPrefix.contains(",")) {
+            throw new IllegalArgumentException("Skipping artifactPrefix because not of pattern '<groupId>:<artifactId>,<localeArtifactId>'");
+        }
+        final String substringAfterComma = artifactPrefix.substring(artifactPrefix.indexOf(",") + 1);
+        if (substringAfterComma.contains(":") || substringAfterComma.contains(",")) {
+            throw new IllegalArgumentException("Skipping artifactPrefix because not of pattern '<groupId>:<artifactId>,<localeArtifactId>'");
         }
     }
-
 }

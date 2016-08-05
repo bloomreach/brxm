@@ -15,6 +15,10 @@
  */
 package org.onehippo.cms.l10n;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -54,4 +58,23 @@ public class IncludeLocalesMojoTest {
     }
 
 
+    @Test
+    public void test_mapping(){
+        final IncludeLocalesMojo includeLocalesMojo = new IncludeLocalesMojo();
+        List<String> artifactPrefixes = new ArrayList<>();
+        // valid
+        artifactPrefixes.add("org.onehippo.cms7:hippo-cms-engine,hippo-cms-l10n");
+        // invalid
+        artifactPrefixes.add("hippo-cms-engine,hippo-cms-l10n");
+        // invalid
+        artifactPrefixes.add("org.onehippo.cms7:hippo-cms-engine,org.onehippo.cms7:hippo-cms-l10n");
+        // invalid
+        artifactPrefixes.add("org.onehippo.cms7:hippo-cms-engine");
+
+        final Map<String, String> map = includeLocalesMojo.map(artifactPrefixes);
+
+        assertEquals(1, map.size());
+        assertEquals("org.onehippo.cms7:hippo-cms-engine",map.keySet().iterator().next());
+        assertEquals("hippo-cms-l10n",map.values().iterator().next());
+    }
 }
