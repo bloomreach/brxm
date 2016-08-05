@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class HtmlValidator implements IClusterable {
 
     private static final long serialVersionUID = 1L;
 
-    public static final String[] VALID_ELEMENTS = new String[] {"img", "object", "embed", "form", "applet"};
+    public static final String[] VALID_ELEMENTS = new String[]{"img", "object", "embed", "form", "applet", "iframe"};
 
     static class Handler extends DefaultHandler {
         boolean valid = false;
@@ -43,7 +43,7 @@ public class HtmlValidator implements IClusterable {
         @Override
         public void characters(char[] chars, int start, int length) throws SAXException {
             String value = new String(chars, start, length).intern();
-            if(CharMatcher.INVISIBLE.negate().matchesAnyOf(value)) {
+            if (CharMatcher.INVISIBLE.negate().matchesAnyOf(value)) {
                 valid = true;
             }
         }
@@ -51,8 +51,8 @@ public class HtmlValidator implements IClusterable {
         @Override
         public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
                 throws SAXException {
-            for(String element : VALID_ELEMENTS) {
-                if(element.equalsIgnoreCase(localName)) {
+            for (String element : VALID_ELEMENTS) {
+                if (element.equalsIgnoreCase(localName)) {
                     valid = true;
                     break;
                 }
@@ -65,7 +65,7 @@ public class HtmlValidator implements IClusterable {
     }
 
     public Set<String> validateNonEmpty(String html) throws ValidationException {
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         Handler handler = new Handler();
         try {
             InputSource is = new InputSource();
