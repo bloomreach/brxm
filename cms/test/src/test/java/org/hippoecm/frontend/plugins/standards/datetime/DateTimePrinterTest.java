@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.wicket.ThreadContext;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.session.UserSession;
 import org.junit.Before;

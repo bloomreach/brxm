@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.wizard.IWizard;
 import org.apache.wicket.extensions.wizard.IWizardModel;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.ResourceModel;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 
 public abstract class AjaxWizardButton extends AjaxButton {
     private static final long serialVersionUID = 1L;
@@ -30,8 +30,7 @@ public abstract class AjaxWizardButton extends AjaxButton {
     private final IWizard wizard;
 
     public AjaxWizardButton(String id, IWizard wizard, final Form form, String labelResourceKey) {
-        super(id, form);
-        this.setLabel(new ResourceModel(labelResourceKey));
+        super(id, new ClassResourceModel(labelResourceKey, AjaxWizardButton.class), form);
         this.wizard = wizard;
     }
 

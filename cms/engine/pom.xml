@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -153,7 +153,35 @@
           <include>**/*.js</include>
         </includes>
       </resource>
+      <!-- package resources fetched via NPM -->
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/node_modules/jstimezonedetect/dist</directory>
+        <targetPath>${basedir}/target/classes/org/hippoecm/frontend/plugins/login</targetPath>
+        <includes>
+          <include>jstz.min.js</include>
+        </includes>
+      </resource>
     </resources>
+    <plugins>
+      <!-- Use NPM to fetch external JavaScript dependencies -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${maven.plugin.exec.version}</version>
+        <executions>
+          <execution>
+            <id>npm-install</id>
+            <phase>generate-sources</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <executable>npm</executable>
+              <commandlineArgs>install</commandlineArgs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
 </project>
