@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,30 +15,30 @@
  */
 package org.hippoecm.addon.workflow;
 
-import java.text.DateFormat;
-import java.util.Calendar;
+import java.time.Instant;
+import java.time.format.FormatStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.AbstractValidator;
-import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
 
+/**
+ * Validate if the date value is in the future. The fraction time after minute is not counted.
+ *
+ */
 public class FutureDateValidator extends AbstractValidator<Date> {
 
     public static final String EMPTY_DATE = "date.empty";
     public static final String DATE_IN_THE_PAST = "date.in.past";
     public static final String INPUTDATE_LABEL = "inputdate";
-    public static final int SECONDS_ADDED_TO_CORRECT_FOR_UNSET_SECOND_BY_DATETIMEFIELD = 59;
-    public static final int YEAR_CORRECTION = 1900;
 
     private String resourceKey;
 
-
     public FutureDateValidator() {
     }
-
 
     public boolean validateOnNullValue() {
         return true;
@@ -46,17 +46,18 @@ public class FutureDateValidator extends AbstractValidator<Date> {
 
     @Override
     protected void onValidate(final IValidatable<Date> dateIValidatable) {
-        Date date = dateIValidatable.getValue();
+        final Date date = dateIValidatable.getValue();
         if (date == null) {
             resourceKey = EMPTY_DATE;
             error(dateIValidatable);
             return;
         }
-        Calendar now = Calendar.getInstance();
-        Calendar publicationDate = Calendar.getInstance();
-        publicationDate.set(date.getYear() + YEAR_CORRECTION, date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
-        publicationDate.add(Calendar.SECOND, SECONDS_ADDED_TO_CORRECT_FOR_UNSET_SECOND_BY_DATETIMEFIELD);
-        if (publicationDate.before(now)) {
+
+        final Instant publicationDateTime = date.toInstant()
+                .plus(1, ChronoUnit.MINUTES); // 1 minute up to round up second fraction.
+
+        final Instant now = Instant.now();
+        if (publicationDateTime.isBefore(now)) {
             resourceKey = DATE_IN_THE_PAST;
             error(dateIValidatable);
         }
@@ -65,24 +66,19 @@ public class FutureDateValidator extends AbstractValidator<Date> {
     @Override
     protected Map<String, Object> variablesMap(IValidatable<Date> validatable) {
         final Map<String, Object> map = super.variablesMap(validatable);
-        Date date = validatable.getValue();
+        final Date date = validatable.getValue();
         if (date == null) {
             return map;
         }
-        UserSession session = UserSession.get();
-        Locale locale = session.getLocale();
 
-        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, locale);
-        map.put(INPUTDATE_LABEL, df.format(date));
+        final String dateLabel = DateTimePrinter.of(date).print(FormatStyle.LONG, FormatStyle.MEDIUM);
+        map.put(INPUTDATE_LABEL, dateLabel);
 
         return map;
     }
-
 
     @Override
     protected String resourceKey() {
         return resourceKey;
     }
-
-
 }
