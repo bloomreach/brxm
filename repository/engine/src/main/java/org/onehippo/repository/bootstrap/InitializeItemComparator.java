@@ -77,6 +77,12 @@ class InitializeItemComparator implements Comparator<InitializeItem> {
         if (result != 0) {
             return result;
         }
+        if (i2.isDownstreamItem(i1)) {
+            return -1;
+        }
+        if ( i1.isDownstreamItem(i2)) {
+            return 1;
+        }
         return i1.getName().compareTo(i2.getName());
     }
 
