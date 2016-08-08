@@ -49,7 +49,7 @@
   "EXPERIMENT_LABEL_RUNNING": "Expérience en cours",
   "ERROR_ENTER_EDIT": "Le passage en mode Modifier a échoué",
   "ERROR_PAGE_PARENT_MISSING": "La page n'a pas pu être enregistrée: l'URL indiquée n'est plus disponible",
-  "ERROR_UPDATE_COMPONENT": "Le composant n'a pas pu être mis à jour: le conteneur est verrouillé par '{{lockedBy}}'",
+  "ERROR_UPDATE_COMPONENT": "Impossible de modifier ce composant",
   "ERROR_MENU_ITEM_SAVE_FAILED": "L'élément du menu n'a pas pu être enregistré",
   "ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED": "Le plan de site de ce canal n'a pas pu être récupéré",
   "PICKER_TYPE_SITEMAP_ITEMS": "Pages (éléments de plan de site)",
