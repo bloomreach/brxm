@@ -32,7 +32,7 @@
   <properties>
     <taglibs.version>1.2.1</taglibs.version>
     <commons.lang.version>2.6</commons.lang.version>
-    <hippo.cms.locales>nl,de,fr,zh</hippo.cms.locales>
+    <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
 
     <hippo.plugin.poll.version>3.1.0-SNAPSHOT</hippo.plugin.poll.version>
   </properties>
