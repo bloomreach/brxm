@@ -74,10 +74,14 @@ public class ResourceBundlesInstruction extends InitializeInstruction {
     private Collection<String> getContextPaths() throws RepositoryException {
         if (contextPaths == null) {
             contextPaths = new HashSet<>();
-            for (BundleInfo bundleInfo : getBundleFileInfo().getBundleInfos()) {
-                contextPaths.add(TRANSLATIONS_PATH + '/'
-                        + StringUtils.replaceChars(bundleInfo.getName(), '.', '/')
-                        + '/' + bundleInfo.getLocale().toString());
+            try {
+                for (BundleInfo bundleInfo : getBundleFileInfo().getBundleInfos()) {
+                    contextPaths.add(TRANSLATIONS_PATH + '/'
+                            + StringUtils.replaceChars(bundleInfo.getName(), '.', '/')
+                            + '/' + bundleInfo.getLocale().toString());
+                }
+            } catch (RepositoryException e) {
+                // failed to load, ignored here, will fail again & bubble up during execute
             }
         }
         return contextPaths;
@@ -139,7 +143,6 @@ public class ResourceBundlesInstruction extends InitializeInstruction {
         for (Map.Entry<String, String> entry : bundleInfo.getTranslations().entrySet()) {
             if (!entry.getValue().equals(JcrUtils.getStringProperty(bundle, entry.getKey(), null))) {
                 // only set new or changed property value
-
                 bundle.setProperty(entry.getKey(), entry.getValue());
             }
         }
