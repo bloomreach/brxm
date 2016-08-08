@@ -39,7 +39,7 @@
     <junit.version>4.5</junit.version>
     <commons.lang.version>2.6</commons.lang.version>
     <lib.spring-js.version>2.0.5.RELEASE</lib.spring-js.version>
-    <hippo.cms.locales>nl,de,fr,zh</hippo.cms.locales>
+    <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
   </properties>
 
   <repositories>
