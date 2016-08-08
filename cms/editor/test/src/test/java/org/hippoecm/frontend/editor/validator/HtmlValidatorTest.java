@@ -111,6 +111,13 @@ public class HtmlValidatorTest {
         assertEquals(0, violations.size());
     }
 
+    @Test
+    public void testIframeHtml() throws Exception {
+        String text = "<iframe src=\"http://example.com\"></iframe>";
+        Set<String> violations = validate(text);
+        assertEquals(0, violations.size());
+    }
+
     private Set<String> validate(final String text) throws ValidationException {
         String html = "<html><body>" + text + "</body></html>";
         return new HtmlValidator().validateNonEmpty(html);
