@@ -418,6 +418,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/foo", "/foo/bar" } );
         item.setProperty(HIPPO_SEQUENCE, 2l);
         Node upstreamItemNode = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
+        upstreamItemNode.setProperty(HIPPO_CONTENTRESOURCE, "fake");
         upstreamItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/foo"});
         upstreamItemNode.setProperty(HIPPO_SEQUENCE, 1l);
         session.save();
@@ -453,6 +454,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTPROPSET, new String[] { "<dummy>" });
         item.setProperty(HIPPO_SEQUENCE, 2l);
         Node upstreamItemNode = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
+        upstreamItemNode.setProperty(HIPPO_CONTENTRESOURCE, "fake");
         upstreamItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/foo"});
         upstreamItemNode.setProperty(HIPPO_SEQUENCE, 1l);
         session.save();
@@ -480,6 +482,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         item.setProperty(HIPPO_CONTENTDELETE, "/foo/bar");
         item.setProperty(HIPPO_SEQUENCE, 2l);
         Node upstreamItemNode = session.getRootNode().addNode("hippo:configuration/hippo:initialize/upstream", "hipposys:initializeitem");
+        upstreamItemNode.setProperty(HIPPO_CONTENTRESOURCE, "fake");
         upstreamItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/foo"});
         upstreamItemNode.setProperty(HIPPO_SEQUENCE, 1l);
         session.save();
