@@ -422,7 +422,7 @@ public class InitializeItem {
         final Node initializationFolder = tempItemNode.getSession().getNode(INITIALIZATION_FOLDER);
         itemNode = JcrUtils.getNodeIfExists(initializationFolder, tempItemNode.getName());
 
-        if (itemNode != null && isReloadRequested()) {
+        if (itemNode != null && (isResourceBundles() || isReloadRequested())) {
             if (isDeltaMerge()) {
                 String message = "Cannot reload initialize item " + getName() + " because it is a combine or overlay delta";
                 log.error(message);

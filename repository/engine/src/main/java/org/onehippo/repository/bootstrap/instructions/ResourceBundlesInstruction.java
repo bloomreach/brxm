@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.bootstrap.InitializeInstruction;
 import org.onehippo.repository.bootstrap.InitializeItem;
 import org.onehippo.repository.bootstrap.PostStartupTask;
@@ -136,7 +137,11 @@ public class ResourceBundlesInstruction extends InitializeInstruction {
         final Node bundles = getOrCreateResourceBundles(bundleInfo.getName());
         final Node bundle = getOrCreateNode(bundleInfo.getLocale().toString(), bundles, NT_RESOURCEBUNDLE);
         for (Map.Entry<String, String> entry : bundleInfo.getTranslations().entrySet()) {
-            bundle.setProperty(entry.getKey(), entry.getValue());
+            if (!entry.getValue().equals(JcrUtils.getStringProperty(bundle, entry.getKey(), null))) {
+                // only set new or changed property value
+
+                bundle.setProperty(entry.getKey(), entry.getValue());
+            }
         }
     }
 
