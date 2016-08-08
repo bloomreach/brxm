@@ -60,7 +60,13 @@ public class Importer {
                 log.error("No such module: {}", fqKey.moduleId);
                 continue;
             }
+
             final RegistryInfo registryInfo = module.getRegistry().getRegistryInfo(fqKey.registryFile);
+            if (!registryInfo.exists()) {
+                log.warn("Could not find registry file {}, please verify if it was moved/deleted", registryInfo.getFileName());
+                continue;
+            }
+
             final ResourceBundle resourceBundle = module.getRegistry().getResourceBundle(fqKey.bundleName, locale, registryInfo);
             resourceBundle.setModuleName(fqKey.moduleId);
 
