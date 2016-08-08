@@ -29,8 +29,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExcelImportFileReader implements ImportFileReader {
+
+    private static final Logger log = LoggerFactory.getLogger(ExcelImportFileReader.class);
 
     public ExcelImportFileReader() {
     }
@@ -49,16 +53,23 @@ public class ExcelImportFileReader implements ImportFileReader {
         final Iterator<Row> rowIterator = sheet.rowIterator();
         while (rowIterator.hasNext()) {
             final Row row = rowIterator.next();
-            final List<String> rowData = new ArrayList<>();
-            for (int c = 0; c < row.getLastCellNum(); c++) {
-                Cell cell = row.getCell(c);
-                if (cell != null) {
-                    rowData.add(cell.getStringCellValue());
-                } else {
-                    rowData.add("");
+            try {
+                final List<String> rowData = new ArrayList<>();
+                for (int c = 0; c < row.getLastCellNum(); c++) {
+                    Cell cell = row.getCell(c);
+                    if (cell == null) {
+                        throw new Exception("empty cell");
+                    }
+                    if (cell.getCellType() != Cell.CELL_TYPE_STRING) {
+                        throw new Exception("content is not an integer");
+                    } else {
+                        rowData.add(cell.getStringCellValue());
+                    }
                 }
+                data.add(rowData.toArray(new String[0]));
+            } catch (Exception e) {
+                log.warn("Skipping translation on row " + row.getRowNum() + ": " + e.getMessage());
             }
-            data.add(rowData.toArray(new String[0]));
         }
 
         return data;
