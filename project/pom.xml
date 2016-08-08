@@ -816,6 +816,11 @@
           <artifactId>maven-enforcer-plugin</artifactId>
           <version>${maven.plugin.enforcer.version}</version>
         </plugin>
+        <plugin>
+          <groupId>org.zeroturnaround</groupId>
+          <artifactId>jrebel-maven-plugin</artifactId>
+          <version>${maven.plugin.jrebel.version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -1074,7 +1079,6 @@
           <plugin>
             <groupId>org.zeroturnaround</groupId>
             <artifactId>jrebel-maven-plugin</artifactId>
-            <version>${maven.plugin.jrebel.version}</version>
             <executions>
               <execution>
                 <id>generate-rebel-xml</id>
