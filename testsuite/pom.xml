@@ -60,7 +60,7 @@
 
     <json-lib.version>2.2.2</json-lib.version>
 
-    <hippo.cms.locales>nl,de,fr,zh</hippo.cms.locales>
+    <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
 
     <!-- properties for clustering setup support -->
     <cluster.node>node1</cluster.node>
