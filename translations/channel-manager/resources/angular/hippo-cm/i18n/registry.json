@@ -554,16 +554,12 @@
       "locales" : null
     },
     "OK" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "SUBPAGE_MENU_EDITOR_SELECT_INTERNAL_LINK" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

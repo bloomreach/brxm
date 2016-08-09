@@ -6,8 +6,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsBlogAuthorPostsComponentInfo/postScope" : {
@@ -15,8 +14,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsBlogAuthorPostsComponentInfo/sortField" : {
@@ -24,22 +22,19 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/group.documents" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/group.settings" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/document4" : {
@@ -47,8 +42,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/document3" : {
@@ -56,8 +50,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/document6" : {
@@ -65,8 +58,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/document5" : {
@@ -74,8 +66,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/document2" : {
@@ -83,8 +74,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/document1" : {
@@ -92,8 +82,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/cycle" : {
@@ -101,8 +90,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/pause" : {
@@ -110,8 +98,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/carouselWidth" : {
@@ -119,8 +106,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/carouselHeight" : {
@@ -128,8 +114,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/carouselBackgroundColor" : {
@@ -137,8 +122,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/showNavigation" : {
@@ -146,8 +130,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo/interval" : {
@@ -155,8 +138,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsDocumentComponentInfo/document" : {
@@ -164,8 +146,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsEventsComponentInfo/hidePastEvents" : {
@@ -173,8 +154,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsEventsComponentInfo/documentDateField" : {
@@ -182,8 +162,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsEventsComponentInfo/documentTypes" : {
@@ -191,8 +170,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsFacetsComponentInfo/facetPath" : {
@@ -200,22 +178,19 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType#TERRAIN" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType.help" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/address" : {
@@ -223,8 +198,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/apiKey" : {
@@ -232,8 +206,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/latitude" : {
@@ -241,8 +214,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType" : {
@@ -250,15 +222,13 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/location.help" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/zoomFactor" : {
@@ -266,22 +236,19 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/map.options" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType#SATELLITE" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/width" : {
@@ -289,29 +256,25 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType#ROADMAP" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/mapType#HYBRID" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/location" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/longitude" : {
@@ -319,8 +282,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsGoogleMapsComponentInfo/height" : {
@@ -328,8 +290,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsImageComponentInfo/document" : {
@@ -337,8 +298,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListComponentInfo/path" : {
@@ -346,8 +306,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListComponentInfo/documentTypes" : {
@@ -355,8 +314,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListComponentInfo/includeSubtypes" : {
@@ -364,8 +322,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document8" : {
@@ -373,8 +330,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document7" : {
@@ -382,8 +338,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document9" : {
@@ -391,8 +346,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document4" : {
@@ -400,8 +354,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document3" : {
@@ -409,8 +362,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document6" : {
@@ -418,8 +370,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document10" : {
@@ -427,8 +378,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document5" : {
@@ -436,8 +386,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document2" : {
@@ -445,8 +394,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsListPickerComponentInfo/document1" : {
@@ -454,8 +402,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsMenuComponentInfo/menu" : {
@@ -463,8 +410,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsNewsComponentInfo/hideFutureItems" : {
@@ -472,8 +418,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsNewsComponentInfo/documentDateField" : {
@@ -481,8 +426,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsNewsComponentInfo/documentTypes" : {
@@ -490,8 +434,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsPageable/pageSize" : {
@@ -499,8 +442,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsPageable/showPagination" : {
@@ -508,8 +450,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsRepositoryMenuComponentInfo/folderLinks" : {
@@ -517,8 +458,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsRepositoryMenuComponentInfo/depth" : {
@@ -526,8 +466,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsRepositoryMenuComponentInfo/root" : {
@@ -535,8 +474,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsSearchComponentInfo/documentTypes" : {
@@ -544,8 +482,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsSearchComponentInfo/showPagination" : {
@@ -553,8 +490,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsSortable/sortOrder#desc" : {
@@ -562,8 +498,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsSortable/sortOrder" : {
@@ -571,8 +506,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsSortable/sortField" : {
@@ -580,8 +514,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsSortable/sortOrder#asc" : {
@@ -589,8 +522,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo/width" : {
@@ -598,8 +530,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo/height" : {
@@ -607,8 +538,7 @@
       "locales" : {
         "de" : "UNRESOLVED",
         "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     }
   }

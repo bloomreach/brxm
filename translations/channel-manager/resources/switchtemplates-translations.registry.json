@@ -4,22 +4,19 @@
     "hippo:channelmanager.switch-template/choose.template" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:channelmanager.switch-template/switch.template" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     },
     "hippo:channelmanager.switch-template/missing.template" : {
       "status" : "UPDATED",
       "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "zh" : "UNRESOLVED"
       }
     }
   }

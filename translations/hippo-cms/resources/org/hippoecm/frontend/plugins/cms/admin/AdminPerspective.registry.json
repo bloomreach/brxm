@@ -54,10 +54,8 @@
       "locales" : null
     },
     "user-active-true" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "permissions-group-removed" : {
       "status" : "CLEAN",
@@ -376,10 +374,8 @@
       "locales" : null
     },
     "user-active-false" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "permissions-users-label" : {
       "status" : "CLEAN",
@@ -450,10 +446,8 @@
       "locales" : null
     },
     "user-password-expired-true" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "permissions-set-title" : {
       "status" : "CLEAN",
@@ -684,10 +678,8 @@
       "locales" : null
     },
     "user-password-expired-false" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "group-new-panel-title" : {
       "status" : "CLEAN",
