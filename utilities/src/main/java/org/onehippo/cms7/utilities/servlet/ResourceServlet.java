@@ -85,16 +85,6 @@ import org.slf4j.LoggerFactory;
  *     <td>META-INF</td>
  *   </tr>
  *   <tr>
- *     <td>cacheTimeout</td>
- *     <td>
- *       Millisecond value to set cache control HTTP headers: 'Expires' and 'Cache-Control'.
- *       These cache control HTTP headers will be written only if this value is greater than zero.
- *       Otherwise, the cache control HTTP headers are not written.
- *     </td>
- *     <td>0</td>
- *     <td>31556926</td>
- *   </tr>
- *   <tr>
  *     <td>gzipEnabled</td>
  *     <td>Flag to enable/disable gzip encoded response for specified mimeTypes, which can be configured by 'compressedMimeTypes' init parameter.</td>
  *     <td>false</td>
@@ -214,6 +204,8 @@ public class ResourceServlet extends HttpServlet {
 
     private static final String HTTP_CACHE_CONTROL_HEADER = "Cache-Control";
 
+    private static final int CACHE_TIME_OUT_1_YEAR_IN_SECONDS = 31556926;
+
     private static final Set<Pattern> DEFAULT_ALLOWED_RESOURCE_PATHS = new HashSet<>();
     static {
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.js"));
@@ -270,8 +262,6 @@ public class ResourceServlet extends HttpServlet {
 
     private String jarPathPrefix;
 
-    private int cacheTimeout;
-
     private boolean gzipEnabled;
 
     private boolean webResourceEnabled;
@@ -280,8 +270,10 @@ public class ResourceServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+        if (getInitParameter("cacheTimeOut") != null) {
+            log.info("'cacheTimeOut' init-param usage is ignored. You can remove this init-param from the servlet config");
+        }
         jarPathPrefix = getInitParameter("jarPathPrefix", "META-INF");
-        cacheTimeout = Integer.parseInt(getInitParameter("cacheTimeout", "31556926"));
         gzipEnabled = Boolean.parseBoolean(getInitParameter("gzipEnabled", "true"));
         webResourceEnabled = Boolean.parseBoolean(getInitParameter("webResourceEnabled", "true"));
         jarResourceEnabled = Boolean.parseBoolean(getInitParameter("jarResourceEnabled", "true"));
@@ -450,17 +442,10 @@ public class ResourceServlet extends HttpServlet {
         response.setContentLength(contentLength);
         response.setContentType(mimeType);
 
-        if (cacheTimeout > 0) {
-            // Http 1.0 header
-            response.setDateHeader(HTTP_EXPIRES_HEADER, System.currentTimeMillis() + cacheTimeout * 1000L);
-            // Http 1.1 header
-            response.setHeader(HTTP_CACHE_CONTROL_HEADER, "max-age=" + cacheTimeout);
-        } else {
-            // Http 1.0 header
-            response.setDateHeader(HTTP_EXPIRES_HEADER, -1);
-            // Http 1.1 header
-            response.setHeader(HTTP_CACHE_CONTROL_HEADER, "no-cache");
-        }
+        // Http 1.0 header
+        response.setDateHeader(HTTP_EXPIRES_HEADER, System.currentTimeMillis() + CACHE_TIME_OUT_1_YEAR_IN_SECONDS * 1000L);
+        // Http 1.1 header
+        response.setHeader(HTTP_CACHE_CONTROL_HEADER, "max-age=" + CACHE_TIME_OUT_1_YEAR_IN_SECONDS);
     }
 
     private OutputStream selectOutputStream(HttpServletRequest request, HttpServletResponse response) throws IOException {
