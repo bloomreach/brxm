@@ -192,16 +192,12 @@ import org.slf4j.LoggerFactory;
  */
 public class ResourceServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
-
     private static Logger log = LoggerFactory.getLogger(ResourceServlet.class);
 
     private static final Pattern WEBAPP_PROTECTED_PATH = Pattern.compile("/?WEB-INF/.*");
 
     private static final String HTTP_LAST_MODIFIED_HEADER = "Last-Modified";
-
     private static final String HTTP_EXPIRES_HEADER = "Expires";
-
     private static final String HTTP_CACHE_CONTROL_HEADER = "Cache-Control";
 
     private static final int CACHE_TIME_OUT_1_YEAR_IN_SECONDS = 31556926;
@@ -254,19 +250,14 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_COMPRESSED_MIME_TYPES.add(Pattern.compile("text/.*"));
     }
 
-    private Set<Pattern> allowedResourcePaths;
-
-    private Map<String, String> mimeTypes;
-
-    private Set<Pattern> compressedMimeTypes;
-
     private String jarPathPrefix;
-
     private boolean gzipEnabled;
-
     private boolean webResourceEnabled;
-
     private boolean jarResourceEnabled;
+
+    private Set<Pattern> allowedResourcePaths;
+    private Set<Pattern> compressedMimeTypes;
+    private Map<String, String> mimeTypes;
 
     @Override
     public void init() throws ServletException {
@@ -326,7 +317,7 @@ public class ResourceServlet extends HttpServlet {
             if (log.isDebugEnabled()) {
                 log.debug("Resource: {} Not Modified.", resourcePath);
             }
-            response.setStatus(304);
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
 
@@ -353,7 +344,7 @@ public class ResourceServlet extends HttpServlet {
         }
 
         final Set<Pattern> set = new HashSet<>();
-        String [] patterns = StringUtils.split(param, ", \t\r\n");
+        final String [] patterns = StringUtils.split(param, ", \t\r\n");
         for (final String pattern : patterns) {
             if (!StringUtils.isBlank(pattern)) {
                 set.add(Pattern.compile(pattern));
@@ -415,10 +406,10 @@ public class ResourceServlet extends HttpServlet {
     }
 
     private void prepareResponse(HttpServletResponse response, URL resource, long lastModified, int contentLength) throws IOException {
-        String resourcePath = resource.getPath();
+        final String resourcePath = resource.getPath();
         String mimeType = null;
 
-        int offset = resourcePath.lastIndexOf('.');
+        final int offset = resourcePath.lastIndexOf('.');
         if (-1 != offset) {
             String extension = resource.getPath().substring(offset);
             mimeType = mimeTypes.get(extension);
@@ -450,9 +441,9 @@ public class ResourceServlet extends HttpServlet {
 
     private OutputStream selectOutputStream(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (gzipEnabled) {
-            String mimeType = response.getContentType();
+            final String mimeType = response.getContentType();
             if (matchesCompressedMimeTypes(mimeType)) {
-                String acceptEncoding = request.getHeader("Accept-Encoding");
+                final String acceptEncoding = request.getHeader("Accept-Encoding");
                 if (acceptEncoding != null && acceptEncoding.contains("gzip")) {
                     if (log.isDebugEnabled()) {
                         log.debug("Enabling GZIP compression for the current response.");
@@ -499,20 +490,18 @@ public class ResourceServlet extends HttpServlet {
     private class GZIPResponseStream extends ServletOutputStream {
 
         private ByteArrayOutputStream byteStream = null;
-
+        private ServletOutputStream servletStream = null;
         private GZIPOutputStream gzipStream = null;
-
-        private boolean closed = false;
 
         private HttpServletResponse response = null;
 
-        private ServletOutputStream servletStream = null;
+        private boolean closed = false;
 
         GZIPResponseStream(HttpServletResponse response) throws IOException {
             super();
             closed = false;
             this.response = response;
-            this.servletStream = response.getOutputStream();
+            servletStream = response.getOutputStream();
             byteStream = new ByteArrayOutputStream();
             gzipStream = new GZIPOutputStream(byteStream);
         }
@@ -557,6 +546,5 @@ public class ResourceServlet extends HttpServlet {
             }
             gzipStream.write(b, off, len);
         }
-
     }
 }
