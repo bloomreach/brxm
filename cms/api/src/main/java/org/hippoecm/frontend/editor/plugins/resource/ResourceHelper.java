@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,20 +40,6 @@ public class ResourceHelper {
     static final Logger log = LoggerFactory.getLogger(ResourceHelper.class);
 
     private ResourceHelper() {
-    }
-
-    /**
-     * @deprecated As version 2.28.00, use {@link MimeTypeHelper#validateMimeType(java.io.InputStream, String)} instead
-     * @param resource
-     * @throws ResourceException
-     * @throws RepositoryException
-     */
-    @Deprecated
-    public static void validateResource(Node resource, String filename) throws RepositoryException, InvalidMimeTypeException {
-        String mimeType = (resource.hasProperty(JcrConstants.JCR_MIMETYPE) ?
-                resource.getProperty(JcrConstants.JCR_MIMETYPE).getString() : "");
-        MimeTypeHelper.validateMimeType(resource.getProperty(JcrConstants.JCR_DATA).getBinary().getStream(),
-                mimeType);
     }
 
     /**

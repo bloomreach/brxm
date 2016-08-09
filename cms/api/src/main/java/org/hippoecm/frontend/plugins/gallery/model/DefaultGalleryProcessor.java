@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,7 +43,6 @@ import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.util.io.IOUtils;
-import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
 import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrHelper;
@@ -338,20 +337,6 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             node.setProperty(JcrConstants.JCR_DATA, getValueFactory(node).createBinary(resourceData));
         }
         node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
-    }
-
-    /**
-     * @deprecated As version 2.28.00, the resource validation is moved to
-     * {@link org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService}
-     */
-    @Deprecated
-    @Override
-    public void validateResource(Node node, String fileName) throws GalleryException, RepositoryException {
-        try {
-            ResourceHelper.validateResource(node, fileName);
-        } catch (InvalidMimeTypeException e) {
-            throw new GalleryException("Invalid resource: " + fileName, e);
-        }
     }
 
     @Override

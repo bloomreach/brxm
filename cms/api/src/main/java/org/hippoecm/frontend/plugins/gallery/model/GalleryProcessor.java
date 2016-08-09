@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,14 +33,6 @@ public interface GalleryProcessor extends IClusterable {
 
     void makeImage(Node node, InputStream istream, String mimeType, String filename) throws GalleryException,
             RepositoryException;
-
-    /**
-     * @deprecated As version 2.28.00, the resource validation is moved to
-     * {@link org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService}
-     *
-     */
-    @Deprecated
-    void validateResource(Node node, String fileName) throws GalleryException, RepositoryException;
 
     void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
             throws GalleryException, RepositoryException;

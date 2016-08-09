@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.editor.type.PlainJcrTypeStore;
-import org.hippoecm.frontend.editor.plugins.resource.InvalidMimeTypeException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.ocm.IStore;
@@ -124,29 +123,6 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
         }
 
         return (Node) result;
-    }
-
-    /**
-     * Validates a resource node. When validation of the primary child fails, the main gallery node is not
-     * initialized further and the other resource nodes are left untouched.
-     *
-     * @deprecated As version 2.28.00, the resource validation is moved to
-     * {@link org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService}
-
-     * @param node the resource node to validate
-     * @param fileName the file name of the uploaded resource
-     *
-     * @throws GalleryException when the node is not a valid resource node
-     * @throws RepositoryException when repository access failed
-     */
-    @Deprecated
-    public void validateResource(Node node, String fileName) throws GalleryException,
-            RepositoryException {
-        try {
-            ResourceHelper.validateResource(node, fileName);
-        } catch (InvalidMimeTypeException e) {
-            throw new GalleryException("Invalid resource: " + fileName, e);
-        }
     }
 
     /**
