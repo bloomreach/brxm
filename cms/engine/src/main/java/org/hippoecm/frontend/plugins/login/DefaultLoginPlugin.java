@@ -46,7 +46,16 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
 
     public static final String SHOW_TIMEZONES_CONFIG_PARAM = "show.timezones";
     public static final String SELECTABLE_TIMEZONES_CONFIG_PARAM = "selectable.timezones";
-    public static final List<String> ALL_JAVA_TIMEZONES = Arrays.asList(TimeZone.getAvailableIDs());
+    public static final List<String> SUPPORTED_JAVA_TIMEZONES = excludeEtcTimeZones(Arrays.asList(TimeZone.getAvailableIDs()));
+
+    /**
+     * Exclude POSIX compatible timezones because they may cause confusions
+     */
+    private static List<String> excludeEtcTimeZones(final List<String> timezones) {
+        return timezones.stream()
+                .filter((tz) -> !tz.startsWith("Etc/"))
+                .collect(Collectors.toList());
+    }
 
     public DefaultLoginPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -128,11 +137,11 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
             if (configuredSelectableTimezones != null) {
                 selectableTimezones = Arrays.stream(configuredSelectableTimezones)
                         .filter(StringUtils::isNotBlank)
-                        .filter(ALL_JAVA_TIMEZONES::contains)
+                        .filter(SUPPORTED_JAVA_TIMEZONES::contains)
                         .collect(Collectors.toList());
             }
 
-            return selectableTimezones.isEmpty() ? ALL_JAVA_TIMEZONES : selectableTimezones;
+            return selectableTimezones.isEmpty() ? SUPPORTED_JAVA_TIMEZONES : selectableTimezones;
         }
     }
 }
