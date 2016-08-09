@@ -258,8 +258,7 @@ public class RootResourceTest extends AbstractResourceTest {
         .when()
             .delete(MOCK_REST_PATH + "channels/channel-foo")
         .then()
-            .statusCode(404)
-            .body("parameters[0]", equalTo("channel-foo"));
+            .statusCode(404);
         verify(channelService);
     }
 
