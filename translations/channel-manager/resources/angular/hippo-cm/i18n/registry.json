@@ -209,8 +209,7 @@
       "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED"
+        "nl" : "UNRESOLVED"
       }
     },
     "ERROR_MENU_ITEM_SAVE_FAILED" : {

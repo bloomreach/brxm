@@ -50,7 +50,7 @@
   "CONFIRM_DISCARD_ALL_CHANGES_MESSAGE": "是否放弃所有变更？",
   "ERROR_ENTER_EDIT": "输入编辑模式失败",
   "ERROR_PAGE_PARENT_MISSING": "保存页面失败，对应的URL已经不可用",
-  "ERROR_UPDATE_COMPONENT": "不能更新组件：该容器已经被'{{lockedBy}}'锁定",
+  "ERROR_UPDATE_COMPONENT": "编辑此组件失败",
   "ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED": "该通道站点地图检索失败",
   "ERROR_MENU_ITEM_SAVE_FAILED": "保存菜单项失败",
   "PICKER_TYPE_SITEMAP_ITEMS": "页码（网站地图项目）",

@@ -113,8 +113,7 @@
       "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED"
+        "nl" : "UNRESOLVED"
       }
     }
   }

@@ -2,22 +2,16 @@
   "bundleType" : "REPOSITORY",
   "keyData" : {
     "hippo:channelmanager.switch-template/choose.template" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:channelmanager.switch-template/switch.template" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:channelmanager.switch-template/missing.template" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }
