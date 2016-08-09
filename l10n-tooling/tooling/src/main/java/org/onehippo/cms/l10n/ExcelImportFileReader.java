@@ -53,22 +53,24 @@ public class ExcelImportFileReader implements ImportFileReader {
         final Iterator<Row> rowIterator = sheet.rowIterator();
         while (rowIterator.hasNext()) {
             final Row row = rowIterator.next();
-            try {
-                final List<String> rowData = new ArrayList<>();
-                for (int c = 0; c < row.getLastCellNum(); c++) {
-                    Cell cell = row.getCell(c);
-                    if (cell == null) {
-                        throw new Exception("empty cell");
-                    }
-                    if (cell.getCellType() != Cell.CELL_TYPE_STRING) {
-                        throw new Exception("content is not an integer");
-                    } else {
-                        rowData.add(cell.getStringCellValue());
-                    }
+            final List<String> rowData = new ArrayList<>();
+            boolean add = true;
+            for (int c = 0; c < row.getLastCellNum(); c++) {
+                Cell cell = row.getCell(c);
+                if (cell == null) {
+                    log.warn("Skipping translation on row " + row.getRowNum() + ": cell " + c + " is empty");
+                    add = false;
+                    break;
                 }
+                if (cell.getCellType() != Cell.CELL_TYPE_STRING) {
+                    log.warn("Skipping translation on row " + row.getRowNum() + ": cell " + c + " does not contain a string");
+                    add = false;
+                    break;
+                }
+                rowData.add(cell.getStringCellValue());
+            }
+            if (add) {
                 data.add(rowData.toArray(new String[0]));
-            } catch (Exception e) {
-                log.warn("Skipping translation on row " + row.getRowNum() + ": " + e.getMessage());
             }
         }
 
