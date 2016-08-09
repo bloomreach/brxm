@@ -199,6 +199,14 @@ public class ChannelServiceImpl implements ChannelService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteChannel(final Session session, final String channelId) throws RepositoryException, ChannelException {
+        // TODO Implement validation prior deleting a channel (HSTTWO-3731)
+
+        // TODO Implement logic to delete a channel (HSTTWO-3733)
+        throw new ChannelException("Unimplemented Operation");
+    }
+
     private Node getOrAddChannelPropsNode(final Node channelNode) throws RepositoryException {
         if (!channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
             return channelNode.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
