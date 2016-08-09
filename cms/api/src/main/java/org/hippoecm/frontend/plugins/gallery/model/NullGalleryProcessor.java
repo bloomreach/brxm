@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,11 +36,5 @@ public class NullGalleryProcessor extends DefaultGalleryProcessor {
     @Override
     protected void makeRegularImage(final Node node, final String name, final InputStream istream, final String mimeType, final Calendar lastModified) throws RepositoryException {
         // do nothing
-    }
-
-    @Deprecated
-    @Override
-    public void validateResource(final Node node, final String fileName) throws GalleryException, RepositoryException {
-        // skip validation, means any type of file can be uploaded
     }
 }
