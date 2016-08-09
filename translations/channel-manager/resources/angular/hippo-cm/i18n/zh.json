@@ -118,7 +118,7 @@
   "ERROR_MENU_LOAD_FAILED": "载入菜单失败",
   "ERROR_SITEMAP_ITEM_RETRIEVAL_FAILED": "为当前页面检索元数据失败",
   "ERROR_DELETE_COMPONENT": "不能删除'{{component}}'",
-  "OK": "合格",
+  "OK": "OK",
   "TOOLBAR_SWITCH_VIEWER_MODE": "查看器模式",
   "PICKER_TYPE_DOCUMENTS": "文件",
   "ERROR_RELEVANCE_GLOBAL_VARIANTS_UNAVAILABLE": "检索全球变体清单失败",
