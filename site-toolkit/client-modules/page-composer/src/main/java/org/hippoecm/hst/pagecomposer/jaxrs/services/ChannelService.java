@@ -35,4 +35,6 @@ public interface ChannelService {
     void saveChannel(Session session, String channelId, Channel channel) throws RepositoryException, ChannelException;
 
     List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired);
+
+    void deleteChannel(Session session, String channelId) throws RepositoryException, ChannelException;
 }
