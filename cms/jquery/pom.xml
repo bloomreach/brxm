@@ -94,6 +94,7 @@
               <output>${project.build.directory}/classes/org/onehippo/cms7/jquery/jquery-all.js</output>
             </aggregation>
           </aggregations>
+          <jswarn>false</jswarn>
         </configuration>
       </plugin>
     </plugins>
