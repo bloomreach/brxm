@@ -25,6 +25,10 @@ export class ConfigService {
 
     Object.assign(this, CmsService.getConfig());
 
+    // CMS gives us a "canManageChanges" flag, which really expresses that the current user has admin privileges.
+    // We make this explicit here in order to avoid that users of the ConfigService need to have this knowledge.
+    this.hasAdminPrivileges = this.canManageChanges;
+
     this.contextPath = this.contextPaths[0];
   }
 

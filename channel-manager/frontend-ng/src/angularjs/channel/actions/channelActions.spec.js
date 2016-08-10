@@ -24,6 +24,7 @@ describe('ChannelActions', () => {
   let $q;
   let $translate;
   let ChannelService;
+  let ConfigService;
   let DialogService;
 
   const confirmDialog = jasmine.createSpyObj('confirmDialog', ['title', 'textContent', 'ok', 'cancel']);
@@ -35,12 +36,13 @@ describe('ChannelActions', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _DialogService_) => {
+    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _ConfigService_, _DialogService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $q = _$q_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
+      ConfigService = _ConfigService_;
       DialogService = _DialogService_;
     });
 
@@ -50,6 +52,7 @@ describe('ChannelActions', () => {
     spyOn(ChannelService, 'isChannelDeletionSupported').and.returnValue(true);
     spyOn(DialogService, 'confirm').and.returnValue(confirmDialog);
     spyOn(DialogService, 'show');
+    ConfigService.hasAdminPrivileges = true;
   });
 
   function compileDirectiveAndGetController() {
@@ -80,10 +83,20 @@ describe('ChannelActions', () => {
   });
 
   it('doesn\'t expose the delete option if channel deletion is not supported', () => {
+    // admin and supported
     const ChannelActionsCtrl = compileDirectiveAndGetController();
     expect(ChannelActionsCtrl.isChannelDeletionAvailable()).toBe(true);
 
+    // admin but not supported
     ChannelService.isChannelDeletionSupported.and.returnValue(false);
+    expect(ChannelActionsCtrl.isChannelDeletionAvailable()).toBe(false);
+
+    // neither admin nor supported
+    ConfigService.hasAdminPrivileges = false;
+    expect(ChannelActionsCtrl.isChannelDeletionAvailable()).toBe(false);
+
+    // not admin but supported
+    ChannelService.isChannelDeletionSupported.and.returnValue(true);
     expect(ChannelActionsCtrl.isChannelDeletionAvailable()).toBe(false);
   });
 
