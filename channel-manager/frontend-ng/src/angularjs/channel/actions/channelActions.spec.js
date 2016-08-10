@@ -128,7 +128,8 @@ describe('ChannelActions', () => {
     DialogService.show.and.returnValue($q.reject()); // cancel
     ChannelActionsCtrl.deleteChannel();
     expect(DialogService.confirm).toHaveBeenCalled();
-    expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DELETE_CHANNEL_MESSAGE', { channel: 'test-channel' });
+    expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DELETE_CHANNEL_TITLE', { channel: 'test-channel' });
+    expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DELETE_CHANNEL_MESSAGE');
     expect(DialogService.show).toHaveBeenCalled();
 
     $rootScope.$digest();

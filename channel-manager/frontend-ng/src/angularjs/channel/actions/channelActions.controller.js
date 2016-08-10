@@ -50,7 +50,8 @@ export class ChannelActionsCtrl {
 
   _confirmDelete() {
     const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_DELETE_CHANNEL_MESSAGE', { channel: this.ChannelService.getName() }))
+      .title(this.$translate.instant('CONFIRM_DELETE_CHANNEL_TITLE', { channel: this.ChannelService.getName() }))
+      .textContent(this.$translate.instant('CONFIRM_DELETE_CHANNEL_MESSAGE'))
       .ok(this.$translate.instant('DELETE'))
       .cancel(this.$translate.instant('CANCEL'));
 
