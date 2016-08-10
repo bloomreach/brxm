@@ -39,6 +39,7 @@ import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
+import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -162,7 +163,7 @@ public class ChannelServiceImpl implements ChannelService {
         return null;
     }
 
-    private Map<String, String> getLocalizedResources(final String channelId, final String language) {
+    private Map<String, String> getLocalizedResources(final String channelId, final String language) throws ChannelException {
         final ResourceBundle resourceBundle = getAllVirtualHosts().getResourceBundle(getChannel(channelId), new Locale(language));
         if (resourceBundle == null) {
             return Collections.EMPTY_MAP;
@@ -173,9 +174,13 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Channel getChannel(final String channelId) {
+    public Channel getChannel(final String channelId) throws ChannelException {
         final VirtualHost virtualHost = getCurrentVirtualHost();
-        return getAllVirtualHosts().getChannelById(virtualHost.getHostGroupName(), channelId);
+        final Channel channel = getAllVirtualHosts().getChannelById(virtualHost.getHostGroupName(), channelId);
+        if (channel == null) {
+            throw new ChannelNotFoundException(channelId);
+        }
+        return channel;
     }
 
     @Override

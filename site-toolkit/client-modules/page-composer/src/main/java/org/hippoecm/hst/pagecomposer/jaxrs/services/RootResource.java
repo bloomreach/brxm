@@ -99,7 +99,12 @@ public class RootResource extends AbstractConfigResource {
         try {
             final Channel channel = channelService.getChannel(channelId);
             return Response.ok().entity(channel).build();
-        } catch (RuntimeRepositoryException e) {
+        } catch (ChannelNotFoundException e) {
+            log.warn(e.getMessage());
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .build();
+        } catch (RuntimeRepositoryException | ChannelException e) {
             final String error = "Could not determine authorization";
             log.warn(error, e);
             return Response.serverError().entity(error).build();
@@ -154,12 +159,12 @@ public class RootResource extends AbstractConfigResource {
 
             return Response.ok().build();
         } catch (ChannelNotFoundException e) {
-            log.error(e.getMessage());
+            log.warn(e.getMessage());
             return Response
                     .status(Response.Status.NOT_FOUND)
-                    .entity(e).build();
+                    .build();
         } catch (RepositoryException | ChannelException e) {
-            log.error(e.getMessage());
+            log.warn("Could not delete channel", e);
             resetSession();
             return Response.serverError().build();
         }
