@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -78,7 +78,6 @@
               <includes>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/core/jquery-1.11.0-min.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.class-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b-min.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.namespace-min.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/ui/jquery-ui-1.9.2-min.js</include>
               </includes>
@@ -89,7 +88,6 @@
               <includes>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/core/jquery-1.11.0.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.class.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.namespace.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/ui/jquery-ui-1.9.2.js</include>
               </includes>
