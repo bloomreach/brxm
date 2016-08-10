@@ -42,6 +42,7 @@ import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.resource.AbstractResourceStream;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
+import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -69,6 +70,7 @@ public class BinaryEditor extends Panel {
 
         // download
         final ResourceStreamResource resource = new ResourceStreamResource(stream);
+        resource.setCacheDuration(Duration.NONE);
         try {
             final Node node = model.getProperty().getParent().getParent();
             final StringBuilder fileName = new StringBuilder(node.getName());
@@ -79,7 +81,7 @@ public class BinaryEditor extends Panel {
         } catch (RepositoryException e) {
             log.error("Unexpected exception while determining download filename", e);
         }
-        final Link downloadLink = new ResourceLink("binary-download-link", resource);
+        final Link downloadLink = new ResourceLink("binary-download-lnk", resource);
         downloadLink.add(new Label("binary-download-text", "download (" + getSizeString(stream.length()) + ")"));
         add(downloadLink);
 
