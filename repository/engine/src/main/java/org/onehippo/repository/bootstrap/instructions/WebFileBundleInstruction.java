@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import org.onehippo.repository.bootstrap.util.PartialZipFile;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_WEB_FILE_BUNDLE;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
 import static org.onehippo.repository.bootstrap.util.BootstrapUtils.getBaseZipFileFromURL;
-import static org.onehippo.repository.bootstrap.util.BootstrapUtils.removeNode;
 
 public class WebFileBundleInstruction extends InitializeInstruction {
 
@@ -66,15 +65,7 @@ public class WebFileBundleInstruction extends InitializeInstruction {
         final String extensionSource = item.getExtensionSource();
 
         try {
-            final PostStartupTask importTask = createImportWebFileTask(extensionSource, bundlePath, session);
-            if (importTask != null && item.isReloadable()) {
-                final String bundleName = bundlePath.indexOf('/') == -1 ? bundlePath : bundlePath.substring(bundlePath.lastIndexOf('/') + 1);
-                final String contextNodePath = WebFilesService.JCR_ROOT_PATH + "/" + bundleName;
-                if (session.nodeExists(contextNodePath)) {
-                    removeNode(session, contextNodePath, false);
-                }
-            }
-            return importTask;
+            return createImportWebFileTask(extensionSource, bundlePath, session);
         } catch (URISyntaxException |IOException e) {
             log.error("Error initializing web file bundle {} at {}", bundlePath, WebFilesService.JCR_ROOT_PATH, e);
             return null;
@@ -150,5 +141,4 @@ public class WebFileBundleInstruction extends InitializeInstruction {
             }
         }
     }
-
 }
