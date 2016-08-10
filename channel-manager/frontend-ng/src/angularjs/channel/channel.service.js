@@ -96,6 +96,7 @@ export class ChannelService {
     this.HstService.getFeatures()
       .then((response) => {
         this.crossChannelPageCopySupported = response.data.crossChannelPageCopySupported;
+        this.channelDeletionSupported = response.data.channelDeletionSupported;
       });
   }
 
@@ -269,6 +270,10 @@ export class ChannelService {
 
   isCrossChannelPageCopySupported() {
     return this.crossChannelPageCopySupported;
+  }
+
+  isChannelDeletionSupported() {
+    return this.channelDeletionSupported;
   }
 
   loadPageModifiableChannels() {

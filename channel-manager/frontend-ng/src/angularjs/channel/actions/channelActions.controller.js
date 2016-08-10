@@ -15,16 +15,44 @@
  */
 
 export class ChannelActionsCtrl {
-  constructor(ChannelService) {
+  constructor($translate, ChannelService, DialogService) {
     'ngInject';
+    this.$translate = $translate;
     this.ChannelService = ChannelService;
+    this.DialogService = DialogService;
+  }
+
+  isChannelSettingsAvailable() {
+    return this.ChannelService.getChannel().hasCustomProperties;
+  }
+
+  isChannelDeletionAvailable() {
+    return this.ChannelService.isChannelDeletionSupported();
+  }
+
+  hasMenuOptions() {
+    return this.isChannelSettingsAvailable() || this.isChannelDeletionAvailable();
   }
 
   openSettings() {
     this.onActionSelected({ subpage: 'channel-settings' });
   }
 
-  isChannelSettingsAvailable() {
-    return this.ChannelService.getChannel().hasCustomProperties;
+  deleteChannel() {
+    this._confirmDelete()
+      .then(() => {
+        // TODO: actually ask the back-end to delete the channel!
+        // something like: this.ChannelService.delete();
+      });
+    // do nothing on cancel
+  }
+
+  _confirmDelete() {
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_DELETE_CHANNEL_MESSAGE', { channel: this.ChannelService.getName() }))
+      .ok(this.$translate.instant('DELETE'))
+      .cancel(this.$translate.instant('CANCEL'));
+
+    return this.DialogService.show(confirm);
   }
 }
