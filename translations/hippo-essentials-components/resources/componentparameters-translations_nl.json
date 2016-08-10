@@ -86,7 +86,7 @@
   "EssentialsSortable": {"nl":   {
     "sortOrder#desc": "Aflopend",
     "sortOrder": "Sorteer volgorde",
-    "sortField": "Sorteer veld",
+    "sortField": "Veld voor sortering",
     "sortOrder#asc": "Oplopend"
   }},
   "EssentialsVideoComponentInfo": {"nl":   {
