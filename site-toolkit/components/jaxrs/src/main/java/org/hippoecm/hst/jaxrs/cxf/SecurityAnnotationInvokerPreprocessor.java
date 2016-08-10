@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class SecurityAnnotationInvokerPreprocessor implements InvokerPreprocesso
     }
     
     protected boolean isForbiddenOperation(Exchange exchange) {
-        SecurityContext securityContext = new SecurityContextImpl(exchange.getInMessage());
+        SecurityContext securityContext = getSecurityContext(exchange);
         OperationResourceInfo operationResourceInfo = exchange.get(OperationResourceInfo.class);
         Method method = operationResourceInfo.getMethodToInvoke();
         
@@ -70,11 +70,8 @@ public class SecurityAnnotationInvokerPreprocessor implements InvokerPreprocesso
             String [] roles = rolesAllowedAnnoOnMethod.value();
             
             if (roles != null) {
-                for (String role : roles) {
-                    if (securityContext.isUserInRole(role)) {
-                        log.debug("The user is in role: " + role);
-                        return false;
-                    }
+                if (isUserInRole(securityContext, roles)) {
+                    return false;
                 }
             }
             
@@ -95,11 +92,8 @@ public class SecurityAnnotationInvokerPreprocessor implements InvokerPreprocesso
             String [] roles = rolesAllowedAnnoOnType.value();
             
             if (roles != null) {
-                for (String role : roles) {
-                    if (securityContext.isUserInRole(role)) {
-                        log.debug("The user is in role: " + role);
-                        return false;
-                    }
+                if (isUserInRole(securityContext, roles)) {
+                    return false;
                 }
             }
             
@@ -114,6 +108,20 @@ public class SecurityAnnotationInvokerPreprocessor implements InvokerPreprocesso
             return false;
         }
         
+        return false;
+    }
+
+    protected SecurityContext getSecurityContext(final Exchange exchange) {
+        return new SecurityContextImpl(exchange.getInMessage());
+    }
+
+    private boolean isUserInRole(final SecurityContext securityContext, final String[] roles) {
+        for (String role : roles) {
+            if (securityContext.isUserInRole(role)) {
+                log.debug("The user is in role: " + role);
+                return true;
+            }
+        }
         return false;
     }
 
