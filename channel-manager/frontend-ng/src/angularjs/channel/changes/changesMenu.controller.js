@@ -66,7 +66,7 @@ export class ChangesMenuCtrl {
   }
 
   publish() {
-    this.ChannelService.publishChanges()
+    this.ChannelService.publishOwnChanges()
       .then(() => {
         this.CmsService.publish('channel-changed-in-angular');
         this.HippoIframeService.reload();
@@ -81,7 +81,7 @@ export class ChangesMenuCtrl {
 
   discard() {
     this._confirmDiscard().then(() => {
-      this.ChannelService.discardChanges()
+      this.ChannelService.discardOwnChanges()
         .then(() => {
           this.CmsService.publish('channel-changed-in-angular');
           this.HippoIframeService.reload();

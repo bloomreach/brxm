@@ -50,8 +50,8 @@ describe('ChangesMenu', () => {
       $rootScope = _$rootScope_;
     });
 
-    spyOn(ChannelService, 'publishChanges').and.returnValue($q.resolve());
-    spyOn(ChannelService, 'discardChanges').and.returnValue($q.resolve());
+    spyOn(ChannelService, 'publishOwnChanges').and.returnValue($q.resolve());
+    spyOn(ChannelService, 'discardOwnChanges').and.returnValue($q.resolve());
     spyOn(ChannelService, 'getChannel').and.returnValue({
       changedBySet: [],
     });
@@ -118,7 +118,7 @@ describe('ChangesMenu', () => {
     ChangesMenuCtrl.publish();
     $rootScope.$digest();
 
-    expect(ChannelService.publishChanges).toHaveBeenCalled();
+    expect(ChannelService.publishOwnChanges).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
@@ -126,12 +126,12 @@ describe('ChangesMenu', () => {
     const ChangesMenuCtrl = createChangesMenuCtrl();
 
     const params = { };
-    ChannelService.publishChanges.and.returnValue($q.reject({ data: params }));
+    ChannelService.publishOwnChanges.and.returnValue($q.reject({ data: params }));
     ChangesMenuCtrl.publish();
     $rootScope.$digest();
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', params);
 
-    ChannelService.publishChanges.and.returnValue($q.reject());
+    ChannelService.publishOwnChanges.and.returnValue($q.reject());
     ChangesMenuCtrl.publish();
     $rootScope.$digest();
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', undefined);
@@ -146,7 +146,7 @@ describe('ChangesMenu', () => {
 
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalled();
-    expect(ChannelService.discardChanges).toHaveBeenCalled();
+    expect(ChannelService.discardOwnChanges).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
@@ -155,12 +155,12 @@ describe('ChangesMenu', () => {
     spyOn(DialogService, 'show').and.returnValue($q.resolve());
 
     const params = { };
-    ChannelService.discardChanges.and.returnValue($q.reject({ data: params }));
+    ChannelService.discardOwnChanges.and.returnValue($q.reject({ data: params }));
     ChangesMenuCtrl.discard();
     $rootScope.$digest();
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', params);
 
-    ChannelService.discardChanges.and.returnValue($q.reject());
+    ChannelService.discardOwnChanges.and.returnValue($q.reject());
     ChangesMenuCtrl.discard();
     $rootScope.$digest();
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', undefined);
@@ -175,6 +175,6 @@ describe('ChangesMenu', () => {
 
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalled();
-    expect(ChannelService.discardChanges).not.toHaveBeenCalled();
+    expect(ChannelService.discardOwnChanges).not.toHaveBeenCalled();
   });
 });
