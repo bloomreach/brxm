@@ -50,7 +50,7 @@
   "EXPERIMENT_LABEL_RUNNING": "Experiment läuft",
   "ERROR_ENTER_EDIT": "Fehler beim Wechsel in Bearbeiten-Modus",
   "ERROR_PAGE_PARENT_MISSING": "Seite konnte nicht gespeichert werden. Die angegebene URL ist nicht mehr verfügbar",
-  "ERROR_UPDATE_COMPONENT": "Komponente kann nicht aktualisiert werden: Der Container wurde gesperrt von '{{lockedBy}}'",
+  "ERROR_UPDATE_COMPONENT": "Bearbeiten dieser Komponente fehlgeschlagen",
   "ERROR_MENU_ITEM_SAVE_FAILED": "Menüelement konnte nicht gespeichert werden",
   "ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED": "Sitemap dieses Channels konnte nicht abgerufen werden",
   "PICKER_TYPE_SITEMAP_ITEMS": "Seiten (Sitemap-Elemente)",

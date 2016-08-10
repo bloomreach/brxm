@@ -110,10 +110,8 @@
       "locales" : null
     },
     "field.hstConfigEditor" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

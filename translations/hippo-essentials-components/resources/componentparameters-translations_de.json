@@ -1,16 +1,96 @@
 {"hippo:hst": {"componentparameters": {"org": {"onehippo": {"cms7": {"essentials": {"components": {"info": {
   "EssentialsCarouselComponentInfo": {"de":   {
     "group.documents": "Karussell-Dokumente",
-    "group.settings": "Karrussel-Einstellungen"
+    "group.settings": "Karrussel-Einstellungen",
+    "document4": "Karussell-Element 4",
+    "document3": "Karussell-Element 3",
+    "document6": "Karussell-Element 6",
+    "document5": "Karussell-Element 5",
+    "document2": "Karussell-Element 2",
+    "document1": "Karussell-Element 1",
+    "cycle": "Karussell ständig durchlaufen",
+    "pause": "Karussell bei Mausaktivierung anhalten",
+    "carouselWidth": "Karussell-Breite",
+    "carouselHeight": "Karussell-Höhe",
+    "carouselBackgroundColor": "Karussell-Hintergrundfarbe",
+    "showNavigation": "Karussell-Navigation anzeigen",
+    "interval": "Karussell-Intervall (Millisekunden)"
   }},
   "EssentialsGoogleMapsComponentInfo": {"de":   {
     "mapType#TERRAIN": "Geländeinformationen",
     "mapType.help": "Anzuzeigender Kartentyp",
+    "address": "Standort/Adresse",
+    "apiKey": "Google Maps API Key",
+    "latitude": "Breitengrad",
+    "mapType": "Kartentyp",
+    "location.help": "Für den Standort können Sie entweder eine Adresse angeben oder Längen- und Breitengrad angeben.",
+    "zoomFactor": "Zoom-Faktor",
+    "map.options": "Landkartenoptionen",
+    "mapType#SATELLITE": "Google-Earth-Satellit",
     "mapType#ROADMAP": "Straßenkarte",
     "mapType#HYBRID": "Kombination normal und Satellit",
+    "width": "Breite (in Pixel)",
     "location": "Standortinformationen",
-    "location.help": "Für den Standort können Sie entweder eine Adresse angeben oder Längen- und Breitengrad angeben.",
-    "map.options": "Landkartenoptionen",
-    "mapType#SATELLITE": "Google-Earth-Satellit"
+    "longitude": "Längengrad",
+    "height": "Höhe (in Pixel)"
+  }},
+  "EssentialsBlogAuthorPostsComponentInfo": {"de":   {
+    "postScope": "Standort Blog-Posts",
+    "sortField": "Sortierfeld",
+    "pageSize": "Anzahl der anzuzeigenden Posts"
+  }},
+  "EssentialsDocumentComponentInfo": {"de": {"document": "Dokument"}},
+  "EssentialsEventsComponentInfo": {"de":   {
+    "hidePastEvents": "Vergangene Events ausblenden",
+    "documentDateField": "Feld mit Dokumentdatum (zum Ausblenden)",
+    "documentTypes": "Events-Dokumenttypen (kommagetrennt)"
+  }},
+  "EssentialsFacetsComponentInfo": {"de": {"facetPath": "Zusammengestellter Pfad"}},
+  "EssentialsImageComponentInfo": {"de": {"document": "Bild"}},
+  "EssentialsListComponentInfo": {"de":   {
+    "path": "Dokumentpfad",
+    "documentTypes": "Dokumenttypen (kommagetrennt)",
+    "includeSubtypes": "Dokumentuntertypen einschließen"
+  }},
+  "EssentialsListPickerComponentInfo": {"de":   {
+    "document8": "Dokument-Element 8",
+    "document7": "Dokument-Element 7",
+    "document9": "Dokument-Element 9",
+    "document4": "Dokument-Element 4",
+    "document3": "Dokument-Element 3",
+    "document6": "Dokument-Element 6",
+    "document10": "Dokument-Element 10",
+    "document5": "Dokument-Element 5",
+    "document2": "Dokument-Element 2",
+    "document1": "Dokument-Element 1"
+  }},
+  "EssentialsMenuComponentInfo": {"de": {"menu": "Menübezeichnung"}},
+  "EssentialsNewsComponentInfo": {"de":   {
+    "hideFutureItems": "Zukünftige Dokumente ausblenden",
+    "documentDateField": "Feld mit Dokumentdatum (zum Ausblenden)",
+    "documentTypes": "News-Dokumenttypen (kommagetrennt)"
+  }},
+  "EssentialsPageable": {"de":   {
+    "pageSize": "Seitenformat",
+    "showPagination": "Seitennummerierung anzeigen"
+  }},
+  "EssentialsRepositoryMenuComponentInfo": {"de":   {
+    "folderLinks": "Ordner sind auch Links",
+    "depth": "Tiefe",
+    "root": "Wurzelverzeichnis"
+  }},
+  "EssentialsSearchComponentInfo": {"de":   {
+    "documentTypes": "Dokumenttypen (kommagetrennt)",
+    "showPagination": "Seitennummerierung anzeigen"
+  }},
+  "EssentialsSortable": {"de":   {
+    "sortOrder#desc": "Absteigend",
+    "sortOrder": "Sortierreihenfolge",
+    "sortField": "Sortierfeld",
+    "sortOrder#asc": "Aufsteigend"
+  }},
+  "EssentialsVideoComponentInfo": {"de":   {
+    "width": "Videobreite",
+    "height": "Videohöhe"
   }}
 }}}}}}}}}

@@ -206,10 +206,8 @@
       "locales" : null
     },
     "ERROR_UPDATE_COMPONENT" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "ERROR_MENU_ITEM_SAVE_FAILED" : {
       "status" : "CLEAN",
