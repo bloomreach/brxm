@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -30,31 +30,7 @@
 
   <build>
     <defaultGoal>package</defaultGoal>
-    <resources>
-      <resource>
-        <filtering>false</filtering>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*.html</include>
-          <include>**/*.css</include>
-          <include>**/*.js</include>
-        </includes>
-      </resource>
-    </resources>
     <plugins>
-      <plugin>
-        <groupId>org.hippoecm.maven.plugins</groupId>
-        <artifactId>maven-yuicompressor-plugin</artifactId>
-        <version>1.01.00</version>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>compress</goal>
-            </goals>
-          </execution>
-        </executions>        
-      </plugin>
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>yuicompressor-maven-plugin</artifactId>
@@ -67,18 +43,12 @@
           </execution>
         </executions>
         <configuration>
-          <excludes>
-            <exclude>**/*.html</exclude>
-            <exclude>**/*.css</exclude>
-            <exclude>**/*.properties</exclude>
-          </excludes>
           <aggregations>
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/core/jquery-1.11.0-min.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.class-min.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b-min.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.namespace-min.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/ui/jquery-ui-1.9.2-min.js</include>
               </includes>
@@ -89,13 +59,13 @@
               <includes>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/core/jquery-1.11.0.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.class.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/plugins/jquery.namespace.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/jquery/ui/jquery-ui-1.9.2.js</include>
               </includes>
               <output>${project.build.directory}/classes/org/onehippo/cms7/jquery/jquery-all.js</output>
             </aggregation>
           </aggregations>
+          <jswarn>false</jswarn>
         </configuration>
       </plugin>
     </plugins>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,6 @@ public final class JQueryBundle {
 
     public static final String JQUERY_NAMESPACE_PLUGIN = "plugins/jquery.namespace.js";
     public static final String JQUERY_NAMESPACE_PLUGIN_MIN = "plugins/jquery.namespace-min.js";
-
-    public static final String JQUERY_HEAD_PLUGIN = "plugins/jquery.head-1.0.3b.js";
-    public static final String JQUERY_HEAD_PLUGIN_MIN = "plugins/jquery.head-1.0.3b-min.js";
 
     public static final String JQUERY_UI = "ui/jquery-ui-1.9.2.js";
     public static final String JQUERY_UI_MIN = "ui/jquery-ui-1.9.2-min.js";
