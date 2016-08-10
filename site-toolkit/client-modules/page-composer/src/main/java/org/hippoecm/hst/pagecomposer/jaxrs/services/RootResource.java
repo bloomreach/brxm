@@ -168,9 +168,14 @@ public class RootResource extends AbstractConfigResource {
     @GET
     @Path("/features")
     public Response getFeatures() {
-        final Boolean crossChannelPageCopySupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("cross.channel.page.copy.supported", false);
         final FeaturesRepresentation featuresRepresentation = new FeaturesRepresentation();
+
+        final Boolean crossChannelPageCopySupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("cross.channel.page.copy.supported", false);
         featuresRepresentation.setCrossChannelPageCopySupported(crossChannelPageCopySupported);
+
+        final Boolean channelDeletionSupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("channel.deletion.supported", false);
+        featuresRepresentation.setChannelDeletionSupported(channelDeletionSupported);
+
         return ok("Fetched features", featuresRepresentation);
     }
 
