@@ -50,7 +50,7 @@
   "EXPERIMENT_LABEL_RUNNING": "Actief experiment",
   "ERROR_ENTER_EDIT": "Het is niet gelukt in de Edit modus te komen",
   "ERROR_PAGE_PARENT_MISSING": "Het bewaren van de pagina is niet gelukt, de gespecificeerde URL is niet langer beschikbaar",
-  "ERROR_UPDATE_COMPONENT": "{{component}}' kan niet worden geüpdatet, de container is in gebruik bij '{{lockedBy}}'",
+  "ERROR_UPDATE_COMPONENT": "Bewerken van component is mislukt",
   "ERROR_MENU_ITEM_SAVE_FAILED": "Het is niet gelukt het menu-item te bewaren",
   "ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED": "Het is niet gelukt de sitemap voor dit channel op te halen",
   "PICKER_TYPE_SITEMAP_ITEMS": "Pagina's (Siteman items)",

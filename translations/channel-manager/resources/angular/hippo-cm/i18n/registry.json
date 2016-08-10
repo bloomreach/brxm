@@ -208,8 +208,7 @@
     "ERROR_UPDATE_COMPONENT" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "de" : "UNRESOLVED"
       }
     },
     "ERROR_MENU_ITEM_SAVE_FAILED" : {

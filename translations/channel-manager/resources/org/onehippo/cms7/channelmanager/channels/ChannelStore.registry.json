@@ -112,8 +112,7 @@
     "field.hstConfigEditor" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
-        "nl" : "UNRESOLVED"
+        "de" : "UNRESOLVED"
       }
     }
   }
