@@ -9,14 +9,19 @@
     <#else>
         <#assign pauseCarousel = ''/>
     </#if>
-    <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="${cparam.interval?c}"
+    <#if editMode>
+        <#assign componentId><@hst.namespace/>_${.now?long?c}</#assign>
+    <#else>
+        <#assign componentId><@hst.namespace/></#assign>
+    </#if>
+    <div id="${componentId}" class="carousel slide" data-ride="carousel" data-interval="${cparam.interval?c}"
          data-pause="${pauseCarousel}" data-wrap="${cparam.cycle?string}">
         <ol class="carousel-indicators">
             <#list 0..(pageable.total-1) as index>
                 <#if index==0>
-                    <li data-target="#myCarousel" data-slide-to="${index}" class="active"></li>
+                    <li data-target="#${componentId}" data-slide-to="${index}" class="active"></li>
                 <#else>
-                    <li data-target="#myCarousel" data-slide-to="${index}"></li>
+                    <li data-target="#${componentId}" data-slide-to="${index}"></li>
                 </#if>
             </#list>
         </ol>
@@ -41,8 +46,8 @@
             </#list>
         </div>
         <#if cparam.showNavigation>
-            <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-            <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+            <a class="left carousel-control" href="#${componentId}" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+            <a class="right carousel-control" href="#${componentId}" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
         </#if>
     </div>
 
@@ -81,6 +86,22 @@
     <@hst.headContribution category="htmlBodyEnd">
         <script type="text/javascript" src="<@hst.webfile path="/js/bootstrap.min.js"/>"></script>
     </@hst.headContribution>
+
+    <#--
+        The Carousel component is initialized on page-load by means of the data attributes. However, when the
+        channel-manager redraws a container (after actions like adding, removing or reordering components) it will only
+        do a page reload if one of the affected components adds a headContribution that has not been processed yet
+        (see HSTTWO-3747). To ensure it is also initialiazed when the page is *not* reloaded, the following snippet is
+        used.
+    -->
+    <#if editMode>
+        <script type="text/javascript">
+            if (window.jQuery && window.jQuery.fn.carousel) {
+                jQuery('#${componentId}').carousel();
+            }
+        </script>
+    </#if>
+
 <#elseif editMode>
     <img src="<@hst.link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
 </#if>

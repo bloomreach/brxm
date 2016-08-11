@@ -1,20 +1,29 @@
 <%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
+<%@ page import="java.util.UUID" %>
 
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 <%--@elvariable id="item" type="{{beansPackage}}.Banner"--%>
 <%--@elvariable id="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo"--%>
+<%--@elvariable id="editMode" type="java.lang.Boolean"--%>
 <c:set var="pauseCarousel" value="${requestScope.cparam.pause ? 'hover':''}"/>
+<c:set var="componentId">
+  <c:choose>
+    <c:when test="${editMode}">${UUID.randomUUID()}</c:when>
+    <c:otherwise><hst:namespace/></c:otherwise>
+  </c:choose>
+</c:set>
+
 <c:if test="${requestScope.pageable ne null && requestScope.pageable.total gt 0}">
-  <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="${requestScope.cparam.interval}"
+  <div id="${componentId}" class="carousel slide" data-ride="carousel" data-interval="${requestScope.cparam.interval}"
        data-pause="${pauseCarousel}" data-wrap="${requestScope.cparam.cycle}">
     <ol class="carousel-indicators">
       <c:forEach begin="0" end="${requestScope.pageable.total -1}" varStatus="index">
         <c:choose>
           <c:when test="${index.first}">
-            <li data-target="#myCarousel" data-slide-to="${index.index}" class="active"></li>
+            <li data-target="#${componentId}" data-slide-to="${index.index}" class="active"></li>
           </c:when>
           <c:otherwise>
-            <li data-target="#myCarousel" data-slide-to="${index.index}"></li>
+            <li data-target="#${componentId}" data-slide-to="${index.index}"></li>
           </c:otherwise>
         </c:choose>
       </c:forEach>
@@ -39,8 +48,8 @@
       </c:forEach>
     </div>
     <c:if test="${requestScope.cparam.showNavigation}">
-      <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-      <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+      <a class="left carousel-control" href="#${componentId}" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+      <a class="right carousel-control" href="#${componentId}" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
     </c:if>
   </div>
   <style type="text/css">
@@ -70,11 +79,29 @@
 
   <hst:headContribution category="htmlBodyEnd">
     <script type="text/javascript" src="<hst:webfile path="/js/jquery-2.1.0.min.js"/>"></script>
-    </hst:headContribution>
-    <hst:headContribution category="htmlBodyEnd">
-      <script type="text/javascript" src="<hst:webfile path="/js/bootstrap.min.js"/>"></script>
-  </hst:headContribution></c:if>
-<%--@elvariable id="editMode" type="java.lang.Boolean"--%>
+  </hst:headContribution>
+
+  <hst:headContribution category="htmlBodyEnd">
+    <script type="text/javascript" src="<hst:webfile path="/js/bootstrap.min.js"/>"></script>
+  </hst:headContribution>
+
+  <%--
+    The Carousel component is initialized on page-load by means of the data attributes. However, when the
+    channel-manager redraws a container (after actions like adding, removing or reordering components) it will only
+    do a page reload if one of the affected components adds a headContribution that has not been processed yet
+    (see HSTTWO-3747). To ensure it is also initialiazed when the page is *not* reloaded, the following snippet is
+    used.
+  --%>
+  <c:if test="${editMode}">
+    <script type="text/javascript">
+      if (window.jQuery && window.jQuery.fn.carousel) {
+        jQuery('#${componentId}').carousel();
+      }
+    </script>
+  </c:if>
+
+</c:if>
+
 <c:if test="${requestScope.editMode && (requestScope.pageable eq null || requestScope.pageable.total lt 1)}">
   <img src="<hst:link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
 </c:if>
