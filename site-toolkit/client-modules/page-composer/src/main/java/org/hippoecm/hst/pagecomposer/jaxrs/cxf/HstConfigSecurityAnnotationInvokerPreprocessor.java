@@ -17,12 +17,10 @@ package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 
 import java.security.Principal;
 
-import javax.jcr.RepositoryException;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.cxf.message.Exchange;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.jaxrs.cxf.SecurityAnnotationInvokerPreprocessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel;
 
@@ -40,20 +38,12 @@ public class HstConfigSecurityAnnotationInvokerPreprocessor extends SecurityAnno
         return new SecurityContext() {
             @Override
             public Principal getUserPrincipal() {
-                try {
-                    return securityModel.getUserPrincipal(RequestContextProvider.get().getSession());
-                } catch (RepositoryException e) {
-                    throw new RuntimeRepositoryException(e);
-                }
+                return securityModel.getUserPrincipal(RequestContextProvider.get());
             }
 
             @Override
             public boolean isUserInRole(final String role) {
-                try {
-                    return securityModel.isUserInRule(RequestContextProvider.get().getSession(), role);
-                } catch (RepositoryException e) {
-                    throw new RuntimeRepositoryException(e);
-                }
+                return securityModel.isUserInRule(RequestContextProvider.get(), role);
             }
 
             @Override

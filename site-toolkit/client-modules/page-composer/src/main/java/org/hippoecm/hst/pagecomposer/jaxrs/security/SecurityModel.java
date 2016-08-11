@@ -31,6 +31,7 @@ import javax.jcr.observation.EventIterator;
 import com.google.common.collect.ImmutableSet;
 
 import org.hippoecm.hst.core.jcr.GenericEventListener;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,35 +64,35 @@ public class SecurityModel {
     }
 
 
-    public Principal getUserPrincipal(final Session session) {
-        return session::getUserID;
+    public Principal getUserPrincipal(final HstRequestContext context) {
+        try {
+            return context.getSession()::getUserID;
+        } catch (RepositoryException e) {
+            throw new IllegalStateException("Exception while getting user principal.", e);
+        }
     }
 
 
-    public boolean isUserInRule(final Session session, final String functionalRole) {
+    public boolean isUserInRule(final HstRequestContext context, final String functionalRole) {
         if (!SUPPORTED_ROLES.contains(functionalRole)) {
-            throw new IllegalStateException(String.format("Functional role '%s' is not a supported functional role " +
-                    "at this moment.", functionalRole));
+            throw new IllegalArgumentException(String.format("Unsupported Functional role '%s'." ,functionalRole));
         }
         final Map<String, PrivilegePathMapping> mapping = getMappingModel();
         final PrivilegePathMapping privilegePathMappging = mapping.get(functionalRole);
         if (privilegePathMappging == null) {
-            log.info("Expected role '{}' to be present as PrivilegePathMapping but did not found it.", functionalRole);
+            log.info("No PrivilegePathMapping for role '{}'.", functionalRole);
             return false;
         }
+        Session session =  null;
         try {
+            session = context.getSession();
             session.checkPermission(privilegePathMappging.privilegePath, privilegePathMappging.privilege);
             return true;
         } catch (java.security.AccessControlException e) {
             log.debug("User '{}' is not in role '{}'", session.getUserID(), functionalRole);
             return false;
         } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Exception while checking permissions.", e);
-            } else {
-                log.warn("Exception while checking permissions : {}", e.toString());
-            }
-            return false;
+            throw new IllegalStateException("Exception while checking permissions.", e);
         }
     }
 
@@ -113,14 +114,14 @@ public class SecurityModel {
                 session = repository.login(credentials);
                 final Node templateComposerNode = JcrUtils.getNodeIfExists(jcrPathTemplateComposer, session);
                 if (templateComposerNode == null) {
-                    log.warn("Empty SecurityModel because expected a jcr node at '{}' to read required configured admin privileges,",
+                    log.warn("Missing jcr node at '{}' to read required configured admin privileges from: Return empty SecurityModel.",
                             jcrPathTemplateComposer);
                     return mapping;
                 }
                 final String manageChangesPrivileges = JcrUtils.getStringProperty(templateComposerNode, "manage.changes.privileges", null);
                 final String manageChangesPrivilegesPath = JcrUtils.getStringProperty(templateComposerNode, "manage.changes.privileges.path", null);
                 if (manageChangesPrivileges == null || manageChangesPrivilegesPath == null) {
-                    log.warn("Empty SecurityModel because expected properties '{}' and '{}' at '{}'",
+                    log.warn("Missing properties '{}' and/or '{}' at '{}' : Return empty SecurityModel.",
                             "manage.changes.privileges", "manage.changes.privileges.path", jcrPathTemplateComposer);
                     return mapping;
                 }
@@ -128,12 +129,7 @@ public class SecurityModel {
                 mapping.put(CHANNEL_MANAGER_ADMIN_ROLE, manageChangesMappging);
                 return mapping;
             } catch (RepositoryException e) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Failed to build security model", e);
-                } else {
-                    log.warn("Failed to build security model: {}", e.toString());
-                }
-                throw new IllegalStateException("Failed to create security model");
+                throw new IllegalStateException("Failed to build security model", e);
             } finally {
                 if (session != null) {
                     session.logout();

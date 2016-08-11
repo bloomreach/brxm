@@ -274,7 +274,8 @@
   </bean>
 
   <!-- Inject the templatecomposer configuration invalidation listener to the EventListenersContainer -->
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel#SecurityModelEventListener"
+        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject" ref="jcrObservationEventListenerItems"/>
     <property name="targetMethod" value="add"/>
     <property name="arguments">
@@ -285,7 +286,7 @@
         <property name="propertyAddedEnabled" value="true"/>
         <property name="propertyChangedEnabled" value="true"/>
         <property name="propertyRemovedEnabled" value="true"/>
-        <property name="absolutePath" value="/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer"/>
+        <property name="absolutePath" ref="jcrPathTemplateComposer"/>
         <property name="deep" value="true"/>
         <property name="uuids">
           <null/>
@@ -305,7 +306,11 @@
         we do not need a session from the pool, but rather a fresh session that is logged out at the end -->
     <property name="repository" ref="javax.jcr.Repository.delegating"/>
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader.delegating"/>
-    <property name="jcrPathTemplateComposer" value="/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer"/>
+    <property name="jcrPathTemplateComposer" ref="jcrPathTemplateComposer"/>
+  </bean>
+
+  <bean id="jcrPathTemplateComposer" class="java.lang.String">
+       <constructor-arg value="/hippo:configuration/hippo:frontend/cms/hippo-channel-manager/channel-manager-perspective/templatecomposer"/>
   </bean>
 
 </beans>
