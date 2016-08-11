@@ -83,14 +83,9 @@ public class SecurityModel {
             log.info("No PrivilegePathMapping for role '{}'.", functionalRole);
             return false;
         }
-        Session session =  null;
         try {
-            session = context.getSession();
-            session.checkPermission(privilegePathMappging.privilegePath, privilegePathMappging.privilege);
-            return true;
-        } catch (java.security.AccessControlException e) {
-            log.debug("User '{}' is not in role '{}'", session.getUserID(), functionalRole);
-            return false;
+            final Session session = context.getSession();
+            return session.hasPermission(privilegePathMappging.privilegePath, privilegePathMappging.privilege);
         } catch (RepositoryException e) {
             throw new IllegalStateException("Exception while checking permissions.", e);
         }
