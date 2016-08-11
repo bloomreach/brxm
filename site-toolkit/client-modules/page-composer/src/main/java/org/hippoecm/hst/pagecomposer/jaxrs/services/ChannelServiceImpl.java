@@ -17,6 +17,7 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -208,8 +209,94 @@ public class ChannelServiceImpl implements ChannelService {
     public void deleteChannel(final Session session, final String channelId) throws RepositoryException, ChannelException {
         // TODO Implement validation prior deleting a channel (HSTTWO-3731)
 
-        // TODO Implement logic to delete a channel (HSTTWO-3733)
-        throw new ChannelException("Unimplemented Operation");
+        final Channel channel = getChannel(channelId);
+
+        removeHstConfigNodes(session, channel.getHstConfigPath());
+        removeHstConfigNodes(session, channel.getHstMountPoint());
+        removeHstConfigNodes(session, channel.getChannelPath());
+        removeMountNodes(session, channel);
+    }
+
+    private void removeMountNodes(final Session session, final Channel channel) throws RepositoryException {
+        final List<Mount> allMountsOfChannel = findMounts(channel);
+
+        final List<String> removingNodePaths = allMountsOfChannel.stream()
+                .map(Mount::getIdentifier)
+                .map((mountId) -> {
+                    try {
+                        return session.getNodeByIdentifier(mountId).getPath();
+                    } catch (RepositoryException e) {
+                        log.debug("Failed to get node of mount " + mountId, e);
+                        return StringUtils.EMPTY;
+                    }
+                })
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toList());
+
+        for (String path: removingNodePaths) {
+            removeMountNodeAndVirtualHostNodes(session, path);
+        }
+    }
+
+    /**
+     * Find all mounts binding to the given channel
+     *
+     * @param channel
+     * @return
+     */
+    private List<Mount> findMounts(final Channel channel) {
+        final String mountPoint = channel.getHstMountPoint();
+
+        final VirtualHosts virtualHosts = getAllVirtualHosts();
+
+        List<Mount> allMounts = new ArrayList<>();
+        for (String hostGroup : virtualHosts.getHostGroupNames()) {
+            final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroup);
+            if (mountsByHostGroup != null) {
+                allMounts.addAll(mountsByHostGroup);
+            }
+        }
+
+        return allMounts.stream()
+                .filter(mount -> StringUtils.equals(mountPoint, mount.getMountPoint()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Remove both the hst config node and its '-preview' node if it exists
+     * @param session
+     * @param nodePath
+     * @throws RepositoryException
+     */
+    private void removeHstConfigNodes(Session session, String nodePath) throws RepositoryException {
+        session.removeItem(nodePath);
+        final String previewNodePath = nodePath + "-preview";
+        if (session.nodeExists(previewNodePath)) {
+            session.removeItem(previewNodePath);
+        }
+    }
+
+    /**
+     * Remove given node and its ancestor nodes if they become leaf nodes after removal
+     * @param session
+     * @param nodePath
+     * @throws RepositoryException
+     */
+    private void removeMountNodeAndVirtualHostNodes(final Session session, final String nodePath) throws RepositoryException {
+        Node removeNode = session.getNode(nodePath);
+        Node parentNode = removeNode.getParent();
+
+        if (removeNode.isNodeType(HstNodeTypes.NODETYPE_HST_MOUNT)) {
+            removeNode.remove();
+        }
+
+        // Remove ancestor nodes of type 'hst:virtualhost' if they become leaf nodes
+        // TODO Simplify the code to parentNode.hasNodes() when REPO-1549 is fixed
+        while(!parentNode.getNodes().hasNext() && parentNode.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOST)) {
+            removeNode = parentNode;
+            parentNode = parentNode.getParent();
+            removeNode.remove();
+        }
     }
 
     private Node getOrAddChannelPropsNode(final Node channelNode) throws RepositoryException {
