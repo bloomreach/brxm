@@ -63,12 +63,6 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
                 editor.save();
 
-                if (getPluginConfig().getAsBoolean("feedback.enabled", false)) {
-                    final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
-                    final IModel<String> msg = new StringResourceModel("saved", EditingWorkflowPlugin.this, null, null,
-                            dateFormat.format(new Date()));
-                    info(msg.getObject());
-                }
                 return null;
             }
         });
