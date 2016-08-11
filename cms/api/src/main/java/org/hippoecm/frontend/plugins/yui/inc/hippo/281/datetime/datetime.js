@@ -317,7 +317,7 @@ if (!YAHOO.hippo.DateTime) {
                         cfg.setProperty("WEEKDAYS_LONG",  ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]);
                         cfg.setProperty("WEEKDAYS_MEDIUM",["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"]);
                         cfg.setProperty("WEEKDAYS_SHORT", ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"]);
-                        cfg.setProperty("WEEKDAYS_1CHAR", ["D", "L", "M", "MX", "M", "V", "D"]);
+                        cfg.setProperty("WEEKDAYS_1CHAR", ["D", "L", "M", "X", "M", "V", "D"]);
                         cfg.setProperty("START_WEEKDAY",  ["1"]);
                     },
                     zh: function(cfg) {
