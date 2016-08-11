@@ -40,7 +40,7 @@ public class ResourceBundleLoaderTest extends RepositoryTestCase {
     @Test
     public void testLoadBundles() throws Exception {
         final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
-        assertEquals("Expected five bundles to be present", 6, bundles.size());
+        assertEquals("Unexpected number of resource bundles", 6, bundles.size());
         assertNotNull(bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("en"))));
         assertNotNull(bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("nl"))));
         assertNotNull(bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("nl_BE"))));
