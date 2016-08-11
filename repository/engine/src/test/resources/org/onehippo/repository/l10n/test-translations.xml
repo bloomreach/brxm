@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sv:node sv:name="foo" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+<sv:node sv:name="group" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:resourcebundles</sv:value>
   </sv:property>
-  <sv:node sv:name="bar">
+  <sv:node sv:name="with_default">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:resourcebundles</sv:value>
     </sv:property>
@@ -17,6 +17,9 @@
       <sv:property sv:name="key2" sv:type="String">
         <sv:value>value2</sv:value>
       </sv:property>
+      <sv:property sv:name="key3" sv:type="String">
+        <sv:value>value3</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="nl">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -24,6 +27,52 @@
       </sv:property>
       <sv:property sv:name="key1" sv:type="String">
         <sv:value>waarde1</sv:value>
+      </sv:property>
+      <sv:property sv:name="key2" sv:type="String">
+        <sv:value>waarde2</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="nl_BE">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+      <sv:property sv:name="key1" sv:type="String">
+        <sv:value>waarde1 BE</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="without_default">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:resourcebundles</sv:value>
+    </sv:property>
+    <sv:node sv:name="nl_BE_foo">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+      <sv:property sv:name="key1" sv:type="String">
+        <sv:value>waarde1 BE foo</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="nl">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+      <sv:property sv:name="key1" sv:type="String">
+        <sv:value>waarde1</sv:value>
+      </sv:property>
+      <sv:property sv:name="key2" sv:type="String">
+        <sv:value>waarde2</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="en_GB">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resourcebundle</sv:value>
+      </sv:property>
+      <sv:property sv:name="key1" sv:type="String">
+        <sv:value>value1</sv:value>
+      </sv:property>
+      <sv:property sv:name="key3" sv:type="String">
+        <sv:value>value3</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

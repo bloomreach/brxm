@@ -40,23 +40,65 @@ public class ResourceBundleLoaderTest extends RepositoryTestCase {
     @Test
     public void testLoadBundles() throws Exception {
         final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
-        assertEquals("Expected two bundles to be present", 2, bundles.size());
-        final ResourceBundle en = bundles.get(new ResourceBundleKey("foo.bar", LocaleUtils.toLocale("en")));
-        assertNotNull(en);
-        final ResourceBundle nl = bundles.get(new ResourceBundleKey("foo.bar", LocaleUtils.toLocale("nl")));
-        assertNotNull(nl);
+        assertEquals("Unexpected number of resource bundles", 6, bundles.size());
+        assertNotNull(bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("en"))));
+        assertNotNull(bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("nl"))));
+        assertNotNull(bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("nl_BE"))));
+        assertNotNull(bundles.get(new ResourceBundleKey("group.without_default", LocaleUtils.toLocale("nl"))));
+        assertNotNull(bundles.get(new ResourceBundleKey("group.without_default", LocaleUtils.toLocale("nl_BE_foo"))));
+        assertNotNull(bundles.get(new ResourceBundleKey("group.without_default", LocaleUtils.toLocale("en_GB"))));
+    }
+
+    @Test
+    public void testParentWiringWithDefaultLocale() throws Exception {
+        final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
+        final ResourceBundle en = bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("en")));
+        final ResourceBundle nl = bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("nl")));
+        final ResourceBundle nl_BE = bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("nl_BE")));
+
         assertEquals("value1", en.getString("key1"));
         assertEquals("waarde1", nl.getString("key1"));
+        assertEquals("waarde1 BE", nl_BE.getString("key1"));
+
         assertEquals("value2", en.getString("key2"));
-        // fallback on default locale (en)
-        assertEquals("value2", nl.getString("key2"));
+        assertEquals("waarde2", nl.getString("key2"));
+        // fallback to nl
+        assertEquals("waarde2", nl_BE.getString("key2"));
+
+        assertEquals("value3", en.getString("key3"));
+        // fallback to en
+        assertEquals("value3", nl.getString("key3"));
+        assertEquals("value3", nl_BE.getString("key3"));
+    }
+
+    @Test
+    public void testParentWiringWithoutDefaultLocale() throws Exception {
+        final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
+        final ResourceBundle en_GB = bundles.get(new ResourceBundleKey("group.without_default", LocaleUtils.toLocale("en_GB")));
+        final ResourceBundle nl = bundles.get(new ResourceBundleKey("group.without_default", LocaleUtils.toLocale("nl")));
+        final ResourceBundle nl_be_foo = bundles.get(new ResourceBundleKey("group.without_default", LocaleUtils.toLocale("nl_BE_foo")));
+
+        assertEquals("value1", en_GB.getString("key1"));
+        assertEquals("waarde1", nl.getString("key1"));
+        assertEquals("waarde1 BE foo", nl_be_foo.getString("key1"));
+
+        assertEquals("waarde2", nl.getString("key2"));
+        // fallback to nl
+        assertEquals("waarde2", nl_be_foo.getString("key2"));
+        // no fallback
+        assertEquals(null, en_GB.getString("key2"));
+
+        assertEquals("value3", en_GB.getString("key3"));
+        // no fallback
+        assertEquals(null, nl.getString("key3"));
+        assertEquals(null, nl_be_foo.getString("key3"));
     }
 
     @Test
     public void testJavaResourceBundles() throws Exception {
         final Map<ResourceBundleKey, ResourceBundle> bundles = ResourceBundleLoader.load(session.getNode("/test"));
-        final java.util.ResourceBundle en = bundles.get(new ResourceBundleKey("foo.bar", LocaleUtils.toLocale("en"))).toJavaResourceBundle();
-        final java.util.ResourceBundle nl = bundles.get(new ResourceBundleKey("foo.bar", LocaleUtils.toLocale("nl"))).toJavaResourceBundle();
+        final java.util.ResourceBundle en = bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("en"))).toJavaResourceBundle();
+        final java.util.ResourceBundle nl = bundles.get(new ResourceBundleKey("group.with_default", LocaleUtils.toLocale("nl"))).toJavaResourceBundle();
 
         // containsKey requires the parents to be wired correctly
         assertTrue(en.containsKey("key1"));

@@ -66,18 +66,15 @@ class ResourceBundleLoader {
 
     private ResourceBundleImpl resolveParent(ResourceBundleImpl bundle) {
         ResourceBundleImpl result = null;
-        for (ResourceBundleImpl parent : bundles.values()) {
-            if (parent == bundle) {
+        for (ResourceBundleImpl current : bundles.values()) {
+            if (current == bundle) {
                 continue;
             }
-            if (parent.getName().equals(bundle.getName())) {
-                if (isParent(parent.getLocale(), bundle.getLocale())) {
-                    if (result == null || isParent(result.getLocale(), parent.getLocale())) {
-                        result = parent;
+            if (current.getName().equals(bundle.getName())) {
+                if (isFallback(current.getLocale(), bundle.getLocale())) {
+                    if (result == null || isFallback(result.getLocale(), current.getLocale())) {
+                        result = current;
                     }
-                }
-                if (result == null && isDefaultLocale(parent.getLocale())) {
-                    result = parent;
                 }
             }
         }
@@ -88,7 +85,10 @@ class ResourceBundleLoader {
         return locale.equals(DEFAULT_LOCALE);
     }
 
-    private boolean isParent(Locale locale1, Locale locale2) {
+    private boolean isFallback(Locale locale1, Locale locale2) {
+        if (isDefaultLocale(locale1)) {
+            return true;
+        }
         if (locale1.getLanguage().equals(locale2.getLanguage())) {
             if (locale1.getCountry().equals(locale2.getCountry())) {
                 return locale1.getVariant().isEmpty() && !locale2.getVariant().isEmpty();
