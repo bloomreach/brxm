@@ -24,13 +24,13 @@
   "EssentialsDocumentComponentInfo": {"es": {"document": "Documento"}},
   "EssentialsEventsComponentInfo": {"es":   {
     "hidePastEvents": "Ocultar eventos pasados",
-    "documentDateField": "Campo que contiene fecha de documento (para ocultar)",
+    "documentDateField": "Campo de fecha del documento (ocultable)",
     "documentTypes": "Tipos de documentos de eventos (separados por comas)"
   }},
   "EssentialsFacetsComponentInfo": {"es": {"facetPath": "Ruta compuesta"}},
   "EssentialsGoogleMapsComponentInfo": {"es":   {
     "mapType#TERRAIN": "Información de terreno",
-    "mapType.help": "El tipo de mapa que mostrar",
+    "mapType.help": "Tipo de mapa que mostrar",
     "address": "Ubicación/ Dirección",
     "apiKey": "Clave API de Google Maps",
     "latitude": "Latitud",
@@ -67,7 +67,7 @@
   "EssentialsMenuComponentInfo": {"es": {"menu": "Nombre de menú"}},
   "EssentialsNewsComponentInfo": {"es":   {
     "hideFutureItems": "Ocultar documentos futuros",
-    "documentDateField": "Campo que contiene fecha de documento (para ocultar)",
+    "documentDateField": "Campo de fecha del documento (ocultable)",
     "documentTypes": "Tipos de documentos de noticias (separados por comas)"
   }},
   "EssentialsPageable": {"es":   {

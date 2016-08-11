@@ -1,5 +1,5 @@
 {"hippo:channelmanager": {"switch-template": {"es": {
-  "choose.template": "Escoger una plantilla",
+  "choose.template": "Elegir una plantilla",
   "switch.template": "Plantilla",
   "missing.template": "Falta la plantilla ''{0}''"
 }}}}

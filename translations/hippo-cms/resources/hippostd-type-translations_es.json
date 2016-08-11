@@ -7,7 +7,7 @@
     "hippostd:state=published": "Publicado",
     "hippostd:state=draft": "Borrador"
   }},
-  "hippostd:taggable": {"es": {"jcr:name": "Se permite etiquetas"}},
+  "hippostd:taggable": {"es": {"jcr:name": "Etiquetable"}},
   "hippostd:date": {"es":   {
     "hippostd:dayofweek=1": "lunes",
     "hippostd:dayofweek=2": "martes",
