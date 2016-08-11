@@ -104,8 +104,20 @@ public class AbstractRestApiIT {
         return repository.login(new SimpleCredentials(userName, password.toCharArray()));
     }
 
+
+    protected MockHttpServletResponse render(final RequestResponseMock requestResponse) throws IOException, ServletException {
+        final MockHttpServletRequest request = requestResponse.getRequest();
+        final MockHttpServletResponse response = requestResponse.getResponse();
+
+        filter.doFilter(request, response, new MockFilterChain(new HttpServlet() {
+            @Override
+            protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+                super.doGet(req, resp);
+            }
+        }, filter));
+        return response;
+    }
     /**
-     * @param filter      the filters that end up in the filter chain
      * @param scheme      http or https
      * @param hostAndPort eg localhost:8080 or www.example.com
      * @param pathInfo    the request pathInfo, starting with a slash
@@ -113,8 +125,7 @@ public class AbstractRestApiIT {
      * @return RequestResponseMock containing {@link MockHttpServletRequest} and {@link MockHttpServletResponse}
      * @throws Exception
      */
-    public RequestResponseMock mockGetRequestResponse(final Filter filter,
-                                                     final String scheme,
+    public RequestResponseMock mockGetRequestResponse(final String scheme,
                                                      final String hostAndPort,
                                                      final String pathInfo,
                                                      final String queryString) {
@@ -141,23 +152,16 @@ public class AbstractRestApiIT {
         if (queryString != null) {
             request.setQueryString(queryString);
         }
-        return new RequestResponseMock(filter, request, response);
+        return new RequestResponseMock(request, response);
     }
 
     public static class RequestResponseMock {
         MockHttpServletRequest request;
         MockHttpServletResponse response;
-        MockFilterChain filterChain;
 
-        public RequestResponseMock(final Filter filter, final MockHttpServletRequest request, final MockHttpServletResponse response) {
+        public RequestResponseMock(final MockHttpServletRequest request, final MockHttpServletResponse response) {
             this.request = request;
             this.response = response;
-            filterChain = new MockFilterChain(new HttpServlet() {
-                @Override
-                protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-                    super.doGet(req, resp);
-                }
-            }, filter);
         }
 
         public MockHttpServletRequest getRequest() {
@@ -168,9 +172,6 @@ public class AbstractRestApiIT {
             return response;
         }
 
-        public MockFilterChain getFilterChain() {
-            return filterChain;
-        }
     }
 
 }
