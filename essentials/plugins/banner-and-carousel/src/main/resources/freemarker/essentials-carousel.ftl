@@ -1,5 +1,6 @@
 <#include "../include/imports.ftl">
 
+<#-- @ftlvariable name="componentId" type="java.lang.String" -->
 <#-- @ftlvariable name="item" type="{{beansPackage}}.Banner" -->
 <#-- @ftlvariable name="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable" -->
 <#-- @ftlvariable name="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo" -->
@@ -8,11 +9,6 @@
         <#assign pauseCarousel = 'hover'/>
     <#else>
         <#assign pauseCarousel = ''/>
-    </#if>
-    <#if editMode>
-        <#assign componentId><@hst.namespace/>_${.now?long?c}</#assign>
-    <#else>
-        <#assign componentId><@hst.namespace/></#assign>
     </#if>
     <div id="${componentId}" class="carousel slide" data-ride="carousel" data-interval="${cparam.interval?c}"
          data-pause="${pauseCarousel}" data-wrap="${cparam.cycle?string}">
@@ -54,7 +50,7 @@
     <@hst.headContribution category="htmlHead">
         <style type="text/css">
             /* Carousel base class */
-            .carousel {
+            #${componentId} {
                 height: ${cparam.carouselHeight}px;
                 /*width: ${cparam.carouselWidth}px;*/
                 margin-bottom: 60px;
@@ -67,7 +63,7 @@
             }
 
             /* Declare heights because of positioning of img element */
-            .carousel .item {
+            #${componentId} .item {
                 height: ${cparam.carouselHeight}px;
                 background-color: ${cparam.carouselBackgroundColor};
             }
