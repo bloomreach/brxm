@@ -8,10 +8,10 @@
 <@hst.headContribution category="htmlBodyEnd">
     <script type="text/javascript">
         if (!window.HEGM) {
-              window.HEGM = [];
+            window.HEGM = [];
         }
         window.HEGM.push(function() {
-              initGoogleMap('map-canvas-${componentId}', '${cparam.address?html}', ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, '${cparam.mapType}');
+            initGoogleMap('map-canvas-${componentId}', '${cparam.address?html}', ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, '${cparam.mapType}');
         });
     </script>
 </@hst.headContribution>
