@@ -38,11 +38,9 @@ import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
-import org.onehippo.repository.mock.MockSession;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 public class ChannelServiceImplTest {
 
@@ -56,21 +54,6 @@ public class ChannelServiceImplTest {
     private Node hstRoot;
 
     private HstConfigurationService hstConfigurationService;
-
-    private static class ExtendedMockSession extends MockSession {
-        public ExtendedMockSession(final MockSession session) {
-            super(session.getRootNode());
-        }
-
-        @Override
-        public void removeItem(final String absPath) {
-            try {
-                getItem(absPath).remove();
-            } catch (RepositoryException e) {
-                fail("Cannot remove '" + absPath + "': " + e.getMessage());
-            }
-        }
-    }
 
     @Before
     public void setUp() throws RepositoryException {

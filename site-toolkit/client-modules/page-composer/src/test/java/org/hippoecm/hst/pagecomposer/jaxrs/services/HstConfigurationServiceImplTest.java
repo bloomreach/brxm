@@ -38,8 +38,9 @@ public class HstConfigurationServiceImplTest {
 
     @Before
     public void setUp() throws RepositoryException {
-        final Node rootNode = MockNode.root();
-        session = rootNode.getSession();
+        final MockNode rootNode = MockNode.root();
+        session = new ExtendedMockSession(rootNode.getSession());
+
         final Node hstRoot = rootNode.addNode("hst:hst", "hst:hst");
         configurationsNode = hstRoot.addNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS, HstNodeTypes.NODETYPE_HST_CONFIGURATIONS);
 
@@ -47,7 +48,7 @@ public class HstConfigurationServiceImplTest {
     }
 
     @Test
-    public void delete_configuration_node_if_no_descendant_exists() throws RepositoryException, HstConfigurationException {
+    public void delete_configuration_node() throws RepositoryException, HstConfigurationException {
         addConfigurationNode("foo");
         addConfigurationNode("bah");
 
@@ -61,7 +62,39 @@ public class HstConfigurationServiceImplTest {
     }
 
     @Test
-    public void cannot_delete_configuration_node_if_a_desendants_exists() throws RepositoryException {
+    public void delete_both_live_and_preview_config_nodes() throws RepositoryException, HstConfigurationException {
+        addConfigurationNode("foo");
+        addConfigurationNode("foo-preview");
+
+        assertThat(session.itemExists("/hst:hst/hst:configurations/foo"), is(true));
+        assertThat(session.itemExists("/hst:hst/hst:configurations/foo-preview"), is(true));
+
+        hstConfigurationService.delete(session, "/hst:hst/hst:configurations/foo");
+
+        assertThat(session.itemExists("/hst:hst/hst:configurations/foo"), is(false));
+        assertThat(session.itemExists("/hst:hst/hst:configurations/foo-preview"), is(false));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void cannot_delete_null_config_path() throws HstConfigurationException, RepositoryException {
+        hstConfigurationService.delete(session, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void cannot_delete_blank_config_path() throws HstConfigurationException, RepositoryException {
+        hstConfigurationService.delete(session, " ");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void cannot_delete_preview_config_path() throws HstConfigurationException, RepositoryException {
+        addConfigurationNode("foo");
+        addConfigurationNode("foo-preview");
+
+        hstConfigurationService.delete(session, "/hst:hst/hst:configurations/foo-preview");
+    }
+
+    @Test
+    public void cannot_delete_configuration_node_if_a_descendant_config_exists() throws RepositoryException {
         addConfigurationNode("foo");
         addConfigurationNode("bah");
         final Node alphaNode = addConfigurationNode("alpha");
@@ -74,14 +107,14 @@ public class HstConfigurationServiceImplTest {
             hstConfigurationService.delete(session, "/hst:hst/hst:configurations/foo");
             fail("foo config should not be deleted");
         } catch (HstConfigurationException e) {
-            assertThat(e.getMessage(), is("Cannot delete the configuration node because it is inherited by others"));
+            assertThat(e.getMessage(), is("The configuration node is inherited by others"));
         }
 
         try {
             hstConfigurationService.delete(session, "/hst:hst/hst:configurations/bah");
             fail("bah config should not be deleted");
         } catch (HstConfigurationException e) {
-            assertThat(e.getMessage(), is("Cannot delete the configuration node because it is inherited by others"));
+            assertThat(e.getMessage(), is("The configuration node is inherited by others"));
         }
     }
 

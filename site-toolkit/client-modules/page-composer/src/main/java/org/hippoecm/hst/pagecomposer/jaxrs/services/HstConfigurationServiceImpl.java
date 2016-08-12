@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 public class HstConfigurationServiceImpl implements HstConfigurationService {
     private static final Logger log = LoggerFactory.getLogger(HstConfigurationServiceImpl.class);
 
+    public static final String PREVIEW_SUFFIX = "-preview";
+
     private final String configurationsRootPath;
 
     public HstConfigurationServiceImpl(final String configurationsRootPath) {
@@ -43,6 +45,7 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
     @Override
     public void delete(final Session session, final String configurationPath) throws RepositoryException, HstConfigurationException {
         final Node configNode = getConfiguration(session, configurationPath);
+        deletePreviewConfiguration(session, configurationPath);
 
         if (hasDescendant(session, configNode.getName())) {
             throw new HstConfigurationException("The configuration node is inherited by others");
@@ -50,12 +53,19 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
         configNode.remove();
     }
 
-    private Node getConfiguration(final Session session, final String configurationPath) throws RepositoryException {
+    private void deletePreviewConfiguration(final Session session, final String configurationPath) throws RepositoryException {
+        final String previewConfigurationPath = configurationPath + PREVIEW_SUFFIX;
+        if (session.nodeExists(previewConfigurationPath)) {
+            session.removeItem(previewConfigurationPath);
+        }
+    }
+
+    private Node getConfiguration(final Session session, final String configurationPath) throws RepositoryException, HstConfigurationException {
         validateConfigurationPathArg(configurationPath);
 
         final Node configurationNode = session.getNode(configurationPath);
         if (!configurationNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
-            throw new IllegalArgumentException(String.format("%s has invalid node type: '%s'. It should be '%s'",
+            throw new HstConfigurationException(String.format("%s has invalid node type: '%s'. It should be '%s'",
                     configurationPath, configurationNode.getPrimaryNodeType().getName(),
                     HstNodeTypes.NODETYPE_HST_CONFIGURATION));
         }
@@ -115,6 +125,10 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
 
         if (!configurationPath.startsWith(configurationsRootPath)) {
             throw new IllegalArgumentException("configurationPath must start with '" + configurationsRootPath + "'");
+        }
+
+        if (configurationPath.endsWith(PREVIEW_SUFFIX)) {
+            throw new IllegalArgumentException("configurationPath must not end with '" + PREVIEW_SUFFIX + "'");
         }
     }
 }
