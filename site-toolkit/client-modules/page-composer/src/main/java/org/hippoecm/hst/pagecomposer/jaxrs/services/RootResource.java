@@ -168,14 +168,9 @@ public class RootResource extends AbstractConfigResource {
     @GET
     @Path("/features")
     public Response getFeatures() {
+        final boolean crossChannelPageCopySupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("cross.channel.page.copy.supported", false);
         final FeaturesRepresentation featuresRepresentation = new FeaturesRepresentation();
-
-        final Boolean crossChannelPageCopySupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("cross.channel.page.copy.supported", false);
         featuresRepresentation.setCrossChannelPageCopySupported(crossChannelPageCopySupported);
-
-        final Boolean channelDeletionSupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("channel.deletion.supported", false);
-        featuresRepresentation.setChannelDeletionSupported(channelDeletionSupported);
-
         return ok("Fetched features", featuresRepresentation);
     }
 
@@ -189,6 +184,7 @@ public class RootResource extends AbstractConfigResource {
         session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
         session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
+
         boolean canWrite;
         try {
             HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
@@ -198,8 +194,16 @@ public class RootResource extends AbstractConfigResource {
             return error("Could not determine authorization", e);
         }
 
+        final boolean channelDeletionSupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("channel.deletion.supported", false);
+
+        // TODO: test whether the user has admin privileges
+        final boolean canDeleteChannel = channelDeletionSupported;
+        final boolean canManageChanges = true;
+
         HandshakeResponse response = new HandshakeResponse();
         response.setCanWrite(canWrite);
+        response.setCanManageChanges(canManageChanges);
+        response.setCanDeleteChannel(canDeleteChannel);
         response.setSessionId(session.getId());
         log.info("Composer-Mode successful");
         return ok("Composer-Mode successful", response);
@@ -238,6 +242,8 @@ public class RootResource extends AbstractConfigResource {
     private static class HandshakeResponse {
 
         private boolean canWrite;
+        private boolean canManageChanges;
+        private boolean canDeleteChannel;
         private String sessionId;
 
         public boolean isCanWrite() {
@@ -246,6 +252,22 @@ public class RootResource extends AbstractConfigResource {
 
         public void setCanWrite(final boolean canWrite) {
             this.canWrite = canWrite;
+        }
+
+        public boolean isCanManageChanges() {
+            return canManageChanges;
+        }
+
+        public void setCanManageChanges(final boolean canManageChanges) {
+            this.canManageChanges = canManageChanges;
+        }
+
+        public boolean isCanDeleteChannel() {
+            return canDeleteChannel;
+        }
+
+        public void setCanDeleteChannel(final boolean canDeleteChannel) {
+            this.canDeleteChannel = canDeleteChannel;
         }
 
         public String getSessionId() {
