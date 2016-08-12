@@ -47,6 +47,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
@@ -58,6 +59,8 @@ public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
 
     private ChannelManager channelManager;
+
+    private HstConfigurationService hstConfigurationService;
 
     @Override
     public ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale) throws ChannelException {
@@ -211,7 +214,13 @@ public class ChannelServiceImpl implements ChannelService {
 
         final Channel channel = getChannel(channelId);
 
-        removeHstConfigNodes(session, channel.getHstConfigPath());
+        final String hstConfigPath = channel.getHstConfigPath();
+        try {
+            hstConfigurationService.delete(session, hstConfigPath);
+        } catch (HstConfigurationException e) {
+            log.warn("Cannot delete configuration node '{}': {}", hstConfigPath, e.getMessage());
+        }
+
         removeHstConfigNodes(session, channel.getHstMountPoint());
         removeHstConfigNodes(session, channel.getChannelPath());
         removeMountNodes(session, channel);
@@ -334,5 +343,9 @@ public class ChannelServiceImpl implements ChannelService {
 
     public void setChannelManager(final ChannelManager channelManager) {
         this.channelManager = channelManager;
+    }
+
+    public void setHstConfigurationService(final HstConfigurationService hstConfigurationService) {
+        this.hstConfigurationService = hstConfigurationService;
     }
 }

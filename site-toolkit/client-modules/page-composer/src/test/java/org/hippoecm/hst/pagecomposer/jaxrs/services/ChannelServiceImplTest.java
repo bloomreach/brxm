@@ -51,10 +51,11 @@ public class ChannelServiceImplTest {
 
     private VirtualHosts mockVirtualHosts;
     private Node channelsNode;
-    private Node configurationsNode;
     private Node virtualHostsNode;
     private Node sitesNode;
     private Node hstRoot;
+
+    private HstConfigurationService hstConfigurationService;
 
     private static class ExtendedMockSession extends MockSession {
         public ExtendedMockSession(final MockSession session) {
@@ -73,12 +74,13 @@ public class ChannelServiceImplTest {
 
     @Before
     public void setUp() throws RepositoryException {
+        hstConfigurationService = EasyMock.createMock(HstConfigurationService.class);
+
         rootNode = MockNode.root();
         session = new ExtendedMockSession(rootNode.getSession());
 
         hstRoot = rootNode.addNode("hst:hst", "hst:hst");
         channelsNode = hstRoot.addNode(HstNodeTypes.NODENAME_HST_CHANNELS, HstNodeTypes.NODETYPE_HST_CHANNELS);
-        configurationsNode = hstRoot.addNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS, HstNodeTypes.NODETYPE_HST_CONFIGURATIONS);
         virtualHostsNode = hstRoot.addNode(HstNodeTypes.NODENAME_HST_HOSTS, HstNodeTypes.NODETYPE_HST_VIRTUALHOSTS);
         sitesNode = hstRoot.addNode("hst:sites", HstNodeTypes.NODETYPE_HST_SITES);
 
@@ -118,26 +120,26 @@ public class ChannelServiceImplTest {
         mountId2MountPoint.put(bahMountNode.getIdentifier(), "/hst:hst/hst:sites/bah");
         mockHostGroups(hostGroups, mountId2MountPoint);
 
-        ChannelService channelService = EasyMock.createMockBuilder(ChannelServiceImpl.class)
+        ChannelServiceImpl channelService = EasyMock.createMockBuilder(ChannelServiceImpl.class)
                 .addMockedMethod("getChannel")
                 .createMock();
+        channelService.setHstConfigurationService(hstConfigurationService);
 
         EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo);
-        EasyMock.replay(channelService);
+        hstConfigurationService.delete(session, "/hst:hst/hst:configurations/foo");
+        EasyMock.expectLastCall();
+        EasyMock.replay(channelService, hstConfigurationService);
 
         assertThat(session.itemExists("/hst:hst/hst:sites/foo"), is(true));
-        assertThat(session.itemExists("/hst:hst/hst:configurations/foo"), is(true));
         assertThat(session.itemExists("/hst:hst/hst:channels/foo"), is(true));
 
         channelService.deleteChannel(session, "foo");
 
-        EasyMock.verify(channelService);
+        EasyMock.verify(channelService, hstConfigurationService);
 
         assertThat(session.itemExists("/hst:hst/hst:sites/bah"), is(true));
         assertThat(session.itemExists("/hst:hst/hst:sites/foo"), is(false));
-        assertThat(session.itemExists("/hst:hst/hst:configurations/foo"), is(false));
         assertThat(session.itemExists("/hst:hst/hst:channels/foo"), is(false));
-
         assertThat(session.itemExists("/hst:hst/hst:hosts/group1/com/example/hst:root/foo"), is(false));
         assertThat(session.itemExists("/hst:hst/hst:hosts/group1/com/example/hst:root"), is(true));
 
@@ -182,7 +184,6 @@ public class ChannelServiceImplTest {
         channel.setHstMountPoint("/hst:hst/hst:sites/" + id);
 
         channelsNode.addNode(id, HstNodeTypes.NODETYPE_HST_CHANNEL);
-        configurationsNode.addNode(id, HstNodeTypes.NODETYPE_HST_CONFIGURATION);
         return channel;
     }
 
