@@ -23,7 +23,6 @@ describe('ConfigService', () => {
     window.APP_CONFIG.locale = 'nl';
     window.APP_CONFIG.apiUrlPrefix = 'https://127.0.0.1:9080/web/one/two';
     window.APP_CONFIG.contextPaths = ['/one', '/two'];
-    window.APP_CONFIG.canManageChanges = 'test-value';
 
     module('hippo-cm-api');
 
@@ -41,9 +40,5 @@ describe('ConfigService', () => {
   it('sets the context path correctly', () => {
     ConfigService.setContextPathForChannel('testpath');
     expect(ConfigService.contextPath).toBe('testpath');
-  });
-
-  it('derives admin privileges from the change management capability', () => {
-    expect(ConfigService.hasAdminPrivileges).toBe('test-value');
   });
 });

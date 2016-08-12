@@ -164,28 +164,23 @@ describe('HstService', () => {
       expect(promiseSpy).toHaveBeenCalled();
     });
 
-    it('resolves with true if response data parameter canWrite is true', () => {
+    it('resolves with a privileges object', () => {
       const promiseSpy = jasmine.createSpy('promiseSpy');
-      $httpBackend.expectGET(handshakeUrl).respond(200, { data: { canWrite: true } });
+      const privileges = {
+        canWrite: true,
+      };
+      $httpBackend.expectGET(handshakeUrl).respond(200, { data: privileges });
       hstService.initializeSession(hostname, mountId).then(promiseSpy);
       $httpBackend.flush();
-      expect(promiseSpy).toHaveBeenCalledWith(true);
+      expect(promiseSpy).toHaveBeenCalledWith(privileges);
     });
 
-    it('resolves with false if response data parameter canWrite is false', () => {
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      $httpBackend.expectGET(handshakeUrl).respond(200, { data: { canWrite: false } });
-      hstService.initializeSession(hostname, mountId).then(promiseSpy);
-      $httpBackend.flush();
-      expect(promiseSpy).toHaveBeenCalledWith(false);
-    });
-
-    it('resolves with false if response data parameter is missing', () => {
+    it('resolves with null if response data parameter is missing', () => {
       const promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200);
       hstService.initializeSession(hostname, mountId).then(promiseSpy);
       $httpBackend.flush();
-      expect(promiseSpy).toHaveBeenCalledWith(false);
+      expect(promiseSpy).toHaveBeenCalledWith(null);
     });
   });
 

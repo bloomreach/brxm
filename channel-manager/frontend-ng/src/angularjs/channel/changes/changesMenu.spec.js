@@ -20,6 +20,7 @@ describe('ChangesMenu', () => {
   let FeedbackService;
   let HippoIframeService;
   let ConfigService;
+  let SessionService;
   let SiteMapService;
   let $q;
   let $rootScope;
@@ -37,6 +38,7 @@ describe('ChangesMenu', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _ConfigService_,
+      _SessionService_,
       _SiteMapService_
     ) => {
       $compile = _$compile_;
@@ -47,6 +49,7 @@ describe('ChangesMenu', () => {
       HippoIframeService = _HippoIframeService_;
       ConfigService = _ConfigService_;
       SiteMapService = _SiteMapService_;
+      SessionService = _SessionService_;
       $rootScope = _$rootScope_;
     });
 
@@ -58,10 +61,10 @@ describe('ChangesMenu', () => {
     spyOn(HippoIframeService, 'reload');
     spyOn(DialogService, 'confirm').and.callThrough();
     spyOn(FeedbackService, 'showError');
+    spyOn(SessionService, 'canManageChanges').and.returnValue(true);
     spyOn(SiteMapService, 'load');
 
     ConfigService.cmsUser = 'testUser';
-    ConfigService.canManageChanges = true;
   });
 
   function createChangesMenuCtrl() {
@@ -108,7 +111,7 @@ describe('ChangesMenu', () => {
     ChannelService.getChannel.and.returnValue({});
     expect(ChangesMenuCtrl.isManageChangesEnabled()).toBe(false);
 
-    ConfigService.canManageChanges = false;
+    SessionService.canManageChanges.and.returnValue(false);
     ChangesMenuCtrl = createChangesMenuCtrl();
     expect(ChangesMenuCtrl.isManageChangesEnabled()).toBe(false);
   });

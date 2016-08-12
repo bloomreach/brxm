@@ -15,12 +15,12 @@
  */
 
 export class ChannelActionsCtrl {
-  constructor($translate, ChannelService, ConfigService, DialogService) {
+  constructor($translate, ChannelService, DialogService, SessionService) {
     'ngInject';
     this.$translate = $translate;
     this.ChannelService = ChannelService;
-    this.ConfigService = ConfigService;
     this.DialogService = DialogService;
+    this.SessionService = SessionService;
   }
 
   isChannelSettingsAvailable() {
@@ -28,7 +28,7 @@ export class ChannelActionsCtrl {
   }
 
   isChannelDeletionAvailable() {
-    return this.ChannelService.isChannelDeletionSupported() && this.ConfigService.hasAdminPrivileges;
+    return this.SessionService.canDeleteChannel();
   }
 
   hasMenuOptions() {

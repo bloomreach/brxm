@@ -63,11 +63,34 @@ describe('SessionService', () => {
     expect(catchSpy).toHaveBeenCalled();
   });
 
-  it('should set canWrite after initializing', () => {
+  it('should not allow anything before initializing', () => {
+    expect(sessionService.hasWriteAccess()).toEqual(false);
+    expect(sessionService.canManageChanges()).toEqual(false);
+    expect(sessionService.canDeleteChannel()).toEqual(false);
+  });
+
+  it('should set privileges after initializing', () => {
     sessionService.initialize(channelMock);
-    deferred.resolve(true);
+    deferred.resolve({
+      canWrite: true,
+      canManageChanges: true,
+      canDeleteChannel: true,
+    });
     $rootScope.$apply();
+
     expect(sessionService.hasWriteAccess()).toEqual(true);
+    expect(sessionService.canManageChanges()).toEqual(true);
+    expect(sessionService.canDeleteChannel()).toEqual(true);
+  });
+
+  it('should not allow anything when no privileges are defined', () => {
+    sessionService.initialize(channelMock);
+    deferred.resolve();
+    $rootScope.$apply();
+
+    expect(sessionService.hasWriteAccess()).toEqual(false);
+    expect(sessionService.canManageChanges()).toEqual(false);
+    expect(sessionService.canDeleteChannel()).toEqual(false);
   });
 
   it('should call all registered callbacks upon successful initialization', () => {

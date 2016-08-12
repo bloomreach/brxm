@@ -24,8 +24,8 @@ describe('ChannelActions', () => {
   let $q;
   let $translate;
   let ChannelService;
-  let ConfigService;
   let DialogService;
+  let SessionService;
 
   const confirmDialog = jasmine.createSpyObj('confirmDialog', ['title', 'textContent', 'ok', 'cancel']);
   confirmDialog.title.and.returnValue(confirmDialog);
@@ -36,23 +36,22 @@ describe('ChannelActions', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _ConfigService_, _DialogService_) => {
+    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _DialogService_, _SessionService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $q = _$q_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
-      ConfigService = _ConfigService_;
       DialogService = _DialogService_;
+      SessionService = _SessionService_;
     });
 
     spyOn($translate, 'instant');
     spyOn(ChannelService, 'getChannel').and.returnValue({ hasCustomProperties: true });
     spyOn(ChannelService, 'getName').and.returnValue('test-channel');
-    spyOn(ChannelService, 'isChannelDeletionSupported').and.returnValue(true);
     spyOn(DialogService, 'confirm').and.returnValue(confirmDialog);
     spyOn(DialogService, 'show');
-    ConfigService.hasAdminPrivileges = true;
+    spyOn(SessionService, 'canDeleteChannel').and.returnValue(true);
   });
 
   function compileDirectiveAndGetController() {
@@ -82,21 +81,11 @@ describe('ChannelActions', () => {
     expect(ChannelActionsCtrl.isChannelSettingsAvailable()).toBe(false);
   });
 
-  it('doesn\'t expose the delete option if channel deletion is not supported', () => {
-    // admin and supported
+  it('doesn\'t expose the delete option if a user cannot delete a channel', () => {
     const ChannelActionsCtrl = compileDirectiveAndGetController();
     expect(ChannelActionsCtrl.isChannelDeletionAvailable()).toBe(true);
 
-    // admin but not supported
-    ChannelService.isChannelDeletionSupported.and.returnValue(false);
-    expect(ChannelActionsCtrl.isChannelDeletionAvailable()).toBe(false);
-
-    // neither admin nor supported
-    ConfigService.hasAdminPrivileges = false;
-    expect(ChannelActionsCtrl.isChannelDeletionAvailable()).toBe(false);
-
-    // not admin but supported
-    ChannelService.isChannelDeletionSupported.and.returnValue(true);
+    SessionService.canDeleteChannel.and.returnValue(false);
     expect(ChannelActionsCtrl.isChannelDeletionAvailable()).toBe(false);
   });
 
@@ -111,7 +100,7 @@ describe('ChannelActions', () => {
     expect(ChannelActionsCtrl.hasMenuOptions()).toBe(true);
 
     // no option
-    ChannelService.isChannelDeletionSupported.and.returnValue(false);
+    SessionService.canDeleteChannel.and.returnValue(false);
     ChannelActionsCtrl = compileDirectiveAndGetController();
     expect(ChannelActionsCtrl.hasMenuOptions()).toBe(false);
 
