@@ -21,14 +21,20 @@ export class SessionService {
     this.HstService = HstService;
 
     this._canWrite = false;
+    this._canManageChanges = false;
+    this._canDeleteChannel = false;
     this._initCallbacks = {};
   }
 
   initialize(channel) {
     return this.HstService
       .initializeSession(channel.hostname, channel.mountId)
-      .then((canWrite) => {
-        this._canWrite = canWrite;
+      .then((privileges) => {
+        if (privileges) {
+          this._canWrite = privileges.canWrite;
+          this._canManageChanges = privileges.canManageChanges;
+          this._canDeleteChannel = privileges.canDeleteChannel;
+        }
         this._serveInitCallbacks();
         return channel;
       });
@@ -36,6 +42,14 @@ export class SessionService {
 
   hasWriteAccess() {
     return this._canWrite;
+  }
+
+  canManageChanges() {
+    return this._canManageChanges;
+  }
+
+  canDeleteChannel() {
+    return this._canDeleteChannel;
   }
 
   registerInitCallback(id, callback) {

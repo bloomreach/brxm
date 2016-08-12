@@ -21,18 +21,37 @@ describe('ChannelActions', () => {
   let $compile;
   let $scope;
   let $element;
+  let $q;
+  let $translate;
   let ChannelService;
+  let DialogService;
+  let SessionService;
+
+  const confirmDialog = jasmine.createSpyObj('confirmDialog', ['title', 'textContent', 'ok', 'cancel']);
+  confirmDialog.title.and.returnValue(confirmDialog);
+  confirmDialog.textContent.and.returnValue(confirmDialog);
+  confirmDialog.ok.and.returnValue(confirmDialog);
+  confirmDialog.cancel.and.returnValue(confirmDialog);
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelService_) => {
+    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _DialogService_, _SessionService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
+      $q = _$q_;
+      $translate = _$translate_;
       ChannelService = _ChannelService_;
+      DialogService = _DialogService_;
+      SessionService = _SessionService_;
     });
 
+    spyOn($translate, 'instant');
     spyOn(ChannelService, 'getChannel').and.returnValue({ hasCustomProperties: true });
+    spyOn(ChannelService, 'getName').and.returnValue('test-channel');
+    spyOn(DialogService, 'confirm').and.returnValue(confirmDialog);
+    spyOn(DialogService, 'show');
+    spyOn(SessionService, 'canDeleteChannel').and.returnValue(true);
   });
 
   function compileDirectiveAndGetController() {
@@ -46,14 +65,14 @@ describe('ChannelActions', () => {
   }
 
   it('calls the on-action-selected callback when clicking the button', () => {
-    compileDirectiveAndGetController();
+    const ChannelActionsCtrl = compileDirectiveAndGetController();
 
-    $element.find('.qa-button-settings').click();
+    ChannelActionsCtrl.openSettings();
 
     expect($scope.onActionSelected).toHaveBeenCalledWith('channel-settings');
   });
 
-  it('doesn\'t expose the functionality if the channel has no custom properties', () => {
+  it('doesn\'t expose the settings option if the channel has no custom properties', () => {
     let ChannelActionsCtrl = compileDirectiveAndGetController();
     expect(ChannelActionsCtrl.isChannelSettingsAvailable()).toBe(true);
 
@@ -61,4 +80,50 @@ describe('ChannelActions', () => {
     ChannelActionsCtrl = compileDirectiveAndGetController();
     expect(ChannelActionsCtrl.isChannelSettingsAvailable()).toBe(false);
   });
+
+  it('doesn\'t expose the delete option if a user cannot delete a channel', () => {
+    const ChannelActionsCtrl = compileDirectiveAndGetController();
+    expect(ChannelActionsCtrl.isChannelDeletionAvailable()).toBe(true);
+
+    SessionService.canDeleteChannel.and.returnValue(false);
+    expect(ChannelActionsCtrl.isChannelDeletionAvailable()).toBe(false);
+  });
+
+  it('displays the menu if there is at least one option available', () => {
+    // both options
+    let ChannelActionsCtrl = compileDirectiveAndGetController();
+    expect(ChannelActionsCtrl.hasMenuOptions()).toBe(true);
+
+    // delete only
+    ChannelService.getChannel.and.returnValue({ hasCustomProperties: false });
+    ChannelActionsCtrl = compileDirectiveAndGetController();
+    expect(ChannelActionsCtrl.hasMenuOptions()).toBe(true);
+
+    // no option
+    SessionService.canDeleteChannel.and.returnValue(false);
+    ChannelActionsCtrl = compileDirectiveAndGetController();
+    expect(ChannelActionsCtrl.hasMenuOptions()).toBe(false);
+
+    // settings only
+    ChannelService.getChannel.and.returnValue({ hasCustomProperties: true });
+    ChannelActionsCtrl = compileDirectiveAndGetController();
+
+    expect(ChannelActionsCtrl.hasMenuOptions()).toBe(true);
+  });
+
+  it('doesn\'t delete a channel when canceling the confirmation dialog', () => {
+    const ChannelActionsCtrl = compileDirectiveAndGetController();
+
+    DialogService.show.and.returnValue($q.reject()); // cancel
+    ChannelActionsCtrl.deleteChannel();
+    expect(DialogService.confirm).toHaveBeenCalled();
+    expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DELETE_CHANNEL_TITLE', { channel: 'test-channel' });
+    expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DELETE_CHANNEL_MESSAGE');
+    expect(DialogService.show).toHaveBeenCalled();
+
+    $rootScope.$digest();
+    // TODO: expect deletion not to have beed triggered.
+  });
+
+  // TODO; add more tests for deleting a channel (once implemented)
 });

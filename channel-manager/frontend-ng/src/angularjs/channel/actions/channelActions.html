@@ -14,9 +14,27 @@
   limitations under the License.
   -->
 
-<md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANNEL_SETTINGS' | translate }}"
-           class="qa-button-settings"
-           ng-if="channelActions.isChannelSettingsAvailable()"
-           ng-click="channelActions.openSettings()">
-  {{ 'TOOLBAR_BUTTON_CHANNEL_SETTINGS' | translate }}
-</md-button>
+<md-menu ng-if="channelActions.hasMenuOptions()">
+  <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}"
+             class="qa-button-channel"
+             ng-click="$mdOpenMenu($event)">
+    {{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}
+  </md-button>
+  <md-menu-content width="4" class="qa-channel-menu">
+    <md-menu-item ng-if="channelActions.isChannelSettingsAvailable()">
+      <md-button class="qa-channel-action-settings"
+                 aria-label="{{ 'TOOLBAR_MENU_CHANNEL_SETTINGS' | translate }}"
+                 ng-click="channelActions.openSettings()">
+        {{ 'TOOLBAR_MENU_CHANNEL_SETTINGS' | translate }}
+      </md-button>
+    </md-menu-item>
+    <md-menu-item ng-if="channelActions.isChannelDeletionAvailable()">
+      <md-button class="qa-channel-action-delete"
+                 aria-label="{{ 'TOOLBAR_MENU_CHANNEL_DELETE' | translate }}"
+                 ng-click="channelActions.deleteChannel()">
+        {{ 'TOOLBAR_MENU_CHANNEL_DELETE' | translate }}
+      </md-button>
+    </md-menu-item>
+  </md-menu-content>
+</md-menu>
+

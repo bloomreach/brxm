@@ -15,8 +15,6 @@
  */
 package org.onehippo.cms7.channelmanager.channeleditor;
 
-import java.security.AccessControlException;
-
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
@@ -73,10 +71,6 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
-    private Boolean canManageChanges = Boolean.FALSE;
-
-    @ExtProperty
-    @SuppressWarnings("unused")
     private Long initialHstConnectionTimeout = DEFAULT_INITIAL_CONNECTION_TIMEOUT;
 
     @ExtProperty
@@ -113,7 +107,6 @@ public class ChannelEditor extends ExtPanel {
             variantsPath = config.getString("variantsPath");
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", DEFAULT_INITIAL_CONNECTION_TIMEOUT);
             this.extAjaxTimeout = config.getLong("extAjaxTimeoutMillis", DEFAULT_EXT_AJAX_TIMEOUT);
-            this.canManageChanges = canManageChanges(this.cmsUser, config);
         }
         this.variantsUuid = getVariantsUuidOrNull(variantsPath);
         // TODO: decide how to show hide hst-config-editor. Probably a config option in ChannelEditor constructor
@@ -164,31 +157,6 @@ public class ChannelEditor extends ExtPanel {
                     getMarkupId(), channelId, initialPath);
             target.appendJavaScript(loadChannelScript);
         }
-    }
-
-    private boolean canManageChanges(final String user, final IPluginConfig config) {
-        final String manageChangesPrivilege = config.getString("manage.changes.privileges", "hippo:admin");
-        final String manageChangesPathToCheck = config.getString("manage.changes.privileges.path", "/hst:hst/hst:channels");
-        return isAllowedTo(user, "manage changes", manageChangesPrivilege, manageChangesPathToCheck);
-    }
-
-    private static boolean isAllowedTo(final String user, final String description, final String privileges, final String pathToCheck) {
-        boolean isAllowed = false;
-        try {
-            UserSession.get().getJcrSession().checkPermission(pathToCheck, privileges);
-            isAllowed = true;
-            log.info("User '{}' is allowed to {}.", user, description);
-        } catch(AccessControlException e) {
-            log.info("User '{}' is not allowed to {}.", user, description);
-        } catch (RepositoryException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Problems while checking if user '{}' is allowed to {}, assuming user is not allowed.", user, description, e);
-            } else {
-                log.warn("Problems while checking if user '{}' is allowed to {}, assuming user is not allowed. {}",
-                        user, description, e);
-            }
-        }
-        return isAllowed;
     }
 
     private static String getVariantsUuidOrNull(final String variantsPath) {
