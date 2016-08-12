@@ -1,17 +1,11 @@
 <%@ include file="/WEB-INF/jsp/include/imports.jsp" %>
-<%@ page import="java.util.UUID" %>
 
+<%--@elvariable id="componentId" type="java.lang.String"--%>
 <%--@elvariable id="pageable" type="org.onehippo.cms7.essentials.components.paging.Pageable"--%>
 <%--@elvariable id="item" type="{{beansPackage}}.Banner"--%>
 <%--@elvariable id="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsCarouselComponentInfo"--%>
 <%--@elvariable id="editMode" type="java.lang.Boolean"--%>
 <c:set var="pauseCarousel" value="${requestScope.cparam.pause ? 'hover':''}"/>
-<c:set var="componentId">
-  <c:choose>
-    <c:when test="${editMode}">${UUID.randomUUID()}</c:when>
-    <c:otherwise><hst:namespace/></c:otherwise>
-  </c:choose>
-</c:set>
 
 <c:if test="${requestScope.pageable ne null && requestScope.pageable.total gt 0}">
   <div id="${componentId}" class="carousel slide" data-ride="carousel" data-interval="${requestScope.cparam.interval}"
@@ -54,7 +48,7 @@
   </div>
   <style type="text/css">
     /* Carousel base class */
-    .carousel {
+    #${componentId} {
       height: ${requestScope.cparam.carouselHeight}px;
       /*width: ${requestScope.cparam.carouselWidth}px;*/
       margin-bottom: 60px;
@@ -67,7 +61,7 @@
     }
 
     /* Declare heights because of positioning of img element */
-    .carousel .item {
+    #${componentId} .item {
       height: ${requestScope.cparam.carouselHeight}px;
       background-color: ${requestScope.cparam.carouselBackgroundColor};
     }
