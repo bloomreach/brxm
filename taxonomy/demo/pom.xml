@@ -92,19 +92,6 @@
         <version>${lib.spring-js.version}</version>
       </dependency>
 
-
-      <dependency>
-        <groupId>org.onehippo</groupId>
-        <artifactId>taxonomy-api</artifactId>
-        <version>${forge.taxonomy.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.onehippo</groupId>
-        <artifactId>taxonomy-hst-api</artifactId>
-        <version>${forge.taxonomy.version}</version>
-      </dependency>
-
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>

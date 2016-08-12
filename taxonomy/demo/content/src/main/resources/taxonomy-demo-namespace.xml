@@ -727,6 +727,14 @@
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>http://www.hippoecm.org/hst/nt/taxonomydemo/1.2</sv:value>
         </sv:property>
+        <sv:node sv:name="extrataxonomy">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>taxonomydemo:alternatekeys</sv:value>
+          </sv:property>
+        </sv:node>
       </sv:node>
     </sv:node>
     <sv:node sv:name="hipposysedit:prototypes">
@@ -914,7 +922,7 @@
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:plugin</sv:value>
           </sv:property>
-          <sv:property sv:name="captionKey" sv:type="String">
+          <sv:property sv:name="field" sv:type="String">
             <sv:value>extrataxonomy</sv:value>
           </sv:property>
           <sv:property sv:name="mode" sv:type="String">

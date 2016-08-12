@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
@@ -39,8 +38,10 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.editor.ITemplateEngine;
@@ -53,6 +54,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.diff.LCS;
 import org.hippoecm.frontend.plugins.standards.diff.LCS.Change;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -63,6 +65,7 @@ import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
@@ -78,24 +81,26 @@ import org.slf4j.LoggerFactory;
  */
 public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
 
-    public static final String HIPPOTRANSLATION_TRANSLATED = "hippotranslation:translated";
-    public static final String HIPPOTRANSLATION_LOCALE = "hippotranslation:locale";
-
     static final Logger log = LoggerFactory.getLogger(TaxonomyPickerPlugin.class);
+
+    private static final CssResourceReference CSS = new CssResourceReference(TaxonomyPickerPlugin.class, "style.css");
+
+    private static final String INVALID_TAXONOMY_KEY = "invalid.taxonomy.key";
+    private static final String INVALID_TAXONOMY_CATEGORY_KEY = "invalid.taxonomy.category.key";
 
     private class CategoryListView extends RefreshingView<String> {
 
-        public CategoryListView(String id) {
+        CategoryListView(String id) {
             super(id);
         }
 
         @Override
         protected Iterator<IModel<String>> getItemModels() {
             if (dao == null) {
-                List<IModel<String>> models = Collections.emptyList();
-                return models.iterator();
+                return Collections.emptyIterator();
             }
-            Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
+
+            final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
             final Iterator<String> upstream = classification.getKeys().iterator();
             return new Iterator<IModel<String>>() {
 
@@ -115,21 +120,10 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
 
         @Override
         protected void populateItem(Item<String> item) {
-            Taxonomy taxonomy = getTaxonomy();
-            IModel<?> categoryTextModel;
+            final String categoryKey = item.getModelObject();
+            final IModel<?> categoryTextModel = getCategoryTextModel(categoryKey);
 
-            if (taxonomy != null) {
-                Category category = taxonomy.getCategoryByKey(item.getModelObject());
-                if (category != null) {
-                    categoryTextModel = new Model(TaxonomyHelper.getCategoryName(category, getPreferredLocale()));
-                } else {
-                    categoryTextModel = new ResourceModel("invalid.taxonomy.category.key");
-                }
-            } else {
-                categoryTextModel = new ResourceModel("invalid.taxonomy.key");
-            }
-
-            Label label = new Label("key", categoryTextModel);
+            final Label label = new Label("key", categoryTextModel);
             item.add(label);
             label.add(new AttributeModifier("title", categoryTextModel));
         }
@@ -137,64 +131,54 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
 
     private class CategoryCompareView extends ListView<Change<String>> {
 
-        public CategoryCompareView(String id, IModel<List<Change<String>>> changeModel) {
+        CategoryCompareView(String id, IModel<List<Change<String>>> changeModel) {
             super(id, changeModel);
         }
 
         @Override
         protected void populateItem(ListItem<Change<String>> item) {
-            Taxonomy taxonomy = getTaxonomy();
-            Change<String> change = item.getModelObject();
-            IModel<?> categoryTextModel;
+            final Change<String> change = item.getModelObject();
+            final String categoryKey = change.getValue();
+            final IModel<?> categoryTextModel = getCategoryTextModel(categoryKey);
 
-            if (taxonomy != null) {
-                Category category = taxonomy.getCategoryByKey(change.getValue());
-                if (category != null) {
-                    categoryTextModel = new Model(TaxonomyHelper.getCategoryName(category, getPreferredLocale()));
-                } else {
-                    categoryTextModel = new ResourceModel("invalid.taxonomy.category.key");
-                }
-            } else {
-                categoryTextModel = new ResourceModel("invalid.taxonomy.key");
-            }
-
-            Label label = new Label("key", categoryTextModel);
+            final Label label = new Label("key", categoryTextModel);
             item.add(label);
             label.add(new AttributeModifier("title", categoryTextModel));
 
             switch (change.getType()) {
                 case ADDED:
-                    label.add(new AttributeAppender("class", new Model("hippo-diff-added"), " "));
+                    label.add(CssClass.append("hippo-diff-added"));
                     break;
                 case REMOVED:
-                    label.add(new AttributeAppender("class", new Model("hippo-diff-removed"), " "));
+                    label.add(CssClass.append("hippo-diff-removed"));
                     break;
             }
         }
     }
 
     private final Mode mode;
+
     private ClassificationDao dao;
 
     public TaxonomyPickerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        FieldPluginHelper helper = new FieldPluginHelper(context, config);
-
-        add(new Label("title", helper.getCaptionModel(this)));
+        final IFieldDescriptor fieldDescriptor = getTaxonomyFieldDescriptor();
+        final FieldPluginHelper helper = new FieldPluginHelper(context, config, fieldDescriptor,
+                getDocumentTypeDescriptor(), null);
 
         final Label requiredMarker = new Label("required", "*");
-        final IFieldDescriptor fieldDescriptor = getTaxonomyFieldDescriptor();
-        if ((fieldDescriptor == null) || (!fieldDescriptor.getValidators().contains("required"))) {
+        if (fieldDescriptor == null || !fieldDescriptor.getValidators().contains("required")) {
             requiredMarker.setVisible(false);
         }
         add(requiredMarker);
 
+        add(new Label("title", helper.getCaptionModel(this)));
         add(new FieldHint("hint-panel", helper.getHintModel(this)));
 
-        dao = context.getService(config.getString(ClassificationDao.SERVICE_ID), ClassificationDao.class);
+        dao = getService(ClassificationDao.SERVICE_ID, ClassificationDao.class);
         if (dao == null) {
-            log.warn("No DAO found to retrieve classification, using service id: {}",
+            log.warn("No DAO found to retrieve classification for service id {}",
                     config.getString(ClassificationDao.SERVICE_ID));
         }
 
@@ -202,27 +186,31 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         if (dao != null && mode == Mode.EDIT) {
             add(new CategoryListView("keys"));
             final ClassificationModel model = new ClassificationModel(dao, getModel());
-            IDialogFactory dialogFactory = new IDialogFactory() {
-
-                public AbstractDialog<Classification> createDialog() {
-                    return createPickerDialog(model, getPreferredLocale());
+            final IDialogFactory dialogFactory = () -> {
+                final String locale = getPreferredLocale();
+                @SuppressWarnings("deprecation")
+                AbstractDialog dialog = createPickerDialog(model, locale);
+                if (dialog == null) {
+                    dialog = createTaxonomyPickerDialog(model, locale);
                 }
+                return dialog;
             };
-            add(new DialogLink("edit", new ResourceModel("edit"), dialogFactory, getDialogService())).setEnabled(getTaxonomy() != null);
+            final DialogLink dialogLink = new DialogLink("edit", new ResourceModel("edit"), dialogFactory, getDialogService());
+            add(dialogLink);
+            setEnabled(getTaxonomy() != null);
         } else if (dao != null && mode == Mode.COMPARE && config.containsKey("model.compareTo")) {
-            IModel<List<Change<String>>> changesModel = new LoadableDetachableModel<List<Change<String>>>() {
+            final IModel<List<Change<String>>> changesModel = new LoadableDetachableModel<List<Change<String>>>() {
 
                 @SuppressWarnings("unchecked")
                 @Override
                 protected List<Change<String>> load() {
                     if (dao != null) {
-                        IModelReference<Node> baseRef = context.getService(config.getString("model.compareTo"),
-                                IModelReference.class);
+                        final IModelReference<Node> baseRef = getService("model.compareTo", IModelReference.class);
                         if (baseRef != null) {
-                            IModel<Node> baseModel = baseRef.getModel();
+                            final IModel<Node> baseModel = baseRef.getModel();
                             if (baseModel != null) {
-                                List<String> currentKeys = dao.getClassification(getModel().getObject()).getKeys();
-                                List<String> baseKeys = dao.getClassification(baseModel.getObject()).getKeys();
+                                final List<String> currentKeys = dao.getClassification(getModel().getObject()).getKeys();
+                                final List<String> baseKeys = dao.getClassification(baseModel.getObject()).getKeys();
                                 return LCS.getChangeSet(baseKeys.toArray(new String[baseKeys.size()]), currentKeys
                                         .toArray(new String[currentKeys.size()]));
                             }
@@ -240,12 +228,11 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         }
 
         final IModel<CanonicalCategory> canonicalNameModel = new LoadableDetachableModel<CanonicalCategory>() {
-
             @Override
             protected CanonicalCategory load() {
-                Taxonomy taxonomy = getTaxonomy();
+                final Taxonomy taxonomy = getTaxonomy();
                 if (taxonomy != null) {
-                    Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
+                    final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModelObject());
                     return new CanonicalCategory(taxonomy, classification.getCanonical(), getPreferredLocale());
                 } else {
                     return null;
@@ -256,7 +243,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
 
             @Override
             public boolean isVisible() {
-                CanonicalCategory canonicalCategory = canonicalNameModel.getObject();
+                final CanonicalCategory canonicalCategory = canonicalNameModel.getObject();
                 return canonicalCategory != null && canonicalCategory.getName() != null;
             }
 
@@ -272,7 +259,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
 
     @Override
     public void renderHead(final IHeaderResponse response) {
-        response.render(CssHeaderItem.forReference(new CssResourceReference(TaxonomyPickerPlugin.class, "res/style.css")));
+        response.render(CssHeaderItem.forReference(CSS));
     }
 
     @Override
@@ -284,29 +271,25 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     public void render(final PluginRequestTarget target) {
 
         // in edit mode, check the validation service for any results for this field
-        if ((target != null) && isActive()) {
-            if (IEditor.Mode.EDIT == mode) {
-                if (getPluginConfig().containsKey(IValidationService.VALIDATE_ID)) {
+        if (target != null && isActive() && IEditor.Mode.EDIT == mode) {
+            final IValidationService validationService = getService(IValidationService.VALIDATE_ID,
+                    IValidationService.class);
 
-                    final String validatorId = getPluginConfig().getString(IValidationService.VALIDATE_ID);
-                    final IValidationService validationService = getPluginContext().getService(validatorId, IValidationService.class);
-
-                    if (validationService != null) {
-                        if (!isTaxonomyFieldValid(validationService.getValidationResult())) {
-                            target.appendJavaScript("Wicket.$('" + getMarkupId() + "').setAttribute('class', 'invalid');");
-                        }
-                    }
-                    else {
-                        log.debug("ValidationService for taxonomy field not found based on {} {}", IValidationService.VALIDATE_ID, validatorId);
-                    }
-                }
-                else {
-                    log.debug("Key {} not found in the configuration for taxonomy field, config={}", IValidationService.VALIDATE_ID, getPluginConfig());
-                }
+            if (validationService != null && !isTaxonomyFieldValid(validationService.getValidationResult())) {
+                target.appendJavaScript("Wicket.$('" + getMarkupId() + "').setAttribute('class', 'invalid');");
             }
         }
 
         super.render(target);
+    }
+
+    /**
+     * @deprecated This method is deprecated in favor of {@link #createTaxonomyPickerDialog} and will be removed in
+     * version 12.00 and onward.
+     */
+    @Deprecated
+    protected AbstractDialog<Classification> createPickerDialog(ClassificationModel model, String preferredLocale) {
+        return null;
     }
 
     /**
@@ -316,7 +299,8 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
      * override this method.
      * </p>
      */
-    protected AbstractDialog<Classification> createPickerDialog(ClassificationModel model, String preferredLocale) {
+    protected Dialog<Classification> createTaxonomyPickerDialog(final ClassificationModel model,
+                                                                final String preferredLocale) {
         return new TaxonomyPickerDialog(getPluginContext(), getPluginConfig(), model, preferredLocale);
     }
 
@@ -325,16 +309,14 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
      * Otherwise, returns the user's UI locale as a fallback.
      */
     protected String getPreferredLocale() {
-        Node node = getModel().getObject();
-
+        final Node node = getModel().getObject();
         try {
-            if (node.isNodeType(HIPPOTRANSLATION_TRANSLATED)) {
-                if (node.hasProperty(HIPPOTRANSLATION_LOCALE)) {
-                    return node.getProperty(HIPPOTRANSLATION_LOCALE).getString();
-                }
+            if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
+                    && node.hasProperty(HippoTranslationNodeType.LOCALE)) {
+                return node.getProperty(HippoTranslationNodeType.LOCALE).getString();
             }
         } catch (RepositoryException e) {
-            log.error("Failed to detect hippotranslation:locale to choose the preferred locale", e);
+            log.error("Failed to detect " + HippoTranslationNodeType.LOCALE + " to choose the preferred locale", e);
         }
 
         return getLocale().getLanguage();
@@ -344,8 +326,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
      * Get the document type descriptor object that this field is part of
      */
     protected ITypeDescriptor getDocumentTypeDescriptor() {
-
-        final ITemplateEngine templateEngine = getPluginContext().getService(getPluginConfig().getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
+        final ITemplateEngine templateEngine = getService(ITemplateEngine.ENGINE, ITemplateEngine.class);
         if (templateEngine != null) {
             try {
                 return templateEngine.getType(getModel());
@@ -362,13 +343,12 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
      * Get the field descriptor object for this field
      */
     protected IFieldDescriptor getTaxonomyFieldDescriptor() {
-
         // get field in current document type, which is either directly configured field or the hippotaxonomy:classifiable
         final ITypeDescriptor docType = getDocumentTypeDescriptor();
         if (docType != null) {
             final String fieldName = getPluginConfig().getString(AbstractFieldPlugin.FIELD, "keys");
-
             final IFieldDescriptor field = docType.getField(fieldName);
+
             if (field != null) {
                 return field;
             }
@@ -380,11 +360,9 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     }
 
     protected Taxonomy getTaxonomy() {
-        IPluginConfig config = getPluginConfig();
-        ITaxonomyService service = getPluginContext()
-                .getService(config.getString(ITaxonomyService.SERVICE_ID, ITaxonomyService.DEFAULT_SERVICE_TAXONOMY_ID), ITaxonomyService.class);
-
-        final String taxonomyName = config.getString(ITaxonomyService.TAXONOMY_NAME);
+        final ITaxonomyService service = getService(ITaxonomyService.SERVICE_ID,
+                ITaxonomyService.DEFAULT_SERVICE_TAXONOMY_ID, ITaxonomyService.class);
+        final String taxonomyName = getPluginConfig().getString(ITaxonomyService.TAXONOMY_NAME);
 
         if (StringUtils.isBlank(taxonomyName)) {
             log.info("No configured/chosen taxonomy name. Found '{}'", taxonomyName);
@@ -409,7 +387,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             }
 
             for (Violation violation : validationResult.getViolations()) {
-                Set<ModelPath> paths = violation.getDependentPaths();
+                final Set<ModelPath> paths = violation.getDependentPaths();
                 for (ModelPath path : paths) {
                     if (path.getElements().length > 0) {
                         final ModelPathElement first = path.getElements()[0];
@@ -424,6 +402,40 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         }
 
         return true;
+    }
+
+    private <T extends IClusterable> T getService(final String serviceConfigKey, Class<T> clazz) {
+        return getService(serviceConfigKey, null, clazz);
+    }
+
+    private <T extends IClusterable> T getService(final String serviceConfigKey, final String defaultServiceId,
+                                                  Class<T> clazz) {
+        final IPluginConfig config = getPluginConfig();
+        final String serviceId = config.getString(serviceConfigKey, defaultServiceId);
+        if (serviceId == null) {
+            log.debug("ServiceId not found for key {}, config={}",
+                    serviceConfigKey, config);
+            return null;
+        }
+
+        final IPluginContext context = getPluginContext();
+        final T service = context.getService(serviceId, clazz);
+        if (service == null) {
+            log.debug("Service {} not found for id {}", clazz.getName(), serviceId);
+        }
+        return service;
+    }
+
+    private IModel<?> getCategoryTextModel(final String categoryKey) {
+        final Taxonomy taxonomy = getTaxonomy();
+        if (taxonomy != null) {
+            final Category category = taxonomy.getCategoryByKey(categoryKey);
+            if (category != null) {
+                return Model.of(TaxonomyHelper.getCategoryName(category, getPreferredLocale()));
+            }
+            return new ResourceModel(INVALID_TAXONOMY_CATEGORY_KEY);
+        }
+        return new ResourceModel(INVALID_TAXONOMY_KEY);
     }
 
 }

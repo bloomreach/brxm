@@ -32,8 +32,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.swing.tree.TreeNode;
 
-import com.google.common.base.Strings;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
@@ -97,6 +95,8 @@ import org.onehippo.taxonomy.plugin.tree.TaxonomyTreeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+
 /**
  * TaxonomyEditorPlugin used when editing taxonomy documents.
  */
@@ -104,6 +104,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(TaxonomyEditorPlugin.class);
 
+    private static final CssResourceReference CSS = new CssResourceReference(TaxonomyEditorPlugin.class, "style.css");
     private static final String MENU_ACTION_STYLE_CLASS = "menu-action";
     private static final String DISABLED_ACTION_STYLE_CLASS = "taxonomy-disabled-action";
     private static final String DISABLED_MENU_ACTION_STYLE_CLASS = MENU_ACTION_STYLE_CLASS + " " + DISABLED_ACTION_STYLE_CLASS;
@@ -358,7 +359,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
 
     @Override
     public void renderHead(final IHeaderResponse response) {
-        response.render(CssHeaderItem.forReference(new CssResourceReference(TaxonomyEditorPlugin.class, "res/style.css")));
+        response.render(CssHeaderItem.forReference(CSS));
     }
 
     /*

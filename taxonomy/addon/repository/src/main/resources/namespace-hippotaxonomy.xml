@@ -82,6 +82,8 @@
         <sv:property sv:name="frontend:properties" sv:type="String">
           <sv:value>mode</sv:value>
           <sv:value>taxonomy.name</sv:value>
+          <sv:value>caption</sv:value>
+          <sv:value>hint</sv:value>
         </sv:property>
         <sv:node sv:name="root">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -110,6 +112,12 @@
           </sv:property>
           <sv:property sv:name="taxonomy.classification.dao" sv:type="String">
             <sv:value>service.taxonomy.dao</sv:value>
+          </sv:property>
+          <sv:property sv:name="caption" sv:type="String">
+            <sv:value>${caption}</sv:value>
+          </sv:property>
+          <sv:property sv:name="hint" sv:type="String">
+            <sv:value>${hint}</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

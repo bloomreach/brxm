@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.onehippo.taxonomy.demo.plugin;
 
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.onehippo.taxonomy.plugin.TaxonomyPickerPlugin;
@@ -24,16 +24,13 @@ import org.onehippo.taxonomy.plugin.model.ClassificationModel;
 
 public class AdditionalFieldCustomTaxonomyPickerPlugin extends TaxonomyPickerPlugin {
 
-    private static final long serialVersionUID = 1L;
-
     public AdditionalFieldCustomTaxonomyPickerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
     }
 
     @Override
-    protected AbstractDialog<Classification> createPickerDialog(ClassificationModel model, String preferredLocale) {
+    protected Dialog<Classification> createTaxonomyPickerDialog(final ClassificationModel model,
+                                                                final String preferredLocale) {
         return new AdditionalFieldCustomTaxonomyPickerDialog(getPluginContext(), getPluginConfig(), model, preferredLocale);
     }
-
-
 }

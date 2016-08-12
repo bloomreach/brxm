@@ -1,16 +1,40 @@
-{"hippo:types": {
-  "taxonomydemo:doubletaxonomy":   {
-    "en": {"taxonomydemo:extrataxonomy": "Secondary taxonomy"},
-    "nl": {"taxonomydemo:extrataxonomy": "Secundaire taxonomie"},
-    "fr": {"taxonomydemo:extrataxonomy": "Taxonomie secondaire"},
-    "de": {"taxonomydemo:extrataxonomy": "Sekundäre Taxonomie"}
-  },
-  "taxonomydemo:canontextpage":   {
-    "en": {"jcr:name": "Canonised Text page"},
-    "nl": {"jcr:name": "Gecanoniseerd Tekstpagina"}
-  },
-  "taxonomydemo:textpage":   {
-    "en": {"jcr:name": "Text page"},
-    "nl": {"jcr:name": "Tekstpagina"}
+{
+  "hippo:types": {
+    "taxonomydemo:doubletaxonomy": {
+      "en": {
+        "hippotaxonomy:keys": "Taxonomy",
+        "taxonomydemo:alternatekeys": "Secondary taxonomy"
+      },
+      "nl": {
+        "taxonomydemo:alternatekeys": "Secundaire taxonomie",
+        "hippotaxonomy:keys": "Taxonomie"
+      },
+      "fr": {
+        "taxonomydemo:alternatekeys": "Taxonomie secondaire",
+        "hippotaxonomy:keys": "Taxonomie"
+      },
+      "de": {
+        "taxonomydemo:alternatekeys": "Sekundäre Taxonomie",
+        "hippotaxonomy:keys": "Taxonomie"
+      }
+    },
+    "taxonomydemo:canontextpage": {
+      "en": {
+        "jcr:name": "Canonised Text page"
+      },
+      "nl": {
+        "jcr:name": "Gecanoniseerd Tekstpagina"
+      }
+    },
+    "taxonomydemo:textpage": {
+      "en": {
+        "jcr:name": "Text page",
+        "hippotaxonomy:keys": "Taxonomy"
+      },
+      "nl": {
+        "jcr:name": "Tekstpagina",
+        "hippotaxonomy:keys": "Taxonomie"
+      }
+    }
   }
-}}
+}
