@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.cms7.essentials.components;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
@@ -49,8 +50,6 @@ import com.google.common.base.Strings;
 
 /**
  * Base HST component, containing default values and utility methods
- *
- * @version "$Id$"
  */
 public abstract class CommonComponent extends BaseHstComponent {
 
@@ -63,10 +62,6 @@ public abstract class CommonComponent extends BaseHstComponent {
      */
     public static final String PAGE_NOT_FOUND = "pagenotfound";
 
-    @SuppressWarnings("HippoHstThreadSafeInspection")
-    private PageableFactory pageableFactory;
-    @SuppressWarnings("HippoHstThreadSafeInspection")
-    private DoBeforeRenderExtension doBeforeRenderExtension;
     /**
      * Attribute names used within Essentials
      */
@@ -78,6 +73,7 @@ public abstract class CommonComponent extends BaseHstComponent {
     protected static final String REQUEST_ATTR_QUERY = "query"; // free-text query string
     protected static final String REQUEST_ATTR_CMS_EDIT = "editMode"; // CMS edit mode
     protected static final String REQUEST_ATTR_LABEL = "label";
+    protected static final String REQUEST_ATTR_COMPONENT_ID = "componentId";
 
     /**
      * Request parameters (as submitted in HTTP-GET request).
@@ -85,8 +81,12 @@ public abstract class CommonComponent extends BaseHstComponent {
     protected static final String REQUEST_PARAM_QUERY = REQUEST_ATTR_QUERY;
     protected static final String REQUEST_PARAM_PAGE = REQUEST_ATTR_PAGE;
 
-
     private static Logger log = LoggerFactory.getLogger(CommonComponent.class);
+
+    @SuppressWarnings("HippoHstThreadSafeInspection")
+    private PageableFactory pageableFactory;
+    @SuppressWarnings("HippoHstThreadSafeInspection")
+    private DoBeforeRenderExtension doBeforeRenderExtension;
 
     public CommonComponent() {
         if (doBeforeRenderExtension == null) {
@@ -158,7 +158,6 @@ public abstract class CommonComponent extends BaseHstComponent {
         }
     }
 
-
     /**
      * Sets content bean onto request. If no bean is found, 404 response will be set.
      *
@@ -189,6 +188,7 @@ public abstract class CommonComponent extends BaseHstComponent {
         if (Strings.isNullOrEmpty(pageNotFoundPath)) {
             pageNotFoundPath = PAGE_404;
         }
+
         final HippoBean bean = context.getSiteContentBaseBean().getBean(pageNotFoundPath, HippoBean.class);
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         if (bean != null) {
@@ -215,7 +215,6 @@ public abstract class CommonComponent extends BaseHstComponent {
                     log.error("Error forwarding to "+ PAGE_NOT_FOUND +" page", e);
                 }
             }
-
         }
     }
 
@@ -263,7 +262,6 @@ public abstract class CommonComponent extends BaseHstComponent {
         return SiteUtils.getAnyParameter(parameter, request, this);
     }
 
-
     /**
      * Adds beans to collection for given path
      *
@@ -288,15 +286,12 @@ public abstract class CommonComponent extends BaseHstComponent {
         return SearchInputParsingUtils.parse(query, false);
     }
 
-    protected void setEditMode(final HstRequest request) {
-        request.setAttribute(REQUEST_ATTR_CMS_EDIT, RequestContextProvider.get().isCmsRequest());
-    }
-
     public PageableFactory getPageableFactory() {
         if (pageableFactory == null) {
             pageableFactory = HstServices.getComponentManager().getComponent(PageableFactory.class.getName());
             if (pageableFactory == null) {
-                log.info("PageableFactory bean: {} is *not* configured, essentials will use DefaultPageableFactory", PageableFactory.class.getName());
+                log.info("PageableFactory bean: {} is *not* configured, essentials will use DefaultPageableFactory",
+                        PageableFactory.class.getName());
                 pageableFactory = new DefaultPageableFactory();
             }
         }
@@ -313,6 +308,18 @@ public abstract class CommonComponent extends BaseHstComponent {
             throw new IllegalArgumentException("Extension must not be null.");
         }
         this.doBeforeRenderExtension = doBeforeRenderExtension;
+    }
+
+    protected void setEditMode(final HstRequest request) {
+        request.setAttribute(REQUEST_ATTR_CMS_EDIT, RequestContextProvider.get().isCmsRequest());
+    }
+
+    protected void setComponentId(final HstRequest request, final HstResponse response) {
+        if (RequestContextProvider.get().isCmsRequest()) {
+            request.setAttribute(REQUEST_ATTR_COMPONENT_ID, UUID.randomUUID().toString());
+        } else {
+            request.setAttribute(REQUEST_ATTR_COMPONENT_ID, response.getNamespace());
+        }
     }
 
 }

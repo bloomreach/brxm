@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,6 @@ import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
 
 /**
  * HST component used for rendering of Carousel items
- *
- * @version "$Id$"
  */
 @ParametersInfo(type = EssentialsCarouselComponentInfo.class)
 public class EssentialsCarouselComponent extends CommonComponent {
@@ -37,10 +35,13 @@ public class EssentialsCarouselComponent extends CommonComponent {
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) {
         super.doBeforeRender(request, response);
+
+        setComponentId(request, response);
+
         final EssentialsCarouselComponentInfo paramInfo = getComponentParametersInfo(request);
+        request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
         final List<HippoDocument> items = getCarouselItems(paramInfo);
         request.setAttribute(REQUEST_ATTR_PAGEABLE, new DefaultPagination<>(items));
-        request.setAttribute(REQUEST_ATTR_PARAM_INFO, paramInfo);
     }
 
     /**
