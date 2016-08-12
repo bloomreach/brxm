@@ -16,8 +16,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.Credentials;
@@ -26,10 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.common.collect.Lists;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
