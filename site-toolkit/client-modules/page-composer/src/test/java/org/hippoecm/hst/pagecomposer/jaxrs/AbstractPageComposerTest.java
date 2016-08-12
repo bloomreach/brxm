@@ -243,14 +243,14 @@ public class AbstractPageComposerTest {
         return resolvedMount.matchSiteMapItem(pathInfo);
     }
 
-    protected void createHstConfigBackup(Session session) throws RepositoryException {
+    public static void createHstConfigBackup(Session session) throws RepositoryException {
         if (!session.nodeExists("/hst-backup")) {
             JcrUtils.copy(session, "/hst:hst", "/hst-backup");
             session.save();
         }
     }
 
-    protected void restoreHstConfigBackup(Session session) throws RepositoryException {
+    public static void restoreHstConfigBackup(Session session) throws RepositoryException {
         if (session.nodeExists("/hst-backup")) {
             if (session.nodeExists("/hst:hst")) {
                 session.removeItem("/hst:hst");
