@@ -30,11 +30,14 @@ import javax.jcr.Session;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
@@ -54,9 +57,11 @@ public class ChannelServiceImplTest {
     private Node hstRoot;
 
     private HstConfigurationService hstConfigurationService;
+    private ChannelServiceImpl channelService;
+    private Channel channelFoo;
 
     @Before
-    public void setUp() throws RepositoryException {
+    public void setUp() throws RepositoryException, ChannelException {
         hstConfigurationService = EasyMock.createMock(HstConfigurationService.class);
 
         rootNode = MockNode.root();
@@ -68,24 +73,8 @@ public class ChannelServiceImplTest {
         sitesNode = hstRoot.addNode("hst:sites", HstNodeTypes.NODETYPE_HST_SITES);
 
         mockVirtualHosts = mockVirtualHosts();
-    }
 
-    @Test
-    public void can_create_mock_mount_nodes() throws RepositoryException {
-        addMountNode("group1", "com/example/hst:root");
-        addMountNode("group1", "com/example/hst:root/bah");
-        addMountNode("group2", "com/example/hst:root/");
-        addMountNode("group2", "com/example/hst:root/foo");
-
-        assertThat(session.itemExists("/hst:hst/hst:hosts/group1/com/example/hst:root"), is(true));
-        assertThat(session.itemExists("/hst:hst/hst:hosts/group1/com/example/hst:root/bah"), is(true));
-        assertThat(session.itemExists("/hst:hst/hst:hosts/group2/com/example/hst:root/"), is(true));
-        assertThat(session.itemExists("/hst:hst/hst:hosts/group2/com/example/hst:root/foo"), is(true));
-    }
-
-    @Test
-    public void delete_channel_should_delete_all_binding_mounts() throws Exception {
-        final Channel channelFoo = mockChannel("foo");
+        channelFoo = mockChannel("foo");
         addSiteNode("foo");
         addSiteNode("bah");
 
@@ -103,11 +92,27 @@ public class ChannelServiceImplTest {
         mountId2MountPoint.put(bahMountNode.getIdentifier(), "/hst:hst/hst:sites/bah");
         mockHostGroups(hostGroups, mountId2MountPoint);
 
-        ChannelServiceImpl channelService = EasyMock.createMockBuilder(ChannelServiceImpl.class)
+        channelService = EasyMock.createMockBuilder(ChannelServiceImpl.class)
                 .addMockedMethod("getChannel")
                 .createMock();
         channelService.setHstConfigurationService(hstConfigurationService);
+    }
 
+    @Test
+    public void can_create_mock_mount_nodes() throws RepositoryException {
+        addMountNode("group1", "com/example/hst:root");
+        addMountNode("group1", "com/example/hst:root/bah");
+        addMountNode("group2", "com/example/hst:root/");
+        addMountNode("group2", "com/example/hst:root/foo");
+
+        assertThat(session.itemExists("/hst:hst/hst:hosts/group1/com/example/hst:root"), is(true));
+        assertThat(session.itemExists("/hst:hst/hst:hosts/group1/com/example/hst:root/bah"), is(true));
+        assertThat(session.itemExists("/hst:hst/hst:hosts/group2/com/example/hst:root/"), is(true));
+        assertThat(session.itemExists("/hst:hst/hst:hosts/group2/com/example/hst:root/foo"), is(true));
+    }
+
+    @Test
+    public void delete_channel_should_delete_all_binding_mounts() throws Exception {
         EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo);
         hstConfigurationService.delete(session, "/hst:hst/hst:configurations/foo");
         EasyMock.expectLastCall();
@@ -133,8 +138,40 @@ public class ChannelServiceImplTest {
         assertThat(session.itemExists("/hst:hst/hst:hosts/group2"), is(true));
     }
 
-    // TODO add a test for the Channel Service's handling of the hstConfigurationService#delete() call to
-    // throw an exception? (caught and uncaught)
+    @Test
+    public void delete_channel_removes_other_nodes_although_config_nodes_removal_fails() throws Exception {
+        EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo);
+        hstConfigurationService.delete(session, "/hst:hst/hst:configurations/foo");
+        EasyMock.expectLastCall().andThrow(new HstConfigurationException("Something wrong"));
+        EasyMock.replay(channelService, hstConfigurationService);
+
+        assertThat(session.itemExists("/hst:hst/hst:sites/foo"), is(true));
+        assertThat(session.itemExists("/hst:hst/hst:channels/foo"), is(true));
+
+        channelService.deleteChannel(session, "foo");
+
+        EasyMock.verify(channelService, hstConfigurationService);
+
+        assertThat(session.itemExists("/hst:hst/hst:sites/bah"), is(true));
+        assertThat(session.itemExists("/hst:hst/hst:sites/foo"), is(false));
+        assertThat(session.itemExists("/hst:hst/hst:channels/foo"), is(false));
+        assertThat(session.itemExists("/hst:hst/hst:hosts/group1/com/example/hst:root/foo"), is(false));
+        assertThat(session.itemExists("/hst:hst/hst:hosts/group1/com/example/hst:root"), is(true));
+
+        // all hst:virtualhost nodes are also removed if they are leaf nodes
+        assertThat(session.itemExists("/hst:hst/hst:hosts/group2/com/example/hst:root"), is(false));
+        assertThat(session.itemExists("/hst:hst/hst:hosts/group2/com/example"), is(false));
+        assertThat(session.itemExists("/hst:hst/hst:hosts/group2/com"), is(false));
+        assertThat(session.itemExists("/hst:hst/hst:hosts/group2"), is(true));
+    }
+
+    @Test(expected = ChannelNotFoundException.class)
+    public void fails_to_delete_nonexistent_channel() throws ChannelException, RepositoryException {
+        EasyMock.expect(channelService.getChannel("bah")).andThrow(new ChannelNotFoundException("bah not found"));
+        EasyMock.replay(channelService);
+
+        channelService.deleteChannel(session, "bah");
+    }
 
     private static VirtualHosts mockVirtualHosts() {
         final MockHstRequestContext requestContext = new MockHstRequestContext();

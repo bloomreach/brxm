@@ -25,3 +25,4 @@ Could not get channel setting information
 Failed to saveChannel channel
 Channel 'channel-foo' not found
 Could not load switch template resource bundle
+Cannot delete configuration node
