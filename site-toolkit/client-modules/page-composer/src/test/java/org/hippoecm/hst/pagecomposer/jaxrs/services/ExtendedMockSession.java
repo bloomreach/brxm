@@ -24,6 +24,7 @@ import org.onehippo.repository.mock.MockSession;
 
 import static org.junit.Assert.fail;
 
+//TODO Remove this class when REPO-1551 is closed
 public class ExtendedMockSession extends MockSession {
     public ExtendedMockSession(final MockSession session) {
         super(session.getRootNode());
