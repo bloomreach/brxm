@@ -48,40 +48,55 @@
           });
     }
 
-    window.initGoogleMaps = function () {
-        if (window.HEGM && window.HEGM.length) {
-            for (var i = 0; i < window.HEGM.length; i++) {
-                window.HEGM[i]();
-            }
-            window.HEGM = [];
-        }
-    };
+    var he, gm;
+    if (!window.HippoEssentials) {
+        window.HippoEssentials = {};
+    }
+    he = window.HippoEssentials;
 
-    window.initGoogleMap = function (elementId, address, longitude, latitude, zoomFactor, mapType) {
-        if (!google) {
-            if (console) {
-                console.warn('Could not find Google Maps API, please make sure it is loaded correctly before creating a ' +
-                  'new Google Map instance. This is typically done by inserting ' +
-                  '<script src="https://maps.googleapis.com/maps/api/js"></script> into the page.');
-            }
-            return;
-        }
-
-        var latlng;
-        if (latitude !== '' || longitude !== '') {
-            latlng = new google.maps.LatLng(latitude, longitude);
-        } else {
-            latlng = new google.maps.LatLng(0, 0);
-        }
-        var el = document.getElementById(elementId);
-        var mapOptions = {
-            center: latlng,
-            zoom: zoomFactor,
-            mapTypeId: getMapType(mapType)
+    if (!he.GoogleMaps) {
+        he.GoogleMaps = {
+            queue: []
         };
-        var map = new google.maps.Map(el, mapOptions);
-        if (address !== '') {
-            geoCodeAddress(address, map);
-        }
-    };
+    }
+    gm = he.GoogleMaps;
+
+    if (!gm.init) {
+        gm.init = function() {
+            for (var i = 0; i < gm.queue.length; i++) {
+                gm.queue[i]();
+            }
+            gm.queue = [];
+        };
+    }
+
+    if (!gm.render) {
+        gm.render = function (elementId, address, longitude, latitude, zoomFactor, mapType) {
+            if (!google) {
+                if (window.console) {
+                    console.warn('Could not find Google Maps API, please make sure it is loaded correctly before creating a ' +
+                      'new Google Map instance. This is typically done by inserting ' +
+                      '<script src="https://maps.googleapis.com/maps/api/js"></script> into the page.');
+                }
+                return;
+            }
+
+            var latlng;
+            if (latitude !== '' || longitude !== '') {
+                latlng = new google.maps.LatLng(latitude, longitude);
+            } else {
+                latlng = new google.maps.LatLng(0, 0);
+            }
+            var el = document.getElementById(elementId);
+            var mapOptions = {
+                center: latlng,
+                zoom: zoomFactor,
+                mapTypeId: getMapType(mapType)
+            };
+            var map = new google.maps.Map(el, mapOptions);
+            if (address !== '') {
+                geoCodeAddress(address, map);
+            }
+        };
+    }
 })();

@@ -7,12 +7,24 @@
 
 <hst:headContribution category="htmlBodyEnd">
     <script type="text/javascript">
-        if (!window.HEGM) {
-            window.HEGM = [];
-        }
-        window.HEGM.push(function() {
-            initGoogleMap('map-canvas-${componentId}', '${fn:escapeXml(requestScope.cparam.address)}', ${requestScope.cparam.longitude}, ${requestScope.cparam.latitude}, ${requestScope.cparam.zoomFactor}, '${requestScope.cparam.mapType}');
-        });
+        (function(win) {
+            var he, gm;
+            if (!win.HippoEssentials) {
+                win.HippoEssentials = {};
+            }
+            he = win.HippoEssentials;
+
+            if (!he.GoogleMaps) {
+                he.GoogleMaps = {
+                    queue: []
+                };
+            }
+            gm = he.GoogleMaps;
+
+            gm.queue.push(function() {
+                gm.render('map-canvas-${componentId}', '${fn:escapeXml(requestScope.cparam.address)}', ${requestScope.cparam.longitude}, ${requestScope.cparam.latitude}, ${requestScope.cparam.zoomFactor}, '${requestScope.cparam.mapType}');
+            });
+        })(window);
     </script>
 </hst:headContribution>
 
@@ -24,10 +36,10 @@
 <hst:headContribution keyHint="google-maps-api" category="htmlBodyEnd">
     <c:choose>
         <c:when test="${not empty requestScope.cparam.apiKey}">
-            <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js?key=${fn:escapeXml(requestScope.cparam.apiKey)}&callback=initGoogleMaps</c:set>
+            <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js?key=${fn:escapeXml(requestScope.cparam.apiKey)}&callback=HippoEssentials.GoogleMaps.init</c:set>
         </c:when>
         <c:otherwise>
-            <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js?callback=initGoogleMaps</c:set>
+            <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js?callback=HippoEssentials.GoogleMaps.init</c:set>
         </c:otherwise>
     </c:choose>
     <script type="text/javascript" src="${mapsUrl}" async="async" defer="defer"></script>
@@ -35,8 +47,8 @@
 
 <c:if test="${editMode}">
     <script type="text/javascript">
-        if (window.initGoogleMap) {
-            initGoogleMap('map-canvas-${componentId}', '${fn:escapeXml(requestScope.cparam.address)}', ${requestScope.cparam.longitude}, ${requestScope.cparam.latitude}, ${requestScope.cparam.zoomFactor}, '${requestScope.cparam.mapType}');
+        if (window.HippoEssentials && window.HippoEssentials.GoogleMaps) {
+            window.HippoEssentials.GoogleMaps.render('map-canvas-${componentId}', '${fn:escapeXml(requestScope.cparam.address)}', ${requestScope.cparam.longitude}, ${requestScope.cparam.latitude}, ${requestScope.cparam.zoomFactor}, '${requestScope.cparam.mapType}');
         }
     </script>
 </c:if>

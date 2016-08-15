@@ -7,12 +7,24 @@
 
 <@hst.headContribution category="htmlBodyEnd">
     <script type="text/javascript">
-        if (!window.HEGM) {
-            window.HEGM = [];
-        }
-        window.HEGM.push(function() {
-            initGoogleMap('map-canvas-${componentId}', '${cparam.address?html}', ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, '${cparam.mapType}');
-        });
+        (function(win) {
+            var he, gm;
+            if (!win.HippoEssentials) {
+                win.HippoEssentials = {};
+            }
+            he = win.HippoEssentials;
+
+            if (!he.GoogleMaps) {
+                he.GoogleMaps = {
+                    queue: []
+                };
+            }
+            gm = he.GoogleMaps;
+
+            gm.queue.push(function() {
+                gm.render('map-canvas-${componentId}', '${cparam.address?html}', ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, '${cparam.mapType}');
+            });
+        })(window);
     </script>
 </@hst.headContribution>
 
@@ -23,17 +35,17 @@
 
 <@hst.headContribution keyHint="google-maps-api" category="htmlBodyEnd">
     <#if cparam.apiKey?has_content>
-        <#assign mapsUrl = "https://maps.googleapis.com/maps/api/js?key=${cparam.apiKey?html}&callback=initGoogleMaps"/>
+        <#assign mapsUrl = "https://maps.googleapis.com/maps/api/js?key=${cparam.apiKey?html}&callback=HippoEssentials.GoogleMaps.init"/>
     <#else>
-        <#assign mapsUrl = "https://maps.googleapis.com/maps/api/js?callback=initGoogleMaps"/>
+        <#assign mapsUrl = "https://maps.googleapis.com/maps/api/js?callback=HippoEssentials.GoogleMaps.init"/>
     </#if>
     <script type="text/javascript" src="${mapsUrl}" async="async" defer="defer"></script>
 </@hst.headContribution>
 
 <#if editMode>
     <script type="text/javascript">
-        if (window.initGoogleMap) {
-            initGoogleMap('map-canvas-${componentId}', '${cparam.address?html}', ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, '${cparam.mapType}');
+        if (window.HippoEssentials && window.HippoEssentials.GoogleMaps) {
+            window.HippoEssentials.GoogleMaps.render('map-canvas-${componentId}', '${cparam.address?html}', ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, '${cparam.mapType}');
         }
     </script>
 </#if>
