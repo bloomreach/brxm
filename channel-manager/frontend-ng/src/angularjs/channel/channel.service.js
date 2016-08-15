@@ -213,13 +213,23 @@ export class ChannelService {
     this.CmsService.publish('channel-changed-in-angular');
   }
 
-  publishChanges(users = [this.ConfigService.cmsUser]) {
+  publishOwnChanges() {
+    return this.HstService.doPost(null, this.getMountId(), 'publish')
+      .then(() => this.reload());
+  }
+
+  publishChangesOf(users) {
     const url = 'userswithchanges/publish';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
       .then(() => this.reload());
   }
 
-  discardChanges(users = [this.ConfigService.cmsUser]) {
+  discardOwnChanges() {
+    return this.HstService.doPost(null, this.getMountId(), 'discard')
+      .then(() => this.reload());
+  }
+
+  discardChangesOf(users) {
     const url = 'userswithchanges/discard';
     return this.HstService.doPost({ data: users }, this.getMountId(), url)
       .then(() => this.reload());

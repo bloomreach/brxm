@@ -62,8 +62,8 @@ describe('ChangeManagement', () => {
       // Out of alphabetical order
       changedBySet: ['testuser', 'otheruser'],
     });
-    spyOn(ChannelService, 'publishChanges').and.returnValue($q.when());
-    spyOn(ChannelService, 'discardChanges').and.returnValue($q.when());
+    spyOn(ChannelService, 'publishChangesOf').and.returnValue($q.when());
+    spyOn(ChannelService, 'discardChangesOf').and.returnValue($q.when());
     spyOn(CmsService, 'publish');
     spyOn(DialogService, 'confirm').and.returnValue(dialog);
     spyOn(DialogService, 'show').and.returnValue($q.when());
@@ -96,7 +96,7 @@ describe('ChangeManagement', () => {
 
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalledWith(dialog);
-    expect(ChannelService.publishChanges).toHaveBeenCalledWith(['otheruser', 'testuser']);
+    expect(ChannelService.publishChangesOf).toHaveBeenCalledWith(['otheruser', 'testuser']);
     expect(CmsService.publish).toHaveBeenCalledWith('channel-changed-in-angular');
     expect(HippoIframeService.reload).toHaveBeenCalled();
     expect($scope.onDone).toHaveBeenCalled();
@@ -108,7 +108,7 @@ describe('ChangeManagement', () => {
     ChangeManagementCtrl.discardAllChanges();
     $rootScope.$apply();
 
-    expect(ChannelService.publishChanges).not.toHaveBeenCalled();
+    expect(ChannelService.publishChangesOf).not.toHaveBeenCalled();
     expect($scope.onDone).not.toHaveBeenCalled();
   });
 
@@ -119,7 +119,7 @@ describe('ChangeManagement', () => {
 
     expect(DialogService.confirm).toHaveBeenCalled();
     expect(DialogService.show).toHaveBeenCalledWith(dialog);
-    expect(ChannelService.discardChanges).toHaveBeenCalledWith(['otheruser', 'testuser']);
+    expect(ChannelService.discardChangesOf).toHaveBeenCalledWith(['otheruser', 'testuser']);
     expect(CmsService.publish).toHaveBeenCalledWith('channel-changed-in-angular');
     expect(HippoIframeService.reload).toHaveBeenCalled();
     expect($scope.onDone).toHaveBeenCalled();
@@ -131,7 +131,7 @@ describe('ChangeManagement', () => {
     ChangeManagementCtrl.discardAllChanges();
     $rootScope.$apply();
 
-    expect(ChannelService.discardChanges).not.toHaveBeenCalled();
+    expect(ChannelService.discardChangesOf).not.toHaveBeenCalled();
     expect($scope.onDone).not.toHaveBeenCalled();
   });
 
@@ -140,7 +140,7 @@ describe('ChangeManagement', () => {
 
     $rootScope.$apply();
 
-    expect(ChannelService.publishChanges).toHaveBeenCalledWith(['testuser']);
+    expect(ChannelService.publishChangesOf).toHaveBeenCalledWith(['testuser']);
   });
 
   it('should discard one users changes', () => {
@@ -148,12 +148,12 @@ describe('ChangeManagement', () => {
 
     $rootScope.$apply();
 
-    expect(ChannelService.discardChanges).toHaveBeenCalledWith(['testuser']);
+    expect(ChannelService.discardChangesOf).toHaveBeenCalledWith(['testuser']);
   });
 
   it('should show a toast when publication fails', () => {
     const response = { key: 'value' };
-    ChannelService.publishChanges.and.returnValue($q.reject(response));
+    ChannelService.publishChangesOf.and.returnValue($q.reject(response));
 
     ChangeManagementCtrl.publishAllChanges();
     $rootScope.$apply();
@@ -162,7 +162,7 @@ describe('ChangeManagement', () => {
       .toHaveBeenCalledWith(response, 'ERROR_CHANGE_PUBLICATION_FAILED');
     expect($scope.onDone).not.toHaveBeenCalled();
 
-    ChannelService.publishChanges.and.returnValue($q.reject());
+    ChannelService.publishChangesOf.and.returnValue($q.reject());
 
     ChangeManagementCtrl.publishChanges('testuser');
     $rootScope.$apply();
@@ -173,7 +173,7 @@ describe('ChangeManagement', () => {
 
   it('should show a toast when discarding of the changes fails', () => {
     const response = { key: 'value' };
-    ChannelService.discardChanges.and.returnValue($q.reject(response));
+    ChannelService.discardChangesOf.and.returnValue($q.reject(response));
 
     ChangeManagementCtrl.discardAllChanges();
     $rootScope.$apply();
@@ -182,7 +182,7 @@ describe('ChangeManagement', () => {
       .toHaveBeenCalledWith(response, 'ERROR_CHANGE_DISCARD_FAILED');
     expect($scope.onDone).not.toHaveBeenCalled();
 
-    ChannelService.discardChanges.and.returnValue($q.reject());
+    ChannelService.discardChangesOf.and.returnValue($q.reject());
 
     ChangeManagementCtrl.discardChanges('testuser');
     $rootScope.$apply();
