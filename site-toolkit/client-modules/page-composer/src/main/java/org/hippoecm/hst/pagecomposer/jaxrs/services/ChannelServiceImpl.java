@@ -17,6 +17,7 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -44,7 +45,10 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
@@ -56,6 +60,7 @@ public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
 
     private ChannelManager channelManager;
+    private ValidatorFactory validatorFactory;
 
     @Override
     public ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale) throws ChannelException {
@@ -201,10 +206,25 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void deleteChannel(final Session session, final String channelId) throws RepositoryException, ChannelException {
-        // TODO Implement validation prior deleting a channel (HSTTWO-3731)
+        if (channelId.endsWith("-preview")) {
+            throw new IllegalArgumentException("Channel id '" + channelId + "' must refer to a live channel");
+        }
+
+        final Channel channel = getChannel(channelId);
+        final List<Mount> allMountsOfChannel = findMounts(channel);
+
+        final ValidatorBuilder preValidatorBuilder = ValidatorBuilder.builder()
+                .add(validatorFactory.getHasNoChildMountNodeValidator(allMountsOfChannel));
+
+        preValidatorBuilder.build()
+                .validate(getRequestContext());
 
         // TODO Implement logic to delete a channel (HSTTWO-3733)
         throw new ChannelException("Unimplemented Operation");
+    }
+
+    private HstRequestContext getRequestContext() {
+        return RequestContextProvider.get();
     }
 
     private Node getOrAddChannelPropsNode(final Node channelNode) throws RepositoryException {
@@ -242,5 +262,14 @@ public class ChannelServiceImpl implements ChannelService {
 
     public void setChannelManager(final ChannelManager channelManager) {
         this.channelManager = channelManager;
+    }
+
+    public void setValidatorFactory(final ValidatorFactory validatorFactory) {
+        this.validatorFactory = validatorFactory;
+    }
+
+    // TODO Replace this dummy method with the implementation in HSTTWO-3733.
+    private List<Mount> findMounts(final Channel channel) {
+        return Arrays.asList(getAllVirtualHosts().getMountByIdentifier(channel.getHstMountPoint()));
     }
 }

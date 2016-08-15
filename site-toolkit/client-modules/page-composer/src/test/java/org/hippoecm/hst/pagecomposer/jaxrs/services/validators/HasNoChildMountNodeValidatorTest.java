@@ -17,13 +17,11 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.VirtualHost;
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.junit.Before;
@@ -33,36 +31,29 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class HasNoChildMountNodeValidatorTest {
 
-    private HstRequestContext context;
     private Mount mountFoo;
+    private Mount mountBah;
 
     private HasNoChildMountNodeValidator validator;
 
     @Before
     public void setUp() {
-        context = createMock(HstRequestContext.class);
-        final VirtualHost mockVirtualHost = createMock(VirtualHost.class);
-        final VirtualHosts mockVirtualHosts = createMock(VirtualHosts.class);
         mountFoo = createMock(Mount.class);
-
-        expect(context.getVirtualHost()).andReturn(mockVirtualHost);
-        expect(mockVirtualHost.getVirtualHosts()).andReturn(mockVirtualHosts);
-        expect(mockVirtualHosts.getMountByIdentifier("mount-foo")).andReturn(mountFoo);
-
-        replay(context, mockVirtualHost, mockVirtualHosts);
-        validator = new HasNoChildMountNodeValidator("mount-foo");
+        mountBah = createMock(Mount.class);
+        validator = new HasNoChildMountNodeValidator(Arrays.asList(mountFoo, mountBah));
     }
 
     @Test
     public void no_exception_when_validating_mount_without_children_mounts() throws Exception {
         expect(mountFoo.getChildMounts()).andReturn(Collections.emptyList());
-        replay(mountFoo);
+        expect(mountBah.getChildMounts()).andReturn(Collections.emptyList());
+        replay(mountFoo, mountBah);
 
-        validator.validate(context);
+        validator.validate(null);
     }
 
     @Test(expected = ClientException.class)
@@ -72,11 +63,12 @@ public class HasNoChildMountNodeValidatorTest {
         childrenMounts.add(childMount);
 
         expect(mountFoo.getChildMounts()).andReturn(childrenMounts).anyTimes();
+        expect(mountBah.getChildMounts()).andReturn(Collections.emptyList());
 
-        replay(mountFoo);
+        replay(mountFoo, mountBah);
 
         try {
-            validator.validate(context);
+            validator.validate(null);
         } catch (ClientException e) {
             assertThat(e.getError(), is(ClientError.CHILD_MOUNT_EXISTS));
             throw e;

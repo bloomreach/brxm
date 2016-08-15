@@ -87,6 +87,7 @@
 
   <bean id="channelService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelServiceImpl">
     <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
+    <property name="validatorFactory" ref="validatiorFactory"/>
   </bean>
 
   <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper" parent="abstractHelper">

@@ -16,6 +16,8 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
+import java.util.List;
+
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -26,16 +28,18 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
  */
 public class HasNoChildMountNodeValidator implements Validator {
 
-    private final String mountId;
+    private final List<Mount> mounts;
 
-    public HasNoChildMountNodeValidator(final String mountId) {
-        this.mountId = mountId;
+    public HasNoChildMountNodeValidator(final List<Mount> mounts) {
+        this.mounts = mounts;
     }
 
     @Override
     public void validate(final HstRequestContext requestContext) throws RuntimeException {
-        final Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(mountId);
-        if (!mount.getChildMounts().isEmpty()) {
+        final boolean hasMountWithChildren = mounts.stream()
+                .anyMatch(mount -> !mount.getChildMounts().isEmpty());
+
+        if (hasMountWithChildren) {
             throw new ClientException("Child mount exists", ClientError.CHILD_MOUNT_EXISTS);
         }
     }
