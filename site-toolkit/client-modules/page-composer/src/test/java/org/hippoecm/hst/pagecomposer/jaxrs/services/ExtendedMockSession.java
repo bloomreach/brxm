@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// TODO should be removed after fixing REPO-1551.
+
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import javax.jcr.RepositoryException;

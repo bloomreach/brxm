@@ -133,6 +133,9 @@ public class ChannelServiceImplTest {
         assertThat(session.itemExists("/hst:hst/hst:hosts/group2"), is(true));
     }
 
+    // TODO add a test for the Channel Service's handling of the hstConfigurationService#delete() call to
+    // throw an exception? (caught and uncaught)
+
     private static VirtualHosts mockVirtualHosts() {
         final MockHstRequestContext requestContext = new MockHstRequestContext();
         final VirtualHost mockVirtualHost = EasyMock.createMock(VirtualHost.class);
