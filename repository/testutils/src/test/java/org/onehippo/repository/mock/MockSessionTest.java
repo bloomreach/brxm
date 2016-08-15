@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -158,6 +158,16 @@ public class MockSessionTest {
         root.getSession().move("/foo/bar", "/bar/foo");
         assertFalse(root.getSession().nodeExists("/foo/bar"));
         assertTrue(root.getSession().nodeExists("/bar/foo"));
+    }
+
+    @Test
+    public void testRemoveNode() throws RepositoryException {
+        final MockNode root = createRootFooBarMockNode();
+        assertTrue(root.getSession().nodeExists("/foo"));
+
+        root.getSession().removeItem("/foo");
+
+        assertFalse(root.getSession().nodeExists("/foo"));
     }
 
     private MockNode createRootFooBarMockNode() throws RepositoryException {
