@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.cms7.services.ServletContextRegistry;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.ServletContextAware;
 
@@ -38,13 +39,21 @@ public abstract class AbstractCmsRestTest {
     protected ComponentManager componentManager;
     protected HstManager hstManager;
 
+    private MockServletContext servletContext;
+    private MockServletContext servletContext2;
+
     @Before
     public void setUp() throws Exception {
         componentManager = new SpringComponentManager(getContainerConfiguration());
         componentManager.setConfigurationResources(getConfigurations());
-        final MockServletContext servletContext = new MockServletContext();
+        servletContext = new MockServletContext();
         servletContext.setContextPath("/site");
-        componentManager.setServletContext(servletContext);
+        ServletContextRegistry.register(servletContext, ServletContextRegistry.WebAppType.HST);
+
+        servletContext2 = new MockServletContext();
+        servletContext2.setContextPath("/site2");
+        ServletContextRegistry.register(servletContext2, ServletContextRegistry.WebAppType.HST);
+        componentManager.setServletContext(servletContext2);
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
@@ -55,6 +64,8 @@ public abstract class AbstractCmsRestTest {
     public void tearDown() throws Exception {
         this.componentManager.stop();
         this.componentManager.close();
+        ServletContextRegistry.unregister(servletContext);
+        ServletContextRegistry.unregister(servletContext2);
         HstServices.setComponentManager(null);
         // always clear HstRequestContext in case it is set on a thread local
         ModifiableRequestContextProvider.clear();

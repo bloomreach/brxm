@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.security.RolesAllowed;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -75,6 +76,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
 
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource {
@@ -268,6 +270,7 @@ public class MountResource extends AbstractConfigResource {
     @POST
     @Path("/userswithchanges/discard")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(CHANNEL_MANAGER_ADMIN_ROLE)
     public Response discardChangesOfUsers(ExtIdsRepresentation ids) {
         if (!getPageComposerContextService().hasPreviewConfiguration()) {
             log.warn("Cannot discard changes of users in a non-preview site");
@@ -295,6 +298,7 @@ public class MountResource extends AbstractConfigResource {
     @POST
     @Path("/userswithchanges/publish")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(CHANNEL_MANAGER_ADMIN_ROLE)
     public Response publishChangesOfUsers(ExtIdsRepresentation ids) {
         if (!getPageComposerContextService().hasPreviewConfiguration()) {
             return cannotPublishNotPreviewSite();

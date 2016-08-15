@@ -52,7 +52,8 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
     public void test_about_us_document() throws Exception {
 
         // about-us  handle identifier is 'ebebebeb-5fa8-48a8-b03b-4524373d992b'
-        final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "localhost", "/api/documents/30092f4e-2ef7-4c72-86a5-8ce895908937", null);
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/api/documents/30092f4e-2ef7-4c72-86a5-8ce895908937", null);
 
         final MockHttpServletResponse response = render(requestResponse);
 
@@ -71,7 +72,8 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
     @Test
     public void non_handle_nodes_are_not_allowed() throws Exception {
         // ebebebeb-5fa8-48a8-b03b-4524373d992a is folder node
-        final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "localhost", "/api/documents/ebebebeb-5fa8-48a8-b03b-4524373d992a", null);
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/api/documents/ebebebeb-5fa8-48a8-b03b-4524373d992a", null);
         final MockHttpServletResponse response = render(requestResponse);
         assertEquals(SC_NOT_FOUND, response.getStatus());
         assertTrue(response.getContentAsString().contains("not found below scope '/api'"));
@@ -80,7 +82,8 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
     @Test
     public void handle_node_of_content_outside_api_mount_is_not_allowed() throws Exception {
         // a62a34ae-5f42-4482-a27a-7f39459ec8ee homepage of subsite
-        final RequestResponseMock requestResponse = mockGetRequestResponse(filter, "http", "localhost", "/api/documents/a62a34ae-5f42-4482-a27a-7f39459ec8ee", null);
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/api/documents/a62a34ae-5f42-4482-a27a-7f39459ec8ee", null);
         final MockHttpServletResponse response = render(requestResponse);
         assertEquals(SC_NOT_FOUND, response.getStatus());
         assertTrue(response.getContentAsString().contains("not found below scope '/api'"));
@@ -92,8 +95,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         try {
             final Node medusaNews = session.getNode("/unittestcontent/documents/myhippoproject/news/2015/12/the-medusa-news");
 
-            final RequestResponseMock requestResponse = mockGetRequestResponse(filter,
-                    "http", "onehippo.io", "/documents/" + medusaNews.getIdentifier(), null);
+            final RequestResponseMock requestResponse = mockGetRequestResponse("http", "onehippo.io", "/documents/" + medusaNews.getIdentifier(), null);
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
 
@@ -111,7 +113,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         try {
             final Node medusaNews = session.getNode("/unittestcontent/documents/myhippoproject/news/2015/12/the-medusa-news");
 
-            final RequestResponseMock requestResponse = mockGetRequestResponse(filter,
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
                     "http", "onehippo.io", "/myhippoproject/documents/" + medusaNews.getIdentifier(), null);
             final MockHttpServletResponse response = render(requestResponse);
             final String restResponse = response.getContentAsString();
@@ -127,7 +129,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
     public void test_search_result_contains_handle_uuids() throws Exception {
         Session liveUser = createLiveUserSession();
         try {
-            final RequestResponseMock requestResponse = mockGetRequestResponse(filter,
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
                     "http", "onehippo.io", "/myhippoproject/documents/", null);
 
             final MockHttpServletResponse response = render(requestResponse);
@@ -150,7 +152,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
     public void test_search_result_is_ordered_by_default_on_publication_date_descending() throws Exception {
         Session liveUser = createLiveUserSession();
         try {
-            final RequestResponseMock requestResponse = mockGetRequestResponse(filter,
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
                     "http", "onehippo.io", "/myhippoproject/documents/", null);
 
             final MockHttpServletResponse response = render(requestResponse);
@@ -179,15 +181,6 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             }
         }
     }
-
-    private MockHttpServletResponse render(final RequestResponseMock requestResponse) throws IOException, ServletException {
-        final MockHttpServletRequest request = requestResponse.getRequest();
-        final MockHttpServletResponse response = requestResponse.getResponse();
-
-        filter.doFilter(request, response, requestResponse.getFilterChain());
-        return response;
-    }
-
 
     private List<Map<String, Object>> getItemsFromSearchResult(final Map<String, Object> searchResult) {
         final Object items = searchResult.get("items");

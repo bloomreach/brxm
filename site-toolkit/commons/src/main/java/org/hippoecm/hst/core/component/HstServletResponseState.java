@@ -25,6 +25,7 @@ import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -41,10 +43,16 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import org.hippoecm.hst.core.channelmanager.ChannelManagerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.DefaultKeyValue;
+import org.hippoecm.hst.util.HeadElementUtils;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.util.JsonSerializer;
 import org.hippoecm.hst.util.KeyValue;
 import org.hippoecm.hst.util.WrapperElementUtils;
 import org.slf4j.Logger;
@@ -54,7 +62,6 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import static org.hippoecm.hst.core.channelmanager.ChannelManagerConstants.HST_TYPE;
 import static org.hippoecm.hst.util.NullWriter.NULL_WRITER;
 
 /**
@@ -156,13 +163,13 @@ public class HstServletResponseState implements HstResponseState {
 
     protected List<String> getAddedHeaderList(String name, boolean create) {
         if (addedHeaders == null) {
-            addedHeaders = new HashMap<String, List<String>>();
+            addedHeaders = new HashMap<>();
         }
 
         List<String> headerList = addedHeaders.get(name);
 
         if (headerList == null && create) {
-            headerList = new ArrayList<String>();
+            headerList = new ArrayList<>();
             addedHeaders.put(name, headerList);
         }
 
@@ -171,13 +178,13 @@ public class HstServletResponseState implements HstResponseState {
 
     protected List<String> getSetHeaderList(String name, boolean create) {
         if (setHeaders == null) {
-            setHeaders = new HashMap<String, List<String>>();
+            setHeaders = new HashMap<>();
         }
 
         List<String> headerList = setHeaders.get(name);
 
         if (headerList == null && create) {
-            headerList = new ArrayList<String>();
+            headerList = new ArrayList<>();
             setHeaders.put(name, headerList);
         }
 
@@ -218,7 +225,7 @@ public class HstServletResponseState implements HstResponseState {
     public void addCookie(Cookie cookie) {
         if (!committed) {
             if (cookies == null) {
-                cookies = new ArrayList<Cookie>();
+                cookies = new ArrayList<>();
             }
             cookies.add(cookie);
         }
@@ -638,12 +645,12 @@ public class HstServletResponseState implements HstResponseState {
                 ((HstResponse) parentResponse).addHeadElement(element, keyHint);
             } else {
                 if (this.headElements == null) {
-                    this.headElements = new ArrayList<KeyValue<String, Element>>();
+                    this.headElements = new ArrayList<>();
                 }
 
                 if (element == null) {
                     if (keyHint != null) {
-                        KeyValue<String, Element> kvPair = new DefaultKeyValue<String, Element>(keyHint, null, true);
+                        KeyValue<String, Element> kvPair = new DefaultKeyValue<>(keyHint, null, true);
                         this.headElements.remove(kvPair);
                     } else {
                         // If element is null and keyHint is null, remove all head elements.
@@ -653,7 +660,7 @@ public class HstServletResponseState implements HstResponseState {
                     return;
                 }
 
-                KeyValue<String, Element> kvPair = new DefaultKeyValue<String, Element>(keyHint, element, true);
+                KeyValue<String, Element> kvPair = new DefaultKeyValue<>(keyHint, element, true);
 
                 if (!this.headElements.contains(kvPair)) {
                     this.headElements.add(kvPair);
@@ -666,7 +673,7 @@ public class HstServletResponseState implements HstResponseState {
         boolean containing = false;
 
         if (this.headElements != null && keyHint != null) {
-            KeyValue<String, Element> kvPair = new DefaultKeyValue<String, Element>(keyHint, null, true);
+            KeyValue<String, Element> kvPair = new DefaultKeyValue<>(keyHint, null, true);
             containing = this.headElements.contains(kvPair);
         }
 
@@ -686,7 +693,7 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     public List<Element> getHeadElements() {
-        List<Element> elements = new LinkedList<Element>();
+        List<Element> elements = new LinkedList<>();
 
         if (this.headElements != null) {
             for (KeyValue<String, Element> kv : this.headElements) {
@@ -699,14 +706,14 @@ public class HstServletResponseState implements HstResponseState {
 
     public void addPreambleNode(Comment comment) {
         if (this.preambleComments == null) {
-            this.preambleComments = new ArrayList<Comment>();
+            this.preambleComments = new ArrayList<>();
         }
         this.preambleComments.add(comment);
     }
 
     public void addPreambleNode(Element element) {
         if (this.preambleElements == null) {
-            this.preambleElements = new ArrayList<Element>();
+            this.preambleElements = new ArrayList<>();
         }
         this.preambleElements.add(element);
     }
@@ -854,18 +861,8 @@ public class HstServletResponseState implements HstResponseState {
                 }
             }
 
-            if (headElements != null && isComponentRenderingResponse && HstRequestUtils.getHstRequestContext(request).isCmsRequest()) {
-                // check whether there are head elements that are not included in the response already by
-                // a head contributions tag
-                for (KeyValue<String, Element> entry : headElements) {
-                    if (processedElements == null || !processedElements.contains(entry.getValue())) {
-                        final Comment comment = createComment(" { \"unprocessed-head-elements-present\" : true, \"" +
-                                 HST_TYPE+"\" : \"HST_INFO\" } ");
-                        addEpilogueNode(comment);
-                        log.info("Found unprocessed head element contribution(s) for component rendering call.");
-                        break;
-                    }
-                }
+            if (HstRequestUtils.getHstRequestContext(request).isCmsRequest()) {
+                addHeadContributionsReport();
             }
 
             if (!hasError && redirectLocation == null) {
@@ -1054,5 +1051,64 @@ public class HstServletResponseState implements HstResponseState {
         DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(new Date(date));
+    }
+
+    private void addHeadContributionsReport() {
+        if (headElements != null && !headElements.isEmpty()) {
+            final JsonSerializer jsonSerializer = HstServices.getComponentManager().getComponent(JsonSerializer.class);
+
+            // check whether there are head elements that are not included in the response already by
+            // a head contributions tag
+            final List<String> unprocessed = mapElementsToString(getUnprocessedElementContributions());
+            if (!unprocessed.isEmpty()) {
+                HeadContributionsReport report = new HeadContributionsReport("HST_UNPROCESSED_HEAD_CONTRIBUTIONS", unprocessed);
+                final Comment comment = createComment(jsonSerializer.toJson(report));
+                addEpilogueNode(comment);
+            }
+
+            final List<String> processed = mapElementsToString(processedElements);
+            if (!processed.isEmpty()) {
+                HeadContributionsReport report = new HeadContributionsReport("HST_PROCESSED_HEAD_CONTRIBUTIONS", processed);
+                final Comment comment = createComment(jsonSerializer.toJson(report));
+                addEpilogueNode(comment);
+            }
+
+        }
+    }
+
+    private List<Element> getUnprocessedElementContributions() {
+        return headElements.stream()
+                .filter(entry -> processedElements == null || !processedElements.contains(entry.getValue()))
+                .map(KeyValue::getValue)
+                .collect(Collectors.toList());
+    }
+
+    private List<String> mapElementsToString(final List<Element> elements) {
+        if (elements == null || elements.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return elements.stream()
+                .map(element -> HeadElementUtils.toHtmlString(new HeadElementImpl(element)))
+                .collect(Collectors.toList());
+    }
+
+    private static class HeadContributionsReport {
+
+        private final String type;
+        private final List<String> headElements;
+
+        public HeadContributionsReport(final String type, final List<String> headElements) {
+            this.type = type;
+            this.headElements = headElements;
+        }
+
+        @JsonProperty(ChannelManagerConstants.HST_TYPE)
+        public String getType() {
+            return type;
+        }
+
+        public List<String> getHeadElements() {
+            return headElements;
+        }
     }
 }

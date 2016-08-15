@@ -1,22 +1,21 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-package org.hippoecm.hst.restapi;
+package org.hippoecm.hst.pagecomposer.jaxrs;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
@@ -29,12 +28,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
-import org.hippoecm.hst.site.container.ModuleDescriptorUtils;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
@@ -42,17 +42,23 @@ import org.onehippo.cms7.services.ServletContextRegistry;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
+import static org.junit.Assert.assertTrue;
 
-public class AbstractRestApiIT {
+public class AbstractFullRequestCycleTest {
 
     protected SpringComponentManager componentManager;
     protected final MockServletContext servletContext = new MockServletContext();
+    protected static ObjectMapper mapper = new ObjectMapper();
+
     protected Filter filter;
 
     @Before
     public void setUp() throws Exception {
+
         componentManager = new SpringComponentManager(new PropertiesConfiguration());
         componentManager.setConfigurationResources(getConfigurations());
 
@@ -61,20 +67,25 @@ public class AbstractRestApiIT {
 
         componentManager.setServletContext(servletContext);
 
-        List<ModuleDefinition> addonModuleDefinitions = ModuleDescriptorUtils.collectAllModuleDefinitions();
-        if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
-            componentManager.setAddonModuleDefinitions(addonModuleDefinitions);
-        }
-
         componentManager.initialize();
         componentManager.start();
         HstServices.setComponentManager(getComponentManager());
         filter = HstServices.getComponentManager().getComponent("org.hippoecm.hst.container.HstFilter");
+
+        // assert admin has hippo:admin privilege
+        Session admin = createSession("admin", "admin");
+        assertTrue(admin.hasPermission("/hst:hst", "jcr:write"));
+        assertTrue(admin.hasPermission("/hst:hst/hst:channels", "hippo:admin"));
+        admin.logout();
+
+        // assert editor is part of webmaster group
+        final Session editor = createSession("editor", "editor");
+        assertTrue(editor.hasPermission("/hst:hst", "jcr:write"));
+        editor.logout();
     }
 
     @After
     public void tearDown() throws Exception {
-
         this.componentManager.stop();
         this.componentManager.close();
         ServletContextRegistry.unregister(servletContext);
@@ -84,8 +95,8 @@ public class AbstractRestApiIT {
     }
 
     protected String[] getConfigurations() {
-        String classXmlFileName = AbstractRestApiIT.class.getName().replace(".", "/") + ".xml";
-        String classXmlFileName2 = AbstractRestApiIT.class.getName().replace(".", "/") + "-*.xml";
+        String classXmlFileName = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractFullRequestCycleTest.class.getName().replace(".", "/") + "-*.xml";
         return new String[]{classXmlFileName, classXmlFileName2};
     }
 
@@ -93,20 +104,38 @@ public class AbstractRestApiIT {
         return this.componentManager;
     }
 
-    protected Session createLiveUserSession() throws RepositoryException {
-        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        Credentials credentials= HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".default.delegating");
-        return repository.login(credentials);
-    }
-
     protected Session createSession(final String userName, final String password) throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
         return repository.login(new SimpleCredentials(userName, password.toCharArray()));
     }
 
+    public String getNodeId(final String jcrMountPath) throws RepositoryException {
+        final Session admin = createSession("admin", "admin");
+        final String mountId = admin.getNode(jcrMountPath).getIdentifier();
+        admin.logout();
+        return mountId;
+    }
 
-    protected MockHttpServletResponse render(final RequestResponseMock requestResponse) throws IOException, ServletException {
+    public MockHttpServletResponse render(final String mountId, final RequestResponseMock requestResponse, final Credentials authenticatedCmsUser) throws IOException, ServletException {
+        final MockHttpSession mockHttpSession = new MockHttpSession();
+        mockHttpSession.setAttribute(CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
+        requestResponse.getRequest().setSession(mockHttpSession);
+        return render(requestResponse, authenticatedCmsUser);
+    }
+
+    public MockHttpServletResponse render(final RequestResponseMock requestResponse, final Credentials authenticatedCmsUser) throws IOException, ServletException {
         final MockHttpServletRequest request = requestResponse.getRequest();
+
+        final MockHttpSession mockHttpSession;
+        if (request.getSession(false) == null) {
+            mockHttpSession = new MockHttpSession();
+            request.setSession(mockHttpSession);
+        } else {
+            mockHttpSession = (MockHttpSession)request.getSession();
+        }
+
+        mockHttpSession.setAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME, authenticatedCmsUser);
+
         final MockHttpServletResponse response = requestResponse.getResponse();
 
         filter.doFilter(request, response, new MockFilterChain(new HttpServlet() {
@@ -117,6 +146,7 @@ public class AbstractRestApiIT {
         }, filter));
         return response;
     }
+
     /**
      * @param scheme      http or https
      * @param hostAndPort eg localhost:8080 or www.example.com
@@ -126,9 +156,10 @@ public class AbstractRestApiIT {
      * @throws Exception
      */
     public RequestResponseMock mockGetRequestResponse(final String scheme,
-                                                     final String hostAndPort,
-                                                     final String pathInfo,
-                                                     final String queryString) {
+                                                      final String hostAndPort,
+                                                      final String pathInfo,
+                                                      final String queryString,
+                                                      final String method) {
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -148,10 +179,11 @@ public class AbstractRestApiIT {
         request.setPathInfo(pathInfo);
         request.setContextPath("/site");
         request.setRequestURI("/site" + pathInfo);
-        request.setMethod("GET");
+        request.setMethod(method);
         if (queryString != null) {
             request.setQueryString(queryString);
         }
+
         return new RequestResponseMock(request, response);
     }
 
@@ -162,6 +194,7 @@ public class AbstractRestApiIT {
         public RequestResponseMock(final MockHttpServletRequest request, final MockHttpServletResponse response) {
             this.request = request;
             this.response = response;
+
         }
 
         public MockHttpServletRequest getRequest() {
@@ -175,3 +208,5 @@ public class AbstractRestApiIT {
     }
 
 }
+
+
