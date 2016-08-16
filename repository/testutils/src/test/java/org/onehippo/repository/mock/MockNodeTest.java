@@ -367,6 +367,22 @@ public class MockNodeTest {
     }
 
     @Test
+    public void testRemoveNodeRemovesParentChild() throws RepositoryException {
+        final MockNode root = MockNode.root();
+        final Node child = root.addNode("child", "nt:unstructured");
+
+        assertTrue(root.hasNode("child"));
+        assertTrue(root.getNodes().hasNext());
+        assertTrue(root.hasNodes());
+
+        child.remove();
+
+        assertFalse(root.hasNode("child"));
+        assertFalse(root.getNodes().hasNext());
+        assertFalse(root.hasNodes());
+    }
+
+    @Test
     public void rootCanBeRemoved() throws RepositoryException {
         MockNode.root().remove();
     }

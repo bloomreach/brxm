@@ -254,6 +254,9 @@ public class MockNode extends MockItem implements HippoNode {
             List<MockNode> childList = parent.children.get(getName());
             if (childList != null) {
                 childList.remove(this);
+                if (childList.isEmpty()) {
+                    parent.children.remove(getName());
+                }
             }
         }
         setParent(null);
