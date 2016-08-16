@@ -15,6 +15,7 @@
 */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,6 +37,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+
+import org.apache.cxf.common.i18n.Exception;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
@@ -43,8 +46,11 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.FeaturesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
@@ -150,6 +156,14 @@ public class RootResource extends AbstractConfigResource {
         try {
             final Session session = RequestContextProvider.get().getSession();
             this.channelService.deleteChannel(session, channelId);
+
+            publishSynchronousEvent(new ChannelEvent(
+                    ChannelEvent.ChannelEventType.DELETE,
+                    Collections.emptyList(),
+                    null,
+                    null,
+                    getPageComposerContextService().getRequestContext()));
+
             HstConfigurationUtils.persistChanges(session);
 
             return Response.ok().build();
@@ -158,6 +172,9 @@ public class RootResource extends AbstractConfigResource {
             return Response
                     .status(Response.Status.NOT_FOUND)
                     .entity(e).build();
+        } catch (ClientException e) {
+            resetSession();
+            return logAndReturnClientError(e);
         } catch (RepositoryException | ChannelException e) {
             log.error(e.getMessage());
             resetSession();
@@ -237,6 +254,21 @@ public class RootResource extends AbstractConfigResource {
         servletRequest.getSession().removeAttribute(ContainerConstants.RENDER_VARIANT);
         log.info("Variant cleared");
         return ok("Variant cleared");
+    }
+
+    /**
+     * Note: Override the AbstractConfigResource#logAndReturnClientError() to remove ExtResponseRepresentation wrapper in the
+     * body response.
+     */
+    @Override
+    protected Response logAndReturnClientError(final ClientException e) {
+        final String formattedMessage = e.getMessage();
+        if (log.isDebugEnabled()) {
+            log.info(formattedMessage, e);
+        } else {
+            log.info(formattedMessage);
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity(e.getErrorStatus()).build();
     }
 
     private static class HandshakeResponse {

@@ -27,3 +27,4 @@ Channel 'channel-foo' not found
 Could not load switch template resource bundle
 Could not create a preview configuration
 Missing properties 'manage.changes.privileges'
+cancel channel delete
