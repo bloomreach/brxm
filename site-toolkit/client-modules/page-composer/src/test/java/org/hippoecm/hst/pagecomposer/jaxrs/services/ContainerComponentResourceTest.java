@@ -262,7 +262,7 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
         containerComponentService.updateContainer(eq(mockSession), isA(ContainerRepresentation.class));
         expectLastCall();
         final ContainerRepresentation containerToBeUpdated = createMockContainerRepresentation();
-        replay(containerComponentService, containerToBeUpdated);
+        replay(containerComponentService);
 
         given()
             .contentType(JSON)
@@ -288,7 +288,7 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
         containerComponentService.updateContainer(eq(mockSession), isA(ContainerRepresentation.class));
         expectLastCall().andThrow(new ClientException("foo bah", ClientError.ITEM_ALREADY_LOCKED, params));
         final ContainerRepresentation containerToBeUpdated = createMockContainerRepresentation();
-        replay(containerComponentService, containerToBeUpdated);
+        replay(containerComponentService);
 
         given()
             .contentType(JSON)
@@ -310,7 +310,7 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
         expectLastCall().andThrow(new ClientException("foo bah", ClientError.UNKNOWN));
 
         final ContainerRepresentation containerToBeUpdated = createMockContainerRepresentation();
-        replay(containerComponentService, containerToBeUpdated);
+        replay(containerComponentService);
 
         given()
             .contentType(JSON)
@@ -330,7 +330,7 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
         expectLastCall().andThrow(new RepositoryException("unknown error"));
 
         final ContainerRepresentation containerToBeUpdated = createMockContainerRepresentation();
-        replay(containerComponentService, containerToBeUpdated);
+        replay(containerComponentService);
 
         given()
             .contentType(JSON)
@@ -346,10 +346,11 @@ public class ContainerComponentResourceTest extends AbstractResourceTest {
     }
 
     private ContainerRepresentation createMockContainerRepresentation() {
-        final ContainerRepresentation containerToBeUpdated = createNiceMock(ContainerRepresentation.class);
-        expect(containerToBeUpdated.getId()).andReturn("cafebabe").anyTimes();
-        expect(containerToBeUpdated.getName()).andReturn("foo-item").anyTimes();
-        expect(containerToBeUpdated.getLastModifiedTimestamp()).andReturn(1234L).anyTimes();
+        final ContainerRepresentation containerToBeUpdated = new ContainerRepresentation();
+
+        containerToBeUpdated.setId("cafebabe");
+        containerToBeUpdated.setName("foo-item");
+        containerToBeUpdated.setLastModifiedTimestamp(1234L);
         return containerToBeUpdated;
     }
 }
