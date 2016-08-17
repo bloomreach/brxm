@@ -18,6 +18,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -46,8 +47,11 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
@@ -59,7 +63,7 @@ public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
 
     private ChannelManager channelManager;
-
+    private ValidatorFactory validatorFactory;
     private HstConfigurationService hstConfigurationService;
 
     @Override
@@ -210,14 +214,30 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public void deleteChannel(final Session session, final String channelId) throws RepositoryException, ChannelException {
-        // TODO Implement validation prior deleting a channel (HSTTWO-3731)
+        if (channelId.endsWith("-preview")) {
+            throw new IllegalArgumentException("Channel id '" + channelId + "' must refer to a live channel");
+        }
+
+        // TODO in HSTTWO-3759: double-check that channel delete is really enabled
+        // (otherwise admin could delete a channel even if the feature was disabled)
 
         final Channel channel = getChannel(channelId);
+        final List<Mount> allMountsOfChannel = findMounts(channel);
+
+        final ValidatorBuilder preValidatorBuilder = ValidatorBuilder.builder()
+                .add(validatorFactory.getHasNoChildMountNodeValidator(allMountsOfChannel));
+
+        preValidatorBuilder.build()
+                .validate(getRequestContext());
 
         removeConfigurationNodes(session, channel);
         removeSiteNode(session, channel);
         removeChannelNodes(session, channel.getChannelPath());
-        removeMountNodes(session, channel);
+        removeMountNodes(session, allMountsOfChannel);
+    }
+
+    private HstRequestContext getRequestContext() {
+        return RequestContextProvider.get();
     }
 
     private void removeConfigurationNodes(final Session session, final Channel channel) throws RepositoryException {
@@ -233,9 +253,7 @@ public class ChannelServiceImpl implements ChannelService {
         session.removeItem(channel.getHstMountPoint());
     }
 
-    private void removeMountNodes(final Session session, final Channel channel) throws RepositoryException {
-        final List<Mount> allMountsOfChannel = findMounts(channel);
-
+    private void removeMountNodes(final Session session, final List<Mount> allMountsOfChannel) throws RepositoryException {
         final List<String> removingNodePaths = allMountsOfChannel.stream()
                 .map(Mount::getIdentifier)
                 .map((mountId) -> {
@@ -256,9 +274,6 @@ public class ChannelServiceImpl implements ChannelService {
 
     /**
      * Find all mounts binding to the given channel
-     *
-     * @param channel
-     * @return
      */
     private List<Mount> findMounts(final Channel channel) {
         final String mountPoint = channel.getHstMountPoint();
@@ -280,11 +295,8 @@ public class ChannelServiceImpl implements ChannelService {
 
     /**
      * Remove both the hst config node and its '-preview' node if it exists
-     * @param session
-     * @param nodePath
-     * @throws RepositoryException
      */
-    private void removeChannelNodes(Session session, String nodePath) throws RepositoryException {
+    private void removeChannelNodes(final Session session, final String nodePath) throws RepositoryException {
         session.removeItem(nodePath);
         final String previewNodePath = nodePath + "-preview";
         if (session.nodeExists(previewNodePath)) {
@@ -294,9 +306,6 @@ public class ChannelServiceImpl implements ChannelService {
 
     /**
      * Remove given node and its ancestor nodes if they become leaf nodes after removal
-     * @param session
-     * @param nodePath
-     * @throws RepositoryException
      */
     private void removeMountNodeAndVirtualHostNodes(final Session session, final String nodePath) throws RepositoryException {
         Node removeNode = session.getNode(nodePath);
@@ -304,13 +313,21 @@ public class ChannelServiceImpl implements ChannelService {
 
         if (removeNode.isNodeType(HstNodeTypes.NODETYPE_HST_MOUNT)) {
             removeNode.remove();
-        }
 
-        // Remove ancestor nodes of type 'hst:virtualhost' if they become leaf nodes
-        while(!parentNode.hasNodes() && parentNode.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOST)) {
-            removeNode = parentNode;
-            parentNode = parentNode.getParent();
-            removeNode.remove();
+            // Remove ancestor nodes of type 'hst:virtualhost' if they become leaf nodes
+            while (parentNode != null && !parentNode.hasNodes() && parentNode.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOST)) {
+                removeNode = parentNode;
+                parentNode = parentNode.getParent();
+                removeNode.remove();
+            }
+        }
+    }
+
+    private Node getOrAddChannelPropsNode(final Node channelNode) throws RepositoryException {
+        if (!channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
+            return channelNode.addNode(HstNodeTypes.NODENAME_HST_CHANNELINFO, HstNodeTypes.NODETYPE_HST_CHANNELINFO);
+        } else {
+            return channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
         }
     }
 
@@ -341,6 +358,10 @@ public class ChannelServiceImpl implements ChannelService {
 
     public void setChannelManager(final ChannelManager channelManager) {
         this.channelManager = channelManager;
+    }
+
+    public void setValidatorFactory(final ValidatorFactory validatorFactory) {
+        this.validatorFactory = validatorFactory;
     }
 
     public void setHstConfigurationService(final HstConfigurationService hstConfigurationService) {

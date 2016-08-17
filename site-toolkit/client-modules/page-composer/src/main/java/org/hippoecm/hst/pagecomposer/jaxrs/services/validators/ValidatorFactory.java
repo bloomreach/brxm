@@ -16,8 +16,11 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
+import java.util.List;
+
 import com.google.common.base.Predicate;
 
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
@@ -109,6 +112,10 @@ public class ValidatorFactory {
 
     public Validator getItemNotSameOrDescendantOfValidator(final String validateUUID, final String targetUUID) {
         return new ItemNotSameOrDescendantOfValidator(validateUUID, targetUUID);
+    }
+
+    public Validator getHasNoChildMountNodeValidator(final List<Mount> mounts) {
+        return new HasNoChildMountNodeValidator(mounts);
     }
 
     private static final class SiteMapItemBasedPathInfoValidator extends AbstractPathInfoValidator {

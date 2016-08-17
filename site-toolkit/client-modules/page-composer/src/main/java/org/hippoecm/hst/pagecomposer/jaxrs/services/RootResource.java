@@ -159,12 +159,11 @@ public class RootResource extends AbstractConfigResource {
 
             return Response.ok().build();
         } catch (ChannelNotFoundException e) {
-            log.warn(e.getMessage());
-            return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .build();
+            printErrorLog("Failed to delete channel", e);
+
+            return Response.status(Response.Status.NOT_FOUND).build();
         } catch (RepositoryException | ChannelException e) {
-            log.warn("Could not delete channel", e);
+            printErrorLog("Failed to delete channel", e);
             resetSession();
             return Response.serverError().build();
         }
@@ -242,6 +241,14 @@ public class RootResource extends AbstractConfigResource {
         servletRequest.getSession().removeAttribute(ContainerConstants.RENDER_VARIANT);
         log.info("Variant cleared");
         return ok("Variant cleared");
+    }
+
+    private void printErrorLog(final String errorMessage, final Exception e) {
+        if (log.isDebugEnabled()) {
+            log.error(errorMessage, e);
+        } else {
+            log.error(errorMessage, e.getMessage());
+        }
     }
 
     private static class HandshakeResponse {
