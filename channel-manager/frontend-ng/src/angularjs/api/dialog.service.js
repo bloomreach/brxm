@@ -48,4 +48,12 @@ export class DialogService {
   _removeMask() {
     this.CmsService.publish('remove-mask');
   }
+
+  hide() {
+    return this.$mdDialog.hide();
+  }
+
+  cancel() {
+    return this.$mdDialog.cancel();
+  }
 }

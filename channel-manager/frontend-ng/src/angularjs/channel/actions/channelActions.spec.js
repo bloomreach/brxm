@@ -122,7 +122,7 @@ describe('ChannelActions', () => {
     expect(DialogService.show).toHaveBeenCalled();
 
     $rootScope.$digest();
-    // TODO: expect deletion not to have beed triggered.
+    // TODO: expect deletion not to have been triggered.
   });
 
   // TODO; add more tests for deleting a channel (once implemented)

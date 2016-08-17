@@ -18,6 +18,7 @@
   "COPY": "Copy",
   "CREATE": "Create",
   "DELETE": "Delete",
+  "DELETING_CHANNEL": "Deleting channel '{{channel}}'...",
   "DISCARD": "Discard",
   "DISCARD_ALL": "Discard all",
   "DONE": "Done",

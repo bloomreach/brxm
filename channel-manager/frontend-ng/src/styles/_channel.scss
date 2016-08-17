@@ -79,3 +79,23 @@ md-select.ng-invalid-required > md-select-value > span:after {
   text-overflow: clip;
   white-space: normal;
 }
+
+.dialog-transparent {
+  background-color: transparent;
+  box-shadow: none;
+  color: $grey-50;
+  overflow: visible;
+
+  md-progress-circular path {
+    stroke: $grey-50;
+  }
+
+  md-progress-linear {
+    ._md-container {
+      background-color: $grey-200;
+    }
+    ._md-bar {
+      background-color: $grey-400;
+    }
+  }
+}

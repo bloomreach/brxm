@@ -41,11 +41,14 @@ export class ChannelActionsCtrl {
 
   deleteChannel() {
     this._confirmDelete()
+      .then(() => this._showDeleteProgress())
       .then(() => {
         // TODO: actually ask the back-end to delete the channel!
         // something like: this.ChannelService.delete();
+      })
+      .catch(() => {
+        // TODO: show why deleting the channel failed
       });
-    // do nothing on cancel
   }
 
   _confirmDelete() {
@@ -57,4 +60,20 @@ export class ChannelActionsCtrl {
 
     return this.DialogService.show(confirm);
   }
+
+  _showDeleteProgress() {
+    return this.DialogService.show({
+      templateUrl: 'channel/actions/delete/delete-channel-progress.html',
+      locals: {
+        translationData: {
+          channel: this.ChannelService.getName(),
+        },
+      },
+      controller: ($scope, translationData) => {
+        'ngInject';
+        $scope.translationData = translationData;
+      },
+    });
+  }
+
 }
