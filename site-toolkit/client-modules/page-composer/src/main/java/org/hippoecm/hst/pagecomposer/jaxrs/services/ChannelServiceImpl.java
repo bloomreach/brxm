@@ -307,8 +307,7 @@ public class ChannelServiceImpl implements ChannelService {
         }
 
         // Remove ancestor nodes of type 'hst:virtualhost' if they become leaf nodes
-        // TODO Simplify the code to parentNode.hasNodes() when REPO-1549 is fixed
-        while(!parentNode.getNodes().hasNext() && parentNode.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOST)) {
+        while(!parentNode.hasNodes() && parentNode.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOST)) {
             removeNode = parentNode;
             parentNode = parentNode.getParent();
             removeNode.remove();
