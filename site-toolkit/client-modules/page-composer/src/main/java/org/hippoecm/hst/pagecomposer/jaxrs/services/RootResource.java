@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -189,16 +190,16 @@ public class RootResource extends AbstractConfigResource {
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
         session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
 
+        HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         boolean canWrite;
         try {
-            HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
             canWrite = requestContext.getSession().hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
         } catch (RepositoryException e) {
             log.warn("Could not determine authorization", e);
             return error("Could not determine authorization", e);
         }
 
-        final boolean channelDeletionSupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("channel.deletion.supported", false);
+        final boolean channelDeletionSupported = isChannelDeletionSupported(requestContext, mountId);
 
         // TODO: test whether the user has admin privileges
         final boolean canDeleteChannel = channelDeletionSupported;
@@ -211,6 +212,18 @@ public class RootResource extends AbstractConfigResource {
         response.setSessionId(session.getId());
         log.info("Composer-Mode successful");
         return ok("Composer-Mode successful", response);
+    }
+
+    private boolean isChannelDeletionSupported(final HstRequestContext requestContext, final String mountId) {
+        try {
+            Optional<Channel> channel = channelService.getChannelByMountId(mountId);
+            if (channel.isPresent()) {
+                return channelService.canChannelBeDeleted(requestContext.getSession(), channel.get().getId());
+            }
+        } catch (RepositoryException e) {
+            // ignore, consider unsupported.
+        }
+        return false;
     }
 
     @GET

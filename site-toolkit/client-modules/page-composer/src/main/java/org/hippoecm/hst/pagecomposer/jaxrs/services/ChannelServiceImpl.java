@@ -18,13 +18,13 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.function.Function;
@@ -213,15 +213,46 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
+    public Optional<Channel> getChannelByMountId(final String mountId) {
+        final VirtualHost virtualHost = getCurrentVirtualHost();
+        List<Mount> mounts = virtualHost.getVirtualHosts().getMountsByHostGroup(virtualHost.getHostGroupName());
+        return mounts.stream()
+                .filter(mount -> mount.getIdentifier().equals(mountId))
+                .map(Mount::getChannel)
+                .findFirst();
+    }
+
+    @Override
+    public boolean canChannelBeDeleted(Session session, String channelId) {
+        try {
+            return canChannelBeDeleted(session, getChannel(channelId));
+        } catch (ChannelException e) {
+            return false;
+        }
+    }
+
+    private boolean canChannelBeDeleted(final Session session, final Channel channel) {
+        try {
+            final Node channelNode = session.getNode(channel.getChannelPath());
+
+            return channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE).getBoolean();
+        } catch (RepositoryException e) {
+            return false;
+        }
+    }
+
+    @Override
     public void deleteChannel(final Session session, final String channelId) throws RepositoryException, ChannelException {
         if (channelId.endsWith("-preview")) {
             throw new IllegalArgumentException("Channel id '" + channelId + "' must refer to a live channel");
         }
 
-        // TODO in HSTTWO-3759: double-check that channel delete is really enabled
-        // (otherwise admin could delete a channel even if the feature was disabled)
-
         final Channel channel = getChannel(channelId);
+
+        if (!canChannelBeDeleted(session, channel)) {
+            throw new ChannelException("Requested channel cannot be deleted");
+        }
+
         final List<Mount> allMountsOfChannel = findMounts(channel);
 
         final ValidatorBuilder preValidatorBuilder = ValidatorBuilder.builder()

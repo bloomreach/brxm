@@ -191,6 +191,23 @@ public class ChannelServiceImplTest {
         channelService.deleteChannel(session, "bah");
     }
 
+    @Test
+    public void check_channel_deletable() throws Exception {
+        EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo).anyTimes();
+        EasyMock.expect(channelService.getChannel("bogus")).andThrow(new ChannelNotFoundException("bogus"));
+        EasyMock.replay(channelService);
+
+        assertThat(channelService.canChannelBeDeleted(session, "foo"), is(true));
+
+        channelsNode.getNode("foo").setProperty("hst:deletable", false);
+        assertThat(channelService.canChannelBeDeleted(session, "foo"), is(false));
+
+        channelsNode.getNode("foo").getProperty("hst:deletable").remove();
+        assertThat(channelService.canChannelBeDeleted(session, "foo"), is(false));
+
+        assertThat(channelService.canChannelBeDeleted(session, "bogus"), is(false));
+    }
+
     private static VirtualHosts mockVirtualHosts() {
         final MockHstRequestContext requestContext = new MockHstRequestContext();
         final VirtualHost mockVirtualHost = EasyMock.createMock(VirtualHost.class);
@@ -224,7 +241,8 @@ public class ChannelServiceImplTest {
         channel.setChannelPath("/hst:hst/hst:channels/" + id);
         channel.setHstMountPoint("/hst:hst/hst:sites/" + id);
 
-        channelsNode.addNode(id, HstNodeTypes.NODETYPE_HST_CHANNEL);
+        final Node channelNode = channelsNode.addNode(id, HstNodeTypes.NODETYPE_HST_CHANNEL);
+        channelNode.setProperty("hst:deletable", true);
         return channel;
     }
 
