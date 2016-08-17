@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 
@@ -30,6 +31,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.tester.FormTester;
+import org.easymock.EasyMock;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.HippoTester;
@@ -42,16 +44,12 @@ import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.repository.api.StringCodec;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.onehippo.repository.mock.MockNode;
 
+import static org.easymock.EasyMock.eq;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class AddDocumentDialogTest {
 
@@ -64,6 +62,7 @@ public class AddDocumentDialogTest {
     private PluginPage home;
     private PluginContext context;
     private MockNode root;
+    private StringCodec stringCodec;
 
     @Before
     public void setUp() throws RepositoryException, IOException {
@@ -83,12 +82,16 @@ public class AddDocumentDialogTest {
         workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
 
         final AddDocumentArguments addDocumentArguments = new AddDocumentArguments();
-        final IWorkflowInvoker invoker = mock(IWorkflowInvoker.class);
+        final IWorkflowInvoker invoker = EasyMock.createMock(IWorkflowInvoker.class);
 
-        Mockito.doNothing().when(invoker).invokeWorkflow();
+        invoker.invokeWorkflow();
+        EasyMock.expectLastCall();
 
-        final StringCodec stringCodec = mock(StringCodec.class);
-        final ILocaleProvider localeProvider = mock(ILocaleProvider.class);
+        stringCodec = EasyMock.createMock(StringCodec.class);
+        final ILocaleProvider localeProvider = EasyMock.createMock(ILocaleProvider.class);
+        EasyMock.expect(localeProvider.getLocales()).andReturn(Collections.emptyList());
+
+        EasyMock.replay(invoker, localeProvider);
 
         IModel<StringCodec> stringCodecModel = new LoadableDetachableModel<StringCodec>(stringCodec) {
             @Override
@@ -121,16 +124,18 @@ public class AddDocumentDialogTest {
     }
 
     private WorkflowDescriptorModel createErrorWorkflow() throws RepositoryException {
-        final WorkflowDescriptorModel wfdm = mock(WorkflowDescriptorModel.class);
-        when(wfdm.getNode()).thenThrow(new RepositoryException("No node found"));
+        final WorkflowDescriptorModel wfdm = EasyMock.createMock(WorkflowDescriptorModel.class);
+        EasyMock.expect(wfdm.getNode()).andThrow(new RepositoryException("No node found"));
+        EasyMock.replay(wfdm);
         return wfdm;
     }
 
     private WorkflowDescriptorModel createNormalWorkflow() throws IOException, RepositoryException {
-        final WorkflowDescriptorModel wfdm = mock(WorkflowDescriptorModel.class);
+        final WorkflowDescriptorModel wfdm = EasyMock.createMock(WorkflowDescriptorModel.class);
         final Node contentNode = createContentNode();
         assertNotNull(contentNode);
-        when(wfdm.getNode()).thenReturn(contentNode);
+        EasyMock.expect(wfdm.getNode()).andReturn(contentNode);
+        EasyMock.replay(wfdm);
         return wfdm;
     }
 
@@ -174,6 +179,10 @@ public class AddDocumentDialogTest {
     @Test
     public void addFolderWithNewNames() throws Exception {
         final FormTester formTester = createDialog(false);
+
+        EasyMock.expect(stringCodec.encode(eq("archives"))).andReturn("archives");
+        EasyMock.replay(stringCodec);
+
         tester.clickLink(WICKET_PATH_ENABLE_URIINPUT_LINK);
         formTester.setValue(URL_INPUT, "archives");
         formTester.setValue(NAME_INPUT, "Archives");
