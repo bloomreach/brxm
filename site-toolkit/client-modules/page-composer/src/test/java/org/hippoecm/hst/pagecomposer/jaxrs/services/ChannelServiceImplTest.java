@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
@@ -92,10 +94,20 @@ public class ChannelServiceImplTest {
         mountId2MountPoint.put(bahMountNode.getIdentifier(), "/hst:hst/hst:sites/bah");
         mockHostGroups(hostGroups, mountId2MountPoint);
 
+        // Mark the "bah-mount" to have children
+        mockVirtualHosts.getMountsByHostGroup("group1").stream()
+                .filter(mount -> mount.getIdentifier().equals("com/example/hst:root"))
+                .forEach(mount -> {
+                    final List<Mount> childMounts = Arrays.asList(EasyMock.createMock(Mount.class));
+                    EasyMock.expect(mount.getChildMounts()).andReturn(childMounts).anyTimes();
+                    EasyMock.replay(mount);
+                });
+
         channelService = EasyMock.createMockBuilder(ChannelServiceImpl.class)
                 .addMockedMethod("getChannel")
                 .createMock();
         channelService.setHstConfigurationService(hstConfigurationService);
+        channelService.setValidatorFactory(new ValidatorFactory());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -201,7 +213,7 @@ public class ChannelServiceImplTest {
                     .map(mountId -> mockMount(mountId, mountPoints.get(mountId)))
                     .collect(Collectors.toList());
 
-            EasyMock.expect(mockVirtualHosts.getMountsByHostGroup(hostGroup)).andReturn(mockMounts);
+            EasyMock.expect(mockVirtualHosts.getMountsByHostGroup(hostGroup)).andReturn(mockMounts).anyTimes();
         });
         EasyMock.replay(mockVirtualHosts);
     }
@@ -249,9 +261,8 @@ public class ChannelServiceImplTest {
     private static Mount mockMount(final String mountId, final String mountPoint)  {
         final Mount mount = EasyMock.createMock(Mount.class);
         EasyMock.expect(mount.getMountPoint()).andReturn(mountPoint);
-
         EasyMock.expect(mount.getIdentifier()).andReturn(mountId).anyTimes();
-
+        EasyMock.expect(mount.getChildMounts()).andReturn(Collections.emptyList()).anyTimes();
         EasyMock.replay(mount);
         return mount;
     }
