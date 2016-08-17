@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Locale;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -34,15 +33,8 @@ import org.apache.wicket.util.tester.FormTester;
 import org.easymock.EasyMock;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.HippoTester;
-import org.hippoecm.frontend.PluginPage;
-import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.plugin.DummyPlugin;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.repository.api.StringCodec;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 
@@ -51,47 +43,24 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-public class AddDocumentDialogTest {
+public class AddDocumentDialogTest extends AbstractWicketDialogTest {
 
     public static final String WICKET_PATH_ENABLE_URIINPUT_LINK = "dialog:content:form:name-url:uriAction";
     public static final String WICKET_PATH_OK_BUTTON = "dialog:content:form:buttons:0:button";
     public static final String URL_INPUT = "name-url:url";
     public static final String NAME_INPUT = "name-url:name";
 
-    private HippoTester tester;
-    private PluginPage home;
-    private PluginContext context;
-    private MockNode root;
     private StringCodec stringCodec;
 
-    @Before
-    public void setUp() throws RepositoryException, IOException {
-        root = MockNode.root();
-
-        tester = new HippoTester();
-        tester.getSession().setLocale(Locale.ENGLISH);
-
-        home = (PluginPage) tester.startPluginPage();
-        JavaPluginConfig config = new JavaPluginConfig("dummy");
-        config.put("plugin.class", DummyPlugin.class.getName());
-        context = home.getPluginManager().start(config);
-    }
-
     private FormTester createDialog(boolean workflowError) throws Exception {
-        final WorkflowDescriptorModel workflowDescriptorModel;
-        workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
+        final WorkflowDescriptorModel workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
 
-        final AddDocumentArguments addDocumentArguments = new AddDocumentArguments();
-        final IWorkflowInvoker invoker = EasyMock.createMock(IWorkflowInvoker.class);
-
-        invoker.invokeWorkflow();
-        EasyMock.expectLastCall();
+        final IWorkflowInvoker invoker = mockWorkflowInvoker();
 
         stringCodec = EasyMock.createMock(StringCodec.class);
         final ILocaleProvider localeProvider = EasyMock.createMock(ILocaleProvider.class);
         EasyMock.expect(localeProvider.getLocales()).andReturn(Collections.emptyList());
-
-        EasyMock.replay(invoker, localeProvider);
+        EasyMock.replay(localeProvider);
 
         IModel<StringCodec> stringCodecModel = new LoadableDetachableModel<StringCodec>(stringCodec) {
             @Override
@@ -101,7 +70,7 @@ public class AddDocumentDialogTest {
         };
 
         final AddDocumentDialog dialog = new AddDocumentDialog(
-                addDocumentArguments,
+                new AddDocumentArguments(),
                 Model.of("Add document dialog title"),
                 "category test",
                 new HashSet<>(Arrays.asList(new String[]{"cat1"})),
@@ -112,22 +81,7 @@ public class AddDocumentDialogTest {
                 workflowDescriptorModel
         );
 
-        tester.runInAjax(home, new Runnable() {
-            @Override
-            public void run() {
-                IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                dialogService.show(dialog);
-            }
-
-        });
-        return tester.newFormTester("dialog:content:form");
-    }
-
-    private WorkflowDescriptorModel createErrorWorkflow() throws RepositoryException {
-        final WorkflowDescriptorModel wfdm = EasyMock.createMock(WorkflowDescriptorModel.class);
-        EasyMock.expect(wfdm.getNode()).andThrow(new RepositoryException("No node found"));
-        EasyMock.replay(wfdm);
-        return wfdm;
+        return executeDialog(dialog);
     }
 
     private WorkflowDescriptorModel createNormalWorkflow() throws IOException, RepositoryException {

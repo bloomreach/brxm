@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
@@ -24,6 +23,8 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.repository.mock.MockNode;
 
 public class MockNodeUtil {
+    private MockNodeUtil() {
+    }
 
     /**
      * Create a subfolder {@link HippoStdNodeType#NT_FOLDER} of <code>parentNode</code> with the same node name and localized name
