@@ -224,6 +224,7 @@
                 <exclude>dashboard/*.txt</exclude>
                 <exclude>dashboard/node_modules/**</exclude>
                 <exclude>dashboard/src/main/webapp/js/lib/**</exclude>
+                <!-- Swagger UI -->
                 <exclude>dashboard/src/main/webapp/docs/rest-api/**</exclude>
                 <exclude>archetype/**</exclude>
                 <exclude>**/*.md</exclude>
