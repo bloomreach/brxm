@@ -65,7 +65,7 @@ public class ChannelServiceImplTest {
         hstConfigurationService = EasyMock.createMock(HstConfigurationService.class);
 
         rootNode = MockNode.root();
-        session = new ExtendedMockSession(rootNode.getSession());
+        session = rootNode.getSession();
 
         hstRoot = rootNode.addNode("hst:hst", "hst:hst");
         channelsNode = hstRoot.addNode(HstNodeTypes.NODENAME_HST_CHANNELS, HstNodeTypes.NODETYPE_HST_CHANNELS);

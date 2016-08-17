@@ -39,7 +39,7 @@ public class HstConfigurationServiceImplTest {
     @Before
     public void setUp() throws RepositoryException {
         final MockNode rootNode = MockNode.root();
-        session = new ExtendedMockSession(rootNode.getSession());
+        session = rootNode.getSession();
 
         final Node hstRoot = rootNode.addNode("hst:hst", "hst:hst");
         configurationsNode = hstRoot.addNode(HstNodeTypes.NODENAME_HST_CONFIGURATIONS, HstNodeTypes.NODETYPE_HST_CONFIGURATIONS);
