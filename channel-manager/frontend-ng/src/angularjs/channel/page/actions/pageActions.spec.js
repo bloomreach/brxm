@@ -24,6 +24,7 @@ describe('PageActions', () => {
   let $scope;
   let FeedbackService;
   let ChannelService;
+  let SessionService;
   let SiteMapService;
   let SiteMapItemService;
   let DialogService;
@@ -39,13 +40,14 @@ describe('PageActions', () => {
     module('hippo-cm');
 
     inject((_$q_, _$rootScope_, _$compile_, _$translate_, _FeedbackService_, _ChannelService_, _SiteMapService_,
-            _SiteMapItemService_, _DialogService_, _HippoIframeService_, _PageMetaDataService_) => {
+            _SiteMapItemService_, _DialogService_, _HippoIframeService_, _PageMetaDataService_, _SessionService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $translate = _$translate_;
       FeedbackService = _FeedbackService_;
       ChannelService = _ChannelService_;
+      SessionService = _SessionService_;
       SiteMapService = _SiteMapService_;
       SiteMapItemService = _SiteMapItemService_;
       DialogService = _DialogService_;
@@ -67,7 +69,7 @@ describe('PageActions', () => {
     spyOn(ChannelService, 'recordOwnChange');
     spyOn(ChannelService, 'loadPageModifiableChannels');
     spyOn(ChannelService, 'getPageModifiableChannels');
-    spyOn(ChannelService, 'isCrossChannelPageCopySupported').and.returnValue(true);
+    spyOn(SessionService, 'isCrossChannelPageCopySupported').and.returnValue(true);
     spyOn(ChannelService, 'getSiteMapId').and.returnValue('siteMapId');
     spyOn(SiteMapService, 'load');
     spyOn(SiteMapItemService, 'get').and.returnValue({ name: 'name' });
@@ -182,10 +184,10 @@ describe('PageActions', () => {
     expect(copyAction.isEnabled()).toBe(true);
 
     ChannelService.hasWorkspace.and.returnValue(false);
-    ChannelService.isCrossChannelPageCopySupported.and.returnValue(false);
+    SessionService.isCrossChannelPageCopySupported.and.returnValue(false);
     expect(copyAction.isEnabled()).toBe(false);
 
-    ChannelService.isCrossChannelPageCopySupported.and.returnValue(true);
+    SessionService.isCrossChannelPageCopySupported.and.returnValue(true);
     ChannelService.getPageModifiableChannels.and.returnValue(undefined);
     expect(copyAction.isEnabled()).toBe(false);
 
