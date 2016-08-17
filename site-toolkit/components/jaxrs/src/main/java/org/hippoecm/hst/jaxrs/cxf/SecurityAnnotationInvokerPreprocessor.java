@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,87 +33,103 @@ import org.slf4j.LoggerFactory;
 
 /**
  * SecurityAnnotationInvokerPreprocessor
- * <P>
+ * <p>
  * This <CODE>InvokerPreprocessor</CODE> implementation checks the security annotations of the target operation
  * and return a 403 Forbidden error message when not authorized for the operation by the annotation.
  * </P>
- * 
+ *
  * @version $Id$
  */
 public class SecurityAnnotationInvokerPreprocessor implements InvokerPreprocessor {
-    
+
     private static Logger log = LoggerFactory.getLogger(SecurityAnnotationInvokerPreprocessor.class);
 
     public Object preprocoess(Exchange exchange, Object request) {
-        if (isForbiddenOperation(exchange)) {
-            return new MessageContentsList(Response.status(Response.Status.FORBIDDEN).build());
+        try {
+            if (isForbiddenOperation(exchange)) {
+                return new MessageContentsList(Response.status(Response.Status.FORBIDDEN).build());
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Exception happened during InvokerPreprocessor#preprocoess.", e);
+            } else {
+                log.warn("Exception happened during InvokerPreprocessor#preprocoess : {}", e.toString());
+            }
+            return new MessageContentsList(Response.status(Response.Status.INTERNAL_SERVER_ERROR).build());
         }
-        
         return null;
     }
-    
+
     protected boolean isForbiddenOperation(Exchange exchange) {
-        SecurityContext securityContext = new SecurityContextImpl(exchange.getInMessage());
+        SecurityContext securityContext = getSecurityContext(exchange);
         OperationResourceInfo operationResourceInfo = exchange.get(OperationResourceInfo.class);
         Method method = operationResourceInfo.getMethodToInvoke();
-        
+
         DenyAll denyAllAnnoOnMethod = method.getAnnotation(DenyAll.class);
-        
+
         if (denyAllAnnoOnMethod != null) {
             log.debug("The operation is denied to all.");
             return true;
         }
-        
+
         RolesAllowed rolesAllowedAnnoOnMethod = method.getAnnotation(RolesAllowed.class);
-        
+
         if (rolesAllowedAnnoOnMethod != null) {
-            String [] roles = rolesAllowedAnnoOnMethod.value();
-            
+            String[] roles = rolesAllowedAnnoOnMethod.value();
+
             if (roles != null) {
-                for (String role : roles) {
-                    if (securityContext.isUserInRole(role)) {
-                        log.debug("The user is in role: " + role);
-                        return false;
-                    }
+                if (isUserInRole(securityContext, roles)) {
+                    return false;
                 }
             }
-            
+
             log.debug("The user is not in any role: " + StringUtils.join(roles, ", "));
             return true;
         }
-        
+
         PermitAll permitAllAnnoOnMethod = method.getAnnotation(PermitAll.class);
-        
+
         if (permitAllAnnoOnMethod != null) {
             log.debug("The operation is permitted to all.");
             return false;
         }
-        
+
         RolesAllowed rolesAllowedAnnoOnType = method.getDeclaringClass().getAnnotation(RolesAllowed.class);
-        
+
         if (rolesAllowedAnnoOnType != null) {
-            String [] roles = rolesAllowedAnnoOnType.value();
-            
+            String[] roles = rolesAllowedAnnoOnType.value();
+
             if (roles != null) {
-                for (String role : roles) {
-                    if (securityContext.isUserInRole(role)) {
-                        log.debug("The user is in role: " + role);
-                        return false;
-                    }
+                if (isUserInRole(securityContext, roles)) {
+                    return false;
                 }
             }
-            
+
             log.debug("The user is not in any role defined in the type: " + StringUtils.join(roles, ", "));
             return true;
         }
-        
+
         PermitAll permitAllAnnoOnType = method.getDeclaringClass().getAnnotation(PermitAll.class);
-        
+
         if (permitAllAnnoOnType != null) {
             log.debug("The type is permitted to all.");
             return false;
         }
-        
+
+        return false;
+    }
+
+    protected SecurityContext getSecurityContext(final Exchange exchange) {
+        return new SecurityContextImpl(exchange.getInMessage());
+    }
+
+    private boolean isUserInRole(final SecurityContext securityContext, final String[] roles) {
+        for (String role : roles) {
+            if (securityContext.isUserInRole(role)) {
+                log.debug("The user is in role: " + role);
+                return true;
+            }
+        }
         return false;
     }
 

@@ -233,6 +233,19 @@ public class RootResourceTest extends AbstractResourceTest {
     }
 
     @Test
+    public void cannot_get_unexisted_channel() throws ChannelException {
+        expect(channelService.getChannel("channel-foo")).andThrow(new ChannelNotFoundException("channel-foo"));
+        replay(channelService);
+
+        when()
+            .get(MOCK_REST_PATH + "channels/channel-foo")
+        .then()
+            .statusCode(404);
+
+        verify(channelService);
+    }
+
+    @Test
     public void can_delete_a_channel() throws ChannelException, RepositoryException {
         channelService.deleteChannel(eq(mockSession), eq("channel-foo"));
         expectLastCall();

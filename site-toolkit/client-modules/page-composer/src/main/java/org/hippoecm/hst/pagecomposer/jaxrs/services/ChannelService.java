@@ -30,7 +30,7 @@ public interface ChannelService {
 
     ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale) throws ChannelException;
 
-    Channel getChannel(String channelId);
+    Channel getChannel(String channelId) throws ChannelException;
 
     void saveChannel(Session session, String channelId, Channel channel) throws RepositoryException, ChannelException;
 
