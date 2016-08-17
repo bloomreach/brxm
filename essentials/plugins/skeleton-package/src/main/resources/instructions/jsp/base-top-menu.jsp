@@ -40,12 +40,4 @@
       <hst:cmseditmenu menu="${requestScope.menu}"/>
     </div>
   </c:when>
-
-  <%--Placeholder reminding us to configure a valid menu in the component parameters--%>
-  <c:otherwise>
-    <c:if test="${requestScope.editMode}">
-      <h5>[Menu Component]</h5>
-      <sub>Click to edit Menu</sub>
-    </c:if>
-  </c:otherwise>
 </c:choose>
