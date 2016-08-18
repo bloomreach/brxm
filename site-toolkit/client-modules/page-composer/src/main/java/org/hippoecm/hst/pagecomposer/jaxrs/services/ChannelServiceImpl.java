@@ -18,13 +18,14 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.function.Function;
@@ -56,6 +57,7 @@ import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,15 +215,41 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
+    public Optional<Channel> getChannelByMountId(final String mountId) {
+        if (StringUtils.isBlank(mountId)) {
+            throw new IllegalArgumentException("MountId argument must not be blank");
+        }
+        final VirtualHost virtualHost = getCurrentVirtualHost();
+        final List<Mount> mounts = virtualHost.getVirtualHosts().getMountsByHostGroup(virtualHost.getHostGroupName());
+        return mounts.stream()
+                .filter(mount -> StringUtils.equals(mount.getIdentifier(), mountId))
+                .map(Mount::getChannel)
+                .filter(Objects::nonNull)
+                .findFirst();
+    }
+
+    @Override
+    public boolean canChannelBeDeleted(final Session session, final String channelId) throws ChannelException, RepositoryException {
+        return canChannelBeDeleted(session, getChannel(channelId));
+    }
+
+    private boolean canChannelBeDeleted(final Session session, final Channel channel) throws RepositoryException {
+        final Node channelNode = session.getNode(channel.getChannelPath());
+        return JcrUtils.getBooleanProperty(channelNode, HstNodeTypes.CHANNEL_PROPERTY_DELETABLE, false);
+    }
+
+    @Override
     public void deleteChannel(final Session session, final String channelId) throws RepositoryException, ChannelException {
         if (channelId.endsWith("-preview")) {
             throw new IllegalArgumentException("Channel id '" + channelId + "' must refer to a live channel");
         }
 
-        // TODO in HSTTWO-3759: double-check that channel delete is really enabled
-        // (otherwise admin could delete a channel even if the feature was disabled)
-
         final Channel channel = getChannel(channelId);
+
+        if (!canChannelBeDeleted(session, channel)) {
+            throw new ChannelException("Requested channel cannot be deleted");
+        }
+
         final List<Mount> allMountsOfChannel = findMounts(channel);
 
         final ValidatorBuilder preValidatorBuilder = ValidatorBuilder.builder()

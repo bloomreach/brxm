@@ -18,6 +18,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -35,6 +36,10 @@ public interface ChannelService {
     void saveChannel(Session session, String channelId, Channel channel) throws RepositoryException, ChannelException;
 
     List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired);
+
+    Optional<Channel> getChannelByMountId(final String mountId);
+
+    boolean canChannelBeDeleted(Session session, String channelId) throws  RepositoryException, ChannelException;
 
     void deleteChannel(Session session, String channelId) throws RepositoryException, ChannelException;
 }
