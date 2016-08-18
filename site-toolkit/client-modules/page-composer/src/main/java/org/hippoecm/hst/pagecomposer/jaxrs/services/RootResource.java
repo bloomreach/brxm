@@ -15,7 +15,6 @@
 */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -38,7 +37,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
@@ -46,7 +44,7 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.FeaturesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -159,15 +157,11 @@ public class RootResource extends AbstractConfigResource {
     public Response deleteChannel(@PathParam("id") String channelId) {
         try {
             final Session session = RequestContextProvider.get().getSession();
-            this.channelService.deleteChannel(session, channelId);
+            final Channel deletingChannel = this.channelService.preDeleteChannel(session, channelId);
 
-            publishSynchronousEvent(new ChannelEvent(
-                    ChannelEvent.ChannelEventType.DELETE,
-                    Collections.emptyList(),
-                    null,
-                    null,
-                    getPageComposerContextService().getRequestContext()));
+            publishSynchronousEvent(new BeforeChannelDeleteEvent(deletingChannel));
 
+            this.channelService.deleteChannel(session, deletingChannel);
             HstConfigurationUtils.persistChanges(session);
 
             return Response.ok().build();

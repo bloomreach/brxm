@@ -41,5 +41,25 @@ public interface ChannelService {
 
     boolean canChannelBeDeleted(Session session, String channelId) throws  RepositoryException, ChannelException;
 
-    void deleteChannel(Session session, String channelId) throws RepositoryException, ChannelException;
+    /**
+     * Validates conditions before return a deletable channel. This method should be called before
+     * {@link #deleteChannel(Session, Channel)}
+     *
+     * @param session
+     * @param channelId Id of the channel to be deleted
+     * @return Object representing channel to be updated.
+     * @throws ChannelException
+     * @throws RepositoryException
+     */
+    Channel preDeleteChannel(Session session, String channelId) throws ChannelException, RepositoryException;
+
+    /**
+     * Remove channel configurations nodes (hst:channel, hst:configuration, hst:site, hst:mount)
+     *
+     * @param session
+     * @param channelId
+     * @throws RepositoryException
+     * @throws ChannelException
+     */
+    void deleteChannel(Session session, Channel channelId) throws RepositoryException, ChannelException;
 }

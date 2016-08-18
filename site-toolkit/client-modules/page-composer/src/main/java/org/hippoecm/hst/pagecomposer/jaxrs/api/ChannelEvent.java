@@ -50,7 +50,6 @@ public class ChannelEvent extends RuntimeExceptionEvent {
     public enum ChannelEventType {
         PUBLISH,
         DISCARD,
-        DELETE,
         PREVIEW_CREATION
     }
 

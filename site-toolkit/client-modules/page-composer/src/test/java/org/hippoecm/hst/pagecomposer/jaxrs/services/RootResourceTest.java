@@ -35,7 +35,7 @@ import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundExceptio
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -73,7 +73,6 @@ public class RootResourceTest extends AbstractResourceTest {
     private static final String MOCK_REST_PATH = "test-rootresource/";
 
     private ChannelService channelService;
-    private PageComposerContextService pageComposerContextService;
     private RootResourceWithMockPath rootResource;
 
     /**
@@ -93,14 +92,12 @@ public class RootResourceTest extends AbstractResourceTest {
         final HstCXFTestFixtureHelper helper = new HstCXFTestFixtureHelper(context);
 
         channelService = EasyMock.createMock(ChannelService.class);
-        pageComposerContextService = EasyMock.createMock(PageComposerContextService.class);
 
         rootResource = EasyMock.createMockBuilder(RootResourceWithMockPath.class)
                 .addMockedMethod("publishSynchronousEvent")
                 .createMock();
 
         rootResource.setChannelService(channelService);
-        rootResource.setPageComposerContextService(pageComposerContextService);
         rootResource.setRootPath("/hst:hst");
 
         Config config = createDefaultConfig(JsonPojoMapperProvider.class)
@@ -271,13 +268,13 @@ public class RootResourceTest extends AbstractResourceTest {
     public void deletes_channel_and_publishes_event() throws ChannelException, RepositoryException {
         mock_HstConfigurationUtils_persistChanges(1);
 
-        channelService.deleteChannel(eq(mockSession), eq("channel-foo"));
+        final Channel channelFoo = new Channel("channel-foo");
+        EasyMock.expect(channelService.preDeleteChannel(mockSession, "channel-foo")).andReturn(channelFoo);
+        channelService.deleteChannel(mockSession, channelFoo);
         expectLastCall();
 
-        final HstRequestContext mockRequestContext = mockHstRequestContext();
-
-        final Capture<ChannelEvent> capturedChannelEvent = EasyMock.newCapture();
-        rootResource.publishSynchronousEvent(and(capture(capturedChannelEvent), EasyMock.isA(ChannelEvent.class)));
+        final Capture<BeforeChannelDeleteEvent> capturedEvent = EasyMock.newCapture();
+        rootResource.publishSynchronousEvent(and(capture(capturedEvent), EasyMock.isA(BeforeChannelDeleteEvent.class)));
         expectLastCall();
 
         replay(channelService, rootResource);
@@ -289,21 +286,19 @@ public class RootResourceTest extends AbstractResourceTest {
         .then()
             .statusCode(200);
 
-        verify(channelService, pageComposerContextService, rootResource);
+        verify(channelService, rootResource);
         PowerMock.verify(HstConfigurationUtils.class);
 
-        assertThat(capturedChannelEvent.getValue().getChannelEventType(), is(ChannelEvent.ChannelEventType.DELETE));
-        assertThat(capturedChannelEvent.getValue().getRequestContext(), is(mockRequestContext));
+        assertThat(capturedEvent.getValue().getChannel().getId(), is("channel-foo"));
     }
 
     @Test
     public void throws_exception_to_cancel_channel_delete() throws ChannelException, RepositoryException {
         // Make sure HstConfigurationUtils#persistChanges is not called
         mock_HstConfigurationUtils_persistChanges(0);
-        channelService.deleteChannel(eq(mockSession), eq("channel-foo"));
-        expectLastCall();
 
-        final HstRequestContext mockRequestContext = mockHstRequestContext();
+        final Channel channelFoo = new Channel("channel-foo");
+        EasyMock.expect(channelService.preDeleteChannel(mockSession, "channel-foo")).andReturn(channelFoo);
 
         // Allow users to cancel event with a parameterized message
         final Map<String, String> parameterMap = new HashMap<>();
@@ -311,8 +306,8 @@ public class RootResourceTest extends AbstractResourceTest {
         parameterMap.put("channel", "Foo");
         final ClientException userException = new ClientException("User cancel event", ClientError.UNKNOWN, parameterMap);
 
-        final Capture<ChannelEvent> capturedChannelEvent = EasyMock.newCapture();
-        rootResource.publishSynchronousEvent(and(capture(capturedChannelEvent), EasyMock.isA(ChannelEvent.class)));
+        final Capture<BeforeChannelDeleteEvent> capturedEvent = EasyMock.newCapture();
+        rootResource.publishSynchronousEvent(and(capture(capturedEvent), EasyMock.isA(BeforeChannelDeleteEvent.class)));
         expectLastCall().andThrow(userException);
         replay(rootResource);
 
@@ -329,17 +324,17 @@ public class RootResourceTest extends AbstractResourceTest {
                     "parameterMap.channel", equalTo("Foo"));
 
 
-        verify(channelService, pageComposerContextService, rootResource);
+        verify(channelService, rootResource);
         PowerMock.verify(HstConfigurationUtils.class);
 
-        assertThat(capturedChannelEvent.getValue().getChannelEventType(), is(ChannelEvent.ChannelEventType.DELETE));
-        assertThat(capturedChannelEvent.getValue().getRequestContext(), is(mockRequestContext));
+        assertThat(capturedEvent.getValue().getChannel().getId(), is("channel-foo"));
     }
 
     @Test
     public void cannot_delete_non_existent_channel() throws ChannelException, RepositoryException {
-        channelService.deleteChannel(eq(mockSession), eq("channel-foo"));
-        expectLastCall().andThrow(new ChannelNotFoundException("channel-foo"));
+        EasyMock.expect(channelService.preDeleteChannel(mockSession, "channel-foo"))
+                .andThrow(new ChannelNotFoundException("channel-foo"));
+
         replay(channelService);
 
         given()
@@ -349,13 +344,6 @@ public class RootResourceTest extends AbstractResourceTest {
         .then()
             .statusCode(404);
         verify(channelService);
-    }
-
-    private HstRequestContext mockHstRequestContext() {
-        final HstRequestContext mockRequestContext = EasyMock.createMock(HstRequestContext.class);
-        expect(pageComposerContextService.getRequestContext()).andReturn(mockRequestContext);
-        replay(pageComposerContextService);
-        return mockRequestContext;
     }
 
     private void mock_HstConfigurationUtils_persistChanges(final int count) throws RepositoryException {
