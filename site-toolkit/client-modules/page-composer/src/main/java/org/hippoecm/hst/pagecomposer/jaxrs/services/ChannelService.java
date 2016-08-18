@@ -39,7 +39,7 @@ public interface ChannelService {
 
     Optional<Channel> getChannelByMountId(final String mountId);
 
-    boolean canChannelBeDeleted(Session session, String channelId);
+    boolean canChannelBeDeleted(Session session, String channelId) throws  RepositoryException, ChannelException;
 
     void deleteChannel(Session session, String channelId) throws RepositoryException, ChannelException;
 }

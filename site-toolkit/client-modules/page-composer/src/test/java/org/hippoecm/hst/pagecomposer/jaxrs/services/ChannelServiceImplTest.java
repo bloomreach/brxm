@@ -191,21 +191,55 @@ public class ChannelServiceImplTest {
         channelService.deleteChannel(session, "bah");
     }
 
+    @Test(expected = ChannelException.class)
+    public void fails_to_delete_channel_when_hst_deletable_property_is_not_set() throws ChannelException, RepositoryException {
+        EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo);
+        EasyMock.replay(channelService);
+
+        channelsNode.getNode("foo").setProperty("hst:deletable", false);
+        try {
+            channelService.deleteChannel(session, "foo");
+        } catch (ChannelException e) {
+            assertThat(e.getMessage(), is("Requested channel cannot be deleted"));
+            throw e;
+        }
+    }
+
     @Test
-    public void check_channel_deletable() throws Exception {
-        EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo).anyTimes();
-        EasyMock.expect(channelService.getChannel("bogus")).andThrow(new ChannelNotFoundException("bogus"));
+    public void channel_can_be_deleted_when_hst_deletable_property_is_set() throws Exception {
+        EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo);
         EasyMock.replay(channelService);
 
         assertThat(channelService.canChannelBeDeleted(session, "foo"), is(true));
+    }
+
+    @Test
+    public void channel_can_be_deleted_when_hst_deletable_property_is_not_set() throws Exception {
+        EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo);
+        EasyMock.replay(channelService);
 
         channelsNode.getNode("foo").setProperty("hst:deletable", false);
         assertThat(channelService.canChannelBeDeleted(session, "foo"), is(false));
+        EasyMock.verify(channelService);
+    }
 
+    @Test
+    public void channel_cannot_be_deleted_when_hst_deletable_property_is_missing() throws Exception {
+        EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo);
+        EasyMock.replay(channelService);
         channelsNode.getNode("foo").getProperty("hst:deletable").remove();
-        assertThat(channelService.canChannelBeDeleted(session, "foo"), is(false));
 
-        assertThat(channelService.canChannelBeDeleted(session, "bogus"), is(false));
+        assertThat(channelService.canChannelBeDeleted(session, "foo"), is(false));
+        EasyMock.verify(channelService);
+    }
+
+    @Test(expected = ChannelNotFoundException.class)
+    public void channel_cannot_be_deleted_when_it_does_not_exist() throws Exception {
+        EasyMock.expect(channelService.getChannel("bogus")).andThrow(new ChannelNotFoundException("bogus"));
+        EasyMock.replay(channelService);
+
+        channelService.canChannelBeDeleted(session, "bogus");
+        EasyMock.verify(channelService);
     }
 
     private static VirtualHosts mockVirtualHosts() {

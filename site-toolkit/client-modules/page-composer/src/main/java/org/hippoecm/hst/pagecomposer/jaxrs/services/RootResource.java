@@ -216,11 +216,12 @@ public class RootResource extends AbstractConfigResource {
 
     private boolean isChannelDeletionSupported(final HstRequestContext requestContext, final String mountId) {
         try {
-            Optional<Channel> channel = channelService.getChannelByMountId(mountId);
+            final Optional<Channel> channel = channelService.getChannelByMountId(mountId);
             if (channel.isPresent()) {
                 return channelService.canChannelBeDeleted(requestContext.getSession(), channel.get().getId());
             }
-        } catch (RepositoryException e) {
+        } catch (RepositoryException | ChannelException e) {
+            log.debug("Cannot check channel deletion support", e);
             // ignore, consider unsupported.
         }
         return false;

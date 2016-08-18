@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -56,6 +57,7 @@ import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -214,31 +216,26 @@ public class ChannelServiceImpl implements ChannelService {
 
     @Override
     public Optional<Channel> getChannelByMountId(final String mountId) {
+        if (StringUtils.isBlank(mountId)) {
+            throw new IllegalArgumentException("MountId argument must not be blank");
+        }
         final VirtualHost virtualHost = getCurrentVirtualHost();
-        List<Mount> mounts = virtualHost.getVirtualHosts().getMountsByHostGroup(virtualHost.getHostGroupName());
+        final List<Mount> mounts = virtualHost.getVirtualHosts().getMountsByHostGroup(virtualHost.getHostGroupName());
         return mounts.stream()
-                .filter(mount -> mount.getIdentifier().equals(mountId))
+                .filter(mount -> StringUtils.equals(mount.getIdentifier(), mountId))
                 .map(Mount::getChannel)
+                .filter(Objects::nonNull)
                 .findFirst();
     }
 
     @Override
-    public boolean canChannelBeDeleted(Session session, String channelId) {
-        try {
-            return canChannelBeDeleted(session, getChannel(channelId));
-        } catch (ChannelException e) {
-            return false;
-        }
+    public boolean canChannelBeDeleted(final Session session, final String channelId) throws ChannelException, RepositoryException {
+        return canChannelBeDeleted(session, getChannel(channelId));
     }
 
-    private boolean canChannelBeDeleted(final Session session, final Channel channel) {
-        try {
-            final Node channelNode = session.getNode(channel.getChannelPath());
-
-            return channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE).getBoolean();
-        } catch (RepositoryException e) {
-            return false;
-        }
+    private boolean canChannelBeDeleted(final Session session, final Channel channel) throws RepositoryException {
+        final Node channelNode = session.getNode(channel.getChannelPath());
+        return JcrUtils.getBooleanProperty(channelNode, HstNodeTypes.CHANNEL_PROPERTY_DELETABLE, false);
     }
 
     @Override
