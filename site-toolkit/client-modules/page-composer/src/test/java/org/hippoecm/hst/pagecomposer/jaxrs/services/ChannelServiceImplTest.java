@@ -28,6 +28,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.StringUtils;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -77,6 +78,7 @@ public class ChannelServiceImplTest {
         mockVirtualHosts = mockVirtualHosts();
 
         channelFoo = mockChannel("foo");
+        mockChannel("foo-preview");
         addSiteNode("foo");
         addSiteNode("bah");
 
@@ -138,6 +140,7 @@ public class ChannelServiceImplTest {
 
         assertThat(session.itemExists("/hst:hst/hst:sites/foo"), is(true));
         assertThat(session.itemExists("/hst:hst/hst:channels/foo"), is(true));
+        assertThat(session.itemExists("/hst:hst/hst:channels/foo-preview"), is(true));
 
         channelService.deleteChannel(session, "foo");
 
@@ -145,7 +148,10 @@ public class ChannelServiceImplTest {
 
         assertThat(session.itemExists("/hst:hst/hst:sites/bah"), is(true));
         assertThat(session.itemExists("/hst:hst/hst:sites/foo"), is(false));
+
         assertThat(session.itemExists("/hst:hst/hst:channels/foo"), is(false));
+        assertThat(session.itemExists("/hst:hst/hst:channels/foo-preview"), is(false));
+
         assertThat(session.itemExists("/hst:hst/hst:hosts/group1/com/example/hst:root/foo"), is(false));
         assertThat(session.itemExists("/hst:hst/hst:hosts/group1/com/example/hst:root"), is(true));
 
@@ -273,7 +279,8 @@ public class ChannelServiceImplTest {
         final Channel channel = new Channel(id);
         channel.setHstConfigPath("/hst:hst/hst:configurations/" + id);
         channel.setChannelPath("/hst:hst/hst:channels/" + id);
-        channel.setHstMountPoint("/hst:hst/hst:sites/" + id);
+        // strip '-preview' in id if exists because both live and preview channels refer to a single hst:site node
+        channel.setHstMountPoint("/hst:hst/hst:sites/" + StringUtils.stripEnd(id, "-preview"));
 
         final Node channelNode = channelsNode.addNode(id, HstNodeTypes.NODETYPE_HST_CHANNEL);
         channelNode.setProperty("hst:deletable", true);
