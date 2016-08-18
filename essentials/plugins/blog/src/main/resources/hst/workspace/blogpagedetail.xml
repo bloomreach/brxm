@@ -27,7 +27,7 @@
       <sv:value>2014-04-15T15:02:10.775+02:00</sv:value>
     </sv:property>
     <sv:property sv:name="hst:label" sv:type="String">
-      <sv:value>Blogpage Main</sv:value>
+      <sv:value>Blog Page Main</sv:value>
     </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>HST.vBox</sv:value>

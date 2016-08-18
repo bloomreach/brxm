@@ -23,7 +23,7 @@
       <sv:value>hst:containercomponent</sv:value>
     </sv:property>
     <sv:property sv:name="hst:label" sv:type="String">
-      <sv:value>Faqlist Main</sv:value>
+      <sv:value>Faq Main</sv:value>
     </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
       <sv:value>HST.vBox</sv:value>
