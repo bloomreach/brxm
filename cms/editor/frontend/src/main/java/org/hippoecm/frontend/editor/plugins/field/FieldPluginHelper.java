@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,14 +40,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper class for field plugins. It reads the field
- * descriptor and produces a JcrItemModel.
+ * Helper class for field plugins. It reads the field descriptor and produces a JcrItemModel.
  */
 public class FieldPluginHelper implements IDetachable {
 
-    private static final long serialVersionUID = 3671506410576836811L;
-
     private static final Logger log = LoggerFactory.getLogger(FieldPluginHelper.class);
+
     private static final String HIPPO_TYPES = "hippo:types";
 
     private final IPluginContext context;
@@ -57,17 +55,25 @@ public class FieldPluginHelper implements IDetachable {
     private IFieldDescriptor field;
     private ValidationModel validationModel;
 
-    /** Constructor */
+    public FieldPluginHelper(IPluginContext context, IPluginConfig config, final IFieldDescriptor field,
+                             final ITypeDescriptor documentType, final ValidationModel validationModel) {
+        this.context = context;
+        this.config = config;
+        this.field = field;
+        this.documentType = documentType;
+        this.validationModel = validationModel;
+    }
+
     public FieldPluginHelper(IPluginContext context, IPluginConfig config) {
         this.context = context;
         this.config = config;
 
-        String typeName = config.getString(AbstractFieldPlugin.TYPE);
-        String fieldName = config.getString(AbstractFieldPlugin.FIELD);
+        final String typeName = config.getString(AbstractFieldPlugin.TYPE);
+        final String fieldName = config.getString(AbstractFieldPlugin.FIELD);
         if (fieldName == null) {
             log.error("No field was specified in the configuration");
         } else {
-            ITemplateEngine engine = getTemplateEngine();
+            final ITemplateEngine engine = getTemplateEngine();
             if (engine != null) {
                 try {
                     if (typeName == null) {
@@ -77,19 +83,21 @@ public class FieldPluginHelper implements IDetachable {
                     }
                     field = documentType.getField(fieldName);
                     if (field == null) {
-                        log.warn("Could not find field with name " + fieldName + " in " + documentType.getName() + "; has the field been added without committing the document type?");
+                        log.warn("Could not find field with name {} in {}; has the field been added " +
+                                "without committing the document type?", fieldName, documentType.getName());
                     } else if ("*".equals(field.getPath())) {
-                        log.warn("Field path * is not supported, field name is " + fieldName + " in document type " + documentType.getName());
+                        log.warn("Field path * is not supported, field name is {} in document type",
+                                fieldName, documentType.getName());
                         field = null;
                     } else if (field.getPath() == null) {
-                        log.error("No path available for field " + fieldName);
+                        log.error("No path available for field {}", fieldName);
                         field = null;
                     }
                 } catch (TemplateEngineException tee) {
                     log.error("Could not resolve field for name " + fieldName, tee);
                 }
             } else {
-                log.error("No template engine available for " + fieldName);
+                log.error("No template engine available for {}", fieldName);
             }
         }
 
@@ -97,7 +105,7 @@ public class FieldPluginHelper implements IDetachable {
         if (config.containsKey(IValidationService.VALIDATE_ID)) {
             validationModel = new ValidationModel(context, config);
         } else {
-            log.info("No validation service available for " + fieldName);
+            log.info("No validation service available for {}", fieldName);
         }
     }
 
@@ -132,12 +140,11 @@ public class FieldPluginHelper implements IDetachable {
     }
 
     public ITemplateEngine getTemplateEngine() {
-        return getPluginContext()
-                .getService(getPluginConfig().getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
+        return context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
     }
 
     public JcrNodeModel getNodeModel() {
-        return (JcrNodeModel) getPluginContext().getService(getPluginConfig().getString("wicket.model"),
+        return (JcrNodeModel) context.getService(config.getString("wicket.model"),
                 IModelReference.class).getModel();
     }
 
@@ -149,7 +156,7 @@ public class FieldPluginHelper implements IDetachable {
     public IModel<String> getCaptionModel(final Component component) {
         final IFieldDescriptor field = getField();
         if (field == null) {
-            return new Model<>("undefined");
+            return Model.of("undefined");
         }
         String captionKey = field.getPath();
         final String translation = getStringFromBundle(captionKey);
@@ -159,7 +166,7 @@ public class FieldPluginHelper implements IDetachable {
         String caption = getPluginConfig().getString("caption");
         captionKey = field.getName();
         if (caption == null && !field.getName().isEmpty()) {
-            caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+            caption = StringUtils.capitalize(field.getName());
         }
         // this should be replaced by
         // return caption
@@ -178,7 +185,7 @@ public class FieldPluginHelper implements IDetachable {
         if (translation != null) {
             return Model.of(translation);
         }
-        String hint = getPluginConfig().getString("hint");
+        final String hint = getPluginConfig().getString("hint");
         if (StringUtils.isNotBlank(hint)) {
             // this should be replaced by
             // return hint
