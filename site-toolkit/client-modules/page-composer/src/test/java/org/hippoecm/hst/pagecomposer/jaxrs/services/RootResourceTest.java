@@ -255,6 +255,19 @@ public class RootResourceTest extends AbstractResourceTest {
     }
 
     @Test
+    public void cannot_get_unexisted_channel() throws ChannelException {
+        expect(channelService.getChannel("channel-foo")).andThrow(new ChannelNotFoundException("channel-foo"));
+        replay(channelService);
+
+        when()
+            .get(MOCK_REST_PATH + "channels/channel-foo")
+        .then()
+            .statusCode(404);
+
+        verify(channelService);
+    }
+
+    @Test
     public void deletes_channel_and_publishes_event() throws ChannelException, RepositoryException {
         mock_HstConfigurationUtils_persistChanges(1);
 

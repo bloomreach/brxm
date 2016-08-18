@@ -12,21 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions;
 
-public class ServerErrorException extends Exception {
-    public ServerErrorException(final String message) {
+public class HstConfigurationException extends ServerErrorException {
+    public HstConfigurationException(final String message) {
         super(message);
-    }
-
-    public ServerErrorException(final Exception e) {
-        super(e);
-    }
-
-    public ServerErrorException(final String message, final Exception e) {
-        super(message, e);
     }
 }

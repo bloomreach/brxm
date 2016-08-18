@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -38,7 +39,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.apache.cxf.common.i18n.Exception;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
@@ -48,7 +48,6 @@ import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.FeaturesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
@@ -105,7 +104,12 @@ public class RootResource extends AbstractConfigResource {
         try {
             final Channel channel = channelService.getChannel(channelId);
             return Response.ok().entity(channel).build();
-        } catch (RuntimeRepositoryException e) {
+        } catch (ChannelNotFoundException e) {
+            log.warn(e.getMessage());
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .build();
+        } catch (RuntimeRepositoryException | ChannelException e) {
             final String error = "Could not determine authorization";
             log.warn(error, e);
             return Response.serverError().entity(error).build();
@@ -168,15 +172,14 @@ public class RootResource extends AbstractConfigResource {
 
             return Response.ok().build();
         } catch (ChannelNotFoundException e) {
-            log.error(e.getMessage());
-            return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .entity(e).build();
+            printErrorLog("Failed to delete channel", e);
+
+            return Response.status(Response.Status.NOT_FOUND).build();
         } catch (ClientException e) {
             resetSession();
             return logAndReturnClientError(e);
         } catch (RepositoryException | ChannelException e) {
-            log.error(e.getMessage());
+            printErrorLog("Failed to delete channel", e);
             resetSession();
             return Response.serverError().build();
         }
@@ -202,16 +205,16 @@ public class RootResource extends AbstractConfigResource {
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
         session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
 
+        HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         boolean canWrite;
         try {
-            HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
             canWrite = requestContext.getSession().hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
         } catch (RepositoryException e) {
             log.warn("Could not determine authorization", e);
             return error("Could not determine authorization", e);
         }
 
-        final boolean channelDeletionSupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("channel.deletion.supported", false);
+        final boolean channelDeletionSupported = isChannelDeletionSupported(requestContext, mountId);
 
         // TODO: test whether the user has admin privileges
         final boolean canDeleteChannel = channelDeletionSupported;
@@ -224,6 +227,19 @@ public class RootResource extends AbstractConfigResource {
         response.setSessionId(session.getId());
         log.info("Composer-Mode successful");
         return ok("Composer-Mode successful", response);
+    }
+
+    private boolean isChannelDeletionSupported(final HstRequestContext requestContext, final String mountId) {
+        try {
+            final Optional<Channel> channel = channelService.getChannelByMountId(mountId);
+            if (channel.isPresent()) {
+                return channelService.canChannelBeDeleted(requestContext.getSession(), channel.get().getId());
+            }
+        } catch (RepositoryException | ChannelException e) {
+            log.debug("Cannot check channel deletion support", e);
+            // ignore, consider unsupported.
+        }
+        return false;
     }
 
     @GET
@@ -254,6 +270,14 @@ public class RootResource extends AbstractConfigResource {
         servletRequest.getSession().removeAttribute(ContainerConstants.RENDER_VARIANT);
         log.info("Variant cleared");
         return ok("Variant cleared");
+    }
+
+    private void printErrorLog(final String errorMessage, final Exception e) {
+        if (log.isDebugEnabled()) {
+            log.error(errorMessage, e);
+        } else {
+            log.error(errorMessage, e.getMessage());
+        }
     }
 
     /**
