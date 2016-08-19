@@ -157,11 +157,11 @@ public class RootResource extends AbstractConfigResource {
     public Response deleteChannel(@PathParam("id") String channelId) {
         try {
             final Session session = RequestContextProvider.get().getSession();
-            final Channel deletingChannel = this.channelService.preDeleteChannel(session, channelId);
+            final Channel channel = channelService.preDeleteChannel(session, channelId);
 
-            publishSynchronousEvent(new BeforeChannelDeleteEvent(deletingChannel));
+            publishSynchronousEvent(new BeforeChannelDeleteEvent(channel));
 
-            this.channelService.deleteChannel(session, deletingChannel);
+            channelService.deleteChannel(session, channel);
             HstConfigurationUtils.persistChanges(session);
 
             return Response.ok().build();

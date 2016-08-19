@@ -47,19 +47,19 @@ public interface ChannelService {
      *
      * @param session
      * @param channelId Id of the channel to be deleted
-     * @return Object representing channel to be updated.
+     * @return Object representing identified channel.
      * @throws ChannelException
      * @throws RepositoryException
      */
     Channel preDeleteChannel(Session session, String channelId) throws ChannelException, RepositoryException;
 
     /**
-     * Remove channel configurations nodes (hst:channel, hst:configuration, hst:site, hst:mount)
+     * Remove channel configurations nodes (hst:channel, hst:configuration, hst:site, hst:mount, hst:virtualhost)
      *
      * @param session
-     * @param channelId
+     * @param channel channel to be deleted
      * @throws RepositoryException
      * @throws ChannelException
      */
-    void deleteChannel(Session session, Channel channelId) throws RepositoryException, ChannelException;
+    void deleteChannel(Session session, Channel channel) throws RepositoryException, ChannelException;
 }

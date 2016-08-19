@@ -114,11 +114,12 @@ public class ChannelServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void cannot_delete_preview_channel() throws ChannelException, RepositoryException {
-        ChannelServiceImpl channelService =  new ChannelServiceImpl();
-        deleteChannel(channelService, session, "channel-foo-preview");
+        final String id = "channel-foo-preview";
+        EasyMock.expect(channelService.getChannel(id)).andThrow(new ChannelNotFoundException(id));
+        deleteChannel(session, id);
     }
 
-    private void deleteChannel(final ChannelService channelService, final Session session, final String channelId) throws RepositoryException, ChannelException {
+    private void deleteChannel(final Session session, final String channelId) throws RepositoryException, ChannelException {
         final Channel deletingChannel = channelService.preDeleteChannel(session, channelId);
         channelService.deleteChannel(session, deletingChannel);
     }
@@ -147,7 +148,7 @@ public class ChannelServiceImplTest {
         assertThat(session.itemExists("/hst:hst/hst:channels/foo"), is(true));
         assertThat(session.itemExists("/hst:hst/hst:channels/foo-preview"), is(true));
 
-        deleteChannel(channelService, session, "foo");
+        deleteChannel(session, "foo");
 
         EasyMock.verify(channelService, hstConfigurationService);
 
@@ -177,7 +178,7 @@ public class ChannelServiceImplTest {
         assertThat(session.itemExists("/hst:hst/hst:sites/foo"), is(true));
         assertThat(session.itemExists("/hst:hst/hst:channels/foo"), is(true));
 
-        deleteChannel(channelService, session, "foo");
+        deleteChannel(session, "foo");
 
         EasyMock.verify(channelService, hstConfigurationService);
 
@@ -199,7 +200,7 @@ public class ChannelServiceImplTest {
         EasyMock.expect(channelService.getChannel("bah")).andThrow(new ChannelNotFoundException("bah not found"));
         EasyMock.replay(channelService);
 
-        deleteChannel(channelService, session, "bah");
+        deleteChannel(session, "bah");
     }
 
     @Test(expected = ChannelException.class)
@@ -209,7 +210,7 @@ public class ChannelServiceImplTest {
 
         channelsNode.getNode("foo").setProperty("hst:deletable", false);
         try {
-            deleteChannel(channelService, session, "foo");
+            deleteChannel(session, "foo");
         } catch (ChannelException e) {
             assertThat(e.getMessage(), is("Requested channel cannot be deleted"));
             throw e;

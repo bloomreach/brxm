@@ -252,7 +252,7 @@ public class RootResourceTest extends AbstractResourceTest {
     }
 
     @Test
-    public void cannot_get_unexisted_channel() throws ChannelException {
+    public void cannot_get_non_existent_channel() throws ChannelException {
         expect(channelService.getChannel("channel-foo")).andThrow(new ChannelNotFoundException("channel-foo"));
         replay(channelService);
 
