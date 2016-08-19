@@ -35,7 +35,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-essentials-components-repository</artifactId>
-      <version>${hippo.essentials.components.version}</version>
+      <version>${hippo.essentials-components.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
