@@ -21,9 +21,7 @@ import java.util.TreeMap;
 
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
-import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.HippoHeaderItem;
@@ -59,18 +57,16 @@ public class UsageStatisticsHeaderItem extends HippoHeaderItem {
     @Override
     public void render(final Response response) {
         if (UsageStatisticsSettings.get().isEnabled()) {
-            final Request request = RequestCycle.get().getRequest();
-            createUsageStatisticsReporter(request).render(response);
+            createUsageStatisticsReporter().render(response);
         }
         createLoginEventScript().render(response);
     }
 
-    private HeaderItem createUsageStatisticsReporter(final Request request) {
+    private HeaderItem createUsageStatisticsReporter() {
         final Map<String, String> scriptParams = new TreeMap<>();
         final String url = UsageStatisticsExternalUrl.get();
         scriptParams.put("externalScriptUrl", url);
 
-        scriptParams.put("uniqueUserId", UsageStatisticsUtils.getUniqueUserId(request));
         scriptParams.put("language", UsageStatisticsUtils.getLanguage());
 
         log.info("Including external script for reporting usage statistics: {}", url);
