@@ -16,12 +16,13 @@
 
 export class PageActionsCtrl {
   constructor($translate, FeedbackService, ChannelService, SiteMapService, SiteMapItemService, DialogService,
-              HippoIframeService, PageMetaDataService) {
+              HippoIframeService, PageMetaDataService, SessionService) {
     'ngInject';
 
     this.$translate = $translate;
     this.FeedbackService = FeedbackService;
     this.ChannelService = ChannelService;
+    this.SessionService = SessionService;
     this.SiteMapService = SiteMapService;
     this.SiteMapItemService = SiteMapItemService;
     this.DialogService = DialogService;
@@ -62,7 +63,7 @@ export class PageActionsCtrl {
     if (this.ChannelService.hasWorkspace()) {
       return true; // copy inside this channel is supported
     }
-    if (this.ChannelService.isCrossChannelPageCopySupported()) {
+    if (this.SessionService.isCrossChannelPageCopySupported()) {
       const channels = this.ChannelService.getPageModifiableChannels();
       if (channels && channels.length > 0) {
         return true;
