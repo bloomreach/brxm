@@ -52,8 +52,4 @@ export class DialogService {
   hide() {
     return this.$mdDialog.hide();
   }
-
-  cancel() {
-    return this.$mdDialog.cancel();
-  }
 }

@@ -87,6 +87,7 @@ describe('ChannelService', () => {
     spyOn(HstService, 'doGet').and.returnValue($q.when({ data: {} }));
     spyOn(HstService, 'doGetWithParams').and.returnValue($q.when({ data: {} }));
     spyOn(HstService, 'doPut');
+    spyOn(HstService, 'doDelete');
     spyOn(HstService, 'getChannel');
     spyOn(SiteMapService, 'load');
     spyOn(window.APP_TO_CMS, 'publish');
@@ -636,5 +637,17 @@ describe('ChannelService', () => {
     ChannelService._load({ contentRoot: '/content/documents/testChannel' });
     $rootScope.$digest();
     expect(ChannelService.getContentRootPath()).toEqual('/content/documents/testChannel');
+  });
+
+  it('should forward a channel delete request to the HstService', () => {
+    ChannelService._load(channelMock);
+
+    $rootScope.$digest();
+
+    const promise = $q.defer().promise;
+    HstService.doDelete.and.returnValue(promise);
+
+    expect(ChannelService.deleteChannel()).toBe(promise);
+    expect(HstService.doDelete).toHaveBeenCalledWith(ConfigServiceMock.rootUuid, 'channels', channelMock.id);
   });
 });

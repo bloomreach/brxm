@@ -86,10 +86,6 @@ md-select.ng-invalid-required > md-select-value > span:after {
   color: $grey-50;
   overflow: visible;
 
-  md-progress-circular path {
-    stroke: $grey-50;
-  }
-
   md-progress-linear {
     ._md-container {
       background-color: $grey-200;

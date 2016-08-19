@@ -303,4 +303,8 @@ export class ChannelService {
   getContentRootPath() {
     return this.channel.contentRoot;
   }
+
+  deleteChannel() {
+    return this.HstService.doDelete(this.ConfigService.rootUuid, 'channels', this.getId());
+  }
 }

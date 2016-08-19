@@ -41,13 +41,16 @@ export class ChannelActionsCtrl {
 
   deleteChannel() {
     this._confirmDelete()
-      .then(() => this._showDeleteProgress())
       .then(() => {
-        // TODO: actually ask the back-end to delete the channel!
-        // something like: this.ChannelService.delete();
-      })
-      .catch(() => {
-        // TODO: show why deleting the channel failed
+        this._showDeleteProgress();
+        this.ChannelService.deleteChannel()
+          .then(() => {
+            // TODO CHANNELMGR-796 return to channel overview
+          })
+          .catch(() => {
+            // TODO CHANNELMGR-798 show back-end error to user
+          })
+          .finally(() => this._hideDeleteProgress());
       });
   }
 
@@ -62,7 +65,7 @@ export class ChannelActionsCtrl {
   }
 
   _showDeleteProgress() {
-    return this.DialogService.show({
+    this.DialogService.show({
       templateUrl: 'channel/actions/delete/delete-channel-progress.html',
       locals: {
         translationData: {
@@ -76,4 +79,7 @@ export class ChannelActionsCtrl {
     });
   }
 
+  _hideDeleteProgress() {
+    this.DialogService.hide();
+  }
 }

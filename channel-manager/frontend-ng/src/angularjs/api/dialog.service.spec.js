@@ -80,10 +80,4 @@ describe('DialogService', () => {
     DialogService.hide();
     expect($mdDialog.hide).toHaveBeenCalled();
   });
-
-  it('uses $mdDialog to cancel an existing dialog', () => {
-    spyOn($mdDialog, 'cancel');
-    DialogService.cancel();
-    expect($mdDialog.cancel).toHaveBeenCalled();
-  });
 });
