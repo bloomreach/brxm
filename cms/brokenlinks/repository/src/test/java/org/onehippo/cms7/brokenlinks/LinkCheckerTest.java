@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@ package org.onehippo.cms7.brokenlinks;
 
 import java.io.PrintStream;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 
-import static org.mockito.internal.verification.VerificationModeFactory.atLeastOnce;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.verify;
 
 /**
  * Tests {@link LinkChecker}.
@@ -34,12 +34,19 @@ public class LinkCheckerTest {
         PrintStream realErr = System.err;
 
         try {
-            PrintStream mockErr = Mockito.mock(PrintStream.class);
+            final PrintStream mockErr = EasyMock.createMock(PrintStream.class);
             System.setErr(mockErr);
 
-            Logger log = Mockito.mock(Logger.class);
+            mockErr.print(isA(String.class));
+            EasyMock.expectLastCall();
 
             final RuntimeException expectedException = new RuntimeException("Test");
+
+            final Logger log = EasyMock.createMock(Logger.class);
+            log.error("java.lang.RuntimeException: Test", expectedException);
+            EasyMock.expectLastCall();
+
+            EasyMock.replay(mockErr, log);
 
             Thread t = new Thread() {
                 @Override
@@ -54,8 +61,7 @@ public class LinkCheckerTest {
             t.start();
             t.join();
 
-            Mockito.verify(log).error(expectedException.getClass().getName() + ": Test", expectedException);
-            Mockito.verify(mockErr, atLeastOnce()).println((Object)Matchers.anyObject());
+            verify(mockErr, log);
         } finally {
             System.setErr(realErr);
         }

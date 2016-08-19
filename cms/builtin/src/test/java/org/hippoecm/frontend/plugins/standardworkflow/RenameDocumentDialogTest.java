@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Locale;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -29,61 +27,29 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.tester.FormTester;
+import org.easymock.EasyMock;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.HippoTester;
-import org.hippoecm.frontend.PluginPage;
-import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.plugin.DummyPlugin;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.onehippo.repository.mock.MockNode;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-public class RenameDocumentDialogTest {
+public class RenameDocumentDialogTest extends AbstractWicketDialogTest {
 
     public static final String WICKET_PATH_OK_BUTTON = "dialog:content:form:buttons:0:button";
     public static final String URL_INPUT = "name-url:url";
     public static final String NAME_INPUT = "name-url:name";
 
-    private MockNode root;
-    private HippoTester tester;
-    private PluginPage home;
-    private PluginContext context;
-
-    @Before
-    public void setUp() throws Exception {
-        root = MockNode.root();
-
-        tester = new HippoTester();
-        tester.getSession().setLocale(Locale.ENGLISH);
-
-        home = (PluginPage) tester.startPluginPage();
-        JavaPluginConfig config = new JavaPluginConfig("dummy");
-        config.put("plugin.class", DummyPlugin.class.getName());
-        context = home.getPluginManager().start(config);
-    }
-
-
     private FormTester createDialog(boolean workflowError) throws Exception {
-        final WorkflowDescriptorModel workflowDescriptorModel;
-        workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
+        final WorkflowDescriptorModel workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
 
-        // rename the 'news' folder
-        RenameDocumentArguments renameDocumentArguments = new RenameDocumentArguments("News", "news", HippoStdNodeType.NT_FOLDER);
-
-        final IWorkflowInvoker invoker = Mockito.mock(IWorkflowInvoker.class);
-        Mockito.doNothing().when(invoker).invokeWorkflow();
+        final IWorkflowInvoker invoker = mockWorkflowInvoker();
 
         final StringCodec stringCodec = new StringCodecFactory.UriEncoding();
         IModel<StringCodec> stringCodecModel = new LoadableDetachableModel<StringCodec>(stringCodec) {
@@ -93,31 +59,26 @@ public class RenameDocumentDialogTest {
             }
         };
 
-        RenameDocumentDialog dialog = new RenameDocumentDialog(
+        // rename the 'news' folder
+        final RenameDocumentArguments renameDocumentArguments = new RenameDocumentArguments("News", "news", HippoStdNodeType.NT_FOLDER);
+
+        final RenameDocumentDialog dialog = new RenameDocumentDialog(
                 renameDocumentArguments,
                 Model.of("Add document dialog title"),
                 invoker,
                 stringCodecModel,
                 workflowDescriptorModel
         );
-        tester.runInAjax(home, () -> {
-            IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-            dialogService.show(dialog);
-        });
-        return tester.newFormTester("dialog:content:form");
+
+        return executeDialog(dialog);
     }
 
     private WorkflowDescriptorModel createNormalWorkflow() throws IOException, RepositoryException {
-        final WorkflowDescriptorModel wfdm = mock(WorkflowDescriptorModel.class);
+        final WorkflowDescriptorModel wfdm = EasyMock.createMock(WorkflowDescriptorModel.class);
         final Node contentNode = createContentNode();
         assertNotNull(contentNode);
-        when(wfdm.getNode()).thenReturn(contentNode.getNodes().nextNode());
-        return wfdm;
-    }
-
-    private WorkflowDescriptorModel createErrorWorkflow() throws RepositoryException {
-        final WorkflowDescriptorModel wfdm = mock(WorkflowDescriptorModel.class);
-        when(wfdm.getNode()).thenThrow(new RepositoryException("No node found"));
+        EasyMock.expect(wfdm.getNode()).andReturn(contentNode.getNodes().nextNode());
+        EasyMock.replay(wfdm);
         return wfdm;
     }
 

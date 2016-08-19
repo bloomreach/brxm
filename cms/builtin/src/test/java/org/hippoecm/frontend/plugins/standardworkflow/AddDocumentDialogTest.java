@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Locale;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,65 +30,37 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.tester.FormTester;
+import org.easymock.EasyMock;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.HippoTester;
-import org.hippoecm.frontend.PluginPage;
-import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.plugin.DummyPlugin;
-import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.repository.api.StringCodec;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.onehippo.repository.mock.MockNode;
 
+import static org.easymock.EasyMock.eq;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-public class AddDocumentDialogTest {
+public class AddDocumentDialogTest extends AbstractWicketDialogTest {
 
     public static final String WICKET_PATH_ENABLE_URIINPUT_LINK = "dialog:content:form:name-url:uriAction";
     public static final String WICKET_PATH_OK_BUTTON = "dialog:content:form:buttons:0:button";
     public static final String URL_INPUT = "name-url:url";
     public static final String NAME_INPUT = "name-url:name";
 
-    private HippoTester tester;
-    private PluginPage home;
-    private PluginContext context;
-    private MockNode root;
-
-    @Before
-    public void setUp() throws RepositoryException, IOException {
-        root = MockNode.root();
-
-        tester = new HippoTester();
-        tester.getSession().setLocale(Locale.ENGLISH);
-
-        home = (PluginPage) tester.startPluginPage();
-        JavaPluginConfig config = new JavaPluginConfig("dummy");
-        config.put("plugin.class", DummyPlugin.class.getName());
-        context = home.getPluginManager().start(config);
-    }
+    private StringCodec stringCodec;
 
     private FormTester createDialog(boolean workflowError) throws Exception {
-        final WorkflowDescriptorModel workflowDescriptorModel;
-        workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
+        final WorkflowDescriptorModel workflowDescriptorModel = workflowError ? createErrorWorkflow() : createNormalWorkflow();
 
-        final AddDocumentArguments addDocumentArguments = new AddDocumentArguments();
-        final IWorkflowInvoker invoker = mock(IWorkflowInvoker.class);
+        final IWorkflowInvoker invoker = mockWorkflowInvoker();
 
-        Mockito.doNothing().when(invoker).invokeWorkflow();
-
-        final StringCodec stringCodec = mock(StringCodec.class);
-        final ILocaleProvider localeProvider = mock(ILocaleProvider.class);
+        stringCodec = EasyMock.createMock(StringCodec.class);
+        final ILocaleProvider localeProvider = EasyMock.createMock(ILocaleProvider.class);
+        EasyMock.expect(localeProvider.getLocales()).andReturn(Collections.emptyList());
+        EasyMock.replay(localeProvider);
 
         IModel<StringCodec> stringCodecModel = new LoadableDetachableModel<StringCodec>(stringCodec) {
             @Override
@@ -98,7 +70,7 @@ public class AddDocumentDialogTest {
         };
 
         final AddDocumentDialog dialog = new AddDocumentDialog(
-                addDocumentArguments,
+                new AddDocumentArguments(),
                 Model.of("Add document dialog title"),
                 "category test",
                 new HashSet<>(Arrays.asList(new String[]{"cat1"})),
@@ -109,28 +81,15 @@ public class AddDocumentDialogTest {
                 workflowDescriptorModel
         );
 
-        tester.runInAjax(home, new Runnable() {
-            @Override
-            public void run() {
-                IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                dialogService.show(dialog);
-            }
-
-        });
-        return tester.newFormTester("dialog:content:form");
-    }
-
-    private WorkflowDescriptorModel createErrorWorkflow() throws RepositoryException {
-        final WorkflowDescriptorModel wfdm = mock(WorkflowDescriptorModel.class);
-        when(wfdm.getNode()).thenThrow(new RepositoryException("No node found"));
-        return wfdm;
+        return executeDialog(dialog);
     }
 
     private WorkflowDescriptorModel createNormalWorkflow() throws IOException, RepositoryException {
-        final WorkflowDescriptorModel wfdm = mock(WorkflowDescriptorModel.class);
+        final WorkflowDescriptorModel wfdm = EasyMock.createMock(WorkflowDescriptorModel.class);
         final Node contentNode = createContentNode();
         assertNotNull(contentNode);
-        when(wfdm.getNode()).thenReturn(contentNode);
+        EasyMock.expect(wfdm.getNode()).andReturn(contentNode);
+        EasyMock.replay(wfdm);
         return wfdm;
     }
 
@@ -174,6 +133,10 @@ public class AddDocumentDialogTest {
     @Test
     public void addFolderWithNewNames() throws Exception {
         final FormTester formTester = createDialog(false);
+
+        EasyMock.expect(stringCodec.encode(eq("archives"))).andReturn("archives");
+        EasyMock.replay(stringCodec);
+
         tester.clickLink(WICKET_PATH_ENABLE_URIINPUT_LINK);
         formTester.setValue(URL_INPUT, "archives");
         formTester.setValue(NAME_INPUT, "Archives");
