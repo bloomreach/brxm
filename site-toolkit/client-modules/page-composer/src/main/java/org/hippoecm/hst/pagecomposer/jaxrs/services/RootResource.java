@@ -59,7 +59,6 @@ public class RootResource extends AbstractConfigResource {
     private static final Logger log = LoggerFactory.getLogger(RootResource.class);
     private String rootPath;
     private boolean isCrossChannelPageCopySupported;
-    private boolean isChannelDeletionSupported;
 
     private ChannelService channelService;
 
@@ -77,7 +76,6 @@ public class RootResource extends AbstractConfigResource {
 
         final ContainerConfiguration config = componentManager.getContainerConfiguration();
         isCrossChannelPageCopySupported = config.getBoolean("cross.channel.page.copy.supported", false);
-        isChannelDeletionSupported = config.getBoolean("channel.deletion.supported", false);
     }
 
     @GET
