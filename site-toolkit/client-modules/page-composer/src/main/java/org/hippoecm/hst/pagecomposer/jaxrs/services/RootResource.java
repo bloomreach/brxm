@@ -41,15 +41,15 @@ import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.FeaturesRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
-import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +58,8 @@ public class RootResource extends AbstractConfigResource {
 
     private static final Logger log = LoggerFactory.getLogger(RootResource.class);
     private String rootPath;
+    private boolean isCrossChannelPageCopySupported;
+    private boolean isChannelDeletionSupported;
 
     private ChannelService channelService;
 
@@ -67,6 +69,15 @@ public class RootResource extends AbstractConfigResource {
 
     public void setRootPath(final String rootPath) {
         this.rootPath = rootPath;
+    }
+
+    @Override
+    public void setComponentManager(ComponentManager componentManager) {
+        super.setComponentManager(componentManager);
+
+        final ContainerConfiguration config = componentManager.getContainerConfiguration();
+        isCrossChannelPageCopySupported = config.getBoolean("cross.channel.page.copy.supported", false);
+        isChannelDeletionSupported = config.getBoolean("channel.deletion.supported", false);
     }
 
     @GET
@@ -180,15 +191,6 @@ public class RootResource extends AbstractConfigResource {
     }
 
     @GET
-    @Path("/features")
-    public Response getFeatures() {
-        final boolean crossChannelPageCopySupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("cross.channel.page.copy.supported", false);
-        final FeaturesRepresentation featuresRepresentation = new FeaturesRepresentation();
-        featuresRepresentation.setCrossChannelPageCopySupported(crossChannelPageCopySupported);
-        return ok("Fetched features", featuresRepresentation);
-    }
-
-    @GET
     @Path("/composermode/{renderingHost}/{mountId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response composerModeGet(@Context HttpServletRequest servletRequest,
@@ -218,6 +220,7 @@ public class RootResource extends AbstractConfigResource {
         response.setCanWrite(canWrite);
         response.setCanManageChanges(canManageChanges);
         response.setCanDeleteChannel(canDeleteChannel);
+        response.setCrossChannelPageCopySupported(isCrossChannelPageCopySupported);
         response.setSessionId(session.getId());
         log.info("Composer-Mode successful");
         return ok("Composer-Mode successful", response);
@@ -294,6 +297,7 @@ public class RootResource extends AbstractConfigResource {
         private boolean canWrite;
         private boolean canManageChanges;
         private boolean canDeleteChannel;
+        private boolean isCrossChannelPageCopySupported;
         private String sessionId;
 
         public boolean isCanWrite() {
@@ -318,6 +322,14 @@ public class RootResource extends AbstractConfigResource {
 
         public void setCanDeleteChannel(final boolean canDeleteChannel) {
             this.canDeleteChannel = canDeleteChannel;
+        }
+
+        public boolean isCrossChannelPageCopySupported() {
+            return isCrossChannelPageCopySupported;
+        }
+
+        public void setCrossChannelPageCopySupported(final boolean crossChannelPageCopySupported) {
+            isCrossChannelPageCopySupported = crossChannelPageCopySupported;
         }
 
         public String getSessionId() {
