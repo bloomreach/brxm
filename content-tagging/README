@@ -24,7 +24,7 @@ How to use
 <dependency>
    <groupId>org.hippo.cms7</groupId>
    <artifactId>hippo-plugin-content-tagging</artifactId>
-   <version>4.09.00-SNAPSHOT</version>
+   <version>6.0.0</version>
    <type>jar</type>
 </dependency>
 
