@@ -74,4 +74,10 @@ describe('DialogService', () => {
     expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('remove-mask');
     expect(onRemovingSpy).toHaveBeenCalled();
   });
+
+  it('uses $mdDialog to hide an existing dialog', () => {
+    spyOn($mdDialog, 'hide');
+    DialogService.hide();
+    expect($mdDialog.hide).toHaveBeenCalled();
+  });
 });
