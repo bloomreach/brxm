@@ -114,8 +114,14 @@ public class ChannelServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void cannot_delete_preview_channel() throws ChannelException, RepositoryException {
-        ChannelServiceImpl channelService =  new ChannelServiceImpl();
-        channelService.deleteChannel(null, "channel-foo-preview");
+        final String id = "channel-foo-preview";
+        EasyMock.expect(channelService.getChannel(id)).andThrow(new ChannelNotFoundException(id));
+        deleteChannel(session, id);
+    }
+
+    private void deleteChannel(final Session session, final String channelId) throws RepositoryException, ChannelException {
+        final Channel deletingChannel = channelService.preDeleteChannel(session, channelId);
+        channelService.deleteChannel(session, deletingChannel);
     }
 
     @Test
@@ -142,7 +148,7 @@ public class ChannelServiceImplTest {
         assertThat(session.itemExists("/hst:hst/hst:channels/foo"), is(true));
         assertThat(session.itemExists("/hst:hst/hst:channels/foo-preview"), is(true));
 
-        channelService.deleteChannel(session, "foo");
+        deleteChannel(session, "foo");
 
         EasyMock.verify(channelService, hstConfigurationService);
 
@@ -172,7 +178,7 @@ public class ChannelServiceImplTest {
         assertThat(session.itemExists("/hst:hst/hst:sites/foo"), is(true));
         assertThat(session.itemExists("/hst:hst/hst:channels/foo"), is(true));
 
-        channelService.deleteChannel(session, "foo");
+        deleteChannel(session, "foo");
 
         EasyMock.verify(channelService, hstConfigurationService);
 
@@ -194,7 +200,7 @@ public class ChannelServiceImplTest {
         EasyMock.expect(channelService.getChannel("bah")).andThrow(new ChannelNotFoundException("bah not found"));
         EasyMock.replay(channelService);
 
-        channelService.deleteChannel(session, "bah");
+        deleteChannel(session, "bah");
     }
 
     @Test(expected = ChannelException.class)
@@ -204,7 +210,7 @@ public class ChannelServiceImplTest {
 
         channelsNode.getNode("foo").setProperty("hst:deletable", false);
         try {
-            channelService.deleteChannel(session, "foo");
+            deleteChannel(session, "foo");
         } catch (ChannelException e) {
             assertThat(e.getMessage(), is("Requested channel cannot be deleted"));
             throw e;
@@ -263,7 +269,7 @@ public class ChannelServiceImplTest {
     }
 
     private void mockHostGroups(final Map<String, List<String>> hostGroups, final Map<String, String> mountPoints) {
-        EasyMock.expect(mockVirtualHosts.getHostGroupNames()).andReturn(new ArrayList<>(hostGroups.keySet()));
+        EasyMock.expect(mockVirtualHosts.getHostGroupNames()).andReturn(new ArrayList<>(hostGroups.keySet())).anyTimes();
 
         hostGroups.forEach((hostGroup, mountIds) -> {
             final List<Mount> mockMounts = mountIds.stream()
@@ -319,7 +325,7 @@ public class ChannelServiceImplTest {
 
     private static Mount mockMount(final String mountId, final String mountPoint)  {
         final Mount mount = EasyMock.createMock(Mount.class);
-        EasyMock.expect(mount.getMountPoint()).andReturn(mountPoint);
+        EasyMock.expect(mount.getMountPoint()).andReturn(mountPoint).anyTimes();
         EasyMock.expect(mount.getIdentifier()).andReturn(mountId).anyTimes();
         EasyMock.expect(mount.getChildMounts()).andReturn(Collections.emptyList()).anyTimes();
         EasyMock.replay(mount);

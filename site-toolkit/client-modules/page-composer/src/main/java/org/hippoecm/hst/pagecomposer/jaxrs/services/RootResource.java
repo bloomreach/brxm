@@ -44,8 +44,10 @@ import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.FeaturesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
@@ -155,7 +157,11 @@ public class RootResource extends AbstractConfigResource {
     public Response deleteChannel(@PathParam("id") String channelId) {
         try {
             final Session session = RequestContextProvider.get().getSession();
-            this.channelService.deleteChannel(session, channelId);
+            final Channel channel = channelService.preDeleteChannel(session, channelId);
+
+            publishSynchronousEvent(new BeforeChannelDeleteEvent(channel));
+
+            channelService.deleteChannel(session, channel);
             HstConfigurationUtils.persistChanges(session);
 
             return Response.ok().build();
@@ -163,6 +169,9 @@ public class RootResource extends AbstractConfigResource {
             printErrorLog("Failed to delete channel", e);
 
             return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (ClientException e) {
+            resetSession();
+            return logAndReturnClientError(e);
         } catch (RepositoryException | ChannelException e) {
             printErrorLog("Failed to delete channel", e);
             resetSession();
@@ -263,6 +272,21 @@ public class RootResource extends AbstractConfigResource {
         } else {
             log.error(errorMessage, e.getMessage());
         }
+    }
+
+    /**
+     * Note: Override the AbstractConfigResource#logAndReturnClientError() to remove ExtResponseRepresentation wrapper in the
+     * body response.
+     */
+    @Override
+    protected Response logAndReturnClientError(final ClientException e) {
+        final String formattedMessage = e.getMessage();
+        if (log.isDebugEnabled()) {
+            log.info(formattedMessage, e);
+        } else {
+            log.info(formattedMessage);
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity(e.getErrorStatus()).build();
     }
 
     private static class HandshakeResponse {

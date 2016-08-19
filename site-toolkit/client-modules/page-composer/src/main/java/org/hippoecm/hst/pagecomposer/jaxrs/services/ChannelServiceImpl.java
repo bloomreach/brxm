@@ -239,7 +239,7 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public void deleteChannel(final Session session, final String channelId) throws RepositoryException, ChannelException {
+    public Channel preDeleteChannel(final Session session, final String channelId) throws ChannelException, RepositoryException {
         if (channelId.endsWith("-preview")) {
             throw new IllegalArgumentException("Channel id '" + channelId + "' must refer to a live channel");
         }
@@ -251,17 +251,22 @@ public class ChannelServiceImpl implements ChannelService {
         }
 
         final List<Mount> allMountsOfChannel = findMounts(channel);
-
         final ValidatorBuilder preValidatorBuilder = ValidatorBuilder.builder()
                 .add(validatorFactory.getHasNoChildMountNodeValidator(allMountsOfChannel));
 
         preValidatorBuilder.build()
                 .validate(getRequestContext());
 
+        return channel;
+    }
+
+    @Override
+    public void deleteChannel(final Session session, final Channel channel) throws RepositoryException, ChannelException {
+
         removeConfigurationNodes(session, channel);
         removeSiteNode(session, channel);
         removeChannelNodes(session, channel.getChannelPath());
-        removeMountNodes(session, allMountsOfChannel);
+        removeMountNodes(session, findMounts(channel));
     }
 
     private HstRequestContext getRequestContext() {
