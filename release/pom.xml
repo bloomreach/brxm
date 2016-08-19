@@ -59,7 +59,7 @@
     <hippo.utilities.version>3.1.0-SNAPSHOT</hippo.utilities.version>
 
     <!-- Hippo standard plugin versions -->
-    <hippo.essentials.components.version>3.1.0-SNAPSHOT</hippo.essentials.components.version>
+    <hippo.essentials-components.version>3.1.0-SNAPSHOT</hippo.essentials-components.version>
     <hippo.plugin.content-blocks.version>3.1.0-SNAPSHOT</hippo.plugin.content-blocks.version>
     <hippo.plugin.content-tagging.version>6.1.0-SNAPSHOT</hippo.plugin.content-tagging.version>
     <hippo.plugin.dashboard-document-wizard.version>3.1.0-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
@@ -671,17 +671,17 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-essentials-components-cms</artifactId>
-        <version>${hippo.essentials.components.version}</version>
+        <version>${hippo.essentials-components.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-essentials-components-hst</artifactId>
-        <version>${hippo.essentials.components.version}</version>
+        <version>${hippo.essentials-components.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-essentials-components-repository</artifactId>
-        <version>${hippo.essentials.components.version}</version>
+        <version>${hippo.essentials-components.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
