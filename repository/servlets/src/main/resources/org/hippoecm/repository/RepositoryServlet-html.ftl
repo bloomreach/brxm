@@ -1,3 +1,4 @@
+<#ftl output_format="HTML">
 <!DOCTYPE html>
 <#--
   Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
@@ -182,7 +183,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
                 <#assign childLink = "${childLink}[${child.index}]">
               </#if>
               <a href="./${childLink}/">
-                ${child.name?html}
+                ${child.name}
                 <#if child.hasProperty("hippo:count")>
                 [${child.getProperty("hippo:count").long}]
                 </#if>
@@ -196,7 +197,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
                 [
                   <#list prop.values as value>
                     <#if value.type != 2>
-                      ${value.string!?html},
+                      ${value.string!},
                     <#else>
                       ${prop.length} bytes.
                     </#if>
@@ -204,7 +205,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
                 ]
               <#else>
                 <#if prop.type != 2>
-                  ${prop.string!?html}
+                  ${prop.string!}
                 <#else>
                   ${prop.length} bytes.
                 </#if>
@@ -228,7 +229,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
           SQL query:&nbsp;
         </#if>
 
-        ${originalQuery?html}
+        ${originalQuery}
 
       </blockquote>
 
