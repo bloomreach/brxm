@@ -46,7 +46,7 @@
     <hippo.hst.version>4.1.0-SNAPSHOT</hippo.hst.version>
     <hippo.services.webfiles.version>3.1.0-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.services.contenttype.version>3.1.0-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.essentials.components.version>3.1.0-SNAPSHOT</hippo.essentials.components.version>
+    <hippo.essentials-components.version>3.1.0-SNAPSHOT</hippo.essentials-components.version>
 
   </properties>
 
