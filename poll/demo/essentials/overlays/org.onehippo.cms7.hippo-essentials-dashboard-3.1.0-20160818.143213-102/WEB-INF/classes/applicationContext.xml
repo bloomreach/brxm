@@ -1,0 +1,92 @@
+<!--
+  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://cxf.apache.org/jaxrs
+   http://cxf.apache.org/schemas/jaxrs.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+  <context:component-scan base-package="org.onehippo.cms7.essentials,org.onehippo.cms7.essentials.dashboard.rest"/>
+
+  <import resource="classpath:META-INF/essentialsSpringSdk.xml"/>
+  <import resource="classpath:jackson.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+  <!-- REST RESOURCES-->
+  <bean id="jcrResource" class="org.onehippo.cms7.essentials.rest.JcrResource"/>
+  <bean id="nodeResource" class="org.onehippo.cms7.essentials.rest.NodeResource"/>
+  <bean id="documentResource" class="org.onehippo.cms7.essentials.rest.DocumentResource"/>
+  <bean id="pluginResource" class="org.onehippo.cms7.essentials.rest.PluginResource"/>
+  <bean id="projectResource" class="org.onehippo.cms7.essentials.rest.ProjectResource"/>
+  <bean id="jcrBrowserResource" class="org.onehippo.cms7.essentials.rest.picker.JcrBrowserResource"/>
+  <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter">
+    <property name="allowCredentials" value="true"/>
+    <property name="allowOrigins" value="*"/>
+  </bean>
+
+
+  <jaxrs:server id="restServer" address="/">
+    <jaxrs:serviceBeans>
+      <ref bean="jcrResource"/>
+      <ref bean="jcrBrowserResource"/>
+      <ref bean="nodeResource"/>
+      <ref bean="pluginResource"/>
+      <ref bean="projectResource"/>
+      <ref bean="documentResource"/>
+      <!-- API -->
+      <ref bean="swaggerResourceJSON"/>
+
+
+    </jaxrs:serviceBeans>
+
+
+    <jaxrs:providers>
+      <ref bean="corsFilter"/>
+
+      <ref bean="jsonProvider"/>
+      <!-- API -->
+      <ref bean="resourceWriter"/>
+      <ref bean="apiWriter"/>
+    </jaxrs:providers>
+
+  </jaxrs:server>
+
+
+  <!--
+    //############################################
+    // REST SERVICES DOCUMENTATION
+    //############################################
+  -->
+  <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>
+  <bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider"/>
+  <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider"/>
+  <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+    <property name="resourcePackage" value="org.onehippo.cms7.essentials.rest"/>
+    <property name="version" value="1.0.0"/>
+    <property name="basePath" value="http://localhost:8080/essentials/rest"/>
+    <property name="title" value="Hippo Essentials"/>
+    <property name="description" value="Hippo Essentials REST api"/>
+    <property name="contact" value="info@onehippo.com"/>
+    <property name="license" value="Apache 2.0 License"/>
+    <property name="licenseUrl" value="http://www.apache.org/licenses/LICENSE-2.0.html"/>
+    <property name="scan" value="true"/>
+  </bean>
+
+</beans>

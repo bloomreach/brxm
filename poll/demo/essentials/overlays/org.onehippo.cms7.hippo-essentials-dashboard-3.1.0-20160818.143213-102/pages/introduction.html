@@ -1,0 +1,135 @@
+<!--
+  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+<div class="row" ng-controller="introductionCtrl">
+    <div class="col-sm-12 col-md-10 col-lg-8">
+        <h2>Set up your Hippo Project</h2>
+        <p>
+            This web application helps you setting up a new Hippo project. You can browse the Hippo
+            feature library, install features into your Hippo project and configure them. To get some basic
+            understanding of Hippo's setup application and how to use it, check out our
+            <a href="http://www.onehippo.org/library/setup/introduction.html" target="_blank">documentation</a>.
+        </p>
+        <h3>Important Notes</h3>
+        <ul>
+            <li>
+                Please note that while you are using this application, it will be necessary to rebuild your project
+                once in a while. This is caused by the fact that the plugins need to be integrated both into this web
+                application and into your project. For the installation of certain plugins, it will be necessary to
+                rebuild your project twice. The Rebuild indicator will show this need, and the Rebuild page tells you
+                which plugins require a rebuild of the project.
+            </li>
+            <li>
+                Make sure that you publish your changes in the CMS Channel Manager. Otherwise, these changes, which are
+                stored in the preview HST configuration, will be deleted automatically by the setup application, and
+                you will lose any pending changes.
+            </li>
+        </ul>
+
+        <form name="settingsForm" novalidate>
+            <h3>Project Settings</h3>
+            <p>
+                The setup application will apply several settings by default. You can set the desired values below.
+                We recommend using the default settings.
+            </p>
+            <div class="form-group">
+                <label class="control-label">Please select templating language</label>
+                <div class="radio">
+                    <label>
+                        <input type="radio" ng-model="projectSettings.templateLanguage" required value="freemarker"/> FreeMarker template
+                        (using <a href="http://www.onehippo.org/library/concepts/web-files/web-files-introduction.html" target="_blank">web files</a>)
+                    </label>
+                </div>
+                <div class="radio">
+                    <label>
+                        <input type="radio" ng-model="projectSettings.templateLanguage" required value="jsp"/> JSP template
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Content</label>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="projectSettings.useSamples"/> Add sample content when installing features
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-control-static">
+                <hippo-icon name="{{showAdvanced ? 'chevron-down' : 'chevron-right'}}" size=""></hippo-icon>
+                <a href="#" ng-click="toggleAdvanced($event)">Advanced project settings</a>
+            </div>
+            <div ng-show="showAdvanced" class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group" ng-show="projectSettings.templateLanguage=='freemarker'">
+                        <label class="control-label">Presentation</label>
+                        <p>
+                            When using Freemarker templates, which reside in the repository, the CMS Channel Manager
+                            allows you to choose the component template from different variants.
+                        </p>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="projectSettings.extraTemplates"/> Install extra template variants
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Setup process</label>
+                        <p>
+                            If you want to be able to adjust above settings on a per-feature basis, check this box. This will,
+                            however, result in more user interaction needed during the setup process.
+                        </p>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="projectSettings.confirmParams"/>Confirm / override settings on a per-feature basis
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--
+                //############################################
+                //  REPO URLS
+                //############################################
+            <div class="row form-group">
+                <label class="col-sm-2 control-label">Setup plugin repository urls:</label>
+                <label class="col-sm-6 control-label">
+                    <button class="btn btn-success glyphicon glyphicon-plus" ng-click="addUrl()">Add repository url</button>
+                </label>
+            </div>
+            <div class="row" ng-repeat="url in projectSettings.pluginRepositories track by $index">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Repository URL {{$index +1}}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control"  ng-model="projectSettings.pluginRepositories[$index]">
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="btn btn-danger glyphicon glyphicon-minus pull-right"  ng-click="removeUrl(url)">Remove url</button>
+                    </div>
+                </div>
+            </div>
+            -->
+            <div class="form-group">
+                <button class="btn btn-primary" ng-click="getStarted()">Get started</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-12">
+      <p class="text-center">Copyright 2013-2016 Hippo B.V.. Distributed under the
+        <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</a>.</p>
+    </div>
+</div>
+

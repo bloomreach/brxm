@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+  <!-- ====================================================================== -->
+  <!-- A P P E N D E R S                                                      -->
+  <!-- ====================================================================== -->
+
+  <!-- hippo-cms.log -->
+  <appender name="cms" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/hippo-cms.log"/>
+    <param name="Append" value="true"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
+    </layout>
+    <filter class="org.onehippo.cms7.logging.log4j.MdcOrJndiPropertyFilter">
+      <param name="name" value="logging/contextName" />
+      <param name="resourceRef" value="true" />
+      <param name="value" value="cms" />
+      <param name="onMatchOption" value="ACCEPT" />
+    </filter>
+  </appender>
+
+  <!-- hippo-site.log -->
+  <appender name="site" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/hippo-site.log"/>
+    <param name="Append" value="true"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
+    </layout>
+    <filter class="org.onehippo.cms7.logging.log4j.MdcOrJndiPropertyFilter">
+      <param name="name" value="logging/contextName" />
+      <param name="resourceRef" value="true" />
+      <param name="value" value="site" />
+      <param name="onMatchOption" value="ACCEPT" />
+    </filter>
+  </appender>
+
+  <!-- hippo-audit.log -->
+  <appender name="audit" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/hippo-audit.log"/>
+    <param name="Append" value="true"/>
+    <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
+    </layout>
+  </appender>
+
+  <!-- console -->
+  <appender name="console" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.out"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
+    </layout>
+  </appender>
+
+  <!-- messages -->
+  <appender name="messages" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.out"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{HH:mm:ss} %-5p %m%n"/>
+    </layout>
+  </appender>
+
+  <!-- warnings -->
+  <appender name="warnings" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.err"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{HH:mm:ss} %-5p [%C{1}] %m%n"/>
+    </layout>
+  </appender>
+
+  <!-- ====================================================================== -->
+  <!-- L O G G E R S                                                          -->
+  <!-- ====================================================================== -->
+
+  <!-- CMS logging -->
+  <logger name="org.apache.jackrabbit.core">
+    <level value="warn"/>
+  </logger>
+  <logger name="org.apache.jackrabbit.extractor">
+    <level value="warn"/>
+  </logger>
+  <logger name="org.apache.jackrabbit">
+    <level value="warn"/>
+  </logger>
+  <logger name="org.hippoecm.repository">
+    <level value="warn"/>
+  </logger>
+  <logger name="org.hippoecm.frontend">
+    <level value="warn"/>
+  </logger>
+  <logger name="org.apache.wicket">
+    <level value="warn"/>
+  </logger>
+
+  <!-- DiagnosticsRequestCycleListener only logs when diagnostics is enabled in the repository at
+       /hippo:configuration/hippo:modules/diagnosis
+       hence can be here on level 'info' -->
+  <logger name="org.hippoecm.frontend.diagnosis.DiagnosticsRequestCycleListener">
+    <level value="info"/>
+  </logger>
+
+  <!-- audit logging -->
+  <logger additivity="false" name="org.hippoecm.repository.api.Workflow">
+    <level value="info"/>
+    <appender-ref ref="audit"/>
+  </logger>
+  <logger additivity="false" name="org.onehippo.audit">
+    <level value="info"/>
+    <appender-ref ref="audit"/>
+  </logger>
+
+  <!-- Site logging -->
+  <logger name="org.hippoecm.hst">
+    <level value="warn"/>
+  </logger>
+
+  <!-- DiagnosticReportingValve only logs when diagnostics enabled in hst:hosts config in repo hence
+       can be here on level 'info' -->
+  <logger name="org.hippoecm.hst.core.container.DiagnosticReportingValve">
+    <level value="info"/>
+  </logger>
+
+  <logger name="freemarker">
+    <level value="warn"/>
+  </logger>
+
+  <!-- Freemarker errors -->
+  <logger name="org.hippoecm.hst.servlet.HstFreemarkerServlet" additivity="false">
+    <level value="warn"/>
+    <appender-ref ref="warnings"/>
+  </logger>
+
+  <logger name="freemarker.servlet" additivity="false">
+    <!-- freemarker servket errors will be logged by HstFreemarkerServlet -->
+    <level value="fatal" />
+    <appender-ref ref="warnings" />
+  </logger>
+
+  <logger name="org.apache.cxf">
+    <level value="warn"/>
+  </logger>
+
+  <logger name="javax.ws.rs.core">
+    <level value="warn"/>
+  </logger>
+
+  <logger name="org.apache.commons.pool">
+    <level value="warn"/>
+  </logger>
+
+  <logger name="org.apache.commons.beanutils">
+    <level value="warn"/>
+  </logger>
+
+  <!-- too many caching warnings -->
+  <logger name="org.apache.jackrabbit.core.state">
+    <level value="error"/>
+  </logger>
+  <logger name="org.apache.jackrabbit.core.ItemManager">
+    <level value="error"/>
+  </logger>
+  <logger name="org.apache.jackrabbit.core.persistence.bundle.util.LRUNodeIdCache">
+    <level value="error"/>
+  </logger>
+
+  <!-- ignore wicket localizer warnings -->
+  <logger name="org.apache.wicket.Localizer">
+    <level value="error"/>
+  </logger>
+
+  <!-- more info wanted -->
+  <logger name="org.apache.jackrabbit.core.persistence.bundle">
+    <level value="warn"/>
+  </logger>
+  <logger name="org.hippoecm.repository.jackrabbit.persistence">
+    <level value="info"/>
+  </logger>
+  <logger name="org.hippoecm.repository.updater" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="messages"/>
+  </logger>
+  <logger name="org.onehippo.cms7.autoexport" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="messages"/>
+  </logger>
+  <logger name="org.onehippo.cms7.services.webfiles.watch.WebFilesWatcher" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="messages"/>
+  </logger>
+  <logger name="org.onehippo.cms7.services.autoreload.AutoReloadServiceModule" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="messages"/>
+  </logger>
+  <logger name="org.hippoecm.hst.core.container.WebFileValve" additivity="false">
+    <level value="info"/>
+    <appender-ref ref="messages"/>
+  </logger>
+
+  <root>
+    <level value="warn"/>
+    <appender-ref ref="site"/>
+    <appender-ref ref="cms"/>
+    <appender-ref ref="console"/>
+  </root>
+
+</log4j:configuration>
+

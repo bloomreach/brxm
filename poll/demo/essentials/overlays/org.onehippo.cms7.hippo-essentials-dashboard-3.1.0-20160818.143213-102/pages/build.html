@@ -1,0 +1,64 @@
+<!--
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="alert alert-info" ng-show="REBUILD_PLUGINS === undefined || REBUILD_PLUGINS.length == 0">
+            There are no changes at this moment that require project rebuild.
+        </div>
+        <div ng-show="REBUILD_PLUGINS && REBUILD_PLUGINS.length > 0">
+            <h3>Rebuild required</h3>
+            <p>Rebuilding the project is required for the following plugins:</p>
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="plugin in REBUILD_PLUGINS">
+                    {{plugin.name}}
+                </li>
+            </ul>
+        </div>
+
+        <h3>Build instructions</h3>
+        <p>
+            In order to activate the changes you made, you need to rebuild and restart your project. You need to do
+            this in a command line terminal. Please follow the instructions below to do so. You will be able to
+            continue setting up your Hippo project after a successful rebuild.
+        </p>
+        <p>
+            Certain features require you to rebuild and restart twice in order have them fully installed into your
+            project. The setup application will indicate this. After rebuilding, you will be directed to the page
+            <em>Installed features</em>, so you can configure the features you installed.
+        </p>
+
+        <div class="alert alert-info">
+            You don't need to rebuild for every single feature you add to the project, it is sufficient to rebuild
+            after you added a batch of features.
+        </div>
+        <p>Step 1: In your terminal, stop the running project by pressing Ctrl-C.</p>
+        <p>Step 2: In the root folder of your project, issue the following command to rebuild the project:</p>
+    <pre>
+mvn verify</pre>
+        <p>Step 3: To start your project locally, issue the following command from the project root directory:</p>
+    <pre>
+mvn -Pcargo.run -Drepo.path=storage</pre>
+
+        <div class="alert alert-info">
+            <p>By default, the repository content is stored in the directory target/storage. This has the effect that,
+                when you run "mvn clean", the repository content, along with all unexported changes you made during
+                development, is erased. To avoid accidents in this area, it is a best practice to specify a different
+                location for storing the repository, outside the target directory. This is expressed by the repo.path
+                parameter in the command above.</p>
+        </div>
+    </div>
+</div>

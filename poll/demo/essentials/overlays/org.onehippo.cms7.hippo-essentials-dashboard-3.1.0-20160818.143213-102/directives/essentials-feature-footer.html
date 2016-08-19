@@ -1,0 +1,36 @@
+<div class="feature-changes" ng-show="plugin.documentationLink || hasMessages">
+  <!--
+    Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    -->
+
+  <div class="feature-changes-controls clearfix">
+    <span class="feature-control pull-right" ng-show="plugin.documentationLink">
+      <hippo-icon name="external-link" size="m"></hippo-icon>
+      <a target="_blank" href="{{plugin.documentationLink}}">Documentation</a>
+    </span>
+
+    <span class="feature-control pull-left" ng-show="hasMessages" ng-click="toggleChanges($event)">
+      <hippo-icon name="{{showChanges ? 'chevron-down' : 'chevron-right'}}" size="m"></hippo-icon>
+      <a href="#">Changes made by this feature</a>
+    </span>
+  </div>
+  <div class="log-messages" ng-show="showChanges">
+    <p ng-repeat="message in messages | filter: isCreateFile"><hippo-icon name="file" size="m" ></hippo-icon> {{message.value}}</p>
+    <p ng-repeat="message in messages | filter: isRegisterDocument"><hippo-icon name="file-text" size="m" ></hippo-icon> {{message.value}}</p>
+    <p ng-repeat="message in messages | filter: isCreateXmlNode"><hippo-icon name="plus-square" size="m" ></hippo-icon> {{message.value}}</p>
+    <p ng-repeat="message in messages | filter: isCreateXmlFolderNode"><hippo-icon name="folder-open" size="m" ></hippo-icon> {{message.value}}</p>
+    <p ng-repeat="message in messages | filter: isExecute"><hippo-icon name="code" size="m" ></hippo-icon> {{message.value}}</p>
+  </div>
+</div>

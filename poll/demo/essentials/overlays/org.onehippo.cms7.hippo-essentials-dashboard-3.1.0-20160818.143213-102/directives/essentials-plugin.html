@@ -1,0 +1,69 @@
+<!--
+  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<div class="feature-block">
+    <div class="well">
+        <div class="feature-heading">
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="media">
+                        <span class="pull-left">
+                            <img class="media-object" ng-src="{{plugin.icon}}" alt="{{plugin.name}}">
+                        </span>
+                        <div class="media-body">
+                            <h4>{{plugin.name}}</h4>
+                            <p>{{plugin.type}}, developed by
+                                <a href="{{plugin.vendor.url}}" target="_blank">{{plugin.vendor.name}}</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 text-right">
+                    <button class="btn btn-primary"
+                            ng-show="isDiscovered()"
+                            ng-disabled="installButtonDisabled"
+                            ng-click="installPlugin()">Install {{plugin.type}}
+                    </button>
+                    <a ng-show="isBoarding()" class="btn btn-danger" href="#/build">Needs a rebuild</a>
+                    <a ng-show="isOnBoard()" class="btn btn-default" href="{{plugin.type === 'tool' ? '#/tools' : '#/installed-features'}}">Installed</a>
+                </div>
+            </div>
+        </div>
+        <div class="feature-description">
+            <div class="row">
+                <div class="col-sm-12 col-md-10 col-lg-8 feature-description-short">
+                    <p ng-bind-html="plugin.introduction"></p>
+                    <p ng-show="plugin.description || plugin.imageUrls.length" data-ng-click="toggleDescription($event)">
+                      <hippo-icon name="{{showDescription ? 'chevron-down' : 'chevron-right'}}" size="m"></hippo-icon>
+                      <a href="#">Read more</a>
+                    </p>
+                </div>
+                <div class="col-sm-12 col-md-10 col-lg-8 feature-description-long" ng-show="showDescription && plugin.description">
+                    <p ng-bind-html="plugin.description"></p>
+                </div>
+            </div>
+            <div class="panel panel-default" ng-show="showDescription && plugin.imageUrls.length" style="max-width: 720px">
+                <div class="panel-body">
+                    <uib-carousel interval="interval">
+                        <uib-slide ng-repeat="slide in slides" active="slide.active">
+                            <img ng-src="{{slide.image}}">
+                        </uib-slide>
+                    </uib-carousel>
+                </div>
+            </div>
+        </div>
+        <essentials-feature-footer plugin="plugin"></essentials-feature-footer>
+    </div>
+</div>
