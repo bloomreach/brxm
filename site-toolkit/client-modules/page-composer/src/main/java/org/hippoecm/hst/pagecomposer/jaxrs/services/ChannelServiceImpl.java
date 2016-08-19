@@ -239,9 +239,10 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Channel preDeleteChannel(final Session session, final String channelId) throws ChannelException, RepositoryException {
-        if (channelId.endsWith("-preview")) {
-            throw new IllegalArgumentException("Channel id '" + channelId + "' must refer to a live channel");
+    public Channel preDeleteChannel(final Session session, String channelId) throws ChannelException, RepositoryException {
+        if (channelId.endsWith(HstConfigurationServiceImpl.PREVIEW_SUFFIX)) {
+            // strip the preview suffix
+            channelId = channelId.substring(0, channelId.length() - HstConfigurationServiceImpl.PREVIEW_SUFFIX.length());
         }
 
         final Channel channel = getChannel(channelId);
@@ -331,7 +332,7 @@ public class ChannelServiceImpl implements ChannelService {
      */
     private void removeChannelNodes(final Session session, final String nodePath) throws RepositoryException {
         session.removeItem(nodePath);
-        final String previewNodePath = nodePath + "-preview";
+        final String previewNodePath = nodePath + HstConfigurationServiceImpl.PREVIEW_SUFFIX;
         if (session.nodeExists(previewNodePath)) {
             session.removeItem(previewNodePath);
         }

@@ -112,11 +112,14 @@ public class ChannelServiceImplTest {
         channelService.setValidatorFactory(new ValidatorFactory());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void cannot_delete_preview_channel() throws ChannelException, RepositoryException {
-        final String id = "channel-foo-preview";
-        EasyMock.expect(channelService.getChannel(id)).andThrow(new ChannelNotFoundException(id));
-        deleteChannel(session, id);
+    @Test(expected = ChannelNotFoundException.class)
+    public void substracts_preview_suffix_of_channel() throws ChannelException, RepositoryException {
+        final String id = "channel-foo";
+        final String previewId = id + "-preview";
+        EasyMock.expect(channelService.getChannel(id)).andThrow(new ChannelNotFoundException(previewId));
+        EasyMock.replay(channelService);
+
+        deleteChannel(session, previewId);
     }
 
     private void deleteChannel(final Session session, final String channelId) throws RepositoryException, ChannelException {
