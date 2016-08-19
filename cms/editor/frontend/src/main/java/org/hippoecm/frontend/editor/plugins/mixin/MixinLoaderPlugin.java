@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,29 +36,27 @@ import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MixinLoaderPlugin extends RenderPlugin {
-
-    private static final long serialVersionUID = 1L;
+public class MixinLoaderPlugin extends RenderPlugin<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(MixinLoaderPlugin.class);
 
-    protected IEditor.Mode mode;
+    private final Map<String, IClusterControl> controllers;
 
-    private Map<String, IClusterControl> controllers;
+    protected final IEditor.Mode mode;
 
     public MixinLoaderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        controllers = new HashMap<String, IClusterControl>();
+        controllers = new HashMap<>();
 
         mode = IEditor.Mode.fromString(config.getString(ITemplateEngine.MODE), IEditor.Mode.VIEW);
 
         addExtensionPoint("mixins");
 
-        IModel<Node> model = getModel();
-        Node node = model.getObject();
+        final IModel<Node> model = getModel();
+        final Node node = model.getObject();
         if (node != null) {
-            String mixin = config.getString("mixin");
+            final String mixin = config.getString("mixin");
             try {
                 if (JcrHelper.isNodeType(node, mixin)) {
                     controllers.put(mixin, startMixin(mixin));
@@ -74,12 +72,12 @@ public class MixinLoaderPlugin extends RenderPlugin {
 
     @Override
     protected ExtensionPoint createExtensionPoint(final String extension) {
-        return new RenderService.ExtensionPoint(extension) {
+        return new RenderService<Node>.ExtensionPoint(extension) {
 
             @Override
             protected void register() {
-                IPluginConfig config = getPluginConfig();
-                IPluginContext context = getPluginContext();
+                final IPluginConfig config = getPluginConfig();
+                final IPluginContext context = getPluginContext();
                 if (config.containsKey(extension)) {
                     context.registerTracker(this, config.getString(extension));
                 } else {
@@ -89,8 +87,8 @@ public class MixinLoaderPlugin extends RenderPlugin {
 
             @Override
             protected void unregister() {
-                IPluginConfig config = getPluginConfig();
-                IPluginContext context = getPluginContext();
+                final IPluginConfig config = getPluginConfig();
+                final IPluginContext context = getPluginContext();
                 if (config.containsKey(extension)) {
                     context.unregisterTracker(this, config.getString(extension));
                 } else {
@@ -101,10 +99,11 @@ public class MixinLoaderPlugin extends RenderPlugin {
     }
 
     protected IClusterControl startMixin(String mixin) throws TemplateEngineException {
-        IPluginContext context = getPluginContext();
-        IPluginConfig config = getPluginConfig();
-        ITemplateEngine engine = context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
-        IClusterConfig template = engine.getTemplate(engine.getType(mixin), mode);
+        final IPluginContext context = getPluginContext();
+        final IPluginConfig config = getPluginConfig();
+        final ITemplateEngine engine = context.getService(config.getString(ITemplateEngine.ENGINE), ITemplateEngine.class);
+        final IClusterConfig template = engine.getTemplate(engine.getType(mixin), mode);
+
         IPluginConfig parameters = config.getPluginConfig("cluster.options");
         if (parameters == null) {
             parameters = new JavaPluginConfig();
@@ -117,7 +116,7 @@ public class MixinLoaderPlugin extends RenderPlugin {
         parameters.put("wicket.model", getPluginConfig().get("wicket.model"));
         parameters.put("model.compareTo", getPluginConfig().get("model.compareTo"));
 
-        IClusterControl control = getPluginContext().newCluster(template, parameters);
+        final IClusterControl control = getPluginContext().newCluster(template, parameters);
         control.start();
         return control;
     }
