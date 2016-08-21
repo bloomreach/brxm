@@ -25,7 +25,8 @@ import java.lang.annotation.Target;
  * inform the system about which services it registers with the
  * {@link org.onehippo.cms7.services.HippoServiceRegistry}.
  * Together with the {@link RequiresService} annotation, this annotation
- * determines the order in which modules are started.
+ * determines the order in which modules are started (and destroyed because that
+ * happens in reversed order).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

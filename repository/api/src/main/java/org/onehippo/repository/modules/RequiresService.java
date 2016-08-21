@@ -26,7 +26,8 @@ import java.lang.annotation.Target;
  * {@link org.onehippo.cms7.services.HippoServiceRegistry}
  * and which are provided by other {@link DaemonModule}s.
  * Together with the {@link ProvidesService} annotation, this annotation
- * determines the order in which modules are started.
+ * determines the order in which modules are started (and destroyed because that
+ * happens in reversed order).
  * <p>
  *   The optional optional attribute informs the system not to fail loading the module in the absence of the service.
  *   I.e. if there is no module that provides the service.
