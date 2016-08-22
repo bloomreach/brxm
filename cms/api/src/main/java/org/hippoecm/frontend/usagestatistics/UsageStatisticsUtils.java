@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.hippoecm.frontend.session.UserSession;
 
 public class UsageStatisticsUtils {
 
@@ -43,5 +44,9 @@ public class UsageStatisticsUtils {
      */
     public static String encryptParameterValue(final String plain) {
         return CACHE.getUnchecked(plain);
+    }
+
+    public static String getLanguage() {
+        return UserSession.get().getLocale().getLanguage();
     }
 }
