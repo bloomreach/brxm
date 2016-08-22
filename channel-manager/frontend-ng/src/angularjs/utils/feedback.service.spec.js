@@ -105,7 +105,7 @@ describe('FeedbackService', () => {
     expect($log.info).toHaveBeenCalledWith('another message');
   });
 
-  it('maps error codes using the error map', () => {
+  it('maps ExtResponse error codes using the error map', () => {
     const map = { a: 'A' };
     const response = { errorCode: 'a' };
     FeedbackService.showErrorResponseOnSubpage(response, 'defaultKey', map);
@@ -124,17 +124,20 @@ describe('FeedbackService', () => {
     $translate.instant.calls.reset();
     FeedbackService.showErrorResponse(response, 'defaultKey', map);
     expect($translate.instant).toHaveBeenCalledWith('defaultKey', params);
+  });
 
-    // test an ErrorStatus response i.s.o. an ExtResponse.
-    delete response.data;
-    delete response.errorCode;
-    response.error = 'a';
-    $translate.instant.calls.reset();
+  it('maps ErrorStatus error codes using the error map', () => {
+    const map = { a: 'A' };
+    const response = {
+      error: 'a',
+    };
     FeedbackService.showErrorResponse(response, 'defaultKey', map);
     expect($translate.instant).toHaveBeenCalledWith('A', undefined);
 
+    const params = { trans: 'parent' };
     response.parameterMap = params;
     response.error = 'c';
+    $translate.instant.calls.reset();
     FeedbackService.showErrorResponse(response, 'defaultKey', map);
     expect($translate.instant).toHaveBeenCalledWith('defaultKey', params);
   });
