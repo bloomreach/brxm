@@ -26,6 +26,8 @@
   "ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED": "Cannot add '{{component}}': the container is locked by '{{lockedBy}}'",
   "ERROR_CHANGE_PUBLICATION_FAILED": "Failed to publish changes",
   "ERROR_CHANGE_DISCARD_FAILED": "Failed to discard changes",
+  "ERROR_CHANNEL_DELETE_FAILED": "Failed to delete channel",
+  "ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS": "Channel '{{channel}}' cannot be deleted because its mounts have children: '{{childMountList}}'. A channel can only be deleted when its mounts don't have children.",
   "ERROR_CHANNEL_INFO_RETRIEVAL_FAILED": "Failed to retrieve information on channel settings",
   "ERROR_CHANNEL_PROPERTIES_SAVE_FAILED": "Failed to save the channel setting",
   "ERROR_CHANNEL_SETTINGS_READONLY": "Settings locked by '{{lockedBy}}'",
