@@ -19,7 +19,7 @@
     <sv:value>hipposys:updaterinfo</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:batchsize" sv:type="Long">
-    <sv:value>10</sv:value>
+    <sv:value>100</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:description" sv:type="String">
     <sv:value>Changes the way display names of documents and folders are stored from the old model based on hippo:translated node type to the new model based on hippo:named node type. Run this updater after upgrading to Hippo 11.</sv:value>
@@ -104,7 +104,7 @@ class UpdaterTemplate extends BaseNodeUpdateVisitor {&#xd;
 }</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:throttle" sv:type="Long">
-    <sv:value>1000</sv:value>
+    <sv:value>100</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:nodetype" sv:type="String">
     <sv:value>hippo:translated</sv:value>
