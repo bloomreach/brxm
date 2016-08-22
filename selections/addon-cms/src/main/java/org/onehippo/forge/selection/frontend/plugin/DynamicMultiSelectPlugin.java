@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
@@ -69,6 +71,7 @@ import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.forge.selection.frontend.model.ValueList;
 import org.onehippo.forge.selection.frontend.plugin.sorting.SortHelper;
 import org.onehippo.forge.selection.frontend.provider.IValueListProvider;
@@ -281,16 +284,24 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             JcrNodeModel baseNodeModel = (JcrNodeModel)compareToRef.getModel();
             if (baseNodeModel != null && baseNodeModel.getNode() != null) {
                 IFieldDescriptor field = helper.getField();
-                JcrMultiPropertyValueModel<String> baseModel = new JcrMultiPropertyValueModel<>(new JcrItemModel(
-                        baseNodeModel.getItemModel().getPath() + '/' + field.getPath()));
+                try {
+                    if (baseNodeModel.getNode().getSession().itemExists(baseNodeModel.getItemModel().getPath() + '/' + field.getPath())) {
+                        JcrMultiPropertyValueModel<String> baseModel = new JcrMultiPropertyValueModel<>(new JcrItemModel(
+                                baseNodeModel.getItemModel().getPath() + '/' + field.getPath()));
 
-                List<String> baseOptions = baseModel.getObject();
-                List<String> currentOptions = model.getObject();
-                List<Change<String>> changes = LCS.getChangeSet(baseOptions.toArray(new String[baseOptions.size()]),
-                        currentOptions.toArray(new String[currentOptions.size()]));
+                        List<String> baseOptions = baseModel.getObject();
+                        List<String> currentOptions = model.getObject();
+                        List<Change<String>> changes = LCS.getChangeSet(baseOptions.toArray(new String[baseOptions.size()]),
+                                currentOptions.toArray(new String[currentOptions.size()]));
+                        // show view list
+                        modeFragment.add(new CompareView("viewitems", changes, valueList));
+                    } else {
+                        modeFragment.add(new ListView("viewitems", model.getObject(), valueList));
+                    }
+                } catch (RepositoryException e) {
+                    log.error("RepositoryException : ", e);
+                }
 
-                // show view list
-                modeFragment.add(new CompareView("viewitems", changes, valueList));
             } else {
                 modeFragment.add(new ListView("viewitems", model.getObject(), valueList));
             }
