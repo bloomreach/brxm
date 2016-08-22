@@ -16,8 +16,13 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -40,7 +45,18 @@ public class HasNoChildMountNodeValidator implements Validator {
                 .anyMatch(mount -> !mount.getChildMounts().isEmpty());
 
         if (hasMountWithChildren) {
-            throw new ClientException("Child mount exists", ClientError.CHILD_MOUNT_EXISTS);
+            final Map<String, String> parameterMap = new HashMap<>();
+            final Set<String> mountChildren = new LinkedHashSet<>();
+
+            mounts.stream().forEach(mount -> {
+                for (Mount child : mount.getChildMounts()) {
+                    mountChildren.add(child.getMountPath());
+                }
+            });
+            parameterMap.put("childMountList", StringUtils.join(mountChildren, ", "));
+            parameterMap.put("channel", mounts.get(0).getChannel().getName());
+
+            throw new ClientException("Child mount exists", ClientError.CHILD_MOUNT_EXISTS, parameterMap);
         }
     }
 }
