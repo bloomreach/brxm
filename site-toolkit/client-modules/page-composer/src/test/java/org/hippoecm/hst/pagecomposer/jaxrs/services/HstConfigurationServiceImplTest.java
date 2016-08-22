@@ -16,6 +16,9 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -26,7 +29,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.is;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_ABSTRACTPAGES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_CONTAINERS;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENTS;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENTSFOLDER;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -116,6 +127,37 @@ public class HstConfigurationServiceImplTest {
         } catch (HstConfigurationException e) {
             assertThat(e.getMessage(), is("The configuration node is inherited by others"));
         }
+    }
+
+    @Test
+    public void get_all_container_nodes() throws Exception {
+        final Node fooConfigNode = addConfigurationNode("foo");
+        final List<Node> mockContainerNodes = mockContainerNodes(fooConfigNode);
+
+        final List<Node> containerNodes = hstConfigurationService.getContainerNodes(session, "/hst:hst/hst:configurations/foo");
+
+        assertThat(containerNodes, containsInAnyOrder(mockContainerNodes.toArray(new Node[mockContainerNodes.size()])));
+    }
+
+    private List<Node> mockContainerNodes(final Node configurationNode) throws RepositoryException {
+        final List<Node> containerNodes = new ArrayList<>();
+        final Node pagesNode = configurationNode.addNode(NODENAME_HST_PAGES, NODENAME_HST_PAGES);
+        containerNodes.add(pagesNode.addNode("page-container-1", NODETYPE_HST_CONTAINERCOMPONENT));
+
+        final Node componentsNode = configurationNode.addNode(NODETYPE_HST_COMPONENTS, NODETYPE_HST_COMPONENTS);
+        containerNodes.add(componentsNode.addNode("component-container-1", NODETYPE_HST_CONTAINERCOMPONENT));
+        containerNodes.add(componentsNode.addNode("component-container-2", NODETYPE_HST_CONTAINERCOMPONENT));
+
+        final Node abstractPagesNode = configurationNode.addNode(NODENAME_HST_ABSTRACTPAGES, NODENAME_HST_ABSTRACTPAGES);
+        containerNodes.add(abstractPagesNode.addNode("abstractpage-container-1", NODETYPE_HST_CONTAINERCOMPONENT));
+        containerNodes.add(abstractPagesNode.addNode("abstractpage-container-2", NODETYPE_HST_CONTAINERCOMPONENT));
+
+        final Node workspaceNode = configurationNode.addNode(NODENAME_HST_WORKSPACE, NODENAME_HST_WORKSPACE);
+        final Node hstWorkspaceContainersNode = workspaceNode.addNode(NODENAME_HST_CONTAINERS, NODETYPE_HST_CONTAINERCOMPONENTSFOLDER);
+        containerNodes.add(hstWorkspaceContainersNode.addNode("ws-container-1", NODETYPE_HST_CONTAINERCOMPONENT));
+        containerNodes.add(hstWorkspaceContainersNode.addNode("ws-container-2", NODETYPE_HST_CONTAINERCOMPONENT));
+
+        return containerNodes;
     }
 
     private void setInheritance(final Node configNode, final String ... inheritsFrom) throws RepositoryException {

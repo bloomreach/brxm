@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,8 +29,15 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_ABSTRACTPAGES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGES;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_COMPONENTS;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT;
 
 public class HstConfigurationServiceImpl implements HstConfigurationService {
     private static final Logger log = LoggerFactory.getLogger(HstConfigurationServiceImpl.class);
@@ -51,6 +59,33 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
             throw new HstConfigurationException("The configuration node is inherited by others");
         }
         configNode.remove();
+    }
+
+    @Override
+    public List<Node> getContainerNodes(final Session session, final String configurationPath) throws RepositoryException {
+        final Node configurationNode = session.getNode(configurationPath);
+        final List<String> childrenNodes = Arrays.asList(NODENAME_HST_PAGES,
+                NODETYPE_HST_COMPONENTS,
+                NODENAME_HST_ABSTRACTPAGES,
+                NODENAME_HST_WORKSPACE);
+
+        final List<Node> containerNodes = new ArrayList<>();
+        for (String childNode : childrenNodes) {
+            if (configurationNode.hasNode(childNode)) {
+                getContainerNodes(configurationNode.getNode(childNode), containerNodes);
+            }
+        }
+        return containerNodes;
+    }
+
+    private void getContainerNodes(final Node node, final List<Node> containerNodes) throws RepositoryException {
+        if (node.isNodeType(NODETYPE_HST_CONTAINERCOMPONENT)) {
+            containerNodes.add(node);
+            return;
+        }
+        for (Node child : new NodeIterable(node.getNodes())) {
+            getContainerNodes(child, containerNodes);
+        }
     }
 
     private void deletePreviewConfiguration(final Session session, final String configurationPath) throws RepositoryException {
