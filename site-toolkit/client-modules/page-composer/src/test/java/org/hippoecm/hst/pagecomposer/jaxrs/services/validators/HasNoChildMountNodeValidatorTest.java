@@ -59,13 +59,10 @@ public class HasNoChildMountNodeValidatorTest {
 
     @Test(expected = ClientException.class)
     public void has_exception_when_validating_mount_with_child_mounts() throws Exception {
-        final List<Mount> childMounts = new ArrayList<>();
         final Mount childMountA = createMock(Mount.class);
         final Mount childMountB = createMock(Mount.class);
         final Mount childMountC = createMock(Mount.class);
-        childMounts.add(childMountA);
-        childMounts.add(childMountB);
-        childMounts.add(childMountC);
+        final List<Mount> childMounts = Arrays.asList(childMountA, childMountB, childMountC);
         final Channel channel = createMock(Channel.class);
 
         expect(mountFoo.getChildMounts()).andReturn(childMounts).anyTimes();
