@@ -15,11 +15,12 @@
  */
 
 export class ChannelActionsCtrl {
-  constructor($translate, ChannelService, DialogService, SessionService) {
+  constructor($translate, ChannelService, DialogService, FeedbackService, SessionService) {
     'ngInject';
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.DialogService = DialogService;
+    this.FeedbackService = FeedbackService;
     this.SessionService = SessionService;
   }
 
@@ -45,12 +46,17 @@ export class ChannelActionsCtrl {
         this._showDeleteProgress();
         this.ChannelService.deleteChannel()
           .then(() => {
+            this._hideDeleteProgress();
             // TODO CHANNELMGR-796 return to channel overview
           })
-          .catch(() => {
-            // TODO CHANNELMGR-798 show back-end error to user
-          })
-          .finally(() => this._hideDeleteProgress());
+          .catch((response) => {
+            this._hideDeleteProgress();
+            if (response && response.error === 'CHILD_MOUNT_EXISTS') {
+              this._showElaborateFeedback(response, 'ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS');
+            } else {
+              this.FeedbackService.showErrorResponse(response, 'ERROR_CHANNEL_DELETE_FAILED');
+            }
+          });
       });
   }
 
@@ -81,5 +87,14 @@ export class ChannelActionsCtrl {
 
   _hideDeleteProgress() {
     this.DialogService.hide();
+  }
+
+  _showElaborateFeedback(response, key) {
+    const confirm = this.DialogService.confirm()
+      .title(this.$translate.instant('ERROR_CHANNEL_DELETE_FAILED'))
+      .textContent(this.$translate.instant(key, response.parameterMap))
+      .ok(this.$translate.instant('OK'));
+
+    return this.DialogService.show(confirm);
   }
 }

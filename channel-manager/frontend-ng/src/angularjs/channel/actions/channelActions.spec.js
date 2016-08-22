@@ -25,6 +25,7 @@ describe('ChannelActions', () => {
   let $translate;
   let ChannelService;
   let DialogService;
+  let FeedbackService;
   let SessionService;
 
   const confirmDialog = jasmine.createSpyObj('confirmDialog', ['title', 'textContent', 'ok', 'cancel']);
@@ -36,21 +37,26 @@ describe('ChannelActions', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _DialogService_, _SessionService_) => {
+    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _DialogService_, _FeedbackService_,
+            _SessionService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $q = _$q_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
       DialogService = _DialogService_;
+      FeedbackService = _FeedbackService_;
       SessionService = _SessionService_;
     });
 
     spyOn($translate, 'instant');
     spyOn(ChannelService, 'getChannel').and.returnValue({ hasCustomProperties: true });
     spyOn(ChannelService, 'getName').and.returnValue('test-channel');
+    spyOn(ChannelService, 'deleteChannel').and.returnValue($q.when());
     spyOn(DialogService, 'confirm').and.returnValue(confirmDialog);
-    spyOn(DialogService, 'show');
+    spyOn(DialogService, 'hide');
+    spyOn(DialogService, 'show').and.returnValue($q.when());
+    spyOn(FeedbackService, 'showErrorResponse');
     spyOn(SessionService, 'canDeleteChannel').and.returnValue(true);
   });
 
@@ -122,8 +128,63 @@ describe('ChannelActions', () => {
     expect(DialogService.show).toHaveBeenCalled();
 
     $rootScope.$digest();
-    // TODO: expect deletion not to have been triggered.
+    expect(ChannelService.deleteChannel).not.toHaveBeenCalled();
   });
 
-  // TODO; add more tests for deleting a channel (once implemented)
+  it('flashes a toast when the deletion of a channel failed for an unknown reason', () => {
+    const ChannelActionsCtrl = compileDirectiveAndGetController();
+
+    ChannelService.deleteChannel.and.returnValue($q.reject());
+    ChannelActionsCtrl.deleteChannel();
+
+    $rootScope.$digest();
+    // make sure the mask was shown
+    expect(DialogService.show.calls.mostRecent().args[0].templateUrl).toBeDefined();
+    expect(ChannelService.deleteChannel).toHaveBeenCalled();
+    expect(DialogService.hide).toHaveBeenCalled();
+    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_CHANNEL_DELETE_FAILED');
+  });
+
+  it('flashes a toast when the deletion of a channel failed for an known reason', () => {
+    const ChannelActionsCtrl = compileDirectiveAndGetController();
+    const response = { trans: 'parent' };
+    ChannelService.deleteChannel.and.returnValue($q.reject(response));
+    ChannelActionsCtrl.deleteChannel();
+
+    $rootScope.$digest();
+    // make sure the mask was shown
+    expect(DialogService.show.calls.mostRecent().args[0].templateUrl).toBeDefined();
+    expect(ChannelService.deleteChannel).toHaveBeenCalled();
+    expect(DialogService.hide).toHaveBeenCalled();
+    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(response, 'ERROR_CHANNEL_DELETE_FAILED');
+  });
+
+  it('shows extended error feedback when child mounts prevented channel deletion', () => {
+    const ChannelActionsCtrl = compileDirectiveAndGetController();
+    const parameterMap = { trans: 'parent' };
+    const response = {
+      error: 'CHILD_MOUNT_EXISTS',
+      parameterMap,
+    };
+    ChannelService.deleteChannel.and.returnValue($q.reject(response));
+    ChannelActionsCtrl.deleteChannel();
+
+    $rootScope.$digest();
+    expect(DialogService.hide).toHaveBeenCalled();
+    expect($translate.instant).toHaveBeenCalledWith('ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS', parameterMap);
+  });
+
+  it('successfully deletes a channel', () => {
+    const ChannelActionsCtrl = compileDirectiveAndGetController();
+
+    ChannelActionsCtrl.deleteChannel();
+    $rootScope.$digest();
+
+    expect(ChannelService.deleteChannel).toHaveBeenCalled();
+    // make sure the mask was shown
+    expect(DialogService.show.calls.mostRecent().args[0].templateUrl).toBeDefined();
+    expect(DialogService.hide).toHaveBeenCalled();
+
+    // TODO; add more validation for returning to channel overview, CHANNELMGR-796
+  });
 });
