@@ -290,6 +290,7 @@ public class RootResourceTest extends AbstractResourceTest {
         PowerMock.verify(HstConfigurationUtils.class);
 
         assertThat(capturedEvent.getValue().getChannel().getId(), is("channel-foo"));
+        assertThat(capturedEvent.getValue().getRequestContext().getSession(), is(mockSession));
     }
 
     @Test

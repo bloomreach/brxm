@@ -165,10 +165,11 @@ public class RootResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteChannel(@PathParam("id") String channelId) {
         try {
-            final Session session = RequestContextProvider.get().getSession();
+            final HstRequestContext hstRequestContext = RequestContextProvider.get();
+            final Session session = hstRequestContext.getSession();
             final Channel channel = channelService.preDeleteChannel(session, channelId);
 
-            publishSynchronousEvent(new BeforeChannelDeleteEvent(channel));
+            publishSynchronousEvent(new BeforeChannelDeleteEvent(channel, hstRequestContext));
 
             channelService.deleteChannel(session, channel);
             HstConfigurationUtils.persistChanges(session);
