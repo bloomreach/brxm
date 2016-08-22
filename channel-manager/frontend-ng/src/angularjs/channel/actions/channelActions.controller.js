@@ -95,6 +95,6 @@ export class ChannelActionsCtrl {
       .textContent(this.$translate.instant(key, response.parameterMap))
       .ok(this.$translate.instant('OK'));
 
-    return this.DialogService.show(confirm);
+    this.DialogService.show(confirm);
   }
 }
