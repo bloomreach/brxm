@@ -16,10 +16,11 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services.validators;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -45,7 +46,7 @@ public class HasNoChildMountNodeValidator implements Validator {
 
         if (hasMountWithChildren) {
             final Map<String, String> parameterMap = new HashMap<>();
-            final List<String> mountChildren = new ArrayList<>();
+            final Set<String> mountChildren = new LinkedHashSet<>();
 
             mounts.stream().forEach(mount -> {
                 for (Mount child : mount.getChildMounts()) {
