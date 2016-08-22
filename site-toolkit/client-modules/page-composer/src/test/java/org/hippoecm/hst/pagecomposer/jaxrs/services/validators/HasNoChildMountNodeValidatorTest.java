@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -57,20 +58,32 @@ public class HasNoChildMountNodeValidatorTest {
     }
 
     @Test(expected = ClientException.class)
-    public void has_exception_when_validating_mount_with_children_mounts() throws Exception {
-        final List<Mount> childrenMounts = new ArrayList<>();
-        final Mount childMount = createMock(Mount.class);
-        childrenMounts.add(childMount);
+    public void has_exception_when_validating_mount_with_child_mounts() throws Exception {
+        final List<Mount> childMounts = new ArrayList<>();
+        final Mount childMountA = createMock(Mount.class);
+        final Mount childMountB = createMock(Mount.class);
+        final Mount childMountC = createMock(Mount.class);
+        childMounts.add(childMountA);
+        childMounts.add(childMountB);
+        childMounts.add(childMountC);
+        final Channel channel = createMock(Channel.class);
 
-        expect(mountFoo.getChildMounts()).andReturn(childrenMounts).anyTimes();
-        expect(mountBah.getChildMounts()).andReturn(Collections.emptyList());
+        expect(mountFoo.getChildMounts()).andReturn(childMounts).anyTimes();
+        expect(mountFoo.getChannel()).andReturn(channel).anyTimes();
+        expect(mountBah.getChildMounts()).andReturn(Collections.emptyList()).anyTimes();
+        expect(channel.getName()).andReturn("foo").anyTimes();
+        expect(childMountA.getMountPath()).andReturn("/a").anyTimes();
+        expect(childMountB.getMountPath()).andReturn("/b").anyTimes();
+        expect(childMountC.getMountPath()).andReturn("/a").anyTimes();
 
-        replay(mountFoo, mountBah);
+        replay(mountFoo, mountBah, channel, childMountA, childMountB, childMountC);
 
         try {
             validator.validate(null);
         } catch (ClientException e) {
             assertThat(e.getError(), is(ClientError.CHILD_MOUNT_EXISTS));
+            assertThat(e.getParameterMap().get("channel"), is("foo"));
+            assertThat(e.getParameterMap().get("childMountList"), is("/a, /b"));
             throw e;
         }
     }
