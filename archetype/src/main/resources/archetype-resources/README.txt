@@ -11,15 +11,24 @@ Access the Hippo Essentials at http://localhost:8080/essentials.
 After your project is set up, access the CMS at http://localhost:8080/cms and the site at http://localhost:8080/site.
 Logs are located in target/tomcat7x/logs
 
-Building distribution
-=====================
+Building distributions
+======================
 
-To build a Tomcat distribution tarball containing only deployable artifacts:
+To build Tomcat distribution tarballs:
 
   mvn clean verify
   mvn -P dist
+    or
+  mvn -P dist-with-content
 
-See also src/main/assembly/distribution.xml if you need to customize the distribution.
+The 'dist' profile will produce in the /target directory a distribution tarball, containing the main deployable wars and
+shared libraries.
+
+The 'dist-with-content' profile will produce a distribution-with-content tarball, containing as well the
+bootstrap-content jar in the shared/lib directory. This kind of distribution is meant to be used for deployments on
+empty repositories, for instance deployment on a new environment.
+
+See also src/main/assembly/*.xml if you need to customize the distributions.
 
 Using JRebel
 ============

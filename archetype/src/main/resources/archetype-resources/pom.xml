@@ -242,6 +242,14 @@
 
     <profile>
       <id>cargo.run</id>
+      <dependencies>
+        <dependency>
+          <groupId>${groupId}</groupId>
+          <artifactId>${rootArtifactId}-bootstrap-content</artifactId>
+          <version>${dollar}{project.version}</version>
+          <scope>runtime</scope>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -289,6 +297,13 @@
                 </deployable>
               </deployables>
               <container>
+                <dependencies combine.children="append">
+                  <dependency>
+                    <groupId>${groupId}</groupId>
+                    <artifactId>${rootArtifactId}-bootstrap-content</artifactId>
+                    <classpath>shared</classpath>
+                  </dependency>
+                </dependencies>
                 <systemProperties>
                   <log4j.configuration>file:${dollar}{project.basedir}/conf/log4j-dev.xml</log4j.configuration>
                   <rebel.log4j-plugin>true</rebel.log4j-plugin>
@@ -337,6 +352,54 @@
                 <configuration>
                   <descriptors>
                     <descriptor>${dollar}{project.basedir}/src/main/assembly/distribution.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>dist-with-content</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>jcl-over-slf4j</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+          <groupId>${dollar}{groupId}</groupId>
+          <artifactId>${dollar}{artifactId}-bootstrap-content</artifactId>
+          <version>${dollar}{project.version}</version>
+        </dependency>
+      </dependencies>
+      <build>
+        <defaultGoal>validate</defaultGoal>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>distro-assembly-with-content</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>${project.basedir}/src/main/assembly/distribution-with-content.xml</descriptor>
                   </descriptors>
                 </configuration>
               </execution>
