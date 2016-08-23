@@ -17,14 +17,18 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.api;
 
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BeforeChannelDeleteEvent extends RuntimeExceptionEvent {
     private static final Logger log = LoggerFactory.getLogger(BeforeChannelDeleteEvent.class);
 
-    public BeforeChannelDeleteEvent(final Channel channel) {
+    private transient final HstRequestContext requestContext;
+
+    public BeforeChannelDeleteEvent(final Channel channel, final HstRequestContext requestContext) {
         super(channel);
+        this.requestContext = requestContext;
     }
 
     public Channel getChannel() {
@@ -34,6 +38,10 @@ public class BeforeChannelDeleteEvent extends RuntimeExceptionEvent {
     @Override
     public Logger getLogger() {
         return log;
+    }
+
+    public HstRequestContext getRequestContext() {
+        return requestContext;
     }
 
     @Override

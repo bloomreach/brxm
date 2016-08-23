@@ -16,9 +16,13 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.List;
+
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
 
 /**
@@ -27,4 +31,15 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationE
 public interface HstConfigurationService {
 
     void delete(final Session session, final String configurationPath) throws RepositoryException, HstConfigurationException;
+
+    /**
+     * Get all container nodes of type {@link HstNodeTypes#NODETYPE_HST_CONTAINERCOMPONENT} in the given
+     * configuration path
+     *
+     * @param session
+     * @param configurationPath The absolute jcr path of the 'hst:configuration' node
+     * @return
+     * @throws RepositoryException
+     */
+    List<Node> getContainerNodes(final Session session, final String configurationPath) throws RepositoryException;
 }
