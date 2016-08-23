@@ -130,6 +130,8 @@ public class EventProcessor implements EventListener {
             }
         }
 
+        checkModules();
+
         executor = Executors.newSingleThreadScheduledExecutor();
         eventPreProcessor = new EventPreProcessor(session);
 
@@ -382,7 +384,7 @@ public class EventProcessor implements EventListener {
         defaultModule.getExtension().export();
     }
 
-    void checkModules() {
+    private void checkModules() {
         defaultModule.check();
         for (Module module : modules) {
             module.check();

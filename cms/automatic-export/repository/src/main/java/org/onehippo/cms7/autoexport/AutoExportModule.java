@@ -63,8 +63,6 @@ public final class AutoExportModule implements DaemonModule {
         } catch (Exception e) {
             log.error("Failed to initialize auto export. Auto export will not be available", e);
         }
-
-        processor.checkModules();
     }
 
     @Override

@@ -85,8 +85,12 @@ final class Module {
     }
     
     void check() {
-        detectBrokenInitializeItems();
-        detectOrphanedFiles(exportDir, getBootstrapFiles());
+        if (!exportDir.exists()) {
+            log.info("Auto-export module directory {} does not (yet) exist", exportDir.getPath());
+        } else {
+            detectBrokenInitializeItems();
+            detectOrphanedFiles(exportDir, getBootstrapFiles());
+        }
     }
 
     private void detectBrokenInitializeItems() {
