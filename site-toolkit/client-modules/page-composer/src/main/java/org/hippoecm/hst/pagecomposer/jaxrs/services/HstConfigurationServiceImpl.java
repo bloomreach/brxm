@@ -64,15 +64,15 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
     @Override
     public List<Node> getContainerNodes(final Session session, final String configurationPath) throws RepositoryException {
         final Node configurationNode = session.getNode(configurationPath);
-        final List<String> childrenNodes = Arrays.asList(NODENAME_HST_PAGES,
+        final List<String> childNodeNames = Arrays.asList(NODENAME_HST_PAGES,
                 NODETYPE_HST_COMPONENTS,
                 NODENAME_HST_ABSTRACTPAGES,
                 NODENAME_HST_WORKSPACE);
 
         final List<Node> containerNodes = new ArrayList<>();
-        for (String childNode : childrenNodes) {
-            if (configurationNode.hasNode(childNode)) {
-                getContainerNodes(configurationNode.getNode(childNode), containerNodes);
+        for (String childNodeName : childNodeNames) {
+            if (configurationNode.hasNode(childNodeName)) {
+                getContainerNodes(configurationNode.getNode(childNodeName), containerNodes);
             }
         }
         return containerNodes;
