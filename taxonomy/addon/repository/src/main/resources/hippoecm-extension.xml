@@ -64,6 +64,36 @@
     </sv:property>
   </sv:node>
 
+  <sv:node sv:name="hippotaxonomy-namespace-add-classifiable-template-caption-patch">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20101.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/hippotaxonomy/classifiable/editor:templates/_default_/root/caption</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String" sv:multiple="false">
+      <sv:value>${caption}</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="hippotaxonomy-namespace-add-classifiable-template-hint-patch">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>20101.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:namespaces/hippotaxonomy/classifiable/editor:templates/_default_/root/hint</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String" sv:multiple="false">
+      <sv:value>${hint}</sv:value>
+    </sv:property>
+  </sv:node>
+
   <!--
     Authorization
 
