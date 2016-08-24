@@ -67,8 +67,16 @@ function createMessageBus() {
       if (subscriptions[topic] === undefined) {
         subscriptions[topic] = [];
       }
-
       addCallback(subscriptions[topic], callback, scope);
+    },
+
+    subscribeOnce(topic, callback, scope) {
+      const interceptedCallback = (...args) => {
+        const result = callback.apply(scope, args);
+        this.unsubscribe(topic, interceptedCallback, scope);
+        return result;
+      };
+      this.subscribe(topic, interceptedCallback, scope);
     },
 
     unsubscribe(topic, callback, scope) {

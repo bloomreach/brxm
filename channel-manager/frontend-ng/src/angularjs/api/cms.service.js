@@ -63,6 +63,11 @@ export class CmsService {
     return scope ? hostToIFrame.subscribe(topic, callback, scope) : hostToIFrame.subscribe(topic, callback);
   }
 
+  subscribeOnce(topic, callback, scope) {
+    const hostToIFrame = this.getParentIFramePanel().hostToIFrame;
+    return scope ? hostToIFrame.subscribeOnce(topic, callback, scope) : hostToIFrame.subscribeOnce(topic, callback);
+  }
+
   unsubscribe(topic, callback, scope) {
     const hostToIFrame = this.getParentIFramePanel().hostToIFrame;
     return hostToIFrame.unsubscribe(topic, callback, scope);
