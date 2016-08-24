@@ -46,7 +46,10 @@ export class ChannelActionsCtrl {
       .then(() => {
         this._showDeleteProgress();
         this.ChannelService.deleteChannel()
-          .then(() => this.CmsService.publish('channel-deleted'))
+          .then(() => {
+            this.CmsService.subscribeOnce('channel-removed-from-overview', () => this._hideDeleteProgress());
+            this.CmsService.publish('channel-deleted');
+          })
           .catch((response) => {
             this._hideDeleteProgress();
             if (response && response.error === 'CHILD_MOUNT_EXISTS') {

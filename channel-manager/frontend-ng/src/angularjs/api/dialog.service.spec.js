@@ -80,10 +80,4 @@ describe('DialogService', () => {
     DialogService.hide();
     expect($mdDialog.hide).toHaveBeenCalled();
   });
-
-  it('hides an existing dialog when receiving a hide-dialog event from the CMS', () => {
-    spyOn($mdDialog, 'hide');
-    window.CMS_TO_APP.publish('hide-dialog');
-    expect($mdDialog.hide).toHaveBeenCalled();
-  });
 });

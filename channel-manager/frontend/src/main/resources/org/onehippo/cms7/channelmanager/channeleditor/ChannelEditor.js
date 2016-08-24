@@ -19,8 +19,6 @@
 
   Ext.namespace('Hippo.ChannelManager.ChannelEditor');
 
-  var REMOVE_MASK_ANIMATION_MS = 400;
-
   Hippo.ChannelManager.ChannelEditor.ChannelEditor = Ext.extend(Hippo.IFramePanel, {
 
     constructor: function(config) {
@@ -226,7 +224,7 @@
     _unmaskSurroundings: function() {
       $(document.body).children('.channel-editor-mask')
         .addClass('channel-editor-mask-removing')
-        .delay(REMOVE_MASK_ANIMATION_MS)
+        .delay(400)
         .queue(function() {
           $(this).remove();
         });
@@ -251,13 +249,8 @@
 
     _onChannelDeleted: function() {
       this._reloadChannels().when(function () {
-        // Hide the 'deleting channel' progress dialog, which will also unmask the surrounding CMS in an animated way.
-        this.hostToIFrame.publish('hide-dialog');
-
-        // Wait until the remove-mask animation is finished before returning to the channel overview.
-        window.setTimeout(function () {
-          this.fireEvent('show-channel-overview');
-        }.bind(this), REMOVE_MASK_ANIMATION_MS);
+        this.hostToIFrame.publish('channel-removed-from-overview');
+        this.fireEvent('show-channel-overview');
       }.bind(this));
     },
 
