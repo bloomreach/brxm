@@ -127,14 +127,6 @@
       this.gridPanel.on('channel-selected', channelSelectedHandler, this);
       this.channelIconPanel.on('channel-selected', channelSelectedHandler, this);
 
-      Hippo.ChannelManager.ChannelEditor.Instance.on('mountChanged', function (data) {
-        var channelRecord = this.gridPanel.getChannelByMountId(data.mountId),
-          firstChange = data.oldMountId === null;
-        if (!firstChange && this.selectedChannelId !== channelRecord.get('id')) {
-          this.gridPanel.selectChannel(channelRecord.get('id'));
-        }
-      }, this);
-
       Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
     },
 
