@@ -19,6 +19,8 @@
 
   Ext.namespace('Hippo.ChannelManager.ChannelEditor');
 
+  var REMOVE_MASK_ANIMATION_MS = 400;
+
   Hippo.ChannelManager.ChannelEditor.ChannelEditor = Ext.extend(Hippo.IFramePanel, {
 
     constructor: function(config) {
@@ -53,8 +55,9 @@
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
       this.iframeToHost.subscribe('remove-mask', this._unmaskSurroundings, this);
       this.iframeToHost.subscribe('edit-alter-ego', this._showAlterEgoEditor, this);
+      this.iframeToHost.subscribe('channel-deleted', this._onChannelDeleted, this);
 
-      this.addEvents('open-document-editor');
+      this.addEvents('open-document-editor', 'show-channel-overview');
     },
 
     loadChannel: function(channelId, initialPath) {
@@ -223,7 +226,7 @@
     _unmaskSurroundings: function() {
       $(document.body).children('.channel-editor-mask')
         .addClass('channel-editor-mask-removing')
-        .delay(400)
+        .delay(REMOVE_MASK_ANIMATION_MS)
         .queue(function() {
           $(this).remove();
         });
@@ -244,6 +247,18 @@
       }, this);
 
       alterEgoWindow.show();
+    },
+
+    _onChannelDeleted: function() {
+      this._reloadChannels().when(function () {
+        // Hide the 'deleting channel' progress dialog, which will also unmask the surrounding CMS in an animated way.
+        this.hostToIFrame.publish('hide-dialog');
+
+        // Wait until the remove-mask animation is finished before returning to the channel overview.
+        window.setTimeout(function () {
+          this.fireEvent('show-channel-overview');
+        }.bind(this), REMOVE_MASK_ANIMATION_MS);
+      }.bind(this));
     },
 
     initComponent: function() {

@@ -127,6 +127,8 @@
       this.gridPanel.on('channel-selected', channelSelectedHandler, this);
       this.channelIconPanel.on('channel-selected', channelSelectedHandler, this);
 
+      Hippo.ChannelManager.ChannelEditor.Instance.on('show-channel-overview', this._showChannelOverview, this);
+
       Hippo.ChannelManager.RootPanel.superclass.initComponent.apply(this, arguments);
     },
 
@@ -223,8 +225,8 @@
       }
     },
 
-    showChannelManager: function () {
-      this.layout.setActiveItem(0);
+    _showChannelOverview: function () {
+      this.selectCard(0);
     },
 
     _showChannelEditor: function () {

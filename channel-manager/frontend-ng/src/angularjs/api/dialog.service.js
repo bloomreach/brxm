@@ -20,6 +20,8 @@ export class DialogService {
 
     this.$mdDialog = $mdDialog;
     this.CmsService = CmsService;
+
+    this.CmsService.subscribe('hide-dialog', () => this.hide());
   }
 
   confirm() {

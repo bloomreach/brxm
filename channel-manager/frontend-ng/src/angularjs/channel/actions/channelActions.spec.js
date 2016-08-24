@@ -177,14 +177,14 @@ describe('ChannelActions', () => {
   it('successfully deletes a channel', () => {
     const ChannelActionsCtrl = compileDirectiveAndGetController();
 
+    spyOn(window.APP_TO_CMS, 'publish');
+
     ChannelActionsCtrl.deleteChannel();
     $rootScope.$digest();
 
     expect(ChannelService.deleteChannel).toHaveBeenCalled();
     // make sure the mask was shown
     expect(DialogService.show.calls.mostRecent().args[0].templateUrl).toBeDefined();
-    expect(DialogService.hide).toHaveBeenCalled();
-
-    // TODO; add more validation for returning to channel overview, CHANNELMGR-796
+    expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('channel-deleted');
   });
 });
