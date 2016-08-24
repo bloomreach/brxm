@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
 import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeType;
 
@@ -267,7 +266,7 @@ public class ChannelManagerImpl implements ChannelManager {
             final Node virtualHost = getOrCreateVirtualHost(configRoot, channelUri.getHost());
 
             // Create channel
-            copyOrCreateChannelNode(configRoot, channelId, channel, blueprint);
+            copyOrCreateChannelNode(configRoot, channelId, channel);
 
             // Create or reuse HST configuration
             final Node blueprintNode =  session.getNode(blueprint.getPath());
@@ -319,29 +318,13 @@ public class ChannelManagerImpl implements ChannelManager {
         return contentRootNode;
     }
 
-    private void copyOrCreateChannelNode(final Node configRoot, final String channelId, final Channel channel, final Blueprint blueprint) throws RepositoryException, ChannelException {
+    private void copyOrCreateChannelNode(final Node configRoot, final String channelId, final Channel channel) throws RepositoryException, ChannelException {
         if (!configRoot.hasNode(HstNodeTypes.NODENAME_HST_CHANNELS)) {
             configRoot.addNode(HstNodeTypes.NODENAME_HST_CHANNELS, HstNodeTypes.NODETYPE_HST_CHANNELS);
         }
         Node channelNode = configRoot.getNode(HstNodeTypes.NODENAME_HST_CHANNELS).addNode(channelId,
                 HstNodeTypes.NODETYPE_HST_CHANNEL);
         ChannelPropertyMapper.saveChannel(channelNode, channel);
-
-        // Channel model doesn't contain deletable flag yet, so copy from blueprint directly
-        setChannelDeletableFlag(channelNode, blueprint);
-    }
-
-    private void setChannelDeletableFlag(final Node channelNode, final Blueprint blueprint) throws RepositoryException {
-        final Session session = channelNode.getSession();
-        final Node blueprintNode = session.getNode(blueprint.getPath() + "/" + HstNodeTypes.NODENAME_HST_CHANNEL);
-
-        if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE)) {
-            channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE).remove();
-        }
-        if (blueprintNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE)) {
-            final Value newValue = blueprintNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE).getValue();
-            channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE, newValue);
-        }
     }
 
     private String reuseOrCopyConfiguration(final Session session, final Node configRoot, final Node blueprintNode, final String channelId) throws ChannelException, RepositoryException {
