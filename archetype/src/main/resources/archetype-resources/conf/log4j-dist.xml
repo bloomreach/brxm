@@ -101,29 +101,23 @@
   </logger>
 
   <!-- Site logging -->
-  <logger additivity="false" name="org.hippoecm.hst">
+  <logger name="org.hippoecm.hst">
     <level value="warn"/>
-    <appender-ref ref="site"/>
   </logger>
-  <logger additivity="false" name="org.apache.cxf">
+  <logger name="org.apache.cxf">
     <level value="error"/>
-    <appender-ref ref="site"/>
   </logger>
-  <logger additivity="false" name="javax.ws.rs.core">
+  <logger name="javax.ws.rs.core">
     <level value="error"/>
-    <appender-ref ref="site"/>
   </logger>
-  <logger additivity="false" name="org.apache.commons.pool">
+  <logger name="org.apache.commons.pool">
     <level value="error"/>
-    <appender-ref ref="site"/>
   </logger>
-  <logger additivity="false" name="org.apache.commons.beanutils">
+  <logger name="org.apache.commons.beanutils">
     <level value="error"/>
-    <appender-ref ref="site"/>
   </logger>
-  <logger additivity="false" name="org.hippoecm.hst.core.container.DiagnosticReportingValve">
+  <logger name="org.hippoecm.hst.core.container.DiagnosticReportingValve">
     <level value="info"/>
-    <appender-ref ref="site"/>
   </logger>
 
   <!-- too many caching warnings -->
@@ -165,6 +159,7 @@
   <root>
     <level value="warn"/>
     <appender-ref ref="cms"/>
+    <appender-ref ref="site"/>
   </root>
 
 </log4j:configuration>
