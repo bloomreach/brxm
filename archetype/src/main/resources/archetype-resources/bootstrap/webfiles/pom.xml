@@ -27,7 +27,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>${maven.plugin.resources.version}</version>
         <configuration>
           <includeEmptyDirs>true</includeEmptyDirs>
         </configuration>

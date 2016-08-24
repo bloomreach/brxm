@@ -190,7 +190,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>${dollar}{maven.plugin.buildnumber.version}</version>
         <executions>
           <execution>
             <phase>validate</phase>
@@ -208,7 +207,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>${dollar}{maven.plugin.jar.version}</version>
         <configuration>
           <archive>
             <manifest>
