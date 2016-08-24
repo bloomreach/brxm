@@ -18,7 +18,7 @@
       <destName>site.war</destName>
     </file>
     <file>
-      <source>conf/log4j-prod.xml</source>
+      <source>conf/log4j-dist.xml</source>
       <outputDirectory>conf</outputDirectory>
       <destName>log4j.xml</destName>
     </file>
