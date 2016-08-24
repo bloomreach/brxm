@@ -211,7 +211,7 @@ public class ChannelServiceImplTest {
         EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo);
         EasyMock.replay(channelService);
 
-        channelsNode.getNode("foo").setProperty("hst:deletable", false);
+        channelFoo.setDeletable(false);
         try {
             deleteChannel(session, "foo");
         } catch (ChannelException e) {
@@ -225,7 +225,7 @@ public class ChannelServiceImplTest {
         EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo);
         EasyMock.replay(channelService);
 
-        assertThat(channelService.canChannelBeDeleted(session, "foo"), is(true));
+        assertThat(channelService.canChannelBeDeleted("foo"), is(true));
     }
 
     @Test
@@ -233,18 +233,8 @@ public class ChannelServiceImplTest {
         EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo);
         EasyMock.replay(channelService);
 
-        channelsNode.getNode("foo").setProperty("hst:deletable", false);
-        assertThat(channelService.canChannelBeDeleted(session, "foo"), is(false));
-        EasyMock.verify(channelService);
-    }
-
-    @Test
-    public void channel_cannot_be_deleted_when_hst_deletable_property_is_missing() throws Exception {
-        EasyMock.expect(channelService.getChannel("foo")).andReturn(channelFoo);
-        EasyMock.replay(channelService);
-        channelsNode.getNode("foo").getProperty("hst:deletable").remove();
-
-        assertThat(channelService.canChannelBeDeleted(session, "foo"), is(false));
+        channelFoo.setDeletable(false);
+        assertThat(channelService.canChannelBeDeleted("foo"), is(false));
         EasyMock.verify(channelService);
     }
 
@@ -253,7 +243,7 @@ public class ChannelServiceImplTest {
         EasyMock.expect(channelService.getChannel("bogus")).andThrow(new ChannelNotFoundException("bogus"));
         EasyMock.replay(channelService);
 
-        channelService.canChannelBeDeleted(session, "bogus");
+        channelService.canChannelBeDeleted("bogus");
         EasyMock.verify(channelService);
     }
 
@@ -290,9 +280,9 @@ public class ChannelServiceImplTest {
         channel.setChannelPath("/hst:hst/hst:channels/" + id);
         // strip '-preview' in id if exists because both live and preview channels refer to a single hst:site node
         channel.setHstMountPoint("/hst:hst/hst:sites/" + StringUtils.stripEnd(id, "-preview"));
+        channel.setDeletable(true);
 
-        final Node channelNode = channelsNode.addNode(id, HstNodeTypes.NODETYPE_HST_CHANNEL);
-        channelNode.setProperty("hst:deletable", true);
+        channelsNode.addNode(id, HstNodeTypes.NODETYPE_HST_CHANNEL);
         return channel;
     }
 

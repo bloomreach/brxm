@@ -200,16 +200,16 @@ public class RootResource extends AbstractConfigResource {
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
         session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
 
-        HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         boolean canWrite;
         try {
+            HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
             canWrite = requestContext.getSession().hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
         } catch (RepositoryException e) {
             log.warn("Could not determine authorization", e);
             return error("Could not determine authorization", e);
         }
 
-        final boolean channelDeletionSupported = isChannelDeletionSupported(requestContext, mountId);
+        final boolean channelDeletionSupported = isChannelDeletionSupported(mountId);
 
         // TODO: test whether the user has admin privileges
         final boolean canDeleteChannel = channelDeletionSupported;
@@ -225,13 +225,13 @@ public class RootResource extends AbstractConfigResource {
         return ok("Composer-Mode successful", response);
     }
 
-    private boolean isChannelDeletionSupported(final HstRequestContext requestContext, final String mountId) {
+    private boolean isChannelDeletionSupported(final String mountId) {
         try {
             final Optional<Channel> channel = channelService.getChannelByMountId(mountId);
             if (channel.isPresent()) {
-                return channelService.canChannelBeDeleted(requestContext.getSession(), channel.get().getId());
+                return channelService.canChannelBeDeleted(channel.get().getId());
             }
-        } catch (RepositoryException | ChannelException e) {
+        } catch (ChannelException e) {
             log.debug("Cannot check channel deletion support", e);
             // ignore, consider unsupported.
         }

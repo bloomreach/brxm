@@ -229,13 +229,8 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public boolean canChannelBeDeleted(final Session session, final String channelId) throws ChannelException, RepositoryException {
-        return canChannelBeDeleted(session, getChannel(channelId));
-    }
-
-    private boolean canChannelBeDeleted(final Session session, final Channel channel) throws RepositoryException {
-        final Node channelNode = session.getNode(channel.getChannelPath());
-        return JcrUtils.getBooleanProperty(channelNode, HstNodeTypes.CHANNEL_PROPERTY_DELETABLE, false);
+    public boolean canChannelBeDeleted(final String channelId) throws ChannelException {
+        return getChannel(channelId).isDeletable();
     }
 
     @Override
@@ -247,7 +242,7 @@ public class ChannelServiceImpl implements ChannelService {
 
         final Channel channel = getChannel(channelId);
 
-        if (!canChannelBeDeleted(session, channel)) {
+        if (!channel.isDeletable()) {
             throw new ChannelException("Requested channel cannot be deleted");
         }
 
