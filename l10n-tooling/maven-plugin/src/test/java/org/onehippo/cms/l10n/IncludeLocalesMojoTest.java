@@ -28,18 +28,30 @@ public class IncludeLocalesMojoTest {
 
     @Test
     public void find_previous_micro_version_string() {
-        assertEquals("5", findPreviousMicroVersion("6-SNAPSHOT"));
-        assertEquals("5", findPreviousMicroVersion("6-cmng-psp1-SNAPSHOT"));
+
+        assertEquals("5", findPreviousMicroVersion("6"));
+
+        assertEquals("6", findPreviousMicroVersion("6-SNAPSHOT"));
+        assertEquals("6-SNAPSHOT", findPreviousMicroVersion("6-cmng-psp1-SNAPSHOT"));
         // we do not expect micro version to be prepended with '0' version. If that happens, most likely
         // fallback locales won't work because the fallback from '06' will be '5' and not '05'.
         // we could support that '06' would fallback to '05' instead of '5' but then what would be the
         // fallback of version '10'? Would it be '9' or '09'. We can't know. Hence assume
         // MAJOR.MINOR.MICRO scheme to not have versions prepended with a '0'
-        assertEquals("5", findPreviousMicroVersion("06-cmng-psp1-SNAPSHOT"));
-        assertEquals("9", findPreviousMicroVersion("10-cmng-psp1-SNAPSHOT"));
-        assertEquals("10", findPreviousMicroVersion("11-cmng-psp1-SNAPSHOT"));
+        assertEquals("6-SNAPSHOT", findPreviousMicroVersion("06-cmng-psp1-SNAPSHOT"));
+        assertEquals("10-SNAPSHOT", findPreviousMicroVersion("10-cmng-psp1-SNAPSHOT"));
+        assertEquals("11-SNAPSHOT", findPreviousMicroVersion("11-cmng-psp1-SNAPSHOT"));
+
+        assertEquals("0", findPreviousMicroVersion("0-rc-1"));
+        assertEquals("1", findPreviousMicroVersion("1-rc-1"));
+
         // strange micro version number
-        assertEquals("0", findPreviousMicroVersion("1abc-cmng-psp1-SNAPSHOT"));
+        assertEquals("1-SNAPSHOT", findPreviousMicroVersion("1abc-cmng-psp1-SNAPSHOT"));
+
+
+        assertEquals("1-SNAPSHOT", findPreviousMicroVersion("1-xyz-psp1-SNAPSHOT"));
+        // 4.1.0-xyz-psp1-SNAPSHOT should result that first '4.1.0-SNAPSHOT' is attempted
+        assertEquals("0-SNAPSHOT", findPreviousMicroVersion("0-xyz-psp1-SNAPSHOT"));
     }
 
     @Test(expected = IllegalArgumentException.class)

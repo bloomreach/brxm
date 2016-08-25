@@ -191,8 +191,9 @@ public class IncludeLocalesMojo extends AbstractMojo {
 
     /**
      * Returns the Artifact with version x.y.(z - 1) for {@code artifact} with version x.y.z. If 'z' is not a number but
-     * for example '4-SNAPSHOT' or '4-cmng-psp1-SNAPSHOT', first everything after the number gets removed and then the micro
-     * version gets lowered by 1. If no more fallback artifacts should be tried, {@code null} is returned
+     * for example '4-SNAPSHOT' or '4-cmng-psp1-SNAPSHOT', everything after the number gets removed and then number that is
+     * left is returned as version. Thus for example '4-SNAPSHOT' returns '4' as micro version.
+     * If no more fallback artifacts should be tried, {@code null} is returned
      * @return fallback {@link Artifact} or {@code null} when no more fallback artifacts can be tried
      */
     Artifact findFallbackLocaleArtifact(final Artifact artifact) {
@@ -239,7 +240,34 @@ public class IncludeLocalesMojo extends AbstractMojo {
             }
             return String.valueOf(currentVersion - 1);
         } catch (NumberFormatException e) {
-            return findPreviousMicroVersion(microVersion.substring(0, microVersion.length() - 1));
+            boolean isSnapshot = microVersion.endsWith("-SNAPSHOT");
+            if (isSnapshot) {
+                return findPreviousMicroNumericVersion(microVersion.substring(0, microVersion.length() - "-SNAPSHOT".length()), isSnapshot, false);
+            } else {
+                return findPreviousMicroNumericVersion(microVersion, isSnapshot, false);
+            }
+        }
+    }
+
+    static String findPreviousMicroNumericVersion(final String microVersion,
+                                                  final boolean isSnapshot, final boolean containsAlphaCharsApartFromSnapshot) {
+        if (microVersion == null || microVersion.length() == 0) {
+            throw new IllegalArgumentException("Unexpected micro microVersion since does not start with a number");
+        }
+
+        try {
+            final int currentVersion = Integer.parseInt(microVersion);
+            if (isSnapshot && containsAlphaCharsApartFromSnapshot) {
+                // micro version was something 1-xyz-psp1-SNAPSHOT : return 1-SNAPSHOT
+                return currentVersion + "-SNAPSHOT";
+            }
+
+            // micro version was something 1-SNAPSHOT : return 1
+            return String.valueOf(currentVersion);
+
+        } catch (NumberFormatException e) {
+            // we are either of the form '4-rc-1' or of the form '4-xyx-psp1-SNAPSHOT'
+            return findPreviousMicroNumericVersion(microVersion.substring(0, microVersion.length() - 1), isSnapshot, true);
         }
     }
 
