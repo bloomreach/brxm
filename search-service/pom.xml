@@ -60,8 +60,6 @@
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
 
-    <dependency.solr.version>3.5.0</dependency.solr.version>
-
   </properties>
 
   <repositories>
