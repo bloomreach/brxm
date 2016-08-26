@@ -15,16 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.logout;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
 
 import javax.jcr.Node;
 
 public class LogoutPlugin extends ListViewPlugin<Node> {
+    private SystemInfoDataProvider systemDataProvider = new SystemInfoDataProvider();
 
     public LogoutPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -34,6 +38,10 @@ public class LogoutPlugin extends ListViewPlugin<Node> {
 
         final ILogoutService logoutService = getPluginContext().getService(ILogoutService.SERVICE_ID, ILogoutService.class);
         add(new LogoutLink("logout-link", logoutService));
+
+        final WebMarkupContainer logo = new WebMarkupContainer("logo");
+        logo.add(TitleAttribute.set("Hippo Release Version: " + systemDataProvider.getReleaseVersion()));
+        add(logo);
     }
 
 }

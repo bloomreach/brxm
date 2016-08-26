@@ -204,11 +204,6 @@
   float: right;
 }
 
-.hippo-console-menu-logo {
-  padding: 8px;
-  float: left;
-}
-
 .hippo-console-menu-advanced li {
   float: left;
   margin-left: 10px;
@@ -421,6 +416,14 @@ li.hippo-console-menu-actions-save.session-changes a {
   height: 0;
 }
 
+.hippo-console-menu-logo {
+  float: left;
+  padding: 8px;
+  height: 10px;
+  width: 30px;
+  background: white url('hippo-logo.svg') no-repeat scroll 0 0/30px 30px;
+}
+
 .hippo-console-menu button {
   text-align: center;
   font-size: 12px;
@@ -442,7 +445,7 @@ li.hippo-console-menu-actions-save.session-changes a {
 
 .hippo-console-check {
   position: absolute;
-  left: 200px;
+  left: 100px;
   top: 10px;
   font-size: 11px
 }
