@@ -32,6 +32,7 @@ import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -265,12 +266,35 @@ public class RootResourceTest extends AbstractResourceTest {
     }
 
     @Test
+    public void delete_channel_will_strip_preview_suffix_of_channelId() throws ChannelException {
+        EasyMock.expect(channelService.getChannel("channel-foo")).andThrow(new ChannelNotFoundException("channel-foo"));
+        EasyMock.replay(channelService);
+
+        given()
+            .contentType(JSON)
+        .when()
+            .delete(MOCK_REST_PATH + "channels/channel-foo-preview")
+        .then()
+            .statusCode(404);
+
+        EasyMock.verify(channelService);
+    }
+
+    @Test
     public void deletes_channel_and_publishes_event() throws ChannelException, RepositoryException {
         mock_HstConfigurationUtils_persistChanges(1);
 
+        final List<Mount> mountsOfChannel = Arrays.asList(EasyMock.createMock(Mount.class));
+
         final Channel channelFoo = new Channel("channel-foo");
-        EasyMock.expect(channelService.preDeleteChannel(mockSession, "channel-foo")).andReturn(channelFoo);
-        channelService.deleteChannel(mockSession, channelFoo);
+
+        EasyMock.expect(channelService.getChannel("channel-foo")).andReturn(channelFoo);
+        EasyMock.expect(channelService.findMounts(channelFoo)).andReturn(mountsOfChannel);
+
+        channelService.preDeleteChannel(mockSession, channelFoo, mountsOfChannel);
+        expectLastCall();
+
+        channelService.deleteChannel(mockSession, channelFoo, mountsOfChannel);
         expectLastCall();
 
         final Capture<BeforeChannelDeleteEvent> capturedEvent = EasyMock.newCapture();
@@ -291,6 +315,7 @@ public class RootResourceTest extends AbstractResourceTest {
 
         assertThat(capturedEvent.getValue().getChannel().getId(), is("channel-foo"));
         assertThat(capturedEvent.getValue().getRequestContext().getSession(), is(mockSession));
+        assertThat(capturedEvent.getValue().getMounts(), containsInAnyOrder(mountsOfChannel.toArray()));
     }
 
     @Test
@@ -298,8 +323,14 @@ public class RootResourceTest extends AbstractResourceTest {
         // Make sure HstConfigurationUtils#persistChanges is not called
         mock_HstConfigurationUtils_persistChanges(0);
 
+        final Mount mockMount = EasyMock.createMock(Mount.class);
         final Channel channelFoo = new Channel("channel-foo");
-        EasyMock.expect(channelService.preDeleteChannel(mockSession, "channel-foo")).andReturn(channelFoo);
+
+        EasyMock.expect(channelService.getChannel("channel-foo")).andReturn(channelFoo);
+        channelService.preDeleteChannel(mockSession, channelFoo, Arrays.asList(mockMount));
+        expectLastCall();
+
+        EasyMock.expect(channelService.findMounts(channelFoo)).andReturn(Arrays.asList(mockMount));
 
         // Allow users to cancel event with a parameterized message
         final Map<String, String> parameterMap = new HashMap<>();
@@ -329,11 +360,13 @@ public class RootResourceTest extends AbstractResourceTest {
         PowerMock.verify(HstConfigurationUtils.class);
 
         assertThat(capturedEvent.getValue().getChannel().getId(), is("channel-foo"));
+        assertThat(capturedEvent.getValue().getRequestContext().getSession(), is(mockSession));
+        assertThat(capturedEvent.getValue().getMounts(), containsInAnyOrder(mockMount));
     }
 
     @Test
     public void cannot_delete_non_existent_channel() throws ChannelException, RepositoryException {
-        EasyMock.expect(channelService.preDeleteChannel(mockSession, "channel-foo"))
+        EasyMock.expect(channelService.getChannel("channel-foo"))
                 .andThrow(new ChannelNotFoundException("channel-foo"));
 
         replay(channelService);

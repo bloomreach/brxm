@@ -44,25 +44,25 @@ public interface ChannelService {
 
     /**
      * Validates conditions before return a deletable channel. This method should be called before
-     * {@link #deleteChannel(Session, Channel)}
+     * {@link #deleteChannel(Session, Channel, List<Mount>)}
      *
      * @param session
-     * @param channelId Id of the channel to be deleted
-     * @return Object representing identified channel.
+     * @param channel the channel to be deleted
      * @throws ChannelException
      * @throws RepositoryException
      */
-    Channel preDeleteChannel(Session session, String channelId) throws ChannelException, RepositoryException;
+    void preDeleteChannel(Session session, Channel channel, List<Mount> mountsOfChannel) throws ChannelException, RepositoryException;
 
     /**
      * Remove channel configurations nodes (hst:channel, hst:configuration, hst:site, hst:mount, hst:virtualhost)
      *
      * @param session
      * @param channel channel to be deleted
+     * @param mountsOfChannel mounts binding to the channel
      * @throws RepositoryException
      * @throws ChannelException
      */
-    void deleteChannel(Session session, Channel channel) throws RepositoryException, ChannelException;
+    void deleteChannel(Session session, Channel channel, List<Mount> mountsOfChannel) throws RepositoryException, ChannelException;
 
     /**
      * Find all mounts binding to the given channel

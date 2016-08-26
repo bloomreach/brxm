@@ -16,7 +16,10 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.api;
 
+import java.util.List;
+
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +28,12 @@ public class BeforeChannelDeleteEvent extends RuntimeExceptionEvent {
     private static final Logger log = LoggerFactory.getLogger(BeforeChannelDeleteEvent.class);
 
     private transient final HstRequestContext requestContext;
+    private final List<Mount> mounts;
 
-    public BeforeChannelDeleteEvent(final Channel channel, final HstRequestContext requestContext) {
+    public BeforeChannelDeleteEvent(final Channel channel, final List<Mount> mountsOfChannel, final HstRequestContext requestContext) {
         super(channel);
         this.requestContext = requestContext;
+        this.mounts = mountsOfChannel;
     }
 
     public Channel getChannel() {
@@ -50,5 +55,12 @@ public class BeforeChannelDeleteEvent extends RuntimeExceptionEvent {
                 ", channel=" + getChannel().toString() +
                 ", exception=" + getException() +
                 '}';
+    }
+
+    /**
+     * Return all mounts binding to the deleting channel
+     */
+    public List<Mount> getMounts() {
+        return mounts;
     }
 }

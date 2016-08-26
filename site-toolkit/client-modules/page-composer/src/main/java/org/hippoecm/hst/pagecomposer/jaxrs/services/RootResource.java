@@ -40,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -164,14 +165,22 @@ public class RootResource extends AbstractConfigResource {
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteChannel(@PathParam("id") String channelId) {
+        if (StringUtils.endsWith(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX)) {
+            // strip the preview suffix
+            channelId = StringUtils.stripEnd(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX);
+        }
+
         try {
             final HstRequestContext hstRequestContext = RequestContextProvider.get();
             final Session session = hstRequestContext.getSession();
-            final Channel channel = channelService.preDeleteChannel(session, channelId);
+            final Channel channel = channelService.getChannel(channelId);
+            final List<Mount> mountsOfChannel = channelService.findMounts(channel);
 
-            publishSynchronousEvent(new BeforeChannelDeleteEvent(channel, hstRequestContext));
+            channelService.preDeleteChannel(session, channel, mountsOfChannel);
 
-            channelService.deleteChannel(session, channel);
+            publishSynchronousEvent(new BeforeChannelDeleteEvent(channel, mountsOfChannel, hstRequestContext));
+
+            channelService.deleteChannel(session, channel, mountsOfChannel);
             HstConfigurationUtils.persistChanges(session);
 
             return Response.ok().build();

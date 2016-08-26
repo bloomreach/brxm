@@ -233,35 +233,24 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Channel preDeleteChannel(final Session session, String channelId) throws ChannelException, RepositoryException {
-        if (channelId.endsWith(HstConfigurationServiceImpl.PREVIEW_SUFFIX)) {
-            // strip the preview suffix
-            channelId = channelId.substring(0, channelId.length() - HstConfigurationServiceImpl.PREVIEW_SUFFIX.length());
-        }
-
-        final Channel channel = getChannel(channelId);
-
+    public void preDeleteChannel(final Session session, final Channel channel, List<Mount> mountsOfChannel) throws ChannelException, RepositoryException {
         if (!channel.isDeletable()) {
             throw new ChannelException("Requested channel cannot be deleted");
         }
 
-        final List<Mount> allMountsOfChannel = findMounts(channel);
         final ValidatorBuilder preValidatorBuilder = ValidatorBuilder.builder()
-                .add(validatorFactory.getHasNoChildMountNodeValidator(allMountsOfChannel));
+                .add(validatorFactory.getHasNoChildMountNodeValidator(mountsOfChannel));
 
         preValidatorBuilder.build()
                 .validate(getRequestContext());
-
-        return channel;
     }
 
     @Override
-    public void deleteChannel(final Session session, final Channel channel) throws RepositoryException, ChannelException {
-
+    public void deleteChannel(Session session, Channel channel, List<Mount> mountsOfChannel) throws RepositoryException, ChannelException {
         removeConfigurationNodes(session, channel);
         removeSiteNode(session, channel);
         removeChannelNodes(session, channel.getChannelPath());
-        removeMountNodes(session, findMounts(channel));
+        removeMountNodes(session, mountsOfChannel);
     }
 
     private HstRequestContext getRequestContext() {
@@ -313,7 +302,7 @@ public class ChannelServiceImpl implements ChannelService {
     private List<Mount> loadAllMounts() {
         final VirtualHosts virtualHosts = getAllVirtualHosts();
 
-        final ArrayList<Mount> allMounts = new ArrayList<>();
+        final List<Mount> allMounts = new ArrayList<>();
         for (String hostGroup : virtualHosts.getHostGroupNames()) {
             final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroup);
             if (mountsByHostGroup != null) {
