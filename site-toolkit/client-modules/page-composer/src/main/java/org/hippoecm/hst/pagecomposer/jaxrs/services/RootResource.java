@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import javax.annotation.security.RolesAllowed;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -171,6 +172,7 @@ public class RootResource extends AbstractConfigResource {
     @DELETE
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(CHANNEL_MANAGER_ADMIN_ROLE)
     public Response deleteChannel(@PathParam("id") String channelId) {
         try {
             final HstRequestContext hstRequestContext = RequestContextProvider.get();
@@ -208,8 +210,7 @@ public class RootResource extends AbstractConfigResource {
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
         session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
 
-        HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
-
+        final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         boolean canWrite;
         try {
             canWrite = requestContext.getSession().hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
@@ -218,11 +219,11 @@ public class RootResource extends AbstractConfigResource {
             return error("Could not determine authorization", e);
         }
 
-        final boolean channelDeletionSupported = isChannelDeletionSupported(mountId);
+        final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId);
+        final boolean hasAdminRole = securityModel.isUserInRule(requestContext, CHANNEL_MANAGER_ADMIN_ROLE);
 
-        final boolean canDeleteChannel = channelDeletionSupported;
-
-        final boolean canManageChanges = securityModel.isUserInRule(requestContext, CHANNEL_MANAGER_ADMIN_ROLE);
+        final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole;
+        final boolean canManageChanges = hasAdminRole;
 
         HandshakeResponse response = new HandshakeResponse();
         response.setCanWrite(canWrite);
