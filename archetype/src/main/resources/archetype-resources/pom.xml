@@ -72,6 +72,7 @@
     <easymock.version>3.1</easymock.version>
      
     <repo.bootstrap>true</repo.bootstrap>
+    <content-module-deploy-dir>shared/lib</content-module-deploy-dir>
 
     <hippo.cms.locales>nl,de,fr,es,zh</hippo.cms.locales>
 
@@ -242,14 +243,6 @@
 
     <profile>
       <id>cargo.run</id>
-      <dependencies>
-        <dependency>
-          <groupId>${groupId}</groupId>
-          <artifactId>${rootArtifactId}-bootstrap-content</artifactId>
-          <version>${dollar}{project.version}</version>
-          <scope>runtime</scope>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
           <plugin>
@@ -272,6 +265,12 @@
                     <tofile>logging.properties</tofile>
                   </configfile>
                 </configfiles>
+                <files>
+                  <file>
+                    <file>${project.basedir}/bootstrap/content/target/${rootArtifactId}-bootstrap-content-${dollar}{project.version}.jar</file>
+                    <todir>${content-module-deploy-dir}</todir>
+                  </file>
+                </files>
               </configuration>
               <deployables>
                 <deployable>
@@ -297,13 +296,6 @@
                 </deployable>
               </deployables>
               <container>
-                <dependencies combine.children="append">
-                  <dependency>
-                    <groupId>${groupId}</groupId>
-                    <artifactId>${rootArtifactId}-bootstrap-content</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
-                </dependencies>
                 <systemProperties>
                   <log4j.configuration>file:${dollar}{project.basedir}/conf/log4j-dev.xml</log4j.configuration>
                   <rebel.log4j-plugin>true</rebel.log4j-plugin>
@@ -316,6 +308,15 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <profile>
+      <!-- additional profile to combine with cargo:run to *not* bootstrap the local content module:
+           $ mvn -P cargo.run,without-content -->
+      <id>without-content</id>
+      <properties>
+        <content-module-deploy-dir>temp</content-module-deploy-dir>
+      </properties>
     </profile>
 
     <profile>

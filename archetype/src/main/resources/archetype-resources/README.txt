@@ -7,9 +7,19 @@ From the project root folder, execute:
   mvn clean verify
   mvn -P cargo.run
 
+By default this includes and bootstraps repository content from the bootstrap/content module,
+which is deployed by cargo to the Tomcat shared/lib.
+If you want or need to start *without* bootstrapping the local content module, for example when testing
+against an existing repository, you can specify the *additional* Maven profile without-content to do so:
+
+  mvn -P cargo.run,without-content
+
+This additional profile will modify the target location for the content module to the Tomcat temp/ folder so that
+it won't be seen and picked up during the repository bootstrap process.
+
 Access the Hippo Essentials at http://localhost:8080/essentials.
 After your project is set up, access the CMS at http://localhost:8080/cms and the site at http://localhost:8080/site.
-Logs are located in target/tomcat7x/logs
+Logs are located in target/tomcat8x/logs
 
 Building distributions
 ======================
