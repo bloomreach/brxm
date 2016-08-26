@@ -206,6 +206,7 @@
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource" parent="abstractConfigResource">
               <property name="rootPath" value="${hst.configuration.rootPath}"/>
               <property name="channelService" ref="channelService"/>
+              <property name="securityModel" ref="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel"/>
             </bean>
           </constructor-arg>
         </bean>

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import javax.annotation.security.RolesAllowed;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -48,10 +49,13 @@ import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
+import org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
@@ -61,9 +65,14 @@ public class RootResource extends AbstractConfigResource {
     private boolean isCrossChannelPageCopySupported;
 
     private ChannelService channelService;
+    private SecurityModel securityModel;
 
     public void setChannelService(final ChannelService channelService) {
         this.channelService = channelService;
+    }
+
+    public void setSecurityModel(final SecurityModel securityModel) {
+        this.securityModel = securityModel;
     }
 
     public void setRootPath(final String rootPath) {
@@ -163,6 +172,7 @@ public class RootResource extends AbstractConfigResource {
     @DELETE
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(CHANNEL_MANAGER_ADMIN_ROLE)
     public Response deleteChannel(@PathParam("id") String channelId) {
         try {
             final HstRequestContext hstRequestContext = RequestContextProvider.get();
@@ -200,20 +210,20 @@ public class RootResource extends AbstractConfigResource {
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
         session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
 
+        final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         boolean canWrite;
         try {
-            HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
             canWrite = requestContext.getSession().hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
         } catch (RepositoryException e) {
             log.warn("Could not determine authorization", e);
             return error("Could not determine authorization", e);
         }
 
-        final boolean channelDeletionSupported = isChannelDeletionSupported(mountId);
+        final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId);
+        final boolean hasAdminRole = securityModel.isUserInRule(requestContext, CHANNEL_MANAGER_ADMIN_ROLE);
 
-        // TODO: test whether the user has admin privileges
-        final boolean canDeleteChannel = channelDeletionSupported;
-        final boolean canManageChanges = true;
+        final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole;
+        final boolean canManageChanges = hasAdminRole;
 
         HandshakeResponse response = new HandshakeResponse();
         response.setCanWrite(canWrite);

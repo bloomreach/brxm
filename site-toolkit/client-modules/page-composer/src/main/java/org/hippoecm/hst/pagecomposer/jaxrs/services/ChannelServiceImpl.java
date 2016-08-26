@@ -51,6 +51,7 @@ import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
@@ -247,18 +248,14 @@ public class ChannelServiceImpl implements ChannelService {
         }
 
         final List<Mount> allMountsOfChannel = findMounts(channel);
-        final ValidatorBuilder preValidatorBuilder = ValidatorBuilder.builder()
-                .add(validatorFactory.getHasNoChildMountNodeValidator(allMountsOfChannel));
-
-        preValidatorBuilder.build()
-                .validate(getRequestContext());
+        final Validator hasNoChildMounts = validatorFactory.getHasNoChildMountNodeValidator(allMountsOfChannel);
+        ValidatorBuilder.builder().add(hasNoChildMounts).build().validate(getRequestContext());
 
         return channel;
     }
 
     @Override
     public void deleteChannel(final Session session, final Channel channel) throws RepositoryException, ChannelException {
-
         removeConfigurationNodes(session, channel);
         removeSiteNode(session, channel);
         removeChannelNodes(session, channel.getChannelPath());
