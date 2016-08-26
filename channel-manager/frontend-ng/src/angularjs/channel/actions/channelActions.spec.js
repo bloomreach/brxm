@@ -188,11 +188,11 @@ describe('ChannelActions', () => {
     expect(ChannelService.deleteChannel).toHaveBeenCalled();
     // make sure the mask was shown
     expect(DialogService.show.calls.mostRecent().args[0].templateUrl).toBeDefined();
-    expect(CmsService.subscribeOnce).toHaveBeenCalledWith('channel-removed-from-overview', jasmine.any(Function));
     expect(CmsService.publish).toHaveBeenCalledWith('channel-deleted');
+    expect(CmsService.subscribeOnce).toHaveBeenCalledWith('channel-removed-from-overview', jasmine.any(Function));
+    const channelRemovedFromOverviewCallback = CmsService.subscribeOnce.calls.mostRecent().args[1];
 
-    // mock that the ChannelEditor has removed the channel from the overview
-    window.CMS_TO_APP.publish('channel-removed-from-overview');
+    channelRemovedFromOverviewCallback();
     expect(DialogService.hide).toHaveBeenCalled();
   });
 });
