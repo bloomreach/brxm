@@ -81,4 +81,29 @@
       <sv:value>902.3</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="frontend-console-console-logout-item">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/console/console/logout</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>service.menu.item</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>902.2</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="frontend-console-console-menu-item">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>902.3</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropdelete" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/console/console/menu/item</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>

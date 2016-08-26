@@ -22,7 +22,7 @@
   border-bottom: 1px solid #666666;
 }
 
-/* TODO: this will probably break after the work on the CMS root plugin, replace #layout-doc with .layout-doc should be enough */
+  /* TODO: this will probably break after the work on the CMS root plugin, replace #layout-doc with .layout-doc should be enough */
 #layout-doc > div.yui-layout-unit-center > div.yui-layout-wrap {
   border-right: 1px solid #666666;
   border-bottom: 1px solid #666666;
@@ -42,32 +42,25 @@
   height: 298px;
 }
 
-.hippo-console-menu-advanced {
-  position: absolute;
-  top: 0;
-  right: 150px;
-}
-
 .hippo-console-save {
-  position: absolute;
-  top: 37px;
-  right: 5px;
+  float:right;
+  padding: 7px;
 }
 
 .hippo-console-breadcrumbs {
-  font-weight: normal;
   background: #32629b;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 563px;
-  margin-top: 10px;
-  height: 21px;
+}
+
+.hippo-console-breadcrumbs::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 0;
 }
 
 .hippo-console-tree-add {
-  position: absolute;
-  top: 38px;
-  left: 5px;
+  padding: 7px;
+  float:left;
 }
 
 .hippo-console-tree-add a {
@@ -83,10 +76,6 @@
   left: 21px;
   border-bottom: 1px solid #666666;
   padding: 3px;
-}
-
-.hippo-console-breadcrumbs {
-  margin-top: 30px;
 }
 
 .hippo-console-tree .hippo-tree {
@@ -206,7 +195,18 @@
 }
 
 .hippo-console-menu-advanced {
-  padding: 10px;
+  padding: 8px;
+  float: right;
+}
+
+.hippo-console-menu-logout {
+  padding: 8px;
+  float: right;
+}
+
+.hippo-console-menu-logo {
+  padding: 8px;
+  float: left;
 }
 
 .hippo-console-menu-advanced li {
@@ -266,10 +266,6 @@ li.hippo-console-menu-actions-save.session-changes a {
 .hippo-console-tree-sorter a:hover, .hippo-console-save a:hover, .hippo-console-tree-add a:hover {
   color: white;
   background: #1f3f63;
-}
-
-.hippo-console-tree-add {
-  clear: left;
 }
 
 .hippo-console-tree-add li span {
@@ -418,6 +414,13 @@ li.hippo-console-menu-actions-save.session-changes a {
   vertical-align: bottom
 }
 
+.hippo-console-logout::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 0;
+}
+
 .hippo-console-menu button {
   text-align: center;
   font-size: 12px;
@@ -425,9 +428,6 @@ li.hippo-console-menu-actions-save.session-changes a {
 }
 
 .hippo-console-logout {
-  position: absolute;
-  right: 20px;
-  top: 10px;
   font-size: 11px
 }
 
@@ -442,7 +442,7 @@ li.hippo-console-menu-actions-save.session-changes a {
 
 .hippo-console-check {
   position: absolute;
-  left: 20px;
+  left: 200px;
   top: 10px;
   font-size: 11px
 }

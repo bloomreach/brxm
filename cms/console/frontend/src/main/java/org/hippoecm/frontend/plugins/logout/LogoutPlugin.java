@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ILogoutService;
-import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.ListViewPlugin;
 
-public class LogoutPlugin extends RenderPlugin {
+import javax.jcr.Node;
+
+public class LogoutPlugin extends ListViewPlugin<Node> {
 
     public LogoutPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);

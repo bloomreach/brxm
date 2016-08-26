@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  *  limitations under the License.
  */
 package org.hippoecm.frontend.plugins.console.menu;
-
-import javax.jcr.Node;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.Broadcast;
@@ -45,9 +43,11 @@ import org.hippoecm.frontend.plugins.console.menu.reset.ResetDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialog;
 import org.hippoecm.frontend.plugins.console.menu.save.SaveDialogLink;
 import org.hippoecm.frontend.plugins.standards.sort.NodeSortPanel;
-import org.hippoecm.frontend.service.render.ListViewPlugin;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 
-public class MenuPlugin extends ListViewPlugin<Node> {
+import javax.jcr.Node;
+
+public class MenuPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
