@@ -15,10 +15,11 @@
  */
 
 export class ChannelActionsCtrl {
-  constructor($translate, ChannelService, DialogService, FeedbackService, SessionService) {
+  constructor($translate, ChannelService, CmsService, DialogService, FeedbackService, SessionService) {
     'ngInject';
     this.$translate = $translate;
     this.ChannelService = ChannelService;
+    this.CmsService = CmsService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.SessionService = SessionService;
@@ -46,8 +47,8 @@ export class ChannelActionsCtrl {
         this._showDeleteProgress();
         this.ChannelService.deleteChannel()
           .then(() => {
-            this._hideDeleteProgress();
-            // TODO CHANNELMGR-796 return to channel overview
+            this.CmsService.subscribeOnce('channel-removed-from-overview', () => this._hideDeleteProgress());
+            this.CmsService.publish('channel-deleted');
           })
           .catch((response) => {
             this._hideDeleteProgress();

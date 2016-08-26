@@ -53,8 +53,9 @@
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
       this.iframeToHost.subscribe('remove-mask', this._unmaskSurroundings, this);
       this.iframeToHost.subscribe('edit-alter-ego', this._showAlterEgoEditor, this);
+      this.iframeToHost.subscribe('channel-deleted', this._onChannelDeleted, this);
 
-      this.addEvents('open-document-editor');
+      this.addEvents('open-document-editor', 'show-channel-overview');
     },
 
     loadChannel: function(channelId, initialPath) {
@@ -244,6 +245,13 @@
       }, this);
 
       alterEgoWindow.show();
+    },
+
+    _onChannelDeleted: function() {
+      this._reloadChannels().when(function () {
+        this.hostToIFrame.publish('channel-removed-from-overview');
+        this.fireEvent('show-channel-overview');
+      }.bind(this));
     },
 
     initComponent: function() {
