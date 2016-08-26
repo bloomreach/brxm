@@ -57,7 +57,6 @@ import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
-import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -301,25 +300,27 @@ public class ChannelServiceImpl implements ChannelService {
         }
     }
 
-    /**
-     * Find all mounts binding to the given channel
-     */
-    private List<Mount> findMounts(final Channel channel) {
-        final String mountPoint = channel.getHstMountPoint();
+    @Override
+    public List<Mount> findMounts(final Channel channel) {
+        final List<Mount> allMounts = loadAllMounts();
 
+        final String mountPoint = channel.getHstMountPoint();
+        return allMounts.stream()
+                .filter(mount -> StringUtils.equals(mountPoint, mount.getMountPoint()))
+                .collect(Collectors.toList());
+    }
+
+    private List<Mount> loadAllMounts() {
         final VirtualHosts virtualHosts = getAllVirtualHosts();
 
-        List<Mount> allMounts = new ArrayList<>();
+        final ArrayList<Mount> allMounts = new ArrayList<>();
         for (String hostGroup : virtualHosts.getHostGroupNames()) {
             final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroup);
             if (mountsByHostGroup != null) {
                 allMounts.addAll(mountsByHostGroup);
             }
         }
-
-        return allMounts.stream()
-                .filter(mount -> StringUtils.equals(mountPoint, mount.getMountPoint()))
-                .collect(Collectors.toList());
+        return allMounts;
     }
 
     /**

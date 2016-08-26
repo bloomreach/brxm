@@ -25,6 +25,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 
 public interface ChannelService {
@@ -62,4 +63,9 @@ public interface ChannelService {
      * @throws ChannelException
      */
     void deleteChannel(Session session, Channel channel) throws RepositoryException, ChannelException;
+
+    /**
+     * Find all mounts binding to the given channel
+     */
+    List<Mount> findMounts(final Channel channel);
 }
