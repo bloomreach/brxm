@@ -6,17 +6,6 @@
   <!-- A P P E N D E R S                                                      -->
   <!-- ====================================================================== -->
 
-  <!-- catalina.log -->
-  <appender name="catalina" class="org.apache.log4j.RollingFileAppender">
-    <param name="File" value="${catalina.base}/logs/catalina.log"/>
-    <param name="maxFileSize" value="10MB" />
-    <param name="maxBackupIndex" value="1" />
-    <param name="Append" value="true"/>
-    <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} [%t] %-5p [%C.%M():%L] %m%n"/>
-    </layout>
-  </appender>
-
   <!-- hippo-cms.log -->
   <appender name="cms" class="org.apache.log4j.RollingFileAppender">
     <param name="File" value="${catalina.base}/logs/hippo-cms.log"/>
@@ -64,20 +53,6 @@
   <!-- ====================================================================== -->
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
-
-  <!-- Tomcat logging -->
-  <logger additivity="false" name="org.apache.juli">
-    <level value="info"/>
-    <appender-ref ref="catalina"/>
-  </logger>
-  <logger additivity="false" name="org.apache.tomcat">
-    <level value="info"/>
-    <appender-ref ref="catalina"/>
-  </logger>
-  <logger additivity="false" name="org.apache.catalina">
-    <level value="info"/>
-    <appender-ref ref="catalina"/>
-  </logger>
 
   <!-- CMS logging -->
   <logger name="org.apache">
