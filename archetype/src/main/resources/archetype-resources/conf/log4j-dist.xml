@@ -64,6 +64,9 @@
   <logger name="com.onehippo">
     <level value="error"/>
   </logger>
+  <logger name="org.onehippo">
+    <level value="error"/>
+  </logger>
 
   <!-- audit logging -->
   <logger additivity="false" name="org.hippoecm.repository.api.Workflow">
@@ -106,9 +109,9 @@
     <level value="error"/>
   </logger>
 
-  <!-- ignore Freemarker errors -->
-  <logger additivity="false" name="freemarker">
-    <level value="fatal"/>
+  <!-- Only Freemarker errors -->
+  <logger name="freemarker">
+    <level value="error"/>
   </logger>
 
   <!-- more info wanted -->
