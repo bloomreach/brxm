@@ -5,7 +5,7 @@
       <outputDirectory>shared/lib</outputDirectory>
       <useProjectArtifact>false</useProjectArtifact>
       <includes>
-        <include>${groupId}:${artifactId}-bootstrap-content</include>
+        <include>${project.groupId}:${project.artifactId}-bootstrap-content</include>
       </includes>
     </dependencySet>
   </dependencySets>

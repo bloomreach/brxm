@@ -379,8 +379,8 @@
           <scope>provided</scope>
         </dependency>
         <dependency>
-          <groupId>${dollar}{groupId}</groupId>
-          <artifactId>${dollar}{artifactId}-bootstrap-content</artifactId>
+          <groupId>${dollar}{project.groupId}</groupId>
+          <artifactId>${dollar}{project.artifactId}-bootstrap-content</artifactId>
           <version>${dollar}{project.version}</version>
         </dependency>
       </dependencies>
