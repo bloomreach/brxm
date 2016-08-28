@@ -43,11 +43,6 @@
     </dependency>
     <dependency>
       <groupId>${groupId}</groupId>
-      <artifactId>${rootArtifactId}-bootstrap-content</artifactId>
-      <version>${dollar}{project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${groupId}</groupId>
       <artifactId>${rootArtifactId}-bootstrap-webfiles</artifactId>
       <version>${dollar}{project.version}</version>
     </dependency>
