@@ -32,11 +32,6 @@
     </jsp-property-group>
   </jsp-config>
 
-  <!-- I18N  -->
-  <context-param>
-    <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
-    <param-value>messages</param-value>
-  </context-param>
   <!--
     HST-2 Content Beans Annotation Configuration. You can configure it
     with either xml or classes location filter. For example, if the
