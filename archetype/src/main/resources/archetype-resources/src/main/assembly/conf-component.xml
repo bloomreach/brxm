@@ -2,7 +2,7 @@
            xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/component/1.1.2 http://maven.apache.org/xsd/component-1.1.2.xsd">
   <files>
     <file>
-      <source>conf/log4j-prod.xml</source>
+      <source>conf/log4j-dist.xml</source>
       <outputDirectory>conf</outputDirectory>
       <destName>log4j.xml</destName>
     </file>
