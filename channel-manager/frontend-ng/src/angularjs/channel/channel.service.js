@@ -82,7 +82,7 @@ export class ChannelService {
   }
 
   switchToChannel(contextPath, id) {
-    this._load(id, contextPath)
+    return this._load(id, contextPath)
       .then((channelId) => {
         this.CmsService.publish('switch-channel', channelId); // update breadcrumb.
       });
