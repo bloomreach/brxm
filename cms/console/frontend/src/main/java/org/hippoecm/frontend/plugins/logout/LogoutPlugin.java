@@ -15,12 +15,16 @@
  */
 package org.hippoecm.frontend.plugins.logout;
 
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogLink;
+import org.hippoecm.frontend.dialog.IDialogFactory;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.console.menu.systeminfo.SystemInfoDialog;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.service.render.ListViewPlugin;
@@ -39,7 +43,14 @@ public class LogoutPlugin extends ListViewPlugin<Node> {
         final ILogoutService logoutService = getPluginContext().getService(ILogoutService.SERVICE_ID, ILogoutService.class);
         add(new LogoutLink("logout-link", logoutService));
 
-        final WebMarkupContainer logo = new WebMarkupContainer("logo");
+        IDialogFactory dialogFactory = new IDialogFactory() {
+            private static final long serialVersionUID = 1L;
+
+            public AbstractDialog<Void> createDialog() {
+                return new SystemInfoDialog();
+            }
+        };
+        final DialogLink logo = new DialogLink("logo", null, dialogFactory, getDialogService());
         logo.add(TitleAttribute.set("Hippo Release Version: " + systemDataProvider.getReleaseVersion()));
         add(logo);
     }

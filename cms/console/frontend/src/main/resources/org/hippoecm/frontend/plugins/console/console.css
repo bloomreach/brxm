@@ -416,7 +416,7 @@ li.hippo-console-menu-actions-save.session-changes a {
   height: 0;
 }
 
-.hippo-console-menu-logo {
+.hippo-console-menu-logo a {
   float: left;
   padding: 8px;
   height: 10px;
@@ -935,4 +935,16 @@ body.hippo-root div.yui-log-container {
 .node-dialog input[type="text"],
 .property-dialog input[type="text"] {
   padding: 2px;
+}
+
+.infotable {
+  width: 100%;
+}
+
+.infotable td {
+  padding: 2px;
+}
+
+.infotable tr.odd td {
+  background-color: #e2e2e2;
 }
