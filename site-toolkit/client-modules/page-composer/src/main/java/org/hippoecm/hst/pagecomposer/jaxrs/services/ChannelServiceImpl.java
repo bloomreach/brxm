@@ -58,7 +58,6 @@ import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.rest.beans.InformationObjectsBuilder;
-import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -235,31 +234,21 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Channel preDeleteChannel(final Session session, String channelId) throws ChannelException, RepositoryException {
-        if (channelId.endsWith(HstConfigurationServiceImpl.PREVIEW_SUFFIX)) {
-            // strip the preview suffix
-            channelId = channelId.substring(0, channelId.length() - HstConfigurationServiceImpl.PREVIEW_SUFFIX.length());
-        }
-
-        final Channel channel = getChannel(channelId);
-
+    public void preDeleteChannel(final Session session, final Channel channel, List<Mount> mountsOfChannel) throws ChannelException, RepositoryException {
         if (!channel.isDeletable()) {
             throw new ChannelException("Requested channel cannot be deleted");
         }
 
-        final List<Mount> allMountsOfChannel = findMounts(channel);
-        final Validator hasNoChildMounts = validatorFactory.getHasNoChildMountNodeValidator(allMountsOfChannel);
+        final Validator hasNoChildMounts = validatorFactory.getHasNoChildMountNodeValidator(mountsOfChannel);
         ValidatorBuilder.builder().add(hasNoChildMounts).build().validate(getRequestContext());
-
-        return channel;
     }
 
     @Override
-    public void deleteChannel(final Session session, final Channel channel) throws RepositoryException, ChannelException {
+    public void deleteChannel(Session session, Channel channel, List<Mount> mountsOfChannel) throws RepositoryException, ChannelException {
         removeConfigurationNodes(session, channel);
         removeSiteNode(session, channel);
         removeChannelNodes(session, channel.getChannelPath());
-        removeMountNodes(session, findMounts(channel));
+        removeMountNodes(session, mountsOfChannel);
     }
 
     private HstRequestContext getRequestContext() {
@@ -298,25 +287,27 @@ public class ChannelServiceImpl implements ChannelService {
         }
     }
 
-    /**
-     * Find all mounts binding to the given channel
-     */
-    private List<Mount> findMounts(final Channel channel) {
-        final String mountPoint = channel.getHstMountPoint();
+    @Override
+    public List<Mount> findMounts(final Channel channel) {
+        final List<Mount> allMounts = loadAllMounts();
 
+        final String mountPoint = channel.getHstMountPoint();
+        return allMounts.stream()
+                .filter(mount -> StringUtils.equals(mountPoint, mount.getMountPoint()))
+                .collect(Collectors.toList());
+    }
+
+    private List<Mount> loadAllMounts() {
         final VirtualHosts virtualHosts = getAllVirtualHosts();
 
-        List<Mount> allMounts = new ArrayList<>();
+        final List<Mount> allMounts = new ArrayList<>();
         for (String hostGroup : virtualHosts.getHostGroupNames()) {
             final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroup);
             if (mountsByHostGroup != null) {
                 allMounts.addAll(mountsByHostGroup);
             }
         }
-
-        return allMounts.stream()
-                .filter(mount -> StringUtils.equals(mountPoint, mount.getMountPoint()))
-                .collect(Collectors.toList());
+        return allMounts;
     }
 
     /**

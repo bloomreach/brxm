@@ -138,10 +138,10 @@ public class HstConfigurationServiceImpl implements HstConfigurationService {
 
         final String relativeConfigPath = "../" + configId;
         try {
-            final List<String> inheritsFrom = Arrays.asList(JcrUtils.getMultipleStringProperty(configNode,
-                    HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, new String[0]));
+            final String[] inheritsFrom = JcrUtils.getMultipleStringProperty(configNode,
+                    HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM, new String[0]);
 
-            return inheritsFrom.stream()
+            return Arrays.stream(inheritsFrom)
                     .filter(relativeConfigPath::equals)
                     .findFirst()
                     .isPresent();
