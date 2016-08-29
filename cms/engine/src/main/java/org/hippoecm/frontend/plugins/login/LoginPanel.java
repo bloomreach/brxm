@@ -25,6 +25,7 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
+import org.apache.cxf.common.util.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -190,7 +191,7 @@ public class LoginPanel extends Panel {
                     new IChoiceRenderer<String>() {
                         public String getDisplayValue(String key) {
                             final Locale locale = new Locale(key);
-                            return locale.getDisplayLanguage(locale);
+                            return StringUtils.capitalize(locale.getDisplayLanguage(locale));
                         }
 
                         public String getIdValue(String object, int index) {
