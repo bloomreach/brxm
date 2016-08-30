@@ -763,7 +763,7 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     private void flushUnflushedChildrenHeaders(final HstComponentWindow hcw) throws IOException {
-        if (hcw == null || isActionResponse || isResourceResponse) {
+        if (hcw == null || isActionResponse) {
             return;
         }
         for (String name : hcw.getChildWindowNames()) {
