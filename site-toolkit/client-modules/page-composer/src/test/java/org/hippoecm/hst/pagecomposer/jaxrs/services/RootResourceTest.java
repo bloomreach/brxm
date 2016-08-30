@@ -267,13 +267,13 @@ public class RootResourceTest extends AbstractResourceTest {
 
     @Test
     public void delete_channel_will_strip_preview_suffix_of_channelId() throws ChannelException {
-        EasyMock.expect(channelService.getChannel("channel-foo")).andThrow(new ChannelNotFoundException("channel-foo"));
+        EasyMock.expect(channelService.getChannel("channel-foi")).andThrow(new ChannelNotFoundException("channel-foi"));
         EasyMock.replay(channelService);
 
         given()
             .contentType(JSON)
         .when()
-            .delete(MOCK_REST_PATH + "channels/channel-foo-preview")
+            .delete(MOCK_REST_PATH + "channels/channel-foi-preview")
         .then()
             .statusCode(404);
 
