@@ -85,7 +85,6 @@ public class HstServletResponseState implements HstResponseState {
     protected boolean isRenderResponse;
     protected boolean isResourceResponse;
     protected boolean isMimeResponse;
-    private final boolean isComponentRenderingResponse;
     protected boolean isStateAwareResponse;
 
     protected Locale defaultLocale;
@@ -137,8 +136,6 @@ public class HstServletResponseState implements HstResponseState {
         isActionResponse = (requestContext.getBaseURL().getActionWindowReferenceNamespace() != null);
         isResourceResponse = (requestContext.getBaseURL().getResourceWindowReferenceNamespace() != null);
         isRenderResponse = (!this.isActionResponse && !this.isResourceResponse);
-
-        isComponentRenderingResponse = (requestContext.getBaseURL().getComponentRenderingWindowReferenceNamespace() != null);
 
         isStateAwareResponse = isActionResponse;
         isMimeResponse = isRenderResponse || isResourceResponse;
@@ -219,7 +216,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#addCookie(javax.servlet.http.Cookie)
      */
     public void addCookie(Cookie cookie) {
@@ -233,7 +230,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#addDateHeader(java.lang.String, long)
      */
     public void addDateHeader(String name, long date) {
@@ -242,7 +239,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#addHeader(java.lang.String,
      * java.lang.String)
      */
@@ -257,7 +254,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#addIntHeader(java.lang.String, int)
      */
     public void addIntHeader(String name, int value) {
@@ -266,7 +263,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#containsHeader(java.lang.String)
      */
     public boolean containsHeader(String name) {
@@ -275,7 +272,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#sendError(int, java.lang.String)
      */
     public void sendError(int errorCode, String errorMessage) throws IOException {
@@ -289,7 +286,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#sendError(int)
      */
     public void sendError(int errorCode) throws IOException {
@@ -306,7 +303,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#sendRedirect(java.lang.String)
      */
     public void sendRedirect(String redirectLocation) throws IOException {
@@ -342,7 +339,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#setDateHeader(java.lang.String, long)
      */
     public void setDateHeader(String name, long date) {
@@ -351,7 +348,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#setHeader(java.lang.String,
      * java.lang.String)
      */
@@ -371,7 +368,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#setIntHeader(java.lang.String, int)
      */
     public void setIntHeader(String name, int value) {
@@ -380,7 +377,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#setStatus(int, java.lang.String)
      */
     public void setStatus(int statusCode, String message) {
@@ -389,7 +386,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.http.HttpServletResponseWrapper#setStatus(int)
      */
     public void setStatus(int statusCode) {
@@ -426,7 +423,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#flushBuffer()
      */
     public void flushBuffer() throws IOException {
@@ -437,7 +434,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#getBufferSize()
      */
     public int getBufferSize() {
@@ -446,7 +443,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#getCharacterEncoding()
      */
     public String getCharacterEncoding() {
@@ -455,7 +452,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#getContentType()
      */
     public String getContentType() {
@@ -464,7 +461,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#getLocale()
      */
     public Locale getLocale() {
@@ -473,7 +470,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#getOutputStream()
      */
     public ServletOutputStream getOutputStream() throws IOException {
@@ -503,7 +500,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#getWriter()
      */
     public PrintWriter getWriter() throws IOException {
@@ -522,7 +519,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#isCommitted()
      */
     public boolean isCommitted() {
@@ -531,7 +528,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#reset()
      */
     public void reset() {
@@ -550,7 +547,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#resetBuffer()
      */
     public void resetBuffer() {
@@ -569,7 +566,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#setBufferSize(int)
      */
     public void setBufferSize(int size) {
@@ -578,7 +575,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#setCharacterEncoding(java.lang.String)
      */
     public void setCharacterEncoding(String charset) {
@@ -590,7 +587,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#setContentLength(int)
      */
     public void setContentLength(int len) {
@@ -611,7 +608,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#setContentType(java.lang.String)
      */
     public void setContentType(String type) {
@@ -626,7 +623,7 @@ public class HstServletResponseState implements HstResponseState {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.servlet.ServletResponseWrapper#setLocale(java.util.Locale)
      */
     public void setLocale(Locale locale) {
@@ -765,8 +762,8 @@ public class HstServletResponseState implements HstResponseState {
         doFlush(writer);
     }
 
-    private static void flushUnflushedChildrenHeaders(final HstComponentWindow hcw) throws IOException {
-        if (hcw == null) {
+    private void flushUnflushedChildrenHeaders(final HstComponentWindow hcw) throws IOException {
+        if (hcw == null || isActionResponse || isResourceResponse) {
             return;
         }
         for (String name : hcw.getChildWindowNames()) {
@@ -774,7 +771,7 @@ public class HstServletResponseState implements HstResponseState {
             if (child == null) {
                 continue;
             }
-            if (child.isVisible() && !child.getResponseState().isFlushed()) {
+            if (child.isVisible() && child.getResponseState() != null && !child.getResponseState().isFlushed()) {
                 log.info("Child window '{}' of window '{}' never got flushed. Flushing its possible present response headers now.",
                         child.getName(), hcw.getName());
                 // if this child contains unflushed children, those children will be triggered by child#doFlush
