@@ -177,7 +177,7 @@ public class RootResource extends AbstractConfigResource {
     public Response deleteChannel(@PathParam("id") String channelId) {
         if (StringUtils.endsWith(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX)) {
             // strip the preview suffix
-            channelId = StringUtils.stripEnd(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX);
+            channelId = StringUtils.removeEnd(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX);
         }
 
         try {
