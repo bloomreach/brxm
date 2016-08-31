@@ -22,6 +22,7 @@ describe('HippoIframeService', () => {
   let iframe;
   let HippoIframeService;
   let ChannelService;
+  const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`;
 
   beforeEach(() => {
     module('hippo-cm');
@@ -50,7 +51,7 @@ describe('HippoIframeService', () => {
         fail(e);
       }
     });
-    iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`);
+    iframe.attr('src', iframeSrc);
   }
 
   it('does not reload the iframe when no page has been loaded yet', (done) => {
@@ -136,10 +137,11 @@ describe('HippoIframeService', () => {
 
   it('triggers a reload when trying to load the current page', (done) => {
     ChannelService.extractRenderPathInfo.and.returnValue('/target');
+    ChannelService.makePath.and.returnValue(iframeSrc);
     spyOn(HippoIframeService, 'reload');
     loadIframeFixture(() => { // give the iframe something to reload.
       HippoIframeService.signalPageLoadCompleted();
-      HippoIframeService.load('/target');
+      HippoIframeService.load('dummy');
       expect(HippoIframeService.reload).toHaveBeenCalled();
       done();
     });
