@@ -27,6 +27,7 @@ class FilterConstraint {
         LT, // Less than
         LE, // Less than or equal to
         BETWEEN,
+        NOT_BETWEEN,
         CONTAINS,
         NOT_CONTAINS,
         LIKE,

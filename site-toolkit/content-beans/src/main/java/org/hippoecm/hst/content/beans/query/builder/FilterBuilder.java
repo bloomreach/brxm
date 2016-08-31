@@ -25,18 +25,69 @@ import org.hippoecm.repository.util.DateTools;
 
 public abstract class FilterBuilder {
 
+    private HstQueryBuilder queryBuilder;
+    private boolean negated;
+
     protected FilterBuilder() {
     }
 
-    public abstract Filter build(final HstQueryBuilder queryBuilder, final Session session) throws FilterException;
+    public final Filter build(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
+        Filter filter = doBuild(queryBuilder, session);
 
-    public abstract FilterBuilder queryBuilder(final HstQueryBuilder queryBuilder);
+        if (filter != null && negated()) {
+            filter.negate();
+        }
+
+        return filter;
+    }
+
+    protected abstract Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException;
+
+    public FilterBuilder queryBuilder(final HstQueryBuilder queryBuilder) {
+        this.queryBuilder = queryBuilder;
+        return this;
+    }
+
+    protected HstQueryBuilder queryBuilder() {
+        return queryBuilder;
+    }
+
+    public FilterBuilder negate() {
+        this.negated = !negated;
+        return this;
+    }
+
+    protected boolean negated() {
+        return negated;
+    }
 
     public abstract FilterBuilder equalTo(Object value);
 
-    public abstract FilterBuilder equalTo(Calendar value, DateTools.Resolution resolution);
+    public abstract FilterBuilder equalTo(Calendar value, DateTools.Resolution dateResolution);
 
     public abstract FilterBuilder equalToCaseInsensitive(String value);
+
+    public abstract FilterBuilder notEqualTo(Object value);
+
+    public abstract FilterBuilder notEqualTo(Calendar value, DateTools.Resolution dateResolution);
+
+    public abstract FilterBuilder notEqualToCaseInsensitive(String value);
+
+    public abstract FilterBuilder greaterOrEqualThan(Object value);
+
+    public abstract FilterBuilder greaterOrEqualThan(Calendar value, DateTools.Resolution dateResolution);
+
+    public abstract FilterBuilder greaterThan(Object value);
+
+    public abstract FilterBuilder greaterThan(Calendar value, DateTools.Resolution dateResolution);
+
+    public abstract FilterBuilder lessOrEqualThan(Object value);
+
+    public abstract FilterBuilder lessOrEqualThan(Calendar value, DateTools.Resolution dateResolution);
+
+    public abstract FilterBuilder lessThan(Object value);
+
+    public abstract FilterBuilder lessThan(Calendar value, DateTools.Resolution dateResolution);
 
     public abstract FilterBuilder contains(String fullTextSearch);
 
@@ -44,9 +95,19 @@ public abstract class FilterBuilder {
 
     public abstract FilterBuilder between(Object value1, Object value2);
 
-    public abstract FilterBuilder between(Calendar start, Calendar end, DateTools.Resolution resolution);
+    public abstract FilterBuilder between(Calendar start, Calendar end, DateTools.Resolution dateResolution);
+
+    public abstract FilterBuilder notBetween(Object value1, Object value2);
+
+    public abstract FilterBuilder notBetween(Calendar start, Calendar end, DateTools.Resolution dateResolution);
 
     public abstract FilterBuilder like(String value);
+
+    public abstract FilterBuilder notLike(String value);
+
+    public abstract FilterBuilder notNull();
+
+    public abstract FilterBuilder isNull();
 
     public abstract FilterBuilder jcrExpression(String jcrExpression);
 

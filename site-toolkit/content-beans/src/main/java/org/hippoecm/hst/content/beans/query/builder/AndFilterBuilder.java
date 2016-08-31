@@ -21,7 +21,7 @@ import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 
-class AndFilterBuilder extends AbstractFilterBuilderAdapter {
+class AndFilterBuilder extends FilterBuilderAdapter {
 
     private FilterBuilder [] filterBuilders;
 
@@ -30,7 +30,7 @@ class AndFilterBuilder extends AbstractFilterBuilderAdapter {
         this.filterBuilders = filterBuilders;
     }
 
-    public Filter build(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
+    protected Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
         Filter filter = new FilterImpl(session, queryBuilder.defaultResolution());
 
         if (filterBuilders != null) {

@@ -176,6 +176,46 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
 
+    @Test
+    public void test_withFilterAndNegate() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        Filter nestedFilter1 = hstQuery.createFilter();
+        nestedFilter1.addEqualTo("myhippoproject:customid", "123");
+        nestedFilter1.negate();
+        Filter nestedFilter2 = hstQuery.createFilter();
+        Filter nestedFilter21 = hstQuery.createFilter();
+        nestedFilter21.addLike("myhippoproject:title", "Hello%");
+        Filter nestedFilter22 = hstQuery.createFilter();
+        nestedFilter22.addContains("myhippoproject:description", "foo");
+        nestedFilter2.addOrFilter(nestedFilter21);
+        nestedFilter2.addOrFilter(nestedFilter22);
+        filter.addAndFilter(nestedFilter1);
+        filter.addAndFilter(nestedFilter2);
+        filter.negate();
+        hstQuery.setFilter(filter);
+        String xpathQuery = hstQuery.getQueryAsString(true);
+        log.debug("xpathQuery: {}", xpathQuery);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scope(baseContentBean)
+                .filter(
+                        and(
+                                filter("myhippoproject:customid").equalTo("123").negate(),
+                                or(
+                                        filter("myhippoproject:title").like("Hello%"),
+                                        filter("myhippoproject:description").contains("foo")
+                                        )
+                                ).negate()
+                        )
+                .build();
+
+        String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
+        log.debug("xpathQueryInFluent: {}", xpathQueryInFluent);
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
     private void assertHstQueriesEquals(final HstQuery hstQuery1, final HstQuery hstQuery2) throws Exception {
         assertEquals(hstQuery1.getQueryAsString(true), hstQuery2.getQueryAsString(true));
         assertEquals(hstQuery1.getOffset(), hstQuery2.getOffset());
