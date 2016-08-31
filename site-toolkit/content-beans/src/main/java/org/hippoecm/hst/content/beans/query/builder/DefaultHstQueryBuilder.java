@@ -15,6 +15,10 @@
  */
 package org.hippoecm.hst.content.beans.query.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -39,7 +43,42 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
 
     @Override
     public HstQuery build(final Session session) throws QueryException {
-        HstQuery hstQuery = getHstQueryManager(session).createQuery(getScope());
+        HstQuery hstQuery = null;
+
+        Node [] scopes = getScopes();
+
+        if (scopes == null || scopes.length == 0) {
+            throw new QueryException("Empty scopes.");
+        }
+
+        String [] primaryNodeTypes = getPrimaryNodeTypes();
+        Class<? extends HippoBean> [] filterBeanTyes = getFilterBeanTypes();
+
+        if (scopes.length == 1) {
+            if (primaryNodeTypes != null && primaryNodeTypes.length > 0) {
+                hstQuery = getHstQueryManager(session).createQuery(scopes[0], includeSubTypes(), primaryNodeTypes);
+            } else if (filterBeanTyes != null && filterBeanTyes.length > 0) {
+                hstQuery = getHstQueryManager(session).createQuery(scopes[0], includeSubTypes(), filterBeanTyes);
+            } else {
+                hstQuery = getHstQueryManager(session).createQuery(scopes[0]);
+            }
+        } else {
+            if (primaryNodeTypes != null && primaryNodeTypes.length > 0) {
+                hstQuery = getHstQueryManager(session).createQuery((Node) null, includeSubTypes(), primaryNodeTypes);
+            } else if (filterBeanTyes != null && filterBeanTyes.length > 0) {
+                hstQuery = getHstQueryManager(session).createQuery((Node) null, includeSubTypes(), filterBeanTyes);
+            } else {
+                hstQuery = getHstQueryManager(session).createQuery((Node) null);
+            }
+
+            hstQuery.addScopes(scopes);
+        }
+
+        Node [] excludeScopes = getExcludeScopes();
+
+        if (excludeScopes != null && excludeScopes.length > 0) {
+            hstQuery.excludeScopes(excludeScopes);
+        }
 
         if (filter() != null) {
             hstQuery.setFilter(filter().build(this, session));
@@ -74,22 +113,64 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
         return hstQuery;
     }
 
-    private HippoBean getScope() throws QueryException {
-        HippoBean scope = scope();
+    private Node [] getScopes() throws QueryException {
+        Node [] scopes = null;
 
-        if (scope == null) {
+        List<Node> scopesList = scopes();
+
+        if (scopesList == null || scopesList.isEmpty()) {
             final HstRequestContext requestContext = RequestContextProvider.get();
 
             if (requestContext != null) {
-                scope = requestContext.getSiteContentBaseBean();
+                if (scopesList == null) {
+                    scopesList = new ArrayList<>();
+                }
+
+                scopesList.add(requestContext.getSiteContentBaseBean().getNode());
             }
         }
 
-        if (scope == null) {
-            throw new QueryException("scope is unavailable.");
+        if (scopesList != null) {
+            scopes = scopesList.toArray(new Node[scopesList.size()]);
         }
 
-        return scope;
+        return scopes;
+    }
+
+    private Node [] getExcludeScopes() throws QueryException {
+        Node [] excludeScopes = null;
+
+        List<Node> excludeScopesList = excludeScopes();
+
+        if (excludeScopesList != null) {
+            excludeScopes = excludeScopesList.toArray(new Node[excludeScopesList.size()]);
+        }
+
+        return excludeScopes;
+    }
+
+    private String [] getPrimaryNodeTypes() {
+        String [] primaryNodeTypes = null;
+
+        List<String> primaryNodeTypeList = primaryNodeTypes();
+
+        if (primaryNodeTypeList != null && !primaryNodeTypeList.isEmpty()) {
+            primaryNodeTypes = primaryNodeTypeList.toArray(new String[primaryNodeTypeList.size()]);
+        }
+
+        return primaryNodeTypes;
+    }
+
+    private Class<? extends HippoBean> [] getFilterBeanTypes() {
+        Class<? extends HippoBean> [] filterBeanTypes = null;
+
+        List<Class<? extends HippoBean>> filterBeanTypeList = filterBeanTypes();
+
+        if (filterBeanTypeList != null && !filterBeanTypeList.isEmpty()) {
+            filterBeanTypes = filterBeanTypeList.toArray(new Class[filterBeanTypeList.size()]);
+        }
+
+        return filterBeanTypes;
     }
 
     private HstQueryManager getHstQueryManager(final Session session) throws QueryException {

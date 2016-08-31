@@ -18,6 +18,7 @@ package org.hippoecm.hst.content.beans.query.builder;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -63,7 +64,13 @@ public abstract class HstQueryBuilder {
      */
 
     private DateTools.Resolution defaultResolution;
-    private HippoBean scopeBean;
+    private List<Node> scopes = new ArrayList<>();
+    private List<Node> excludeScopes = new ArrayList<>();
+
+    private boolean includeSubTypes;
+    private List<String> primaryNodeTypes;
+    private List<Class<? extends HippoBean>> filterBeanTypes;
+
     private FilterBuilder filterBuilder;
     private List<OrderByConstruct> orderByConstructs;
     private Integer offset;
@@ -79,6 +86,51 @@ public abstract class HstQueryBuilder {
 
     abstract public HstQuery build(final Session session) throws QueryException;
 
+    public HstQueryBuilder includeSubTypes(boolean includeSubTypes) {
+        this.includeSubTypes = includeSubTypes;
+        return this;
+    }
+
+    protected boolean includeSubTypes() {
+        return includeSubTypes;
+    }
+
+    public HstQueryBuilder primaryNodeTypes(String ... primaryNodeTypeNames) {
+        if (primaryNodeTypeNames != null) {
+            if (primaryNodeTypes == null) {
+                primaryNodeTypes = new ArrayList<>();
+            }
+
+            for (String primaryNodeTypeName : primaryNodeTypeNames) {
+                primaryNodeTypes.add(primaryNodeTypeName);
+            }
+        }
+
+        return this;
+    }
+
+    protected List<String> primaryNodeTypes() {
+        return primaryNodeTypes;
+    }
+
+    public HstQueryBuilder filterBeanTypes(Class<? extends HippoBean> ... filterBeanClazzes) {
+        if (filterBeanClazzes != null) {
+            if (filterBeanTypes == null) {
+                filterBeanTypes = new ArrayList<>();
+            }
+
+            for (Class<? extends HippoBean> filterBeanClazz : filterBeanClazzes) {
+                filterBeanTypes.add(filterBeanClazz);
+            }
+        }
+
+        return this;
+    }
+
+    protected List<Class<? extends HippoBean>> filterBeanTypes() {
+        return filterBeanTypes;
+    }
+
     public HstQueryBuilder defaultResolution(final DateTools.Resolution defaultResolution) {
         this.defaultResolution = defaultResolution;
         return this;
@@ -88,13 +140,52 @@ public abstract class HstQueryBuilder {
         return defaultResolution;
     }
 
-    public HstQueryBuilder scope(final HippoBean scopeBean) {
-        this.scopeBean = scopeBean;
+    public HstQueryBuilder scope(Node ... scopeNodes) {
+        if (scopeNodes != null) {
+            for (Node scopeNode : scopeNodes) {
+                scopes.add(scopeNode);
+            }
+        }
+
         return this;
     }
 
-    protected HippoBean scope() {
-        return scopeBean;
+    public HstQueryBuilder scope(HippoBean ... scopeBeans) {
+        if (scopeBeans != null) {
+            for (HippoBean scopeBean : scopeBeans) {
+                scopes.add(scopeBean.getNode());
+            }
+        }
+
+        return this;
+    }
+
+    protected List<Node> scopes() {
+        return scopes;
+    }
+
+    public HstQueryBuilder excludeScope(Node ... excludeScopeNodes) {
+        if (excludeScopeNodes != null) {
+            for (Node excludeScopeNode : excludeScopeNodes) {
+                excludeScopes.add(excludeScopeNode);
+            }
+        }
+
+        return this;
+    }
+
+    public HstQueryBuilder excludeScope(HippoBean ... excludeScopeBeans) {
+        if (excludeScopeBeans != null) {
+            for (HippoBean excludeScopeBean : excludeScopeBeans) {
+                excludeScopes.add(excludeScopeBean.getNode());
+            }
+        }
+
+        return this;
+    }
+
+    protected List<Node> excludeScopes() {
+        return excludeScopes;
     }
 
     public HstQueryBuilder filter(final FilterBuilder filterBuilder) {
