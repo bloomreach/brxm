@@ -483,6 +483,11 @@
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
           </exclusion>
+          <!-- Exclude geronimo-stax-api-1.0-spec, the JRE 6+ already provides the api-1.2 spec itself -->
+          <exclusion>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-stax-api_1.0_spec</artifactId>
+          </exclusion>
         </exclusions>
       </dependency>
       <dependency>
