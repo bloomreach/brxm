@@ -17,11 +17,6 @@ package org.hippoecm.hst.configuration.channel;
 
 import java.util.Map;
 
-import org.hippoecm.hst.core.parameters.FieldGroup;
-import org.hippoecm.hst.core.parameters.FieldGroupList;
-import org.hippoecm.hst.core.parameters.JcrPath;
-import org.hippoecm.hst.core.parameters.Parameter;
-
 /**
  * Base type for channel info interfaces.
  */

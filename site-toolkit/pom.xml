@@ -661,7 +661,20 @@
         <configuration>
           <aggregate>true</aggregate>
           <destDir>userapidocs</destDir>
-          <sourcepath>${basedir}/api/src/main/java:${basedir}/mock/src/main/java:${basedir}/commons/src/main/java:${basedir}/content-beans/src/main/java:${basedir}/client/src/main/java</sourcepath>
+          <sourcepath>
+            ${basedir}/api/src/main/java:
+            ${basedir}/mock/src/main/java:
+            ${basedir}/commons/src/main/java:
+            ${basedir}/content-beans/src/main/java:
+            ${basedir}/client/src/main/java:
+            ${basedir}/components/jaxrs/src/main/java:
+            ${basedir}/components/resourcebundle/src/main/java:
+            ${basedir}/components/restapi/src/main/java:
+            ${basedir}/components/rewriter/src/main/java:
+            ${basedir}/components/security/src/main/java
+          </sourcepath>
+          <!-- disable JDK 8 doclint for javadoc -->
+          <additionalparam>-Xdoclint:none</additionalparam>
         </configuration>
         <reportSets>
           <reportSet>
@@ -680,6 +693,13 @@
         <configuration>
           <taglib.src.dir>client/src/main/resources/META-INF</taglib.src.dir>
           <title>HST ${project.version} JSP tag</title>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <configuration>
+          <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
         </configuration>
       </plugin>
     </plugins>

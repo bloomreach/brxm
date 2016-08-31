@@ -175,7 +175,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         boolean namedDispatching = false;
         String dispatchUrl = ((HstResponseImpl) hstResponse).getRenderPath();
 
-        if (StringUtils.isBlank(dispatchUrl)) {
+        if (StringUtils.isBlank(dispatchUrl) && component != null) {
 
             String templateParameter = null;
             try {
@@ -184,7 +184,7 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 final TemplateParameterInfo parameterInfoProxy = hstRequest.getRequestContext().getParameterInfoProxyFactory()
                         .createParameterInfoProxy(
                                 HstParameterInfoProxyFactoryImpl.TEMPLATE_PARAMETER_INFO_HOLDER.getParametersInfo(),
-                                window.getComponent().getComponentConfiguration(),
+                                component.getComponentConfiguration(),
                                 hstRequest,
                                 (parameterValue, returnType) -> parameterValue);
 
