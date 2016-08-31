@@ -85,7 +85,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
 
         hstQueryInFluent = HstQueryBuilder.create()
-                .scope(baseContentBean)
+                .scopes(baseContentBean)
                 .build();
 
         xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
@@ -114,7 +114,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         log.debug("xpathQuery: {}", xpathQuery);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create()
-                .scope(baseContentBean)
+                .scopes(baseContentBean)
                 .filter(
                         and(
                                 filter("myhippoproject:customid").equalTo("123"),
@@ -156,7 +156,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         log.debug("xpathQuery: {}", xpathQuery);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create()
-                .scope(baseContentBean)
+                .scopes(baseContentBean)
                 .filter(
                         and(
                                 filter("myhippoproject:customid").equalTo("123"),
@@ -198,7 +198,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         log.debug("xpathQuery: {}", xpathQuery);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create()
-                .scope(baseContentBean)
+                .scopes(baseContentBean)
                 .filter(
                         and(
                                 filter("myhippoproject:customid").equalTo("123").negate(),

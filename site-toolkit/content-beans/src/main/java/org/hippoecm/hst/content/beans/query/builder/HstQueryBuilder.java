@@ -140,7 +140,7 @@ public abstract class HstQueryBuilder {
         return defaultResolution;
     }
 
-    public HstQueryBuilder scope(Node ... scopeNodes) {
+    public HstQueryBuilder scopes(Node ... scopeNodes) {
         if (scopeNodes != null) {
             for (Node scopeNode : scopeNodes) {
                 scopes.add(scopeNode);
@@ -150,7 +150,7 @@ public abstract class HstQueryBuilder {
         return this;
     }
 
-    public HstQueryBuilder scope(HippoBean ... scopeBeans) {
+    public HstQueryBuilder scopes(HippoBean ... scopeBeans) {
         if (scopeBeans != null) {
             for (HippoBean scopeBean : scopeBeans) {
                 scopes.add(scopeBean.getNode());
@@ -164,7 +164,7 @@ public abstract class HstQueryBuilder {
         return scopes;
     }
 
-    public HstQueryBuilder excludeScope(Node ... excludeScopeNodes) {
+    public HstQueryBuilder excludeScopes(Node ... excludeScopeNodes) {
         if (excludeScopeNodes != null) {
             for (Node excludeScopeNode : excludeScopeNodes) {
                 excludeScopes.add(excludeScopeNode);
@@ -174,7 +174,7 @@ public abstract class HstQueryBuilder {
         return this;
     }
 
-    public HstQueryBuilder excludeScope(HippoBean ... excludeScopeBeans) {
+    public HstQueryBuilder excludeScopes(HippoBean ... excludeScopeBeans) {
         if (excludeScopeBeans != null) {
             for (HippoBean excludeScopeBean : excludeScopeBeans) {
                 excludeScopes.add(excludeScopeBean.getNode());
