@@ -38,6 +38,7 @@ class FieldFilterBuilder extends FilterBuilderAdapter {
         this.fieldName = fieldName;
     }
 
+    @Override
     protected Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
         Filter filter = null;
 

@@ -30,6 +30,7 @@ class OrFilterBuilder extends FilterBuilderAdapter {
         this.filterBuilders = filterBuilders;
     }
 
+    @Override
     protected Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
         Filter filter = new FilterImpl(session, queryBuilder.defaultResolution());
 
