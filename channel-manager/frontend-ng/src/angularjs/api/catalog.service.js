@@ -19,7 +19,7 @@ export class CatalogService {
     'ngInject';
 
     this.HstService = HstService;
-    this.components = [];
+    this._resetComponents();
   }
 
   load(mountId) {
@@ -27,13 +27,23 @@ export class CatalogService {
       .then((response) => {
         if (response && response.data) {
           const components = response.data;
+          // Use the component name if there is no label
+          components.forEach((component) => {
+            component.label = component.label || component.name;
+          });
           components.sort((a, b) => a.label.localeCompare(b.label));
           this.components = components;
+        } else {
+          this._resetComponents();
         }
       }, () => {
         // ignore error, but hide components button if channel has no components.
-        this.components = [];
+        this._resetComponents();
       });
+  }
+
+  _resetComponents() {
+    this.components = [];
   }
 
   getComponents() {
