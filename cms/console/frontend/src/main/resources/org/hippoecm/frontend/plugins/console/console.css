@@ -418,10 +418,10 @@ li.hippo-console-menu-actions-save.session-changes a {
 
 .hippo-console-menu-logo a {
   float: left;
-  padding: 8px;
-  height: 10px;
+  padding: 5px 9px 9px 9px;
+  height: 20px;
   width: 30px;
-  background: white url('hippo-logo.svg') no-repeat scroll 0 0/30px 30px;
+  background: white url('hippo-logo.svg') no-repeat scroll 0 0/40px 50px;
 }
 
 .hippo-console-menu button {
@@ -831,6 +831,7 @@ body.hippo-root div.yui-log-container {
 /* ================= */
 .auto-export-state-enabled span {
   color: red;
+  padding: 8px;
 }
 
 /* Node & Property dialog */
@@ -948,3 +949,45 @@ body.hippo-root div.yui-log-container {
 .infotable tr.odd td {
   background-color: #e2e2e2;
 }
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  cursor: pointer;
+  padding: 8px;
+}
+
+.dropdown-content {
+  display: none;
+  position: fixed;
+  background-color: #f9f9f9;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4);
+  margin-top: 5px;
+}
+
+.dropdown-content li {
+  float: none;
+  margin: 0px;
+}
+
+.dropdown-content a {
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #e2e2e2;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:hover .dropbtn {
+  background-color:#4587d6;
+  color: white;
+ }

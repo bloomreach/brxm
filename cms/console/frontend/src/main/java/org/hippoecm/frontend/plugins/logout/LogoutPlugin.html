@@ -26,6 +26,38 @@
     </ul>
     <ul class="hippo-console-menu-advanced">
       <li wicket:id="view"><span wicket:id="item" /></li>
+      <li class="dropdown">
+        <span class="dropbtn">XML</span>
+        <ul class="dropdown-content">
+          <li wicket:id="xml-import"></li>
+          <li wicket:id="xml-export"></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <span class="dropbtn">CND</span>
+        <ul class="dropdown-content">
+          <li wicket:id="cnd-export"></li>
+          <li wicket:id="cnd-import"></li>
+          <li wicket:id="add-namespace"></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <span class="dropbtn">Node</span>
+        <ul class="dropdown-content">
+          <li wicket:id="reset-node"></li>
+          <li wicket:id="create-patch"></li>
+          <li wicket:id="apply-patch"></li>
+          <li wicket:id="view-permissions"></li>
+          <li wicket:id="view-workflow"></li>
+          <li wicket:id="view-references"></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <span class="dropbtn">System</span>
+        <ul class="dropdown-content">
+          <li wicket:id="system-info"></li>
+        </ul>
+      </li>
     </ul>
   </wicket:panel>
 </html>

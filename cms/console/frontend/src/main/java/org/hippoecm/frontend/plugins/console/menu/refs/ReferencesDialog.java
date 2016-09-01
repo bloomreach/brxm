@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class ReferencesDialog extends AbstractDialog<Node> {
 
     static final Logger log = LoggerFactory.getLogger(ReferencesDialog.class);
 
-    public ReferencesDialog(final ReferencesPlugin plugin) {
+    public ReferencesDialog(final RenderService plugin) {
         final IModel<Node> nodeModel = (IModel<Node>) plugin.getDefaultModel();
         setModel(nodeModel);
 

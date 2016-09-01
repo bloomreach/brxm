@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,9 +32,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.frontend.model.IModelReference;
+import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,8 +75,8 @@ public class PermissionsDialog extends AbstractDialog<Node> {
 
     static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
-    public PermissionsDialog(PermissionsPlugin plugin) {
-        final IModel<Node> nodeModel = (IModel<Node>)plugin.getDefaultModel();
+    public PermissionsDialog(final IModelReference<Node> modelReference) {
+        final IModel<Node> nodeModel = modelReference.getModel();
         setModel(nodeModel);
 
         final Label usernameLabel = new Label("username", "Unknown");
