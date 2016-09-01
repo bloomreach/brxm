@@ -123,7 +123,10 @@ public class Main extends PluginApplication {
     public final static String MAXUPLOAD_PARAM = "upload-limit";
     public final static String ENCRYPT_URLS = "encrypt-urls";
     public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
+
     public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
+    public final static String PLUGIN_APPLICATION_VALUE_CMS = "cms";
+    public final static String PLUGIN_APPLICATION_VALUE_CONSOLE = "console";
 
     // comma separated init parameter
     public final static String ACCEPTED_ORIGIN_WHITELIST = "accepted-origin-whitelist";
@@ -507,7 +510,7 @@ public class Main extends PluginApplication {
 
     @Override
     public String getPluginApplicationName() {
-        return getConfigurationParameter(PLUGIN_APPLICATION_NAME_PARAMETER, "cms");
+        return getConfigurationParameter(PLUGIN_APPLICATION_NAME_PARAMETER, PLUGIN_APPLICATION_VALUE_CMS);
     }
 
     @Override
