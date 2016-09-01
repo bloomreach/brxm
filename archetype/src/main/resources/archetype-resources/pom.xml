@@ -378,11 +378,6 @@
           <artifactId>log4j</artifactId>
           <scope>provided</scope>
         </dependency>
-        <dependency>
-          <groupId>${dollar}{project.groupId}</groupId>
-          <artifactId>${dollar}{project.artifactId}-bootstrap-content</artifactId>
-          <version>${dollar}{project.version}</version>
-        </dependency>
       </dependencies>
       <build>
         <defaultGoal>validate</defaultGoal>
