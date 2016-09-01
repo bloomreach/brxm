@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,18 +139,6 @@ public final class MatcherUtils {
         }
 
         return result;
-    }
-
-    public static String replaceDefaultAndAnyMatchersWithMatchedNodes(final String path,
-                                                                      final List<String> matchedNodes) {
-        String newPath = path;
-        for (String matchedNode : matchedNodes) {
-            Matcher matcher = ANY_OR_DEFAULT.matcher(newPath);
-            if (matcher.find()) {
-                newPath = matcher.replaceFirst(matchedNode);
-            }
-        }
-        return newPath;
     }
 
     /**

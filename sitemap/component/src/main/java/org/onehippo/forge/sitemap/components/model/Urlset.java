@@ -60,8 +60,6 @@ import static java.util.Collections.synchronizedList;
 @XmlRootElement(name = "urlset")
 public class Urlset {
 
-    public static final int MAX_SUPPORTED_URLS_PER_FILE = 50000;
-
     private List<Url> urls;
 
     public Urlset() {
@@ -98,17 +96,6 @@ public class Urlset {
     @XmlElement(name = "url", required = true)
     public List<Url> getUrls() {
         return this.urls;
-    }
-
-    /**
-     * Adds the specified url to the Urlset if this Url isn't already in the Urlset
-     *
-     * @param url the Url to add
-     */
-    public void addUrlThatDoesntExistInTheListYet(Url url) {
-        if (!urls.contains(url)) {
-            urls.add(url);
-        }
     }
 
 }

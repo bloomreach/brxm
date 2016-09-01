@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,13 +18,9 @@ package org.onehippo.forge.sitemap.generator;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 
 import javax.xml.bind.JAXBContext;
@@ -37,81 +33,25 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenuItem;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
-import org.hippoecm.hst.util.HstSiteMapUtils;
-import org.onehippo.forge.sitemap.components.UrlInformationProvider;
 import org.onehippo.forge.sitemap.components.beans.SiteMap;
 import org.onehippo.forge.sitemap.components.beans.SiteMapItem;
 import org.onehippo.forge.sitemap.components.model.ChangeFrequency;
 import org.onehippo.forge.sitemap.components.model.SiteMapCharacterEscapeHandler;
 import org.onehippo.forge.sitemap.components.model.Url;
 import org.onehippo.forge.sitemap.components.model.Urlset;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static java.util.Collections.synchronizedList;
-import static java.util.Collections.synchronizedMap;
 
 public class SitemapGenerator {
 
     private final HstRequestContext requestContext;
-    private final ObjectConverter objectConverter;
-    private final UrlInformationProvider urlInformationProvider;
-    private int queriesFired;
-    private int queryCacheHits;
-
-    private final Map<String, List<String>> queriesWithResultingPaths;
-    private final List<String> siteMapRefIdsToExcludeFromSiteMap;
-    private final List<String> componentConfigurationIdsToExcludeFromSiteMap;
-    private final List<String> siteMapPathsToExcludeFromSiteMap;
-
-    private final List<WorkItem> workItemQueue;
-    private final List<WorkItem> workItemsInProgress;
-
-    private final Mount mount;
-
-    private final Object waitObj = new Object();
 
     private static final String UNUSED = "unused";
-    private static final int DEFAULT_AMOUNT_OF_WORKERS = 4;
-    private static final long MS_TO_WAIT_FOR_UPDATES = 1000;
 
-    private static final Logger LOG = LoggerFactory.getLogger(SitemapGenerator.class);
-    private boolean errorOccured = false;
-    private Exception lastWorkerException = null;
-    private List<SitemapGeneratorWorker> workers;
-    private int amountOfWorkers = DEFAULT_AMOUNT_OF_WORKERS;
-
-    public SitemapGenerator(HstRequestContext requestContext, ObjectConverter objectConverter) {
-        this(requestContext, objectConverter, new DefaultUrlInformationProvider());
-    }
-
-    public SitemapGenerator(HstRequestContext requestContext, ObjectConverter objectConverter,
-                            UrlInformationProvider urlInformationProvider) {
-        this(requestContext, objectConverter, urlInformationProvider, requestContext.getResolvedMount().getMount());
-    }
-
-    public SitemapGenerator(final HstRequestContext requestContext, final ObjectConverter objectConverter,
-                            final UrlInformationProvider urlInformationProvider, Mount mount) {
-        this.objectConverter = objectConverter;
-        this.urlInformationProvider = urlInformationProvider;
+    public SitemapGenerator(HstRequestContext requestContext) {
         this.requestContext = requestContext;
-        this.mount = mount;
-        componentConfigurationIdsToExcludeFromSiteMap = new ArrayList<String>();
-        siteMapRefIdsToExcludeFromSiteMap = new ArrayList<String>();
-        siteMapPathsToExcludeFromSiteMap = new ArrayList<String>();
-        queriesWithResultingPaths = synchronizedMap(new HashMap<String, List<String>>());
-        workItemQueue = synchronizedList(new ArrayList<WorkItem>());
-        workItemsInProgress = new ArrayList<WorkItem>();
-        queriesFired = 0;
-        queryCacheHits = 0;
     }
 
     @SuppressWarnings({UNUSED})
@@ -219,231 +159,6 @@ public class SitemapGenerator {
         }
     }
 
-    /**
-     * Creates a new {@link Urlset} based upon the current {@link HstSiteMap} resolved from the current
-     * {@link HstRequestContext}
-     *
-     * @return The Urlset containing the urls of the sitemap items
-     */
-    public Urlset createUrlSetBasedOnHstSiteMap() {
-
-        createAndStartWorkers();
-
-        fillInitialWorkQueue();
-
-        boolean allWorkDone = waitUntilAllWorkItemsAreFinished();
-
-        if (!allWorkDone) {
-            // We might have been interrupted
-            return null;
-        }
-
-        stopWorkers();
-
-        if (errorOccured) {
-            throw new IllegalStateException("Error occurred while trying to generate the site map", lastWorkerException);
-        }
-
-        Urlset urlset = combineUrlSetsFromWorkers();
-
-        return urlset;
-    }
-
-    private Urlset combineUrlSetsFromWorkers() {
-        final Urlset combinedUrlset = new Urlset();
-        for (SitemapGeneratorWorker worker : workers) {
-            for (Url url : worker.getUrlset().getUrls()) {
-                combinedUrlset.addUrlThatDoesntExistInTheListYet(url);
-            }
-        }
-        return combinedUrlset;
-    }
-
-
-    private void stopWorkers() {
-        for (SitemapGeneratorWorker worker : workers) {
-            worker.interrupt();
-        }
-    }
-
-    private boolean waitUntilAllWorkItemsAreFinished() {
-        // Wait until all work items have been processed or an error occurs
-        while ((!workItemQueue.isEmpty() || !workItemsInProgress.isEmpty()) && !errorOccured) {
-            try {
-                synchronized (waitObj) {
-                    if ((!workItemQueue.isEmpty() || workItemsInProgress.isEmpty()) && !errorOccured) {
-                        waitObj.wait(MS_TO_WAIT_FOR_UPDATES);
-                    }
-                }
-            } catch (InterruptedException e) {
-                // we were interrupted, cancel
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void fillInitialWorkQueue() {
-
-        HstSiteMap siteMap = mount.getHstSite().getSiteMap();
-        for (HstSiteMapItem siteMapItem : siteMap.getSiteMapItems()) {
-            addSiteMapBranchToUrlSet(siteMapItem);
-        }
-    }
-
-    private List<SitemapGeneratorWorker> createAndStartWorkers() {
-        // Initialize the workers
-        workers = new ArrayList<SitemapGeneratorWorker>();
-        for (int i = 0 ; i < amountOfWorkers; i++) {
-            SitemapGeneratorWorker worker = new SitemapGeneratorWorker(
-                    this, mount, requestContext,
-                    objectConverter, urlInformationProvider
-            );
-            worker.start();
-            workers.add(worker);
-        }
-        return workers;
-    }
-
-    /**
-     * Initial method passing through an empty List, because there are no matched nodes yet
-     *
-     * @param siteMapItem the {@link HstSiteMapItem} to "parse"
-     */
-    private void addSiteMapBranchToUrlSet(final HstSiteMapItem siteMapItem) {
-        WorkItem workItem = new WorkItem(siteMapItem, new ArrayList<String>());
-        addWorkItem(workItem);
-    }
-
-    public boolean shouldIgnoreSiteMapItem(final HstSiteMapItem siteMapItem) {
-        String refId = siteMapItem.getRefId();
-        String siteMapPath = HstSiteMapUtils.getPath(siteMapItem);
-
-        boolean shouldIgnoreBasedOnRefId = siteMapRefIdsToExcludeFromSiteMap.contains(refId);
-        boolean shouldIgnoreBasedOnPath = siteMapPathsToExcludeFromSiteMap.contains(siteMapPath);
-
-        if (LOG.isDebugEnabled()) {
-            if (shouldIgnoreBasedOnRefId) {
-                LOG.debug("Ignoring sitemap item \"{}\" because it has a refId \"{}\" which we exclude.",
-                        siteMapItem.getId(), refId);
-            }
-            if (shouldIgnoreBasedOnPath) {
-                LOG.debug("Ignoring sitemap item \"{}\" because it has a path \"{}\" which we exclude.",
-                        siteMapItem.getId(), siteMapPath);
-            }
-        }
-
-        return shouldIgnoreBasedOnPath || shouldIgnoreBasedOnRefId;
-    }
-
-    public void addSitemapRefIdExclusions(final String[] refIdsToExclude) {
-        addSitemapRefIdExclusions(Arrays.asList(refIdsToExclude));
-    }
-
-    public void addSitemapRefIdExclusions(final Collection<String> refIdsToExclude) {
-        siteMapRefIdsToExcludeFromSiteMap.addAll(refIdsToExclude);
-    }
-
-    @SuppressWarnings({UNUSED})
-    public void addSitemapRefIdExclusion(final String sitemapRefId) {
-        siteMapRefIdsToExcludeFromSiteMap.add(sitemapRefId);
-    }
-
-    public void addSitemapPathExclusions(final String[] pathsToExclude) {
-        addSitemapPathExclusions(Arrays.asList(pathsToExclude));
-    }
-
-    public void addSitemapPathExclusions(final Collection<String> pathsToExclude) {
-        siteMapPathsToExcludeFromSiteMap.addAll(pathsToExclude);
-    }
-
-    @SuppressWarnings({UNUSED})
-    public void addSitemapPathExclusion(final String sitemapPath) {
-        siteMapPathsToExcludeFromSiteMap.add(sitemapPath);
-    }
-
-    public void addComponentConfigurationIdExclusions(final Collection<String> componentConfigurationIdsToExclude) {
-        componentConfigurationIdsToExcludeFromSiteMap.addAll(componentConfigurationIdsToExclude);
-    }
-
-    public void addComponentConfigurationIdExclusions(final String[] componentConfigurationIdsToExclude) {
-        addComponentConfigurationIdExclusions(Arrays.asList(componentConfigurationIdsToExclude));
-    }
-
-    @SuppressWarnings({UNUSED})
-    public void addComponentConfigurationIdExclusion(final String componentConfigurationId) {
-        componentConfigurationIdsToExcludeFromSiteMap.add(componentConfigurationId);
-    }
-
-    public int getQueriesFired() {
-        return queriesFired;
-    }
-
-    public int getQueryCacheHits() {
-        return queryCacheHits;
-    }
-
-    public boolean componentConfigurationIdShouldBeExcluded(final String componentConfigurationId) {
-        return componentConfigurationIdsToExcludeFromSiteMap.contains(componentConfigurationId);
-    }
-
-    public void addWorkItem(final WorkItem workItem) {
-        workItemQueue.add(workItem);
-    }
-
-    public boolean queryIsCached(final String query) {
-        return queriesWithResultingPaths.containsKey(query);
-    }
-
-    public List<String> getNodePathsForQueryFromCache(final String query) {
-        List<String> nodePaths = queriesWithResultingPaths.get(query);
-        if (nodePaths == null) {
-            LOG.error("Query \"{}\" is not cached, cannot return node paths, so throwing exception.", query);
-            throw new IllegalArgumentException("Query not cached, so cannot return node paths");
-        }
-        return nodePaths;
-    }
-
-    public void addNodePathsForQueryToCache(final String query, final List<String> nodePaths) {
-        queriesWithResultingPaths.put(query, nodePaths);
-    }
-
-    /**
-     * Returns the next {@link WorkItem} in the queue
-     * @return {@link WorkItem} to be processed
-     */
-    public WorkItem getNextWorkItem() {
-        synchronized (this) {
-            if (!workItemQueue.isEmpty()) {
-                synchronized (workItemsInProgress) {
-                    WorkItem workItem = workItemQueue.remove(0);
-                    workItemsInProgress.add(workItem);
-                    return workItem;
-                }
-            } else {
-                return null;
-            }
-        }
-    }
-
-    /**
-     * Called by a worker to indicate that a work item has been processed
-     * @param workItem work item that is finished
-     */
-    public void finishWorkItem(WorkItem workItem) {
-        synchronized (workItemsInProgress) {
-            workItemsInProgress.remove(workItem);
-        }
-    }
-
-    public void reportErrorOccurred(Exception e) {
-        errorOccured = true;
-        lastWorkerException = e;
-    }
-
-    public void setAmountOfWorkers(int amountOfWorkers) {
-        this.amountOfWorkers = amountOfWorkers;
-    }
 
     protected HstRequestContext getRequestContext() {
         return requestContext;

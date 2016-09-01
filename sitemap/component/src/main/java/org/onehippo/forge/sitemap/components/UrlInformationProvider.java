@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,22 +66,4 @@ public interface UrlInformationProvider {
      */
     String getLoc(HippoBean hippoBean, HstRequestContext requestContext, Mount mount);
 
-    /**
-     * Indicates whether this document should be included in the site map
-     *
-     * @param hippoBean the document
-     * @return <code>true</code> if the document should be included, <code>false</code> otherwise
-     */
-    boolean includeDocumentInSiteMap(HippoBean hippoBean);
-
-    /**
-     * Indicates whether the child site map items for this document should be included in the site map.
-     * This happens when a default/any matcher site map item has child site map items. This method indicates whether
-     * those child site map items should also be processed.
-     *
-     * @param hippoBean the document
-     * @return <code>true</code> if the child site map items of this document should be included, <code>false</code>
-     * otherwise
-     */
-    boolean includeChildrenInSiteMap(HippoBean hippoBean);
 }

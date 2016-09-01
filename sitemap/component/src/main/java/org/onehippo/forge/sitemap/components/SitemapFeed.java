@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.onehippo.forge.sitemap.components;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
@@ -26,16 +25,16 @@ import org.onehippo.forge.sitemap.generator.SitemapGenerator;
 public class SitemapFeed extends BaseHstComponent {
 
     public static final int DEFAULT_DEPTH = 2;
-    
+
     public void doBeforeRender(HstRequest request, HstResponse response) {
-        String depthStr =getComponentParameter("depth");
-        int maxdepth = DEFAULT_DEPTH;
-        if (depthStr != null){
-            maxdepth = Integer.valueOf(depthStr);  
+        String depthStr = getComponentParameter("depth");
+        int maxDepth = DEFAULT_DEPTH;
+        if (depthStr != null) {
+            maxDepth = Integer.valueOf(depthStr);
         }
         HstSiteMenus siteMenus = request.getRequestContext().getHstSiteMenus();
-        request.setAttribute("sitemap", new SitemapGenerator(request.getRequestContext(), RequestContextProvider.get().getContentBeansTool().getObjectConverter())
-                .createSitemap(siteMenus, maxdepth));
+        request.setAttribute("sitemap", new SitemapGenerator(request.getRequestContext())
+                .createSitemap(siteMenus, maxDepth));
     }
 
 }

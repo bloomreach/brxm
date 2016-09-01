@@ -28,12 +28,12 @@ public class SitemapView extends BaseHstComponent {
     
     public void doBeforeRender(HstRequest request, HstResponse response) {
         String depthStr = getComponentParameter("depth");
-        int maxdepth = DEFAULT_DEPTH;
+        int maxDepth = DEFAULT_DEPTH;
         if (depthStr != null){
-            maxdepth = Integer.valueOf(depthStr);  
+            maxDepth = Integer.valueOf(depthStr);
         }
         HstSiteMenus siteMenus = request.getRequestContext().getHstSiteMenus();
-        request.setAttribute("sitemap", SitemapGenerator.getSitemapView(siteMenus, maxdepth));
+        request.setAttribute("sitemap", SitemapGenerator.getSitemapView(siteMenus, maxDepth));
     }
 
 }

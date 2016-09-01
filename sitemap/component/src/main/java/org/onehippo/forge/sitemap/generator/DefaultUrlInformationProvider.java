@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 package org.onehippo.forge.sitemap.generator;
 
+import java.math.BigDecimal;
+import java.util.Calendar;
+
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
@@ -22,9 +25,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.onehippo.forge.sitemap.components.UrlInformationProvider;
 import org.onehippo.forge.sitemap.components.model.ChangeFrequency;
-
-import java.math.BigDecimal;
-import java.util.Calendar;
 
 /**
  */
@@ -68,21 +68,4 @@ public class DefaultUrlInformationProvider implements UrlInformationProvider {
         return linkCreator.create(hippoBean.getNode(), mount).toUrlForm(requestContext, true);
     }
 
-    /**
-     * By default, all matched documents are included in the site map
-     * @param hippoBean the current document to validate
-     * @return <code>true</code>
-     */
-    public boolean includeDocumentInSiteMap(HippoBean hippoBean) {
-        return true;
-    }
-
-    /**
-     * By default, all children of matched documents are included in the site map
-     * @param hippoBean the current document to validate
-     * @return <code>true</code>
-     */
-    public boolean includeChildrenInSiteMap(HippoBean hippoBean) {
-        return true;
-    }
 }
