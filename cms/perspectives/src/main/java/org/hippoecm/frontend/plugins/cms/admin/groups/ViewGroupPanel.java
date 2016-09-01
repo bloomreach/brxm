@@ -35,6 +35,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
@@ -364,6 +365,19 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         } catch (RepositoryException e) {
             Session.get().error(getString("group-member-remove-failed", null));
             log.error("Failed to remove memberships", e);
+        }
+    }
+
+    @Override
+    public void onActivate(IBreadCrumbParticipant previous) {
+        super.onActivate(previous);
+        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        if (target != null) {
+            GroupMembersListView groupMembersListView = ((GroupMembersListView)get("groupmembers"));
+            if (groupMembersListView != null) {
+                groupMembersListView.listModel.setObject(
+                  new ArrayList<DetachableUser>(groupMembersListView.group.getMembersAsDetachableUsers()));
+            }
         }
     }
 }
