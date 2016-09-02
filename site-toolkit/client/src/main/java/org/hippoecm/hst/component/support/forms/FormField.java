@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +43,7 @@ public class FormField {
     // error messages
     private List<String> messages;
 
-
-    public FormField(final String name) {
+    public FormField(@JsonProperty("name") final String name) {
         if(name==null || name.trim().length()==0){
             throw new IllegalArgumentException("FormField name was null or empty");
         }
@@ -86,6 +88,7 @@ public class FormField {
      *
      * @return first value or empty string if no values present
      */
+    @JsonIgnore
     public String getValue() {
         if (values == null || values.size() == 0) {
             return "";
@@ -98,6 +101,10 @@ public class FormField {
             return Collections.emptyList();
         }
         return messages;
+    }
+
+    public void setMessages(final List<String> messages) {
+        this.messages = messages;
     }
 
     public void addMessage(final String value) {
