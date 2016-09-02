@@ -625,6 +625,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
+          <version>false</version>
           <aggregate>true</aggregate>
           <destDir>userapidocs</destDir>
           <sourcepath>

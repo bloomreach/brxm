@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponseWrapper;
 /**
  * Simple XSS Url attack protection blocking access whenever the request url contains a &lt; or &gt; character.
  *
- * @version $Id: XSSUrlFilter.java 516448 2007-03-09 16:25:47Z ate $
  */
 public class XSSUrlFilter implements Filter {
 

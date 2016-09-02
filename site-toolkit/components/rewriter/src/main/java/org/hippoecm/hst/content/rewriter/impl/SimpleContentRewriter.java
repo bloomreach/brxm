@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import java.util.regex.Pattern;
  * The href attributes of anchor tags can contain a reference to a child node of the HippoHtml node. This child node
  * will contain a link to a repository resource. The same applies to the src attributes of image tags.
  * 
- * @version $Id: SimpleContentRewriter.java 24267 2010-10-11 09:09:56Z aschrijvers $
  */
 public class SimpleContentRewriter extends AbstractContentRewriter<String> {
 
