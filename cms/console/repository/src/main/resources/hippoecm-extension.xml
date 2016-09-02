@@ -87,7 +87,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/console/console/logout</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/console/console/logout/item</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentpropset" sv:type="String">
       <sv:value>service.menu.item</sv:value>
@@ -116,7 +116,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/console/console/logout</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/console/console/logout/excludedPaths</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentpropset" sv:type="String">
       <sv:value>/content</sv:value>
