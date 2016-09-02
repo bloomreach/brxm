@@ -73,6 +73,12 @@ public interface ObjectBeanPersistenceManager extends ObjectBeanManager {
      * <CODE>ContentNodeBinder</CODE> map to do real bindings. It probably depends on the functionalities
      * of underlying repository.
      * </P>
+     * <P>
+     * <EM>Note:</EM> It is recommended as best practice and more semantically correct to invoke {@link #save()}
+     * to commit the changes to the repository after successful {@link #update(Object)} call.
+     * In the future, the commit or rollback semantics could be more dependent on whether {@link #save()} or
+     * {@link #refresh()}/{@link #refresh(boolean)} is really invoked.
+     * </P>
      * @param content
      * @throws ObjectBeanPersistenceException
      */
@@ -87,6 +93,12 @@ public interface ObjectBeanPersistenceManager extends ObjectBeanManager {
      * </P>
      * <P>
      * Therefore, if a developer wants to customize the bindings, the developer should provide a <CODE>customContentNodeBinder</CODE>.
+     * </P>
+     * <P>
+     * <EM>Note:</EM> It is recommended as best practice and more semantically correct to invoke {@link #save()}
+     * to commit the changes to the repository after successful {@link #update(Object, ContentNodeBinder)} call.
+     * In the future, the commit or rollback semantics could be more dependent on whether {@link #save()} or
+     * {@link #refresh()}/{@link #refresh(boolean)} is really invoked.
      * </P>
      * @param content
      * @param customContentNodeBinder
