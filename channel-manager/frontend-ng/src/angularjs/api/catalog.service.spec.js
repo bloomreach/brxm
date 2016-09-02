@@ -44,26 +44,65 @@ describe('ComponentsService', () => {
     const mockComponents = [
       {
         label: 'foo component',
+        name: 'zorro',
       },
       {
-        label: 'bah component',
+        name: 'bah component',
       },
       {
         label: 'foo2 component',
       },
     ];
-    const deferred = $q.defer();
-
-    HstServiceMock.doGet.and.returnValue(deferred.promise);
+    HstServiceMock.doGet.and.returnValue($q.when({ data: mockComponents }));
 
     CatalogService.load();
     expect(HstServiceMock.doGet).toHaveBeenCalled();
-
-    deferred.resolve({ data: mockComponents });
     $rootScope.$digest();
 
     const components = CatalogService.getComponents();
     expect(components.map((c) => c.label))
       .toEqual(['bah component', 'foo component', 'foo2 component']);
+  });
+
+  it('clears the component list when the response contains no data', () => {
+    // Preload
+    HstServiceMock.doGet.and.returnValue($q.when({ data: [{ label: 'test' }] }));
+    CatalogService.load();
+    $rootScope.$digest();
+    expect(CatalogService.getComponents().length).toBe(1);
+
+    // Wipe
+    HstServiceMock.doGet.and.returnValue($q.when({ no: 'data' }));
+    CatalogService.load();
+    $rootScope.$digest();
+    expect(CatalogService.getComponents()).toEqual([]);
+  });
+
+  it('clears the component list when the response is empty', () => {
+    // Preload
+    HstServiceMock.doGet.and.returnValue($q.when({ data: [{ label: 'test' }] }));
+    CatalogService.load();
+    $rootScope.$digest();
+    expect(CatalogService.getComponents().length).toBe(1);
+
+    // Wipe
+    HstServiceMock.doGet.and.returnValue($q.when());
+    CatalogService.load();
+    $rootScope.$digest();
+    expect(CatalogService.getComponents()).toEqual([]);
+  });
+
+  it('clears the component list when the retrieval fails', () => {
+    // Preload
+    HstServiceMock.doGet.and.returnValue($q.when({ data: [{ label: 'test' }] }));
+    CatalogService.load();
+    $rootScope.$digest();
+    expect(CatalogService.getComponents().length).toBe(1);
+
+    // Wipe
+    HstServiceMock.doGet.and.returnValue($q.reject());
+    CatalogService.load();
+    $rootScope.$digest();
+    expect(CatalogService.getComponents()).toEqual([]);
   });
 });
