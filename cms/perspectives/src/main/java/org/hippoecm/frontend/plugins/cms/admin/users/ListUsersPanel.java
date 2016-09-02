@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
@@ -134,15 +133,15 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
                 cellItem.add(groupsLinkListPanel);
             }
         });
-        columns.add(new AbstractColumn<User, String>(new Model<String>("Type")) {
+        columns.add(new AbstractColumn<User, String>(new ResourceModel("user-type")) {
             private static final long serialVersionUID = 1L;
 
             public void populateItem(Item<ICellPopulator<User>> cellItem, String componentId, IModel<User> model) {
                 User user = model.getObject();
                 if (user.isExternal()) {
-                    cellItem.add(new Label(componentId, "external"));
+                    cellItem.add(new Label(componentId, new ResourceModel("user-type-external")));
                 } else {
-                    cellItem.add(new Label(componentId, "repository"));
+                    cellItem.add(new Label(componentId, new ResourceModel("user-type-repository")));
                 }
             }
         });
