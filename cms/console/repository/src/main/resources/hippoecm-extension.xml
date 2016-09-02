@@ -96,6 +96,20 @@
       <sv:value>902.2</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="frontend-console-console-root-yuiconfig-headerheight">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/console/console/root/yui.config/header.height</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>74</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>902.2</sv:value>
+    </sv:property>
+  </sv:node>
   <!-- the logout plugin must now takes care of rendering the createpatch plugin, for which this config is meant -->
   <sv:node sv:name="frontend-console-console-logout-excludedpaths">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -214,17 +228,6 @@
     </sv:property>
     <sv:property sv:name="hippo:contentdelete" sv:type="String">
       <sv:value>/hippo:configuration/hippo:frontend/console/console/cndexport</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>903</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="frontend-console-console-createpatch">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentdelete" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/console/console/createpatch</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>903</sv:value>
