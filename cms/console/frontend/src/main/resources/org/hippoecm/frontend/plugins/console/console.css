@@ -59,7 +59,7 @@
 }
 
 .hippo-console-tree-add {
-  padding: 7px;
+  padding: 8px;
   float:left;
 }
 
@@ -416,12 +416,12 @@ li.hippo-console-menu-actions-save.session-changes a {
   height: 0;
 }
 
-.hippo-console-menu-logo a {
+.hippo-console-menu-logo {
   float: left;
-  padding: 5px 9px 9px 9px;
+  padding: 6px 2px 8px;
   height: 20px;
-  width: 30px;
-  background: white url('hippo-logo.svg') no-repeat scroll 0 0/40px 50px;
+  width: 42px;
+  background: white url('hippo-logo.svg') no-repeat scroll 0 0/50px 46px;
 }
 
 .hippo-console-menu button {
@@ -974,7 +974,7 @@ body.hippo-root div.yui-log-container {
 }
 
 .dropdown-content a {
-  padding: 12px 16px;
+  padding: 7px 12px;
   text-decoration: none;
   display: block;
 }
