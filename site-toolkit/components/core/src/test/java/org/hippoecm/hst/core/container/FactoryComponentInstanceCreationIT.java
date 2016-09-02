@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.HashSet;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
@@ -29,6 +30,7 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class FactoryComponentInstanceCreationIT extends AbstractSpringTestCase {
 
@@ -74,5 +76,40 @@ public class FactoryComponentInstanceCreationIT extends AbstractSpringTestCase {
         }
     }
 
+    @Test
+    public void testComponentCreationFails() {
+
+        Mount mount1 = createNiceMock(Mount.class);
+        expect(mount1.getIdentifier()).andReturn("cafe-babe").anyTimes();
+
+        ResolvedMount resolvedMount = createNiceMock(ResolvedMount.class);
+        expect(resolvedMount.getMount()).andReturn(mount1).anyTimes();
+
+        HstRequestContext requestContext = createNiceMock(HstRequestContext.class);
+        expect(requestContext.getResolvedMount()).andReturn(resolvedMount).anyTimes();
+        expect(requestContext.getComponentFilterTags()).andReturn(new HashSet<>()).anyTimes();
+
+        HstContainerConfig mockHstContainerConfig = createNiceMock(HstContainerConfig.class);
+        HstComponentConfiguration compConfig = createNiceMock(HstComponentConfiguration.class);
+        expect(compConfig.getId()).andReturn("some//path").anyTimes();
+        expect(compConfig.getComponentClassName()).andReturn("org.hippoecm.hst.core.container.NotExistingClass").anyTimes();
+
+        replay(mockHstContainerConfig, compConfig, mount1, resolvedMount, requestContext);
+
+        HstComponentFactory componentFactory = getComponent(HstComponentFactory.class.getName());
+        try {
+            componentFactory.getComponentInstance(mockHstContainerConfig, compConfig, mount1);
+            fail("Exception should had been thrown");
+        } catch (HstComponentException e) {
+            try {
+                componentFactory.getComponentInstance(mockHstContainerConfig, compConfig, mount1);
+                fail("Exception should had been thrown");
+            } catch (HstComponentException e2) {
+                // second failure should result in exact same exception instance
+                assertTrue(e == e2);
+            }
+        }
+
+    }
 
 }

@@ -63,15 +63,13 @@ public class HstComponentFactoryImpl implements HstComponentFactory, ComponentMa
         HstComponent component = this.componentRegistry.getComponent(requestContainerConfig, componentId);
 
         if (component == null) {
-            boolean initialized = false;
             String componentClassName = StringUtils.trim(compConfig.getComponentClassName());
-
             try {
-                Class<?> compClass = null;
+                Class<?> compClass;
 
                 if (StringUtils.isNotEmpty(componentClassName)) {
                     // first try to retrieve component bean from the componentManager by classname.
-                    component = (HstComponent) componentManager.getComponent(componentClassName);
+                    component = componentManager.getComponent(componentClassName);
 
                     // if component not found from componentManager, instantiate it from classname.
                     if (component == null) {
@@ -87,20 +85,25 @@ public class HstComponentFactoryImpl implements HstComponentFactory, ComponentMa
                 ComponentConfiguration compConfigImpl = new ComponentConfigurationImpl(compConfig);
                 component.init(requestContainerConfig.getServletContext(), compConfigImpl);
 
-                initialized = true;
             } catch (ClassNotFoundException e) {
-                throw new HstComponentException("Cannot find the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
+                HstComponentException exc = new HstComponentException("Cannot find the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
+                this.componentRegistry.registerComponent(requestContainerConfig, componentId, new FailedComponent(exc));
+                throw  exc;
             } catch (InstantiationException e) {
-                throw new HstComponentException("Cannot instantiate the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
+                HstComponentException exc = new HstComponentException("Cannot instantiate the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
+                this.componentRegistry.registerComponent(requestContainerConfig, componentId, new FailedComponent(exc));
+                throw exc;
             } catch (IllegalAccessException e) {
-                throw new HstComponentException("Illegal access to the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
+                HstComponentException exc = new HstComponentException("Illegal access to the class of " + compConfig.getCanonicalStoredLocation() + ": " + componentClassName);
+                this.componentRegistry.registerComponent(requestContainerConfig, componentId, new FailedComponent(exc));
+                throw exc;
             }
-            
-            if (initialized) {
-                this.componentRegistry.registerComponent(requestContainerConfig, componentId, component);
-            }
+            this.componentRegistry.registerComponent(requestContainerConfig, componentId, component);
         }
-        
+
+        if (component instanceof FailedComponent) {
+            throw ((FailedComponent)component).exc;
+        }
         return component;
         
     }
@@ -132,6 +135,13 @@ public class HstComponentFactoryImpl implements HstComponentFactory, ComponentMa
         componentIdBuilder.append("mount:").append(mount.hashCode()).append('\uFFFF').append(mount.getIdentifier()).append('\uFFFF');
         componentIdBuilder.append("compId:").append(compConfig.getId()).append('\uFFFF').append(compConfig.hashCode());
         return componentIdBuilder.toString();
+    }
+
+    private static final class FailedComponent extends GenericHstComponent {
+        private HstComponentException exc;
+        public FailedComponent(final HstComponentException exc) {
+            this.exc = exc;
+        }
     }
 
 }
