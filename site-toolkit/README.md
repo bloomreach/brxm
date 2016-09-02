@@ -1,40 +1,42 @@
-========================================
 How to test and build Hippo Site Toolkit
 ========================================
 
-1. Introduction
+Introduction
+------------
 
-  Very brief introduction to how to build, test and run HST!
+  Very brief introduction to how to build, test and run the Hippo Site Toolkit!
 
-2. Requirements --
+Requirements
+------------
 
-  (1) Java 1.6
-  (2) Maven 3.0.x
-  (3) [Optional] Tomcat 6.0 or higher if you want to deploy and run on Tomcat.)
+* Java 8
+* Maven 3 (3.2.1+)
+* [Optional] Tomcat 8.0.x if you want to deploy and run on Tomcat.)
 
-3. Build 
+Build
+----- 
      
-    (1) Build with testing
+1. Build with testing
     
-      $ mvn clean install
+    mvn clean install
     
-    (2) Build with skipping tests
+2. Build with skipping tests
+    mvn clean install -DskipTests 
     
-      $ mvn clean install -DskipTests 
-    
-    (3) Build with Hippo Snapshot Repository Flag
+3. Build with Hippo Snapshot Repository Flag
       - Note: Mostly you do not need this when you check out and build a released version!
               Needed only when you build the TRUNK having snapshot dependencies!
-      - Note: Please beware that the `-Dhippo.snapshots' option is effective only when you define
+      - Note: Please beware that the '-Dhippo.snapshots' option is effective only when you define
               a Maven profile with this property in your settings.xml for the Hippo snapshot repository.
-              For detail, see https://wiki.onehippo.com/display/CMS7/Build+Hippo+CMS+7.5+or+higher+from+scratch
-      - Add `-Dhippo.snapshots' for snapshot dependencies.
+              For details, see https://www.onehippo.org/library/development/build-hippo-cms-from-scratch.html
+      - Add '-Dhippo.snapshots' for snapshot dependencies.
         For example,
         
           $ mvn clean install -Dhippo.snapshots -DskipTests
 
-4. Creating the mvn site with javadocs: type from the root
-   $ mvn -o site
+Creating the mvn site with javadocs: type from the root
+-------------------------------------------------------
+    mvn site
 
    All aggregated javadocs are generated in target/site/apidocs and all aggregated test javadocs are generated in target/site/testapidocs.
 
@@ -43,7 +45,7 @@ How to test and build Hippo Site Toolkit
 
    Use
 
-   $ mvn -o site:stage
+    mvn site:stage
 
    If you want to see sub-module links in your generated site, also see
    http://maven.apache.org/plugins/maven-site-plugin/usage.html
