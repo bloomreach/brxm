@@ -41,10 +41,10 @@ public class FormField {
 
     // label if present and otherwise {@code null
     private String label;
-    // stored values
-    private Map<String,String> values;
+
+    private List<String> valueList = new ArrayList<>();
     // error messages
-    private List<String> messages;
+    private List<String> messages = new ArrayList<>();
 
     public FormField(@JsonProperty("name") final String name) {
         if(name==null || name.trim().length()==0){
@@ -69,44 +69,57 @@ public class FormField {
         this.label = label;
     }
 
-    public Map<String,String> getValues() {
-        if (values == null) {
-            return Collections.emptyMap();
-        }
-        return values;
+    public List<String> getValueList() {
+        return valueList;
     }
 
+    public void setValueList(final List<String> valueList) {
+        this.valueList = valueList;
+    }
+
+    /**
+     * @deprecated use 'getValueList' instead
+     */
+    @Deprecated
+    @JsonIgnore
+    public Map<String,String> getValues() {
+        Map<String, String> map = new LinkedHashMap<>(valueList.size());
+        for (String s : valueList) {
+            map.put(s,s);
+        }
+        return map;
+    }
+
+    /**
+     * @deprecated use 'setValueList' instead
+     */
+    @Deprecated
+    @JsonIgnore
     public void setValues(final Map<String,String> values) {
-        this.values = values;
+        this.valueList = new ArrayList<>(values.values());
     }
 
     public void addValue(final String value) {
         if (value == null) {
             return;
         }
-        if (values == null) {
-            values = new LinkedHashMap<String, String>();
-        }
-        values.put(value,value);
+        valueList.add(value);
     }
 
     /**
-     * Most of the fields have single values, we'll return first element (if there), null otherwise
+     * Most of the fields have single valueList, we'll return first element (if there), null otherwise
      *
-     * @return first value or empty string if no values present
+     * @return first value or empty string if no valueList present
      */
     @JsonIgnore
     public String getValue() {
-        if (values == null || values.size() == 0) {
+        if (valueList == null || valueList.size() == 0) {
             return "";
         }
-        return values.values().iterator().next();
+        return valueList.get(0);
     }
 
     public List<String> getMessages() {
-        if (messages == null) {
-            return Collections.emptyList();
-        }
         return messages;
     }
 
@@ -115,9 +128,6 @@ public class FormField {
     }
 
     public void addMessage(final String value) {
-        if (messages == null) {
-            messages = new ArrayList<String>();
-        }
         messages.add(value);
     }
 
