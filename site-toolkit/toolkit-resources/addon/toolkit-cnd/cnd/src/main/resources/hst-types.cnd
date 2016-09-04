@@ -461,7 +461,8 @@
 + hst:formfieldvalue (hst:formfieldvalue) multiple
 - hst:predecessor (string)
 - hst:sealed (boolean)
-
+// optional property pointing to the identifier of the backing form
+- hst:formId (string)
 
 [hst:formdatacontainer] 
 + * (hst:formdatacontainer)
