@@ -38,6 +38,9 @@ public class FormField {
 
     // field name
     private String name;
+
+    // label if present and otherwise {@code null
+    private String label;
     // stored values
     private Map<String,String> values;
     // error messages
@@ -50,9 +53,6 @@ public class FormField {
         this.name = name;
     }
 
-
-
-
     public String getName() {
         return name;
     }
@@ -61,6 +61,13 @@ public class FormField {
         this.name = name;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(final String label) {
+        this.label = label;
+    }
 
     public Map<String,String> getValues() {
         if (values == null) {
