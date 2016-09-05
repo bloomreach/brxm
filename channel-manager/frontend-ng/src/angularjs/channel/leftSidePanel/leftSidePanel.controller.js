@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-export class ChannelSidenavCtrl {
-  constructor($scope, $element, ChannelSidenavService, ChannelService, SiteMapService, HippoIframeService) {
+export class ChannelLeftSidePanelCtrl {
+  constructor($scope, $element, ChannelLeftSidePanelService, ChannelService, SiteMapService, HippoIframeService) {
     'ngInject';
 
     this.ChannelService = ChannelService;
-    this.ChannelSidenavService = ChannelSidenavService;
+    this.ChannelLeftSidePanelService = ChannelLeftSidePanelService;
     this.SiteMapService = SiteMapService;
     this.HippoIframeService = HippoIframeService;
 
-    ChannelSidenavService.initialize($element.find('md-sidenav'));
+    ChannelLeftSidePanelService.initialize($element.find('.channel-left-side-panel'));
 
-    $scope.$watch('sidenav.editMode', () => {
+    $scope.$watch('leftSidePanel.editMode', () => {
       if (!this.editMode) {
-        ChannelSidenavService.close();
+        ChannelLeftSidePanelService.close();
       }
     });
   }

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-export function channelSidenavDirective() {
+export function channelLeftSidePanelToggleDirective() {
   'ngInject';
 
   return {
     restrict: 'E',
     bindToController: {
-      editMode: '=',
+      disabled: '=',
     },
-    templateUrl: 'channel/sidenav/sidenav.html',
-    controller: 'ChannelSidenavCtrl',
-    controllerAs: 'sidenav',
+    templateUrl: 'channel/leftSidePanel/toggle.html',
+    controller: 'ChannelLeftSidePanelToggleCtrl',
+    controllerAs: 'toggle',
   };
 }

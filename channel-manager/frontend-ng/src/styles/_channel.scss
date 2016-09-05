@@ -19,7 +19,7 @@
   position: absolute;
   top: 0;
   width: 100%;
-  z-index: 100; // must be higher than sidenav (60)
+  z-index: 100; // must be higher than left side panel (60)
 
   &.masked {
     pointer-events: auto;

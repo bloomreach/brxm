@@ -16,50 +16,50 @@
 
 /* eslint-disable prefer-const */
 
-describe('ChannelSidenavToggle', () => {
+describe('ChannelLeftSidePanelToggle', () => {
   'use strict';
 
   let $rootScope;
   let $compile;
-  let ChannelSidenavService;
+  let ChannelLeftSidePanelService;
   let ChannelService;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidenavService_, _ChannelService_) => {
+    inject((_$rootScope_, _$compile_, _ChannelLeftSidePanelService_, _ChannelService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      ChannelSidenavService = _ChannelSidenavService_;
+      ChannelLeftSidePanelService = _ChannelLeftSidePanelService_;
       ChannelService = _ChannelService_;
     });
 
     spyOn(ChannelService, 'getCatalog').and.returnValue([]);
-    spyOn(ChannelSidenavService, 'toggle');
-    spyOn(ChannelSidenavService, 'isOpen');
+    spyOn(ChannelLeftSidePanelService, 'toggle');
+    spyOn(ChannelLeftSidePanelService, 'isOpen');
   });
 
   function instantiateController() {
     const scope = $rootScope.$new();
-    const el = angular.element('<channel-sidenav-toggle edit-mode="editMode"></channel-sidenav-toggle>');
+    const el = angular.element('<channel-left-side-panel-toggle edit-mode="editMode"></channel-left-side-panel-toggle>');
     $compile(el)(scope);
     $rootScope.$digest();
-    return el.controller('channel-sidenav-toggle');
+    return el.controller('channel-left-side-panel-toggle');
   }
 
-  it('forwards the toggle call to the sidenav service', () => {
+  it('forwards the toggle call to the left side panel service', () => {
     const ToggleCtrl = instantiateController();
-    expect(ChannelSidenavService.toggle).not.toHaveBeenCalled();
+    expect(ChannelLeftSidePanelService.toggle).not.toHaveBeenCalled();
 
-    ToggleCtrl.toggleSidenav();
-    expect(ChannelSidenavService.toggle).toHaveBeenCalled();
+    ToggleCtrl.toggleLeftSidePanel();
+    expect(ChannelLeftSidePanelService.toggle).toHaveBeenCalled();
   });
 
-  it('forwards the is open call to the sidenav service', () => {
+  it('forwards the is open call to the left side panel service', () => {
     const ToggleCtrl = instantiateController();
-    ChannelSidenavService.isOpen.and.returnValue(false);
-    expect(ToggleCtrl.isSidenavOpen()).toBe(false);
-    ChannelSidenavService.isOpen.and.returnValue(true);
-    expect(ToggleCtrl.isSidenavOpen()).toBe(true);
+    ChannelLeftSidePanelService.isOpen.and.returnValue(false);
+    expect(ToggleCtrl.isLeftSidePanelOpen()).toBe(false);
+    ChannelLeftSidePanelService.isOpen.and.returnValue(true);
+    expect(ToggleCtrl.isLeftSidePanelOpen()).toBe(true);
   });
 });

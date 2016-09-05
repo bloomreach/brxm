@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-export class ChannelSidenavToggleCtrl {
-  constructor(ChannelSidenavService, ChannelService) {
+export class ChannelLeftSidePanelToggleCtrl {
+  constructor(ChannelLeftSidePanelService, ChannelService) {
     'ngInject';
 
-    this.ChannelSidenavService = ChannelSidenavService;
+    this.ChannelLeftSidePanelService = ChannelLeftSidePanelService;
     this.ChannelService = ChannelService;
   }
 
-  toggleSidenav() {
-    this.ChannelSidenavService.toggle();
+  toggleLeftSidePanel() {
+    this.ChannelLeftSidePanelService.toggle();
   }
 
-  isSidenavOpen() {
-    return this.ChannelSidenavService.isOpen();
+  isLeftSidePanelOpen() {
+    return this.ChannelLeftSidePanelService.isOpen();
   }
 }
-

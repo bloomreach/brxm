@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-const CHANNEL_SIDENAV_ID = 'channel-sidenav'; // must match with directive mark-up
+const CHANNEL_LEFT_SIDE_PANEL_ID = 'channel-left-side-panel'; // must match with directive mark-up
 
-export class ChannelSidenavService {
+export class ChannelLeftSidePanelService {
   constructor($mdSidenav, ScalingService) {
     'ngInject';
 
@@ -24,24 +24,23 @@ export class ChannelSidenavService {
     this.ScalingService = ScalingService;
   }
 
-  initialize(sidenavJQueryElement) {
-    this.sidenavJQueryElement = sidenavJQueryElement;
+  initialize(leftSidePanelJQueryElement) {
+    this.leftSidePanelJQueryElement = leftSidePanelJQueryElement;
   }
 
   toggle() {
-    this.$mdSidenav(CHANNEL_SIDENAV_ID).toggle();
-    this.ScalingService.setPushWidth(this.isOpen() ? this.sidenavJQueryElement.width() : 0);
+    this.$mdSidenav(CHANNEL_LEFT_SIDE_PANEL_ID).toggle();
+    this.ScalingService.setPushWidth(this.isOpen() ? this.leftSidePanelJQueryElement.width() : 0);
   }
 
   isOpen() {
-    return this.sidenavJQueryElement && this.$mdSidenav(CHANNEL_SIDENAV_ID).isOpen();
+    return this.leftSidePanelJQueryElement && this.$mdSidenav(CHANNEL_LEFT_SIDE_PANEL_ID).isOpen();
   }
 
   close() {
     if (this.isOpen()) {
-      this.$mdSidenav(CHANNEL_SIDENAV_ID).close();
+      this.$mdSidenav(CHANNEL_LEFT_SIDE_PANEL_ID).close();
       this.ScalingService.setPushWidth(0);
     }
   }
 }
-
