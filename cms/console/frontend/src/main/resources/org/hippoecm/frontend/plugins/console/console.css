@@ -47,11 +47,11 @@
   padding: 7px;
 }
 
-.hippo-console-breadcrumbs {
+.hippo-console-menubuttons-background {
   background: #32629b;
 }
 
-.hippo-console-breadcrumbs::after {
+.hippo-console-menubuttons-background::after {
   clear: both;
   content: "";
   display: block;
@@ -463,7 +463,7 @@ li.hippo-console-menu-actions-save.session-changes a {
   border: 1px solid #666666;
 }
 
-.hippo-console-breadcrumbs strong span {
+.hippo-console-menubuttons-background strong span {
   font-weight: normal;
   color: white;
   font-size: 15px;

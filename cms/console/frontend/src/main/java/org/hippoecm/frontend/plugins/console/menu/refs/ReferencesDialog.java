@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,15 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.refs;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -37,9 +28,16 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
-import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.RepositoryException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ReferencesDialog extends AbstractDialog<Node> {
 
@@ -47,7 +45,7 @@ public class ReferencesDialog extends AbstractDialog<Node> {
 
     static final Logger log = LoggerFactory.getLogger(ReferencesDialog.class);
 
-    public ReferencesDialog(final RenderService plugin) {
+    public ReferencesDialog(final ReferencesPlugin plugin) {
         final IModel<Node> nodeModel = (IModel<Node>) plugin.getDefaultModel();
         setModel(nodeModel);
 

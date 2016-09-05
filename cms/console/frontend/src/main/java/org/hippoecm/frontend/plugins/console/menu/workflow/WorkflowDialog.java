@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,14 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.workflow;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -32,13 +24,20 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+
 public class WorkflowDialog extends AbstractDialog<Node> {
 
     private static final long serialVersionUID = 1L;
 
     private final RenderService plugin;
 
-    public WorkflowDialog(RenderService plugin) {
+    public WorkflowDialog(WorkflowPlugin plugin) {
         this.plugin = plugin;
 
         final IModel<Node> nodeModel = (IModel<Node>)plugin.getDefaultModel();

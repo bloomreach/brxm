@@ -15,27 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.permissions;
 
-import java.security.AccessControlException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.jcr.query.Query;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.model.IModelReference;
-import org.hippoecm.frontend.service.render.RenderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.*;
+import javax.jcr.query.Query;
+import java.security.AccessControlException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class PermissionsDialog extends AbstractDialog<Node> {
 
@@ -75,8 +68,8 @@ public class PermissionsDialog extends AbstractDialog<Node> {
 
     static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
-    public PermissionsDialog(final IModelReference<Node> modelReference) {
-        final IModel<Node> nodeModel = modelReference.getModel();
+    public PermissionsDialog(PermissionsPlugin plugin) {
+        final IModel<Node> nodeModel = (IModel<Node>)plugin.getDefaultModel();
         setModel(nodeModel);
 
         final Label usernameLabel = new Label("username", "Unknown");
