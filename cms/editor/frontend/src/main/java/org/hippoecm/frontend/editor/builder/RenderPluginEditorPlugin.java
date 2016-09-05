@@ -171,7 +171,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
             }
 
         };
-        removeLink.setVisible(editable);
+        removeLink.setVisible(editable && validateDelete());
         removeLink.add(HippoIcon.fromSprite("icon", Icon.TIMES_CIRCLE));
         container.add(removeLink);
 
