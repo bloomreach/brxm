@@ -17,14 +17,12 @@ package org.hippoecm.frontend.service.restproxy;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.jcr.Credentials;
-import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.proxy.Interceptor;
@@ -33,6 +31,7 @@ import org.apache.commons.proxy.ProxyFactory;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -43,7 +42,10 @@ import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
-import org.onehippo.sso.CredentialCipher;
+import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.services.cmscontext.CmsContextService;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,10 +65,9 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
     private static final Logger log = LoggerFactory.getLogger(IRestProxyService.class);
 
-    private static final String CMSREST_CREDENTIALS_HEADER = "X-CMSREST-CREDENTIALS";
+    private static final String HEADER_CMS_CONTEXT_SERVICE_ID = "X-CMS-CS-ID";
+    private static final String HEADER_CMS_SESSION_CONTEXT_ID = "X-CMS-SC-ID";
     private static final String CMSREST_CMSHOST_HEADER = "X-CMSREST-CMSHOST";
-    // This is really bad workaround but it is used only for the time being
-    private static final String CREDENTIAL_CIPHER_KEY = "ENC_DEC_KEY";
     public static final String CONFIG_REST_URI = "rest.uri";
     public static final String CONFIG_CONTEXT_PATH = "context.path";
     public static final String CONFIG_SERVICE_ID = "service.id";
@@ -170,11 +171,18 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public <T> T createSecureRestProxy(final Class<T> restServiceApiClass, final List<Object> additionalProviders) {
         T clientProxy = JAXRSClientFactory.create(restUri, restServiceApiClass, getProviders(additionalProviders));
 
-        Subject subject = getSubject();
+        HttpSession httpSession = ((ServletWebRequest)RequestCycle.get().getRequest()).getContainerRequest().getSession();
+        CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+        if (cmsSessionContext == null) {
+            CmsInternalCmsContextService cmsContextService = (CmsInternalCmsContextService)HippoServiceRegistry.getService(CmsContextService.class);
+            cmsSessionContext = cmsContextService.create(httpSession);
+            cmsContextService.setData(cmsSessionContext, CmsSessionContext.REPOSITORY_CREDENTIALS, ((PluginUserSession) UserSession.get()).getCredentials());
+        }
         // The accept method is called to solve an issue as the REST call was sent with 'text/plain' as an accept header
         // which caused problems matching with the relevant JAXRS resource
         WebClient.client(clientProxy)
-                .header(CMSREST_CREDENTIALS_HEADER, getEncryptedCredentials(subject))
+                .header(HEADER_CMS_CONTEXT_SERVICE_ID, cmsSessionContext.getCmsContextServiceId())
+                .header(HEADER_CMS_SESSION_CONTEXT_ID, cmsSessionContext.getId())
                 .header(CMSREST_CMSHOST_HEADER, getFarthestRequestHost())
                 .accept(MediaType.WILDCARD_TYPE);
 
@@ -214,24 +222,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
             host = request.getServerName() + ":" + serverPort;
         }
         return host;
-    }
-
-    protected String getEncryptedCredentials(Subject subject) throws IllegalArgumentException {
-        if (subject == null) {
-            throw new IllegalArgumentException("Null subject has been passed which is not acceptable as an argument!");
-        }
-
-        Set<Object> credentials = subject.getPrivateCredentials();
-
-        if ( (credentials == null) || (credentials.isEmpty()) ) {
-            throw new IllegalArgumentException("Subject has no credentials attached with it!");
-        }
-
-        Iterator<Object> credentialsIterator = credentials.iterator();
-        SimpleCredentials subjectCredentials = (SimpleCredentials) credentialsIterator.next();
-
-        CredentialCipher credentialCipher = CredentialCipher.getInstance();
-        return credentialCipher.getEncryptedString(CREDENTIAL_CIPHER_KEY, subjectCredentials);
     }
 
     protected List<Object> getProviders(final List<Object> additionalProviders) {
