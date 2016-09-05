@@ -61,6 +61,7 @@ import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -265,7 +266,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     String renderingHost = getRenderingHost(containerRequest);
                     if (renderingHost != null) {
                         requestContext.setRenderHost(renderingHost);
-                        if (requestComesFromCms(vHosts, resolvedMount) && session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
+                        if (requestComesFromCms(vHosts, resolvedMount) && session != null && CmsSessionContext.getContext(session) != null) {
                             requestContext.setCmsRequest(true);
                             if (resolvedMount instanceof MutableResolvedMount) {
                                 Mount undecoratedMount = resolvedMount.getMount();
@@ -540,7 +541,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             }
             return true;
         }
-        if (Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
+        if (CmsSessionContext.getContext(session) != null) {
             return false;
         }
         return true;

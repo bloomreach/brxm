@@ -55,7 +55,7 @@ public class CmsComponentComponentWindowAttributeContributor implements Componen
         if (compConfig instanceof ConfigurationLockInfo) {
             ConfigurationLockInfo lockInfo = (ConfigurationLockInfo) compConfig;
             if (lockInfo.getLockedBy() != null) {
-                String cmsUserId = (String) request.getSession(false).getAttribute(ContainerConstants.CMS_USER_ID_ATTR);
+                String cmsUserId = (String) request.getAttribute(ContainerConstants.CMS_REQUEST_USER_ID_ATTR);
                 populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY, lockInfo.getLockedBy());
                 if (lockInfo.getLockedBy().equals(cmsUserId)) {
                     populatingAttributesMap.put(ChannelManagerConstants.HST_LOCKED_BY_CURRENT_USER, "true");

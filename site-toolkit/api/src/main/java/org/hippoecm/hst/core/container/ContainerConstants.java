@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -91,10 +91,17 @@ public interface ContainerConstants {
     String SUBJECT_REPO_CREDS_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject.repo.creds";
 
     /**
-     * Subject's repository credentials session attribute name (This one can be optionally and temporarily set in a
-     * container that doesn't support JACC.)
+     * Subject's repository credentials session attribute name
+     * @deprecated since 4.0.2 (cms v11.0 GA), will be removed with 5.0.
+     * Use (request!) attribute {@link #CMS_REQUEST_REPO_CREDS_ATTR}
      */
-    String CMS_SSO_REPO_CREDS_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject.repo.creds";
+    @Deprecated
+    String CMS_SSO_REPO_CREDS_ATTR_NAME = "org.hippoecm.hst.sso.cms.repo.creds";
+
+    /**
+     * Name of the http servlet request attribute with the CMS repository credentials during a CMS initiated request
+     */
+    String CMS_REQUEST_REPO_CREDS_ATTR = "org.hippoecm.hst.container.cms.request.repo.creds";
 
     /**
      * Preferred local request or session attribute name
@@ -139,13 +146,23 @@ public interface ContainerConstants {
 
     /**
      * http session attribute to indicate a single sign on session is created through the cms
+     * @deprecated since 4.0.2 (CMS v11.0 GA), will be removed with 5.0.
+     * Use ({@link org.onehippo.cms7.services.cmscontext.CmsSessionContext#getContext(javax.servlet.http.HttpSession)} != null) instead.
      */
+    @Deprecated
     String CMS_SSO_AUTHENTICATED = "org.hippoecm.hst.container.sso_cms_authenticated";
 
     /**
      * If there is a correct cms sso authentication, then on the HttpSession we store the user id with this attribute name
+     * @deprecated Since 4.0.2 (CMS v11.0 GA). Will be removed in 5.0.
      */
+    @Deprecated
     String CMS_USER_ID_ATTR = "org.hippoecm.hst.container.cms_user_id";
+
+    /**
+     * Name of the http servlet request attribute with the CMS user id during a CMS initiated request
+     */
+    String CMS_REQUEST_USER_ID_ATTR = "org.hippoecm.hst.container.cms_user_id";
 
     /**
      * The attribute used on the request to indicate that the request is from a CMS context *and* is a REST call
