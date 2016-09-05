@@ -96,7 +96,11 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
                 HttpSession tmpSession = session;
                 session = null;
                 if (tmpSession != null) {
-                    tmpSession.removeAttribute(SESSION_KEY);
+                    try {
+                        tmpSession.removeAttribute(SESSION_KEY);
+                    } catch (IllegalStateException e) {
+                        // ignore session already invalidated exception
+                    }
                 }
                 cmsCtx = null;
                 sharedContextsMap = Collections.emptyMap();
@@ -178,7 +182,13 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         CmsSessionContextImpl ctx = contextsMap.get(ctxId);
         if (ctx != null) {
             ctx = new CmsSessionContextImpl(this, ctx);
-            session.setAttribute(SESSION_KEY, ctx);
+            try {
+                session.setAttribute(SESSION_KEY, ctx);
+            } catch (IllegalStateException e) {
+                // session just happened to be invalidated, make sure to cleaup ctx
+                ctx.detach();
+                throw e;
+            }
         }
         return ctx;
     }
@@ -188,7 +198,13 @@ public class CmsContextServiceImpl implements CmsInternalCmsContextService {
         CmsSessionContextImpl ctx = (CmsSessionContextImpl)session.getAttribute(SESSION_KEY);
         if (ctx == null) {
             ctx = new CmsSessionContextImpl(this);
-            session.setAttribute(SESSION_KEY, ctx);
+            try {
+                session.setAttribute(SESSION_KEY, ctx);
+            } catch (IllegalStateException e) {
+                // session just happened to be invalidated, make sure to cleaup ctx
+                ctx.detach();
+                throw e;
+            }
             contextsMap.put(ctx.getId(), ctx);
         }
         return ctx;
