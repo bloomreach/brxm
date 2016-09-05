@@ -140,16 +140,16 @@ public final class HippoServiceRegistry {
     /**
      * Register a service under a {@link SingletonService} annotated interface.
      * <p>
-     * The service will be proxied using the providing interface to enforce the ContextClassLoader in invocation to
-     * be set to the classloader of the service itself.
-     * </p><p>
      * If the service is an instance of the interface, it will be registered as the singleton.
      * </p><p>
      * If the interface has an {@link WhiteboardService} annotation, it is still possible to
      * register the service.
+     * </p><p>
+     * The service will be proxied to enforce the Thread ContextClassLoader during invocation to
+     * be set to the Thread ContextClassLoader during registration.
      * </p>
      * @param service service object to register
-     * @param ifaceClass interface to proxy for the service and used for service lookup
+     * @param ifaceClass interface to register the service upon for service lookup
      */
     public synchronized static void registerService(Object service, Class<?> ifaceClass) {
         registerService(service, new Class[]{ifaceClass});
@@ -158,20 +158,21 @@ public final class HippoServiceRegistry {
     /**
      * Register a service under a {@link SingletonService} annotated interface.
      * <p>
-     * The service will be proxied using the first provided interface to enforce the ContextClassLoader in invocation to
-     * be set to the classloader of the service itself.
+     * If the service is an instance of the interface, it will be registered as the singleton.
+     * </p><p>
+     * If the interface has an {@link WhiteboardService} annotation, it is still possible to
+     * register the service.
+     * </p><p>
+     * The service will be proxied to enforce the Thread ContextClassLoader during invocation to
+     * be set to the Thread ContextClassLoader during registration.
      * </p><p>
      * Additional interfaces can be specified by the ifaceClasses parameter to be also exposed through the proxy.
      * This allows for example (web application) internal interfaces to be used to access additional methods, not to be
      * shared across web applications.
      * </p><p>
-     * If the service is an instance of the interface, it will be registered as the singleton.
-     * </p><p>
-     * If the interface has an {@link WhiteboardService} annotation, it is still possible to
-     * register the service.
-     * </p>
      * @param service service object to register
-     * @param ifaceClasses array of interfaces to proxy for the service, first interface used for service lookup
+     * @param ifaceClasses array of interfaces to proxy for the service, the first interface is used to register the
+     *                     service upon for service lookup
      */
     public synchronized static void registerService(Object service, Class[] ifaceClasses) {
         Class<?> ifaceClass = ifaceClasses[0];
