@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,19 +47,19 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
             @Override
             public String getObject() {
                 if (!isVersionable()) {
-                    return "";
+                    return "Check In/Out";
                 }
                 return isCheckedOut() ? "Check In" : "Check Out";
             }
         });
         label.setOutputMarkupId(true);
-        label.add(new AttributeModifier("style", true, new Model<String>() {
+        label.add(new AttributeModifier("style", new Model<String>() {
             private static final long serialVersionUID = 1L;
 
             @Override
             public String getObject() {
                 if (!isVersionable()) {
-                    return "color:grey";
+                    return "color:grey; font-weight: normal; font-style: normal; padding: 7px 12px; display:block;";
                 }
                 return isCheckedOut() ? "color:green" : "color:red";
             }
@@ -106,7 +107,7 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
 
     private void checkin() {
         try {
-            getModelObject().checkin();
+            getSession().getJcrSession().getWorkspace().getVersionManager().checkin(getModelObject().getPath());
         } catch (RepositoryException e) {
             log.error("An error occurred trying to check in node.", e);
         }
@@ -114,7 +115,7 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
 
     private void checkout() {
         try {
-            getModelObject().checkout();
+            getSession().getJcrSession().getWorkspace().getVersionManager().checkout(getModelObject().getPath());
         } catch (RepositoryException e) {
             log.error("An error occurred trying to check out node.", e);
         }
@@ -123,6 +124,11 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
     @Override
     protected void onModelChanged() {
         link.setEnabled(isVersionable());
+        if(!isVersionable()) {
+            this.add(TitleAttribute.set("Only versionable nodes can be checked in or out."));
+        } else {
+            this.add(TitleAttribute.clear());
+        }
         redraw();
     }
 

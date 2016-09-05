@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
@@ -47,21 +48,21 @@ public class UnlockPlugin extends RenderPlugin<Node> {
             @Override
             public String getObject() {
                 if (!isLockable()) {
-                    return "";
+                    return "Lock/Unlock";
                 }
                 return isLocked() ? "Unlock" : "Not locked";
             }
         });
         label.setOutputMarkupId(true);
-        label.add(new AttributeModifier("style", true, new Model<String>() {
+        label.add(new AttributeModifier("style", new Model<String>() {
             private static final long serialVersionUID = 1L;
 
             @Override
             public String getObject() {
                 if (!isLockable()) {
-                    return "color:grey";
+                    return "color:grey; font-weight: normal; font-style: normal; padding: 7px 12px; display:block;";
                 }
-                return isLocked() ? "color:green" : "color:red";
+                return isLocked() ? "color:green" : "color:red; font-weight: normal; font-style: normal; padding: 7px 12px; display:block;";
             }
         }));
         // set up link component
@@ -110,6 +111,11 @@ public class UnlockPlugin extends RenderPlugin<Node> {
     @Override
     protected void onModelChanged() {
         link.setEnabled(isLocked());
+        if(!isLockable()) {
+            this.add(TitleAttribute.set("Only lockable nodes can be locked or unlocked."));
+        } else {
+            this.add(TitleAttribute.clear());
+        }
         redraw();
     }
 
