@@ -56,8 +56,11 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.frontend.Main.PLUGIN_APPLICATION_VALUE_CMS;
 
 /**
  * A Wicket {@link org.apache.wicket.Session} that maintains a reference to a JCR {@link javax.jcr.Session}.  It is
@@ -363,6 +366,10 @@ public class PluginUserSession extends UserSession {
             dirty();
             if (appCount == 0) {
                 invalidate();
+            } else {
+                if (PluginApplication.get().getPluginApplicationName().equals(PLUGIN_APPLICATION_VALUE_CMS)) {
+                    getHttpSession().removeAttribute(CmsSessionContext.SESSION_KEY);
+                }
             }
         } finally {
             if (logoutTask != null) {
