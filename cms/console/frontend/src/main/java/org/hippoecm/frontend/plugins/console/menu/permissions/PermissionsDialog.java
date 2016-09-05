@@ -84,12 +84,12 @@ public class PermissionsDialog extends AbstractDialog<Node> {
         add(allPrivilegesLabel);
         add(actionsLabel);
         add(privilegesLabel);
+        Session privSession = null;
         try {
             Node subject = nodeModel.getObject();
 
             // FIXME: hardcoded workflowuser
-            Session privSession = subject.getSession()
-                    .impersonate(new SimpleCredentials("workflowuser", new char[] {}));
+            privSession = subject.getSession().impersonate(new SimpleCredentials("workflowuser", new char[] {}));
 
             String userID = subject.getSession().getUserID();
             String[] memberships = getMemberships(privSession, userID);
@@ -105,6 +105,10 @@ public class PermissionsDialog extends AbstractDialog<Node> {
 
         } catch (RepositoryException ex) {
             actionsLabel.setDefaultModel(new Model(ex.getClass().getName() + ": " + ex.getMessage()));
+        } finally {
+            if(privSession != null) {
+                privSession.logout();
+            }
         }
         setOkVisible(false);
         setFocusOnOk();
