@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,14 +17,21 @@ package org.onehippo.cms7.services;
 
 import org.junit.Test;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("Duplicates")
 public class HippoServiceRegistryTest {
 
     @SingletonService
     interface TestService {
 
         void doSomething();
+    }
+
+    interface AnotherInterface extends TestService {
+
     }
 
     @Test
@@ -38,9 +45,43 @@ public class HippoServiceRegistryTest {
         try {
             TestService service = HippoServiceRegistry.getService(TestService.class);
             assertNotNull(service);
+            assertFalse(service instanceof AnotherInterface);
         } finally {
             HippoServiceRegistry.unregisterService(testService, TestService.class);
         }
     }
 
+    @Test
+    public void serviceIsRegisteredImplementingAnotherInterface() {
+        TestService testService = new AnotherInterface() {
+            @Override
+            public void doSomething() {
+            }
+        };
+        HippoServiceRegistry.registerService(testService, TestService.class);
+        try {
+            TestService service = HippoServiceRegistry.getService(TestService.class);
+            assertNotNull(service);
+            assertFalse(service instanceof AnotherInterface);
+        } finally {
+            HippoServiceRegistry.unregisterService(testService, TestService.class);
+        }
+    }
+
+    @Test
+    public void serviceIsRegisteredWithAdditionalInterface() {
+        TestService testService = new AnotherInterface() {
+            @Override
+            public void doSomething() {
+            }
+        };
+        HippoServiceRegistry.registerService(testService, new Class[]{TestService.class, AnotherInterface.class});
+        try {
+            TestService service = HippoServiceRegistry.getService(TestService.class);
+            assertNotNull(service);
+            assertTrue(service instanceof AnotherInterface);
+        } finally {
+            HippoServiceRegistry.unregisterService(testService, TestService.class);
+        }
+    }
 }

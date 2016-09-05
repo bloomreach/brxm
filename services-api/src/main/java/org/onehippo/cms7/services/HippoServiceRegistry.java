@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,13 +38,15 @@ public final class HippoServiceRegistry {
         private final Object proxy;
         private final Class<?> iface;
 
-        private NamedRegistration(final ClassLoader classLoader, final Object service, Class<?> iface) {
+        private NamedRegistration(final ClassLoader classLoader, final Object service, Class<?>[] ifaces) {
             super(classLoader, service);
-            if (!iface.isInstance(service)) {
-                throw new HippoServiceException("Service does not implement provided interface " + iface.getName());
+            for (Class<?> iface : ifaces) {
+                if (!iface.isInstance(service)) {
+                    throw new HippoServiceException("Service does not implement provided interface " + iface.getName());
+                }
             }
-            this.iface = iface;
-            this.proxy = Proxy.newProxyInstance(classLoader, new Class[]{iface}, new InvocationHandler() {
+            this.iface = ifaces[0];
+            this.proxy = Proxy.newProxyInstance(classLoader, ifaces, new InvocationHandler() {
 
                 @Override
                 public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
@@ -137,19 +139,46 @@ public final class HippoServiceRegistry {
 
     /**
      * Register a service under a {@link SingletonService} annotated interface.
-     * If the service is an instance of the interface, it will be registered as the singleton.
      * <p>
+     * The service will be proxied using the providing interface to enforce the ContextClassLoader in invocation to
+     * be set to the classloader of the service itself.
+     * </p><p>
+     * If the service is an instance of the interface, it will be registered as the singleton.
+     * </p><p>
      * If the interface has an {@link WhiteboardService} annotation, it is still possible to
      * register the service.
-     *
-     * @param service
-     * @param ifaceClass
+     * </p>
+     * @param service service object to register
+     * @param ifaceClass interface to proxy for the service and used for service lookup
      */
     public synchronized static void registerService(Object service, Class<?> ifaceClass) {
+        registerService(service, new Class[]{ifaceClass});
+    }
+
+    /**
+     * Register a service under a {@link SingletonService} annotated interface.
+     * <p>
+     * The service will be proxied using the first provided interface to enforce the ContextClassLoader in invocation to
+     * be set to the classloader of the service itself.
+     * </p><p>
+     * Additional interfaces can be specified by the ifaceClasses parameter to be also exposed through the proxy.
+     * This allows for example (web application) internal interfaces to be used to access additional methods, not to be
+     * shared across web applications.
+     * </p><p>
+     * If the service is an instance of the interface, it will be registered as the singleton.
+     * </p><p>
+     * If the interface has an {@link WhiteboardService} annotation, it is still possible to
+     * register the service.
+     * </p>
+     * @param service service object to register
+     * @param ifaceClasses array of interfaces to proxy for the service, first interface used for service lookup
+     */
+    public synchronized static void registerService(Object service, Class[] ifaceClasses) {
+        Class<?> ifaceClass = ifaceClasses[0];
         ServiceDescriptor descriptor = new ServiceDescriptor(ifaceClass);
         descriptor.checkSingleton();
         if (descriptor.isSingleton(service)) {
-            registerNamedServiceInternal(service, ifaceClass, ifaceClass.getName());
+            registerNamedServiceInternal(service, ifaceClasses, ifaceClass.getName());
         } else {
             descriptor.checkWhiteboard();
             registerUnnamedServiceInternal(service, ifaceClass);
@@ -190,9 +219,14 @@ public final class HippoServiceRegistry {
     // public non-singleton services
 
     public synchronized static void registerService(Object service, Class<?> ifaceClass, String name) {
+        registerService(service, new Class<?>[]{ifaceClass}, name);
+    }
+
+    public synchronized static void registerService(Object service, Class<?>[] ifaceClasses, String name) {
+        Class<?> ifaceClass = ifaceClasses[0];
         ServiceDescriptor descriptor = new ServiceDescriptor(ifaceClass);
         descriptor.checkNonSingleton();
-        registerNamedServiceInternal(service, ifaceClass, name);
+        registerNamedServiceInternal(service, ifaceClasses, name);
     }
 
     public synchronized static void unregisterService(Object service, Class<?> ifaceClass, String name) {
@@ -219,7 +253,7 @@ public final class HippoServiceRegistry {
 
     // internal registry management
 
-    private static void registerNamedServiceInternal(Object service, Class<?> ifaceClass, String name) {
+    private static void registerNamedServiceInternal(Object service, Class<?>[] ifaceClass, String name) {
         NamedRegistration registration = newRegistration(service, ifaceClass);
         if (!namedServices.containsKey(name)) {
             namedServices.put(name, registration);
@@ -291,7 +325,7 @@ public final class HippoServiceRegistry {
 
     // utility methods
 
-    private static NamedRegistration newRegistration(final Object service, final Class<?> ifaceClass) {
+    private static NamedRegistration newRegistration(final Object service, final Class<?>[] ifaceClass) {
         return new NamedRegistration(Thread.currentThread().getContextClassLoader(), service, ifaceClass);
     }
 
