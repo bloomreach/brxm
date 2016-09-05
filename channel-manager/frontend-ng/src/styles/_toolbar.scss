@@ -21,11 +21,12 @@ md-toolbar.hippo-toolbar {
   md-progress-linear {
     height: 2px;
 
-    ._md-container {
+    .md-container {
       background-color: $grey-200;
       height: 2px;
     }
-    ._md-bar {
+
+    .md-bar {
       background-color: $grey-400;
     }
   }
@@ -36,8 +37,8 @@ md-toolbar.hippo-toolbar {
 
   channel-actions .md-button,
   page-actions .md-button {
-    min-width: 0;
     margin: 0;
+    min-width: 0;
     padding-left: 8px;
     padding-right: 8px;
   }
@@ -49,8 +50,8 @@ md-toolbar.hippo-toolbar {
   .md-icon-button {
     color: $text-dark;
     height: $toolbar-height;
-    padding: 0;
     margin: 0;
+    padding: 0;
     width: 26px;
   }
 
@@ -104,10 +105,10 @@ md-toolbar.hippo-toolbar {
     margin-right: 4px;
     padding-right: 20px;
     md-icon {
-      color: $orange-a400;
-      position: relative;
-      left: 6px;
       bottom: 1px;
+      color: $orange-a400;
+      left: 6px;
+      position: relative;
     }
   }
 }
