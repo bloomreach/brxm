@@ -17,15 +17,12 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.SignatureException;
 import java.util.List;
 
-import javax.crypto.BadPaddingException;
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,8 +36,14 @@ import org.hippoecm.hst.core.jcr.SessionSecurityDelegation;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.onehippo.sso.CredentialCipher;
+import org.onehippo.cms7.services.cmscontext.CmsContextService;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 
+import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR;
+import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_USER_ID_ATTR;
+import static org.hippoecm.hst.core.container.ContainerConstants.CMS_SSO_AUTHENTICATED;
+import static org.hippoecm.hst.core.container.ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_USER_ID_ATTR;
 
 /**
@@ -76,7 +79,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
 
-        if (servletRequest.getHeader("CMS-User") == null && !requestContext.isCmsRequest()) {
+        if (!requestContext.isCmsRequest()) {
             String ignoredPrefix = requestContext.getResolvedMount().getMatchingIgnoredPrefix();
             if (!StringUtils.isEmpty(ignoredPrefix) && ignoredPrefix.equals(requestContext.getResolvedMount()
                     .getMount().getVirtualHost().getVirtualHosts().getCmsPreviewPrefix())) {
@@ -90,58 +93,63 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
         log.debug("Request '{}' is invoked from CMS context. Check whether the SSO handshake is done.", servletRequest.getRequestURL());
 
-        HttpSession httpSession = servletRequest.getSession(true);
+        HttpSession httpSession = servletRequest.getSession(false);
+        CmsSessionContext cmsSessionContext = httpSession != null ? CmsSessionContext.getContext(httpSession) : null;
 
-        // Verify that cms user in request header is same as the one associated
-        // with the credentials on the HttpSession
-        String cmsUser = servletRequest.getHeader("CMS-User");
-        if (cmsUser != null) {
-            final String currentCmsUser = getCurrentCmsUser(httpSession);
-            if (currentCmsUser != null && !currentCmsUser.equals(cmsUser)) {
-                httpSession.invalidate();
-                redirectToCms(servletRequest, servletResponse, requestContext, null);
+        if (httpSession == null || cmsSessionContext == null)
+        {
+            CmsContextService cmsContextService = HippoServiceRegistry.getService(CmsContextService.class);
+            if (cmsContextService == null) {
+                log.debug("No CmsContextService available");
+                sendError(servletResponse, HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
-        }
 
-        if (!isAuthenticated(httpSession)) {
-            try {
-                final String encryptedCredentials = servletRequest.getParameter("cred");
-                if (encryptedCredentials == null) {
-                    // no secret or credentials; if possible, add the secret (httpSession.getId()) and request the
-                    // encrypted credentials by redirecting back to CMS
-                    final String method = servletRequest.getMethod();
-                    if (!"GET".equals(method) && !"HEAD".equals(method)) {
-                        log.warn("Invalid request to redirect for authentication because request method is '{}' and only" +
-                                " 'GET' or 'HEAD' are allowed", method);
-                        sendError(servletResponse, HttpServletResponse.SC_UNAUTHORIZED);
-                        return;
-                    }
-                    log.debug("No encryptedCredentials found. Redirect to the CMS");
-                    redirectToCms(servletRequest, servletResponse, requestContext, httpSession.getId());
+            final String cmsContextServiceId = servletRequest.getParameter("cmsCSID");
+            final String cmsSessionContextId = servletRequest.getParameter("cmsSCID");
+            if (cmsContextServiceId == null || cmsSessionContextId == null) {
+                // no CmsSessionContext and/or CmsContextService IDs provided:  if possible, request these by redirecting back to CMS
+                final String method = servletRequest.getMethod();
+                if (!"GET".equals(method) && !"HEAD".equals(method)) {
+                    log.warn("Invalid request to redirect for authentication because request method is '{}' and only" +
+                            " 'GET' or 'HEAD' are allowed", method);
+                    sendError(servletResponse, HttpServletResponse.SC_UNAUTHORIZED);
                     return;
                 }
-
-                authenticate(httpSession, encryptedCredentials);
-
-            } catch (SignatureException | BadPaddingException e) {
-                log.debug("Exception while authenticating. Redirect to cms SSO authentication URL : {}", e.toString());
-                httpSession.invalidate();
-                redirectToCms(servletRequest, servletResponse, requestContext, null);
+                log.debug("No CmsSessionContext and/or CmsContextService IDs found. Redirect to the CMS");
+                redirectToCms(servletRequest, servletResponse, requestContext, cmsContextService.getId());
                 return;
-            } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.error("Exception while authenticating.", e);
-                } else {
-                    log.error("Exception while authenticating : {}", e.toString());
-                }
+            }
+
+            if (!cmsContextServiceId.equals(cmsContextService.getId())) {
+                log.warn("Cannot authorize request: not coming from this CMS HOST. Redirecting to cms authentication URL to retry.");
+                redirectToCms(servletRequest, servletResponse, requestContext, cmsContextService.getId());
+                return;
+            }
+
+            if (httpSession == null) {
+                httpSession = servletRequest.getSession(true);
+            }
+            cmsSessionContext = cmsContextService.attachSessionContext(cmsSessionContextId, httpSession);
+            if (cmsSessionContext == null) {
+                httpSession.invalidate();
+                log.warn("Cannot authorize request: CmsSessionContext not found");
                 sendError(servletResponse, HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-
         }
 
         updateHstSessionCookie(servletRequest, servletResponse, httpSession);
+
+        servletRequest.setAttribute(CMS_REQUEST_USER_ID_ATTR, cmsSessionContext.getRepositoryCredentials().getUserID());
+        servletRequest.setAttribute(CMS_REQUEST_REPO_CREDS_ATTR, cmsSessionContext.getRepositoryCredentials());
+
+        // TODO: remove this with 5.0 / CMS 12.0
+        {
+            httpSession.setAttribute(CMS_USER_ID_ATTR, cmsSessionContext.getRepositoryCredentials().getUserID());
+            httpSession.setAttribute(CMS_SSO_REPO_CREDS_ATTR_NAME, cmsSessionContext.getRepositoryCredentials());
+            httpSession.setAttribute(CMS_SSO_AUTHENTICATED, Boolean.TRUE);
+        }
 
         // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
         // if another thread flushes this session.
@@ -149,12 +157,12 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             Session jcrSession = null;
             try {
                 if (isCmsRestOrPageComposerRequest(servletRequest)) {
-                    jcrSession = createCmsChannelManagerRestSession(httpSession);
+                    jcrSession = createCmsChannelManagerRestSession(servletRequest);
                 } else {
                     // request preview website, for example in channel manager. The request is not
                     // a REST call
                     if (sessionSecurityDelegation.sessionSecurityDelegationEnabled()) {
-                        jcrSession = createCmsPreviewSession(httpSession);
+                        jcrSession = createCmsPreviewSession(servletRequest);
                     } else {
                         // do not yet create a session. just use the one that the HST container will create later
                     }
@@ -170,7 +178,8 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 }
             } catch (LoginException e) {
                 // the credentials of the current CMS user have changed, so reset the current authentication
-                log.info("Credentials of CMS user '{}' are no longer valid, resetting its HTTP session and starting the SSO handshake again.", getCurrentCmsUser(httpSession));
+                log.info("Credentials of CMS user '{}' are no longer valid, resetting its HTTP session and starting the SSO handshake again.",
+                        cmsSessionContext.getRepositoryCredentials().getUserID());
                 httpSession.invalidate();
                 redirectToCms(servletRequest, servletResponse, requestContext, null);
                 return;
@@ -193,70 +202,18 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         }
     }
 
-    private static String getCurrentCmsUser(final HttpSession httpSession) {
-        return (String)httpSession.getAttribute(CMS_USER_ID_ATTR);
-    }
-
-
-    private static boolean isAuthenticated(final HttpSession httpSession) {
-        return httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME) != null;
-    }
-
-    /**
-     * Authenticates the current user and if it does not succeed, throws an exception
-     *
-     * @throws SignatureException if the <code>httpSession.getId()</code> does not match the encrypted key
-     * @throws BadPaddingException when the decryption fails because of wrong decryption secret in CredentialCipher (for example
-     *                            due to skewed cms/site cluster node affinity)
-     * @throws RuntimeException   in case the decryption fails by another reason than wrong decryption secret in
-     *                            CredentialCipher
-     */
-    private static void authenticate(final HttpSession httpSession, final String encryptedCredentials)
-            throws SignatureException, BadPaddingException {
-
-        final String key = httpSession.getId();
-        final CredentialCipher credentialCipher = CredentialCipher.getInstance();
-        try {
-            final Credentials cred = credentialCipher.decryptFromString(key, encryptedCredentials);
-            httpSession.setAttribute(CMS_USER_ID_ATTR, ((SimpleCredentials)cred).getUserID());
-            httpSession.setAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME, cred);
-            httpSession.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED, true);
-        } catch (SignatureException e) {
-            if (log.isDebugEnabled()) {
-                log.error("SignatureException while decrypting credentials. Retrying : ", e);
-            } else {
-                log.error("SignatureException while decrypting credentials : {}. Retrying ", e.toString());
-            }
-            throw e;
-        } catch (RuntimeException e) {
-            if (log.isDebugEnabled()) {
-                log.error("RuntimeException while decrypting credentials. : ", e);
-            } else {
-                log.error("RuntimeException while decrypting credentials : {}. ", e.toString());
-            }
-            if (e.getCause() instanceof BadPaddingException) {
-                // BadPaddingException - if this credentialCipher is in decryption mode, and (un)padding has been requested,
-                // but the decrypted data is not bounded by the appropriate padding bytes
-                // Throw a SignatureException that triggers retry after invalidating http session cause most likely
-                // skewed http session between cms and site webapp  affinity in load balancer in clustered setup
-                // and no shared secret set in cluster for CredentialCipher
-                throw (BadPaddingException) e.getCause();
-            }
-            throw e;
-        }
-    }
-
     private static void redirectToCms(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse,
-                                      final HstRequestContext requestContext, final String key) throws ContainerException {
+                                      final HstRequestContext requestContext, final String cmsContextServiceId) throws ContainerException {
 
-        if (servletRequest.getParameterMap().containsKey("retry") && key == null) {
-            // endless redirect loop protection, for example in case the decryption of credentials keeps failing
+        if (servletRequest.getParameterMap().containsKey("retry")) {
+            // endless redirect loop protection
+            // in case the loadbalancer keeps skewing the CMS and HST application from different container instances
             sendError(servletResponse, HttpServletResponse.SC_CONFLICT);
             return;
         }
 
         try {
-            final String cmsAuthUrl = createCmsAuthenticationUrl(servletRequest, requestContext, key);
+            final String cmsAuthUrl = createCmsAuthenticationUrl(servletRequest, requestContext, cmsContextServiceId);
             servletResponse.sendRedirect(cmsAuthUrl);
         } catch (UnsupportedEncodingException e) {
             log.error("Unable to encode the destination url with UTF8 encoding " + e.getMessage(), e);
@@ -267,7 +224,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         }
     }
 
-    private static String createCmsAuthenticationUrl(final HttpServletRequest servletRequest, final HstRequestContext requestContext, final String key) throws ContainerException {
+    private static String createCmsAuthenticationUrl(final HttpServletRequest servletRequest, final HstRequestContext requestContext, final String cmsContextServiceId) throws ContainerException {
         final String farthestRequestUrlPrefix = getFarthestUrlPrefix(servletRequest);
         final String cmsLocation = getCmsLocationByPrefix(requestContext, farthestRequestUrlPrefix);
         final String destinationURL = createDestinationUrl(servletRequest, requestContext, farthestRequestUrlPrefix);
@@ -277,8 +234,8 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             authUrl.append("/");
         }
         authUrl.append("auth?destinationUrl=").append(destinationURL);
-        if (key != null) {
-            authUrl.append("&key=").append(key);
+        if (cmsContextServiceId != null) {
+            authUrl.append("&cmsCSID=").append(cmsContextServiceId);
         }
         return authUrl.toString();
     }
@@ -340,32 +297,10 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         return Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_REST_REQUEST_CONTEXT));
     }
 
-    /**
-     * from a url, return everything up to the contextpath : Thus,
-     * scheme + host + port
-     *
-     * @param url the URL string to get the base from
-     * @return the scheme + host + port without trailing / at the end
-     * @throws ContainerException if the URL does not contain // after the scheme or does not contain a / after the
-     *                            host
-     *                            (+port)
-     */
-    private static String getBaseUrl(final String url) throws ContainerException {
-        int indexOfDoubleSlash = url.indexOf("//");
-        if (indexOfDoubleSlash == -1) {
-            throw new ContainerException("Could not establish a SSO between CMS & site application because cannot get a cms url from the referer '" + url + "'");
-        }
-        int indexOfRequestURI = url.substring(indexOfDoubleSlash + 2).indexOf("/") + indexOfDoubleSlash + 2;
-        if (indexOfRequestURI == -1) {
-            throw new ContainerException("Could not establish a SSO between CMS & site application because cannot get a cms url from the referer '" + url + "'");
-        }
-        return url.substring(0, indexOfRequestURI);
-    }
-
-    private Session createCmsChannelManagerRestSession(final HttpSession httpSession) throws LoginException, ContainerException {
+    private Session createCmsChannelManagerRestSession(final HttpServletRequest request) throws LoginException, ContainerException {
         long start = System.currentTimeMillis();
         try {
-            final Credentials credentials = (Credentials)httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
+            final Credentials credentials = (Credentials)request.getAttribute(ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR);
             // This returns a plain session for credentials where access is not merged with for example preview user session
             // For cms rest calls to page composer or cms-rest we must *NEVER* combine the security with other sessions
             Session session = sessionSecurityDelegation.getDelegatedSession(credentials);
@@ -378,9 +313,9 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         }
     }
 
-    private Session createCmsPreviewSession(final HttpSession httpSession) throws LoginException, ContainerException {
+    private Session createCmsPreviewSession(final HttpServletRequest request) throws LoginException, ContainerException {
         long start = System.currentTimeMillis();
-        Credentials cmsUserCred = (Credentials)httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
+        Credentials cmsUserCred = (Credentials)request.getAttribute(ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR);
         try {
             Session session = sessionSecurityDelegation.createPreviewSecurityDelegate(cmsUserCred, false);
             log.debug("Acquiring security delegate session took '{}' ms.", (System.currentTimeMillis() - start));

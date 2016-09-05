@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -775,13 +774,9 @@ public class ContentBeanUtils {
                 return requestContext.getSession(true);
 
             }
-            HttpSession httpSession = requestContext.getServletRequest().getSession(false);
-            if (httpSession == null) {
-                throw new IllegalStateException("HttpSession should not be null for cms requests");
-            }
-            Credentials cmsUserCred = (Credentials) httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
+            Credentials cmsUserCred = (Credentials) requestContext.getServletRequest().getAttribute(ContainerConstants.CMS_REQUEST_REPO_CREDS_ATTR);
             if (cmsUserCred == null) {
-                throw new IllegalStateException("HttpSession should contain cms user credentials attribute for cms requests");
+                throw new IllegalStateException("HttpServletRequest should contain cms user credentials attribute for cms requests");
             }
             // create a security delegated session that is automatically cleaned up at the end of the request
             return sessionSecurityDelegation.getOrCreatePreviewSecurityDelegate(cmsUserCred, sessionIdentifier);
