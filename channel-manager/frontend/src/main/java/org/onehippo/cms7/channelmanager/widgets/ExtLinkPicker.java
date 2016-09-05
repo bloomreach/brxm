@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -207,9 +208,12 @@ public class ExtLinkPicker extends ExtObservable {
         }
 
         final StringBuilder script = new StringBuilder();
-        script.append("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('").append(eventName).append("'");
+        script.append("Hippo.ChannelManager.ExtLinkPickerFactory.Instance.fireEvent('")
+                .append(StringEscapeUtils.escapeJavaScript(eventName)).append("'");
         for (String param : params) {
-            script.append(", '").append(param).append("'");
+            script.append(", '")
+                    .append(StringEscapeUtils.escapeJavaScript(param))
+                    .append("'");
         }
         script.append(");");
 
