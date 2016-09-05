@@ -20,16 +20,16 @@ import org.hippoecm.hst.core.parameters.Parameter;
 
 public interface PollComponentInfo {
 
-    @Parameter(name = "poll-dataPath", displayName = "Path to store poll data")
+    @Parameter(name = "poll-dataPath")
     String getPollDataPath();
 
-    @Parameter(name = "poll-docsClass", displayName = "Poll documents class")
+    @Parameter(name = "poll-docsClass")
     String getPollDocsClass();
 
-    @Parameter(name = "poll-pollCompoundName", displayName = "Name of poll compound")
+    @Parameter(name = "poll-pollCompoundName")
     String getPollCompoundName();
 
-    @Parameter(name = "poll-docsPath", required = true, displayName = "Path to poll documents relative to site content root")
+    @Parameter(name = "poll-docsPath", required = true)
     @JcrPath(pickerSelectableNodeTypes = "hippostd:folder")
     String getPollDocsPath();
 }

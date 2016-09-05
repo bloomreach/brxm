@@ -1,0 +1,29 @@
+{
+  "hippo:hst": {
+    "componentparameters": {
+      "org": {
+        "onehippo": {
+          "forge": {
+            "poll": {
+              "component": {
+                "PollComponentInfo": {
+                  "en": {
+                    "poll-dataPath": "Path to store poll data",
+                    "poll-docsClass": "Poll documents class",
+                    "poll-pollCompoundName": "Name of poll compound",
+                    "poll-docsPath": "Path to poll documents relative to site content root"
+                  }
+                },
+                "PollDocumentComponentInfo": {
+                  "en": {
+                    "poll-docsPath": "Poll document"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
