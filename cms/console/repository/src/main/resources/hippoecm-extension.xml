@@ -118,7 +118,7 @@
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:frontend/console/console/logout/excludedPaths</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+    <sv:property sv:name="hippo:contentpropset" sv:type="String" sv:multiple="true">
       <sv:value>/content</sv:value>
       <sv:value>/hippo:log</sv:value>
       <sv:value>/formdata</sv:value>
@@ -269,4 +269,64 @@
       <sv:value>/hippo:configuration/hippo:frontend/console/console/menu/item</sv:value>
     </sv:property>
   </sv:node>
+
+  <!-- the top plugin does not render the check link anymore, but the logout / System menu does -->
+  <sv:node sv:name="frontend-console-console-top-extensioncheck">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>902.3</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropdelete" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/console/console/top/extension.check</sv:value>
+    </sv:property>
+  </sv:node>
+  <!-- set the complete multivalued prop again to remove one entry -->
+  <sv:node sv:name="frontend-console-console-top-wicketextensions">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/console/console/top/wicket.extensions</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>extension.logout</sv:value>
+      <sv:value>extension.menu</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>903</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <!-- the logout plugin now shows the check plugin -->
+  <sv:node sv:name="frontend-console-console-logout-extensioncheck">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/console/console/logout/extension.check</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>service.check</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>903</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="frontend-console-console-logout-wicketextensions">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/console/console/logout/wicket.extensions</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String" sv:multiple="true">
+      <sv:value>extension.check</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>903</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>
