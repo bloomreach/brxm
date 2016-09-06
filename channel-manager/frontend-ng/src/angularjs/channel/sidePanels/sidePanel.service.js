@@ -14,32 +14,38 @@
  * limitations under the License.
  */
 
-const CHANNEL_LEFT_SIDE_PANEL_ID = 'channel-left-side-panel'; // must match with directive mark-up
-
-export class ChannelLeftSidePanelService {
+export class ChannelSidePanelService {
   constructor($mdSidenav, ScalingService) {
     'ngInject';
 
     this.$mdSidenav = $mdSidenav;
     this.ScalingService = ScalingService;
+    this.panels = {
+      left: {
+        element: 'channel-left-side-panel',
+      },
+      right: {
+        element: 'channel-right-side-panel',
+      },
+    };
   }
 
-  initialize(leftSidePanelJQueryElement) {
-    this.leftSidePanelJQueryElement = leftSidePanelJQueryElement;
+  initialize(side, jQueryElement) {
+    this.panels[side].jQueryElement = jQueryElement;
   }
 
-  toggle() {
-    this.$mdSidenav(CHANNEL_LEFT_SIDE_PANEL_ID).toggle();
-    this.ScalingService.setPushWidth(this.isOpen() ? this.leftSidePanelJQueryElement.width() : 0);
+  toggle(side) {
+    this.$mdSidenav(this.panels[side].element).toggle();
+    this.ScalingService.setPushWidth(this.isOpen(side) ? this.panels[side].jQueryElement.width() : 0);
   }
 
-  isOpen() {
-    return this.leftSidePanelJQueryElement && this.$mdSidenav(CHANNEL_LEFT_SIDE_PANEL_ID).isOpen();
+  isOpen(side) {
+    return this.panels[side].jQueryElement && this.$mdSidenav(this.panels[side].element).isOpen();
   }
 
-  close() {
-    if (this.isOpen()) {
-      this.$mdSidenav(CHANNEL_LEFT_SIDE_PANEL_ID).close();
+  close(side) {
+    if (this.isOpen(side)) {
+      this.$mdSidenav(this.panels[side].element).close();
       this.ScalingService.setPushWidth(0);
     }
   }

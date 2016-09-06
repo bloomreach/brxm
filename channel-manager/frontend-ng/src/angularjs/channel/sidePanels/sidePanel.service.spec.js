@@ -16,10 +16,10 @@
 
 /* eslint-disable prefer-const */
 
-describe('ChannelLeftSidePanelService', () => {
+describe('ChannelSidePanelService', () => {
   'use strict';
 
-  let ChannelLeftSidePanelService;
+  let ChannelSidePanelService;
   let ScalingService;
   const leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'close']);
 
@@ -32,8 +32,8 @@ describe('ChannelLeftSidePanelService', () => {
       $provide.value('$mdSidenav', $mdSidenav);
     });
 
-    inject((_ChannelLeftSidePanelService_, _ScalingService_) => {
-      ChannelLeftSidePanelService = _ChannelLeftSidePanelService_;
+    inject((_ChannelSidePanelService_, _ScalingService_) => {
+      ChannelSidePanelService = _ChannelSidePanelService_;
       ScalingService = _ScalingService_;
     });
 
@@ -43,13 +43,13 @@ describe('ChannelLeftSidePanelService', () => {
   it('forwards the toggle to the mdSidenav service and updates the scaling service', () => {
     const element = angular.element('<div></div>');
     element.width(250);
-    ChannelLeftSidePanelService.initialize(element);
+    ChannelSidePanelService.initialize('left', element);
 
     ScalingService.setPushWidth.calls.reset();
     leftSidePanel.toggle.calls.reset();
     leftSidePanel.isOpen.and.returnValue(true);
 
-    ChannelLeftSidePanelService.toggle();
+    ChannelSidePanelService.toggle('left');
 
     expect(leftSidePanel.toggle).toHaveBeenCalled();
     expect(ScalingService.setPushWidth).toHaveBeenCalledWith(250);
@@ -58,7 +58,7 @@ describe('ChannelLeftSidePanelService', () => {
     leftSidePanel.toggle.calls.reset();
     leftSidePanel.isOpen.and.returnValue(false);
 
-    ChannelLeftSidePanelService.toggle();
+    ChannelSidePanelService.toggle('left');
 
     expect(leftSidePanel.toggle).toHaveBeenCalled();
     expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
@@ -66,29 +66,29 @@ describe('ChannelLeftSidePanelService', () => {
 
   it('forwards the is-open check to the mdSidenav service', () => {
     const element = angular.element('<div></div>');
-    ChannelLeftSidePanelService.initialize(element);
+    ChannelSidePanelService.initialize('left', element);
 
     leftSidePanel.isOpen.and.returnValue(true);
-    expect(ChannelLeftSidePanelService.isOpen()).toBe(true);
+    expect(ChannelSidePanelService.isOpen('left')).toBe(true);
 
     leftSidePanel.isOpen.and.returnValue(false);
-    expect(ChannelLeftSidePanelService.isOpen()).toBe(false);
+    expect(ChannelSidePanelService.isOpen('left')).toBe(false);
   });
 
   it('the is-open check works when the left side panel has not been rendered yet', () => {
     leftSidePanel.isOpen.and.throwError('left side panel cannot be found');
-    expect(ChannelLeftSidePanelService.isOpen()).toBeFalsy();
+    expect(ChannelSidePanelService.isOpen('left')).toBeFalsy();
   });
 
   it('closes the left side panel if it is open', () => {
     const element = angular.element('<div></div>');
-    ChannelLeftSidePanelService.initialize(element);
+    ChannelSidePanelService.initialize('left', element);
 
     ScalingService.setPushWidth.calls.reset();
     leftSidePanel.close.calls.reset();
     leftSidePanel.isOpen.and.returnValue(true);
 
-    ChannelLeftSidePanelService.close();
+    ChannelSidePanelService.close('left');
 
     expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
     expect(leftSidePanel.close).toHaveBeenCalled();
@@ -97,7 +97,7 @@ describe('ChannelLeftSidePanelService', () => {
     leftSidePanel.close.calls.reset();
     leftSidePanel.isOpen.and.returnValue(false);
 
-    ChannelLeftSidePanelService.close();
+    ChannelSidePanelService.close('left');
 
     expect(ScalingService.setPushWidth).not.toHaveBeenCalled();
     expect(leftSidePanel.close).not.toHaveBeenCalled();

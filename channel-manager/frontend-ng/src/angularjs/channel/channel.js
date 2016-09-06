@@ -19,7 +19,7 @@ import { channelChangesModule } from './changes/changes';
 import { channelPageModule } from './page/page';
 import { channelPageActionsModule } from './page/actions/actions';
 import { channelActionsModule } from './actions/actions';
-import { channelLeftSidePanelModule } from './leftSidePanel/leftSidePanel';
+import { channelLeftSidePanelModule } from './sidePanels/leftSidePanel/leftSidePanel';
 import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
 import { channelMenuModule } from './menu/editor';
 import { channelMaskModule } from './mask/mask';

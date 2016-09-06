@@ -22,7 +22,7 @@ export function channelLeftSidePanelToggleDirective() {
     bindToController: {
       disabled: '=',
     },
-    templateUrl: 'channel/leftSidePanel/toggle.html',
+    templateUrl: 'channel/sidePanels/leftSidePanel/leftSidePanelToggle.html',
     controller: 'ChannelLeftSidePanelToggleCtrl',
     controllerAs: 'toggle',
   };

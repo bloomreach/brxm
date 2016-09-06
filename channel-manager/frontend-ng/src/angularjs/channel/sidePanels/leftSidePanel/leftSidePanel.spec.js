@@ -19,7 +19,7 @@ describe('ChannelLeftSidePanel', () => {
 
   let $rootScope;
   let $compile;
-  let ChannelLeftSidePanelService;
+  let ChannelSidePanelService;
   let SiteMapService;
   let ChannelService;
   let HippoIframeService;
@@ -31,18 +31,18 @@ describe('ChannelLeftSidePanel', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelLeftSidePanelService_, _ChannelService_, _SiteMapService_, _HippoIframeService_) => {
+    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_, _ChannelService_, _SiteMapService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      ChannelLeftSidePanelService = _ChannelLeftSidePanelService_;
+      ChannelSidePanelService = _ChannelSidePanelService_;
       ChannelService = _ChannelService_;
       SiteMapService = _SiteMapService_;
       HippoIframeService = _HippoIframeService_;
     });
 
     spyOn(ChannelService, 'getCatalog').and.returnValue([]);
-    spyOn(ChannelLeftSidePanelService, 'initialize');
-    spyOn(ChannelLeftSidePanelService, 'close');
+    spyOn(ChannelSidePanelService, 'initialize');
+    spyOn(ChannelSidePanelService, 'close');
     spyOn(SiteMapService, 'get');
     spyOn(HippoIframeService, 'load');
     spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
@@ -60,8 +60,8 @@ describe('ChannelLeftSidePanel', () => {
   it('initializes the channel left side panel service upon instantiation', () => {
     instantiateController(false);
 
-    expect(ChannelLeftSidePanelService.initialize).toHaveBeenCalled();
-    expect(ChannelLeftSidePanelService.close).toHaveBeenCalled();
+    expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
+    expect(ChannelSidePanelService.close).toHaveBeenCalled();
   });
 
   it('retrieves the catalog from the channel service', () => {

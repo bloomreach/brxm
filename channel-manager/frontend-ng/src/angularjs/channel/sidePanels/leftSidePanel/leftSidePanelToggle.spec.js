@@ -21,22 +21,22 @@ describe('ChannelLeftSidePanelToggle', () => {
 
   let $rootScope;
   let $compile;
-  let ChannelLeftSidePanelService;
+  let ChannelSidePanelService;
   let ChannelService;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelLeftSidePanelService_, _ChannelService_) => {
+    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_, _ChannelService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      ChannelLeftSidePanelService = _ChannelLeftSidePanelService_;
+      ChannelSidePanelService = _ChannelSidePanelService_;
       ChannelService = _ChannelService_;
     });
 
     spyOn(ChannelService, 'getCatalog').and.returnValue([]);
-    spyOn(ChannelLeftSidePanelService, 'toggle');
-    spyOn(ChannelLeftSidePanelService, 'isOpen');
+    spyOn(ChannelSidePanelService, 'toggle');
+    spyOn(ChannelSidePanelService, 'isOpen');
   });
 
   function instantiateController() {
@@ -49,17 +49,17 @@ describe('ChannelLeftSidePanelToggle', () => {
 
   it('forwards the toggle call to the left side panel service', () => {
     const ToggleCtrl = instantiateController();
-    expect(ChannelLeftSidePanelService.toggle).not.toHaveBeenCalled();
+    expect(ChannelSidePanelService.toggle).not.toHaveBeenCalled();
 
     ToggleCtrl.toggleLeftSidePanel();
-    expect(ChannelLeftSidePanelService.toggle).toHaveBeenCalled();
+    expect(ChannelSidePanelService.toggle).toHaveBeenCalled();
   });
 
   it('forwards the is open call to the left side panel service', () => {
     const ToggleCtrl = instantiateController();
-    ChannelLeftSidePanelService.isOpen.and.returnValue(false);
+    ChannelSidePanelService.isOpen.and.returnValue(false);
     expect(ToggleCtrl.isLeftSidePanelOpen()).toBe(false);
-    ChannelLeftSidePanelService.isOpen.and.returnValue(true);
+    ChannelSidePanelService.isOpen.and.returnValue(true);
     expect(ToggleCtrl.isLeftSidePanelOpen()).toBe(true);
   });
 });

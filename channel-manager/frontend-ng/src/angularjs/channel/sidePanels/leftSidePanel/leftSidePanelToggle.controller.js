@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-export function channelLeftSidePanelDirective() {
-  'ngInject';
+export class ChannelLeftSidePanelToggleCtrl {
+  constructor(ChannelSidePanelService, ChannelService) {
+    'ngInject';
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      editMode: '=',
-    },
-    templateUrl: 'channel/leftSidePanel/leftSidePanel.html',
-    controller: 'ChannelLeftSidePanelCtrl',
-    controllerAs: 'leftSidePanel',
-  };
+    this.ChannelSidePanelService = ChannelSidePanelService;
+    this.ChannelService = ChannelService;
+  }
+
+  toggleLeftSidePanel() {
+    this.ChannelSidePanelService.toggle('left');
+  }
+
+  isLeftSidePanelOpen() {
+    return this.ChannelSidePanelService.isOpen('left');
+  }
 }
