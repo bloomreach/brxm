@@ -21,21 +21,39 @@ export class SessionService {
     this.HstService = HstService;
 
     this._canWrite = false;
+    this._canManageChanges = false;
+    this._canDeleteChannel = false;
+    this._isCrossChannelPageCopySupported = false;
     this._initCallbacks = {};
   }
 
-  initialize(channel) {
-    return this.HstService
-      .initializeSession(channel.hostname, channel.mountId)
-      .then((canWrite) => {
-        this._canWrite = canWrite;
+  initialize(hostname, mountId) {
+    return this.HstService.initializeSession(hostname, mountId)
+      .then((privileges) => {
+        if (privileges) {
+          this._canWrite = privileges.canWrite;
+          this._canManageChanges = privileges.canManageChanges;
+          this._canDeleteChannel = privileges.canDeleteChannel;
+          this._isCrossChannelPageCopySupported = privileges.crossChannelPageCopySupported;
+        }
         this._serveInitCallbacks();
-        return channel;
       });
   }
 
   hasWriteAccess() {
     return this._canWrite;
+  }
+
+  canManageChanges() {
+    return this._canManageChanges;
+  }
+
+  canDeleteChannel() {
+    return this._canDeleteChannel;
+  }
+
+  isCrossChannelPageCopySupported() {
+    return this._isCrossChannelPageCopySupported;
   }
 
   registerInitCallback(id, callback) {

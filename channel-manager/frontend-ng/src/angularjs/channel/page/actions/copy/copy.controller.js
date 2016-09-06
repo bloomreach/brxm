@@ -15,7 +15,7 @@
  */
 
 export class PageCopyCtrl {
-  constructor($log, $translate, ChannelService, SiteMapService, SiteMapItemService, HippoIframeService,
+  constructor($log, $translate, ChannelService, SessionService, SiteMapService, SiteMapItemService, HippoIframeService,
               FeedbackService) {
     'ngInject';
 
@@ -42,7 +42,7 @@ export class PageCopyCtrl {
     this.lastPathInfoElement = '';
     this.subpageTitle = $translate.instant('SUBPAGE_PAGE_COPY_TITLE', { pageName: this.item.name });
 
-    if (ChannelService.isCrossChannelPageCopySupported()) {
+    if (SessionService.isCrossChannelPageCopySupported()) {
       this.channels = ChannelService.getPageModifiableChannels();
       if (this.channels && (this.channels.length > 1 ||
         (this.channels.length === 1 && this.channels[0].id !== this.channelId))) {

@@ -31,7 +31,7 @@ export class HstService {
 
   initializeSession(hostname, mountId) {
     return this.doGet(this.config.rootUuid, 'composermode', hostname, mountId)
-      .then((response) => !!(response && response.data && response.data.canWrite));
+      .then((response) => response ? response.data : null);
   }
 
   getChannel(id) {
@@ -44,10 +44,6 @@ export class HstService {
   getSiteMap(id) {
     return this.doGet(id, 'pages')
       .then((response) => response.data.pages);
-  }
-
-  getFeatures() {
-    return this.doGet(this.config.rootUuid, 'features');
   }
 
   doGet(uuid, ...pathElements) {

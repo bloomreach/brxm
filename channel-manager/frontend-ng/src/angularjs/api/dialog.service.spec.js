@@ -35,6 +35,12 @@ describe('DialogService', () => {
     expect(DialogService.confirm()).toEqual(mockDialogPreset);
   });
 
+  it('uses $mdDialog to create a alert dialog', () => {
+    const mockDialogPreset = {};
+    spyOn($mdDialog, 'alert').and.returnValue(mockDialogPreset);
+    expect(DialogService.alert()).toEqual(mockDialogPreset);
+  });
+
   it('uses $mdDialog to show a confirmation dialog', () => {
     spyOn($mdDialog, 'show');
     const confirmationDialog = DialogService.confirm();
@@ -73,5 +79,11 @@ describe('DialogService', () => {
     dialogConfig.onRemoving();
     expect(window.APP_TO_CMS.publish).toHaveBeenCalledWith('remove-mask');
     expect(onRemovingSpy).toHaveBeenCalled();
+  });
+
+  it('uses $mdDialog to hide an existing dialog', () => {
+    spyOn($mdDialog, 'hide');
+    DialogService.hide();
+    expect($mdDialog.hide).toHaveBeenCalled();
   });
 });

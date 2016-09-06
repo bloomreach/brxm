@@ -24,6 +24,7 @@ export class ChangesMenuCtrl {
       DialogService,
       FeedbackService,
       HippoIframeService,
+      SessionService,
       SiteMapService
     ) {
     'ngInject';
@@ -36,9 +37,8 @@ export class ChangesMenuCtrl {
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.SessionService = SessionService;
     this.SiteMapService = SiteMapService;
-
-    this.canManageChanges = ConfigService.canManageChanges;
   }
 
   _getChangedBySet() {
@@ -46,7 +46,11 @@ export class ChangesMenuCtrl {
   }
 
   _hasChangesToManage() {
-    return this.canManageChanges && this._getChangedBySet().length > 0;
+    return this.canManageChanges() && this._getChangedBySet().length > 0;
+  }
+
+  canManageChanges() {
+    return this.SessionService.canManageChanges();
   }
 
   hasOwnChanges() {

@@ -77,7 +77,11 @@ describe('FeedbackService', () => {
 
   it('handles undefined error responses', () => {
     FeedbackService.showErrorResponseOnSubpage(undefined, 'defaultKey');
+    expect($log.info).not.toHaveBeenCalled();
+    expect($translate.instant).toHaveBeenCalledWith('defaultKey', undefined);
+    expect(toast.parent.calls.mostRecent().args[0]).toBeDefined();
 
+    FeedbackService.showErrorResponse(undefined, 'defaultKey');
     expect($log.info).not.toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('defaultKey', undefined);
     expect(toast.parent.calls.mostRecent().args[0]).toBeDefined();
@@ -92,22 +96,49 @@ describe('FeedbackService', () => {
   });
 
   it('logs messages at info level', () => {
-    const response = { message: 'test log message' };
+    let response = { message: 'test log message' };
     FeedbackService.showErrorResponseOnSubpage(response, 'defaultKey');
-
     expect($log.info).toHaveBeenCalledWith('test log message');
+
+    response = { parameterMap: { errorReason: 'another message' } };
+    FeedbackService.showErrorResponseOnSubpage(response, 'defaultKey');
+    expect($log.info).toHaveBeenCalledWith('another message');
   });
 
-  it('maps error codes using the error map', () => {
+  it('maps ExtResponse error codes using the error map', () => {
     const map = { a: 'A' };
     const response = { errorCode: 'a' };
     FeedbackService.showErrorResponseOnSubpage(response, 'defaultKey', map);
+    expect($translate.instant).toHaveBeenCalledWith('A', undefined);
+
+    $translate.instant.calls.reset();
+    FeedbackService.showErrorResponse(response, 'defaultKey', map);
     expect($translate.instant).toHaveBeenCalledWith('A', undefined);
 
     const params = { trans: 'parent' };
     response.data = params;
     response.errorCode = 'c';
     FeedbackService.showErrorResponseOnSubpage(response, 'defaultKey', map);
+    expect($translate.instant).toHaveBeenCalledWith('defaultKey', params);
+
+    $translate.instant.calls.reset();
+    FeedbackService.showErrorResponse(response, 'defaultKey', map);
+    expect($translate.instant).toHaveBeenCalledWith('defaultKey', params);
+  });
+
+  it('maps ErrorStatus error codes using the error map', () => {
+    const map = { a: 'A' };
+    const response = {
+      error: 'a',
+    };
+    FeedbackService.showErrorResponse(response, 'defaultKey', map);
+    expect($translate.instant).toHaveBeenCalledWith('A', undefined);
+
+    const params = { trans: 'parent' };
+    response.parameterMap = params;
+    response.error = 'c';
+    $translate.instant.calls.reset();
+    FeedbackService.showErrorResponse(response, 'defaultKey', map);
     expect($translate.instant).toHaveBeenCalledWith('defaultKey', params);
   });
 

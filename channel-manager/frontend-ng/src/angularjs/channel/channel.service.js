@@ -32,7 +32,6 @@ export class ChannelService {
     'ngInject';
 
     this.$log = $log;
-    this.$rootScope = $rootScope;
     this.$http = $http;
     this.$state = $state;
     this.SessionService = SessionService;
@@ -46,11 +45,16 @@ export class ChannelService {
 
     this.channel = {};
 
-    this.CmsService.subscribe('channel-changed-in-extjs', () => this._onChannelChanged());
+    this.CmsService.subscribe('channel-changed-in-extjs', () => {
+      $rootScope.$apply(() => this.reload());
+    });
   }
 
-  _onChannelChanged() {
-    this.$rootScope.$apply(() => this.reload());
+  initialize() {
+    this.CmsService.subscribe('load-channel', (channel, initialPath) => this._onLoadChannel(channel, initialPath));
+
+    // Handle reloading of iframe by BrowserSync during development
+    this.CmsService.publish('reload-channel');
   }
 
   clearChannel() {
@@ -61,41 +65,44 @@ export class ChannelService {
     return !!this.channel.id;
   }
 
-  reload(channelId = this.channel.id) {
-    return this.HstService.getChannel(channelId)
-      .then((channel) => {
-        this._setChannel(channel);
-      })
-      .catch((error) => {
-        this.$log.error(`Failed to reload channel '${channelId}'.`, error);
-      });
+  getChannel() {
+    return this.channel;
   }
 
-  initialize() {
-    this.CmsService.subscribe('load-channel', (channel, initialPath) => this._onLoadChannel(channel, initialPath));
-
-    // Handle reloading of iframe by BrowserSync during development
-    this.CmsService.publish('reload-channel');
+  reload(channelId = this.channel.id) {
+    return this._load(channelId, this.channel.contextPath);
   }
 
   _onLoadChannel(channel, initialPath) {
-    this.ConfigService.setContextPathForChannel(channel.contextPath);
-    this.HstService.getChannel(channel.id).then((updatedChannel) => {
-      this._loadGlobalFeatures();
-      this._load(updatedChannel).then((channelId) => {
+    this._load(channel.id, channel.contextPath)
+      .then((channelId) => {
         const initialRenderPath = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), initialPath);
         this.$state.go('hippo-cm.channel', { channelId, initialRenderPath }, { reload: true });
       });
-    });
-    // TODO: handle error.
-    // If this goes wrong, the CM won't work. display a toast explaining so
-    // and switch back to the channel overview.
   }
 
-  _loadGlobalFeatures() {
-    this.HstService.getFeatures()
-      .then((response) => {
-        this.crossChannelPageCopySupported = response.data.crossChannelPageCopySupported;
+  switchToChannel(contextPath, id) {
+    return this._load(id, contextPath)
+      .then((channelId) => {
+        this.CmsService.publish('switch-channel', channelId); // update breadcrumb.
+      });
+  }
+
+  _load(channelId, contextPath) {
+    this.ConfigService.setContextPathForChannel(contextPath);
+
+    return this.HstService.getChannel(channelId)
+      .then((channel) => this.SessionService.initialize(channel.hostname, channel.mountId)
+        .then(() => {
+          this._setChannel(channel);
+          return channel.id;
+        })
+      )
+      .catch((error) => {
+        // TODO: improve error handling.
+        // If this goes wrong, the CM won't work. display a toast explaining so
+        // and switch back to the channel overview.
+        this.$log.error(`Failed to reload channel '${channelId}'.`, error);
       });
   }
 
@@ -111,19 +118,6 @@ export class ChannelService {
     if (this.SessionService.hasWriteAccess()) {
       this._augmentChannelWithPrototypeInfo();
     }
-  }
-
-  getChannel() {
-    return this.channel;
-  }
-
-  _load(channel) {
-    return this.SessionService
-      .initialize(channel)
-      .then(() => {
-        this._setChannel(channel);
-        return channel.id;
-      });
   }
 
   _makeContextPrefix(contextPath) {
@@ -176,15 +170,6 @@ export class ChannelService {
 
   getName() {
     return this.channel.name;
-  }
-
-  switchToChannel(contextPath, id) {
-    this.ConfigService.setContextPathForChannel(contextPath);
-    return this.HstService.getChannel(id)
-      .then((channel) => {
-        this._setChannel(channel);
-        this.CmsService.publish('switch-channel', channel.id); // update breadcrumb.
-      });
   }
 
   hasPreviewConfiguration() {
@@ -277,10 +262,6 @@ export class ChannelService {
     return this.HstService.doPut(this.channel, this.ConfigService.rootUuid, 'channels', this.channel.id);
   }
 
-  isCrossChannelPageCopySupported() {
-    return this.crossChannelPageCopySupported;
-  }
-
   loadPageModifiableChannels() {
     const params = {
       previewConfigRequired: true,
@@ -302,5 +283,9 @@ export class ChannelService {
 
   getContentRootPath() {
     return this.channel.contentRoot;
+  }
+
+  deleteChannel() {
+    return this.HstService.doDelete(this.ConfigService.rootUuid, 'channels', this.getId());
   }
 }

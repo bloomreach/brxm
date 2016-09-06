@@ -28,6 +28,12 @@ export class DialogService {
     });
   }
 
+  alert() {
+    return this.$mdDialog.alert({
+      onRemoving: () => this._removeMask(),
+    });
+  }
+
   show(dialog) {
     this._showMask();
 
@@ -47,5 +53,9 @@ export class DialogService {
 
   _removeMask() {
     this.CmsService.publish('remove-mask');
+  }
+
+  hide() {
+    return this.$mdDialog.hide();
   }
 }

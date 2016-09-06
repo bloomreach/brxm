@@ -23,6 +23,7 @@ describe('CmsService', () => {
   beforeEach(() => {
     spyOn(window.APP_TO_CMS, 'publish').and.callThrough();
     spyOn(window.CMS_TO_APP, 'subscribe').and.callThrough();
+    spyOn(window.CMS_TO_APP, 'subscribeOnce').and.callThrough();
 
     module('hippo-cm-api');
 
@@ -32,56 +33,69 @@ describe('CmsService', () => {
     });
   });
 
-  describe('in production mode', () => {
-    it('publishes events to the CMS', () => {
-      CmsService.publish('browseTo', '/about');
-      expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('browseTo', '/about');
+  it('publishes events to the CMS', () => {
+    CmsService.publish('browseTo', '/about');
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('browseTo', '/about');
+  });
+
+  it('subscribes to events from the CMS', () => {
+    CmsService.subscribe('test', 'callback');
+    expect($window.CMS_TO_APP.subscribe).toHaveBeenCalledWith('test', 'callback');
+  });
+
+  it('subscribes to events from the CMS with a function scope', () => {
+    CmsService.subscribe('test', 'callback', 'scope');
+    expect($window.CMS_TO_APP.subscribe).toHaveBeenCalledWith('test', 'callback', 'scope');
+  });
+
+  it('subscribes once to events from the CMS', () => {
+    CmsService.subscribeOnce('test', 'callback');
+    expect($window.CMS_TO_APP.subscribeOnce).toHaveBeenCalledWith('test', 'callback');
+  });
+
+  it('subscribes once to events from the CMS with a function scope', () => {
+    CmsService.subscribeOnce('test', 'callback', 'scope');
+    expect($window.CMS_TO_APP.subscribeOnce).toHaveBeenCalledWith('test', 'callback', 'scope');
+  });
+
+  it('unsubscribes from events from the CMS', () => {
+    const mock = jasmine.createSpyObj('mock', ['test']);
+
+    CmsService.subscribe('test', mock.test, mock);
+
+    $window.CMS_TO_APP.publish('test');
+    expect(mock.test).toHaveBeenCalled();
+
+    mock.test.calls.reset();
+    CmsService.unsubscribe('test', mock.test, mock);
+    $window.CMS_TO_APP.publish('test');
+    expect(mock.test).not.toHaveBeenCalled();
+  });
+
+  it('returns the app configuration specified by the CMS', () => {
+    expect(CmsService.getConfig()).toEqual(window.APP_CONFIG);
+  });
+
+  it('throws an error when the CMS does not contain an ExtJs IFramePanel with the given ID', () => {
+    spyOn($window.parent.Ext, 'getCmp').and.returnValue(undefined);
+    expect(() => {
+      CmsService.getConfig();
+    }).toThrow(new Error("Unknown iframe panel id: 'ext-42'"));
+  });
+
+  it('throws an error when the CMS\'s IFramePanel does not contain any configuration for the app', () => {
+    spyOn($window.parent.Ext, 'getCmp').and.returnValue({
+      initialConfig: {},
     });
+    expect(() => {
+      CmsService.getConfig();
+    }).toThrowError(Error, 'Parent iframe panel does not contain iframe configuration');
+  });
 
-    it('subscribes to events from the CMS', () => {
-      CmsService.subscribe('test', 'callback', 'scope');
-      expect($window.CMS_TO_APP.subscribe).toHaveBeenCalledWith('test', 'callback', 'scope');
-    });
-
-    it('unsubscribes from events from the CMS', () => {
-      const mock = jasmine.createSpyObj('mock', ['test']);
-
-      CmsService.subscribe('test', mock.test, mock);
-
-      $window.CMS_TO_APP.publish('test');
-      expect(mock.test).toHaveBeenCalled();
-
-      mock.test.calls.reset();
-      CmsService.unsubscribe('test', mock.test, mock);
-      $window.CMS_TO_APP.publish('test');
-      expect(mock.test).not.toHaveBeenCalled();
-    });
-
-    it('returns the app configuration specified by the CMS', () => {
-      expect(CmsService.getConfig()).toEqual(window.APP_CONFIG);
-    });
-
-    it('throws an error when the CMS does not contain an ExtJs IFramePanel with the given ID', () => {
-      spyOn($window.parent.Ext, 'getCmp').and.returnValue(undefined);
-      expect(() => {
-        CmsService.getConfig();
-      }).toThrow(new Error("Unknown iframe panel id: 'ext-42'"));
-    });
-
-    it('throws an error when the CMS\'s IFramePanel does not contain any configuration for the app', () => {
-      spyOn($window.parent.Ext, 'getCmp').and.returnValue({
-        initialConfig: {},
-      });
-      expect(() => {
-        CmsService.getConfig();
-      }).toThrowError(Error, 'Parent iframe panel does not contain iframe configuration');
-    });
-
-    it('throws an error when the IFrame URL does not contain request parameter \'parentExtIFramePanelId\'', () => {
-      window.history.replaceState({}, document.title, '/');
-      expect(() => {
-        CmsService.getParentIFramePanelId();
-      }).toThrowError(Error, 'Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
-    });
+  it('throws an error when the IFrame URL does not contain request parameter \'parentExtIFramePanelId\'', () => {
+    window.history.replaceState({}, document.title, '/');
+    expect(() => {
+      CmsService.getParentIFramePanelId();
+    }).toThrowError(Error, 'Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
   });
 });

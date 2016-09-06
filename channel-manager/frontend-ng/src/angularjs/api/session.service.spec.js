@@ -18,74 +18,95 @@ describe('SessionService', () => {
   'use strict';
 
   let $rootScope;
-  let deferred;
-  let sessionService;
-  const channelMock = 'channelMock';
+  let $q;
+  let SessionService;
+  let HstService;
 
   beforeEach(() => {
     module('hippo-cm-api');
 
-    inject(($q, _$rootScope_, SessionService, HstService) => {
+    inject((_$rootScope_, _$q_, _SessionService_, _HstService_) => {
       $rootScope = _$rootScope_;
-      sessionService = SessionService;
-      deferred = $q.defer();
-      spyOn(HstService, 'initializeSession').and.returnValue(deferred.promise);
+      $q = _$q_;
+      SessionService = _SessionService_;
+      HstService = _HstService_;
     });
+
+    spyOn(HstService, 'initializeSession').and.returnValue($q.when());
   });
 
   it('should exist', () => {
-    expect(sessionService).toBeDefined();
+    expect(SessionService).toBeDefined();
   });
 
   it('should always be readonly before initialization', () => {
-    expect(sessionService.hasWriteAccess()).toEqual(false);
+    expect(SessionService.hasWriteAccess()).toEqual(false);
   });
 
   it('should resolve a promise with the channel argument when initialization is successful', () => {
     const promiseSpy = jasmine.createSpy('promiseSpy');
-    sessionService
-      .initialize(channelMock)
-      .then(promiseSpy);
-
-    deferred.resolve();
+    SessionService.initialize('hostname', 'mountId').then(promiseSpy);
     $rootScope.$apply();
-    expect(promiseSpy).toHaveBeenCalledWith(channelMock);
+    expect(promiseSpy).toHaveBeenCalled();
+    expect(HstService.initializeSession).toHaveBeenCalledWith('hostname', 'mountId');
   });
 
   it('should reject a promise when initialization fails', () => {
+    HstService.initializeSession.and.returnValue($q.reject());
     const catchSpy = jasmine.createSpy('catchSpy');
-    sessionService
-      .initialize(channelMock)
-      .catch(catchSpy);
-
-    deferred.reject();
+    SessionService.initialize().catch(catchSpy);
     $rootScope.$apply();
     expect(catchSpy).toHaveBeenCalled();
   });
 
-  it('should set canWrite after initializing', () => {
-    sessionService.initialize(channelMock);
-    deferred.resolve(true);
+  it('should not allow anything before initializing', () => {
+    expect(SessionService.hasWriteAccess()).toEqual(false);
+    expect(SessionService.canManageChanges()).toEqual(false);
+    expect(SessionService.canDeleteChannel()).toEqual(false);
+    expect(SessionService.isCrossChannelPageCopySupported()).toEqual(false);
+  });
+
+  it('should set privileges after initializing', () => {
+    HstService.initializeSession.and.returnValue($q.when({
+      canWrite: true,
+      canManageChanges: true,
+      canDeleteChannel: true,
+      crossChannelPageCopySupported: true,
+    }));
+    SessionService.initialize();
     $rootScope.$apply();
-    expect(sessionService.hasWriteAccess()).toEqual(true);
+
+    expect(SessionService.hasWriteAccess()).toEqual(true);
+    expect(SessionService.canManageChanges()).toEqual(true);
+    expect(SessionService.canDeleteChannel()).toEqual(true);
+    expect(SessionService.isCrossChannelPageCopySupported()).toEqual(true);
+  });
+
+  it('should not allow anything when no privileges are defined', () => {
+    SessionService.initialize();
+    $rootScope.$apply();
+
+    expect(SessionService.hasWriteAccess()).toEqual(false);
+    expect(SessionService.canManageChanges()).toEqual(false);
+    expect(SessionService.canDeleteChannel()).toEqual(false);
+    expect(SessionService.isCrossChannelPageCopySupported()).toEqual(false);
   });
 
   it('should call all registered callbacks upon successful initialization', () => {
     const cb1 = jasmine.createSpy('cb1');
     const cb2 = jasmine.createSpy('cb2');
 
-    sessionService.registerInitCallback('cb1', cb1);
-    sessionService.registerInitCallback('cb2', cb2);
+    SessionService.registerInitCallback('cb1', cb1);
+    SessionService.registerInitCallback('cb2', cb2);
 
     expect(cb1).not.toHaveBeenCalled();
     expect(cb2).not.toHaveBeenCalled();
 
-    sessionService.initialize(channelMock);
+    SessionService.initialize();
 
     expect(cb1).not.toHaveBeenCalled();
     expect(cb2).not.toHaveBeenCalled();
 
-    deferred.resolve(true);
     $rootScope.$digest();
 
     expect(cb1).toHaveBeenCalled();
@@ -96,14 +117,13 @@ describe('SessionService', () => {
     const cb1 = jasmine.createSpy('cb1');
     const cb2 = jasmine.createSpy('cb2');
 
-    sessionService.registerInitCallback('cb1', cb1);
-    sessionService.registerInitCallback('cb2', cb2);
+    SessionService.registerInitCallback('cb1', cb1);
+    SessionService.registerInitCallback('cb2', cb2);
 
-    sessionService.unregisterInitCallback('cb1');
-    sessionService.unregisterInitCallback('cb3'); // should be ignored
+    SessionService.unregisterInitCallback('cb1');
+    SessionService.unregisterInitCallback('cb3'); // should be ignored
 
-    sessionService.initialize(channelMock);
-    deferred.resolve(true);
+    SessionService.initialize();
     $rootScope.$digest();
 
     expect(cb1).not.toHaveBeenCalled();

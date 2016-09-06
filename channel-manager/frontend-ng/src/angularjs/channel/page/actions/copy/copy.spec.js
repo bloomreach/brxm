@@ -27,6 +27,7 @@ describe('PageActionCopy', () => {
   let ChannelService;
   let FeedbackService;
   let HippoIframeService;
+  let SessionService;
   let SiteMapService;
   let SiteMapItemService;
   let siteMapItem;
@@ -52,7 +53,7 @@ describe('PageActionCopy', () => {
     module('hippo-cm');
 
     inject((_$q_, _$log_, _$rootScope_, _$compile_, _$translate_, _ChannelService_, _FeedbackService_,
-            _HippoIframeService_, _SiteMapService_, _SiteMapItemService_) => {
+            _HippoIframeService_, _SessionService_, _SiteMapService_, _SiteMapItemService_) => {
       $q = _$q_;
       $log = _$log_;
       $rootScope = _$rootScope_;
@@ -61,6 +62,7 @@ describe('PageActionCopy', () => {
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
+      SessionService = _SessionService_;
       SiteMapService = _SiteMapService_;
       SiteMapItemService = _SiteMapItemService_;
     });
@@ -93,7 +95,7 @@ describe('PageActionCopy', () => {
 
     spyOn($translate, 'instant').and.callFake((key) => key);
     spyOn($log, 'info');
-    spyOn(ChannelService, 'isCrossChannelPageCopySupported').and.returnValue(true);
+    spyOn(SessionService, 'isCrossChannelPageCopySupported').and.returnValue(true);
     spyOn(ChannelService, 'getPageModifiableChannels').and.returnValue(channels);
     spyOn(ChannelService, 'switchToChannel').and.returnValue($q.when());
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
@@ -121,7 +123,7 @@ describe('PageActionCopy', () => {
   }
 
   it('initializes correctly when cross channel copy is disabled', () => {
-    ChannelService.isCrossChannelPageCopySupported.and.returnValue(false);
+    SessionService.isCrossChannelPageCopySupported.and.returnValue(false);
 
     const PageCopyCtrl = compileDirectiveAndGetController();
 
@@ -263,7 +265,7 @@ describe('PageActionCopy', () => {
   });
 
   it('successfully copies the page inside the current channel - without cross-channel copy support', () => {
-    ChannelService.isCrossChannelPageCopySupported.and.returnValue(false);
+    SessionService.isCrossChannelPageCopySupported.and.returnValue(false);
     const PageCopyCtrl = compileDirectiveAndGetController();
 
     SiteMapService.copy.and.returnValue($q.when({ renderPathInfo: '/render/path' }));

@@ -164,28 +164,23 @@ describe('HstService', () => {
       expect(promiseSpy).toHaveBeenCalled();
     });
 
-    it('resolves with true if response data parameter canWrite is true', () => {
+    it('resolves with a privileges object', () => {
       const promiseSpy = jasmine.createSpy('promiseSpy');
-      $httpBackend.expectGET(handshakeUrl).respond(200, { data: { canWrite: true } });
+      const privileges = {
+        canWrite: true,
+      };
+      $httpBackend.expectGET(handshakeUrl).respond(200, { data: privileges });
       hstService.initializeSession(hostname, mountId).then(promiseSpy);
       $httpBackend.flush();
-      expect(promiseSpy).toHaveBeenCalledWith(true);
+      expect(promiseSpy).toHaveBeenCalledWith(privileges);
     });
 
-    it('resolves with false if response data parameter canWrite is false', () => {
-      const promiseSpy = jasmine.createSpy('promiseSpy');
-      $httpBackend.expectGET(handshakeUrl).respond(200, { data: { canWrite: false } });
-      hstService.initializeSession(hostname, mountId).then(promiseSpy);
-      $httpBackend.flush();
-      expect(promiseSpy).toHaveBeenCalledWith(false);
-    });
-
-    it('resolves with false if response data parameter is missing', () => {
+    it('resolves with null if response data parameter is missing', () => {
       const promiseSpy = jasmine.createSpy('promiseSpy');
       $httpBackend.expectGET(handshakeUrl).respond(200);
       hstService.initializeSession(hostname, mountId).then(promiseSpy);
       $httpBackend.flush();
-      expect(promiseSpy).toHaveBeenCalledWith(false);
+      expect(promiseSpy).toHaveBeenCalledWith(null);
     });
   });
 
@@ -344,24 +339,6 @@ describe('HstService', () => {
     }).respond(200);
     hstService.doPut({ foo: 1 }, 'some-uuid', 'one', 'two', 'three').catch(fail);
     $httpBackend.flush();
-  });
-
-  it('should relay the success result when retrieving features', () => {
-    const promiseSpy = jasmine.createSpy('promiseSpy');
-    const success = { key: 'value' };
-    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/cafebabe./features`).respond(200, success);
-    hstService.getFeatures().then(promiseSpy).catch(() => fail());
-    $httpBackend.flush();
-    expect(promiseSpy).toHaveBeenCalledWith(success);
-  });
-
-  it('should relay the error result when retrieving features', () => {
-    const catchSpy = jasmine.createSpy('catchSpy');
-    const error = { key: 'value' };
-    $httpBackend.expectGET(`${contextPath}${apiUrlPrefix}/cafebabe./features`).respond(500, error);
-    hstService.getFeatures().then(() => fail()).catch(catchSpy);
-    $httpBackend.flush();
-    expect(catchSpy).toHaveBeenCalledWith(error);
   });
 
   it('reports user activity to the CMS when the backend is called', () => {
