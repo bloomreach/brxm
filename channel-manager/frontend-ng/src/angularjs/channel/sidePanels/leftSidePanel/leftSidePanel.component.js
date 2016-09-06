@@ -18,16 +18,20 @@ export class ChannelLeftSidePanelCtrl {
   constructor($scope, $element, ChannelSidePanelService, ChannelService, SiteMapService, HippoIframeService) {
     'ngInject';
 
+    this.$scope = $scope;
     this.ChannelService = ChannelService;
     this.ChannelSidePanelService = ChannelSidePanelService;
     this.SiteMapService = SiteMapService;
     this.HippoIframeService = HippoIframeService;
 
     ChannelSidePanelService.initialize('left', $element.find('.channel-left-side-panel'));
+    this.closePanelOnEditModeTurnedOff();
+  }
 
-    $scope.$watch('$ctrl.editMode', () => {
+  closePanelOnEditModeTurnedOff() {
+    this.$scope.$watch('$ctrl.editMode', () => {
       if (!this.editMode) {
-        ChannelSidePanelService.close('left');
+        this.ChannelSidePanelService.close('left');
       }
     });
   }
