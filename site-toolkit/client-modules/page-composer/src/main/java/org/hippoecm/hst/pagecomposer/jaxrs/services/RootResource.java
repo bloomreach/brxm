@@ -17,12 +17,15 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
+import javax.annotation.security.RolesAllowed;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -37,31 +40,52 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
-import org.hippoecm.hst.pagecomposer.jaxrs.model.FeaturesRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
-import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource {
 
     private static final Logger log = LoggerFactory.getLogger(RootResource.class);
     private String rootPath;
+    private boolean isCrossChannelPageCopySupported;
 
     private ChannelService channelService;
+    private SecurityModel securityModel;
 
     public void setChannelService(final ChannelService channelService) {
         this.channelService = channelService;
     }
 
+    public void setSecurityModel(final SecurityModel securityModel) {
+        this.securityModel = securityModel;
+    }
+
     public void setRootPath(final String rootPath) {
         this.rootPath = rootPath;
+    }
+
+    @Override
+    public void setComponentManager(ComponentManager componentManager) {
+        super.setComponentManager(componentManager);
+
+        final ContainerConfiguration config = componentManager.getContainerConfiguration();
+        isCrossChannelPageCopySupported = config.getBoolean("cross.channel.page.copy.supported", false);
     }
 
     @GET
@@ -97,7 +121,12 @@ public class RootResource extends AbstractConfigResource {
         try {
             final Channel channel = channelService.getChannel(channelId);
             return Response.ok().entity(channel).build();
-        } catch (RuntimeRepositoryException e) {
+        } catch (ChannelNotFoundException e) {
+            log.warn(e.getMessage());
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .build();
+        } catch (RuntimeRepositoryException | ChannelException e) {
             final String error = "Could not determine authorization";
             log.warn(error, e);
             return Response.serverError().entity(error).build();
@@ -141,13 +170,42 @@ public class RootResource extends AbstractConfigResource {
         }
     }
 
-    @GET
-    @Path("/features")
-    public Response getFeatures() {
-        final Boolean crossChannelPageCopySupported = HstServices.getComponentManager().getContainerConfiguration().getBoolean("cross.channel.page.copy.supported", false);
-        final FeaturesRepresentation featuresRepresentation = new FeaturesRepresentation();
-        featuresRepresentation.setCrossChannelPageCopySupported(crossChannelPageCopySupported);
-        return ok("Fetched features", featuresRepresentation);
+    @DELETE
+    @Path("/channels/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed(CHANNEL_MANAGER_ADMIN_ROLE)
+    public Response deleteChannel(@PathParam("id") String channelId) {
+        if (StringUtils.endsWith(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX)) {
+            // strip the preview suffix
+            channelId = StringUtils.removeEnd(channelId, HstConfigurationServiceImpl.PREVIEW_SUFFIX);
+        }
+
+        try {
+            final HstRequestContext hstRequestContext = RequestContextProvider.get();
+            final Session session = hstRequestContext.getSession();
+            final Channel channel = channelService.getChannel(channelId);
+            final List<Mount> mountsOfChannel = channelService.findMounts(channel);
+
+            channelService.preDeleteChannel(session, channel, mountsOfChannel);
+
+            publishSynchronousEvent(new BeforeChannelDeleteEvent(channel, mountsOfChannel, hstRequestContext));
+
+            channelService.deleteChannel(session, channel, mountsOfChannel);
+            HstConfigurationUtils.persistChanges(session);
+
+            return Response.ok().build();
+        } catch (ChannelNotFoundException e) {
+            printErrorLog("Failed to delete channel", e);
+
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (ClientException e) {
+            resetSession();
+            return logAndReturnClientError(e);
+        } catch (RepositoryException | ChannelException e) {
+            printErrorLog("Failed to delete channel", e);
+            resetSession();
+            return Response.serverError().build();
+        }
     }
 
     @GET
@@ -160,20 +218,43 @@ public class RootResource extends AbstractConfigResource {
         session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
         session.setAttribute(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
+
+        final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
         boolean canWrite;
         try {
-            HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
             canWrite = requestContext.getSession().hasPermission(rootPath + "/accesstest", Session.ACTION_SET_PROPERTY);
         } catch (RepositoryException e) {
             log.warn("Could not determine authorization", e);
             return error("Could not determine authorization", e);
         }
 
+        final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId);
+        final boolean hasAdminRole = securityModel.isUserInRule(requestContext, CHANNEL_MANAGER_ADMIN_ROLE);
+
+        final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole;
+        final boolean canManageChanges = hasAdminRole;
+
         HandshakeResponse response = new HandshakeResponse();
         response.setCanWrite(canWrite);
+        response.setCanManageChanges(canManageChanges);
+        response.setCanDeleteChannel(canDeleteChannel);
+        response.setCrossChannelPageCopySupported(isCrossChannelPageCopySupported);
         response.setSessionId(session.getId());
         log.info("Composer-Mode successful");
         return ok("Composer-Mode successful", response);
+    }
+
+    private boolean isChannelDeletionSupported(final String mountId) {
+        try {
+            final Optional<Channel> channel = channelService.getChannelByMountId(mountId);
+            if (channel.isPresent()) {
+                return channelService.canChannelBeDeleted(channel.get().getId());
+            }
+        } catch (ChannelException e) {
+            log.debug("Cannot check channel deletion support", e);
+            // ignore, consider unsupported.
+        }
+        return false;
     }
 
     @GET
@@ -206,9 +287,35 @@ public class RootResource extends AbstractConfigResource {
         return ok("Variant cleared");
     }
 
+    private void printErrorLog(final String errorMessage, final Exception e) {
+        if (log.isDebugEnabled()) {
+            log.error(errorMessage, e);
+        } else {
+            log.error(errorMessage, e.getMessage());
+        }
+    }
+
+    /**
+     * Note: Override the AbstractConfigResource#logAndReturnClientError() to remove ExtResponseRepresentation wrapper in the
+     * body response.
+     */
+    @Override
+    protected Response logAndReturnClientError(final ClientException e) {
+        final String formattedMessage = e.getMessage();
+        if (log.isDebugEnabled()) {
+            log.info(formattedMessage, e);
+        } else {
+            log.info(formattedMessage);
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity(e.getErrorStatus()).build();
+    }
+
     private static class HandshakeResponse {
 
         private boolean canWrite;
+        private boolean canManageChanges;
+        private boolean canDeleteChannel;
+        private boolean isCrossChannelPageCopySupported;
         private String sessionId;
 
         public boolean isCanWrite() {
@@ -217,6 +324,30 @@ public class RootResource extends AbstractConfigResource {
 
         public void setCanWrite(final boolean canWrite) {
             this.canWrite = canWrite;
+        }
+
+        public boolean isCanManageChanges() {
+            return canManageChanges;
+        }
+
+        public void setCanManageChanges(final boolean canManageChanges) {
+            this.canManageChanges = canManageChanges;
+        }
+
+        public boolean isCanDeleteChannel() {
+            return canDeleteChannel;
+        }
+
+        public void setCanDeleteChannel(final boolean canDeleteChannel) {
+            this.canDeleteChannel = canDeleteChannel;
+        }
+
+        public boolean isCrossChannelPageCopySupported() {
+            return isCrossChannelPageCopySupported;
+        }
+
+        public void setCrossChannelPageCopySupported(final boolean crossChannelPageCopySupported) {
+            isCrossChannelPageCopySupported = crossChannelPageCopySupported;
         }
 
         public String getSessionId() {

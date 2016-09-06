@@ -53,6 +53,7 @@ public class Channel implements Serializable {
     private boolean previewHstConfigExists;
     private boolean workspaceExists;
     private boolean hasCustomProperties;
+    private boolean deletable;
 
     // the set of users that have changes for the channel: Can be the channel node itself or some
     // hst configuration belonging to the channel
@@ -109,6 +110,7 @@ public class Channel implements Serializable {
         previewHstConfigExists = channel.previewHstConfigExists;
         workspaceExists = channel.workspaceExists;
         hasCustomProperties = channel.hasCustomProperties;
+        deletable = channel.deletable;
         // not a deep clone: Not a problem! Note even the same instance is used, this is because
         // channel.changedBySet can be a ChannelLazyLoadingChangedBySet
         changedBySet = channel.changedBySet;
@@ -314,6 +316,14 @@ public class Channel implements Serializable {
 
     public void setHasCustomProperties(final boolean hasCustomProperties) {
         this.hasCustomProperties = hasCustomProperties;
+    }
+
+    public boolean isDeletable() {
+        return deletable;
+    }
+
+    public void setDeletable(final boolean deletable) {
+        this.deletable = deletable;
     }
 
     /**

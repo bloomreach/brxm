@@ -283,6 +283,7 @@
 - hst:lockedon (date)
 - hst:lastmodified (date)
 - hst:lastmodifiedby (string)
+- hst:deletable (boolean)
 // properties of the channel
 + hst:channelinfo (hst:channelinfo)
 

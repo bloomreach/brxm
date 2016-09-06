@@ -18,21 +18,54 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelException;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
 
 public interface ChannelService {
 
     ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale) throws ChannelException;
 
-    Channel getChannel(String channelId);
+    Channel getChannel(String channelId) throws ChannelException;
 
     void saveChannel(Session session, String channelId, Channel channel) throws RepositoryException, ChannelException;
 
     List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired);
+
+    Optional<Channel> getChannelByMountId(final String mountId);
+
+    boolean canChannelBeDeleted(String channelId) throws ChannelException;
+
+    /**
+     * Validates conditions before return a deletable channel. This method should be called before
+     * {@link #deleteChannel(Session, Channel, List<Mount>)}
+     *
+     * @param session
+     * @param channel the channel to be deleted
+     * @throws ChannelException
+     * @throws RepositoryException
+     */
+    void preDeleteChannel(Session session, Channel channel, List<Mount> mountsOfChannel) throws ChannelException, RepositoryException;
+
+    /**
+     * Remove channel configurations nodes (hst:channel, hst:configuration, hst:site, hst:mount, hst:virtualhost)
+     *
+     * @param session
+     * @param channel channel to be deleted
+     * @param mountsOfChannel mounts binding to the channel
+     * @throws RepositoryException
+     * @throws ChannelException
+     */
+    void deleteChannel(Session session, Channel channel, List<Mount> mountsOfChannel) throws RepositoryException, ChannelException;
+
+    /**
+     * Find all mounts binding to the given channel
+     */
+    List<Mount> findMounts(final Channel channel);
 }

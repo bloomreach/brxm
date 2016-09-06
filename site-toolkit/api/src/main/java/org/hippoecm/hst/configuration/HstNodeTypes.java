@@ -220,7 +220,7 @@ public interface HstNodeTypes {
     String CHANNEL_PROPERTY_TYPE = "hst:type";
     String CHANNEL_PROPERTY_DEFAULT_DEVICE = "hst:defaultdevice";
     String CHANNEL_PROPERTY_DEVICES = "hst:devices";
-
+    String CHANNEL_PROPERTY_DELETABLE = "hst:deletable";
     String CHANNEL_PROPERTY_CHANNELINFO_CLASS = "hst:channelinfoclass";
 
     String BLUEPRINT_PROPERTY_NAME = "hst:name";

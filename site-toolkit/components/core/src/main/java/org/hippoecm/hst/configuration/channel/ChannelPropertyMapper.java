@@ -74,6 +74,10 @@ public class ChannelPropertyMapper {
             channel.setDevices(Arrays.asList(devices));
         }
 
+        if (channelNode.getValueProvider().hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE)) {
+            channel.setDeletable(channelNode.getValueProvider().getBoolean(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE));
+        }
+
         if (channelNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
             channel.setChannelNodeLockedBy(channelNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
         }
@@ -145,6 +149,12 @@ public class ChannelPropertyMapper {
             channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES, channel.getDevices().toArray(new String[0]));
         } else if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES)) {
             channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES).remove();
+        }
+
+        if (channel.isDeletable()) {
+            channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE, true);
+        } else if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE)) {
+            channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_DELETABLE).remove();
         }
 
         String channelInfoClassName = channel.getChannelInfoClassName();

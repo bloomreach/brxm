@@ -87,6 +87,11 @@ public enum ClientError {
      */
     ITEM_EXISTS,
 
+    /**
+     * Client requests to delete a hst:mount node, but it contains children node(s) of type hst:mount
+     */
+    CHILD_MOUNT_EXISTS,
+
     UNKNOWN
 
 }

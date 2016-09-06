@@ -17,12 +17,15 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.function.Function;
@@ -39,12 +42,18 @@ import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
+import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
@@ -56,6 +65,8 @@ public class ChannelServiceImpl implements ChannelService {
     private static final Logger log = LoggerFactory.getLogger(ChannelServiceImpl.class);
 
     private ChannelManager channelManager;
+    private ValidatorFactory validatorFactory;
+    private HstConfigurationService hstConfigurationService;
 
     @Override
     public ChannelInfoDescription getChannelInfoDescription(final String channelId, final String locale) throws ChannelException {
@@ -162,7 +173,7 @@ public class ChannelServiceImpl implements ChannelService {
         return null;
     }
 
-    private Map<String, String> getLocalizedResources(final String channelId, final String language) {
+    private Map<String, String> getLocalizedResources(final String channelId, final String language) throws ChannelException {
         final ResourceBundle resourceBundle = getAllVirtualHosts().getResourceBundle(getChannel(channelId), new Locale(language));
         if (resourceBundle == null) {
             return Collections.EMPTY_MAP;
@@ -173,9 +184,13 @@ public class ChannelServiceImpl implements ChannelService {
     }
 
     @Override
-    public Channel getChannel(final String channelId) {
+    public Channel getChannel(final String channelId) throws ChannelException {
         final VirtualHost virtualHost = getCurrentVirtualHost();
-        return getAllVirtualHosts().getChannelById(virtualHost.getHostGroupName(), channelId);
+        final Channel channel = getAllVirtualHosts().getChannelById(virtualHost.getHostGroupName(), channelId);
+        if (channel == null) {
+            throw new ChannelNotFoundException(channelId);
+        }
+        return channel;
     }
 
     @Override
@@ -197,6 +212,132 @@ public class ChannelServiceImpl implements ChannelService {
                 .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
                 .filter(channel -> workspaceFiltered(channel, workspaceRequired))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Channel> getChannelByMountId(final String mountId) {
+        if (StringUtils.isBlank(mountId)) {
+            throw new IllegalArgumentException("MountId argument must not be blank");
+        }
+        final VirtualHost virtualHost = getCurrentVirtualHost();
+        final List<Mount> mounts = virtualHost.getVirtualHosts().getMountsByHostGroup(virtualHost.getHostGroupName());
+        return mounts.stream()
+                .filter(mount -> StringUtils.equals(mount.getIdentifier(), mountId))
+                .map(Mount::getChannel)
+                .filter(Objects::nonNull)
+                .findFirst();
+    }
+
+    @Override
+    public boolean canChannelBeDeleted(final String channelId) throws ChannelException {
+        return getChannel(channelId).isDeletable();
+    }
+
+    @Override
+    public void preDeleteChannel(final Session session, final Channel channel, List<Mount> mountsOfChannel) throws ChannelException, RepositoryException {
+        if (!channel.isDeletable()) {
+            throw new ChannelException("Requested channel cannot be deleted");
+        }
+
+        final Validator hasNoChildMounts = validatorFactory.getHasNoChildMountNodeValidator(mountsOfChannel);
+        ValidatorBuilder.builder().add(hasNoChildMounts).build().validate(getRequestContext());
+    }
+
+    @Override
+    public void deleteChannel(Session session, Channel channel, List<Mount> mountsOfChannel) throws RepositoryException, ChannelException {
+        removeConfigurationNodes(session, channel);
+        removeSiteNode(session, channel);
+        removeChannelNodes(session, channel.getChannelPath());
+        removeMountNodes(session, mountsOfChannel);
+    }
+
+    private HstRequestContext getRequestContext() {
+        return RequestContextProvider.get();
+    }
+
+    private void removeConfigurationNodes(final Session session, final Channel channel) throws RepositoryException {
+        final String hstConfigPath = channel.getHstConfigPath();
+        try {
+            hstConfigurationService.delete(session, hstConfigPath);
+        } catch (HstConfigurationException e) {
+            log.warn("Cannot delete configuration node '{}': {}", hstConfigPath, e.getMessage());
+        }
+    }
+
+    private void removeSiteNode(final Session session, final Channel channel) throws RepositoryException {
+        session.removeItem(channel.getHstMountPoint());
+    }
+
+    private void removeMountNodes(final Session session, final List<Mount> allMountsOfChannel) throws RepositoryException {
+        final List<String> removingNodePaths = allMountsOfChannel.stream()
+                .map(Mount::getIdentifier)
+                .map((mountId) -> {
+                    try {
+                        return session.getNodeByIdentifier(mountId).getPath();
+                    } catch (RepositoryException e) {
+                        log.debug("Failed to get node of mount " + mountId, e);
+                        return StringUtils.EMPTY;
+                    }
+                })
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toList());
+
+        for (String path: removingNodePaths) {
+            removeMountNodeAndVirtualHostNodes(session, path);
+        }
+    }
+
+    @Override
+    public List<Mount> findMounts(final Channel channel) {
+        final List<Mount> allMounts = loadAllMounts();
+
+        final String mountPoint = channel.getHstMountPoint();
+        return allMounts.stream()
+                .filter(mount -> StringUtils.equals(mountPoint, mount.getMountPoint()))
+                .collect(Collectors.toList());
+    }
+
+    private List<Mount> loadAllMounts() {
+        final VirtualHosts virtualHosts = getAllVirtualHosts();
+
+        final List<Mount> allMounts = new ArrayList<>();
+        for (String hostGroup : virtualHosts.getHostGroupNames()) {
+            final List<Mount> mountsByHostGroup = virtualHosts.getMountsByHostGroup(hostGroup);
+            if (mountsByHostGroup != null) {
+                allMounts.addAll(mountsByHostGroup);
+            }
+        }
+        return allMounts;
+    }
+
+    /**
+     * Remove both the hst config node and its '-preview' node if it exists
+     */
+    private void removeChannelNodes(final Session session, final String nodePath) throws RepositoryException {
+        session.removeItem(nodePath);
+        final String previewNodePath = nodePath + HstConfigurationServiceImpl.PREVIEW_SUFFIX;
+        if (session.nodeExists(previewNodePath)) {
+            session.removeItem(previewNodePath);
+        }
+    }
+
+    /**
+     * Remove given node and its ancestor nodes if they become leaf nodes after removal
+     */
+    private void removeMountNodeAndVirtualHostNodes(final Session session, final String nodePath) throws RepositoryException {
+        Node removeNode = session.getNode(nodePath);
+        Node parentNode = removeNode.getParent();
+
+        if (removeNode.isNodeType(HstNodeTypes.NODETYPE_HST_MOUNT)) {
+            removeNode.remove();
+
+            // Remove ancestor nodes of type 'hst:virtualhost' if they become leaf nodes
+            while (parentNode != null && !parentNode.hasNodes() && parentNode.isNodeType(HstNodeTypes.NODETYPE_HST_VIRTUALHOST)) {
+                removeNode = parentNode;
+                parentNode = parentNode.getParent();
+                removeNode.remove();
+            }
+        }
     }
 
     private Node getOrAddChannelPropsNode(final Node channelNode) throws RepositoryException {
@@ -234,5 +375,13 @@ public class ChannelServiceImpl implements ChannelService {
 
     public void setChannelManager(final ChannelManager channelManager) {
         this.channelManager = channelManager;
+    }
+
+    public void setValidatorFactory(final ValidatorFactory validatorFactory) {
+        this.validatorFactory = validatorFactory;
+    }
+
+    public void setHstConfigurationService(final HstConfigurationService hstConfigurationService) {
+        this.hstConfigurationService = hstConfigurationService;
     }
 }

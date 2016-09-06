@@ -85,8 +85,14 @@
     <constructor-arg ref="pageComposerPropertyPresentationFactories"/>
   </bean>
 
+  <bean id="hstConfigurationService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl">
+    <constructor-arg value="/hst:hst/hst:configurations"/>
+  </bean>
+
   <bean id="channelService" class="org.hippoecm.hst.pagecomposer.jaxrs.services.ChannelServiceImpl">
     <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager"/>
+    <property name="validatorFactory" ref="validatiorFactory"/>
+    <property name="hstConfigurationService" ref="hstConfigurationService"/>
   </bean>
 
   <bean id="siteMapHelper" class="org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper" parent="abstractHelper">
@@ -200,6 +206,7 @@
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.RootResource" parent="abstractConfigResource">
               <property name="rootPath" value="${hst.configuration.rootPath}"/>
               <property name="channelService" ref="channelService"/>
+              <property name="securityModel" ref="org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel"/>
             </bean>
           </constructor-arg>
         </bean>

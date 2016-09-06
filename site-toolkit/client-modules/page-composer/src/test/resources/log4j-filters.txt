@@ -23,6 +23,10 @@ Could not create variant 'foo-variant'
 Could not delete variant 'foo-variant'
 Could not get channel setting information
 Failed to saveChannel channel
+Channel 'channel-foo' not found
 Could not load switch template resource bundle
+Cannot delete configuration node
 Could not create a preview configuration
 Missing properties 'manage.changes.privileges'
+cancel channel delete
+Failed to delete channel

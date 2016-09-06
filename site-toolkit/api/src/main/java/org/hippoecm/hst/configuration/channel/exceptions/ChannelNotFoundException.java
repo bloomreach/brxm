@@ -12,21 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions;
+package org.hippoecm.hst.configuration.channel.exceptions;
 
-public class ServerErrorException extends Exception {
-    public ServerErrorException(final String message) {
-        super(message);
-    }
+import org.hippoecm.hst.configuration.channel.ChannelException;
 
-    public ServerErrorException(final Exception e) {
-        super(e);
-    }
-
-    public ServerErrorException(final String message, final Exception e) {
-        super(message, e);
+public class ChannelNotFoundException extends ChannelException {
+    public ChannelNotFoundException(final String channelId) {
+        super("Channel '" + channelId + "' not found", Type.CHANNEL_NOT_FOUND, channelId);
     }
 }

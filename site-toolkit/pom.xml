@@ -59,7 +59,9 @@
     <taglibs.version>1.2.1</taglibs.version>
 
     <junit.version>4.5</junit.version>
-    <easymock.version>3.0</easymock.version>
+    <easymock.version>3.4</easymock.version>
+    <!-- Make sure that powermock and easymock are compatible -->
+    <powermock.version>1.6.5</powermock.version>
 
     <xerces.version>2.4.0</xerces.version>
     <xercesImpl.version>2.9.1</xercesImpl.version>
