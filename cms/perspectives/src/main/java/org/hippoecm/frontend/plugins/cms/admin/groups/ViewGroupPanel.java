@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -373,10 +373,10 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         super.onActivate(previous);
         AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
-            GroupMembersListView groupMembersListView = ((GroupMembersListView)get("groupmembers"));
+            GroupMembersListView groupMembersListView = ((GroupMembersListView) get("groupmembers"));
             if (groupMembersListView != null) {
                 groupMembersListView.listModel.setObject(
-                  new ArrayList<DetachableUser>(groupMembersListView.group.getMembersAsDetachableUsers()));
+                        new ArrayList<>(groupMembersListView.group.getMembersAsDetachableUsers()));
             }
         }
     }
