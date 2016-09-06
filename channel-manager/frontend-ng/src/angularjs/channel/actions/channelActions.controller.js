@@ -91,11 +91,11 @@ export class ChannelActionsCtrl {
   }
 
   _showElaborateFeedback(response, key) {
-    const confirm = this.DialogService.confirm()
+    const alert = this.DialogService.alert()
       .title(this.$translate.instant('ERROR_CHANNEL_DELETE_FAILED'))
       .textContent(this.$translate.instant(key, response.parameterMap))
       .ok(this.$translate.instant('OK'));
 
-    this.DialogService.show(confirm);
+    this.DialogService.show(alert);
   }
 }

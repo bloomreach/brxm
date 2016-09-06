@@ -28,6 +28,12 @@ export class DialogService {
     });
   }
 
+  alert() {
+    return this.$mdDialog.alert({
+      onRemoving: () => this._removeMask(),
+    });
+  }
+
   show(dialog) {
     this._showMask();
 

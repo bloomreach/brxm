@@ -56,6 +56,7 @@ describe('ChannelActions', () => {
     spyOn(ChannelService, 'getName').and.returnValue('test-channel');
     spyOn(ChannelService, 'deleteChannel').and.returnValue($q.when());
     spyOn(DialogService, 'confirm').and.returnValue(confirmDialog);
+    spyOn(DialogService, 'alert').and.returnValue(confirmDialog);
     spyOn(DialogService, 'hide');
     spyOn(DialogService, 'show').and.returnValue($q.when());
     spyOn(FeedbackService, 'showErrorResponse');
@@ -173,6 +174,7 @@ describe('ChannelActions', () => {
 
     $rootScope.$digest();
     expect(DialogService.hide).toHaveBeenCalled();
+    expect(DialogService.alert).toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('ERROR_CHANNEL_DELETE_FAILED_DUE_TO_CHILD_MOUNTS', parameterMap);
   });
 
