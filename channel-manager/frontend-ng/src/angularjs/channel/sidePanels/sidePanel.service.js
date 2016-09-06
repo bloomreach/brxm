@@ -36,7 +36,11 @@ export class ChannelSidePanelService {
 
   toggle(side) {
     this.$mdSidenav(this.panels[side].element).toggle();
-    this.ScalingService.setPushWidth(this.isOpen(side) ? this.panels[side].jQueryElement.width() : 0);
+
+    if (side === 'left') {
+      // TODO: Remove this when scaling is fixed
+      this.ScalingService.setPushWidth(this.isOpen(side) ? this.panels[side].jQueryElement.width() : 0);
+    }
   }
 
   isOpen(side) {
@@ -46,7 +50,11 @@ export class ChannelSidePanelService {
   close(side) {
     if (this.isOpen(side)) {
       this.$mdSidenav(this.panels[side].element).close();
-      this.ScalingService.setPushWidth(0);
+
+      if (side === 'left') {
+        // TODO: Remove this when scaling is fixed
+        this.ScalingService.setPushWidth(0);
+      }
     }
   }
 }

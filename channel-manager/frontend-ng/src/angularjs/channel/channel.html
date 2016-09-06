@@ -18,9 +18,7 @@
   <md-toolbar class="hippo-toolbar qa-toolbar">
     <div class="md-toolbar-tools">
       <div flex="30" layout layout-align="start center">
-        <channel-left-side-panel-toggle
-          disabled="channelCtrl.isControlsDisabled()">
-        </channel-left-side-panel-toggle>
+        <channel-left-side-panel-toggle disabled="channelCtrl.isControlsDisabled()"></channel-left-side-panel-toggle>
 
         <channel-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
 
@@ -35,6 +33,8 @@
       </div>
 
       <div flex="30" layout layout-align="end center">
+        <channel-right-side-panel-toggle disabled="channelCtrl.isControlsDisabled()"></channel-right-side-panel-toggle>
+
         <changes-menu ng-show="channelCtrl.isChannelLoaded()"
           on-manage-changes="channelCtrl.showSubpage('manage-changes')">
         </changes-menu>
@@ -73,6 +73,8 @@
       edit-mode="channelCtrl.isEditMode"
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
+
+    <channel-right-side-panel edit-mode="channelCtrl.isEditMode"></channel-right-side-panel>
   </md-content>
 </div>
 
