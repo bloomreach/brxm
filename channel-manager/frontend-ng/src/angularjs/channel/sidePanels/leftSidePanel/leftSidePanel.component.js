@@ -25,7 +25,7 @@ export class ChannelLeftSidePanelCtrl {
 
     ChannelSidePanelService.initialize('left', $element.find('.channel-left-side-panel'));
 
-    $scope.$watch('leftSidePanel.editMode', () => {
+    $scope.$watch('$ctrl.editMode', () => {
       if (!this.editMode) {
         ChannelSidePanelService.close('left');
       }
