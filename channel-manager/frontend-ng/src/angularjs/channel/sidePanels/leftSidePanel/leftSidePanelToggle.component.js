@@ -30,3 +30,15 @@ export class ChannelLeftSidePanelToggleCtrl {
     return this.ChannelSidePanelService.isOpen('left');
   }
 }
+
+const channelLeftSidePanelToggleComponentModule = angular
+  .module('hippo-cm.channel.leftSidePanelToggleComponentModule', [])
+  .component('channelLeftSidePanelToggle', {
+    bindings: {
+      disabled: '=',
+    },
+    controller: ChannelLeftSidePanelToggleCtrl,
+    templateUrl: 'channel/sidePanels/leftSidePanel/leftSidePanelToggle.html',
+  });
+
+export default channelLeftSidePanelToggleComponentModule;

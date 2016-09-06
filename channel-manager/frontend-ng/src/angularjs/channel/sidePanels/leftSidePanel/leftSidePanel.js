@@ -15,14 +15,12 @@
  */
 
 import { ChannelSidePanelService } from './../sidePanel.service';
-import { ChannelLeftSidePanelToggleCtrl } from './leftSidePanelToggle.controller';
-import { channelLeftSidePanelToggleDirective } from './leftSidePanelToggle.directive';
+import channelLeftSidePanelToggleComponentModule from './leftSidePanelToggle.component.js';
 import channelLeftSidePanelComponentModule from './leftSidePanel.component';
 
 export const channelLeftSidePanelModule = angular
   .module('hippo-cm.channel.leftSidePanel', [
+    channelLeftSidePanelToggleComponentModule.name,
     channelLeftSidePanelComponentModule.name,
   ])
-  .service('ChannelSidePanelService', ChannelSidePanelService)
-  .controller('ChannelLeftSidePanelToggleCtrl', ChannelLeftSidePanelToggleCtrl)
-  .directive('channelLeftSidePanelToggle', channelLeftSidePanelToggleDirective);
+  .service('ChannelSidePanelService', ChannelSidePanelService);
