@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-import { ChannelSidePanelService } from './../sidePanel.service.js';
-import { ChannelLeftSidePanelToggleCtrl } from './leftSidePanelToggle.controller.js';
-import { channelLeftSidePanelToggleDirective } from './leftSidePanelToggle.directive.js';
-import { ChannelLeftSidePanelCtrl } from './leftSidePanel.controller.js';
-import { channelLeftSidePanelDirective } from './leftSidePanel.directive.js';
+import { ChannelSidePanelService } from './../sidePanel.service';
+import { ChannelLeftSidePanelToggleCtrl } from './leftSidePanelToggle.controller';
+import { channelLeftSidePanelToggleDirective } from './leftSidePanelToggle.directive';
+import channelLeftSidePanelComponentModule from './leftSidePanel.component';
 
 export const channelLeftSidePanelModule = angular
-  .module('hippo-cm.channel.leftSidePanel', [])
+  .module('hippo-cm.channel.leftSidePanel', [
+    channelLeftSidePanelComponentModule.name,
+  ])
   .service('ChannelSidePanelService', ChannelSidePanelService)
   .controller('ChannelLeftSidePanelToggleCtrl', ChannelLeftSidePanelToggleCtrl)
-  .controller('ChannelLeftSidePanelCtrl', ChannelLeftSidePanelCtrl)
-  .directive('channelLeftSidePanelToggle', channelLeftSidePanelToggleDirective)
-  .directive('channelLeftSidePanel', channelLeftSidePanelDirective);
+  .directive('channelLeftSidePanelToggle', channelLeftSidePanelToggleDirective);

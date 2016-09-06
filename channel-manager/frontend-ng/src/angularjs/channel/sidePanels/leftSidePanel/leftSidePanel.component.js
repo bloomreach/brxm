@@ -53,3 +53,15 @@ export class ChannelLeftSidePanelCtrl {
     return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
   }
 }
+
+const channelLeftSidePanelComponentModule = angular
+  .module('hippo-cm.channel.leftSidePanelComponentModule', [])
+  .component('channelLeftSidePanel', {
+    bindings: {
+      editMode: '=',
+    },
+    controller: ChannelLeftSidePanelCtrl,
+    templateUrl: 'channel/sidePanels/leftSidePanel/leftSidePanel.html',
+  });
+
+export default channelLeftSidePanelComponentModule;
