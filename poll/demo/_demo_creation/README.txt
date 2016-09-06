@@ -1,6 +1,6 @@
 
-How to create this demo project 
-===============================
+How to create the demo project
+==============================
 
 1) Generate project by the Maven archetype with parameters:
 
@@ -15,9 +15,10 @@ How to create this demo project
 2) Build and run the project and install the Poll feature with Essentials, in the default set up.
    Rebuild and run.
 
------------
+
+Creating a custom poll document the contains the poll compound.
+---------------------------------------------------------------
 For the next steps, we rely on the auto-export function to export changes into the project.
------------
 
 3) In the CMS document type editor, create a new document type 'customPollDocument' with
    - a String field with caption=Title and path=title
@@ -45,14 +46,14 @@ For the next steps, we rely on the auto-export function to export changes into t
 
 6) From the console, import:
 
-  demo-creation/import/polldata-polldemo.xml              into /polldata
-  demo-creation/import/content-custom-example-poll.xml    into /content/documents/polldemo/polls
+  _demo_creation/import/polldata-polldemo.xml              into /polldata
+  _demo_creation/import/content-custom-example-poll.xml    into /content/documents/polldemo/polls
 
-  demo-creation/import/custompoll-catalogitem.xml         into /hst:hst/hst:configurations/polldemo/hst:catalog/polldemo-catalog
-  demo-creation/import/custompoll-page.xml                into /hst:hst/hst:configurations/polldemo/hst:pages
-  demo-creation/import/custompoll-sitemapitem.xml         into /hst:hst/hst:configurations/polldemo/hst:sitemap
-  demo-creation/import/custompoll-template.xml            into /hst:hst/hst:configurations/polldemo/hst:templates
-  demo-creation/import/custompoll-workspace-container.xml into /hst:hst/hst:configurations/polldemo/hst:workspace/hst:containers
+  _demo_creation/import/custompoll-catalogitem.xml         into /hst:hst/hst:configurations/polldemo/hst:catalog/polldemo-catalog
+  _demo_creation/import/custompoll-page.xml                into /hst:hst/hst:configurations/polldemo/hst:pages
+  _demo_creation/import/custompoll-sitemapitem.xml         into /hst:hst/hst:configurations/polldemo/hst:sitemap
+  _demo_creation/import/custompoll-template.xml            into /hst:hst/hst:configurations/polldemo/hst:templates
+  _demo_creation/import/custompoll-workspace-container.xml into /hst:hst/hst:configurations/polldemo/hst:workspace/hst:containers
 
 7) Rebuild and run.
    In the CMS Channel Manager, edit the channel and:
@@ -62,9 +63,4 @@ For the next steps, we rely on the auto-export function to export changes into t
 
    Publish the changes!
 
-The auto export should have updated the bootstrap content & configuration, commit that into SCM.
-
-Final note: when fully regenerating the demo project, please do check the licence headers per file.
-
-   
-   
+The auto export should have updated the bootstrap content & configuration.
