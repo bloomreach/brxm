@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.wicket.Localizer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -90,7 +91,7 @@ public class ChannelGridPanel extends ExtPanel {
                 return;
             }
             try {
-                final String paramChannelId = (String) getValue(parameters, "channelId");
+                final String paramChannelId = StringEscapeUtils.escapeJavaScript((String)getValue(parameters, "channelId"));
                 final String paramHstMountPoint = (String) getValue(parameters, "hstMountPoint");
                 target.prependJavaScript("Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance').initEditor('" + paramChannelId + "');");
                 this.hstConfigEditor.setMountPoint(target, paramChannelId, paramHstMountPoint);
