@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>28.1</version>
+    <version>28.3-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit</name>
@@ -93,10 +93,8 @@
 
     <sf.htmlcleaner.version>2.12</sf.htmlcleaner.version>
 
-    <geronimo-stax-api_1.2_spec.version>1.1</geronimo-stax-api_1.2_spec.version>
-    <stax.version>1.2.0</stax.version>
-    <stax2-api.version>3.1.1</stax2-api.version>
-    <woodstox.version>4.2.0</woodstox.version>
+    <stax2-api.version>3.1.4</stax2-api.version>
+    <woodstox.version>4.4.1</woodstox.version>
 
     <mime4j.version>0.6</mime4j.version>
     <dependency.solr.version>4.9.0</dependency.solr.version>
@@ -527,28 +525,6 @@
         </exclusions>
       </dependency>
 
-      <!-- STAX API -->
-
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-stax-api_1.2_spec</artifactId>
-        <version>${geronimo-stax-api_1.2_spec.version}</version>
-      </dependency>
-
-      <!-- STAX Implementation -->
-
-      <dependency>
-        <groupId>stax</groupId>
-        <artifactId>stax</artifactId>
-        <version>${stax.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>stax</groupId>
-            <artifactId>stax-api</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
       <!-- STAX2 API -->
 
       <dependency>
@@ -558,10 +534,6 @@
         <exclusions>
           <exclusion>
             <groupId>javax.xml.stream</groupId>
-            <artifactId>stax-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
           </exclusion>
         </exclusions>
@@ -576,10 +548,6 @@
         <exclusions>
           <exclusion>
             <groupId>javax.xml.stream</groupId>
-            <artifactId>stax-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
           </exclusion>
         </exclusions>
@@ -659,6 +627,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
+          <version>false</version>
           <aggregate>true</aggregate>
           <destDir>userapidocs</destDir>
           <sourcepath>

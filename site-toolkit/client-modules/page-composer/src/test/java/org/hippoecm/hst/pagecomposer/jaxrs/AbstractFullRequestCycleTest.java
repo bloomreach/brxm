@@ -33,11 +33,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.ServletContextRegistry;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -134,7 +134,7 @@ public class AbstractFullRequestCycleTest {
             mockHttpSession = (MockHttpSession)request.getSession();
         }
 
-        mockHttpSession.setAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME, authenticatedCmsUser);
+        mockHttpSession.setAttribute(CmsSessionContext.SESSION_KEY, new CmsSessionContextMock(authenticatedCmsUser));
 
         final MockHttpServletResponse response = requestResponse.getResponse();
 
@@ -207,6 +207,29 @@ public class AbstractFullRequestCycleTest {
 
     }
 
+    public static class CmsSessionContextMock implements CmsSessionContext {
+
+        private SimpleCredentials credentials;
+
+        public CmsSessionContextMock(Credentials credentials) {
+            this.credentials = (SimpleCredentials)credentials;
+        }
+
+        @Override
+        public String getId() {
+            return null;
+        }
+
+        @Override
+        public String getCmsContextServiceId() {
+            return null;
+        }
+
+        @Override
+        public Object get(final String key) {
+            return CmsSessionContext.REPOSITORY_CREDENTIALS.equals(key) ? credentials : null;
+        }
+    }
 }
 
 

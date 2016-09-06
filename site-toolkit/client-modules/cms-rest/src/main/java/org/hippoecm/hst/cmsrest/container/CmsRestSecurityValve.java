@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,12 +17,8 @@
 package org.hippoecm.hst.cmsrest.container;
 
 import java.io.IOException;
-import java.security.SignatureException;
 
-import javax.jcr.Credentials;
-import javax.jcr.LoginException;
 import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +30,9 @@ import org.hippoecm.hst.core.container.ValveContext;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
-import org.onehippo.sso.CredentialCipher;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.services.cmscontext.CmsContextService;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,14 +43,11 @@ public class CmsRestSecurityValve extends AbstractOrderableValve {
 
     private final static Logger log = LoggerFactory.getLogger(CmsRestSecurityValve.class);
 
-    private static final String CREDENTIAL_CIPHER_KEY = "ENC_DEC_KEY";
-
-    private static final String HEADER_CMS_REST_CREDENTIALS = "X-CMSREST-CREDENTIALS";
+    private static final String HEADER_CMS_CONTEXT_SERVICE_ID = "X-CMS-CS-ID";
+    private static final String HEADER_CMS_SESSION_CONTEXT_ID = "X-CMS-SC-ID";
     private static final String CMSREST_CMSHOST_HEADER = "X-CMSREST-CMSHOST";
 
     public static final String HOST_GROUP_NAME_FOR_CMS_HOST = "HOST_GROUP_NAME_FOR_CMS_HOST";
-
-    private static final String ERROR_MESSAGE_NO_CMS_REST_CREDENTIALS_FOUND = "no CMS REST credentials found";
 
     private Repository repository;
 
@@ -73,31 +68,55 @@ public class CmsRestSecurityValve extends AbstractOrderableValve {
 
         log.debug("Request '{}' is invoked from CMS context. Check for credentials and apply security rules or raise proper error!", servletRequest.getRequestURL());
 
-        // Retrieve encrypted CMS REST username and password and use them as credentials to create a JCR session
-        String cmsRestCredentials = servletRequest.getHeader(HEADER_CMS_REST_CREDENTIALS);
+        String cmsContextServiceId = servletRequest.getHeader(HEADER_CMS_CONTEXT_SERVICE_ID);
+        if (StringUtils.isBlank(cmsContextServiceId)) {
+            log.warn("Cannot proceed _cmsrest request: header '"+ HEADER_CMS_CONTEXT_SERVICE_ID +"' missing");
+            setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, "Request header '"+ HEADER_CMS_CONTEXT_SERVICE_ID +"' missing");
+            return;
+        }
 
-        if (StringUtils.isBlank(cmsRestCredentials)) {
-            log.debug("No CMS REST credentials found");
-            setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, ERROR_MESSAGE_NO_CMS_REST_CREDENTIALS_FOUND);
+        String cmsSessionContextId = servletRequest.getHeader(HEADER_CMS_SESSION_CONTEXT_ID);
+        if (StringUtils.isBlank(cmsSessionContextId)) {
+            log.warn("Cannot proceed _cmsrest request: header '"+ HEADER_CMS_SESSION_CONTEXT_ID +"' missing");
+            setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, "Request header '"+ HEADER_CMS_SESSION_CONTEXT_ID +"' missing");
+            return;
+        }
+
+        final String cmsHost = servletRequest.getHeader(CMSREST_CMSHOST_HEADER);
+        if (StringUtils.isEmpty(cmsHost)) {
+            log.warn("Cannot proceed _cmsrest request: header'"+CMSREST_CMSHOST_HEADER+"' missing");
+            setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, "Request header '"+CMSREST_CMSHOST_HEADER+"' missing");
+            return;
+        }
+
+        CmsContextService cmsContextService = HippoServiceRegistry.getService(CmsContextService.class);
+        if (cmsContextService == null) {
+            log.error("No CmsContextService available");
+            setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
+            return;
+        }
+
+        if (!cmsContextServiceId.equals(cmsContextService.getId())) {
+            log.warn("Cannot proceed _cmsrest request: not coming from this CMS HOST");
+            setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, "Cannot proceed _cmsrest request: not coming from this CMS HOST");
+            return;
+        }
+
+        CmsSessionContext cmsSessionContext = cmsContextService.getSessionContext(cmsSessionContextId);
+        if (cmsSessionContext == null) {
+            log.warn("Cannot proceed _cmsrest request: CmsSessionContext not found");
+            setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, "Cannot proceed _cmsrest request: CmsSessionContext not found");
             return;
         }
 
         Session cmsSession = null;
         try {
-            CredentialCipher credentialCipher = CredentialCipher.getInstance();
-            Credentials credentials = credentialCipher.decryptFromString(CREDENTIAL_CIPHER_KEY, cmsRestCredentials);
-            cmsSession = repository.login(credentials);
+            cmsSession = repository.login(cmsSessionContext.getRepositoryCredentials());
             ((HstMutableRequestContext) requestContext).setSession(cmsSession);
 
-            final String cmsHost = requestContext.getServletRequest().getHeader(CMSREST_CMSHOST_HEADER);
-            if (StringUtils.isEmpty(cmsHost)) {
-                log.warn("Cannot proceed _cmsrest request because no header found for '{}'", CMSREST_CMSHOST_HEADER);
-                setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
-                return;
-            }
             final ResolvedVirtualHost resolvedVirtualHost = requestContext.getVirtualHost().getVirtualHosts().matchVirtualHost(cmsHost);
             if (resolvedVirtualHost == null) {
-                log.warn("Cannot match cmsHost '{}' to a host. Make sure '{}' is configured on a hst:virtualhostgroup node " +
+                log.error("Cannot match cmsHost '{}' to a host. Make sure '{}' is configured on a hst:virtualhostgroup node " +
                         "that belong to the correct environment for the cmsHost", cmsHost, cmsHost);
                 setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
                 return;
