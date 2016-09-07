@@ -4,7 +4,9 @@
   "license": "Apache-2.0",
   "description": "Channel manager NG for Hippo B.V.",
   "scripts": {
-    "gulp": "gulp"
+    "gulp": "gulp",
+    "start": "gulp serve",
+    "test": "gulp test"
   },
   "dependencies": {
     "angular": "1.5.8",
