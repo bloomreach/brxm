@@ -56,6 +56,10 @@ export class ChannelRightSidePanelCtrl {
   isActiveSiteMapItem(siteMapItem) {
     return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
   }
+
+  close() {
+    this.ChannelSidePanelService.close('right');
+  }
 }
 
 const channelRightSidePanelComponentModule = angular
