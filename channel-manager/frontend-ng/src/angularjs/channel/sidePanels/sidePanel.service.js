@@ -43,6 +43,12 @@ export class ChannelSidePanelService {
     }
   }
 
+  open(side) {
+    if (!this.isOpen(side)) {
+      this.$mdSidenav(this.panels[side].element).open();
+    }
+  }
+
   isOpen(side) {
     return this.panels[side].jQueryElement && this.$mdSidenav(this.panels[side].element).isOpen();
   }
