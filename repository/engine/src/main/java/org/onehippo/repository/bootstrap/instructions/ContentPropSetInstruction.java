@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,9 @@ import org.onehippo.repository.bootstrap.PostStartupTask;
 
 import static javax.jcr.PropertyType.STRING;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPSET;
+import static org.onehippo.repository.bootstrap.instructions.ContentPropSetInstruction.Type.AMBIGUOUS;
+import static org.onehippo.repository.bootstrap.instructions.ContentPropSetInstruction.Type.MULTIPLE;
+import static org.onehippo.repository.bootstrap.instructions.ContentPropSetInstruction.Type.SINGLE;
 import static org.onehippo.repository.bootstrap.util.BootstrapConstants.log;
 
 public class ContentPropSetInstruction extends InitializeInstruction {
@@ -74,42 +77,81 @@ public class ContentPropSetInstruction extends InitializeInstruction {
         } else {
             final int offset = contentRoot.lastIndexOf('/');
             final String targetNodePath = offset == 0 ? "/" : contentRoot.substring(0, offset);
-            final String propertyName = contentRoot.substring(offset+1);
+            final String propertyName = contentRoot.substring(offset + 1);
             final Value[] values = contentSetProperty.getValues();
             if (values.length == 0) {
                 log.warn("Invalid content prop set item {}: No property value(s) specified");
             } else if (values.length == 1) {
                 final Node target = session.getNode(targetNodePath);
-                if (isMultiple(target, propertyName)) {
-                    target.setProperty(propertyName, values);
-                } else {
-                    target.setProperty(propertyName, values[0]);
+                Type type = getType(target, propertyName);
+                switch (type) {
+                    case MULTIPLE:
+                        target.setProperty(propertyName, values);
+                        break;
+                    case SINGLE:
+                    case AMBIGUOUS:
+                        // single or ambiguous type (according nodetype) we write a single value when values.length = 1
+                        target.setProperty(propertyName, values[0]);
+                        break;
+
                 }
             } else {
                 session.getNode(targetNodePath).setProperty(propertyName, values);
             }
         }
+
         return null;
     }
 
-    private static boolean isMultiple(final Node target, final String propertyName) throws RepositoryException {
+    private static Type getType(final Node target, final String propertyName) throws RepositoryException {
         final List<NodeType> nodeTypes = new ArrayList<>(Arrays.asList(target.getMixinNodeTypes()));
         nodeTypes.add(target.getPrimaryNodeType());
+        Type type = null;
         for (NodeType nodeType : nodeTypes) {
             for (PropertyDefinition propertyDefinition : nodeType.getPropertyDefinitions()) {
                 if (propertyDefinition.getRequiredType() == STRING && propertyDefinition.getName().equals(propertyName)) {
-                    return propertyDefinition.isMultiple();
+                    if (type != null) {
+                        // exceptional situation where an explicit property name is present but in cnd defined two times
+                        // (once single valued and once multiple)
+                        type = AMBIGUOUS;
+                        break;
+                    }
+                    if (propertyDefinition.isMultiple()) {
+                        type = MULTIPLE;
+                    } else {
+                        type = SINGLE;
+                    }
                 }
             }
         }
+
+        if (type != null) {
+            return type;
+        }
+
         for (NodeType nodeType : nodeTypes) {
             for (PropertyDefinition propertyDefinition : nodeType.getPropertyDefinitions()) {
                 if (propertyDefinition.getRequiredType() == STRING && propertyDefinition.getName().equals("*")) {
-                    return propertyDefinition.isMultiple();
+                    if (type != null) {
+                        // residual * property name is present but in cnd defined two times (once single valued and once multiple)
+                        type = AMBIGUOUS;
+                        break;
+                    }
+                    if (propertyDefinition.isMultiple()) {
+                        type = MULTIPLE;
+                    } else {
+                        type = SINGLE;
+                    }
                 }
             }
         }
-        return false;
+        if (type == null) {
+            return Type.SINGLE;
+        }
+        return type;
     }
 
+    public enum Type {
+        MULTIPLE, SINGLE, AMBIGUOUS
+    }
 }
