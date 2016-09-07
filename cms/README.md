@@ -1,40 +1,15 @@
--------------
-Prerequisites
--------------
-
- - Java 8
- - Maven 3.0.5 or higher
- - Node.js (http://nodejs.org)
- - Grunt (http://gruntjs.org)
- - Bower (http://bower.io)
- - Git (http://git-scm.org) - needed by Bower
-
-Grunt and Bower can be installed with Node Package Manager (provided and installed with Node.js):
-
- $ sudo npm install -g grunt-cli bower
-
--------------------
-Nodejs instructions
--------------------
-
-For installing Node.js on any OS go to https://nodejs.org/download/
-Download your distribution and if needed follow instructions in their README.
-
------
-Build
------
-
+# Build
 Build with testing:
 
- $ mvn clean install
+    $ mvn clean install
 
 Build without testing:
 
- $ mvn clean install -DskipTests
+    $ mvn clean install -DskipTests
 
 Build with snapshot dependencies:
 
- $ mvn clean install -Dhippo.snapshots=true
+    $ mvn clean install -Dhippo.snapshots=true
 
  Note: only needed when the project refers to SNAPSHOT dependencies!
 
@@ -42,42 +17,21 @@ Build with snapshot dependencies:
        with this property for the Hippo snapshot repository. For details, see
        http://www.onehippo.org/library/development/build-hippo-cms-from-scratch.html
 
-----------------------
-Front-end Installation
-----------------------
-
+# Front-end Installation
 * Run these commands from either the api or the console/frontend module
 
-1. Get latest version of npm
-Before setting up Grunt ensure that your npm is up-to-date by running
-
-    $ npm update -g npm
-
-(this might require `sudo` on certain systems).
-
-2. Install Grunt and Bower
-
-    $ npm install -g grunt-cli bower
-
-(this might require `sudo` on certain systems).
-
-3. Install project dependencies
-Install both npm and bower dependencies
+Install project dependencies
 
     $ npm install
-    $ bower install
 
--------------------------------------------
-Building and developing the front-end theme
--------------------------------------------
-
+# Building and developing the front-end theme
 Build front-end code:
 
-    $ grunt build
+    $ npm run build
 
 After building the frontend-end code:
 
-    $ grunt watch
+    $ npm start
 
 This will handle the following cases:
     * If a change in a LESS file is detected it will recompile all LESS files, copy the theme to the CLASSPATH and (if
@@ -89,9 +43,7 @@ Run the CMS with Wicket development mode args:
 
     $ mvn -P cargo.run -Djrebel -Drepo.path=repo -Dcargo.jvm.args='-Dwicket.configuration=development'
 
----------------------------
-Live reload browser plugins
----------------------------
+# Live reload browser plugins
 You need a browser extension to use live reload.
 
 Safari:
