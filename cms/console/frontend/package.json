@@ -2,11 +2,16 @@
   "name": "hippo-console-theme",
   "license": "Apache-2.0",
   "private": true,
+  "scripts": {
+    "grunt": "grunt",
+    "build": "grunt build"
+  },
   "dependencies": {
     "font-awesome": "4.6.3"
   },
   "devDependencies": {
     "grunt": "0.4.5",
+    "grunt-cli": "1.2.0",
     "grunt-contrib-clean": "0.6.0",
     "grunt-contrib-copy": "0.7.0",
     "load-grunt-tasks": "0.6.0",
