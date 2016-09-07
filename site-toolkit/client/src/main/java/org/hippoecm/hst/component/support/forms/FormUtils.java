@@ -46,6 +46,7 @@ import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static javax.jcr.nodetype.NodeType.MIX_REFERENCEABLE;
 import static org.hippoecm.hst.core.component.HstRequest.RESOURCE_PHASE;
 import static org.hippoecm.hst.site.HstServices.getComponentManager;
 import static org.onehippo.repository.util.JcrConstants.MIX_REFERENCEABLE;
@@ -263,9 +264,9 @@ public class FormUtils {
             }
 
             postedFormDataNode.addMixin(MIX_REFERENCEABLE);
-            postedFormDataNode.addMixin(MIXIN_FORM_DATA_PAYLOAD);
 
             if (getComponentManager().getContainerConfiguration().getBoolean(FORM_DATA_FLAT_STORAGE_CONFIG_PROP, true)) {
+                postedFormDataNode.addMixin(MIXIN_FORM_DATA_PAYLOAD);
                 final String json = new ObjectMapper().writeValueAsString(formMap.getFormMap());
                 postedFormDataNode.setProperty(PROPERTY_FORM_DATA_PAYLOAD, json);
             } else {
@@ -273,9 +274,9 @@ public class FormUtils {
                     FormField field = entry.getValue();
                     Node fieldNode = postedFormDataNode.addNode(HST_FORM_DATA_NODE, HST_FORM_DATA_NODE);
                     fieldNode.setProperty(HST_FORM_FIELD_NAME, field.getName());
-                    Map<String, String> values = field.getValues();
-                    if (values.size() > 0) {
-                        fieldNode.setProperty(HST_FORM_FIELD_DATA, values.values().toArray(new String[values.size()]));
+                    List<String> valueList = field.getValueList();
+                    if (valueList.size() > 0) {
+                        fieldNode.setProperty(HST_FORM_FIELD_DATA, valueList.toArray(new String[valueList.size()]));
                     }
                     List<String> messages = field.getMessages();
                     if (messages.size() > 0) {
