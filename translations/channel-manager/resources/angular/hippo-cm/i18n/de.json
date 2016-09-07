@@ -105,7 +105,6 @@
   "ERROR_CHANNEL_PROPERTIES_SAVE_FAILED": "Channel-Einstellung konnte nicht gespeichert werden",
   "SUBPAGE_CHANNEL_EDIT_TITLE": "Bearbeiten von Channel '{{channelName}}'",
   "SUBPAGE_PAGE_EDIT_LABEL_PRIMARY_DOCUMENT": "Primäres Dokument",
-  "TOOLBAR_BUTTON_CHANNEL_SETTINGS": "Einstellungen",
   "SUBPAGE_MENU_EDITOR_EMPTY_MENU": "Keine Elemente im Menü",
   "SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REPOSITIONING": "Container-Elemente auf dieser Seite werden repositioniert, wenn diese Seite mit dieser Vorlage gespeichert wird",
   "TOOLBAR_MENU_CHANGES_PUBLISH": "Veröffentlichen",
@@ -136,5 +135,7 @@
   "ERROR_MENU_MOVE_FAILED": "Verschieben des Menüelements ist fehlgeschlagen",
   "SUBPAGE_PAGE_LABEL_TITLE": "Seitentitel",
   "TITLE": "Titel",
-  "TOOLBAR_MENU_PAGE_COPY": "Kopieren"
+  "TOOLBAR_MENU_PAGE_COPY": "Kopieren",
+  "TOOLBAR_MENU_CHANNEL_SETTINGS": "Einstellungen",
+  "TOOLBAR_MENU_CHANNEL_DELETE": "Löschen"
 }

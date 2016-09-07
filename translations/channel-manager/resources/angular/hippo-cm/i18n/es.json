@@ -105,7 +105,6 @@
   "ERROR_CHANNEL_PROPERTIES_SAVE_FAILED": "No se pudo guardar la configuración del canal",
   "SUBPAGE_CHANNEL_EDIT_TITLE": "Editar canal '{{channelName}}'",
   "SUBPAGE_PAGE_EDIT_LABEL_PRIMARY_DOCUMENT": "Documento primario",
-  "TOOLBAR_BUTTON_CHANNEL_SETTINGS": "Configuración",
   "SUBPAGE_MENU_EDITOR_EMPTY_MENU": "No hay elementos en el menú",
   "SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REPOSITIONING": "Los elementos del contenedor de esta página se cambiarán de sitio cuando se guarde la página con esta plantilla",
   "TOOLBAR_MENU_CHANGES_PUBLISH": "Publicar",
@@ -137,5 +136,7 @@
   "ERROR_MENU_MOVE_FAILED": "No se pudo mover el elemento de menú",
   "SUBPAGE_PAGE_LABEL_TITLE": "Título de la página",
   "TITLE": "Título",
-  "TOOLBAR_MENU_PAGE_COPY": "Copiar"
+  "TOOLBAR_MENU_PAGE_COPY": "Copiar",
+  "TOOLBAR_MENU_CHANNEL_SETTINGS": "Configuración",
+  "TOOLBAR_MENU_CHANNEL_DELETE": "Borrar"
 }

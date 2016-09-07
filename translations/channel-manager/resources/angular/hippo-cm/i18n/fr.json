@@ -104,7 +104,6 @@
   "ERROR_CHANNEL_PROPERTIES_SAVE_FAILED": "Le paramètre de canal n'a pas pu être enregistré",
   "SUBPAGE_CHANNEL_EDIT_TITLE": "Modifier le canal '{{channelName}}'",
   "SUBPAGE_PAGE_EDIT_LABEL_PRIMARY_DOCUMENT": "Document primaire",
-  "TOOLBAR_BUTTON_CHANNEL_SETTINGS": "Paramètres",
   "SUBPAGE_MENU_EDITOR_EMPTY_MENU": "Aucun élément dans le menu",
   "SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REPOSITIONING": "Les éléments de conteneur de cette page seront repositionnés lorsque cette page sera enregistrée avec ce modèle.",
   "TOOLBAR_MENU_CHANGES_PUBLISH": "Publier",
@@ -135,5 +134,7 @@
   "ERROR_MENU_MOVE_FAILED": "L'élément de menu n'a pas pu être déplacé",
   "SUBPAGE_PAGE_LABEL_TITLE": "Titre de la page",
   "TITLE": "Titre",
-  "TOOLBAR_MENU_PAGE_COPY": "Copier"
+  "TOOLBAR_MENU_PAGE_COPY": "Copier",
+  "TOOLBAR_MENU_CHANNEL_SETTINGS": "Paramètres",
+  "TOOLBAR_MENU_CHANNEL_DELETE": "Supprimer"
 }

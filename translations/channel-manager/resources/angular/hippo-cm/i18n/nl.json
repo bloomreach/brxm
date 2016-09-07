@@ -105,7 +105,6 @@
   "ERROR_CHANNEL_PROPERTIES_SAVE_FAILED": "Het is niet gelukt de channel-setting te bewaren",
   "SUBPAGE_CHANNEL_EDIT_TITLE": "Channel '{{channelName}}' wijzigen.",
   "SUBPAGE_PAGE_EDIT_LABEL_PRIMARY_DOCUMENT": "Primair document",
-  "TOOLBAR_BUTTON_CHANNEL_SETTINGS": "Instellingen",
   "SUBPAGE_MENU_EDITOR_EMPTY_MENU": "Geen items in het menu",
   "SUBPAGE_PAGE_EDIT_ALERT_CONTENT_REPOSITIONING": "Containeritems op deze pagina zullen worden geherpositioneerd zodra deze pagina wordt bewaard met dit sjabloon.",
   "TOOLBAR_MENU_CHANGES_PUBLISH": "Publiceer",
@@ -137,5 +136,7 @@
   "ERROR_MENU_MOVE_FAILED": "Het is niet gelukt het menu-item te verplaatsen",
   "SUBPAGE_PAGE_LABEL_TITLE": "Paginatitel",
   "TITLE": "Titel",
-  "TOOLBAR_MENU_PAGE_COPY": "Pagina kopiëren"
+  "TOOLBAR_MENU_PAGE_COPY": "Pagina kopiëren",
+  "TOOLBAR_MENU_CHANNEL_SETTINGS": "Instellingen",
+  "TOOLBAR_MENU_CHANNEL_DELETE": "Verwijderen"
 }
