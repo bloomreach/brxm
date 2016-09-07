@@ -64,7 +64,7 @@ public class FormUtils {
     public final static String DEFAULT_FORMDATA_CONTAINER = "hst:formdatacontainer";
     public final static String DEFAULT_FORMDATA_TYPE = "hst:formdata";
 
-    public static final String HST_FORM_ID = "hst:formId";
+    public static final String HST_FORM_ID = "hst:formid";
     public final static String HST_CREATIONTIME = "hst:creationtime";
     public final static String HST_PREDECESSOR = "hst:predecessor";
     public final static String HST_FORM_DATA_NODE = "hst:formfieldvalue";

@@ -28,7 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Simple value wrapper for form fields (name and data). Supports multiple value fields
+ * Simple value wrapper for form fields (name, label, data where the data can be submitted form field values and
+ * possible messages). Supports multiple value fields
  *
  * @version $Id$
  */
