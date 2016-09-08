@@ -19,7 +19,7 @@ import { channelChangesModule } from './changes/changes';
 import { channelPageModule } from './page/page';
 import { channelPageActionsModule } from './page/actions/actions';
 import { channelActionsModule } from './actions/actions';
-import { channelSidenavModule } from './sidenav/sidenav';
+import { channelSidePanelModule } from './sidePanels/sidePanel';
 import { channelHippoIframeModule } from './hippoIframe/hippoIframe';
 import { channelMenuModule } from './menu/editor';
 import { channelMaskModule } from './mask/mask';
@@ -39,7 +39,7 @@ export const channelModule = angular
     channelPageModule.name,
     channelPageActionsModule.name,
     channelActionsModule.name,
-    channelSidenavModule.name,
+    channelSidePanelModule.name,
     channelHippoIframeModule.name,
     channelMenuModule.name,
     channelMaskModule.name,

@@ -14,15 +14,15 @@
   limitations under the License.
   -->
 
-<md-sidenav class="channel-sidenav" md-component-id="channel-sidenav">
+<md-sidenav class="channel-left-side-panel" md-component-id="channel-left-side-panel">
   <md-tabs md-dynamic-height class="qa-sidenav-tabs">
-    <md-tab label="{{ 'SIDENAV_TAB_SITEMAP' | translate }}">
+    <md-tab label="{{ 'LEFT_SIDE_PANEL_TAB_SITEMAP' | translate }}">
       <md-list md-no-ink class="qa-sitemap">
         <md-list-item class="md-2-line qa-sitemap-item"
-                      ng-class="{'list-item-active': sidenav.isActiveSiteMapItem(item) }"
-                      ng-repeat="item in sidenav.getSiteMap()"
-                      md-autofocus="sidenav.isActiveSiteMapItem(item)"
-                      ng-click="sidenav.showPage(item)">
+                      ng-class="{'list-item-active': $ctrl.isActiveSiteMapItem(item) }"
+                      ng-repeat="item in $ctrl.getSiteMap()"
+                      md-autofocus="$ctrl.isActiveSiteMapItem(item)"
+                      ng-click="$ctrl.showPage(item)">
           <div class="md-list-item-text">
             <h4 class="qa-pathinfo">{{ item.pathInfo | startWithSlash }}</h4>
             <p class="qa-name">{{ item.pageTitle || item.name }}</p>
@@ -31,11 +31,11 @@
         </md-list-item>
       </md-list>
     </md-tab>
-    <md-tab label="{{ 'SIDENAV_TAB_COMPONENTS' | translate }}"
-            ng-if="sidenav.showComponentsTab()">
+    <md-tab label="{{ 'LEFT_SIDE_PANEL_TAB_COMPONENTS' | translate }}"
+            ng-if="$ctrl.showComponentsTab()">
       <md-list md-no-ink class="qa-catalog">
         <md-list-item class="md-1-line catalog-dd-container"
-                      ng-repeat="component in sidenav.getCatalog()">
+                      ng-repeat="component in $ctrl.getCatalog()">
           <div layout="row"
                 layout-align="start center"
                 catalog-component="component"

@@ -33,7 +33,8 @@ export class HippoIframeCtrl {
     PageStructureService,
     PageMetaDataService,
     ScalingService,
-    HippoIframeService
+    HippoIframeService,
+    ChannelSidePanelService
   ) {
     'ngInject';
 
@@ -52,6 +53,8 @@ export class HippoIframeCtrl {
     this.OverlaySyncService = OverlaySyncService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
+
+    this.ChannelSidePanelService = ChannelSidePanelService;
 
     this.PageStructureService.clearParsedElements();
 
@@ -207,7 +210,12 @@ export class HippoIframeCtrl {
   }
 
   openContent(contentLink) {
-    this.CmsService.publish('open-content', contentLink.getUuid());
+    const locked = false; // TODO: replace when CHANNELMGR-841 is complete
+    if (locked) {
+      this.CmsService.publish('open-content', contentLink.getUuid());
+    } else {
+      this.ChannelSidePanelService.open('right');
+    }
   }
 
   getEditMenuLinks() {

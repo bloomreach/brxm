@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-const ANGULAR_MATERIAL_SIDENAV_EASING = [0.25, 0.8, 0.25, 1];
-const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
+const ANGULAR_MATERIAL_LEFT_SIDE_PANEL_EASING = [0.25, 0.8, 0.25, 1];
+const ANGULAR_MATERIAL_LEFT_SIDE_PANEL_ANIMATION_DURATION_MS = 400;
 
 export class ScalingService {
 
@@ -25,11 +25,11 @@ export class ScalingService {
     this.$rootScope = $rootScope;
     this.OverlaySyncService = OverlaySyncService;
 
-    this.pushWidth = 0; // all sidenavs are initially closed
+    this.pushWidth = 0; // left side panel is initially closed
     this.viewPortWidth = 0; // unconstrained
     this.scaleFactor = 1.0;
-    this.scaleDuration = ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS;
-    this.scaleEasing = ANGULAR_MATERIAL_SIDENAV_EASING;
+    this.scaleDuration = ANGULAR_MATERIAL_LEFT_SIDE_PANEL_ANIMATION_DURATION_MS;
+    this.scaleEasing = ANGULAR_MATERIAL_LEFT_SIDE_PANEL_EASING;
 
     angular.element($window).bind('resize', () => {
       if (this.hippoIframeJQueryElement) {
@@ -65,7 +65,7 @@ export class ScalingService {
   /**
    * Update the iframe shift, if necessary
    *
-   * The iframe should be shifted right (by controlling the left-margin) if the sidenav is open,
+   * The iframe should be shifted right (by controlling the left-margin) if the left side panel is open,
    * and if the viewport width is less than the available canvas
    *
    * @param animate  flag indicating whether any shift-change should be automated or immediate.
@@ -100,7 +100,7 @@ export class ScalingService {
    * Update the scale factor, if necessary
    *
    * We compute the new scale factor and compare it to the old one. In case of a change, we zoom the "elementsToScale",
-   * i.e. the iframe and the overlay, in or out. In case the scale factor changes due to opening/closing the sidenav,
+   * i.e. the iframe and the overlay, in or out. In case the scale factor changes due to opening/closing the left side panel,
    * which is animated by material, we also animate the zooming and do an attempt to keep the scroll position of the
    * iframe unchanged. Other changes (window resize, viewport width change) are not animated and we don't worry much
    * about the scroll position.

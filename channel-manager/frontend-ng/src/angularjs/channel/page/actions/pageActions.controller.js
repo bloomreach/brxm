@@ -116,7 +116,7 @@ export class PageActionsCtrl {
             this.HippoIframeService.load(homePage);
 
             const siteMapId = this.ChannelService.getSiteMapId();
-            this.SiteMapService.load(siteMapId);   // reload sitemap (sidenav)
+            this.SiteMapService.load(siteMapId);   // reload sitemap (left side panel)
 
             this.SiteMapItemService.clear();       // wipe meta-data of current page
             this.ChannelService.recordOwnChange(); // mark the channel changed

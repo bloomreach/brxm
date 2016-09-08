@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-describe('ChannelSidenav', () => {
+describe('ChannelLeftSidePanel', () => {
   'use strict';
 
   let $rootScope;
   let $compile;
-  let ChannelSidenavService;
+  let ChannelSidePanelService;
   let SiteMapService;
   let ChannelService;
   let HippoIframeService;
@@ -31,18 +31,18 @@ describe('ChannelSidenav', () => {
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidenavService_, _ChannelService_, _SiteMapService_, _HippoIframeService_) => {
+    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_, _ChannelService_, _SiteMapService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      ChannelSidenavService = _ChannelSidenavService_;
+      ChannelSidePanelService = _ChannelSidePanelService_;
       ChannelService = _ChannelService_;
       SiteMapService = _SiteMapService_;
       HippoIframeService = _HippoIframeService_;
     });
 
     spyOn(ChannelService, 'getCatalog').and.returnValue([]);
-    spyOn(ChannelSidenavService, 'initialize');
-    spyOn(ChannelSidenavService, 'close');
+    spyOn(ChannelSidePanelService, 'initialize');
+    spyOn(ChannelSidePanelService, 'close');
     spyOn(SiteMapService, 'get');
     spyOn(HippoIframeService, 'load');
     spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
@@ -51,57 +51,57 @@ describe('ChannelSidenav', () => {
   function instantiateController(editMode) {
     parentScope = $rootScope.$new();
     parentScope.editMode = editMode;
-    const el = angular.element('<channel-sidenav edit-mode="editMode"></channel-sidenav>');
+    const el = angular.element('<channel-left-side-panel edit-mode="editMode"></channel-left-side-panel>');
     $compile(el)(parentScope);
     $rootScope.$digest();
-    return el.controller('channel-sidenav');
+    return el.controller('channel-left-side-panel');
   }
 
-  it('initializes the channel sidenav service upon instantiation', () => {
+  it('initializes the channel left side panel service upon instantiation', () => {
     instantiateController(false);
 
-    expect(ChannelSidenavService.initialize).toHaveBeenCalled();
-    expect(ChannelSidenavService.close).toHaveBeenCalled();
+    expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
+    expect(ChannelSidePanelService.close).toHaveBeenCalled();
   });
 
   it('retrieves the catalog from the channel service', () => {
     ChannelService.getCatalog.and.returnValue(catalogComponents);
-    const ChannelSidenavCtrl = instantiateController();
+    const ChannelLeftSidePanelCtrl = instantiateController();
 
-    expect(ChannelSidenavCtrl.getCatalog()).toBe(catalogComponents);
+    expect(ChannelLeftSidePanelCtrl.getCatalog()).toBe(catalogComponents);
   });
 
   it('only shows the components tab in edit mode, and if there are catalog items', () => {
-    const ChannelSidenavCtrl = instantiateController(false);
-    expect(ChannelSidenavCtrl.showComponentsTab()).toBe(false);
+    const ChannelLeftSidePanelCtrl = instantiateController(false);
+    expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(false);
 
     parentScope.editMode = true;
     $rootScope.$digest();
-    expect(ChannelSidenavCtrl.showComponentsTab()).toBe(false);
+    expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(false);
 
     ChannelService.getCatalog.and.returnValue(catalogComponents);
-    expect(ChannelSidenavCtrl.showComponentsTab()).toBe(true);
+    expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(true);
 
     parentScope.editMode = false;
     $rootScope.$digest();
-    expect(ChannelSidenavCtrl.showComponentsTab()).toBe(false);
+    expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(false);
   });
 
   it('retrieves the sitemap items from the channel siteMap service', () => {
     const siteMapItems = ['dummy'];
-    const ChannelSidenavCtrl = instantiateController(false);
+    const ChannelLeftSidePanelCtrl = instantiateController(false);
     SiteMapService.get.and.returnValue(siteMapItems);
 
-    expect(ChannelSidenavCtrl.getSiteMap()).toBe(siteMapItems);
+    expect(ChannelLeftSidePanelCtrl.getSiteMap()).toBe(siteMapItems);
   });
 
   it('asks the HippoIframeService to load the requested siteMap item', () => {
     const siteMapItem = {
       renderPathInfo: 'dummy',
     };
-    const ChannelSidenavCtrl = instantiateController(false);
+    const ChannelLeftSidePanelCtrl = instantiateController(false);
 
-    ChannelSidenavCtrl.showPage(siteMapItem);
+    ChannelLeftSidePanelCtrl.showPage(siteMapItem);
 
     expect(HippoIframeService.load).toHaveBeenCalledWith('dummy');
   });
@@ -111,11 +111,11 @@ describe('ChannelSidenav', () => {
     const siteMapItem = {
       renderPathInfo: '/current/path',
     };
-    const ChannelSidenavCtrl = instantiateController(false);
-    expect(ChannelSidenavCtrl.isActiveSiteMapItem(siteMapItem)).toBe(true);
+    const ChannelLeftSidePanelCtrl = instantiateController(false);
+    expect(ChannelLeftSidePanelCtrl.isActiveSiteMapItem(siteMapItem)).toBe(true);
 
     siteMapItem.renderPathInfo = '/other/path';
-    expect(ChannelSidenavCtrl.isActiveSiteMapItem(siteMapItem)).toBe(false);
+    expect(ChannelLeftSidePanelCtrl.isActiveSiteMapItem(siteMapItem)).toBe(false);
   });
 });
 

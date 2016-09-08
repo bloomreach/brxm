@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-export class ChannelSidenavCtrl {
-  constructor($scope, $element, ChannelSidenavService, ChannelService, SiteMapService, HippoIframeService) {
+export class ChannelLeftSidePanelCtrl {
+  constructor($scope, $element, ChannelSidePanelService, ChannelService, SiteMapService, HippoIframeService) {
     'ngInject';
 
+    this.$scope = $scope;
     this.ChannelService = ChannelService;
-    this.ChannelSidenavService = ChannelSidenavService;
+    this.ChannelSidePanelService = ChannelSidePanelService;
     this.SiteMapService = SiteMapService;
     this.HippoIframeService = HippoIframeService;
 
-    ChannelSidenavService.initialize($element.find('md-sidenav'));
+    ChannelSidePanelService.initialize('left', $element.find('.channel-left-side-panel'));
+    this.closePanelOnEditModeTurnedOff();
+  }
 
-    $scope.$watch('sidenav.editMode', () => {
+  closePanelOnEditModeTurnedOff() {
+    this.$scope.$watch('$ctrl.editMode', () => {
       if (!this.editMode) {
-        ChannelSidenavService.close();
+        this.ChannelSidePanelService.close('left');
       }
     });
   }
@@ -53,3 +57,15 @@ export class ChannelSidenavCtrl {
     return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
   }
 }
+
+const channelLeftSidePanelComponentModule = angular
+  .module('hippo-cm.channel.leftSidePanelComponentModule', [])
+  .component('channelLeftSidePanel', {
+    bindings: {
+      editMode: '=',
+    },
+    controller: ChannelLeftSidePanelCtrl,
+    templateUrl: 'channel/sidePanels/leftSidePanel/leftSidePanel.html',
+  });
+
+export default channelLeftSidePanelComponentModule;
