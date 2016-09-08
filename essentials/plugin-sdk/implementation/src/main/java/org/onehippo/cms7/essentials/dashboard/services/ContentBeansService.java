@@ -175,14 +175,21 @@ public class ContentBeansService {
                                 continue;
                             }
                         }
-                        log.info("@Missing declaration for: {}. Method will be deleted", internalName);
-                        final boolean deleted = JavaSourceUtils.deleteMethod(method, path);
-                        final String methodName = method.getMethodName();
-                        if (deleted) {
-                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), methodName, ActionType.DELETED_METHOD));
-                            eventBus.post(new MessageEvent(String.format("Successfully deleted method: %s", methodName)));
+                        final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoEssentialsAnnotation(path, method.getMethodDeclaration());
+                        final boolean allowUpdate = annotation != null && annotation.isAllowModifications();
+                        if(allowUpdate) {
+                            log.info("@Missing declaration for: {}. Method will be deleted", internalName);
+                            final boolean deleted = JavaSourceUtils.deleteMethod(method, path);
+                            final String methodName = method.getMethodName();
+                            if (deleted) {
+                                context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(path.toString(), methodName, ActionType.DELETED_METHOD));
+                                eventBus.post(new MessageEvent(String.format("Successfully deleted method: %s", methodName)));
+                            } else {
+                                context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(String.format("Failed to  delete method: %s", methodName)));
+                            }
                         } else {
-                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry(String.format("Failed to  delete method: %s", methodName)));
+                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method should be removed, but modifications are disabled: "
+                                    + method.getInternalName() + ", " + method.getMethodName()));
                         }
                     }
                 }
