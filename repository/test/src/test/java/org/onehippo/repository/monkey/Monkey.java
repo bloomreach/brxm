@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,14 @@ import static org.onehippo.repository.monkey.MonkeyTest.log;
 
 class Monkey {
 
-    private final Random random = new Random();
     private final String name;
+    private final Random random;
     private final Session session;
     private final List<Action> actions;
 
-    Monkey(final String name, final Session session, final List<Action> actions) {
+    Monkey(final String name, final Random random, final Session session, final List<Action> actions) {
         this.name = name;
+        this.random = random;
         this.session = session;
         this.actions = actions;
     }

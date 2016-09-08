@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -222,7 +222,15 @@ public abstract class ClusterTest {
     protected boolean clusterContentEqual() throws RepositoryException, IOException {
         session1.refresh(false);
         session2.refresh(false);
-        return getTestSystemViewXML(session1).equals(getTestSystemViewXML(session2));
+        final String systemViewXml1 = getTestSystemViewXML(session1);
+        final String systemViewXml2 = getTestSystemViewXML(session2);
+
+        if (systemViewXml1.equals(systemViewXml2)) {
+            return true;
+        } else {
+            log.error("Cluster content is not equal:\ncluster1\n{}\ncluster2\n{}\n", systemViewXml1, systemViewXml2);
+            return false;
+        }
     }
 
     /**
@@ -235,7 +243,15 @@ public abstract class ClusterTest {
         try {
             final Object consistencyCheck = searchIndex.getClass().getMethod("runConsistencyCheck").invoke(searchIndex);
             errors = (List) consistencyCheck.getClass().getMethod("getErrors").invoke(consistencyCheck);
-            return errors.isEmpty();
+            if (errors.isEmpty()) {
+                return true;
+            } else {
+                log.error("Index consistency check failed");
+                for (Object error : errors) {
+                    log.error("Error: {}", error.toString());
+                }
+                return false;
+            }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             log.error("Failed to run index consistency check: " + e);
         }
@@ -261,7 +277,15 @@ public abstract class ClusterTest {
             checkerClass.getMethod("doubleCheckErrors").invoke(checker);
             final Object report = checkerClass.getMethod("getReport").invoke(checker);
             Set errors = (Set) report.getClass().getMethod("getItems").invoke(report);
-            return errors.isEmpty();
+            if (errors.isEmpty()) {
+                return true;
+            } else {
+                log.error("Database consistency check failed");
+                for (Object error : errors) {
+                    log.error("Error: {}", error.toString());
+                }
+                return false;
+            }
         } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             log.error("Failed to run database consistency check: " + e);
         }

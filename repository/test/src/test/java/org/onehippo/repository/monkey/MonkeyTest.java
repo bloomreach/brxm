@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,12 +39,18 @@ import static junit.framework.Assert.fail;
  *     The system property -Dorg.onehippo.repository.monkey.MonkeyTest.actionCount
  *     controls the amount of action to perform during each test. Defaults to 1000.
  * </p>
+ * <p>
+ *     The system property -Dorg.onehippo.repository.monkey.MonkeyTest.seed controls the seed of the randomizer.
+ *     Specifying the seed allows you to rerun a test using the same sequence of steps. The seed used is printed as an
+ *     info log message.
+ * </p>
  */
 public class MonkeyTest extends ClusterTest {
 
     static final Logger log = LoggerFactory.getLogger(MonkeyTest.class);
 
     private static final int actionCount = Integer.getInteger(MonkeyTest.class.getName() + ".actionCount", 1000);
+    private static int seed = Integer.getInteger(MonkeyTest.class.getName() + ".seed", -1);
 
     private Random random;
     private List<Action> actions;
@@ -53,7 +59,12 @@ public class MonkeyTest extends ClusterTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        random = new Random();
+        if (seed == -1) {
+            seed = new Random().nextInt();
+        }
+        random = new Random(seed);
+        log.info("Running MonkeyTest with seed={}", seed);
+
         actions = Arrays.asList(
                 new AddNodeAction("a"), new AddNodeAction("b"), new AddNodeAction("a/b"),
                 new RemoveNodeAction("a"), new RemoveNodeAction("b"), new RemoveNodeAction("a/b"),
@@ -100,7 +111,7 @@ public class MonkeyTest extends ClusterTest {
 
     private Monkey createMonkey(final String name, Object repo) throws RepositoryException {
         final Session session = loginSession(repo);
-        return new Monkey(name, session, actions);
+        return new Monkey(name, random, session, actions);
     }
 
     private Monkey selectMonkey(final Monkey monkey1, final Monkey monkey2) {
