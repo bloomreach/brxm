@@ -31,6 +31,7 @@ describe('hippoIframeCtrl', () => {
   let PageMetaDataService;
   let ChannelService;
   let CmsService;
+  let ChannelSidePanelService;
   let HippoIframeService;
   let DialogService;
   let DomService;
@@ -48,7 +49,7 @@ describe('hippoIframeCtrl', () => {
 
     inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlaySyncService_,
             _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,
-            _ChannelService_, _CmsService_, _HippoIframeService_, _DialogService_, _DomService_) => {
+            _ChannelService_, _CmsService_, _ChannelSidePanelService_, _HippoIframeService_, _DialogService_, _DomService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $q = _$q_;
@@ -60,6 +61,7 @@ describe('hippoIframeCtrl', () => {
       PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
+      ChannelSidePanelService = _ChannelSidePanelService_;
       HippoIframeService = _HippoIframeService_;
       DialogService = _DialogService_;
       DomService = _DomService_;
@@ -177,16 +179,29 @@ describe('hippoIframeCtrl', () => {
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
-  it('sends an "open-content" event to the CMS to open content', () => {
+  // TODO: Enable test after CHANNELMGR-841 is complete
+  // it('sends an "open-content" event to the CMS to open content', () => {
+  //   const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
+  //   const contentLink = new EmbeddedLink(contentLinkComment, {
+  //     uuid: '1234',
+  //   });
+  //   spyOn(CmsService, 'publish');
+
+  //   hippoIframeCtrl.openContent(contentLink);
+
+  //   expect(CmsService.publish).toHaveBeenCalledWith('open-content', '1234');
+  // });
+
+  it('opens right side panel when clicking the edit content button', () => {
     const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
     const contentLink = new EmbeddedLink(contentLinkComment, {
       uuid: '1234',
     });
-    spyOn(CmsService, 'publish');
+    spyOn(ChannelSidePanelService, 'open');
 
     hippoIframeCtrl.openContent(contentLink);
 
-    expect(CmsService.publish).toHaveBeenCalledWith('open-content', '1234');
+    expect(ChannelSidePanelService.open).toHaveBeenCalledWith('right');
   });
 
   it('calls the registered callback for editing a menu', () => {

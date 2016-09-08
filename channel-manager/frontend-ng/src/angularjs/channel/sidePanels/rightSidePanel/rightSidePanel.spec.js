@@ -20,32 +20,19 @@ describe('ChannelRightSidePanel', () => {
   let $rootScope;
   let $compile;
   let ChannelSidePanelService;
-  let SiteMapService;
-  let ChannelService;
-  let HippoIframeService;
   let parentScope;
-  const catalogComponents = [
-    { label: 'dummy' },
-  ];
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_, _ChannelService_, _SiteMapService_, _HippoIframeService_) => {
+    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       ChannelSidePanelService = _ChannelSidePanelService_;
-      ChannelService = _ChannelService_;
-      SiteMapService = _SiteMapService_;
-      HippoIframeService = _HippoIframeService_;
     });
 
-    spyOn(ChannelService, 'getCatalog').and.returnValue([]);
     spyOn(ChannelSidePanelService, 'initialize');
     spyOn(ChannelSidePanelService, 'close');
-    spyOn(SiteMapService, 'get');
-    spyOn(HippoIframeService, 'load');
-    spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
   });
 
   function instantiateController(editMode) {
@@ -62,60 +49,6 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalled();
-  });
-
-  it('retrieves the catalog from the channel service', () => {
-    ChannelService.getCatalog.and.returnValue(catalogComponents);
-    const ChannelRightSidePanelCtrl = instantiateController();
-
-    expect(ChannelRightSidePanelCtrl.getCatalog()).toBe(catalogComponents);
-  });
-
-  it('only shows the components tab in edit mode, and if there are catalog items', () => {
-    const ChannelRightSidePanelCtrl = instantiateController(false);
-    expect(ChannelRightSidePanelCtrl.showComponentsTab()).toBe(false);
-
-    parentScope.editMode = true;
-    $rootScope.$digest();
-    expect(ChannelRightSidePanelCtrl.showComponentsTab()).toBe(false);
-
-    ChannelService.getCatalog.and.returnValue(catalogComponents);
-    expect(ChannelRightSidePanelCtrl.showComponentsTab()).toBe(true);
-
-    parentScope.editMode = false;
-    $rootScope.$digest();
-    expect(ChannelRightSidePanelCtrl.showComponentsTab()).toBe(false);
-  });
-
-  it('retrieves the sitemap items from the channel siteMap service', () => {
-    const siteMapItems = ['dummy'];
-    const ChannelRightSidePanelCtrl = instantiateController(false);
-    SiteMapService.get.and.returnValue(siteMapItems);
-
-    expect(ChannelRightSidePanelCtrl.getSiteMap()).toBe(siteMapItems);
-  });
-
-  it('asks the HippoIframeService to load the requested siteMap item', () => {
-    const siteMapItem = {
-      renderPathInfo: 'dummy',
-    };
-    const ChannelRightSidePanelCtrl = instantiateController(false);
-
-    ChannelRightSidePanelCtrl.showPage(siteMapItem);
-
-    expect(HippoIframeService.load).toHaveBeenCalledWith('dummy');
-  });
-
-  it('compares the siteMap item\'s renderPathInfo to the current one', () => {
-    HippoIframeService.getCurrentRenderPathInfo.and.returnValue('/current/path');
-    const siteMapItem = {
-      renderPathInfo: '/current/path',
-    };
-    const ChannelRightSidePanelCtrl = instantiateController(false);
-    expect(ChannelRightSidePanelCtrl.isActiveSiteMapItem(siteMapItem)).toBe(true);
-
-    siteMapItem.renderPathInfo = '/other/path';
-    expect(ChannelRightSidePanelCtrl.isActiveSiteMapItem(siteMapItem)).toBe(false);
   });
 });
 

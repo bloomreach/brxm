@@ -15,14 +15,11 @@
  */
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, ChannelSidePanelService, ChannelService, SiteMapService, HippoIframeService) {
+  constructor($scope, $element, ChannelSidePanelService) {
     'ngInject';
 
     this.$scope = $scope;
-    this.ChannelService = ChannelService;
     this.ChannelSidePanelService = ChannelSidePanelService;
-    this.SiteMapService = SiteMapService;
-    this.HippoIframeService = HippoIframeService;
 
     ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'));
     this.closePanelOnEditModeTurnedOff();
@@ -34,27 +31,6 @@ export class ChannelRightSidePanelCtrl {
         this.ChannelSidePanelService.close('right');
       }
     });
-  }
-
-  showComponentsTab() {
-    const catalog = this.getCatalog();
-    return this.editMode && catalog.length > 0;
-  }
-
-  getCatalog() {
-    return this.ChannelService.getCatalog();
-  }
-
-  getSiteMap() {
-    return this.SiteMapService.get();
-  }
-
-  showPage(siteMapItem) {
-    this.HippoIframeService.load(siteMapItem.renderPathInfo);
-  }
-
-  isActiveSiteMapItem(siteMapItem) {
-    return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
   }
 
   close() {
