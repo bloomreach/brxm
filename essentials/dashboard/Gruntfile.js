@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-module.exports = function gruntTasks(grunt) {
+module.exports = function gruntFunctions(grunt) {
   'use strict';
 
     // display execution time of each task
@@ -47,19 +47,18 @@ module.exports = function gruntTasks(grunt) {
             cwd: '<%= build.npmDir %>',
             dest: '<%= build.dashboardtarget %>',
             src: [
+              'jquery/dist/jquery.js',
               'angular/angular.js',
-              'angular-ui-bootstrap/ui-bootstrap-tpls.js',
+              'chosen-npm/public/chosen.jquery.js',
               'angular-chosen-localytics/dist/angular-chosen.js',
-              'angular-sanitize/angular-sanitize.min.js',
-              'angular-tablesort/src/angular-tablesort.js',
+              'angular-ui-bootstrap/ui-bootstrap-tpls.js',
               'angular-ui-router/release/angular-ui-router.js',
               'angular-ui-tree/dist/angular-ui-tree.min.css',
-              'chosen-npm/public/chosen.jquery.js',
+              'angular-sanitize/angular-sanitize.js',
+              'angular-aria/angular-aria.js',
+              'angular-animate/angular-animate.js',
               'google-code-prettify/src/prettify.js',
               'hippo-theme/dist/**',
-              'jquery/dist/jquery.js',
-              'angular-animate/angular-animate.js',
-              'angular-aria/angular-aria.min.js',
             ],
           },
         ],

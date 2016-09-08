@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 package org.onehippo.cms7.essentials.dashboard.ctx;
-
 
 import java.io.File;
 import java.io.Serializable;
@@ -111,6 +110,13 @@ public interface PluginContext extends Serializable {
     String beansPackageName();
 
     /**
+     * General package name used for the project
+     *
+     * @return project package name, might be null if not configured
+     */
+    String getProjectPackageName();
+
+    /**
      * Package name used for REST components
      *
      * @return REST package name, might be null if not configured
@@ -165,6 +171,14 @@ public interface PluginContext extends Serializable {
      * @param beansPackage name of the beans package e.g. {@code org.onehippo.myproject.beans}
      */
     void setBeansPackageName(String beansPackage);
+
+    /**
+     * Sets the general project package name
+     *
+     * @param projectPackage name of the project package e.g. {@code org.onehippo.myproject}
+     */
+
+    void setProjectPackageName(String projectPackage);
 
     /**
      * Sets HST rest package name

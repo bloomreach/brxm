@@ -79,6 +79,7 @@ public class ContentBeansService {
     public static final String HIPPO_GALLERY_IMAGE_SET_CLASS = "HippoGalleryImageSet";
     public static final String RELATED_MIXIN = "relateddocs:relatabledocs";
     public static final String DOCBASE = "Docbase";
+    public static final String RESOURCE = "hippo:resource";
     private static Logger log = LoggerFactory.getLogger(ContentBeansService.class);
 
     private final PluginContext context;
@@ -511,6 +512,12 @@ public class ContentBeansService {
 
                     methodName = GlobalUtils.createMethodName(name);
                     JavaSourceUtils.addBeanMethodHippoImage(beanPath, methodName, name, multiple);
+                    existing.add(name);
+                    logChildBeanMessage(beanPath, methodName);
+                    break;
+                case RESOURCE:
+                    methodName = GlobalUtils.createMethodName(name);
+                    JavaSourceUtils.addBeanMethodHippoResource(beanPath, methodName, name, multiple);
                     existing.add(name);
                     logChildBeanMessage(beanPath, methodName);
                     break;

@@ -15,6 +15,6 @@
  */
 
 module.exports = {
-    npmDir: 'node_modules',
-    dashboardtarget: 'target/dashboard/components'
+  npmDir: 'node_modules',
+  dashboardtarget: 'target/dashboard/components',
 };

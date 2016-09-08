@@ -610,6 +610,17 @@ public final class JavaSourceUtils {
 
     }
 
+
+    public static void addBeanMethodHippoResource(final Path path, final String methodName, final String propertyName, final boolean multiple) {
+        if (multiple) {
+            addParameterizedMethod(methodName, "List", "HippoResourceBean", path, "getBeans", propertyName);
+            addImport(path, List.class.getName());
+        } else {
+            addTwoArgumentsMethod("getBean", "HippoResourceBean", path, methodName, propertyName);
+        }
+        addImport(path, "org.hippoecm.hst.content.beans.standard.HippoResourceBean");
+    }
+
     public static void addBeanMethodHippoImageSet(final Path path, final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
             addParameterizedMethod(methodName, "List", "HippoGalleryImageSet", path, "getChildBeansByName", propertyName);

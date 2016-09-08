@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 package org.onehippo.cms7.essentials.dashboard.config;
-
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,6 +42,7 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     private String projectNamespace;
 
     private String selectedBeansPackage;
+    private String selectedProjectPackage;
     private String selectedComponentsPackage;
     private String selectedRestPackage;
     private Boolean setupDone;
@@ -189,6 +189,16 @@ public class ProjectSettingsBean extends BaseDocument implements ProjectSettings
     @Override
     public void setSelectedComponentsPackage(final String selectedComponentsPackage) {
         this.selectedComponentsPackage = selectedComponentsPackage;
+    }
+
+    @Override
+    public String getSelectedProjectPackage() {
+        return this.selectedProjectPackage;
+    }
+
+    @Override
+    public void setSelectedProjectPackage(final String selectedProjectPackage) {
+        this.selectedProjectPackage = selectedProjectPackage;
     }
 
     @Override

@@ -48,7 +48,7 @@ Installation of Git is also possible using Chocolatey:
 
 # Getting Started
 
-## SVN checkout
+## Code checkout
 
 To get started with the Hippo Essentials, checkout the code. You have two options to check out
 the project. The example commands below use the potentially unstable trunk snapshot. Consider
@@ -56,17 +56,17 @@ using a tag instead.
 
 ### Read-only
 ```shell
-svn co http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk essentials
+git clone git@code.onehippo.org:cms-community/hippo-essentials.git
 ```
 
-### Read-write (you'll need Hippo SVN account for this)
+### Read-write (you'll need Hippo GIT account for this)
 ```shell
-svn co https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk essentials
+git clone git@code.onehippo.org:cms-community/hippo-essentials.git
 ```
 
 ### Build the essentials components:
 ```shell
-cd essentials
+cd hippo-essentials
 mvn clean install
 ```
 
@@ -77,8 +77,8 @@ mvn clean && mvn validate -Ppedantic
 
 ### Create and install archetype locally:
 ```shell
-svn co http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk/ archetype
-cd archetype
+git clone git@code.onehippo.org:cms-community/hippo-project-archetype.git
+cd hippo-project-archetype
 mvn clean install
 ```
 
@@ -155,6 +155,6 @@ or permanently in your project's file
 
 ##Copyright and license
 
-Copyright 2013-2015 Hippo B.V.
-Distributed under the [Apache 2.0 license](http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk/LICENSE).
+Copyright 2013-2016 Hippo B.V.
+Distributed under the [Apache 2.0 license](https://code.onehippo.org/cms-community/hippo-essentials/blob/master/LICENSE).
 
