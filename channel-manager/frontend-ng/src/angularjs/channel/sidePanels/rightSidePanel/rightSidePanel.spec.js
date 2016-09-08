@@ -50,5 +50,13 @@ describe('ChannelRightSidePanel', () => {
     expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalled();
   });
+
+  it('closes the panel', () => {
+    const $ctrl = instantiateController(false);
+
+    $ctrl.close();
+
+    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+  });
 });
 
