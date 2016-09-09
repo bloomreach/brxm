@@ -32,7 +32,7 @@ public class HippoHtmlAdapter extends XmlAdapter<String, HippoHtml> {
         }
         final HstRequestContext context = RequestContextProvider.get();
         final String rewrittenContent = new SimpleContentRewriter().rewrite(html.getContent(), html.getNode(), context);
-        return "<![CDATA[" + rewrittenContent + "]]>";
+        return rewrittenContent;
     }
 
     @Override
