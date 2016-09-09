@@ -90,21 +90,29 @@ describe('OverlaySyncService', () => {
   });
 
   it('should attach a MutationObserver on the iframe document on first load', (done) => {
-    spyOn(OverlaySyncService.observer, 'observe').and.callThrough();
-    loadIframeFixture(iframeWindow => {
-      expect(OverlaySyncService.observer.observe).toHaveBeenCalledWith(iframeWindow.document, jasmine.anything());
+    loadIframeFixture(() => {
+      expect(OverlaySyncService.observer).not.toBeNull();
       done();
     });
   });
 
   it('should disconnect the MutationObserver on iframe unload', (done) => {
-    spyOn(OverlaySyncService.observer, 'disconnect').and.callThrough();
     loadIframeFixture(() => {
+      const disconnect = spyOn(OverlaySyncService.observer, 'disconnect').and.callThrough();
       // load URL again to cause unload
       loadIframeFixture(() => {
-        expect(OverlaySyncService.observer.disconnect).toHaveBeenCalled();
+        expect(disconnect).toHaveBeenCalled();
         done();
       });
+    });
+  });
+
+  it('should trigger onDOMChanged when the iframe DOM is changed', (done) => {
+    spyOn(OverlaySyncService, 'onDOMChanged');
+    loadIframeFixture(iframeWindow => {
+      OverlaySyncService.onDOMChanged.calls.reset();
+      OverlaySyncService.onDOMChanged.and.callFake(done);
+      $(iframeWindow.document.body).css('color', 'green');
     });
   });
 
@@ -138,7 +146,7 @@ describe('OverlaySyncService', () => {
   });
 
   it('should not constrain the viewport by default', (done) => {
-    spyOn(OverlaySyncService.observer, 'observe');
+    spyOn(OverlaySyncService, 'onDOMChanged');
 
     loadIframeFixture((iframeWindow) => {
       const $doc = $(iframeWindow.document.body);
@@ -173,7 +181,8 @@ describe('OverlaySyncService', () => {
   });
 
   it('should show a horizontal scrollbar when viewport is constrained and site is not responsive', (done) => {
-    spyOn(OverlaySyncService.observer, 'observe');
+    spyOn(OverlaySyncService, 'onDOMChanged');
+
     loadIframeFixture((iframeWindow) => {
       const $doc = $(iframeWindow.document.body);
       $doc.width(1200);

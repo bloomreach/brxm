@@ -50,7 +50,11 @@ module.exports = function karmaConfig(config) {
       included: false,
     },
     {
-      pattern: `${cfg.npmDir}/+(dom-autoscroller|create-point-cb)/index.js`,
+      pattern: `${cfg.npmDir}/+(dom-autoscroller|create-point-cb|lodash.debounce)/index.js`,
+      included: false,
+    },
+    {
+      pattern: `${cfg.npmDir}/mutation-summary/src/mutation-summary.js`,
       included: false,
     },
   ].concat(options.files);

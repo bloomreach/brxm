@@ -15,7 +15,6 @@
  */
 
 import { DomService } from './dom.service';
-import { ThrottleService } from './throttle.service';
 import { FeedbackService } from './feedback.service';
 import { PathService } from './path.service';
 import { startWithSlashFilter } from './filter/startWithSlash.filter';
@@ -28,7 +27,6 @@ import { scrollToIfDirective } from './directive/scrollToIf.directive';
 export const utilsModule = angular
   .module('hippo-cm.utils', [])
   .service('DomService', DomService)
-  .service('ThrottleService', ThrottleService)
   .service('FeedbackService', FeedbackService)
   .service('PathService', PathService)
   .filter('getByProperty', getByPropertyFilter)

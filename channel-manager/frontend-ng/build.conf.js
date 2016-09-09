@@ -65,6 +65,8 @@ const customConfig = {
     map: {
       'dom-autoscroller': `${npmDir}/dom-autoscroller/index.js`,
       'create-point-cb': `${npmDir}/create-point-cb/index.js`,
+      'lodash.debounce': `${npmDir}/lodash.debounce/index.js`,
+      'mutation-summary': `${npmDir}/mutation-summary/src/mutation-summary.js`,
     },
   },
 };
