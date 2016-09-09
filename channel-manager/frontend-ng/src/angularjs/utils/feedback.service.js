@@ -27,40 +27,58 @@ export class FeedbackService {
   }
 
   showError(key, params, parentJQueryElement) {
-    const text = this.$translate.instant(key, params);
-    this._show(text, parentJQueryElement);
+    this._showErrorMessage(key, params, parentJQueryElement);
   }
 
   showErrorOnSubpage(key, params) {
-    this._showOnSubpage(this.$translate.instant(key, params));
+    const target = this._getSubpageTarget();
+    this._showErrorMessage(key, params, target);
   }
 
-  showErrorResponseOnSubpage(response, defaultKey, errorMap = {}) {
+  showErrorResponse(response, defaultKey, errorMap) {
+    this._showErrorResponse(response, defaultKey, errorMap);
+  }
+
+  showErrorResponseOnSubpage(response, defaultKey, errorMap) {
+    const target = this._getSubpageTarget();
+    this._showErrorResponse(response, defaultKey, errorMap, target);
+  }
+
+  _getSubpageTarget() {
+    return $('.subpage-feedback-parent');
+  }
+
+  _showErrorMessage(key, params, target) {
+    const text = this.$translate.instant(key, params);
+    this._show(text, target);
+  }
+
+  _showErrorResponse(response, defaultKey, errorMap = {}, target) {
     if (!response) {
-      this.showErrorOnSubpage(defaultKey);
+      this._showErrorMessage(defaultKey, undefined, target);
       return;
     }
 
-    if (response.message) {
-      this.$log.info(response.message);
+    // Handle plain error message or fallback to ExtResponse
+    const responseDebugMessage = (response.parameterMap && response.parameterMap.errorReason) || response.message;
+    const responseErrorCode = response.error || response.errorCode;
+    const responseParams = response.parameterMap || response.data;
+
+    if (responseDebugMessage) {
+      this.$log.info(responseDebugMessage);
     }
 
     let text;
-    if (response.data && response.data.userMessage) {
-      const template = response.data.userMessage;
-      delete response.data.userMessage;
-      text = this.$interpolate(template)(response.data);
+    if (responseParams && responseParams.userMessage) {
+      const template = responseParams.userMessage;
+      delete responseParams.userMessage;
+      text = this.$interpolate(template)(responseParams);
     } else {
-      const key = errorMap[response.errorCode] || defaultKey;
-      text = this.$translate.instant(key, response.data);
+      const key = errorMap[responseErrorCode] || defaultKey;
+      text = this.$translate.instant(key, responseParams);
     }
 
-    this._showOnSubpage(text);
-  }
-
-  _showOnSubpage(text) {
-    const feedbackParent = $('.subpage-feedback-parent');
-    this._show(text, feedbackParent);
+    this._show(text, target);
   }
 
   _show(text, parentJQueryElement = $('hippo-iframe')) {
