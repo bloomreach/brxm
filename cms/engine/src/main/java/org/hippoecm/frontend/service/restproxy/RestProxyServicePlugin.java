@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.service.restproxy;
 
 import java.lang.annotation.Annotation;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,17 +91,28 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public RestProxyServicePlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        restUri = config.getString(CONFIG_REST_URI);
-        if (StringUtils.isEmpty(restUri)) {
+        String uriValue = config.getString(CONFIG_REST_URI);
+        if (StringUtils.isEmpty(uriValue)) {
             throw new IllegalStateException("No REST service URI configured. Please set the plugin configuration property '"
                     + CONFIG_REST_URI + "'");
         }
+        try {
+            URI u = new URI(uriValue);
+            if (u.getPort() == -1) {
+                final HttpServletRequest request = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
+                uriValue = new URI(u.getScheme(), u.getUserInfo(), u.getHost(), request.getLocalPort(), u.getRawPath(), u.getRawQuery(), u.getRawFragment()).toString();
+            }
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Invalid REST service URI configured. Please correct the plugin configuration property '"
+                    + CONFIG_REST_URI + "'", e);
+        }
+        restUri = uriValue;
         log.info("Using REST uri '{}'", restUri);
 
         contextPath = config.getString(CONFIG_CONTEXT_PATH);
         if (contextPath != null) {
             if (isValidContextPath(contextPath)) {
-               log.info("Configured contextPath for REST service with uri '{}' is '{}'", restUri, contextPath);
+                log.info("Configured contextPath for REST service with uri '{}' is '{}'", restUri, contextPath);
             } else {
                 throw new IllegalStateException("Invalid context path configured for restUri '"
                         + restUri + "'. Property '"+CONFIG_CONTEXT_PATH+"' must be either missing, empty, or " +
