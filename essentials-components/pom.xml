@@ -30,7 +30,12 @@
   <version>3.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <inceptionYear>2016</inceptionYear>
+
   <properties>
+    <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
+    <notice.project.name>Hippo Essentials Components</notice.project.name>
+
     <hippo.repository.version>4.1.0-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>3.1.0-SNAPSHOT</hippo.services.version>
     <hippo.commons.version>3.1.0-SNAPSHOT</hippo.commons.version>
