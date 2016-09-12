@@ -242,6 +242,7 @@ public abstract class ClusterTest {
         final List errors;
         try {
             final Object consistencyCheck = searchIndex.getClass().getMethod("runConsistencyCheck").invoke(searchIndex);
+            consistencyCheck.getClass().getMethod("doubleCheckErrors").invoke(consistencyCheck);
             errors = (List) consistencyCheck.getClass().getMethod("getErrors").invoke(consistencyCheck);
             if (errors.isEmpty()) {
                 return true;
