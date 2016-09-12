@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 
 public class JcrNodeIcon {
 
-    static final Logger log = LoggerFactory.getLogger(JcrNodeIcon.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrNodeIcon.class);
 
     private static final String CONTENT_ROOT = "/content";
     private static final String NODE_CSS_CLASS_PREFIX = "jcrnode-";
@@ -46,8 +46,9 @@ public class JcrNodeIcon {
     private static final String FA_CSS_CLASS = "fa";
     private static final String FA_DEFAULT_CSS_CLASS = FontAwesomeIcon.CIRCLE.cssClass();
     private static final String FA_VIRTUAL_NODE_CSS_CLASS = FontAwesomeIcon.CIRCLE_O.cssClass();
+    private static final String FA_UNKNOWN_NODE_ICON_CLASS = FontAwesomeIcon.EXCLAMATION_CIRCLE.cssClass();
 
-    public static final String FA_DEFAULT_NODE_CSS_CLASS = FA_CSS_CLASS + " " + FA_DEFAULT_CSS_CLASS + " " + DEFAULT_NODE_CSS_CLASS;
+    public static final String FA_UNKNOWN_NODE_CSS_CLASS = FA_CSS_CLASS + " " + FA_UNKNOWN_NODE_ICON_CLASS + " " + DEFAULT_NODE_CSS_CLASS;
 
     private static final List<String> nodeTypes = new ArrayList<>();
     private static final Map<String, String> pathCssClass = new HashMap<>();
@@ -177,11 +178,14 @@ public class JcrNodeIcon {
 
     /**
      * Compute all CSS classes for the specified node.
-
+     *
      * @param node The node to compute the CSS classes for
      * @return a String containing all CSS classes for the specified node
      */
-    public static String getIconCssClass(Node node) {
+    public static String getIconCssClass(final Node node) {
+        if(node == null) {
+            return FA_UNKNOWN_NODE_CSS_CLASS;
+        }
         return FA_CSS_CLASS + " " + getIconTypeCssClass(node) + " " + getIconColorCssClass(node);
     }
 
