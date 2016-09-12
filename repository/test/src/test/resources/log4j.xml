@@ -61,10 +61,6 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
-  <category additivity="false" name="org.onehippo.repository.monkey">
-    <level value="info"/>
-    <appender-ref ref="console"/>
-  </category>
 
   <category additivity="false" name="org.hippoecm.repository.jackrabbit.HippoVirtualProvider">
     <level value="error"/>
