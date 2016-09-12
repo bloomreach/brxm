@@ -79,6 +79,17 @@ public class MonkeyTest extends ClusterTest {
     public void monkeyCluster() throws Exception {
         Monkey monkey1 = createMonkey("monkey1", repo1);
         Monkey monkey2 = createMonkey("monkey2", repo2);
+        runMonkeyTest(monkey1, monkey2);
+    }
+
+    @Test
+    public void monkeySingleNode() throws Exception {
+        Monkey monkey1 = createMonkey("monkey1", repo1);
+        Monkey monkey2 = createMonkey("monkey2", repo1);
+        runMonkeyTest(monkey1, monkey2);
+    }
+
+    private void runMonkeyTest(final Monkey monkey1, final Monkey monkey2) throws Exception {
         boolean saved = false;
         int count = 0;
         while ((!saved || checkClusterConsistency()) && count < actionCount) {
@@ -87,25 +98,7 @@ public class MonkeyTest extends ClusterTest {
             count += 1;
         }
         if (count < actionCount) {
-            // todo: determine failure sequence
-            fail("Detected inconsistency after executing " + count + " actions.");
-        }
-    }
-
-    @Test
-    public void monkeySingleNode() throws Exception {
-        Monkey monkey1 = createMonkey("monkey1", repo1);
-        Monkey monkey2 = createMonkey("monkey2", repo1);
-        boolean saved = false;
-        int count = 0;
-        while ((!saved || checkSingleNodeConsistency(repo1)) && count < actionCount) {
-            saved = selectMonkey(monkey1, monkey2)._do();
-            Thread.sleep(10);
-            count += 1;
-        }
-        if (count < actionCount) {
-            // todo: determine failure sequence
-            fail("Detected inconsistency after executing " + count + " actions.");
+            fail("Detected inconsistency after executing " + count + " actions, running with seed = " + seed);
         }
     }
 
@@ -128,11 +121,6 @@ public class MonkeyTest extends ClusterTest {
                 && checkIndexConsistency(repo2)
                 && checkDatabaseConsistency(repo1)
                 && checkDatabaseConsistency(repo2);
-    }
-
-    private boolean checkSingleNodeConsistency(Object repo) throws IOException, RepositoryException {
-        log.info("checking node consistency...");
-        return checkIndexConsistency(repo) && checkDatabaseConsistency(repo);
     }
 
 }
