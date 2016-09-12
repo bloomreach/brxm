@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 class RemoveNodeAction extends Action {
+
+    static final Logger log = LoggerFactory.getLogger(RemoveNodeAction.class);
 
     private final String relPath;
 
@@ -35,7 +40,10 @@ class RemoveNodeAction extends Action {
 
     private boolean removeNode(final Node node, final String relPath) throws RepositoryException {
         if (node.hasNode(relPath)) {
-            node.getNode(relPath).remove();
+            final Node target = node.getNode(relPath);
+            final String id = target.getIdentifier();
+            target.remove();
+            log.info("removed node {}/{} with id={}", node.getPath(), relPath, id);
             return true;
         }
         return false;

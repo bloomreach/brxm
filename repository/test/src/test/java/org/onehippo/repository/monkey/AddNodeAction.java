@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 class AddNodeAction extends Action {
+
+    static final Logger log = LoggerFactory.getLogger(AddNodeAction.class);
 
     private final String relPath;
 
@@ -45,12 +50,12 @@ class AddNodeAction extends Action {
             else {
                 return false;
             }
-        }
-        else {
+        } else {
             if (node.hasNode(relPath)) {
                 return false;
             }
-            node.addNode(relPath);
+            final Node newNode = node.addNode(relPath);
+            log.info("added node {}/{}, new id={}", node.getPath(), relPath, newNode.getIdentifier());
         }
         return true;
     }

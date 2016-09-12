@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,12 @@ package org.onehippo.repository.monkey;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 class MoveNodeAction extends Action {
+
+    static final Logger log = LoggerFactory.getLogger(MoveNodeAction.class);
 
     private final String srcAbsPath;
     private final String destAbsPath;
@@ -40,7 +45,10 @@ class MoveNodeAction extends Action {
         if (!s.nodeExists(getParentPath(destAbsPath))) {
             return false;
         }
+        final String originalId = s.getNode(srcAbsPath).getIdentifier();
         s.move(srcAbsPath, destAbsPath);
+        final String newId = s.getNode(destAbsPath).getIdentifier();
+        log.info("moved node with original id={} from {} to {}, new id={}", originalId, srcAbsPath, destAbsPath, newId);
         return true;
     }
 

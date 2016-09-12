@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,16 @@
 package org.onehippo.repository.monkey;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 class RemovePropertyAction extends Action {
+
+    static final Logger log = LoggerFactory.getLogger(RemovePropertyAction.class);
 
     private final String relPath;
 
@@ -35,7 +41,11 @@ class RemovePropertyAction extends Action {
 
     private boolean removeProperty(final Node node, final String relPath) throws RepositoryException {
         if (node.hasProperty(relPath)) {
-            node.getProperty(relPath).remove();
+            final Property property = node.getProperty(relPath);
+            final Node parent = property.getNode();
+            final String name = property.getName();
+            property.remove();
+            log.info("removed property {} from node {} with id={}", name, parent.getPath(), parent.getIdentifier());
             return true;
         }
         return false;

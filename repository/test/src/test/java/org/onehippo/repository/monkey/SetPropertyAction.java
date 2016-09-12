@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 class SetPropertyAction extends Action {
+
+    static final Logger log = LoggerFactory.getLogger(SetPropertyAction.class);
 
     private final String relPath;
 
@@ -45,14 +50,14 @@ class SetPropertyAction extends Action {
             else {
                 return false;
             }
-        }
-        else {
+        } else {
             if (node.hasNode(relPath)) {
                 return false;
             }
             node.setProperty(relPath, "x");
+            log.info("added property {} to node {} with id={}", relPath, node.getPath(), node.getIdentifier());
         }
         return true;
-
     }
+
 }
