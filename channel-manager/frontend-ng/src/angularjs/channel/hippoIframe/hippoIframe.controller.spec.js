@@ -197,9 +197,7 @@ describe('hippoIframeCtrl', () => {
     const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
     const contentLink = new EmbeddedLink(contentLinkComment, {
       uuid: '1234',
-      holder: {
-        userName: 'test',
-      }, // TODO: replace when HSTTWO-3797 is complete
+      holderId: 'test',
     });
 
     let locked = hippoIframeCtrl.contentIsLocked(contentLink);
@@ -211,9 +209,7 @@ describe('hippoIframeCtrl', () => {
     const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
     const contentLink = new EmbeddedLink(contentLinkComment, {
       uuid: '1234',
-      holder: {
-        userName: 'differentUser',
-      },
+      holderName: 'differentUser',
     });
     hippoIframeCtrl.config = {
       cmsUser: 'test',
@@ -255,15 +251,13 @@ describe('hippoIframeCtrl', () => {
     const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
     const contentLink = new EmbeddedLink(contentLinkComment, {
       uuid: '1234',
-      holder: {
-        userName: 'test',
-      }
+      holderName: 'test',
     });
     spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(true);
 
     let tooltip = hippoIframeCtrl.getContentLinkTooltip(contentLink);
 
-    expect(tooltip).toBe(hippoIframeCtrl.$translate.instant('LOCKED_BY'), { user: contentLink.metaData.holder.userName });
+    expect(tooltip).toBe(hippoIframeCtrl.$translate.instant('LOCKED_BY'), { user: contentLink.metaData.holderName });
   });
 
   it('calls the registered callback for editing a menu', () => {
