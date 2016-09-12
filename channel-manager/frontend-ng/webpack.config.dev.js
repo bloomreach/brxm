@@ -10,7 +10,13 @@ const srcDir = path.resolve(__dirname, 'src');
 const distDir = path.resolve(__dirname, 'dist');
 const publicDir = path.resolve(distDir, 'public');
 
-module.exports = {
+const validate = require('webpack-validator');
+const Joi = require('webpack-validator').Joi
+const schemaExtension = Joi.object({
+  babel: Joi.any()
+})
+
+module.exports = validate({
   entry: {
     index: './src/index.js',
     vendor: [
@@ -33,6 +39,9 @@ module.exports = {
   debug: true,
   devtool: 'cheap-module-eval-source-map',
   devServer: {},
+  babel: {
+    presets: ['es2015'],
+  },
   module: {
     preLoaders: [
       {
@@ -48,7 +57,7 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        loaders: ['ng-annotate', 'nginject?deprecate', 'babel?{"presets":["es2015"]}'],
+        loaders: ['ng-annotate', 'nginject?deprecate', 'babel'],
         exclude: /(node_modules)/,
       },
       {
@@ -57,7 +66,7 @@ module.exports = {
       },
       {
         test: /\.html$/,
-        loader: 'ngtemplate!html',
+        loader: 'ngtemplate!html?interpolate&root=.',
         exclude: /(index.html)/,
       },
     ],
@@ -66,7 +75,7 @@ module.exports = {
     path: distDir,
     filename: '[name].bundle.js',
     chunkFilename: '[id].bundle.js',
-    publicPath: '/cms/angular/hippo-cm',
+    publicPath: '/cms/angular/hippo-cm/',
   },
   postcss: [
     autoprefixer({
@@ -109,4 +118,4 @@ module.exports = {
     extensions: ['', '.js', '.scss'],
     root: [srcDir],
   },
-};
+}, { schemaExtension });
