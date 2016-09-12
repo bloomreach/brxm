@@ -31,6 +31,7 @@ describe('hippoIframeCtrl', () => {
   let PageMetaDataService;
   let ChannelService;
   let CmsService;
+  let ConfigService;
   let ChannelSidePanelService;
   let HippoIframeService;
   let DialogService;
@@ -49,7 +50,8 @@ describe('hippoIframeCtrl', () => {
 
     inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlaySyncService_,
             _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,
-            _ChannelService_, _CmsService_, _ChannelSidePanelService_, _HippoIframeService_, _DialogService_, _DomService_) => {
+            _ChannelService_, _CmsService_, _ConfigService_, _ChannelSidePanelService_, _HippoIframeService_,
+            _DialogService_, _DomService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $q = _$q_;
@@ -61,6 +63,7 @@ describe('hippoIframeCtrl', () => {
       PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
+      ConfigService = _ConfigService_;
       ChannelSidePanelService = _ChannelSidePanelService_;
       HippoIframeService = _HippoIframeService_;
       DialogService = _DialogService_;
@@ -179,18 +182,49 @@ describe('hippoIframeCtrl', () => {
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
-  // TODO: Enable test after CHANNELMGR-841 is complete
-  // it('sends an "open-content" event to the CMS to open content', () => {
-  //   const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
-  //   const contentLink = new EmbeddedLink(contentLinkComment, {
-  //     uuid: '1234',
-  //   });
-  //   spyOn(CmsService, 'publish');
+  it('checks if content is unlocked', () => {
+    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
+    const contentLink = new EmbeddedLink(contentLinkComment, {
+      uuid: '1234'
+    });
 
-  //   hippoIframeCtrl.openContent(contentLink);
+    let locked = hippoIframeCtrl.contentIsLocked(contentLink);
 
-  //   expect(CmsService.publish).toHaveBeenCalledWith('open-content', '1234');
-  // });
+    expect(locked).toBe(false);
+  });
+
+  it('checks if content is locked', () => {
+    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
+    const contentLink = new EmbeddedLink(contentLinkComment, {
+      uuid: '1234',
+      holder: {
+        userName: 'test',
+      }, // TODO: replace when HSTTWO-3797 is complete
+    });
+
+    let locked = hippoIframeCtrl.contentIsLocked(contentLink);
+
+    expect(locked).toBe(true);
+  });
+
+  it('sends an "open-content" event to the CMS to open content', () => {
+    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
+    const contentLink = new EmbeddedLink(contentLinkComment, {
+      uuid: '1234',
+      holder: {
+        userName: 'differentUser',
+      },
+    });
+    hippoIframeCtrl.config = {
+      cmsUser: 'test',
+    };
+    spyOn(CmsService, 'publish');
+    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(true);
+
+    hippoIframeCtrl.openContent(contentLink);
+
+    expect(CmsService.publish).toHaveBeenCalledWith('open-content', '1234');
+  });
 
   it('opens right side panel when clicking the edit content button', () => {
     const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
@@ -198,10 +232,38 @@ describe('hippoIframeCtrl', () => {
       uuid: '1234',
     });
     spyOn(ChannelSidePanelService, 'open');
+    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(false);
 
     hippoIframeCtrl.openContent(contentLink);
 
     expect(ChannelSidePanelService.open).toHaveBeenCalledWith('right');
+  });
+
+  it('gets the correct tooltip for the content link', () => {
+    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
+    const contentLink = new EmbeddedLink(contentLinkComment, {
+      uuid: '1234',
+    });
+    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(false);
+
+    let tooltip = hippoIframeCtrl.getContentLinkTooltip(contentLink);
+
+    expect(tooltip).toBe(hippoIframeCtrl.$translate.instant('EDIT_CONTENT'));
+  });
+
+  it('gets the correct tooltip for the content link', () => {
+    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
+    const contentLink = new EmbeddedLink(contentLinkComment, {
+      uuid: '1234',
+      holder: {
+        userName: 'test',
+      }
+    });
+    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(true);
+
+    let tooltip = hippoIframeCtrl.getContentLinkTooltip(contentLink);
+
+    expect(tooltip).toBe(hippoIframeCtrl.$translate.instant('LOCKED_BY'), { user: contentLink.metaData.holder.userName });
   });
 
   it('calls the registered callback for editing a menu', () => {

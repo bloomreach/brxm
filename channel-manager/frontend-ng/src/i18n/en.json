@@ -15,7 +15,7 @@
   "CONFIRM_DISCARD_OWN_CHANGES_MESSAGE": "Discard your changes?",
   "CONFIRM_OPEN_EXTERNAL_LINK": "This external link will be opened in a new tab.\nDo you want to continue?",
   "CONTAINER_INHERITED": "Cannot be edited in this channel",
-  "CONTAINER_LOCKED_BY": "Locked by '{{user}}'",
+  "LOCKED_BY": "Locked by '{{user}}'",
   "COPY": "Copy",
   "CREATE": "Create",
   "DELETE": "Delete",
