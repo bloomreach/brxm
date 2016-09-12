@@ -31,7 +31,6 @@ describe('hippoIframeCtrl', () => {
   let PageMetaDataService;
   let ChannelService;
   let CmsService;
-  let ConfigService;
   let ChannelSidePanelService;
   let HippoIframeService;
   let DialogService;
@@ -50,7 +49,7 @@ describe('hippoIframeCtrl', () => {
 
     inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlaySyncService_,
             _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,
-            _ChannelService_, _CmsService_, _ConfigService_, _ChannelSidePanelService_, _HippoIframeService_,
+            _ChannelService_, _CmsService_, _ChannelSidePanelService_, _HippoIframeService_,
             _DialogService_, _DomService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
@@ -63,7 +62,6 @@ describe('hippoIframeCtrl', () => {
       PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
-      ConfigService = _ConfigService_;
       ChannelSidePanelService = _ChannelSidePanelService_;
       HippoIframeService = _HippoIframeService_;
       DialogService = _DialogService_;
@@ -185,10 +183,10 @@ describe('hippoIframeCtrl', () => {
   it('checks if content is unlocked', () => {
     const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
     const contentLink = new EmbeddedLink(contentLinkComment, {
-      uuid: '1234'
+      uuid: '1234',
     });
 
-    let locked = hippoIframeCtrl.contentIsLocked(contentLink);
+    const locked = hippoIframeCtrl.contentIsLocked(contentLink);
 
     expect(locked).toBe(false);
   });
@@ -200,7 +198,7 @@ describe('hippoIframeCtrl', () => {
       holderId: 'test',
     });
 
-    let locked = hippoIframeCtrl.contentIsLocked(contentLink);
+    const locked = hippoIframeCtrl.contentIsLocked(contentLink);
 
     expect(locked).toBe(true);
   });
@@ -242,7 +240,7 @@ describe('hippoIframeCtrl', () => {
     });
     spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(false);
 
-    let tooltip = hippoIframeCtrl.getContentLinkTooltip(contentLink);
+    const tooltip = hippoIframeCtrl.getContentLinkTooltip(contentLink);
 
     expect(tooltip).toBe(hippoIframeCtrl.$translate.instant('EDIT_CONTENT'));
   });
@@ -255,7 +253,7 @@ describe('hippoIframeCtrl', () => {
     });
     spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(true);
 
-    let tooltip = hippoIframeCtrl.getContentLinkTooltip(contentLink);
+    const tooltip = hippoIframeCtrl.getContentLinkTooltip(contentLink);
 
     expect(tooltip).toBe(hippoIframeCtrl.$translate.instant('LOCKED_BY'), { user: contentLink.metaData.holderName });
   });
