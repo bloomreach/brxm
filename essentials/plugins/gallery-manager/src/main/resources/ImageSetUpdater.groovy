@@ -1,6 +1,6 @@
 package org.onehippo.cms7.essentials.rest.model
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,13 +32,12 @@ import javax.jcr.query.QueryResult
 /**
  * Groovy script to update image sets
  *
- * Query: content/gallery//element(*, hippogallery:stdImageGallery)
+ * Query: content/gallery//element(*,hippogallery:imageset)
  *
  */
 class ImageSetUpdater extends BaseNodeUpdateVisitor {
 
-    public static
-    final String HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE = "hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
+    public static final String HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE = "hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
 
     private static final int IMAGE_PROPERTIES_HEIGHT_INDEX = 1;
     private static final int IMAGE_PROPERTIES_WIDTH_INDEX = 0;
@@ -48,7 +47,6 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
     protected static final Long DEFAULT_WIDTH = 0L;
     protected static final Long DEFAULT_HEIGHT = 0L;
 
-    public final Map<String, List<String>> imageSets = new HashMap<String, List<String>>();
     public final Map<String, List<Long>> imageVariants = new HashMap<String, List<Long>>();
 
     private boolean overwrite = true;
@@ -60,7 +58,6 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
         try {
             Node configNode = session.getRootNode().getNode(HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE);
             getImageVariants(configNode);
-            getImageSets(session);
 
         } catch (RepositoryException e) {
             log.error("Exception while retrieving image set variants configuration", e);
@@ -72,11 +69,6 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
 
     boolean doUpdate(Node node) {
         try {
-            /* hippogallery:thumbnail is the only required image variant, not hippogalley:original according to the hippogallery cnd */
-            List<String> imageSet = imageSets.get(node.getPrimaryNodeType().getName());
-            if (imageSet == null || imageSet.isEmpty()) {
-                log.warn("Could not find image set {} for node {}", node.getPrimaryNodeType().getName(), node.getName());
-            }
             processImageSet(node);
             return true;
         } catch (RepositoryException e) {
@@ -105,8 +97,7 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
     }
 
     private void processVariant(Node node, Node data, String variantName) throws RepositoryException {
-
-        // same exception for thumbnails as when building the imageVariants
+        /* hippogallery:thumbnail is the only required image variant, not hippogalley:original according to the hippogallery cnd */
         if (!HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName)) {
 
             final List<Long> dimensions = imageVariants.get(variantName);
@@ -152,45 +143,6 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
             log.info("Image variant {} generated for node {}", variant.getName(), node.getPath());
         } finally {
             IOUtils.closeQuietly(dataInputStream);
-        }
-    }
-
-    private void getImageInformation(Node node) {
-        try {
-            Session session = node.getSession();
-            Node configNode = session.getRootNode().getNode(HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE);
-
-            getImageVariants(configNode);
-
-            getImageSets(session);
-
-
-        } catch (RepositoryException e) {
-            log.error("Exception while retrieving image set variants configuration", e);
-        }
-    }
-
-    private void getImageSets(Session session) throws RepositoryException {
-        QueryManager queryManager = session.getWorkspace().getQueryManager();
-        Query query = queryManager.createQuery("hippo:namespaces//element(*,hippogallery:imageset)", "xpath");
-        QueryResult queryResult = query.execute();
-        NodeIterator nodeIterator = queryResult.getNodes();
-
-        // looking up nodes of type hippogallery:image (or derived) in the prototype of a namespace definition
-        while (nodeIterator.hasNext()) {
-            Node next = nodeIterator.nextNode();
-            NodeIterator children = next.getNodes();
-
-            List<String> imageVariants = new ArrayList<String>();
-
-            while (children.hasNext()) {
-                Node child = children.nextNode();
-
-                if (child.isNodeType(HippoGalleryNodeType.IMAGE)) {
-                    imageVariants.add(child.getName());
-                }
-            }
-            imageSets.put(next.getPrimaryNodeType().getName(), imageVariants);
         }
     }
 
