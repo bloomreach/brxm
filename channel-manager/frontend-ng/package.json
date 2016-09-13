@@ -8,7 +8,7 @@
     "test-watch": "karma start --auto-watch --no-single-run",
     "dev": "rimraf dist; webpack --bail --progress --profile --config webpack.config.dev.js",
     "release": "rimraf dist; webpack --config webpack.config.js",
-    "start": "webpack-dev-server --content-base dist/ --config webpack.config.dev.js --history-api-fallback --hot --inline --port 9090",
+    "start": "webpack-dashboard -- webpack-dev-server --content-base dist/ --config webpack.config.dev.js --history-api-fallback --hot --inline --port 9090",
     "gulp": "gulp"
   },
   "dependencies": {
@@ -73,6 +73,7 @@
     "sass-loader": "3.2.0",
     "style-loader": "0.13.1",
     "webpack": "1.13.2",
+    "webpack-dashboard": "0.1.8",
     "webpack-dev-server": "1.15.1",
     "webpack-validator": "2.2.7"
   }

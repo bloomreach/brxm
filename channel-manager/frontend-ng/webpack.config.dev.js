@@ -16,6 +16,8 @@ const schemaExtension = Joi.object({
   babel: Joi.any()
 })
 
+const DashboardPlugin = require('webpack-dashboard/plugin');
+
 module.exports = validate({
   entry: {
     index: './src/index.js',
@@ -83,6 +85,7 @@ module.exports = validate({
     }),
   ],
   plugins: [
+    new DashboardPlugin(),
     new webpack.ProvidePlugin({
       $: 'jquery',
       'window.$': 'jquery',
