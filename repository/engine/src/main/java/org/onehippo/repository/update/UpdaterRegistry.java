@@ -97,8 +97,11 @@ public class UpdaterRegistry implements EventListener {
 
     /**
      * Get the list of updaters that are registered for this node. After using the updater, the client must call
-     * destroy on the updater.
-     *
+     * {@link NodeUpdateVisitor#destroy()}.
+     * <p>When calling the {@link NodeUpdateVisitor#doUpdate(Node)} the effective node updated will be retrieved
+     * using the updater (system) session, just as when the updater is executed through the {@link UpdaterExecutor}.
+     * And on successful update the updater session will first be saved before returning true.
+     * </p>
      * @param node  the node to get the updaters for
      * @return  the list the updaters that should be applied to this node, empty list if no updaters for this node.
      * @throws RepositoryException
@@ -122,7 +125,13 @@ public class UpdaterRegistry implements EventListener {
 
                             @Override
                             public boolean doUpdate(final Node node) throws RepositoryException {
-                                return updater.doUpdate(node);
+                                if (updater.doUpdate(session.getNodeByIdentifier(node.getIdentifier()))) {
+                                    session.save();
+                                    return true;
+                                }
+                                else {
+                                    return false;
+                                }
                             }
 
                             @Override
