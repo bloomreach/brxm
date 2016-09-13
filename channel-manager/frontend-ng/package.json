@@ -8,7 +8,7 @@
     "test-watch": "karma start --auto-watch --no-single-run",
     "dev": "rimraf dist; webpack --bail --progress --profile --config webpack.config.dev.js",
     "release": "rimraf dist; webpack --config webpack.config.js",
-    "server": "webpack-dev-server --content-base dist/ --config webpack.config.dev.js --history-api-fallback --hot --inline --port 9090",
+    "start": "webpack-dev-server --content-base dist/ --config webpack.config.dev.js --history-api-fallback --hot --inline --port 9090",
     "gulp": "gulp"
   },
   "dependencies": {
