@@ -21,7 +21,6 @@
         <iframe class="qa-view"
                 flex="noshrink"
                 ng-src="{{ iframe.getSrc() }}"></iframe>
-
         <div class="overlay qa-overlay" component-adder>
           <div ng-repeat="container in iframe.getContainers()" class="qa-container">
             <overlay-element class="overlay-element-container"
@@ -33,7 +32,6 @@
                              }"
                              structure-element="container">
             </overlay-element>
-
             <div ng-repeat="component in container.getComponents()" class="qa-component">
               <overlay-element class="overlay-element-component"
                                layout="row"
@@ -44,10 +42,11 @@
             </div>
           </div>
           <div ng-repeat="contentLink in iframe.getContentLinks()">
+            test
             <overlay-element structure-element="contentLink">
               <md-button class="overlay-element-fab overlay-element-fab-content-link md-fab md-mini md-hue-2 qa-content-link"
                          ng-click="iframe.openContent(contentLink)">
-                <md-icon aria-label="iframe.getContentLinkTooltip(contentLink)"
+                <md-icon aria-label="{{iframe.getContentLinkTooltip(contentLink)}}"
                          md-svg-src="{{iframe.getContentLinkIcon(contentLink)}}"></md-icon>
                 <md-tooltip md-direction="top">
                   {{iframe.getContentLinkTooltip(contentLink)}}
