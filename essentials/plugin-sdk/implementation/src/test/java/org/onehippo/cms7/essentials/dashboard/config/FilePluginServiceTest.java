@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ public class FilePluginServiceTest extends BaseTest {
             bean.setSelectedBeansPackage("testBeanPackage");
             bean.setSelectedComponentsPackage("testComponentPackage");
             bean.setSelectedRestPackage("testRestPackage");
+            bean.setSelectedProjectPackage("testProjectPackage");
             final boolean written = service.write(bean);
             assertTrue(written);
             final ProjectSettings myBean = service.read(bean.getClass());
@@ -42,6 +43,7 @@ public class FilePluginServiceTest extends BaseTest {
             assertEquals(myBean.getSelectedBeansPackage(), bean.getSelectedBeansPackage());
             assertEquals(myBean.getSelectedComponentsPackage(), bean.getSelectedComponentsPackage());
             assertEquals(myBean.getSelectedRestPackage(), bean.getSelectedRestPackage());
+            assertEquals(myBean.getSelectedProjectPackage(), bean.getSelectedProjectPackage());
 
         }
     }

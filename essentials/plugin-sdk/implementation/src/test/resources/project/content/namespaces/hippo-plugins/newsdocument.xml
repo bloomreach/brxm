@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -220,6 +220,9 @@
       </sv:property>
       <sv:property sv:name="hippoplugins:title" sv:type="String">
         <sv:value/>
+      </sv:property>
+      <sv:property sv:name="{{namespace}}:date" sv:type="Date">
+        <sv:value>0001-01-01T13:00:00.000+01:00</sv:value>
       </sv:property>
       <sv:property sv:name="hippostd:holder" sv:type="String">
         <sv:value>holder</sv:value>

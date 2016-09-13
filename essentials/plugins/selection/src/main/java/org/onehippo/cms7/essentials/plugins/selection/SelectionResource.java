@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.plugins.selection;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -377,7 +378,8 @@ public class SelectionResource extends BaseResource {
         final InputStream stream = getClass().getResourceAsStream(resourcePath);
         final String processedXml = TemplateUtils.replaceStringPlaceholders(GlobalUtils.readStreamAsText(stream), placeholderMap);
 
-        destination.getSession().importXML(destination.getPath(), IOUtils.toInputStream(processedXml),
+        destination.getSession().importXML(destination.getPath(),
+                IOUtils.toInputStream(processedXml, StandardCharsets.UTF_8),
                 ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
     }
 

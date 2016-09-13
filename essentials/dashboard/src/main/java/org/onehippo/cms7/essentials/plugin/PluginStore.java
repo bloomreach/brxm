@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.ext.RuntimeDelegate;
 
+import com.google.common.base.Strings;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
@@ -55,11 +60,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.ContextLoader;
-
-import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 /**
 * Created by tjeger on 10/11/14.
@@ -220,8 +220,18 @@ public class PluginStore {
     }
 
     private List<PluginDescriptorRestful> getLocalDescriptors() {
-        final InputStream stream = PluginStore.class.getResourceAsStream("/plugin_descriptor.json");
+        final List<PluginDescriptorRestful> descriptors = new ArrayList<>();
+
+        descriptors.addAll(loadPluginDescriptorsFromResource("/plugin_descriptor.json"));
+        descriptors.addAll(loadPluginDescriptorsFromResource("/project_plugin_descriptor.json"));
+
+        return descriptors;
+    }
+
+    private List<PluginDescriptorRestful> loadPluginDescriptorsFromResource(final String resource) {
+        final InputStream stream = PluginStore.class.getResourceAsStream(resource);
         final String json = GlobalUtils.readStreamAsText(stream);
+
         return parsePlugins(json).getItems();
     }
 

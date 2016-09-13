@@ -1,7 +1,6 @@
 <#include "../include/imports.ftl">
 
 <#-- @ftlvariable name="document" type="{{beansPackage}}.FaqList" -->
-<@hst.defineObjects/>
 <#if document??>
     <#if document.FAQ??>
         <div class="has-edit-button">

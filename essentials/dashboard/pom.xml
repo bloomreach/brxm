@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-essentials</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>hippo-essentials-dashboard</artifactId>
@@ -45,7 +45,7 @@
       <artifactId>hippo-theme</artifactId>
       <version>${hippo.frontend.theme.version}</version>
       <classifier>distribution</classifier>
-      <type>zip</type>
+      <type>tar.gz</type>
       <scope>provided</scope>
     </dependency>
 
@@ -90,21 +90,12 @@
             </configuration>
           </execution>
           <execution>
-            <id>bower-install</id>
+            <id>npm-build</id>
             <phase>process-resources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
-              <executable>bower</executable>
-              <commandlineArgs>install --no-color</commandlineArgs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>grunt-build</id>
-            <phase>process-resources</phase>
-            <goals><goal>exec</goal></goals>
-            <configuration>
-              <executable>grunt</executable>
-              <commandlineArgs>build --no-color</commandlineArgs>
+              <executable>npm</executable>
+              <commandlineArgs>run build</commandlineArgs>
             </configuration>
           </execution>
         </executions>

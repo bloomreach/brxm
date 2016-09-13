@@ -48,8 +48,6 @@
   </hst:headContribution>
 </c:if>
 
-
-<hst:defineObjects/>
 <c:if test="${hstRequest.requestContext.cmsRequest}">
   <img src="<hst:link path='/images/essentials/catalog-component-icons/seo.png'/>"> Click to edit SEO parameters
 </c:if>

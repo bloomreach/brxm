@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.onehippo.cms7.essentials.plugins.relateddocuments;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,6 +36,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+
 import org.apache.commons.io.IOUtils;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContextFactory;
@@ -47,9 +51,6 @@ import org.onehippo.cms7.essentials.dashboard.utils.PayloadUtils;
 import org.onehippo.cms7.essentials.dashboard.utils.TemplateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 
 /**
  * @version "$Id$"
@@ -102,10 +103,10 @@ public class RelatedDocumentsResource extends BaseResource {
                     templateData.put("numberOfSuggestions", suggestions[idx]);
                     // import field:
                     final String fieldData = TemplateUtils.replaceStringPlaceholders(templateRelatedDocs, templateData);
-                    session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                    session.importXML(fieldImportPath, IOUtils.toInputStream(fieldData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                     // import suggest field:
                     final String suggestData = TemplateUtils.replaceStringPlaceholders(templateSuggestDocs, templateData);
-                    session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
+                    session.importXML(fieldImportPath, IOUtils.toInputStream(suggestData, StandardCharsets.UTF_8), ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
                     session.save();
                     changedDocuments.add(document);
                     idx++;
