@@ -47,8 +47,8 @@
             <overlay-element structure-element="contentLink">
               <md-button class="overlay-element-fab overlay-element-fab-content-link md-fab md-mini md-hue-2 qa-content-link"
                          ng-click="iframe.openContent(contentLink)">
-                <md-icon aria-label="getContentLinkTooltip(contentLink)"
-                         md-svg-src="images/edit-document.svg"></md-icon>
+                <md-icon aria-label="iframe.getContentLinkTooltip(contentLink)"
+                         md-svg-src="iframe.getContentLinkIcon(contentLink)"></md-icon>
                 <md-tooltip md-direction="top">
                   {{iframe.getContentLinkTooltip(contentLink)}}
                 </md-tooltip>
@@ -69,7 +69,6 @@
             </overlay-element>
           </div>
         </div>
-
       </div>
     </div>
     <div class="channel-dragula-mirror cm-scale"></div>

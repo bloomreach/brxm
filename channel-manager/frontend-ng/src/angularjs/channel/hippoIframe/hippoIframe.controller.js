@@ -214,7 +214,7 @@ export class HippoIframeCtrl {
   }
 
   openContent(contentLink) {
-    if (this.contentIsLocked(contentLink) && contentLink.metaData.holderId !== this.config.cmsUser) {
+    if (this.contentIsLocked(contentLink) && contentLink.metaData.holderId !== this.ConfigService.cmsUser) {
       this.CmsService.publish('open-content', contentLink.getUuid());
     } else {
       this.ChannelSidePanelService.open('right');
@@ -227,6 +227,16 @@ export class HippoIframeCtrl {
       result = this.$translate.instant('LOCKED_BY', { user: contentLink.metaData.holderName });
     } else {
       result = this.$translate.instant('EDIT_CONTENT');
+    }
+    return result;
+  }
+
+  getContentLinkIcon(contentLink) {
+    let result;
+    if (this.contentIsLocked(contentLink)) {
+      result = 'images/lock.svg';
+    } else {
+      result = 'images/edit-document.svg';
     }
     return result;
   }

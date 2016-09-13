@@ -209,7 +209,7 @@ describe('hippoIframeCtrl', () => {
       uuid: '1234',
       holderName: 'differentUser',
     });
-    hippoIframeCtrl.config = {
+    hippoIframeCtrl.ConfigService = {
       cmsUser: 'test',
     };
     spyOn(CmsService, 'publish');
@@ -233,29 +233,40 @@ describe('hippoIframeCtrl', () => {
     expect(ChannelSidePanelService.open).toHaveBeenCalledWith('right');
   });
 
-  it('gets the correct tooltip for the content link', () => {
-    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
-    const contentLink = new EmbeddedLink(contentLinkComment, {
-      uuid: '1234',
-    });
+  it('gets the edit content tooltip for the content link', () => {
     spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(false);
 
-    const tooltip = hippoIframeCtrl.getContentLinkTooltip(contentLink);
+    const tooltip = hippoIframeCtrl.getContentLinkTooltip({});
 
     expect(tooltip).toBe(hippoIframeCtrl.$translate.instant('EDIT_CONTENT'));
   });
 
-  it('gets the correct tooltip for the content link', () => {
-    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
-    const contentLink = new EmbeddedLink(contentLinkComment, {
-      uuid: '1234',
-      holderName: 'test',
-    });
+  it('gets the locked by tooltip for the content link', () => {
     spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(true);
 
-    const tooltip = hippoIframeCtrl.getContentLinkTooltip(contentLink);
+    const tooltip = hippoIframeCtrl.getContentLinkTooltip({
+      metaData: {
+        holderName: 'test',
+      }
+    });
 
-    expect(tooltip).toBe(hippoIframeCtrl.$translate.instant('LOCKED_BY'), { user: contentLink.metaData.holderName });
+    expect(tooltip).toBe(hippoIframeCtrl.$translate.instant('LOCKED_BY'), { user: 'test' });
+  });
+
+  it('gets the edit icon for the content link', () => {
+    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(false);
+
+    const icon = hippoIframeCtrl.getContentLinkIcon({});
+
+    expect(icon).toBe('images/edit-document.svg');
+  });
+
+  it('gets the locked icon for the content link', () => {
+    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(true);
+
+    const icon = hippoIframeCtrl.getContentLinkIcon({});
+
+    expect(icon).toBe('images/lock.svg');
   });
 
   it('calls the registered callback for editing a menu', () => {
