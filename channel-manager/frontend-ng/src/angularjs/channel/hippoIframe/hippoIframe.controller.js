@@ -209,13 +209,36 @@ export class HippoIframeCtrl {
     return !this.editMode ? this.PageStructureService.getContentLinks() : [];
   }
 
+  contentIsLocked(contentLink) {
+    return typeof contentLink.metaData.holderId !== 'undefined';
+  }
+
   openContent(contentLink) {
-    const locked = false; // TODO: replace when CHANNELMGR-841 is complete
-    if (locked) {
+    if (this.contentIsLocked(contentLink) && contentLink.metaData.holderId !== this.ConfigService.cmsUser) {
       this.CmsService.publish('open-content', contentLink.getUuid());
     } else {
       this.ChannelSidePanelService.open('right');
     }
+  }
+
+  getContentLinkTooltip(contentLink) {
+    let result;
+    if (this.contentIsLocked(contentLink)) {
+      result = this.$translate.instant('LOCKED_BY', { user: contentLink.metaData.holderName });
+    } else {
+      result = this.$translate.instant('EDIT_CONTENT');
+    }
+    return result;
+  }
+
+  getContentLinkIcon(contentLink) {
+    let result;
+    if (this.contentIsLocked(contentLink)) {
+      result = 'images/lock.svg';
+    } else {
+      result = 'images/edit-document.svg';
+    }
+    return result;
   }
 
   getEditMenuLinks() {

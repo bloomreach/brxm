@@ -59,7 +59,7 @@ export class OverlayElementCtrl {
     if (this.structureElement.isInherited()) {
       result = this.$translate.instant('CONTAINER_INHERITED');
     } else {
-      result = this.$translate.instant('CONTAINER_LOCKED_BY', { user: this.structureElement.getLockedBy() });
+      result = this.$translate.instant('LOCKED_BY', { user: this.structureElement.getLockedBy() });
     }
     return result;
   }
