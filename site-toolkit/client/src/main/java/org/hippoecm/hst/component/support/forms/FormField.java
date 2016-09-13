@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Simple value wrapper for form fields (name and data). Supports multiple value fields
+ * Simple value wrapper for form fields (name, label, data where the data can be submitted form field values and
+ * possible messages). Supports multiple value fields
  *
  * @version $Id$
  */
@@ -35,21 +39,20 @@ public class FormField {
 
     // field name
     private String name;
-    // stored values
-    private Map<String,String> values;
+
+    // label if present and otherwise {@code null
+    private String label;
+
+    private List<String> valueList = new ArrayList<>();
     // error messages
-    private List<String> messages;
+    private List<String> messages = new ArrayList<>();
 
-
-    public FormField(final String name) {
+    public FormField(@JsonProperty("name") final String name) {
         if(name==null || name.trim().length()==0){
             throw new IllegalArgumentException("FormField name was null or empty");
         }
         this.name = name;
     }
-
-
-
 
     public String getName() {
         return name;
@@ -59,51 +62,73 @@ public class FormField {
         this.name = name;
     }
 
-
-    public Map<String,String> getValues() {
-        if (values == null) {
-            return Collections.emptyMap();
-        }
-        return values;
+    public String getLabel() {
+        return label;
     }
 
+    public void setLabel(final String label) {
+        this.label = label;
+    }
+
+    public List<String> getValueList() {
+        return valueList;
+    }
+
+    public void setValueList(final List<String> valueList) {
+        this.valueList = valueList;
+    }
+
+    /**
+     * @deprecated use 'getValueList' instead
+     */
+    @Deprecated
+    @JsonIgnore
+    public Map<String,String> getValues() {
+        Map<String, String> map = new LinkedHashMap<>(valueList.size());
+        for (String s : valueList) {
+            map.put(s,s);
+        }
+        return map;
+    }
+
+    /**
+     * @deprecated use 'setValueList' instead
+     */
+    @Deprecated
+    @JsonIgnore
     public void setValues(final Map<String,String> values) {
-        this.values = values;
+        this.valueList = new ArrayList<>(values.values());
     }
 
     public void addValue(final String value) {
         if (value == null) {
             return;
         }
-        if (values == null) {
-            values = new LinkedHashMap<String, String>();
-        }
-        values.put(value,value);
+        valueList.add(value);
     }
 
     /**
-     * Most of the fields have single values, we'll return first element (if there), null otherwise
+     * Most of the fields have single valueList, we'll return first element (if there), null otherwise
      *
-     * @return first value or empty string if no values present
+     * @return first value or empty string if no valueList present
      */
+    @JsonIgnore
     public String getValue() {
-        if (values == null || values.size() == 0) {
+        if (valueList == null || valueList.size() == 0) {
             return "";
         }
-        return values.values().iterator().next();
+        return valueList.get(0);
     }
 
     public List<String> getMessages() {
-        if (messages == null) {
-            return Collections.emptyList();
-        }
         return messages;
     }
 
+    public void setMessages(final List<String> messages) {
+        this.messages = messages;
+    }
+
     public void addMessage(final String value) {
-        if (messages == null) {
-            messages = new ArrayList<String>();
-        }
         messages.add(value);
     }
 
