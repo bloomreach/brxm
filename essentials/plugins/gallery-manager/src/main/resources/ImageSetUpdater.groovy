@@ -1,4 +1,4 @@
-package org.onehippo.cms7.essentials.rest.model
+package org.hippoecm.frontend.plugins.cms.admin.updater
 /*
  * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
