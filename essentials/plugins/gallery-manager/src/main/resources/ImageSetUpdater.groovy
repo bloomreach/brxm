@@ -84,19 +84,24 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
     }
 
     private void processImageSet(Node node) throws RepositoryException {
-        Node data;
+        Node original;
         if (node.hasNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL)) {
-            data = node.getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
+            original = node.getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
         } else {
-            data = node.getNode(HippoGalleryNodeType.IMAGE_SET_THUMBNAIL);
+            original = node.getNode(HippoGalleryNodeType.IMAGE_SET_THUMBNAIL);
         }
 
         for (String variantName : imageVariants.keySet()) {
-            processVariant(node, data, variantName);
+            try {
+                processVariant(node, original, variantName);
+            } catch (RepositoryException e) {
+                log.error("Failed in generating image variant " + variantName, e);
+                node.getSession().refresh(false)
+            }
         }
     }
 
-    private void processVariant(Node node, Node data, String variantName) throws RepositoryException {
+    private void processVariant(Node node, Node original, String variantName) throws RepositoryException {
         /* hippogallery:thumbnail is the only required image variant, not hippogalley:original according to the hippogallery cnd */
         if (!HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName)) {
 
@@ -120,19 +125,19 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
             Long width = dimensions.get(IMAGE_PROPERTIES_WIDTH_INDEX);
             Long height = dimensions.get(IMAGE_PROPERTIES_HEIGHT_INDEX);
 
-            createImageVariant(node, data, variant, width, height);
+            createImageVariant(node, original, variant, width, height);
 
             node.getSession().save();
         }
     }
 
-    private void createImageVariant(Node node, Node data, Node variant, Long width, Long height) throws RepositoryException {
+    private void createImageVariant(Node node, Node original, Node variant, Long width, Long height) throws RepositoryException {
 
         InputStream dataInputStream = null;
 
         try {
-            dataInputStream = data.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
-            String mimeType = data.getProperty(JcrConstants.JCR_MIMETYPE).getString();
+            dataInputStream = original.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
+            String mimeType = original.getProperty(JcrConstants.JCR_MIMETYPE).getString();
 
             ScalingParameters scalingParameters = new ScalingParameters(width.intValue(), height.intValue(), upscaling);
             ScalingGalleryProcessor scalingGalleryProcessor = new ScalingGalleryProcessor();
