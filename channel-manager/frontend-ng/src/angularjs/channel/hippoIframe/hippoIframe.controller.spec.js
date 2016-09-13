@@ -247,7 +247,7 @@ describe('hippoIframeCtrl', () => {
     const tooltip = hippoIframeCtrl.getContentLinkTooltip({
       metaData: {
         holderName: 'test',
-      }
+      },
     });
 
     expect(tooltip).toBe(hippoIframeCtrl.$translate.instant('LOCKED_BY'), { user: 'test' });
