@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -116,6 +116,7 @@
     <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.svg" target="{{webfilesRoot}}/fonts/glyphicons-halflings-regular.svg"/>
     <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.ttf" target="{{webfilesRoot}}/fonts/glyphicons-halflings-regular.ttf"/>
     <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.woff" target="{{webfilesRoot}}/fonts/glyphicons-halflings-regular.woff"/>
+    <file action="copy" binary="true" source="instructions/bootstrap/fonts/glyphicons-halflings-regular.woff2" target="{{webfilesRoot}}/fonts/glyphicons-halflings-regular.woff2"/>
   </instructionSet>
 
 </instructions>

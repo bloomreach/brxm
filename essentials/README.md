@@ -8,53 +8,9 @@ Please use the Hippo Essentials feedback form to inform us if you encounter any 
 suggestions for improvements.
 ```
 
-# Prerequisites
-
-* Java 8
-* Maven 3.x
-* Git (http://git-scm.com)
-* NodeJS (http://nodejs.org/) 0.10+
-* Node Package Manager (http://npmjs.org)
-* Grunt (http://gruntjs.org)
-* Bower (http://bower.io)
-
-Grunt and Bower can be installed with Node Package Manager:
-
-```shell
-sudo npm install -g grunt-cli bower
-```
-
-If Bower fails to download zipped dependencies, make sure it uses decompress-zip >= 0.0.4.
-(e.g. check the file /usr/lib/node_modules/bower/node_modules/decompress-zip/package.json,
-and reinstall Bower if decompress-zip is too old).
-
-## Windows specific preparation instructions
-
-You can automate the installation of NodeJS and NPM using [Chocolatey package manager]
-(https://chocolatey.org).
-
-The package for Node.js can be installed using (this will also install NPM):
-
-    C:\> choco install nodejs.install
-
-__Note:__ Due to a [bug] (http://jira.codehaus.org/browse/MEXEC-137) in the exec-maven-plugin the Maven build of the
-API module will fail as the exec-maven-plugin is unable to find the __grunt__ and __bower__ commands. To fix this, do
-the following:
-
-* open folder `C:\Users\USER\AppData\Roaming\npm`
-* copy __grunt.cmd__ to __grunt.bat__
-* copy __bower.cmd__ to __bower.bat__
-
-More information can be found [here] (http://stackoverflow.com/questions/22393785/exec-maven-plugin-says-cannot-run-specified-program-even-though-it-is-on-the-pa/22395703#22395703).
-
-Installation of Git is also possible using Chocolatey:
-
-    C:\> choco install git.install
-
-
 # Getting Started
 
-## SVN checkout
+## Code checkout
 
 To get started with the Hippo Essentials, checkout the code. You have two options to check out
 the project. The example commands below use the potentially unstable trunk snapshot. Consider
@@ -62,17 +18,17 @@ using a tag instead.
 
 ### Read-only
 ```shell
-svn co http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk essentials
+git clone git@code.onehippo.org:cms-community/hippo-essentials.git
 ```
 
-### Read-write (you'll need Hippo SVN account for this)
+### Read-write (you'll need Hippo GIT account for this)
 ```shell
-svn co https://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk essentials
+git clone git@code.onehippo.org:cms-community/hippo-essentials.git
 ```
 
 ### Build the essentials components:
 ```shell
-cd essentials
+cd hippo-essentials
 mvn clean install
 ```
 
@@ -83,8 +39,8 @@ mvn clean && mvn validate -Ppedantic
 
 ### Create and install archetype locally:
 ```shell
-svn co http://svn.onehippo.org/repos/hippo/hippo-cms7/archetype/trunk/ archetype
-cd archetype
+git clone git@code.onehippo.org:cms-community/hippo-project-archetype.git
+cd hippo-project-archetype
 mvn clean install
 ```
 
@@ -107,7 +63,7 @@ mvn -P cargo.run -Drepo.path=storage
 The following URLs are available from this project:
 
  * CMS at http://localhost:8080/cms
- * Website at http://localhost:8080/site 
+ * Website at http://localhost:8080/site
  * Essentials dashboard at http://localhost:8080/essentials
 
 Logs are located in `target/tomcat8x/logs`
@@ -161,6 +117,6 @@ or permanently in your project's file
 
 ##Copyright and license
 
-Copyright 2013-2015 Hippo B.V.
-Distributed under the [Apache 2.0 license](http://svn.onehippo.org/repos/hippo/hippo-cms7/essentials/trunk/LICENSE).
+Copyright 2013-2016 Hippo B.V.
+Distributed under the [Apache 2.0 license](https://code.onehippo.org/cms-community/hippo-essentials/blob/master/LICENSE).
 
