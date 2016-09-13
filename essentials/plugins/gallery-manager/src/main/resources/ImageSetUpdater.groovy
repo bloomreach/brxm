@@ -25,9 +25,6 @@ import javax.jcr.Node
 import javax.jcr.NodeIterator
 import javax.jcr.RepositoryException
 import javax.jcr.Session
-import javax.jcr.query.Query
-import javax.jcr.query.QueryManager
-import javax.jcr.query.QueryResult
 
 /**
  * Groovy script to update image sets
@@ -39,20 +36,17 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
 
     public static final String HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE = "hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
 
-    private static final int IMAGE_PROPERTIES_HEIGHT_INDEX = 1;
-    private static final int IMAGE_PROPERTIES_WIDTH_INDEX = 0;
-
     protected static final String CONFIG_PARAM_WIDTH = "width";
     protected static final String CONFIG_PARAM_HEIGHT = "height";
+    protected static final String CONFIG_PARAM_UPSCALING = "upscaling";
+
     protected static final Long DEFAULT_WIDTH = 0L;
     protected static final Long DEFAULT_HEIGHT = 0L;
+    protected static final Boolean DEFAULT_UPSCALING = false;
 
-    public final Map<String, List<Long>> imageVariants = new HashMap<String, List<Long>>();
+    private final Map<String, ScalingParameters> imageVariants = new HashMap<String, ScalingParameters>();
 
     private boolean overwrite = true;
-    private boolean upscaling = true;
-    private final String[] names = ["overwrite", "upscaling"];
-    private final Object[] objects = [overwrite, upscaling];
 
     public void initialize(Session session) throws RepositoryException {
         try {
@@ -60,15 +54,14 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
             getImageVariants(configNode);
 
         } catch (RepositoryException e) {
-            log.error("Exception while retrieving image set variants configuration", e);
+            log.error("Exception while retrieving imageset variants configuration", e);
         }
-
-        printInit(names, objects);
     }
 
 
     boolean doUpdate(Node node) {
         try {
+            log.info(node.path)
             processImageSet(node);
             return true;
         } catch (RepositoryException e) {
@@ -105,9 +98,9 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
         /* hippogallery:thumbnail is the only required image variant, not hippogalley:original according to the hippogallery cnd */
         if (!HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName)) {
 
-            final List<Long> dimensions = imageVariants.get(variantName);
-            if (dimensions == null) {
-                log.warn("No width and height available for image variant {}. Skipping node {}", variantName, node.getPath());
+            final ScalingParameters scalingParameters = imageVariants.get(variantName);
+            if (scalingParameters == null) {
+                log.warn("No scalingParameters available for image variant {}. Skipping node {}", variantName, node.getPath());
                 return;
             }
 
@@ -122,16 +115,13 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
                 variant = node.addNode(variantName, HippoGalleryNodeType.IMAGE);
             }
 
-            Long width = dimensions.get(IMAGE_PROPERTIES_WIDTH_INDEX);
-            Long height = dimensions.get(IMAGE_PROPERTIES_HEIGHT_INDEX);
-
-            createImageVariant(node, original, variant, width, height);
+            createImageVariant(node, original, variant, scalingParameters);
 
             node.getSession().save();
         }
     }
 
-    private void createImageVariant(Node node, Node original, Node variant, Long width, Long height) throws RepositoryException {
+    private void createImageVariant(Node node, Node original, Node variant, ScalingParameters scalingParameters) throws RepositoryException {
 
         InputStream dataInputStream = null;
 
@@ -139,7 +129,6 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
             dataInputStream = original.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
             String mimeType = original.getProperty(JcrConstants.JCR_MIMETYPE).getString();
 
-            ScalingParameters scalingParameters = new ScalingParameters(width.intValue(), height.intValue(), upscaling);
             ScalingGalleryProcessor scalingGalleryProcessor = new ScalingGalleryProcessor();
 
             scalingGalleryProcessor.addScalingParameters(variant.getName(), scalingParameters);
@@ -159,45 +148,20 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
             String variantName = variantNode.getName();
 
             // hippogallery:thumbnail is the only required image variant according to the hippogallery.cnd
-            // so no regeneration for that one
-            if (!HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName)) {
+            // so no regeneration for that one, neither take the original into account
+            if (!(HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName) ||
+                    HippoGalleryNodeType.IMAGE_SET_ORIGINAL.equals(variantName))) {
 
                 Long width = variantNode.hasProperty(CONFIG_PARAM_WIDTH) ? variantNode.getProperty(CONFIG_PARAM_WIDTH).getLong() : DEFAULT_WIDTH;
                 Long height = variantNode.hasProperty(CONFIG_PARAM_HEIGHT) ? variantNode.getProperty(CONFIG_PARAM_HEIGHT).getLong() : DEFAULT_HEIGHT;
+                Boolean upscaling = variantNode.hasProperty(CONFIG_PARAM_UPSCALING) ? variantNode.getProperty(CONFIG_PARAM_UPSCALING).getBoolean() : DEFAULT_UPSCALING;
 
-                Object[] objects = [variantName, width, height];
+                Object[] objects = [variantName, width, height, upscaling];
+                log.info("Registered image set variant '{}' with width={}, height={} and upscaling={}", objects);
 
-
-                log.info("Registered image set variant '{}' with width {} and height {}",
-                        objects);
-
-                final List<Long> dimensions = new ArrayList<Long>(2);
-                dimensions.add(width);
-                dimensions.add(height);
-
-                imageVariants.put(variantName, dimensions);
+                ScalingParameters scalingParameters = new ScalingParameters(width.intValue(), height.intValue(), upscaling);
+                imageVariants.put(variantName, scalingParameters);
             }
         }
     }
-
-    protected void printInit(final String[] configNames, final Object[] configObjects) {
-
-        StringBuilder sb = new StringBuilder("### Initialized runner plugin ").append(this.getClass().getName()).append("\n");
-
-        if ((configNames != null) && configObjects != null) {
-            if (configNames.length != configObjects.length) {
-                throw new IllegalArgumentException("Lengths of configNames and configObjects do not match: " + configNames.length + " and " + configObjects.length);
-            }
-
-            if (configNames.length > 0) {
-                sb.append("Initialization parameters:\n");
-                for (int i = 0; i < configNames.length; i++) {
-                    sb.append("  ").append(configNames[i]).append(" = ").append(configObjects[i]).append("\n");
-                }
-            }
-        }
-
-        log.info(sb.toString());
-    }
-
 }
