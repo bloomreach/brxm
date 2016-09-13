@@ -4,21 +4,14 @@ const webpack = require('webpack');
 const autoprefixer = require('autoprefixer');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const DashboardPlugin = require('webpack-dashboard/plugin');
 
 const npmDir = path.resolve(__dirname, 'node_modules');
 const srcDir = path.resolve(__dirname, 'src');
 const distDir = path.resolve(__dirname, 'dist');
 const publicDir = path.resolve(distDir, 'public');
 
-const validate = require('webpack-validator');
-const Joi = require('webpack-validator').Joi
-const schemaExtension = Joi.object({
-  babel: Joi.any()
-})
-
-const DashboardPlugin = require('webpack-dashboard/plugin');
-
-module.exports = validate({
+const webpackConfig = {
   entry: {
     index: './src/index.js',
     vendor: [
@@ -121,4 +114,11 @@ module.exports = validate({
     extensions: ['', '.js', '.scss'],
     root: [srcDir],
   },
-}, { schemaExtension });
+};
+
+const validate = require('webpack-validator');
+const Joi = require('webpack-validator').Joi
+const schemaExtension = Joi.object({
+  babel: Joi.any()
+})
+module.exports = validate(webpackConfig, { schemaExtension });
