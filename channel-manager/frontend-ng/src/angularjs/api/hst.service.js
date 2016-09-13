@@ -31,7 +31,12 @@ export class HstService {
 
   initializeSession(hostname, mountId) {
     return this.doGet(this.config.rootUuid, 'composermode', hostname, mountId)
-      .then((response) => response ? response.data : null);
+      .then(response => {
+        if (response) {
+          return response.data;
+        }
+        return null;
+      });
   }
 
   getChannel(id) {
