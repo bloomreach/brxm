@@ -20,22 +20,20 @@ export class ChannelSidePanelService {
 
     this.$mdSidenav = $mdSidenav;
     this.ScalingService = ScalingService;
-    this.panels = {
-      left: {
-        element: 'channel-left-side-panel',
-      },
-      right: {
-        element: 'channel-right-side-panel',
-      },
-    };
+    this.panels = { };
   }
 
   initialize(side, jQueryElement) {
-    this.panels[side].jQueryElement = jQueryElement;
+    const panel = {
+      jQueryElement,
+      sideNavComponentId: jQueryElement.attr('md-component-id'),
+    };
+
+    this.panels[side] = panel;
   }
 
   toggle(side) {
-    this.$mdSidenav(this.panels[side].element).toggle();
+    this.$mdSidenav(this.panels[side].sideNavComponentId).toggle();
 
     if (side === 'left') {
       // TODO: Remove this when scaling is fixed
@@ -45,17 +43,17 @@ export class ChannelSidePanelService {
 
   open(side) {
     if (!this.isOpen(side)) {
-      this.$mdSidenav(this.panels[side].element).open();
+      this.$mdSidenav(this.panels[side].sideNavComponentId).open();
     }
   }
 
   isOpen(side) {
-    return this.panels[side].jQueryElement && this.$mdSidenav(this.panels[side].element).isOpen();
+    return this.panels[side] && this.$mdSidenav(this.panels[side].sideNavComponentId).isOpen();
   }
 
   close(side) {
     if (this.isOpen(side)) {
-      this.$mdSidenav(this.panels[side].element).close();
+      this.$mdSidenav(this.panels[side].sideNavComponentId).close();
 
       if (side === 'left') {
         // TODO: Remove this when scaling is fixed
