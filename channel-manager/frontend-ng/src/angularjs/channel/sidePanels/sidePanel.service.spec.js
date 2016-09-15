@@ -52,7 +52,7 @@ describe('ChannelSidePanelService', () => {
     ChannelSidePanelService.toggle('left');
 
     expect(leftSidePanel.toggle).toHaveBeenCalled();
-    expect(ScalingService.setPushWidth).toHaveBeenCalledWith(250);
+    expect(ScalingService.setPushWidth).toHaveBeenCalledWith('left', 250);
 
     ScalingService.setPushWidth.calls.reset();
     leftSidePanel.toggle.calls.reset();
@@ -61,7 +61,7 @@ describe('ChannelSidePanelService', () => {
     ChannelSidePanelService.toggle('left');
 
     expect(leftSidePanel.toggle).toHaveBeenCalled();
-    expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
+    expect(ScalingService.setPushWidth).toHaveBeenCalledWith('left', 0);
   });
 
   it('forwards the is-open check to the mdSidenav service', () => {
@@ -90,7 +90,7 @@ describe('ChannelSidePanelService', () => {
 
     ChannelSidePanelService.close('left');
 
-    expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
+    expect(ScalingService.setPushWidth).toHaveBeenCalledWith('left', 0);
     expect(leftSidePanel.close).toHaveBeenCalled();
 
     ScalingService.setPushWidth.calls.reset();

@@ -34,18 +34,23 @@ export class ChannelSidePanelService {
     this.panels[side].jQueryElement = jQueryElement;
   }
 
-  toggle(side) {
-    this.$mdSidenav(this.panels[side].element).toggle();
+  scale(side) {
+    this.ScalingService.setPushWidth(side, this.isOpen(side) ? this.panels[side].jQueryElement.width() : 0);
+  }
 
-    if (side === 'left') {
-      // TODO: Remove this when scaling is fixed
-      this.ScalingService.setPushWidth(this.isOpen(side) ? this.panels[side].jQueryElement.width() : 0);
+  toggle(side) {
+    if (this.isOpen(side)) {
+      this.close(side);
+    } else {
+      this.open(side);
     }
   }
 
   open(side) {
     if (!this.isOpen(side)) {
+      this.close(side === 'left' ? 'right' : 'left');
       this.$mdSidenav(this.panels[side].element).open();
+      this.scale(side);
     }
   }
 
@@ -57,10 +62,7 @@ export class ChannelSidePanelService {
     if (this.isOpen(side)) {
       this.$mdSidenav(this.panels[side].element).close();
 
-      if (side === 'left') {
-        // TODO: Remove this when scaling is fixed
-        this.ScalingService.setPushWidth(0);
-      }
+      this.ScalingService.setPushWidth(side, 0);
     }
   }
 }

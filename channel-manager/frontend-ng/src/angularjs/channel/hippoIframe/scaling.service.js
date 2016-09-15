@@ -14,38 +14,39 @@
  * limitations under the License.
  */
 
-const ANGULAR_MATERIAL_LEFT_SIDE_PANEL_EASING = [0.25, 0.8, 0.25, 1];
-const ANGULAR_MATERIAL_LEFT_SIDE_PANEL_ANIMATION_DURATION_MS = 400;
-
 export class ScalingService {
 
-  constructor($rootScope, $window, OverlaySyncService) {
+  constructor($rootScope, $window, OverlaySyncService, DomService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.OverlaySyncService = OverlaySyncService;
+    this.DomService = DomService;
 
-    this.pushWidth = 0; // left side panel is initially closed
+    this.pushWidth = {
+      left: 0,
+      right: 0,
+    }; // side panels are initially closed
     this.viewPortWidth = 0; // unconstrained
     this.scaleFactor = 1.0;
-    this.scaleDuration = ANGULAR_MATERIAL_LEFT_SIDE_PANEL_ANIMATION_DURATION_MS;
-    this.scaleEasing = ANGULAR_MATERIAL_LEFT_SIDE_PANEL_EASING;
+    this.scaleDuration = 400;
+    this.scaleEasing = [0.25, 0.8, 0.25, 1];
 
     angular.element($window).bind('resize', () => {
       if (this.hippoIframeJQueryElement) {
-        $rootScope.$apply(() => this._updateScaling(false));
+        $rootScope.$apply(() => this._resyncScaling(false));
       }
     });
   }
 
   init(hippoIframeJQueryElement) {
     this.hippoIframeJQueryElement = hippoIframeJQueryElement;
-    this._updateScaling(false);
+    this._resyncScaling(false);
   }
 
-  setPushWidth(pushWidth) {
-    this.pushWidth = pushWidth;
-    this._updateScaling(true);
+  setPushWidth(side, pushWidth) {
+    this.pushWidth.side = pushWidth;
+    this._updateScaling(side, true);
   }
 
   setViewPortWidth(viewPortWidth) {
@@ -54,7 +55,7 @@ export class ScalingService {
   }
 
   sync() {
-    this._updateScaling(false);
+    this._resyncScaling(false);
     this.OverlaySyncService.syncIframe();
   }
 
@@ -72,27 +73,26 @@ export class ScalingService {
    * @returns {*[]}  canvasWidth is the maximum width available to the iframe
    *                 viewPortWidth indicates how many pixels wide the iframe content should be rendered.
    */
-  _updateIframeShift(animate) {
-    const currentShift = parseInt(this.hippoIframeJQueryElement.css('margin-left'), 10);
+  _updateIframeShift(side, animate) {
+    const currentShift = parseInt(this.hippoIframeJQueryElement.css(`margin-${side}`), 10);
     const canvasWidth = this.hippoIframeJQueryElement.find('.channel-iframe-canvas').width() + currentShift;
     const viewPortWidth = this.OverlaySyncService.getViewPortWidth() === 0 ? canvasWidth : this.OverlaySyncService.getViewPortWidth();
     const canvasBorderWidth = canvasWidth - viewPortWidth;
-    const targetShift = Math.min(canvasBorderWidth, this.pushWidth);
+    const targetShift = Math.min(canvasBorderWidth, this.pushWidth.side);
 
     if (targetShift !== currentShift) {
       this.hippoIframeJQueryElement.velocity('finish');
       if (animate) {
-        this.hippoIframeJQueryElement.velocity({
-          'margin-left': targetShift,
-        }, {
+        const velocityAdjust = {};
+        velocityAdjust[`margin-${side}`] = targetShift;
+        this.hippoIframeJQueryElement.velocity(velocityAdjust, {
           duration: this.scaleDuration,
           easing: this.scaleEasing,
         });
       } else {
-        this.hippoIframeJQueryElement.css('margin-left', targetShift);
+        this.hippoIframeJQueryElement.css(`margin-${side}`, targetShift);
       }
     }
-
     return [canvasWidth, viewPortWidth];
   }
 
@@ -107,18 +107,23 @@ export class ScalingService {
    *
    * @param animate  flag indicating that any change should be animated.
    */
-  _updateScaling(animate) {
+  _updateScaling(side, animate) {
     if (!this.hippoIframeJQueryElement || !this.hippoIframeJQueryElement.is(':visible')) {
       return;
     }
 
-    const [canvasWidth, viewPortWidth] = this._updateIframeShift(animate);
-    const visibleCanvasWidth = canvasWidth - this.pushWidth;
+    const [canvasWidth, viewPortWidth] = this._updateIframeShift(side, animate);
+    const visibleCanvasWidth = canvasWidth - this.pushWidth.side;
     const oldScale = this.scaleFactor;
     const newScale = (visibleCanvasWidth < viewPortWidth) ? visibleCanvasWidth / viewPortWidth : 1;
 
     if (newScale !== oldScale) {
       const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
+      if (side === 'right') {
+        elementsToScale.addClass('cm-scale-to-left');
+      } else {
+        elementsToScale.removeClass('cm-scale-to-left');
+      }
       elementsToScale.velocity('finish');
 
       if (animate) {
@@ -149,7 +154,7 @@ export class ScalingService {
           complete: () => {
             // when scaling causes a scrollbar to appear/disappear, we have to tweak it
             if (newScale !== 1 && widthBeforeScaling !== iframeScrollXJQueryElement.width()) {
-              this._updateScaling(animate);
+              this._updateScaling(side, animate);
             } else {
               this.OverlaySyncService.syncIframe();
             }
@@ -159,8 +164,16 @@ export class ScalingService {
         elementsToScale.css('transform', `scale(${newScale})`);
       }
     }
-
     this.scaleFactor = newScale;
   }
 
+  _resyncScaling(animate) {
+    if (!this.hippoIframeJQueryElement || !this.hippoIframeJQueryElement.is(':visible')) {
+      return;
+    }
+    const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
+    const side = (elementsToScale.hasClass('cm-scale-to-left') ? 'right' : 'left');
+
+    this._updateScaling(side, animate);
+  }
 }

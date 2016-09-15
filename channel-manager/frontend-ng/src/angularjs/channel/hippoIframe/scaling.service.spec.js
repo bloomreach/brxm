@@ -64,7 +64,7 @@ describe('ScalingService', () => {
     canvasJQueryElement.width(400);
 
     ScalingService.init(iframeJQueryElement);
-    ScalingService.setPushWidth(100);
+    ScalingService.setPushWidth('left', 100);
 
     expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
@@ -85,10 +85,10 @@ describe('ScalingService', () => {
     canvasJQueryElement.width(400);
 
     ScalingService.init(iframeJQueryElement);
-    ScalingService.setPushWidth(100);
+    ScalingService.setPushWidth('left', 100);
     elementsToScale.velocity.calls.reset();
 
-    ScalingService.setPushWidth(0);
+    ScalingService.setPushWidth('left', 0);
 
     expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
@@ -108,7 +108,7 @@ describe('ScalingService', () => {
   it('should change the scaling factor instantly when the window is resized', () => {
     canvasJQueryElement.width(200);
     ScalingService.init(iframeJQueryElement);
-    ScalingService.setPushWidth(100);
+    ScalingService.setPushWidth('left', 100);
     elementsToScale.velocity.calls.reset();
     ScalingService.scaleFactor = 0.75; // fake different scaling factor so the effect of the window resize is testable
 
@@ -131,7 +131,7 @@ describe('ScalingService', () => {
     ScalingService.init(iframeJQueryElement);
     elementsToScale.velocity.calls.reset();
 
-    ScalingService.setPushWidth(100);
+    ScalingService.setPushWidth('left', 100);
 
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
     expect(elementsToScale.velocity).toHaveBeenCalledWith('scroll', {
@@ -206,7 +206,7 @@ describe('ScalingService', () => {
     iframeJQueryElement.css.calls.reset();
     iframeJQueryElement.velocity.calls.reset();
 
-    ScalingService.setPushWidth(260);
+    ScalingService.setPushWidth('left', 260);
 
     // validate shifting
     expect(iframeJQueryElement.velocity).toHaveBeenCalledWith('finish');
@@ -237,7 +237,7 @@ describe('ScalingService', () => {
     canvasJQueryElement.width(800);
     ScalingService.init(iframeJQueryElement);
     ScalingService.setViewPortWidth(720);
-    ScalingService.setPushWidth(260);
+    ScalingService.setPushWidth('left', 260);
 
     // reset all relevant spies
     elementsToScale.css.calls.reset();
@@ -264,7 +264,7 @@ describe('ScalingService', () => {
     canvasJQueryElement.width(400);
 
     ScalingService.init(iframeJQueryElement);
-    ScalingService.setPushWidth(100);
+    ScalingService.setPushWidth('left', 100);
 
     expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
     expect(elementsToScale.velocity).not.toHaveBeenCalled();

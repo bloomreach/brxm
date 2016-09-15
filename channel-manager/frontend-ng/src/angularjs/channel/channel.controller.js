@@ -47,7 +47,8 @@ export class ChannelCtrl {
     this.isCreatingPreview = false;
 
     // reset service state to avoid weird scaling when controller is reloaded due to state change
-    ScalingService.setPushWidth(0);
+    ScalingService.setPushWidth('left', 0);
+    ScalingService.setPushWidth('right', 0);
 
     ComponentAdderService.setCatalogContainerClass('catalog-dd-container');
     ComponentAdderService.setCatalogContainerItemClass('catalog-dd-container-item');

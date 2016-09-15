@@ -105,7 +105,8 @@ describe('ChannelCtrl', () => {
         $scope: $rootScope.$new(),
         ScalingService,
       });
-      expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
+      expect(ScalingService.setPushWidth).toHaveBeenCalledWith('left', 0);
+      expect(ScalingService.setPushWidth).toHaveBeenCalledWith('right', 0);
     });
   });
 
