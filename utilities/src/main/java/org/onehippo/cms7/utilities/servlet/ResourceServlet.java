@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -259,6 +260,9 @@ public class ResourceServlet extends HttpServlet {
     private Set<Pattern> compressedMimeTypes;
     private Map<String, String> mimeTypes;
 
+    private boolean webpackEnabled;
+    private String webpackServer;
+
     @Override
     public void init() throws ServletException {
         if (getInitParameter("cacheTimeOut") != null) {
@@ -268,6 +272,12 @@ public class ResourceServlet extends HttpServlet {
         gzipEnabled = Boolean.parseBoolean(getInitParameter("gzipEnabled", "true"));
         webResourceEnabled = Boolean.parseBoolean(getInitParameter("webResourceEnabled", "true"));
         jarResourceEnabled = Boolean.parseBoolean(getInitParameter("jarResourceEnabled", "true"));
+
+        webpackEnabled = Boolean.parseBoolean(getInitParameter("webpackEnabled", "false"));
+
+        final String webpackHost = getInitParameter("webpackHost", "localhost");
+        final String webpackPort = getInitParameter("webpackPort", "9090");
+        webpackServer = "http://" + webpackHost + ":" + webpackPort;
 
         allowedResourcePaths = initPatterns("allowedResourcePaths", DEFAULT_ALLOWED_RESOURCE_PATHS);
         compressedMimeTypes = initPatterns("compressedMimeTypes", DEFAULT_COMPRESSED_MIME_TYPES);
@@ -293,12 +303,14 @@ public class ResourceServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String resourcePath = StringUtils.substringBefore(request.getPathInfo(), ";");
+        String queryParams = request.getQueryString();
+        queryParams = StringUtils.isEmpty(queryParams) ? "" :  "?" + queryParams;
 
         if (log.isDebugEnabled()) {
-            log.debug("Processing request for resource {}.", resourcePath);
+            log.debug("Processing request for resource {}.", resourcePath + queryParams);
         }
 
-        URL resource = getResourceURL(resourcePath);
+        URL resource = getResourceURL(resourcePath, queryParams);
 
         if (resource == null) {
             if (log.isDebugEnabled()) {
@@ -308,9 +320,19 @@ public class ResourceServlet extends HttpServlet {
             return;
         }
 
-        long ifModifiedSince = request.getDateHeader("If-Modified-Since");
-
         URLConnection conn = resource.openConnection();
+        if (conn instanceof HttpURLConnection) {
+            HttpURLConnection httpConn = (HttpURLConnection) conn;
+            if (httpConn.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Resource not found: {}", resourcePath);
+                }
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+        }
+
+        long ifModifiedSince = request.getDateHeader("If-Modified-Since");
         long lastModified = conn.getLastModified();
 
         if (ifModifiedSince >= lastModified) {
@@ -353,13 +375,34 @@ public class ResourceServlet extends HttpServlet {
         return set;
     }
 
-    private URL getResourceURL(String resourcePath) throws MalformedURLException {
+    private URL getResourceURL(final String resourcePath, final String queryParams) throws MalformedURLException {
         if (!isAllowed(resourcePath)) {
             if (log.isWarnEnabled()) {
                 log.warn("An attempt to access a protected resource at {} was disallowed.", resourcePath);
             }
 
             return null;
+        }
+
+        if (webpackEnabled) {
+            if (!webpackServerIsLive()) {
+                log.warn("Webpack is enabled but the development server could not be reached");
+                return null;
+            }
+
+            final String webpackPath;
+            if (resourcePath.contains("/public/")) {
+                webpackPath = "/public/" + StringUtils.substringAfter(resourcePath, "/public/");
+            } else {
+                webpackPath = "/cms/angular" + resourcePath;
+            }
+            final String url = webpackServer + webpackPath + queryParams;
+
+            if (log.isDebugEnabled()) {
+                log.debug("Loading resource from webpack at {}", url);
+            }
+
+            return new URL(url);
         }
 
         URL resource = null;
@@ -375,6 +418,22 @@ public class ResourceServlet extends HttpServlet {
         }
 
         return resource;
+    }
+
+    private boolean webpackServerIsLive() {
+        final String webpackPingURL = webpackServer + "/sockjs-node/info";
+        final int timeout = 500;
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(webpackPingURL).openConnection();
+            connection.setConnectTimeout(timeout);
+            connection.setReadTimeout(timeout);
+            connection.setRequestMethod("GET");
+            int responseCode = connection.getResponseCode();
+            return (200 <= responseCode && responseCode <= 399);
+        } catch (IOException exception) {
+            return false;
+        }
+
     }
 
     private boolean isAllowed(String resourcePath) {
