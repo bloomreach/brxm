@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import templateUrl from './property.html';
+import template from './property.html';
 
 export function channelPropertyDirective() {
   'ngInject';
@@ -27,7 +27,7 @@ export function channelPropertyDirective() {
       error: '=channelPropertiesError',
       data: '=channelPropertiesData',
     },
-    templateUrl,
+    template,
     controller: 'ChannelPropertyCtrl',
     controllerAs: 'channelProperty',
   };

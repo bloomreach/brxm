@@ -24,17 +24,17 @@ export class ViewportToggleCtrl {
     this.viewPorts = [
       {
         id: 'DESKTOP',
-        icon: '/cms/angular/public/images/desktop.svg',
+        icon: '/cms/angular/hippo-cm/images/desktop.svg',
         width: 0,
       },
       {
         id: 'TABLET',
-        icon: '/cms/angular/public/images/tablet.svg',
+        icon: '/cms/angular/hippo-cm/images/tablet.svg',
         width: 720,
       },
       {
         id: 'PHONE',
-        icon: '/cms/angular/public/images/phone.svg',
+        icon: '/cms/angular/hippo-cm/images/phone.svg',
         width: 320,
       },
     ];

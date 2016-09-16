@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import templateUrl from './editor.html';
+import template from './editor.html';
 
 export function menuEditorDirective() {
   'ngInject';
@@ -27,7 +27,7 @@ export function menuEditorDirective() {
       onSuccess: '&',
       onError: '&',
     },
-    templateUrl,
+    template,
     controller: 'MenuEditorCtrl',
     controllerAs: 'menuEditor',
   };

@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const conf = require('./gulp.conf');
 const path = require('path');
 
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -51,12 +52,32 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'vendor-[hash].js',
+      minChunks: Infinity,
+    }),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.NoErrorsPlugin(),
     new HtmlWebpackPlugin({
       template: conf.path.src('index.html'),
       inject: true,
     }),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      'window.$': 'jquery',
+      'window.jQuery': 'jquery',
+      'window.dragula': 'dragula',
+    }),
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(conf.paths.npmDir, 'dragula', 'dist', 'dragula.min.js'),
+        to: path.resolve(conf.paths.dist, 'scripts', 'dragula.min.js'),
+      }, {
+        from: path.resolve(conf.paths.npmDir, 'dragula', 'dist', 'dragula.min.css'),
+        to: path.resolve(conf.paths.dist, 'styles', 'dragula.min.css'),
+      },
+    ]),
     new webpack.optimize.UglifyJsPlugin({
       compress: { unused: true, dead_code: true },
     }),
@@ -73,12 +94,10 @@ module.exports = {
     }),
   ],
   output: {
-    path: path.join(process.cwd(), conf.paths.dist),
     filename: '[name]-[hash].js',
-    publicPath: '/cms/angular/hippo-cm',
+    path: path.join(process.cwd(), conf.paths.dist),
+    publicPath: '/cms/angular/hippo-cm/',
   },
-  debug: true,
-  devtool: 'cheap-module-eval-source-map',
   entry: {
     vendor: conf.vendors,
     app: `./${conf.path.src('index')}`,

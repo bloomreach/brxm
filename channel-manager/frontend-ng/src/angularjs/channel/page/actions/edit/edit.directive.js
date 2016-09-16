@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import templateUrl from './edit.html';
+import template from './edit.html';
 
 export function pageEditDirective() {
   'ngInject';
@@ -24,7 +24,7 @@ export function pageEditDirective() {
     bindToController: {
       onDone: '&',
     },
-    templateUrl,
+    template,
     controller: 'PageEditCtrl',
     controllerAs: 'pageEdit',
   };

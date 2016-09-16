@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import templateUrl from './subpageContent.html';
+import template from './subpageContent.html';
 
 export function subpageContentDirective() {
   'ngInject';
@@ -22,6 +22,6 @@ export function subpageContentDirective() {
   return {
     restrict: 'E',
     transclude: true,
-    templateUrl,
+    template,
   };
 }

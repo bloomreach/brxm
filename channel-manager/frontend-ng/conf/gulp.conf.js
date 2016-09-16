@@ -23,6 +23,7 @@ exports.paths = {
   tmp: 'target/classes/angular/hippo-cm',
   e2e: 'e2e',
   tasks: 'gulp_tasks',
+  npmDir: 'node_modules',
 };
 
 exports.exclude = {

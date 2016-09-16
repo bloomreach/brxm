@@ -1,20 +1,17 @@
-const pkg = require('../package.json');
-const path = require('path');
 const webpack = require('webpack');
 const conf = require('./gulp.conf');
+const path = require('path');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
-
-const srcDir = conf.path.src;
 
 module.exports = {
   module: {
     preLoaders: [
       {
-        test: /\.js?$/,
-        loader: 'eslint',
+        test: /\.js$/,
         exclude: /node_modules/,
+        loader: 'eslint',
       },
     ],
     loaders: [
@@ -34,16 +31,16 @@ module.exports = {
         ],
       },
       {
-        test: /\.(eot|svg|ttf|woff|woff2|png)\w*/,
-        loader: 'file',
-      },
-      {
         test: /\.js$/,
         exclude: /node_modules/,
         loaders: [
           'ng-annotate',
           'babel',
         ],
+      },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2|png)\w*/,
+        loader: 'file',
       },
       {
         test: /.html$/,
@@ -56,7 +53,7 @@ module.exports = {
   plugins: [
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      filename: 'vendor.bundle.js',
+      filename: 'vendor-[hash].js',
       minChunks: Infinity,
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
@@ -64,6 +61,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: conf.path.src('index.html'),
       inject: true,
+    }),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      'window.$': 'jquery',
+      'window.jQuery': 'jquery',
+      'window.dragula': 'dragula',
     }),
   ],
   postcss: [
@@ -79,15 +82,12 @@ module.exports = {
   debug: true,
   devtool: 'cheap-module-eval-source-map',
   output: {
-    path: path.join(process.cwd(), conf.paths.tmp),
-    filename: 'index.js',
+    filename: '[name].[hash].js',
+    path: path.join(process.cwd(), conf.paths.dist),
+    publicPath: '/',
   },
   entry: {
-    vendor: Object.keys(pkg.dependencies),
-    index: `./${conf.path.src('index')}`,
-  },
-  resolve: {
-    extensions: ['', '.js', '.scss'],
-    root: [srcDir()],
+    vendor: conf.vendors,
+    app: `./${conf.path.src('index')}`,
   },
 };

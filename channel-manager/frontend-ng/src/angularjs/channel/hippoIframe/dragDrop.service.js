@@ -113,10 +113,10 @@ export class DragDropService {
   _injectDragula(iframe) {
     const appRootUrl = this.DomService.getAppRootUrl();
 
-    const dragulaCss = `${appRootUrl}../public/styles/dragula.min.css?antiCache=${this.ConfigService.antiCache}`;
+    const dragulaCss = `${appRootUrl}/styles/dragula.min.css?antiCache=${this.ConfigService.antiCache}`;
     this.DomService.addCss(iframe, dragulaCss);
 
-    const dragulaJs = `${appRootUrl}../public/scripts/dragula.min.js?antiCache=${this.ConfigService.antiCache}`;
+    const dragulaJs = `${appRootUrl}/scripts/dragula.min.js?antiCache=${this.ConfigService.antiCache}`;
     return this.DomService.addScript(iframe, dragulaJs);
   }
 

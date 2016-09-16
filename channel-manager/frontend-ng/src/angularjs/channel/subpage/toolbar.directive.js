@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import templateUrl from './toolbar.html';
+import template from './toolbar.html';
 
 export function subpageToolbarDirective() {
   'ngInject';
@@ -28,7 +28,7 @@ export function subpageToolbarDirective() {
     bindToController: {
       mode: '@',
     },
-    templateUrl,
+    template,
     controller: 'SubpageToolbarCtrl',
     controllerAs: 'toolbar',
   };
