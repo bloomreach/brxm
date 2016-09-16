@@ -108,7 +108,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             fragment = new Fragment(id, "embed", this);
             fragment.add(new Label("filesize", Model.of(formatter.format(stream.length().bytes()))));
             fragment.add(new Label("mimetype", Model.of(stream.getContentType())));
-            fragment.add(createFileLink(stream, getModelObject()));
+            fragment.add(createFileLink(stream, stream.getChainedModel().getObject()));
 
             if (stream.getContentType().equals(MIME_TYPE_HIPPO_BLANK)) {
                 fragment.setVisible(false);
