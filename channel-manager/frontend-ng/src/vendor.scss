@@ -1,7 +1,7 @@
 // Open Sans font
-@import '~open-sans-fontface/sass/variables';
-$OpenSansPath: '~open-sans-fontface/fonts'; 
+@import 'styles/variables';
 
+@import '~open-sans-fontface/sass/variables';
 @import '~open-sans-fontface/sass/mixins';
 @import '~open-sans-fontface/sass/Regular';
 
