@@ -27,7 +27,7 @@ export function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $
     resolve: {
       translations: ($translate, ConfigService) => {
         $translateProvider.useStaticFilesLoader({
-          prefix: '/cms/angular/public/i18n/',
+          prefix: '/cms/angular/hippo-cm/i18n/',
           suffix: `.json?antiCache=${ConfigService.antiCache}`,
         });
         return $translate.use(ConfigService.locale)
