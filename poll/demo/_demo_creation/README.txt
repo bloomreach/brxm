@@ -16,7 +16,7 @@ How to create the demo project
    Rebuild and run.
 
 
-Creating a custom poll document the contains the poll compound.
+Creating a custom poll document that contains the poll compound
 ---------------------------------------------------------------
 For the next steps, we rely on the auto-export function to export changes into the project.
 
