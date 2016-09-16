@@ -10,6 +10,7 @@
 
 const path = require('path');
 const gutil = require('gulp-util');
+const pkg = require('../package.json');
 
 exports.ngModule = 'app';
 
@@ -23,6 +24,15 @@ exports.paths = {
   e2e: 'e2e',
   tasks: 'gulp_tasks',
 };
+
+exports.exclude = {
+  vendors: [
+    'open-sans-fontface',
+  ],
+};
+
+exports.vendors = Object.keys(pkg.dependencies)
+  .filter(name => exports.exclude.vendors.indexOf(name) === -1);
 
 exports.path = {};
 for (const pathName in exports.paths) {

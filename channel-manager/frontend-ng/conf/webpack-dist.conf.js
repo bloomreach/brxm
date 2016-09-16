@@ -4,7 +4,7 @@ const path = require('path');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const pkg = require('../package.json');
+
 const autoprefixer = require('autoprefixer');
 
 module.exports = {
@@ -16,7 +16,6 @@ module.exports = {
         loader: 'eslint',
       },
     ],
-
     loaders: [
       {
         test: /.json$/,
@@ -25,7 +24,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.(css|scss)$/,
+        test: /\.scss$/,
         loaders: ExtractTextPlugin.extract({
           fallbackLoader: 'style',
           loader: 'css?minimize!postcss!sass',
@@ -61,7 +60,7 @@ module.exports = {
     new webpack.optimize.UglifyJsPlugin({
       compress: { unused: true, dead_code: true },
     }),
-    new ExtractTextPlugin('index-[contenthash].css'),
+    new ExtractTextPlugin('[name]-[contenthash].css'),
   ],
   postcss: [
     autoprefixer({
@@ -81,7 +80,7 @@ module.exports = {
   debug: true,
   devtool: 'cheap-module-eval-source-map',
   entry: {
-    vendor: Object.keys(pkg.dependencies),
+    vendor: conf.vendors,
     app: `./${conf.path.src('index')}`,
   },
 };
