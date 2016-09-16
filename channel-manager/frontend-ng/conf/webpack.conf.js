@@ -25,7 +25,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.(css|scss)$/,
+        test: /\.scss$/,
         loaders: [
           'style',
           'css?sourceMap',
