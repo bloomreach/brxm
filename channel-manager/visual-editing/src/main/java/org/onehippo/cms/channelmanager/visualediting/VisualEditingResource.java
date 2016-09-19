@@ -18,7 +18,12 @@ package org.onehippo.cms.channelmanager.visualediting;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+
+import org.onehippo.cms.channelmanager.visualediting.model.Document;
+import org.onehippo.cms.channelmanager.visualediting.model.DocumentTypeSpec;
+import org.onehippo.cms.channelmanager.visualediting.util.MockResponse;
 
 @Produces("application/json")
 @Path("/")
@@ -28,5 +33,17 @@ public class VisualEditingResource {
     @Path("/")
     public String helloWorld() {
         return "Hello World!";
+    }
+
+    @GET
+    @Path("documents/{id}")
+    public Document getDocument(@PathParam("id") String id) {
+        return MockResponse.createTestDocument(id);
+    }
+
+    @GET
+    @Path("documenttypes/{id}")
+    public DocumentTypeSpec getDocumentTypeSpec(@PathParam("id") String id) {
+        return MockResponse.createTestDocumentType();
     }
 }
