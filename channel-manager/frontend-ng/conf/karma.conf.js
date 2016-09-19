@@ -1,54 +1,55 @@
 const conf = require('./gulp.conf');
 
-module.exports = function (config) {
+module.exports = function karmaConfig(config) {
   const configuration = {
     basePath: '../',
     singleRun: true,
     autoWatch: false,
     logLevel: 'INFO',
     junitReporter: {
-      outputDir: 'test-reports'
+      outputDir: 'test-reports',
     },
     browsers: [
-      'PhantomJS'
+      'Chrome',
     ],
     frameworks: [
-      'jasmine'
+      'jasmine',
     ],
     files: [
       'node_modules/es6-shim/es6-shim.js',
       conf.path.src('index.spec.js'),
-      conf.path.src('**/*.html')
+      conf.path.src('**/*.html'),
     ],
     preprocessors: {
       [conf.path.src('index.spec.js')]: [
-        'webpack'
+        'webpack',
+        'sourcemap',
       ],
       [conf.path.src('**/*.html')]: [
-        'ng-html2js'
-      ]
+        'ng-html2js',
+      ],
     },
     ngHtml2JsPreprocessor: {
-      stripPrefix: `${conf.paths.src}/`
+      stripPrefix: `${conf.paths.src}/`,
     },
     reporters: ['progress', 'coverage'],
     coverageReporter: {
       type: 'html',
-      dir: 'coverage/'
+      dir: 'coverage/',
     },
     webpack: require('./webpack-test.conf'),
     webpackMiddleware: {
-      noInfo: true
+      noInfo: 'errors-only',
     },
     plugins: [
       require('karma-jasmine'),
       require('karma-junit-reporter'),
       require('karma-coverage'),
-      require('karma-phantomjs-launcher'),
-      require('karma-phantomjs-shim'),
+      require('karma-chrome-launcher'),
+      require('karma-sourcemap-loader'),
       require('karma-ng-html2js-preprocessor'),
-      require('karma-webpack')
-    ]
+      require('karma-webpack'),
+    ],
   };
 
   config.set(configuration);
