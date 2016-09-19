@@ -186,7 +186,7 @@ describe('hippoIframeCtrl', () => {
       uuid: '1234',
     });
 
-    const locked = hippoIframeCtrl.contentIsLocked(contentLink);
+    const locked = hippoIframeCtrl.contentIsLockedByAnother(contentLink);
 
     expect(locked).toBe(false);
   });
@@ -198,7 +198,7 @@ describe('hippoIframeCtrl', () => {
       holderId: 'test',
     });
 
-    const locked = hippoIframeCtrl.contentIsLocked(contentLink);
+    const locked = hippoIframeCtrl.contentIsLockedByAnother(contentLink);
 
     expect(locked).toBe(true);
   });
@@ -213,7 +213,7 @@ describe('hippoIframeCtrl', () => {
       cmsUser: 'test',
     };
     spyOn(CmsService, 'publish');
-    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(true);
+    spyOn(hippoIframeCtrl, 'contentIsLockedByAnother').and.returnValue(true);
 
     hippoIframeCtrl.openContent(contentLink);
 
@@ -226,7 +226,7 @@ describe('hippoIframeCtrl', () => {
       uuid: '1234',
     });
     spyOn(ChannelSidePanelService, 'open');
-    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(false);
+    spyOn(hippoIframeCtrl, 'contentIsLockedByAnother').and.returnValue(false);
 
     hippoIframeCtrl.openContent(contentLink);
 
@@ -234,7 +234,7 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('gets the edit content tooltip for the content link', () => {
-    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(false);
+    spyOn(hippoIframeCtrl, 'contentIsLockedByAnother').and.returnValue(false);
 
     const tooltip = hippoIframeCtrl.getContentLinkTooltip({});
 
@@ -242,7 +242,7 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('gets the locked by tooltip for the content link', () => {
-    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(true);
+    spyOn(hippoIframeCtrl, 'contentIsLockedByAnother').and.returnValue(true);
 
     const tooltip = hippoIframeCtrl.getContentLinkTooltip({
       metaData: {
@@ -254,7 +254,7 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('gets the edit icon for the content link', () => {
-    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(false);
+    spyOn(hippoIframeCtrl, 'contentIsLockedByAnother').and.returnValue(false);
 
     const icon = hippoIframeCtrl.getContentLinkIcon({});
 
@@ -262,7 +262,7 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('gets the locked icon for the content link', () => {
-    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(true);
+    spyOn(hippoIframeCtrl, 'contentIsLockedByAnother').and.returnValue(true);
 
     const icon = hippoIframeCtrl.getContentLinkIcon({});
 
