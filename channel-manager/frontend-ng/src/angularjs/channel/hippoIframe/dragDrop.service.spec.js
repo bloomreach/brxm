@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('DragDropService', () => {
   'use strict';
 
@@ -35,7 +38,7 @@ describe('DragDropService', () => {
   let container2;
 
   beforeEach(() => {
-    module('hippo-cm.channel.hippoIframe');
+    angular.mock.module('hippo-cm.channel.hippoIframe');
 
     inject((_$q_,
             _DragDropService_,

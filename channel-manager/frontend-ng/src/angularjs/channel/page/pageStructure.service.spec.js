@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('PageStructureService', () => {
   'use strict';
 
@@ -31,7 +34,7 @@ describe('PageStructureService', () => {
   let $rootScope;
 
   beforeEach(() => {
-    module('hippo-cm.channel.page');
+    angular.mock.module('hippo-cm.channel.page');
 
     inject((_$q_, _$rootScope_, _$log_, _$document_, _$window_, _PageStructureService_, _PageMetaDataService_,
             _ChannelService_, _HstService_, _RenderingService_, _HippoIframeService_, _FeedbackService_) => {

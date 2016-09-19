@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('OverlaySyncService', () => {
   'use strict';
 
@@ -26,7 +29,7 @@ describe('OverlaySyncService', () => {
   let $window;
 
   beforeEach(() => {
-    module('hippo-cm.channel.hippoIframe.overlay');
+    angular.mock.module('hippo-cm.channel.hippoIframe.overlay');
 
     inject((_$window_, _OverlaySyncService_, _DomService_) => {
       $window = _$window_;

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('HstService', () => {
   'use strict';
 
@@ -30,7 +33,7 @@ describe('HstService', () => {
   const handshakeUrl = `${contextPath}${apiUrlPrefix}/${rootUuid}./composermode/${hostname}/${mountId}`;
 
   beforeEach(() => {
-    module('hippo-cm-api');
+    angular.mock.module('hippo-cm-api');
 
     ConfigServiceMock = {
       apiUrlPrefix,
@@ -39,7 +42,7 @@ describe('HstService', () => {
       rootUuid,
     };
 
-    module(($provide) => {
+    angular.mock.module(($provide) => {
       $provide.value('ConfigService', ConfigServiceMock);
     });
 

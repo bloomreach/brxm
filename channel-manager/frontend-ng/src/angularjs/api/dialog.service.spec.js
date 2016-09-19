@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('DialogService', () => {
   'use strict';
 
@@ -21,7 +24,7 @@ describe('DialogService', () => {
   let DialogService;
 
   beforeEach(() => {
-    module('hippo-cm-api');
+    angular.mock.module('hippo-cm-api');
 
     inject((_$mdDialog_, _DialogService_) => {
       $mdDialog = _$mdDialog_;

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('SessionService', () => {
   'use strict';
 
@@ -23,7 +26,7 @@ describe('SessionService', () => {
   let HstService;
 
   beforeEach(() => {
-    module('hippo-cm-api');
+    angular.mock.module('hippo-cm-api');
 
     inject((_$rootScope_, _$q_, _SessionService_, _HstService_) => {
       $rootScope = _$rootScope_;

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('ScrollService', () => {
   'use strict';
 
@@ -22,7 +25,7 @@ describe('ScrollService', () => {
   let velocitySpy;
 
   beforeEach(() => {
-    module('hippo-cm.channel.hippoIframe');
+    angular.mock.module('hippo-cm.channel.hippoIframe');
 
     jasmine.getFixtures().load('channel/hippoIframe/scroll.service.fixture.html');
 

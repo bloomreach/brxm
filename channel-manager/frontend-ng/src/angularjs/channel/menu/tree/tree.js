@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+import uiTree from 'angular-ui-tree';
+
 import { hippoTreeDirective } from './tree.directive';
 import { hippoTreeTemplateDirective } from './tree.template.directive';
 import { HippoTreeCtrl } from './tree.controller';
 
 export const uiTreeModule = angular
-  .module('hippo-cm.ui.tree', ['ui.tree'])
+  .module('hippo-cm.ui.tree', [
+    uiTree,
+  ])
   .directive('hippoTree', hippoTreeDirective)
   .directive('hippoTreeTemplate', hippoTreeTemplateDirective)
   .controller('HippoTreeCtrl', HippoTreeCtrl);

@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('PageMetaDataService', () => {
   'use strict';
 
   let PageMetaDataService;
 
   beforeEach(() => {
-    module('hippo-cm.channel.page');
+    angular.mock.module('hippo-cm.channel.page');
 
     inject((_PageMetaDataService_) => {
       PageMetaDataService = _PageMetaDataService_;

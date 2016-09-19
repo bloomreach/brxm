@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
 import { EmbeddedLink } from '../page/element/embeddedLink';
 
 describe('hippoIframeCtrl', () => {
@@ -44,7 +46,7 @@ describe('hippoIframeCtrl', () => {
 
   beforeEach(() => {
     let $compile;
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlaySyncService_,
             _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,

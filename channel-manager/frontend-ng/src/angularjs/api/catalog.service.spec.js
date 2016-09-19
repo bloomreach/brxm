@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('ComponentsService', () => {
   'use strict';
 
@@ -23,13 +26,13 @@ describe('ComponentsService', () => {
   let CatalogService;
 
   beforeEach(() => {
-    module('hippo-cm-api');
+    angular.mock.module('hippo-cm-api');
 
     HstServiceMock = jasmine.createSpyObj('HstService', [
       'doGet',
     ]);
 
-    module(($provide) => {
+    angular.mock.module(($provide) => {
       $provide.value('HstService', HstServiceMock);
     });
 

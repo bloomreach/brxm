@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import ngDeviceDetector from 'ng-device-detector';
+
 import { overlayModule } from './overlay/overlay';
 import { componentAdderModule } from './componentAdder/componentAdder';
 import { hippoIframe } from './hippoIframe.directive';
@@ -27,7 +29,7 @@ import { DragDropService } from './dragDrop.service';
 
 export const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
-    'ng.deviceDetector',
+    ngDeviceDetector,
     overlayModule.name,
     componentAdderModule.name,
   ])

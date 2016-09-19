@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('ChannelProperty', () => {
   'use strict';
 
@@ -27,7 +30,7 @@ describe('ChannelProperty', () => {
   let $scope;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$rootScope_, _$compile_, _$log_, _ChannelService_, _ConfigService_) => {
       $rootScope = _$rootScope_;
@@ -75,7 +78,7 @@ describe('ChannelProperty', () => {
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('channel-property');
+    return $element.controller('channelProperty');
   }
 
   it('initializes correctly', () => {
