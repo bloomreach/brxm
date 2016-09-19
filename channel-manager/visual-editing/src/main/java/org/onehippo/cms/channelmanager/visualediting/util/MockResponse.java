@@ -36,7 +36,7 @@ public class MockResponse {
         final Document doc = new Document();
 
         doc.setId(id);
-        doc.setType(DOCUMENT_TYPE);
+        doc.setTypeId(DOCUMENT_TYPE);
         doc.setDisplayName("Tobi's test document");
 
         // String

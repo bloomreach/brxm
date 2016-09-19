@@ -25,8 +25,8 @@ import java.util.Map;
  * Its {@code type} attribute refers to the document's {@link DocumentTypeSpec} by id.
  */
 public class Document {
-    private String id;    // UUID
-    private String type;  // "namespace:typename"
+    private String id;                // UUID
+    private Type type; // enveloped reference to document type: { id: "namespace:typename" }
     private String displayName;
     private Map<String, Object> fields;
 
@@ -38,12 +38,12 @@ public class Document {
         this.id = id;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(final String type) {
-        this.type = type;
+    public void setTypeId(final String id) {
+        type = new Type(id);
     }
 
     public String getDisplayName() {
@@ -63,5 +63,17 @@ public class Document {
             fields = new HashMap<>();
         }
         fields.put(id, field);
+    }
+
+    private class Type {
+        private String id;
+
+        public Type(String id) {
+            this.id = id;
+        }
+
+        public String getId() {
+            return id;
+        }
     }
 }
