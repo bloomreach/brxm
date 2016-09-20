@@ -17,6 +17,11 @@ module.exports = function karmaConfig(config) {
     ],
     files: [
       'node_modules/es6-shim/es6-shim.js',
+      'node_modules/jquery/dist/jquery.js',
+      {
+        pattern: 'node_modules/dragula/dist/dragula.min.+(css|js)',
+        included: false,
+      },
       conf.path.src('index.spec.js'),
       conf.path.src('**/*.html'),
     ],
