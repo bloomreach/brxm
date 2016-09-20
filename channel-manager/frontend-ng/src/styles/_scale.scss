@@ -12,10 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+$transition-duration: 0.4s !default; // matches angular material
+$transition-type: cubic-bezier(0.25, 0.8, 0.25, 1) !default; // matches angular material
+
+hippo-iframe,
 .cm-scale {
-  transform-origin: top right;
+  transition: transform $transition-duration $transition-type;
+  will-change: transform;
 }
 
 .cm-scale-to-left {
   transform-origin: top left;
 }
+.cm-scale-to-right {
+  transform-origin: top right;
+}
+
+.prevent-horizontal-scrollbar-while-scaling {
+  overflow-x: hidden;
+}
+
