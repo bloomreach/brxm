@@ -26,9 +26,10 @@ import java.util.Set;
  * It can be serialized into JSON to expose it through a REST API.
  */
 public class FieldTypeSpec {
-    private String id;         // "namespace:fieldname", unique within a "level" of fields.
+    private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
-    private String caption;    // using the correct language/locale
+    private String displayName;   // using the correct language/locale
+    private String hint;          // using the correct language/locale
 
     private boolean multiple;
     // private boolean orderable; // future improvement
@@ -71,12 +72,20 @@ public class FieldTypeSpec {
         this.type = type;
     }
 
-    public String getCaption() {
-        return caption;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setCaption(final String caption) {
-        this.caption = caption;
+    public void setDisplayName(final String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(final String hint) {
+        this.hint = hint;
     }
 
     public boolean isMultiple() {

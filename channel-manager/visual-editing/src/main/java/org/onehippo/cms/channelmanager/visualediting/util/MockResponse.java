@@ -129,20 +129,23 @@ public class MockResponse {
         FieldTypeSpec field = new FieldTypeSpec();
         field.setId("ns:string");
         field.setType(FieldTypeSpec.Type.STRING);
-        field.setCaption("Simple string");
+        field.setDisplayName("Simple string");
+        field.setHint("A simple string with no constraints");
         docType.addField(field);
 
         field = new FieldTypeSpec();
         field.setId("ns:multiplestring");
         field.setType(FieldTypeSpec.Type.STRING);
-        field.setCaption("Multiple string");
+        field.setDisplayName("Multiple string");
+        field.setHint("0 or more simple strings");
         field.setMultiple(true);
         docType.addField(field);
 
         field = new FieldTypeSpec();
         field.setId("ns:requiredstring");
         field.setType(FieldTypeSpec.Type.STRING);
-        field.setCaption("Required string");
+        field.setDisplayName("Required string");
+        field.setHint("A string which must not be empty");
         field.addValidator(FieldTypeSpec.Validator.REQUIRED);
         docType.addField(field);
 
@@ -151,13 +154,14 @@ public class MockResponse {
         field = new FieldTypeSpec();
         field.setId("ns:multilinestring");
         field.setType(FieldTypeSpec.Type.MULTILINE_STRING);
-        field.setCaption("Multi-line string");
+        field.setDisplayName("Multi-line string");
+        field.setHint("A long string, which may take a few lines");
         docType.addField(field);
 
         field = new FieldTypeSpec();
         field.setId("ns:requiredmultiplemultilinestring");
         field.setType(FieldTypeSpec.Type.MULTILINE_STRING);
-        field.setCaption("Required multiple multi-line string");
+        field.setDisplayName("Required multiple multi-line string");
         field.setMultiple(true);
         field.addValidator(FieldTypeSpec.Validator.REQUIRED);
         docType.addField(field);
@@ -167,25 +171,26 @@ public class MockResponse {
         field = new FieldTypeSpec();
         field.setId("ns:singlechoice");
         field.setType(FieldTypeSpec.Type.CHOICE);
-        field.setCaption("Single choice");
+        field.setDisplayName("Single choice");
+        field.setHint("Choose between a simple string, multiple strings or multiple non-empty long strings");
 
         FieldTypeSpec child = new FieldTypeSpec();
         child.setId("ns:firstchoice");
         child.setType(FieldTypeSpec.Type.STRING);
-        child.setCaption("First Choice: simple string");
+        child.setDisplayName("First Choice: simple string");
         field.addField(child);
 
         child = new FieldTypeSpec();
         child.setId("ns:secondchoice");
         child.setType(FieldTypeSpec.Type.STRING);
-        child.setCaption("Second Choice: multiple string");
+        child.setDisplayName("Second Choice: multiple string");
         child.setMultiple(true);
         field.addField(child);
 
         child = new FieldTypeSpec();
         child.setId("ns:thirdchoice");
         child.setType(FieldTypeSpec.Type.MULTILINE_STRING);
-        child.setCaption("Third Choice: Multi-line required string");
+        child.setDisplayName("Third Choice: Multi-line required string");
         child.setMultiple(true);
         child.addValidator(FieldTypeSpec.Validator.REQUIRED);
         field.addField(child);
@@ -195,31 +200,33 @@ public class MockResponse {
         field = new FieldTypeSpec();
         field.setId("ns:multiplechoice");
         field.setType(FieldTypeSpec.Type.CHOICE);
-        field.setCaption("Multiple choice");
+        field.setDisplayName("Multiple choice");
+        field.setHint("A sequence of fields being either a multi-line string, a sub-choice or a compound");
         field.setMultiple(true);
 
         child = new FieldTypeSpec();
         child.setId("ns:firstchoice");
         child.setType(FieldTypeSpec.Type.MULTILINE_STRING);
-        child.setCaption("First Choice: multi-line string");
+        child.setDisplayName("First Choice: multi-line string");
         field.addField(child);
 
         child = new FieldTypeSpec();
         child.setId("ns:secondchoice");
         child.setType(FieldTypeSpec.Type.CHOICE);
-        child.setCaption("Second Choice: sub-choice");
+        child.setDisplayName("Second Choice: sub-choice");
+        child.setHint("You can choose between multiple strings of a single multi-line string");
 
         FieldTypeSpec grandChild = new FieldTypeSpec();
         grandChild.setId("ns:firstchoice");
         grandChild.setType(FieldTypeSpec.Type.STRING);
-        grandChild.setCaption("First sub-choice");
+        grandChild.setDisplayName("First sub-choice");
         grandChild.setMultiple(true);
         child.addField(grandChild);
 
         grandChild = new FieldTypeSpec();
         grandChild.setId("ns:secondchoice");
         grandChild.setType(FieldTypeSpec.Type.MULTILINE_STRING);
-        grandChild.setCaption("Second sub-choice");
+        grandChild.setDisplayName("Second sub-choice");
         child.addField(grandChild);
 
         field.addField(child);
@@ -227,19 +234,19 @@ public class MockResponse {
         child = new FieldTypeSpec();
         child.setId("ns:thirdchoice");
         child.setType(FieldTypeSpec.Type.COMPOUND);
-        child.setCaption("Third Choice: compound");
+        child.setDisplayName("Third Choice: compound");
         child.setMultiple(true);
 
         grandChild = new FieldTypeSpec();
         grandChild.setId("ns:firstchild");
         grandChild.setType(FieldTypeSpec.Type.STRING);
-        grandChild.setCaption("First sub-child");
+        grandChild.setDisplayName("First sub-child");
         child.addField(grandChild);
 
         grandChild = new FieldTypeSpec();
         grandChild.setId("ns:secondchild");
         grandChild.setType(FieldTypeSpec.Type.STRING);
-        grandChild.setCaption("Second sub-child");
+        grandChild.setDisplayName("Second sub-child");
         grandChild.addValidator(FieldTypeSpec.Validator.REQUIRED);
         child.addField(grandChild);
 
@@ -252,13 +259,14 @@ public class MockResponse {
         field = new FieldTypeSpec();
         field.setId("ns:onelevelnesting");
         field.setType(FieldTypeSpec.Type.COMPOUND);
-        field.setCaption("One level of nesting");
+        field.setDisplayName("One level of nesting");
+        field.setHint("This is a simple compound field, consisting of N required strings, a multi-line string and N multi-line strings.");
         field.setMultiple(true);
 
         child = new FieldTypeSpec();
         child.setId("ns:firstchild");
         child.setType(FieldTypeSpec.Type.STRING);
-        child.setCaption("First child");
+        child.setDisplayName("First child");
         child.setMultiple(true);
         child.addValidator(FieldTypeSpec.Validator.REQUIRED);
         field.addField(child);
@@ -266,13 +274,13 @@ public class MockResponse {
         child = new FieldTypeSpec();
         child.setId("ns:secondchild");
         child.setType(FieldTypeSpec.Type.MULTILINE_STRING);
-        child.setCaption("Second child");
+        child.setDisplayName("Second child");
         field.addField(child);
 
         child = new FieldTypeSpec();
         child.setId("ns:thirdchild");
         child.setType(FieldTypeSpec.Type.MULTILINE_STRING);
-        child.setCaption("Third child");
+        child.setDisplayName("Third child");
         child.setMultiple(true);
         field.addField(child);
 
@@ -281,32 +289,33 @@ public class MockResponse {
         field = new FieldTypeSpec();
         field.setId("ns:twolevelnesting");
         field.setType(FieldTypeSpec.Type.COMPOUND);
-        field.setCaption("Two levels of nesting");
+        field.setDisplayName("Two levels of nesting");
+        field.setHint("A compound field with 2 levels of nesting. At the second level, there's a sub-compound and single choice.");
         field.setMultiple(true);
 
         child = new FieldTypeSpec();
         child.setId("ns:firstchild");
         child.setType(FieldTypeSpec.Type.STRING);
-        child.setCaption("First child");
+        child.setDisplayName("First child");
         field.addField(child);
 
         child = new FieldTypeSpec();
         child.setId("ns:secondchild");
         child.setType(FieldTypeSpec.Type.COMPOUND);
-        child.setCaption("Second child");
+        child.setDisplayName("Second child");
         child.setMultiple(true);
 
         grandChild = new FieldTypeSpec();
         grandChild.setId("ns:firstgrandchild");
         grandChild.setType(FieldTypeSpec.Type.STRING);
-        grandChild.setCaption("First grand-child");
+        grandChild.setDisplayName("First grand-child");
         grandChild.setMultiple(true);
         child.addField(grandChild);
 
         grandChild = new FieldTypeSpec();
         grandChild.setId("ns:secondgrandchild");
         grandChild.setType(FieldTypeSpec.Type.MULTILINE_STRING);
-        grandChild.setCaption("Second grand-child");
+        grandChild.setDisplayName("Second grand-child");
         grandChild.addValidator(FieldTypeSpec.Validator.REQUIRED);
         child.addField(grandChild);
 
@@ -315,18 +324,18 @@ public class MockResponse {
         child = new FieldTypeSpec();
         child.setId("ns:thirdchild");
         child.setType(FieldTypeSpec.Type.CHOICE);
-        child.setCaption("Third child");
+        child.setDisplayName("Third child");
 
         grandChild = new FieldTypeSpec();
         grandChild.setId("ns:firstgrandchild");
         grandChild.setType(FieldTypeSpec.Type.STRING);
-        grandChild.setCaption("First grand-child");
+        grandChild.setDisplayName("First grand-child");
         child.addField(grandChild);
 
         grandChild = new FieldTypeSpec();
         grandChild.setId("ns:secondgrandchild");
         grandChild.setType(FieldTypeSpec.Type.STRING);
-        grandChild.setCaption("Second grand-child");
+        grandChild.setDisplayName("Second grand-child");
         grandChild.setMultiple(true);
         grandChild.addValidator(FieldTypeSpec.Validator.REQUIRED);
         child.addField(grandChild);
@@ -334,7 +343,7 @@ public class MockResponse {
         grandChild = new FieldTypeSpec();
         grandChild.setId("ns:thirdgrandchild");
         grandChild.setType(FieldTypeSpec.Type.MULTILINE_STRING);
-        grandChild.setCaption("Third grand-child");
+        grandChild.setDisplayName("Third grand-child");
         child.addField(grandChild);
 
         field.addField(child);
