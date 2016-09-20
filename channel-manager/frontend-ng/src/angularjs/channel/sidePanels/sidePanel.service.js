@@ -34,10 +34,6 @@ export class ChannelSidePanelService {
     this.panels[side].jQueryElement = jQueryElement;
   }
 
-  scale(side) {
-    this.ScalingService.setPushWidth(side, this.isOpen(side) ? this.panels[side].jQueryElement.width() : 0);
-  }
-
   toggle(side) {
     if (this.isOpen(side)) {
       this.close(side);
@@ -48,9 +44,8 @@ export class ChannelSidePanelService {
 
   open(side) {
     if (!this.isOpen(side)) {
-      this.close(side === 'left' ? 'right' : 'left');
       this.$mdSidenav(this.panels[side].element).open();
-      this.scale(side);
+      this.ScalingService.setPushWidth(side, this.panels[side].jQueryElement.width());
     }
   }
 

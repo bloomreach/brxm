@@ -21,7 +21,7 @@ describe('ChannelSidePanelService', () => {
 
   let ChannelSidePanelService;
   let ScalingService;
-  const leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'close']);
+  const leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close']);
 
   beforeEach(() => {
     module('hippo-cm');
@@ -47,20 +47,20 @@ describe('ChannelSidePanelService', () => {
 
     ScalingService.setPushWidth.calls.reset();
     leftSidePanel.toggle.calls.reset();
-    leftSidePanel.isOpen.and.returnValue(true);
-
-    ChannelSidePanelService.toggle('left');
-
-    expect(leftSidePanel.toggle).toHaveBeenCalled();
-    expect(ScalingService.setPushWidth).toHaveBeenCalledWith('left', 250);
-
-    ScalingService.setPushWidth.calls.reset();
-    leftSidePanel.toggle.calls.reset();
     leftSidePanel.isOpen.and.returnValue(false);
 
     ChannelSidePanelService.toggle('left');
 
-    expect(leftSidePanel.toggle).toHaveBeenCalled();
+    expect(leftSidePanel.open).toHaveBeenCalled();
+    expect(ScalingService.setPushWidth).toHaveBeenCalledWith('left', 250);
+
+    ScalingService.setPushWidth.calls.reset();
+    leftSidePanel.toggle.calls.reset();
+    leftSidePanel.isOpen.and.returnValue(true);
+
+    ChannelSidePanelService.toggle('left');
+
+    expect(leftSidePanel.close).toHaveBeenCalled();
     expect(ScalingService.setPushWidth).toHaveBeenCalledWith('left', 0);
   });
 
