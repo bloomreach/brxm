@@ -22,12 +22,11 @@ import java.util.Map;
 /**
  * This bean represents a document, stored in the CMS.
  * It can be serialized into JSON to expose it through a REST API.
- * Its {@code type} attribute refers to the document's {@link DocumentTypeSpec} by id.
  */
 public class Document {
     private String id;                // UUID
-    private Type type; // enveloped reference to document type: { id: "namespace:typename" }
     private String displayName;
+    private DocumentInfo info;        // read-only information about (the current state of) the document
     private Map<String, Object> fields;
 
     public String getId() {
@@ -38,20 +37,20 @@ public class Document {
         this.id = id;
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public void setTypeId(final String id) {
-        type = new Type(id);
-    }
-
     public String getDisplayName() {
         return displayName;
     }
 
     public void setDisplayName(final String displayName) {
         this.displayName = displayName;
+    }
+
+    public DocumentInfo getInfo() {
+        return info;
+    }
+
+    public void setInfo(final DocumentInfo info) {
+        this.info = info;
     }
 
     public Map<String, Object> getFields() {
@@ -63,17 +62,5 @@ public class Document {
             fields = new HashMap<>();
         }
         fields.put(id, field);
-    }
-
-    private class Type {
-        private String id;
-
-        public Type(String id) {
-            this.id = id;
-        }
-
-        public String getId() {
-            return id;
-        }
     }
 }

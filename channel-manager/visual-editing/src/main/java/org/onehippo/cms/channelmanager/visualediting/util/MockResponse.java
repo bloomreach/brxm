@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.onehippo.cms.channelmanager.visualediting.model.Document;
+import org.onehippo.cms.channelmanager.visualediting.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.visualediting.model.DocumentTypeSpec;
 import org.onehippo.cms.channelmanager.visualediting.model.FieldTypeSpec;
 
@@ -34,10 +35,14 @@ public class MockResponse {
 
     public static Document createTestDocument(final String id) {
         final Document doc = new Document();
+        final DocumentInfo info = new DocumentInfo();
 
         doc.setId(id);
-        doc.setTypeId(DOCUMENT_TYPE);
+        doc.setInfo(info);
         doc.setDisplayName("Tobi's test document");
+
+        info.setEditState(DocumentInfo.EditState.AVAILABLE);
+        info.setTypeId(DOCUMENT_TYPE);
 
         // String
         doc.addField("ns:string", "Lorem ipsum dolor sit amet");
