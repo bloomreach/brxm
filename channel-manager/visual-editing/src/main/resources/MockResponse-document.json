@@ -5,7 +5,9 @@
     "type": {
       "id": "ns:testdocument"
     },
-    "editState": "AVAILABLE"
+    "editing": {
+      "state": "AVAILABLE"
+    }
   },
   "fields": {
     "ns:string": "Lorem ipsum dolor sit amet",

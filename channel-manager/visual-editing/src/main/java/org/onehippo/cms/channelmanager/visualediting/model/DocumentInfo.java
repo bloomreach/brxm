@@ -27,11 +27,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DocumentInfo {
-    private Type type;                // enveloped reference to document type: { id: "namespace:typename" }
 
-    private EditState editState = EditState.UNKNOWN;
-    private String holder;            // CMS user-ID of editor
-    private String holderDisplayName; // full, human-readable name of editor
+    // enveloped reference to document type: { id: "namespace:typename" }
+    private Type type;
+
+    @JsonProperty(value = "editing")
+    private EditingInfo editingInfo;
 
     public Type getType() {
         return type;
@@ -41,28 +42,12 @@ public class DocumentInfo {
         type = new Type(id);
     }
 
-    public EditState getEditState() {
-        return editState;
+    public EditingInfo getEditingInfo() {
+        return editingInfo;
     }
 
-    public void setEditState(final EditState editState) {
-        this.editState = editState;
-    }
-
-    public String getHolder() {
-        return holder;
-    }
-
-    public void setHolder(final String holder) {
-        this.holder = holder;
-    }
-
-    public String getHolderDisplayName() {
-        return holderDisplayName;
-    }
-
-    public void setHolderDisplayName(final String holderDisplayName) {
-        this.holderDisplayName = holderDisplayName;
+    public void setEditingInfo(final EditingInfo editing) {
+        this.editingInfo = editing;
     }
 
     private static class Type {
@@ -79,12 +64,4 @@ public class DocumentInfo {
         }
     }
 
-    public enum EditState {
-        AVAILABLE,
-        ACCESS_DENIED,
-        HELD_BY_OTHER_USER,
-        LOCKED_BY_PUBLICATION_REQUEST,
-
-        UNKNOWN
-    }
 }
