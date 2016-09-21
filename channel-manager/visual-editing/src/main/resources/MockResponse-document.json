@@ -29,16 +29,22 @@
         "voluptatem accusantium doloremque laudantium"
       ]
     },
-    "ns:multiplechoice": {
-      "ns:thirdchoice": {
-        "ns:firstchild": "",
-        "ns:secondchild": "totam rem aperiam"
+    "ns:multiplechoice": [
+      {
+        "ns:thirdchoice": {
+          "ns:firstchild": "",
+          "ns:secondchild": "totam rem aperiam"
+        }
       },
-      "ns:firstchoice": "eaque ipsa quae ab illo inventore\nveritatis et quasi architecto beatae vitae dicta sunt explicabo",
-      "ns:secondchoice": {
-        "ns:secondchoice": "Nemo enim ipsam voluptatem quia voluptas sit"
+      {
+        "ns:firstchoice": "eaque ipsa quae ab illo inventore\nveritatis et quasi architecto beatae vitae dicta sunt explicabo"
+      },
+      {
+        "ns:secondchoice": {
+          "ns:secondchoice": "Nemo enim ipsam voluptatem quia voluptas sit"
+        }
       }
-    },
+    ],
     "ns:onelevelnesting": {
       "ns:firstchild": [],
       "ns:secondchild": "aspernatur aut odit aut fugit\nsed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt"
