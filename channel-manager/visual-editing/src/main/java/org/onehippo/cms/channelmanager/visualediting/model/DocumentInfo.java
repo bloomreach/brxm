@@ -17,7 +17,6 @@
 package org.onehippo.cms.channelmanager.visualediting.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -25,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * It is part of a document and can be serialized into JSON to expose it through a REST API.
  * Type {@code type} attribute refers to the document's {@link DocumentTypeSpec} by id.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DocumentInfo {
 
     // enveloped reference to document type: { id: "namespace:typename" }
