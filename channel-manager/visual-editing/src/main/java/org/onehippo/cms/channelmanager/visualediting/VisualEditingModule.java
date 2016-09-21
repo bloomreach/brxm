@@ -22,7 +22,9 @@ import javax.jcr.Session;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
+import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.jaxrs.CXFRepositoryJaxrsEndpoint;
 import org.onehippo.repository.jaxrs.RepositoryJaxrsEndpoint;
 import org.onehippo.repository.jaxrs.RepositoryJaxrsService;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
@@ -54,7 +56,8 @@ public class VisualEditingModule extends AbstractReconfigurableDaemonModule {
             throw new IllegalStateException("VisualEditingModule requires a hippo:moduleconfig");
         }
         // TODO: add authorization
-        jaxrsEndpoint = new RepositoryJaxrsEndpoint(endpointAddress)
+        jaxrsEndpoint = new CXFRepositoryJaxrsEndpoint(endpointAddress)
+                .invoker(new JAXRSInvoker()) // use a pure CXF invoker to circumvent the repository's default authentication
                 .rootClass(VisualEditingResource.class)
                 .singleton(new JacksonJsonProvider());
         RepositoryJaxrsService.addEndpoint(jaxrsEndpoint);

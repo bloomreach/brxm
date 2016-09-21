@@ -1,0 +1,81 @@
+{
+  "id": "bla",
+  "displayName": "Tobi's test document",
+  "info": {
+    "type": {
+      "id": "ns:testdocument"
+    },
+    "editing": {
+      "state": "AVAILABLE"
+    }
+  },
+  "fields": {
+    "ns:string": "Lorem ipsum dolor sit amet",
+    "ns:multiplestring": [
+      "consectetur adipiscing elit",
+      "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+      "Ut enim ad minim veniam"
+    ],
+    "ns:requiredstring": "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat",
+    "ns:multilinestring": "Duis aute irure dolor in reprehenderit\nin voluptate velit esse cillum dolore eu fugiat nulla pariatur",
+    "ns:requiredmultiplemultilinestring": [
+      "",
+      "Excepteur sint occaecat cupidatat non proident",
+      "sunt in culpa qui officia deserunt\nmollit anim id est laborum"
+    ],
+    "ns:singlechoice": {
+      "ns:secondchoice": [
+        "Sed ut perspiciatis unde omnis iste natus error sit",
+        "voluptatem accusantium doloremque laudantium"
+      ]
+    },
+    "ns:multiplechoice": [
+      {
+        "ns:thirdchoice": {
+          "ns:firstchild": "",
+          "ns:secondchild": "totam rem aperiam"
+        }
+      },
+      {
+        "ns:firstchoice": "eaque ipsa quae ab illo inventore\nveritatis et quasi architecto beatae vitae dicta sunt explicabo"
+      },
+      {
+        "ns:secondchoice": {
+          "ns:secondchoice": "Nemo enim ipsam voluptatem quia voluptas sit"
+        }
+      }
+    ],
+    "ns:onelevelnesting": {
+      "ns:firstchild": [],
+      "ns:secondchild": "aspernatur aut odit aut fugit\nsed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt"
+    },
+    "ns:twolevelnesting": [
+      {
+        "ns:thirdchild": {
+          "ns:secondgrandchild": [
+            "qui dolorem ipsum quia dolor sit amet"
+          ]
+        },
+        "ns:firstchild": "Neque porro quisquam est"
+      },
+      {
+        "ns:thirdchild": {
+          "ns:firstgrandchild": "nisi ut aliquid ex ea commodi consequatur"
+        },
+        "ns:firstchild": "",
+        "ns:secondchild": [
+          {
+            "ns:firstgrandchild": [
+              "consectetur, adipisci velit",
+              "sed quia non numquam eius modi tempora incidunt ut labore"
+            ],
+            "ns:secondgrandchild": "et dolore magnam aliquam quaerat voluptatem"
+          },
+          {
+            "ns:secondgrandchild": "Ut enim ad minima veniam\nquis nostrum exercitationem ullam corporis suscipit laboriosam"
+          }
+        ]
+      }
+    ]
+  }
+}
