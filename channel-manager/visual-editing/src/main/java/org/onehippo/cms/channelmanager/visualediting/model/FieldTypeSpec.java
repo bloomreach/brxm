@@ -21,10 +21,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * This bean represents a field type, used for the fields of a {@link DocumentTypeSpec}.
  * It can be serialized into JSON to expose it through a REST API.
  */
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class FieldTypeSpec {
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
