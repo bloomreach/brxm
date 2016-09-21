@@ -16,6 +16,8 @@
 
 package org.onehippo.cms.channelmanager.visualediting;
 
+import java.io.IOException;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -37,13 +39,13 @@ public class VisualEditingResource {
 
     @GET
     @Path("documents/{id}")
-    public Document getDocument(@PathParam("id") String id) {
+    public Document getDocument(@PathParam("id") String id) throws IOException {
         return MockResponse.createTestDocument(id);
     }
 
     @GET
     @Path("documenttypes/{id}")
-    public DocumentTypeSpec getDocumentTypeSpec(@PathParam("id") String id) {
+    public DocumentTypeSpec getDocumentTypeSpec(@PathParam("id") String id) throws IOException {
         return MockResponse.createTestDocumentType();
     }
 }

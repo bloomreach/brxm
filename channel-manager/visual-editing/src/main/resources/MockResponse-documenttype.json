@@ -1,0 +1,298 @@
+{
+  "id": "ns:testdocument",
+  "displayName": "Tobi's test document type",
+  "fields": [
+    {
+      "id": "ns:string",
+      "type": "STRING",
+      "displayName": "Simple string",
+      "hint": "A simple string with no constraints",
+      "multiple": false,
+      "validators": null,
+      "fields": null
+    },
+    {
+      "id": "ns:multiplestring",
+      "type": "STRING",
+      "displayName": "Multiple string",
+      "hint": "0 or more simple strings",
+      "multiple": true,
+      "validators": null,
+      "fields": null
+    },
+    {
+      "id": "ns:requiredstring",
+      "type": "STRING",
+      "displayName": "Required string",
+      "hint": "A string which must not be empty",
+      "multiple": false,
+      "validators": [
+        "REQUIRED"
+      ],
+      "fields": null
+    },
+    {
+      "id": "ns:multilinestring",
+      "type": "MULTILINE_STRING",
+      "displayName": "Multi-line string",
+      "hint": "A long string, which may take a few lines",
+      "multiple": false,
+      "validators": null,
+      "fields": null
+    },
+    {
+      "id": "ns:requiredmultiplemultilinestring",
+      "type": "MULTILINE_STRING",
+      "displayName": "Required multiple multi-line string",
+      "hint": null,
+      "multiple": true,
+      "validators": [
+        "REQUIRED"
+      ],
+      "fields": null
+    },
+    {
+      "id": "ns:singlechoice",
+      "type": "CHOICE",
+      "displayName": "Single choice",
+      "hint": "Choose between a simple string, multiple strings or multiple non-empty long strings",
+      "multiple": false,
+      "validators": null,
+      "fields": [
+        {
+          "id": "ns:firstchoice",
+          "type": "STRING",
+          "displayName": "First Choice: simple string",
+          "hint": null,
+          "multiple": false,
+          "validators": null,
+          "fields": null
+        },
+        {
+          "id": "ns:secondchoice",
+          "type": "STRING",
+          "displayName": "Second Choice: multiple string",
+          "hint": null,
+          "multiple": true,
+          "validators": null,
+          "fields": null
+        },
+        {
+          "id": "ns:thirdchoice",
+          "type": "MULTILINE_STRING",
+          "displayName": "Third Choice: Multi-line required string",
+          "hint": null,
+          "multiple": true,
+          "validators": [
+            "REQUIRED"
+          ],
+          "fields": null
+        }
+      ]
+    },
+    {
+      "id": "ns:multiplechoice",
+      "type": "CHOICE",
+      "displayName": "Multiple choice",
+      "hint": "A sequence of fields being either a multi-line string, a sub-choice or a compound",
+      "multiple": true,
+      "validators": null,
+      "fields": [
+        {
+          "id": "ns:firstchoice",
+          "type": "MULTILINE_STRING",
+          "displayName": "First Choice: multi-line string",
+          "hint": null,
+          "multiple": false,
+          "validators": null,
+          "fields": null
+        },
+        {
+          "id": "ns:secondchoice",
+          "type": "CHOICE",
+          "displayName": "Second Choice: sub-choice",
+          "hint": "You can choose between multiple strings of a single multi-line string",
+          "multiple": false,
+          "validators": null,
+          "fields": [
+            {
+              "id": "ns:firstchoice",
+              "type": "STRING",
+              "displayName": "First sub-choice",
+              "hint": null,
+              "multiple": true,
+              "validators": null,
+              "fields": null
+            },
+            {
+              "id": "ns:secondchoice",
+              "type": "MULTILINE_STRING",
+              "displayName": "Second sub-choice",
+              "hint": null,
+              "multiple": false,
+              "validators": null,
+              "fields": null
+            }
+          ]
+        },
+        {
+          "id": "ns:thirdchoice",
+          "type": "COMPOUND",
+          "displayName": "Third Choice: compound",
+          "hint": null,
+          "multiple": true,
+          "validators": null,
+          "fields": [
+            {
+              "id": "ns:firstchild",
+              "type": "STRING",
+              "displayName": "First sub-child",
+              "hint": null,
+              "multiple": false,
+              "validators": null,
+              "fields": null
+            },
+            {
+              "id": "ns:secondchild",
+              "type": "STRING",
+              "displayName": "Second sub-child",
+              "hint": null,
+              "multiple": false,
+              "validators": [
+                "REQUIRED"
+              ],
+              "fields": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ns:onelevelnesting",
+      "type": "COMPOUND",
+      "displayName": "One level of nesting",
+      "hint": "This is a simple compound field, consisting of N required strings, a multi-line string and N multi-line strings.",
+      "multiple": true,
+      "validators": null,
+      "fields": [
+        {
+          "id": "ns:firstchild",
+          "type": "STRING",
+          "displayName": "First child",
+          "hint": null,
+          "multiple": true,
+          "validators": [
+            "REQUIRED"
+          ],
+          "fields": null
+        },
+        {
+          "id": "ns:secondchild",
+          "type": "MULTILINE_STRING",
+          "displayName": "Second child",
+          "hint": null,
+          "multiple": false,
+          "validators": null,
+          "fields": null
+        },
+        {
+          "id": "ns:thirdchild",
+          "type": "MULTILINE_STRING",
+          "displayName": "Third child",
+          "hint": null,
+          "multiple": true,
+          "validators": null,
+          "fields": null
+        }
+      ]
+    },
+    {
+      "id": "ns:twolevelnesting",
+      "type": "COMPOUND",
+      "displayName": "Two levels of nesting",
+      "hint": "A compound field with 2 levels of nesting. At the second level, there's a sub-compound and single choice.",
+      "multiple": true,
+      "validators": null,
+      "fields": [
+        {
+          "id": "ns:firstchild",
+          "type": "STRING",
+          "displayName": "First child",
+          "hint": null,
+          "multiple": false,
+          "validators": null,
+          "fields": null
+        },
+        {
+          "id": "ns:secondchild",
+          "type": "COMPOUND",
+          "displayName": "Second child",
+          "hint": null,
+          "multiple": true,
+          "validators": null,
+          "fields": [
+            {
+              "id": "ns:firstgrandchild",
+              "type": "STRING",
+              "displayName": "First grand-child",
+              "hint": null,
+              "multiple": true,
+              "validators": null,
+              "fields": null
+            },
+            {
+              "id": "ns:secondgrandchild",
+              "type": "MULTILINE_STRING",
+              "displayName": "Second grand-child",
+              "hint": null,
+              "multiple": false,
+              "validators": [
+                "REQUIRED"
+              ],
+              "fields": null
+            }
+          ]
+        },
+        {
+          "id": "ns:thirdchild",
+          "type": "CHOICE",
+          "displayName": "Third child",
+          "hint": null,
+          "multiple": false,
+          "validators": null,
+          "fields": [
+            {
+              "id": "ns:firstgrandchild",
+              "type": "STRING",
+              "displayName": "First grand-child",
+              "hint": null,
+              "multiple": false,
+              "validators": null,
+              "fields": null
+            },
+            {
+              "id": "ns:secondgrandchild",
+              "type": "STRING",
+              "displayName": "Second grand-child",
+              "hint": null,
+              "multiple": true,
+              "validators": [
+                "REQUIRED"
+              ],
+              "fields": null
+            },
+            {
+              "id": "ns:thirdgrandchild",
+              "type": "MULTILINE_STRING",
+              "displayName": "Third grand-child",
+              "hint": null,
+              "multiple": false,
+              "validators": null,
+              "fields": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
