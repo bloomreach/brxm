@@ -34,7 +34,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
-import org.hippoecm.frontend.model.properties.MapNullDateToNullModel;
+import org.hippoecm.frontend.model.properties.MapEmptyDateToNullModel;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
@@ -53,7 +53,7 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
         setOutputMarkupId(true);
 
         final Node dateNode = ((JcrNodeModel) getDefaultModel()).getNode();
-        final IModel<Date> valueModel = new MapNullDateToNullModel(new JcrPropertyValueModel<>(
+        final IModel<Date> valueModel = new MapEmptyDateToNullModel(new JcrPropertyValueModel<>(
                 new JcrPropertyModel(dateNode.getProperty(HIPPOSTD_DATE))));
 
         final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);

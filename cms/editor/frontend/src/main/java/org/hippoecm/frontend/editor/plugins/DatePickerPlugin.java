@@ -25,7 +25,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.datetime.DateTimeLabel;
 import org.hippoecm.frontend.plugins.standards.datetime.GMTDateLabel;
 import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
-import org.hippoecm.frontend.model.properties.MapNullDateToNullModel;
+import org.hippoecm.frontend.model.properties.MapEmptyDateToNullModel;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
@@ -49,7 +49,7 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
     public DatePickerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        final IModel<Date> model = new MapNullDateToNullModel(getModel());
+        final IModel<Date> model = new MapEmptyDateToNullModel(getModel());
         final Mode mode = Mode.fromString(config.getString(MODE), Mode.VIEW);
         if (mode == Mode.EDIT) {
             add(newDateFieldWidget(context, config, model));

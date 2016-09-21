@@ -20,18 +20,18 @@ import java.util.Date;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.PropertyValueProvider;
 
-public class MapNullDateToNullModel implements IModel<Date> {
+public class MapEmptyDateToNullModel implements IModel<Date> {
 
     private IModel<Date> delegate;
 
-    public MapNullDateToNullModel(IModel<Date> valueModel) {
+    public MapEmptyDateToNullModel(IModel<Date> valueModel) {
         delegate = valueModel;
     }
 
     @Override
     public Date getObject() {
         final Date object = delegate.getObject();
-        if (object != null && object.equals(PropertyValueProvider.NULL_DATE)) {
+        if (object != null && object.equals(PropertyValueProvider.EMPTY_DATE)) {
             return null;
         }
         return object;
@@ -40,7 +40,7 @@ public class MapNullDateToNullModel implements IModel<Date> {
     @Override
     public void setObject(final Date date) {
         if (date == null) {
-            delegate.setObject(PropertyValueProvider.NULL_DATE);
+            delegate.setObject(PropertyValueProvider.EMPTY_DATE);
         } else {
             delegate.setObject(date);
         }
