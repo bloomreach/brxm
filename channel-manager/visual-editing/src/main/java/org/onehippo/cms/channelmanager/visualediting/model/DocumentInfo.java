@@ -16,7 +16,9 @@
 
 package org.onehippo.cms.channelmanager.visualediting.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * This bean carries information of a document, stored in the CMS.
@@ -63,10 +65,12 @@ public class DocumentInfo {
         this.holderDisplayName = holderDisplayName;
     }
 
-    private class Type {
-        private String id;
+    private static class Type {
 
-        public Type(String id) {
+        private final String id;
+
+        @JsonCreator
+        public Type(@JsonProperty("id") String id) {
             this.id = id;
         }
 
