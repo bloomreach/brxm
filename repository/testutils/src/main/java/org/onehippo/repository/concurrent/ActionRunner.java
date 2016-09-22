@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.onehippo.repository.concurrent;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
@@ -28,6 +29,9 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
 import org.apache.jackrabbit.spi.Event;
+import org.apache.log4j.Appender;
+import org.apache.log4j.spi.LocationInfo;
+import org.apache.log4j.spi.LoggingEvent;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.concurrent.action.Action;
 import org.onehippo.repository.concurrent.action.ActionContext;
@@ -45,20 +49,27 @@ public class ActionRunner extends Thread {
     private final Random random = new Random();
     private final long duration;
     private final long throttle;
+    private boolean suppressRecoverableExceptions;
 
     private long endTime = -1;
     private boolean terminate = false;
-    private int misses = 0;
+    private int suspiciousExceptionCount = 0;
+    private int recoverableExceptionCount = 0;
     private int successes = 0;
     private final List<ActionFailure> failures = new ArrayList<ActionFailure>();
 
     public ActionRunner(ActionContext actionContext, List<Class<? extends Action>> actions, long duration, long throttle) {
+        this(actionContext, actions, duration, throttle, false);
+    }
+
+    public ActionRunner(ActionContext actionContext, List<Class<? extends Action>> actions, long duration, long throttle, boolean suppressRecoverableExceptions) {
         this.context = actionContext;
         this.session = actionContext.getSession();
         this.log = actionContext.getLog();
         this.actions = actions;
         this.duration = duration;
         this.throttle = throttle;
+        this.suppressRecoverableExceptions = suppressRecoverableExceptions;
     }
 
     public void initialize() throws Exception {}
@@ -79,9 +90,14 @@ public class ActionRunner extends Thread {
 
     @Override
     public void run() {
+        if (suppressRecoverableExceptions) {
+            setupLogFilter();
+        }
+
         if (duration > 0) {
             endTime = System.currentTimeMillis() + duration;
         }
+
         final EventListener eventListener = new EventListener() {
             @Override
             public void onEvent(EventIterator events) {
@@ -108,6 +124,31 @@ public class ActionRunner extends Thread {
             session.getWorkspace().getObservationManager().removeEventListener(eventListener);
         } catch (RepositoryException ex) {
             log.error("Failed to remove event listener for thread " + Thread.currentThread().getName());
+        }
+    }
+
+    protected void setupLogFilter() {
+        final org.apache.log4j.spi.Filter filter = new org.apache.log4j.spi.Filter() {
+            @Override
+            public int decide(final LoggingEvent event) {
+                final LocationInfo locationInfo = event.getLocationInformation();
+                if (locationInfo.getClassName().startsWith("org.onehippo.repository.concurrent")
+                        || locationInfo.getClassName().startsWith("org.hippoecm.repository.concurrent")) {
+                    return NEUTRAL;
+                }
+                if (event.getThrowableInformation() != null) {
+                    if (isRecoverable(event.getThrowableInformation().getThrowable())) {
+                        return DENY;
+                    }
+                }
+                return NEUTRAL;
+            }
+        };
+        final org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
+        final Enumeration appenders = root.getAllAppenders();
+        while (appenders.hasMoreElements()) {
+            final Appender appender = (Appender) appenders.nextElement();
+            appender.addFilter(filter);
         }
     }
 
@@ -149,8 +190,12 @@ public class ActionRunner extends Thread {
         return node;
     }
 
-    public int getMisses() {
-        return misses;
+    public int getSuspiciousExceptionCount() {
+        return suspiciousExceptionCount;
+    }
+
+    public int getRecoverableExceptionCount() {
+        return recoverableExceptionCount;
     }
 
     public int getSuccesses() {
@@ -173,7 +218,6 @@ public class ActionRunner extends Thread {
         final Action action = getAction(node);
         if (action != null) {
             try {
-                log.debug("Executing {} on node {}", new String[] { action.getClass().getSimpleName(), node.getPath() });
                 final Node result = action.execute(node);
                 successes++;
                 throttle();
@@ -246,15 +290,17 @@ public class ActionRunner extends Thread {
     }
 
     private void handleThrowable(Throwable t, Action action, Node node) {
-        if (t instanceof Exception) {
-            if (isRecoverableException((Exception)t)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Recoverable exception in action " + action.getClass().getSimpleName(), t);
-                }
-                misses++;
-                action.addMissed();
-                return;
-            }
+        if (isSuspicious(t)) {
+            log.error("Suspicious exception in action {}", action.getClass().getSimpleName(), t);
+            suspiciousExceptionCount++;
+            action.addSuspiciousException();
+            return;
+        }
+        if (isRecoverable(t)) {
+            log.debug("Recoverable exception in action {}", action.getClass().getSimpleName(), t);
+            recoverableExceptionCount++;
+            action.addRecoverableException();
+            return;
         }
         String path = null;
         try {
@@ -267,14 +313,31 @@ public class ActionRunner extends Thread {
         failures.add(failure);
     }
 
-    private boolean isRecoverableException(Exception e) {
-        if (e instanceof RepositoryException) {
-            return !(e.getCause() != null && !(e.getCause() instanceof RepositoryException || e.getCause().getClass().getSimpleName().endsWith("ItemStateException")));
+    private boolean isSuspicious(final Throwable t) {
+        if (t instanceof AssertionError) {
+            final StackTraceElement[] stackTrace = t.getStackTrace();
+            if (stackTrace.length > 0
+                    && stackTrace[0].getClassName().equals("org.apache.jackrabbit.core.ItemSaveOperation")
+                    && stackTrace[0].getMethodName().equals("removeTransientItems")) {
+                return true;
+            }
         }
-        if (e.getClass().getSimpleName().endsWith("ItemStateException")) {
-            return !(e.getCause() != null && !(e.getCause() instanceof RepositoryException || e.getCause().getClass().getSimpleName().endsWith("ItemStateException")));
+        return false;
+    }
+
+    private boolean isRecoverable(final Throwable t) {
+        // calling isSuspicious because isRecoverable is also invoked from the log filter created in #setupLogFilter
+        // suspicious exceptions must be logged
+        if (isSuspicious(t)) {
+            return false;
         }
-        if (e instanceof WorkflowException) {
+        if (t instanceof RepositoryException) {
+            return !(t.getCause() != null && !(t.getCause() instanceof RepositoryException || t.getCause().getClass().getSimpleName().endsWith("ItemStateException")));
+        }
+        if (t.getClass().getSimpleName().endsWith("ItemStateException")) {
+            return !(t.getCause() != null && !(t.getCause() instanceof RepositoryException || t.getCause().getClass().getSimpleName().endsWith("ItemStateException")));
+        }
+        if (t instanceof WorkflowException) {
             return true;
         }
         return false;
