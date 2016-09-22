@@ -55,6 +55,7 @@ module.exports = function karmaConfig(config) {
       require('karma-junit-reporter'),
       require('karma-coverage'),
       require('karma-chrome-launcher'),
+      require('karma-sourcemap-loader'),
       require('karma-ng-html2js-preprocessor'),
       require('karma-webpack'),
     ],
