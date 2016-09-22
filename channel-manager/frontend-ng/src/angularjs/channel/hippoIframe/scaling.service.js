@@ -120,14 +120,13 @@ export class ScalingService {
       const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
 
       if (targetOffset !== currentOffset) {
-        // keep scroll-position constant during animation
         elementsToScale.velocity('scroll', {
           container: iframeBaseJQueryElement,
           offset: targetOffset - currentOffset,
           duration: this.scaleDuration,
           easing: this.scaleEasing,
           queue: false,
-        });
+        }); // keep scroll-position constant during animation
       }
       elementsToScale.css('transform', `scale(${newScale})`);
     }
