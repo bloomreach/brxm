@@ -69,7 +69,6 @@ export class ScalingService {
    * The iframe should be shifted right (by controlling the translateX) if the left side panel is open,
    * and if the viewport width is less than the available canvas
    *
-   * @param animate  flag indicating whether any shift-change should be automated or immediate.
    * @returns {*[]}  canvasWidth is the maximum width available to the iframe
    *                 viewPortWidth indicates how many pixels wide the iframe content should be rendered.
    */
@@ -93,13 +92,9 @@ export class ScalingService {
    *
    * We compute the new scale factor and compare it to the old one. In case of a change, we zoom the "elementsToScale",
    * i.e. the iframe and the overlay, in or out. In case the scale factor changes due to opening/closing the left side panel,
-   * which is animated by material, we also animate the zooming and do an attempt to keep the scroll position of the
-   * iframe unchanged. Other changes (window resize, viewport width change) are not animated and we don't worry much
-   * about the scroll position.
-   *
-   * @param animate  flag indicating that any change should be animated.
+   * which is animated by material, we also animate the zooming and do an attempt to keep the scroll position of the iframe unchanged.
    */
-  _updateScaling(side, animate) {
+  _updateScaling(side) {
     if (!this.hippoIframeJQueryElement || !this.hippoIframeJQueryElement.is(':visible')) {
       return;
     }
@@ -120,36 +115,32 @@ export class ScalingService {
       }
       elementsToScale.velocity('finish');
 
-      if (animate) {
-        const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-base');
-        const currentOffset = iframeBaseJQueryElement.scrollTop();
-        const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
+      const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-base');
+      const currentOffset = iframeBaseJQueryElement.scrollTop();
+      const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
 
-        if (targetOffset !== currentOffset) {
-          // keep scroll-position constant during animation
-          elementsToScale.velocity('scroll', {
-            container: iframeBaseJQueryElement,
-            offset: targetOffset - currentOffset,
-            duration: this.scaleDuration,
-            easing: this.scaleEasing,
-            queue: false,
-          });
-        }
-        elementsToScale.css('transform', `scale(${newScale})`);
-      } else {
-        elementsToScale.css('transform', `scale(${newScale})`);
+      if (targetOffset !== currentOffset) {
+        // keep scroll-position constant during animation
+        elementsToScale.velocity('scroll', {
+          container: iframeBaseJQueryElement,
+          offset: targetOffset - currentOffset,
+          duration: this.scaleDuration,
+          easing: this.scaleEasing,
+          queue: false,
+        });
       }
+      elementsToScale.css('transform', `scale(${newScale})`);
     }
     this.scaleFactor = newScale;
   }
 
-  _resyncScaling(animate) {
+  _resyncScaling() {
     if (!this.hippoIframeJQueryElement || !this.hippoIframeJQueryElement.is(':visible')) {
       return;
     }
     const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
     const side = (elementsToScale.hasClass('cm-scale-to-left') ? 'right' : 'left');
 
-    this._updateScaling(side, animate);
+    this._updateScaling(side);
   }
 }

@@ -59,7 +59,7 @@ describe('ScalingService', () => {
     expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
 
-  it('should change the scaling factor animated when setting pushWidth', () => {
+  it('should change the scaling factor when setting pushWidth', () => {
     canvasJQueryElement.width(400);
 
     ScalingService.init(iframeJQueryElement);
@@ -69,7 +69,7 @@ describe('ScalingService', () => {
     expect(ScalingService.getScaleFactor()).toEqual(0.75);
   });
 
-  it('should reset the scaling factor animated to 1.0 when setting pushWidth to 0', () => {
+  it('should reset the scaling factor to 1.0 when setting pushWidth to 0', () => {
     canvasJQueryElement.width(400);
 
     ScalingService.init(iframeJQueryElement);
