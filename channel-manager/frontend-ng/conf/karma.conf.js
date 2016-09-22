@@ -7,9 +7,6 @@ module.exports = function karmaConfig(config) {
     singleRun: true,
     autoWatch: false,
     logLevel: 'INFO',
-    junitReporter: {
-      outputDir: 'test-reports',
-    },
     browsers: [
       'Chrome',
     ],
@@ -62,7 +59,6 @@ module.exports = function karmaConfig(config) {
       require('karma-coverage'),
       require('karma-jasmine'),
       require('karma-jasmine-jquery'),
-      require('karma-junit-reporter'),
       require('karma-mocha-reporter'),
       require('karma-ng-html2js-preprocessor'),
       require('karma-sourcemap-loader'),
