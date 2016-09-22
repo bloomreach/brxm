@@ -1,3 +1,7 @@
+
+// set test environment, currently used to trigger 'istanbul' plugin in .babelrc
+process.env.ENV = process.env.NODE_ENV = 'test';
+
 module.exports = {
   module: {
     preLoaders: [
@@ -7,7 +11,6 @@ module.exports = {
         loader: 'eslint',
       },
     ],
-
     loaders: [
       {
         test: /.json$/,
@@ -35,11 +38,6 @@ module.exports = {
         loaders: [
           'html',
         ],
-      },
-      {
-        test: /\.js$/,
-        exclude: /(node_modules|.*\.spec\.js)/,
-        loader: 'isparta',
       },
     ],
   },

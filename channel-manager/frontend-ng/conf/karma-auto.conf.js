@@ -44,8 +44,10 @@ module.exports = function karmaConfig(config) {
     },
     reporters: ['mocha', 'coverage'],
     coverageReporter: {
-      type: 'html',
-      dir: 'coverage/',
+      reporters: [
+        { type: 'html' },
+        { type: 'text-summary' },
+      ],
     },
     mochaReporter: {
       output: 'minimal',
