@@ -1,4 +1,5 @@
 const conf = require('./gulp.conf');
+const karmaFixtureProxyPath = '/base/src/angularjs/';
 
 module.exports = function karmaConfig(config) {
   const configuration = {
@@ -13,13 +14,13 @@ module.exports = function karmaConfig(config) {
       'Chrome',
     ],
     frameworks: [
-      'jasmine',
+      'jasmine-jquery', 'jasmine',
     ],
     files: [
       'node_modules/es6-shim/es6-shim.js',
-      'node_modules/jquery/dist/jquery.js',
+      conf.path.src('index.spec.js'),
       {
-        pattern: 'node_modules/dragula/dist/dragula.min.+(css|js)',
+        pattern: conf.path.src('**/*.fixture.+(js|html|css|json)'),
         included: false,
       },
       conf.path.src('index.spec.js'),
@@ -30,9 +31,13 @@ module.exports = function karmaConfig(config) {
         'webpack',
         'sourcemap',
       ],
-      [conf.path.src('**/*.html')]: [
+      [conf.path.src('**/!(*fixture).html')]: [
         'ng-html2js',
       ],
+    },
+    proxies: {
+      '/spec/javascripts/fixtures/': karmaFixtureProxyPath,
+      '/spec/javascripts/fixtures/json/': karmaFixtureProxyPath,
     },
     ngHtml2JsPreprocessor: {
       stripPrefix: `${conf.paths.src}/`,
@@ -48,6 +53,7 @@ module.exports = function karmaConfig(config) {
     },
     plugins: [
       require('karma-jasmine'),
+      require('karma-jasmine-jquery'),
       require('karma-junit-reporter'),
       require('karma-coverage'),
       require('karma-chrome-launcher'),
