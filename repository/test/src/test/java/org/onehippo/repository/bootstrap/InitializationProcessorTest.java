@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -57,6 +58,7 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_DELTADIRECTIVE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENT;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTDELETE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_CONTENTPROPADD;
@@ -109,6 +111,7 @@ public class InitializationProcessorTest extends RepositoryTestCase {
     public void tearDown() throws Exception {
         removeNode("/hippo:configuration/hippo:initialize/testitem");
         removeNode("/hippo:configuration/hippo:initialize/upstream");
+        removeNode("/hippo:configuration/hippo:initialize/deltaitem");
         removeNode("/webfiles");
 
         HippoServiceRegistry.unregisterService(webFilesService, WebFilesService.class);
@@ -284,6 +287,62 @@ public class InitializationProcessorTest extends RepositoryTestCase {
         assertEquals(1, deltaItemNode.getProperty(HIPPO_UPSTREAMITEMS).getValues().length);
         assertEquals(barItemNode.getIdentifier(), deltaItemNode.getProperty(HIPPO_UPSTREAMITEMS).getValues()[0].getString());
         process();
+    }
+
+    @Test
+    public void testProcessDeltaMergesLater() throws Exception {
+        Node resourceItemNode = item;
+        resourceItemNode.setProperty(HIPPO_CONTENTROOT, "/");
+        resourceItemNode.setProperty(HIPPO_CONTENTRESOURCE, "fake");
+        resourceItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[]{"/test"});
+        resourceItemNode.setProperty(HIPPO_SEQUENCE, 1l);
+        Node deltaItemNode = session.getRootNode().addNode("hippo:configuration/hippo:initialize/deltaitem", "hipposys:initializeitem");
+        deltaItemNode.setProperty(HIPPO_CONTENTROOT, "/");
+        deltaItemNode.setProperty(HIPPO_CONTENTRESOURCE, "fake");
+        deltaItemNode.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/test" } );
+        deltaItemNode.setProperty(HIPPOSYS_DELTADIRECTIVE, "combine");
+        deltaItemNode.setProperty(HIPPO_SEQUENCE, 1l);
+        session.save();
+
+        InitializeItem deltaItem = new InitializeItem(deltaItemNode);
+        InitializeItem resourceItem = new InitializeItem(item);
+        List<InitializeItem> initializeItems = Arrays.asList(deltaItem, resourceItem);
+        Collections.sort(initializeItems, new InitializeItemComparator());
+        // resource:"testitem" < delta:"deltaitem"
+        assertTrue(initializeItems.get(0).equals(resourceItem));
+        // assert initial order doesn't matter
+        initializeItems = Arrays.asList(resourceItem, deltaItem);
+        Collections.sort(initializeItems, new InitializeItemComparator());
+        assertTrue(initializeItems.get(0).equals(resourceItem));
+    }
+
+    @Test
+    public void testProcessDeltaMergesOrderedByName() throws Exception {
+        // item.name == "testitem"
+        Node deltaItem1Node = item;
+        deltaItem1Node.setProperty(HIPPO_CONTENTROOT, "/");
+        deltaItem1Node.setProperty(HIPPO_CONTENTRESOURCE, "fake");
+        deltaItem1Node.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/test" } );
+        deltaItem1Node.setProperty(HIPPOSYS_DELTADIRECTIVE, "combine");
+        deltaItem1Node.setProperty(HIPPO_SEQUENCE, 1l);
+        Node deltaItem2Node = session.getRootNode().addNode("hippo:configuration/hippo:initialize/deltaitem", "hipposys:initializeitem");
+        deltaItem2Node.setProperty(HIPPO_CONTENTROOT, "/");
+        deltaItem2Node.setProperty(HIPPO_CONTENTRESOURCE, "fake");
+        deltaItem2Node.setProperty(HIPPO_CONTEXTPATHS, new String[] { "/test" } );
+        deltaItem1Node.setProperty(HIPPOSYS_DELTADIRECTIVE, "combine");
+        deltaItem2Node.setProperty(HIPPO_SEQUENCE, 1l);
+        session.save();
+
+        InitializeItem deltaItem2 = new InitializeItem(deltaItem2Node);
+        InitializeItem deltaItem1 = new InitializeItem(item);
+        List<InitializeItem> initializeItems = Arrays.asList(deltaItem1, deltaItem2);
+        Collections.sort(initializeItems, new InitializeItemComparator());
+        // delta:"deltaitem < delta:"testitem"
+        assertTrue(initializeItems.get(0).equals(deltaItem2));
+        // assert initial order doesn't matter
+        initializeItems = Arrays.asList(deltaItem2, deltaItem1);
+        Collections.sort(initializeItems, new InitializeItemComparator());
+        assertTrue(initializeItems.get(0).equals(deltaItem2));
     }
 
     @Test
