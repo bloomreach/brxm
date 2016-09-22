@@ -15,6 +15,7 @@
  */
 
 import uiTree from 'angular-ui-tree';
+require('ng-cache!./items.renderer.html');
 
 import { hippoTreeDirective } from './tree.directive';
 import { hippoTreeTemplateDirective } from './tree.template.directive';

@@ -71,6 +71,7 @@
     "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "1.8.0",
     "ng-annotate-loader": "0.1.1",
+    "ng-cache-loader": "0.0.21",
     "node-sass": "3.10.0",
     "null-loader": "0.1.1",
     "phantomjs-prebuilt": "2.1.12",
