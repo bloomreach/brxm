@@ -23,10 +23,14 @@ export class ScalingService {
     this.OverlaySyncService = OverlaySyncService;
     this.DomService = DomService;
 
-    this.pushWidth = {
-      left: 0,
-      right: 0,
-    }; // side panels are initially closed
+    this.panels = {
+      left: {
+        pushWidth: 0,
+      },
+      right: {
+        pushWidth: 0,
+      },
+    };
     this.viewPortWidth = 0; // unconstrained
     this.scaleFactor = 1.0;
     this.scaleDuration = 400; // matches angular material
@@ -45,7 +49,7 @@ export class ScalingService {
   }
 
   setPushWidth(side, pushWidth) {
-    this.pushWidth.side = pushWidth;
+    this.panels[side].pushWidth = pushWidth;
     this._updateScaling(side, true);
   }
 
@@ -71,14 +75,13 @@ export class ScalingService {
    */
   _updateIframeShift(side) {
     const negativeOrPositiveAdjust = (side === 'left' ? '' : '-');
-
     const transform = this.hippoIframeJQueryElement.css('transform');
     const transformXValue = transform.split(',')[5] || 0;
     const currentShift = parseInt((transformXValue), 10);
     const canvasWidth = this.hippoIframeJQueryElement.find('.channel-iframe-canvas').width() + currentShift;
     const viewPortWidth = this.OverlaySyncService.getViewPortWidth() === 0 ? canvasWidth : this.OverlaySyncService.getViewPortWidth();
     const canvasBorderWidth = canvasWidth - viewPortWidth;
-    const targetShift = Math.min(canvasBorderWidth, this.pushWidth[side]);
+    const targetShift = Math.min(canvasBorderWidth, this.panels[side].pushWidth);
 
     this.hippoIframeJQueryElement.css('transform', `translateX(${negativeOrPositiveAdjust}${targetShift})`);
 
@@ -102,7 +105,7 @@ export class ScalingService {
     }
 
     const [canvasWidth, viewPortWidth] = this._updateIframeShift(side);
-    const visibleCanvasWidth = canvasWidth - this.pushWidth.side;
+    const visibleCanvasWidth = canvasWidth - this.panels[side].pushWidth;
     const oldScale = this.scaleFactor;
     const newScale = (visibleCanvasWidth < viewPortWidth) ? visibleCanvasWidth / viewPortWidth : 1;
 
