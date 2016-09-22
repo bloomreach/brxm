@@ -52,7 +52,7 @@ module.exports = function karmaConfig(config) {
     },
     webpack: require('./webpack-test.conf'),
     webpackMiddleware: {
-      noInfo: 'errors-only',
+      noInfo: true,
     },
     plugins: [
       require('karma-jasmine'),
