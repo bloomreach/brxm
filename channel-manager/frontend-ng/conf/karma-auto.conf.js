@@ -45,23 +45,27 @@ module.exports = function karmaConfig(config) {
     ngHtml2JsPreprocessor: {
       stripPrefix: `${conf.paths.src}/`,
     },
-    reporters: ['progress', 'coverage'],
+    reporters: ['mocha', 'coverage'],
     coverageReporter: {
       type: 'html',
       dir: 'coverage/',
+    },
+    mochaReporter: {
+      output: 'minimal',
     },
     webpack: require('./webpack-test.conf'),
     webpackMiddleware: {
       noInfo: true,
     },
     plugins: [
+      require('karma-chrome-launcher'),
+      require('karma-coverage'),
       require('karma-jasmine'),
       require('karma-jasmine-jquery'),
       require('karma-junit-reporter'),
-      require('karma-coverage'),
-      require('karma-chrome-launcher'),
-      require('karma-sourcemap-loader'),
+      require('karma-mocha-reporter'),
       require('karma-ng-html2js-preprocessor'),
+      require('karma-sourcemap-loader'),
       require('karma-webpack'),
     ],
   };
