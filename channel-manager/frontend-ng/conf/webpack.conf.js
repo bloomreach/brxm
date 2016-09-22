@@ -85,6 +85,7 @@ module.exports = {
     filename: '[name].[hash].js',
     path: path.join(process.cwd(), conf.paths.dist),
     publicPath: '/',
+    pathinfo: true,
   },
   entry: {
     vendor: conf.vendors,
