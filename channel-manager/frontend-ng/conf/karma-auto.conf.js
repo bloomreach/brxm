@@ -18,6 +18,8 @@ module.exports = function karmaConfig(config) {
     ],
     files: [
       'node_modules/es6-shim/es6-shim.js',
+      'node_modules/dragula/dist/dragula.min.js',
+      'node_modules/dragula/dist/dragula.min.css',
       conf.path.src('index.spec.js'),
       {
         pattern: conf.path.src('**/*.fixture.+(js|html|css|json)'),
@@ -36,6 +38,8 @@ module.exports = function karmaConfig(config) {
     proxies: {
       '/spec/javascripts/fixtures/': karmaFixtureProxyPath,
       '/spec/javascripts/fixtures/json/': karmaFixtureProxyPath,
+      '/styles/dragula.min.css': '/base/node_modules/dragula/dist/dragula.min.css',
+      '/scripts/dragula.min.js': '/base/node_modules/dragula/dist/dragula.min.js',
     },
     ngHtml2JsPreprocessor: {
       stripPrefix: `${conf.paths.src}/`,
