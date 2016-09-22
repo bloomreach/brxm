@@ -45,6 +45,7 @@ module.exports = {
       },
       {
         test: /.html$/,
+        exclude: /items.renderer.html/,
         loaders: [
           'html',
         ],
