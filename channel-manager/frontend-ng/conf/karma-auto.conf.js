@@ -25,6 +25,7 @@ module.exports = function karmaConfig(config) {
         pattern: conf.path.src('**/*.fixture.+(js|html|css|json)'),
         included: false,
       },
+      'node_modules/jquery/dist/jquery.js',
     ],
     preprocessors: {
       [conf.path.src('index.spec.js')]: [
