@@ -350,7 +350,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     }
 
     protected boolean validateDelete() {
-        return checkWhetherSubtypesHaveEditorTemplates();
+        return false;
     }
 
     protected void registerChildTrackers() {
