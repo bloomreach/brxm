@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const conf = require('./gulp.conf');
 const path = require('path');
 
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 
@@ -69,6 +70,15 @@ module.exports = {
       'window.jQuery': 'jquery',
       'window.dragula': 'dragula',
     }),
+    new CopyWebpackPlugin([
+      {
+        from: path.resolve(conf.paths.npmDir, 'dragula', 'dist', 'dragula.min.js'),
+        to: path.resolve(conf.paths.dist, 'scripts', 'dragula.min.js'),
+      }, {
+        from: path.resolve(conf.paths.npmDir, 'dragula', 'dist', 'dragula.min.css'),
+        to: path.resolve(conf.paths.dist, 'styles', 'dragula.min.css'),
+      },
+    ]),
   ],
   postcss: [
     autoprefixer({
@@ -83,9 +93,9 @@ module.exports = {
   debug: true,
   devtool: 'cheap-module-eval-source-map',
   output: {
-    filename: '[name].[hash].js',
+    filename: '[name]-[hash].js',
     path: path.join(process.cwd(), conf.paths.dist),
-    publicPath: '/',
+    publicPath: '/cms/angular/hippo-cm/',
     pathinfo: true,
   },
   entry: {
