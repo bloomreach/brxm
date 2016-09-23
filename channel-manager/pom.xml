@@ -156,7 +156,7 @@
     <module>frontend-ng</module>
     <module>frontend</module>
     <module>repository</module>
-    <module>visual-editing</module>
+    <module>content-service</module>
   </modules>
 
   <scm>
@@ -230,8 +230,8 @@
                 <exclude>frontend-ng/coverage/**/*</exclude>
 
                 <!-- repository content XML -->
+                <exclude>content-service/src/main/resources/**/*.xml</exclude>
                 <exclude>repository/src/main/resources/**/*.xml</exclude>
-                <exclude>visual-editing/src/main/resources/**/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>
