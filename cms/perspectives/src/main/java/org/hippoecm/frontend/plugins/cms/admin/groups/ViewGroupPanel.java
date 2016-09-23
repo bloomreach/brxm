@@ -31,10 +31,10 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
@@ -77,7 +77,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
 
         // common group properties
         add(new Label("groupname", group.getGroupname())); // groups cannot be renamed, so no model needed
-        add(new Label("description", new PropertyModel(group, "description")));
+        add(new Label("description", ReadOnlyModel.of(group::getDescription)));
 
         PermissionsListView permissionsListView = new PermissionsListView(group, "permissions", context);
         add(permissionsListView);
