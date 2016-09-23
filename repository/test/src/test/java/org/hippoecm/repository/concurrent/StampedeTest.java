@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -139,7 +139,7 @@ public class StampedeTest {
         final ActionRunner[] runners = new ActionRunner[nthreads];
         for (int i = 0; i < nthreads; i++) {
             Session runnerSession = hippoRepository.getRepository().login(new SimpleCredentials("admin", "admin".toCharArray()));
-            runners[i] = new ActionRunner(new ActionContext(runnerSession, log), actions, duration, throttle);
+            runners[i] = new ActionRunner(new ActionContext(runnerSession, log), actions, duration, throttle, true);
             runners[i].initialize();
             runners[i].setDaemon(true);
         }
@@ -172,7 +172,8 @@ public class StampedeTest {
 
             int actionCount = 0;
             int actionFailures = 0;
-            int actionMissed = 0;
+            int recoverableExceptionCount = 0;
+            int suspiciousExceptionCount = 0;
             int timeSpent = 0;
             for (ActionRunner runner : runners) {
                 final Action action = runner.getContext().getAction(actionClass);
@@ -186,31 +187,33 @@ public class StampedeTest {
                     }
                 }
                 actionCount += action.getCount();
-                actionMissed += action.getMissed();
+                recoverableExceptionCount += action.getRecoverableExceptionCount();
+                suspiciousExceptionCount += action.getSuspiciousExceptionCount();
                 timeSpent += action.getTimeSpent();
             }
 
             int averageTime = (actionCount == 0 || timeSpent == 0) ? 0 : (timeSpent / actionCount);
             System.err.println(actionClass.getSimpleName() + " executed " + actionCount + " times; " +
-                    "missed "+ actionMissed + " failed " + actionFailures + " times; " +
-                    "total time spent " + timeSpent + " ms; " +
-                    "average time " + averageTime);
+                    "recoverable exceptions "+ recoverableExceptionCount + " suspicious exceptions " + suspiciousExceptionCount + " " +
+                    "failed " + actionFailures + " times; " +
+                    "total time spent " + timeSpent + " ms; " + "average time " + averageTime);
         }
-        int totalFailures = 0, totalSuccesses = 0, totalMisses = 0;
+        int totalFailures = 0, totalSuccesses = 0, totalRecoverableExceptionCount = 0, totalSuspiciousExceptionCount = 0;
         List<ActionFailure> failures = new ArrayList<ActionFailure>();
         for (ActionRunner runner : runners) {
             totalFailures += runner.getFailures().size();
             failures.addAll(runner.getFailures());
             totalSuccesses += runner.getSuccesses();
-            totalMisses += runner.getMisses();
+            totalRecoverableExceptionCount += runner.getRecoverableExceptionCount();
+            totalSuspiciousExceptionCount += runner.getSuspiciousExceptionCount();
         }
         System.err.println("Total actions run: " + totalSteps);
         System.err.println("Total successful actions: " + totalSuccesses);
         System.err.println("Total write actions run: " + totalWriteSteps);
-        // missed actions are those that have recoverable exceptions; added for completeness
-        System.err.println("Total missed actions: " + totalMisses);
+        System.err.println("Total actions with recoverable exceptions: " + totalRecoverableExceptionCount);
+        System.err.println("Total actions with suspicious exceptions: " + totalSuspiciousExceptionCount);
         System.err.println("Total failed actions: " + totalFailures);
-        System.err.println("Successrate: " + (totalSuccesses + totalMisses) / (double)totalSteps);
+        System.err.println("Successrate: " + (totalSuccesses + totalRecoverableExceptionCount) / (double)totalSteps);
         System.err.println("Total time it took: " + (endTime - startTime) / 1000.0 + " sec");
 
         if (totalFailures > 0) {
