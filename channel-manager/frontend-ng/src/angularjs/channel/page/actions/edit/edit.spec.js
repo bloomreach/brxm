@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('PageActionEdit', () => {
   'use strict';
 
@@ -47,7 +50,7 @@ describe('PageActionEdit', () => {
   };
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$q_, _$rootScope_, _$compile_, _$translate_, _$mdDialog_, _ChannelService_, _FeedbackService_,
             _HippoIframeService_, _SiteMapService_, _SiteMapItemService_) => {
@@ -102,7 +105,7 @@ describe('PageActionEdit', () => {
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('page-edit');
+    return $element.controller('pageEdit');
   }
 
   it('initializes correctly', () => {

@@ -16,6 +16,9 @@
 
 /* eslint-disable prefer-const */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('ChannelSidenavService', () => {
   'use strict';
 
@@ -24,11 +27,11 @@ describe('ChannelSidenavService', () => {
   const sidenav = jasmine.createSpyObj('sidenav', ['isOpen', 'toggle', 'close']);
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     const $mdSidenav = jasmine.createSpy('$mdSidenav').and.returnValue(sidenav);
 
-    module(($provide) => {
+    angular.mock.module(($provide) => {
       $provide.value('$mdSidenav', $mdSidenav);
     });
 

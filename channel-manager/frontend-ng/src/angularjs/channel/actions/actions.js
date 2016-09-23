@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import ngMessages from 'angular-messages';
+
 import { channelActionsDirective } from './channelActions.directive';
 import { ChannelActionsCtrl } from './channelActions.controller';
 import { channelSettingsDirective } from './settings/settings.directive';
@@ -23,7 +25,9 @@ import { ChannelPropertyCtrl } from './settings/property/property.controller';
 import { helpIconDirective } from './settings/property/helpIcon/helpIcon.directive';
 
 export const channelActionsModule = angular
-  .module('hippo-cm.channel.actions', ['ngMessages'])
+  .module('hippo-cm.channel.actions', [
+    ngMessages,
+  ])
   .controller('ChannelActionsCtrl', ChannelActionsCtrl)
   .directive('channelActions', channelActionsDirective)
   .controller('ChannelSettingsCtrl', ChannelSettingsCtrl)

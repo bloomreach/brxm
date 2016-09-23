@@ -1,25 +1,19 @@
 const path = require('path');
-
 const gulp = require('gulp');
-const karma = require('karma');
+const { Server } = require('karma');
 
-gulp.task('karma:single-run', karmaSingleRun);
-gulp.task('karma:auto-run', karmaAutoRun);
-
-function karmaFinishHandler(done) {
-  return failCount => {
-    done(failCount ? new Error(`Failed ${failCount} tests.`) : null);
+function karmaRun(config) {
+  const configFile = path.join(process.cwd(), 'conf', config);
+  return (done) => {
+    new Server({ configFile }, failCount => {
+      if (failCount === 0) {
+        done();
+      } else {
+        done(new Error(`Failed ${failCount} tests.`));
+      }
+    }).start();
   };
 }
 
-function karmaSingleRun(done) {
-  const configFile = path.join(process.cwd(), 'conf', 'karma.conf.js');
-  const karmaServer = new karma.Server({configFile}, karmaFinishHandler(done));
-  karmaServer.start();
-}
-
-function karmaAutoRun(done) {
-  const configFile = path.join(process.cwd(), 'conf', 'karma-auto.conf.js');
-  const karmaServer = new karma.Server({configFile}, karmaFinishHandler(done));
-  karmaServer.start();
-}
+gulp.task('karma:single-run', karmaRun('karma.conf.js'));
+gulp.task('karma:auto-run', karmaRun('karma-auto.conf.js'));

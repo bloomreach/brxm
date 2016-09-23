@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('PageActions', () => {
   'use strict';
 
@@ -37,7 +40,7 @@ describe('PageActions', () => {
   confirmDialog.cancel.and.returnValue(confirmDialog);
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$q_, _$rootScope_, _$compile_, _$translate_, _FeedbackService_, _ChannelService_, _SiteMapService_,
             _SiteMapItemService_, _DialogService_, _HippoIframeService_, _PageMetaDataService_, _SessionService_) => {
@@ -92,7 +95,7 @@ describe('PageActions', () => {
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('page-actions');
+    return $element.controller('pageActions');
   }
 
   it('displays a menu with 5 actions', () => {

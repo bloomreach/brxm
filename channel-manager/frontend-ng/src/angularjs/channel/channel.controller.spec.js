@@ -16,6 +16,9 @@
 
 /* eslint-disable prefer-const */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('ChannelCtrl', () => {
   'use strict';
 
@@ -32,7 +35,7 @@ describe('ChannelCtrl', () => {
   let $q;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject(($controller, _$rootScope_, _$timeout_, _$q_, _FeedbackService_, _SessionService_) => {
       const resolvedPromise = _$q_.when();

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('ChannelActions', () => {
   'use strict';
 
@@ -36,7 +39,7 @@ describe('ChannelActions', () => {
   confirmDialog.cancel.and.returnValue(confirmDialog);
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _CmsService_, _DialogService_, _FeedbackService_,
             _SessionService_) => {
@@ -69,8 +72,7 @@ describe('ChannelActions', () => {
     $element = angular.element('<channel-actions on-action-selected="onActionSelected(subpage)"></channel-actions>');
     $compile($element)($scope);
     $scope.$digest();
-
-    return $element.controller('channel-actions');
+    return $element.controller('channelActions');
   }
 
   it('calls the on-action-selected callback when clicking the button', () => {
@@ -142,7 +144,7 @@ describe('ChannelActions', () => {
 
     $rootScope.$digest();
     // make sure the mask was shown
-    expect(DialogService.show.calls.mostRecent().args[0].templateUrl).toBeDefined();
+    expect(DialogService.show.calls.mostRecent().args[0].template).toBeDefined();
     expect(ChannelService.deleteChannel).toHaveBeenCalled();
     expect(DialogService.hide).toHaveBeenCalled();
     expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_CHANNEL_DELETE_FAILED');
@@ -156,7 +158,7 @@ describe('ChannelActions', () => {
 
     $rootScope.$digest();
     // make sure the mask was shown
-    expect(DialogService.show.calls.mostRecent().args[0].templateUrl).toBeDefined();
+    expect(DialogService.show.calls.mostRecent().args[0].template).toBeDefined();
     expect(ChannelService.deleteChannel).toHaveBeenCalled();
     expect(DialogService.hide).toHaveBeenCalled();
     expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(response, 'ERROR_CHANNEL_DELETE_FAILED');
@@ -189,7 +191,7 @@ describe('ChannelActions', () => {
 
     expect(ChannelService.deleteChannel).toHaveBeenCalled();
     // make sure the mask was shown
-    expect(DialogService.show.calls.mostRecent().args[0].templateUrl).toBeDefined();
+    expect(DialogService.show.calls.mostRecent().args[0].template).toBeDefined();
     expect(CmsService.publish).toHaveBeenCalledWith('channel-deleted');
     expect(CmsService.subscribeOnce).toHaveBeenCalledWith('channel-removed-from-overview', jasmine.any(Function));
     const channelRemovedFromOverviewCallback = CmsService.subscribeOnce.calls.mostRecent().args[1];

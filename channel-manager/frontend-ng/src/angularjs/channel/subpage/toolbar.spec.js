@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('SubpageToolbar', () => {
   'use strict';
 
@@ -25,7 +28,7 @@ describe('SubpageToolbar', () => {
   let mode;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$rootScope_, _$compile_, _$translate_) => {
       $rootScope = _$rootScope_;
@@ -45,7 +48,7 @@ describe('SubpageToolbar', () => {
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('subpage-toolbar');
+    return $element.controller('subpageToolbar');
   }
 
   it('displays the passed-in page title', () => {
@@ -65,13 +68,13 @@ describe('SubpageToolbar', () => {
     mode = undefined;
     const SubpageToolbarCtrl = compileDirectiveAndGetController();
     expect(SubpageToolbarCtrl.ariaLabel).toBe('TOOLBAR_BUTTON_BACK');
-    expect(SubpageToolbarCtrl.icon).toBe('images/back.svg');
+    expect(SubpageToolbarCtrl.icon).toBe('/cms/angular/hippo-cm/images/back.svg');
   });
 
   it('should show the close icon if the mode is set to cancel', () => {
     mode = 'cancel';
     const SubpageToolbarCtrl = compileDirectiveAndGetController();
     expect(SubpageToolbarCtrl.ariaLabel).toBe('TOOLBAR_BUTTON_CLOSE');
-    expect(SubpageToolbarCtrl.icon).toBe('images/close.svg');
+    expect(SubpageToolbarCtrl.icon).toBe('/cms/angular/hippo-cm/images/close.svg');
   });
 });

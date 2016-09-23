@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('HippoIframeService', () => {
   'use strict';
 
@@ -25,7 +28,7 @@ describe('HippoIframeService', () => {
   const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$log_, _$rootScope_, _HippoIframeService_, _ChannelService_) => {
       $log = _$log_;

@@ -75,7 +75,7 @@ export class ChannelActionsCtrl {
 
   _showDeleteProgress() {
     this.DialogService.show({
-      deleteProgressTemplate,
+      template: deleteProgressTemplate,
       locals: {
         translationData: {
           channel: this.ChannelService.getName(),

@@ -1,46 +1,45 @@
+
+// set test environment, currently used to trigger 'istanbul' plugin in .babelrc
+process.env.ENV = process.env.NODE_ENV = 'test';
+
 module.exports = {
   module: {
     preLoaders: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'eslint'
-      }
+        loader: 'eslint',
+      },
     ],
-
     loaders: [
       {
         test: /.json$/,
         loaders: [
-          'json'
-        ]
+          'json',
+        ],
       },
       {
-        test: /\.(css|scss)$/,
-        loaders: ['null']
+        test: /\.scss$/,
+        loaders: [
+          'null',
+        ],
       },
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: [/(node_modules)/],
         loaders: [
           'ng-annotate',
-          'babel'
-        ]
+          'babel',
+        ],
       },
       {
-        test: /.html$/,
+        test: /\.html$/,
+        exclude: /items.renderer.html/,
         loaders: [
-          'html'
-        ]
+          'html',
+        ],
       },
-      {
-        test: /\.js$/,
-        exclude: /(node_modules|.*\.spec\.js)/,
-        loader: 'isparta'
-      }
-    ]
+    ],
   },
-  plugins: [],
-  debug: true,
-  devtool: 'cheap-module-eval-source-map'
+  devtool: 'inline-source-map',
 };

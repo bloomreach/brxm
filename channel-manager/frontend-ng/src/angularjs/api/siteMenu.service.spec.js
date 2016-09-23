@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('SiteMenuService', () => {
   'use strict';
 
@@ -62,7 +65,7 @@ describe('SiteMenuService', () => {
   };
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$q_, _$rootScope_, _SiteMenuService_, _HstService_) => {
       $q = _$q_;

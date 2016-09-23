@@ -45,6 +45,7 @@ module.exports = {
       },
       {
         test: /.html$/,
+        exclude: /items.renderer.html/,
         loaders: [
           'html',
         ],
@@ -95,6 +96,7 @@ module.exports = {
     filename: '[name]-[hash].js',
     path: path.join(process.cwd(), conf.paths.dist),
     publicPath: '/cms/angular/hippo-cm/',
+    pathinfo: true,
   },
   entry: {
     vendor: conf.vendors,

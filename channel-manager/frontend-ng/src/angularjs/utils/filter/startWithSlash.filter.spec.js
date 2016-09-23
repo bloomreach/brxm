@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('startWithSlashFilter', () => {
   'use strict';
 
   let startWithSlashFilter;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_startWithSlashFilter_) => {
       startWithSlashFilter = _startWithSlashFilter_;

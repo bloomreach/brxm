@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('DomService', () => {
   'use strict';
 
@@ -21,9 +24,9 @@ describe('DomService', () => {
   const fixturesPath = `/${jasmine.getFixtures().fixturesPath}`;
 
   beforeEach(() => {
-    module('hippo-cm.utils');
+    angular.mock.module('hippo-cm.utils');
 
-    module(($provide) => {
+    angular.mock.module(($provide) => {
       $provide.value('$document', [{
         location: {
           pathname: '/app/root/index.html',

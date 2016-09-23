@@ -16,6 +16,9 @@
 
 /* eslint-disable prefer-const */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('MenuEditor', () => {
   'use strict';
 
@@ -38,7 +41,7 @@ describe('MenuEditor', () => {
   dialog.cancel.and.returnValue(dialog);
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$q_, _$rootScope_, _$compile_, _SiteMenuService_, _DialogService_, _FeedbackService_, _HippoIframeService_,
             _ChannelService_, _ConfigService_) => {
@@ -75,7 +78,7 @@ describe('MenuEditor', () => {
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('menu-editor');
+    return $element.controller('menuEditor');
   }
 
   it('initializes correctly', () => {

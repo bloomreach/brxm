@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('stopPropagationDirective', () => {
   'use strict';
 
   let $rootScope;
   let $compile;
 
-  beforeEach(module('hippo-cm.utils'));
+  beforeEach(angular.mock.module('hippo-cm.utils'));
   beforeEach(inject((_$rootScope_, _$compile_) => {
     $rootScope = _$rootScope_;
     $compile = _$compile_;

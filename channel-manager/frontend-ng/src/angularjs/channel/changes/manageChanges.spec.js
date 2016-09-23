@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('ChangeManagement', () => {
   let $compile;
   let $q;
@@ -34,7 +37,7 @@ describe('ChangeManagement', () => {
   dialog.cancel.and.returnValue(dialog);
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((
       _$compile_,

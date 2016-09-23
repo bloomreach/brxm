@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import itemsRenderer from './items.renderer.html';
-
 export class HippoTreeCtrl {
   constructor($scope, $filter, $transclude) {
     'ngInject';
@@ -23,7 +21,6 @@ export class HippoTreeCtrl {
     this.$scope = $scope;
     this.$filter = $filter;
     this.renderTreeTemplate = $transclude;
-    this.itemsRenderer = itemsRenderer;
 
     $scope.$watch(() => this.items, (newItems, oldItems) => {
       const oldNodes = this._collectNodes(oldItems, {});

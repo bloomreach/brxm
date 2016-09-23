@@ -16,6 +16,9 @@
 
 /* eslint-disable prefer-const */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('SiteMapItemService', () => {
   'use strict';
 
@@ -27,7 +30,7 @@ describe('SiteMapItemService', () => {
   let ConfigService;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$q_, _$rootScope_, _SiteMapItemService_, _ConfigService_, _HstService_, _FeedbackService_) => {
       $q = _$q_;
