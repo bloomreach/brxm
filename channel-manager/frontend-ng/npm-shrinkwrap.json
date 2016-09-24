@@ -4698,11 +4698,6 @@
       "from": "lodash.debounce@4.0.8",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.debounce/-/lodash.debounce-4.0.8.tgz"
     },
-    "lodash.deburr": {
-      "version": "4.0.0",
-      "from": "lodash.deburr@>=4.0.0 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.deburr/-/lodash.deburr-4.0.0.tgz"
-    },
     "lodash.defaults": {
       "version": "4.2.0",
       "from": "lodash.defaults@>=4.0.1 <5.0.0",
