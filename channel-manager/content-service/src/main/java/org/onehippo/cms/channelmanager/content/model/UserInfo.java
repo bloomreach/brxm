@@ -19,7 +19,7 @@ package org.onehippo.cms.channelmanager.content.model;
  * This bean represents a CMS user.
  * It can be serialized into JSON to expose it through a REST API.
  */
-public class User {
+public class UserInfo {
 
     private String id;
     private String displayName;

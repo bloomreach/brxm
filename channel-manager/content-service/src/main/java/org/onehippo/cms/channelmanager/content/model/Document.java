@@ -29,6 +29,10 @@ public class Document {
     private DocumentInfo info;        // read-only information about (the current state of) the document
     private Map<String, Object> fields;
 
+    public Document() {
+        setInfo(new DocumentInfo());
+    }
+
     public String getId() {
         return id;
     }

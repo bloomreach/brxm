@@ -16,12 +16,12 @@
 
 package org.onehippo.cms.channelmanager.content;
 
-import java.io.IOException;
-
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 
 import org.onehippo.cms.channelmanager.content.model.Document;
 import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
@@ -30,6 +30,14 @@ import org.onehippo.cms.channelmanager.content.util.MockResponse;
 @Produces("application/json")
 @Path("/")
 public class ContentResource {
+    private final UserSessionProvider userSessionProvider;
+
+    @Context
+    private ContentService contentService;
+
+    public ContentResource(final UserSessionProvider userSessionProvider) {
+        this.userSessionProvider = userSessionProvider;
+    }
 
     @GET
     @Path("/")
@@ -39,13 +47,13 @@ public class ContentResource {
 
     @GET
     @Path("documents/{id}")
-    public Document getDocument(@PathParam("id") String id) throws IOException {
-        return MockResponse.createTestDocument(id);
+    public Document getDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
+        return contentService.getDocument(userSessionProvider.get(servletRequest), id);
     }
 
     @GET
     @Path("documenttypes/{id}")
-    public DocumentTypeSpec getDocumentTypeSpec(@PathParam("id") String id) throws IOException {
+    public DocumentTypeSpec getDocumentTypeSpec(@PathParam("id") String id) {
         return MockResponse.createTestDocumentType();
     }
 }

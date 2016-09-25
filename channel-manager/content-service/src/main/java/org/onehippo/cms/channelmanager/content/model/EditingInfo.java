@@ -32,8 +32,8 @@ public class EditingInfo {
         UNAVAILABLE_REQUEST_PENDING
     }
 
-    private State state;
-    private User holder;
+    private State state = State.UNAVAILABLE;
+    private UserInfo holder;
 
     public State getState() {
         return state;
@@ -43,11 +43,11 @@ public class EditingInfo {
         this.state = state;
     }
 
-    public User getHolder() {
+    public UserInfo getHolder() {
         return holder;
     }
 
-    public void setHolder(final User holder) {
+    public void setHolder(final UserInfo holder) {
         this.holder = holder;
     }
 }

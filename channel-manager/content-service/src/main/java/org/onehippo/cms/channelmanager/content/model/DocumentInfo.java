@@ -48,7 +48,7 @@ public class DocumentInfo {
         this.editingInfo = editing;
     }
 
-    private static class Type {
+    public static class Type {
 
         private final String id;
 

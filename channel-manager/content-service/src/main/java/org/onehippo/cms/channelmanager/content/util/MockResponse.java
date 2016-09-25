@@ -24,21 +24,37 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.onehippo.cms.channelmanager.content.model.Document;
 import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class temporarily provides the front-end with mock responses of the visual editing REST API.
  * Once the back-end has been fully implemented, this class should be deleted.
  */
 public class MockResponse {
+    private static final Logger log = LoggerFactory.getLogger(MockResponse.class);
 
-    public static Document createTestDocument(final String id) throws IOException {
-        final Document document = readResource("/MockResponse-document.json", Document.class);
-        document.setId(id);
+    public static Document createTestDocument(final String id) {
+        final String resourcePath = "/MockResponse-document.json";
+        Document document = null;
+        try {
+            document = readResource(resourcePath, Document.class);
+            document.setId(id);
+        } catch (IOException e) {
+            log.error("Error reading mock document {}", resourcePath, e);
+        }
         return document;
     }
 
-    public static DocumentTypeSpec createTestDocumentType() throws IOException {
-        return readResource("/MockResponse-documenttype.json", DocumentTypeSpec.class);
+    public static DocumentTypeSpec createTestDocumentType() {
+        final String resourcePath = "/MockResponse-documenttype.json";
+        DocumentTypeSpec docType = null;
+        try {
+            docType = readResource(resourcePath, DocumentTypeSpec.class);
+        } catch (IOException e) {
+            log.error("Error reading mock document type {}", resourcePath, e);
+        }
+        return docType;
     }
 
     private static <T> T readResource(String resourcePath, Class<T> c) throws IOException {

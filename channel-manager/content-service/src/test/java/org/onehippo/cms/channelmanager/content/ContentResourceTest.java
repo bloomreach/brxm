@@ -16,6 +16,9 @@
 
 package org.onehippo.cms.channelmanager.content;
 
+import javax.jcr.Session;
+
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.jaxrs.cxf.CXFTest;
@@ -24,10 +27,45 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 public class ContentResourceTest extends CXFTest {
 
+    private Session userSession;
+    private ContentService contentService;
+
     @Before
     public void setup() {
-        setup(ContentResource.class);
+        userSession = EasyMock.createMock(Session.class);
+        contentService = EasyMock.createMock(ContentService.class);
+
+        final ContentServiceProvider contentServiceProvider = EasyMock.createMock(ContentServiceProvider.class);
+        EasyMock.expect(contentServiceProvider.createContext(EasyMock.anyObject())).andReturn(contentService).anyTimes();
+
+        final UserSessionProvider userSessionProvider = EasyMock.createMock(UserSessionProvider.class);
+        EasyMock.expect(userSessionProvider.get(EasyMock.anyObject())).andReturn(userSession).anyTimes();
+
+        EasyMock.replay(contentServiceProvider, userSessionProvider);
+
+        final CXFTest.Config config = new CXFTest.Config();
+        config.addServerSingleton(contentServiceProvider);
+        config.addServerSingleton(new ContentResource(userSessionProvider));
+
+        setup(config);
     }
+
+/* In order to write such tests, @Context injection must be enabled (how?).
+    @Test
+    public void contentResourceRelaysUserSessionAndDocumentUuidToContentService() {
+        final String requestedUuid = "requested-uuid";
+        final String returnedUuid = "returned-uuid";
+        final Document testDocument = new Document();
+        testDocument.setId(returnedUuid);
+        EasyMock.expect(contentService.getDocument(userSession, requestedUuid)).andReturn(testDocument);
+
+        when()
+                .get("/documents/" + requestedUuid)
+        .then()
+                .statusCode(200)
+                .body(equalTo("TBD"));
+    }
+*/
 
     @Test
     public void callingHelloWorldMustSucceed() {
