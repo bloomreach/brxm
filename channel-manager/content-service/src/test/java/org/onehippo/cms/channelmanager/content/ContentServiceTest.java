@@ -57,42 +57,26 @@ public class ContentServiceTest {
         session = rootNode.getSession();
     }
 
-    @Test
+    @Test(expected = NotFoundException.class)
     public void returnNotFoundWhenDocumentHandleNotFound() throws Exception {
-        try {
-            contentService.getDocument(session, "unknown-uuid");
-            assertThat("we don't get here", false);
-        } catch (Exception e) {
-            assertThat("NotFoundException is thrown", e instanceof NotFoundException);
-        }
+        contentService.getDocument(session, "unknown-uuid");
     }
 
-    @Test
+    @Test(expected = NotFoundException.class)
     public void returnNotFoundWhenDocumentHandleTypeIsInvalid() throws Exception {
         final Node handle = rootNode.addNode("testDocument", "invalid-type");
         final String id = handle.getIdentifier();
-
-        try {
-            contentService.getDocument(session, id);
-            assertThat("we don't get here", false);
-        } catch (Exception e) {
-            assertThat("NotFoundException is thrown", e instanceof NotFoundException);
-        }
+        contentService.getDocument(session, id);
     }
 
-    @Test
+    @Test(expected = NotFoundException.class)
     public void returnNotFoundWhenDocumentHandleHasNoVariantNode() throws Exception {
         final Node handle = rootNode.addNode("testDocument", "hippo:handle");
         final String id = handle.getIdentifier();
 
         handle.addNode("otherName", "ns:doctype");
 
-        try {
-            contentService.getDocument(session, id);
-            assertThat("we don't get here", false);
-        } catch (Exception e) {
-            assertThat("NotFoundException is thrown", e instanceof NotFoundException);
-        }
+        contentService.getDocument(session, id);
     }
 
     @Test
