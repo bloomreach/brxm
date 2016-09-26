@@ -39,9 +39,9 @@ import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class UserSessionProviderTest {
+public class ManagedUserSessionInvokerTest {
     private Session systemSession = createMock(Session.class);
-    private UserSessionProvider provider = new UserSessionProvider(systemSession) {
+    private ManagedUserSessionInvoker invoker = new ManagedUserSessionInvoker(systemSession) {
         @Override
         protected Object invokeSuper(Exchange exchange, Object requestParams) {
             final Map<String, Object> map = new HashMap<>();
@@ -55,11 +55,11 @@ public class UserSessionProviderTest {
     @Test
     public void readTheUserSessionFromTheHttpServletRequest() {
         final Session userSession = createMock(Session.class);
-        final String attributeName = UserSessionProvider.class.getName() + ".UserSession";
+        final String attributeName = ManagedUserSessionInvoker.class.getName() + ".UserSession";
         expect(servletRequest.getAttribute(attributeName)).andReturn(userSession);
         replay(servletRequest);
 
-        final Session retrievedSession = provider.get(servletRequest);
+        final Session retrievedSession = invoker.get(servletRequest);
 
         verify(servletRequest);
         assertThat(retrievedSession, equalTo(userSession));
@@ -67,11 +67,11 @@ public class UserSessionProviderTest {
 
     @Test
     public void returnNullIfTheresNoUserSession() {
-        final String attributeName = UserSessionProvider.class.getName() + ".UserSession";
+        final String attributeName = ManagedUserSessionInvoker.class.getName() + ".UserSession";
         expect(servletRequest.getAttribute(attributeName)).andReturn(null);
         replay(servletRequest);
 
-        final Session retrievedSession = provider.get(servletRequest);
+        final Session retrievedSession = invoker.get(servletRequest);
 
         verify(servletRequest);
         assertThat(retrievedSession, equalTo(null));
@@ -82,7 +82,7 @@ public class UserSessionProviderTest {
         final Exchange exchange = prepareHippoUsername(null);
         replay(exchange);
 
-        final Object result = provider.invoke(exchange, "test");
+        final Object result = invoker.invoke(exchange, "test");
 
         verify(exchange);
         assertForbidden(result);
@@ -93,7 +93,7 @@ public class UserSessionProviderTest {
         final Exchange exchange = prepareHippoUsername("");
         replay(exchange);
 
-        final Object result = provider.invoke(exchange, "test");
+        final Object result = invoker.invoke(exchange, "test");
 
         verify(exchange);
         assertForbidden(result);
@@ -107,11 +107,11 @@ public class UserSessionProviderTest {
         expect(systemSession.impersonate(anyObject())).andReturn(userSession);
         final Exchange exchange = prepareHippoUsername("tester");
         prepareServletRequest(exchange);
-        servletRequest.setAttribute(UserSessionProvider.class.getName() + ".UserSession", userSession);
+        servletRequest.setAttribute(ManagedUserSessionInvoker.class.getName() + ".UserSession", userSession);
         expectLastCall();
         replay(systemSession, userSession, servletRequest, exchange);
 
-        final Object result = provider.invoke(exchange, "test");
+        final Object result = invoker.invoke(exchange, "test");
 
         verify(systemSession, userSession, servletRequest, exchange);
         assertThat("a map is returned", result instanceof Map);
@@ -126,7 +126,7 @@ public class UserSessionProviderTest {
         final Exchange exchange = prepareHippoUsername("tester");
         replay(systemSession, exchange);
 
-        final Object result = provider.invoke(exchange, "test");
+        final Object result = invoker.invoke(exchange, "test");
 
         verify(systemSession, exchange);
         assertForbidden(result);
@@ -135,7 +135,7 @@ public class UserSessionProviderTest {
     @Test
     public void logoutInSpiteOfUnexpectedException() throws Exception {
         final RuntimeException testException = new RuntimeException();
-        final UserSessionProvider exceptionThrowingProvider = new UserSessionProvider(systemSession) {
+        final ManagedUserSessionInvoker exceptionThrowingInvoker = new ManagedUserSessionInvoker(systemSession) {
             @Override
             protected Object invokeSuper(Exchange exchange, Object requestParams) {
                 throw testException;
@@ -148,12 +148,12 @@ public class UserSessionProviderTest {
         expect(systemSession.impersonate(anyObject())).andReturn(userSession);
         final Exchange exchange = prepareHippoUsername("tester");
         prepareServletRequest(exchange);
-        servletRequest.setAttribute(UserSessionProvider.class.getName() + ".UserSession", userSession);
+        servletRequest.setAttribute(ManagedUserSessionInvoker.class.getName() + ".UserSession", userSession);
         expectLastCall();
         replay(systemSession, userSession, servletRequest, exchange);
 
         try {
-            exceptionThrowingProvider.invoke(exchange, "test");
+            exceptionThrowingInvoker.invoke(exchange, "test");
             assertThat("we don't get here", false);
         } catch (Exception e) {
             verify(systemSession, userSession, servletRequest, exchange);
