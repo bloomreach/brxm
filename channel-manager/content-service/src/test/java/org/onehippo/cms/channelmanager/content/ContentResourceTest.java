@@ -16,10 +16,19 @@
 
 package org.onehippo.cms.channelmanager.content;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
+
 import javax.jcr.Session;
+
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms.channelmanager.content.model.Document;
 import org.onehippo.jaxrs.cxf.CXFTest;
 
 import static org.easymock.EasyMock.anyObject;
@@ -43,13 +52,12 @@ public class ContentResourceTest extends CXFTest {
         replay(userSessionProvider);
 
         final CXFTest.Config config = new CXFTest.Config();
-        config.addServerSingleton(new ContentServiceProvider(contentService));
-        config.addServerSingleton(new ContentResource(userSessionProvider));
+        config.addServerSingleton(new ContentResource(userSessionProvider, contentService));
+        config.addServerSingleton(new JacksonJsonProvider());
 
         setup(config);
     }
 
-/* In order to write such tests, @Context injection must be enabled (how?).
     @Test
     public void contentResourceRelaysUserSessionAndDocumentUuidToContentService() {
         final String requestedUuid = "requested-uuid";
@@ -57,21 +65,22 @@ public class ContentResourceTest extends CXFTest {
         final Document testDocument = new Document();
         testDocument.setId(returnedUuid);
         expect(contentService.getDocument(userSession, requestedUuid)).andReturn(testDocument);
+        replay(contentService);
+
+        final String expectedBody = normalizeJsonResource("/empty-document.json");
 
         when()
                 .get("/documents/" + requestedUuid)
         .then()
                 .statusCode(200)
-                .body(equalTo("TBD"));
+                .body(equalTo(expectedBody));
     }
-*/
 
-    @Test
-    public void callingHelloWorldMustSucceed() {
-        when()
-                .get("/")
-        .then()
-                .statusCode(200)
-                .body(equalTo("Hello World!"));
+    private String normalizeJsonResource(final String resourcePath) {
+        final InputStream resourceStream = ContentResourceTest.class.getResourceAsStream(resourcePath);
+        return new BufferedReader(new InputStreamReader(resourceStream))
+                .lines()
+                .map(String::trim)
+                .collect(Collectors.joining(""));
     }
 }

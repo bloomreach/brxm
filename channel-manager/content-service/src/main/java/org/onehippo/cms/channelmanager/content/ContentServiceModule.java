@@ -57,9 +57,8 @@ public class ContentServiceModule extends AbstractReconfigurableDaemonModule {
         final UserSessionProvider userSessionProvider = new UserSessionProvider(session);
         jaxrsEndpoint = new CXFRepositoryJaxrsEndpoint(endpointAddress)
                 .invoker(userSessionProvider)
-                .singleton(new ContentResource(userSessionProvider))
-                .singleton(new JacksonJsonProvider())
-                .singleton(new ContentServiceProvider(new ContentService()));
+                .singleton(new ContentResource(userSessionProvider, new ContentService()))
+                .singleton(new JacksonJsonProvider());
         RepositoryJaxrsService.addEndpoint(jaxrsEndpoint);
     }
 

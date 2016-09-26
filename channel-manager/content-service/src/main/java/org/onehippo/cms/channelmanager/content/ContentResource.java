@@ -31,18 +31,11 @@ import org.onehippo.cms.channelmanager.content.util.MockResponse;
 @Path("/")
 public class ContentResource {
     private final UserSessionProvider userSessionProvider;
+    private final ContentService contentService;
 
-    @Context
-    private ContentService contentService;
-
-    public ContentResource(final UserSessionProvider userSessionProvider) {
+    public ContentResource(final UserSessionProvider userSessionProvider, final ContentService contentService) {
         this.userSessionProvider = userSessionProvider;
-    }
-
-    @GET
-    @Path("/")
-    public String helloWorld() {
-        return "Hello World!";
+        this.contentService = contentService;
     }
 
     @GET
