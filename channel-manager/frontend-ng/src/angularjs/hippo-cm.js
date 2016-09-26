@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-console.log('hi');
+
 import angular from 'angular';
 import ngMaterial from 'angular-material';
 import ngTranslate from 'angular-translate';
