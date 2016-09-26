@@ -239,4 +239,23 @@ public class ContentServiceTest {
         assertThat(info.getId(), equalTo("otherUser"));
         assertThat(info.getDisplayName(), equalTo("John"));
     }
+
+    @Test
+    public void readHolderWithoutDisplayName() throws Exception {
+        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
+        final SecurityService ss = createMock(SecurityService.class);
+        final User user = createMock(User.class);
+
+        expect(user.getFirstName()).andReturn(null);
+        expect(user.getLastName()).andReturn(null);
+        expect(ss.getUser("otherUser")).andReturn(user);
+        expect(workspace.getSecurityService()).andReturn(ss);
+        replay(workspace, ss, user);
+
+        UserInfo info = contentService.determineHolder("otherUser", workspace);
+
+        verify(workspace, ss, user);
+        assertThat(info.getId(), equalTo("otherUser"));
+        assertThat(info.getDisplayName(), equalTo(""));
+    }
 }
