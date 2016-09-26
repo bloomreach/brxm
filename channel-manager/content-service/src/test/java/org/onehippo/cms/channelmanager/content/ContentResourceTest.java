@@ -16,25 +16,70 @@
 
 package org.onehippo.cms.channelmanager.content;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
+
+import javax.jcr.Session;
+
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms.channelmanager.content.model.Document;
 import org.onehippo.jaxrs.cxf.CXFTest;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class ContentResourceTest extends CXFTest {
 
+    private Session userSession;
+    private ContentService contentService;
+
     @Before
     public void setup() {
-        setup(ContentResource.class);
+        userSession = createMock(Session.class);
+        contentService = createMock(ContentService.class);
+
+        final UserSessionProvider userSessionProvider = createMock(UserSessionProvider.class);
+        expect(userSessionProvider.get(anyObject())).andReturn(userSession).anyTimes();
+        replay(userSessionProvider);
+
+        final CXFTest.Config config = new CXFTest.Config();
+        config.addServerSingleton(new ContentResource(userSessionProvider, contentService));
+        config.addServerSingleton(new JacksonJsonProvider());
+
+        setup(config);
     }
 
     @Test
-    public void callingHelloWorldMustSucceed() {
+    public void contentResourceRelaysUserSessionAndDocumentUuidToContentService() throws Exception {
+        final String requestedUuid = "requested-uuid";
+        final String returnedUuid = "returned-uuid";
+        final Document testDocument = new Document();
+        testDocument.setId(returnedUuid);
+        expect(contentService.getDocument(userSession, requestedUuid)).andReturn(testDocument);
+        replay(contentService);
+
+        final String expectedBody = normalizeJsonResource("/empty-document.json");
+
         when()
-                .get("/")
+                .get("/documents/" + requestedUuid)
         .then()
                 .statusCode(200)
-                .body(equalTo("Hello World!"));
+                .body(equalTo(expectedBody));
+    }
+
+    private String normalizeJsonResource(final String resourcePath) {
+        final InputStream resourceStream = ContentResourceTest.class.getResourceAsStream(resourcePath);
+        return new BufferedReader(new InputStreamReader(resourceStream))
+                .lines()
+                .map(String::trim)
+                .collect(Collectors.joining(""));
     }
 }

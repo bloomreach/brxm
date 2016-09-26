@@ -16,13 +16,17 @@
 
 package org.onehippo.cms.channelmanager.content;
 
-import java.io.IOException;
-
+import javax.jcr.Session;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 
+import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.Document;
 import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
 import org.onehippo.cms.channelmanager.content.util.MockResponse;
@@ -30,22 +34,29 @@ import org.onehippo.cms.channelmanager.content.util.MockResponse;
 @Produces("application/json")
 @Path("/")
 public class ContentResource {
+    private final UserSessionProvider userSessionProvider;
+    private final ContentService contentService;
 
-    @GET
-    @Path("/")
-    public String helloWorld() {
-        return "Hello World!";
+    public ContentResource(final UserSessionProvider userSessionProvider, final ContentService contentService) {
+        this.userSessionProvider = userSessionProvider;
+        this.contentService = contentService;
     }
 
     @GET
     @Path("documents/{id}")
-    public Document getDocument(@PathParam("id") String id) throws IOException {
-        return MockResponse.createTestDocument(id);
+    public Response getDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
+        final Session userSession = userSessionProvider.get(servletRequest);
+        try {
+            final Document document = contentService.getDocument(userSession, id);
+            return Response.ok().entity(document).build();
+        } catch (DocumentNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
     @GET
     @Path("documenttypes/{id}")
-    public DocumentTypeSpec getDocumentTypeSpec(@PathParam("id") String id) throws IOException {
+    public DocumentTypeSpec getDocumentTypeSpec(@PathParam("id") String id) {
         return MockResponse.createTestDocumentType();
     }
 }

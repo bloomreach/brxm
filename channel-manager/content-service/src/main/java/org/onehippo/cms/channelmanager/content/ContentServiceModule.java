@@ -22,7 +22,6 @@ import javax.jcr.Session;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
-import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.jaxrs.CXFRepositoryJaxrsEndpoint;
 import org.onehippo.repository.jaxrs.RepositoryJaxrsEndpoint;
@@ -55,10 +54,10 @@ public class ContentServiceModule extends AbstractReconfigurableDaemonModule {
         if (endpointAddress == null) {
             throw new IllegalStateException("ContentServiceModule requires a hippo:moduleconfig");
         }
-        // TODO: add authorization
+        final ManagedUserSessionInvoker managedUserSessionInvoker = new ManagedUserSessionInvoker(session);
         jaxrsEndpoint = new CXFRepositoryJaxrsEndpoint(endpointAddress)
-                .invoker(new JAXRSInvoker()) // use a pure CXF invoker to circumvent the repository's default authentication
-                .rootClass(ContentResource.class)
+                .invoker(managedUserSessionInvoker)
+                .singleton(new ContentResource(managedUserSessionInvoker, new ContentService()))
                 .singleton(new JacksonJsonProvider());
         RepositoryJaxrsService.addEndpoint(jaxrsEndpoint);
     }

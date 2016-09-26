@@ -31,14 +31,24 @@ import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
  */
 public class MockResponse {
 
-    public static Document createTestDocument(final String id) throws IOException {
-        final Document document = readResource("/MockResponse-document.json", Document.class);
-        document.setId(id);
-        return document;
+    public static Document createTestDocument(final String id) {
+        final String resourcePath = "/MockResponse-document.json";
+        try {
+            final Document document = readResource(resourcePath, Document.class);
+            document.setId(id);
+            return document;
+        } catch (IOException e) {
+            throw new IllegalStateException("Error reading mock document " + resourcePath, e);
+        }
     }
 
-    public static DocumentTypeSpec createTestDocumentType() throws IOException {
-        return readResource("/MockResponse-documenttype.json", DocumentTypeSpec.class);
+    public static DocumentTypeSpec createTestDocumentType() {
+        final String resourcePath = "/MockResponse-documenttype.json";
+        try {
+            return readResource(resourcePath, DocumentTypeSpec.class);
+        } catch (IOException e) {
+            throw new IllegalStateException("Error reading mock document type " + resourcePath, e);
+        }
     }
 
     private static <T> T readResource(String resourcePath, Class<T> c) throws IOException {
