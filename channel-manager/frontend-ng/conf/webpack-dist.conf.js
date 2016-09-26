@@ -80,7 +80,11 @@ module.exports = {
       },
     ]),
     new webpack.optimize.UglifyJsPlugin({
-      compress: { unused: true, dead_code: true },
+      compress: {
+        unused: true,
+        dead_code: true,
+        warnings: false,
+      },
     }),
     new ExtractTextPlugin('[name]-[contenthash].css'),
   ],
