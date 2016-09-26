@@ -497,10 +497,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "TOOLBAR_VIEW_AS_INFIX" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "ERROR_SITEMAP_RETRIEVAL_FAILED" : {
       "status" : "CLEAN",
       "locales" : null
