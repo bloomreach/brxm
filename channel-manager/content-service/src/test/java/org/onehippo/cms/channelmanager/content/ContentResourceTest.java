@@ -58,7 +58,7 @@ public class ContentResourceTest extends CXFTest {
     }
 
     @Test
-    public void contentResourceRelaysUserSessionAndDocumentUuidToContentService() {
+    public void contentResourceRelaysUserSessionAndDocumentUuidToContentService() throws Exception {
         final String requestedUuid = "requested-uuid";
         final String returnedUuid = "returned-uuid";
         final Document testDocument = new Document();

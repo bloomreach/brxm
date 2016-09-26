@@ -19,11 +19,14 @@ package org.onehippo.cms.channelmanager.content;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 
+import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.Document;
 import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
 import org.onehippo.cms.channelmanager.content.util.MockResponse;
@@ -41,9 +44,14 @@ public class ContentResource {
 
     @GET
     @Path("documents/{id}")
-    public Document getDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
+    public Response getDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         final Session userSession = userSessionProvider.get(servletRequest);
-        return contentService.getDocument(userSession, id);
+        try {
+            final Document document = contentService.getDocument(userSession, id);
+            return Response.ok().entity(document).build();
+        } catch (DocumentNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
     @GET

@@ -31,6 +31,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.Document;
 import org.onehippo.cms.channelmanager.content.model.EditingInfo;
 import org.onehippo.cms.channelmanager.content.model.UserInfo;
@@ -57,19 +58,19 @@ public class ContentServiceTest {
         session = rootNode.getSession();
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test(expected = DocumentNotFoundException.class)
     public void returnNotFoundWhenDocumentHandleNotFound() throws Exception {
         contentService.getDocument(session, "unknown-uuid");
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test(expected = DocumentNotFoundException.class)
     public void returnNotFoundWhenDocumentHandleTypeIsInvalid() throws Exception {
         final Node handle = rootNode.addNode("testDocument", "invalid-type");
         final String id = handle.getIdentifier();
         contentService.getDocument(session, id);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test(expected = DocumentNotFoundException.class)
     public void returnNotFoundWhenDocumentHandleHasNoVariantNode() throws Exception {
         final Node handle = rootNode.addNode("testDocument", "hippo:handle");
         final String id = handle.getIdentifier();

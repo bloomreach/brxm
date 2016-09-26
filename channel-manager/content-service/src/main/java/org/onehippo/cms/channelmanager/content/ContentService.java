@@ -30,6 +30,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.Document;
 import org.onehippo.cms.channelmanager.content.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.model.EditingInfo;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public class ContentService {
     private static final Logger log = LoggerFactory.getLogger(ContentService.class);
 
-    public Document getDocument(final Session session, final String id) {
+    public Document getDocument(final Session session, final String id) throws DocumentNotFoundException {
         if ("test".equals(id)) {
             return MockResponse.createTestDocument(id);
         }
@@ -60,7 +61,7 @@ public class ContentService {
             if (!HippoNodeType.NT_HANDLE.equals(documentHandle.getPrimaryNodeType().getName())
                     || !documentHandle.hasNode(documentHandle.getName())) {
                 log.debug("Id {} doesn't refer to valid document", id);
-                throw new NotFoundException();
+                throw new DocumentNotFoundException();
             }
 
             final DocumentInfo info = new DocumentInfo();
@@ -70,7 +71,7 @@ public class ContentService {
             document.setInfo(info);
         } catch (RepositoryException e) {
             log.debug("Problem reading vital document parameters", e);
-            throw new NotFoundException();
+            throw new DocumentNotFoundException();
         }
 
         // look-up document type and fill in document content
