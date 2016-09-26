@@ -19,6 +19,7 @@ describe('ScalingService', () => {
 
   let ScalingService;
   let iframeJQueryElement;
+  let iframeWrapper;
   let baseJQueryElement;
   let canvasJQueryElement;
   let elementsToScale;
@@ -32,11 +33,13 @@ describe('ScalingService', () => {
 
     jasmine.getFixtures().load('channel/hippoIframe/scaling.service.fixture.html');
 
+    iframeWrapper = $j('.channel-iframe-wrapper');
     baseJQueryElement = $j('.channel-iframe-base');
     canvasJQueryElement = $j('.channel-iframe-canvas');
     elementsToScale = jasmine.createSpyObj('elementsToScale', ['velocity', 'css', 'scrollTop', 'hasClass', 'removeClass', 'addClass']);
 
-    iframeJQueryElement = jasmine.createSpyObj('iframeJQueryElement', ['find', 'css', 'velocity', 'is']);
+    iframeJQueryElement = jasmine.createSpyObj('iframeJQueryElement', ['parent', 'find', 'css', 'velocity', 'is']);
+    iframeJQueryElement.parent.and.callFake(() => $j('#test-hippo-iframe-wrapper'));
     iframeJQueryElement.find.and.callFake((selector) => {
       if (selector === '.cm-scale') {
         return elementsToScale;
@@ -45,6 +48,9 @@ describe('ScalingService', () => {
     });
     iframeJQueryElement.css.and.callFake(() => '0');
     iframeJQueryElement.is.and.returnValue(true);
+
+
+    iframeWrapper.width(400);
   });
 
   afterEach(() => {
@@ -55,7 +61,6 @@ describe('ScalingService', () => {
   it('should initialize using the default values', () => {
     ScalingService.init(iframeJQueryElement);
 
-    expect(elementsToScale.css).not.toHaveBeenCalled();
     expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
 
@@ -82,15 +87,15 @@ describe('ScalingService', () => {
   });
 
   it('should change the scaling factor instantly when the window is resized', () => {
-    canvasJQueryElement.width(200);
+    canvasJQueryElement.width(400);
     ScalingService.init(iframeJQueryElement);
     ScalingService.setPushWidth('left', 100);
-    ScalingService.scaleFactor = 0.75; // fake different scaling factor so the effect of the window resize is testable
+    ScalingService.scaleFactor = 0.1; // fake different scaling factor so the effect of the window resize is testable
 
     $j(window).resize();
 
-    expect(elementsToScale.css).toHaveBeenCalledWith('transform', 'scale(0.5)');
-    expect(ScalingService.getScaleFactor()).toEqual(0.5);
+    expect(elementsToScale.css).toHaveBeenCalledWith('transform', 'scale(0.75)');
+    expect(ScalingService.getScaleFactor()).toEqual(0.75);
   });
 
   it('should update the scroll position instantly while scaling', () => {
