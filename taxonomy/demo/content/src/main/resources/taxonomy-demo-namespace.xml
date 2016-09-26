@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="taxonomydemo">
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="taxonomydemo">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposysedit:namespace</sv:value>
   </sv:property>
@@ -733,6 +734,9 @@
           </sv:property>
           <sv:property sv:name="hipposysedit:path" sv:type="String">
             <sv:value>taxonomydemo:alternatekeys</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>String</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
