@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +57,8 @@ public class UserSessionProvider extends JAXRSInvoker {
                 throw new UserUnknownException();
             }
             final Session userSession = systemSession.impersonate(new SimpleCredentials(userId, new char[]{}));
-            final HttpServletRequest servletRequest = getServletRequest(exchange);
+            final HttpServletRequest servletRequest
+                    = (HttpServletRequest)exchange.getInMessage().get(AbstractHTTPDestination.HTTP_REQUEST);
             servletRequest.setAttribute(SESSION_ATTRIBUTE, userSession);
             try {
                 result = invokeSuper(exchange, requestParams);
@@ -74,10 +76,6 @@ public class UserSessionProvider extends JAXRSInvoker {
     // extracted call to super for better testability
     protected Object invokeSuper(Exchange exchange, Object requestParams) {
         return super.invoke(exchange, requestParams);
-    }
-
-    private HttpServletRequest getServletRequest(Exchange exchange) {
-        return (HttpServletRequest)exchange.getInMessage().get("HTTP.REQUEST");
     }
 
     private static class UserUnknownException extends Exception { }

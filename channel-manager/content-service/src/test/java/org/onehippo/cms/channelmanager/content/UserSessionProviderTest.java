@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.anyObject;
@@ -173,7 +174,7 @@ public class UserSessionProviderTest {
 
     private void prepareServletRequest(final Exchange exchange) {
         final Message message = createMock(Message.class);
-        expect(message.get("HTTP.REQUEST")).andReturn(servletRequest);
+        expect(message.get(AbstractHTTPDestination.HTTP_REQUEST)).andReturn(servletRequest);
         expect(exchange.getInMessage()).andReturn(message);
         replay(message);
     }
