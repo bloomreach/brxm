@@ -17,18 +17,17 @@ $transition-type: cubic-bezier(0.25, 0.8, 0.25, 1) !default; // matches angular 
 
 hippo-iframe,
 .cm-scale {
+  transform-origin: top right;
   transition: transform $transition-duration $transition-type;
   will-change: transform;
 }
 
-.cm-scale-to-left {
-  transform-origin: top left;
-}
-.cm-scale-to-right {
-  transform-origin: top right;
-}
-
-.prevent-horizontal-scrollbar-while-scaling {
+.channel-iframe-wrapper {
   overflow-x: hidden;
 }
 
+.channel-iframe-canvas {
+  position: relative;
+  transition: margin-left $transition-duration $transition-type, margin-right $transition-duration $transition-type;
+  will-change: margin-left, margin-right;
+}

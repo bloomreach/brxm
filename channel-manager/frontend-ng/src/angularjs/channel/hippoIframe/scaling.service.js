@@ -38,53 +38,29 @@ export class ScalingService {
 
     angular.element($window).bind('resize', () => {
       if (this.hippoIframeJQueryElement) {
-        $rootScope.$apply(() => this._resyncScaling(false));
+        $rootScope.$apply(() => this._updateScaling());
       }
     });
   }
 
   init(hippoIframeJQueryElement) {
     this.hippoIframeJQueryElement = hippoIframeJQueryElement;
-    this._resyncScaling(false);
+    this._updateScaling();
   }
 
   setPushWidth(side, pushWidth) {
     this.panels[side].pushWidth = pushWidth;
-    this._updateScaling(side, true);
+    this._updateScaling(side);
   }
 
   setViewPortWidth(viewPortWidth) {
     this.OverlaySyncService.setViewPortWidth(viewPortWidth);
-    this._resyncScaling(false);
+    this._updateScaling();
     this.OverlaySyncService.syncIframe();
   }
 
   getScaleFactor() {
     return this.scaleFactor;
-  }
-
-  /**
-   * Update the iframe shift, if necessary
-   *
-   * The iframe should be shifted right (by controlling the translateX) if the left side panel is open,
-   * and if the viewport width is less than the available canvas
-   *
-   * @returns {*[]}  canvasWidth is the maximum width available to the iframe
-   *                 viewPortWidth indicates how many pixels wide the iframe content should be rendered.
-   */
-  _updateIframeShift(side) {
-    const negativeOrPositiveAdjust = (side === 'left' ? '' : '-');
-    const transform = this.hippoIframeJQueryElement.css('transform');
-    const transformXValue = transform.split(',')[5] || 0;
-    const currentShift = parseInt((transformXValue), 10);
-    const canvasWidth = this.hippoIframeJQueryElement.find('.channel-iframe-canvas').width() + currentShift;
-    const viewPortWidth = this.OverlaySyncService.getViewPortWidth() === 0 ? canvasWidth : this.OverlaySyncService.getViewPortWidth();
-    const canvasBorderWidth = canvasWidth - viewPortWidth;
-    const targetShift = Math.min(canvasBorderWidth, this.panels[side].pushWidth);
-
-    this.hippoIframeJQueryElement.css('transform', `translateX(${negativeOrPositiveAdjust}${targetShift})`);
-
-    return [canvasWidth, viewPortWidth];
   }
 
   /**
@@ -99,47 +75,56 @@ export class ScalingService {
       return;
     }
 
-    const [canvasWidth, viewPortWidth] = this._updateIframeShift(side);
-    const visibleCanvasWidth = canvasWidth - this.panels[side].pushWidth;
+    const iframeWrapper = this.hippoIframeJQueryElement.parent();
+    const iframeWrapperWidth = iframeWrapper.width();
+    const iframeContentWidth = iframeWrapperWidth - (this.panels.left.pushWidth + this.panels.right.pushWidth);
     const oldScale = this.scaleFactor;
-    const newScale = (visibleCanvasWidth < viewPortWidth) ? visibleCanvasWidth / viewPortWidth : 1;
+
+    if (iframeWrapperWidth > 1280) {
+      return; // only scale when we're below 1280 width as that is our lowest supported width
+    }
+
+    const newScale = Math.min(iframeContentWidth / iframeWrapperWidth, 1);
 
     if (newScale !== oldScale) {
+      const iframeBase = this.hippoIframeJQueryElement.find('.channel-iframe-base');
       const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
-      if (side === 'right') {
-        elementsToScale.addClass('cm-scale-to-left');
-        elementsToScale.removeClass('cm-scale-to-right');
-      } else {
-        elementsToScale.removeClass('cm-scale-to-left');
-        elementsToScale.addClass('cm-scale-to-right');
-      }
       elementsToScale.velocity('finish');
-
-      const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-base');
-      const currentOffset = iframeBaseJQueryElement.scrollTop();
+      const currentOffset = iframeBase.scrollTop();
       const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
 
       if (targetOffset !== currentOffset) {
         elementsToScale.velocity('scroll', {
-          container: iframeBaseJQueryElement,
+          container: iframeBase,
           offset: targetOffset - currentOffset,
           duration: this.scaleDuration,
           easing: this.scaleEasing,
           queue: false,
         }); // keep scroll-position constant during animation
       }
+
       elementsToScale.css('transform', `scale(${newScale})`);
+
+      const iframeCanvas = this.hippoIframeJQueryElement.find('.channel-iframe-canvas');
+
+      const leftMargin = Math.abs(parseInt(iframeCanvas.css('margin-left'), 10));
+      const rightMargin = Math.abs(parseInt(iframeCanvas.css('margin-right'), 10));
+
+      if (leftMargin !== this.panels.left.pushWidth) {
+        iframeCanvas.css('margin-left', `-${this.panels.left.pushWidth}px`);
+      }
+      if (rightMargin !== this.panels.right.pushWidth) {
+        iframeCanvas.css('margin-right', `-${this.panels.right.pushWidth}px`);
+      }
+
+      if (this.panels.left.pushWidth && this.panels.right.pushWidth) {
+        elementsToScale.css('transform-origin', 'top center');
+      } else if ((!this.panels.left.pushWidth && this.panels.right.pushWidth) || side === 'right') {
+        elementsToScale.css('transform-origin', 'top left');
+      } else if ((this.panels.left.pushWidth && !this.panels.right.pushWidth) || side === 'left') {
+        elementsToScale.css('transform-origin', 'top right');
+      }
     }
     this.scaleFactor = newScale;
-  }
-
-  _resyncScaling() {
-    if (!this.hippoIframeJQueryElement || !this.hippoIframeJQueryElement.is(':visible')) {
-      return;
-    }
-    const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
-    const side = (elementsToScale.hasClass('cm-scale-to-left') ? 'right' : 'left');
-
-    this._updateScaling(side);
   }
 }
