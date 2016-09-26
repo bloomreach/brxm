@@ -20,7 +20,7 @@
     <sv:value>hipposys:updaterinfo</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:batchsize" sv:type="Long">
-    <sv:value>1</sv:value>
+    <sv:value>10</sv:value>
   </sv:property>
   <sv:property sv:name="hipposys:dryrun" sv:type="Boolean">
     <sv:value>false</sv:value>
