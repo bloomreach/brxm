@@ -26,10 +26,14 @@ import org.apache.cxf.message.Message;
  */
 @Provider
 public class ContentServiceProvider implements ContextProvider<ContentService> {
-    private final ContentService service = new ContentService();
+    private final ContentService contentService;
+
+    public ContentServiceProvider(final ContentService contentService) {
+        this.contentService = contentService;
+    }
 
     @Override
     public ContentService createContext(Message message) {
-        return service;
+        return contentService;
     }
 }

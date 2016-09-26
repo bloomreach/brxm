@@ -59,7 +59,7 @@ public class ContentServiceModule extends AbstractReconfigurableDaemonModule {
                 .invoker(userSessionProvider)
                 .singleton(new ContentResource(userSessionProvider))
                 .singleton(new JacksonJsonProvider())
-                .singleton(new ContentServiceProvider());
+                .singleton(new ContentServiceProvider(new ContentService()));
         RepositoryJaxrsService.addEndpoint(jaxrsEndpoint);
     }
 

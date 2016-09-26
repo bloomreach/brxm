@@ -18,11 +18,14 @@ package org.onehippo.cms.channelmanager.content;
 
 import javax.jcr.Session;
 
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.jaxrs.cxf.CXFTest;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class ContentResourceTest extends CXFTest {
@@ -32,19 +35,15 @@ public class ContentResourceTest extends CXFTest {
 
     @Before
     public void setup() {
-        userSession = EasyMock.createMock(Session.class);
-        contentService = EasyMock.createMock(ContentService.class);
+        userSession = createMock(Session.class);
+        contentService = createMock(ContentService.class);
 
-        final ContentServiceProvider contentServiceProvider = EasyMock.createMock(ContentServiceProvider.class);
-        EasyMock.expect(contentServiceProvider.createContext(EasyMock.anyObject())).andReturn(contentService).anyTimes();
-
-        final UserSessionProvider userSessionProvider = EasyMock.createMock(UserSessionProvider.class);
-        EasyMock.expect(userSessionProvider.get(EasyMock.anyObject())).andReturn(userSession).anyTimes();
-
-        EasyMock.replay(contentServiceProvider, userSessionProvider);
+        final UserSessionProvider userSessionProvider = createMock(UserSessionProvider.class);
+        expect(userSessionProvider.get(anyObject())).andReturn(userSession).anyTimes();
+        replay(userSessionProvider);
 
         final CXFTest.Config config = new CXFTest.Config();
-        config.addServerSingleton(contentServiceProvider);
+        config.addServerSingleton(new ContentServiceProvider(contentService));
         config.addServerSingleton(new ContentResource(userSessionProvider));
 
         setup(config);
@@ -57,7 +56,7 @@ public class ContentResourceTest extends CXFTest {
         final String returnedUuid = "returned-uuid";
         final Document testDocument = new Document();
         testDocument.setId(returnedUuid);
-        EasyMock.expect(contentService.getDocument(userSession, requestedUuid)).andReturn(testDocument);
+        expect(contentService.getDocument(userSession, requestedUuid)).andReturn(testDocument);
 
         when()
                 .get("/documents/" + requestedUuid)
