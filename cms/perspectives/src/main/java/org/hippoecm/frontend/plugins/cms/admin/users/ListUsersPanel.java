@@ -126,7 +126,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
             @Override
             public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId, final IModel<User> model) {
                 User user = model.getObject();
-                List<Group> groups = user.getLocalMembershipsAsListOfGroups();
+                List<Group> groups = user.getLocalMembershipsAsListOfGroups(true);
                 GroupsLinkListPanel groupsLinkListPanel = new GroupsLinkListPanel(componentId, groups, context,
                                                                                   ListUsersPanel.this);
 

@@ -99,6 +99,7 @@ public class User implements Comparable<User>, IClusterable {
 
     private static final String QUERY_LOCAL_MEMBERSHIPS = "//element(*, hipposys:group)[@hipposys:members='{}']";
     private static final String QUERY_EXTERNAL_MEMBERSHIPS = "//element(*, hipposys:externalgroup)[@hipposys:members='{}']";
+    private static final String QUERY_AND_NOT_A_SYSTEM_GROUP = "//element(*, hipposys:group)[@hipposys:members='{}' and (not(@hipposys:system) or @hipposys:system=false)]";
 
     private static final long ONEDAYMS = 1000 * 3600 * 24;
 
@@ -359,8 +360,13 @@ public class User implements Comparable<User>, IClusterable {
      * @return the User's local memberships
      */
     public List<DetachableGroup> getLocalMemberships() {
+        return getLocalMemberships(false);
+    }
+
+    public List<DetachableGroup> getLocalMemberships(Boolean excludeSystemUsers) {
         final String escapedUsername = Text.escapeIllegalXpathSearchChars(username).replaceAll("'", "''");
-        final String queryString = QUERY_LOCAL_MEMBERSHIPS.replace("{}", escapedUsername);
+        final String queryString = excludeSystemUsers ?
+          QUERY_AND_NOT_A_SYSTEM_GROUP.replace("{}", escapedUsername) : QUERY_LOCAL_MEMBERSHIPS.replace("{}", escapedUsername);
         final List<DetachableGroup> localMemberships = new ArrayList<DetachableGroup>();
         try {
             final Query query = getQueryManager().createQuery(queryString, Query.XPATH);
@@ -383,8 +389,12 @@ public class User implements Comparable<User>, IClusterable {
     }
 
     public List<Group> getLocalMembershipsAsListOfGroups() {
+        return getLocalMembershipsAsListOfGroups(false);
+    }
+
+    public List<Group> getLocalMembershipsAsListOfGroups(Boolean excludeSystemUsers) {
         List<Group> groups = new ArrayList<Group>();
-        for (DetachableGroup group : getLocalMemberships()) {
+        for (DetachableGroup group : getLocalMemberships(excludeSystemUsers)) {
             groups.add(group.getObject());
         }
         return groups;
