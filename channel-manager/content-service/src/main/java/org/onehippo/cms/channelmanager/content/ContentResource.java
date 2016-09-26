@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content;
 
+import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -41,7 +42,8 @@ public class ContentResource {
     @GET
     @Path("documents/{id}")
     public Document getDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
-        return contentService.getDocument(userSessionProvider.get(servletRequest), id);
+        final Session userSession = userSessionProvider.get(servletRequest);
+        return contentService.getDocument(userSession, id);
     }
 
     @GET
