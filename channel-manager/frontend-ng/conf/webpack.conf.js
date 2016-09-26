@@ -52,6 +52,13 @@ module.exports = {
       },
     ],
   },
+  devServer: {
+    contentBase: '/cms/angular/hippo-cm/',
+    hot: true,
+    inline: true,
+    historyApiFallback: true,
+    port: 9090,
+  },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
