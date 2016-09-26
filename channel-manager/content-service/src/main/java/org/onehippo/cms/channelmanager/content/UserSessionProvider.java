@@ -31,12 +31,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Manage and provide a user session, authenticated for the current HTTP session's hippo:username.
- * When this invoker is invoked while no user is logged in, a 403 forbidden error is returned.
+ * Provides and manages a JCR session authenticated for the current logged in user.
+ * The name of the logged is user is read from the HTTP session attribute 'hippo:username'.
+ * Returns a 403 forbidden error when invoked while no user is logged in.
  */
 public class UserSessionProvider extends JAXRSInvoker {
+
     private static final Logger log = LoggerFactory.getLogger(UserSessionProvider.class);
+
+    private static final char[] EMPTY_PASSWORD = new char[]{};
     private static final String SESSION_ATTRIBUTE = UserSessionProvider.class.getName() + ".UserSession";
+    private static final MessageContentsList FORBIDDEN = new MessageContentsList(Response.status(Response.Status.FORBIDDEN).build());
+
     private final Session systemSession;
 
     public UserSessionProvider(final Session systemSession) {
@@ -50,33 +56,29 @@ public class UserSessionProvider extends JAXRSInvoker {
     @Override
     public Object invoke(Exchange exchange, Object requestParams) {
         final String userId = (String)exchange.getSession().get("hippo:username");
-        Object result = null;
+
+        if (StringUtils.isBlank(userId)) {
+            return FORBIDDEN;
+        }
 
         try {
-            if (StringUtils.isBlank(userId)) {
-                throw new UserUnknownException();
-            }
-            final Session userSession = systemSession.impersonate(new SimpleCredentials(userId, new char[]{}));
-            final HttpServletRequest servletRequest
-                    = (HttpServletRequest)exchange.getInMessage().get(AbstractHTTPDestination.HTTP_REQUEST);
-            servletRequest.setAttribute(SESSION_ATTRIBUTE, userSession);
+            final Session userSession = systemSession.impersonate(new SimpleCredentials(userId, EMPTY_PASSWORD));
             try {
-                result = invokeSuper(exchange, requestParams);
+                final HttpServletRequest servletRequest
+                        = (HttpServletRequest) exchange.getInMessage().get(AbstractHTTPDestination.HTTP_REQUEST);
+                servletRequest.setAttribute(SESSION_ATTRIBUTE, userSession);
+                return invokeSuper(exchange, requestParams);
             } finally {
                 userSession.logout();
             }
-        } catch (UserUnknownException|RepositoryException e) {
-            log.debug("Failed to create user session", e);
-            result = new MessageContentsList(Response.status(Response.Status.FORBIDDEN).build());
+        } catch (RepositoryException e) {
+            log.debug("Failed to create user session for '{}'", userId, e);
+            return FORBIDDEN;
         }
-
-        return result;
     }
 
     // extracted call to super for better testability
     protected Object invokeSuper(Exchange exchange, Object requestParams) {
         return super.invoke(exchange, requestParams);
     }
-
-    private static class UserUnknownException extends Exception { }
 }
