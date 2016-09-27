@@ -7,7 +7,23 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 
 module.exports = {
+  entry: {
+    vendor: conf.vendors,
+    app: [`./${conf.path.src('index')}`],
+  },
+  output: {
+    filename: '[name]-[hash].js',
+    path: path.join(process.cwd(), conf.paths.dist),
+    publicPath: '/cms/angular/hippo-cm/',
+  },
   module: {
+    preLoaders: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'eslint',
+      },
+    ],
     loaders: [
       {
         test: /.json$/,
@@ -76,6 +92,7 @@ module.exports = {
         to: conf.paths.dir,
       },
     ]),
+    new webpack.HotModuleReplacementPlugin(),
   ],
   postcss: [
     autoprefixer({
@@ -89,14 +106,4 @@ module.exports = {
   ],
   debug: true,
   devtool: 'cheap-module-eval-source-map',
-  output: {
-    filename: '[name]-[hash].js',
-    path: path.join(process.cwd(), conf.paths.dist),
-    publicPath: '/cms/angular/hippo-cm/',
-    pathinfo: true,
-  },
-  entry: {
-    vendor: conf.vendors,
-    app: [`./${conf.path.src('index')}`],
-  },
 };

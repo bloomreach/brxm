@@ -8,6 +8,15 @@ const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
+  entry: {
+    vendor: conf.vendors,
+    app: [`./${conf.path.src('index')}`],
+  },
+  output: {
+    filename: '[name]-[hash].js',
+    path: path.join(process.cwd(), conf.paths.dist),
+    publicPath: '/cms/angular/hippo-cm/',
+  },
   module: {
     preLoaders: [
       {
@@ -101,13 +110,4 @@ module.exports = {
       ],
     }),
   ],
-  output: {
-    filename: '[name]-[hash].js',
-    path: path.join(process.cwd(), conf.paths.dist),
-    publicPath: '/cms/angular/hippo-cm/',
-  },
-  entry: {
-    vendor: conf.vendors,
-    app: [`./${conf.path.src('index')}`],
-  },
 };
