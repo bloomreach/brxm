@@ -2,10 +2,14 @@ const path = require('path');
 const gulp = require('gulp');
 const { Server } = require('karma');
 
-function karmaRun(config) {
+function karmaRun(config, singleRun) {
   const configFile = path.join(process.cwd(), 'conf', config);
   return (done) => {
-    new Server({ configFile }, failCount => {
+    new Server({
+      configFile,
+      singleRun,
+      autoWatch: !singleRun,
+    }, failCount => {
       if (failCount === 0) {
         done();
       } else {
@@ -15,5 +19,5 @@ function karmaRun(config) {
   };
 }
 
-gulp.task('karma:single-run', karmaRun('karma.conf.js'));
-gulp.task('karma:auto-run', karmaRun('karma-auto.conf.js'));
+gulp.task('karma:single-run', karmaRun('karma.conf.js', true));
+gulp.task('karma:auto-run', karmaRun('karma.conf.js', false));
