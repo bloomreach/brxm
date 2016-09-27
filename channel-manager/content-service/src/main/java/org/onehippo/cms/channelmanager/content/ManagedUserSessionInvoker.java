@@ -20,13 +20,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.JAXRSInvoker;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,24 +57,30 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements UserSessi
 
     @Override
     public Object invoke(Exchange exchange, Object requestParams) {
-        final String userId = (String)exchange.getSession().get("hippo:username");
+        final HttpServletRequest servletRequest
+                = (HttpServletRequest) exchange.getInMessage().get(AbstractHTTPDestination.HTTP_REQUEST);
+        final HttpSession httpSession = servletRequest.getSession(false);
 
-        if (StringUtils.isBlank(userId)) {
+        if (httpSession == null) {
             return FORBIDDEN;
         }
 
+        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+        if (cmsSessionContext == null) {
+            return FORBIDDEN;
+        }
+
+        final SimpleCredentials credentials = cmsSessionContext.getRepositoryCredentials();
         try {
-            final Session userSession = systemSession.impersonate(new SimpleCredentials(userId, EMPTY_PASSWORD));
+            final Session userSession = systemSession.getRepository().login(credentials);
             try {
-                final HttpServletRequest servletRequest
-                        = (HttpServletRequest) exchange.getInMessage().get(AbstractHTTPDestination.HTTP_REQUEST);
                 servletRequest.setAttribute(SESSION_ATTRIBUTE, userSession);
                 return invokeSuper(exchange, requestParams);
             } finally {
                 userSession.logout();
             }
         } catch (RepositoryException e) {
-            log.debug("Failed to create user session for '{}'", userId, e);
+            log.debug("Failed to create user session for '{}'", credentials.getUserID(), e);
             return FORBIDDEN;
         }
     }
