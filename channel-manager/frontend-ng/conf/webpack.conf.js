@@ -45,13 +45,6 @@ module.exports = {
       },
     ],
   },
-  devServer: {
-    contentBase: '/cms/angular/hippo-cm/',
-    hot: true,
-    inline: true,
-    historyApiFallback: true,
-    port: 9090,
-  },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
@@ -77,6 +70,10 @@ module.exports = {
       }, {
         from: path.resolve(conf.paths.npmDir, 'dragula', 'dist', 'dragula.min.css'),
         to: path.resolve(conf.paths.dist, 'styles', 'dragula.min.css'),
+      }, {
+        context: conf.paths.src,
+        from: '**/!(*.js|*.scss|*.html)',
+        to: conf.paths.dir,
       },
     ]),
   ],

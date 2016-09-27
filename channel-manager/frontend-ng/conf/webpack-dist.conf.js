@@ -4,9 +4,8 @@ const path = require('path');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-
 const autoprefixer = require('autoprefixer');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   module: {
@@ -77,6 +76,10 @@ module.exports = {
       }, {
         from: path.resolve(conf.paths.npmDir, 'dragula', 'dist', 'dragula.min.css'),
         to: path.resolve(conf.paths.dist, 'styles', 'dragula.min.css'),
+      }, {
+        context: conf.paths.src,
+        from: '**/!(*.js|*.scss|*.html)',
+        to: conf.paths.dir,
       },
     ]),
     new webpack.optimize.UglifyJsPlugin({
