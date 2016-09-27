@@ -10,6 +10,6 @@ gulp.registry(hub);
 
 gulp.task('test', gulp.series('karma:single-run'));
 gulp.task('test:auto', gulp.series('karma:auto-run'));
-gulp.task('build', gulp.series('clean', 'other', 'webpack:dist'));
-gulp.task('serve', gulp.series('clean', 'other', 'webpack'));
+gulp.task('build', gulp.series('clean', 'webpack:dist'));
+gulp.task('serve', gulp.series('clean', 'webpack'));
 gulp.task('default', gulp.series('build'));

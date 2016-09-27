@@ -45,13 +45,6 @@ module.exports = {
       },
     ],
   },
-  devServer: {
-    contentBase: '/cms/angular/hippo-cm/',
-    hot: true,
-    inline: true,
-    historyApiFallback: true,
-    port: 9090,
-  },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
@@ -64,6 +57,7 @@ module.exports = {
       template: conf.path.src('index.html'),
       inject: true,
     }),
+    new webpack.HotModuleReplacementPlugin(),
     new webpack.ProvidePlugin({
       $: 'jquery',
       'window.$': 'jquery',
@@ -77,6 +71,15 @@ module.exports = {
       }, {
         from: path.resolve(conf.paths.npmDir, 'dragula', 'dist', 'dragula.min.css'),
         to: path.resolve(conf.paths.dist, 'styles', 'dragula.min.css'),
+      }, {
+        from: conf.path.src('i18n'),
+        to: path.resolve(conf.paths.dist, 'i18n'),
+      }, {
+        from: conf.path.src('images'),
+        to: path.resolve(conf.paths.dist, 'images'),
+      }, {
+        from: conf.path.src('styles', 'hippo-iframe.css'),
+        to: path.resolve(conf.paths.dist, 'styles', 'hippo-iframe.css'),
       },
     ]),
   ],
@@ -100,6 +103,6 @@ module.exports = {
   },
   entry: {
     vendor: conf.vendors,
-    app: `./${conf.path.src('index')}`,
+    app: [`./${conf.path.src('index')}`],
   },
 };
