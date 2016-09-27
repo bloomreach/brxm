@@ -3,7 +3,6 @@ module.exports = {
   hot: true,
   historyApiFallback: true,
   inline: true,
-  port: 9090,
   publicPath: '/cms/angular/hippo-cm/',
   stats: {
     colors: true,
