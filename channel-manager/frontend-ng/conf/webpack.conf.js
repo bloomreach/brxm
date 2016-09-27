@@ -57,7 +57,6 @@ module.exports = {
       template: conf.path.src('index.html'),
       inject: true,
     }),
-    new webpack.HotModuleReplacementPlugin(),
     new webpack.ProvidePlugin({
       $: 'jquery',
       'window.$': 'jquery',
@@ -72,14 +71,9 @@ module.exports = {
         from: path.resolve(conf.paths.npmDir, 'dragula', 'dist', 'dragula.min.css'),
         to: path.resolve(conf.paths.dist, 'styles', 'dragula.min.css'),
       }, {
-        from: conf.path.src('i18n'),
-        to: path.resolve(conf.paths.dist, 'i18n'),
-      }, {
-        from: conf.path.src('images'),
-        to: path.resolve(conf.paths.dist, 'images'),
-      }, {
-        from: conf.path.src('styles', 'hippo-iframe.css'),
-        to: path.resolve(conf.paths.dist, 'styles', 'hippo-iframe.css'),
+        context: conf.paths.src,
+        from: '**/!(*.js|*.scss|*.html)',
+        to: conf.paths.dir,
       },
     ]),
   ],

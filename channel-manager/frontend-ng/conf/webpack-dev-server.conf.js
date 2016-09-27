@@ -8,4 +8,5 @@ module.exports = {
   stats: {
     colors: true,
   },
+  port: 9090,
 };
