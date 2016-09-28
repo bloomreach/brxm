@@ -19,13 +19,17 @@ package org.onehippo.cms.channelmanager.content.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * This bean represents a document type, known to the CMS.
  * It can be serialized into JSON to expose it through a REST API.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DocumentTypeSpec {
     private String id; // "namespace:typename"
     private String displayName;
+    private Boolean readOnlyDueToUnknownValidator;
     private List<FieldTypeSpec> fields; // ordered list of fields
 
     public String getId() {
@@ -42,6 +46,14 @@ public class DocumentTypeSpec {
 
     public void setDisplayName(final String displayName) {
         this.displayName = displayName;
+    }
+
+    public Boolean isReadOnlyDueToUnknownValidator() {
+        return readOnlyDueToUnknownValidator;
+    }
+
+    public void setReadOnlyDueToUnknownValidator(final boolean readOnlyDueToUnknownValidator) {
+        this.readOnlyDueToUnknownValidator = readOnlyDueToUnknownValidator;
     }
 
     public List<FieldTypeSpec> getFields() {

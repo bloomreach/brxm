@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cms.channelmanager.content;
 
-import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
+package org.onehippo.cms.channelmanager.content.exception;
 
-/**
- * Provides a JCR session authenticated for the logged in user.
- */
-public interface UserSessionProvider {
-
-    Session get(HttpServletRequest servletRequest);
+public class DocumentTypeNotFoundException extends Exception {
 }

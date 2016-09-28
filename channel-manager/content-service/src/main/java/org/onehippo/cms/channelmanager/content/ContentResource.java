@@ -16,10 +16,11 @@
 
 package org.onehippo.cms.channelmanager.content;
 
+import java.util.Locale;
+
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -27,25 +28,28 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
+import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.Document;
 import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
-import org.onehippo.cms.channelmanager.content.util.MockResponse;
 
 @Produces("application/json")
 @Path("/")
 public class ContentResource {
-    private final UserSessionProvider userSessionProvider;
+    private final SessionDataProvider sessionDataProvider;
     private final ContentService contentService;
+    private final DocumentTypeFactory documentTypeFactory;
 
-    public ContentResource(final UserSessionProvider userSessionProvider, final ContentService contentService) {
-        this.userSessionProvider = userSessionProvider;
+    public ContentResource(final SessionDataProvider userSessionProvider, final ContentService contentService,
+                           final DocumentTypeFactory documentTypeFactory) {
+        this.sessionDataProvider = userSessionProvider;
         this.contentService = contentService;
+        this.documentTypeFactory = documentTypeFactory;
     }
 
     @GET
     @Path("documents/{id}")
     public Response getDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
-        final Session userSession = userSessionProvider.get(servletRequest);
+        final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
         try {
             final Document document = contentService.getDocument(userSession, id);
             return Response.ok().entity(document).build();
@@ -56,7 +60,13 @@ public class ContentResource {
 
     @GET
     @Path("documenttypes/{id}")
-    public DocumentTypeSpec getDocumentTypeSpec(@PathParam("id") String id) {
-        return MockResponse.createTestDocumentType();
+    public Response getDocumentTypeSpec(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
+        final Locale locale = sessionDataProvider.getLocale(servletRequest);
+        try {
+            final DocumentTypeSpec docType = documentTypeFactory.getDocumentTypeSpec(id, locale);
+            return Response.ok().entity(docType).build();
+        } catch (DocumentTypeNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 }

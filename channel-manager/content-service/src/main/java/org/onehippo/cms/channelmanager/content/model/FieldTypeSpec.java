@@ -34,7 +34,7 @@ public class FieldTypeSpec {
     private String displayName;   // using the correct language/locale
     private String hint;          // using the correct language/locale
 
-    private boolean multiple;
+    private Boolean multiple;
     // private boolean orderable; // future improvement
     // private boolean readOnly;  // future improvement
 
@@ -56,7 +56,7 @@ public class FieldTypeSpec {
      */
     public enum Validator {
         REQUIRED,
-        OTHER
+        UNSUPPORTED
     }
 
     public String getId() {
@@ -91,7 +91,7 @@ public class FieldTypeSpec {
         this.hint = hint;
     }
 
-    public boolean isMultiple() {
+    public Boolean isMultiple() {
         return multiple;
     }
 

@@ -16,6 +16,8 @@
 
 package org.onehippo.cms.channelmanager.content;
 
+import java.util.Locale;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -36,12 +38,12 @@ import org.slf4j.LoggerFactory;
  * The name of the logged is user is read from the HTTP session attribute 'hippo:username'.
  * Returns a 403 forbidden error when invoked while no user is logged in.
  */
-public class ManagedUserSessionInvoker extends JAXRSInvoker implements UserSessionProvider {
+public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionDataProvider {
 
     private static final Logger log = LoggerFactory.getLogger(ManagedUserSessionInvoker.class);
 
-    private static final char[] EMPTY_PASSWORD = new char[]{};
-    private static final String SESSION_ATTRIBUTE = ManagedUserSessionInvoker.class.getName() + ".UserSession";
+    private static final String ATTRIBUTE_SESSION = ManagedUserSessionInvoker.class.getName() + ".UserSession";
+    private static final String ATTRIBUTE_LOCALE  = ManagedUserSessionInvoker.class.getName() + ".Locale";
     private static final MessageContentsList FORBIDDEN = new MessageContentsList(Response.status(Response.Status.FORBIDDEN).build());
 
     private final Session systemSession;
@@ -51,8 +53,13 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements UserSessi
     }
 
     @Override
-    public Session get(final HttpServletRequest servletRequest) {
-        return (Session)servletRequest.getAttribute(SESSION_ATTRIBUTE);
+    public Session getJcrSession(final HttpServletRequest servletRequest) {
+        return (Session)servletRequest.getAttribute(ATTRIBUTE_SESSION);
+    }
+
+    @Override
+    public Locale getLocale(final HttpServletRequest servletRequest) {
+        return (Locale)servletRequest.getAttribute(ATTRIBUTE_LOCALE);
     }
 
     @Override
@@ -74,7 +81,8 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements UserSessi
         try {
             final Session userSession = systemSession.getRepository().login(credentials);
             try {
-                servletRequest.setAttribute(SESSION_ATTRIBUTE, userSession);
+                servletRequest.setAttribute(ATTRIBUTE_SESSION, userSession);
+                servletRequest.setAttribute(ATTRIBUTE_LOCALE, getLocale(cmsSessionContext));
                 return invokeSuper(exchange, requestParams);
             } finally {
                 userSession.logout();
@@ -88,5 +96,13 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements UserSessi
     // extracted call to super for better testability
     protected Object invokeSuper(Exchange exchange, Object requestParams) {
         return super.invoke(exchange, requestParams);
+    }
+
+    protected Locale getLocale(final CmsSessionContext context) {
+        Locale locale = context.getLocale();
+        if (locale == null) {
+            locale = new Locale("en");
+        }
+        return locale;
     }
 }

@@ -55,9 +55,11 @@ public class ContentServiceModule extends AbstractReconfigurableDaemonModule {
             throw new IllegalStateException("ContentServiceModule requires a hippo:moduleconfig");
         }
         final ManagedUserSessionInvoker managedUserSessionInvoker = new ManagedUserSessionInvoker(session);
+        final ContentResource contentResource = new ContentResource(
+                managedUserSessionInvoker, new ContentService(), new DocumentTypeFactory(session));
         jaxrsEndpoint = new CXFRepositoryJaxrsEndpoint(endpointAddress)
                 .invoker(managedUserSessionInvoker)
-                .singleton(new ContentResource(managedUserSessionInvoker, new ContentService()))
+                .singleton(contentResource)
                 .singleton(new JacksonJsonProvider());
         RepositoryJaxrsService.addEndpoint(jaxrsEndpoint);
     }

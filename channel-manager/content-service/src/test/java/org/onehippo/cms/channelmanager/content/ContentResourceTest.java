@@ -40,18 +40,20 @@ public class ContentResourceTest extends CXFTest {
 
     private Session userSession;
     private ContentService contentService;
+    private DocumentTypeFactory documentTypeFactory;
 
     @Before
     public void setup() {
         userSession = createMock(Session.class);
         contentService = createMock(ContentService.class);
+        documentTypeFactory = createMock(DocumentTypeFactory.class);
 
-        final UserSessionProvider userSessionProvider = createMock(UserSessionProvider.class);
-        expect(userSessionProvider.get(anyObject())).andReturn(userSession).anyTimes();
-        replay(userSessionProvider);
+        final SessionDataProvider sessionDataProvider = createMock(SessionDataProvider.class);
+        expect(sessionDataProvider.getJcrSession(anyObject())).andReturn(userSession).anyTimes();
+        replay(sessionDataProvider);
 
         final CXFTest.Config config = new CXFTest.Config();
-        config.addServerSingleton(new ContentResource(userSessionProvider, contentService));
+        config.addServerSingleton(new ContentResource(sessionDataProvider, contentService, documentTypeFactory));
         config.addServerSingleton(new JacksonJsonProvider());
 
         setup(config);
