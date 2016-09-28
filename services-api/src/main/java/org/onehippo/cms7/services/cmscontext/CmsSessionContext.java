@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.services.cmscontext;
 
+import java.util.Locale;
+
 import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpSession;
 
@@ -33,6 +35,12 @@ public interface CmsSessionContext {
      * @see #getRepositoryCredentials()
      */
     String REPOSITORY_CREDENTIALS = "repository.credentials";
+
+    /**
+     * Key to retrieve the locale applicable to the current CMS session.
+     * @see #getLocale()
+     */
+    String LOCALE = "locale";
 
     /**
      * Static method to retrieve the CmsSessionContext from a HttpSession
@@ -65,5 +73,12 @@ public interface CmsSessionContext {
      */
     default SimpleCredentials getRepositoryCredentials() {
         return (SimpleCredentials)get(REPOSITORY_CREDENTIALS);
+    }
+
+    /**
+     * @return the Locale applicable to the current CMS session
+     */
+    default Locale getLocale() {
+        return (Locale)get(LOCALE);
     }
 }
