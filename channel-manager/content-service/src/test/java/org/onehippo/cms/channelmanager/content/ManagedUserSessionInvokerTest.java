@@ -41,6 +41,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.fail;
 
 public class ManagedUserSessionInvokerTest {
     private static final String SESSION_ATTRIBUTE = ManagedUserSessionInvoker.class.getName() + ".UserSession";
@@ -196,7 +197,7 @@ public class ManagedUserSessionInvokerTest {
 
         try {
             exceptionThrowingInvoker.invoke(exchange, "test");
-            assertThat("we don't get here", false);
+            fail("We mustn't get here");
         } catch (Exception e) {
             verify(servletRequest, httpSession, context, systemSession, repository, userSession);
             assertThat(e, equalTo(testException));

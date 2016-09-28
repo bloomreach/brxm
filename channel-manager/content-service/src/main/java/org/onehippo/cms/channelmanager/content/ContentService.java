@@ -90,11 +90,12 @@ public class ContentService {
             if ((Boolean) hints.get("obtainEditableInstance")) {
                 info.setState(EditingInfo.State.AVAILABLE);
             } else if (hints.containsKey("inUseBy")) {
-                if (session.getUserID().equals(hints.get("inUseBy"))) {
+                final String inUseBy = (String)hints.get("inUseBy");
+                if (inUseBy.equals(session.getUserID())) {
                     info.setState(EditingInfo.State.AVAILABLE);
                 } else {
                     info.setState(EditingInfo.State.UNAVAILABLE_HELD_BY_OTHER_USER);
-                    info.setHolder(determineHolder((String) hints.get("inUseBy"), workspace));
+                    info.setHolder(determineHolder(inUseBy, workspace));
                 }
             } else if (hints.containsKey("requests")) {
                 info.setState(EditingInfo.State.UNAVAILABLE_REQUEST_PENDING);
