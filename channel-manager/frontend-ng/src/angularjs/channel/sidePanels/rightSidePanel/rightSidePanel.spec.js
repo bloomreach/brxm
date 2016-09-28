@@ -17,22 +17,29 @@
 describe('ChannelRightSidePanel', () => {
   'use strict';
 
-  let $rootScope;
   let $compile;
+  let $q;
+  let $rootScope;
   let ChannelSidePanelService;
+  let ContentService;
   let parentScope;
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_) => {
-      $rootScope = _$rootScope_;
+    inject((_$compile_, _$q_, _$rootScope_, _ChannelSidePanelService_, _ContentService_) => {
       $compile = _$compile_;
+      $q = _$q_;
+      $rootScope = _$rootScope_;
       ChannelSidePanelService = _ChannelSidePanelService_;
+      ContentService = _ContentService_;
     });
 
     spyOn(ChannelSidePanelService, 'initialize');
     spyOn(ChannelSidePanelService, 'close');
+    spyOn(ContentService, 'getDocument').and.returnValue($q.resolve({
+      id: 'testDocument',
+    }));
   });
 
   function instantiateController(editMode) {
@@ -45,10 +52,13 @@ describe('ChannelRightSidePanel', () => {
   }
 
   it('initializes the channel right side panel service upon instantiation', () => {
-    instantiateController(false);
+    const $ctrl = instantiateController(false);
 
     expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalled();
+    expect($ctrl.doc).toEqual({
+      id: 'testDocument',
+    });
   });
 
   it('closes the panel', () => {

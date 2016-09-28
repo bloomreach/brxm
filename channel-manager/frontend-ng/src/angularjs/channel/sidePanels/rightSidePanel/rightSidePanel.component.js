@@ -15,14 +15,20 @@
  */
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, ChannelSidePanelService) {
+  constructor($scope, $element, ChannelSidePanelService, ContentService) {
     'ngInject';
 
     this.$scope = $scope;
     this.ChannelSidePanelService = ChannelSidePanelService;
+    this.ContentService = ContentService;
+
+    this.doc = {};
 
     ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'));
     this.closePanelOnEditModeTurnedOff();
+
+    // TODO: load document when 'edit content' button is clicked instead of always loading the hardcoded 'test' document
+    this.loadDocument('test');
   }
 
   closePanelOnEditModeTurnedOff() {
@@ -31,6 +37,14 @@ export class ChannelRightSidePanelCtrl {
         this.ChannelSidePanelService.close('right');
       }
     });
+  }
+
+  loadDocument(id) {
+    this.ContentService.getDocument(id)
+      .then((doc) => {
+        this.doc = doc;
+      });
+    // TODO: handle error
   }
 
   close() {

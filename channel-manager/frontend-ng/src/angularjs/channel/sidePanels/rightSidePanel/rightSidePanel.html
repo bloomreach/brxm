@@ -25,7 +25,7 @@
     <h1 class="md-title">{{'EDIT_DOCUMENT' | translate }}</h1>
   </div>
   <md-content flex="grow" layout-padding>
-    Right Side Panel
+    <pre>{{ $ctrl.doc | json }}</pre>
   </md-content>
   <div layout="row" layout-align="end center" flex="none">
     <md-button class="md-primary">{{'SAVE' | translate }}</md-button>
