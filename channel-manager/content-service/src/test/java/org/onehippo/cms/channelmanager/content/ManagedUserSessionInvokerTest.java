@@ -19,9 +19,12 @@ package org.onehippo.cms.channelmanager.content;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.message.Exchange;
@@ -29,8 +32,8 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.junit.Test;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
-import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
@@ -38,8 +41,11 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.fail;
 
 public class ManagedUserSessionInvokerTest {
+    private static final String SESSION_ATTRIBUTE = ManagedUserSessionInvoker.class.getName() + ".UserSession";
+
     private Session systemSession = createMock(Session.class);
     private ManagedUserSessionInvoker invoker = new ManagedUserSessionInvoker(systemSession) {
         @Override
@@ -55,8 +61,7 @@ public class ManagedUserSessionInvokerTest {
     @Test
     public void readTheUserSessionFromTheHttpServletRequest() {
         final Session userSession = createMock(Session.class);
-        final String attributeName = ManagedUserSessionInvoker.class.getName() + ".UserSession";
-        expect(servletRequest.getAttribute(attributeName)).andReturn(userSession);
+        expect(servletRequest.getAttribute(SESSION_ATTRIBUTE)).andReturn(userSession);
         replay(servletRequest);
 
         final Session retrievedSession = invoker.get(servletRequest);
@@ -67,8 +72,7 @@ public class ManagedUserSessionInvokerTest {
 
     @Test
     public void returnNullIfTheresNoUserSession() {
-        final String attributeName = ManagedUserSessionInvoker.class.getName() + ".UserSession";
-        expect(servletRequest.getAttribute(attributeName)).andReturn(null);
+        expect(servletRequest.getAttribute(SESSION_ATTRIBUTE)).andReturn(null);
         replay(servletRequest);
 
         final Session retrievedSession = invoker.get(servletRequest);
@@ -78,42 +82,61 @@ public class ManagedUserSessionInvokerTest {
     }
 
     @Test
-    public void returnForbiddenIfUsernameMissing() {
-        final Exchange exchange = prepareHippoUsername(null);
-        replay(exchange);
+    public void returnForbiddenIfHttpSessionMissing() {
+        final Exchange exchange = prepareExchange();
+
+        expect(servletRequest.getSession(false)).andReturn(null);
+        replay(servletRequest);
 
         final Object result = invoker.invoke(exchange, "test");
 
-        verify(exchange);
+        verify(servletRequest);
         assertForbidden(result);
     }
 
     @Test
-    public void returnForbiddenIfUsernameEmpty() {
-        final Exchange exchange = prepareHippoUsername("");
-        replay(exchange);
+    public void returnForbiddenIfNoCmsSessionContext() {
+        final Exchange exchange = prepareExchange();
+        final HttpSession httpSession = createMock(HttpSession.class);
+        final CmsSessionContext context = createMock(CmsSessionContext.class);
+
+        expect(servletRequest.getSession(false)).andReturn(httpSession);
+        expect(httpSession.getAttribute(CmsSessionContext.SESSION_KEY)).andReturn(context);
+
+        replay(servletRequest);
 
         final Object result = invoker.invoke(exchange, "test");
 
-        verify(exchange);
+        verify(servletRequest);
         assertForbidden(result);
     }
 
     @Test
     public void invokeJaxrs() throws Exception {
+        final SimpleCredentials credentials = new SimpleCredentials("tester", new char[]{});
+        final Exchange exchange = prepareExchange();
+        final HttpSession httpSession = createMock(HttpSession.class);
+        final CmsSessionContext context = createMock(CmsSessionContext.class);
+        final Repository repository = createMock(Repository.class);
         final Session userSession = createMock(Session.class);
+
+        expect(servletRequest.getSession(false)).andReturn(httpSession);
+        expect(httpSession.getAttribute(CmsSessionContext.SESSION_KEY)).andReturn(context);
+        expect(context.getRepositoryCredentials()).andReturn(credentials);
+        expect(systemSession.getRepository()).andReturn(repository);
+        expect(repository.login(credentials)).andReturn(userSession);
+
+        servletRequest.setAttribute(SESSION_ATTRIBUTE, userSession);
+        expectLastCall();
         userSession.logout();
         expectLastCall();
-        expect(systemSession.impersonate(anyObject())).andReturn(userSession);
-        final Exchange exchange = prepareHippoUsername("tester");
-        prepareServletRequest(exchange);
-        servletRequest.setAttribute(ManagedUserSessionInvoker.class.getName() + ".UserSession", userSession);
-        expectLastCall();
-        replay(systemSession, userSession, servletRequest, exchange);
+
+        replay(servletRequest, httpSession, context, systemSession, repository, userSession);
 
         final Object result = invoker.invoke(exchange, "test");
 
-        verify(systemSession, userSession, servletRequest, exchange);
+        verify(servletRequest, httpSession, context, systemSession, repository, userSession);
+
         assertThat("a map is returned", result instanceof Map);
         final Map<String, Object> map = (Map<String, Object>)result;
         assertThat(map.get("exchange"), equalTo(exchange));
@@ -121,14 +144,24 @@ public class ManagedUserSessionInvokerTest {
     }
 
     @Test
-    public void returnForbiddenIfImpersonationFails() throws Exception {
-        expect(systemSession.impersonate(anyObject())).andThrow(new RepositoryException());
-        final Exchange exchange = prepareHippoUsername("tester");
-        replay(systemSession, exchange);
+    public void returnForbiddenIfLoginFails() throws Exception {
+        final SimpleCredentials credentials = new SimpleCredentials("tester", new char[]{});
+        final Exchange exchange = prepareExchange();
+        final HttpSession httpSession = createMock(HttpSession.class);
+        final CmsSessionContext context = createMock(CmsSessionContext.class);
+        final Repository repository = createMock(Repository.class);
+
+        expect(servletRequest.getSession(false)).andReturn(httpSession);
+        expect(httpSession.getAttribute(CmsSessionContext.SESSION_KEY)).andReturn(context);
+        expect(context.getRepositoryCredentials()).andReturn(credentials);
+        expect(systemSession.getRepository()).andReturn(repository);
+        expect(repository.login(credentials)).andThrow(new RepositoryException());
+
+        replay(servletRequest, httpSession, context, systemSession, repository);
 
         final Object result = invoker.invoke(exchange, "test");
 
-        verify(systemSession, exchange);
+        verify(servletRequest, httpSession, context, systemSession, repository);
         assertForbidden(result);
     }
 
@@ -142,41 +175,44 @@ public class ManagedUserSessionInvokerTest {
             }
         };
 
+        final SimpleCredentials credentials = new SimpleCredentials("tester", new char[]{});
+        final Exchange exchange = prepareExchange();
+        final HttpSession httpSession = createMock(HttpSession.class);
+        final CmsSessionContext context = createMock(CmsSessionContext.class);
+        final Repository repository = createMock(Repository.class);
         final Session userSession = createMock(Session.class);
+
+        expect(servletRequest.getSession(false)).andReturn(httpSession);
+        expect(httpSession.getAttribute(CmsSessionContext.SESSION_KEY)).andReturn(context);
+        expect(context.getRepositoryCredentials()).andReturn(credentials);
+        expect(systemSession.getRepository()).andReturn(repository);
+        expect(repository.login(credentials)).andReturn(userSession);
+
+        servletRequest.setAttribute(SESSION_ATTRIBUTE, userSession);
+        expectLastCall();
         userSession.logout();
         expectLastCall();
-        expect(systemSession.impersonate(anyObject())).andReturn(userSession);
-        final Exchange exchange = prepareHippoUsername("tester");
-        prepareServletRequest(exchange);
-        servletRequest.setAttribute(ManagedUserSessionInvoker.class.getName() + ".UserSession", userSession);
-        expectLastCall();
-        replay(systemSession, userSession, servletRequest, exchange);
+
+        replay(servletRequest, httpSession, context, systemSession, repository, userSession);
 
         try {
             exceptionThrowingInvoker.invoke(exchange, "test");
-            assertThat("we don't get here", false);
+            fail("We mustn't get here");
         } catch (Exception e) {
-            verify(systemSession, userSession, servletRequest, exchange);
+            verify(servletRequest, httpSession, context, systemSession, repository, userSession);
             assertThat(e, equalTo(testException));
         }
     }
 
-    private Exchange prepareHippoUsername(String userName) {
-        final org.apache.cxf.transport.Session cxfSession = createMock(org.apache.cxf.transport.Session.class);
+    private Exchange prepareExchange() {
+        final Message message = createMock(Message.class);
         final Exchange exchange = createMock(Exchange.class);
 
-        expect(exchange.getSession()).andReturn(cxfSession);
-        expect(cxfSession.get("hippo:username")).andReturn(userName);
-        replay(cxfSession);
+        expect(exchange.getInMessage()).andReturn(message);
+        expect(message.get(AbstractHTTPDestination.HTTP_REQUEST)).andReturn(servletRequest);
+        replay(message, exchange);
 
         return exchange;
-    }
-
-    private void prepareServletRequest(final Exchange exchange) {
-        final Message message = createMock(Message.class);
-        expect(message.get(AbstractHTTPDestination.HTTP_REQUEST)).andReturn(servletRequest);
-        expect(exchange.getInMessage()).andReturn(message);
-        replay(message);
     }
 
     private void assertForbidden(final Object result) {

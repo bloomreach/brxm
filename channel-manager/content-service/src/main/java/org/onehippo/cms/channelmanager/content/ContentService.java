@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.ws.rs.NotFoundException;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -91,8 +90,13 @@ public class ContentService {
             if ((Boolean) hints.get("obtainEditableInstance")) {
                 info.setState(EditingInfo.State.AVAILABLE);
             } else if (hints.containsKey("inUseBy")) {
-                info.setState(EditingInfo.State.UNAVAILABLE_HELD_BY_OTHER_USER);
-                info.setHolder(determineHolder((String) hints.get("inUseBy"), workspace));
+                final String inUseBy = (String)hints.get("inUseBy");
+                if (inUseBy.equals(session.getUserID())) {
+                    info.setState(EditingInfo.State.AVAILABLE);
+                } else {
+                    info.setState(EditingInfo.State.UNAVAILABLE_HELD_BY_OTHER_USER);
+                    info.setHolder(determineHolder(inUseBy, workspace));
+                }
             } else if (hints.containsKey("requests")) {
                 info.setState(EditingInfo.State.UNAVAILABLE_REQUEST_PENDING);
             }

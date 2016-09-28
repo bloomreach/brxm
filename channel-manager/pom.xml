@@ -39,6 +39,7 @@
     <hippo.cms.version>4.1.0-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>4.1.0-visual-editing-psp1-SNAPSHOT</hippo.hst.version>
     <hippo.commons.version>3.1.0-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>3.1.0-SNAPSHOT</hippo.services.version>
     <hippo.addon-hst-configuration-editor.version>3.1.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
 
     <commons-lang.version>2.6</commons-lang.version>
@@ -49,7 +50,7 @@
 
     <!-- test related -->
     <junit.version>4.12</junit.version>
-    <easymock.version>3.0</easymock.version>
+    <easymock.version>3.4</easymock.version>
   </properties>
 
   <repositories>
@@ -115,6 +116,11 @@
         <artifactId>hippo-cms7-commons</artifactId>
         <version>${hippo.commons.version}</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services</artifactId>
+        <version>${hippo.services.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>

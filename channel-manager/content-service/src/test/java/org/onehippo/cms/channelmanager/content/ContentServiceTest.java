@@ -139,6 +139,31 @@ public class ContentServiceTest {
     }
 
     @Test
+    public void readAvailableEditingInfoWhileEditing() throws Exception {
+        final Node handle = rootNode.addNode("testDocument", "hippo:handle");
+        session = createMock(Session.class);
+        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
+        final WorkflowManager wfm = createMock(WorkflowManager.class);
+        final Workflow wf = createMock(Workflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+        hints.put("obtainEditableInstance", false);
+        hints.put("inUseBy", "tester");
+
+        expect(wf.hints()).andReturn(hints);
+        expect(wfm.getWorkflow("editing", handle)).andReturn(wf);
+        expect(workspace.getWorkflowManager()).andReturn(wfm);
+        expect(session.getWorkspace()).andReturn(workspace);
+        expect(session.getUserID()).andReturn("tester");
+        replay(session, workspace, wfm, wf);
+
+        final EditingInfo info = contentService.determineEditingInfo(session, handle);
+
+        verify(session, workspace, wfm, wf);
+        assertThat(info.getState(), equalTo(EditingInfo.State.AVAILABLE));
+        assertThat(info.getHolder(), equalTo(null));
+    }
+
+    @Test
     public void readUnavailableHeldByOtherUser() throws Exception {
         final Node handle = rootNode.addNode("testDocument", "hippo:handle");
         contentService = createMockBuilder(ContentService.class).addMockedMethod("determineHolder").createMock();
@@ -155,6 +180,7 @@ public class ContentServiceTest {
         expect(wfm.getWorkflow("editing", handle)).andReturn(wf);
         expect(workspace.getWorkflowManager()).andReturn(wfm);
         expect(session.getWorkspace()).andReturn(workspace);
+        expect(session.getUserID()).andReturn("tester");
         expect(contentService.determineHolder("otherUser", workspace)).andReturn(null);
         replay(contentService, session, workspace, wfm, wf);
 
