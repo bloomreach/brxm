@@ -4,14 +4,23 @@ const karmaFixtureProxyPath = '/base/src/angularjs/';
 module.exports = function karmaConfig(config) {
   const configuration = {
     basePath: '../',
-    singleRun: true,
-    autoWatch: false,
     logLevel: 'INFO',
     browsers: [
       'Chrome',
     ],
     frameworks: [
-      'jasmine-jquery', 'jasmine',
+      'jasmine-jquery',
+      'jasmine',
+    ],
+    plugins: [
+      require('karma-chrome-launcher'),
+      require('karma-coverage'),
+      require('karma-jasmine'),
+      require('karma-jasmine-jquery'),
+      require('karma-mocha-reporter'),
+      require('karma-ng-html2js-preprocessor'),
+      require('karma-sourcemap-loader'),
+      require('karma-webpack'),
     ],
     files: [
       'node_modules/es6-shim/es6-shim.js',
@@ -56,16 +65,6 @@ module.exports = function karmaConfig(config) {
     webpackMiddleware: {
       noInfo: true,
     },
-    plugins: [
-      require('karma-chrome-launcher'),
-      require('karma-coverage'),
-      require('karma-jasmine'),
-      require('karma-jasmine-jquery'),
-      require('karma-mocha-reporter'),
-      require('karma-ng-html2js-preprocessor'),
-      require('karma-sourcemap-loader'),
-      require('karma-webpack'),
-    ],
   };
 
   config.set(configuration);
