@@ -66,7 +66,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         requestContext.setNonDefaultHstQueryManagers(nonDefaultHstQueryManagers);
         requestContext.setSession(session);
         baseContentNode = session.getNode("/unittestcontent");
-        baseContentBean = (HippoBean) objectConverter.getObject(baseContentNode);
+        baseContentBean = (HippoBean)objectConverter.getObject(baseContentNode);
         requestContext.setSiteContentBaseBean(baseContentBean);
         ModifiableRequestContextProvider.set(requestContext);
     }
@@ -116,7 +116,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void simple_filter_no_constraint_results_in_must_exist_propery_contstraint() throws Exception {
+    public void simple_filter_no_constraint_results_in_must_exist_property_constraint() throws Exception {
 
     }
 
@@ -126,8 +126,34 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void simple_nestedproperty_filter() throws Exception {
+    public void simple_nodescopes_filter() throws Exception {
 
+    }
+
+    @Test
+    public void simple_nestedproperty_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        Filter nestedFilter1 = hstQuery.createFilter();
+        nestedFilter1.addEqualTo("myhippoproject:customid", "123");
+        filter.addAndFilter(nestedFilter1);
+        hstQuery.setFilter(filter);
+        String xpathQuery = hstQuery.getQueryAsString(true);
+        log.debug("xpathQuery: {}", xpathQuery);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        and(
+                                filterBuilder("myhippoproject:customid").equalTo("123")
+                        )
+                )
+                .build();
+
+        String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
+        log.debug("xpathQueryInFluent: {}", xpathQueryInFluent);
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
 
     @Test
@@ -162,9 +188,9 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                                 or(
                                         filterBuilder("myhippoproject:title").like("Hello%"),
                                         filterBuilder("myhippoproject:description").contains("foo")
-                                        )
                                 )
                         )
+                )
                 .build();
 
         String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
@@ -172,7 +198,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
-
 
 
     @Test
@@ -206,9 +231,9 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                                 or(
                                         filterBuilder("myhippoproject:title").like("Hello%"),
                                         filterBuilder("myhippoproject:description").contains("foo")
-                                        )
                                 )
                         )
+                )
                 .orderByAscending("myhippoproject:title").orderByDescending("myhippoproject:date")
                 .offset(10).limit(5)
                 .build();
@@ -248,9 +273,9 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                                 or(
                                         filterBuilder("myhippoproject:title").like("Hello%"),
                                         filterBuilder("myhippoproject:description").contains("foo")
-                                        )
-                                ).negate()
-                        )
+                                )
+                        ).negate()
+                )
                 .build();
 
         String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
