@@ -69,6 +69,7 @@
     "ng-cache-loader": "0.0.21",
     "node-sass": "3.10.0",
     "postcss-loader": "0.13.0",
+    "progress": "1.1.8",
     "sass-loader": "4.0.2",
     "style-loader": "0.13.1",
     "webpack": "2.1.0-beta.22",
