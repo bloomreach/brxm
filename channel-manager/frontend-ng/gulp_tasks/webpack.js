@@ -106,6 +106,6 @@ gulp.task('webpack:serve', () => {
   webpackServe(webpackConf);
 });
 
-gulp.task('webpack:distServe', done => {
-  webpackServe(webpackDistConf, done);
+gulp.task('webpack:distServe', () => {
+  webpackServe(webpackDistConf);
 });
