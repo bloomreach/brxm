@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.query.builder;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
+import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
@@ -40,6 +42,7 @@ import static org.hippoecm.hst.content.beans.query.builder.FilterBuilder.filterB
 import static org.hippoecm.hst.content.beans.query.builder.FilterBuilder.or;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
@@ -105,6 +108,98 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 .build();
 
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void simple_boolean_property_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addEqualTo("myhippoproject:customid", Boolean.TRUE);
+        hstQuery.setFilter(filter);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        filterBuilder("myhippoproject:customid").equalTo(Boolean.TRUE)
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void simple_double_property_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addEqualTo("myhippoproject:customid", 4.0D);
+        hstQuery.setFilter(filter);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        filterBuilder("myhippoproject:customid").equalTo(4.0D)
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void simple_long_property_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addEqualTo("myhippoproject:customid", 4L);
+        hstQuery.setFilter(filter);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        filterBuilder("myhippoproject:customid").equalTo(4L)
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void simple_calendar_property_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        Calendar calendar = Calendar.getInstance();
+        filter.addEqualTo("myhippoproject:customid", calendar);
+        hstQuery.setFilter(filter);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        filterBuilder("myhippoproject:customid").equalTo(calendar)
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void simple_unallowed_object_property_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        try {
+            filter.addEqualTo("myhippoproject:customid", this);
+            fail("FilterException expected ");
+        } catch (FilterException e) {
+
+        }
+        try {
+            HstQueryBuilder.create()
+                    .scopes(baseContentBean)
+                    .filter(
+                            filterBuilder("myhippoproject:customid").equalTo(this)
+                    )
+                    .build();
+            fail("FilterException expected ");
+        } catch (FilterException e) {
+
+        }
     }
 
 
