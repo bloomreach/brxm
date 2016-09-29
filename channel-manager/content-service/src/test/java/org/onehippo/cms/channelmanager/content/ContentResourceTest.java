@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.jcr.Session;
@@ -27,29 +28,36 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
+import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.Document;
+import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
 import org.onehippo.jaxrs.cxf.CXFTest;
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reset;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 public class ContentResourceTest extends CXFTest {
 
     private Session userSession;
+    private Locale locale;
     private ContentService contentService;
     private DocumentTypeFactory documentTypeFactory;
 
     @Before
     public void setup() {
+        locale = new Locale("en");
         userSession = createMock(Session.class);
         contentService = createMock(ContentService.class);
         documentTypeFactory = createMock(DocumentTypeFactory.class);
 
         final SessionDataProvider sessionDataProvider = createMock(SessionDataProvider.class);
         expect(sessionDataProvider.getJcrSession(anyObject())).andReturn(userSession).anyTimes();
+        expect(sessionDataProvider.getLocale(anyObject())).andReturn(locale).anyTimes();
         replay(sessionDataProvider);
 
         final CXFTest.Config config = new CXFTest.Config();
@@ -60,7 +68,7 @@ public class ContentResourceTest extends CXFTest {
     }
 
     @Test
-    public void contentResourceRelaysUserSessionAndDocumentUuidToContentService() throws Exception {
+    public void retrieveDocument() throws Exception {
         final String requestedUuid = "requested-uuid";
         final String returnedUuid = "returned-uuid";
         final Document testDocument = new Document();
@@ -75,6 +83,51 @@ public class ContentResourceTest extends CXFTest {
         .then()
                 .statusCode(200)
                 .body(equalTo(expectedBody));
+    }
+
+    @Test
+    public void documentNotFound() throws Exception {
+        final String requestedUuid = "requested-uuid";
+
+        expect(contentService.getDocument(userSession, requestedUuid)).andThrow(new DocumentNotFoundException());
+        replay(contentService);
+
+        when()
+                .get("/documents/" + requestedUuid)
+        .then()
+                .statusCode(404);
+    }
+
+    @Test
+    public void retrieveDocumentType() throws Exception {
+        final String requestedId = "ns:testdocument";
+        final String returnedId = "ns:otherdocument";
+        final DocumentTypeSpec docType = new DocumentTypeSpec();
+        docType.setId(returnedId);
+
+        expect(documentTypeFactory.getDocumentTypeSpec(requestedId, locale)).andReturn(docType);
+        replay(documentTypeFactory);
+
+        final String expectedBody = normalizeJsonResource("/empty-documenttype.json");
+
+        when()
+                .get("/documenttypes/" + requestedId)
+        .then()
+                .statusCode(200)
+                .body(equalTo(expectedBody));
+    }
+
+    @Test
+    public void documentTypeNotFound() throws Exception {
+        final String requestedId = "ns:testdocument";
+
+        expect(documentTypeFactory.getDocumentTypeSpec(requestedId, locale)).andThrow(new DocumentTypeNotFoundException());
+        replay(documentTypeFactory);
+
+        when()
+                .get("/documenttypes/" + requestedId)
+        .then()
+                .statusCode(404);
     }
 
     private String normalizeJsonResource(final String resourcePath) {
