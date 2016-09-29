@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 const path = require('path');
-const targetDir = path.resolve('.target/classes/angular/hippo-cm/');
+const targetDir = path.resolve('./target/classes/angular/hippo-cm/');
 const npmDir = path.resolve('./node_modules');
 
 const customConfig = {
@@ -27,11 +27,11 @@ const customConfig = {
   copyFiles: [
     {
       from: `${npmDir}/dragula/dist/dragula.min.css`,
-      to: `${targetDir}styles`,
+      to: `${targetDir}/styles`,
     },
     {
       from: `${npmDir}/dragula/dist/dragula.min.js`,
-      to: `${targetDir}scripts`,
+      to: `${targetDir}/scripts`,
     },
   ],
   provide: {
