@@ -74,14 +74,6 @@ public abstract class FilterBuilder {
 
     protected abstract Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException;
 
-    public FilterBuilder queryBuilder(final HstQueryBuilder queryBuilder) {
-        this.queryBuilder = queryBuilder;
-        return this;
-    }
-
-    protected HstQueryBuilder queryBuilder() {
-        return queryBuilder;
-    }
     /**
      * Negates the current filter
      */
