@@ -21,7 +21,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import org.w3c.dom.DocumentType;
 
 /**
  * This bean represents a field type, used for the fields of a {@link DocumentTypeSpec}.
@@ -29,6 +32,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class FieldTypeSpec {
+    @JsonIgnore
+    private DocumentTypeSpec documentTypeSpec;
+
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
     private String displayName;   // using the correct language/locale
@@ -57,6 +63,14 @@ public class FieldTypeSpec {
     public enum Validator {
         REQUIRED,
         UNSUPPORTED
+    }
+
+    public FieldTypeSpec(final DocumentTypeSpec documentTypeSpec) {
+        this.documentTypeSpec = documentTypeSpec;
+    }
+
+    public DocumentTypeSpec getDocumentTypeSpec() {
+        return documentTypeSpec;
     }
 
     public String getId() {
