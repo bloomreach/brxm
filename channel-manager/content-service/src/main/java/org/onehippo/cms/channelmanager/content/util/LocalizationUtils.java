@@ -83,24 +83,7 @@ public class LocalizationUtils {
      */
     public static String determineFieldDisplayName(final String fieldId, final ResourceBundle resourceBundle,
                                             final Node namespaceNode) {
-        // Try to return a localised field name
-        if (resourceBundle != null) {
-            String displayName = resourceBundle.getString(fieldId);
-            if (displayName != null) {
-                return displayName;
-            }
-        }
-        // Try to read the caption property of the field's plugin config
-        final Node fieldConfig = NamespaceUtils.getConfigForField(namespaceNode, fieldId);
-        if (fieldConfig != null) {
-            try {
-                return fieldConfig.getProperty("caption").getString();
-            } catch (RepositoryException e) {
-                // failed to read caption
-            }
-        }
-        // No display name available
-        return null;
+        return determineFieldLabel(fieldId, resourceBundle, fieldId, namespaceNode, "caption");
     }
 
     /**
@@ -113,23 +96,28 @@ public class LocalizationUtils {
      */
     public static String determineFieldHint(final String fieldId, final ResourceBundle resourceBundle,
                                      final Node namespaceNode) {
-        // Try to return a localised field name
+        return determineFieldLabel(fieldId, resourceBundle, fieldId + "#hint", namespaceNode, "hint");
+    }
+
+    private static String determineFieldLabel(final String fieldId, final ResourceBundle resourceBundle,
+                                              final String resourceKey, final Node namespaceNode, final String configProperty) {
+        // Try to return a localized label
         if (resourceBundle != null) {
-            String hint = resourceBundle.getString(fieldId + "#hint");
+            String hint = resourceBundle.getString(resourceKey);
             if (hint != null) {
                 return hint;
             }
         }
-        // Try to read the caption property of the field's plugin config
+        // Try to read a property off the field's plugin config
         final Node fieldConfig = NamespaceUtils.getConfigForField(namespaceNode, fieldId);
         if (fieldConfig != null) {
             try {
-                return fieldConfig.getProperty("hint").getString();
+                return fieldConfig.getProperty(configProperty).getString();
             } catch (RepositoryException e) {
                 // failed to read caption
             }
         }
-        // No hint available
+        // No label available
         return null;
     }
 }
