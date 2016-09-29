@@ -41,6 +41,17 @@ const customConfig = {
     'window.dragula': 'dragula',
   },
   serverPort: 9090,
+  karma: {
+    files: [
+      'node_modules/dragula/dist/dragula.min.js',
+      'node_modules/dragula/dist/dragula.min.css',
+      'node_modules/jquery/dist/jquery.js',
+    ],
+    proxies: {
+      '/styles/dragula.min.css': '/base/node_modules/dragula/dist/dragula.min.css',
+      '/scripts/dragula.min.js': '/base/node_modules/dragula/dist/dragula.min.js',
+    },
+  },
 };
 
 module.exports = customConfig;
