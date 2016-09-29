@@ -35,8 +35,16 @@ public abstract class HstQueryBuilder {
      * Static methods to create a query builder or filter builder.
      */
 
-    public static HstQueryBuilder create() {
-        return new DefaultHstQueryBuilder();
+    public static HstQueryBuilder create(final HippoBean ... scopeBeans) {
+        DefaultHstQueryBuilder defaultHstQueryBuilder = new DefaultHstQueryBuilder();
+        defaultHstQueryBuilder.scopes(scopeBeans);
+        return defaultHstQueryBuilder;
+    }
+
+    public static HstQueryBuilder create(final Node ... scopeNodes) {
+        DefaultHstQueryBuilder defaultHstQueryBuilder = new DefaultHstQueryBuilder();
+        defaultHstQueryBuilder.scopes(scopeNodes);
+        return defaultHstQueryBuilder;
     }
 
     /*
@@ -120,7 +128,7 @@ public abstract class HstQueryBuilder {
         return defaultResolution;
     }
 
-    public HstQueryBuilder scopes(final Node ... scopeNodes) {
+    HstQueryBuilder scopes(final Node ... scopeNodes) {
         if (scopeNodes != null) {
             for (Node scopeNode : scopeNodes) {
                 scopes.add(scopeNode);
@@ -132,7 +140,7 @@ public abstract class HstQueryBuilder {
         return this;
     }
 
-    public HstQueryBuilder scopes(final HippoBean ... scopeBeans) {
+    HstQueryBuilder scopes(final HippoBean ... scopeBeans) {
         if (scopeBeans != null) {
             for (HippoBean scopeBean : scopeBeans) {
                 scopes.add(scopeBean.getNode());
