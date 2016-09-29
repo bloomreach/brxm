@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,17 @@ package org.hippoecm.hst.content.beans.query;
 
 
 import org.hippoecm.hst.AbstractBeanTestCase;
+import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.repository.util.DateTools;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Locale;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -62,6 +70,37 @@ public class TestHstFilters extends AbstractBeanTestCase {
         assertEquals("@A = fn:lower-case('aaab') and @B = fn:lower-case('bb')",mainFilter.getJcrExpression());
     }
     
+    @Test
+    public void test_getStringValue_conversions() throws Exception {
+
+        final FilterImpl filter = new FilterImpl(session, null);
+
+        // String, Boolean
+        assertEquals("'stringvalue'", filter.getStringValue("stringvalue"));
+        assertEquals("'true'", filter.getStringValue(Boolean.TRUE));
+
+        // various Numbers
+        assertEquals("1", filter.getStringValue(1));
+        assertEquals("2", filter.getStringValue(2L));
+        assertEquals("3", filter.getStringValue(new BigInteger("3")));
+        assertEquals("4.0", filter.getStringValue(4.0D));
+        assertEquals("5.0", filter.getStringValue(5.0F));
+        assertEquals("6.00", filter.getStringValue(new BigDecimal(6.0D).setScale(2, BigDecimal.ROUND_UNNECESSARY)));
+
+        // Calendar/Date
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(1475155000000L);
+        assertEquals("xs:dateTime('2016-09-29T15:16:40.000+02:00')", filter.getStringValue(cal));
+        assertEquals("xs:dateTime('2016-09-29T15:16:40.000+02:00')", filter.getStringValue(cal.getTime()));
+    }
+
+    @Test(expected = FilterException.class)
+    public void test_getStringValue_unsupported() throws Exception {
+
+        final FilterImpl filter = new FilterImpl(session, null);
+        assertEquals("exception", filter.getStringValue(Collections.EMPTY_LIST));
+    }
+
     /**
      * Combine some AND-ed filters
      * @throws Exception
