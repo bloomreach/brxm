@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content;
+package org.onehippo.cms.channelmanager.content.util;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
