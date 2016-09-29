@@ -126,7 +126,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void simple_string_property_filter() throws Exception {
+    public void simple_string_equal_property_filter() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         Filter filter = hstQuery.createFilter();
         filter.addEqualTo("myhippoproject:customid", "123");
@@ -142,7 +142,40 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void simple_boolean_property_filter() throws Exception {
+    public void simple_string_not_equal_property_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addNotEqualTo("myhippoproject:customid", "123");
+        hstQuery.setFilter(filter);
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        filterBuilder("myhippoproject:customid").notEqualTo("123")
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+
+    @Test
+    public void simple_string_equal_case_insensitive_property_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addEqualToCaseInsensitive("myhippoproject:customid", "ABc");
+        hstQuery.setFilter(filter);
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        filterBuilder("myhippoproject:customid").equalToCaseInsensitive("ABc")
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void simple_boolean_equal_property_filter() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         Filter filter = hstQuery.createFilter();
         filter.addEqualTo("myhippoproject:customid", Boolean.TRUE);
@@ -159,7 +192,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void simple_double_property_filter() throws Exception {
+    public void simple_double_equal_property_filter() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         Filter filter = hstQuery.createFilter();
         filter.addEqualTo("myhippoproject:customid", 4.0D);
@@ -176,7 +209,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void simple_long_property_filter() throws Exception {
+    public void simple_long_equal_property_filter() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         Filter filter = hstQuery.createFilter();
         filter.addEqualTo("myhippoproject:customid", 4L);
@@ -193,7 +226,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void simple_calendar_property_filter() throws Exception {
+    public void simple_calendar_equal_property_filter() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         Filter filter = hstQuery.createFilter();
         Calendar calendar = Calendar.getInstance();
