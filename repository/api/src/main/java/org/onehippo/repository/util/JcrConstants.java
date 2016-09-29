@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -76,5 +76,9 @@ public final class JcrConstants {
 
     public static final String JCR_READ = "jcr:read";
     public static final String JCR_WRITE = "jcr:write";
+
+    // ------------------------------------------ general
+
+    public static final String ROOT_NODE_ID = "cafebabe-cafe-babe-cafe-babecafebabe";
 
 }
