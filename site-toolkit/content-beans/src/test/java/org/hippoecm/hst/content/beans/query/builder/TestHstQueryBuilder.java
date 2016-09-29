@@ -16,6 +16,7 @@
 package org.hippoecm.hst.content.beans.query.builder;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
+import org.hippoecm.repository.util.DateTools;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -237,6 +239,42 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 .scopes(baseContentBean)
                 .filter(
                         filterBuilder("myhippoproject:customid").equalTo(calendar)
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void simple_date_equal_with_resolution_property_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        Date date = new Date();
+        filter.addEqualTo("myhippoproject:customid", date);
+        hstQuery.setFilter(filter);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        filterBuilder("myhippoproject:customid").equalTo(date)
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void simple_calendar_equal_with_resolution_property_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        Calendar calendar = Calendar.getInstance();
+        filter.addEqualTo("myhippoproject:customid", calendar, DateTools.Resolution.DAY);
+        hstQuery.setFilter(filter);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        filterBuilder("myhippoproject:customid").equalTo(calendar, DateTools.Resolution.DAY)
                 )
                 .build();
 
