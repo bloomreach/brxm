@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  *  This file contains the variables used in other gulp files
  *  which defines tasks
@@ -26,6 +24,16 @@ exports.paths = {
   npmDir: 'node_modules',
 };
 
+exports.path = {};
+
+Object.keys(exports.paths).forEach(pathName => {
+  exports.path[pathName] = function pathJoin(...funcArgs) {
+    const pathValue = exports.paths[pathName];
+    const args = [pathValue].concat(funcArgs);
+    return path.join.apply(this, args);
+  };
+});
+
 exports.exclude = {
   vendors: [
     'open-sans-fontface',
@@ -34,18 +42,6 @@ exports.exclude = {
 
 exports.vendors = Object.keys(pkg.dependencies)
   .filter(name => exports.exclude.vendors.indexOf(name) === -1);
-
-exports.path = {};
-for (const pathName in exports.paths) {
-  if (exports.paths.hasOwnProperty(pathName)) {
-    exports.path[pathName] = function pathJoin() {
-      const pathValue = exports.paths[pathName];
-      const funcArgs = Array.prototype.slice.call(arguments);
-      const joinArgs = [pathValue].concat(funcArgs);
-      return path.join.apply(this, joinArgs);
-    };
-  }
-}
 
 /**
  *  Common implementation for an error handler of a Gulp plugin
