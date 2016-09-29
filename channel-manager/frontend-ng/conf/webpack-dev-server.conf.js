@@ -5,7 +5,7 @@ module.exports = {
   inline: true,
   publicPath: '/cms/angular/hippo-cm/',
   stats: {
-    colors: true,
+    chunks: true,
   },
   port: 9090,
 };
