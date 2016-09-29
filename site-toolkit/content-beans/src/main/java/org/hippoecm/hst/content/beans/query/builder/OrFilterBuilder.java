@@ -23,9 +23,9 @@ import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 
 class OrFilterBuilder extends FilterBuilderAdapter {
 
-    private FilterBuilder [] filterBuilders;
+    private FilterBuilder[] filterBuilders;
 
-    protected OrFilterBuilder(FilterBuilder ... filterBuilders) {
+    protected OrFilterBuilder(final FilterBuilder... filterBuilders) {
         super();
         this.filterBuilders = filterBuilders;
     }
@@ -35,11 +35,8 @@ class OrFilterBuilder extends FilterBuilderAdapter {
         Filter filter = new FilterImpl(session, queryBuilder.defaultResolution());
 
         if (filterBuilders != null) {
-            Filter nestedFilter;
-
             for (FilterBuilder filterBuilder : filterBuilders) {
-                nestedFilter = filterBuilder.build(queryBuilder, session);
-
+                final Filter nestedFilter = filterBuilder.build(queryBuilder, session);
                 if (nestedFilter != null) {
                     filter.addOrFilter(nestedFilter);
                 }

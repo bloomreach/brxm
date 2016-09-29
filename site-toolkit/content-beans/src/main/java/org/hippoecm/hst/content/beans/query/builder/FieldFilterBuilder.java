@@ -40,107 +40,93 @@ class FieldFilterBuilder extends FilterBuilderAdapter {
 
     @Override
     protected Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
-        Filter filter = null;
 
-        if (filterConstraints != null) {
-            filter = new FilterImpl(session, queryBuilder.defaultResolution());
+        if (filterConstraints == null) {
+            return null;
+        }
+        final Filter filter = new FilterImpl(session, queryBuilder.defaultResolution());
 
-            Operator operator;
-            Object value;
+        Operator operator;
+        Object value;
 
-            for (FilterConstraint constraint : filterConstraints) {
-                operator = constraint.operator();
-                value = constraint.value();
+        for (FilterConstraint constraint : filterConstraints) {
+            operator = constraint.operator();
+            value = constraint.value();
 
-                if (operator == Operator.EQUAL) {
-                    if (value instanceof Calendar) {
-                        filter.addEqualTo(fieldName(), (Calendar) value, constraint.dateResolution());
+            if (operator == Operator.EQUAL) {
+                if (value instanceof Calendar) {
+                    filter.addEqualTo(fieldName(), (Calendar)value, constraint.dateResolution());
+                } else {
+                    if (value instanceof String && !constraint.caseSensitive()) {
+                        filter.addEqualToCaseInsensitive(fieldName(), (String)value);
                     } else {
-                        if (value instanceof String && !constraint.caseSensitive()) {
-                            filter.addEqualToCaseInsensitive(fieldName(), (String) value);
-                        } else {
-                            filter.addEqualTo(fieldName(), value);
-                        }
+                        filter.addEqualTo(fieldName(), value);
                     }
                 }
-                else if (operator == Operator.GE) {
-                    if (value instanceof Calendar) {
-                        filter.addGreaterOrEqualThan(fieldName(), (Calendar) value, constraint.dateResolution());
-                    } else {
-                        filter.addGreaterOrEqualThan(fieldName(), value);
-                    }
+            } else if (operator == Operator.GE) {
+                if (value instanceof Calendar) {
+                    filter.addGreaterOrEqualThan(fieldName(), (Calendar)value, constraint.dateResolution());
+                } else {
+                    filter.addGreaterOrEqualThan(fieldName(), value);
                 }
-                else if (operator == Operator.GT) {
-                    if (value instanceof Calendar) {
-                        filter.addGreaterThan(fieldName(), (Calendar) value, constraint.dateResolution());
-                    } else {
-                        filter.addGreaterThan(fieldName(), value);
-                    }
+            } else if (operator == Operator.GT) {
+                if (value instanceof Calendar) {
+                    filter.addGreaterThan(fieldName(), (Calendar)value, constraint.dateResolution());
+                } else {
+                    filter.addGreaterThan(fieldName(), value);
                 }
-                else if (operator == Operator.LE) {
-                    if (value instanceof Calendar) {
-                        filter.addLessOrEqualThan(fieldName(), (Calendar) value, constraint.dateResolution());
-                    } else {
-                        filter.addLessOrEqualThan(fieldName(), value);
-                    }
+            } else if (operator == Operator.LE) {
+                if (value instanceof Calendar) {
+                    filter.addLessOrEqualThan(fieldName(), (Calendar)value, constraint.dateResolution());
+                } else {
+                    filter.addLessOrEqualThan(fieldName(), value);
                 }
-                else if (operator == Operator.LT) {
-                    if (value instanceof Calendar) {
-                        filter.addLessThan(fieldName(), (Calendar) value, constraint.dateResolution());
-                    } else {
-                        filter.addLessThan(fieldName(), value);
-                    }
+            } else if (operator == Operator.LT) {
+                if (value instanceof Calendar) {
+                    filter.addLessThan(fieldName(), (Calendar)value, constraint.dateResolution());
+                } else {
+                    filter.addLessThan(fieldName(), value);
                 }
-                else if (operator == Operator.CONTAINS) {
-                    filter.addContains(fieldName(), (String) value);
-                }
-                else if (operator == Operator.LIKE) {
-                    filter.addLike(fieldName(), (String) value);
-                }
-                else if (operator == Operator.BETWEEN) {
-                    Object [] values = (Object []) value;
+            } else if (operator == Operator.CONTAINS) {
+                filter.addContains(fieldName(), (String)value);
+            } else if (operator == Operator.LIKE) {
+                filter.addLike(fieldName(), (String)value);
+            } else if (operator == Operator.BETWEEN) {
+                Object[] values = (Object[])value;
 
-                    if (values[0] instanceof Calendar) {
-                        filter.addBetween(fieldName(), (Calendar) values[0], (Calendar) values[1], constraint.dateResolution());
+                if (values[0] instanceof Calendar) {
+                    filter.addBetween(fieldName(), (Calendar)values[0], (Calendar)values[1], constraint.dateResolution());
+                } else {
+                    filter.addBetween(fieldName(), values[0], values[1]);
+                }
+            } else if (operator == Operator.NOT_EQUAL) {
+                if (value instanceof Calendar) {
+                    filter.addNotEqualTo(fieldName(), (Calendar)value, constraint.dateResolution());
+                } else {
+                    if (value instanceof String && !constraint.caseSensitive()) {
+                        filter.addNotEqualToCaseInsensitive(fieldName(), (String)value);
                     } else {
-                        filter.addBetween(fieldName(), values[0], values[1]);
+                        filter.addNotEqualTo(fieldName(), value);
                     }
                 }
-                else if (operator == Operator.NOT_EQUAL) {
-                    if (value instanceof Calendar) {
-                        filter.addNotEqualTo(fieldName(), (Calendar) value, constraint.dateResolution());
-                    } else {
-                        if (value instanceof String && !constraint.caseSensitive()) {
-                            filter.addNotEqualToCaseInsensitive(fieldName(), (String) value);
-                        } else {
-                            filter.addNotEqualTo(fieldName(), value);
-                        }
-                    }
-                }
-                else if (operator == Operator.NOT_LIKE) {
-                    filter.addNotLike(fieldName(), (String) value);
-                }
-                else if (operator == Operator.NOT_NULL) {
-                    filter.addNotNull(fieldName());
-                }
-                else if (operator == Operator.IS_NULL) {
-                    filter.addIsNull(fieldName());
-                }
-                else if (operator == Operator.NOT_CONTAINS) {
-                    filter.addNotContains(fieldName(), (String) value);
-                }
-                else if (operator == Operator.NOT_BETWEEN) {
-                    Object [] values = (Object []) value;
+            } else if (operator == Operator.NOT_LIKE) {
+                filter.addNotLike(fieldName(), (String)value);
+            } else if (operator == Operator.NOT_NULL) {
+                filter.addNotNull(fieldName());
+            } else if (operator == Operator.IS_NULL) {
+                filter.addIsNull(fieldName());
+            } else if (operator == Operator.NOT_CONTAINS) {
+                filter.addNotContains(fieldName(), (String)value);
+            } else if (operator == Operator.NOT_BETWEEN) {
+                Object[] values = (Object[])value;
 
-                    if (values[0] instanceof Calendar) {
-                        filter.addNotBetween(fieldName(), (Calendar) values[0], (Calendar) values[1], constraint.dateResolution());
-                    } else {
-                        filter.addNotBetween(fieldName(), values[0], values[1]);
-                    }
+                if (values[0] instanceof Calendar) {
+                    filter.addNotBetween(fieldName(), (Calendar)values[0], (Calendar)values[1], constraint.dateResolution());
+                } else {
+                    filter.addNotBetween(fieldName(), values[0], values[1]);
                 }
-                else if (operator == Operator.XPATH_EXPRESSION) {
-                    filter.addJCRExpression((String) value);
-                }
+            } else if (operator == Operator.XPATH_EXPRESSION) {
+                filter.addJCRExpression((String)value);
             }
         }
 
@@ -152,154 +138,154 @@ class FieldFilterBuilder extends FilterBuilderAdapter {
     }
 
     @Override
-    public FilterBuilder equalTo(Object value) {
+    public FilterBuilder equalTo(final Object value) {
         FilterConstraint constraint = new FilterConstraint(Operator.EQUAL, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder equalTo(Calendar value, DateTools.Resolution dateResolution) {
+    public FilterBuilder equalTo(final Calendar value, final DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.EQUAL, value).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder equalToCaseInsensitive(String value) {
+    public FilterBuilder equalToCaseInsensitive(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.EQUAL, value).caseSensitive(false);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notEqualTo(Object value) {
+    public FilterBuilder notEqualTo(final Object value) {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_EQUAL, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notEqualTo(Calendar value, DateTools.Resolution dateResolution) {
+    public FilterBuilder notEqualTo(final Calendar value, DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_EQUAL, value).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notEqualToCaseInsensitive(String value) {
+    public FilterBuilder notEqualToCaseInsensitive(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_EQUAL, value).caseSensitive(false);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder greaterOrEqualThan(Object value) {
+    public FilterBuilder greaterOrEqualThan(final Object value) {
         FilterConstraint constraint = new FilterConstraint(Operator.GE, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder greaterOrEqualThan(Calendar value, DateTools.Resolution dateResolution) {
+    public FilterBuilder greaterOrEqualThan(final Calendar value, final DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.GE, value).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder greaterThan(Object value) {
+    public FilterBuilder greaterThan(final Object value) {
         FilterConstraint constraint = new FilterConstraint(Operator.GT, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder greaterThan(Calendar value, DateTools.Resolution dateResolution) {
+    public FilterBuilder greaterThan(final Calendar value, final DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.GT, value).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder lessOrEqualThan(Object value) {
+    public FilterBuilder lessOrEqualThan(final Object value) {
         FilterConstraint constraint = new FilterConstraint(Operator.LE, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder lessOrEqualThan(Calendar value, DateTools.Resolution dateResolution) {
+    public FilterBuilder lessOrEqualThan(final Calendar value, final DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.LE, value).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder lessThan(Object value) {
+    public FilterBuilder lessThan(final Object value) {
         FilterConstraint constraint = new FilterConstraint(Operator.LT, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder lessThan(Calendar value, DateTools.Resolution dateResolution) {
+    public FilterBuilder lessThan(final Calendar value, final DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.LT, value).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder contains(String value) {
+    public FilterBuilder contains(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.CONTAINS, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notContains(String value) {
+    public FilterBuilder notContains(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_CONTAINS, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder between(Object value1, Object value2) {
-        FilterConstraint constraint = new FilterConstraint(Operator.BETWEEN, new Object [] { value1, value2 });
+    public FilterBuilder between(final Object value1, final Object value2) {
+        FilterConstraint constraint = new FilterConstraint(Operator.BETWEEN, new Object[]{value1, value2});
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder between(Calendar start, Calendar end, DateTools.Resolution dateResolution) {
-        FilterConstraint constraint = new FilterConstraint(Operator.BETWEEN, new Object [] { start, end }).dateResolution(dateResolution);
+    public FilterBuilder between(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
+        FilterConstraint constraint = new FilterConstraint(Operator.BETWEEN, new Object[]{start, end}).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notBetween(Object value1, Object value2) {
-        FilterConstraint constraint = new FilterConstraint(Operator.NOT_BETWEEN, new Object [] { value1, value2 });
+    public FilterBuilder notBetween(final Object value1, final Object value2) {
+        FilterConstraint constraint = new FilterConstraint(Operator.NOT_BETWEEN, new Object[]{value1, value2});
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notBetween(Calendar start, Calendar end, DateTools.Resolution dateResolution) {
-        FilterConstraint constraint = new FilterConstraint(Operator.NOT_BETWEEN, new Object [] { start, end }).dateResolution(dateResolution);
+    public FilterBuilder notBetween(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
+        FilterConstraint constraint = new FilterConstraint(Operator.NOT_BETWEEN, new Object[]{start, end}).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder like(String value) {
+    public FilterBuilder like(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.LIKE, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notLike(String value) {
+    public FilterBuilder notLike(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_LIKE, value);
         addFilterConstraint(constraint);
         return this;
@@ -320,7 +306,7 @@ class FieldFilterBuilder extends FilterBuilderAdapter {
     }
 
     @Override
-    public FilterBuilder jcrExpression(String value) {
+    public FilterBuilder jcrExpression(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.XPATH_EXPRESSION, value);
         addFilterConstraint(constraint);
         return this;

@@ -30,7 +30,7 @@ class OrderByConstruct {
         return fieldName;
     }
 
-    public OrderByConstruct ascending(boolean ascending) {
+    public OrderByConstruct ascending(final boolean ascending) {
         this.ascending = ascending;
         return this;
     }
@@ -39,7 +39,7 @@ class OrderByConstruct {
         return ascending;
     }
 
-    public OrderByConstruct caseSensitive(boolean caseSensitive) {
+    public OrderByConstruct caseSensitive(final boolean caseSensitive) {
         this.caseSensitive = caseSensitive;
         return this;
     }

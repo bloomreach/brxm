@@ -46,7 +46,7 @@ class FilterConstraint {
         this(operator, null);
     }
 
-    public FilterConstraint(Operator operator, Object value) {
+    public FilterConstraint(final Operator operator, final Object value) {
         this.operator = operator;
         this.value = value;
     }
@@ -59,7 +59,7 @@ class FilterConstraint {
         return value;
     }
 
-    public FilterConstraint dateResolution(DateTools.Resolution dateResolution) {
+    public FilterConstraint dateResolution(final DateTools.Resolution dateResolution) {
         this.dateResolution = dateResolution;
         return this;
     }
@@ -68,7 +68,7 @@ class FilterConstraint {
         return dateResolution;
     }
 
-    public FilterConstraint caseSensitive(boolean caseSensitive) {
+    public FilterConstraint caseSensitive(final boolean caseSensitive) {
         this.caseSensitive = caseSensitive;
         return this;
     }

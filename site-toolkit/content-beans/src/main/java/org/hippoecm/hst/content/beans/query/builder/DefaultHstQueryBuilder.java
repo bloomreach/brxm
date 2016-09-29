@@ -43,16 +43,16 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
 
     @Override
     public HstQuery build(final Session session) throws QueryException {
-        HstQuery hstQuery = null;
+        final HstQuery hstQuery;
 
-        Node [] scopes = getScopes();
+        final Node [] scopes = getScopes();
 
         if (scopes == null || scopes.length == 0) {
             throw new QueryException("Empty scopes.");
         }
 
-        String [] primaryNodeTypes = getPrimaryNodeTypes();
-        Class<? extends HippoBean> [] filterBeanTyes = getFilterBeanTypes();
+        final String [] primaryNodeTypes = getPrimaryNodeTypes();
+        final Class<? extends HippoBean> [] filterBeanTyes = getFilterBeanTypes();
 
         if (scopes.length == 1) {
             if (primaryNodeTypes != null && primaryNodeTypes.length > 0) {
@@ -74,7 +74,7 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
             hstQuery.addScopes(scopes);
         }
 
-        Node [] excludeScopes = getExcludeScopes();
+        final Node [] excludeScopes = getExcludeScopes();
 
         if (excludeScopes != null && excludeScopes.length > 0) {
             hstQuery.excludeScopes(excludeScopes);

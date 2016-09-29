@@ -23,23 +23,20 @@ import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 
 class AndFilterBuilder extends FilterBuilderAdapter {
 
-    private FilterBuilder [] filterBuilders;
+    private final FilterBuilder [] filterBuilders;
 
-    protected AndFilterBuilder(FilterBuilder ... filterBuilders) {
+    protected AndFilterBuilder(final FilterBuilder ... filterBuilders) {
         super();
         this.filterBuilders = filterBuilders;
     }
 
     @Override
     protected Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
-        Filter filter = new FilterImpl(session, queryBuilder.defaultResolution());
+        final Filter filter = new FilterImpl(session, queryBuilder.defaultResolution());
 
         if (filterBuilders != null) {
-            Filter nestedFilter;
-
             for (FilterBuilder filterBuilder : filterBuilders) {
-                nestedFilter = filterBuilder.build(queryBuilder, session);
-
+                final Filter nestedFilter = filterBuilder.build(queryBuilder, session);
                 if (nestedFilter != null) {
                     filter.addAndFilter(nestedFilter);
                 }

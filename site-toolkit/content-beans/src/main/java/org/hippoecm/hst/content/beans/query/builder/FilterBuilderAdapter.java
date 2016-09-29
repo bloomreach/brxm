@@ -30,117 +30,117 @@ class FilterBuilderAdapter extends FilterBuilder {
     }
 
     @Override
-    protected Filter doBuild(HstQueryBuilder queryBuilder, Session session) throws FilterException {
+    protected Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder equalTo(Object value) {
+    public FilterBuilder equalTo(final Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder equalTo(Calendar value, DateTools.Resolution dateResolution) {
+    public FilterBuilder equalTo(final Calendar value, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder equalToCaseInsensitive(String value) {
+    public FilterBuilder equalToCaseInsensitive(final String value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notEqualTo(Object value) {
+    public FilterBuilder notEqualTo(final Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notEqualTo(Calendar value, DateTools.Resolution dateResolution) {
+    public FilterBuilder notEqualTo(final Calendar value, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notEqualToCaseInsensitive(String value) {
+    public FilterBuilder notEqualToCaseInsensitive(final String value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder greaterOrEqualThan(Object value) {
+    public FilterBuilder greaterOrEqualThan(final Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder greaterOrEqualThan(Calendar calendar, DateTools.Resolution dateResolution) {
+    public FilterBuilder greaterOrEqualThan(final Calendar calendar, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder greaterThan(Object value) {
+    public FilterBuilder greaterThan(final Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder greaterThan(Calendar value, DateTools.Resolution dateResolution) {
+    public FilterBuilder greaterThan(final Calendar value, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder lessOrEqualThan(Object value) {
+    public FilterBuilder lessOrEqualThan(final Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder lessOrEqualThan(Calendar value, DateTools.Resolution dateResolution) {
+    public FilterBuilder lessOrEqualThan(final Calendar value, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder lessThan(Object value) {
+    public FilterBuilder lessThan(final Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder lessThan(Calendar value, DateTools.Resolution dateResolution) {
+    public FilterBuilder lessThan(final Calendar value, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder contains(String fullTextSearch) {
+    public FilterBuilder contains(final String fullTextSearch) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notContains(String fullTextSearch) {
+    public FilterBuilder notContains(final String fullTextSearch) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder between(Object value1, Object value2) {
+    public FilterBuilder between(final Object value1, final Object value2) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder between(Calendar start, Calendar end, DateTools.Resolution dateResolution) {
+    public FilterBuilder between(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notBetween(Object value1, Object value2) {
+    public FilterBuilder notBetween(final Object value1, final Object value2) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notBetween(Calendar start, Calendar end, DateTools.Resolution dateResolution) {
+    public FilterBuilder notBetween(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder like(String value) {
+    public FilterBuilder like(final String value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notLike(String value) {
+    public FilterBuilder notLike(final String value) {
         throw new UnsupportedOperationException();
     }
 
@@ -155,7 +155,7 @@ class FilterBuilderAdapter extends FilterBuilder {
     }
 
     @Override
-    public FilterBuilder jcrExpression(String jcrExpression) {
+    public FilterBuilder jcrExpression(final String jcrExpression) {
         throw new UnsupportedOperationException();
     }
 }
