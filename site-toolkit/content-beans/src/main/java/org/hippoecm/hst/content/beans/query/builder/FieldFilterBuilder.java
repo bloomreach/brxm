@@ -41,10 +41,12 @@ class FieldFilterBuilder extends FilterBuilderAdapter {
     @Override
     protected Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
 
-        if (filterConstraints == null) {
-            return null;
-        }
         final Filter filter = new FilterImpl(session, queryBuilder.defaultResolution());
+        if (filterConstraints == null) {
+            // we default back to a that fieldName must exists
+            filter.addNotNull(fieldName);
+            return filter;
+        }
 
         Operator operator;
         Object value;

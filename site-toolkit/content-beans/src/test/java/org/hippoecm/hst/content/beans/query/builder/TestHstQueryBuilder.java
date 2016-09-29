@@ -78,10 +78,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    public void test_basic_query_without_constraints() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
-        String xpathQuery = hstQuery.getQueryAsString(true);
-        log.debug("xpathQuery: {}", xpathQuery);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create()
                 .build();
@@ -105,6 +103,22 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 .scopes(baseContentBean)
                 .filter(
                         filterBuilder("myhippoproject:customid").exists()
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void no_constraint_on_filderBuilder_defaults_to_property_must_exist_query() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addNotNull("myhippoproject:customid");
+        hstQuery.setFilter(filter);
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        filterBuilder("myhippoproject:customid")
                 )
                 .build();
 
