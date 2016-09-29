@@ -28,6 +28,8 @@ import org.apache.cxf.jaxrs.impl.SecurityContextImpl;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.MessageContentsList;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +122,13 @@ public class SecurityAnnotationInvokerPreprocessor implements InvokerPreprocesso
     }
 
     protected SecurityContext getSecurityContext(final Exchange exchange) {
-        return new SecurityContextImpl(exchange.getInMessage());
+        return new SecurityContextImpl(exchange.getInMessage()) {
+            @Override
+            public boolean isSecure() {
+                String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(RequestContextProvider.get().getServletRequest());
+                return farthestRequestScheme.equalsIgnoreCase("https");
+            }
+        };
     }
 
     private boolean isUserInRole(final SecurityContext securityContext, final String[] roles) {
