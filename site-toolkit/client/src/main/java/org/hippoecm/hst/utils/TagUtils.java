@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,14 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.jstl.core.Config;
 
 import com.google.common.base.Predicate;
 
@@ -35,6 +37,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -206,4 +209,15 @@ public class TagUtils {
         }
         return queryString.toString();
     }
+
+    public static Locale getLocale(final PageContext pc) {
+        Locale locale = (Locale) Config.find(pc, Config.FMT_LOCALE);
+        if (locale == null) {
+            final HstRequest hstRequest = HstRequestUtils.getHstRequest((HttpServletRequest)pc.getRequest());
+            final HttpServletRequest request = hstRequest == null ? (HttpServletRequest)pc.getRequest() : hstRequest;
+            locale = request.getLocale();
+        }
+        return locale;
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.taglibs.standard.tag.common.fmt.BundleSupport;
 import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
 import org.hippoecm.hst.utils.MessageUtils;
+import org.hippoecm.hst.utils.TagUtils;
 
 /**
  * Messages Replacing Tag by resource bundle
@@ -69,7 +70,7 @@ public class MessagesReplaceTag extends BodyTagSupport {
                 if (StringUtils.isNotEmpty(localeString)) {
                     locale = LocaleUtils.toLocale(localeString);
                 } else {
-                    locale = pageContext.getRequest().getLocale();
+                    locale = TagUtils.getLocale(pageContext);
                 }
             }
     

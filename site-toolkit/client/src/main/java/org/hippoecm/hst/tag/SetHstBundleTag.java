@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.PageContext;
@@ -29,10 +28,9 @@ import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.resourcebundle.CompositeResourceBundle;
 import org.hippoecm.hst.resourcebundle.ResourceBundleUtils;
-import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.utils.TagUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,9 +120,7 @@ public class SetHstBundleTag extends TagSupport {
     }
 
     private static LocalizationContext getLocalizationContext(PageContext pc, String basename, boolean fallbackToJavaResourceBundle, boolean fallbackToDefaultLocaleContext) {
-        HstRequest hstRequest = HstRequestUtils.getHstRequest((HttpServletRequest) pc.getRequest());
-        HttpServletRequest request =  hstRequest == null ? (HttpServletRequest) pc.getRequest() : hstRequest;
-        Locale locale = request.getLocale();
+        Locale locale = TagUtils.getLocale(pc);
         List<ResourceBundle> bundles = new ArrayList<ResourceBundle>();
         String [] bundleIds = StringUtils.split(basename, " ,\t\f\r\n");
 
