@@ -79,6 +79,6 @@ public final class JcrConstants {
 
     // ------------------------------------------ general
 
-    public static final String JCR_ROOT_NODE_ID = "cafebabe-cafe-babe-cafe-babecafebabe";
+    public static final String ROOT_NODE_ID = "cafebabe-cafe-babe-cafe-babecafebabe";
 
 }
