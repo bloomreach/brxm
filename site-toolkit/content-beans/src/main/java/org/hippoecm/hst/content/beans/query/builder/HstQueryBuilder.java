@@ -24,7 +24,6 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.query.HstQuery;
-import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -38,10 +37,6 @@ public abstract class HstQueryBuilder {
 
     public static HstQueryBuilder create() {
         return new DefaultHstQueryBuilder();
-    }
-
-    public static HstQueryBuilder create(final HstQueryManager queryManager) {
-        return new DefaultHstQueryBuilder(queryManager);
     }
 
     /*
