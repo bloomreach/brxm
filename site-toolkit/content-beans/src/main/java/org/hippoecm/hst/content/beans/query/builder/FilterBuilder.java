@@ -32,6 +32,36 @@ public abstract class FilterBuilder {
     protected FilterBuilder() {
     }
 
+    /**
+     * The {@code fieldName} is in general a property name, for example <em>example:title</em>. Depending on the
+     * filter method ({@link FilterBuilder#equalTo}, {@link FilterBuilder#notEqualTo}, {@link FilterBuilder#contains}, etc)
+     * the {@code fieldName} is limited to certain conditions. For <strong>all</strong> {@link FilterBuilder} constraints
+     * methods the fieldName is allowed to be of the form <em>myhippo:title</em> or <em>address/myhippo:street</em> where the
+     * latter is a constraint on a child node its property. There is one exception: When you use {@link FilterBuilder#like(String)}
+     * or {@link FilterBuilder#notLike(String)}, it is not allowed to do the constrain on a child node property.
+     * <p>
+     * For the constraint {@link FilterBuilder#contains(String)} and {@link FilterBuilder#notContains(String)} the
+     * {@code fieldName} can next to <em>myhippo:title</em> or <em>address/myhippo:street</em> also be equal to
+     * "<em>.</em>" meaning a (not)contains filter node scope level is done
+     * </p>
+     * @param fieldName the {@code fieldName} this filter operates on
+     * @return a new FilterBuilder for {@code fieldName}
+     */
+    public static FilterBuilder filterBuilder(String fieldName) {
+        FieldFilterBuilder filterBuilder = new FieldFilterBuilder(fieldName);
+        return filterBuilder;
+    }
+
+    public static FilterBuilder and(FilterBuilder ... filterBuilders) {
+        AndFilterBuilder filterBuilder = new AndFilterBuilder(filterBuilders);
+        return filterBuilder;
+    }
+
+    public static FilterBuilder or(FilterBuilder ... filterBuilders) {
+        OrFilterBuilder filterBuilder = new OrFilterBuilder(filterBuilders);
+        return filterBuilder;
+    }
+
     public final Filter build(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
         Filter filter = doBuild(queryBuilder, session);
 

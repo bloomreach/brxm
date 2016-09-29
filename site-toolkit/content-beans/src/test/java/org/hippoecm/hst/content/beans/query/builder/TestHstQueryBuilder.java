@@ -15,11 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.query.builder;
 
-import static org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder.and;
-import static org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder.filter;
-import static org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder.or;
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +34,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.content.beans.query.builder.FilterBuilder.and;
+import static org.hippoecm.hst.content.beans.query.builder.FilterBuilder.filterBuilder;
+import static org.hippoecm.hst.content.beans.query.builder.FilterBuilder.or;
+import static org.junit.Assert.assertEquals;
 
 public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
@@ -94,8 +94,51 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
 
+
     @Test
-    public void test_withFilter() throws Exception {
+    public void simple_property_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addEqualTo("myhippoproject:customid", "123");
+        hstQuery.setFilter(filter);
+        String xpathQuery = hstQuery.getQueryAsString(true);
+        log.debug("xpathQuery: {}", xpathQuery);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(filterBuilder("myhippoproject:customid").equalTo("123"))
+                .build();
+
+        String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
+        log.debug("xpathQueryInFluent: {}", xpathQueryInFluent);
+
+        System.out.println(hstQueryInFluent);
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void simple_filter_no_constraint_results_in_must_exist_propery_contstraint() throws Exception {
+
+    }
+
+    @Test
+    public void simple_nodescope_filter() throws Exception {
+
+    }
+
+    @Test
+    public void simple_nestedproperty_filter() throws Exception {
+
+    }
+
+    @Test
+    public void simple_duplicate_filter_results_in_xyz() throws Exception {
+
+    }
+
+    @Test
+    public void nested_property_filters() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         Filter filter = hstQuery.createFilter();
         Filter nestedFilter1 = hstQuery.createFilter();
@@ -117,10 +160,10 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 .scopes(baseContentBean)
                 .filter(
                         and(
-                                filter("myhippoproject:customid").equalTo("123"),
+                                filterBuilder("myhippoproject:customid").equalTo("123"),
                                 or(
-                                        filter("myhippoproject:title").like("Hello%"),
-                                        filter("myhippoproject:description").contains("foo")
+                                        filterBuilder("myhippoproject:title").like("Hello%"),
+                                        filterBuilder("myhippoproject:description").contains("foo")
                                         )
                                 )
                         )
@@ -132,8 +175,10 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
 
+
+
     @Test
-    public void test_withFilterAndOrderBy() throws Exception {
+    public void nested_property_filters_with_order_by() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         Filter filter = hstQuery.createFilter();
         Filter nestedFilter1 = hstQuery.createFilter();
@@ -159,10 +204,10 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 .scopes(baseContentBean)
                 .filter(
                         and(
-                                filter("myhippoproject:customid").equalTo("123"),
+                                filterBuilder("myhippoproject:customid").equalTo("123"),
                                 or(
-                                        filter("myhippoproject:title").like("Hello%"),
-                                        filter("myhippoproject:description").contains("foo")
+                                        filterBuilder("myhippoproject:title").like("Hello%"),
+                                        filterBuilder("myhippoproject:description").contains("foo")
                                         )
                                 )
                         )
@@ -177,7 +222,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void test_withFilterAndNegate() throws Exception {
+    public void nested_property_filters_with_negate() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         Filter filter = hstQuery.createFilter();
         Filter nestedFilter1 = hstQuery.createFilter();
@@ -201,10 +246,10 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 .scopes(baseContentBean)
                 .filter(
                         and(
-                                filter("myhippoproject:customid").equalTo("123").negate(),
+                                filterBuilder("myhippoproject:customid").equalTo("123").negate(),
                                 or(
-                                        filter("myhippoproject:title").like("Hello%"),
-                                        filter("myhippoproject:description").contains("foo")
+                                        filterBuilder("myhippoproject:title").like("Hello%"),
+                                        filterBuilder("myhippoproject:description").contains("foo")
                                         )
                                 ).negate()
                         )
