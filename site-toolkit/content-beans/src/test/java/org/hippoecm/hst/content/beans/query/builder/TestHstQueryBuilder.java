@@ -112,8 +112,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
         log.debug("xpathQueryInFluent: {}", xpathQueryInFluent);
 
-        System.out.println(hstQueryInFluent);
-
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
 
