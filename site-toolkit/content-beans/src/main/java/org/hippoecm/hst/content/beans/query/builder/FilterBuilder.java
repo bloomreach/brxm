@@ -362,13 +362,13 @@ public abstract class FilterBuilder {
      * Add a constraint that the result <b>does</b> have the property <code>fieldAttributeName</code>, regardless its value
      * @throws FilterException when <code>fieldAttributeName</code> is <code>null</code>
      */
-    public abstract FilterBuilder notNull();
+    public abstract FilterBuilder exists();
 
     /**
      * Add a constraint that the result <b>does NOT</b> have the property <code>fieldAttributeName</code>
      * @throws FilterException when <code>fieldAttributeName</code> is <code>null</code>
      */
-    public abstract FilterBuilder isNull();
+    public abstract FilterBuilder notExists();
 
     /**
      * Adds the xpath <code>jcrExpression</code> as constraint. See jsr-170 spec for the xpath format

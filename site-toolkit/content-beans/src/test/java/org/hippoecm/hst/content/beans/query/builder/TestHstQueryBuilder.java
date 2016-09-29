@@ -93,6 +93,37 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
 
+    @Test
+    public void simple_property_does_exist_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addNotNull("myhippoproject:customid");
+        hstQuery.setFilter(filter);
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        filterBuilder("myhippoproject:customid").exists()
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void simple_property_does_not_exist_filter() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addIsNull("myhippoproject:customid");
+        hstQuery.setFilter(filter);
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        filterBuilder("myhippoproject:customid").notExists()
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
 
     @Test
     public void simple_string_property_filter() throws Exception {

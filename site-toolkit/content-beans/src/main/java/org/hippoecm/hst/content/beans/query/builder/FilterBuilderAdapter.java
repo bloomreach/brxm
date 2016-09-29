@@ -145,12 +145,12 @@ class FilterBuilderAdapter extends FilterBuilder {
     }
 
     @Override
-    public FilterBuilder notNull() {
+    public FilterBuilder exists() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder isNull() {
+    public FilterBuilder notExists() {
         throw new UnsupportedOperationException();
     }
 

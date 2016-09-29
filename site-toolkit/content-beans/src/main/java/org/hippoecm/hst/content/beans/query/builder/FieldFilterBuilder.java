@@ -292,14 +292,14 @@ class FieldFilterBuilder extends FilterBuilderAdapter {
     }
 
     @Override
-    public FilterBuilder notNull() {
+    public FilterBuilder exists() {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_NULL);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder isNull() {
+    public FilterBuilder notExists() {
         FilterConstraint constraint = new FilterConstraint(Operator.IS_NULL);
         addFilterConstraint(constraint);
         return this;
