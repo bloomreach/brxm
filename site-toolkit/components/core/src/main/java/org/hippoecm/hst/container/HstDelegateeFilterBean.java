@@ -258,7 +258,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             ResolvedMount resolvedMount = requestContext.getResolvedMount();
 
             if (resolvedMount == null) {
-                resolvedMount = vHosts.matchMount(hostName, containerRequest.getContextPath(), containerRequest.getPathInfo());
+                resolvedMount = resolvedVirtualHost.matchMount(containerRequest.getContextPath(), containerRequest.getPathInfo());
                 if (resolvedMount != null) {
                     request.setAttribute(ContainerConstants.RESOLVED_MOUNT_REQUEST_ATTR, resolvedMount);
                     requestContext.setResolvedMount(resolvedMount);
