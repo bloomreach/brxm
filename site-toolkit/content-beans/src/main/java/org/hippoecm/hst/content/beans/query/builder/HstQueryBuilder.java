@@ -140,20 +140,24 @@ public abstract class HstQueryBuilder {
         return defaultResolution;
     }
 
-    public HstQueryBuilder scopes(Node ... scopeNodes) {
+    public HstQueryBuilder scopes(final Node ... scopeNodes) {
         if (scopeNodes != null) {
             for (Node scopeNode : scopeNodes) {
                 scopes.add(scopeNode);
+                // in case present in 'scopes', remove it from there because now added as exclusion
+                excludeScopes.remove(scopeNode);
             }
         }
 
         return this;
     }
 
-    public HstQueryBuilder scopes(HippoBean ... scopeBeans) {
+    public HstQueryBuilder scopes(final HippoBean ... scopeBeans) {
         if (scopeBeans != null) {
             for (HippoBean scopeBean : scopeBeans) {
                 scopes.add(scopeBean.getNode());
+                // in case present in 'scopes', remove it from there because now added as exclusion
+                excludeScopes.remove(scopeBean.getNode());
             }
         }
 
@@ -164,20 +168,24 @@ public abstract class HstQueryBuilder {
         return scopes;
     }
 
-    public HstQueryBuilder excludeScopes(Node ... excludeScopeNodes) {
+    public HstQueryBuilder excludeScopes(final Node ... excludeScopeNodes) {
         if (excludeScopeNodes != null) {
             for (Node excludeScopeNode : excludeScopeNodes) {
                 excludeScopes.add(excludeScopeNode);
+                // in case present in 'scopes', remove it from there because now added as exclusion
+                scopes.remove(excludeScopeNode);
             }
         }
 
         return this;
     }
 
-    public HstQueryBuilder excludeScopes(HippoBean ... excludeScopeBeans) {
+    public HstQueryBuilder excludeScopes(final HippoBean ... excludeScopeBeans) {
         if (excludeScopeBeans != null) {
             for (HippoBean excludeScopeBean : excludeScopeBeans) {
                 excludeScopes.add(excludeScopeBean.getNode());
+                // in case present in 'scopes', remove it from there because now added as exclusion
+                scopes.remove(excludeScopeBean.getNode());
             }
         }
 
@@ -225,7 +233,7 @@ public abstract class HstQueryBuilder {
         return orderByConstructs;
     }
 
-    public HstQueryBuilder offset(int offset) {
+    public HstQueryBuilder offset(final int offset) {
         this.offset = offset;
         return this;
     }
@@ -234,7 +242,7 @@ public abstract class HstQueryBuilder {
         return offset;
     }
 
-    public HstQueryBuilder limit(int limit) {
+    public HstQueryBuilder limit(final int limit) {
         this.limit = limit;
         return this;
     }
