@@ -45,9 +45,12 @@ public class NamespaceUtils {
     public static Node getDocumentTypeRootNode(final String typeId, final Session session)
             throws DocumentTypeNotFoundException {
         try {
-            String[] part = typeId.split(":");
-            String path = "/hippo:namespaces/" + part[0] + "/" + part[1];
+            final String[] part = typeId.split(":");
+            if (part.length != 2) {
+                throw new DocumentTypeNotFoundException();
+            }
 
+            final String path = "/hippo:namespaces/" + part[0] + "/" + part[1];
             return session.getNode(path);
         } catch (RepositoryException e) {
             log.debug("Unable to find root node for document type '{}'", typeId, e);
