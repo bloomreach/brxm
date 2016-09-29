@@ -54,7 +54,7 @@ class FieldFilterBuilder extends FilterBuilderAdapter {
             value = constraint.value();
 
             if (operator == Operator.EQUAL) {
-                if (value instanceof Calendar) {
+                if (value instanceof Calendar && constraint.dateResolution() != null) {
                     filter.addEqualTo(fieldName(), (Calendar)value, constraint.dateResolution());
                 } else {
                     if (value instanceof String && !constraint.caseSensitive()) {
