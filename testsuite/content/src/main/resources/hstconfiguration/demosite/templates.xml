@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
 
-    Copyright (C) 2011 Hippo B.V.
+    Copyright (C) 2011-2016 Hippo B.V.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@
       <sv:value>&lt;#ftl output_format="HTML" auto_esc=false&gt;&#xd;
 &#xd;
 &lt;#assign hst=JspTaglibs["http://www.hippoecm.org/jsp/hst/core"]&gt;&#xd;
+&lt;#assign fmt=JspTaglibs["http://java.sun.com/jsp/jstl/fmt"]&gt;&#xd;
 &#xd;
 &lt;@hst.defineObjects/&gt;&#xd;
 &#xd;
@@ -137,9 +138,22 @@ LINK URL: &lt;@hst.link path="/news" escapeXml=false&gt;&lt;@hst.param name="a" 
     &#xd;
     &lt;div style="color:red"&gt;&#xd;
       Note: this page is loaded by a repository freemarker template, &#xd;
-      see [/hst:hst/hst:configurations/democommon/hst:scripts/home.ftl] &#xd;
+      see [/hst:hst/hst:configurations/demosite/hst:templates/homepage.ftl] &#xd;
     &lt;/div&gt;&#xd;
-&#xd;
+&lt;p&gt;&#xd;
+    &lt;@hst.setBundle basename="org.onehippo.hst.demo.resources.GeneralTranslationsBundle"/&gt;&#xd;
+    The following should be the value from the default resource bundle: &lt;@fmt.message key="key.available.languages"/&gt;&#xd;
+&lt;/p&gt;&#xd;
+&lt;p&gt;&#xd;
+    &lt;@fmt.setLocale value="fr"/&gt;&#xd;
+    &lt;@hst.setBundle basename="org.onehippo.hst.demo.resources.GeneralTranslationsBundle"/&gt;&#xd;
+    The following should be the value from the French resource bundle: &lt;@fmt.message key="key.available.languages"/&gt;&#xd;
+&lt;/p&gt;&#xd;
+&lt;p&gt;&#xd;
+    &lt;@fmt.setLocale value="en"/&gt;&#xd;
+    &lt;@hst.setBundle basename="org.onehippo.hst.demo.resources.GeneralTranslationsBundle"/&gt;&#xd;
+    The following should be the value from the English resource bundle: &lt;@fmt.message key="key.available.languages"/&gt;&#xd;
+&lt;/p&gt;&#xd;
     &lt;p style="height: 30em;"&gt; &lt;/p&gt; &#xd;
   &#xd;
   &lt;/div&gt;</sv:value>
