@@ -39,6 +39,7 @@ import static org.hippoecm.hst.content.beans.query.builder.FilterBuilder.and;
 import static org.hippoecm.hst.content.beans.query.builder.FilterBuilder.filterBuilder;
 import static org.hippoecm.hst.content.beans.query.builder.FilterBuilder.or;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
@@ -80,40 +81,32 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         HstQuery hstQueryInFluent = HstQueryBuilder.create()
                 .build();
 
-        String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
-        log.debug("xpathQueryInFluent: {}", xpathQueryInFluent);
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
 
         hstQueryInFluent = HstQueryBuilder.create()
                 .scopes(baseContentBean)
                 .build();
 
-        xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
-        log.debug("xpathQueryInFluent: {}", xpathQueryInFluent);
-
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
 
 
     @Test
-    public void simple_property_filter() throws Exception {
+    public void simple_string_property_filter() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         Filter filter = hstQuery.createFilter();
         filter.addEqualTo("myhippoproject:customid", "123");
         hstQuery.setFilter(filter);
-        String xpathQuery = hstQuery.getQueryAsString(true);
-        log.debug("xpathQuery: {}", xpathQuery);
-
         HstQuery hstQueryInFluent = HstQueryBuilder.create()
                 .scopes(baseContentBean)
-                .filter(filterBuilder("myhippoproject:customid").equalTo("123"))
+                .filter(
+                        filterBuilder("myhippoproject:customid").equalTo("123")
+                )
                 .build();
-
-        String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
-        log.debug("xpathQueryInFluent: {}", xpathQueryInFluent);
 
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
+
 
     @Test
     public void simple_filter_no_constraint_results_in_must_exist_property_constraint() throws Exception {
@@ -138,8 +131,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         nestedFilter1.addEqualTo("myhippoproject:customid", "123");
         filter.addAndFilter(nestedFilter1);
         hstQuery.setFilter(filter);
-        String xpathQuery = hstQuery.getQueryAsString(true);
-        log.debug("xpathQuery: {}", xpathQuery);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create()
                 .scopes(baseContentBean)
@@ -150,15 +141,20 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 )
                 .build();
 
-        String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
-        log.debug("xpathQueryInFluent: {}", xpathQueryInFluent);
-
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
 
     @Test
-    public void simple_duplicate_filter_results_in_xyz() throws Exception {
+    public void simple_duplicate_constraint_in_filter_works() throws Exception {
+        HstQuery hstQueryInFluent = HstQueryBuilder.create()
+                .scopes(baseContentBean)
+                .filter(
+                        filterBuilder("myhippoproject:customid").equalTo("foo").equalTo("bar")
+                )
+                .build();
 
+        String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
+        assertTrue(xpathQueryInFluent.contains("(@myhippoproject:customid = 'foo' and @myhippoproject:customid = 'bar')"));
     }
 
     @Test
@@ -177,8 +173,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         filter.addAndFilter(nestedFilter1);
         filter.addAndFilter(nestedFilter2);
         hstQuery.setFilter(filter);
-        String xpathQuery = hstQuery.getQueryAsString(true);
-        log.debug("xpathQuery: {}", xpathQuery);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create()
                 .scopes(baseContentBean)
@@ -192,9 +186,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                         )
                 )
                 .build();
-
-        String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
-        log.debug("xpathQueryInFluent: {}", xpathQueryInFluent);
 
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
@@ -220,8 +211,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.addOrderByDescending("myhippoproject:date");
         hstQuery.setOffset(10);
         hstQuery.setLimit(5);
-        String xpathQuery = hstQuery.getQueryAsString(true);
-        log.debug("xpathQuery: {}", xpathQuery);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create()
                 .scopes(baseContentBean)
@@ -237,9 +226,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 .orderByAscending("myhippoproject:title").orderByDescending("myhippoproject:date")
                 .offset(10).limit(5)
                 .build();
-
-        String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
-        log.debug("xpathQueryInFluent: {}", xpathQueryInFluent);
 
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
@@ -262,8 +248,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         filter.addAndFilter(nestedFilter2);
         filter.negate();
         hstQuery.setFilter(filter);
-        String xpathQuery = hstQuery.getQueryAsString(true);
-        log.debug("xpathQuery: {}", xpathQuery);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create()
                 .scopes(baseContentBean)
@@ -277,9 +261,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                         ).negate()
                 )
                 .build();
-
-        String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
-        log.debug("xpathQueryInFluent: {}", xpathQueryInFluent);
 
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
