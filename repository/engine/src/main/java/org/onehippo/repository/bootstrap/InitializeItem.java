@@ -523,7 +523,7 @@ public class InitializeItem {
         return JcrUtils.getBooleanProperty(itemNode, HIPPO_RELOADONSTARTUP, false);
     }
 
-    private boolean isDeltaMerge() throws RepositoryException {
+    boolean isDeltaMerge() throws RepositoryException {
         final String deltaDirective = StringUtils.trim(JcrUtils.getStringProperty(this.itemNode, HIPPOSYS_DELTADIRECTIVE, null));
         return deltaDirective != null && (deltaDirective.equals("combine") || deltaDirective.equals("overlay"));
     }

@@ -77,11 +77,24 @@ class InitializeItemComparator implements Comparator<InitializeItem> {
         if (result != 0) {
             return result;
         }
-        if (i2.isDownstreamItem(i1)) {
-            return -1;
+        if (i1.isDeltaMerge()) {
+            if (!i2.isDeltaMerge()) {
+                // not delta-merge > delta-merge
+                return 1;
+            }
         }
-        if ( i1.isDownstreamItem(i2)) {
-            return 1;
+        else {
+            if (i2.isDeltaMerge()) {
+                // delta-merge < not delta-merge
+                return -1;
+            }
+            // i1 and i2 both not a delta-merge
+            if (i2.isDownstreamItem(i1)) {
+                return -1;
+            }
+            if ( i1.isDownstreamItem(i2)) {
+                return 1;
+            }
         }
         return i1.getName().compareTo(i2.getName());
     }

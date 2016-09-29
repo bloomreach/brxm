@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,8 @@ import javax.jcr.Session;
 public abstract class Action {
 
     private final AtomicInteger count = new AtomicInteger(0);
-    private final AtomicInteger missed = new AtomicInteger(0);
+    private final AtomicInteger suspiciousExceptionCount = new AtomicInteger(0);
+    private final AtomicInteger recoverableExceptionCount = new AtomicInteger(0);
     private final AtomicInteger timeSpent = new AtomicInteger(0);
 
     protected final ActionContext context;
@@ -40,6 +41,7 @@ public abstract class Action {
         count.incrementAndGet();
         Session session = node.getSession();
         try {
+            context.getLog().debug("Executing {} on node {}", getClass().getSimpleName(), node.getPath());
             long start = System.currentTimeMillis();
             node = doExecute(node);
             long delta = System.currentTimeMillis() - start;
@@ -59,12 +61,20 @@ public abstract class Action {
         return count.get();
     }
 
-    public void addMissed() {
-        missed.incrementAndGet();
+    public void addSuspiciousException() {
+        suspiciousExceptionCount.incrementAndGet();
     }
 
-    public int getMissed() {
-        return missed.get();
+    public int getSuspiciousExceptionCount() {
+        return suspiciousExceptionCount.get();
+    }
+
+    public void addRecoverableException() {
+        recoverableExceptionCount.incrementAndGet();
+    }
+
+    public int getRecoverableExceptionCount() {
+        return recoverableExceptionCount.get();
     }
 
     public int getTimeSpent() {
@@ -83,4 +93,5 @@ public abstract class Action {
      * to start from the top.
      */
     protected abstract Node doExecute(Node node) throws Exception;
+
 }
