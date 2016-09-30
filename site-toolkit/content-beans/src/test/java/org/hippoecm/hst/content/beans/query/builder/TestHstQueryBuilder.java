@@ -640,7 +640,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
         HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
                 .where(constraint("myhippoproject:customid").equalTo("123"))
-                .orderByAscending("myhippoproject:title, myhippoproject:date")
+                .orderByAscending("myhippoproject:title", "myhippoproject:date")
                 .offset(10).limit(5)
                 .build();
         assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
@@ -657,8 +657,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setOffset(10);
         hstQuery.setLimit(5);
 
-        System.out.printf(hstQuery.getQueryAsString(false));
-
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
                 .where(constraint("myhippoproject:customid").equalTo("123"))
                 .orderByAscendingCaseInsensitive("myhippoproject:title")
@@ -670,7 +668,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
         HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
                 .where(constraint("myhippoproject:customid").equalTo("123"))
-                .orderByAscendingCaseInsensitive("myhippoproject:title, myhippoproject:date")
+                .orderByAscendingCaseInsensitive("myhippoproject:title" , "myhippoproject:date")
                 .offset(10).limit(5)
                 .build();
         assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
@@ -702,7 +700,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 .offset(10).limit(5)
                 .build();
 
-        System.out.println(hstQueryInFluent2.getQueryAsString(true));
         assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
     }
 
@@ -731,7 +728,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 .offset(10).limit(5)
                 .build();
         assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
-        System.out.printf(hstQueryInFluent2.getQueryAsString(false));
 
     }
 }
