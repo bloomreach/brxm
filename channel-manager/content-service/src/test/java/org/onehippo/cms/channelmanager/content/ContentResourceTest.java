@@ -33,6 +33,7 @@ import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundExcepti
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.Document;
 import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
+import org.onehippo.cms.channelmanager.content.service.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.service.DocumentsService;
 import org.onehippo.jaxrs.cxf.CXFTest;
 import org.powermock.api.easymock.PowerMock;
@@ -48,20 +49,20 @@ import static org.hamcrest.core.IsEqual.equalTo;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.net.ssl.*")
-@PrepareForTest(DocumentsService.class)
+@PrepareForTest({DocumentsService.class, DocumentTypesService.class})
 public class ContentResourceTest extends CXFTest {
 
     private Session userSession;
     private Locale locale;
     private DocumentsService documentsService;
-    private DocumentTypeFactory documentTypeFactory;
+    private DocumentTypesService documentTypesService;
 
     @Before
     public void setup() {
         locale = new Locale("en");
         userSession = createMock(Session.class);
         documentsService = createMock(DocumentsService.class);
-        documentTypeFactory = createMock(DocumentTypeFactory.class);
+        documentTypesService = createMock(DocumentTypesService.class);
 
         final SessionDataProvider sessionDataProvider = createMock(SessionDataProvider.class);
         expect(sessionDataProvider.getJcrSession(anyObject())).andReturn(userSession).anyTimes();
@@ -70,10 +71,12 @@ public class ContentResourceTest extends CXFTest {
 
         PowerMock.mockStaticPartial(DocumentsService.class, "get");
         expect(DocumentsService.get()).andReturn(documentsService).anyTimes();
+        PowerMock.mockStaticPartial(DocumentTypesService.class, "get");
+        expect(DocumentTypesService.get()).andReturn(documentTypesService).anyTimes();
         PowerMock.replayAll();
 
         final CXFTest.Config config = new CXFTest.Config();
-        config.addServerSingleton(new ContentResource(sessionDataProvider, documentTypeFactory));
+        config.addServerSingleton(new ContentResource(sessionDataProvider));
         config.addServerSingleton(new JacksonJsonProvider());
 
         setup(config);
@@ -117,8 +120,8 @@ public class ContentResourceTest extends CXFTest {
         final DocumentTypeSpec docType = new DocumentTypeSpec();
         docType.setId(returnedId);
 
-        expect(documentTypeFactory.getDocumentTypeSpec(requestedId, locale)).andReturn(docType);
-        replay(documentTypeFactory);
+        expect(documentTypesService.getDocumentTypeSpec(requestedId, locale)).andReturn(docType);
+        replay(documentTypesService);
 
         final String expectedBody = normalizeJsonResource("/empty-documenttype.json");
 
@@ -133,8 +136,8 @@ public class ContentResourceTest extends CXFTest {
     public void documentTypeNotFound() throws Exception {
         final String requestedId = "ns:testdocument";
 
-        expect(documentTypeFactory.getDocumentTypeSpec(requestedId, locale)).andThrow(new DocumentTypeNotFoundException());
-        replay(documentTypeFactory);
+        expect(documentTypesService.getDocumentTypeSpec(requestedId, locale)).andThrow(new DocumentTypeNotFoundException());
+        replay(documentTypesService);
 
         when()
                 .get("/documenttypes/" + requestedId)

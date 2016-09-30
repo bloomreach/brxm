@@ -31,17 +31,16 @@ import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundExcepti
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.Document;
 import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
+import org.onehippo.cms.channelmanager.content.service.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.service.DocumentsService;
 
 @Produces("application/json")
 @Path("/")
 public class ContentResource {
     private final SessionDataProvider sessionDataProvider;
-    private final DocumentTypeFactory documentTypeFactory;
 
-    public ContentResource(final SessionDataProvider userSessionProvider, final DocumentTypeFactory documentTypeFactory) {
+    public ContentResource(final SessionDataProvider userSessionProvider) {
         this.sessionDataProvider = userSessionProvider;
-        this.documentTypeFactory = documentTypeFactory;
     }
 
     @GET
@@ -61,8 +60,9 @@ public class ContentResource {
     @Path("documenttypes/{id}")
     public Response getDocumentTypeSpec(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         final Locale locale = sessionDataProvider.getLocale(servletRequest);
+        final DocumentTypesService documentTypesService = DocumentTypesService.get();
         try {
-            final DocumentTypeSpec docType = documentTypeFactory.getDocumentTypeSpec(id, locale);
+            final DocumentTypeSpec docType = documentTypesService.getDocumentTypeSpec(id, locale);
             return Response.ok().entity(docType).build();
         } catch (DocumentTypeNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();

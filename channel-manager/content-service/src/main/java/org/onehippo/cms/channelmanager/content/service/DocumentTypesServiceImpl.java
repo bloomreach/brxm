@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content;
+package org.onehippo.cms.channelmanager.content.service;
 
 import java.util.Locale;
 
@@ -41,12 +41,19 @@ import org.slf4j.LoggerFactory;
  * DocumentTypeFactory assembles a DocumentTypeSpec for a document type ID, using primarily the
  * Repository's content type service.
  */
-public class DocumentTypeFactory {
-    private static final Logger log = LoggerFactory.getLogger(DocumentTypeFactory.class);
+public class DocumentTypesServiceImpl implements DocumentTypesService {
+    private static final Logger log = LoggerFactory.getLogger(DocumentTypesServiceImpl.class);
+    private static final DocumentTypesServiceImpl INSTANCE = new DocumentTypesServiceImpl();
 
-    private final Session systemSession; // Use read-only only!
+    private Session systemSession; // Use read-only only!
 
-    public DocumentTypeFactory(final Session systemSession) {
+    private DocumentTypesServiceImpl() { }
+
+    public static DocumentTypesServiceImpl getInstance() {
+        return INSTANCE;
+    }
+
+    public void setSystemSession(final Session systemSession) {
         this.systemSession = systemSession;
     }
 
