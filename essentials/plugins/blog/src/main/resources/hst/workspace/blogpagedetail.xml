@@ -30,7 +30,7 @@
       <sv:value>Blog Page Main</sv:value>
     </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
-      <sv:value>HST.vBox</sv:value>
+      <sv:value>hst.vbox</sv:value>
     </sv:property>
     <sv:node sv:name="content">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -46,7 +46,7 @@
         <sv:value>blog-detail{{templateExtension}}</sv:value>
       </sv:property>
       <sv:property sv:name="hst:xtype" sv:type="String">
-        <sv:value>HST.Item</sv:value>
+        <sv:value>hst.item</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
