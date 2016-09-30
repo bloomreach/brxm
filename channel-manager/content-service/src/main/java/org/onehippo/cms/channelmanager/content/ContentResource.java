@@ -59,10 +59,11 @@ public class ContentResource {
     @GET
     @Path("documenttypes/{id}")
     public Response getDocumentTypeSpec(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
+        final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
         final Locale locale = sessionDataProvider.getLocale(servletRequest);
         final DocumentTypesService documentTypesService = DocumentTypesService.get();
         try {
-            final DocumentTypeSpec docType = documentTypesService.getDocumentTypeSpec(id, locale);
+            final DocumentTypeSpec docType = documentTypesService.getDocumentTypeSpec(id, userSession, locale);
             return Response.ok().entity(docType).build();
         } catch (DocumentTypeNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();

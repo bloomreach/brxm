@@ -41,20 +41,15 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
     private static final Logger log = LoggerFactory.getLogger(DocumentTypesServiceImpl.class);
     private static final DocumentTypesServiceImpl INSTANCE = new DocumentTypesServiceImpl();
 
-    private Session systemSession; // Use read-only only!
-
     public static DocumentTypesServiceImpl getInstance() {
         return INSTANCE;
     }
 
     private DocumentTypesServiceImpl() { }
 
-    public void setSystemSession(final Session systemSession) {
-        this.systemSession = systemSession;
-    }
-
     @Override
-    public DocumentTypeSpec getDocumentTypeSpec(final String id, final Locale locale) throws DocumentTypeNotFoundException {
+    public DocumentTypeSpec getDocumentTypeSpec(final String id, final Session userSession, final Locale locale)
+            throws DocumentTypeNotFoundException {
         if ("ns:testdocument".equals(id)) {
             return MockResponse.createTestDocumentType();
         }
@@ -64,7 +59,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
             final ContentType contentType = service.getContentTypes().getType(id);
             validateDocumentType(contentType, id);
 
-            final ScanningContext context = createScanningContext(id, contentType, locale);
+            final ScanningContext context = createScanningContext(id, contentType, userSession, locale);
             final DocumentTypeSpec docType = new DocumentTypeSpec();
 
             docType.setId(id);
@@ -90,10 +85,11 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
         }
     }
 
-    protected ScanningContext createScanningContext(final String id, final ContentType contentType, final Locale locale)
+    protected ScanningContext createScanningContext(final String id, final ContentType contentType,
+                                                    final Session userSession, final Locale locale)
             throws DocumentTypeNotFoundException {
 
-        final Node documentTypeRoot = NamespaceUtils.getDocumentTypeRootNode(id, systemSession);
+        final Node documentTypeRoot = NamespaceUtils.getDocumentTypeRootNode(id, userSession);
         final ResourceBundle resourceBundle = LocalizationUtils.getResourceBundleForDocument(id, locale);
 
         return new ScanningContext(contentType, resourceBundle, documentTypeRoot);

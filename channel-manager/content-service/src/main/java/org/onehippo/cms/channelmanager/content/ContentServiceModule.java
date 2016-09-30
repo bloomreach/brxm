@@ -23,7 +23,6 @@ import javax.jcr.Session;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.service.DocumentTypesServiceImpl;
 import org.onehippo.repository.jaxrs.CXFRepositoryJaxrsEndpoint;
 import org.onehippo.repository.jaxrs.RepositoryJaxrsEndpoint;
 import org.onehippo.repository.jaxrs.RepositoryJaxrsService;
@@ -62,12 +61,10 @@ public class ContentServiceModule extends AbstractReconfigurableDaemonModule {
         if (endpointAddress == null) {
             throw new IllegalStateException("ContentServiceModule requires a hippo:moduleconfig");
         }
-        DocumentTypesServiceImpl.getInstance().setSystemSession(session);
         final ManagedUserSessionInvoker managedUserSessionInvoker = new ManagedUserSessionInvoker(session);
-        final ContentResource contentResource = new ContentResource(managedUserSessionInvoker);
         jaxrsEndpoint = new CXFRepositoryJaxrsEndpoint(endpointAddress)
                 .invoker(managedUserSessionInvoker)
-                .singleton(contentResource)
+                .singleton(new ContentResource(managedUserSessionInvoker))
                 .singleton(new JacksonJsonProvider());
         RepositoryJaxrsService.addEndpoint(jaxrsEndpoint);
     }
