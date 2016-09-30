@@ -37,36 +37,23 @@ import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * DocumentTypeFactory assembles a DocumentTypeSpec for a document type ID, using primarily the
- * Repository's content type service.
- */
 public class DocumentTypesServiceImpl implements DocumentTypesService {
     private static final Logger log = LoggerFactory.getLogger(DocumentTypesServiceImpl.class);
     private static final DocumentTypesServiceImpl INSTANCE = new DocumentTypesServiceImpl();
 
     private Session systemSession; // Use read-only only!
 
-    private DocumentTypesServiceImpl() { }
-
     public static DocumentTypesServiceImpl getInstance() {
         return INSTANCE;
     }
+
+    private DocumentTypesServiceImpl() { }
 
     public void setSystemSession(final Session systemSession) {
         this.systemSession = systemSession;
     }
 
-    /**
-     * Assemble a DocumentTypeSpec based on the given document type ID, the Content Type Service,
-     * JCR read-only access through a system session and the current CMS session's locale.
-     *
-     * @param id     ID of the document type, e.g. "myhippoproject:newsdocument"
-     * @param locale locale of the current CMS session
-     * @return       assembled document type specification to expose over REST
-     * @throws DocumentTypeNotFoundException
-     *               if assembling the document type specification failed in a non-recoverable manner
-     */
+    @Override
     public DocumentTypeSpec getDocumentTypeSpec(final String id, final Locale locale) throws DocumentTypeNotFoundException {
         if ("ns:testdocument".equals(id)) {
             return MockResponse.createTestDocumentType();
@@ -91,7 +78,8 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
         }
     }
 
-    protected void validateDocumentType(final ContentType contentType, final String id) throws DocumentTypeNotFoundException {
+    protected void validateDocumentType(final ContentType contentType, final String id)
+            throws DocumentTypeNotFoundException {
         if (contentType == null) {
             log.debug("No content type found for '{}'", id);
             throw new DocumentTypeNotFoundException();
@@ -122,8 +110,8 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
     }
 
     protected void addPropertyField(final DocumentTypeSpec docType,
-                                  final ContentTypeProperty property,
-                                  final ScanningContext context) {
+                                    final ContentTypeProperty property,
+                                    final ScanningContext context) {
         final FieldTypeSpec fieldType = new FieldTypeSpec(docType);
         final String fieldId = property.getName();
 
