@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
+import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.util.DateTools;
@@ -185,6 +186,9 @@ public abstract class HstQueryBuilder {
     }
 
     public HstQueryBuilder where(final ConstraintBuilder constraintBuilder) {
+        if (this.constraintBuilder != null){
+            throw new RuntimeQueryException(new QueryException("'where' clause is allowed only once."));
+        }
         this.constraintBuilder = constraintBuilder;
         return this;
     }
@@ -193,27 +197,43 @@ public abstract class HstQueryBuilder {
         return constraintBuilder;
     }
 
-    public HstQueryBuilder orderByAscending(final String fieldName) {
-        OrderByConstruct orderBy = new OrderByConstruct(fieldName, true);
-        addOrderByConstruct(orderBy);
+    public HstQueryBuilder orderByAscending(final String ... fieldNames) {
+        if (fieldNames != null) {
+            for (String fieldName : fieldNames) {
+                OrderByConstruct orderBy = new OrderByConstruct(fieldName, true);
+                addOrderByConstruct(orderBy);
+            }
+        }
         return this;
     }
 
-    public HstQueryBuilder orderByAscendingCaseInsensitive(final String fieldName) {
-        OrderByConstruct orderBy = new OrderByConstruct(fieldName, true).caseSensitive(false);
-        addOrderByConstruct(orderBy);
+    public HstQueryBuilder orderByAscendingCaseInsensitive(final String ... fieldNames) {
+        if (fieldNames != null) {
+            for (String fieldName : fieldNames) {
+                OrderByConstruct orderBy = new OrderByConstruct(fieldName, true).caseSensitive(false);
+                addOrderByConstruct(orderBy);
+            }
+        }
         return this;
     }
 
-    public HstQueryBuilder orderByDescending(final String fieldName) {
-        OrderByConstruct orderBy = new OrderByConstruct(fieldName, false);
-        addOrderByConstruct(orderBy);
+    public HstQueryBuilder orderByDescending(final String ... fieldNames) {
+        if (fieldNames != null) {
+            for (String fieldName : fieldNames) {
+                OrderByConstruct orderBy = new OrderByConstruct(fieldName, false);
+                addOrderByConstruct(orderBy);
+            }
+        }
         return this;
     }
 
-    public HstQueryBuilder orderByDescendingCaseInsensitive(final String fieldName) {
-        OrderByConstruct orderBy = new OrderByConstruct(fieldName, false).caseSensitive(false);
-        addOrderByConstruct(orderBy);
+    public HstQueryBuilder orderByDescendingCaseInsensitive(final String ... fieldNames) {
+        if (fieldNames != null) {
+            for (String fieldName : fieldNames) {
+                OrderByConstruct orderBy = new OrderByConstruct(fieldName, false).caseSensitive(false);
+                addOrderByConstruct(orderBy);
+            }
+        }
         return this;
     }
 
@@ -222,6 +242,9 @@ public abstract class HstQueryBuilder {
     }
 
     public HstQueryBuilder offset(final int offset) {
+        if (this.offset != null) {
+            throw new RuntimeQueryException(new QueryException("'offset' is allowed to be set only once."));
+        }
         this.offset = offset;
         return this;
     }
@@ -231,6 +254,9 @@ public abstract class HstQueryBuilder {
     }
 
     public HstQueryBuilder limit(final int limit) {
+        if (this.limit != null) {
+            throw new RuntimeQueryException(new QueryException("'limit' is allowed to be set only once."));
+        }
         this.limit = limit;
         return this;
     }

@@ -32,6 +32,7 @@ import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
+import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
@@ -563,5 +564,174 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         assertEquals(hstQuery1.getQueryAsString(true), hstQuery2.getQueryAsString(true));
         assertEquals(hstQuery1.getOffset(), hstQuery2.getOffset());
         assertEquals(hstQuery1.getLimit(), hstQuery2.getLimit());
+    }
+
+    @Test(expected = RuntimeQueryException.class)
+    public void duplicate_where_clause_throws_query_exception() throws Exception {
+        HstQueryBuilder.create(baseContentBean)
+                .where(
+                        constraint("myhippoproject:customid").equalTo("foo")
+                ).where(
+                        constraint("myhippoproject:customid").equalTo("bar")
+                )
+                .build();
+    }
+
+    @Test(expected = RuntimeQueryException.class)
+    public void duplicate_offset_throws_query_exception() throws Exception {
+        HstQueryBuilder.create(baseContentBean)
+                .where(
+                        constraint("myhippoproject:customid").equalTo("foo")
+                )
+                .offset(2)
+                .offset(3)
+                .build();
+    }
+
+    @Test(expected = RuntimeQueryException.class)
+    public void duplicate_limit_throws_query_exception() throws Exception {
+        HstQueryBuilder.create(baseContentBean)
+                .where(
+                        constraint("myhippoproject:customid").equalTo("foo")
+                )
+                .limit(2)
+                .limit(3)
+                .build();
+    }
+
+    @Test
+    public void duplicate_exclude_scopes_is_allowed() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        hstQuery.excludeScopes(Lists.newArrayList(galleryContentBean, assetsContentBean));
+        Filter filter = hstQuery.createFilter();
+        filter.addNotEqualTo("myhippoproject:customid", "123");
+        hstQuery.setFilter(filter);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean, assetsContentBean)
+                .excludeScopes(galleryContentBean)
+                .excludeScopes(assetsContentBean)
+                .where(
+                        constraint("myhippoproject:customid").notEqualTo("123")
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void duplicate_order_by_ascending_allowed() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addEqualTo("myhippoproject:customid", "123");
+        hstQuery.setFilter(filter);
+        hstQuery.addOrderByAscending("myhippoproject:title");
+        hstQuery.addOrderByAscending("myhippoproject:date");
+        hstQuery.setOffset(10);
+        hstQuery.setLimit(5);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .where(constraint("myhippoproject:customid").equalTo("123"))
+                .orderByAscending("myhippoproject:title")
+                .orderByAscending("myhippoproject:date")
+                .offset(10).limit(5)
+                .build();
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+
+
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .where(constraint("myhippoproject:customid").equalTo("123"))
+                .orderByAscending("myhippoproject:title, myhippoproject:date")
+                .offset(10).limit(5)
+                .build();
+        assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
+    }
+
+    @Test
+    public void duplicate_order_by_ascending_case_insensitive_allowed() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addEqualTo("myhippoproject:customid", "123");
+        hstQuery.setFilter(filter);
+        hstQuery.addOrderByAscendingCaseInsensitive("myhippoproject:title");
+        hstQuery.addOrderByAscendingCaseInsensitive("myhippoproject:date");
+        hstQuery.setOffset(10);
+        hstQuery.setLimit(5);
+
+        System.out.printf(hstQuery.getQueryAsString(false));
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .where(constraint("myhippoproject:customid").equalTo("123"))
+                .orderByAscendingCaseInsensitive("myhippoproject:title")
+                .orderByAscendingCaseInsensitive("myhippoproject:date")
+                .offset(10).limit(5)
+                .build();
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+
+
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .where(constraint("myhippoproject:customid").equalTo("123"))
+                .orderByAscendingCaseInsensitive("myhippoproject:title, myhippoproject:date")
+                .offset(10).limit(5)
+                .build();
+        assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
+    }
+
+
+    @Test
+    public void duplicate_order_by_descending_allowed() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addEqualTo("myhippoproject:customid", "123");
+        hstQuery.setFilter(filter);
+        hstQuery.addOrderByDescending("myhippoproject:title");
+        hstQuery.addOrderByDescending("myhippoproject:date");
+        hstQuery.setOffset(10);
+        hstQuery.setLimit(5);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .where(constraint("myhippoproject:customid").equalTo("123"))
+                .orderByDescending("myhippoproject:title")
+                .orderByDescending("myhippoproject:date")
+                .offset(10).limit(5)
+                .build();
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .where(constraint("myhippoproject:customid").equalTo("123"))
+                .orderByDescending("myhippoproject:title", "myhippoproject:date")
+                .offset(10).limit(5)
+                .build();
+
+        System.out.println(hstQueryInFluent2.getQueryAsString(true));
+        assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
+    }
+
+    @Test
+    public void duplicate_order_by_descending_case_insensitive_allowed() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addEqualTo("myhippoproject:customid", "123");
+        hstQuery.setFilter(filter);
+        hstQuery.addOrderByDescendingCaseInsensitive("myhippoproject:title");
+        hstQuery.addOrderByDescendingCaseInsensitive("myhippoproject:date");
+        hstQuery.setOffset(10);
+        hstQuery.setLimit(5);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .where(constraint("myhippoproject:customid").equalTo("123"))
+                .orderByDescendingCaseInsensitive("myhippoproject:title")
+                .orderByDescendingCaseInsensitive("myhippoproject:date")
+                .offset(10).limit(5)
+                .build();
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .where(constraint("myhippoproject:customid").equalTo("123"))
+                .orderByDescendingCaseInsensitive("myhippoproject:title", "myhippoproject:date")
+                .offset(10).limit(5)
+                .build();
+        assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
+        System.out.printf(hstQueryInFluent2.getQueryAsString(false));
+
     }
 }

@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.query.exceptions;
 
-public class FilterException extends QueryException{
+public class FilterException extends QueryException {
     
     private static final long serialVersionUID = 1L;
 
