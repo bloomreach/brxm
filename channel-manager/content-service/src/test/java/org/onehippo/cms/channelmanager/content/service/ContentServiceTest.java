@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content;
+package org.onehippo.cms.channelmanager.content.service;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.ws.rs.NotFoundException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -50,7 +49,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class ContentServiceTest {
     private Node rootNode;
     private Session session;
-    private ContentService contentService = new ContentService();
+    private DocumentsServiceImpl contentService = (DocumentsServiceImpl)DocumentsService.get();
 
     @Before
     public void setup() throws RepositoryException {
@@ -87,7 +86,7 @@ public class ContentServiceTest {
 
         handle.addNode("testDocument", "ns:doctype");
         handle.setProperty(HippoNodeType.HIPPO_NAME, "Test Document");
-        contentService = createMockBuilder(ContentService.class).addMockedMethod("determineEditingInfo").createMock();
+        contentService = createMockBuilder(DocumentsServiceImpl.class).addMockedMethod("determineEditingInfo").createMock();
         expect(contentService.determineEditingInfo(session, handle)).andReturn(null);
         replay(contentService);
 
@@ -166,7 +165,7 @@ public class ContentServiceTest {
     @Test
     public void readUnavailableHeldByOtherUser() throws Exception {
         final Node handle = rootNode.addNode("testDocument", "hippo:handle");
-        contentService = createMockBuilder(ContentService.class).addMockedMethod("determineHolder").createMock();
+        contentService = createMockBuilder(DocumentsServiceImpl.class).addMockedMethod("determineHolder").createMock();
         session = createMock(Session.class);
         final HippoWorkspace workspace = createMock(HippoWorkspace.class);
         final WorkflowManager wfm = createMock(WorkflowManager.class);

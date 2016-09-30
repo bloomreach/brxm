@@ -56,7 +56,7 @@ public class ContentServiceModule extends AbstractReconfigurableDaemonModule {
         }
         final ManagedUserSessionInvoker managedUserSessionInvoker = new ManagedUserSessionInvoker(session);
         final ContentResource contentResource = new ContentResource(
-                managedUserSessionInvoker, new ContentService(), new DocumentTypeFactory(session));
+                managedUserSessionInvoker, new DocumentTypeFactory(session));
         jaxrsEndpoint = new CXFRepositoryJaxrsEndpoint(endpointAddress)
                 .invoker(managedUserSessionInvoker)
                 .singleton(contentResource)

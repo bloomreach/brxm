@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content;
+package org.onehippo.cms.channelmanager.content.service;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -42,8 +42,15 @@ import org.slf4j.LoggerFactory;
 /**
  * ContentService provides functionality to manipulate CMS content.
  */
-public class ContentService {
-    private static final Logger log = LoggerFactory.getLogger(ContentService.class);
+public class DocumentsServiceImpl implements DocumentsService {
+    private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
+    private static final DocumentsService INSTANCE = new DocumentsServiceImpl();
+
+    private DocumentsServiceImpl() { }
+
+    static DocumentsService getInstance() {
+        return INSTANCE;
+    }
 
     public Document getDocument(final Session session, final String id) throws DocumentNotFoundException {
         if ("test".equals(id)) {
