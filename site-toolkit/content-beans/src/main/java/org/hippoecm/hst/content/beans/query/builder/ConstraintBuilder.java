@@ -24,41 +24,41 @@ import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.repository.util.DateTools;
 
-public abstract class FilterBuilder {
+public abstract class ConstraintBuilder {
 
     private HstQueryBuilder queryBuilder;
     private boolean negated;
 
-    protected FilterBuilder() {
+    protected ConstraintBuilder() {
     }
 
     /**
      * The {@code fieldName} is in general a property name, for example <em>example:title</em>. Depending on the
-     * filter method ({@link FilterBuilder#equalTo}, {@link FilterBuilder#notEqualTo}, {@link FilterBuilder#contains}, etc)
-     * the {@code fieldName} is limited to certain conditions. For <strong>all</strong> {@link FilterBuilder} constraints
+     * filter method ({@link ConstraintBuilder#equalTo}, {@link ConstraintBuilder#notEqualTo}, {@link ConstraintBuilder#contains}, etc)
+     * the {@code fieldName} is limited to certain conditions. For <strong>all</strong> {@link ConstraintBuilder} constraints
      * methods the fieldName is allowed to be of the form <em>myhippo:title</em> or <em>address/myhippo:street</em> where the
-     * latter is a constraint on a child node its property. There is one exception: When you use {@link FilterBuilder#like(String)}
-     * or {@link FilterBuilder#notLike(String)}, it is not allowed to do the constrain on a child node property.
+     * latter is a constraint on a child node its property. There is one exception: When you use {@link ConstraintBuilder#like(String)}
+     * or {@link ConstraintBuilder#notLike(String)}, it is not allowed to do the constrain on a child node property.
      * <p>
-     * For the constraint {@link FilterBuilder#contains(String)} and {@link FilterBuilder#notContains(String)} the
+     * For the constraint {@link ConstraintBuilder#contains(String)} and {@link ConstraintBuilder#notContains(String)} the
      * {@code fieldName} can next to <em>myhippo:title</em> or <em>address/myhippo:street</em> also be equal to
      * "<em>.</em>" meaning a (not)contains filter node scope level is done
      * </p>
      * @param fieldName the {@code fieldName} this filter operates on
      * @return a new FilterBuilder for {@code fieldName}
      */
-    public static FilterBuilder filterBuilder(String fieldName) {
-        FieldFilterBuilder filterBuilder = new FieldFilterBuilder(fieldName);
+    public static ConstraintBuilder constraint(String fieldName) {
+        FieldConstraintBuilder filterBuilder = new FieldConstraintBuilder(fieldName);
         return filterBuilder;
     }
 
-    public static FilterBuilder and(FilterBuilder ... filterBuilders) {
-        AndFilterBuilder filterBuilder = new AndFilterBuilder(filterBuilders);
+    public static ConstraintBuilder and(ConstraintBuilder... constraintBuilders) {
+        AndConstraintBuilder filterBuilder = new AndConstraintBuilder(constraintBuilders);
         return filterBuilder;
     }
 
-    public static FilterBuilder or(FilterBuilder ... filterBuilders) {
-        OrFilterBuilder filterBuilder = new OrFilterBuilder(filterBuilders);
+    public static ConstraintBuilder or(ConstraintBuilder... constraintBuilders) {
+        OrConstraintBuilder filterBuilder = new OrConstraintBuilder(constraintBuilders);
         return filterBuilder;
     }
 
@@ -77,7 +77,7 @@ public abstract class FilterBuilder {
     /**
      * Negates the current filter
      */
-    public FilterBuilder negate() {
+    public ConstraintBuilder negate() {
         this.negated = !negated;
         return this;
     }
@@ -87,7 +87,7 @@ public abstract class FilterBuilder {
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or <code>value</code> is of invalid type/value or is <code>null</code>
      */
-    public abstract FilterBuilder equalTo(Object value);
+    public abstract ConstraintBuilder equalTo(Object value);
 
     /**
      * <p>
@@ -104,28 +104,28 @@ public abstract class FilterBuilder {
      * {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * </p>
      */
-    public abstract FilterBuilder equalTo(Calendar value, DateTools.Resolution dateResolution);
+    public abstract ConstraintBuilder equalTo(Calendar value, DateTools.Resolution dateResolution);
 
     /**
      * Case insensitive testing of <code>fieldAttributeName</code> for some <code>value</code>.
      * @see #equalTo(Object) same as equalTo(Object) only now the equality is checked
      * case insensitive and the value can only be of type <code>String</code>
      */
-    public abstract FilterBuilder equalToCaseInsensitive(String value);
+    public abstract ConstraintBuilder equalToCaseInsensitive(String value);
 
     /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is NOT equal to <code>value</code>
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
-    public abstract FilterBuilder notEqualTo(Object value);
+    public abstract ConstraintBuilder notEqualTo(Object value);
 
     /**
      * Case insensitive testing of <code>fieldAttributeName</code> for some <code>value</code>.
      * @see #notEqualTo(Object) same as notEqualTo(Object) only now the inequality is checked
      * case insensitive and the value can only be of type <code>String</code>
      */
-    public abstract FilterBuilder notEqualTo(Calendar value, DateTools.Resolution dateResolution);
+    public abstract ConstraintBuilder notEqualTo(Calendar value, DateTools.Resolution dateResolution);
 
     /**
      * <p><strong>note:</strong> supported resolutions are
@@ -137,7 +137,7 @@ public abstract class FilterBuilder {
      * @see #equalTo(java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
      * equalTo(java.util.Calendar, DateTools.Resolution) only now negated
      */
-    public abstract FilterBuilder notEqualToCaseInsensitive(String value);
+    public abstract ConstraintBuilder notEqualToCaseInsensitive(String value);
 
     /**
      * <p>
@@ -152,7 +152,7 @@ public abstract class FilterBuilder {
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
-    public abstract FilterBuilder greaterOrEqualThan(Object value);
+    public abstract ConstraintBuilder greaterOrEqualThan(Object value);
 
     /**
      * <p><strong>note:</strong> supported resolutions are
@@ -164,7 +164,7 @@ public abstract class FilterBuilder {
      * @see #between(java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
      * between(java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no upper bound
      */
-    public abstract FilterBuilder greaterOrEqualThan(Calendar value, DateTools.Resolution dateResolution);
+    public abstract ConstraintBuilder greaterOrEqualThan(Calendar value, DateTools.Resolution dateResolution);
 
     /**
      * <p>
@@ -179,7 +179,7 @@ public abstract class FilterBuilder {
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or <code>value</code> is of invalid type/value or is <code>null</code>
      */
-    public abstract FilterBuilder greaterThan(Object value);
+    public abstract ConstraintBuilder greaterThan(Object value);
 
     /**
      * <p><strong>note:</strong> supported resolutions are
@@ -191,7 +191,7 @@ public abstract class FilterBuilder {
      * @see #between(java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
      * between(java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no upper bound and lower bound not included
      */
-    public abstract FilterBuilder greaterThan(Calendar value, DateTools.Resolution dateResolution);
+    public abstract ConstraintBuilder greaterThan(Calendar value, DateTools.Resolution dateResolution);
 
     /**
      * <p>
@@ -206,7 +206,7 @@ public abstract class FilterBuilder {
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
-    public abstract FilterBuilder lessOrEqualThan(Object value);
+    public abstract ConstraintBuilder lessOrEqualThan(Object value);
 
     /**
      * <p><strong>note:</strong> supported resolutions are
@@ -218,7 +218,7 @@ public abstract class FilterBuilder {
      * @see #between(java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
      * between(java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no lower bound
      */
-    public abstract FilterBuilder lessOrEqualThan(Calendar value, DateTools.Resolution dateResolution);
+    public abstract ConstraintBuilder lessOrEqualThan(Calendar value, DateTools.Resolution dateResolution);
 
     /**
      * <p>
@@ -233,7 +233,7 @@ public abstract class FilterBuilder {
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
-    public abstract FilterBuilder lessThan(Object value);
+    public abstract ConstraintBuilder lessThan(Object value);
 
     /**
      * <p><strong>note:</strong> supported resolutions are
@@ -245,7 +245,7 @@ public abstract class FilterBuilder {
      * @see #between(java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
      * between(java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no lower bound and upper bound not included
      */
-    public abstract FilterBuilder lessThan(Calendar value, DateTools.Resolution dateResolution);
+    public abstract ConstraintBuilder lessThan(Calendar value, DateTools.Resolution dateResolution);
 
     /**
      * Adds a fulltext search to this Filter. A fulltext search is a search on the indexed text of the <code>scope</code>. When the
@@ -255,7 +255,7 @@ public abstract class FilterBuilder {
      * @param fullTextSearch the text to search on
      * @throws FilterException when <code>scope</code> or <code>fullTextSearch</code> is <code>null</code>
      */
-    public abstract FilterBuilder contains(String fullTextSearch);
+    public abstract ConstraintBuilder contains(String fullTextSearch);
 
     /**
      * The negated version of {@link #contains(String)}
@@ -263,7 +263,7 @@ public abstract class FilterBuilder {
      * @param fullTextSearch the text to search on
      * @throws FilterException when <code>scope</code> or <code>fullTextSearch</code> is <code>null</code>
      */
-    public abstract FilterBuilder notContains(String fullTextSearch);
+    public abstract ConstraintBuilder notContains(String fullTextSearch);
 
     /**
      * <p>
@@ -279,7 +279,7 @@ public abstract class FilterBuilder {
      * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code>, <code>value1</code> or <code>value2</code> are invalid types/values or one of them is <code>null</code>
      */
-    public abstract FilterBuilder between(Object value1, Object value2);
+    public abstract ConstraintBuilder between(Object value1, Object value2);
 
     /**
      * Adds a <b>FAST DATE RANGE</b> constraint that the Calendar value for <code>fieldAttributeName</code> is between <code>start</code> and <code>end</code> (boundaries included) BASED ON the
@@ -295,7 +295,7 @@ public abstract class FilterBuilder {
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * @throws FilterException
      */
-    public abstract FilterBuilder between(Calendar start, Calendar end, DateTools.Resolution dateResolution);
+    public abstract ConstraintBuilder between(Calendar start, Calendar end, DateTools.Resolution dateResolution);
 
     /**
      * <p>
@@ -312,7 +312,7 @@ public abstract class FilterBuilder {
      * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code>, <code>value1</code> or <code>value2</code> are invalid types/values or one of them is <code>null</code>
      */
-    public abstract FilterBuilder notBetween(Object value1, Object value2);
+    public abstract ConstraintBuilder notBetween(Object value1, Object value2);
 
     /**
      * <p><strong>note:</strong> supported resolutions are
@@ -324,7 +324,7 @@ public abstract class FilterBuilder {
      * @see #between(java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
      * addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now negated
      */
-    public abstract FilterBuilder notBetween(Calendar start, Calendar end, DateTools.Resolution dateResolution);
+    public abstract ConstraintBuilder notBetween(Calendar start, Calendar end, DateTools.Resolution dateResolution);
 
     /**
      * <p>
@@ -350,30 +350,30 @@ public abstract class FilterBuilder {
      * @param value object that must be of type String
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
-    public abstract FilterBuilder like(String value);
+    public abstract ConstraintBuilder like(String value);
 
     /**
      * @see #like(String) only now inverted
      *
      */
-    public abstract FilterBuilder notLike(String value);
+    public abstract ConstraintBuilder notLike(String value);
 
     /**
      * Add a constraint that the result <b>does</b> have the property <code>fieldAttributeName</code>, regardless its value
      * @throws FilterException when <code>fieldAttributeName</code> is <code>null</code>
      */
-    public abstract FilterBuilder exists();
+    public abstract ConstraintBuilder exists();
 
     /**
      * Add a constraint that the result <b>does NOT</b> have the property <code>fieldAttributeName</code>
      * @throws FilterException when <code>fieldAttributeName</code> is <code>null</code>
      */
-    public abstract FilterBuilder notExists();
+    public abstract ConstraintBuilder notExists();
 
     /**
      * Adds the xpath <code>jcrExpression</code> as constraint. See jsr-170 spec for the xpath format
      * @param jcrExpression
      */
-    public abstract FilterBuilder jcrExpression(String jcrExpression);
+    public abstract ConstraintBuilder jcrExpression(String jcrExpression);
 
 }

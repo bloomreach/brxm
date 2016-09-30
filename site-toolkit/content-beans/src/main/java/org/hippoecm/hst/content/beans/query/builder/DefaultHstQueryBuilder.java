@@ -80,8 +80,8 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
             hstQuery.excludeScopes(excludeScopes);
         }
 
-        if (filter() != null) {
-            hstQuery.setFilter(filter().build(this, session));
+        if (where() != null) {
+            hstQuery.setFilter(where().build(this, session));
         }
 
         if (orderByConstructs() != null) {

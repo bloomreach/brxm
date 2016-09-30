@@ -41,9 +41,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.content.beans.query.builder.FilterBuilder.and;
-import static org.hippoecm.hst.content.beans.query.builder.FilterBuilder.filterBuilder;
-import static org.hippoecm.hst.content.beans.query.builder.FilterBuilder.or;
+import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.and;
+import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.constraint;
+import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.or;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -103,8 +103,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         filter.addNotNull("myhippoproject:customid");
         hstQuery.setFilter(filter);
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").exists()
+                .where(
+                        constraint("myhippoproject:customid").exists()
                 )
                 .build();
 
@@ -118,8 +118,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         filter.addNotNull("myhippoproject:customid");
         hstQuery.setFilter(filter);
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid")
+                .where(
+                        constraint("myhippoproject:customid")
                 )
                 .build();
 
@@ -133,8 +133,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         filter.addIsNull("myhippoproject:customid");
         hstQuery.setFilter(filter);
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").notExists()
+                .where(
+                        constraint("myhippoproject:customid").notExists()
                 )
                 .build();
 
@@ -148,8 +148,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         filter.addEqualTo("myhippoproject:customid", "123");
         hstQuery.setFilter(filter);
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").equalTo("123")
+                .where(
+                        constraint("myhippoproject:customid").equalTo("123")
                 )
                 .build();
 
@@ -163,8 +163,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         filter.addNotEqualTo("myhippoproject:customid", "123");
         hstQuery.setFilter(filter);
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").notEqualTo("123")
+                .where(
+                        constraint("myhippoproject:customid").notEqualTo("123")
                 )
                 .build();
 
@@ -179,8 +179,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         filter.addEqualToCaseInsensitive("myhippoproject:customid", "ABc");
         hstQuery.setFilter(filter);
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").equalToCaseInsensitive("ABc")
+                .where(
+                        constraint("myhippoproject:customid").equalToCaseInsensitive("ABc")
                 )
                 .build();
 
@@ -195,8 +195,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setFilter(filter);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").equalTo(Boolean.TRUE)
+                .where(
+                        constraint("myhippoproject:customid").equalTo(Boolean.TRUE)
                 )
                 .build();
 
@@ -211,8 +211,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setFilter(filter);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").equalTo(4.0D)
+                .where(
+                        constraint("myhippoproject:customid").equalTo(4.0D)
                 )
                 .build();
 
@@ -227,8 +227,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setFilter(filter);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").equalTo(4L)
+                .where(
+                        constraint("myhippoproject:customid").equalTo(4L)
                 )
                 .build();
 
@@ -244,8 +244,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setFilter(filter);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").equalTo(calendar)
+                .where(
+                        constraint("myhippoproject:customid").equalTo(calendar)
                 )
                 .build();
 
@@ -261,8 +261,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setFilter(filter);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").equalTo(date)
+                .where(
+                        constraint("myhippoproject:customid").equalTo(date)
                 )
                 .build();
 
@@ -278,8 +278,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setFilter(filter);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").equalTo(calendar, DateTools.Resolution.DAY)
+                .where(
+                        constraint("myhippoproject:customid").equalTo(calendar, DateTools.Resolution.DAY)
                 )
                 .build();
 
@@ -298,8 +298,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         }
         try {
             HstQueryBuilder.create(baseContentBean)
-                    .filter(
-                            filterBuilder("myhippoproject:customid").equalTo(this)
+                    .where(
+                            constraint("myhippoproject:customid").equalTo(this)
                     )
                     .build();
             fail("FilterException expected ");
@@ -334,9 +334,9 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setFilter(filter);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
+                .where(
                         and(
-                                filterBuilder("myhippoproject:customid").equalTo("123")
+                                constraint("myhippoproject:customid").equalTo("123")
                         )
                 )
                 .build();
@@ -347,8 +347,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     @Test
     public void simple_duplicate_constraint_in_filter_works() throws Exception {
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").equalTo("foo").equalTo("bar")
+                .where(
+                        constraint("myhippoproject:customid").equalTo("foo").equalTo("bar")
                 )
                 .build();
 
@@ -374,12 +374,12 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setFilter(filter);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
+                .where(
                         and(
-                                filterBuilder("myhippoproject:customid").equalTo("123"),
+                                constraint("myhippoproject:customid").equalTo("123"),
                                 or(
-                                        filterBuilder("myhippoproject:title").like("Hello%"),
-                                        filterBuilder("myhippoproject:description").contains("foo")
+                                        constraint("myhippoproject:title").like("Hello%"),
+                                        constraint("myhippoproject:description").contains("foo")
                                 )
                         )
                 )
@@ -411,12 +411,12 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setLimit(5);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
+                .where(
                         and(
-                                filterBuilder("myhippoproject:customid").equalTo("123"),
+                                constraint("myhippoproject:customid").equalTo("123"),
                                 or(
-                                        filterBuilder("myhippoproject:title").like("Hello%"),
-                                        filterBuilder("myhippoproject:description").contains("foo")
+                                        constraint("myhippoproject:title").like("Hello%"),
+                                        constraint("myhippoproject:description").contains("foo")
                                 )
                         )
                 )
@@ -447,12 +447,12 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setFilter(filter);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
-                .filter(
+                .where(
                         and(
-                                filterBuilder("myhippoproject:customid").equalTo("123").negate(),
+                                constraint("myhippoproject:customid").equalTo("123").negate(),
                                 or(
-                                        filterBuilder("myhippoproject:title").like("Hello%"),
-                                        filterBuilder("myhippoproject:description").contains("foo")
+                                        constraint("myhippoproject:title").like("Hello%"),
+                                        constraint("myhippoproject:description").contains("foo")
                                 )
                         ).negate()
                 )
@@ -471,8 +471,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
                 .excludeScopes(assetsContentBean, galleryContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").notEqualTo("123")
+                .where(
+                        constraint("myhippoproject:customid").notEqualTo("123")
                 )
                 .build();
 
@@ -489,8 +489,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
                 .excludeScopes(galleryContentNode, assetsContentNode)
-                .filter(
-                        filterBuilder("myhippoproject:customid").notEqualTo("123")
+                .where(
+                        constraint("myhippoproject:customid").notEqualTo("123")
                 )
                 .build();
 
@@ -506,8 +506,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setFilter(filter);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentNode, galleryContentNode, assetsContentNode)
-                .filter(
-                        filterBuilder("myhippoproject:customid").notEqualTo("123")
+                .where(
+                        constraint("myhippoproject:customid").notEqualTo("123")
                 )
                 .build();
 
@@ -523,8 +523,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         hstQuery.setFilter(filter);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean, assetsContentBean, galleryContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").notEqualTo("123")
+                .where(
+                        constraint("myhippoproject:customid").notEqualTo("123")
                 )
                 .build();
 
@@ -542,8 +542,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean, assetsContentBean)
                 .excludeScopes(galleryContentBean)
-                .filter(
-                        filterBuilder("myhippoproject:customid").notEqualTo("123")
+                .where(
+                        constraint("myhippoproject:customid").notEqualTo("123")
                 )
                 .build();
 

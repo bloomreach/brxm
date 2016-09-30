@@ -21,22 +21,22 @@ import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 
-class AndFilterBuilder extends FilterBuilderAdapter {
+class AndConstraintBuilder extends ConstraintBuilderAdapter {
 
-    private final FilterBuilder [] filterBuilders;
+    private final ConstraintBuilder[] constraintBuilders;
 
-    protected AndFilterBuilder(final FilterBuilder ... filterBuilders) {
+    protected AndConstraintBuilder(final ConstraintBuilder... constraintBuilders) {
         super();
-        this.filterBuilders = filterBuilders;
+        this.constraintBuilders = constraintBuilders;
     }
 
     @Override
     protected Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
         final Filter filter = new FilterImpl(session, queryBuilder.defaultResolution());
 
-        if (filterBuilders != null) {
-            for (FilterBuilder filterBuilder : filterBuilders) {
-                final Filter nestedFilter = filterBuilder.build(queryBuilder, session);
+        if (constraintBuilders != null) {
+            for (ConstraintBuilder constraintBuilder : constraintBuilders) {
+                final Filter nestedFilter = constraintBuilder.build(queryBuilder, session);
                 if (nestedFilter != null) {
                     filter.addAndFilter(nestedFilter);
                 }

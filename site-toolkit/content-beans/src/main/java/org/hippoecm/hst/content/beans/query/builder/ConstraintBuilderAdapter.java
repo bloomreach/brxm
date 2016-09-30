@@ -23,9 +23,9 @@ import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.repository.util.DateTools;
 
-class FilterBuilderAdapter extends FilterBuilder {
+class ConstraintBuilderAdapter extends ConstraintBuilder {
 
-    protected FilterBuilderAdapter() {
+    protected ConstraintBuilderAdapter() {
         super();
     }
 
@@ -35,127 +35,127 @@ class FilterBuilderAdapter extends FilterBuilder {
     }
 
     @Override
-    public FilterBuilder equalTo(final Object value) {
+    public ConstraintBuilder equalTo(final Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder equalTo(final Calendar value, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder equalTo(final Calendar value, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder equalToCaseInsensitive(final String value) {
+    public ConstraintBuilder equalToCaseInsensitive(final String value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notEqualTo(final Object value) {
+    public ConstraintBuilder notEqualTo(final Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notEqualTo(final Calendar value, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder notEqualTo(final Calendar value, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notEqualToCaseInsensitive(final String value) {
+    public ConstraintBuilder notEqualToCaseInsensitive(final String value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder greaterOrEqualThan(final Object value) {
+    public ConstraintBuilder greaterOrEqualThan(final Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder greaterOrEqualThan(final Calendar calendar, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder greaterOrEqualThan(final Calendar calendar, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder greaterThan(final Object value) {
+    public ConstraintBuilder greaterThan(final Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder greaterThan(final Calendar value, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder greaterThan(final Calendar value, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder lessOrEqualThan(final Object value) {
+    public ConstraintBuilder lessOrEqualThan(final Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder lessOrEqualThan(final Calendar value, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder lessOrEqualThan(final Calendar value, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder lessThan(final Object value) {
+    public ConstraintBuilder lessThan(final Object value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder lessThan(final Calendar value, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder lessThan(final Calendar value, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder contains(final String fullTextSearch) {
+    public ConstraintBuilder contains(final String fullTextSearch) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notContains(final String fullTextSearch) {
+    public ConstraintBuilder notContains(final String fullTextSearch) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder between(final Object value1, final Object value2) {
+    public ConstraintBuilder between(final Object value1, final Object value2) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder between(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder between(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notBetween(final Object value1, final Object value2) {
+    public ConstraintBuilder notBetween(final Object value1, final Object value2) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notBetween(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder notBetween(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder like(final String value) {
+    public ConstraintBuilder like(final String value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notLike(final String value) {
+    public ConstraintBuilder notLike(final String value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder exists() {
+    public ConstraintBuilder exists() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder notExists() {
+    public ConstraintBuilder notExists() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public FilterBuilder jcrExpression(final String jcrExpression) {
+    public ConstraintBuilder jcrExpression(final String jcrExpression) {
         throw new UnsupportedOperationException();
     }
 }

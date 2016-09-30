@@ -27,13 +27,13 @@ import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.repository.util.DateTools;
 
-class FieldFilterBuilder extends FilterBuilderAdapter {
+class FieldConstraintBuilder extends ConstraintBuilderAdapter {
 
     private final String fieldName;
 
     private List<FilterConstraint> filterConstraints;
 
-    protected FieldFilterBuilder(final String fieldName) {
+    protected FieldConstraintBuilder(final String fieldName) {
         super();
         this.fieldName = fieldName;
     }
@@ -140,175 +140,175 @@ class FieldFilterBuilder extends FilterBuilderAdapter {
     }
 
     @Override
-    public FilterBuilder equalTo(final Object value) {
+    public ConstraintBuilder equalTo(final Object value) {
         FilterConstraint constraint = new FilterConstraint(Operator.EQUAL, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder equalTo(final Calendar value, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder equalTo(final Calendar value, final DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.EQUAL, value).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder equalToCaseInsensitive(final String value) {
+    public ConstraintBuilder equalToCaseInsensitive(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.EQUAL, value).caseSensitive(false);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notEqualTo(final Object value) {
+    public ConstraintBuilder notEqualTo(final Object value) {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_EQUAL, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notEqualTo(final Calendar value, DateTools.Resolution dateResolution) {
+    public ConstraintBuilder notEqualTo(final Calendar value, DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_EQUAL, value).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notEqualToCaseInsensitive(final String value) {
+    public ConstraintBuilder notEqualToCaseInsensitive(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_EQUAL, value).caseSensitive(false);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder greaterOrEqualThan(final Object value) {
+    public ConstraintBuilder greaterOrEqualThan(final Object value) {
         FilterConstraint constraint = new FilterConstraint(Operator.GE, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder greaterOrEqualThan(final Calendar value, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder greaterOrEqualThan(final Calendar value, final DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.GE, value).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder greaterThan(final Object value) {
+    public ConstraintBuilder greaterThan(final Object value) {
         FilterConstraint constraint = new FilterConstraint(Operator.GT, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder greaterThan(final Calendar value, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder greaterThan(final Calendar value, final DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.GT, value).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder lessOrEqualThan(final Object value) {
+    public ConstraintBuilder lessOrEqualThan(final Object value) {
         FilterConstraint constraint = new FilterConstraint(Operator.LE, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder lessOrEqualThan(final Calendar value, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder lessOrEqualThan(final Calendar value, final DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.LE, value).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder lessThan(final Object value) {
+    public ConstraintBuilder lessThan(final Object value) {
         FilterConstraint constraint = new FilterConstraint(Operator.LT, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder lessThan(final Calendar value, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder lessThan(final Calendar value, final DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.LT, value).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder contains(final String value) {
+    public ConstraintBuilder contains(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.CONTAINS, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notContains(final String value) {
+    public ConstraintBuilder notContains(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_CONTAINS, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder between(final Object value1, final Object value2) {
+    public ConstraintBuilder between(final Object value1, final Object value2) {
         FilterConstraint constraint = new FilterConstraint(Operator.BETWEEN, new Object[]{value1, value2});
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder between(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder between(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.BETWEEN, new Object[]{start, end}).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notBetween(final Object value1, final Object value2) {
+    public ConstraintBuilder notBetween(final Object value1, final Object value2) {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_BETWEEN, new Object[]{value1, value2});
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notBetween(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
+    public ConstraintBuilder notBetween(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_BETWEEN, new Object[]{start, end}).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder like(final String value) {
+    public ConstraintBuilder like(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.LIKE, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notLike(final String value) {
+    public ConstraintBuilder notLike(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_LIKE, value);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder exists() {
+    public ConstraintBuilder exists() {
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_NULL);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder notExists() {
+    public ConstraintBuilder notExists() {
         FilterConstraint constraint = new FilterConstraint(Operator.IS_NULL);
         addFilterConstraint(constraint);
         return this;
     }
 
     @Override
-    public FilterBuilder jcrExpression(final String value) {
+    public ConstraintBuilder jcrExpression(final String value) {
         FilterConstraint constraint = new FilterConstraint(Operator.XPATH_EXPRESSION, value);
         addFilterConstraint(constraint);
         return this;

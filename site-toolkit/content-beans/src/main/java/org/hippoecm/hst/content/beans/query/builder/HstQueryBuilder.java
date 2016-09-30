@@ -59,7 +59,7 @@ public abstract class HstQueryBuilder {
     private List<String> primaryNodeTypes;
     private List<Class<? extends HippoBean>> filterBeanTypes;
 
-    private FilterBuilder filterBuilder;
+    private ConstraintBuilder constraintBuilder;
     private List<OrderByConstruct> orderByConstructs;
     private Integer offset;
     private Integer limit;
@@ -184,13 +184,13 @@ public abstract class HstQueryBuilder {
         return excludeScopes;
     }
 
-    public HstQueryBuilder filter(final FilterBuilder filterBuilder) {
-        this.filterBuilder = filterBuilder;
+    public HstQueryBuilder where(final ConstraintBuilder constraintBuilder) {
+        this.constraintBuilder = constraintBuilder;
         return this;
     }
 
-    protected FilterBuilder filter() {
-        return filterBuilder;
+    protected ConstraintBuilder where() {
+        return constraintBuilder;
     }
 
     public HstQueryBuilder orderByAscending(final String fieldName) {
