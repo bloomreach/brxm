@@ -117,6 +117,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         Filter filter = hstQuery.createFilter();
         filter.addNotNull("myhippoproject:customid");
         hstQuery.setFilter(filter);
+
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
                 .where(
                         constraint("myhippoproject:customid")
@@ -124,6 +125,14 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 .build();
 
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .where(
+                        constraint("myhippoproject:customid").exists()
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
     }
 
     @Test
