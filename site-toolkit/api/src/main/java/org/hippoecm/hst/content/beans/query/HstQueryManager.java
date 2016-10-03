@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,12 +16,31 @@
 package org.hippoecm.hst.content.beans.query;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
 
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.repository.util.DateTools;
 
 public interface HstQueryManager {
+
+    /**
+     * @return the {@link Session} which was used to create this {@code HstQueryManager} with
+     */
+    Session getSession();
+
+
+    /**
+     * @return the default {@code {@link DateTools.Resolution}} for this {@code HstQueryManager} instance
+     */
+    DateTools.Resolution getDefaultResolution();
+
+    /**
+     * @return the {@link ObjectConverter} that was used to create this  {@code HstQueryManager} instance
+     */
+    ObjectConverter getObjectConverter();
 
     /**
      * Creates a empty query, with scope
