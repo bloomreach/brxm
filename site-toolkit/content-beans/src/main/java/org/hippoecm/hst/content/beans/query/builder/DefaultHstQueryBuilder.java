@@ -30,29 +30,22 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 
 class DefaultHstQueryBuilder extends HstQueryBuilder {
 
-    private HstQueryManager queryManager;
-
     protected DefaultHstQueryBuilder() {
         super();
-    }
-
-    protected DefaultHstQueryBuilder(final HstQueryManager queryManager) {
-        super();
-        this.queryManager = queryManager;
     }
 
     @Override
     public HstQuery build(final Session session) throws QueryException {
         final HstQuery hstQuery;
 
-        final Node [] scopes = getScopes();
+        final Node[] scopes = getScopes();
 
         if (scopes == null || scopes.length == 0) {
             throw new QueryException("Empty scopes.");
         }
 
-        final String [] primaryNodeTypes = getPrimaryNodeTypes();
-        final Class<? extends HippoBean> [] filterBeanTyes = getFilterBeanTypes();
+        final String[] primaryNodeTypes = getPrimaryNodeTypes();
+        final Class<? extends HippoBean>[] filterBeanTyes = getFilterBeanTypes();
 
         if (scopes.length == 1) {
             if (primaryNodeTypes != null && primaryNodeTypes.length > 0) {
@@ -64,17 +57,17 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
             }
         } else {
             if (primaryNodeTypes != null && primaryNodeTypes.length > 0) {
-                hstQuery = getHstQueryManager(session).createQuery((Node) null, includeSubTypes(), primaryNodeTypes);
+                hstQuery = getHstQueryManager(session).createQuery((Node)null, includeSubTypes(), primaryNodeTypes);
             } else if (filterBeanTyes != null && filterBeanTyes.length > 0) {
-                hstQuery = getHstQueryManager(session).createQuery((Node) null, includeSubTypes(), filterBeanTyes);
+                hstQuery = getHstQueryManager(session).createQuery((Node)null, includeSubTypes(), filterBeanTyes);
             } else {
-                hstQuery = getHstQueryManager(session).createQuery((Node) null);
+                hstQuery = getHstQueryManager(session).createQuery((Node)null);
             }
 
             hstQuery.addScopes(scopes);
         }
 
-        final Node [] excludeScopes = getExcludeScopes();
+        final Node[] excludeScopes = getExcludeScopes();
 
         if (excludeScopes != null && excludeScopes.length > 0) {
             hstQuery.excludeScopes(excludeScopes);
@@ -113,8 +106,8 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
         return hstQuery;
     }
 
-    private Node [] getScopes() throws QueryException {
-        Node [] scopes = null;
+    private Node[] getScopes() throws QueryException {
+        Node[] scopes = null;
 
         List<Node> scopesList = scopes();
 
@@ -137,8 +130,8 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
         return scopes;
     }
 
-    private Node [] getExcludeScopes() throws QueryException {
-        Node [] excludeScopes = null;
+    private Node[] getExcludeScopes() throws QueryException {
+        Node[] excludeScopes = null;
 
         List<Node> excludeScopesList = excludeScopes();
 
@@ -149,8 +142,8 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
         return excludeScopes;
     }
 
-    private String [] getPrimaryNodeTypes() {
-        String [] primaryNodeTypes = null;
+    private String[] getPrimaryNodeTypes() {
+        String[] primaryNodeTypes = null;
 
         List<String> primaryNodeTypeList = primaryNodeTypes();
 
@@ -161,8 +154,8 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
         return primaryNodeTypes;
     }
 
-    private Class<? extends HippoBean> [] getFilterBeanTypes() {
-        Class<? extends HippoBean> [] filterBeanTypes = null;
+    private Class<? extends HippoBean>[] getFilterBeanTypes() {
+        Class<? extends HippoBean>[] filterBeanTypes = null;
 
         List<Class<? extends HippoBean>> filterBeanTypeList = filterBeanTypes();
 
@@ -174,24 +167,12 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
     }
 
     private HstQueryManager getHstQueryManager(final Session session) throws QueryException {
-        HstQueryManager qm = queryManager;
 
-        if (qm == null) {
-            final HstRequestContext requestContext = RequestContextProvider.get();
-
-            if (requestContext != null) {
-                if (session == null) {
-                    qm = requestContext.getQueryManager();
-                } else {
-                    qm = requestContext.getQueryManager(session);
-                }
-            }
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        if (session == null) {
+            return requestContext.getQueryManager();
+        } else {
+            return requestContext.getQueryManager(session);
         }
-
-        if (qm == null) {
-            throw new QueryException("HstQueryManager is unavailable.");
-        }
-
-        return qm;
     }
 }
