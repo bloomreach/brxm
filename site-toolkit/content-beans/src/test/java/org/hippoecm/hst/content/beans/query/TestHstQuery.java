@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.query;
 
-
-import javax.jcr.Node;
 
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -68,7 +66,7 @@ public class TestHstQuery  extends AbstractBeanTestCase {
     public void multiple_types_query_including_subtypes() throws Exception {
         HstQuery query = queryMngr.createQuery(session.getRootNode(), true, "unittestproject:textpage", "unittestproject:newspage");
         assertEquals("//*[(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') and not(@jcr:primaryType='nt:frozenNode') " +
-                "and ((@jcr:primaryType='unittestproject:textpage' or @jcr:primaryType='unittestproject:subtextpage' " +
+                "and ((@jcr:primaryType='unittestproject:subtextpage' or @jcr:primaryType='unittestproject:textpage' " +
                 "or @jcr:primaryType='unittestproject:newspage'))] order by @jcr:score descending ",
                 query.getQueryAsString(false));
     }
@@ -79,8 +77,8 @@ public class TestHstQuery  extends AbstractBeanTestCase {
                 "unittestproject:basedocument");
 
         assertEquals("//*[(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') and not(@jcr:primaryType='nt:frozenNode') " +
-                "and ((@jcr:primaryType='unittestproject:textpage' or @jcr:primaryType='unittestproject:subtextpage' " +
-                "or @jcr:primaryType='unittestproject:newspage' or @jcr:primaryType='unittestproject:basedocument'))] " +
+                "and ((@jcr:primaryType='unittestproject:subtextpage' or @jcr:primaryType='unittestproject:textpage' or " +
+                "@jcr:primaryType='unittestproject:newspage' or @jcr:primaryType='unittestproject:basedocument'))] " +
                 "order by @jcr:score descending ",
                 query.getQueryAsString(false));
     }
