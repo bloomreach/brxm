@@ -130,11 +130,11 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
      * nested method invocation.
      */
     private static class ScanningContext {
-        public final ContentType contentType;
-        public final ResourceBundle resourceBundle;
-        public final Node documentTypeRoot;
+        private final ContentType contentType;
+        private final ResourceBundle resourceBundle;
+        private final Node documentTypeRoot;
 
-        public ScanningContext(final ContentType contentType,
+        private ScanningContext(final ContentType contentType,
                                final ResourceBundle resourceBundle,
                                final Node documentTypeRoot) {
             this.contentType = contentType;

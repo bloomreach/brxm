@@ -40,7 +40,7 @@ public class FieldTypeSpec {
     private String displayName;   // using the correct language/locale
     private String hint;          // using the correct language/locale
 
-    private Boolean multiple;
+    private Boolean multiple;     // Boolean (i.s.o. boolean) removes the 'false' value from JSON output
     // private boolean orderable; // future improvement
     // private boolean readOnly;  // future improvement
 

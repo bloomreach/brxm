@@ -81,11 +81,11 @@ public class FieldTypeUtils {
 
     private static class TypeDescriptor {
         public final FieldTypeSpec.Type type;
-        public final String pluginClass;
+        public final String defaultPluginClass;
 
-        public TypeDescriptor(final FieldTypeSpec.Type type, final String pluginClass) {
+        public TypeDescriptor(final FieldTypeSpec.Type type, final String defaultPluginClass) {
             this.type = type;
-            this.pluginClass = pluginClass;
+            this.defaultPluginClass = defaultPluginClass;
         }
     }
 
@@ -146,7 +146,7 @@ public class FieldTypeUtils {
 
         final String pluginClass = NamespaceUtils.getPluginClassForField(documentTypeRootNode, property.getName());
 
-        return descriptor.pluginClass.equals(pluginClass);
+        return descriptor.defaultPluginClass.equals(pluginClass);
     }
 
     /**

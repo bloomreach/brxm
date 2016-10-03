@@ -103,9 +103,9 @@ public class LocalizationUtils {
                                               final String resourceKey, final Node namespaceNode, final String configProperty) {
         // Try to return a localized label
         if (resourceBundle != null) {
-            String hint = resourceBundle.getString(resourceKey);
-            if (hint != null) {
-                return hint;
+            String label = resourceBundle.getString(resourceKey);
+            if (label != null) {
+                return label;
             }
         }
         // Try to read a property off the field's plugin config
