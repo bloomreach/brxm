@@ -487,22 +487,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         }
     }
 
-
-    @Test
-    public void simple_filter_no_constraint_results_in_must_exist_property_constraint() throws Exception {
-
-    }
-
-    @Test
-    public void simple_nodescope_filter() throws Exception {
-
-    }
-
-    @Test
-    public void simple_nodescopes_filter() throws Exception {
-
-    }
-
     @Test
     public void simple_nestedproperty_filter() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
