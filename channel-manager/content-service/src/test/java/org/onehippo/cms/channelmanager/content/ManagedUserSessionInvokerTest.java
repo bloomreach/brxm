@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.jcr.Repository;
@@ -44,7 +45,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
 
 public class ManagedUserSessionInvokerTest {
-    private static final String SESSION_ATTRIBUTE = ManagedUserSessionInvoker.class.getName() + ".UserSession";
+    private static final String ATTRIBUTE_SESSION = ManagedUserSessionInvoker.class.getName() + ".UserSession";
+    private static final String ATTRIBUTE_LOCALE = ManagedUserSessionInvoker.class.getName() + ".Locale";
 
     private Session systemSession = createMock(Session.class);
     private ManagedUserSessionInvoker invoker = new ManagedUserSessionInvoker(systemSession) {
@@ -61,10 +63,10 @@ public class ManagedUserSessionInvokerTest {
     @Test
     public void readTheUserSessionFromTheHttpServletRequest() {
         final Session userSession = createMock(Session.class);
-        expect(servletRequest.getAttribute(SESSION_ATTRIBUTE)).andReturn(userSession);
+        expect(servletRequest.getAttribute(ATTRIBUTE_SESSION)).andReturn(userSession);
         replay(servletRequest);
 
-        final Session retrievedSession = invoker.get(servletRequest);
+        final Session retrievedSession = invoker.getJcrSession(servletRequest);
 
         verify(servletRequest);
         assertThat(retrievedSession, equalTo(userSession));
@@ -72,10 +74,10 @@ public class ManagedUserSessionInvokerTest {
 
     @Test
     public void returnNullIfTheresNoUserSession() {
-        expect(servletRequest.getAttribute(SESSION_ATTRIBUTE)).andReturn(null);
+        expect(servletRequest.getAttribute(ATTRIBUTE_SESSION)).andReturn(null);
         replay(servletRequest);
 
-        final Session retrievedSession = invoker.get(servletRequest);
+        final Session retrievedSession = invoker.getJcrSession(servletRequest);
 
         verify(servletRequest);
         assertThat(retrievedSession, equalTo(null));
@@ -114,6 +116,7 @@ public class ManagedUserSessionInvokerTest {
     @Test
     public void invokeJaxrs() throws Exception {
         final SimpleCredentials credentials = new SimpleCredentials("tester", new char[]{});
+        final Locale locale = new Locale("en");
         final Exchange exchange = prepareExchange();
         final HttpSession httpSession = createMock(HttpSession.class);
         final CmsSessionContext context = createMock(CmsSessionContext.class);
@@ -123,10 +126,13 @@ public class ManagedUserSessionInvokerTest {
         expect(servletRequest.getSession(false)).andReturn(httpSession);
         expect(httpSession.getAttribute(CmsSessionContext.SESSION_KEY)).andReturn(context);
         expect(context.getRepositoryCredentials()).andReturn(credentials);
+        expect(context.getLocale()).andReturn(locale);
         expect(systemSession.getRepository()).andReturn(repository);
         expect(repository.login(credentials)).andReturn(userSession);
 
-        servletRequest.setAttribute(SESSION_ATTRIBUTE, userSession);
+        servletRequest.setAttribute(ATTRIBUTE_SESSION, userSession);
+        expectLastCall();
+        servletRequest.setAttribute(ATTRIBUTE_LOCALE, locale);
         expectLastCall();
         userSession.logout();
         expectLastCall();
@@ -176,6 +182,7 @@ public class ManagedUserSessionInvokerTest {
         };
 
         final SimpleCredentials credentials = new SimpleCredentials("tester", new char[]{});
+        final Locale locale = new Locale("en");
         final Exchange exchange = prepareExchange();
         final HttpSession httpSession = createMock(HttpSession.class);
         final CmsSessionContext context = createMock(CmsSessionContext.class);
@@ -185,10 +192,13 @@ public class ManagedUserSessionInvokerTest {
         expect(servletRequest.getSession(false)).andReturn(httpSession);
         expect(httpSession.getAttribute(CmsSessionContext.SESSION_KEY)).andReturn(context);
         expect(context.getRepositoryCredentials()).andReturn(credentials);
+        expect(context.getLocale()).andReturn(locale);
         expect(systemSession.getRepository()).andReturn(repository);
         expect(repository.login(credentials)).andReturn(userSession);
 
-        servletRequest.setAttribute(SESSION_ATTRIBUTE, userSession);
+        servletRequest.setAttribute(ATTRIBUTE_SESSION, userSession);
+        expectLastCall();
+        servletRequest.setAttribute(ATTRIBUTE_LOCALE, locale);
         expectLastCall();
         userSession.logout();
         expectLastCall();
@@ -202,6 +212,19 @@ public class ManagedUserSessionInvokerTest {
             verify(servletRequest, httpSession, context, systemSession, repository, userSession);
             assertThat(e, equalTo(testException));
         }
+    }
+
+    @Test
+    public void fallbackToEnglishLocale() {
+        final CmsSessionContext context = createMock(CmsSessionContext.class);
+
+        expect(context.getLocale()).andReturn(null);
+        replay(context);
+
+        final Locale locale = invoker.getLocale(context);
+
+        assertThat("locale is not null", locale != null);
+        assertThat("default locale is English", locale.getLanguage().equals("en"));
     }
 
     private Exchange prepareExchange() {
