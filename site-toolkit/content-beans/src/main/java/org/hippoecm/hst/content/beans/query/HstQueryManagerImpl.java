@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -63,6 +63,20 @@ public class HstQueryManagerImpl implements HstQueryManager {
         defaultResolution = resolution;
     }
 
+    @Override
+    public Session getSession() {
+        return session;
+    }
+
+    @Override
+    public DateTools.Resolution getDefaultResolution() {
+        return defaultResolution;
+    }
+
+    @Override
+    public ObjectConverter getObjectConverter() {
+        return objectConverter;
+    }
 
     public HstQuery createQuery(final Node scope) throws QueryException {
         return createQuery(scope, (NodeTypeFilter)null);
@@ -148,7 +162,7 @@ public class HstQueryManagerImpl implements HstQueryManager {
             if(primaryNodeTypeNameForBean != null) {
                 if (includeSubTypes) {
                     try {
-                        Set<String> subNodeTypes = getSubTypes(primaryNodeTypeNameForBean);
+                        Set<String> subNodeTypes = getSelfPlusSubTypes(primaryNodeTypeNameForBean);
                         primaryNodeTypes.addAll(subNodeTypes);
                     } catch (RepositoryException e) {
                         throw new QueryException("RepositoryException while getting sub types",e);
@@ -216,14 +230,15 @@ public class HstQueryManagerImpl implements HstQueryManager {
         }
         Set<String> primaryNodeTypesSet = new LinkedHashSet<>();
         for (String primaryNodeType : primaryNodeTypes) {
-            primaryNodeTypesSet.add(primaryNodeType);
             if (includeSubTypes) {
                 try {
-                    Set<String> subNodeTypes = getSubTypes(primaryNodeType);
+                    Set<String> subNodeTypes = getSelfPlusSubTypes(primaryNodeType);
                     primaryNodeTypesSet.addAll(subNodeTypes);
                 } catch (RepositoryException e) {
                     throw new QueryException("RepositoryException while getting sub types",e);
                 }
+            } else {
+                primaryNodeTypesSet.add(primaryNodeType);
             }
         }
         NodeTypeFilter primaryNodeTypeFilter  = new PrimaryNodeTypeFilterImpl(primaryNodeTypesSet.toArray(new String[primaryNodeTypesSet.size()]));
@@ -238,7 +253,7 @@ public class HstQueryManagerImpl implements HstQueryManager {
     }
 
 
-    private Set<String> getSubTypes(final String primaryNodeType) throws RepositoryException {
+    private Set<String> getSelfPlusSubTypes(final String primaryNodeType) throws RepositoryException {
         Set<String> subTypes = new LinkedHashSet<>();
         NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
         NodeTypeIterator allTypes = ntMgr.getAllNodeTypes();
