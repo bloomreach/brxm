@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.util;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import javax.jcr.Node;
 
@@ -24,8 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
 import org.onehippo.cms.channelmanager.content.model.FieldTypeSpec;
-import org.onehippo.cms.channelmanager.content.util.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.util.NamespaceUtils;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -152,7 +151,7 @@ public class FieldTypeUtilsTest {
         final FieldTypeSpec fieldType = createMock(FieldTypeSpec.class);
         replay(fieldType);
 
-        FieldTypeUtils.determineValidators(fieldType, Arrays.asList("optional"));
+        FieldTypeUtils.determineValidators(fieldType, Collections.singletonList("optional"));
     }
 
     @Test
@@ -191,6 +190,6 @@ public class FieldTypeUtilsTest {
         expectLastCall();
         replay(fieldType, docType);
 
-        FieldTypeUtils.determineValidators(fieldType, Arrays.asList("unknown-validator"));
+        FieldTypeUtils.determineValidators(fieldType, Collections.singletonList("unknown-validator"));
     }
 }
