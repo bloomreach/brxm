@@ -39,9 +39,9 @@ class FieldConstraintBuilder extends ConstraintBuilderAdapter {
     }
 
     @Override
-    protected Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
+    protected Filter doBuild(final Session session, final DateTools.Resolution defaultResolution) throws FilterException {
 
-        final Filter filter = new FilterImpl(session, queryBuilder.defaultResolution());
+        final Filter filter = new FilterImpl(session, defaultResolution);
         if (filterConstraints == null) {
             // we default back to a that fieldName must exists
             filter.addNotNull(fieldName);

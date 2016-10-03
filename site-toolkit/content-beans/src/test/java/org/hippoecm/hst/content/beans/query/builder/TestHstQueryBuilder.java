@@ -27,6 +27,9 @@ import com.google.common.collect.Lists;
 
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
+import org.hippoecm.hst.content.beans.BasePage;
+import org.hippoecm.hst.content.beans.NewsPage;
+import org.hippoecm.hst.content.beans.PersistableTextPage;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
@@ -39,8 +42,6 @@ import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.repository.util.DateTools;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.and;
 import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.constraint;
@@ -50,8 +51,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestHstQueryBuilder extends AbstractBeanTestCase {
-
-    private static Logger log = LoggerFactory.getLogger(TestHstQueryBuilder.class);
 
     private HstQueryManager queryManager;
     private MockHstRequestContext requestContext;
@@ -89,12 +88,182 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void test_basic_query_without_constraints() throws Exception {
+    public void basic_query_without_constraints() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
 
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean).build();
 
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void basic_query_with_primaryType_constraints() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean, "unittestproject:textpage");
+        HstQuery hstQuery2 = queryManager.createQuery(baseContentBean.getNode(), "unittestproject:textpage", false);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .ofPrimaryTypes("unittestproject:textpage")
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+        assertHstQueriesEquals(hstQuery2, hstQueryInFluent);
+    }
+
+    @Test
+    public void basic_query_with_primaryTypes_constraints() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean, "unittestproject:textpage", "unittestproject:newspage");
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .ofPrimaryTypes("unittestproject:textpage", "unittestproject:newspage")
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .ofPrimaryTypes("unittestproject:textpage")
+                .ofPrimaryTypes("unittestproject:newspage")
+                .build();
+
+        assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
+    }
+
+    @Test
+    public void basic_query_with_primaryTypeClazz_constraints() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean, NewsPage.class);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .ofPrimaryTypes(NewsPage.class)
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+
+    }
+
+    @Test
+    public void basic_query_with_primaryTypeClazzes_constraints() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean, NewsPage.class, PersistableTextPage.class);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .ofPrimaryTypes(NewsPage.class, PersistableTextPage.class)
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .ofPrimaryTypes(NewsPage.class)
+                .ofPrimaryTypes(PersistableTextPage.class)
+                .build();
+
+        assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
+
+    }
+
+    @Test
+    public void basic_query_with_primaryType_and_clazzes_mixed() throws Exception {
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .ofPrimaryTypes(PersistableTextPage.class, NewsPage.class)
+                .build();
+
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .ofPrimaryTypes(NewsPage.class)
+                .ofPrimaryTypes("unittestproject:textpage")
+                .build();
+
+        HstQuery hstQueryInFluent3 = HstQueryBuilder.create(baseContentBean)
+                .ofPrimaryTypes("unittestproject:textpage")
+                .ofPrimaryTypes(NewsPage.class)
+                .build();
+
+        HstQuery hstQueryInFluent4 = HstQueryBuilder.create(baseContentBean)
+                .ofPrimaryTypes("unittestproject:textpage")
+                .ofPrimaryTypes("unittestproject:newspage")
+                .build();
+
+        assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
+        assertHstQueriesEquals(hstQueryInFluent2, hstQueryInFluent3);
+        assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent4);
+
+    }
+
+    @Test
+    public void basic_query_with_nodetype_constraints() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean.getNode(), "unittestproject:textpage", true);
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .ofTypes(PersistableTextPage.class)
+                .build();
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .ofTypes("unittestproject:textpage")
+                .build();
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent2);
+    }
+
+    @Test
+    public void basic_query_with__base_nodetype_constraints() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean.getNode(), "unittestproject:basedocument", true);
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .ofTypes(BasePage.class)
+                .build();
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .ofTypes("unittestproject:basedocument")
+                .build();
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent2);
+    }
+
+    @Test
+    public void basic_query_with_nodetypes_constraints() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean.getNode(), true, "unittestproject:textpage", "unittestproject:newspage");
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .ofTypes(PersistableTextPage.class, NewsPage.class)
+                .build();
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .ofTypes("unittestproject:textpage", "unittestproject:newspage")
+                .build();
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent2);
+    }
+
+    @Test
+    public void basic_query_with_base_nodetypes_constraints() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean.getNode(), true, "unittestproject:textpage", "unittestproject:newspage", "unittestproject:basedocument");
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .ofTypes(PersistableTextPage.class, NewsPage.class, BasePage.class)
+                .build();
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .ofTypes("unittestproject:textpage", "unittestproject:newspage", "unittestproject:basedocument")
+                .build();
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent2);
+    }
+
+    @Test
+    public void basic_query_with_base_nodetypes_constraints_mixed() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean.getNode(), true, "unittestproject:newspage", "unittestproject:textpage");
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .ofTypes(PersistableTextPage.class)
+                .ofTypes("unittestproject:newspage")
+                .build();
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .ofTypes("unittestproject:newspage")
+                .ofTypes(PersistableTextPage.class)
+                .build();
+
+        HstQuery hstQueryInFluent3 = HstQueryBuilder.create(baseContentBean)
+                .ofTypes(NewsPage.class, PersistableTextPage.class)
+                .build();
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent2);
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent3);
+    }
+
+    @Test(expected = RuntimeQueryException.class)
+    public void basic_query_mix_primary_nodetypes_and_nodetypes_constraints_not_supported() throws Exception {
+        HstQueryBuilder.create(baseContentBean)
+                .ofTypes("unittestproject:textpage")
+                .ofPrimaryTypes("unittestproject:newspage")
+                .build();
     }
 
     @Test

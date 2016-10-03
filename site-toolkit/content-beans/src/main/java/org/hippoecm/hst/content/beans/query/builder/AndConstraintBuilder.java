@@ -20,6 +20,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
+import org.hippoecm.repository.util.DateTools;
 
 class AndConstraintBuilder extends ConstraintBuilderAdapter {
 
@@ -31,12 +32,12 @@ class AndConstraintBuilder extends ConstraintBuilderAdapter {
     }
 
     @Override
-    protected Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
-        final Filter filter = new FilterImpl(session, queryBuilder.defaultResolution());
+    protected Filter doBuild(final Session session, final DateTools.Resolution defaultResolution) throws FilterException {
+        final Filter filter = new FilterImpl(session, defaultResolution);
 
         if (constraintBuilders != null) {
             for (ConstraintBuilder constraintBuilder : constraintBuilders) {
-                final Filter nestedFilter = constraintBuilder.build(queryBuilder, session);
+                final Filter nestedFilter = constraintBuilder.build(session, defaultResolution);
                 if (nestedFilter != null) {
                     filter.addAndFilter(nestedFilter);
                 }

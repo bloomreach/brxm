@@ -15,18 +15,24 @@
  */
 package org.hippoecm.hst.content.beans.query.builder;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeIterator;
+import javax.jcr.nodetype.NodeTypeManager;
 
-import org.hippoecm.hst.container.RequestContextProvider;
+import org.apache.commons.lang.ArrayUtils;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
+import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.request.HstRequestContext;
 
 class DefaultHstQueryBuilder extends HstQueryBuilder {
 
@@ -35,37 +41,37 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
     }
 
     @Override
-    public HstQuery build(final Session session) throws QueryException {
+    public HstQuery build(final HstQueryManager queryManager) throws QueryException {
         final HstQuery hstQuery;
 
-        final Node[] scopes = getScopes();
+        List<Node> scopes = scopes();
 
-        if (scopes == null || scopes.length == 0) {
+        if (scopes == null || scopes.size() == 0) {
             throw new QueryException("Empty scopes.");
         }
 
-        final String[] primaryNodeTypes = getPrimaryNodeTypes();
-        final Class<? extends HippoBean>[] filterBeanTyes = getFilterBeanTypes();
+        final String[] primaryNodeTypes = getPrimaryNodeTypes(queryManager);
 
-        if (scopes.length == 1) {
-            if (primaryNodeTypes != null && primaryNodeTypes.length > 0) {
-                hstQuery = getHstQueryManager(session).createQuery(scopes[0], includeSubTypes(), primaryNodeTypes);
-            } else if (filterBeanTyes != null && filterBeanTyes.length > 0) {
-                hstQuery = getHstQueryManager(session).createQuery(scopes[0], includeSubTypes(), filterBeanTyes);
+        final String[] ofTypes = getOfTypes(queryManager);
+
+
+        if (primaryNodeTypes.length > 0) {
+            if (ofTypes.length > 0) {
+                throw new RuntimeQueryException(new QueryException("Unsupported to combine #ofTypes and #ofPrimaryTypes"));
             } else {
-                hstQuery = getHstQueryManager(session).createQuery(scopes[0]);
+                hstQuery = queryManager.createQuery((Node)null, false, primaryNodeTypes);
+            }
+        } else if (ofTypes.length > 0) {
+            if (ofTypes.length == 1) {
+                hstQuery = queryManager.createQuery(null, ofTypes[0], true);
+            } else {
+                hstQuery = queryManager.createQuery((Node)null, false, expand(ofTypes, queryManager.getSession()));
             }
         } else {
-            if (primaryNodeTypes != null && primaryNodeTypes.length > 0) {
-                hstQuery = getHstQueryManager(session).createQuery((Node)null, includeSubTypes(), primaryNodeTypes);
-            } else if (filterBeanTyes != null && filterBeanTyes.length > 0) {
-                hstQuery = getHstQueryManager(session).createQuery((Node)null, includeSubTypes(), filterBeanTyes);
-            } else {
-                hstQuery = getHstQueryManager(session).createQuery((Node)null);
-            }
-
-            hstQuery.addScopes(scopes);
+            hstQuery = queryManager.createQuery((Node)null);
         }
+
+        hstQuery.addScopes(scopes.toArray(new Node[scopes.size()]));
 
         final Node[] excludeScopes = getExcludeScopes();
 
@@ -74,7 +80,7 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
         }
 
         if (where() != null) {
-            hstQuery.setFilter(where().build(this, session));
+            hstQuery.setFilter(where().build(queryManager.getSession(), queryManager.getDefaultResolution()));
         }
 
         if (orderByConstructs() != null) {
@@ -106,30 +112,6 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
         return hstQuery;
     }
 
-    private Node[] getScopes() throws QueryException {
-        Node[] scopes = null;
-
-        List<Node> scopesList = scopes();
-
-        if (scopesList == null || scopesList.isEmpty()) {
-            final HstRequestContext requestContext = RequestContextProvider.get();
-
-            if (requestContext != null) {
-                if (scopesList == null) {
-                    scopesList = new ArrayList<>();
-                }
-
-                scopesList.add(requestContext.getSiteContentBaseBean().getNode());
-            }
-        }
-
-        if (scopesList != null) {
-            scopes = scopesList.toArray(new Node[scopesList.size()]);
-        }
-
-        return scopes;
-    }
-
     private Node[] getExcludeScopes() throws QueryException {
         Node[] excludeScopes = null;
 
@@ -142,37 +124,62 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
         return excludeScopes;
     }
 
-    private String[] getPrimaryNodeTypes() {
-        String[] primaryNodeTypes = null;
+    private String[] getPrimaryNodeTypes(final HstQueryManager queryManager) {
 
-        List<String> primaryNodeTypeList = primaryNodeTypes();
-
-        if (primaryNodeTypeList != null && !primaryNodeTypeList.isEmpty()) {
-            primaryNodeTypes = primaryNodeTypeList.toArray(new String[primaryNodeTypeList.size()]);
-        }
-
-        return primaryNodeTypes;
+        Set<String> primaryNodeTypeSet = combine(queryManager, primaryNodeTypes(), primaryNodeTypeClazzes());
+        return primaryNodeTypeSet.toArray(new String[primaryNodeTypeSet.size()]);
     }
 
-    private Class<? extends HippoBean>[] getFilterBeanTypes() {
-        Class<? extends HippoBean>[] filterBeanTypes = null;
 
-        List<Class<? extends HippoBean>> filterBeanTypeList = filterBeanTypes();
-
-        if (filterBeanTypeList != null && !filterBeanTypeList.isEmpty()) {
-            filterBeanTypes = filterBeanTypeList.toArray(new Class[filterBeanTypeList.size()]);
-        }
-
-        return filterBeanTypes;
+    private String[] getOfTypes(final HstQueryManager queryManager) {
+        Set<String> ofTypes = combine(queryManager, ofTypes(), ofTypeClazzes());
+        return ofTypes.toArray(new String[ofTypes.size()]);
     }
 
-    private HstQueryManager getHstQueryManager(final Session session) throws QueryException {
+    private Set<String> combine(final HstQueryManager queryManager, final List<String> types,
+                                final List<Class<? extends HippoBean>> typeClazzes) {
+        Set<String> combinedSet = new LinkedHashSet<>();
+        if (types != null) {
+            for (String type : types) {
+                combinedSet.add(type);
+            }
+        }
+        if (typeClazzes != null && !typeClazzes.isEmpty()) {
+            ObjectConverter objectConverter = queryManager.getObjectConverter();
+            for (Class<? extends HippoBean> primaryNodeTypeClazz : typeClazzes) {
+                String primaryNodeType = objectConverter.getPrimaryNodeTypeNameFor(primaryNodeTypeClazz);
+                if (primaryNodeType != null) {
+                    combinedSet.add(primaryNodeType);
+                }
+            }
+        }
+        return combinedSet;
+    }
 
-        final HstRequestContext requestContext = RequestContextProvider.get();
-        if (session == null) {
-            return requestContext.getQueryManager();
-        } else {
-            return requestContext.getQueryManager(session);
+
+    private String[] expand(final String[] ofTypes, final Session session) throws QueryException {
+        try {
+            Set<String> expanded = new LinkedHashSet<>();
+            NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
+            for (String ofType : ofTypes) {
+                expanded.addAll(getSelfPlusSubTypes(ofType, ntMgr.getAllNodeTypes()));
+            }
+            return expanded.toArray(new String[expanded.size()]);
+        } catch (RepositoryException e) {
+            throw new QueryException("Exception while expanding node types", e);
         }
     }
+
+
+    private Set<String> getSelfPlusSubTypes(final String nodeType, final NodeTypeIterator allTypes) throws RepositoryException {
+        Set<String> subTypes = new LinkedHashSet<>();
+        while (allTypes.hasNext()) {
+            NodeType nt = allTypes.nextNodeType();
+            if (nt.isNodeType(nodeType)) {
+                subTypes.add(nt.getName());
+            }
+        }
+        return subTypes;
+    }
+
 }

@@ -30,7 +30,7 @@ class ConstraintBuilderAdapter extends ConstraintBuilder {
     }
 
     @Override
-    protected Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
+    protected Filter doBuild(final Session session, final DateTools.Resolution defaultResolution) throws FilterException {
         throw new UnsupportedOperationException();
     }
 

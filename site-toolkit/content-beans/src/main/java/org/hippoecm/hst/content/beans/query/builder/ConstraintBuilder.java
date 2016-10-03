@@ -62,8 +62,8 @@ public abstract class ConstraintBuilder {
         return filterBuilder;
     }
 
-    public final Filter build(final HstQueryBuilder queryBuilder, final Session session) throws FilterException {
-        Filter filter = doBuild(queryBuilder, session);
+    public final Filter build(final Session session, final DateTools.Resolution defaultResolution) throws FilterException {
+        Filter filter = doBuild(session, defaultResolution);
 
         if (filter != null && negated) {
             filter.negate();
@@ -72,7 +72,7 @@ public abstract class ConstraintBuilder {
         return filter;
     }
 
-    protected abstract Filter doBuild(final HstQueryBuilder queryBuilder, final Session session) throws FilterException;
+    protected abstract Filter doBuild(final Session session, final DateTools.Resolution defaultResolution) throws FilterException;
 
     /**
      * Negates the current filter

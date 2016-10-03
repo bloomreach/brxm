@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.hippoecm.hst.content.beans.BasePage;
+import org.hippoecm.hst.content.beans.NewsPage;
 import org.hippoecm.hst.content.beans.PersistableTextPage;
 import org.hippoecm.hst.content.beans.PersistableTextPageCopy;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
@@ -35,6 +37,8 @@ public abstract class AbstractBeanTestCase extends RepositoryTestCase {
     protected Collection<Class<? extends HippoBean>> getAnnotatedClasses() {
         List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
         annotatedClasses.add(PersistableTextPage.class);
+        annotatedClasses.add(NewsPage.class);
+        annotatedClasses.add(BasePage.class);
         annotatedClasses.add(PersistableTextPageCopy.class);
         return annotatedClasses;
     }

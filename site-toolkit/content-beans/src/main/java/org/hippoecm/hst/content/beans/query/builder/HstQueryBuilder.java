@@ -20,10 +20,10 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.query.HstQuery;
+import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -56,9 +56,10 @@ public abstract class HstQueryBuilder {
     private List<Node> scopes = new ArrayList<>();
     private List<Node> excludeScopes = new ArrayList<>();
 
-    private boolean includeSubTypes;
+    private List<String> ofTypes;
+    private List<Class<? extends HippoBean>> ofTypeClazzes;
     private List<String> primaryNodeTypes;
-    private List<Class<? extends HippoBean>> filterBeanTypes;
+    private List<Class<? extends HippoBean>> primaryNodeTypeClazzes;
 
     private ConstraintBuilder constraintBuilder;
     private List<OrderByConstruct> orderByConstructs;
@@ -70,63 +71,94 @@ public abstract class HstQueryBuilder {
 
     public HstQuery build() throws QueryException, RepositoryException {
         final HstRequestContext requestContext = RequestContextProvider.get();
-        return build(requestContext.getSession());
+        return build(requestContext.getQueryManager());
     }
 
-    abstract public HstQuery build(final Session session) throws QueryException;
+    abstract public HstQuery build(final HstQueryManager queryManager) throws QueryException;
 
-    public HstQueryBuilder includeSubTypes(boolean includeSubTypes) {
-        this.includeSubTypes = includeSubTypes;
+    /**
+     * @param ofTypeClazzes the result most return documents only of {@code types} where subtypes are included
+     * @return this {@link HstQueryBuilder} instance
+     */
+    public HstQueryBuilder ofTypes(final Class<? extends HippoBean> ... ofTypeClazzes) {
+        if (ofTypeClazzes != null) {
+            if (this.ofTypeClazzes == null) {
+                this.ofTypeClazzes = new ArrayList<>();
+            }
+            for (Class<? extends HippoBean> ofTypeClazz : ofTypeClazzes) {
+                this.ofTypeClazzes.add(ofTypeClazz);
+            }
+        }
         return this;
     }
 
-    protected boolean includeSubTypes() {
-        return includeSubTypes;
-    }
-
-    public HstQueryBuilder primaryNodeTypes(String ... primaryNodeTypeNames) {
-        if (primaryNodeTypeNames != null) {
-            if (primaryNodeTypes == null) {
-                primaryNodeTypes = new ArrayList<>();
+    /**
+     * @param ofTypeClazzes the result most return documents only of {@code types} where subtypes are included
+     * @return this {@link HstQueryBuilder} instance
+     */
+    public HstQueryBuilder ofTypes(final String ... ofTypeClazzes) {
+        if (ofTypeClazzes != null) {
+            if (this.ofTypes == null) {
+                this.ofTypes = new ArrayList<>();
             }
 
-            for (String primaryNodeTypeName : primaryNodeTypeNames) {
-                primaryNodeTypes.add(primaryNodeTypeName);
+            for (String ofTypeClazz : ofTypeClazzes) {
+                this.ofTypes.add(ofTypeClazz);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * @param primaryNodeTypes the result most return documents only of {@code primaryNodeTypeNames} where subtypes
+     *                             are <strong>not</strong> included
+     * @return this {@link HstQueryBuilder} instance
+     */
+    public HstQueryBuilder ofPrimaryTypes(String ... primaryNodeTypes) {
+        if (primaryNodeTypes != null) {
+            if (this.primaryNodeTypes == null) {
+                this.primaryNodeTypes = new ArrayList<>();
+            }
+
+            for (String primaryNodeType : primaryNodeTypes) {
+                this.primaryNodeTypes.add(primaryNodeType);
             }
         }
 
         return this;
     }
 
-    protected List<String> primaryNodeTypes() {
+    /**
+     * @param primaryNodeTypeClazzes the result most return documents only of {@code primaryNodeTypeNames} where subtypes
+     *                             are <strong>not</strong> included
+     * @return this {@link HstQueryBuilder} instance
+     */
+    public HstQueryBuilder ofPrimaryTypes(final Class<? extends HippoBean> ... primaryNodeTypeClazzes) {
+        if (primaryNodeTypeClazzes != null) {
+            if (this.primaryNodeTypeClazzes == null) {
+                this.primaryNodeTypeClazzes = new ArrayList<>();
+            }
+            for (Class<? extends HippoBean> primaryNodeTypeClazz : primaryNodeTypeClazzes) {
+                this.primaryNodeTypeClazzes.add(primaryNodeTypeClazz);
+            }
+        }
+        return this;
+    }
+
+
+    List<String> ofTypes() {
+        return ofTypes;
+    }
+
+    List<Class<? extends HippoBean>> ofTypeClazzes() {
+        return ofTypeClazzes;
+    }
+
+    List<String> primaryNodeTypes() {
         return primaryNodeTypes;
     }
-
-    public HstQueryBuilder filterBeanTypes(Class<? extends HippoBean> ... filterBeanClazzes) {
-        if (filterBeanClazzes != null) {
-            if (filterBeanTypes == null) {
-                filterBeanTypes = new ArrayList<>();
-            }
-
-            for (Class<? extends HippoBean> filterBeanClazz : filterBeanClazzes) {
-                filterBeanTypes.add(filterBeanClazz);
-            }
-        }
-
-        return this;
-    }
-
-    protected List<Class<? extends HippoBean>> filterBeanTypes() {
-        return filterBeanTypes;
-    }
-
-    public HstQueryBuilder defaultResolution(final DateTools.Resolution defaultResolution) {
-        this.defaultResolution = defaultResolution;
-        return this;
-    }
-
-    protected DateTools.Resolution defaultResolution() {
-        return defaultResolution;
+    List<Class<? extends HippoBean>>  primaryNodeTypeClazzes() {
+        return  primaryNodeTypeClazzes;
     }
 
     HstQueryBuilder scopes(final Node ... scopeNodes) {
