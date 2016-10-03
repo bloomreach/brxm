@@ -23,6 +23,7 @@ export class ChannelRightSidePanelCtrl {
     this.ContentService = ContentService;
 
     this.doc = {};
+    this.docType = {};
 
     ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'));
     this.closePanelOnEditModeTurnedOff();
@@ -42,7 +43,11 @@ export class ChannelRightSidePanelCtrl {
   loadDocument(id) {
     this.ContentService.getDocument(id)
       .then((doc) => {
-        this.doc = doc;
+        this.ContentService.getDocumentType(doc.info.type.id)
+          .then((docType) => {
+            this.doc = doc;
+            this.docType = docType;
+          });
       });
     // TODO: handle error
   }

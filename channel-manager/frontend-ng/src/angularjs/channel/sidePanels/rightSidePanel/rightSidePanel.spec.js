@@ -24,6 +24,18 @@ describe('ChannelRightSidePanel', () => {
   let ContentService;
   let parentScope;
 
+  const testDocument = {
+    id: 'test',
+    info: {
+      type: {
+        id: 'ns:testdocument',
+      },
+    },
+  };
+  const testDocumentType = {
+    id: 'ns:testdocument',
+  };
+
   beforeEach(() => {
     module('hippo-cm');
 
@@ -37,9 +49,8 @@ describe('ChannelRightSidePanel', () => {
 
     spyOn(ChannelSidePanelService, 'initialize');
     spyOn(ChannelSidePanelService, 'close');
-    spyOn(ContentService, 'getDocument').and.returnValue($q.resolve({
-      id: 'testDocument',
-    }));
+    spyOn(ContentService, 'getDocument').and.returnValue($q.resolve(testDocument));
+    spyOn(ContentService, 'getDocumentType').and.returnValue($q.resolve(testDocumentType));
   });
 
   function instantiateController(editMode) {
@@ -56,9 +67,8 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalled();
-    expect($ctrl.doc).toEqual({
-      id: 'testDocument',
-    });
+    expect($ctrl.doc).toEqual(testDocument);
+    expect($ctrl.docType).toEqual(testDocumentType);
   });
 
   it('closes the panel', () => {
