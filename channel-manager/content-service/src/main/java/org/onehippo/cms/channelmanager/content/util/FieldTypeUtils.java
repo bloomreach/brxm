@@ -51,21 +51,21 @@ public class FieldTypeUtils {
 
     static {
         IGNORED_VALIDATORS = new HashSet<>();
-        IGNORED_VALIDATORS.add("optional"); // optional "validator" indicates that the field may be absent (cardinality).
+        IGNORED_VALIDATORS.add(FieldValidators.OPTIONAL); // optional "validator" indicates that the field may be absent (cardinality).
 
         VALIDATOR_MAP = new HashMap<>();
-        VALIDATOR_MAP.put("required", FieldTypeSpec.Validator.REQUIRED);
-        VALIDATOR_MAP.put("non-empty", FieldTypeSpec.Validator.REQUIRED);
+        VALIDATOR_MAP.put(FieldValidators.REQUIRED, FieldTypeSpec.Validator.REQUIRED);
+        VALIDATOR_MAP.put(FieldValidators.NON_EMPTY, FieldTypeSpec.Validator.REQUIRED);
         // Apparently, making a String field required puts above two(!) values onto the validator property.
 
         FIELD_VALIDATOR_WHITELIST = new HashSet<>();
-        FIELD_VALIDATOR_WHITELIST.add("email");
-        FIELD_VALIDATOR_WHITELIST.add("escaped");
-        FIELD_VALIDATOR_WHITELIST.add("html");
-        FIELD_VALIDATOR_WHITELIST.add("image-references");
-        FIELD_VALIDATOR_WHITELIST.add("references");
-        FIELD_VALIDATOR_WHITELIST.add("required");
-        FIELD_VALIDATOR_WHITELIST.add("resource-required");
+        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.EMAIL);
+        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.ESCAPED);
+        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.HTML);
+        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.IMAGE_REFERENCES);
+        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.REFERENCES);
+        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.REQUIRED);
+        FIELD_VALIDATOR_WHITELIST.add(FieldValidators.RESOURCE_REQUIRED);
 
         NAMESPACE_BLACKLIST = new HashSet<>();
         NAMESPACE_BLACKLIST.add("hippo");

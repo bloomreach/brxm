@@ -29,6 +29,7 @@ import org.onehippo.cms.channelmanager.content.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.util.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.util.MockResponse;
+import org.onehippo.cms.channelmanager.content.util.FieldValidators;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
@@ -116,7 +117,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
         fieldType.setHint(LocalizationUtils.determineFieldHint(fieldId, context.resourceBundle, context.documentTypeRoot));
         fieldType.setType(FieldTypeUtils.deriveFieldType(property));
 
-        if (property.isMultiple() || property.getValidators().contains("optional")) {
+        if (property.isMultiple() || property.getValidators().contains(FieldValidators.OPTIONAL)) {
             fieldType.setMultiple(true);
         }
 
