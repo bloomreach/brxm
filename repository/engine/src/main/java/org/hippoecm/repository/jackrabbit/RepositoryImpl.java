@@ -20,6 +20,8 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 
 import javax.jcr.AccessDeniedException;
+import javax.jcr.Credentials;
+import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
@@ -353,4 +355,14 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
         }
     }
 
+    @Override
+    public Session login(final Credentials credentials, final String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
+        final ClassLoader currentContextClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+            return super.login(credentials, workspaceName);
+        } finally {
+            Thread.currentThread().setContextClassLoader(currentContextClassLoader);
+        }
+    }
 }
