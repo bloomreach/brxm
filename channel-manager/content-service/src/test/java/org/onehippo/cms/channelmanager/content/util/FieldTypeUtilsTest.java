@@ -149,14 +149,16 @@ public class FieldTypeUtilsTest {
     @Test
     public void validateIgnoredValidator() {
         final FieldTypeSpec fieldType = createMock(FieldTypeSpec.class);
+        final DocumentTypeSpec docType = createMock(DocumentTypeSpec.class);
         replay(fieldType);
 
-        FieldTypeUtils.determineValidators(fieldType, Collections.singletonList("optional"));
+        FieldTypeUtils.determineValidators(fieldType, docType, Collections.singletonList("optional"));
     }
 
     @Test
     public void validateMappedValidators() {
         final FieldTypeSpec fieldType = createMock(FieldTypeSpec.class);
+        final DocumentTypeSpec docType = createMock(DocumentTypeSpec.class);
 
         fieldType.addValidator(FieldTypeSpec.Validator.REQUIRED);
         expectLastCall();
@@ -164,12 +166,13 @@ public class FieldTypeUtilsTest {
         expectLastCall();
         replay(fieldType);
 
-        FieldTypeUtils.determineValidators(fieldType, Arrays.asList("required", "non-empty"));
+        FieldTypeUtils.determineValidators(fieldType, docType, Arrays.asList("required", "non-empty"));
     }
 
     @Test
     public void validateFieldValidators() {
         final FieldTypeSpec fieldType = createMock(FieldTypeSpec.class);
+        final DocumentTypeSpec docType = createMock(DocumentTypeSpec.class);
 
         fieldType.addValidator(FieldTypeSpec.Validator.UNSUPPORTED);
         expectLastCall();
@@ -177,7 +180,7 @@ public class FieldTypeUtilsTest {
         expectLastCall();
         replay(fieldType);
 
-        FieldTypeUtils.determineValidators(fieldType, Arrays.asList("email", "references"));
+        FieldTypeUtils.determineValidators(fieldType, docType, Arrays.asList("email", "references"));
     }
 
     @Test
@@ -185,11 +188,10 @@ public class FieldTypeUtilsTest {
         final FieldTypeSpec fieldType = createMock(FieldTypeSpec.class);
         final DocumentTypeSpec docType = createMock(DocumentTypeSpec.class);
 
-        expect(fieldType.getDocumentTypeSpec()).andReturn(docType);
         docType.setReadOnlyDueToUnknownValidator(true);
         expectLastCall();
         replay(fieldType, docType);
 
-        FieldTypeUtils.determineValidators(fieldType, Collections.singletonList("unknown-validator"));
+        FieldTypeUtils.determineValidators(fieldType, docType, Collections.singletonList("unknown-validator"));
     }
 }

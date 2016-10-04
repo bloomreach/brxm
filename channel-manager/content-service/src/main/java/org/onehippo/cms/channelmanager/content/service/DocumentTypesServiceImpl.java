@@ -109,7 +109,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
     protected void addPropertyField(final DocumentTypeSpec docType,
                                     final ContentTypeProperty property,
                                     final ScanningContext context) {
-        final FieldTypeSpec fieldType = new FieldTypeSpec(docType);
+        final FieldTypeSpec fieldType = new FieldTypeSpec();
         final String fieldId = property.getName();
 
         fieldType.setId(fieldId);
@@ -121,7 +121,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
             fieldType.setMultiple(true);
         }
 
-        FieldTypeUtils.determineValidators(fieldType, property.getValidators());
+        FieldTypeUtils.determineValidators(fieldType, docType, property.getValidators());
 
         docType.addField(fieldType);
     }
