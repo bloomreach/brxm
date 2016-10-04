@@ -24,6 +24,7 @@ import java.util.Set;
 
 import javax.jcr.Node;
 
+import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
 import org.onehippo.cms.channelmanager.content.model.FieldTypeSpec;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
@@ -91,11 +92,14 @@ public class FieldTypeUtils {
 
     /**
      * Translate the set of validators specified at JCR level into a set of validators at the FieldTypeSpec level.
+     * When the list of validators contains an unknown one, the document type is marked as 'readonly due to
+     * unknown validator'.
      *
-     * @param fieldType  Specification of a field type (in the scope of a document type)
+     * @param fieldType  Specification of a field type
+     * @param docType The document type the field is a part of
      * @param validators List of 0 or more validators specified at JCR level
      */
-    public static void determineValidators(final FieldTypeSpec fieldType, final List<String> validators) {
+    public static void determineValidators(final FieldTypeSpec fieldType, final DocumentTypeSpec docType, final List<String> validators) {
         for (String validator : validators) {
             if (IGNORED_VALIDATORS.contains(validator)) {
                 // Do nothing
@@ -104,7 +108,7 @@ public class FieldTypeUtils {
             } else if (FIELD_VALIDATOR_WHITELIST.contains(validator)) {
                 fieldType.addValidator(FieldTypeSpec.Validator.UNSUPPORTED);
             } else {
-                fieldType.getDocumentTypeSpec().setReadOnlyDueToUnknownValidator(true);
+                docType.setReadOnlyDueToUnknownValidator(true);
             }
         }
     }
