@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,10 +45,6 @@ import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version $Id$
- *
- */
 public abstract class AbstractResource {
 
     private static Logger log = LoggerFactory.getLogger(AbstractResource.class);
@@ -95,12 +91,14 @@ public abstract class AbstractResource {
         log.warn("AbstractResource#getAnnotatedClasses is deprecated and does not do anything any more.");
         return Collections.emptyList();
     }
-    
+
     public void setAnnotatedClasses(List<Class<? extends HippoBean>> annotatedClasses) {
         log.warn("AbstractResource#setAnnotatedClasses is deprecated and does not do anything any more.");
     }
 
-
+    /**
+     * @return a {@link ObjectConverter} instance. Note that this instance is shared between multiple threads.
+     */
     public ObjectConverter getObjectConverter(HstRequestContext requestContext) {
         return requestContext.getContentBeansTool().getObjectConverter();
     }
@@ -116,13 +114,16 @@ public abstract class AbstractResource {
     }
     
     /**
-     * @param requestContext
-     * @return
+     * @return the query manager backed by the session returned by {@link HstRequestContext#getSession()} of the
+     * provided <code>requestContext</code>
      */
     public HstQueryManager getHstQueryManager(HstRequestContext requestContext) {
         return requestContext.getQueryManager();
     }
-    
+
+    /**
+     * @return the query manager backed by the provided <code>session</code>
+     */
     public HstQueryManager getHstQueryManager(Session session, HstRequestContext requestContext) {
         return requestContext.getQueryManager(session);
     }
@@ -185,7 +186,10 @@ public abstract class AbstractResource {
     protected ObjectBeanPersistenceManager getPersistenceManager(HstRequestContext requestContext, Session persistableSession) throws RepositoryException {
         return new WorkflowPersistenceManagerImpl(persistableSession, getObjectConverter(requestContext));
     }
-    
+
+    /**
+     * @return the {@link HstRequestContext} for the provided <code>servletRequest</code>
+     */
     protected HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }
@@ -231,7 +235,15 @@ public abstract class AbstractResource {
     public HippoFolderBean getMountContentBaseBean(HstRequestContext requestContext) throws ObjectBeanManagerException {
         return (HippoFolderBean) requestContext.getSiteContentBaseBean();
     }
-    
+
+    /**
+     * Deletes the content node mapped to the provided {@link HippoBean}
+     * @param servletRequest
+     * @param hippoBean the bean which mapped data should be deleted
+     * @return the path of the content node mapped to this bean before deletion
+     * @throws RepositoryException
+     * @throws ObjectBeanPersistenceException
+     */
     protected String deleteHippoBean(HttpServletRequest servletRequest, HippoBean hippoBean) throws RepositoryException, ObjectBeanPersistenceException {
         String path = hippoBean.getPath();
         ObjectBeanPersistenceManager obpm = getPersistenceManager(getRequestContext(servletRequest));
@@ -239,7 +251,18 @@ public abstract class AbstractResource {
         obpm.save();
         return path;
     }
-    
+
+    /**
+     * Looks up a child {@link HippoBean} for the provided {@link HippoBean}. If <code>relPath</code> is not
+     * <code>null</code> or empty, a lookup using <code>relPath</code> is done. If <code>relPath</code> is
+     * <code>null</code> or empty, a lookup using <code>primaryNodeType</code> is done; if any child beans are
+     * found, the first is returned.
+     * @param hippoBean
+     * @param relPath             the path identifying the child bean, see also {@link HippoBean#getBean(String)}
+     * @param primaryNodeType     the primary node type used to search for child beans, see also
+     *                            {@link HippoBean#getChildBeans(String)}
+     * @return the child bean or <code>null</code> if not found
+     */
     protected HippoBean getChildBeanByRelPathOrPrimaryNodeType(HippoBean hippoBean, String relPath, String primaryNodeType) {
         if (StringUtils.isBlank(relPath)) {
             List<HippoBean> childBeans = hippoBean.getChildBeans(primaryNodeType);
@@ -253,7 +276,11 @@ public abstract class AbstractResource {
         
         return null;
     }
-    
+
+    /**
+     * Creates an URL to identify a specific link relation by combining the given <code>iri</code> and
+     * <code>simpleRel</code>
+     */
     protected String getQualifiedLinkRel(String iri, String simpleRel) {
     	if (iri != null) {
     		if (iri.endsWith("/")) {
@@ -263,31 +290,76 @@ public abstract class AbstractResource {
     	}
     	return simpleRel;
     }
-    
+
+    /**
+     * Creates an URL to identify a specific link relation by combining {@link #getRestRelationsBaseUri()} and
+     * <code>simpleRel</code>
+     */
     protected String getQualifiedLinkRel(String simpleRel) {
     	return getQualifiedLinkRel(getRestRelationsBaseUri(), simpleRel);
     }
-    
+
+    /**
+     * Creates an URL to identify a specific link relation by combining {@link #HST_REST_RELATIONS_BASE_URI} and
+     * <code>simpleRel</code>
+     */
     protected String getHstQualifiedLinkRel(String simpleRel) {
     	return getQualifiedLinkRel(HST_REST_RELATIONS_BASE_URI,simpleRel);
     }
-    
+
+    /**
+     * Create the URL identifying the link relation for a document served over the provided <code>mountName</code>
+     */
     protected String getLinkMountRelation(String mountName) {
     	return getHstQualifiedLinkRel(HST_MOUNT_REL_PREFIX+mountName);
     }
-    
+
+    /**
+     * Creates a link to the provided {@link HippoBean}, exposed over the rest mount. If the bean is not exposed over
+     * the mount, a page not found link is returned.
+     * @param requestContext
+     * @param hippoBean
+     * @return
+     */
     protected Link getNodeLink(HstRequestContext requestContext, HippoBean hippoBean) {
         return getRestLink(requestContext, hippoBean, null);
     }
-    
+
+    /**
+     * Creates a link to the provided {@link HippoBean}, exposed over the rest mount. If the bean is not exposed over
+     * the mount, a page not found link is returned.
+     * @param requestContext
+     * @param hippoBean
+     * @param subPath subPath appended to the link created for {@link HippoBean}, can be <code>null</code>
+     * @return
+     */
     protected Link getRestLink(HstRequestContext requestContext, HippoBean hippoBean, String subPath) {
         return getMountLink(requestContext, hippoBean, MOUNT_ALIAS_REST, subPath);
     }
-    
+
+    /**
+     * Creates a link to the provided {@link HippoBean}, exposed over the site mount. If the bean is not exposed over
+     * the mount, a page not found link is returned.
+     * @param requestContext
+     * @param hippoBean
+     * @return
+     */
     protected Link getSiteLink(HstRequestContext requestContext, HippoBean hippoBean) {
         return getMountLink(requestContext, hippoBean, null, null);
     }
-    
+
+    /**
+     * Creates a link to the provided {@link HippoBean}, exposed over the mount identified by the alias
+     * <code>mountAliasName</code>. If no mount is found with the provided <code>mountAliasName</code>, a link is
+     * created using the mount of the provided {@link HstRequestContext}. If the bean is not exposed over the mount,
+     * a page not found link is returned.
+     * @param requestContext
+     * @param hippoBean
+     * @param mountAliasName mount alias name, when <code>null</code> the mount with the alias <code>site</code> is
+     *                       used to create the link
+     * @param subPath        subPath appended to the link created for {@link HippoBean}, can be <code>null</code>
+     * @return
+     */
     protected Link getMountLink(HstRequestContext requestContext, HippoBean hippoBean, String mountAliasName, String subPath) {
         Link nodeLink = new Link();
         
@@ -366,6 +438,5 @@ public abstract class AbstractResource {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
         return repository.login(credentials);
     }
-    
-    
+
 }

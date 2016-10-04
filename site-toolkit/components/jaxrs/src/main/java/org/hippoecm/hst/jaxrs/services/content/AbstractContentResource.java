@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,10 +41,6 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * AbstractContentResource
- * @version $Id$
- */
 public abstract class AbstractContentResource extends AbstractResource {
     
     private static Logger log = LoggerFactory.getLogger(AbstractContentResource.class);
@@ -64,6 +60,16 @@ public abstract class AbstractContentResource extends AbstractResource {
         return contentRewriter;
     }
 
+    /**
+     * Deletes the content node mapped to the child bean identified by <code>relPath</code>.
+     * @param servletRequest
+     * @param baseBean
+     * @param relPath           the path identifying the child bean, see also {@link HippoBean#getBean(String)}
+     * @return the path of the content node mapped to the child bean before deletion
+     * @throws RepositoryException
+     * @throws ObjectBeanPersistenceException
+     * @throws IllegalArgumentException when the provided <code>relPath</code> could not be mapped to a child bean
+     */
     protected String deleteContentResource(HttpServletRequest servletRequest, HippoBean baseBean, String relPath) throws RepositoryException, ObjectBeanPersistenceException {
         HippoBean child = baseBean.getBean(relPath);
         
@@ -73,7 +79,18 @@ public abstract class AbstractContentResource extends AbstractResource {
         
         return deleteHippoBean(servletRequest, child);
     }
-    
+
+    /**
+     * Creates a {@link HippoHtmlRepresentation} for a {@link HippoHtml} child bean of the current request's content
+     * bean. The child bean can be identified by providing <code>relPath</code>; if <code>relPath</code> is
+     * <code>null</code> or empty, the first child bean of type <code>hippostd:html</code> is used. All links in the
+     * content are rewritten as if the content was served over <code>targetMountAlias</code>; if
+     * <code>targetMountAlias</code> is <code>null</code> or empty, the alias <code>site</code> is used.
+     * @param servletRequest
+     * @param relPath             the path identifying the child bean, see also {@link HippoBean#getBean(String)}
+     * @param targetMountAlias
+     * @return
+     */
     protected HippoHtmlRepresentation getHippoHtmlRepresentation(HttpServletRequest servletRequest, String relPath, String targetMountAlias) {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         HippoBean hippoBean = null;
@@ -125,13 +142,26 @@ public abstract class AbstractContentResource extends AbstractResource {
             throw new WebApplicationException(e);
         }
     }
-    
+
+    /**
+     * Updates the content of a {@link HippoHtml} child bean of the current request's content bean. The child bean can
+     * be identified by providing <code>relPath</code>; if <code>relPath</code> is <code>null</code> or empty, the
+     * first child bean of type <code>hippostd:html</code> is updated. Note that saving content in a <code>live</code>
+     * document variant will update the <code>preview</code> variant and the original <code>live</code> content will be
+     * returned.
+     * @param servletRequest
+     * @param relPath             the path identifying the child bean, see also {@link HippoBean#getBean(String)}
+     * @param htmlRepresentation  the {@link HippoHtmlRepresentation} containing the new content
+     * @return the updated content as read from the current bean. Note that saving content in a <code>live</code>
+     * document variant will update the <code>preview</code> variant and the original <code>live</code> content will be
+     * returned.
+     */
     protected HippoHtmlRepresentation updateHippoHtmlRepresentation(HttpServletRequest servletRequest, String relPath, HippoHtmlRepresentation htmlRepresentation) {
         HippoBean hippoBean = null;
         HippoHtml htmlBean = null;
-        
+
         HstRequestContext requestContext = getRequestContext(servletRequest);
-        
+
         try {
             hippoBean = getRequestContentBean(requestContext);
             htmlBean = (HippoHtml) getChildBeanByRelPathOrPrimaryNodeType(hippoBean, relPath, "hippostd:html");
@@ -141,15 +171,15 @@ public abstract class AbstractContentResource extends AbstractResource {
             } else {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
-            
+
             throw new WebApplicationException(e);
         }
-        
+
         if (htmlBean == null) {
             log.warn("HippoHtml child bean not found.");
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
-        
+
         try {
             WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getPersistenceManager(requestContext);
             final String html = htmlRepresentation.getContent();
@@ -166,7 +196,7 @@ public abstract class AbstractContentResource extends AbstractResource {
                 }
             });
             wpm.save();
-            
+
             hippoBean = (HippoBean) wpm.getObject(hippoBean.getPath());
             htmlBean = (HippoHtml) getChildBeanByRelPathOrPrimaryNodeType(hippoBean, relPath, "hippostd:html");
             htmlRepresentation = new HippoHtmlRepresentation().represent(htmlBean);
@@ -176,13 +206,24 @@ public abstract class AbstractContentResource extends AbstractResource {
             } else {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
-            
+
             throw new WebApplicationException(e);
         }
-        
+
         return htmlRepresentation;
     }
-    
+
+    /**
+     * Creates a string for the content of a {@link HippoHtml} child bean of the current request's content
+     * bean. The child bean can be identified by providing <code>relPath</code>; if <code>relPath</code> is
+     * <code>null</code> or empty, the first child bean of type <code>hippostd:html</code> is used. All links in the
+     * content are rewritten as if the content was served over <code>targetMountAlias</code>; if
+     * <code>targetMountAlias</code> is <code>null</code> or empty, the alias <code>site</code> is used.
+     * @param servletRequest
+     * @param relPath             the path identifying the child bean, see also {@link HippoBean#getBean(String)}
+     * @param targetMountAlias
+     * @return
+     */
     protected String getHippoHtmlContent(HttpServletRequest servletRequest, String relPath, String targetMountAlias) {
         
         HstRequestContext requestContext = getRequestContext(servletRequest);
@@ -218,6 +259,19 @@ public abstract class AbstractContentResource extends AbstractResource {
         return StringUtils.defaultString(rewrittenHtml);
     }
 
+    /**
+     * Updates the content of a {@link HippoHtml} child bean of the current request's content bean. The child bean can
+     * be identified by providing <code>relPath</code>; if <code>relPath</code> is <code>null</code> or empty, the
+     * first child bean of type <code>hippostd:html</code> is updated. Note that saving content in a <code>live</code>
+     * document variant will update the <code>preview</code> variant and the original <code>live</code> content will be
+     * returned.
+     * @param servletRequest
+     * @param relPath             the path identifying the child bean, see also {@link HippoBean#getBean(String)}
+     * @param htmlContent         the <code>String</code> containing the new content
+     * @return the updated content as read from the current bean. Note that saving content in a <code>live</code>
+     * document variant will update the <code>preview</code> variant and the original <code>live</code> content will be
+     * returned.
+     */
     protected String updateHippoHtmlContent(HttpServletRequest servletRequest, String relPath, String htmlContent) {
         HippoBean hippoBean = null;
         HippoHtml htmlBean = null;
@@ -273,4 +327,5 @@ public abstract class AbstractContentResource extends AbstractResource {
         
         return htmlBean.getContent();
     }
+
 }
