@@ -38,3 +38,8 @@
     cursor: grabbing;
   }
 }
+
+// Reduce space between input fields in the right side-panel
+.channel-right-side-panel md-input-container {
+  margin-bottom: 0;
+}
