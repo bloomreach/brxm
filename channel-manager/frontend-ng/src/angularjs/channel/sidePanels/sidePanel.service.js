@@ -23,10 +23,11 @@ export class ChannelSidePanelService {
     this.panels = { };
   }
 
-  initialize(side, jQueryElement) {
+  initialize(side, jQueryElement, onOpenCallback) {
     const panel = {
       jQueryElement,
       sideNavComponentId: jQueryElement.attr('md-component-id'),
+      onOpenCallback: onOpenCallback || angular.noop,
     };
 
     this.panels[side] = panel;
@@ -44,6 +45,7 @@ export class ChannelSidePanelService {
   open(side) {
     if (!this.isOpen(side)) {
       this.$mdSidenav(this.panels[side].sideNavComponentId).open();
+      this.panels[side].onOpenCallback();
     }
   }
 

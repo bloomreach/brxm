@@ -15,21 +15,29 @@
  */
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, ChannelSidePanelService, ContentService) {
+  constructor($scope, $element, $timeout, ChannelSidePanelService, ContentService) {
     'ngInject';
 
     this.$scope = $scope;
+    this.$timeout = $timeout;
     this.ChannelSidePanelService = ChannelSidePanelService;
     this.ContentService = ContentService;
 
     this.doc = {};
     this.docType = {};
 
-    ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'));
+    ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), this.onOpen.bind(this));
     this.closePanelOnEditModeTurnedOff();
 
     // TODO: load document when 'edit content' button is clicked instead of always loading the hardcoded 'test' document
     this.loadDocument('test');
+  }
+
+  onOpen() {
+    // set initial size of textareas (fixes Angular Material issue #9745)
+    this.$timeout(() => {
+      this.$scope.$broadcast('md-resize-textarea');
+    });
   }
 
   closePanelOnEditModeTurnedOff() {

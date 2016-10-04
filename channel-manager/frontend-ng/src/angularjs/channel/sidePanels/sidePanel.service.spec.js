@@ -21,7 +21,7 @@ describe('ChannelSidePanelService', () => {
 
   let ChannelSidePanelService;
   let ScalingService;
-  const leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'close']);
+  const leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close']);
 
   beforeEach(() => {
     module('hippo-cm');
@@ -101,5 +101,29 @@ describe('ChannelSidePanelService', () => {
 
     expect(ScalingService.setPushWidth).not.toHaveBeenCalled();
     expect(leftSidePanel.close).not.toHaveBeenCalled();
+  });
+
+  it('forwards the open call to the mdSidenav service', () => {
+    const element = angular.element('<div></div>');
+    ChannelSidePanelService.initialize('left', element);
+
+    ChannelSidePanelService.open('left');
+    expect(leftSidePanel.open).toHaveBeenCalled();
+  });
+
+  it('calls the onOpen callback when specified', () => {
+    const element = angular.element('<div md-component-id="left"></div>');
+    const onOpen = jasmine.createSpy('onOpen');
+
+    ChannelSidePanelService.initialize('left', element, onOpen);
+
+    ChannelSidePanelService.open('left');
+    expect(onOpen).toHaveBeenCalled();
+  });
+
+  it('opens without errors when the onOpen callback is omitted', () => {
+    const element = angular.element('<div md-component-id="left"></div>');
+    ChannelSidePanelService.initialize('left', element);
+    ChannelSidePanelService.open('left');
   });
 });
