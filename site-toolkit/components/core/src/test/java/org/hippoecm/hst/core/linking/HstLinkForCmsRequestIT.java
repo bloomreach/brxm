@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -240,12 +240,12 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
     /**
      * Even when a render host is set, when there is also an indication on the request that the client host should be forced, then
      * the render host should be skipped. This is the case where for example on the http session the renderhost is stored, but
-     * the request should not used this stored renderhost. Then, with the parameter FORCE_CLIENT_HOST = true this can be indicated
+     * the request should not used this stored renderhost. Then, with the parameter Force-Client-Host = true this can be indicated
      * @throws Exception
      */
     @Test
     public void testLinksCMSRequestWITHRenderingHostAndForceClientHost() throws Exception {
-        // the rendering host is www.unit.test but we also indicate FORCE_CLIENT_HOST = true
+        // the rendering host is www.unit.test but we also indicate Force-Client-Host = true
         HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "www.unit.test", true);
         // even though the renderingHost www.unit.test is set
         
@@ -313,7 +313,7 @@ public class HstLinkForCmsRequestIT extends AbstractHstLinkRewritingIT {
                 request.setParameter(ContainerConstants.RENDERING_HOST, renderingHost);
             }
             if (forceClientHost) {
-                request.setParameter("FORCE_CLIENT_HOST", "true");
+                request.setParameter("Force-Client-Host", "true");
             }
             containerRequest = new HstContainerRequestImpl(request, hstManager.getPathSuffixDelimiter());
         }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -248,9 +248,9 @@ public class HstRequestUtils {
     }
 
     private static String getRenderingHostName(final HttpServletRequest request) {
-        String forceClientHost = request.getParameter("FORCE_CLIENT_HOST");
+        String forceClientHost = request.getParameter("Force-Client-Host");
         if (forceClientHost == null) {
-            forceClientHost = request.getHeader("FORCE_CLIENT_HOST");
+            forceClientHost = request.getHeader("Force-Client-Host");
         }
         if (Boolean.parseBoolean(forceClientHost) == Boolean.TRUE) {
             return null;

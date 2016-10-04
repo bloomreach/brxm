@@ -204,10 +204,10 @@ public class ContainerItemComponentServiceImpl implements ContainerItemComponent
                                final MultivaluedMap<String, String> parameters) throws RepositoryException, IllegalStateException {
         componentParameters.removePrefix(prefix);
         for (String parameterName : parameters.keySet()) {
-            // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
-            // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
+            // the Force-Client-Host is some 'magic' parameter we do not need to store
+            // this check can be removed once in all code, the Force-Client-Host parameter from the queryString
             // has been replaced by a request header.
-            if (!"FORCE_CLIENT_HOST".equals(parameterName)) {
+            if (!"Force-Client-Host".equals(parameterName)) {
                 String parameterValue = parameters.getFirst(parameterName);
                 componentParameters.setValue(prefix, parameterName, parameterValue);
             }

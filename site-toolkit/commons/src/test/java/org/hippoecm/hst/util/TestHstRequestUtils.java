@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,16 +15,6 @@
  */
 package org.hippoecm.hst.util;
 
-import static org.easymock.EasyMock.createControl;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
-import static org.hippoecm.hst.core.container.ContainerConstants.HST_REQUEST_CONTEXT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.net.URI;
 import java.util.Map;
 
@@ -35,6 +25,15 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.junit.Test;
+
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reset;
+import static org.hippoecm.hst.core.container.ContainerConstants.HST_REQUEST_CONTEXT;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TestHstRequestUtils
@@ -110,7 +109,7 @@ public class TestHstRequestUtils {
     public void forcedRenderHostWithoutPortUsesPortFromForwardedHostHeader() {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getHeader("X-Forwarded-Host")).andReturn("www.example.org:8080");
-        expect(request.getParameter("FORCE_CLIENT_HOST")).andReturn("false");
+        expect(request.getParameter("Force-Client-Host")).andReturn("false");
         expect(request.getParameter(ContainerConstants.RENDERING_HOST)).andReturn("localhost");
         replay(request);
         final String renderHost = HstRequestUtils.getFarthestRequestHost(request, true);
