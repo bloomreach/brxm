@@ -124,6 +124,8 @@ describe('ChannelSidePanelService', () => {
   it('opens without errors when the onOpen callback is omitted', () => {
     const element = angular.element('<div md-component-id="left"></div>');
     ChannelSidePanelService.initialize('left', element);
-    ChannelSidePanelService.open('left');
+    expect(() => {
+      ChannelSidePanelService.open('left');
+    }).not.toThrow(jasmine.any(Error));
   });
 });
