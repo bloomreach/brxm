@@ -17,56 +17,75 @@
 describe('ChannelRightSidePanel', () => {
   'use strict';
 
-  let $compile;
+  let $componentController;
   let $q;
   let $rootScope;
+  let $timeout;
   let ChannelSidePanelService;
   let ContentService;
-  let parentScope;
+
+  let $ctrl;
+  let $scope;
+
+  const testDocument = {
+    id: 'test',
+    info: {
+      type: {
+        id: 'ns:testdocument',
+      },
+    },
+  };
+  const testDocumentType = {
+    id: 'ns:testdocument',
+  };
 
   beforeEach(() => {
     module('hippo-cm');
 
-    inject((_$compile_, _$q_, _$rootScope_, _ChannelSidePanelService_, _ContentService_) => {
-      $compile = _$compile_;
+    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_) => {
+      $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
-      ChannelSidePanelService = _ChannelSidePanelService_;
-      ContentService = _ContentService_;
+      $timeout = _$timeout_;
     });
 
-    spyOn(ChannelSidePanelService, 'initialize');
-    spyOn(ChannelSidePanelService, 'close');
-    spyOn(ContentService, 'getDocument').and.returnValue($q.resolve({
-      id: 'testDocument',
-    }));
+    ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'close']);
+    ContentService = jasmine.createSpyObj('ContentService', ['getDocument', 'getDocumentType']);
+
+    ContentService.getDocument.and.returnValue($q.resolve(testDocument));
+    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+
+    $scope = $rootScope.$new();
+    const $element = angular.element('<div></div>');
+    $ctrl = $componentController('channelRightSidePanel', {
+      $scope,
+      $element,
+      $timeout,
+      ChannelSidePanelService,
+      ContentService,
+    }, {
+      editMode: false,
+    });
+    $rootScope.$apply();
   });
 
-  function instantiateController(editMode) {
-    parentScope = $rootScope.$new();
-    parentScope.editMode = editMode;
-    const el = angular.element('<channel-right-side-panel edit-mode="editMode"></channel-right-side-panel>');
-    $compile(el)(parentScope);
-    $rootScope.$digest();
-    return el.controller('channel-right-side-panel');
-  }
-
   it('initializes the channel right side panel service upon instantiation', () => {
-    const $ctrl = instantiateController(false);
-
     expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalled();
-    expect($ctrl.doc).toEqual({
-      id: 'testDocument',
-    });
+    expect($ctrl.doc).toEqual(testDocument);
+    expect($ctrl.docType).toEqual(testDocumentType);
   });
 
   it('closes the panel', () => {
-    const $ctrl = instantiateController(false);
-
     $ctrl.close();
-
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+  });
+
+  it('sets the initial size of textareas when opened', () => {
+    spyOn($scope, '$broadcast');
+    $ctrl.onOpen();
+    $timeout.flush();
+    expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
   });
 });
 

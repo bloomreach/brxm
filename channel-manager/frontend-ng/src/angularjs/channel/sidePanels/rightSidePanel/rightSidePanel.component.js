@@ -15,20 +15,30 @@
  */
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, ChannelSidePanelService, ContentService) {
+  constructor($scope, $element, $timeout, ChannelSidePanelService, ContentService) {
     'ngInject';
 
     this.$scope = $scope;
+    this.$timeout = $timeout;
     this.ChannelSidePanelService = ChannelSidePanelService;
     this.ContentService = ContentService;
 
     this.doc = {};
+    this.docType = {};
 
-    ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'));
+    ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), this.onOpen.bind(this));
     this.closePanelOnEditModeTurnedOff();
 
     // TODO: load document when 'edit content' button is clicked instead of always loading the hardcoded 'test' document
     this.loadDocument('test');
+  }
+
+  onOpen() {
+    // Set initial size of textareas (see Angular Material issue #9745).
+    // Use $timeout to ensure that the sidenav has become visible.
+    this.$timeout(() => {
+      this.$scope.$broadcast('md-resize-textarea');
+    });
   }
 
   closePanelOnEditModeTurnedOff() {
@@ -42,7 +52,11 @@ export class ChannelRightSidePanelCtrl {
   loadDocument(id) {
     this.ContentService.getDocument(id)
       .then((doc) => {
-        this.doc = doc;
+        this.ContentService.getDocumentType(doc.info.type.id)
+          .then((docType) => {
+            this.doc = doc;
+            this.docType = docType;
+          });
       });
     // TODO: handle error
   }

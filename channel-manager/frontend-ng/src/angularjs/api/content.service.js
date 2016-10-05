@@ -26,8 +26,17 @@ export class ContentService {
   }
 
   getDocument(id) {
-    const apiUrl = this.PathService.concatPaths(CMS_CONTEXT_PATH, 'ws/content/documents', id);
+    return this._doGet('documents', id);
+  }
+
+  getDocumentType(id) {
+    return this._doGet('documenttypes', id);
+  }
+
+  _doGet(path, id) {
+    const apiUrl = this.PathService.concatPaths(CMS_CONTEXT_PATH, 'ws/content', path, id);
     return this.$http.get(apiUrl)
       .then((result) => result.data);
   }
 }
+
