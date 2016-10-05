@@ -34,7 +34,8 @@ export class ChannelRightSidePanelCtrl {
   }
 
   onOpen() {
-    // set initial size of textareas (fixes Angular Material issue #9745)
+    // Set initial size of textareas (see Angular Material issue #9745).
+    // Use $timeout to ensure that the sidenav has become visible.
     this.$timeout(() => {
       this.$scope.$broadcast('md-resize-textarea');
     });
