@@ -83,7 +83,7 @@ export class HstService {
 
     headers = headers || {};
     headers['CMS-User'] = this.config.cmsUser;
-    headers.FORCE_CLIENT_HOST = 'true';
+    headers['Force-Client-Host'] = 'true';
 
     this.CmsService.publish('user-activity');
 

@@ -18,19 +18,16 @@ Run the commands below in the project root directory.
 
 1. Compile channel manager with JRebel
 
-
-    $ mvn clean install -Djrebel
+        $ mvn clean install -Djrebel
 
 2. Start up your project with JRebel and wicket development mode enabled
 
-
-    $ cd <your project>
-    $ mvn -Pcargo.run -Dcargo.jvm.args='-Dwicket.configuration=development' -Djrebel
+        $ cd <your project>
+        $ mvn -Pcargo.run -Dcargo.jvm.args='-Dwicket.configuration=development' -Djrebel
 
 3. Start up frontend build system
 
-
-    $ npm start
+        $ npm start
 
 # Useful commands
 ## When starting gulp tasks using cli

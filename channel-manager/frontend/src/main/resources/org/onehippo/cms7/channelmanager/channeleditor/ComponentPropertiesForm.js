@@ -88,7 +88,7 @@
               method: 'DELETE',
               url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id),
               headers: {
-                'FORCE_CLIENT_HOST': 'true',
+                'Force-Client-Host': 'true',
                 'lastModifiedTimestamp': this.lastModified
               },
               success: function () {
@@ -183,7 +183,7 @@
 
       form.submit({
         headers: {
-          'FORCE_CLIENT_HOST': 'true',
+          'Force-Client-Host': 'true',
           'Move-To': this.newVariantId,
           'lastModifiedTimestamp': this.lastModified
         },
@@ -306,7 +306,7 @@
 
       comboStore = new Ext.data.JsonStore({
         root: 'data',
-        url: this.composerRestMountUrl + '/' + this.mountId + './documents/' + record.get('docType') + '?FORCE_CLIENT_HOST=true',
+        url: this.composerRestMountUrl + '/' + this.mountId + './documents/' + record.get('docType') + '?Force-Client-Host=true',
         fields: ['path']
       });
 
@@ -409,7 +409,7 @@
                 url: createUrl,
                 params: options,
                 headers: {
-                  'FORCE_CLIENT_HOST': 'true'
+                  'Force-Client-Host': 'true'
                 },
                 success: function () {
                   Ext.getCmp(options.comboId).setValue(options.docLocation + "/" + options.docName);
@@ -604,7 +604,7 @@
           'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes',
           'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager', 'groupLabel', 'displayValue'
         ],
-        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/' + this.locale + '?FORCE_CLIENT_HOST=true'
+        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/' + this.locale + '?Force-Client-Host=true'
       });
 
       this.store.on('load', function () {
