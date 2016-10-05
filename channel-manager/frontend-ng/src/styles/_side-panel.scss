@@ -38,3 +38,23 @@
     cursor: grabbing;
   }
 }
+
+.channel-right-side-panel {
+  md-toolbar {
+    background: $grey-50;
+    color: $text-dark;
+
+    &:first-child {
+      border-bottom: 1px solid $grey-200;
+    }
+    &:last-child {
+      border-top: 1px solid $grey-200;
+    }
+  }
+  .md-button {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
