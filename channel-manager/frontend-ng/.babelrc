@@ -1,16 +1,3 @@
 {
-  "presets": [
-    "es2015"
-  ],
-  "env": {
-    "test": {
-      "plugins": [
-        ["istanbul", {
-          "exclude": [
-            "**/*.spec.js"
-          ]
-        }]
-      ]
-    }
-  }
+  "extends": "./node_modules/frontend-build/.babelrc"
 }
