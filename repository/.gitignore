@@ -2,7 +2,7 @@
 /.idea
 /.project
 /.settings
-api/*.iml
+*.iml
 api/*.tmp
 api/.classpath
 api/.project
@@ -24,13 +24,13 @@ builtin/.classpath
 builtin/.project
 builtin/.settings
 builtin/hippo-repository-builtin.iml
+builtin/log4j.log
 builtin/target
 config/.classpath
 config/.project
 config/.settings
 config/hippo-repository-config.iml
 config/target
-connector/*.iml
 connector/*.tmp
 connector/.classpath
 connector/.project
@@ -46,14 +46,11 @@ connector/tmlog.lck
 connector/wdbp-error-log.txt
 /datanucleus.log
 /debuglog
-dependencies/*.iml
 dependencies/.project
 dependencies/.settings
 dependencies/target
-deprecated/*.iml
 deprecated/.project
 deprecated/.settings
-deprecated/facetsearch/*.iml
 deprecated/facetsearch/.classpath
 deprecated/facetsearch/.project
 deprecated/facetsearch/.settings
@@ -88,12 +85,10 @@ engine/version
 engine/wdbp-error-log.txt
 engine/workspaces
 /hippo-repository.iml
-jaxrs/*.iml
 jaxrs/log4j.log
 jaxrs/target
 /jpox.log
 /log4j.log
-modules/*.iml
 modules/*.tmp
 modules/.classpath
 modules/.project
@@ -107,7 +102,6 @@ modules/tm.out.1
 modules/tm.out.lck
 modules/tmlog.lck
 modules/wdbp-error-log.txt
-provider/*.iml
 provider/*.tmp
 provider/.classpath
 provider/.pom.xml.swp
@@ -123,7 +117,6 @@ provider/tm.out.1
 provider/tm.out.lck
 provider/tmlog.lck
 provider/wdbp-error-log.txt
-resources/*.iml
 resources/.classpath
 resources/.project
 resources/.settings
@@ -133,7 +126,6 @@ scripts/.project
 scripts/.settings
 scripts/hippo-repository-scripts.iml
 scripts/target
-servlets/*.iml
 servlets/*.tmp
 servlets/.classpath
 servlets/.pom.xml.swp
@@ -200,7 +192,6 @@ testutils/tmlog.lck
 testutils/version
 testutils/wdbp-error-log.txt
 testutils/workspaces
-upgrade/*.iml
 upgrade/*.tmp
 upgrade/.classpath
 upgrade/.project
@@ -215,7 +206,6 @@ upgrade/tm.out.1
 upgrade/tm.out.lck
 upgrade/tmlog.lck
 upgrade/wdbp-error-log.txt
-utilities/*.iml
 utilities/*.tmp
 utilities/.classpath
 utilities/.project
@@ -229,7 +219,6 @@ utilities/tm.out.1
 utilities/tm.out.lck
 utilities/tmlog.lck
 utilities/wdbp-error-log.txt
-workflow/*.iml
 workflow/*.log
 workflow/.classpath
 workflow/.project

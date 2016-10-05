@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,6 @@
  */
 package org.onehippo.repository.mock;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemExistsException;
@@ -28,15 +24,12 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
-import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionManager;
-import javax.naming.OperationNotSupportedException;
 
 import org.onehippo.repository.util.JcrConstants;
 

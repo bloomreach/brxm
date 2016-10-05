@@ -54,6 +54,7 @@ import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionHistory;
 
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -688,7 +689,7 @@ public class MockNode extends MockItem implements HippoNode {
 
     @Override
     public String getDisplayName() throws RepositoryException {
-        return JcrUtils.getStringProperty(this, HIPPO_NAME, getName());
+        return JcrUtils.getStringProperty(this, HippoNodeType.HIPPO_NAME, getName());
     }
 
     @Override

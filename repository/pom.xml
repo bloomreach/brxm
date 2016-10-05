@@ -65,6 +65,7 @@
     <module>scripts</module>
     <module>workflow</module>
     <module>jaxrs</module>
+    <module>mockutils</module>
   </modules>
 
   <properties>

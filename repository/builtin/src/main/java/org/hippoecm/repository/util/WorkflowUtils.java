@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,14 +15,24 @@
  */
 package org.hippoecm.repository.util;
 
+import java.util.Optional;
+
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.Workflow;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class WorkflowUtils {
+    private static final Logger log = LoggerFactory.getLogger(WorkflowUtils.class);
 
     private WorkflowUtils() {}
 
@@ -59,4 +69,79 @@ public final class WorkflowUtils {
         return node.getSession().getRootNode();
     }
 
+    /**
+     * Retrieve a workflow of a certain type (class).
+     *
+     * @param node     JCR for which the workflow is requested
+     * @param category Desired workflow category
+     * @param clazz    Desired (super-)class of the workflow
+     * @return         Workflow of the desired category and class, or nothing, wrapped in an Optional
+     */
+    public static <T extends Workflow> Optional<T> getWorkflow(final Node node, final String category, final Class<T> clazz) {
+        try {
+            final Session session = node.getSession();
+            final HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
+            final WorkflowManager workflowManager = workspace.getWorkflowManager();
+            final Workflow workflow = workflowManager.getWorkflow(category, node);
+
+            if (clazz.isAssignableFrom(workflow.getClass())) {
+                return Optional.of((T)workflow);
+            } else {
+                log.info("Obtained workflow is not of desired class {}", clazz.getName());
+            }
+        } catch (RepositoryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Problem retrieving workflow for category '{}'", category, e);
+            } else {
+                log.warn("Problem retrieving workflow for category '{}': {}", category, e.getMessage());
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Retrieve the node representing a specific document variant.
+     *
+     * @param node    JCR node representing either a variant or the handle node
+     * @param variant Indication which variant to retrieve
+     * @return        The requested variant node, or null, wrapped in an Optional
+     */
+    public static Optional<Node> getDocumentVariantNode(Node node, final Variant variant) {
+        try {
+            if (!node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                node = node.getParent();
+            }
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                for (Node child : new NodeIterable(node.getNodes(node.getName()))) {
+                    String state = JcrUtils.getStringProperty(child, HippoStdNodeType.HIPPOSTD_STATE, null);
+                    if (variant.getState().equals(state)) {
+                        return Optional.of(child);
+                    }
+                }
+            }
+        } catch (RepositoryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Problem retrieving a variant node", e);
+            } else {
+                log.warn("Problem retrieving a variant node: {}", e.getMessage());
+            }
+        }
+        return Optional.empty();
+    }
+
+    public enum Variant {
+        PUBLISHED(HippoStdNodeType.PUBLISHED),
+        UNPUBLISHED(HippoStdNodeType.UNPUBLISHED),
+        DRAFT(HippoStdNodeType.DRAFT);
+
+        private final String state;
+
+        Variant(final String state) {
+            this.state = state;
+        }
+
+        private String getState() {
+            return state;
+        }
+    }
 }
