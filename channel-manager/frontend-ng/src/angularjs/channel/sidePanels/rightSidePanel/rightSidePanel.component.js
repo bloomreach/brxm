@@ -23,17 +23,37 @@ export class ChannelRightSidePanelCtrl {
     this.ChannelSidePanelService = ChannelSidePanelService;
     this.ContentService = ContentService;
 
-    this.doc = {};
-    this.docType = {};
-
-    ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), this.onOpen.bind(this));
+    ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), (documentId) => {
+      this.openDocument(documentId);
+    });
     this.closePanelOnEditModeTurnedOff();
-
-    // TODO: load document when 'edit content' button is clicked instead of always loading the hardcoded 'test' document
-    this.loadDocument('test');
+    this._clearDocument();
   }
 
-  onOpen() {
+  openDocument(documentId) {
+    this._clearDocument();
+    this._loadDocument(documentId);
+  }
+
+  _clearDocument() {
+    this.doc = null;
+    this.docType = null;
+  }
+
+  _loadDocument(id) {
+    this.ContentService.getDocument(id)
+      .then((doc) => {
+        this.ContentService.getDocumentType(doc.info.type.id)
+          .then((docType) => {
+            this.doc = doc;
+            this.docType = docType;
+            this._resizeTextareas();
+          });
+      });
+    // TODO: handle error
+  }
+
+  _resizeTextareas() {
     // Set initial size of textareas (see Angular Material issue #9745).
     // Use $timeout to ensure that the sidenav has become visible.
     this.$timeout(() => {
@@ -47,18 +67,6 @@ export class ChannelRightSidePanelCtrl {
         this.ChannelSidePanelService.close('right');
       }
     });
-  }
-
-  loadDocument(id) {
-    this.ContentService.getDocument(id)
-      .then((doc) => {
-        this.ContentService.getDocumentType(doc.info.type.id)
-          .then((docType) => {
-            this.doc = doc;
-            this.docType = docType;
-          });
-      });
-    // TODO: handle error
   }
 
   close() {
