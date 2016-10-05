@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,23 +15,25 @@
  */
 package org.hippoecm.hst.servlet.util;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.hst.servlet.utils.ResourceUtils;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
+
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ResourceUtilsTest {
 
@@ -149,7 +151,7 @@ public class ResourceUtilsTest {
     }
 
     @Test
-    public void testGetFileName() throws RepositoryException {
+    public void testGetFileNameFromProperty() throws RepositoryException {
         String[] fileNameProps = new String[] { "name1", "name2", "name3" };
         Property p = createMock(Property.class);
 
@@ -166,21 +168,35 @@ public class ResourceUtilsTest {
     }
 
     @Test
-    public void testNoFileName() throws RepositoryException {
+    public void testGetFileNameFallbackToHandleName() throws RepositoryException {
         String[] fileNameProps = new String[] { "name1", "name2", "name3" };
 
         Node n = createMock(Node.class);
         expect(n.hasProperty("name1")).andReturn(false);
         expect(n.hasProperty("name2")).andReturn(false);
         expect(n.hasProperty("name3")).andReturn(false);
+        Session s = createMock(Session.class);
+        expect(n.getSession()).andReturn(s);
+        Node root = createMock(Node.class);
+        expect(s.getRootNode()).andReturn(root);
+        Node variant = createMock(Node.class);
+        expect(n.isSame(root)).andReturn(false);
+        expect(n.getParent()).andReturn(variant);
+        expect(variant.isNodeType(HippoNodeType.NT_HANDLE)).andReturn(false);
+        Node handle = createMock(Node.class);
+        expect(variant.isSame(root)).andReturn(false);
+        expect(variant.getParent()).andReturn(handle);
+        expect(handle.isNodeType(HippoNodeType.NT_HANDLE)).andReturn(true);
+        expect(variant.isNodeType(HippoNodeType.NT_DOCUMENT)).andReturn(true);
+        expect(handle.getName()).andReturn("handle");
 
-        replay(n);
+        replay(n, s, variant, handle);
 
-        assertEquals(null, ResourceUtils.getFileName(n, fileNameProps));
+        assertEquals("handle", ResourceUtils.getFileName(n, fileNameProps));
     }
 
     @Test
-    public void testResoucePathIsValid() {
+    public void testResourcePathIsValid() {
         assertTrue(ResourceUtils.isValidResourcePath("/my/path/file.pdf"));
         assertFalse(ResourceUtils.isValidResourcePath("a/relative/path"));
         assertFalse(ResourceUtils.isValidResourcePath(null));

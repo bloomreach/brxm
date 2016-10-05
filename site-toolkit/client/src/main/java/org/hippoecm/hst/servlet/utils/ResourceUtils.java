@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -90,9 +90,41 @@ public final class ResourceUtils {
                         return resourceNode.getProperty(name).getString();
                     }
                 } catch (RepositoryException e) {
-                    log.warn("Unable to determine file name", e);
+                    if (log.isDebugEnabled()) {
+                        log.warn("Exception reading file name from configured property", e);
+                    } else {
+                        log.warn("Exception reading file name from configured property: {}", e.getMessage());
+                    }
                 }
             }
+        }
+
+        try {
+            final Node handle = findDocumentHandle(resourceNode);
+            if (handle == null) {
+                log.warn("Could not find handle for node {}", resourceNode.getPath());
+                return null;
+            }
+            return handle.getName();
+        } catch (RepositoryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Could not determine file name", e);
+            } else {
+                log.warn("Could not determine file name: {}", e.getMessage());
+            }
+        }
+
+        return null;
+    }
+
+    private static Node findDocumentHandle(Node current) throws RepositoryException {
+        final Node root = current.getSession().getRootNode();
+        while (!current.isSame(root)) {
+            final Node parent = current.getParent();
+            if (parent.isNodeType(HippoNodeType.NT_HANDLE) && current.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                return parent;
+            }
+            current = parent;
         }
         return null;
     }
