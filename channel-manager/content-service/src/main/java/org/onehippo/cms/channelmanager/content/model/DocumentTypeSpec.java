@@ -30,7 +30,11 @@ public class DocumentTypeSpec {
     private String id; // "namespace:typename"
     private String displayName;
     private Boolean readOnlyDueToUnknownValidator;
-    private List<FieldTypeSpec> fields; // ordered list of fields
+    private final List<FieldTypeSpec> fields; // ordered list of fields
+
+    public DocumentTypeSpec() {
+        fields = new ArrayList<>();
+    }
 
     public String getId() {
         return id;
@@ -61,9 +65,6 @@ public class DocumentTypeSpec {
     }
 
     public void addField(final FieldTypeSpec field) {
-        if (fields == null) {
-            fields = new ArrayList<>();
-        }
         fields.add(field);
     }
 }

@@ -116,6 +116,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
         fieldType.setDisplayName(LocalizationUtils.determineFieldDisplayName(fieldId, context.resourceBundle, context.documentTypeRoot));
         fieldType.setHint(LocalizationUtils.determineFieldHint(fieldId, context.resourceBundle, context.documentTypeRoot));
         fieldType.setType(FieldTypeUtils.deriveFieldType(property));
+        fieldType.setStoredAsMultiValueProperty(property.isMultiple());
 
         if (property.isMultiple() || property.getValidators().contains(FieldValidators.OPTIONAL)) {
             fieldType.setMultiple(true);

@@ -88,7 +88,7 @@ public class ContentResourceTest extends CXFTest {
         final String returnedUuid = "returned-uuid";
         final Document testDocument = new Document();
         testDocument.setId(returnedUuid);
-        expect(documentsService.getDocument(userSession, requestedUuid)).andReturn(testDocument);
+        expect(documentsService.getDocument(requestedUuid, userSession, locale)).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -104,7 +104,7 @@ public class ContentResourceTest extends CXFTest {
     public void documentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.getDocument(userSession, requestedUuid)).andThrow(new DocumentNotFoundException());
+        expect(documentsService.getDocument(requestedUuid, userSession, locale)).andThrow(new DocumentNotFoundException());
         replay(documentsService);
 
         when()

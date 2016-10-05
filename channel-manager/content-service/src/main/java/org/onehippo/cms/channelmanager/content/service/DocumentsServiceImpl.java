@@ -18,21 +18,32 @@ package org.onehippo.cms.channelmanager.content.service;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
+import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.Document;
 import org.onehippo.cms.channelmanager.content.model.DocumentInfo;
+import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
 import org.onehippo.cms.channelmanager.content.model.EditingInfo;
+import org.onehippo.cms.channelmanager.content.model.FieldTypeSpec;
 import org.onehippo.cms.channelmanager.content.model.UserInfo;
 import org.onehippo.cms.channelmanager.content.util.MockResponse;
 import org.onehippo.repository.security.User;
@@ -50,7 +61,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     private DocumentsServiceImpl() { }
 
     @Override
-    public Document getDocument(final Session session, final String id) throws DocumentNotFoundException {
+    public Document getDocument(final String id, final Session session, final Locale locale) throws DocumentNotFoundException {
         if ("test".equals(id)) {
             return MockResponse.createTestDocument(id);
         }
@@ -71,37 +82,108 @@ public class DocumentsServiceImpl implements DocumentsService {
             final DocumentInfo info = new DocumentInfo();
             final Node variant = documentHandle.getNode(documentHandle.getName());
             info.setTypeId(variant.getPrimaryNodeType().getName());
-            info.setEditingInfo(determineEditingInfo(session, documentHandle));
+
+            final EditableWorkflow workflow = retrieveWorkflow(documentHandle);
+            info.setEditingInfo(determineEditingInfo(session, workflow));
             document.setInfo(info);
+
+            determineDocumentFields(document, documentHandle, workflow, locale);
         } catch (RepositoryException e) {
             log.debug("Problem reading vital document parameters", e);
             throw new DocumentNotFoundException();
         }
 
-        // look-up document type and fill in document content
-
         return document;
     }
 
     // protected for better testability
-    protected EditingInfo determineEditingInfo(final Session session, final Node documentHandle) {
+    protected void determineDocumentFields(final Document document,
+                                           final Node handle,
+                                           final EditableWorkflow workflow,
+                                           final Locale locale) throws DocumentNotFoundException {
+        final Node draft = getOrMakeDraftNode(workflow, handle);
+        try {
+            final DocumentTypeSpec docType = getDocumentTypeSpec(document, handle.getSession(), locale);
+
+            // look-up document type and fill in document content
+            for (FieldTypeSpec field : docType.getFields()) {
+                final String fieldId = field.getId();
+                if (draft.hasProperty(fieldId)) {
+                    if (field.isStoredAsMultiValueProperty()) {
+                        final List<String> values = new ArrayList<>();
+                        for (Value v : draft.getProperty(fieldId).getValues()) {
+                            values.add(v.getString());
+                        }
+                        if (!values.isEmpty()) {
+                            document.addField(fieldId, values);
+                        }
+                    } else {
+                        document.addField(fieldId, draft.getProperty(fieldId).getString());
+                    }
+                }
+            }
+        } catch (DocumentTypeNotFoundException|RepositoryException e) {
+            throw new DocumentNotFoundException();
+        }
+    }
+
+    // protected for better testability
+    protected Node getOrMakeDraftNode(final EditableWorkflow workflow, final Node handle) throws DocumentNotFoundException {
+        try {
+            final Map<String, Serializable> hints = workflow.hints();
+            final Session session = handle.getSession();
+
+            if (isDocumentEditable(hints, session)) {
+                return workflow.obtainEditableInstance().getNode(session);
+            } else {
+                final Optional<Node> variant = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT);
+                if (!variant.isPresent()) {
+                    throw new DocumentNotFoundException();
+                }
+                return variant.get();
+            }
+        } catch (WorkflowException|RepositoryException|RemoteException e) {
+            throw new DocumentNotFoundException();
+        }
+    }
+
+    // protected for better testability
+    protected DocumentTypeSpec getDocumentTypeSpec(final Document document, final Session session, final Locale locale)
+            throws DocumentTypeNotFoundException {
+        final String docTypeId = document.getInfo().getType().getId();
+        final DocumentTypesService docTypesService = DocumentTypesService.get();
+        return docTypesService.getDocumentTypeSpec(docTypeId, session, locale);
+    }
+
+    // protected for better testability
+    protected EditableWorkflow retrieveWorkflow(final Node documentHandle) throws DocumentNotFoundException {
+        try {
+            final HippoWorkspace workspace = (HippoWorkspace) documentHandle.getSession().getWorkspace();
+            final WorkflowManager workflowManager = workspace.getWorkflowManager();
+            final Workflow workflow = workflowManager.getWorkflow("editing", documentHandle);
+
+            if (!(workflow instanceof EditableWorkflow)) {
+                throw new DocumentNotFoundException();
+            }
+
+            return (EditableWorkflow)workflow;
+        } catch (RepositoryException e) {
+            throw new DocumentNotFoundException();
+        }
+    }
+
+    // protected for better testability
+    protected EditingInfo determineEditingInfo(final Session session, final Workflow workflow) {
         final EditingInfo info = new EditingInfo();
-        final HippoWorkspace workspace = (HippoWorkspace)session.getWorkspace();
 
         try {
-            final WorkflowManager workflowManager = workspace.getWorkflowManager();
-            final Map<String, Serializable> hints = workflowManager.getWorkflow("editing", documentHandle).hints();
+            final Map<String, Serializable> hints = workflow.hints();
 
-            if ((Boolean) hints.get("obtainEditableInstance")) {
+            if (isDocumentEditable(hints, session)) {
                 info.setState(EditingInfo.State.AVAILABLE);
             } else if (hints.containsKey("inUseBy")) {
-                final String inUseBy = (String)hints.get("inUseBy");
-                if (inUseBy.equals(session.getUserID())) {
-                    info.setState(EditingInfo.State.AVAILABLE);
-                } else {
-                    info.setState(EditingInfo.State.UNAVAILABLE_HELD_BY_OTHER_USER);
-                    info.setHolder(determineHolder(inUseBy, workspace));
-                }
+                info.setState(EditingInfo.State.UNAVAILABLE_HELD_BY_OTHER_USER);
+                info.setHolder(determineHolder((String)hints.get("inUseBy"), (HippoWorkspace) session.getWorkspace()));
             } else if (hints.containsKey("requests")) {
                 info.setState(EditingInfo.State.UNAVAILABLE_REQUEST_PENDING);
             }
@@ -109,6 +191,25 @@ public class DocumentsServiceImpl implements DocumentsService {
             log.debug("Failed to determine editing info", e);
         }
         return info;
+    }
+
+    private boolean isDocumentEditable(final Map<String, Serializable> hints, final Session session) {
+        if ((Boolean) hints.get("obtainEditableInstance")) {
+            return true;
+        }
+
+        // TODO: initial tests suggested that once the user has obtained the editable instance of a document,
+        //       the hints would have set the obtainEditableInstance flag to false and the inUseBy flag to the
+        //       current holder (self). Subsequet tests no longer observed this behaviour. Should we keep below
+        //       extra check or not?
+        if (hints.containsKey("inUseBy")) {
+            final String inUseBy = (String) hints.get("inUseBy");
+            if (inUseBy.equals(session.getUserID())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // protected for better testability

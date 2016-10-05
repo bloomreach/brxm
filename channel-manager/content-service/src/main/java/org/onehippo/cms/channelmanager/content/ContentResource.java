@@ -47,9 +47,10 @@ public class ContentResource {
     @Path("documents/{id}")
     public Response getDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
+        final Locale locale = sessionDataProvider.getLocale(servletRequest);
         final DocumentsService documentsService = DocumentsService.get();
         try {
-            final Document document = documentsService.getDocument(userSession, id);
+            final Document document = documentsService.getDocument(id, userSession, locale);
             return Response.ok().entity(document).build();
         } catch (DocumentNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();

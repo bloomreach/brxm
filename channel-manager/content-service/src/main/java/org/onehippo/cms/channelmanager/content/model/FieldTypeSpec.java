@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
@@ -42,6 +43,9 @@ public class FieldTypeSpec {
     private Set<Validator> validators;
 
     private List<FieldTypeSpec> fields; // the child-fields of a complex field type (COMPOUND or CHOICE)
+
+    @JsonIgnore
+    private boolean storedAsMultiValueProperty;
 
     public enum Type {
         STRING,
@@ -123,5 +127,13 @@ public class FieldTypeSpec {
             fields = new ArrayList<>();
         }
         fields.add(field);
+    }
+
+    public boolean isStoredAsMultiValueProperty() {
+        return storedAsMultiValueProperty;
+    }
+
+    public void setStoredAsMultiValueProperty(final boolean storedAsMultiValueProperty) {
+        this.storedAsMultiValueProperty = storedAsMultiValueProperty;
     }
 }
