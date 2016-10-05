@@ -25,7 +25,7 @@
     <h1 class="md-title">{{'EDIT_DOCUMENT' | translate }}</h1>
   </div>
   <md-content flex="grow" layout-padding>
-    <form layout="column">
+    <form class="form-dense-layout" layout="column">
       <md-input-container class="md-block" ng-repeat="field in $ctrl.docType.fields track by field.id" ng-switch="field.type">
         <label>{{ ::field.displayName }}</label>
 
