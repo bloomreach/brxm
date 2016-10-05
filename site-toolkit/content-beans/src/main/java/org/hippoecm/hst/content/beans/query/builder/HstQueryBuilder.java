@@ -306,6 +306,10 @@ public abstract class HstQueryBuilder {
         return orderByConstructs;
     }
 
+    /**
+     * Sets the offset to start searching from. Default offset is <code>-1</code> which means it is ignored. A negative offset will be ignored
+     * @param offset the {@code offset} to use, negative values will be ignored
+     */
     public HstQueryBuilder offset(final int offset) {
         if (this.offset != null) {
             throw new RuntimeQueryException(new QueryException("'offset' is allowed to be set only once."));
@@ -318,6 +322,12 @@ public abstract class HstQueryBuilder {
         return offset;
     }
 
+
+    /**
+    * Sets the limit of search results.
+    * <b>Note</b> that setting this value very high might influence performance negatively
+    * @param limit the {@code limit} to use, negative values will be ignored
+    */
     public HstQueryBuilder limit(final int limit) {
         if (this.limit != null) {
             throw new RuntimeQueryException(new QueryException("'limit' is allowed to be set only once."));
