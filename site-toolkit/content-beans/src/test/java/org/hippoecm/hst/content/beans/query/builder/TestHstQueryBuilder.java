@@ -47,6 +47,7 @@ import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.and
 import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.constraint;
 import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.or;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -199,7 +200,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void basic_query_with__base_nodetype_constraints() throws Exception {
+    public void basic_query_with_base_nodetype_constraints() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean.getNode(), "unittestproject:basedocument", true);
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
                 .ofTypes(BasePage.class)
@@ -585,6 +586,46 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 )
                 .orderByAscending("myhippoproject:title").orderByDescending("myhippoproject:date")
                 .offset(10).limit(5)
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void assert_order_by_clauses_are_in_order_they_are_added() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        hstQuery.addOrderByAscending("myhippoproject:title");
+        hstQuery.addOrderByDescending("myhippoproject:date");
+        hstQuery.addOrderByAscending("myhippoproject:foo");
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .orderByAscending("myhippoproject:title")
+                .orderByDescending("myhippoproject:date")
+                .orderByAscending("myhippoproject:foo")
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+
+
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .orderByAscending("myhippoproject:title")
+                .orderByAscending("myhippoproject:foo")
+                .orderByDescending("myhippoproject:date")
+                .build();
+
+        assertFalse(hstQueryInFluent.getQueryAsString(true).equals(hstQueryInFluent2.getQueryAsString(true)));
+    }
+
+    @Test
+    public void assert_order_by_clauses_null_value__and_empty_values_are_skipped() throws Exception {
+
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+
+        HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
+                .orderByAscending(null)
+                .orderByDescending(null)
+                .orderByAscending("","")
+                .orderByDescending("","")
                 .build();
 
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);

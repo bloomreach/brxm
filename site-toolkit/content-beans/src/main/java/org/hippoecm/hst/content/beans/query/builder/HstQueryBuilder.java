@@ -185,7 +185,7 @@ public abstract class HstQueryBuilder {
         return this;
     }
 
-    protected List<Node> scopes() {
+    List<Node> scopes() {
         return scopes;
     }
 
@@ -229,47 +229,80 @@ public abstract class HstQueryBuilder {
         return constraintBuilder;
     }
 
+    /**
+     * @param fieldNames the {@code fieldNames} to order on in ascending order. The {@code fieldNames} argument
+     *                   can be {@code null} in which case it is just ignored. A field name in the array that is empty is
+     *                   skipped.
+     * @return this {@link HstQueryBuilder} instance
+     */
     public HstQueryBuilder orderByAscending(final String ... fieldNames) {
         if (fieldNames != null) {
             for (String fieldName : fieldNames) {
-                OrderByConstruct orderBy = new OrderByConstruct(fieldName, true);
-                addOrderByConstruct(orderBy);
+                if (!fieldName.isEmpty()) {
+                    OrderByConstruct orderBy = new OrderByConstruct(fieldName, true);
+                    addOrderByConstruct(orderBy);
+                }
             }
         }
         return this;
     }
 
+    /**
+     * @param fieldNames the {@code fieldNames} to order on case insensitive in ascending order. The {@code fieldNames} argument
+     *                   can be {@code null} in which case it is just ignored. A field name in the array that is empty is
+     *                   skipped.
+     * @return this {@link HstQueryBuilder} instance
+     */
     public HstQueryBuilder orderByAscendingCaseInsensitive(final String ... fieldNames) {
         if (fieldNames != null) {
             for (String fieldName : fieldNames) {
-                OrderByConstruct orderBy = new OrderByConstruct(fieldName, true).caseSensitive(false);
-                addOrderByConstruct(orderBy);
+                if (!fieldName.isEmpty()) {
+                    OrderByConstruct orderBy = new OrderByConstruct(fieldName, true).caseSensitive(false);
+                    addOrderByConstruct(orderBy);
+                }
             }
         }
         return this;
     }
 
+
+    /**
+     * @param fieldNames the {@code fieldNames} to order on in descending order. The {@code fieldNames} argument
+     *                   can be {@code null} in which case it is just ignored. A field name in the array that is empty is
+     *                   skipped.
+     * @return this {@link HstQueryBuilder} instance
+     */
     public HstQueryBuilder orderByDescending(final String ... fieldNames) {
         if (fieldNames != null) {
             for (String fieldName : fieldNames) {
-                OrderByConstruct orderBy = new OrderByConstruct(fieldName, false);
-                addOrderByConstruct(orderBy);
+                if (!fieldName.isEmpty()) {
+                    OrderByConstruct orderBy = new OrderByConstruct(fieldName, false);
+                    addOrderByConstruct(orderBy);
+                }
             }
         }
         return this;
     }
 
+    /**
+     * @param fieldNames the {@code fieldNames} to order on case insensitive in descending order. The {@code fieldNames} argument
+     *                   can be {@code null} in which case it is just ignored. A field name in the array that is empty is
+     *                   skipped.
+     * @return this {@link HstQueryBuilder} instance
+     */
     public HstQueryBuilder orderByDescendingCaseInsensitive(final String ... fieldNames) {
         if (fieldNames != null) {
             for (String fieldName : fieldNames) {
-                OrderByConstruct orderBy = new OrderByConstruct(fieldName, false).caseSensitive(false);
-                addOrderByConstruct(orderBy);
+                if (!fieldName.isEmpty()) {
+                    OrderByConstruct orderBy = new OrderByConstruct(fieldName, false).caseSensitive(false);
+                    addOrderByConstruct(orderBy);
+                }
             }
         }
         return this;
     }
 
-    protected List<OrderByConstruct> orderByConstructs() {
+    List<OrderByConstruct> orderByConstructs() {
         return orderByConstructs;
     }
 
@@ -281,7 +314,7 @@ public abstract class HstQueryBuilder {
         return this;
     }
 
-    public Integer offset() {
+    Integer offset() {
         return offset;
     }
 
@@ -293,7 +326,7 @@ public abstract class HstQueryBuilder {
         return this;
     }
 
-    public Integer limit() {
+    Integer limit() {
         return limit;
     }
 
