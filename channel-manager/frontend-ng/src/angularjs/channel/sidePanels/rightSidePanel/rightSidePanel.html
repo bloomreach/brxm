@@ -35,7 +35,7 @@
         </div>
 
         <div ng-switch-when="MULTILINE_STRING" ng-switch="field.multiple">
-          <textarea ng-switch-when="false" ng-model="$ctrl.doc.fields[field.id]" rows="2" max-rows="10"></textarea>
+          <textarea ng-switch-when="false" ng-model="$ctrl.doc.fields[field.id]" max-rows="10"></textarea>
           <input ng-switch-when="true" disabled value="TODO">
         </div>
 
