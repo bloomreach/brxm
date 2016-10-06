@@ -18,12 +18,12 @@ package org.hippoecm.hst.intranet.components;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
+import org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
-import org.hippoecm.hst.content.beans.query.filter.Filter;
+import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -33,6 +33,8 @@ import org.hippoecm.hst.intranet.componentsinfo.PageableListInfo;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.constraint;
 
 public abstract class BaseComponent extends BaseHstComponent {
 
@@ -76,28 +78,19 @@ public abstract class BaseComponent extends BaseHstComponent {
         if (filterClass == null) {
             throw new HstComponentException("There is no bean for docType '"+docType+"'. Cannot use '"+docType+"' as in this search");
         }
-        try {
-            @SuppressWarnings("unchecked")
-            HstQuery hstQuery = requestContext.getQueryManager().createQuery(scope, filterClass, true);
-            hstQuery.setLimit(pageSize);
-            hstQuery.setOffset(pageSize * (crPage - 1));
-            if (sortBy != null && !sortBy.isEmpty()) {
-                if (sortOrder == null || sortOrder.isEmpty() || "descending".equals(sortOrder)) {
-                    hstQuery.addOrderByDescending(sortBy);
-                } else {
-                    hstQuery.addOrderByAscending(sortBy);
-                }
-            }
 
+        try {
             String parsedQuery = SearchInputParsingUtils.parse(query, false);
-            if (parsedQuery != null && !parsedQuery.equals(query)) {
-                log.debug("Replaced query '{}' with '{}' because it contained invalid chars.", query, parsedQuery);
-            }
-            if (!StringUtils.isEmpty(parsedQuery)) {
-                Filter f = hstQuery.createFilter();
-                f.addContains(".", parsedQuery);
-                hstQuery.setFilter(f);
-            }
+
+            HstQuery hstQuery = HstQueryBuilder.create(scope)
+                    .ofTypes(docType)
+                    .where(
+                            constraint(".").contains(parsedQuery)
+                    )
+                    .sortBy(sortOrder, sortBy)
+                    .limit(pageSize)
+                    .offset(pageSize * (crPage - 1))
+                    .build();
 
             HstQueryResult result = hstQuery.execute();
 
@@ -124,6 +117,8 @@ public abstract class BaseComponent extends BaseHstComponent {
 
         } catch (QueryException e) {
             throw new HstComponentException("Exception occurred during creation or execution of HstQuery. ", e);
+        } catch (RuntimeQueryException e) {
+            throw new HstComponentException("Exception occurred during creation or execution of HstQuery. ", e.getCause());
         }
     }
 }
