@@ -291,9 +291,9 @@ public abstract class HstQueryBuilder {
      * @return this {@link HstQueryBuilder} instance
      */
     public HstQueryBuilder sortByAscending(final String ... fieldNames) {
-        if (fieldNames != null) {
+        if (fieldNames != null && fieldNames.length != 0) {
             for (String fieldName : fieldNames) {
-                if (!fieldName.isEmpty()) {
+                if (fieldName != null && !fieldName.isEmpty()) {
                     OrderByConstruct orderBy = new OrderByConstruct(fieldName, true);
                     addOrderByConstruct(orderBy);
                 }
@@ -309,9 +309,9 @@ public abstract class HstQueryBuilder {
      * @return this {@link HstQueryBuilder} instance
      */
     public HstQueryBuilder sortByAscendingCaseInsensitive(final String ... fieldNames) {
-        if (fieldNames != null) {
+        if (fieldNames != null && fieldNames.length != 0) {
             for (String fieldName : fieldNames) {
-                if (!fieldName.isEmpty()) {
+                if (fieldName != null && !fieldName.isEmpty()) {
                     OrderByConstruct orderBy = new OrderByConstruct(fieldName, true).caseSensitive(false);
                     addOrderByConstruct(orderBy);
                 }
@@ -328,9 +328,9 @@ public abstract class HstQueryBuilder {
      * @return this {@link HstQueryBuilder} instance
      */
     public HstQueryBuilder sortByDescending(final String ... fieldNames) {
-        if (fieldNames != null) {
+        if (fieldNames != null && fieldNames.length != 0) {
             for (String fieldName : fieldNames) {
-                if (!fieldName.isEmpty()) {
+                if (fieldName != null && !fieldName.isEmpty()) {
                     OrderByConstruct orderBy = new OrderByConstruct(fieldName, false);
                     addOrderByConstruct(orderBy);
                 }
@@ -346,9 +346,9 @@ public abstract class HstQueryBuilder {
      * @return this {@link HstQueryBuilder} instance
      */
     public HstQueryBuilder sortByDescendingCaseInsensitive(final String ... fieldNames) {
-        if (fieldNames != null) {
+        if (fieldNames != null && fieldNames.length != 0) {
             for (String fieldName : fieldNames) {
-                if (!fieldName.isEmpty()) {
+                if (fieldName != null && !fieldName.isEmpty()) {
                     OrderByConstruct orderBy = new OrderByConstruct(fieldName, false).caseSensitive(false);
                     addOrderByConstruct(orderBy);
                 }

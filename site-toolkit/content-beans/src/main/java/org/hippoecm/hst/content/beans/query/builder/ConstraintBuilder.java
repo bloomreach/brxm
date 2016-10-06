@@ -26,7 +26,6 @@ import org.hippoecm.repository.util.DateTools;
 
 public abstract class ConstraintBuilder {
 
-    private HstQueryBuilder queryBuilder;
     private boolean negated;
 
     protected ConstraintBuilder() {
