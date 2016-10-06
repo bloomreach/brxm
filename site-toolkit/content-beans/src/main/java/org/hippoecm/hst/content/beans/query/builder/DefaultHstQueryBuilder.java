@@ -139,8 +139,8 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
 
 
     private String[] getOfTypes(final HstQueryManager queryManager) {
-        Set<String> ofTypes = combine(queryManager, ofTypes(), ofTypeClazzes());
-        return ofTypes.toArray(new String[ofTypes.size()]);
+        Set<String> types = combine(queryManager, ofTypes(), ofTypeClazzes());
+        return types.toArray(new String[types.size()]);
     }
 
     private Set<String> combine(final HstQueryManager queryManager, final List<String> types,
@@ -148,7 +148,9 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
         Set<String> combinedSet = new LinkedHashSet<>();
         if (types != null) {
             for (String type : types) {
-                combinedSet.add(type);
+                if (type != null) {
+                    combinedSet.add(type);
+                }
             }
         }
         if (typeClazzes != null && !typeClazzes.isEmpty()) {

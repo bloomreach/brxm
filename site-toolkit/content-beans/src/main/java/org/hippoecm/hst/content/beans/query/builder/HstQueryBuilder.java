@@ -101,13 +101,15 @@ public abstract class HstQueryBuilder {
      *                      If {@code ofTypeClazzes} is {@code null} the parameter is ignored
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder ofTypes(final Class<? extends HippoBean> ... ofTypeClazzes) {
+    public HstQueryBuilder ofTypes(final Class<? extends HippoBean>... ofTypeClazzes) {
         if (ofTypeClazzes != null) {
-            if (this.ofTypeClazzes == null) {
-                this.ofTypeClazzes = new ArrayList<>();
-            }
             for (Class<? extends HippoBean> ofTypeClazz : ofTypeClazzes) {
-                this.ofTypeClazzes.add(ofTypeClazz);
+                if (ofTypeClazz != null) {
+                    if (this.ofTypeClazzes == null) {
+                        this.ofTypeClazzes = new ArrayList<>();
+                    }
+                    this.ofTypeClazzes.add(ofTypeClazz);
+                }
             }
         }
         return this;
@@ -120,12 +122,13 @@ public abstract class HstQueryBuilder {
      */
     public HstQueryBuilder ofTypes(final String ... ofTypeClazzes) {
         if (ofTypeClazzes != null) {
-            if (this.ofTypes == null) {
-                this.ofTypes = new ArrayList<>();
-            }
-
             for (String ofTypeClazz : ofTypeClazzes) {
-                this.ofTypes.add(ofTypeClazz);
+                if (ofTypeClazz != null) {
+                    if (this.ofTypes == null) {
+                        this.ofTypes = new ArrayList<>();
+                    }
+                    this.ofTypes.add(ofTypeClazz);
+                }
             }
         }
         return this;
@@ -139,12 +142,13 @@ public abstract class HstQueryBuilder {
      */
     public HstQueryBuilder ofPrimaryTypes(String ... primaryNodeTypes) {
         if (primaryNodeTypes != null) {
-            if (this.primaryNodeTypes == null) {
-                this.primaryNodeTypes = new ArrayList<>();
-            }
-
             for (String primaryNodeType : primaryNodeTypes) {
-                this.primaryNodeTypes.add(primaryNodeType);
+                if (primaryNodeType != null) {
+                    if (this.primaryNodeTypes == null) {
+                        this.primaryNodeTypes = new ArrayList<>();
+                    }
+                    this.primaryNodeTypes.add(primaryNodeType);
+                }
             }
         }
 
@@ -159,11 +163,13 @@ public abstract class HstQueryBuilder {
      */
     public HstQueryBuilder ofPrimaryTypes(final Class<? extends HippoBean> ... primaryNodeTypeClazzes) {
         if (primaryNodeTypeClazzes != null) {
-            if (this.primaryNodeTypeClazzes == null) {
-                this.primaryNodeTypeClazzes = new ArrayList<>();
-            }
             for (Class<? extends HippoBean> primaryNodeTypeClazz : primaryNodeTypeClazzes) {
-                this.primaryNodeTypeClazzes.add(primaryNodeTypeClazz);
+                if (primaryNodeTypeClazz != null) {
+                    if (this.primaryNodeTypeClazzes == null) {
+                        this.primaryNodeTypeClazzes = new ArrayList<>();
+                    }
+                    this.primaryNodeTypeClazzes.add(primaryNodeTypeClazz);
+                }
             }
         }
         return this;

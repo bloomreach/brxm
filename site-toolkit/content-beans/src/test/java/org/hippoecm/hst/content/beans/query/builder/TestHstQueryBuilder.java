@@ -1226,4 +1226,92 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
             fail("one null scope should be allowed");
         }
     }
+
+    @Test
+    public void null_type_is_ignored() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+
+        HstQuery fluentQuery = create(baseContentBean)
+                .ofTypes((Class)null)
+                .build();
+
+        assertHstQueriesEquals(hstQuery, fluentQuery);
+
+        HstQuery fluentQuery2 = create(baseContentBean)
+                .ofTypes((Class)null, null)
+                .build();
+
+        HstQuery fluentQuery3 = create(baseContentBean)
+                .ofTypes((String)null)
+                .build();
+
+        HstQuery fluentQuery4 = create(baseContentBean)
+                .ofTypes((String)null, null)
+                .build();
+        assertHstQueriesEquals(hstQuery, fluentQuery2);
+        assertHstQueriesEquals(hstQuery, fluentQuery3);
+        assertHstQueriesEquals(hstQuery, fluentQuery4);
+
+    }
+
+    @Test
+    public void null_type_and_non_null_is_allowed() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean.getNode(), "unittestproject:textpage", true);
+
+        HstQuery fluentQuery = create(baseContentBean)
+                .ofTypes(null, "unittestproject:textpage")
+                .build();
+
+        HstQuery fluentQuery2 = create(baseContentBean)
+                .ofTypes(null, PersistableTextPage.class)
+                .build();
+
+        assertHstQueriesEquals(hstQuery, fluentQuery);
+        assertHstQueriesEquals(hstQuery, fluentQuery2);
+    }
+
+    @Test
+    public void null_primary_type_is_ignored() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+
+        HstQuery fluentQuery = create(baseContentBean)
+                .ofPrimaryTypes((Class)null)
+                .build();
+
+        assertHstQueriesEquals(hstQuery, fluentQuery);
+
+        HstQuery fluentQuery2 = create(baseContentBean)
+                .ofPrimaryTypes((Class)null, null)
+                .build();
+
+        HstQuery fluentQuery3 = create(baseContentBean)
+                .ofPrimaryTypes((String)null)
+                .build();
+
+        HstQuery fluentQuery4 = create(baseContentBean)
+                .ofPrimaryTypes((String)null, null)
+                .build();
+        assertHstQueriesEquals(hstQuery, fluentQuery2);
+        assertHstQueriesEquals(hstQuery, fluentQuery3);
+        assertHstQueriesEquals(hstQuery, fluentQuery4);
+
+
+
+    }
+
+    @Test
+    public void null_primary_type_and_non_null_is_allowed() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean, "unittestproject:textpage");
+
+        HstQuery fluentQuery = create(baseContentBean)
+                .ofPrimaryTypes(null, "unittestproject:textpage")
+                .build();
+
+        HstQuery fluentQuery2 = create(baseContentBean)
+                .ofPrimaryTypes(null, PersistableTextPage.class)
+                .build();
+
+        assertHstQueriesEquals(hstQuery, fluentQuery);
+        assertHstQueriesEquals(hstQuery, fluentQuery2);
+    }
 }
