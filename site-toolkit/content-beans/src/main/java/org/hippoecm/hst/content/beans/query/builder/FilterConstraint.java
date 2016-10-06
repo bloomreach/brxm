@@ -44,15 +44,17 @@ class FilterConstraint {
     private boolean noop;
 
     public FilterConstraint(Operator operator) {
-        this(operator, null);
+        this(operator, null, false);
     }
 
     public FilterConstraint(final Operator operator, final Object value) {
-        if (value == null) {
-            noop = true;
-        }
+        this(operator, value, value == null);
+    }
+
+    private FilterConstraint(final Operator operator, final Object value, final boolean noop) {
         this.operator = operator;
         this.value = value;
+        this.noop = noop;
     }
 
     public Operator operator() {
