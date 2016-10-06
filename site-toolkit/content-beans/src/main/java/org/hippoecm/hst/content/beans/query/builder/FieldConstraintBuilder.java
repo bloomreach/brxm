@@ -263,6 +263,12 @@ class FieldConstraintBuilder extends ConstraintBuilderAdapter {
 
     @Override
     public ConstraintBuilder between(final Object value1, final Object value2) {
+        if (value1 == null || value2 == null) {
+            // trigger noop constraint
+            FilterConstraint constraint = new FilterConstraint(Operator.BETWEEN, null);
+            addFilterConstraint(constraint);
+            return this;
+        }
         FilterConstraint constraint = new FilterConstraint(Operator.BETWEEN, new Object[]{value1, value2});
         addFilterConstraint(constraint);
         return this;
@@ -270,6 +276,12 @@ class FieldConstraintBuilder extends ConstraintBuilderAdapter {
 
     @Override
     public ConstraintBuilder between(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
+        if (start == null || end == null) {
+            // trigger noop constraint
+            FilterConstraint constraint = new FilterConstraint(Operator.BETWEEN, null).dateResolution(dateResolution);
+            addFilterConstraint(constraint);
+            return this;
+        }
         FilterConstraint constraint = new FilterConstraint(Operator.BETWEEN, new Object[]{start, end}).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
@@ -277,6 +289,12 @@ class FieldConstraintBuilder extends ConstraintBuilderAdapter {
 
     @Override
     public ConstraintBuilder notBetween(final Object value1, final Object value2) {
+        if (value1 == null || value2 == null) {
+            // trigger noop constraint
+            FilterConstraint constraint = new FilterConstraint(Operator.NOT_BETWEEN, null);
+            addFilterConstraint(constraint);
+            return this;
+        }
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_BETWEEN, new Object[]{value1, value2});
         addFilterConstraint(constraint);
         return this;
@@ -284,6 +302,12 @@ class FieldConstraintBuilder extends ConstraintBuilderAdapter {
 
     @Override
     public ConstraintBuilder notBetween(final Calendar start, final Calendar end, final DateTools.Resolution dateResolution) {
+        if (start == null || end == null) {
+            // trigger noop constraint
+            FilterConstraint constraint = new FilterConstraint(Operator.NOT_BETWEEN, null).dateResolution(dateResolution);
+            addFilterConstraint(constraint);
+            return this;
+        }
         FilterConstraint constraint = new FilterConstraint(Operator.NOT_BETWEEN, new Object[]{start, end}).dateResolution(dateResolution);
         addFilterConstraint(constraint);
         return this;
