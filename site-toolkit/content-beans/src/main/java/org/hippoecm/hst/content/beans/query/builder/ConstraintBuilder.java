@@ -42,9 +42,25 @@ public abstract class ConstraintBuilder {
      * <p>
      * For the constraint {@link ConstraintBuilder#contains(String)} and {@link ConstraintBuilder#notContains(String)} the
      * {@code fieldName} can next to <em>myhippo:title</em> or <em>address/myhippo:street</em> also be equal to
-     * "<em>.</em>" meaning a (not)contains filter node scope level is done
+     * "<em>.</em>" meaning a text constraint on node scope (instead of property) level is done
      * </p>
-     * @param fieldName the {@code fieldName} this filter operates on
+     * <p>
+     *     When you do not invoke a explicit {@link ConstraintBuilder} method, for example {@link ConstraintBuilder#equalTo(Object)},
+     *     but just use something like {@code constraint("myproject:title")} in the {@link HstQueryBuilder#where(ConstraintBuilder)},
+     *     the {@link ConstraintBuilder} falls back to a property must exist constraint, thus {@link ConstraintBuilder#exists()}.
+     * </p>
+     * <p>
+     *     If you do invoke an explicit {@link ConstraintBuilder} method, for example {@link ConstraintBuilder#equalTo(Object)},
+     *     but the argument is {@code null}, the effect is that this {@link ConstraintBuilder} in {@link HstQueryBuilder#where(ConstraintBuilder)}
+     *     is ignored. This way, when using the fluent api, you can skip null checks. For example
+     *     <pre>
+     *         .where(
+                    constraint(".").contains(query)
+               )
+     *     </pre>
+     *     will result in the constraint to be skipped if the {@code query} turns out to be {@code null}.
+     * </p>
+     * @param fieldName the {@code fieldName} this filter operates on, not allowed to be {@code null}
      * @return a new FilterBuilder for {@code fieldName}
      */
     public static ConstraintBuilder constraint(String fieldName) {
@@ -85,7 +101,6 @@ public abstract class ConstraintBuilder {
     /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is equal to <code>value</code>
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @throws FilterException when <code>fieldAttributeName</code> or <code>value</code> is of invalid type/value or is <code>null</code>
      */
     public abstract ConstraintBuilder equalTo(Object value);
 
@@ -116,7 +131,6 @@ public abstract class ConstraintBuilder {
     /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is NOT equal to <code>value</code>
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
     public abstract ConstraintBuilder notEqualTo(Object value);
 
@@ -150,7 +164,6 @@ public abstract class ConstraintBuilder {
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
     public abstract ConstraintBuilder greaterOrEqualThan(Object value);
 
@@ -177,7 +190,6 @@ public abstract class ConstraintBuilder {
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @throws FilterException when <code>fieldAttributeName</code> or <code>value</code> is of invalid type/value or is <code>null</code>
      */
     public abstract ConstraintBuilder greaterThan(Object value);
 
@@ -204,7 +216,6 @@ public abstract class ConstraintBuilder {
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
     public abstract ConstraintBuilder lessOrEqualThan(Object value);
 
@@ -231,7 +242,6 @@ public abstract class ConstraintBuilder {
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
     public abstract ConstraintBuilder lessThan(Object value);
 
@@ -253,7 +263,6 @@ public abstract class ConstraintBuilder {
      * for example <code><b>@myproject:title</b></code>, the free text search is done on this property only. You can also point to properties of
      * child nodes, for example a scope like <code><b>myproject:paragraph/@myproject:header</b></code>
      * @param fullTextSearch the text to search on
-     * @throws FilterException when <code>scope</code> or <code>fullTextSearch</code> is <code>null</code>
      */
     public abstract ConstraintBuilder contains(String fullTextSearch);
 
@@ -261,7 +270,6 @@ public abstract class ConstraintBuilder {
      * The negated version of {@link #contains(String)}
      * @see #contains(String)
      * @param fullTextSearch the text to search on
-     * @throws FilterException when <code>scope</code> or <code>fullTextSearch</code> is <code>null</code>
      */
     public abstract ConstraintBuilder notContains(String fullTextSearch);
 
@@ -277,7 +285,6 @@ public abstract class ConstraintBuilder {
      * </p>
      * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @throws FilterException when <code>fieldAttributeName</code>, <code>value1</code> or <code>value2</code> are invalid types/values or one of them is <code>null</code>
      */
     public abstract ConstraintBuilder between(Object value1, Object value2);
 
@@ -293,7 +300,6 @@ public abstract class ConstraintBuilder {
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
-     * @throws FilterException
      */
     public abstract ConstraintBuilder between(Calendar start, Calendar end, DateTools.Resolution dateResolution);
 
@@ -310,7 +316,6 @@ public abstract class ConstraintBuilder {
      * </p>
      * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @throws FilterException when <code>fieldAttributeName</code>, <code>value1</code> or <code>value2</code> are invalid types/values or one of them is <code>null</code>
      */
     public abstract ConstraintBuilder notBetween(Object value1, Object value2);
 
@@ -348,7 +353,6 @@ public abstract class ConstraintBuilder {
      *     as they cannot be efficiently done in Lucene.
      * </p>
      * @param value object that must be of type String
-     * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
     public abstract ConstraintBuilder like(String value);
 
@@ -360,13 +364,11 @@ public abstract class ConstraintBuilder {
 
     /**
      * Add a constraint that the result <b>does</b> have the property <code>fieldAttributeName</code>, regardless its value
-     * @throws FilterException when <code>fieldAttributeName</code> is <code>null</code>
      */
     public abstract ConstraintBuilder exists();
 
     /**
      * Add a constraint that the result <b>does NOT</b> have the property <code>fieldAttributeName</code>
-     * @throws FilterException when <code>fieldAttributeName</code> is <code>null</code>
      */
     public abstract ConstraintBuilder notExists();
 

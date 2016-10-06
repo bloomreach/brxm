@@ -31,6 +31,7 @@ import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
+import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 class DefaultHstQueryBuilder extends HstQueryBuilder {
@@ -80,7 +81,10 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
             }
 
             if (where() != null) {
-                hstQuery.setFilter(where().build(queryManager.getSession(), queryManager.getDefaultResolution()));
+                Filter filter = where().build(queryManager.getSession(), queryManager.getDefaultResolution());
+                if (filter != null) {
+                    hstQuery.setFilter(filter);
+                }
             }
 
             if (orderByConstructs() != null) {

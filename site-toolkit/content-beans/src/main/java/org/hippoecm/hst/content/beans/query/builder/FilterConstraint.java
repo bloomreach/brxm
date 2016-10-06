@@ -41,12 +41,16 @@ class FilterConstraint {
     private Object value;
     private DateTools.Resolution dateResolution;
     private boolean caseSensitive = true;
+    private boolean noop;
 
     public FilterConstraint(Operator operator) {
         this(operator, null);
     }
 
     public FilterConstraint(final Operator operator, final Object value) {
+        if (value == null) {
+            noop = true;
+        }
         this.operator = operator;
         this.value = value;
     }
@@ -75,5 +79,9 @@ class FilterConstraint {
 
     public boolean caseSensitive() {
         return caseSensitive;
+    }
+
+    public boolean isNoop() {
+        return noop;
     }
 }

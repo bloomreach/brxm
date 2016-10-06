@@ -35,15 +35,20 @@ class OrConstraintBuilder extends ConstraintBuilderAdapter {
     protected Filter doBuild(final Session session, final DateTools.Resolution defaultResolution) throws FilterException {
         Filter filter = new FilterImpl(session, defaultResolution);
 
+        boolean realConstraintFound = false;
+
         if (constraintBuilders != null) {
             for (ConstraintBuilder constraintBuilder : constraintBuilders) {
                 final Filter nestedFilter = constraintBuilder.build(session, defaultResolution);
                 if (nestedFilter != null) {
+                    realConstraintFound = true;
                     filter.addOrFilter(nestedFilter);
                 }
             }
         }
-
+        if (!realConstraintFound) {
+            return null;
+        }
         return filter;
     }
 }

@@ -35,6 +35,7 @@ import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
+import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -612,7 +613,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
         HstQuery hstQueryInFluent4 = HstQueryBuilder.create(baseContentBean)
                 .sortBy("ascending", "myhippoproject:title")
-                .sortBy("foo","myhippoproject:foo")
+                .sortBy("foo", "myhippoproject:foo")
                 .build();
 
         assertHstQueriesEquals(hstQueryInFluent4, hstQueryInFluent3);
@@ -620,7 +621,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         // correct descending
         HstQuery hstQueryInFluent5 = HstQueryBuilder.create(baseContentBean)
                 .sortBy("descending", "myhippoproject:title")
-                .sortBy("foo","myhippoproject:foo")
+                .sortBy("foo", "myhippoproject:foo")
                 .build();
 
         assertFalse(hstQueryInFluent.getQueryAsString(true).equals(hstQueryInFluent5.getQueryAsString(true)));
@@ -671,7 +672,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
         HstQuery hstQueryInFluent4 = HstQueryBuilder.create(baseContentBean)
                 .sortByCaseInsensitive("ascending", "myhippoproject:title")
-                .sortByCaseInsensitive("foo","myhippoproject:foo")
+                .sortByCaseInsensitive("foo", "myhippoproject:foo")
                 .build();
 
         assertHstQueriesEquals(hstQueryInFluent4, hstQueryInFluent3);
@@ -679,7 +680,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         // correct descending
         HstQuery hstQueryInFluent5 = HstQueryBuilder.create(baseContentBean)
                 .sortByCaseInsensitive("descending", "myhippoproject:title")
-                .sortByCaseInsensitive("foo","myhippoproject:foo")
+                .sortByCaseInsensitive("foo", "myhippoproject:foo")
                 .build();
 
         assertFalse(hstQueryInFluent.getQueryAsString(true).equals(hstQueryInFluent5.getQueryAsString(true)));
@@ -737,8 +738,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         HstQuery hstQueryInFluent = HstQueryBuilder.create(baseContentBean)
                 .sortByAscending(null)
                 .sortByDescending(null)
-                .sortByAscending("","")
-                .sortByDescending("","")
+                .sortByAscending("", "")
+                .sortByDescending("", "")
                 .build();
 
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
@@ -879,8 +880,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 .where(
                         constraint("myhippoproject:customid").equalTo("foo")
                 ).where(
-                        constraint("myhippoproject:customid").equalTo("bar")
-                )
+                constraint("myhippoproject:customid").equalTo("bar")
+        )
                 .build();
     }
 
@@ -975,7 +976,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
         HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
                 .where(constraint("myhippoproject:customid").equalTo("123"))
-                .sortByAscendingCaseInsensitive("myhippoproject:title" , "myhippoproject:date")
+                .sortByAscendingCaseInsensitive("myhippoproject:title", "myhippoproject:date")
                 .offset(10).limit(5)
                 .build();
         assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
@@ -1035,6 +1036,48 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                 .offset(10).limit(5)
                 .build();
         assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
+    }
 
+    @Test
+    public void constraint_with_constraintMethod_invoked_with_null_value_makes_the_constraint_being_skipped() throws Exception {
+
+        HstQuery hstQueryInFluent1 = HstQueryBuilder.create(baseContentBean)
+                .build();
+
+
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .where(constraint(".").contains(null))
+                .build();
+
+        HstQuery hstQueryInFluent3 = HstQueryBuilder.create(baseContentBean)
+                .where(constraint("myproject:title").contains(null))
+                .build();
+
+        HstQuery hstQueryInFluent4 = HstQueryBuilder.create(baseContentBean)
+                .where(constraint("myproject:title").equalTo(null))
+                .build();
+
+        assertHstQueriesEquals(hstQueryInFluent1, hstQueryInFluent2);
+        assertHstQueriesEquals(hstQueryInFluent1, hstQueryInFluent3);
+        assertHstQueriesEquals(hstQueryInFluent1, hstQueryInFluent4);
+
+
+    }
+
+    @Test
+    public void nested_constraints_with_constraintMethod_invoked_with_null_value_makes_the_constraint_being_skipped() throws Exception {
+        HstQuery hstQueryInFluent1 = HstQueryBuilder.create(baseContentBean)
+                .build();
+
+        HstQuery hstQueryInFluent2 = HstQueryBuilder.create(baseContentBean)
+                .where(
+                        and(
+                                constraint(".").contains(null),
+                                constraint("myproject:title").equalTo(null)
+                        )
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQueryInFluent1, hstQueryInFluent2);
     }
 }

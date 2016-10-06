@@ -42,7 +42,7 @@ class FieldConstraintBuilder extends ConstraintBuilderAdapter {
     protected Filter doBuild(final Session session, final DateTools.Resolution defaultResolution) throws FilterException {
 
         final Filter filter = new FilterImpl(session, defaultResolution);
-        if (filterConstraints == null) {
+        if (filterConstraints == null || filterConstraints.size() == 0) {
             // we default back to a that fieldName must exists
             filter.addNotNull(fieldName);
             return filter;
@@ -51,7 +51,14 @@ class FieldConstraintBuilder extends ConstraintBuilderAdapter {
         Operator operator;
         Object value;
 
+        boolean realConstraintFound = false;
+
         for (FilterConstraint constraint : filterConstraints) {
+            if (constraint.isNoop()) {
+                // an 'null' constraint was set, for example  .where(constraint(".").contains(null))
+                continue;
+            }
+            realConstraintFound = true;
             operator = constraint.operator();
             value = constraint.value();
 
@@ -132,6 +139,9 @@ class FieldConstraintBuilder extends ConstraintBuilderAdapter {
             }
         }
 
+        if (!realConstraintFound) {
+           return null;
+        }
         return filter;
     }
 
