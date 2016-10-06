@@ -26,7 +26,6 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
@@ -41,13 +40,13 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
     }
 
     @Override
-    public HstQuery build(final HstQueryManager queryManager) throws QueryException {
+    public HstQuery build(final HstQueryManager queryManager) throws RuntimeQueryException {
         final HstQuery hstQuery;
 
         List<Node> scopes = scopes();
 
         if (scopes == null || scopes.size() == 0) {
-            throw new QueryException("Empty scopes.");
+            throw new RuntimeQueryException(new QueryException("Empty scopes."));
         }
 
         final String[] primaryNodeTypes = getPrimaryNodeTypes(queryManager);
@@ -55,64 +54,68 @@ class DefaultHstQueryBuilder extends HstQueryBuilder {
         final String[] ofTypes = getOfTypes(queryManager);
 
 
-        if (primaryNodeTypes.length > 0) {
-            if (ofTypes.length > 0) {
-                throw new RuntimeQueryException(new QueryException("Unsupported to combine #ofTypes and #ofPrimaryTypes"));
-            } else {
-                hstQuery = queryManager.createQuery((Node)null, false, primaryNodeTypes);
-            }
-        } else if (ofTypes.length > 0) {
-            if (ofTypes.length == 1) {
-                hstQuery = queryManager.createQuery(null, ofTypes[0], true);
-            } else {
-                hstQuery = queryManager.createQuery((Node)null, false, expand(ofTypes, queryManager.getSession()));
-            }
-        } else {
-            hstQuery = queryManager.createQuery((Node)null);
-        }
-
-        hstQuery.addScopes(scopes.toArray(new Node[scopes.size()]));
-
-        final Node[] excludeScopes = getExcludeScopes();
-
-        if (excludeScopes != null && excludeScopes.length > 0) {
-            hstQuery.excludeScopes(excludeScopes);
-        }
-
-        if (where() != null) {
-            hstQuery.setFilter(where().build(queryManager.getSession(), queryManager.getDefaultResolution()));
-        }
-
-        if (orderByConstructs() != null) {
-            for (OrderByConstruct orderBy : orderByConstructs()) {
-                if (orderBy.ascending()) {
-                    if (orderBy.caseSensitive()) {
-                        hstQuery.addOrderByAscending(orderBy.fieldName());
-                    } else {
-                        hstQuery.addOrderByAscendingCaseInsensitive(orderBy.fieldName());
-                    }
+        try {
+            if (primaryNodeTypes.length > 0) {
+                if (ofTypes.length > 0) {
+                    throw new RuntimeQueryException(new QueryException("Unsupported to combine #ofTypes and #ofPrimaryTypes"));
                 } else {
-                    if (orderBy.caseSensitive()) {
-                        hstQuery.addOrderByDescending(orderBy.fieldName());
+                    hstQuery = queryManager.createQuery((Node)null, false, primaryNodeTypes);
+                }
+            } else if (ofTypes.length > 0) {
+                if (ofTypes.length == 1) {
+                    hstQuery = queryManager.createQuery(null, ofTypes[0], true);
+                } else {
+                    hstQuery = queryManager.createQuery((Node)null, false, expand(ofTypes, queryManager.getSession()));
+                }
+            } else {
+                hstQuery = queryManager.createQuery((Node)null);
+            }
+
+            hstQuery.addScopes(scopes.toArray(new Node[scopes.size()]));
+
+            final Node[] excludeScopes = getExcludeScopes();
+
+            if (excludeScopes != null && excludeScopes.length > 0) {
+                hstQuery.excludeScopes(excludeScopes);
+            }
+
+            if (where() != null) {
+                hstQuery.setFilter(where().build(queryManager.getSession(), queryManager.getDefaultResolution()));
+            }
+
+            if (orderByConstructs() != null) {
+                for (OrderByConstruct orderBy : orderByConstructs()) {
+                    if (orderBy.ascending()) {
+                        if (orderBy.caseSensitive()) {
+                            hstQuery.addOrderByAscending(orderBy.fieldName());
+                        } else {
+                            hstQuery.addOrderByAscendingCaseInsensitive(orderBy.fieldName());
+                        }
                     } else {
-                        hstQuery.addOrderByDescendingCaseInsensitive(orderBy.fieldName());
+                        if (orderBy.caseSensitive()) {
+                            hstQuery.addOrderByDescending(orderBy.fieldName());
+                        } else {
+                            hstQuery.addOrderByDescendingCaseInsensitive(orderBy.fieldName());
+                        }
                     }
                 }
             }
-        }
 
-        if (offset() != null) {
-            hstQuery.setOffset(offset());
-        }
+            if (offset() != null) {
+                hstQuery.setOffset(offset());
+            }
 
-        if (limit() != null) {
-            hstQuery.setLimit(limit());
-        }
+            if (limit() != null) {
+                hstQuery.setLimit(limit());
+            }
 
-        return hstQuery;
+            return hstQuery;
+        } catch (QueryException e) {
+            throw new RuntimeQueryException(e);
+        }
     }
 
-    private Node[] getExcludeScopes() throws QueryException {
+    private Node[] getExcludeScopes() {
         Node[] excludeScopes = null;
 
         List<Node> excludeScopesList = excludeScopes();

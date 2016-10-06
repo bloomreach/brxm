@@ -466,7 +466,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
 
-    @Test
+    @Test(expected = RuntimeQueryException.class)
     public void simple_unallowed_object_property_filter() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         Filter filter = hstQuery.createFilter();
@@ -476,16 +476,11 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         } catch (FilterException e) {
 
         }
-        try {
-            HstQueryBuilder.create(baseContentBean)
-                    .where(
-                            constraint("myhippoproject:customid").equalTo(this)
-                    )
-                    .build();
-            fail("FilterException expected ");
-        } catch (FilterException e) {
-
-        }
+        HstQueryBuilder.create(baseContentBean)
+                .where(
+                        constraint("myhippoproject:customid").equalTo(this)
+                )
+                .build();
     }
 
     @Test

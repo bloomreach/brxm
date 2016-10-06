@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
+import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -69,15 +69,26 @@ public abstract class HstQueryBuilder {
     protected HstQueryBuilder() {
     }
 
-    public HstQuery build() throws QueryException, RepositoryException {
+    /**
+     * @return The {@code HstQuery} for this {@code HstQueryBuilder} where the backing {@code HstQueryManager} is taken
+     *         from {@link HstRequestContext#getQueryManager()}
+     * @throws RuntimeQueryException in case the #build results in a {@link QueryException} or {@link FilterException}
+     */
+    public HstQuery build() throws RuntimeQueryException {
         final HstRequestContext requestContext = RequestContextProvider.get();
         return build(requestContext.getQueryManager());
     }
 
-    abstract public HstQuery build(final HstQueryManager queryManager) throws QueryException;
+    /**
+     * @return The {@code HstQuery} for this {@code HstQueryBuilder} where the backing {@code HstQueryManager} is provided
+     *         by the argument {@code queryManager}
+     * @throws RuntimeQueryException in case the #build results in a {@link QueryException} or {@link FilterException}
+     */
+    abstract public HstQuery build(final HstQueryManager queryManager) throws RuntimeQueryException;
 
     /**
-     * @param ofTypeClazzes the result most return documents only of {@code types} where subtypes are included
+     * @param ofTypeClazzes the result most return documents only of {@code types} where subtypes are included.
+     *                      if {@code ofTypeClazzes} is {@code null} the parameter is ignored
      * @return this {@link HstQueryBuilder} instance
      */
     public HstQueryBuilder ofTypes(final Class<? extends HippoBean> ... ofTypeClazzes) {
@@ -94,6 +105,7 @@ public abstract class HstQueryBuilder {
 
     /**
      * @param ofTypeClazzes the result most return documents only of {@code types} where subtypes are included
+     *                      if {@code ofTypeClazzes} is {@code null} the parameter is ignored
      * @return this {@link HstQueryBuilder} instance
      */
     public HstQueryBuilder ofTypes(final String ... ofTypeClazzes) {
@@ -111,7 +123,8 @@ public abstract class HstQueryBuilder {
 
     /**
      * @param primaryNodeTypes the result most return documents only of {@code primaryNodeTypeNames} where subtypes
-     *                             are <strong>not</strong> included
+     *                             are <strong>not</strong> included. if {@code primaryNodeTypes} is {@code null}
+     *                             the parameter is ignored
      * @return this {@link HstQueryBuilder} instance
      */
     public HstQueryBuilder ofPrimaryTypes(String ... primaryNodeTypes) {
@@ -130,7 +143,8 @@ public abstract class HstQueryBuilder {
 
     /**
      * @param primaryNodeTypeClazzes the result most return documents only of {@code primaryNodeTypeNames} where subtypes
-     *                             are <strong>not</strong> included
+     *                             are <strong>not</strong> included. if {@code primaryNodeTypes} is {@code null}
+     *                             the parameter is ignored
      * @return this {@link HstQueryBuilder} instance
      */
     public HstQueryBuilder ofPrimaryTypes(final Class<? extends HippoBean> ... primaryNodeTypeClazzes) {
