@@ -32,17 +32,27 @@ import org.hippoecm.repository.util.DateTools;
 
 public abstract class HstQueryBuilder {
 
-    /*
-     * Static methods to create a query builder or filter builder.
+    /**
+     * Static method to create an initial {@link HstQueryBuilder} instance for {@code scopeBeans}.
+     * @param scopeBeans Array of the scopes for the {@link HstQuery} returned by {@link HstQueryBuilder#build()}. Note
+     *                   at least 1 non-null-value <strong>must</strong> be supplied
+     * @return {@link HstQueryBuilder} instance
+     * @throws RuntimeQueryException if there is not at least 1 non-null-value in {@code scopeBeans}
      */
-
-    public static HstQueryBuilder create(final HippoBean ... scopeBeans) {
+    public static HstQueryBuilder create(final HippoBean ... scopeBeans) throws RuntimeQueryException {
         DefaultHstQueryBuilder defaultHstQueryBuilder = new DefaultHstQueryBuilder();
         defaultHstQueryBuilder.scopes(scopeBeans);
         return defaultHstQueryBuilder;
     }
 
-    public static HstQueryBuilder create(final Node ... scopeNodes) {
+    /**
+     * Static method to create an initial {@link HstQueryBuilder} instance for {@code scopeNodes}.
+     * @param scopeNodes Array of the scopes for the {@link HstQuery} returned by {@link HstQueryBuilder#build()}. Note
+     *                   at least 1 non-null-value <strong>must</strong> be supplied
+     * @return {@link HstQueryBuilder} instance
+     * @throws RuntimeQueryException if there is not at least 1 non-null-value in {@code scopeNodes}
+     */
+    public static HstQueryBuilder create(final Node ... scopeNodes) throws RuntimeQueryException {
         DefaultHstQueryBuilder defaultHstQueryBuilder = new DefaultHstQueryBuilder();
         defaultHstQueryBuilder.scopes(scopeNodes);
         return defaultHstQueryBuilder;
@@ -176,26 +186,41 @@ public abstract class HstQueryBuilder {
     }
 
     HstQueryBuilder scopes(final Node ... scopeNodes) {
+        boolean validScopeAdded = false;
         if (scopeNodes != null) {
             for (Node scopeNode : scopeNodes) {
+                if (scopeNode == null) {
+                    continue;
+                }
+                validScopeAdded = true;
                 scopes.add(scopeNode);
                 // in case present in 'scopes', remove it from there because now added as exclusion
                 excludeScopes.remove(scopeNode);
             }
         }
-
+        if (!validScopeAdded) {
+            throw new RuntimeQueryException(new QueryException("At least one non-null value for scope nodes must be supplied"));
+        }
         return this;
     }
 
     HstQueryBuilder scopes(final HippoBean ... scopeBeans) {
+        boolean validScopeAdded = false;
         if (scopeBeans != null) {
             for (HippoBean scopeBean : scopeBeans) {
+                if (scopeBean == null) {
+                    continue;
+                }
+                validScopeAdded = true;
                 scopes.add(scopeBean.getNode());
                 // in case present in 'scopes', remove it from there because now added as exclusion
                 excludeScopes.remove(scopeBean.getNode());
             }
         }
 
+        if (!validScopeAdded) {
+            throw new RuntimeQueryException(new QueryException("At least one non-null value for scope beans must be supplied"));
+        }
         return this;
     }
 
@@ -204,8 +229,11 @@ public abstract class HstQueryBuilder {
     }
 
     public HstQueryBuilder excludeScopes(final Node ... excludeScopeNodes) {
-        if (excludeScopeNodes != null) {
+        if (excludeScopeNodes != null && excludeScopeNodes.length != 0) {
             for (Node excludeScopeNode : excludeScopeNodes) {
+                if (excludeScopeNode == null) {
+                    continue;
+                }
                 excludeScopes.add(excludeScopeNode);
                 // in case present in 'scopes', remove it from there because now added as exclusion
                 scopes.remove(excludeScopeNode);
@@ -216,8 +244,11 @@ public abstract class HstQueryBuilder {
     }
 
     public HstQueryBuilder excludeScopes(final HippoBean ... excludeScopeBeans) {
-        if (excludeScopeBeans != null) {
+        if (excludeScopeBeans != null && excludeScopeBeans.length != 0) {
             for (HippoBean excludeScopeBean : excludeScopeBeans) {
+                if (excludeScopeBean == null) {
+                    continue;
+                }
                 excludeScopes.add(excludeScopeBean.getNode());
                 // in case present in 'scopes', remove it from there because now added as exclusion
                 scopes.remove(excludeScopeBean.getNode());
