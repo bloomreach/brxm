@@ -244,12 +244,54 @@ public abstract class HstQueryBuilder {
     }
 
     /**
-     * @param fieldNames the {@code fieldNames} to order on in ascending order. The {@code fieldNames} argument
+     * @param sortOrder  the order in which the results should be sorted. If it is {@code null} <strong>or</strong>
+     *                   not exactly equal to 'descending' (case insensitive), the {@code sortOrder} will be <strong>
+     *                   ascending. Only when {@code sortOrder.equalsIgnoreCase("descending")} returns {@code true},
+     *                   the sort order will be descending.
+     *                   </strong>
+     * @param fieldNames the {@code fieldNames} to order on in {@code sortOrder} sort order. The {@code fieldNames} argument
      *                   can be {@code null} in which case it is just ignored. A field name in the array that is empty is
      *                   skipped.
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder orderByAscending(final String ... fieldNames) {
+    public HstQueryBuilder sortBy(final String sortOrder, final String ... fieldNames) {
+        if (sortOrder == null) {
+            return sortByAscending(fieldNames);
+        }
+        if (sortOrder.equalsIgnoreCase("descending")) {
+            return sortByDescending(fieldNames);
+        }
+        return sortByAscending(fieldNames);
+    }
+
+    /**
+     * @param sortOrder  the order in which the results should be sorted. If it is {@code null} <strong>or</strong>
+     *                   not exactly equal to 'descending' (case insensitive), the {@code sortOrder} will be <strong>
+     *                   ascending. Only when {@code sortOrder.equalsIgnoreCase("descending")} returns {@code true},
+     *                   the sort order will be descending.
+     *                   </strong>
+     * @param fieldNames the {@code fieldNames} to order on  case insensitive in {@code sortOrder} sort order. The {@code fieldNames} argument
+     *                   can be {@code null} in which case it is just ignored. A field name in the array that is empty is
+     *                   skipped.
+     * @return this {@link HstQueryBuilder} instance
+     */
+    public HstQueryBuilder sortByCaseInsensitive(final String sortOrder, final String ... fieldNames) {
+        if (sortOrder == null) {
+            return sortByAscendingCaseInsensitive(fieldNames);
+        }
+        if (sortOrder.equalsIgnoreCase("descending")) {
+            return sortByDescendingCaseInsensitive(fieldNames);
+        }
+        return sortByAscendingCaseInsensitive(fieldNames);
+    }
+
+    /**
+     * @param fieldNames the {@code fieldNames} to order on in ascending sort order. The {@code fieldNames} argument
+     *                   can be {@code null} in which case it is just ignored. A field name in the array that is empty is
+     *                   skipped.
+     * @return this {@link HstQueryBuilder} instance
+     */
+    public HstQueryBuilder sortByAscending(final String ... fieldNames) {
         if (fieldNames != null) {
             for (String fieldName : fieldNames) {
                 if (!fieldName.isEmpty()) {
@@ -262,12 +304,12 @@ public abstract class HstQueryBuilder {
     }
 
     /**
-     * @param fieldNames the {@code fieldNames} to order on case insensitive in ascending order. The {@code fieldNames} argument
+     * @param fieldNames the {@code fieldNames} to order on case insensitive in sort order. The {@code fieldNames} argument
      *                   can be {@code null} in which case it is just ignored. A field name in the array that is empty is
      *                   skipped.
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder orderByAscendingCaseInsensitive(final String ... fieldNames) {
+    public HstQueryBuilder sortByAscendingCaseInsensitive(final String ... fieldNames) {
         if (fieldNames != null) {
             for (String fieldName : fieldNames) {
                 if (!fieldName.isEmpty()) {
@@ -281,12 +323,12 @@ public abstract class HstQueryBuilder {
 
 
     /**
-     * @param fieldNames the {@code fieldNames} to order on in descending order. The {@code fieldNames} argument
+     * @param fieldNames the {@code fieldNames} to order on in descending sort order. The {@code fieldNames} argument
      *                   can be {@code null} in which case it is just ignored. A field name in the array that is empty is
      *                   skipped.
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder orderByDescending(final String ... fieldNames) {
+    public HstQueryBuilder sortByDescending(final String ... fieldNames) {
         if (fieldNames != null) {
             for (String fieldName : fieldNames) {
                 if (!fieldName.isEmpty()) {
@@ -299,12 +341,12 @@ public abstract class HstQueryBuilder {
     }
 
     /**
-     * @param fieldNames the {@code fieldNames} to order on case insensitive in descending order. The {@code fieldNames} argument
+     * @param fieldNames the {@code fieldNames} to order on case insensitive in descending sort order. The {@code fieldNames} argument
      *                   can be {@code null} in which case it is just ignored. A field name in the array that is empty is
      *                   skipped.
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder orderByDescendingCaseInsensitive(final String ... fieldNames) {
+    public HstQueryBuilder sortByDescendingCaseInsensitive(final String ... fieldNames) {
         if (fieldNames != null) {
             for (String fieldName : fieldNames) {
                 if (!fieldName.isEmpty()) {
