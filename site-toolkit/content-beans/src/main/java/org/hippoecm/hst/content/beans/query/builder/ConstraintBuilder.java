@@ -100,7 +100,10 @@ public abstract class ConstraintBuilder {
 
     /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is equal to <code>value</code>
-     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
+     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
+     *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder equalTo(Object value);
 
@@ -118,6 +121,16 @@ public abstract class ConstraintBuilder {
      * {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
      * {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * </p>
+     * @param value The {@link Calendar} value constraint that the results should be equal to. If
+     *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @param dateResolution the resolution to use to compare dates. The higher the Resolution (year is highest) the better the performance.
+     *                   supported resolutions are
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder equalTo(Calendar value, DateTools.Resolution dateResolution);
 
@@ -125,19 +138,27 @@ public abstract class ConstraintBuilder {
      * Case insensitive testing of <code>fieldAttributeName</code> for some <code>value</code>.
      * @see #equalTo(Object) same as equalTo(Object) only now the equality is checked
      * case insensitive and the value can only be of type <code>String</code>
+     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
+     *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder equalToCaseInsensitive(String value);
 
     /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is NOT equal to <code>value</code>
-     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
+     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
+     *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder notEqualTo(Object value);
 
     /**
      * Case insensitive testing of <code>fieldAttributeName</code> for some <code>value</code>.
      * @see #notEqualTo(Object) same as notEqualTo(Object) only now the inequality is checked
-     * case insensitive and the value can only be of type <code>String</code>
+     * case insensitive and the value can only be of type {@link Calendar}
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder notEqualTo(Calendar value, DateTools.Resolution dateResolution);
 
@@ -150,6 +171,10 @@ public abstract class ConstraintBuilder {
      * </p>
      * @see #equalTo(java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
      * equalTo(java.util.Calendar, DateTools.Resolution) only now negated
+     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
+     *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder notEqualToCaseInsensitive(String value);
 
@@ -163,7 +188,10 @@ public abstract class ConstraintBuilder {
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
-     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
+     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
+     *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder greaterOrEqualThan(Object value);
 
@@ -176,6 +204,16 @@ public abstract class ConstraintBuilder {
      * </p>
      * @see #between(java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
      * between(java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no upper bound
+     * @param value {@link Calendar} object. If
+     *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @param dateResolution the resolution to use to compare dates. The higher the Resolution (year is highest) the better the performance.
+     *                   supported resolutions are
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder greaterOrEqualThan(Calendar value, DateTools.Resolution dateResolution);
 
@@ -189,7 +227,10 @@ public abstract class ConstraintBuilder {
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
-     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
+     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
+     *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder greaterThan(Object value);
 
@@ -202,6 +243,16 @@ public abstract class ConstraintBuilder {
      * </p>
      * @see #between(java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
      * between(java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no upper bound and lower bound not included
+     * @param value {@link Calendar} object. If
+     *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @param dateResolution the resolution to use to compare dates. The higher the Resolution (year is highest) the better the performance.
+     *                   supported resolutions are
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder greaterThan(Calendar value, DateTools.Resolution dateResolution);
 
@@ -215,7 +266,10 @@ public abstract class ConstraintBuilder {
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
-     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
+     * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
+     *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder lessOrEqualThan(Object value);
 
@@ -228,6 +282,7 @@ public abstract class ConstraintBuilder {
      * </p>
      * @see #between(java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
      * between(java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no lower bound
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder lessOrEqualThan(Calendar value, DateTools.Resolution dateResolution);
 
@@ -242,6 +297,7 @@ public abstract class ConstraintBuilder {
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder lessThan(Object value);
 
@@ -254,6 +310,16 @@ public abstract class ConstraintBuilder {
      * </p>
      * @see #between(java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
      * between(java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no lower bound and upper bound not included
+     * @param value {@link Calendar} object. If
+     *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @param dateResolution the resolution to use to compare dates. The higher the Resolution (year is highest) the better the performance.
+     *                   supported resolutions are
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder lessThan(Calendar value, DateTools.Resolution dateResolution);
 
@@ -262,14 +328,20 @@ public abstract class ConstraintBuilder {
      * <code>scope</code> is just a <code><b>.</b></code>, the search will be done on the entire document. When the <code>scope</code> is
      * for example <code><b>@myproject:title</b></code>, the free text search is done on this property only. You can also point to properties of
      * child nodes, for example a scope like <code><b>myproject:paragraph/@myproject:header</b></code>
-     * @param fullTextSearch the text to search on
+     * @param fullTextSearch the text to search on. If
+     *        the parameter {@code fullTextSearch} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder contains(String fullTextSearch);
 
     /**
      * The negated version of {@link #contains(String)}
      * @see #contains(String)
-     * @param fullTextSearch the text to search on
+     * @param fullTextSearch the text to search on. If
+     *        the parameter {@code fullTextSearch} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder notContains(String fullTextSearch);
 
@@ -283,8 +355,13 @@ public abstract class ConstraintBuilder {
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
-     * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
+     * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
+     *        the parameter {@code value1} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
+     *        the parameter {@code value2} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder between(Object value1, Object value2);
 
@@ -292,14 +369,19 @@ public abstract class ConstraintBuilder {
      * Adds a <b>FAST DATE RANGE</b> constraint that the Calendar value for <code>fieldAttributeName</code> is between <code>start</code> and <code>end</code> (boundaries included) BASED ON the
      * granularity <code>resolution</code>. Thus suppose the Resolution is <code>Resolution.DAY</code>, then results with the same DAY as value for <code>fieldAttributeName</code>
      * will be included. The higher the Resolution (year is highest) the better the performance!
-     * @param start the date to start from (including)
-     * @param end the date to end  (including)
+     * @param start the date to start from (including). If
+     *        the parameter {@code start} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @param end the date to end  (including). If
+     *        the parameter {@code end} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
      * @param dateResolution the resolution to use to compare dates. The higher the Resolution (year is highest) the better the performance.
      *                   supported resolutions are
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder between(Calendar start, Calendar end, DateTools.Resolution dateResolution);
 
@@ -314,8 +396,13 @@ public abstract class ConstraintBuilder {
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
-     * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
+     * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
+     *        the parameter {@code value1} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
+     *        the parameter {@code value2} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder notBetween(Object value1, Object value2);
 
@@ -327,7 +414,20 @@ public abstract class ConstraintBuilder {
      * {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
      * </p>
      * @see #between(java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
-     * addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now negated
+     *      between(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now negated
+     * @param start the date to start from (including). If
+     *        the parameter {@code start} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @param end the date to end  (including). If
+     *        the parameter {@code end} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @param dateResolution the resolution to use to compare dates. The higher the Resolution (year is highest) the better the performance.
+     *                   supported resolutions are
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#YEAR},
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
+     *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder notBetween(Calendar start, Calendar end, DateTools.Resolution dateResolution);
 
@@ -352,29 +452,39 @@ public abstract class ConstraintBuilder {
      *     <code>addLike("myproject:key","%HSTTW0-23%")</code>. Note the prefix '%'. Prefix wildcards blow up in memory and CPU
      *     as they cannot be efficiently done in Lucene.
      * </p>
-     * @param value object that must be of type String
+     * @param value object that must be of type String. If
+     *        the parameter {@code start} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder like(String value);
 
     /**
      * @see #like(String) only now inverted
+     * @param value object that must be of type String. If
+     *        the parameter {@code start} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
+     *        constraint method is invoked without {@code null} value.
+     * @return this {@link ConstraintBuilder}
      *
      */
     public abstract ConstraintBuilder notLike(String value);
 
     /**
      * Add a constraint that the result <b>does</b> have the property <code>fieldAttributeName</code>, regardless its value
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder exists();
 
     /**
      * Add a constraint that the result <b>does NOT</b> have the property <code>fieldAttributeName</code>
+     * @return this {@link ConstraintBuilder}
      */
     public abstract ConstraintBuilder notExists();
 
     /**
      * Adds the xpath <code>jcrExpression</code> as constraint. See jsr-170 spec for the xpath format
-     * @param jcrExpression
+     * @return this {@link ConstraintBuilder}
+     * @param jcrExpression the {@code jcrExpression} to include in this
      */
     public abstract ConstraintBuilder jcrExpression(String jcrExpression);
 
