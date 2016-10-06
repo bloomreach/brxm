@@ -59,6 +59,22 @@ public class DateRangeQueryConstraints {
         return null;
     }
 
+    public String getProperty() {
+        return property;
+    }
+
+    public Calendar getFromDate() {
+        return fromDate;
+    }
+
+    public Calendar getToDate() {
+        return toDate;
+    }
+
+    public DateTools.Resolution getResolution() {
+        return resolution;
+    }
+
     public void addConstraintToFilter(final Filter filter) throws FilterException {
        if (resolution == null) {
            if (fromDate == null && toDate == null) {

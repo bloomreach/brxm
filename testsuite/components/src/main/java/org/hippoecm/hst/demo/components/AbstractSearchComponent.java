@@ -21,19 +21,20 @@ import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
-import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
+import org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
-import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.util.DateRangeQueryConstraints;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.and;
+import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.constraint;
 
 public abstract class AbstractSearchComponent extends BaseHstComponent {
 
@@ -66,7 +67,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
                             final String sortBy,
                             final int pageSize,
                             final HippoBean scope,
-                            final DateRangeQueryConstraints dateRangeQueryConstraints) {
+                            final DateRangeQueryConstraints drqc) {
 
         if (scope == null) {
             log.error("Scope for search is null.");
@@ -81,41 +82,30 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
 
         request.setAttribute("page", page);
 
-        HstRequestContext ctx = request.getRequestContext();
-        HstQueryManager manager = ctx.getQueryManager();
         try {
-            
-            final HstQuery hstQuery;
-            if(nodeType == null) {
-               hstQuery = manager.createQuery(scope);
-            } else {
-               hstQuery = manager.createQuery(scope, nodeType);
-            }
 
-            hstQuery.setLimit(pageSize);
-            int offset = (page - 1) * pageSize;
-            hstQuery.setOffset(offset);
-
-            if (sortBy != null) {
-                hstQuery.addOrderByDescending(sortBy);
-            }
-            
+            String parsedQuery = null;
             if (query != null) {
                 request.setAttribute("query", StringEscapeUtils.escapeHtml(query));
-                String parsedQuery = SearchInputParsingUtils.parse(query, true);
-                Filter filter = hstQuery.createFilter();
-                filter.addContains(".", parsedQuery);
-                hstQuery.setFilter(filter);
+                parsedQuery = SearchInputParsingUtils.parse(query, true);
             }
-            if (dateRangeQueryConstraints != null) {
-                Filter filter = (Filter)hstQuery.getFilter();
-                if (filter == null) {
-                    filter = hstQuery.createFilter();
-                    hstQuery.setFilter(filter);
-                }
-                dateRangeQueryConstraints.addConstraintToFilter(filter);
-            }
-            
+
+            int offset = (page - 1) * pageSize;
+
+            HstQuery hstQuery = HstQueryBuilder.create(scope)
+                    .ofTypes(nodeType)
+                    .where(
+                            and(
+                                    constraint(".").contains(parsedQuery),
+                                    constraint(drqc.getProperty()).greaterOrEqualThan(drqc.getFromDate(), drqc.getResolution()),
+                                    constraint(drqc.getProperty()).lessOrEqualThan(drqc.getToDate(), drqc.getResolution())
+                            )
+                    )
+                    .limit(pageSize)
+                    .offset(offset)
+                    .sortByDescending(sortBy)
+                    .build();
+
             final HstQueryResult result = hstQuery.execute();
 
             request.setAttribute("result", result);
