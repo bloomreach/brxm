@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -358,12 +359,15 @@ public class ResourceServlet extends HttpServlet {
             }
 
             HttpURLConnection httpConn = (HttpURLConnection) conn;
-            if (httpConn.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                if (log.isDebugEnabled()) {
+            try {
+                if (httpConn.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
                     log.debug("Resource not found: {}", resourcePath);
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
                 }
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
+            } catch (ConnectException e) {
+                log.error("Failed to connect to proxy URL {}", resource);
+                throw e;
             }
         }
 
