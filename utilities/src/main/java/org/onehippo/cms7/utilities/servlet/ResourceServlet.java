@@ -23,8 +23,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -195,8 +199,14 @@ public class ResourceServlet extends HttpServlet {
 
     private static Logger log = LoggerFactory.getLogger(ResourceServlet.class);
 
+    private static final String PROXY_FROM_TO_SEPARATOR = "@";
+    private static final String PROXY_SEPARATOR = ",";
+    private static final String PROXIES_SYSTEM_PROPERTY = "resource.proxies";
+    private static final String PROXY_ENABLED_MESSAGE = "Resource proxy enabled with the following mapping(s)";
+
     private static final Pattern WEBAPP_PROTECTED_PATH = Pattern.compile("/?WEB-INF/.*");
 
+    private static final String HTTP_IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
     private static final String HTTP_LAST_MODIFIED_HEADER = "Last-Modified";
     private static final String HTTP_EXPIRES_HEADER = "Expires";
     private static final String HTTP_CACHE_CONTROL_HEADER = "Cache-Control";
@@ -205,6 +215,7 @@ public class ResourceServlet extends HttpServlet {
 
     private static final Set<Pattern> DEFAULT_ALLOWED_RESOURCE_PATHS = new HashSet<>();
     static {
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.html"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.js"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.css"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.png"));
@@ -225,6 +236,7 @@ public class ResourceServlet extends HttpServlet {
 
     private static final Map<String, String> DEFAULT_MIME_TYPES = new HashMap<>();
     static {
+        DEFAULT_MIME_TYPES.put(".html", "text/html");
         DEFAULT_MIME_TYPES.put(".css", "text/css");
         DEFAULT_MIME_TYPES.put(".js", "text/javascript");
         DEFAULT_MIME_TYPES.put(".gif", "image/gif");
@@ -260,8 +272,7 @@ public class ResourceServlet extends HttpServlet {
     private Set<Pattern> compressedMimeTypes;
     private Map<String, String> mimeTypes;
 
-    private boolean webpackEnabled;
-    private String webpackServer;
+    private Map<String, String> proxies;
 
     @Override
     public void init() throws ServletException {
@@ -272,12 +283,6 @@ public class ResourceServlet extends HttpServlet {
         gzipEnabled = Boolean.parseBoolean(getInitParameter("gzipEnabled", "true"));
         webResourceEnabled = Boolean.parseBoolean(getInitParameter("webResourceEnabled", "true"));
         jarResourceEnabled = Boolean.parseBoolean(getInitParameter("jarResourceEnabled", "true"));
-
-        webpackEnabled = Boolean.parseBoolean(getInitParameter("webpackEnabled", "false"));
-
-        final String webpackHost = getInitParameter("webpackHost", "localhost");
-        final String webpackPort = getInitParameter("webpackPort", "9090");
-        webpackServer = "http://" + webpackHost + ":" + webpackPort;
 
         allowedResourcePaths = initPatterns("allowedResourcePaths", DEFAULT_ALLOWED_RESOURCE_PATHS);
         compressedMimeTypes = initPatterns("compressedMimeTypes", DEFAULT_COMPRESSED_MIME_TYPES);
@@ -297,6 +302,29 @@ public class ResourceServlet extends HttpServlet {
                 }
             }
         }
+
+        final String proxiesAsString = System.getProperty(PROXIES_SYSTEM_PROPERTY);
+        proxies = new HashMap<>();
+        if (StringUtils.isNotBlank(proxiesAsString)) {
+            Arrays.stream(StringUtils.split(proxiesAsString, PROXY_SEPARATOR))
+                    .filter(StringUtils::isNotBlank)
+                    .map(proxyLine -> StringUtils.split(proxyLine, PROXY_FROM_TO_SEPARATOR))
+                    .forEach(fromTo -> {
+                        if (fromTo.length > 1) {
+                            final String from = "/" + StringUtils.trim(fromTo[0]) + "/";
+                            final String to = StringUtils.trim(fromTo[1]) + "/";
+                            proxies.put(from, to);
+                        }
+                    });
+        }
+
+        if (!proxies.isEmpty()) {
+            final List<String> messages = new ArrayList<>(proxies.size() + 1);
+            messages.add(PROXY_ENABLED_MESSAGE);
+            proxies.forEach((from, to) -> messages.add(String.format("from %s to %s", from, to)));
+
+            logBorderedMessage(messages);
+        }
     }
 
     @Override
@@ -307,7 +335,7 @@ public class ResourceServlet extends HttpServlet {
         queryParams = StringUtils.isEmpty(queryParams) ? "" :  "?" + queryParams;
 
         if (log.isDebugEnabled()) {
-            log.debug("Processing request for resource {}.", resourcePath + queryParams);
+            log.debug("Processing request for resource {}{}.", resourcePath, queryParams);
         }
 
         URL resource = getResourceURL(resourcePath, queryParams);
@@ -320,8 +348,15 @@ public class ResourceServlet extends HttpServlet {
             return;
         }
 
-        URLConnection conn = resource.openConnection();
-        if (conn instanceof HttpURLConnection) {
+        long modifiedSince = request.getDateHeader(HTTP_IF_MODIFIED_SINCE_HEADER);
+        final URLConnection conn = resource.openConnection();
+
+        if (!proxies.isEmpty() && conn instanceof HttpURLConnection) {
+
+            if (modifiedSince >= 0) {
+                conn.setIfModifiedSince(modifiedSince);
+            }
+
             HttpURLConnection httpConn = (HttpURLConnection) conn;
             if (httpConn.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
                 if (log.isDebugEnabled()) {
@@ -332,10 +367,9 @@ public class ResourceServlet extends HttpServlet {
             }
         }
 
-        long ifModifiedSince = request.getDateHeader("If-Modified-Since");
         long lastModified = conn.getLastModified();
 
-        if (ifModifiedSince >= lastModified) {
+        if (modifiedSince >= lastModified) {
             if (log.isDebugEnabled()) {
                 log.debug("Resource: {} Not Modified.", resourcePath);
             }
@@ -384,25 +418,17 @@ public class ResourceServlet extends HttpServlet {
             return null;
         }
 
-        if (webpackEnabled) {
-            if (!webpackServerIsLive()) {
-                log.warn("Webpack is enabled but the development server could not be reached");
-                return null;
-            }
+        for (Map.Entry<String, String> entry : proxies.entrySet()) {
+            final String from = entry.getKey();
+            final String to = entry.getValue();
 
-            final String webpackPath;
-            if (resourcePath.contains("/public/")) {
-                webpackPath = "/public/" + StringUtils.substringAfter(resourcePath, "/public/");
-            } else {
-                webpackPath = "/cms/angular" + resourcePath;
-            }
-            final String url = webpackServer + webpackPath + queryParams;
+            if (resourcePath.startsWith(from)) {
+                final String url = to + StringUtils.substringAfter(resourcePath, from) + queryParams;
 
-            if (log.isDebugEnabled()) {
-                log.debug("Loading resource from webpack at {}", url);
-            }
+                log.debug("Loading resource from proxy {}", url);
 
-            return new URL(url);
+                return new URL(url);
+            }
         }
 
         URL resource = null;
@@ -418,22 +444,6 @@ public class ResourceServlet extends HttpServlet {
         }
 
         return resource;
-    }
-
-    private boolean webpackServerIsLive() {
-        final String webpackPingURL = webpackServer + "/sockjs-node/info";
-        final int timeout = 500;
-        try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(webpackPingURL).openConnection();
-            connection.setConnectTimeout(timeout);
-            connection.setReadTimeout(timeout);
-            connection.setRequestMethod("GET");
-            int responseCode = connection.getResponseCode();
-            return (200 <= responseCode && responseCode <= 399);
-        } catch (IOException exception) {
-            return false;
-        }
-
     }
 
     private boolean isAllowed(String resourcePath) {
@@ -544,6 +554,24 @@ public class ResourceServlet extends HttpServlet {
             cl = getClass().getClassLoader();
         }
         return cl;
+    }
+
+    private static void logBorderedMessage(final List<String> messages) {
+        final String prefix = "** ";
+        final String suffix = " **";
+        final int fixLength = prefix.length() + suffix.length();
+
+        // find longest message
+        messages.stream().max(Comparator.comparingInt(String::length)).ifPresent(longest -> {
+            final int width = longest.length() + fixLength;
+            final String border = StringUtils.repeat("*", width);
+            log.info(border);
+            messages.forEach(msg -> {
+                final String rightPadding = StringUtils.repeat(" ", width - fixLength - msg.length());
+                log.info(prefix + msg + rightPadding + suffix);
+            });
+            log.info(border);
+        });
     }
 
     private class GZIPResponseStream extends ServletOutputStream {
