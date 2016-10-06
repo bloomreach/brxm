@@ -50,7 +50,7 @@ export class ScalingService {
 
   setPushWidth(side, pushWidth) {
     this.panels[side].pushWidth = pushWidth;
-    this._updateScaling(side);
+    this._updateScaling();
   }
 
   setViewPortWidth(viewPortWidth) {
@@ -70,7 +70,7 @@ export class ScalingService {
    * i.e. the iframe and the overlay, in or out. In case the scale factor changes due to opening/closing the left side panel,
    * which is animated by material, we also animate the zooming and do an attempt to keep the scroll position of the iframe unchanged.
    */
-  _updateScaling(side) {
+  _updateScaling() {
     if (!this.hippoIframeJQueryElement || !this.hippoIframeJQueryElement.is(':visible')) {
       return;
     }
@@ -119,9 +119,9 @@ export class ScalingService {
 
       if (this.panels.left.pushWidth && this.panels.right.pushWidth) {
         elementsToScale.css('transform-origin', 'top center');
-      } else if ((!this.panels.left.pushWidth && this.panels.right.pushWidth) || side === 'right') {
+      } else if ((!this.panels.left.pushWidth && this.panels.right.pushWidth)) {
         elementsToScale.css('transform-origin', 'top left');
-      } else if ((this.panels.left.pushWidth && !this.panels.right.pushWidth) || side === 'left') {
+      } else if ((this.panels.left.pushWidth && !this.panels.right.pushWidth)) {
         elementsToScale.css('transform-origin', 'top right');
       }
     }
