@@ -246,9 +246,8 @@ public abstract class HstQueryBuilder {
     /**
      * @param sortOrder  the order in which the results should be sorted. If it is {@code null} <strong>or</strong>
      *                   not exactly equal to 'descending' (case insensitive), the {@code sortOrder} will be <strong>
-     *                   ascending. Only when {@code sortOrder.equalsIgnoreCase("descending")} returns {@code true},
+     *                   ascending</strong>. Only when {@code sortOrder.equalsIgnoreCase("descending")} returns {@code true},
      *                   the sort order will be descending.
-     *                   </strong>
      * @param fieldNames the {@code fieldNames} to order on in {@code sortOrder} sort order. The {@code fieldNames} argument
      *                   can be {@code null} in which case it is just ignored. A field name in the array that is empty is
      *                   skipped.
@@ -267,9 +266,9 @@ public abstract class HstQueryBuilder {
     /**
      * @param sortOrder  the order in which the results should be sorted. If it is {@code null} <strong>or</strong>
      *                   not exactly equal to 'descending' (case insensitive), the {@code sortOrder} will be <strong>
-     *                   ascending. Only when {@code sortOrder.equalsIgnoreCase("descending")} returns {@code true},
+     *                   ascending</strong>. Only when {@code sortOrder.equalsIgnoreCase("descending")} returns {@code true},
      *                   the sort order will be descending.
-     *                   </strong>
+     *
      * @param fieldNames the {@code fieldNames} to order on  case insensitive in {@code sortOrder} sort order. The {@code fieldNames} argument
      *                   can be {@code null} in which case it is just ignored. A field name in the array that is empty is
      *                   skipped.
