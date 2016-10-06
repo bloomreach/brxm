@@ -97,6 +97,8 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
                     .where(
                             and(
                                     constraint(".").contains(parsedQuery),
+                                    // below on purpose not between because drqc.getFromDate() or drqc.getToDate() can be
+                                    // null. #between expects both values not to be null
                                     constraint(drqc.getProperty()).greaterOrEqualThan(drqc.getFromDate(), drqc.getResolution()),
                                     constraint(drqc.getProperty()).lessOrEqualThan(drqc.getToDate(), drqc.getResolution())
                             )
