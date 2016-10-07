@@ -87,10 +87,10 @@ md-select.ng-invalid-required > md-select-value > span:after {
   overflow: visible;
 
   md-progress-linear {
-    ._md-container {
+    .md-container {
       background-color: $grey-200;
     }
-    ._md-bar {
+    .md-bar {
       background-color: $grey-400;
     }
   }
