@@ -32,7 +32,7 @@
 
         <div ng-switch-when="MULTILINE_STRING" ng-switch="field.multiple">
           <input ng-switch-when="true" disabled value="TODO">
-          <textarea ng-switch-default="false" ng-model="$ctrl.doc.fields[field.id]" max-rows="10"></textarea>
+          <textarea ng-switch-default ng-model="$ctrl.doc.fields[field.id]" max-rows="10"></textarea>
         </div>
 
         <input ng-switch-default disabled value="TODO">
