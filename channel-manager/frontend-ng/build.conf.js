@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 const path = require('path');
+
 const targetDir = path.resolve('./target/classes/angular/hippo-cm/');
 const npmDir = path.resolve('./node_modules');
 
 const customConfig = {
   dist: targetDir,
-  public: '/cms/angular/hippo-cm/',
+  publicPath: '/cms/angular/hippo-cm/',
   htmlExcludes: /items.renderer.html/,
   vendorExcludes: [
     'open-sans-fontface',
