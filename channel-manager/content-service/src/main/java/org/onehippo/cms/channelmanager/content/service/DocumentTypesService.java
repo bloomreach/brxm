@@ -53,7 +53,7 @@ public interface DocumentTypesService {
      * @param locale  locale of the current CMS session
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws DocumentTypeNotFoundException
-     *                if assembling the document type specification failed in a non-recoverable manner
+     *                if assembling the document type failed in a non-recoverable manner
      */
     DocumentType getDocumentType(final Node handle, final Locale locale) throws DocumentTypeNotFoundException;
 }
