@@ -43,7 +43,7 @@ public class FieldTypeUtils {
     // Known non-validating validator values
     private static final Set<String> IGNORED_VALIDATORS;
 
-    // Translate JCR level validator to FieldTypeSpec.Validator
+    // Translate JCR level validator to FieldType.Validator
     private static final Map<String, FieldType.Validator> VALIDATOR_MAP;
 
     // Unsupported validators of which we know they have field-scope only
@@ -87,17 +87,17 @@ public class FieldTypeUtils {
     }
 
     private static class TypeDescriptor {
-        public final Class<? extends FieldType> fieldTypeSpec;
+        public final Class<? extends FieldType> fieldType;
         public final String defaultPluginClass;
 
-        public TypeDescriptor(final Class<? extends FieldType> fieldTypeSpec, final String defaultPluginClass) {
-            this.fieldTypeSpec = fieldTypeSpec;
+        public TypeDescriptor(final Class<? extends FieldType> fieldType, final String defaultPluginClass) {
+            this.fieldType = fieldType;
             this.defaultPluginClass = defaultPluginClass;
         }
     }
 
     /**
-     * Translate the set of validators specified at JCR level into a set of validators at the FieldTypeSpec level.
+     * Translate the set of validators specified at JCR level into a set of validators at the {@link FieldType} level.
      * When the list of validators contains an unknown one, the document type is marked as 'readonly due to
      * unknown validator'.
      *
@@ -159,17 +159,17 @@ public class FieldTypeUtils {
     }
 
     /**
-     * Translate the JCR type of a (supported!) field into its corresponding FieldTypeSpec.Type value
+     * Translate the JCR type of a (supported!) field into its corresponding {@link FieldType}.Type value
      */
-    public static Optional<? extends FieldType> createFieldTypeSpec(final ContentTypeProperty property) {
+    public static Optional<? extends FieldType> createFieldType(final ContentTypeProperty property) {
         final String jcrType = property.getItemType();
 
         if (FIELD_TYPE_MAP.containsKey(jcrType)) {
             try {
-                final Class<? extends FieldType> fieldTypeSpecClass = FIELD_TYPE_MAP.get(jcrType).fieldTypeSpec;
-                return Optional.of(fieldTypeSpecClass.newInstance());
+                final Class<? extends FieldType> fieldTypeClass = FIELD_TYPE_MAP.get(jcrType).fieldType;
+                return Optional.of(fieldTypeClass.newInstance());
             } catch (InstantiationException|IllegalAccessException e) {
-                log.debug("Problem creating a field type spec for type '{}'", jcrType, e);
+                log.debug("Problem creating a field type for type '{}'", jcrType, e);
             }
         }
         return Optional.empty();

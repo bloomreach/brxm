@@ -136,8 +136,8 @@ public class FieldTypeUtilsTest {
         expect(property.getItemType()).andReturn("Text");
         replay(property);
 
-        assertThat(FieldTypeUtils.createFieldTypeSpec(property).get().getClass(), equalTo(StringFieldType.class));
-        assertThat(FieldTypeUtils.createFieldTypeSpec(property).get().getClass(), equalTo(MultilineStringFieldType.class));
+        assertThat(FieldTypeUtils.createFieldType(property).get().getClass(), equalTo(StringFieldType.class));
+        assertThat(FieldTypeUtils.createFieldType(property).get().getClass(), equalTo(MultilineStringFieldType.class));
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -147,7 +147,7 @@ public class FieldTypeUtilsTest {
         expect(property.getItemType()).andReturn("Html");
         replay(property);
 
-        FieldTypeUtils.createFieldTypeSpec(property).get();
+        FieldTypeUtils.createFieldType(property).get();
     }
 
     @Test

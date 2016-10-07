@@ -124,7 +124,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
     protected void addPropertyField(final DocumentType docType,
                                     final ContentTypeProperty property,
                                     final ScanningContext context) {
-        FieldTypeUtils.createFieldTypeSpec(property).ifPresent((fieldType) -> {
+        FieldTypeUtils.createFieldType(property).ifPresent((fieldType) -> {
             final String fieldId = property.getName();
 
             fieldType.setId(fieldId);

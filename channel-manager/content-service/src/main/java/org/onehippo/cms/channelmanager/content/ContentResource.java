@@ -59,7 +59,7 @@ public class ContentResource {
 
     @GET
     @Path("documenttypes/{id}")
-    public Response getDocumentTypeSpec(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
+    public Response getDocumentType(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
         final Locale locale = sessionDataProvider.getLocale(servletRequest);
         final DocumentTypesService documentTypesService = DocumentTypesService.get();
