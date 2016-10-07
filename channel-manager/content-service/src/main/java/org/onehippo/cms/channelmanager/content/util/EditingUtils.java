@@ -43,7 +43,11 @@ import org.slf4j.LoggerFactory;
  * @see EditingInfo
  */
 public class EditingUtils {
+
     private static final Logger log = LoggerFactory.getLogger(EditingUtils.class);
+    private static final String HINT_IN_USE_BY = "inUseBy";
+    private static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
+    private static final String HINT_REQUESTS = "requests";
 
     private EditingUtils() { }
 
@@ -63,10 +67,10 @@ public class EditingUtils {
 
             if (isDocumentEditable(hints, session)) {
                 info.setState(EditingInfo.State.AVAILABLE);
-            } else if (hints.containsKey("inUseBy")) {
+            } else if (hints.containsKey(HINT_IN_USE_BY)) {
                 info.setState(EditingInfo.State.UNAVAILABLE_HELD_BY_OTHER_USER);
-                info.setHolder(determineHolder((String)hints.get("inUseBy"), session));
-            } else if (hints.containsKey("requests")) {
+                info.setHolder(determineHolder((String)hints.get(HINT_IN_USE_BY), session));
+            } else if (hints.containsKey(HINT_REQUESTS)) {
                 info.setState(EditingInfo.State.UNAVAILABLE_REQUEST_PENDING);
             }
         } catch (RepositoryException | WorkflowException | RemoteException e) {
@@ -76,16 +80,16 @@ public class EditingUtils {
     }
 
     private static boolean isDocumentEditable(final Map<String, Serializable> hints, final Session session) {
-        if ((Boolean) hints.get("obtainEditableInstance")) {
+        if ((Boolean) hints.get(HINT_OBTAIN_EDITABLE_INSTANCE)) {
             return true;
         }
 
         // TODO: initial tests suggested that once the user has obtained the editable instance of a document,
         //       the hints would have set the obtainEditableInstance flag to false and the inUseBy flag to the
-        //       current holder (self). Subsequet tests no longer observed this behaviour. Should we keep below
+        //       current holder (self). Subsequent tests no longer observed this behaviour. Should we keep below
         //       extra check or not?
-        if (hints.containsKey("inUseBy")) {
-            final String inUseBy = (String) hints.get("inUseBy");
+        if (hints.containsKey(HINT_IN_USE_BY)) {
+            final String inUseBy = (String) hints.get(HINT_IN_USE_BY);
             if (inUseBy.equals(session.getUserID())) {
                 return true;
             }
@@ -136,7 +140,7 @@ public class EditingUtils {
                 final Document document = workflow.obtainEditableInstance();
                 final Session session = handle.getSession();
                 return Optional.of(document.getNode(session));
-            } catch (WorkflowException|RepositoryException|RemoteException e) {
+            } catch (WorkflowException | RepositoryException | RemoteException e) {
                 log.debug("Problem retrieving draft node", e);
             }
         } else {
