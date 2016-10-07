@@ -26,11 +26,11 @@ import javax.jcr.Session;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
-import org.onehippo.cms.channelmanager.content.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.util.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.util.FieldValidators;
 import org.onehippo.cms.channelmanager.content.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.util.MockResponse;
-import org.onehippo.cms.channelmanager.content.util.FieldValidators;
+import org.onehippo.cms.channelmanager.content.util.NamespaceUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
@@ -130,9 +130,9 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
             fieldType.setId(fieldId);
 
             LocalizationUtils.determineFieldDisplayName(fieldId, context.resourceBundle, context.documentTypeRoot)
-                    .ifPresent(displayName -> fieldType.setDisplayName(displayName));
+                    .ifPresent(fieldType::setDisplayName);
             LocalizationUtils.determineFieldHint(fieldId, context.resourceBundle, context.documentTypeRoot)
-                    .ifPresent(hint -> fieldType.setHint(hint));
+                    .ifPresent(fieldType::setHint);
             fieldType.setStoredAsMultiValueProperty(property.isMultiple());
 
             if (property.isMultiple() || property.getValidators().contains(FieldValidators.OPTIONAL)) {
