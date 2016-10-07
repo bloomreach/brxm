@@ -23,6 +23,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.util.DocumentUtils;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
@@ -51,14 +52,14 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(DocumentNotFoundException::new);
-        final DocumentType docType = getDocumentType(handle, locale);
         final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)
                                                        .orElseThrow(DocumentNotFoundException::new);
         final EditingInfo editingInfo = EditingUtils.determineEditingInfo(workflow, handle);
         final Node variant = EditingUtils.getOrMakeDraft(editingInfo, workflow, handle)
                                          .orElseThrow(DocumentNotFoundException::new);
-        final DocumentInfo documentInfo = new DocumentInfo();
 
+        final DocumentType docType = getDocumentType(handle, locale);
+        final DocumentInfo documentInfo = new DocumentInfo();
         documentInfo.setTypeId(docType.getId());
         documentInfo.setEditingInfo(editingInfo);
 
@@ -80,7 +81,8 @@ public class DocumentsServiceImpl implements DocumentsService {
         try {
             return DocumentTypesService.get().getDocumentType(handle, locale);
         } catch (DocumentTypeNotFoundException e) {
-            throw new DocumentNotFoundException();
+            final String handlePath = JcrUtils.getNodePathQuietly(handle);
+            throw new DocumentNotFoundException("Failed to retrieve type of document '" + handlePath + "'", e);
         }
     }
 }

@@ -17,4 +17,15 @@
 package org.onehippo.cms.channelmanager.content.exception;
 
 public class DocumentNotFoundException extends Exception {
+
+    public DocumentNotFoundException() {
+    }
+
+    public DocumentNotFoundException(final String message) {
+        super(message);
+    }
+
+    public DocumentNotFoundException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }
