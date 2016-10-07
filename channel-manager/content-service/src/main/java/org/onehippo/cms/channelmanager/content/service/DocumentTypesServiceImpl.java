@@ -50,12 +50,12 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
     private DocumentTypesServiceImpl() { }
 
     @Override
-    public DocumentType getDocumentTypeSpec(final Node handle, final Locale locale)
+    public DocumentType getDocumentType(final Node handle, final Locale locale)
             throws DocumentTypeNotFoundException {
         try {
             final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(DocumentTypeNotFoundException::new);
 
-            return getDocumentTypeSpec(id, handle.getSession(), locale);
+            return getDocumentType(id, handle.getSession(), locale);
         } catch (RepositoryException e) {
             log.debug("Problem retrieving type of document", e);
         }
@@ -63,7 +63,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
     }
 
     @Override
-    public DocumentType getDocumentTypeSpec(final String id, final Session userSession, final Locale locale)
+    public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
             throws DocumentTypeNotFoundException {
         if ("ns:testdocument".equals(id)) {
             return MockResponse.createTestDocumentType();

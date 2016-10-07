@@ -64,7 +64,7 @@ public class ContentResource {
         final Locale locale = sessionDataProvider.getLocale(servletRequest);
         final DocumentTypesService documentTypesService = DocumentTypesService.get();
         try {
-            final DocumentType docType = documentTypesService.getDocumentTypeSpec(id, userSession, locale);
+            final DocumentType docType = documentTypesService.getDocumentType(id, userSession, locale);
             return Response.ok().entity(docType).build();
         } catch (DocumentTypeNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();

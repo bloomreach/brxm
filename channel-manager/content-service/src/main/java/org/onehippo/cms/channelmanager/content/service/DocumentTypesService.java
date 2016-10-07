@@ -43,7 +43,7 @@ public interface DocumentTypesService {
      * @throws DocumentTypeNotFoundException
      *                if assembling the document type specification failed in a non-recoverable manner
      */
-    DocumentType getDocumentTypeSpec(final String id, final Session userSession, final Locale locale)
+    DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
             throws DocumentTypeNotFoundException;
 
     /**
@@ -55,5 +55,5 @@ public interface DocumentTypesService {
      * @throws DocumentTypeNotFoundException
      *                if assembling the document type specification failed in a non-recoverable manner
      */
-    DocumentType getDocumentTypeSpec(final Node handle, final Locale locale) throws DocumentTypeNotFoundException;
+    DocumentType getDocumentType(final Node handle, final Locale locale) throws DocumentTypeNotFoundException;
 }

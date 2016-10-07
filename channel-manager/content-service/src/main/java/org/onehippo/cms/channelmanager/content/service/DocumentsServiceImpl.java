@@ -78,7 +78,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     private DocumentType getDocumentType(final Node handle, final Locale locale)
             throws DocumentNotFoundException {
         try {
-            return DocumentTypesService.get().getDocumentTypeSpec(handle, locale);
+            return DocumentTypesService.get().getDocumentType(handle, locale);
         } catch (DocumentTypeNotFoundException e) {
             throw new DocumentNotFoundException();
         }

@@ -150,10 +150,10 @@ public class DocumentsServiceImplTest {
 
         documentsService = createMockBuilder(DocumentsServiceImpl.class)
                 .addMockedMethod("getOrMakeDraftNode")
-                .addMockedMethod("getDocumentTypeSpec")
+                .addMockedMethod("getDocumentType")
                 .createMock();
         expect(documentsService.getOrMakeDraftNode(workflow, handle)).andReturn(draft);
-        expect(documentsService.getDocumentTypeSpec(document, session, locale)).andReturn(docType);
+        expect(documentsService.getDocumentType(document, session, locale)).andReturn(docType);
         expect(handle.getSession()).andReturn(session);
         replay(documentsService, handle);
 

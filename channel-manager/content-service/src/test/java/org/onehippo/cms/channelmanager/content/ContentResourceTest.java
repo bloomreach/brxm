@@ -120,7 +120,7 @@ public class ContentResourceTest extends CXFTest {
         final DocumentType docType = new DocumentType();
         docType.setId(returnedId);
 
-        expect(documentTypesService.getDocumentTypeSpec(requestedId, userSession, locale)).andReturn(docType);
+        expect(documentTypesService.getDocumentType(requestedId, userSession, locale)).andReturn(docType);
         replay(documentTypesService);
 
         final String expectedBody = normalizeJsonResource("/empty-documenttype.json");
@@ -136,7 +136,7 @@ public class ContentResourceTest extends CXFTest {
     public void documentTypeNotFound() throws Exception {
         final String requestedId = "ns:testdocument";
 
-        expect(documentTypesService.getDocumentTypeSpec(requestedId, userSession, locale))
+        expect(documentTypesService.getDocumentType(requestedId, userSession, locale))
                 .andThrow(new DocumentTypeNotFoundException());
         replay(documentTypesService);
 
