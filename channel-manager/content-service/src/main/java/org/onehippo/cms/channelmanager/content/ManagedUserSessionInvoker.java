@@ -88,7 +88,7 @@ public class ManagedUserSessionInvoker extends JAXRSInvoker implements SessionDa
                 userSession.logout();
             }
         } catch (RepositoryException e) {
-            log.debug("Failed to create user session for '{}'", credentials.getUserID(), e);
+            log.warn("Failed to create user session for '{}'", credentials.getUserID(), e);
             return FORBIDDEN;
         }
     }

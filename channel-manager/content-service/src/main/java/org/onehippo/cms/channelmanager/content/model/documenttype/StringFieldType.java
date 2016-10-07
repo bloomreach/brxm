@@ -24,7 +24,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.hippoecm.repository.util.JcrUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class StringFieldType extends FieldType {
+
+    private static final Logger log = LoggerFactory.getLogger(StringFieldType.class);
 
     public StringFieldType() {
         this.setType(Type.STRING);
@@ -47,7 +53,7 @@ public class StringFieldType extends FieldType {
                 }
             }
         } catch (RepositoryException e) {
-            // add a debug message? we should never get here.
+            log.warn("Failed to read string field '{}' from '{}'", property, JcrUtils.getNodePathQuietly(node), e);
         }
         return Optional.empty();
     }

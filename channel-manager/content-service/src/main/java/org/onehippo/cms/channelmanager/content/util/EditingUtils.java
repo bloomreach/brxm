@@ -30,6 +30,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.model.document.EditingInfo;
 import org.onehippo.cms.channelmanager.content.model.document.UserInfo;
@@ -68,8 +69,8 @@ public class EditingUtils {
             } else if (hints.containsKey("requests")) {
                 info.setState(EditingInfo.State.UNAVAILABLE_REQUEST_PENDING);
             }
-        } catch (RepositoryException |WorkflowException |RemoteException e) {
-            log.debug("Failed to determine editing info", e);
+        } catch (RepositoryException | WorkflowException | RemoteException e) {
+            log.warn("Failed to determine editing info for node '{}'", JcrUtils.getNodePathQuietly(handle), e);
         }
         return info;
     }

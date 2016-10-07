@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
  * stored under the /hippo:namespaces root-level node.
  */
 public class NamespaceUtils {
+
+    private static final String PROPERTY_PLUGIN_CLASS = "plugin.class";
     private static final Logger log = LoggerFactory.getLogger(NamespaceUtils.class);
 
     /**
@@ -77,7 +79,7 @@ public class NamespaceUtils {
                 }
             }
         } catch (RepositoryException e) {
-            // unable to retrieve the config node
+            log.debug("Failed to read config of field '{}'", fieldId, e);
         }
         return Optional.empty();
     }
@@ -92,9 +94,9 @@ public class NamespaceUtils {
     public static Optional<String> getPluginClassForField(final Node documentTypeRootNode, final String fieldId) {
         return getConfigForField(documentTypeRootNode, fieldId).flatMap(config -> {
             try {
-                return Optional.of(config.getProperty("plugin.class").getString());
+                return Optional.of(config.getProperty(PROPERTY_PLUGIN_CLASS).getString());
             } catch (RepositoryException e) {
-                // failed to read plugin config
+                log.debug("Failed to read property '{}' of field '{}'", PROPERTY_PLUGIN_CLASS, fieldId);
             }
             return Optional.empty();
         });

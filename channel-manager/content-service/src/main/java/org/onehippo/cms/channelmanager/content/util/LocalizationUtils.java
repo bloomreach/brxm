@@ -26,6 +26,8 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.onehippo.repository.l10n.ResourceBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * LocalizationHelper provides functionality for determining correctly localized document type and field names and hints.
@@ -34,6 +36,8 @@ public class LocalizationUtils {
     // TODO: these are defined in TranslatorType in the CMS API. Move to repository and avoid duplication?
     private static final String HIPPO_TYPES = "hippo:types";
     private static final String JCR_NAME = "jcr:name";
+
+    private static final Logger log = LoggerFactory.getLogger(LocalizationUtils.class);
 
     private LocalizationUtils() { }
 
@@ -102,7 +106,7 @@ public class LocalizationUtils {
         return determineFieldLabel(fieldId, resourceBundle, fieldId + "#hint", namespaceNode, "hint");
     }
 
-    private static Optional<String>determineFieldLabel(final String fieldId,
+    private static Optional<String> determineFieldLabel(final String fieldId,
                                                         final Optional<ResourceBundle> resourceBundle,
                                                         final String resourceKey,
                                                         final Node namespaceNode,
@@ -118,7 +122,7 @@ public class LocalizationUtils {
             try {
                 return Optional.of(config.getProperty(configProperty).getString());
             } catch (RepositoryException e) {
-                // failed to read caption
+                log.debug("Failed to read property '{}'", configProperty, e);
             }
             return Optional.empty();
         });

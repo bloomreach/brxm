@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.util.DocumentUtils;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 import org.onehippo.cms.channelmanager.content.util.FieldTypeUtils;
@@ -57,7 +58,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
 
             return getDocumentType(id, handle.getSession(), locale);
         } catch (RepositoryException e) {
-            log.debug("Problem retrieving type of document", e);
+            log.warn("Failed to retrieve document type from node '{}'", JcrUtils.getNodePathQuietly(handle), e);
         }
         throw new DocumentTypeNotFoundException();
     }
@@ -70,25 +71,29 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
         }
 
         final ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
+        final ContentType contentType = getContentType(id, service);
+        validateDocumentType(contentType, id);
+
+        final ScanningContext context = createScanningContext(id, contentType, userSession, locale);
+        final DocumentType docType = new DocumentType();
+
+        docType.setId(id);
+        LocalizationUtils.determineDocumentDisplayName(id, context.resourceBundle).ifPresent(docType::setDisplayName);
+        populateFields(docType, context);
+
+        return docType;
+    }
+
+    private static ContentType getContentType(final String id, final ContentTypeService service) throws DocumentTypeNotFoundException {
         try {
-            final ContentType contentType = service.getContentTypes().getType(id);
-            validateDocumentType(contentType, id);
-
-            final ScanningContext context = createScanningContext(id, contentType, userSession, locale);
-            final DocumentType docType = new DocumentType();
-
-            docType.setId(id);
-            LocalizationUtils.determineDocumentDisplayName(id, context.resourceBundle).ifPresent(docType::setDisplayName);
-            populateFields(docType, context);
-
-            return docType;
+            return service.getContentTypes().getType(id);
         } catch (RepositoryException e) {
-            log.debug("Failed to create document type spect for '{}'.", id, e);
+            log.warn("Failed to retrieve content type '{}'", id, e);
             throw new DocumentTypeNotFoundException();
         }
     }
 
-    protected void validateDocumentType(final ContentType contentType, final String id)
+    private static void validateDocumentType(final ContentType contentType, final String id)
             throws DocumentTypeNotFoundException {
         if (contentType == null) {
             log.debug("No content type found for '{}'", id);
@@ -100,7 +105,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
         }
     }
 
-    protected ScanningContext createScanningContext(final String id, final ContentType contentType,
+    private static ScanningContext createScanningContext(final String id, final ContentType contentType,
                                                     final Session userSession, final Locale locale)
             throws DocumentTypeNotFoundException {
 
@@ -111,7 +116,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
         return new ScanningContext(contentType, resourceBundle, documentTypeRoot);
     }
 
-    protected void populateFields(final DocumentType docType, final ScanningContext context) {
+    private static void populateFields(final DocumentType docType, final ScanningContext context) {
         context.contentType.getProperties()
                 .values()
                 .stream()
@@ -121,7 +126,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
                 .forEach(field -> addPropertyField(docType, field, context));
     }
 
-    protected void addPropertyField(final DocumentType docType,
+    private static void addPropertyField(final DocumentType docType,
                                     final ContentTypeProperty property,
                                     final ScanningContext context) {
         FieldTypeUtils.createFieldType(property).ifPresent((fieldType) -> {
