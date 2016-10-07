@@ -17,7 +17,9 @@
 <md-sidenav class="md-sidenav-right channel-right-side-panel" md-component-id="channel-right-side-panel" layout="column">
   <md-toolbar>
     <div class="md-toolbar-tools">
-      <h1 class="md-title">{{'EDIT_DOCUMENT' | translate }}</h1>
+      <h1 class="md-title text-truncate" translate="EDIT_DOCUMENT" translate-values="{ documentName: $ctrl.doc.displayName }">
+        <md-tooltip md-delay="500">{{ $ctrl.doc.displayName }}</md-tooltip>
+      </h1>
     </div>
   </md-toolbar>
   <md-content flex="grow" layout-padding>
