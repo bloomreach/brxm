@@ -161,7 +161,7 @@ public class FieldTypeUtils {
     /**
      * Translate the JCR type of a (supported!) field into its corresponding {@link FieldType}.Type value
      */
-    public static Optional<? extends FieldType> createFieldType(final ContentTypeProperty property) {
+    public static Optional<FieldType> createFieldType(final ContentTypeProperty property) {
         final String jcrType = property.getItemType();
 
         if (FIELD_TYPE_MAP.containsKey(jcrType)) {
