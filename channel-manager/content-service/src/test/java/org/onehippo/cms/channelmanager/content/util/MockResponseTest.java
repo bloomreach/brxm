@@ -16,8 +16,8 @@
 package org.onehippo.cms.channelmanager.content.util;
 
 import org.junit.Test;
-import org.onehippo.cms.channelmanager.content.model.Document;
-import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
+import org.onehippo.cms.channelmanager.content.model.document.Document;
+import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -32,7 +32,7 @@ public class MockResponseTest {
 
     @Test
     public void testDocumentType() {
-        final DocumentTypeSpec docType = MockResponse.createTestDocumentType();
+        final DocumentType docType = MockResponse.createTestDocumentType();
         assertThat(docType.getId(), equalTo("ns:testdocument"));
     }
 }

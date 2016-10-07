@@ -18,10 +18,11 @@ package org.onehippo.cms.channelmanager.content.service;
 
 import java.util.Locale;
 
+import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
-import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
+import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 
 /**
  * DocumentTypesService exposes an API for reading document types
@@ -42,6 +43,17 @@ public interface DocumentTypesService {
      * @throws DocumentTypeNotFoundException
      *                if assembling the document type specification failed in a non-recoverable manner
      */
-    DocumentTypeSpec getDocumentTypeSpec(final String id, final Session userSession, final Locale locale)
+    DocumentType getDocumentTypeSpec(final String id, final Session userSession, final Locale locale)
             throws DocumentTypeNotFoundException;
+
+    /**
+     * Read the supported part of a document type into a JSON-serializable representation
+     *
+     * @param handle  JCR node representing a document handle to derive the type ID and session from
+     * @param locale  locale of the current CMS session
+     * @return        JSON-serializable representation of the parts supported for exposing
+     * @throws DocumentTypeNotFoundException
+     *                if assembling the document type specification failed in a non-recoverable manner
+     */
+    DocumentType getDocumentTypeSpec(final Node handle, final Locale locale) throws DocumentTypeNotFoundException;
 }

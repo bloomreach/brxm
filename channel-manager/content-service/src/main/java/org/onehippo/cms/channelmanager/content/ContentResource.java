@@ -29,8 +29,8 @@ import javax.ws.rs.core.Response;
 
 import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
-import org.onehippo.cms.channelmanager.content.model.Document;
-import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
+import org.onehippo.cms.channelmanager.content.model.document.Document;
+import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 import org.onehippo.cms.channelmanager.content.service.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.service.DocumentsService;
 
@@ -64,7 +64,7 @@ public class ContentResource {
         final Locale locale = sessionDataProvider.getLocale(servletRequest);
         final DocumentTypesService documentTypesService = DocumentTypesService.get();
         try {
-            final DocumentTypeSpec docType = documentTypesService.getDocumentTypeSpec(id, userSession, locale);
+            final DocumentType docType = documentTypesService.getDocumentTypeSpec(id, userSession, locale);
             return Response.ok().entity(docType).build();
         } catch (DocumentTypeNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();

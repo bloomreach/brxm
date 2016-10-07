@@ -18,13 +18,17 @@ package org.onehippo.cms.channelmanager.content.util;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import javax.jcr.Node;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
-import org.onehippo.cms.channelmanager.content.model.FieldTypeSpec;
+import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
+import org.onehippo.cms.channelmanager.content.model.documenttype.FieldType;
+import org.onehippo.cms.channelmanager.content.model.documenttype.MultilineStringFieldType;
+import org.onehippo.cms.channelmanager.content.model.documenttype.StringFieldType;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -97,15 +101,15 @@ public class FieldTypeUtilsTest {
         expect(property.getItemType()).andReturn("String").anyTimes();
         replay(property);
 
-        // deals with null value
-        expect(NamespaceUtils.getPluginClassForField(documentTypeRootNode, "dummy")).andReturn(null);
+        // deals with empty value
+        expect(NamespaceUtils.getPluginClassForField(documentTypeRootNode, "dummy")).andReturn(Optional.empty());
         PowerMock.replayAll();
         assertThat(FieldTypeUtils.usesDefaultFieldPlugin(property, documentTypeRootNode), equalTo(false));
         PowerMock.verifyAll();
 
         // rejects dummy text
         PowerMock.resetAll();
-        expect(NamespaceUtils.getPluginClassForField(documentTypeRootNode, "dummy")).andReturn("sometext");
+        expect(NamespaceUtils.getPluginClassForField(documentTypeRootNode, "dummy")).andReturn(Optional.of("sometext"));
         PowerMock.replayAll();
         assertThat(FieldTypeUtils.usesDefaultFieldPlugin(property, documentTypeRootNode), equalTo(false));
 
@@ -117,7 +121,7 @@ public class FieldTypeUtilsTest {
         replay(property);
 
         PowerMock.resetAll();
-        expect(NamespaceUtils.getPluginClassForField(documentTypeRootNode, "dummy")).andReturn(PROPERTY_FIELD_PLUGIN).anyTimes();
+        expect(NamespaceUtils.getPluginClassForField(documentTypeRootNode, "dummy")).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN)).anyTimes();
         PowerMock.replayAll();
 
         assertThat(FieldTypeUtils.usesDefaultFieldPlugin(property, documentTypeRootNode), equalTo(true));
@@ -132,24 +136,24 @@ public class FieldTypeUtilsTest {
         expect(property.getItemType()).andReturn("Text");
         replay(property);
 
-        assertThat(FieldTypeUtils.deriveFieldType(property), equalTo(FieldTypeSpec.Type.STRING));
-        assertThat(FieldTypeUtils.deriveFieldType(property), equalTo(FieldTypeSpec.Type.MULTILINE_STRING));
+        assertThat(FieldTypeUtils.createFieldTypeSpec(property).get().getClass(), equalTo(StringFieldType.class));
+        assertThat(FieldTypeUtils.createFieldTypeSpec(property).get().getClass(), equalTo(MultilineStringFieldType.class));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = NoSuchElementException.class)
     public void validateDeriveFieldTypeOfUnknownType() {
         final ContentTypeProperty property = createMock(ContentTypeProperty.class);
 
         expect(property.getItemType()).andReturn("Html");
         replay(property);
 
-        FieldTypeUtils.deriveFieldType(property);
+        FieldTypeUtils.createFieldTypeSpec(property).get();
     }
 
     @Test
     public void validateIgnoredValidator() {
-        final FieldTypeSpec fieldType = createMock(FieldTypeSpec.class);
-        final DocumentTypeSpec docType = createMock(DocumentTypeSpec.class);
+        final FieldType fieldType = createMock(FieldType.class);
+        final DocumentType docType = createMock(DocumentType.class);
         replay(fieldType);
 
         FieldTypeUtils.determineValidators(fieldType, docType, Collections.singletonList("optional"));
@@ -157,12 +161,12 @@ public class FieldTypeUtilsTest {
 
     @Test
     public void validateMappedValidators() {
-        final FieldTypeSpec fieldType = createMock(FieldTypeSpec.class);
-        final DocumentTypeSpec docType = createMock(DocumentTypeSpec.class);
+        final FieldType fieldType = createMock(FieldType.class);
+        final DocumentType docType = createMock(DocumentType.class);
 
-        fieldType.addValidator(FieldTypeSpec.Validator.REQUIRED);
+        fieldType.addValidator(FieldType.Validator.REQUIRED);
         expectLastCall();
-        fieldType.addValidator(FieldTypeSpec.Validator.REQUIRED);
+        fieldType.addValidator(FieldType.Validator.REQUIRED);
         expectLastCall();
         replay(fieldType);
 
@@ -171,12 +175,12 @@ public class FieldTypeUtilsTest {
 
     @Test
     public void validateFieldValidators() {
-        final FieldTypeSpec fieldType = createMock(FieldTypeSpec.class);
-        final DocumentTypeSpec docType = createMock(DocumentTypeSpec.class);
+        final FieldType fieldType = createMock(FieldType.class);
+        final DocumentType docType = createMock(DocumentType.class);
 
-        fieldType.addValidator(FieldTypeSpec.Validator.UNSUPPORTED);
+        fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
         expectLastCall();
-        fieldType.addValidator(FieldTypeSpec.Validator.UNSUPPORTED);
+        fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
         expectLastCall();
         replay(fieldType);
 
@@ -185,8 +189,8 @@ public class FieldTypeUtilsTest {
 
     @Test
     public void validateUnknownValidators() {
-        final FieldTypeSpec fieldType = createMock(FieldTypeSpec.class);
-        final DocumentTypeSpec docType = createMock(DocumentTypeSpec.class);
+        final FieldType fieldType = createMock(FieldType.class);
+        final DocumentType docType = createMock(DocumentType.class);
 
         docType.setReadOnlyDueToUnknownValidator(true);
         expectLastCall();

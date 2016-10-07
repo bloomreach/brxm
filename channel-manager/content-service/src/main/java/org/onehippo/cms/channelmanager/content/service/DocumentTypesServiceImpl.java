@@ -17,14 +17,15 @@
 package org.onehippo.cms.channelmanager.content.service;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.util.DocumentUtils;
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
-import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
-import org.onehippo.cms.channelmanager.content.model.FieldTypeSpec;
+import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 import org.onehippo.cms.channelmanager.content.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.util.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.util.LocalizationUtils;
@@ -49,7 +50,20 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
     private DocumentTypesServiceImpl() { }
 
     @Override
-    public DocumentTypeSpec getDocumentTypeSpec(final String id, final Session userSession, final Locale locale)
+    public DocumentType getDocumentTypeSpec(final Node handle, final Locale locale)
+            throws DocumentTypeNotFoundException {
+        try {
+            final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(DocumentTypeNotFoundException::new);
+
+            return getDocumentTypeSpec(id, handle.getSession(), locale);
+        } catch (RepositoryException e) {
+            log.debug("Problem retrieving type of document", e);
+        }
+        throw new DocumentTypeNotFoundException();
+    }
+
+    @Override
+    public DocumentType getDocumentTypeSpec(final String id, final Session userSession, final Locale locale)
             throws DocumentTypeNotFoundException {
         if ("ns:testdocument".equals(id)) {
             return MockResponse.createTestDocumentType();
@@ -61,10 +75,10 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
             validateDocumentType(contentType, id);
 
             final ScanningContext context = createScanningContext(id, contentType, userSession, locale);
-            final DocumentTypeSpec docType = new DocumentTypeSpec();
+            final DocumentType docType = new DocumentType();
 
             docType.setId(id);
-            docType.setDisplayName(LocalizationUtils.determineDocumentDisplayName(id, context.resourceBundle));
+            LocalizationUtils.determineDocumentDisplayName(id, context.resourceBundle).ifPresent(docType::setDisplayName);
             populateFields(docType, context);
 
             return docType;
@@ -90,13 +104,14 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
                                                     final Session userSession, final Locale locale)
             throws DocumentTypeNotFoundException {
 
-        final Node documentTypeRoot = NamespaceUtils.getDocumentTypeRootNode(id, userSession);
-        final ResourceBundle resourceBundle = LocalizationUtils.getResourceBundleForDocument(id, locale);
+        final Node documentTypeRoot = NamespaceUtils.getDocumentTypeRootNode(id, userSession)
+                                                    .orElseThrow(DocumentTypeNotFoundException::new);
+        final Optional<ResourceBundle> resourceBundle = LocalizationUtils.getResourceBundleForDocument(id, locale);
 
         return new ScanningContext(contentType, resourceBundle, documentTypeRoot);
     }
 
-    protected void populateFields(final DocumentTypeSpec docType, final ScanningContext context) {
+    protected void populateFields(final DocumentType docType, final ScanningContext context) {
         context.contentType.getProperties()
                 .values()
                 .stream()
@@ -106,25 +121,28 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
                 .forEach(field -> addPropertyField(docType, field, context));
     }
 
-    protected void addPropertyField(final DocumentTypeSpec docType,
+    protected void addPropertyField(final DocumentType docType,
                                     final ContentTypeProperty property,
                                     final ScanningContext context) {
-        final FieldTypeSpec fieldType = new FieldTypeSpec();
-        final String fieldId = property.getName();
+        FieldTypeUtils.createFieldTypeSpec(property).ifPresent((fieldType) -> {
+            final String fieldId = property.getName();
 
-        fieldType.setId(fieldId);
-        fieldType.setDisplayName(LocalizationUtils.determineFieldDisplayName(fieldId, context.resourceBundle, context.documentTypeRoot));
-        fieldType.setHint(LocalizationUtils.determineFieldHint(fieldId, context.resourceBundle, context.documentTypeRoot));
-        fieldType.setType(FieldTypeUtils.deriveFieldType(property));
-        fieldType.setStoredAsMultiValueProperty(property.isMultiple());
+            fieldType.setId(fieldId);
 
-        if (property.isMultiple() || property.getValidators().contains(FieldValidators.OPTIONAL)) {
-            fieldType.setMultiple(true);
-        }
+            LocalizationUtils.determineFieldDisplayName(fieldId, context.resourceBundle, context.documentTypeRoot)
+                    .ifPresent(displayName -> fieldType.setDisplayName(displayName));
+            LocalizationUtils.determineFieldHint(fieldId, context.resourceBundle, context.documentTypeRoot)
+                    .ifPresent(hint -> fieldType.setHint(hint));
+            fieldType.setStoredAsMultiValueProperty(property.isMultiple());
 
-        FieldTypeUtils.determineValidators(fieldType, docType, property.getValidators());
+            if (property.isMultiple() || property.getValidators().contains(FieldValidators.OPTIONAL)) {
+                fieldType.setMultiple(true);
+            }
 
-        docType.addField(fieldType);
+            FieldTypeUtils.determineValidators(fieldType, docType, property.getValidators());
+
+            docType.addField(fieldType);
+        });
     }
 
     /**
@@ -133,11 +151,11 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
      */
     private static class ScanningContext {
         private final ContentType contentType;
-        private final ResourceBundle resourceBundle;
+        private final Optional<ResourceBundle> resourceBundle;
         private final Node documentTypeRoot;
 
         private ScanningContext(final ContentType contentType,
-                               final ResourceBundle resourceBundle,
+                               final Optional<ResourceBundle> resourceBundle,
                                final Node documentTypeRoot) {
             this.contentType = contentType;
             this.resourceBundle = resourceBundle;

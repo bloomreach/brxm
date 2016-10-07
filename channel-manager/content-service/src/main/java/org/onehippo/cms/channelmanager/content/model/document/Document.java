@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.model;
+package org.onehippo.cms.channelmanager.content.model.document;
 
 import java.util.HashMap;
 import java.util.Map;

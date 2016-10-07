@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.model;
+package org.onehippo.cms.channelmanager.content.model.documenttype;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +26,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * It can be serialized into JSON to expose it through a REST API.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DocumentTypeSpec {
+public class DocumentType {
     private String id; // "namespace:typename"
     private String displayName;
     private Boolean readOnlyDueToUnknownValidator;
-    private final List<FieldTypeSpec> fields; // ordered list of fields
+    private final List<FieldType> fields; // ordered list of fields
 
-    public DocumentTypeSpec() {
+    public DocumentType() {
         fields = new ArrayList<>();
     }
 
@@ -60,11 +60,11 @@ public class DocumentTypeSpec {
         this.readOnlyDueToUnknownValidator = readOnlyDueToUnknownValidator;
     }
 
-    public List<FieldTypeSpec> getFields() {
+    public List<FieldType> getFields() {
         return fields;
     }
 
-    public void addField(final FieldTypeSpec field) {
+    public void addField(final FieldType field) {
         fields.add(field);
     }
 }

@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
-import org.onehippo.cms.channelmanager.content.model.Document;
-import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
+import org.onehippo.cms.channelmanager.content.model.document.Document;
+import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 import org.onehippo.cms.channelmanager.content.service.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.service.DocumentsService;
 import org.onehippo.jaxrs.cxf.CXFTest;
@@ -117,7 +117,7 @@ public class ContentResourceTest extends CXFTest {
     public void retrieveDocumentType() throws Exception {
         final String requestedId = "ns:testdocument";
         final String returnedId = "ns:otherdocument";
-        final DocumentTypeSpec docType = new DocumentTypeSpec();
+        final DocumentType docType = new DocumentType();
         docType.setId(returnedId);
 
         expect(documentTypesService.getDocumentTypeSpec(requestedId, userSession, locale)).andReturn(docType);

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cms.channelmanager.content.model;
+package org.onehippo.cms.channelmanager.content.model.document;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

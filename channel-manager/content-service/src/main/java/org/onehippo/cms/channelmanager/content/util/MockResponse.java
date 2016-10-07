@@ -22,8 +22,8 @@ import java.io.InputStream;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.onehippo.cms.channelmanager.content.model.Document;
-import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
+import org.onehippo.cms.channelmanager.content.model.document.Document;
+import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 
 /**
  * This class temporarily provides the front-end with mock responses of the visual editing REST API.
@@ -42,10 +42,10 @@ public class MockResponse {
         }
     }
 
-    public static DocumentTypeSpec createTestDocumentType() {
+    public static DocumentType createTestDocumentType() {
         final String resourcePath = "/MockResponse-documenttype.json";
         try {
-            return readResource(resourcePath, DocumentTypeSpec.class);
+            return readResource(resourcePath, DocumentType.class);
         } catch (IOException e) {
             throw new IllegalStateException("Error reading mock document type " + resourcePath, e);
         }

@@ -21,7 +21,7 @@ import java.util.Locale;
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
-import org.onehippo.cms.channelmanager.content.model.Document;
+import org.onehippo.cms.channelmanager.content.model.document.Document;
 
 /**
  * DocumentsService exposes an API for reading and manipulating documents
