@@ -31,6 +31,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +50,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({EditingUtils.class, WorkflowUtils.class})
+@PrepareForTest({EditingUtils.class, WorkflowUtils.class, JcrUtils.class})
 public class EditingUtilsTest {
 
     @Test
@@ -139,8 +140,12 @@ public class EditingUtilsTest {
         final Node handle = createMock(Node.class);
         final Workflow workflow = createMock(Workflow.class);
 
+        PowerMock.mockStaticPartial(JcrUtils.class, "getNodePathQuietly");
+
         expect(handle.getSession()).andThrow(new RepositoryException());
+        expect(JcrUtils.getNodePathQuietly(handle)).andReturn("bla");
         replay(handle);
+        PowerMock.replayAll();
 
         final EditingInfo info = EditingUtils.determineEditingInfo(workflow, handle);
 

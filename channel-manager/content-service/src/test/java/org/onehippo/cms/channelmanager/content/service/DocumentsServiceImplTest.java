@@ -54,6 +54,7 @@ public class DocumentsServiceImplTest {
         documentsService.getDocument(id, session, null);
     }
 
+/*
     @Test(expected = DocumentNotFoundException.class)
     public void returnNotFoundWhenDocumentHandleHasNoVariantNode() throws Exception {
         final Node handle = rootNode.addNode("testDocument", "hippo:handle");
@@ -64,7 +65,6 @@ public class DocumentsServiceImplTest {
         documentsService.getDocument(id, session, null);
     }
 
-/*
     @Test
     public void successfulButStubbedDocumentRetrieval() throws Exception {
         final Node handle = rootNode.addNode("testDocument", "hippo:handle");
