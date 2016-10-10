@@ -590,7 +590,21 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void order_by__default_ascending_order() throws Exception {
+    public void order_by_enum_from_string() throws Exception {
+        assertEquals(ASC, HstQueryBuilder.Order.fromString(null));
+        assertEquals(ASC, HstQueryBuilder.Order.fromString("foo"));
+        assertEquals(ASC, HstQueryBuilder.Order.fromString("asc"));
+        assertEquals(ASC, HstQueryBuilder.Order.fromString("ascending"));
+        assertEquals(DESC, HstQueryBuilder.Order.fromString("desc"));
+        assertEquals(DESC, HstQueryBuilder.Order.fromString("DESC"));
+        assertEquals(DESC, HstQueryBuilder.Order.fromString("DeSc"));
+        assertEquals(DESC, HstQueryBuilder.Order.fromString("descending"));
+        assertEquals(DESC, HstQueryBuilder.Order.fromString("DeScending"));
+        assertEquals(DESC, HstQueryBuilder.Order.fromString("DESCENDING"));
+    }
+
+    @Test
+    public void order_by_default_ascending_order() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         hstQuery.addOrderByAscending("myhippoproject:title");
         hstQuery.addOrderByAscending("myhippoproject:foo");
@@ -638,7 +652,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void sort_by_default_ascending_case_insensitive_order() throws Exception {
+    public void order_by_default_ascending_case_insensitive_order() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         hstQuery.addOrderByAscendingCaseInsensitive("myhippoproject:title");
         hstQuery.addOrderByAscendingCaseInsensitive("myhippoproject:foo");
@@ -672,7 +686,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
 
     @Test
-    public void sort_by_descending_case_insensitive_order() throws Exception {
+    public void order_by_descending_case_insensitive_order() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         hstQuery.addOrderByDescendingCaseInsensitive("myhippoproject:title");
         hstQuery.addOrderByDescendingCaseInsensitive("myhippoproject:foo");
@@ -685,7 +699,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void assert_sort_by_clauses_are_in_order_they_are_added() throws Exception {
+    public void assert_order_by_clauses_are_in_order_they_are_added() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         hstQuery.addOrderByAscending("myhippoproject:title");
         hstQuery.addOrderByDescending("myhippoproject:date");
@@ -710,7 +724,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void assert_sort_by_clauses_null_value_and_empty_values_are_skipped() throws Exception {
+    public void assert_order_by_clauses_null_value_and_empty_values_are_skipped() throws Exception {
 
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
 

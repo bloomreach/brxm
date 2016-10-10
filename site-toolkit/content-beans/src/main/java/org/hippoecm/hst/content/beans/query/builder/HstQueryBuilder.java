@@ -33,7 +33,24 @@ import org.hippoecm.repository.util.DateTools;
 public abstract class HstQueryBuilder {
 
     public enum Order {
-        DESC, ASC
+
+        DESC, ASC;
+
+        /**
+         * @param order the string representative of the order. The values {@code desc} and  {@code descending} (case
+         *              insensitive) result in {@link Order#DESC} and all other values including {@code null} will result
+         *              in {@link Order#ASC} being retured.
+         * @return {@link Order} enum constant {@link Order#DESC} or  {@link Order#ASC} depending on {@code order}
+         */
+        public static Order fromString(final String order) {
+            if (order == null) {
+                return ASC;
+            }
+            if (order.equalsIgnoreCase("desc") || order.equalsIgnoreCase("descending") ) {
+                return DESC;
+            }
+            return ASC;
+        }
     }
     /**
      * Static method to create an initial {@link HstQueryBuilder} instance for {@code scopeBeans}.
