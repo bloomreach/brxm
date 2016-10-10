@@ -120,7 +120,7 @@ describe('DragDropService', () => {
 
   function boundEventHandlerCount(jqueryElement, event) {
     const eventHandlers = $._data(jqueryElement[0], 'events');
-    return eventHandlers && eventHandlers.hasOwnProperty(event) ? eventHandlers[event].length : 0;
+    return eventHandlers && {}.hasOwnProperty.call(eventHandlers, event) ? eventHandlers[event].length : 0;
   }
 
   it('is not dragging initially', () => {
