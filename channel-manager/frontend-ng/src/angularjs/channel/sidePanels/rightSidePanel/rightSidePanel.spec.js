@@ -27,6 +27,28 @@ describe('ChannelRightSidePanel', () => {
   let $ctrl;
   let $scope;
 
+  const stringField = {
+    id: 'ns:string',
+    type: 'STRING',
+  };
+  const multipleStringField = {
+    id: 'ns:multiplestring',
+    type: 'STRING',
+    multiple: true,
+  };
+  const emptyMultipleStringField = {
+    id: 'ns:emptymultiplestring',
+    type: 'STRING',
+    multiple: true,
+  };
+  const testDocumentType = {
+    id: 'ns:testdocument',
+    fields: [
+      stringField,
+      multipleStringField,
+      emptyMultipleStringField,
+    ],
+  };
   const testDocument = {
     id: 'test',
     info: {
@@ -34,9 +56,11 @@ describe('ChannelRightSidePanel', () => {
         id: 'ns:testdocument',
       },
     },
-  };
-  const testDocumentType = {
-    id: 'ns:testdocument',
+    fields: {
+      'ns:string': 'String value',
+      'ns:multiplestring': ['One', 'Two'],
+      'ns:emptymultiplestring': [],
+    },
   };
 
   beforeEach(() => {
@@ -83,7 +107,8 @@ describe('ChannelRightSidePanel', () => {
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     spyOn($scope, '$broadcast');
 
-    $ctrl.openDocument('test');
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
 
     expect(ContentService.getDocument).toHaveBeenCalledWith('test');
     expect($ctrl.doc).toBe(null);
@@ -98,6 +123,23 @@ describe('ChannelRightSidePanel', () => {
 
     $timeout.flush();
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
+  });
+
+  it('recognizes an empty multiple field', () => {
+    $ctrl.docType = testDocumentType;
+    $ctrl.doc = testDocument;
+
+    expect($ctrl.isEmptyMultiple(stringField)).toBeFalsy();
+    expect($ctrl.isEmptyMultiple(multipleStringField)).toBeFalsy();
+    expect($ctrl.isEmptyMultiple(emptyMultipleStringField)).toBeTruthy();
+  });
+
+  it('can get a field as an array', () => {
+    $ctrl.doc = testDocument;
+
+    expect($ctrl.getFieldAsArray('ns:string')).toEqual(['String value']);
+    expect($ctrl.getFieldAsArray('ns:multiplestring')).toEqual(['One', 'Two']);
+    expect($ctrl.getFieldAsArray('ns:emptymultiplestring')).toEqual([]);
   });
 });
 
