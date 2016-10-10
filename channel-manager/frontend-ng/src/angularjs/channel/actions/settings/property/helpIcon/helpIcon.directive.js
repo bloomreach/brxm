@@ -16,7 +16,7 @@
 
 import template from './helpIcon.html';
 
-export function helpIconDirective() {
+function helpIconDirective() {
   'ngInject';
 
   return {
@@ -27,3 +27,5 @@ export function helpIconDirective() {
     template,
   };
 }
+
+export default helpIconDirective;

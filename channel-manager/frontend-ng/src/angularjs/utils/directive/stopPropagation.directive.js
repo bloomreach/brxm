@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-/**
- * @ngdoc directive
- * @name utils.directive:stopPropagation
- * @restrict A
- *
- * @description
- * Prevent event bubbling
- */
-export function stopPropagationDirective() {
+function stopPropagationDirective() {
   'ngInject';
 
   return {
@@ -32,3 +24,5 @@ export function stopPropagationDirective() {
     },
   };
 }
+
+export default stopPropagationDirective;

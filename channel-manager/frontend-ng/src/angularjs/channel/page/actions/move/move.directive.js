@@ -16,7 +16,7 @@
 
 import template from './move.html';
 
-export function pageMoveDirective() {
+function pageMoveDirective() {
   'ngInject';
 
   return {
@@ -29,3 +29,5 @@ export function pageMoveDirective() {
     controllerAs: 'pageMove',
   };
 }
+
+export default pageMoveDirective;

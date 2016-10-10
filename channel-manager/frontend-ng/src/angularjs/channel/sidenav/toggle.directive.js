@@ -16,7 +16,7 @@
 
 import template from './toggle.html';
 
-export function channelSidenavToggleDirective() {
+function channelSidenavToggleDirective() {
   'ngInject';
 
   return {
@@ -29,3 +29,5 @@ export function channelSidenavToggleDirective() {
     controllerAs: 'toggle',
   };
 }
+
+export default channelSidenavToggleDirective;

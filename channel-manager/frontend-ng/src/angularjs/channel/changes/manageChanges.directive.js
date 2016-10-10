@@ -16,7 +16,7 @@
 
 import template from './manageChanges.html';
 
-export function changeManagementDirective() {
+function changeManagementDirective() {
   return {
     restrict: 'E',
     template,
@@ -26,3 +26,5 @@ export function changeManagementDirective() {
     },
   };
 }
+
+export default changeManagementDirective;

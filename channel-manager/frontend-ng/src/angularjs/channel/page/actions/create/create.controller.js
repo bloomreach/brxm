@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class PageCreateCtrl {
+class PageCreateCtrl {
   constructor($element, $log, $scope, $translate, ChannelService, SiteMapService, HippoIframeService,
               FeedbackService, lowercaseFilter) {
     'ngInject';
@@ -89,3 +89,5 @@ export class PageCreateCtrl {
     return value;
   }
 }
+
+export default PageCreateCtrl;

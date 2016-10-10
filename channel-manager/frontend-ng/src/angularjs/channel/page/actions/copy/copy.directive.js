@@ -16,7 +16,7 @@
 
 import template from './copy.html';
 
-export function pageCopyDirective() {
+function pageCopyDirective() {
   'ngInject';
 
   return {
@@ -29,3 +29,5 @@ export function pageCopyDirective() {
     controllerAs: 'pageCopy',
   };
 }
+
+export default pageCopyDirective;

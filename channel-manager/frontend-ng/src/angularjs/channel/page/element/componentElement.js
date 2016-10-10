@@ -18,7 +18,7 @@
 
 import { PageStructureElement } from './pageStructureElement';
 
-export class ComponentElement extends PageStructureElement {
+class ComponentElement extends PageStructureElement {
   constructor(startCommentDomElement, metaData, container, commentProcessor) {
     let [boxDomElement, endCommentDomElement] = commentProcessor.locateComponent(metaData.uuid, startCommentDomElement);
 
@@ -39,3 +39,5 @@ export class ComponentElement extends PageStructureElement {
     this.container = container;
   }
 }
+
+export default ComponentElement;

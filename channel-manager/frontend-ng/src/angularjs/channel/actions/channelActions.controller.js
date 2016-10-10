@@ -16,7 +16,7 @@
 
 import deleteProgressTemplate from './delete/delete-channel-progress.html';
 
-export class ChannelActionsCtrl {
+class ChannelActionsCtrl {
   constructor($translate, ChannelService, CmsService, DialogService, FeedbackService, SessionService) {
     'ngInject';
 
@@ -103,3 +103,5 @@ export class ChannelActionsCtrl {
     this.DialogService.show(alert);
   }
 }
+
+export default ChannelActionsCtrl;

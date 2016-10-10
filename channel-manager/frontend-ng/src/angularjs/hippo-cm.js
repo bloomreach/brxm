@@ -20,11 +20,11 @@ import ngTranslate from 'angular-translate';
 import 'angular-translate-loader-static-files';
 import uiRouter from 'angular-ui-router';
 
-import { channelManagerApi } from './api/api';
-import { channelModule } from './channel/channel';
-import { config } from './hippo-cm.config';
+import channelManagerApi from './api/api';
+import channelModule from './channel/channel';
+import config from './hippo-cm.config';
 
-export const hippoCmng = angular
+const hippoCmng = angular
   .module('hippo-cm', [
     ngMaterial,
     ngTranslate,
@@ -33,3 +33,5 @@ export const hippoCmng = angular
     channelModule.name,
   ])
   .config(config);
+
+export default hippoCmng;

@@ -16,7 +16,7 @@
 
 import template from './overlayElement.html';
 
-export function overlayElementDirective() {
+function overlayElementDirective() {
   'ngInject';
 
   return {
@@ -30,3 +30,5 @@ export function overlayElementDirective() {
     controllerAs: 'overlayElement',
   };
 }
+
+export default overlayElementDirective;

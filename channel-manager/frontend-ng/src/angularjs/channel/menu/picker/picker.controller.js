@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class PickerCtrl {
+class PickerCtrl {
   constructor($mdDialog, $filter, PickerService) {
     'ngInject';
 
@@ -93,3 +93,5 @@ export class PickerCtrl {
     });
   }
 }
+
+export default PickerCtrl;

@@ -16,7 +16,7 @@
 
 import template from './channel.html';
 
-export function config($stateProvider) {
+function config($stateProvider) {
   'ngInject';
 
   $stateProvider.state('hippo-cm.channel', {
@@ -28,3 +28,5 @@ export function config($stateProvider) {
     },
   });
 }
+
+export default config;

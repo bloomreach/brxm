@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class DomService {
+class DomService {
 
   constructor($q, $rootScope, $document) {
     'ngInject';
@@ -151,3 +151,5 @@ export class DomService {
     return this._scrollBarWidth;
   }
 }
+
+export default DomService;

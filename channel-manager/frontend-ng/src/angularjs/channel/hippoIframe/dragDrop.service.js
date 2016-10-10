@@ -19,7 +19,7 @@ const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
 const MOUSELEAVE_EVENT_NAME = 'mouseleave.dragDropService';
 const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 
-export class DragDropService {
+class DragDropService {
 
   constructor($rootScope, $q, ConfigService, DomService, HstService, PageStructureService, ScalingService,
               ChannelService, ScrollService, FeedbackService) {
@@ -309,3 +309,5 @@ export class DragDropService {
   }
 
 }
+
+export default DragDropService;

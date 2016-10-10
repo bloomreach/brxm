@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ChannelService {
+class ChannelService {
   constructor(
       $log,
       $rootScope,
@@ -289,3 +289,5 @@ export class ChannelService {
     return this.HstService.doDelete(this.ConfigService.rootUuid, 'channels', this.getId());
   }
 }
+
+export default ChannelService;

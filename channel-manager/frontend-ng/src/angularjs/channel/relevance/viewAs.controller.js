@@ -16,7 +16,7 @@
 
 const ALTER_EGO_ID = 'hippo-alter-ego';
 
-export class ViewAsCtrl {
+class ViewAsCtrl {
   constructor($scope, $element, $translate, CmsService, ConfigService, SessionService, HstService, HippoIframeService, PageMetaDataService, FeedbackService) {
     'ngInject';
 
@@ -102,3 +102,5 @@ export class ViewAsCtrl {
     }
   }
 }
+
+export default ViewAsCtrl;

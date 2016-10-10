@@ -16,7 +16,7 @@
 
 import template from './tree.html';
 
-export function hippoTreeDirective() {
+function hippoTreeDirective() {
   'ngInject';
 
   return {
@@ -34,3 +34,5 @@ export function hippoTreeDirective() {
     controllerAs: 'hippoTree',
   };
 }
+
+export default hippoTreeDirective;

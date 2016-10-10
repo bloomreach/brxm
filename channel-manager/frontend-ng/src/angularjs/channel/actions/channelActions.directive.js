@@ -16,7 +16,7 @@
 
 import template from './channelActions.html';
 
-export function channelActionsDirective() {
+function channelActionsDirective() {
   'ngInject';
 
   return {
@@ -29,3 +29,5 @@ export function channelActionsDirective() {
     controllerAs: 'channelActions',
   };
 }
+
+export default channelActionsDirective;

@@ -16,7 +16,7 @@
 
 import template from './property.html';
 
-export function channelPropertyDirective() {
+function channelPropertyDirective() {
   'ngInject';
 
   return {
@@ -32,3 +32,5 @@ export function channelPropertyDirective() {
     controllerAs: 'channelProperty',
   };
 }
+
+export default channelPropertyDirective;

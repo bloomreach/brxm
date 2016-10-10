@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export function incrementPropertyFilter() {
+function incrementPropertyFilter() {
   return (collection, propertyName, propertyValue, subCollection) => {
     const itemsWithProperty = [];
 
@@ -45,3 +45,5 @@ export function incrementPropertyFilter() {
     return propertyValue.replace(/\((\d+)\)/, () => `(${maxNum + 1})`);
   };
 }
+
+export default incrementPropertyFilter;

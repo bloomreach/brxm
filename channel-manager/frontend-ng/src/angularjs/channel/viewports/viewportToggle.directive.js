@@ -16,7 +16,7 @@
 
 import template from './viewportToggle.html';
 
-export function viewportToggleDirective() {
+function viewportToggleDirective() {
   return {
     restrict: 'E',
     template,
@@ -27,3 +27,5 @@ export function viewportToggleDirective() {
     controllerAs: 'toggleCtrl',
   };
 }
+
+export default viewportToggleDirective;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class HippoIframeCtrl {
+class HippoIframeCtrl {
   constructor(
     $q,
     $log,
@@ -222,3 +222,5 @@ export class HippoIframeCtrl {
     return this.HippoIframeService.getSrc();
   }
 }
+
+export default HippoIframeCtrl;

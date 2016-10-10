@@ -42,7 +42,7 @@ const getParentOfScrollItem = (elem) => {
 };
 
 
-export function scrollToIfDirective($timeout) {
+function scrollToIfDirective($timeout) {
   'ngInject';
 
   return {
@@ -78,3 +78,5 @@ export function scrollToIfDirective($timeout) {
     },
   };
 }
+
+export default scrollToIfDirective;

@@ -16,7 +16,7 @@
 
 import template from './pageActions.html';
 
-export function pageActionsDirective() {
+function pageActionsDirective() {
   'ngInject';
 
   return {
@@ -29,3 +29,5 @@ export function pageActionsDirective() {
     controllerAs: 'pageActions',
   };
 }
+
+export default pageActionsDirective;

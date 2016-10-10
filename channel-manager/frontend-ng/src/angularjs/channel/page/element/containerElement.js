@@ -19,7 +19,7 @@
 import { HstConstants } from '../../../api/hst.constants';
 import { PageStructureElement } from './pageStructureElement';
 
-export class ContainerElement extends PageStructureElement {
+class ContainerElement extends PageStructureElement {
   constructor(startCommentDomElement, metaData, commentProcessor) {
     let [boxDomElement, endCommentDomElement] = commentProcessor.locateComponent(metaData.uuid, startCommentDomElement);
 
@@ -103,3 +103,5 @@ export class ContainerElement extends PageStructureElement {
     };
   }
 }
+
+export default ContainerElement;

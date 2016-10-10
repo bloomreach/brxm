@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class PageCopyCtrl {
+class PageCopyCtrl {
   constructor($log, $translate, ChannelService, SessionService, SiteMapService, SiteMapItemService, HippoIframeService,
               FeedbackService) {
     'ngInject';
@@ -108,3 +108,5 @@ export class PageCopyCtrl {
       .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED'));
   }
 }
+
+export default PageCopyCtrl;

@@ -17,7 +17,7 @@
 let q;
 let http;
 
-export class HstService {
+class HstService {
   constructor($q, $http, CmsService, ConfigService, PathService) {
     'ngInject';
 
@@ -143,3 +143,5 @@ export class HstService {
     return this._callHst('PUT', containerId, [], containerRepresentation);
   }
 }
+
+export default HstService;

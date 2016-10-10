@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ChangeManagementCtrl {
+class ChangeManagementCtrl {
   constructor(
       $log,
       $translate,
@@ -117,3 +117,5 @@ export class ChangeManagementCtrl {
     return this.DialogService.show(confirm);
   }
 }
+
+export default ChangeManagementCtrl;

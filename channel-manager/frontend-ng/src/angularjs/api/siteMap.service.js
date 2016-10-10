@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class SiteMapService {
+class SiteMapService {
   constructor(HstService, FeedbackService) {
     'ngInject';
 
@@ -49,3 +49,5 @@ export class SiteMapService {
       .then(response => response.data);
   }
 }
+
+export default SiteMapService;

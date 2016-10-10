@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import { ChannelSidenavService } from './sidenav.service';
-import { ChannelSidenavToggleCtrl } from './toggle.controller';
-import { channelSidenavToggleDirective } from './toggle.directive';
-import { ChannelSidenavCtrl } from './sidenav.controller';
-import { channelSidenavDirective } from './sidenav.directive';
+import ChannelSidenavService from './sidenav.service';
+import ChannelSidenavToggleCtrl from './toggle.controller';
+import channelSidenavToggleDirective from './toggle.directive';
+import ChannelSidenavCtrl from './sidenav.controller';
+import channelSidenavDirective from './sidenav.directive';
 
-export const channelSidenavModule = angular
+const channelSidenavModule = angular
   .module('hippo-cm.channel.sidenav', [])
   .service('ChannelSidenavService', ChannelSidenavService)
   .controller('ChannelSidenavToggleCtrl', ChannelSidenavToggleCtrl)
   .directive('channelSidenavToggle', channelSidenavToggleDirective)
   .controller('ChannelSidenavCtrl', ChannelSidenavCtrl)
   .directive('channelSidenav', channelSidenavDirective);
+
+export default channelSidenavModule;

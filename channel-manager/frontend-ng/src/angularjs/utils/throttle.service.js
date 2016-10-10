@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ThrottleService {
+class ThrottleService {
   constructor() {
     'ngInject';
   }
@@ -32,3 +32,5 @@ export class ThrottleService {
     };
   }
 }
+
+export default ThrottleService;

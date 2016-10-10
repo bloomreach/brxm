@@ -16,7 +16,7 @@
 
 import template from './sidenav.html';
 
-export function channelSidenavDirective() {
+function channelSidenavDirective() {
   'ngInject';
 
   return {
@@ -29,3 +29,5 @@ export function channelSidenavDirective() {
     controllerAs: 'sidenav',
   };
 }
+
+export default channelSidenavDirective;

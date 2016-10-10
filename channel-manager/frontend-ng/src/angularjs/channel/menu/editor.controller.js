@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class MenuEditorCtrl {
+class MenuEditorCtrl {
   constructor($scope, $translate, SiteMenuService, HippoIframeService, DialogService,
               FeedbackService, ChannelService, PickerService, ConfigService) {
     'ngInject';
@@ -209,3 +209,5 @@ export class MenuEditorCtrl {
     return Object.keys(this.editingItem.localParameters).length !== 0;
   }
 }
+
+export default MenuEditorCtrl;

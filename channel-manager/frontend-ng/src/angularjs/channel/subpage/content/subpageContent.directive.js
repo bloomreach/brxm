@@ -16,7 +16,7 @@
 
 import template from './subpageContent.html';
 
-export function subpageContentDirective() {
+function subpageContentDirective() {
   'ngInject';
 
   return {
@@ -25,3 +25,5 @@ export function subpageContentDirective() {
     template,
   };
 }
+
+export default subpageContentDirective;

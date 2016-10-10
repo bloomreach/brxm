@@ -16,7 +16,7 @@
 
 import template from './create.html';
 
-export function pageCreateDirective() {
+function pageCreateDirective() {
   'ngInject';
 
   return {
@@ -29,3 +29,5 @@ export function pageCreateDirective() {
     controllerAs: 'pageCreate',
   };
 }
+
+export default pageCreateDirective;

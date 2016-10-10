@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ChannelSidenavCtrl {
+class ChannelSidenavCtrl {
   constructor($scope, $element, ChannelSidenavService, ChannelService, SiteMapService, HippoIframeService) {
     'ngInject';
 
@@ -53,3 +53,5 @@ export class ChannelSidenavCtrl {
     return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
   }
 }
+
+export default ChannelSidenavCtrl;

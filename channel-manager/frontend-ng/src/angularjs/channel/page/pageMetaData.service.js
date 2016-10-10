@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class PageMetaDataService {
+class PageMetaDataService {
 
   constructor(HstConstants) {
     'ngInject';
@@ -52,3 +52,5 @@ export class PageMetaDataService {
     return this.data[this.HST.SITEMAPITEM_ID];
   }
 }
+
+export default PageMetaDataService;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class SubpageToolbarCtrl {
+class SubpageToolbarCtrl {
   constructor($translate) {
     'ngInject';
 
@@ -22,3 +22,5 @@ export class SubpageToolbarCtrl {
     this.icon = (this.mode === 'cancel') ? '/cms/angular/hippo-cm/images/close.svg' : '/cms/angular/hippo-cm/images/back.svg';
   }
 }
+
+export default SubpageToolbarCtrl;

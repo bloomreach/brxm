@@ -16,7 +16,7 @@
 
 // TODO: Rename this to ExtApiService
 
-export class CmsService {
+class CmsService {
 
   constructor($window, $log) {
     'ngInject';
@@ -84,3 +84,5 @@ export class CmsService {
     return config;
   }
 }
+
+export default CmsService;

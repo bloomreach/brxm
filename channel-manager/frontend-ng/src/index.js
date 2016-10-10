@@ -16,5 +16,4 @@
 
 import './vendor.scss';
 import './index.scss';
-
-export { hippoCmng } from './angularjs/hippo-cm.js';
+import './angularjs/hippo-cm';

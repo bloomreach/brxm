@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class PageMoveCtrl {
+class PageMoveCtrl {
   constructor($log, $translate, ChannelService, SiteMapService, SiteMapItemService, HippoIframeService,
               FeedbackService) {
     'ngInject';
@@ -83,3 +83,5 @@ export class PageMoveCtrl {
       .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MOVE_FAILED', this.errorMap));
   }
 }
+
+export default PageMoveCtrl;

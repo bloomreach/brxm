@@ -16,7 +16,7 @@
 
 import template from './listing.html';
 
-export function listingDirective() {
+function listingDirective() {
   return {
     restrict: 'A',
     bindToController: {
@@ -28,3 +28,5 @@ export function listingDirective() {
     controllerAs: 'listing',
   };
 }
+
+export default listingDirective;

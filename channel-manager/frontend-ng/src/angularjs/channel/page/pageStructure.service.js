@@ -20,7 +20,7 @@ import { EmbeddedLink } from './element/embeddedLink';
 
 const EMBEDDED_LINK_MARKUP = '<a class="hst-cmseditlink"></a>';
 
-export class PageStructureService {
+class PageStructureService {
 
   constructor($log,
               $q,
@@ -506,3 +506,5 @@ export class PageStructureService {
     this._showFeedbackAndReload(errorKey, errorResponse.parameterMap);
   }
 }
+
+export default PageStructureService;

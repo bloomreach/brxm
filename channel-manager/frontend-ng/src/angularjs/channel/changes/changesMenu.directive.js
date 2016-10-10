@@ -16,7 +16,7 @@
 
 import template from './changesMenu.html';
 
-export function changesMenuDirective() {
+function changesMenuDirective() {
   return {
     restrict: 'E',
     template,
@@ -26,3 +26,5 @@ export function changesMenuDirective() {
     },
   };
 }
+
+export default changesMenuDirective;

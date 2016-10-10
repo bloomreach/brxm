@@ -16,7 +16,7 @@
 
 import template from './hippo-cm.html';
 
-export function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $translateProvider) {
+function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $translateProvider) {
   'ngInject';
 
   $urlRouterProvider.otherwise('/');
@@ -125,3 +125,5 @@ export function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $
     .backgroundPalette('hippo-grey');
 }
 
+
+export default config;

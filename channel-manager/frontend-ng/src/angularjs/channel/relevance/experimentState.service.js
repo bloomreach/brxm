@@ -17,7 +17,7 @@
 const EXPERIMENT_ID = 'Targeting-experiment-id';
 const EXPERIMENT_STATE = 'Targeting-experiment-state';
 
-export class ExperimentStateService {
+class ExperimentStateService {
 
   constructor($translate) {
     'ngInject';
@@ -42,3 +42,5 @@ export class ExperimentStateService {
     return label;
   }
 }
+
+export default ExperimentStateService;

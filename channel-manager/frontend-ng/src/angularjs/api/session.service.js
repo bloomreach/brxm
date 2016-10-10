@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class SessionService {
+class SessionService {
   constructor(HstService) {
     'ngInject';
 
@@ -68,3 +68,5 @@ export class SessionService {
     Object.keys(this._initCallbacks).forEach(id => this._initCallbacks[id]());
   }
 }
+
+export default SessionService;

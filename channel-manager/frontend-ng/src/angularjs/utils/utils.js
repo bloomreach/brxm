@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { DomService } from './dom.service';
-import { ThrottleService } from './throttle.service';
-import { FeedbackService } from './feedback.service';
-import { PathService } from './path.service';
-import { startWithSlashFilter } from './filter/startWithSlash.filter';
-import { getByPropertyFilter } from './filter/getByProperty.filter';
-import { incrementPropertyFilter } from './filter/incrementProperty.filter';
-import { illegalCharactersDirective } from './directive/illegalCharacters.directive';
-import { stopPropagationDirective } from './directive/stopPropagation.directive';
-import { scrollToIfDirective } from './directive/scrollToIf.directive';
+import DomService from './dom.service';
+import ThrottleService from './throttle.service';
+import FeedbackService from './feedback.service';
+import PathService from './path.service';
+import startWithSlashFilter from './filter/startWithSlash.filter';
+import getByPropertyFilter from './filter/getByProperty.filter';
+import incrementPropertyFilter from './filter/incrementProperty.filter';
+import illegalCharactersDirective from './directive/illegalCharacters.directive';
+import stopPropagationDirective from './directive/stopPropagation.directive';
+import scrollToIfDirective from './directive/scrollToIf.directive';
 
-export const utilsModule = angular
+const utilsModule = angular
   .module('hippo-cm.utils', [])
   .service('DomService', DomService)
   .service('ThrottleService', ThrottleService)
@@ -37,3 +37,5 @@ export const utilsModule = angular
   .directive('illegalCharacters', illegalCharactersDirective)
   .directive('stopPropagation', stopPropagationDirective)
   .directive('scrollToIf', scrollToIfDirective);
+
+export default utilsModule;

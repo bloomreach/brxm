@@ -17,7 +17,7 @@
 
 import template from './picker.html';
 
-export class PickerService {
+class PickerService {
 
   constructor(DialogService, HstService) {
     'ngInject';
@@ -56,3 +56,5 @@ export class PickerService {
     });
   }
 }
+
+export default PickerService;

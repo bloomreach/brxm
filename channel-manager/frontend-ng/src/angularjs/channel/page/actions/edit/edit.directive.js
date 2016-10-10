@@ -16,7 +16,7 @@
 
 import template from './edit.html';
 
-export function pageEditDirective() {
+function pageEditDirective() {
   'ngInject';
 
   return {
@@ -29,3 +29,5 @@ export function pageEditDirective() {
     controllerAs: 'pageEdit',
   };
 }
+
+export default pageEditDirective;

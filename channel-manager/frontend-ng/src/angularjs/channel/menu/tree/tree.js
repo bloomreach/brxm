@@ -15,16 +15,21 @@
  */
 
 import uiTree from 'angular-ui-tree';
-import { hippoTreeDirective } from './tree.directive';
-import { hippoTreeTemplateDirective } from './tree.template.directive';
-import { HippoTreeCtrl } from './tree.controller';
+import hippoTreeDirective from './tree.directive';
+import hippoTreeTemplateDirective from './tree.template.directive';
+import HippoTreeCtrl from './tree.controller';
 
-require('ng-cache!./items.renderer.html');  // eslint-disable-line import/no-unresolved
+// TODO: Find better solution than a 1 time use of webpack ng-cache loader
+/* eslint-disable */
+require('ng-cache!./items.renderer.html');
+/* eslint-enable */
 
-export const uiTreeModule = angular
+const uiTreeModule = angular
   .module('hippo-cm.ui.tree', [
     uiTree,
   ])
   .directive('hippoTree', hippoTreeDirective)
   .directive('hippoTreeTemplate', hippoTreeTemplateDirective)
   .controller('HippoTreeCtrl', HippoTreeCtrl);
+
+export default uiTreeModule;

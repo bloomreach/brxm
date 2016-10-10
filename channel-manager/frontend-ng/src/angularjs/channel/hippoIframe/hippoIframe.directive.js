@@ -16,7 +16,7 @@
 
 import template from './hippoIframe.html';
 
-export function hippoIframe() {
+function hippoIframe() {
   'ngInject';
 
   return {
@@ -31,3 +31,5 @@ export function hippoIframe() {
     controllerAs: 'iframe',
   };
 }
+
+export default hippoIframe;

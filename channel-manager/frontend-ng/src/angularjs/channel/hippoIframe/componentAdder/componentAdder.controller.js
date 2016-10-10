@@ -16,7 +16,7 @@
 
 import autoScrollerFactory from 'dom-autoscroller';
 
-export class ComponentAdderCtrl {
+class ComponentAdderCtrl {
   constructor($scope, $log, $element, ComponentAdderService, PageStructureService, CatalogService, DragDropService,
               HippoIframeService) {
     'ngInject';
@@ -115,3 +115,5 @@ export class ComponentAdderCtrl {
     return container && !container.isDisabled();
   }
 }
+
+export default ComponentAdderCtrl;

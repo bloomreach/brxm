@@ -17,7 +17,7 @@
 const FIRST_CHILD = 'first';
 const NEXT_SIBLING = 'after';
 
-export class SiteMenuService {
+class SiteMenuService {
   constructor($filter, $translate, HstService) {
     'ngInject';
 
@@ -245,3 +245,5 @@ export class SiteMenuService {
   }
 }
 
+
+export default SiteMenuService;

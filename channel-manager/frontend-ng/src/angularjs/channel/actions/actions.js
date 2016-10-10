@@ -16,15 +16,15 @@
 
 import ngMessages from 'angular-messages';
 
-import { channelActionsDirective } from './channelActions.directive';
-import { ChannelActionsCtrl } from './channelActions.controller';
-import { channelSettingsDirective } from './settings/settings.directive';
-import { ChannelSettingsCtrl } from './settings/settings.controller';
-import { channelPropertyDirective } from './settings/property/property.directive';
-import { ChannelPropertyCtrl } from './settings/property/property.controller';
-import { helpIconDirective } from './settings/property/helpIcon/helpIcon.directive';
+import channelActionsDirective from './channelActions.directive';
+import ChannelActionsCtrl from './channelActions.controller';
+import channelSettingsDirective from './settings/settings.directive';
+import ChannelSettingsCtrl from './settings/settings.controller';
+import channelPropertyDirective from './settings/property/property.directive';
+import ChannelPropertyCtrl from './settings/property/property.controller';
+import helpIconDirective from './settings/property/helpIcon/helpIcon.directive';
 
-export const channelActionsModule = angular
+const channelActionsModule = angular
   .module('hippo-cm.channel.actions', [
     ngMessages,
   ])
@@ -35,3 +35,5 @@ export const channelActionsModule = angular
   .controller('ChannelPropertyCtrl', ChannelPropertyCtrl)
   .directive('channelProperty', channelPropertyDirective)
   .directive('helpIcon', helpIconDirective);
+
+export default channelActionsModule;

@@ -16,7 +16,7 @@
 
 import template from './toolbar.html';
 
-export function subpageToolbarDirective() {
+function subpageToolbarDirective() {
   'ngInject';
 
   return {
@@ -33,3 +33,5 @@ export function subpageToolbarDirective() {
     controllerAs: 'toolbar',
   };
 }
+
+export default subpageToolbarDirective;

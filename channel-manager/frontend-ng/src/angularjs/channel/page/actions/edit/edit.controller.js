@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class PageEditCtrl {
+class PageEditCtrl {
   constructor($translate, $mdDialog, SiteMapService, SiteMapItemService, ChannelService, HippoIframeService,
               FeedbackService) {
     'ngInject';
@@ -102,3 +102,5 @@ export class PageEditCtrl {
   }
 }
 
+
+export default PageEditCtrl;

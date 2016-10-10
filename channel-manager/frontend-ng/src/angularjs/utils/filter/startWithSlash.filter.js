@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export function startWithSlashFilter() {
+function startWithSlashFilter() {
   'ngInject';
 
   return (value) => {
@@ -24,3 +24,5 @@ export function startWithSlashFilter() {
     return value;
   };
 }
+
+export default startWithSlashFilter;

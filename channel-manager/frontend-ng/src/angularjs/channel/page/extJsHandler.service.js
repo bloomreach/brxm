@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ExtJsHandlerService {
+class ExtJsHandlerService {
 
   constructor(CmsService, PageStructureService) {
     'ngInject';
@@ -28,3 +28,5 @@ export class ExtJsHandlerService {
     this.CmsService.subscribe('reload-channel', errorResponse => this.PageStructureService.reloadChannel(errorResponse));
   }
 }
+
+export default ExtJsHandlerService;

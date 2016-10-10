@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class PageActionsCtrl {
+class PageActionsCtrl {
   constructor($translate, FeedbackService, ChannelService, SiteMapService, SiteMapItemService, DialogService,
               HippoIframeService, PageMetaDataService, SessionService) {
     'ngInject';
@@ -138,3 +138,5 @@ export class PageActionsCtrl {
     return this.DialogService.show(confirm);
   }
 }
+
+export default PageActionsCtrl;

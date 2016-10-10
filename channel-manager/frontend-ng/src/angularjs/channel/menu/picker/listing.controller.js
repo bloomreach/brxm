@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ListingCtrl {
+class ListingCtrl {
   selectDocument(document) {
     this.selectedDocument = document;
   }
@@ -52,3 +52,5 @@ export class ListingCtrl {
     return iconPath;
   }
 }
+
+export default ListingCtrl;

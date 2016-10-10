@@ -16,7 +16,7 @@
 
 import template from './settings.html';
 
-export function channelSettingsDirective() {
+function channelSettingsDirective() {
   'ngInject';
 
   return {
@@ -31,3 +31,5 @@ export function channelSettingsDirective() {
     controllerAs: 'channelSettings',
   };
 }
+
+export default channelSettingsDirective;

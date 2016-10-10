@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class OverlaySyncService {
+class OverlaySyncService {
 
   constructor($rootScope, $log, $window, ThrottleService, DomService) {
     'ngInject';
@@ -204,3 +204,5 @@ export class OverlaySyncService {
   }
 
 }
+
+export default OverlaySyncService;

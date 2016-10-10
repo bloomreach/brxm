@@ -16,7 +16,7 @@
 
 import template from './editor.html';
 
-export function menuEditorDirective() {
+function menuEditorDirective() {
   'ngInject';
 
   return {
@@ -32,3 +32,5 @@ export function menuEditorDirective() {
     controllerAs: 'menuEditor',
   };
 }
+
+export default menuEditorDirective;

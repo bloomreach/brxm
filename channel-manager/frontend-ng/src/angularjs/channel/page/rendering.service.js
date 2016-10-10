@@ -16,7 +16,7 @@
  *
  */
 
-export class RenderingService {
+class RenderingService {
 
   constructor($http, $log) {
     'ngInject';
@@ -55,3 +55,5 @@ export class RenderingService {
   }
 
 }
+
+export default RenderingService;

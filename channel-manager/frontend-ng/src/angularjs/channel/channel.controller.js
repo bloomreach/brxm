@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ChannelCtrl {
+class ChannelCtrl {
 
   constructor(
       $log,
@@ -151,3 +151,5 @@ export class ChannelCtrl {
     }
   }
 }
+
+export default ChannelCtrl;

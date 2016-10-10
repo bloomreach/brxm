@@ -27,7 +27,7 @@ function isInternalLink(link, internalLinks) {
   return internalLinks.some(internalLink => startsWith(link, internalLink));
 }
 
-export class LinkProcessorService {
+class LinkProcessorService {
 
   constructor($translate) {
     'ngInject';
@@ -58,3 +58,5 @@ export class LinkProcessorService {
     });
   }
 }
+
+export default LinkProcessorService;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ChannelSettingsCtrl {
+class ChannelSettingsCtrl {
   constructor($translate, FeedbackService, ChannelService, HippoIframeService, ConfigService) {
     'ngInject';
 
@@ -100,3 +100,5 @@ export class ChannelSettingsCtrl {
     });
   }
 }
+
+export default ChannelSettingsCtrl;

@@ -18,7 +18,7 @@
 let log;
 let HST;
 
-export class HstCommentsProcessorService {
+class HstCommentsProcessorService {
 
   constructor($log, HstConstants) {
     'ngInject';
@@ -150,3 +150,5 @@ export class HstCommentsProcessorService {
     return false;
   }
 }
+
+export default HstCommentsProcessorService;

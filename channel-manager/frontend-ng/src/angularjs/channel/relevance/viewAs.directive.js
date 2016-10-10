@@ -16,7 +16,7 @@
 
 import template from './viewAs.html';
 
-export function ViewAsDirective() {
+function ViewAsDirective() {
   'ngInject';
 
   return {
@@ -30,3 +30,5 @@ export function ViewAsDirective() {
     controllerAs: 'viewAs',
   };
 }
+
+export default ViewAsDirective;
