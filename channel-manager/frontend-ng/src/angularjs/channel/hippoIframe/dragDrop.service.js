@@ -173,8 +173,32 @@ export class DragDropService {
   }
 
   _onMirrorCreated(mirrorElement, originalElement) {
-    this.DomService.copyComputedStyleExcept(originalElement, mirrorElement, ['border-[a-z]*', 'box-shadow', 'height', 'margin-[a-z]*', 'overflow', 'opacity', 'pointer-events', 'position', '[a-z\\\-]*user-select', 'width']);
-    this.DomService.copyComputedStyleOfDescendantsExcept(originalElement, mirrorElement, ['opacity', 'pointer-events', '[a-z\\\-]*user-select']);
+    this.DomService.copyComputedStyleExcept(
+      originalElement,
+      mirrorElement,
+      [
+        'border-[a-z]*',
+        'box-shadow',
+        'height',
+        'margin-[a-z]*',
+        'overflow',
+        'opacity',
+        'pointer-events',
+        'position',
+        '[a-z\\-]*user-select',
+        'width',
+      ]
+    );
+
+    this.DomService.copyComputedStyleOfDescendantsExcept(
+      originalElement,
+      mirrorElement,
+      [
+        'opacity',
+        'pointer-events',
+        '[a-z\\-]*user-select',
+      ]
+    );
 
     const iframeOffset = this.iframeJQueryElement.offset();
     $(MIRROR_WRAPPER_SELECTOR).offset(iframeOffset);
