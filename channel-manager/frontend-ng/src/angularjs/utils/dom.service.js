@@ -66,7 +66,7 @@ export class DomService {
     const toComputedStyle = toElement.ownerDocument.defaultView.getComputedStyle(toElement, null);
     const cssDiff = [];
 
-    for (let i = 0, fromLength = fromComputedStyle.length; i < fromLength; i++) {
+    for (let i = 0, fromLength = fromComputedStyle.length; i < fromLength; i += 1) {
       const cssPropertyName = fromComputedStyle.item(i);
       if (!excludeRegExp || !excludeRegExp.test(cssPropertyName)) {
         const fromValue = fromComputedStyle.getPropertyValue(cssPropertyName);

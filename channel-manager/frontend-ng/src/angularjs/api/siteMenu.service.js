@@ -179,7 +179,7 @@ export class SiteMenuService {
   // lookup the existing menu item by ID and replace it with the updated item
   _replaceMenuItem(items, item) {
     if (angular.isArray(items)) {
-      for (let i = 0; i < items.length; i++) {
+      for (let i = 0; i < items.length; i += 1) {
         if (items[i].id === item.id) {
           items[i] = item;
           return true;

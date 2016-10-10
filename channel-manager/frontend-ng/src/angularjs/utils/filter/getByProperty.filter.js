@@ -19,7 +19,7 @@ export function getByPropertyFilter() {
 
   return (collection, propertyName, propertyValue, subCollection) => {
     function findPropertiesAndSubProperties(newCollection) {
-      for (let i = 0; i < newCollection.length; i++) {
+      for (let i = 0; i < newCollection.length; i += 1) {
         if (newCollection[i][propertyName] === propertyValue) {
           return newCollection[i];
         }

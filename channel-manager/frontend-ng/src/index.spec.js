@@ -17,7 +17,7 @@ function createMessageBus() {
       return false;
     }
     const scopeParameter = scope || window;
-    for (let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i += 1) {
       const entry = list[i];
       if (entry.callback === callback && entry.scope === scopeParameter) {
         list.splice(i, 1);
@@ -33,7 +33,7 @@ function createMessageBus() {
     }
 
     const len = entries.length;
-    for (let i = 0; i < len; i++) {
+    for (let i = 0; i < len; i += 1) {
       const entry = entries[i];
       if (entry.callback.apply(entry.scope, args) === false) {
         return false;

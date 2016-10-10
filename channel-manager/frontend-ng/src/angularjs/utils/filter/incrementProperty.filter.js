@@ -19,7 +19,7 @@ export function incrementPropertyFilter() {
     const itemsWithProperty = [];
 
     function findPropertiesAndSubProperties(newCollection) {
-      for (let i = 0; i < newCollection.length; i++) {
+      for (let i = 0; i < newCollection.length; i += 1) {
         const propName = newCollection[i][propertyName];
         const match = propName.match(/\((\d+)\)/);
         if (match) {
