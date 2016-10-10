@@ -32,7 +32,7 @@ export class HstCommentsProcessorService {
     }
     // IE doesn't support 'evaluate', see
     // https://developer.mozilla.org/en/docs/Web/API/Document/evaluate#Browser_compatibility
-    if (!!document.evaluate) {
+    if (document.evaluate) {
       this.processCommentsWithXPath(document, callback);
     } else {
       this.processCommentsWithDomWalking(document, callback);
