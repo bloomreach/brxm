@@ -57,7 +57,7 @@ describe('MenuEditor', () => {
     menu = { items: [] };
 
     spyOn(SiteMenuService, 'deleteMenuItem').and.returnValue($q.when());
-    spyOn(SiteMenuService, 'getEditableMenuItem').and.callFake((id) => $q.when({ id }));
+    spyOn(SiteMenuService, 'getEditableMenuItem').and.callFake(id => $q.when({ id }));
     spyOn(SiteMenuService, 'loadMenu').and.returnValue($q.when(menu));
     spyOn(SiteMenuService, 'saveMenuItem').and.returnValue($q.when());
     spyOn(ChannelService, 'recordOwnChange');

@@ -94,7 +94,7 @@ describe('PageActionCopy', () => {
       },
     ];
 
-    spyOn($translate, 'instant').and.callFake((key) => key);
+    spyOn($translate, 'instant').and.callFake(key => key);
     spyOn($log, 'info');
     spyOn(SessionService, 'isCrossChannelPageCopySupported').and.returnValue(true);
     spyOn(ChannelService, 'getPageModifiableChannels').and.returnValue(channels);

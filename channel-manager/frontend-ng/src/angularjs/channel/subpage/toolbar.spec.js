@@ -34,7 +34,7 @@ describe('SubpageToolbar', () => {
       $translate = _$translate_;
     });
 
-    spyOn($translate, 'instant').and.callFake((key) => key);
+    spyOn($translate, 'instant').and.callFake(key => key);
   });
 
   function compileDirectiveAndGetController() {

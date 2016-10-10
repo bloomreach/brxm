@@ -61,7 +61,7 @@ describe('ComponentsService', () => {
     $rootScope.$digest();
 
     const components = CatalogService.getComponents();
-    expect(components.map((c) => c.label))
+    expect(components.map(c => c.label))
       .toEqual(['bah component', 'foo component', 'foo2 component']);
   });
 

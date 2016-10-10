@@ -32,7 +32,7 @@ export class RenderingService {
       header: {
         Accept: 'text/html',
       },
-    }).then((response) => response.data);
+    }).then(response => response.data);
   }
 
   fetchComponentMarkup(component, propertiesMap) {

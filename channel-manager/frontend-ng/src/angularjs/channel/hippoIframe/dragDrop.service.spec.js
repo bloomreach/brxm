@@ -92,7 +92,7 @@ describe('DragDropService', () => {
   }
 
   function componentIds(container) {
-    return container.getComponents().map((component) => component.getId());
+    return container.getComponents().map(component => component.getId());
   }
 
   function loadIframeFixture(callback) {

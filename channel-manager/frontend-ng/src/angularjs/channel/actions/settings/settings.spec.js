@@ -94,7 +94,7 @@ describe('ChannelSettings', () => {
       },
     };
 
-    spyOn($translate, 'instant').and.callFake((key) => key);
+    spyOn($translate, 'instant').and.callFake(key => key);
     spyOn(ChannelService, 'getName').and.returnValue('test-name');
     spyOn(ChannelService, 'reload').and.returnValue($q.when(channel));
     spyOn(ChannelService, 'getChannel').and.returnValue(channel);

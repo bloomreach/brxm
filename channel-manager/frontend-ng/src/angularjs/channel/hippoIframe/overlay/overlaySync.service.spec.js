@@ -92,7 +92,7 @@ describe('OverlaySyncService', () => {
 
   it('should attach a MutationObserver on the iframe document on first load', (done) => {
     spyOn(OverlaySyncService.observer, 'observe').and.callThrough();
-    loadIframeFixture(iframeWindow => {
+    loadIframeFixture((iframeWindow) => {
       expect(OverlaySyncService.observer.observe).toHaveBeenCalledWith(iframeWindow.document, jasmine.anything());
       done();
     });
@@ -111,7 +111,7 @@ describe('OverlaySyncService', () => {
 
   it('should sync when the iframe DOM is changed', (done) => {
     spyOn(OverlaySyncService, 'syncIframe');
-    loadIframeFixture(iframeWindow => {
+    loadIframeFixture((iframeWindow) => {
       OverlaySyncService.syncIframe.calls.reset();
       OverlaySyncService.syncIframe.and.callFake(done);
       $(iframeWindow.document.body).css('color', 'green');

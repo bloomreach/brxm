@@ -24,7 +24,7 @@ function isInternalLink(link, internalLinks) {
   if (!angular.isArray(internalLinks)) {
     return false;
   }
-  return internalLinks.some((internalLink) => startsWith(link, internalLink));
+  return internalLinks.some(internalLink => startsWith(link, internalLink));
 }
 
 export class LinkProcessorService {

@@ -41,11 +41,11 @@ export class SiteMapService {
 
   create(siteMapId, parentSiteMapItemId, page) {
     return this.HstService.doPost(page, siteMapId, 'create', parentSiteMapItemId)
-      .then((response) => response.data);
+      .then(response => response.data);
   }
 
   copy(siteMapId, headers) {
     return this.HstService.doPostWithHeaders(siteMapId, headers, 'copy')
-      .then((response) => response.data);
+      .then(response => response.data);
   }
 }

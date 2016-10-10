@@ -25,9 +25,9 @@ export class ComponentAdderCtrl {
 
     const drake = window.dragula({
       ignoreInputTextSelection: false,
-      isContainer: (el) => this._isEnabledOverlayContainer(el) || ComponentAdderService.isCatalogContainer(el),
+      isContainer: el => this._isEnabledOverlayContainer(el) || ComponentAdderService.isCatalogContainer(el),
       copy: true,
-      moves: (el) => ComponentAdderService.isCatalogContainerItem(el),
+      moves: el => ComponentAdderService.isCatalogContainerItem(el),
       accepts: (el, target) => this._isEnabledOverlayContainer(target),
     });
 
@@ -37,7 +37,7 @@ export class ComponentAdderCtrl {
         $element.addClass('add-mode');
 
         // prevent IE11 from dragging the image
-        this.selectedCatalogItem.catalogJQueryElement.find('img').on('dragstart', (event) => event.preventDefault());
+        this.selectedCatalogItem.catalogJQueryElement.find('img').on('dragstart', event => event.preventDefault());
       });
     });
 

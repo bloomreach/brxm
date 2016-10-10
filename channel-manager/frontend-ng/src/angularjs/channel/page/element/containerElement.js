@@ -77,11 +77,11 @@ export class ContainerElement extends PageStructureElement {
   }
 
   getComponent(componentId) {
-    return this.items.find((item) => item.getId() === componentId);
+    return this.items.find(item => item.getId() === componentId);
   }
 
   getComponentByIframeElement(iframeElement) {
-    return this.items.find((item) => item.getBoxElement().is(iframeElement));
+    return this.items.find(item => item.getBoxElement().is(iframeElement));
   }
 
   replaceComponent(oldComponent, newComponent) {
@@ -99,7 +99,7 @@ export class ContainerElement extends PageStructureElement {
     return {
       id: this.getId(),
       lastModifiedTimestamp: this.getLastModified(),
-      children: this.items.map((item) => item.getId()),
+      children: this.items.map(item => item.getId()),
     };
   }
 }

@@ -31,7 +31,7 @@ export class HstService {
 
   initializeSession(hostname, mountId) {
     return this.doGet(this.config.rootUuid, 'composermode', hostname, mountId)
-      .then(response => {
+      .then((response) => {
         if (response) {
           return response.data;
         }
@@ -48,7 +48,7 @@ export class HstService {
 
   getSiteMap(id) {
     return this.doGet(id, 'pages')
-      .then((response) => response.data.pages);
+      .then(response => response.data.pages);
   }
 
   doGet(uuid, ...pathElements) {
@@ -94,8 +94,8 @@ export class HstService {
 
     return q((resolve, reject) => {
       http({ method, url, headers, data })
-        .success((response) => resolve(response))
-        .error((error) => reject(error));
+        .success(response => resolve(response))
+        .error(error => reject(error));
     });
   }
 
@@ -119,7 +119,7 @@ export class HstService {
 
   _serializeParams(params) {
     const str = Object.keys(params)
-      .map((param) => `${encodeURIComponent(param)}=${encodeURIComponent(params[param])}`);
+      .map(param => `${encodeURIComponent(param)}=${encodeURIComponent(params[param])}`);
     return str.join('&');
   }
 

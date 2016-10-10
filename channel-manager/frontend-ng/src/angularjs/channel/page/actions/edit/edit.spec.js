@@ -82,7 +82,7 @@ describe('PageActionEdit', () => {
     mockAlert.textContent.and.returnValue(mockAlert);
     mockAlert.ok.and.returnValue(mockAlert);
 
-    spyOn($translate, 'instant').and.callFake((key) => key);
+    spyOn($translate, 'instant').and.callFake(key => key);
     spyOn($mdDialog, 'alert').and.returnValue(mockAlert);
     spyOn($mdDialog, 'show');
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));

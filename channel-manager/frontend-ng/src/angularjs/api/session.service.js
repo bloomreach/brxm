@@ -65,6 +65,6 @@ export class SessionService {
   }
 
   _serveInitCallbacks() {
-    Object.keys(this._initCallbacks).forEach((id) => this._initCallbacks[id]());
+    Object.keys(this._initCallbacks).forEach(id => this._initCallbacks[id]());
   }
 }

@@ -147,7 +147,7 @@ describe('PageActions', () => {
 
   it('enables the delete action if the current page is editable', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
-    const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
+    const deleteAction = PageActionsCtrl.actions.find(action => action.id === 'delete');
 
     SiteMapItemService.isEditable.and.returnValue(false);
     expect(deleteAction.isEnabled()).toBe(false);
@@ -160,7 +160,7 @@ describe('PageActions', () => {
 
   it('enables the edit action if the current page is editable', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
-    const editAction = PageActionsCtrl.actions.find((action) => action.id === 'edit');
+    const editAction = PageActionsCtrl.actions.find(action => action.id === 'edit');
 
     $translate.instant.calls.reset();
     SiteMapItemService.isEditable.and.returnValue(false);
@@ -175,7 +175,7 @@ describe('PageActions', () => {
 
   it('enables the copy action if the page can be copied', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
-    const copyAction = PageActionsCtrl.actions.find((action) => action.id === 'copy');
+    const copyAction = PageActionsCtrl.actions.find(action => action.id === 'copy');
 
     SiteMapItemService.isLocked.and.returnValue(true);
     expect(copyAction.isEnabled()).toBe(false);
@@ -201,7 +201,7 @@ describe('PageActions', () => {
 
   it('disables the copy action if the page is undefined', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
-    const copyAction = PageActionsCtrl.actions.find((action) => action.id === 'copy');
+    const copyAction = PageActionsCtrl.actions.find(action => action.id === 'copy');
 
     SiteMapItemService.hasItem.and.returnValue(false);
     expect(copyAction.isEnabled()).toBe(false);
@@ -209,7 +209,7 @@ describe('PageActions', () => {
 
   it('does nothing when not confirming the deletion of a page', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
-    const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
+    const deleteAction = PageActionsCtrl.actions.find(action => action.id === 'delete');
 
     DialogService.show.and.returnValue($q.reject());
     PageActionsCtrl.trigger(deleteAction);
@@ -221,7 +221,7 @@ describe('PageActions', () => {
 
   it('flashes a toast when failing to delete the current page', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
-    const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
+    const deleteAction = PageActionsCtrl.actions.find(action => action.id === 'delete');
 
     DialogService.show.and.returnValue($q.when());
     SiteMapItemService.deleteItem.and.returnValue($q.reject());
@@ -235,7 +235,7 @@ describe('PageActions', () => {
 
   it('navigates to the channel\'s homepage after successfully deleting the current page', () => {
     const PageActionsCtrl = compileDirectiveAndGetController();
-    const deleteAction = PageActionsCtrl.actions.find((action) => action.id === 'delete');
+    const deleteAction = PageActionsCtrl.actions.find(action => action.id === 'delete');
 
     DialogService.show.and.returnValue($q.when());
     SiteMapItemService.deleteItem.and.returnValue($q.when());

@@ -57,7 +57,7 @@ export class ChannelSettingsCtrl {
 
   touchRequiredFields() {
     if (this.form.$error.required) {
-      this.form.$error.required.forEach((requiredField) => requiredField.$setDirty());
+      this.form.$error.required.forEach(requiredField => requiredField.$setDirty());
     }
   }
 

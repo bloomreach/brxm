@@ -50,7 +50,7 @@ export class PageActionsCtrl {
   }
 
   _findAction(id) {
-    return this.actions.find((action) => action.id === id);
+    return this.actions.find(action => action.id === id);
   }
 
   _isCopyEnabled() {

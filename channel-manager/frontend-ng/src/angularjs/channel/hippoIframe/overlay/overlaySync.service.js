@@ -175,7 +175,7 @@ export class OverlaySyncService {
   }
 
   _syncOverlayElements() {
-    this.overlayElements.forEach((element) => this._syncElement(element));
+    this.overlayElements.forEach(element => this._syncElement(element));
   }
 
   _syncElement(structureElement) {

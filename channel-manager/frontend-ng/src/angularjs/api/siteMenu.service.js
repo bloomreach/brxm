@@ -105,13 +105,13 @@ export class SiteMenuService {
         }
 
         return this.HstService.doPostWithParams(newItem, menuId, options, parentId)
-          .then((response) => response.data)
-          .then((newItemId) => this.loadMenu(menuId).then(() => this._makeEditableItem(newItemId)));
+          .then(response => response.data)
+          .then(newItemId => this.loadMenu(menuId).then(() => this._makeEditableItem(newItemId)));
       });
   }
 
   getPathToMenuItem(menuId, menuItemId) {
-    return this._loadMenu(menuId).then((menu) => this._findPathToMenuItem(menu, menuItemId));
+    return this._loadMenu(menuId).then(menu => this._findPathToMenuItem(menu, menuItemId));
   }
 
   _createBlankMenuItem() {
