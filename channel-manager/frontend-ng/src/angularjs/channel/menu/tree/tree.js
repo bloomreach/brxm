@@ -15,7 +15,7 @@
  */
 
 import uiTree from 'angular-ui-tree';
-require('ng-cache!./items.renderer.html');
+require('ng-cache!./items.renderer.html');  // eslint-disable-line import/no-unresolved
 
 import { hippoTreeDirective } from './tree.directive';
 import { hippoTreeTemplateDirective } from './tree.template.directive';
