@@ -18,15 +18,9 @@ package org.hippoecm.hst.content.beans.query.builder;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.jcr.Session;
-
-import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
-import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.repository.util.DateTools;
 
 public abstract class ConstraintBuilder {
-
-    private boolean negated;
 
     protected ConstraintBuilder() {
     }
@@ -44,13 +38,8 @@ public abstract class ConstraintBuilder {
      * "<em>.</em>" meaning a text constraint on node scope (instead of property) level is done
      * </p>
      * <p>
-     *     When you do not invoke a explicit {@link ConstraintBuilder} method, for example {@link ConstraintBuilder#equalTo(Object)},
-     *     but just use something like {@code constraint("myproject:title")} in the {@link HstQueryBuilder#where(ConstraintBuilder)},
-     *     the {@link ConstraintBuilder} falls back to a property must exist constraint, thus {@link ConstraintBuilder#exists()}.
-     * </p>
-     * <p>
      *     If you do invoke an explicit {@link ConstraintBuilder} method, for example {@link ConstraintBuilder#equalTo(Object)},
-     *     but the argument is {@code null}, the effect is that this {@link ConstraintBuilder} in {@link HstQueryBuilder#where(ConstraintBuilder)}
+     *     but the argument is {@code null}, the effect is that this {@link ConstraintBuilder} in {@link HstQueryBuilder#where(Constraint)}
      *     is ignored. This way, when using the fluent api, you can skip null checks. For example
      *     <pre>
      *         .where(
@@ -62,49 +51,30 @@ public abstract class ConstraintBuilder {
      * @param fieldName the {@code fieldName} this filter operates on, not allowed to be {@code null}
      * @return a new FilterBuilder for {@code fieldName}
      */
-    public static ConstraintBuilder constraint(String fieldName) {
-        FieldConstraintBuilder filterBuilder = new FieldConstraintBuilder(fieldName);
-        return filterBuilder;
+    public static FieldConstraintBuilder constraint(String fieldName) {
+        FieldConstraintBuilder fieldConstraintBuilder = new FieldConstraintBuilder(fieldName);
+        return fieldConstraintBuilder;
     }
 
-    public static ConstraintBuilder and(ConstraintBuilder... constraintBuilders) {
-        AndConstraintBuilder filterBuilder = new AndConstraintBuilder(constraintBuilders);
-        return filterBuilder;
+    public static Constraint and(Constraint ... constraints) {
+        AndConstraint andConstraint = new AndConstraint(constraints);
+        return andConstraint;
     }
 
-    public static ConstraintBuilder or(ConstraintBuilder... constraintBuilders) {
-        OrConstraintBuilder filterBuilder = new OrConstraintBuilder(constraintBuilders);
-        return filterBuilder;
+    public static Constraint or(Constraint ... constraints) {
+        OrConstraint orConstraint = new OrConstraint(constraints);
+        return orConstraint;
     }
 
-    public final Filter build(final Session session, final DateTools.Resolution defaultResolution) throws FilterException {
-        Filter filter = doBuild(session, defaultResolution);
-
-        if (filter != null && negated) {
-            filter.negate();
-        }
-
-        return filter;
-    }
-
-    protected abstract Filter doBuild(final Session session, final DateTools.Resolution defaultResolution) throws FilterException;
-
-    /**
-     * Negates the current filter
-     */
-    public ConstraintBuilder negate() {
-        this.negated = !negated;
-        return this;
-    }
 
     /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is equal to <code>value</code>
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
      *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder equalTo(Object value);
+    public abstract Constraint equalTo(Object value);
 
     /**
      * <p>
@@ -129,9 +99,9 @@ public abstract class ConstraintBuilder {
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder equalTo(Calendar value, DateTools.Resolution dateResolution);
+    public abstract Constraint equalTo(Calendar value, DateTools.Resolution dateResolution);
 
     /**
      * Case insensitive testing of <code>fieldAttributeName</code> for some <code>value</code>.
@@ -140,26 +110,26 @@ public abstract class ConstraintBuilder {
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
      *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder equalToCaseInsensitive(String value);
+    public abstract Constraint equalToCaseInsensitive(String value);
 
     /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is NOT equal to <code>value</code>
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
      *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder notEqualTo(Object value);
+    public abstract Constraint notEqualTo(Object value);
 
     /**
      * Case insensitive testing of <code>fieldAttributeName</code> for some <code>value</code>.
      * @see #notEqualTo(Object) same as notEqualTo(Object) only now the inequality is checked
      * case insensitive and the value can only be of type {@link Calendar}
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder notEqualTo(Calendar value, DateTools.Resolution dateResolution);
+    public abstract Constraint notEqualTo(Calendar value, DateTools.Resolution dateResolution);
 
     /**
      * <p><strong>note:</strong> supported resolutions are
@@ -173,9 +143,9 @@ public abstract class ConstraintBuilder {
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
      *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder notEqualToCaseInsensitive(String value);
+    public abstract Constraint notEqualToCaseInsensitive(String value);
 
     /**
      * <p>
@@ -190,9 +160,9 @@ public abstract class ConstraintBuilder {
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
      *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder greaterOrEqualThan(Object value);
+    public abstract Constraint greaterOrEqualThan(Object value);
 
     /**
      * <p><strong>note:</strong> supported resolutions are
@@ -212,9 +182,9 @@ public abstract class ConstraintBuilder {
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder greaterOrEqualThan(Calendar value, DateTools.Resolution dateResolution);
+    public abstract Constraint greaterOrEqualThan(Calendar value, DateTools.Resolution dateResolution);
 
     /**
      * <p>
@@ -229,9 +199,9 @@ public abstract class ConstraintBuilder {
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
      *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder greaterThan(Object value);
+    public abstract Constraint greaterThan(Object value);
 
     /**
      * <p><strong>note:</strong> supported resolutions are
@@ -251,9 +221,9 @@ public abstract class ConstraintBuilder {
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder greaterThan(Calendar value, DateTools.Resolution dateResolution);
+    public abstract Constraint greaterThan(Calendar value, DateTools.Resolution dateResolution);
 
     /**
      * <p>
@@ -268,9 +238,9 @@ public abstract class ConstraintBuilder {
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
      *        the parameter {@code value} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder lessOrEqualThan(Object value);
+    public abstract Constraint lessOrEqualThan(Object value);
 
     /**
      * <p><strong>note:</strong> supported resolutions are
@@ -281,9 +251,9 @@ public abstract class ConstraintBuilder {
      * </p>
      * @see #between(java.util.Calendar, java.util.Calendar, org.hippoecm.repository.util.DateTools.Resolution)
      * between(java.util.Calendar, java.util.Calendar, DateTools.Resolution) but now no lower bound
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder lessOrEqualThan(Calendar value, DateTools.Resolution dateResolution);
+    public abstract Constraint lessOrEqualThan(Calendar value, DateTools.Resolution dateResolution);
 
     /**
      * <p>
@@ -296,9 +266,9 @@ public abstract class ConstraintBuilder {
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder lessThan(Object value);
+    public abstract Constraint lessThan(Object value);
 
     /**
      * <p><strong>note:</strong> supported resolutions are
@@ -318,9 +288,9 @@ public abstract class ConstraintBuilder {
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder lessThan(Calendar value, DateTools.Resolution dateResolution);
+    public abstract Constraint lessThan(Calendar value, DateTools.Resolution dateResolution);
 
     /**
      * Adds a fulltext search to this Filter. A fulltext search is a search on the indexed text of the <code>scope</code>. When the
@@ -330,9 +300,9 @@ public abstract class ConstraintBuilder {
      * @param fullTextSearch the text to search on. If
      *        the parameter {@code fullTextSearch} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder contains(String fullTextSearch);
+    public abstract Constraint contains(String fullTextSearch);
 
     /**
      * The negated version of {@link #contains(String)}
@@ -340,9 +310,9 @@ public abstract class ConstraintBuilder {
      * @param fullTextSearch the text to search on. If
      *        the parameter {@code fullTextSearch} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder notContains(String fullTextSearch);
+    public abstract Constraint notContains(String fullTextSearch);
 
     /**
      * <p>
@@ -360,9 +330,9 @@ public abstract class ConstraintBuilder {
      * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
      *        the parameter {@code value2} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder between(Object value1, Object value2);
+    public abstract Constraint between(Object value1, Object value2);
 
     /**
      * Adds a <b>FAST DATE RANGE</b> constraint that the Calendar value for <code>fieldAttributeName</code> is between <code>start</code> and <code>end</code> (boundaries included) BASED ON the
@@ -380,9 +350,9 @@ public abstract class ConstraintBuilder {
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder between(Calendar start, Calendar end, DateTools.Resolution dateResolution);
+    public abstract Constraint between(Calendar start, Calendar end, DateTools.Resolution dateResolution);
 
     /**
      * <p>
@@ -401,9 +371,9 @@ public abstract class ConstraintBuilder {
      * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}. If
      *        the parameter {@code value2} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder notBetween(Object value1, Object value2);
+    public abstract Constraint notBetween(Object value1, Object value2);
 
     /**
      * <p><strong>note:</strong> supported resolutions are
@@ -426,9 +396,9 @@ public abstract class ConstraintBuilder {
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#MONTH},
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#DAY} or
      *                   {@link org.hippoecm.repository.util.DateTools.Resolution#HOUR}
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder notBetween(Calendar start, Calendar end, DateTools.Resolution dateResolution);
+    public abstract Constraint notBetween(Calendar start, Calendar end, DateTools.Resolution dateResolution);
 
     /**
      * <p>
@@ -454,37 +424,37 @@ public abstract class ConstraintBuilder {
      * @param value object that must be of type String. If
      *        the parameter {@code start} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder like(String value);
+    public abstract Constraint like(String value);
 
     /**
      * @see #like(String) only now inverted
      * @param value object that must be of type String. If
      *        the parameter {@code start} is {@code null}, this {@link ConstraintBuilder} is ignored (unless another
      *        constraint method is invoked without {@code null} value.
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      *
      */
-    public abstract ConstraintBuilder notLike(String value);
+    public abstract Constraint notLike(String value);
 
     /**
      * Add a constraint that the result <b>does</b> have the property <code>fieldAttributeName</code>, regardless its value
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder exists();
+    public abstract Constraint exists();
 
     /**
      * Add a constraint that the result <b>does NOT</b> have the property <code>fieldAttributeName</code>
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      */
-    public abstract ConstraintBuilder notExists();
+    public abstract Constraint notExists();
 
     /**
      * Adds the xpath <code>jcrExpression</code> as constraint. See jsr-170 spec for the xpath format
-     * @return this {@link ConstraintBuilder}
+     * @return this {@link Constraint}
      * @param jcrExpression the {@code jcrExpression} to include in this
      */
-    public abstract ConstraintBuilder jcrExpression(String jcrExpression);
+    public abstract Constraint jcrExpression(String jcrExpression);
 
 }

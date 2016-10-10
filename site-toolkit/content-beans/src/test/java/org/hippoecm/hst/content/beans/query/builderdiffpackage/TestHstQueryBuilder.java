@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.content.beans.query.builder;
+package org.hippoecm.hst.content.beans.query.builderdiffpackage;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -34,12 +34,14 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
+import org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.repository.util.DateTools;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -286,30 +288,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void no_constraint_on_filderBuilder_defaults_to_property_must_exist_query() throws Exception {
-        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
-        Filter filter = hstQuery.createFilter();
-        filter.addNotNull("myhippoproject:customid");
-        hstQuery.setFilter(filter);
-
-        HstQuery hstQueryInFluent = create(baseContentBean)
-                .where(
-                        constraint("myhippoproject:customid")
-                )
-                .build();
-
-        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
-
-        HstQuery hstQueryInFluent2 = create(baseContentBean)
-                .where(
-                        constraint("myhippoproject:customid").exists()
-                )
-                .build();
-
-        assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
-    }
-
-    @Test
     public void simple_property_does_not_exist_filter() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         Filter filter = hstQuery.createFilter();
@@ -507,18 +485,6 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
     }
 
     @Test
-    public void simple_duplicate_constraint_in_filter_works() throws Exception {
-        HstQuery hstQueryInFluent = create(baseContentBean)
-                .where(
-                        constraint("myhippoproject:customid").equalTo("foo").equalTo("bar")
-                )
-                .build();
-
-        String xpathQueryInFluent = hstQueryInFluent.getQueryAsString(true);
-        assertTrue(xpathQueryInFluent.contains("(@myhippoproject:customid = 'foo' and @myhippoproject:customid = 'bar')"));
-    }
-
-    @Test
     public void nested_property_filters() throws Exception {
         HstQuery hstQuery = queryManager.createQuery(baseContentBean);
         Filter filter = hstQuery.createFilter();
@@ -550,6 +516,115 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
         assertHstQueriesEquals(hstQuery, hstQueryInFluent);
     }
 
+
+    @Test
+    public void nested_property_filters_or_first() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        Filter nestedFilter1 = hstQuery.createFilter();
+        nestedFilter1.addEqualTo("myhippoproject:customid", "123");
+        Filter nestedFilter2 = hstQuery.createFilter();
+        Filter nestedFilter21 = hstQuery.createFilter();
+        nestedFilter21.addLike("myhippoproject:title", "Hello%");
+        Filter nestedFilter22 = hstQuery.createFilter();
+        nestedFilter22.addContains("myhippoproject:description", "foo");
+        nestedFilter2.addAndFilter(nestedFilter21);
+        nestedFilter2.addAndFilter(nestedFilter22);
+        filter.addOrFilter(nestedFilter1);
+        filter.addOrFilter(nestedFilter2);
+        hstQuery.setFilter(filter);
+
+        HstQuery hstQueryInFluent = create(baseContentBean)
+                .where(
+                        or(
+                                constraint("myhippoproject:customid").equalTo("123"),
+                                and(
+                                        constraint("myhippoproject:title").like("Hello%"),
+                                        constraint("myhippoproject:description").contains("foo")
+                                )
+                        )
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+    }
+
+    @Test
+    public void empty_nested_or_and_are_ignored() throws Exception {
+        HstQuery hstQueryInFluent = create(baseContentBean)
+                .where(
+                        or(
+                                constraint("myhippoproject:customid").equalTo("123")
+                        )
+                )
+                .build();
+
+        HstQuery hstQueryInFluent2 = create(baseContentBean)
+                .where(
+                        or(
+                                constraint("myhippoproject:customid").equalTo("123"),
+                                and(
+
+                                )
+                        )
+                )
+                .build();
+
+        HstQuery hstQueryInFluent3 = create(baseContentBean)
+                .where(
+                        or(
+                                constraint("myhippoproject:customid").equalTo("123"),
+                                or(
+
+                                )
+                        )
+                )
+                .build();
+
+
+        assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent2);
+        assertHstQueriesEquals(hstQueryInFluent, hstQueryInFluent3);
+    }
+
+
+    @Test
+    public void constraint_with_negate() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addEqualTo("myhippoproject:customid", "123");
+        filter.negate();
+        hstQuery.setFilter(filter);
+
+        HstQuery hstQueryInFluent = create(baseContentBean)
+                .where(constraint("myhippoproject:customid").equalTo("123").negate())
+                .build();
+
+        HstQuery hstQueryInFluent2 = create(baseContentBean)
+                .where(constraint("myhippoproject:customid").equalTo("123").negate().negate().negate())
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent2);
+    }
+
+    @Test
+    public void constraint_with_even_negate_ignored() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Filter filter = hstQuery.createFilter();
+        filter.addEqualTo("myhippoproject:customid", "123");
+        hstQuery.setFilter(filter);
+
+        HstQuery hstQueryInFluent = create(baseContentBean)
+                .where(constraint("myhippoproject:customid").equalTo("123").negate().negate())
+                .build();
+
+        HstQuery hstQueryInFluent2 = create(baseContentBean)
+                .where(constraint("myhippoproject:customid").equalTo("123").negate().negate().negate().negate())
+                .build();
+
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent);
+        assertHstQueriesEquals(hstQuery, hstQueryInFluent2);
+    }
 
     @Test
     public void nested_property_filters_with_order_by() throws Exception {
@@ -591,7 +666,7 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
     @Test
     public void order_by_enum_from_string() throws Exception {
-        assertEquals(ASC, HstQueryBuilder.Order.fromString(null));
+        Assert.assertEquals(ASC, HstQueryBuilder.Order.fromString(null));
         assertEquals(ASC, HstQueryBuilder.Order.fromString("foo"));
         assertEquals(ASC, HstQueryBuilder.Order.fromString("asc"));
         assertEquals(ASC, HstQueryBuilder.Order.fromString("ascending"));

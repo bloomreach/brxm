@@ -22,26 +22,27 @@ import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.repository.util.DateTools;
 
-class AndConstraintBuilder extends ConstraintBuilderAdapter {
+class OrConstraint extends Constraint {
 
-    private final ConstraintBuilder[] constraintBuilders;
+    private Constraint[] constraints;
 
-    protected AndConstraintBuilder(final ConstraintBuilder... constraintBuilders) {
+    protected OrConstraint(final Constraint ... constraints) {
         super();
-        this.constraintBuilders = constraintBuilders;
+        this.constraints = constraints;
     }
 
     @Override
     protected Filter doBuild(final Session session, final DateTools.Resolution defaultResolution) throws FilterException {
-        final Filter filter = new FilterImpl(session, defaultResolution);
+        Filter filter = new FilterImpl(session, defaultResolution);
 
         boolean realConstraintFound = false;
-        if (constraintBuilders != null) {
-            for (ConstraintBuilder constraintBuilder : constraintBuilders) {
-                final Filter nestedFilter = constraintBuilder.build(session, defaultResolution);
+
+        if (constraints != null) {
+            for (Constraint constraint : constraints) {
+                final Filter nestedFilter = constraint.build(session, defaultResolution);
                 if (nestedFilter != null) {
                     realConstraintFound = true;
-                    filter.addAndFilter(nestedFilter);
+                    filter.addOrFilter(nestedFilter);
                 }
             }
         }

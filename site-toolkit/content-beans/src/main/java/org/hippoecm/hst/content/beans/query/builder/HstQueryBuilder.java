@@ -91,7 +91,7 @@ public abstract class HstQueryBuilder {
     private List<String> primaryNodeTypes;
     private List<Class<? extends HippoBean>> primaryNodeTypeClazzes;
 
-    private ConstraintBuilder constraintBuilder;
+    private Constraint constraint;
     private List<OrderByConstruct> orderByConstructs;
     private Integer offset;
     private Integer limit;
@@ -288,16 +288,16 @@ public abstract class HstQueryBuilder {
         return excludeScopes;
     }
 
-    public HstQueryBuilder where(final ConstraintBuilder constraintBuilder) {
-        if (this.constraintBuilder != null){
+    public HstQueryBuilder where(final Constraint constraint) {
+        if (this.constraint != null){
             throw new RuntimeQueryException(new QueryException("'where' clause is allowed only once."));
         }
-        this.constraintBuilder = constraintBuilder;
+        this.constraint = constraint;
         return this;
     }
 
-    protected ConstraintBuilder where() {
-        return constraintBuilder;
+    protected Constraint where() {
+        return constraint;
     }
 
     /**
