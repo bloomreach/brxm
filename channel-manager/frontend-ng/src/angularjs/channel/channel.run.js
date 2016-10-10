@@ -16,5 +16,6 @@
 
 export function run(ChannelService) {
   'ngInject';
+
   ChannelService.initialize();
 }

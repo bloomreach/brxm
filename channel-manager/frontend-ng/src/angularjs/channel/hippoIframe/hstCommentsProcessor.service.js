@@ -22,6 +22,7 @@ export class HstCommentsProcessorService {
 
   constructor($log, HstConstants) {
     'ngInject';
+
     log = $log;
     HST = HstConstants;
   }

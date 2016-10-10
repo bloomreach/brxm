@@ -21,6 +21,7 @@ export class ExperimentStateService {
 
   constructor($translate) {
     'ngInject';
+
     this.$translate = $translate;
   }
 
