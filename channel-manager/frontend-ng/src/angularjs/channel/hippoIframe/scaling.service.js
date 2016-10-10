@@ -77,14 +77,15 @@ export class ScalingService {
 
     const iframeWrapper = this.hippoIframeJQueryElement.parent();
     const iframeWrapperWidth = iframeWrapper.width();
+    const viewPortWidth = this.OverlaySyncService.getViewPortWidth();
     const iframeContentWidth = iframeWrapperWidth - (this.panels.left.pushWidth + this.panels.right.pushWidth);
     const oldScale = this.scaleFactor;
 
-    if (iframeWrapperWidth > 1280) {
-      return; // only scale when we're below 1280 width as that is our lowest supported width
-    }
+    let newScale = Math.min(iframeContentWidth / iframeWrapperWidth, 1);
 
-    const newScale = Math.min(iframeContentWidth / iframeWrapperWidth, 1);
+    if ((viewPortWidth !== 0 && iframeContentWidth >= viewPortWidth) || iframeContentWidth >= 1280) {
+      newScale = 1;
+    }
 
     if (newScale !== oldScale) {
       const iframeBase = this.hippoIframeJQueryElement.find('.channel-iframe-base');
