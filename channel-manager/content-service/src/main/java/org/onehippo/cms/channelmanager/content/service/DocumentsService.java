@@ -16,10 +16,12 @@
 
 package org.onehippo.cms.channelmanager.content.service;
 
+import java.util.Locale;
+
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
-import org.onehippo.cms.channelmanager.content.model.Document;
+import org.onehippo.cms.channelmanager.content.model.document.Document;
 
 /**
  * DocumentsService exposes an API for reading and manipulating documents
@@ -33,11 +35,12 @@ public interface DocumentsService {
     /**
      * Read the contents and state of a document into a JSON-serializable representation
      *
-     * @param session user-authenticated JCR session for reading from the repository
      * @param id      UUID of the requested document (handle)
+     * @param session user-authenticated JCR session for reading from the repository
+     * @param locale  locale of the current CMS session
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws DocumentNotFoundException
      *                If the requested UUID was not found or is not a document
      */
-    Document getDocument(final Session session, final String id) throws DocumentNotFoundException;
+    Document getDocument(final String id, final Session session, final Locale locale) throws DocumentNotFoundException;
 }

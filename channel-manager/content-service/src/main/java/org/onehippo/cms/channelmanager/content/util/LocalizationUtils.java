@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.util;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -25,6 +26,8 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.onehippo.repository.l10n.ResourceBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * LocalizationHelper provides functionality for determining correctly localized document type and field names and hints.
@@ -33,6 +36,8 @@ public class LocalizationUtils {
     // TODO: these are defined in TranslatorType in the CMS API. Move to repository and avoid duplication?
     private static final String HIPPO_TYPES = "hippo:types";
     private static final String JCR_NAME = "jcr:name";
+
+    private static final Logger log = LoggerFactory.getLogger(LocalizationUtils.class);
 
     private LocalizationUtils() { }
 
@@ -43,10 +48,10 @@ public class LocalizationUtils {
      * @param locale Locale of the related CMS session
      * @return       ResourceBundle or null
      */
-    public static ResourceBundle getResourceBundleForDocument(final String id, final Locale locale) {
+    public static Optional<ResourceBundle> getResourceBundleForDocument(final String id, final Locale locale) {
         final LocalizationService localizationService = HippoServiceRegistry.getService(LocalizationService.class);
         final String bundleName = HIPPO_TYPES + "." + id;
-        return localizationService.getResourceBundle(bundleName, locale);
+        return Optional.ofNullable(localizationService.getResourceBundle(bundleName, locale));
     }
 
     /**
@@ -54,35 +59,36 @@ public class LocalizationUtils {
      *
      * @param id             ID of the document type, e.g. "myhippoproject:newsdocument"
      * @param resourceBundle Document type's resource bundle. May be null
-     * @return               Display name or null
+     * @return               Display name or nothing, wrapped in an Optional
      */
-    public static String determineDocumentDisplayName(final String id, final ResourceBundle resourceBundle) {
+    public static Optional<String> determineDocumentDisplayName(final String id,
+                                                                final Optional<ResourceBundle> resourceBundle) {
         // Try to return a localised document name
-        if (resourceBundle != null) {
-            String displayName = resourceBundle.getString(JCR_NAME);
-            if (displayName != null) {
-                return displayName;
-            }
+        Optional<String> displayName = resourceBundle.map(rb -> rb.getString(JCR_NAME));
+        if (displayName.isPresent()) {
+            return displayName;
         }
+
         // Fall-back to node name, use part after namespace prefix
         if (id.contains(":")) {
             String unNamespaced = id.substring(id.indexOf(":") + 1);
-            return NodeNameCodec.decode(unNamespaced);
+            return Optional.of(NodeNameCodec.decode(unNamespaced));
         }
         // No display name available
-        return null;
+        return Optional.empty();
     }
 
     /**
      * Determine the localized display name ("caption") of a document type field.
      *
      * @param fieldId        ID of the field, e.g. "myhippoproject:title"
-     * @param resourceBundle Document type's resource bundle. May be null
+     * @param resourceBundle Document type's optional resource bundle
      * @param namespaceNode  Document type's root node
-     * @return               Display name or null
+     * @return               Display name or nothing, wrapped in an Optional
      */
-    public static String determineFieldDisplayName(final String fieldId, final ResourceBundle resourceBundle,
-                                            final Node namespaceNode) {
+    public static Optional<String> determineFieldDisplayName(final String fieldId,
+                                                             final Optional<ResourceBundle> resourceBundle,
+                                                             final Node namespaceNode) {
         return determineFieldLabel(fieldId, resourceBundle, fieldId, namespaceNode, "caption");
     }
 
@@ -90,34 +96,35 @@ public class LocalizationUtils {
      * Determine the localized hint of a document type field.
      *
      * @param fieldId        ID of the field, e.g. "myhippoproject:title"
-     * @param resourceBundle Document type's resource bundle. May be null
+     * @param resourceBundle Document type's optional resource bundle
      * @param namespaceNode  Document type's root node
-     * @return               Hint or null
+     * @return               Hint or nothing, wrapped in an Optional
      */
-    public static String determineFieldHint(final String fieldId, final ResourceBundle resourceBundle,
-                                     final Node namespaceNode) {
+    public static Optional<String> determineFieldHint(final String fieldId,
+                                                      final Optional<ResourceBundle> resourceBundle,
+                                                      final Node namespaceNode) {
         return determineFieldLabel(fieldId, resourceBundle, fieldId + "#hint", namespaceNode, "hint");
     }
 
-    private static String determineFieldLabel(final String fieldId, final ResourceBundle resourceBundle,
-                                              final String resourceKey, final Node namespaceNode, final String configProperty) {
+    private static Optional<String> determineFieldLabel(final String fieldId,
+                                                        final Optional<ResourceBundle> resourceBundle,
+                                                        final String resourceKey,
+                                                        final Node namespaceNode,
+                                                        final String configProperty) {
         // Try to return a localized label
-        if (resourceBundle != null) {
-            String label = resourceBundle.getString(resourceKey);
-            if (label != null) {
-                return label;
-            }
+        Optional<String> label = resourceBundle.map(rb -> rb.getString(resourceKey));
+        if (label.isPresent()) {
+            return label;
         }
+
         // Try to read a property off the field's plugin config
-        final Node fieldConfig = NamespaceUtils.getConfigForField(namespaceNode, fieldId);
-        if (fieldConfig != null) {
+        return NamespaceUtils.getConfigForField(namespaceNode, fieldId).flatMap(config -> {
             try {
-                return fieldConfig.getProperty(configProperty).getString();
+                return Optional.of(config.getProperty(configProperty).getString());
             } catch (RepositoryException e) {
-                // failed to read caption
+                log.debug("Failed to read property '{}'", configProperty, e);
             }
-        }
-        // No label available
-        return null;
+            return Optional.empty();
+        });
     }
 }

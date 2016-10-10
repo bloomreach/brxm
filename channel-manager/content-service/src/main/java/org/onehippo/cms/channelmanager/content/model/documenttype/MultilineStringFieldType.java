@@ -13,30 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cms.channelmanager.content.model;
 
-/**
- * This bean represents a CMS user.
- * It can be serialized into JSON to expose it through a REST API.
- */
-public class UserInfo {
+package org.onehippo.cms.channelmanager.content.model.documenttype;
 
-    private String id;
-    private String displayName;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(final String id) {
-        this.id = id;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(final String displayName) {
-        this.displayName = displayName;
+public class MultilineStringFieldType extends StringFieldType {
+    public MultilineStringFieldType() {
+        setType(Type.MULTILINE_STRING);
     }
 }

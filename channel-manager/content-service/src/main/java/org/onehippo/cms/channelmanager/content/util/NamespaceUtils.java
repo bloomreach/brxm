@@ -16,13 +16,14 @@
 
 package org.onehippo.cms.channelmanager.content.util;
 
+import java.util.Optional;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,8 @@ import org.slf4j.LoggerFactory;
  * stored under the /hippo:namespaces root-level node.
  */
 public class NamespaceUtils {
+
+    private static final String PROPERTY_PLUGIN_CLASS = "plugin.class";
     private static final Logger log = LoggerFactory.getLogger(NamespaceUtils.class);
 
     /**
@@ -38,24 +41,19 @@ public class NamespaceUtils {
      *
      * @param typeId  ID of a document type, e.g. "myhippoproject:newsdocument"
      * @param session system JCR session meant for read-only access
-     * @return        document type root node
-     * @throws DocumentTypeNotFoundException
-     *                Not finding the root node means we abort the document type reading.
+     * @return        document type root node or nothing, wrapped in an Optional
      */
-    public static Node getDocumentTypeRootNode(final String typeId, final Session session)
-            throws DocumentTypeNotFoundException {
+    public static Optional<Node> getDocumentTypeRootNode(final String typeId, final Session session) {
         try {
             final String[] part = typeId.split(":");
-            if (part.length != 2) {
-                throw new DocumentTypeNotFoundException();
+            if (part.length == 2) {
+                final String path = "/hippo:namespaces/" + part[0] + "/" + part[1];
+                return Optional.of(session.getNode(path));
             }
-
-            final String path = "/hippo:namespaces/" + part[0] + "/" + part[1];
-            return session.getNode(path);
         } catch (RepositoryException e) {
             log.debug("Unable to find root node for document type '{}'", typeId, e);
-            throw new DocumentTypeNotFoundException();
         }
+        return Optional.empty();
     }
 
 
@@ -65,9 +63,9 @@ public class NamespaceUtils {
      *
      * @param documentTypeRootNode the root node of a document type
      * @param fieldId              node or property name
-     * @return                     the config node, or null
+     * @return                     the config node or nothing, wrapped in an Optional
      */
-    public static Node getConfigForField(final Node documentTypeRootNode, final String fieldId) {
+    public static Optional<Node> getConfigForField(final Node documentTypeRootNode, final String fieldId) {
         try {
             final String nodeTypePath = HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE;
             final Node nodeTypeNode = documentTypeRootNode.getNode(nodeTypePath);
@@ -77,13 +75,13 @@ public class NamespaceUtils {
                 if (child.hasProperty(HippoNodeType.HIPPO_PATH)
                         && child.getProperty(HippoNodeType.HIPPO_PATH).getString().equals(fieldId)) {
                     final String configPath = "editor:templates/_default_/" + child.getName();
-                    return documentTypeRootNode.getNode(configPath);
+                    return Optional.of(documentTypeRootNode.getNode(configPath));
                 }
             }
         } catch (RepositoryException e) {
-            // unable to retrieve the config node
+            log.debug("Failed to read config of field '{}'", fieldId, e);
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -91,17 +89,16 @@ public class NamespaceUtils {
      *
      * @param documentTypeRootNode the root node of a document type
      * @param fieldId              node or property name
-     * @return                     the plugin class name or null
+     * @return                     the plugin class name or nothing, wrapped in an Optional
      */
-    public static String getPluginClassForField(final Node documentTypeRootNode, final String fieldId) {
-        final Node fieldConfig = getConfigForField(documentTypeRootNode, fieldId);
-        if (fieldConfig != null) {
+    public static Optional<String> getPluginClassForField(final Node documentTypeRootNode, final String fieldId) {
+        return getConfigForField(documentTypeRootNode, fieldId).flatMap(config -> {
             try {
-                return fieldConfig.getProperty("plugin.class").getString();
+                return Optional.of(config.getProperty(PROPERTY_PLUGIN_CLASS).getString());
             } catch (RepositoryException e) {
-                // failed to read plugin config
+                log.debug("Failed to read property '{}' of field '{}'", PROPERTY_PLUGIN_CLASS, fieldId);
             }
-        }
-        return null;
+            return Optional.empty();
+        });
     }
 }

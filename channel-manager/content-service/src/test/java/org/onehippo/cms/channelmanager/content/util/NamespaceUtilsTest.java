@@ -16,6 +16,9 @@
 
 package org.onehippo.cms.channelmanager.content.util;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
@@ -24,8 +27,6 @@ import javax.jcr.Session;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
-import org.onehippo.cms.channelmanager.content.util.NamespaceUtils;
 import org.onehippo.repository.mock.MockNode;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -49,24 +50,24 @@ public class NamespaceUtilsTest {
         expect(session.getNode("/hippo:namespaces/ns/testdocument")).andReturn(rootNode);
         replay(session);
 
-        assertThat(NamespaceUtils.getDocumentTypeRootNode("ns:testdocument", session), equalTo(rootNode));
+        assertThat(NamespaceUtils.getDocumentTypeRootNode("ns:testdocument", session).get(), equalTo(rootNode));
     }
 
-    @Test(expected = DocumentTypeNotFoundException.class)
+    @Test(expected = NoSuchElementException.class)
     public void getRootNodeWithInvalidId() throws Exception {
         final Session session = createMock(Session.class);
 
-        NamespaceUtils.getDocumentTypeRootNode("blabla", session);
+        NamespaceUtils.getDocumentTypeRootNode("blabla", session).get();
     }
 
-    @Test(expected = DocumentTypeNotFoundException.class)
+    @Test(expected = NoSuchElementException.class)
     public void getRootNodeWithRepositoryException() throws Exception {
         final Session session = createMock(Session.class);
 
         expect(session.getNode("/hippo:namespaces/ns/testdocument")).andThrow(new RepositoryException());
         replay(session);
 
-        NamespaceUtils.getDocumentTypeRootNode("ns:testdocument", session);
+        NamespaceUtils.getDocumentTypeRootNode("ns:testdocument", session).get();
     }
 
     @Test
@@ -81,20 +82,20 @@ public class NamespaceUtilsTest {
         nt.addNode("id2", HippoNodeType.NT_FIELD).setProperty(HippoNodeType.HIPPO_PATH, "field2");
         nt.addNode("id3", HippoNodeType.NT_FIELD).setProperty(HippoNodeType.HIPPO_PATH, "field3");
 
-        assertThat(NamespaceUtils.getConfigForField(root, "field0"), equalTo(null));
-        assertThat(NamespaceUtils.getConfigForField(root, "field1"), equalTo(null));
-        assertThat(NamespaceUtils.getConfigForField(root, "field2"), equalTo(null));
-        assertThat(NamespaceUtils.getConfigForField(root, "field3"), equalTo(config3));
+        assertThat(NamespaceUtils.getConfigForField(root, "field0").isPresent(), equalTo(false));
+        assertThat(NamespaceUtils.getConfigForField(root, "field1").isPresent(), equalTo(false));
+        assertThat(NamespaceUtils.getConfigForField(root, "field2").isPresent(), equalTo(false));
+        assertThat(NamespaceUtils.getConfigForField(root, "field3").get(), equalTo(config3));
     }
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void getConfigNodeWithRepositoryException() throws Exception {
         final Node root = createMock(Node.class);
 
         expect(root.getNode(anyObject())).andThrow(new RepositoryException());
         replay(root);
 
-        assertThat(NamespaceUtils.getConfigForField(root, "dummy"), equalTo(null));
+        NamespaceUtils.getConfigForField(root, "dummy").get();
     }
 
     @Test
@@ -107,16 +108,16 @@ public class NamespaceUtilsTest {
 
         PowerMock.mockStaticPartial(NamespaceUtils.class, "getConfigForField");
 
-        expect(NamespaceUtils.getConfigForField(root, fieldId)).andReturn(config);
+        expect(NamespaceUtils.getConfigForField(root, fieldId)).andReturn(Optional.of(config));
         expect(config.getProperty("plugin.class")).andReturn(property);
         expect(property.getString()).andReturn(pluginClass);
         replay(config, property);
         PowerMock.replayAll();
 
-        assertThat(NamespaceUtils.getPluginClassForField(root, fieldId), equalTo(pluginClass));
+        assertThat(NamespaceUtils.getPluginClassForField(root, fieldId).get(), equalTo(pluginClass));
     }
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void getPluginClassWithRepositoryException() throws Exception {
         final String fieldId = "fieldId";
         final Node root = createMock(Node.class);
@@ -124,24 +125,24 @@ public class NamespaceUtilsTest {
 
         PowerMock.mockStaticPartial(NamespaceUtils.class, "getConfigForField");
 
-        expect(NamespaceUtils.getConfigForField(root, fieldId)).andReturn(config);
+        expect(NamespaceUtils.getConfigForField(root, fieldId)).andReturn(Optional.of(config));
         expect(config.getProperty("plugin.class")).andThrow(new RepositoryException());
         replay(config);
         PowerMock.replayAll();
 
-        assertThat(NamespaceUtils.getPluginClassForField(root, fieldId), equalTo(null));
+        NamespaceUtils.getPluginClassForField(root, fieldId).get();
     }
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void getPluginClassWithMissingConfig() throws Exception {
         final String fieldId = "fieldId";
         final Node root = createMock(Node.class);
 
         PowerMock.mockStaticPartial(NamespaceUtils.class, "getConfigForField");
 
-        expect(NamespaceUtils.getConfigForField(root, fieldId)).andReturn(null);
+        expect(NamespaceUtils.getConfigForField(root, fieldId)).andReturn(Optional.empty());
         PowerMock.replayAll();
 
-        assertThat(NamespaceUtils.getPluginClassForField(root, fieldId), equalTo(null));
+        NamespaceUtils.getPluginClassForField(root, fieldId).get();
     }
 }

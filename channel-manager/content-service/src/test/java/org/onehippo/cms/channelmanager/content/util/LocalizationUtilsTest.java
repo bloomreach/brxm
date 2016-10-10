@@ -17,6 +17,8 @@
 package org.onehippo.cms.channelmanager.content.util;
 
 import java.util.Locale;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -53,10 +55,10 @@ public class LocalizationUtilsTest {
         expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(localizationService);
         PowerMock.replayAll();
 
-        assertThat(LocalizationUtils.getResourceBundleForDocument("ns:testdocument", locale), equalTo(resourceBundle));
+        assertThat(LocalizationUtils.getResourceBundleForDocument("ns:testdocument", locale).get(), equalTo(resourceBundle));
     }
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void getResourceBundleNull() {
         final Locale locale = new Locale("en");
         final LocalizationService localizationService = createMock(LocalizationService.class);
@@ -67,7 +69,7 @@ public class LocalizationUtilsTest {
         expect(HippoServiceRegistry.getService(LocalizationService.class)).andReturn(localizationService);
         PowerMock.replayAll();
 
-        assertThat(LocalizationUtils.getResourceBundleForDocument("ns:testdocument", locale), equalTo(null));
+        LocalizationUtils.getResourceBundleForDocument("ns:testdocument", locale).get();
     }
 
     @Test
@@ -78,7 +80,7 @@ public class LocalizationUtilsTest {
         expect(resourceBundle.getString("jcr:name")).andReturn(displayName);
         replay(resourceBundle);
 
-        assertThat(LocalizationUtils.determineDocumentDisplayName("anything", resourceBundle), equalTo(displayName));
+        assertThat(LocalizationUtils.determineDocumentDisplayName("anything", Optional.of(resourceBundle)).get(), equalTo(displayName));
     }
 
     @Test
@@ -90,7 +92,7 @@ public class LocalizationUtilsTest {
         expect(resourceBundle.getString("jcr:name")).andReturn(null);
         replay(resourceBundle);
 
-        assertThat(LocalizationUtils.determineDocumentDisplayName(id, resourceBundle), equalTo(displayName));
+        assertThat(LocalizationUtils.determineDocumentDisplayName(id, Optional.of(resourceBundle)).get(), equalTo(displayName));
     }
 
     @Test
@@ -98,17 +100,17 @@ public class LocalizationUtilsTest {
         final String displayName = "displayName";
         final String id = "namespace:" + displayName;
 
-        assertThat(LocalizationUtils.determineDocumentDisplayName(id, null), equalTo(displayName));
+        assertThat(LocalizationUtils.determineDocumentDisplayName(id, Optional.empty()).get(), equalTo(displayName));
     }
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void failToGetDocumentDisplayName() {
         final ResourceBundle resourceBundle = createMock(ResourceBundle.class);
 
         expect(resourceBundle.getString("jcr:name")).andReturn(null);
         replay(resourceBundle);
 
-        assertThat(LocalizationUtils.determineDocumentDisplayName("anything", resourceBundle), equalTo(null));
+        LocalizationUtils.determineDocumentDisplayName("anything", Optional.of(resourceBundle)).get();
     }
 
     @Test
@@ -119,7 +121,7 @@ public class LocalizationUtilsTest {
         expect(resourceBundle.getString("ns:title")).andReturn(displayName);
         replay(resourceBundle);
 
-        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", resourceBundle, null), equalTo(displayName));
+        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", Optional.of(resourceBundle), null).get(), equalTo(displayName));
     }
 
     @Test
@@ -135,13 +137,13 @@ public class LocalizationUtilsTest {
         expect(config.getProperty("caption")).andReturn(property);
         expect(property.getString()).andReturn(displayName);
         replay(resourceBundle, config, property);
-        expect(NamespaceUtils.getConfigForField(root, "ns:title")).andReturn(config);
+        expect(NamespaceUtils.getConfigForField(root, "ns:title")).andReturn(Optional.of(config));
         PowerMock.replayAll();
 
-        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", resourceBundle, root), equalTo(displayName));
+        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", Optional.of(resourceBundle), root).get(), equalTo(displayName));
     }
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void getConfigBasedFieldDisplayNameWithRepositoryException() throws Exception {
         final Node root = createMock(Node.class);
         final Node config = createMock(Node.class);
@@ -149,21 +151,21 @@ public class LocalizationUtilsTest {
 
         expect(config.getProperty("caption")).andThrow(new RepositoryException());
         replay(config);
-        expect(NamespaceUtils.getConfigForField(root, "ns:title")).andReturn(config);
+        expect(NamespaceUtils.getConfigForField(root, "ns:title")).andReturn(Optional.of(config));
         PowerMock.replayAll();
 
-        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", null, root), equalTo(null));
+        LocalizationUtils.determineFieldDisplayName("ns:title", Optional.empty(), root).get();
     }
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void getConfigBasedFieldDisplayNameAndFail() throws Exception {
         final Node root = createMock(Node.class);
         PowerMock.mockStaticPartial(NamespaceUtils.class, "getConfigForField");
 
-        expect(NamespaceUtils.getConfigForField(root, "ns:title")).andReturn(null);
+        expect(NamespaceUtils.getConfigForField(root, "ns:title")).andReturn(Optional.empty());
         PowerMock.replayAll();
 
-        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", null, root), equalTo(null));
+        LocalizationUtils.determineFieldDisplayName("ns:title", Optional.empty(), root).get();
     }
 
     @Test
@@ -174,7 +176,7 @@ public class LocalizationUtilsTest {
         expect(resourceBundle.getString("ns:title#hint")).andReturn(hint);
         replay(resourceBundle);
 
-        assertThat(LocalizationUtils.determineFieldHint("ns:title", resourceBundle, null), equalTo(hint));
+        assertThat(LocalizationUtils.determineFieldHint("ns:title", Optional.of(resourceBundle), null).get(), equalTo(hint));
     }
 
     @Test
@@ -188,9 +190,9 @@ public class LocalizationUtilsTest {
         expect(config.getProperty("hint")).andReturn(property);
         expect(property.getString()).andReturn(hint);
         replay(config, property);
-        expect(NamespaceUtils.getConfigForField(root, "ns:title")).andReturn(config);
+        expect(NamespaceUtils.getConfigForField(root, "ns:title")).andReturn(Optional.of(config));
         PowerMock.replayAll();
 
-        assertThat(LocalizationUtils.determineFieldHint("ns:title", null, root), equalTo(hint));
+        assertThat(LocalizationUtils.determineFieldHint("ns:title", Optional.empty(), root).get(), equalTo(hint));
     }
 }

@@ -29,8 +29,8 @@ import javax.ws.rs.core.Response;
 
 import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
-import org.onehippo.cms.channelmanager.content.model.Document;
-import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
+import org.onehippo.cms.channelmanager.content.model.document.Document;
+import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 import org.onehippo.cms.channelmanager.content.service.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.service.DocumentsService;
 
@@ -47,9 +47,10 @@ public class ContentResource {
     @Path("documents/{id}")
     public Response getDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
+        final Locale locale = sessionDataProvider.getLocale(servletRequest);
         final DocumentsService documentsService = DocumentsService.get();
         try {
-            final Document document = documentsService.getDocument(userSession, id);
+            final Document document = documentsService.getDocument(id, userSession, locale);
             return Response.ok().entity(document).build();
         } catch (DocumentNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -58,12 +59,12 @@ public class ContentResource {
 
     @GET
     @Path("documenttypes/{id}")
-    public Response getDocumentTypeSpec(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
+    public Response getDocumentType(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
         final Locale locale = sessionDataProvider.getLocale(servletRequest);
         final DocumentTypesService documentTypesService = DocumentTypesService.get();
         try {
-            final DocumentTypeSpec docType = documentTypesService.getDocumentTypeSpec(id, userSession, locale);
+            final DocumentType docType = documentTypesService.getDocumentType(id, userSession, locale);
             return Response.ok().entity(docType).build();
         } catch (DocumentTypeNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();

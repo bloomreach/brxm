@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.model;
+package org.onehippo.cms.channelmanager.content.model.documenttype;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
- * This bean represents a document, stored in the CMS.
+ * This bean represents a document type, known to the CMS.
  * It can be serialized into JSON to expose it through a REST API.
  */
-public class Document {
-    private String id;                // UUID
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class DocumentType {
+    private String id; // "namespace:typename"
     private String displayName;
-    private DocumentInfo info;        // read-only information about (the current state of) the document
-    private Map<String, Object> fields;
+    private Boolean readOnlyDueToUnknownValidator;
+    private final List<FieldType> fields; // ordered list of fields
 
-    public Document() {
-        setInfo(new DocumentInfo());
+    public DocumentType() {
+        fields = new ArrayList<>();
     }
 
     public String getId() {
@@ -49,22 +52,19 @@ public class Document {
         this.displayName = displayName;
     }
 
-    public DocumentInfo getInfo() {
-        return info;
+    public Boolean isReadOnlyDueToUnknownValidator() {
+        return readOnlyDueToUnknownValidator;
     }
 
-    public void setInfo(final DocumentInfo info) {
-        this.info = info;
+    public void setReadOnlyDueToUnknownValidator(final boolean readOnlyDueToUnknownValidator) {
+        this.readOnlyDueToUnknownValidator = readOnlyDueToUnknownValidator;
     }
 
-    public Map<String, Object> getFields() {
+    public List<FieldType> getFields() {
         return fields;
     }
 
-    public void addField(final String id, final Object field) {
-        if (fields == null) {
-            fields = new HashMap<>();
-        }
-        fields.put(id, field);
+    public void addField(final FieldType field) {
+        fields.add(field);
     }
 }

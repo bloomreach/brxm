@@ -20,25 +20,31 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.Node;
 
-import org.onehippo.cms.channelmanager.content.model.DocumentTypeSpec;
-import org.onehippo.cms.channelmanager.content.model.FieldTypeSpec;
+import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
+import org.onehippo.cms.channelmanager.content.model.documenttype.FieldType;
+import org.onehippo.cms.channelmanager.content.model.documenttype.MultilineStringFieldType;
+import org.onehippo.cms.channelmanager.content.model.documenttype.StringFieldType;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * FieldTypeUtils provides utility methods for populating and dealing with field types.
  */
 public class FieldTypeUtils {
+    private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
 
     // Known non-validating validator values
     private static final Set<String> IGNORED_VALIDATORS;
 
-    // Translate JCR level validator to FieldTypeSpec.Validator
-    private static final Map<String, FieldTypeSpec.Validator> VALIDATOR_MAP;
+    // Translate JCR level validator to FieldType.Validator
+    private static final Map<String, FieldType.Validator> VALIDATOR_MAP;
 
     // Unsupported validators of which we know they have field-scope only
     private static final Set<String> FIELD_VALIDATOR_WHITELIST;
@@ -55,8 +61,8 @@ public class FieldTypeUtils {
         IGNORED_VALIDATORS.add(FieldValidators.OPTIONAL); // optional "validator" indicates that the field may be absent (cardinality).
 
         VALIDATOR_MAP = new HashMap<>();
-        VALIDATOR_MAP.put(FieldValidators.REQUIRED, FieldTypeSpec.Validator.REQUIRED);
-        VALIDATOR_MAP.put(FieldValidators.NON_EMPTY, FieldTypeSpec.Validator.REQUIRED);
+        VALIDATOR_MAP.put(FieldValidators.REQUIRED, FieldType.Validator.REQUIRED);
+        VALIDATOR_MAP.put(FieldValidators.NON_EMPTY, FieldType.Validator.REQUIRED);
         // Apparently, making a String field required puts above two(!) values onto the validator property.
 
         FIELD_VALIDATOR_WHITELIST = new HashSet<>();
@@ -76,22 +82,22 @@ public class FieldTypeUtils {
         NAMESPACE_BLACKLIST.add("jcr");
 
         FIELD_TYPE_MAP = new HashMap<>();
-        FIELD_TYPE_MAP.put("String", new TypeDescriptor(FieldTypeSpec.Type.STRING, PROPERTY_FIELD_PLUGIN));
-        FIELD_TYPE_MAP.put("Text", new TypeDescriptor(FieldTypeSpec.Type.MULTILINE_STRING, PROPERTY_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put("Text", new TypeDescriptor(MultilineStringFieldType.class, PROPERTY_FIELD_PLUGIN));
     }
 
     private static class TypeDescriptor {
-        public final FieldTypeSpec.Type type;
+        public final Class<? extends FieldType> fieldType;
         public final String defaultPluginClass;
 
-        public TypeDescriptor(final FieldTypeSpec.Type type, final String defaultPluginClass) {
-            this.type = type;
+        public TypeDescriptor(final Class<? extends FieldType> fieldType, final String defaultPluginClass) {
+            this.fieldType = fieldType;
             this.defaultPluginClass = defaultPluginClass;
         }
     }
 
     /**
-     * Translate the set of validators specified at JCR level into a set of validators at the FieldTypeSpec level.
+     * Translate the set of validators specified at JCR level into a set of validators at the {@link FieldType} level.
      * When the list of validators contains an unknown one, the document type is marked as 'readonly due to
      * unknown validator'.
      *
@@ -99,14 +105,14 @@ public class FieldTypeUtils {
      * @param docType The document type the field is a part of
      * @param validators List of 0 or more validators specified at JCR level
      */
-    public static void determineValidators(final FieldTypeSpec fieldType, final DocumentTypeSpec docType, final List<String> validators) {
+    public static void determineValidators(final FieldType fieldType, final DocumentType docType, final List<String> validators) {
         for (String validator : validators) {
             if (IGNORED_VALIDATORS.contains(validator)) {
                 // Do nothing
             } else if (VALIDATOR_MAP.containsKey(validator)) {
                 fieldType.addValidator(VALIDATOR_MAP.get(validator));
             } else if (FIELD_VALIDATOR_WHITELIST.contains(validator)) {
-                fieldType.addValidator(FieldTypeSpec.Validator.UNSUPPORTED);
+                fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
             } else {
                 docType.setReadOnlyDueToUnknownValidator(true);
             }
@@ -148,21 +154,24 @@ public class FieldTypeUtils {
             return false;
         }
 
-        final String pluginClass = NamespaceUtils.getPluginClassForField(documentTypeRootNode, property.getName());
-
-        return descriptor.defaultPluginClass.equals(pluginClass);
+        Optional<String> pluginClass = NamespaceUtils.getPluginClassForField(documentTypeRootNode, property.getName());
+        return descriptor.defaultPluginClass.equals(pluginClass.orElse(""));
     }
 
     /**
-     * Translate the JCR type of a (supported!) field into its corresponding FieldTypeSpec.Type value
+     * Translate the JCR type of a (supported!) field into its corresponding {@link FieldType}.Type value
      */
-    public static FieldTypeSpec.Type deriveFieldType(final ContentTypeProperty property) {
+    public static Optional<FieldType> createFieldType(final ContentTypeProperty property) {
         final String jcrType = property.getItemType();
 
-        if (!FIELD_TYPE_MAP.containsKey(jcrType)) {
-            throw new IllegalStateException("Unsupported field type");
+        if (FIELD_TYPE_MAP.containsKey(jcrType)) {
+            try {
+                final Class<? extends FieldType> fieldTypeClass = FIELD_TYPE_MAP.get(jcrType).fieldType;
+                return Optional.of(fieldTypeClass.newInstance());
+            } catch (InstantiationException|IllegalAccessException e) {
+                log.debug("Problem creating a field type for type '{}'", jcrType, e);
+            }
         }
-
-        return FIELD_TYPE_MAP.get(jcrType).type;
+        return Optional.empty();
     }
 }

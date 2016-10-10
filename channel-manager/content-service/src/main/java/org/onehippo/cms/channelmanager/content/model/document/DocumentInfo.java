@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.model;
+package org.onehippo.cms.channelmanager.content.model.document;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
+
 /**
  * This bean carries information of a document, stored in the CMS.
  * It is part of a document and can be serialized into JSON to expose it through a REST API.
- * Type {@code type} attribute refers to the document's {@link DocumentTypeSpec} by id.
+ * Type {@code type} attribute refers to the document's {@link DocumentType} by id.
  */
 public class DocumentInfo {
 

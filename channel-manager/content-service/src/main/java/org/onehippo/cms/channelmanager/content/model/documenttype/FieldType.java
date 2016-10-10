@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.model;
+package org.onehippo.cms.channelmanager.content.model.documenttype;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import javax.jcr.Node;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
- * This bean represents a field type, used for the fields of a {@link DocumentTypeSpec}.
+ * This bean represents a field type, used for the fields of a {@link DocumentType}.
  * It can be serialized into JSON to expose it through a REST API.
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class FieldTypeSpec {
+public class FieldType {
 
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
@@ -41,7 +45,10 @@ public class FieldTypeSpec {
 
     private Set<Validator> validators;
 
-    private List<FieldTypeSpec> fields; // the child-fields of a complex field type (COMPOUND or CHOICE)
+    private List<FieldType> fields; // the child-fields of a complex field type (COMPOUND or CHOICE)
+
+    @JsonIgnore
+    private boolean storedAsMultiValueProperty;
 
     public enum Type {
         STRING,
@@ -60,7 +67,7 @@ public class FieldTypeSpec {
         UNSUPPORTED
     }
 
-    public FieldTypeSpec() {
+    public FieldType() {
     }
 
     public String getId() {
@@ -75,7 +82,7 @@ public class FieldTypeSpec {
         return type;
     }
 
-    public void setType(final Type type) {
+    protected void setType(final Type type) {
         this.type = type;
     }
 
@@ -114,14 +121,27 @@ public class FieldTypeSpec {
         validators.add(validator);
     }
 
-    public List<FieldTypeSpec> getFields() {
+    public List<FieldType> getFields() {
         return fields;
     }
 
-    public void addField(final FieldTypeSpec field) {
+    public void addField(final FieldType field) {
         if (fields == null) {
             fields = new ArrayList<>();
         }
         fields.add(field);
     }
+
+    public boolean isStoredAsMultiValueProperty() {
+        return storedAsMultiValueProperty;
+    }
+
+    public void setStoredAsMultiValueProperty(final boolean storedAsMultiValueProperty) {
+        this.storedAsMultiValueProperty = storedAsMultiValueProperty;
+    }
+
+    // TODO: once we phase out the ns:testdocument, this method and class should be made abstract.
+    public Optional<Object> readFrom(Node node) {
+        return Optional.empty();
+    };
 }

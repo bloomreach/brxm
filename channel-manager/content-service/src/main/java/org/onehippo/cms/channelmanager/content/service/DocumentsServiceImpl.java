@@ -16,31 +16,26 @@
 
 package org.onehippo.cms.channelmanager.content.service;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.Map;
+import java.util.Locale;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+import org.hippoecm.repository.util.DocumentUtils;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
-import org.onehippo.cms.channelmanager.content.model.Document;
-import org.onehippo.cms.channelmanager.content.model.DocumentInfo;
-import org.onehippo.cms.channelmanager.content.model.EditingInfo;
-import org.onehippo.cms.channelmanager.content.model.UserInfo;
+import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
+import org.onehippo.cms.channelmanager.content.model.document.Document;
+import org.onehippo.cms.channelmanager.content.model.document.DocumentInfo;
+import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
+import org.onehippo.cms.channelmanager.content.model.document.EditingInfo;
+import org.onehippo.cms.channelmanager.content.model.documenttype.FieldType;
+import org.onehippo.cms.channelmanager.content.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.util.MockResponse;
-import org.onehippo.repository.security.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DocumentsServiceImpl implements DocumentsService {
-    private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
     private static final DocumentsService INSTANCE = new DocumentsServiceImpl();
 
     static DocumentsService getInstance() {
@@ -50,90 +45,44 @@ public class DocumentsServiceImpl implements DocumentsService {
     private DocumentsServiceImpl() { }
 
     @Override
-    public Document getDocument(final Session session, final String id) throws DocumentNotFoundException {
-        if ("test".equals(id)) {
-            return MockResponse.createTestDocument(id);
+    public Document getDocument(final String uuid, final Session session, final Locale locale)
+            throws DocumentNotFoundException {
+        if ("test".equals(uuid)) {
+            return MockResponse.createTestDocument(uuid);
         }
+
+        final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(DocumentNotFoundException::new);
+        final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)
+                                                       .orElseThrow(DocumentNotFoundException::new);
+        final EditingInfo editingInfo = EditingUtils.determineEditingInfo(workflow, handle);
+        final Node variant = EditingUtils.getOrMakeDraft(editingInfo, workflow, handle)
+                                         .orElseThrow(DocumentNotFoundException::new);
+
+        final DocumentType docType = getDocumentType(handle, locale);
+        final DocumentInfo documentInfo = new DocumentInfo();
+        documentInfo.setTypeId(docType.getId());
+        documentInfo.setEditingInfo(editingInfo);
 
         final Document document = new Document();
-        document.setId(id);
 
-        try {
-            final Node documentHandle = session.getNodeByIdentifier(id);
-            document.setDisplayName(((HippoNode)documentHandle).getDisplayName());
+        document.setId(uuid);
+        document.setInfo(documentInfo);
+        DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
 
-            if (!HippoNodeType.NT_HANDLE.equals(documentHandle.getPrimaryNodeType().getName())
-                    || !documentHandle.hasNode(documentHandle.getName())) {
-                log.debug("Id {} doesn't refer to valid document", id);
-                throw new DocumentNotFoundException();
-            }
-
-            final DocumentInfo info = new DocumentInfo();
-            final Node variant = documentHandle.getNode(documentHandle.getName());
-            info.setTypeId(variant.getPrimaryNodeType().getName());
-            info.setEditingInfo(determineEditingInfo(session, documentHandle));
-            document.setInfo(info);
-        } catch (RepositoryException e) {
-            log.debug("Problem reading vital document parameters", e);
-            throw new DocumentNotFoundException();
+        for (FieldType field : docType.getFields()) {
+            field.readFrom(variant).ifPresent(value -> document.addField(field.getId(), value));
         }
-
-        // look-up document type and fill in document content
 
         return document;
     }
 
-    // protected for better testability
-    protected EditingInfo determineEditingInfo(final Session session, final Node documentHandle) {
-        final EditingInfo info = new EditingInfo();
-        final HippoWorkspace workspace = (HippoWorkspace)session.getWorkspace();
-
+    private DocumentType getDocumentType(final Node handle, final Locale locale)
+            throws DocumentNotFoundException {
         try {
-            final WorkflowManager workflowManager = workspace.getWorkflowManager();
-            final Map<String, Serializable> hints = workflowManager.getWorkflow("editing", documentHandle).hints();
-
-            if ((Boolean) hints.get("obtainEditableInstance")) {
-                info.setState(EditingInfo.State.AVAILABLE);
-            } else if (hints.containsKey("inUseBy")) {
-                final String inUseBy = (String)hints.get("inUseBy");
-                if (inUseBy.equals(session.getUserID())) {
-                    info.setState(EditingInfo.State.AVAILABLE);
-                } else {
-                    info.setState(EditingInfo.State.UNAVAILABLE_HELD_BY_OTHER_USER);
-                    info.setHolder(determineHolder(inUseBy, workspace));
-                }
-            } else if (hints.containsKey("requests")) {
-                info.setState(EditingInfo.State.UNAVAILABLE_REQUEST_PENDING);
-            }
-        } catch (RepositoryException|WorkflowException|RemoteException e) {
-            log.debug("Failed to determine editing info", e);
+            return DocumentTypesService.get().getDocumentType(handle, locale);
+        } catch (DocumentTypeNotFoundException e) {
+            final String handlePath = JcrUtils.getNodePathQuietly(handle);
+            throw new DocumentNotFoundException("Failed to retrieve type of document '" + handlePath + "'", e);
         }
-        return info;
-    }
-
-    // protected for better testability
-    protected UserInfo determineHolder(final String holderId, final HippoWorkspace workspace) {
-        final UserInfo holder = new UserInfo();
-        holder.setId(holderId);
-        try {
-            final User user =  workspace.getSecurityService().getUser(holderId);
-            final String firstName = user.getFirstName();
-            final String lastName = user.getLastName();
-
-            // TODO: Below logic was copied from the org.hippoecm.frontend.plugins.cms.admin.users.User.java
-            // (hippo-cms-perspectives). Move this logic into the repository's User class to be able to share it?
-            StringBuilder sb = new StringBuilder();
-            if (firstName != null) {
-                sb.append(firstName.trim());
-                sb.append(" ");
-            }
-            if (lastName != null) {
-                sb.append(lastName.trim());
-            }
-            holder.setDisplayName(sb.toString().trim());
-        } catch (RepositoryException e) {
-            log.debug("Unable to determine displayName of holder", e);
-        }
-        return holder;
     }
 }

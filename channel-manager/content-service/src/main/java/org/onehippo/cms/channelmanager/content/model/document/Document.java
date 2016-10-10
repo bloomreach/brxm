@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.model;
+package org.onehippo.cms.channelmanager.content.model.document;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * This bean represents a document type, known to the CMS.
+ * This bean represents a document, stored in the CMS.
  * It can be serialized into JSON to expose it through a REST API.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class DocumentTypeSpec {
-    private String id; // "namespace:typename"
+public class Document {
+    private String id;                // UUID
     private String displayName;
-    private Boolean readOnlyDueToUnknownValidator;
-    private List<FieldTypeSpec> fields; // ordered list of fields
+    private DocumentInfo info;        // read-only information about (the current state of) the document
+    private Map<String, Object> fields;
+
+    public Document() {
+        setInfo(new DocumentInfo());
+    }
 
     public String getId() {
         return id;
@@ -48,22 +49,22 @@ public class DocumentTypeSpec {
         this.displayName = displayName;
     }
 
-    public Boolean isReadOnlyDueToUnknownValidator() {
-        return readOnlyDueToUnknownValidator;
+    public DocumentInfo getInfo() {
+        return info;
     }
 
-    public void setReadOnlyDueToUnknownValidator(final boolean readOnlyDueToUnknownValidator) {
-        this.readOnlyDueToUnknownValidator = readOnlyDueToUnknownValidator;
+    public void setInfo(final DocumentInfo info) {
+        this.info = info;
     }
 
-    public List<FieldTypeSpec> getFields() {
+    public Map<String, Object> getFields() {
         return fields;
     }
 
-    public void addField(final FieldTypeSpec field) {
+    public void addField(final String id, final Object field) {
         if (fields == null) {
-            fields = new ArrayList<>();
+            fields = new HashMap<>();
         }
-        fields.add(field);
+        fields.put(id, field);
     }
 }
