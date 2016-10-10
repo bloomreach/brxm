@@ -49,7 +49,8 @@ export class LinkProcessorService {
       if (url && !isInternalLink(url, internalLinkPrefixes)) {
         link.attr('target', '_blank');
         link.click((event) => {
-          if (!confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) {
+          // TODO: should use proper dialog!!
+          if (!confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) { // eslint-disable-line no-alert
             event.preventDefault();
           }
         });
