@@ -64,7 +64,7 @@ export function scrollToIfDirective($timeout) {
                 parent.scrollTop = elemOffsetTop + topPadding;
               } else if (elemOffsetTop + elemHeight > parent.scrollTop + parent.clientHeight) {
                 if (elemHeight > parent.clientHeight) {
-                  elemHeight = elemHeight - (elemHeight - parent.clientHeight);
+                  elemHeight -= (elemHeight - parent.clientHeight);
                 }
                 parent.scrollTop = elemOffsetTop + topPadding + elemHeight - parent.clientHeight;
               }
