@@ -38,6 +38,7 @@ export class ChannelRightSidePanelCtrl {
   _clearDocument() {
     this.doc = null;
     this.docType = null;
+    this.focusedFieldId = null;
   }
 
   _loadDocument(id) {
@@ -76,6 +77,14 @@ export class ChannelRightSidePanelCtrl {
   getFieldAsArray(fieldId) {
     const field = this.doc.fields[fieldId];
     return angular.isArray(field) ? field : [field];
+  }
+
+  onFocus(field) {
+    this.focusedFieldId = field.id;
+  }
+
+  isFocused(field) {
+    return this.focusedFieldId === field.id;
   }
 
   close() {

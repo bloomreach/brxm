@@ -141,5 +141,16 @@ describe('ChannelRightSidePanel', () => {
     expect($ctrl.getFieldAsArray('ns:multiplestring')).toEqual(['One', 'Two']);
     expect($ctrl.getFieldAsArray('ns:emptymultiplestring')).toEqual([]);
   });
+
+  it('keeps track of the focused field', () => {
+    expect($ctrl.isFocused(stringField)).toBe(false);
+
+    $ctrl.onFocus(stringField);
+    expect($ctrl.isFocused(stringField)).toBe(true);
+
+    $ctrl.onFocus(multipleStringField);
+    expect($ctrl.isFocused(stringField)).toBe(false);
+    expect($ctrl.isFocused(multipleStringField)).toBe(true);
+  });
 });
 
