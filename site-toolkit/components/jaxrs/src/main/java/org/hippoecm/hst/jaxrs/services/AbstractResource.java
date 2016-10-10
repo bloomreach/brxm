@@ -278,8 +278,11 @@ public abstract class AbstractResource {
     }
 
     /**
-     * Creates an URL to identify a specific link relation by combining the given <code>iri</code> and
-     * <code>simpleRel</code>
+     * Creates an URL that can be used to specify the relation type for a link such as
+     * <code>&lt;link href="http://localhost:8080/site/" rel="http://www.onehippo.org/cms7/hst/rest/relations/mount:site" title="Home Page"/&gt;</code>
+     * @param iri          Internationalized Resource Identifier, e.g. <code>"http://www.onehippo.org/cms7/hst/rest/relations"</code>
+     * @param simpleRel    relationship, e.g. <code>"mount:site"</code>
+     * @return the combination of <code>iri</code> and <code>simpleRel</code>
      */
     protected String getQualifiedLinkRel(String iri, String simpleRel) {
     	if (iri != null) {
@@ -292,23 +295,33 @@ public abstract class AbstractResource {
     }
 
     /**
-     * Creates an URL to identify a specific link relation by combining {@link #getRestRelationsBaseUri()} and
-     * <code>simpleRel</code>
+     * Creates an URL that can be used to specify the relation type for a link such as
+     * <code>&lt;link href="http://localhost:8080/site/" rel="http://www.onehippo.org/cms7/hst/rest/relations/mount:site" title="Home Page"/&gt;</code>
+     * @param simpleRel    relationship, e.g. "mount:site"
+     * @return the combination of {@link #getRestRelationsBaseUri()} (which defaults to
+     * <code>"http://www.onehippo.org/cms7/hst/rest/relations"</code>) and <code>simpleRel</code>
      */
     protected String getQualifiedLinkRel(String simpleRel) {
     	return getQualifiedLinkRel(getRestRelationsBaseUri(), simpleRel);
     }
 
     /**
-     * Creates an URL to identify a specific link relation by combining {@link #HST_REST_RELATIONS_BASE_URI} and
-     * <code>simpleRel</code>
+     * Creates an URL that can be used to specify the relation type for a link such as
+     * <code>&lt;link href="http://localhost:8080/site/" rel="http://www.onehippo.org/cms7/hst/rest/relations/mount:site" title="Home Page"/&gt;</code>
+     * @param simpleRel    relationship, e.g. "mount:site"
+     * @return the combination of {@link #HST_REST_RELATIONS_BASE_URI} (which is defined as
+     * <code>"http://www.onehippo.org/cms7/hst/rest/relations"</code>) and <code>simpleRel</code>
      */
     protected String getHstQualifiedLinkRel(String simpleRel) {
     	return getQualifiedLinkRel(HST_REST_RELATIONS_BASE_URI,simpleRel);
     }
 
     /**
-     * Create the URL identifying the link relation for a document served over the provided <code>mountName</code>
+     * Creates an URL that can be used to specify the relation type for a link such as
+     * <code>&lt;link href="http://localhost:8080/site/" rel="http://www.onehippo.org/cms7/hst/rest/relations/mount:site" title="Home Page"/&gt;</code>
+     * @param mountName    mount name, e.g. "site"
+     * @return the combination of {@link #HST_MOUNT_REL_PREFIX} (which is defined as
+     * <code>"http://www.onehippo.org/cms7/hst/rest/relations/mount:"</code>) and <code>mountName</code>
      */
     protected String getLinkMountRelation(String mountName) {
     	return getHstQualifiedLinkRel(HST_MOUNT_REL_PREFIX+mountName);
