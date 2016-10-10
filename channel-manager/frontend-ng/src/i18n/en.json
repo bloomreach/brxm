@@ -23,7 +23,7 @@
   "DISCARD_ALL": "Discard all",
   "DONE": "Done",
   "EDIT_CONTENT": "Edit content",
-  "EDIT_DOCUMENT": "Edit document",
+  "EDIT_DOCUMENT": "Edit '{{displayName}}'",
   "ERROR_ADD_COMPONENT": "Cannot add '{{component}}'",
   "ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED": "Cannot add '{{component}}': the container is locked by '{{lockedBy}}'",
   "ERROR_CHANGE_PUBLICATION_FAILED": "Failed to publish changes",
