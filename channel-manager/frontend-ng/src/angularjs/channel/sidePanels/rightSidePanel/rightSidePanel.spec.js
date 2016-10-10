@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-xdescribe('ChannelRightSidePanel', () => {
+describe('ChannelRightSidePanel', () => {
   'use strict';
 
   let $componentController;
