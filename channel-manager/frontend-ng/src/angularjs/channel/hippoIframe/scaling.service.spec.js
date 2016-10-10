@@ -127,7 +127,6 @@ describe('ScalingService', () => {
   it('should do nothing when the viewport width of an uninitialized service is changed', () => {
     ScalingService.setViewPortWidth(720);
 
-    expect(iframeJQueryElement.css).not.toHaveBeenCalled();
     expect(elementsToScale.css).not.toHaveBeenCalled();
     expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
@@ -137,7 +136,6 @@ describe('ScalingService', () => {
     ScalingService.init(iframeJQueryElement);
     ScalingService.setViewPortWidth(0);
 
-    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['transform', 'translateX(0)']);
     expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
 
@@ -146,7 +144,6 @@ describe('ScalingService', () => {
     ScalingService.init(iframeJQueryElement);
     ScalingService.setViewPortWidth(720);
 
-    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['transform', 'translateX(0)']);
     expect(ScalingService.getScaleFactor()).toEqual(1.0);
   });
 
@@ -157,23 +154,17 @@ describe('ScalingService', () => {
 
     expect(elementsToScale.css.calls.mostRecent().args).toEqual(['transform', 'scale(0.5)']);
     expect(ScalingService.getScaleFactor()).toEqual(0.5);
-
-    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['transform', 'translateX(-400)']);
   });
 
-  it('should start shifting and scaling when pushing the visible canvas width below the viewport width', () => {
+  it('should start scaling when pushing the visible canvas width below the viewport width', () => {
     canvasJQueryElement.width(800);
     ScalingService.init(iframeJQueryElement);
     ScalingService.setViewPortWidth(720);
 
     // reset all relevant spies
     elementsToScale.css.calls.reset();
-    iframeJQueryElement.css.calls.reset();
 
     ScalingService.setPushWidth('left', 260);
-
-    // validate shifting
-    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['transform', 'translateX(80)']);
 
     // validate scaling
     expect(elementsToScale.css).toHaveBeenCalledWith('transform', 'scale(0.75)');
@@ -188,15 +179,9 @@ describe('ScalingService', () => {
 
     // reset all relevant spies
     elementsToScale.css.calls.reset();
-    iframeJQueryElement.css.calls.reset();
-
-    iframeJQueryElement.css.and.returnValue('matrix(1, 0, 0, 1, 0, 0)'); // current shift
     canvasJQueryElement.width(720); // current canvas width
 
     ScalingService.setViewPortWidth(360);
-
-    // validate shifting
-    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['transform', 'translateX(260)']);
 
     // validate scaling
     expect(elementsToScale.css.calls.mostRecent().args).toEqual(['transform', 'scale(1)']);
