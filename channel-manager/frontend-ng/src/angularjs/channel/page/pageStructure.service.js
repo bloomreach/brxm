@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ComponentElement } from './element/componentElement';
-import { ContainerElement } from './element/containerElement';
-import { EmbeddedLink } from './element/embeddedLink';
+import ComponentElement from './element/componentElement';
+import ContainerElement from './element/containerElement';
+import EmbeddedLink from './element/embeddedLink';
 
 const EMBEDDED_LINK_MARKUP = '<a class="hst-cmseditlink"></a>';
 

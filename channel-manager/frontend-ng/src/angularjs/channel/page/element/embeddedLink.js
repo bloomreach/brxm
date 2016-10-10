@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PageStructureElement } from './pageStructureElement';
+import PageStructureElement from './pageStructureElement';
 
 class EmbeddedLink extends PageStructureElement {
 

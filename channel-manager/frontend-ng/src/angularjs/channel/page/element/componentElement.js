@@ -16,7 +16,7 @@
 
 /* eslint-disable prefer-const */
 
-import { PageStructureElement } from './pageStructureElement';
+import PageStructureElement from './pageStructureElement';
 
 class ComponentElement extends PageStructureElement {
   constructor(startCommentDomElement, metaData, container, commentProcessor) {

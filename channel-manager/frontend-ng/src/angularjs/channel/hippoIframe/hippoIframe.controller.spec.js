@@ -16,7 +16,7 @@
 
 import angular from 'angular';
 import 'angular-mocks';
-import { EmbeddedLink } from '../page/element/embeddedLink';
+import EmbeddedLink from '../page/element/embeddedLink';
 
 describe('hippoIframeCtrl', () => {
   let PageStructureService;
