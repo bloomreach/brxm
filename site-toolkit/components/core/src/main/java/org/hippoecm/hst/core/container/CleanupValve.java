@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,11 +31,15 @@ import org.hippoecm.hst.core.request.ResolvedMount;
  */
 public class CleanupValve extends AbstractBaseOrderableValve {
 
-    protected List<ResourceLifecycleManagement> resourceLifecycleManagements;
     protected SessionSecurityDelegation sessionSecurityDelegation;
 
+    /**
+     * @deprecated since 4.1.0 resourceLifecycleManagements does not need to be set any more on the CleanupValve
+     */
+    @Deprecated
     public void setResourceLifecycleManagements(List<ResourceLifecycleManagement> resourceLifecycleManagements) {
-        this.resourceLifecycleManagements = resourceLifecycleManagements;
+        log.info("CleanupValve#setResourceLifecycleManagements has been deprecated. Not 'resourceLifecycleManagements' " +
+                "is needed to be set via spring wiring any more");
     }
 
     public void setSessionSecurityDelegation(SessionSecurityDelegation sessionSecurityDelegation) {
@@ -45,11 +49,6 @@ public class CleanupValve extends AbstractBaseOrderableValve {
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
-        if (this.resourceLifecycleManagements != null) {
-            for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {
-                resourceLifecycleManagement.disposeAllResources();
-            }
-        }
 
         HttpServletRequest servletRequest = context.getServletRequest();
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);

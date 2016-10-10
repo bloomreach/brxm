@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,26 +25,25 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
  */
 public class InitializationValve extends AbstractBaseOrderableValve {
 
-    protected List<ResourceLifecycleManagement> resourceLifecycleManagements;
-
+    /**
+     * @deprecated since 4.1.0 resourceLifecycleManagements does not need to be set any more on the CleanupValve
+     */
+    @Deprecated
     public void setResourceLifecycleManagements(List<ResourceLifecycleManagement> resourceLifecycleManagements) {
-        this.resourceLifecycleManagements = resourceLifecycleManagements;
+        log.info("CleanupValve#setResourceLifecycleManagements has been deprecated. Not 'resourceLifecycleManagements' " +
+                "is needed to be set via spring wiring any more");
     }
 
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
         HstMutableRequestContext requestContext = (HstMutableRequestContext)context.getRequestContext();
-
-        if (this.resourceLifecycleManagements != null) {
-            for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {
-                resourceLifecycleManagement.disposeAllResources();
-                resourceLifecycleManagement.setActive(true);
-            }
-            // because the requestContext can already have a jcr session at this moment which is now disposed  (returned to pool) again, we explicitly
-            // set it to null in the HstMutableRequestContext to be sure it gets a new one when requestContext#getSession is called
-            requestContext.setSession(null);
-        }
+        // because the requestContext can already have a jcr session (for example fetched during a SiteMapItemHandler or
+        // during HstLinkProcessor pre processing, we explicitly set it to null in the HstMutableRequestContext to be
+        // sure it gets a new one when requestContext#getSession is called : Namely, it can result in a different
+        // jcr session (for example because the SecurityValve kicks in or because of a custom ContextCredentialsProvider
+        // which inspects some state being provided by some custom valve
+        requestContext.setSession(null);
 
         // continue
         context.invokeNext();

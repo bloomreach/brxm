@@ -252,6 +252,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             }
 
             // sets up the current thread's active request context object.
+            initializeResourceLifecycleManagements();
             RequestContextProvider.set(requestContext);
             requestContextSetToProvider = true;
 
@@ -429,7 +430,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 disposeHstRequestContext();
                 RequestContextProvider.clear();
             }
-
+            cleanupResourceLifecycleManagements();
             if (rootTask != null) {
                 HDC.cleanUp();
             }
@@ -622,19 +623,13 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
 
         if (processHandlers) {
-            initializeResourceLifecycleManagements();
             // run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
             try {
                 resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, siteMapItemHandlerFactory , containerRequest, res, filterChain);
                 if(resolvedSiteMapItem == null) {
-                    // one of the handlers has finished the request/response already
-                    // call clean up of the resourceLifecycleManagements as there might have been taken a jcr session from some session
-                    // pool already
-                    cleanupResourceLifecycleManagements();
                     return;
                 }
             } catch (HstSiteMapItemHandlerException e) {
-                cleanupResourceLifecycleManagements();
                 throw e;
             }
             // sync possibly changed ResolvedSiteMapItem
