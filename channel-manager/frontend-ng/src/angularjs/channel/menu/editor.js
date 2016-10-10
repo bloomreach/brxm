@@ -17,7 +17,7 @@
 import { menuEditorDirective } from './editor.directive';
 import { selectAllOnFocusDirective } from './selectAllOnFocus.directive';
 import { MenuEditorCtrl } from './editor.controller';
-import { uiTreeModule } from './tree/tree.js';
+import { uiTreeModule } from './tree/tree';
 import { pickerModule } from './picker/picker';
 
 export const channelMenuModule = angular
