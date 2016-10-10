@@ -15,12 +15,11 @@
  */
 
 import uiTree from 'angular-ui-tree';
-
-require('ng-cache!./items.renderer.html');  // eslint-disable-line import/no-unresolved
-
 import { hippoTreeDirective } from './tree.directive';
 import { hippoTreeTemplateDirective } from './tree.template.directive';
 import { HippoTreeCtrl } from './tree.controller';
+
+require('ng-cache!./items.renderer.html');  // eslint-disable-line import/no-unresolved
 
 export const uiTreeModule = angular
   .module('hippo-cm.ui.tree', [
