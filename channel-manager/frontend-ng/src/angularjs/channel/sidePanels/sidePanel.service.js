@@ -42,10 +42,11 @@ export class ChannelSidePanelService {
     }
   }
 
-  open(side) {
+  open(side, ...params) {
     if (!this.isOpen(side)) {
-      this.$mdSidenav(this.panels[side].sideNavComponentId).open();
-      this.panels[side].onOpenCallback();
+      const panel = this.panels[side];
+      this.$mdSidenav(panel.sideNavComponentId).open();
+      panel.onOpenCallback.apply(panel, params);
     }
   }
 

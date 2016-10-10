@@ -52,9 +52,6 @@ describe('ChannelRightSidePanel', () => {
     ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'close']);
     ContentService = jasmine.createSpyObj('ContentService', ['getDocument', 'getDocumentType']);
 
-    ContentService.getDocument.and.returnValue($q.resolve(testDocument));
-    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
-
     $scope = $rootScope.$new();
     const $element = angular.element('<div></div>');
     $ctrl = $componentController('channelRightSidePanel', {
@@ -72,8 +69,8 @@ describe('ChannelRightSidePanel', () => {
   it('initializes the channel right side panel service upon instantiation', () => {
     expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalled();
-    expect($ctrl.doc).toEqual(testDocument);
-    expect($ctrl.docType).toEqual(testDocumentType);
+    expect($ctrl.doc).toBe(null);
+    expect($ctrl.docType).toBe(null);
   });
 
   it('closes the panel', () => {
@@ -81,9 +78,24 @@ describe('ChannelRightSidePanel', () => {
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
   });
 
-  it('sets the initial size of textareas when opened', () => {
+  it('opens a document', () => {
+    ContentService.getDocument.and.returnValue($q.resolve(testDocument));
+    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     spyOn($scope, '$broadcast');
-    $ctrl.onOpen();
+
+    $ctrl.openDocument('test');
+
+    expect(ContentService.getDocument).toHaveBeenCalledWith('test');
+    expect($ctrl.doc).toBe(null);
+    expect($ctrl.docType).toBe(null);
+
+    $rootScope.$apply();
+
+    expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
+
+    expect($ctrl.doc).toEqual(testDocument);
+    expect($ctrl.docType).toEqual(testDocumentType);
+
     $timeout.flush();
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
   });

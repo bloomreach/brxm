@@ -209,36 +209,9 @@ export class HippoIframeCtrl {
     return !this.editMode ? this.PageStructureService.getContentLinks() : [];
   }
 
-  contentIsLockedByAnother(contentLink) {
-    return (typeof contentLink.metaData.holderId !== 'undefined') && contentLink.metaData.holderId !== this.ConfigService.cmsUser;
-  }
-
   openContent(contentLink) {
-    if (this.contentIsLockedByAnother(contentLink)) {
-      this.CmsService.publish('open-content', contentLink.getUuid());
-    } else {
-      this.ChannelSidePanelService.open('right');
-    }
-  }
-
-  getContentLinkTooltip(contentLink) {
-    let result;
-    if (this.contentIsLockedByAnother(contentLink)) {
-      result = this.$translate.instant('LOCKED_BY', { user: contentLink.metaData.holderName });
-    } else {
-      result = this.$translate.instant('EDIT_CONTENT');
-    }
-    return result;
-  }
-
-  getContentLinkIcon(contentLink) {
-    let result;
-    if (this.contentIsLockedByAnother(contentLink)) {
-      result = 'images/lock.svg';
-    } else {
-      result = 'images/edit-document.svg';
-    }
-    return result;
+    const contentId = contentLink.getUuid();
+    this.ChannelSidePanelService.open('right', contentId);
   }
 
   getEditMenuLinks() {

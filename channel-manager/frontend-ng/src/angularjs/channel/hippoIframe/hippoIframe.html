@@ -45,10 +45,10 @@
             <overlay-element structure-element="contentLink">
               <md-button class="overlay-element-fab overlay-element-fab-content-link md-fab md-mini md-hue-2 qa-content-link"
                          ng-click="iframe.openContent(contentLink)">
-                <md-icon aria-label="{{iframe.getContentLinkTooltip(contentLink)}}"
-                         md-svg-src="{{iframe.getContentLinkIcon(contentLink)}}"></md-icon>
+                <md-icon aria-label="{{ 'EDIT_CONTENT' | translate }}"
+                         md-svg-src="images/edit-document.svg"></md-icon>
                 <md-tooltip md-direction="top">
-                  {{iframe.getContentLinkTooltip(contentLink)}}
+                  {{ 'EDIT_CONTENT' | translate }}
                 </md-tooltip>
               </md-button>
             </overlay-element>
