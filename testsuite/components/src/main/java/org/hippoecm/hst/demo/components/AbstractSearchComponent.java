@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
+import org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder;
 import org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -92,17 +93,22 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
 
             int offset = (page - 1) * pageSize;
 
+            ConstraintBuilder constraint;
+            if (drqc == null) {
+                constraint = constraint(".").contains(parsedQuery);
+            } else {
+                constraint =
+                        and(
+                                constraint(".").contains(parsedQuery),
+                                // below on purpose not between because drqc.getFromDate() or drqc.getToDate() can be
+                                // null. #between expects both values not to be null
+                                constraint(drqc.getProperty()).greaterOrEqualThan(drqc.getFromDate(), drqc.getResolution()),
+                                constraint(drqc.getProperty()).lessOrEqualThan(drqc.getToDate(), drqc.getResolution())
+                        );
+            }
             HstQuery hstQuery = HstQueryBuilder.create(scope)
                     .ofTypes(nodeType)
-                    .where(
-                            and(
-                                    constraint(".").contains(parsedQuery),
-                                    // below on purpose not between because drqc.getFromDate() or drqc.getToDate() can be
-                                    // null. #between expects both values not to be null
-                                    constraint(drqc.getProperty()).greaterOrEqualThan(drqc.getFromDate(), drqc.getResolution()),
-                                    constraint(drqc.getProperty()).lessOrEqualThan(drqc.getToDate(), drqc.getResolution())
-                            )
-                    )
+                    .where(constraint)
                     .limit(pageSize)
                     .offset(offset)
                     .orderByDescending(sortBy)
