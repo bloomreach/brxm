@@ -105,7 +105,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
                     )
                     .limit(pageSize)
                     .offset(offset)
-                    .sortByDescending(sortBy)
+                    .orderByDescending(sortBy)
                     .build();
 
             final HstQueryResult result = hstQuery.execute();

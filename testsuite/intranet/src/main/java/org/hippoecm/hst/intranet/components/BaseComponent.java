@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder.constraint;
+import static org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder.Order.fromString;
 
 public abstract class BaseComponent extends BaseHstComponent {
 
@@ -87,7 +88,7 @@ public abstract class BaseComponent extends BaseHstComponent {
                     .where(
                             constraint(".").contains(parsedQuery)
                     )
-                    .sortBy(sortOrder, sortBy)
+                    .orderBy(fromString(sortOrder), sortBy)
                     .limit(pageSize)
                     .offset(pageSize * (crPage - 1))
                     .build();
