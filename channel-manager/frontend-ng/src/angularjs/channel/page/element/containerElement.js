@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-/* eslint-disable prefer-const */
-
-import { HstConstants } from '../../../api/hst.constants';
-import { PageStructureElement } from './pageStructureElement';
+import HstConstants from '../../../api/hst.constants';
+import PageStructureElement from './pageStructureElement';
 
 class ContainerElement extends PageStructureElement {
   constructor(startCommentDomElement, metaData, commentProcessor) {
-    let [boxDomElement, endCommentDomElement] = commentProcessor.locateComponent(metaData.uuid, startCommentDomElement);
+    const elements = commentProcessor.locateComponent(metaData.uuid, startCommentDomElement);
+    const endCommentDomElement = elements[1];
+    let boxDomElement = elements[0];
 
     if (PageStructureElement.isXTypeNoMarkup(metaData)) {
       boxDomElement = startCommentDomElement.parentNode;
