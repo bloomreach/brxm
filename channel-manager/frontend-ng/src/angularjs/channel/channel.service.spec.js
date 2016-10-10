@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ChannelService', () => {
-  'use strict';
-
   let $q;
   let $log;
   let $rootScope;

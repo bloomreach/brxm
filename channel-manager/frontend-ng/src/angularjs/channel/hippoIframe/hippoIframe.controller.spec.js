@@ -19,8 +19,6 @@ import 'angular-mocks';
 import { EmbeddedLink } from '../page/element/embeddedLink';
 
 describe('hippoIframeCtrl', () => {
-  'use strict';
-
   let PageStructureService;
   let hippoIframeCtrl;
   let scope;

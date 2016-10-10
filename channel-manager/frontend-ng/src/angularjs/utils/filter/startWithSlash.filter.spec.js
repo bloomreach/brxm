@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('startWithSlashFilter', () => {
-  'use strict';
-
   let startWithSlashFilter;
 
   beforeEach(() => {

@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('DialogService', () => {
-  'use strict';
-
   let $mdDialog;
   let DialogService;
 

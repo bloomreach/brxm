@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ComponentsService', () => {
-  'use strict';
-
   let $q;
   let $rootScope;
   let HstServiceMock;

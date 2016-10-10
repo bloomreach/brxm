@@ -20,8 +20,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ChannelCtrl', () => {
-  'use strict';
-
   let ChannelService;
   let ComponentsService;
   let ScalingService;

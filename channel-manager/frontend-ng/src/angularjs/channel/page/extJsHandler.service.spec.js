@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ExtJsHandlerService', () => {
-  'use strict';
-
   let PageStructureService;
 
   beforeEach(() => {

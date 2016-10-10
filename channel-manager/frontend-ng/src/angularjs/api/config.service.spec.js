@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ConfigService', () => {
-  'use strict';
-
   let ConfigService;
 
   beforeEach(() => {

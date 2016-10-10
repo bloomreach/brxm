@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('The hippo-cm module', () => {
-  'use strict';
-
   let configService;
   let $httpBackend;
   let $rootScope;

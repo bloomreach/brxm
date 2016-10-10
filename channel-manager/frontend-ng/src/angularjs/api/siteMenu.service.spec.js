@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('SiteMenuService', () => {
-  'use strict';
-
   let $q;
   let $rootScope;
   let SiteMenuService;

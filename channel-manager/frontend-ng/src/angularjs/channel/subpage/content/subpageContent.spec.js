@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('SubpageContent', () => {
-  'use strict';
-
   let $element;
   let $rootScope;
   let $compile;

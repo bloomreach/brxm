@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ChannelActions', () => {
-  'use strict';
-
   let $rootScope;
   let $compile;
   let $scope;

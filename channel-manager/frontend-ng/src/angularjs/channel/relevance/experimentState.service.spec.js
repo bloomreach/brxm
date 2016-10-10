@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ExperimentStateService', () => {
-  'use strict';
-
   let ExperimentStateService;
   let $translate;
 

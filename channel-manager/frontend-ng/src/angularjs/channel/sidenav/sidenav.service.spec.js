@@ -20,8 +20,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ChannelSidenavService', () => {
-  'use strict';
-
   let ChannelSidenavService;
   let ScalingService;
   const sidenav = jasmine.createSpyObj('sidenav', ['isOpen', 'toggle', 'close']);

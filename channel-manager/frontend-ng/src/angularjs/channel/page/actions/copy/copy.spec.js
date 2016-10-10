@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('PageActionCopy', () => {
-  'use strict';
-
   let $element;
   let $q;
   let $log;

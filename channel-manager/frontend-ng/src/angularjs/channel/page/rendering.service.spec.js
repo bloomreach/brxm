@@ -20,8 +20,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('RenderingService', () => {
-  'use strict';
-
   let RenderingService;
   let $httpBackend;
 

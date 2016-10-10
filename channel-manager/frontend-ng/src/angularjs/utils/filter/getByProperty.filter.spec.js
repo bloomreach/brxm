@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('getByProperty filter', () => {
-  'use strict';
-
   let getByPropertyFilter;
   const items = [
     {

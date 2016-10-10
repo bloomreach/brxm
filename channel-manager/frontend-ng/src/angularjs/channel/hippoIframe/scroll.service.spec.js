@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ScrollService', () => {
-  'use strict';
-
   let ScrollService;
   let baseJQueryElement;
   let velocitySpy;

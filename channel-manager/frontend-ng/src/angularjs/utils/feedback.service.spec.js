@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('FeedbackService', () => {
-  'use strict';
-
   let $log;
   let $translate;
   let $mdToast;

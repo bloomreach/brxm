@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('HippoIframeService', () => {
-  'use strict';
-
   let $log;
   let $rootScope;
   let iframe;

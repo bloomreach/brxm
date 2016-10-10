@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('PageActionCreate', () => {
-  'use strict';
-
   let $q;
   let $scope;
   let $rootScope;

@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('LinkProcessorService', () => {
-  'use strict';
-
   let linkProcessorService;
   let $document;
   const previewUrl = ['http://localhost:8080/site'];

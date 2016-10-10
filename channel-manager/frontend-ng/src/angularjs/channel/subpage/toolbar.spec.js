@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('SubpageToolbar', () => {
-  'use strict';
-
   let $element;
   let $scope;
   let $rootScope;

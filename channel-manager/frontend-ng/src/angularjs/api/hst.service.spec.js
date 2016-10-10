@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('HstService', () => {
-  'use strict';
-
   let $q;
   let $httpBackend;
   let hstService;
@@ -223,8 +221,8 @@ describe('HstService', () => {
     const catchSpy = jasmine.createSpy('catchSpy');
     const url = `${contextPath}${apiUrlPrefix}/${rootUuid}./channels/test`;
     $httpBackend.expectGET(url).respond(500);
-    hstService.
-      getChannel('test')
+    hstService
+      .getChannel('test')
       .catch(catchSpy);
 
     $httpBackend.flush();

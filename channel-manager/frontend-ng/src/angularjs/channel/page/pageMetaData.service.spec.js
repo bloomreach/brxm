@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('PageMetaDataService', () => {
-  'use strict';
-
   let PageMetaDataService;
 
   beforeEach(() => {

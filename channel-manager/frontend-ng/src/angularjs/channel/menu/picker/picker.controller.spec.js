@@ -20,8 +20,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('PickerCtrl', () => {
-  'use strict';
-
   let $rootScope;
   let $mdDialog;
   let PickerService;

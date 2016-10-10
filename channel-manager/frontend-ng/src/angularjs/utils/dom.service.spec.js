@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('DomService', () => {
-  'use strict';
-
   let DomService;
   const fixturesPath = `/${jasmine.getFixtures().fixturesPath}`;
 

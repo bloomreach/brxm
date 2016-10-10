@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ViewAsCtrl', () => {
-  'use strict';
-
   let ViewAsCtrl;
   let $element;
   let $q;

@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('HstCommentsProcessorService', () => {
-  'use strict';
-
   let hstCommentsProcessorService;
   function NOOP() { }
 

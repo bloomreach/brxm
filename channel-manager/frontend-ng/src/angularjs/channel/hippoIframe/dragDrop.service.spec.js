@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('DragDropService', () => {
-  'use strict';
-
   let $q;
   let DragDropService;
   let ScalingService;

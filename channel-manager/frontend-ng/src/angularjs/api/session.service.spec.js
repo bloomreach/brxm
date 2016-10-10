@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('SessionService', () => {
-  'use strict';
-
   let $rootScope;
   let $q;
   let SessionService;

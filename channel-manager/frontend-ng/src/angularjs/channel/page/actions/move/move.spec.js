@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('PageActionMove', () => {
-  'use strict';
-
   let $element;
   let $q;
   let $scope;

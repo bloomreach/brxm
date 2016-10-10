@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('OverlaySyncService', () => {
-  'use strict';
-
   let OverlaySyncService;
   let $iframe;
   let $base;

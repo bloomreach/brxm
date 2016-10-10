@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('PageActionEdit', () => {
-  'use strict';
-
   let $q;
   let $scope;
   let $rootScope;

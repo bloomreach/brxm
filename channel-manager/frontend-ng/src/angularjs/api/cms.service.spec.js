@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('CmsService', () => {
-  'use strict';
-
   let $window;
   let CmsService;
 

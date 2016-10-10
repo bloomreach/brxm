@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('The tree rendered by the tree directive', () => {
-  'use strict';
-
   const defaultItems = [
     {
       title: 'Item 1',

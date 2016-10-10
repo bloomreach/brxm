@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('PageStructureService', () => {
-  'use strict';
-
   let PageStructureService;
   let PageMetaDataService;
   let ChannelService;

@@ -20,8 +20,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('SiteMapService', () => {
-  'use strict';
-
   let $q;
   let $rootScope;
   let SiteMapService;

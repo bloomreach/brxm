@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('selectAllOnFocusDirective', () => {
-  'use strict';
-
   let $rootScope;
   let $compile;
 

@@ -18,8 +18,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('incrementProperty filter', () => {
-  'use strict';
-
   let incrementPropertyFilter;
 
   beforeEach(angular.mock.module('hippo-cm.utils'));
