@@ -55,7 +55,7 @@ export class CmsService {
 
   publish(...args) {
     const iframeToHost = this.getParentIFramePanel().iframeToHost;
-    return iframeToHost.publish.apply(iframeToHost, args);
+    return iframeToHost.publish(...args);
   }
 
   subscribe(topic, callback, scope) {
