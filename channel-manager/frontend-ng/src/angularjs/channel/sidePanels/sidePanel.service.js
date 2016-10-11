@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ChannelSidePanelService {
+class ChannelSidePanelService {
   constructor($mdSidenav, ScalingService) {
     'ngInject';
 
@@ -46,7 +46,7 @@ export class ChannelSidePanelService {
     if (!this.isOpen(side)) {
       const panel = this.panels[side];
       this.$mdSidenav(panel.sideNavComponentId).open();
-      panel.onOpenCallback.apply(panel, params);
+      panel.onOpenCallback(...params);
     }
   }
 
@@ -65,3 +65,5 @@ export class ChannelSidePanelService {
     }
   }
 }
+
+export default ChannelSidePanelService;

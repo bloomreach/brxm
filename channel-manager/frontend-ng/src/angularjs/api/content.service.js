@@ -16,7 +16,7 @@
 
 const CMS_CONTEXT_PATH = window.parent ? window.parent.location.pathname : '/cms/';
 
-export class ContentService {
+class ContentService {
 
   constructor($http, PathService) {
     'ngInject';
@@ -36,7 +36,8 @@ export class ContentService {
   _doGet(path, id) {
     const apiUrl = this.PathService.concatPaths(CMS_CONTEXT_PATH, 'ws/content', path, id);
     return this.$http.get(apiUrl)
-      .then((result) => result.data);
+      .then(result => result.data);
   }
 }
 
+export default ContentService;

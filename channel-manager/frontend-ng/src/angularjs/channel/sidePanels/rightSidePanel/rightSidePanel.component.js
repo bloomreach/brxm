@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import template from './rightSidePanel.html';
+
 export class ChannelRightSidePanelCtrl {
   constructor($scope, $element, $timeout, ChannelSidePanelService, ContentService) {
     'ngInject';
@@ -103,7 +105,7 @@ const channelRightSidePanelComponentModule = angular
       editMode: '=',
     },
     controller: ChannelRightSidePanelCtrl,
-    templateUrl: 'channel/sidePanels/rightSidePanel/rightSidePanel.html',
+    template,
   });
 
 export default channelRightSidePanelComponentModule;

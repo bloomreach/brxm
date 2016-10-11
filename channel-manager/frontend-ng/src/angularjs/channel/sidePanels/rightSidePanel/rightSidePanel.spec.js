@@ -15,8 +15,6 @@
  */
 
 describe('ChannelRightSidePanel', () => {
-  'use strict';
-
   let $componentController;
   let $q;
   let $rootScope;
@@ -64,7 +62,7 @@ describe('ChannelRightSidePanel', () => {
   };
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$componentController_, _$q_, _$rootScope_, _$timeout_) => {
       $componentController = _$componentController_;

@@ -20,8 +20,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ChannelLeftSidePanelToggle', () => {
-  'use strict';
-
   let $rootScope;
   let $compile;
   let ChannelSidePanelService;

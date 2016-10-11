@@ -17,18 +17,16 @@
 /* eslint-disable prefer-const */
 
 describe('ChannelSidePanelService', () => {
-  'use strict';
-
   let ChannelSidePanelService;
   let ScalingService;
   const leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close']);
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     const $mdSidenav = jasmine.createSpy('$mdSidenav').and.returnValue(leftSidePanel);
 
-    module(($provide) => {
+    angular.mock.module(($provide) => {
       $provide.value('$mdSidenav', $mdSidenav);
     });
 
