@@ -28,7 +28,6 @@ import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.repository.util.DateTools;
 
 public abstract class HstQueryBuilder {
 
@@ -59,7 +58,7 @@ public abstract class HstQueryBuilder {
      * @return {@link HstQueryBuilder} instance
      * @throws RuntimeQueryException if there is not at least 1 non-null-value in {@code scopeBeans}
      */
-    public static HstQueryBuilder create(final HippoBean ... scopeBeans) throws RuntimeQueryException {
+    public static HstQueryBuilder create(final HippoBean... scopeBeans) throws RuntimeQueryException {
         DefaultHstQueryBuilder defaultHstQueryBuilder = new DefaultHstQueryBuilder();
         defaultHstQueryBuilder.scopes(scopeBeans);
         return defaultHstQueryBuilder;
@@ -72,7 +71,7 @@ public abstract class HstQueryBuilder {
      * @return {@link HstQueryBuilder} instance
      * @throws RuntimeQueryException if there is not at least 1 non-null-value in {@code scopeNodes}
      */
-    public static HstQueryBuilder create(final Node ... scopeNodes) throws RuntimeQueryException {
+    public static HstQueryBuilder create(final Node... scopeNodes) throws RuntimeQueryException {
         DefaultHstQueryBuilder defaultHstQueryBuilder = new DefaultHstQueryBuilder();
         defaultHstQueryBuilder.scopes(scopeNodes);
         return defaultHstQueryBuilder;
@@ -82,7 +81,6 @@ public abstract class HstQueryBuilder {
      * Members of a builder instance.
      */
 
-    private DateTools.Resolution defaultResolution;
     private List<Node> scopes = new ArrayList<>();
     private List<Node> excludeScopes = new ArrayList<>();
 
@@ -140,7 +138,7 @@ public abstract class HstQueryBuilder {
      *                      If {@code ofTypeClazzes} is {@code null} the parameter is ignored
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder ofTypes(final String ... ofTypeClazzes) {
+    public HstQueryBuilder ofTypes(final String... ofTypeClazzes) {
         if (ofTypeClazzes != null) {
             for (String ofTypeClazz : ofTypeClazzes) {
                 if (ofTypeClazz != null) {
@@ -160,7 +158,7 @@ public abstract class HstQueryBuilder {
      *                             the parameter is ignored
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder ofPrimaryTypes(String ... primaryNodeTypes) {
+    public HstQueryBuilder ofPrimaryTypes(String... primaryNodeTypes) {
         if (primaryNodeTypes != null) {
             for (String primaryNodeType : primaryNodeTypes) {
                 if (primaryNodeType != null) {
@@ -181,7 +179,7 @@ public abstract class HstQueryBuilder {
      *                             the parameter is ignored
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder ofPrimaryTypes(final Class<? extends HippoBean> ... primaryNodeTypeClazzes) {
+    public HstQueryBuilder ofPrimaryTypes(final Class<? extends HippoBean>... primaryNodeTypeClazzes) {
         if (primaryNodeTypeClazzes != null) {
             for (Class<? extends HippoBean> primaryNodeTypeClazz : primaryNodeTypeClazzes) {
                 if (primaryNodeTypeClazz != null) {
@@ -211,7 +209,7 @@ public abstract class HstQueryBuilder {
         return  primaryNodeTypeClazzes;
     }
 
-    HstQueryBuilder scopes(final Node ... scopeNodes) {
+    HstQueryBuilder scopes(final Node... scopeNodes) {
         boolean validScopeAdded = false;
         if (scopeNodes != null) {
             for (Node scopeNode : scopeNodes) {
@@ -230,7 +228,7 @@ public abstract class HstQueryBuilder {
         return this;
     }
 
-    HstQueryBuilder scopes(final HippoBean ... scopeBeans) {
+    HstQueryBuilder scopes(final HippoBean... scopeBeans) {
         boolean validScopeAdded = false;
         if (scopeBeans != null) {
             for (HippoBean scopeBean : scopeBeans) {
@@ -254,7 +252,7 @@ public abstract class HstQueryBuilder {
         return scopes;
     }
 
-    public HstQueryBuilder excludeScopes(final Node ... excludeScopeNodes) {
+    public HstQueryBuilder excludeScopes(final Node... excludeScopeNodes) {
         if (excludeScopeNodes != null && excludeScopeNodes.length != 0) {
             for (Node excludeScopeNode : excludeScopeNodes) {
                 if (excludeScopeNode == null) {
@@ -269,7 +267,7 @@ public abstract class HstQueryBuilder {
         return this;
     }
 
-    public HstQueryBuilder excludeScopes(final HippoBean ... excludeScopeBeans) {
+    public HstQueryBuilder excludeScopes(final HippoBean... excludeScopeBeans) {
         if (excludeScopeBeans != null && excludeScopeBeans.length != 0) {
             for (HippoBean excludeScopeBean : excludeScopeBeans) {
                 if (excludeScopeBean == null) {
@@ -307,7 +305,7 @@ public abstract class HstQueryBuilder {
      *                   skipped.
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder orderBy(final Order order, final String ... fieldNames) {
+    public HstQueryBuilder orderBy(final Order order, final String... fieldNames) {
         if (Order.DESC.equals(order)) {
             return orderByDescending(fieldNames);
         }
@@ -321,7 +319,7 @@ public abstract class HstQueryBuilder {
      *                   skipped.
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder orderByCaseInsensitive(final Order order, final String ... fieldNames) {
+    public HstQueryBuilder orderByCaseInsensitive(final Order order, final String... fieldNames) {
         if (Order.DESC.equals(order)) {
             return orderByDescendingCaseInsensitive(fieldNames);
         }
@@ -334,7 +332,7 @@ public abstract class HstQueryBuilder {
      *                   skipped.
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder orderByAscending(final String ... fieldNames) {
+    public HstQueryBuilder orderByAscending(final String... fieldNames) {
         if (fieldNames != null && fieldNames.length != 0) {
             for (String fieldName : fieldNames) {
                 if (fieldName != null && !fieldName.isEmpty()) {
@@ -352,7 +350,7 @@ public abstract class HstQueryBuilder {
      *                   skipped.
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder orderByAscendingCaseInsensitive(final String ... fieldNames) {
+    public HstQueryBuilder orderByAscendingCaseInsensitive(final String... fieldNames) {
         if (fieldNames != null && fieldNames.length != 0) {
             for (String fieldName : fieldNames) {
                 if (fieldName != null && !fieldName.isEmpty()) {
@@ -371,7 +369,7 @@ public abstract class HstQueryBuilder {
      *                   skipped.
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder orderByDescending(final String ... fieldNames) {
+    public HstQueryBuilder orderByDescending(final String... fieldNames) {
         if (fieldNames != null && fieldNames.length != 0) {
             for (String fieldName : fieldNames) {
                 if (fieldName != null && !fieldName.isEmpty()) {
@@ -389,7 +387,7 @@ public abstract class HstQueryBuilder {
      *                   skipped.
      * @return this {@link HstQueryBuilder} instance
      */
-    public HstQueryBuilder orderByDescendingCaseInsensitive(final String ... fieldNames) {
+    public HstQueryBuilder orderByDescendingCaseInsensitive(final String... fieldNames) {
         if (fieldNames != null && fieldNames.length != 0) {
             for (String fieldName : fieldNames) {
                 if (fieldName != null && !fieldName.isEmpty()) {
