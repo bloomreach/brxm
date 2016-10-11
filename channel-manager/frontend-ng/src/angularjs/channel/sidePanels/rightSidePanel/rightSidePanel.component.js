@@ -79,11 +79,15 @@ export class ChannelRightSidePanelCtrl {
     return angular.isArray(field) ? field : [field];
   }
 
-  onFocus(field) {
+  onFieldFocus(field) {
     this.focusedFieldId = field.id;
   }
 
-  isFocused(field) {
+  onFieldBlur() {
+    this.focusedFieldId = null;
+  }
+
+  isFieldFocused(field) {
     return this.focusedFieldId === field.id;
   }
 

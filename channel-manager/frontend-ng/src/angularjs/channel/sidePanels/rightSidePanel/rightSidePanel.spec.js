@@ -143,14 +143,17 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('keeps track of the focused field', () => {
-    expect($ctrl.isFocused(stringField)).toBe(false);
+    expect($ctrl.isFieldFocused(stringField)).toBe(false);
 
-    $ctrl.onFocus(stringField);
-    expect($ctrl.isFocused(stringField)).toBe(true);
+    $ctrl.onFieldFocus(stringField);
+    expect($ctrl.isFieldFocused(stringField)).toBe(true);
 
-    $ctrl.onFocus(multipleStringField);
-    expect($ctrl.isFocused(stringField)).toBe(false);
-    expect($ctrl.isFocused(multipleStringField)).toBe(true);
+    $ctrl.onFieldFocus(multipleStringField);
+    expect($ctrl.isFieldFocused(stringField)).toBe(false);
+    expect($ctrl.isFieldFocused(multipleStringField)).toBe(true);
+
+    $ctrl.onFieldBlur();
+    expect($ctrl.isFieldFocused(multipleStringField)).toBe(false);
   });
 });
 
