@@ -24,15 +24,13 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.repository.mock.MockNode;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -40,7 +38,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(NamespaceUtils.class)
+@PrepareForTest({NamespaceUtils.class, JcrUtils.class})
 public class NamespaceUtilsTest {
     @Test
     public void getDocumentRootNode() throws Exception {
@@ -71,78 +69,124 @@ public class NamespaceUtilsTest {
     }
 
     @Test
-    public void getConfigNode() throws Exception {
-        final Node root = MockNode.root();
-        final Node nth = root.addNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE, HippoNodeType.NT_HANDLE);
-        final Node nt = nth.addNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE, HippoNodeType.NT_NODETYPE);
-        final Node ets = root.addNode("editor:templates", "editor:templateset");
-        final Node et = ets.addNode("_default_", "frontend:plugincluster");
-        final Node config3 = et.addNode("id3", "frontend:plugin");
-        nt.addNode("id1", HippoNodeType.NT_FIELD);
-        nt.addNode("id2", HippoNodeType.NT_FIELD).setProperty(HippoNodeType.HIPPO_PATH, "field2");
-        nt.addNode("id3", HippoNodeType.NT_FIELD).setProperty(HippoNodeType.HIPPO_PATH, "field3");
-
-        assertThat(NamespaceUtils.getConfigForField(root, "field0").isPresent(), equalTo(false));
-        assertThat(NamespaceUtils.getConfigForField(root, "field1").isPresent(), equalTo(false));
-        assertThat(NamespaceUtils.getConfigForField(root, "field2").isPresent(), equalTo(false));
-        assertThat(NamespaceUtils.getConfigForField(root, "field3").get(), equalTo(config3));
-    }
-
-    @Test(expected = NoSuchElementException.class)
-    public void getConfigNodeWithRepositoryException() throws Exception {
-        final Node root = createMock(Node.class);
-
-        expect(root.getNode(anyObject())).andThrow(new RepositoryException());
-        replay(root);
-
-        NamespaceUtils.getConfigForField(root, "dummy").get();
-    }
-
-    @Test
     public void getPluginClass() throws Exception {
-        final String fieldId = "fieldId";
         final String pluginClass = "pluginClass";
         final Property property = createMock(Property.class);
-        final Node root = createMock(Node.class);
-        final Node config = createMock(Node.class);
+        final Node editorFieldNode = createMock(Node.class);
 
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "getConfigForField");
-
-        expect(NamespaceUtils.getConfigForField(root, fieldId)).andReturn(Optional.of(config));
-        expect(config.getProperty("plugin.class")).andReturn(property);
+        expect(editorFieldNode.hasProperty("plugin.class")).andReturn(true);
+        expect(editorFieldNode.getProperty("plugin.class")).andReturn(property);
         expect(property.getString()).andReturn(pluginClass);
-        replay(config, property);
-        PowerMock.replayAll();
+        replay(editorFieldNode, property);
 
-        assertThat(NamespaceUtils.getPluginClassForField(root, fieldId).get(), equalTo(pluginClass));
+        assertThat(NamespaceUtils.getPluginClassForField(editorFieldNode).get(), equalTo(pluginClass));
     }
 
     @Test(expected = NoSuchElementException.class)
     public void getPluginClassWithRepositoryException() throws Exception {
-        final String fieldId = "fieldId";
-        final Node root = createMock(Node.class);
-        final Node config = createMock(Node.class);
+        final Node editorFieldNode = createMock(Node.class);
 
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "getConfigForField");
+        PowerMock.mockStaticPartial(JcrUtils.class, "getNodePathQuietly");
 
-        expect(NamespaceUtils.getConfigForField(root, fieldId)).andReturn(Optional.of(config));
-        expect(config.getProperty("plugin.class")).andThrow(new RepositoryException());
-        replay(config);
+        expect(editorFieldNode.hasProperty("plugin.class")).andThrow(new RepositoryException());
+        expect(JcrUtils.getNodePathQuietly(editorFieldNode)).andReturn("/bla");
+        replay(editorFieldNode);
         PowerMock.replayAll();
 
-        NamespaceUtils.getPluginClassForField(root, fieldId).get();
+        NamespaceUtils.getPluginClassForField(editorFieldNode).get();
+    }
+
+    @Test
+    public void retrieveFieldSorterTwoColumns() throws Exception {
+        final Node root = createMock(Node.class);
+        final Node editorNode = createMock(Node.class);
+        final Node layout = createMock(Node.class);
+
+        PowerMock.mockStaticPartial(NamespaceUtils.class, "getPluginClassForField");
+
+        expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(true);
+        expect(root.getNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(editorNode);
+        expect(editorNode.hasNode("root")).andReturn(true);
+        expect(editorNode.getNode("root")).andReturn(layout);
+        expect(NamespaceUtils.getPluginClassForField(layout)).andReturn(Optional.of("org.hippoecm.frontend.editor.layout.TwoColumn"));
+        replay(root, editorNode);
+        PowerMock.replayAll();
+
+        assertThat("2-col sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof TwoColumnFieldSorter);
+    }
+
+    @Test
+    public void retrieveFieldSorterUnknownLayout() throws Exception {
+        final Node root = createMock(Node.class);
+        final Node editorNode = createMock(Node.class);
+        final Node layout = createMock(Node.class);
+
+        PowerMock.mockStaticPartial(NamespaceUtils.class, "getPluginClassForField");
+
+        expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(true);
+        expect(root.getNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(editorNode);
+        expect(editorNode.hasNode("root")).andReturn(true);
+        expect(editorNode.getNode("root")).andReturn(layout);
+        expect(NamespaceUtils.getPluginClassForField(layout)).andReturn(Optional.of("unknown"));
+        replay(root, editorNode);
+        PowerMock.replayAll();
+
+        assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof DefaultFieldSorter);
+    }
+
+    @Test
+    public void retrieveFieldSorterNoPluginClass() throws Exception {
+        final Node root = createMock(Node.class);
+        final Node editorNode = createMock(Node.class);
+        final Node layout = createMock(Node.class);
+
+        PowerMock.mockStaticPartial(NamespaceUtils.class, "getPluginClassForField");
+
+        expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(true);
+        expect(root.getNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(editorNode);
+        expect(editorNode.hasNode("root")).andReturn(true);
+        expect(editorNode.getNode("root")).andReturn(layout);
+        expect(NamespaceUtils.getPluginClassForField(layout)).andReturn(Optional.empty());
+        replay(root, editorNode);
+        PowerMock.replayAll();
+
+        assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof DefaultFieldSorter);
+    }
+
+    @Test
+    public void retrieveFieldSorterNoLayoutNode() throws Exception {
+        final Node root = createMock(Node.class);
+        final Node editorNode = createMock(Node.class);
+
+        expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(true);
+        expect(root.getNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(editorNode);
+        expect(editorNode.hasNode("root")).andReturn(false);
+        replay(root, editorNode);
+
+        assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof DefaultFieldSorter);
     }
 
     @Test(expected = NoSuchElementException.class)
-    public void getPluginClassWithMissingConfig() throws Exception {
-        final String fieldId = "fieldId";
+    public void retrieveFieldSorterNoEditorNode() throws Exception {
         final Node root = createMock(Node.class);
 
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "getConfigForField");
+        expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andReturn(false);
+        replay(root);
 
-        expect(NamespaceUtils.getConfigForField(root, fieldId)).andReturn(Optional.empty());
+        NamespaceUtils.retrieveFieldSorter(root).get();
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void retrieveFieldSorterRepositoryException() throws Exception {
+        final Node root = createMock(Node.class);
+
+        PowerMock.mockStaticPartial(JcrUtils.class, "getNodePathQuietly");
+
+        expect(root.hasNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andThrow(new RepositoryException());
+        expect(JcrUtils.getNodePathQuietly(root)).andReturn("/bla");
+        replay(root);
         PowerMock.replayAll();
 
-        NamespaceUtils.getPluginClassForField(root, fieldId).get();
+        NamespaceUtils.retrieveFieldSorter(root).get();
     }
 }

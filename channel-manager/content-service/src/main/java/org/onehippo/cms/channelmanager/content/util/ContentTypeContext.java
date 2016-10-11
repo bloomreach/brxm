@@ -1,0 +1,96 @@
+/*
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.onehippo.cms.channelmanager.content.util;
+
+import java.util.Locale;
+import java.util.Optional;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.onehippo.cms.channelmanager.content.exception.ContentTypeException;
+import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.contenttype.ContentType;
+import org.onehippo.cms7.services.contenttype.ContentTypeService;
+import org.onehippo.cms7.util.LoggingUtils;
+import org.onehippo.repository.l10n.ResourceBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * ContentTypeContext groups and wraps sources of information about a content type.
+ */
+public class ContentTypeContext {
+    private static final Logger log = LoggerFactory.getLogger(ContentTypeContext.class);
+
+    private final ContentType contentType;
+    private final Optional<ResourceBundle> resourceBundle;
+    private final Node contentTypeRoot;
+
+    /**
+     * Create a new {@link ContentTypeContext} for the identified content type and the current CMS session.
+     *
+     * @param id          identifies the requested content type, e.g. "myhippoproject:newsdocument"
+     * @param userSession JCR session using the privileges of the requesting user
+     * @param locale      locale of the current CMS session
+     * @return            {@link ContentTypeContext} for creating a {@link DocumentType}
+     * @throws ContentTypeException
+     *                    if creation of a ContentTypeContext failed.
+     */
+    public static ContentTypeContext createDocumentTypeContext(final String id, final Session userSession, final Locale locale)
+            throws ContentTypeException {
+
+        final ContentType contentType = getContentType(id).orElseThrow(ContentTypeException::new);
+        final Optional<ResourceBundle> resourceBundle = LocalizationUtils.getResourceBundleForDocument(id, locale);
+        final Node documentTypeRoot = NamespaceUtils.getDocumentTypeRootNode(id, userSession)
+                .orElseThrow(ContentTypeException::new);
+
+        return new ContentTypeContext(contentType, resourceBundle, documentTypeRoot);
+    }
+
+    private static Optional<ContentType> getContentType(final String id) {
+        final ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
+        try {
+            return Optional.ofNullable(service.getContentTypes().getType(id));
+        } catch (RepositoryException e) {
+            LoggingUtils.warnException(log, e, "Failed to retrieve content type '{}'", id);
+        }
+        return Optional.empty();
+    }
+
+    private ContentTypeContext(final ContentType contentType,
+                              final Optional<ResourceBundle> resourceBundle,
+                              final Node documentTypeRoot) {
+        this.contentType = contentType;
+        this.resourceBundle = resourceBundle;
+        this.contentTypeRoot = documentTypeRoot;
+    }
+
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    public Optional<ResourceBundle> getResourceBundle() {
+        return resourceBundle;
+    }
+
+    public Node getContentTypeRoot() {
+        return contentTypeRoot;
+    }
+}

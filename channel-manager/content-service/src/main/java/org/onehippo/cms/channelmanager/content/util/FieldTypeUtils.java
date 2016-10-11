@@ -23,13 +23,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.jcr.Node;
-
 import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.FieldType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.StringFieldType;
-import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
+import org.onehippo.cms7.services.contenttype.ContentTypeItem;
+import org.onehippo.cms7.util.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,12 +48,8 @@ public class FieldTypeUtils {
     // Unsupported validators of which we know they have field-scope only
     private static final Set<String> FIELD_VALIDATOR_WHITELIST;
 
-    // Set of to-be-ignored root-level document property namespaces
-    // We ignore then because they represent CMS-internal state-keeping which we don't want to expose.
-    private static final Set<String> NAMESPACE_BLACKLIST;
-
     // A map for associating supported JCR-level field types with relevant information
-    private static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
+    public static final Map<String, TypeDescriptor> FIELD_TYPE_MAP;
 
     static {
         IGNORED_VALIDATORS = new HashSet<>();
@@ -74,19 +69,12 @@ public class FieldTypeUtils {
         FIELD_VALIDATOR_WHITELIST.add(FieldValidators.REQUIRED);
         FIELD_VALIDATOR_WHITELIST.add(FieldValidators.RESOURCE_REQUIRED);
 
-        NAMESPACE_BLACKLIST = new HashSet<>();
-        NAMESPACE_BLACKLIST.add("hippo");
-        NAMESPACE_BLACKLIST.add("hippostd");
-        NAMESPACE_BLACKLIST.add("hippostdpubwf");
-        NAMESPACE_BLACKLIST.add("hippotranslation");
-        NAMESPACE_BLACKLIST.add("jcr");
-
         FIELD_TYPE_MAP = new HashMap<>();
         FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Text", new TypeDescriptor(MultilineStringFieldType.class, PROPERTY_FIELD_PLUGIN));
     }
 
-    private static class TypeDescriptor {
+    public static class TypeDescriptor {
         public final Class<? extends FieldType> fieldType;
         public final String defaultPluginClass;
 
@@ -120,25 +108,11 @@ public class FieldTypeUtils {
     }
 
     /**
-     * Check if a property matches the namespace blacklist, and if not, consider it to be a "project property".
+     * Check if a item represents a supported field type.
      */
-    public static boolean isProjectProperty(final ContentTypeProperty property) {
-        final String id = property.getName();
-        final int offset = id.indexOf(":");
-
-        if (offset < 0) {
-            return true; // non-namespaced property name is assumed project-specific
-        }
-
-        final String namespace = id.substring(0, offset);
-        return !NAMESPACE_BLACKLIST.contains(namespace);
-    }
-
-    /**
-     * Check if a property represents a supported field type.
-     */
-    public static boolean isSupportedFieldType(final ContentTypeProperty property) {
-        return FIELD_TYPE_MAP.containsKey(property.getItemType());
+    public static boolean isSupportedFieldType(final FieldTypeContext context) {
+        final String type = context.getContentTypeItem().getItemType();
+        return FIELD_TYPE_MAP.containsKey(type);
     }
 
     /**
@@ -147,29 +121,30 @@ public class FieldTypeUtils {
      * Fields that use a different rendering plugin may have been set-up with a special meaning,
      * unknown to the content service. Therefore, such fields should not be included in the exposed document type.
      */
-    public static boolean usesDefaultFieldPlugin(final ContentTypeProperty property, final Node documentTypeRootNode) {
-        final TypeDescriptor descriptor = FIELD_TYPE_MAP.get(property.getItemType());
+    public static boolean usesDefaultFieldPlugin(final FieldTypeContext context) {
+        final ContentTypeItem item = context.getContentTypeItem();
+        final TypeDescriptor descriptor = FIELD_TYPE_MAP.get(item.getItemType());
 
         if (descriptor == null) {
             return false;
         }
 
-        Optional<String> pluginClass = NamespaceUtils.getPluginClassForField(documentTypeRootNode, property.getName());
+        Optional<String> pluginClass = NamespaceUtils.getPluginClassForField(context.getEditorConfigNode());
         return descriptor.defaultPluginClass.equals(pluginClass.orElse(""));
     }
 
     /**
      * Translate the JCR type of a (supported!) field into its corresponding {@link FieldType}.Type value
      */
-    public static Optional<FieldType> createFieldType(final ContentTypeProperty property) {
-        final String jcrType = property.getItemType();
+    public static Optional<FieldType> createFieldType(final ContentTypeItem item) {
+        final String jcrType = item.getItemType();
 
         if (FIELD_TYPE_MAP.containsKey(jcrType)) {
             try {
                 final Class<? extends FieldType> fieldTypeClass = FIELD_TYPE_MAP.get(jcrType).fieldType;
                 return Optional.of(fieldTypeClass.newInstance());
             } catch (InstantiationException|IllegalAccessException e) {
-                log.debug("Problem creating a field type for type '{}'", jcrType, e);
+                LoggingUtils.warnException(log, e, "Problem creating a field type for type '{}'", jcrType);
             }
         }
         return Optional.empty();

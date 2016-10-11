@@ -16,14 +16,17 @@
 
 package org.onehippo.cms.channelmanager.content.util;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms7.util.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +36,22 @@ import org.slf4j.LoggerFactory;
  */
 public class NamespaceUtils {
 
-    private static final String PROPERTY_PLUGIN_CLASS = "plugin.class";
+    public static final String NODE_TYPE_PATH = HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE;
+    public static final String EDITOR_CONFIG_PATH = "editor:templates/_default_";
+
     private static final Logger log = LoggerFactory.getLogger(NamespaceUtils.class);
+
+    private static final String PROPERTY_PLUGIN_CLASS = "plugin.class";
+    private static final String LAYOUT_PLUGIN_CLASS_ONE_COLUMN = "org.hippoecm.frontend.service.render.ListViewPlugin";
+    private static final String LAYOUT_PLUGIN_CLASS_TWO_COLUMN = "org.hippoecm.frontend.editor.layout.TwoColumn";
+    private static final Map<String, FieldSorter> LAYOUT_SORTER;
+
+    static {
+        LAYOUT_SORTER = new HashMap<>();
+
+        LAYOUT_SORTER.put(LAYOUT_PLUGIN_CLASS_ONE_COLUMN, new DefaultFieldSorter());
+        LAYOUT_SORTER.put(LAYOUT_PLUGIN_CLASS_TWO_COLUMN, new TwoColumnFieldSorter());
+    }
 
     /**
      * Retrieve the root node of a document type's definition in the repository.
@@ -56,49 +73,51 @@ public class NamespaceUtils {
         return Optional.empty();
     }
 
-
     /**
-     * Given a node or property name (e.g. "myhippoproject:title"), retrieve the corresponding "config node"
-     * under "editor:templates".
+     * Retrieve the (CMS) plugin class in use for a specific field.
      *
-     * @param documentTypeRootNode the root node of a document type
-     * @param fieldId              node or property name
-     * @return                     the config node or nothing, wrapped in an Optional
+     * @param editorFieldNode JCR node representing an editor field (or group of fields)
+     * @return                the plugin class name or nothing, wrapped in an Optional
      */
-    public static Optional<Node> getConfigForField(final Node documentTypeRootNode, final String fieldId) {
+    public static Optional<String> getPluginClassForField(final Node editorFieldNode) {
         try {
-            final String nodeTypePath = HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE;
-            final Node nodeTypeNode = documentTypeRootNode.getNode(nodeTypePath);
-            final NodeIterator children = nodeTypeNode.getNodes();
-            while (children.hasNext()) {
-                final Node child = children.nextNode();
-                if (child.hasProperty(HippoNodeType.HIPPO_PATH)
-                        && child.getProperty(HippoNodeType.HIPPO_PATH).getString().equals(fieldId)) {
-                    final String configPath = "editor:templates/_default_/" + child.getName();
-                    return Optional.of(documentTypeRootNode.getNode(configPath));
-                }
+            if (editorFieldNode.hasProperty(PROPERTY_PLUGIN_CLASS)) {
+                return Optional.of(editorFieldNode.getProperty(PROPERTY_PLUGIN_CLASS).getString());
             }
         } catch (RepositoryException e) {
-            log.debug("Failed to read config of field '{}'", fieldId, e);
+            LoggingUtils.warnException(log, e, "Failed to read property '{}' for field {}", PROPERTY_PLUGIN_CLASS,
+                                       JcrUtils.getNodePathQuietly(editorFieldNode));
         }
         return Optional.empty();
     }
 
     /**
-     * Retrieve the (CMS) plugin class in use for a specific field.
+     * Retrieve a sorter for the fields of a content type.
      *
-     * @param documentTypeRootNode the root node of a document type
-     * @param fieldId              node or property name
-     * @return                     the plugin class name or nothing, wrapped in an Optional
+     * @param contentTypeRootNode JCR node representing the root of a content type definition
+     * @return                    Appropriate sorter or nothing, wrapped in an Optional
      */
-    public static Optional<String> getPluginClassForField(final Node documentTypeRootNode, final String fieldId) {
-        return getConfigForField(documentTypeRootNode, fieldId).flatMap(config -> {
-            try {
-                return Optional.of(config.getProperty(PROPERTY_PLUGIN_CLASS).getString());
-            } catch (RepositoryException e) {
-                log.debug("Failed to read property '{}' of field '{}'", PROPERTY_PLUGIN_CLASS, fieldId);
+    public static Optional<FieldSorter> retrieveFieldSorter(final Node contentTypeRootNode) {
+        try {
+            if (contentTypeRootNode.hasNode(EDITOR_CONFIG_PATH)) {
+                final Node editorConfigNode = contentTypeRootNode.getNode(EDITOR_CONFIG_PATH);
+                if (editorConfigNode.hasNode("root")) {
+                    final Node layoutNode = editorConfigNode.getNode("root");
+                    final Optional<String> optionalPluginClass = getPluginClassForField(layoutNode);
+
+                    if (optionalPluginClass.isPresent()) {
+                        String pluginClass = optionalPluginClass.get();
+                        return Optional.of(LAYOUT_SORTER.containsKey(pluginClass)
+                                ? LAYOUT_SORTER.get(pluginClass)
+                                : LAYOUT_SORTER.get(LAYOUT_PLUGIN_CLASS_ONE_COLUMN));
+                    }
+                }
+                return Optional.of(LAYOUT_SORTER.get(LAYOUT_PLUGIN_CLASS_ONE_COLUMN));
             }
-            return Optional.empty();
-        });
+        } catch (RepositoryException e) {
+            LoggingUtils.warnException(log, e, "Failed to determine layout of content type {}",
+                    JcrUtils.getNodePathQuietly(contentTypeRootNode));
+        }
+        return Optional.empty();
     }
 }

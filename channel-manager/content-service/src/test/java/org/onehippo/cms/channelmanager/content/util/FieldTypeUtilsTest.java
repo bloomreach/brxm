@@ -29,6 +29,7 @@ import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.FieldType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.StringFieldType;
+import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -49,83 +50,68 @@ public class FieldTypeUtilsTest {
 
     @Test
     public void validateSupportedFieldTypes() {
-        final ContentTypeProperty property = createMock(ContentTypeProperty.class);
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
 
-        expect(property.getItemType()).andReturn("String");
-        replay(property);
-        assertThat(FieldTypeUtils.isSupportedFieldType(property), equalTo(true));
-        reset(property);
+        expect(context.getContentTypeItem()).andReturn(item).anyTimes();
+        expect(item.getItemType()).andReturn("String");
+        replay(item, context);
+        assertThat(FieldTypeUtils.isSupportedFieldType(context), equalTo(true));
+        reset(item);
 
-        expect(property.getItemType()).andReturn("Text");
-        replay(property);
-        assertThat(FieldTypeUtils.isSupportedFieldType(property), equalTo(true));
-        reset(property);
+        expect(item.getItemType()).andReturn("Text");
+        replay(item);
+        assertThat(FieldTypeUtils.isSupportedFieldType(context), equalTo(true));
+        reset(item);
 
-        expect(property.getItemType()).andReturn("Html");
-        replay(property);
-        assertThat(FieldTypeUtils.isSupportedFieldType(property), equalTo(false));
-        reset(property);
+        expect(item.getItemType()).andReturn("Html");
+        replay(item);
+        assertThat(FieldTypeUtils.isSupportedFieldType(context), equalTo(false));
+        reset(item);
 
-        expect(property.getItemType()).andReturn(null);
-        replay(property);
-        assertThat(FieldTypeUtils.isSupportedFieldType(property), equalTo(false));
-    }
-
-    @Test
-    public void validateProjectPropertyDetection() {
-        final ContentTypeProperty property = createMock(ContentTypeProperty.class);
-
-        expect(property.getName()).andReturn("anything:unspecific");
-        replay(property);
-        assertThat(FieldTypeUtils.isProjectProperty(property), equalTo(true));
-        reset(property);
-
-        expect(property.getName()).andReturn("unnamespaced");
-        replay(property);
-        assertThat(FieldTypeUtils.isProjectProperty(property), equalTo(true));
-        reset(property);
-
-        expect(property.getName()).andReturn("hippo:something");
-        replay(property);
-        assertThat(FieldTypeUtils.isProjectProperty(property), equalTo(false));
-        reset(property);
+        expect(item.getItemType()).andReturn(null);
+        replay(item);
+        assertThat(FieldTypeUtils.isSupportedFieldType(context), equalTo(false));
     }
 
     @Test
     public void validatePluginClassValidation() {
-        final ContentTypeProperty property = createMock(ContentTypeProperty.class);
-        final Node documentTypeRootNode = createMock(Node.class);
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+        final Node editorFieldNode = createMock(Node.class);
         PowerMock.mockStatic(NamespaceUtils.class);
 
-        expect(property.getName()).andReturn("dummy").anyTimes();
-        expect(property.getItemType()).andReturn("String").anyTimes();
-        replay(property);
+        expect(context.getContentTypeItem()).andReturn(item).anyTimes();
+        expect(context.getEditorConfigNode()).andReturn(editorFieldNode).anyTimes();
+        expect(item.getName()).andReturn("dummy").anyTimes();
+        expect(item.getItemType()).andReturn("String").anyTimes();
+        replay(context, item);
 
         // deals with empty value
-        expect(NamespaceUtils.getPluginClassForField(documentTypeRootNode, "dummy")).andReturn(Optional.empty());
+        expect(NamespaceUtils.getPluginClassForField(editorFieldNode)).andReturn(Optional.empty());
         PowerMock.replayAll();
-        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(property, documentTypeRootNode), equalTo(false));
+        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(context), equalTo(false));
         PowerMock.verifyAll();
 
         // rejects dummy text
         PowerMock.resetAll();
-        expect(NamespaceUtils.getPluginClassForField(documentTypeRootNode, "dummy")).andReturn(Optional.of("sometext"));
+        expect(NamespaceUtils.getPluginClassForField(editorFieldNode)).andReturn(Optional.of("sometext"));
         PowerMock.replayAll();
-        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(property, documentTypeRootNode), equalTo(false));
+        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(context), equalTo(false));
 
         // accept correct value for both String and Text
-        reset(property);
-        expect(property.getName()).andReturn("dummy").anyTimes();
-        expect(property.getItemType()).andReturn("String");
-        expect(property.getItemType()).andReturn("Text");
-        replay(property);
+        reset(item);
+        expect(item.getName()).andReturn("dummy").anyTimes();
+        expect(item.getItemType()).andReturn("String");
+        expect(item.getItemType()).andReturn("Text");
+        replay(item);
 
         PowerMock.resetAll();
-        expect(NamespaceUtils.getPluginClassForField(documentTypeRootNode, "dummy")).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN)).anyTimes();
+        expect(NamespaceUtils.getPluginClassForField(editorFieldNode)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN)).anyTimes();
         PowerMock.replayAll();
 
-        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(property, documentTypeRootNode), equalTo(true));
-        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(property, documentTypeRootNode), equalTo(true));
+        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(context), equalTo(true));
+        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(context), equalTo(true));
     }
 
     @Test

@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -40,7 +41,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({HippoServiceRegistry.class, NamespaceUtils.class})
+@PrepareForTest(HippoServiceRegistry.class)
 public class LocalizationUtilsTest {
 
     @Test
@@ -127,45 +128,27 @@ public class LocalizationUtilsTest {
     @Test
     public void getConfigBasedFieldDisplayName() throws Exception {
         final String displayName = "displayName";
-        final Node root = createMock(Node.class);
-        final Node config = createMock(Node.class);
+        final Node editorFieldNode = createMock(Node.class);
         final Property property = createMock(Property.class);
         final ResourceBundle resourceBundle = createMock(ResourceBundle.class);
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "getConfigForField");
 
         expect(resourceBundle.getString("ns:title")).andReturn(null);
-        expect(config.getProperty("caption")).andReturn(property);
+        expect(editorFieldNode.hasProperty("caption")).andReturn(true);
+        expect(editorFieldNode.getProperty("caption")).andReturn(property);
         expect(property.getString()).andReturn(displayName);
-        replay(resourceBundle, config, property);
-        expect(NamespaceUtils.getConfigForField(root, "ns:title")).andReturn(Optional.of(config));
-        PowerMock.replayAll();
+        replay(resourceBundle, editorFieldNode, property);
 
-        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", Optional.of(resourceBundle), root).get(), equalTo(displayName));
+        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", Optional.of(resourceBundle), editorFieldNode).get(), equalTo(displayName));
     }
 
     @Test(expected = NoSuchElementException.class)
     public void getConfigBasedFieldDisplayNameWithRepositoryException() throws Exception {
-        final Node root = createMock(Node.class);
-        final Node config = createMock(Node.class);
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "getConfigForField");
+        final Node editorFieldNode = createMock(Node.class);
 
-        expect(config.getProperty("caption")).andThrow(new RepositoryException());
-        replay(config);
-        expect(NamespaceUtils.getConfigForField(root, "ns:title")).andReturn(Optional.of(config));
-        PowerMock.replayAll();
+        expect(editorFieldNode.hasProperty("caption")).andThrow(new RepositoryException());
+        replay(editorFieldNode);
 
-        LocalizationUtils.determineFieldDisplayName("ns:title", Optional.empty(), root).get();
-    }
-
-    @Test(expected = NoSuchElementException.class)
-    public void getConfigBasedFieldDisplayNameAndFail() throws Exception {
-        final Node root = createMock(Node.class);
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "getConfigForField");
-
-        expect(NamespaceUtils.getConfigForField(root, "ns:title")).andReturn(Optional.empty());
-        PowerMock.replayAll();
-
-        LocalizationUtils.determineFieldDisplayName("ns:title", Optional.empty(), root).get();
+        LocalizationUtils.determineFieldDisplayName("ns:title", Optional.empty(), editorFieldNode).get();
     }
 
     @Test
@@ -182,17 +165,14 @@ public class LocalizationUtilsTest {
     @Test
     public void getConfigBasedHint() throws Exception {
         final String hint = "hint";
-        final Node root = createMock(Node.class);
-        final Node config = createMock(Node.class);
+        final Node editorFieldNode = createMock(Node.class);
         final Property property = createMock(Property.class);
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "getConfigForField");
 
-        expect(config.getProperty("hint")).andReturn(property);
+        expect(editorFieldNode.hasProperty("hint")).andReturn(true);
+        expect(editorFieldNode.getProperty("hint")).andReturn(property);
         expect(property.getString()).andReturn(hint);
-        replay(config, property);
-        expect(NamespaceUtils.getConfigForField(root, "ns:title")).andReturn(Optional.of(config));
-        PowerMock.replayAll();
+        replay(editorFieldNode, property);
 
-        assertThat(LocalizationUtils.determineFieldHint("ns:title", Optional.empty(), root).get(), equalTo(hint));
+        assertThat(LocalizationUtils.determineFieldHint("ns:title", Optional.empty(), editorFieldNode).get(), equalTo(hint));
     }
 }

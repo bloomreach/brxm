@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.util.LoggingUtils;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
@@ -81,35 +82,34 @@ public class LocalizationUtils {
     /**
      * Determine the localized display name ("caption") of a document type field.
      *
-     * @param fieldId        ID of the field, e.g. "myhippoproject:title"
-     * @param resourceBundle Document type's optional resource bundle
-     * @param namespaceNode  Document type's root node
-     * @return               Display name or nothing, wrapped in an Optional
+     * @param fieldId         ID of the field, e.g. "myhippoproject:title"
+     * @param resourceBundle  Document type's optional resource bundle
+     * @param editorFieldNode JCR node representing the field in the content editor
+     * @return                Display name or nothing, wrapped in an Optional
      */
     public static Optional<String> determineFieldDisplayName(final String fieldId,
                                                              final Optional<ResourceBundle> resourceBundle,
-                                                             final Node namespaceNode) {
-        return determineFieldLabel(fieldId, resourceBundle, fieldId, namespaceNode, "caption");
+                                                             final Node editorFieldNode) {
+        return determineFieldLabel(resourceBundle, fieldId, editorFieldNode, "caption");
     }
 
     /**
      * Determine the localized hint of a document type field.
      *
-     * @param fieldId        ID of the field, e.g. "myhippoproject:title"
-     * @param resourceBundle Document type's optional resource bundle
-     * @param namespaceNode  Document type's root node
-     * @return               Hint or nothing, wrapped in an Optional
+     * @param fieldId         ID of the field, e.g. "myhippoproject:title"
+     * @param resourceBundle  Document type's optional resource bundle
+     * @param editorFieldNode JCR node representing the field in the content editor
+     * @return                Hint or nothing, wrapped in an Optional
      */
     public static Optional<String> determineFieldHint(final String fieldId,
                                                       final Optional<ResourceBundle> resourceBundle,
-                                                      final Node namespaceNode) {
-        return determineFieldLabel(fieldId, resourceBundle, fieldId + "#hint", namespaceNode, "hint");
+                                                      final Node editorFieldNode) {
+        return determineFieldLabel(resourceBundle, fieldId + "#hint", editorFieldNode, "hint");
     }
 
-    private static Optional<String> determineFieldLabel(final String fieldId,
-                                                        final Optional<ResourceBundle> resourceBundle,
+    private static Optional<String> determineFieldLabel(final Optional<ResourceBundle> resourceBundle,
                                                         final String resourceKey,
-                                                        final Node namespaceNode,
+                                                        final Node editorFieldNode,
                                                         final String configProperty) {
         // Try to return a localized label
         Optional<String> label = resourceBundle.map(rb -> rb.getString(resourceKey));
@@ -118,13 +118,13 @@ public class LocalizationUtils {
         }
 
         // Try to read a property off the field's plugin config
-        return NamespaceUtils.getConfigForField(namespaceNode, fieldId).flatMap(config -> {
-            try {
-                return Optional.of(config.getProperty(configProperty).getString());
-            } catch (RepositoryException e) {
-                log.debug("Failed to read property '{}'", configProperty, e);
+        try {
+            if (editorFieldNode.hasProperty(configProperty)) {
+                return Optional.of(editorFieldNode.getProperty(configProperty).getString());
             }
-            return Optional.empty();
-        });
+        } catch (RepositoryException e) {
+            LoggingUtils.warnException(log, e, "Failed to read property '{}'", configProperty);
+        }
+        return Optional.empty();
     }
 }
