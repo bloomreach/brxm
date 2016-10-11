@@ -32,6 +32,8 @@ import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.document.Document;
+import org.onehippo.cms.channelmanager.content.model.document.DocumentInfo;
+import org.onehippo.cms.channelmanager.content.model.document.EditingInfo;
 import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 import org.onehippo.cms.channelmanager.content.service.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.service.DocumentsService;
@@ -83,12 +85,12 @@ public class ContentResourceTest extends CXFTest {
     }
 
     @Test
-    public void retrieveDocument() throws Exception {
+    public void getUnpublishedDocument() throws Exception {
         final String requestedUuid = "requested-uuid";
-        final String returnedUuid = "returned-uuid";
-        final Document testDocument = new Document();
-        testDocument.setId(returnedUuid);
-        expect(documentsService.getDocument(requestedUuid, userSession, locale)).andReturn(testDocument);
+        final String uuid = "returned-uuid";
+        final Document testDocument = createDocument(uuid);
+
+        expect(documentsService.getUnpublished(requestedUuid, userSession, locale)).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -101,14 +103,63 @@ public class ContentResourceTest extends CXFTest {
     }
 
     @Test
-    public void documentNotFound() throws Exception {
+    public void getUnpublishedDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.getDocument(requestedUuid, userSession, locale)).andThrow(new DocumentNotFoundException());
+        expect(documentsService.getUnpublished(requestedUuid, userSession, locale)).andThrow(new DocumentNotFoundException());
         replay(documentsService);
 
         when()
                 .get("/documents/" + requestedUuid)
+        .then()
+                .statusCode(404);
+    }
+
+    @Test
+    public void createDraftDocument() throws Exception {
+        final String requestedUuid = "requested-uuid";
+        final String uuid = "returned-uuid";
+        final FluentDocument testDocument = createDocument(uuid).withState(EditingInfo.State.AVAILABLE);
+
+        expect(documentsService.createDraft(requestedUuid, userSession, locale)).andReturn(testDocument);
+        replay(documentsService);
+
+        final String expectedBody = normalizeJsonResource("/available-document.json");
+
+        when()
+                .post("/documents/" + requestedUuid + "/draft")
+        .then()
+                .statusCode(201)
+                .body(equalTo(expectedBody));
+    }
+
+    @Test
+    public void createDraftDocumentForbidden() throws Exception {
+        final String requestedUuid = "requested-uuid";
+        final String uuid = "returned-uuid";
+        final FluentDocument testDocument = createDocument(uuid).withState(EditingInfo.State.UNAVAILABLE);
+
+        expect(documentsService.createDraft(requestedUuid, userSession, locale)).andReturn(testDocument);
+        replay(documentsService);
+
+        final String expectedBody = normalizeJsonResource("/unavailable-document.json");
+
+        when()
+                .post("/documents/" + requestedUuid + "/draft")
+        .then()
+                .statusCode(403)
+                .body(equalTo(expectedBody));
+    }
+
+    @Test
+    public void createDraftDocumentNotFound() throws Exception {
+        final String requestedUuid = "requested-uuid";
+
+        expect(documentsService.createDraft(requestedUuid, userSession, locale)).andThrow(new DocumentNotFoundException());
+        replay(documentsService);
+
+        when()
+                .post("/documents/" + requestedUuid + "/draft")
         .then()
                 .statusCode(404);
     }
@@ -152,5 +203,24 @@ public class ContentResourceTest extends CXFTest {
                 .lines()
                 .map(String::trim)
                 .collect(Collectors.joining(""));
+    }
+
+    private FluentDocument createDocument(final String uuid) {
+        final FluentDocument document = new FluentDocument();
+        document.setId(uuid);
+        return document;
+    }
+
+    private static class FluentDocument extends Document {
+        public FluentDocument withState(final EditingInfo.State state) {
+            final DocumentInfo info = new DocumentInfo();
+            final EditingInfo editingInfo = new EditingInfo();
+
+            this.setInfo(info);
+            info.setEditingInfo(editingInfo);
+            editingInfo.setState(state);
+
+            return this;
+        }
     }
 }

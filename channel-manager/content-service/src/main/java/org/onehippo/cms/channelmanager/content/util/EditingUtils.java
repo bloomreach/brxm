@@ -131,20 +131,20 @@ public class EditingUtils {
         return holder;
     }
 
-    // TODO this function is of temporary nature, more design and changes are expected in this area.
-    public static Optional<Node> getOrMakeDraft(final EditingInfo editingInfo,
-                                                final EditableWorkflow workflow,
-                                                final Node handle) {
-        if (editingInfo.getState() == EditingInfo.State.AVAILABLE) {
-            try {
-                final Document document = workflow.obtainEditableInstance();
-                final Session session = handle.getSession();
-                return Optional.of(document.getNode(session));
-            } catch (WorkflowException | RepositoryException | RemoteException e) {
-                log.debug("Problem retrieving draft node", e);
-            }
-        } else {
-            return WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT);
+    /**
+     * Create a draft variant node for a document represented by handle node.
+     *
+     * @param workflow Editable workflow for the desired document
+     * @param handle   JCR handle node for the desired document
+     * @return         JCR draft node or nothing, wrapped in an Optional
+     */
+    public static Optional<Node> createDraft(final EditableWorkflow workflow, final Node handle) {
+        try {
+            final Document document = workflow.obtainEditableInstance();
+            final Session session = handle.getSession();
+            return Optional.of(document.getNode(session));
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.debug("Problem retrieving draft node", e);
         }
         return Optional.empty();
     }

@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.service;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -45,7 +46,27 @@ public class DocumentsServiceImpl implements DocumentsService {
     private DocumentsServiceImpl() { }
 
     @Override
-    public Document getDocument(final String uuid, final Session session, final Locale locale)
+    public Document createDraft(final String uuid, final Session session, final Locale locale)
+            throws DocumentNotFoundException {
+        final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(DocumentNotFoundException::new);
+        final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)
+                                                       .orElseThrow(DocumentNotFoundException::new);
+        final DocumentType docType = getDocumentType(handle, locale);
+        final Document document = assembleDocument(uuid, handle, workflow, docType);
+
+        if (document.getInfo().getEditingInfo().getState() == EditingInfo.State.AVAILABLE) {
+            final Optional<Node> optionalDraft = EditingUtils.createDraft(workflow, handle);
+            if (optionalDraft.isPresent()) {
+                loadFields(document, optionalDraft.get(), docType);
+            } else {
+                document.getInfo().getEditingInfo().setState(EditingInfo.State.UNAVAILABLE);
+            }
+        }
+        return document;
+    }
+
+    @Override
+    public Document getUnpublished(final String uuid, final Session session, final Locale locale)
             throws DocumentNotFoundException {
         if ("test".equals(uuid)) {
             return MockResponse.createTestDocument(uuid);
@@ -54,25 +75,11 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(DocumentNotFoundException::new);
         final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)
                                                        .orElseThrow(DocumentNotFoundException::new);
-        final EditingInfo editingInfo = EditingUtils.determineEditingInfo(workflow, handle);
-        final Node variant = EditingUtils.getOrMakeDraft(editingInfo, workflow, handle)
-                                         .orElseThrow(DocumentNotFoundException::new);
-
         final DocumentType docType = getDocumentType(handle, locale);
-        final DocumentInfo documentInfo = new DocumentInfo();
-        documentInfo.setTypeId(docType.getId());
-        documentInfo.setEditingInfo(editingInfo);
+        final Document document = assembleDocument(uuid, handle, workflow, docType);
 
-        final Document document = new Document();
-
-        document.setId(uuid);
-        document.setInfo(documentInfo);
-        DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
-
-        for (FieldType field : docType.getFields()) {
-            field.readFrom(variant).ifPresent(value -> document.addField(field.getId(), value));
-        }
-
+        WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED)
+                .ifPresent(unpublished -> loadFields(document, unpublished, docType));
         return document;
     }
 
@@ -83,6 +90,29 @@ public class DocumentsServiceImpl implements DocumentsService {
         } catch (DocumentTypeNotFoundException e) {
             final String handlePath = JcrUtils.getNodePathQuietly(handle);
             throw new DocumentNotFoundException("Failed to retrieve type of document '" + handlePath + "'", e);
+        }
+    }
+
+    private Document assembleDocument(final String uuid, final Node handle,
+                                      final EditableWorkflow workflow, final DocumentType docType) {
+        final Document document = new Document();
+        document.setId(uuid);
+
+        final DocumentInfo documentInfo = new DocumentInfo();
+        documentInfo.setTypeId(docType.getId());
+        document.setInfo(documentInfo);
+
+        DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
+
+        final EditingInfo editingInfo = EditingUtils.determineEditingInfo(workflow, handle);
+        documentInfo.setEditingInfo(editingInfo);
+
+        return document;
+    }
+
+    private void loadFields(final Document document, final Node variant, final DocumentType docType) {
+        for (FieldType field : docType.getFields()) {
+            field.readFrom(variant).ifPresent(value -> document.addField(field.getId(), value));
         }
     }
 }

@@ -15,6 +15,7 @@
  */
 
 const CMS_CONTEXT_PATH = window.parent ? window.parent.location.pathname : '/cms/';
+const CMS_CONTENT_REST_API_PATH = 'ws/content';
 
 export class ContentService {
 
@@ -25,8 +26,9 @@ export class ContentService {
     this.PathService = PathService;
   }
 
-  getDocument(id) {
-    return this._doGet('documents', id);
+  createDraft(id) {
+    return this.$http.post(this._draftUrlForDocument(id))
+      .then(result => result.data);
   }
 
   getDocumentType(id) {
@@ -34,9 +36,13 @@ export class ContentService {
   }
 
   _doGet(path, id) {
-    const apiUrl = this.PathService.concatPaths(CMS_CONTEXT_PATH, 'ws/content', path, id);
+    const apiUrl = this.PathService.concatPaths(CMS_CONTEXT_PATH, CMS_CONTENT_REST_API_PATH, path, id);
     return this.$http.get(apiUrl)
       .then((result) => result.data);
+  }
+
+  _draftUrlForDocument(id) {
+    return this.PathService.concatPaths(CMS_CONTEXT_PATH, CMS_CONTENT_REST_API_PATH, 'documents', id, 'draft');
   }
 }
 

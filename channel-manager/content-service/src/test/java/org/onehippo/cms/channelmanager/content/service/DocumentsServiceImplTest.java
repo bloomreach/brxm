@@ -44,14 +44,14 @@ public class DocumentsServiceImplTest {
 
     @Test(expected = DocumentNotFoundException.class)
     public void nodeNotFound() throws Exception {
-        documentsService.getDocument("unknown-uuid", session, null);
+        documentsService.getUnpublished("unknown-uuid", session, null);
     }
 
     @Test(expected = DocumentNotFoundException.class)
     public void nodeNotHandle() throws Exception {
         final Node handle = rootNode.addNode("testDocument", "invalid-type");
         final String id = handle.getIdentifier();
-        documentsService.getDocument(id, session, null);
+        documentsService.getUnpublished(id, session, null);
     }
 
 /*
