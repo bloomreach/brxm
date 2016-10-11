@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
-import org.hippoecm.hst.content.beans.query.builder.ConstraintBuilder;
+import org.hippoecm.hst.content.beans.query.builder.Constraint;
 import org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -93,7 +93,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
 
             int offset = (page - 1) * pageSize;
 
-            ConstraintBuilder constraint;
+            Constraint constraint;
             if (drqc == null) {
                 constraint = constraint(".").contains(parsedQuery);
             } else {
