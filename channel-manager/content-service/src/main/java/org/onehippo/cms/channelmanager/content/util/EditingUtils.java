@@ -75,7 +75,7 @@ public class EditingUtils {
                 info.setState(EditingInfo.State.UNAVAILABLE_REQUEST_PENDING);
             }
         } catch (RepositoryException | WorkflowException | RemoteException e) {
-            LoggingUtils.warnException(log, e, "Failed to determine editing info for node '{}'", JcrUtils.getNodePathQuietly(handle));
+            LoggingUtils.warn(log, e, "Failed to determine editing info for node '{}'", JcrUtils.getNodePathQuietly(handle));
         }
         return info;
     }

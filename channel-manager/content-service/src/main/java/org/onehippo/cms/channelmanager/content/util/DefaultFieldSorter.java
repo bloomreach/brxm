@@ -49,7 +49,7 @@ public class DefaultFieldSorter implements FieldSorter {
                 createFieldContext(editorFieldNode, nodeTypeNode, context).ifPresent(sortedFields::add);
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warnException(log, e, "Failed to sort fields of content type");
+            LoggingUtils.warn(log, e, "Failed to sort fields of content type");
         }
 
         return sortedFields;
@@ -68,7 +68,7 @@ public class DefaultFieldSorter implements FieldSorter {
                 }
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warnException(log, e, "Failed to create field context");
+            LoggingUtils.warn(log, e, "Failed to create field context");
         }
         return Optional.empty();
     }

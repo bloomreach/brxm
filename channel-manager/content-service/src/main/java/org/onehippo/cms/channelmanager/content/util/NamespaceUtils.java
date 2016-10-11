@@ -85,7 +85,7 @@ public class NamespaceUtils {
                 return Optional.of(editorFieldNode.getProperty(PROPERTY_PLUGIN_CLASS).getString());
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warnException(log, e, "Failed to read property '{}' for field {}", PROPERTY_PLUGIN_CLASS,
+            LoggingUtils.warn(log, e, "Failed to read property '{}' for field {}", PROPERTY_PLUGIN_CLASS,
                                        JcrUtils.getNodePathQuietly(editorFieldNode));
         }
         return Optional.empty();
@@ -115,7 +115,7 @@ public class NamespaceUtils {
                 return Optional.of(LAYOUT_SORTER.get(LAYOUT_PLUGIN_CLASS_ONE_COLUMN));
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warnException(log, e, "Failed to determine layout of content type {}",
+            LoggingUtils.warn(log, e, "Failed to determine layout of content type {}",
                     JcrUtils.getNodePathQuietly(contentTypeRootNode));
         }
         return Optional.empty();

@@ -69,7 +69,7 @@ public class ContentTypeContext {
         try {
             return Optional.ofNullable(service.getContentTypes().getType(id));
         } catch (RepositoryException e) {
-            LoggingUtils.warnException(log, e, "Failed to retrieve content type '{}'", id);
+            LoggingUtils.warn(log, e, "Failed to retrieve content type '{}'", id);
         }
         return Optional.empty();
     }

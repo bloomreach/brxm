@@ -57,7 +57,7 @@ public class TwoColumnFieldSorter extends DefaultFieldSorter {
                         .ifPresent(sortedFields::add);
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warnException(log, e, "Problem sorting fields of content type {}",
+            LoggingUtils.warn(log, e, "Problem sorting fields of content type {}",
                                        context.getContentType().getName());
         }
 
@@ -76,7 +76,7 @@ public class TwoColumnFieldSorter extends DefaultFieldSorter {
                 }
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warnException(log, e, "Problem checking the wicket id of content type field {}",
+            LoggingUtils.warn(log, e, "Problem checking the wicket id of content type field {}",
                                        JcrUtils.getNodePathQuietly(editorFieldNode));
         }
         return Optional.empty();

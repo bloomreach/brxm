@@ -123,7 +123,7 @@ public class LocalizationUtils {
                 return Optional.of(editorFieldNode.getProperty(configProperty).getString());
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warnException(log, e, "Failed to read property '{}'", configProperty);
+            LoggingUtils.warn(log, e, "Failed to read property '{}'", configProperty);
         }
         return Optional.empty();
     }

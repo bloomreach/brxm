@@ -144,7 +144,7 @@ public class FieldTypeUtils {
                 final Class<? extends FieldType> fieldTypeClass = FIELD_TYPE_MAP.get(jcrType).fieldType;
                 return Optional.of(fieldTypeClass.newInstance());
             } catch (InstantiationException|IllegalAccessException e) {
-                LoggingUtils.warnException(log, e, "Problem creating a field type for type '{}'", jcrType);
+                LoggingUtils.warn(log, e, "Problem creating a field type for type '{}'", jcrType);
             }
         }
         return Optional.empty();
