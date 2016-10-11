@@ -79,7 +79,7 @@
             Ext.Ajax.request({
               url: self.composerRestMountUrl + '/' + self.componentId,
               headers: {
-                'FORCE_CLIENT_HOST': 'true'
+                'Force-Client-Host': 'true'
               },
               success: function(result) {
                 var jsonData = Ext.util.JSON.decode(result.responseText),
@@ -116,7 +116,7 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'FORCE_CLIENT_HOST': 'true'
+            'Force-Client-Host': 'true'
           },
           params: Ext.util.JSON.encode(variantIds),
           success: function(result) {
@@ -145,7 +145,7 @@
             method: 'POST',
             url: this.composerRestMountUrl + '/' + this.componentId,
             headers: {
-              'FORCE_CLIENT_HOST': 'true',
+              'Force-Client-Host': 'true',
               'Content-Type': 'application/json',
               'lastModifiedTimestamp': this.lastModified
             },

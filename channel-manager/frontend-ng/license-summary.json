@@ -1,11 +1,15 @@
 {
   "angular-animate@1.4.8": {
     "licenses": "MIT",
-    "repository": "https://github.com/angular/angular.js"
+    "repository": "https://github.com/angular/angular.js",
+    "publisher": "Angular Core Team",
+    "email": "angular-core+npm@google.com"
   },
   "angular-aria@1.4.8": {
     "licenses": "MIT",
-    "repository": "https://github.com/angular/angular.js"
+    "repository": "https://github.com/angular/angular.js",
+    "publisher": "Angular Core Team",
+    "email": "angular-core+npm@google.com"
   },
   "angular-material@1.1.0-rc4-master-06e7e99": {
     "licenses": "MIT",
@@ -14,15 +18,19 @@
   },
   "angular-messages@1.4.8": {
     "licenses": "MIT",
-    "repository": "https://github.com/angular/angular.js"
+    "repository": "https://github.com/angular/angular.js",
+    "publisher": "Angular Core Team",
+    "email": "angular-core+npm@google.com"
   },
   "angular-translate-loader-static-files@2.8.1": {
     "licenses": "MIT",
-    "repository": "https://github.com/angular-translate/bower-angular-translate-loader-static-files"
+    "repository": "https://github.com/angular-translate/bower-angular-translate-loader-static-files",
+    "publisher": "Pascal Precht"
   },
   "angular-translate@2.8.1": {
     "licenses": "MIT",
     "repository": "https://github.com/angular-translate/angular-translate",
+    "publisher": "Pascal Precht",
     "licenseFile": "node_modules/angular-translate/LICENSE"
   },
   "angular-ui-router@0.2.15": {
@@ -37,40 +45,61 @@
   },
   "angular@1.4.8": {
     "licenses": "MIT",
-    "repository": "https://github.com/angular/angular.js"
+    "repository": "https://github.com/angular/angular.js",
+    "publisher": "Angular Core Team",
+    "email": "angular-core+npm@google.com"
   },
   "atoa@1.0.0": {
     "licenses": "MIT",
     "repository": "https://github.com/bevacqua/atoa",
+    "publisher": "Nicolas Bevacqua",
+    "email": "nicolasbevacqua@gmail.com",
+    "url": "http://bevacqua.io/",
     "licenseFile": "node_modules/atoa/license"
   },
   "contra@1.9.4": {
     "licenses": "MIT",
     "repository": "https://github.com/bevacqua/contra",
+    "publisher": "Nicolas Bevacqua",
+    "email": "hello@bevacqua.io",
+    "url": "http://bevacqua.io",
     "licenseFile": "node_modules/contra/LICENSE"
   },
   "crossvent@1.5.4": {
     "licenses": "MIT",
     "repository": "https://github.com/bevacqua/crossvent",
+    "publisher": "Nicolas Bevacqua",
+    "email": "hello@bevacqua.io",
+    "url": "http://bevacqua.io",
     "licenseFile": "node_modules/crossvent/LICENSE"
   },
   "custom-event@1.0.0": {
     "licenses": "MIT",
-    "repository": "https://github.com/webmodules/custom-event"
+    "repository": "https://github.com/webmodules/custom-event",
+    "publisher": "Nathan Rajlich",
+    "email": "nathan@tootallnate.net",
+    "url": "http://n8.io/"
   },
   "dom-autoscroller@1.2.4": {
     "licenses": "MIT",
     "repository": "https://github.com/hollowdoor/dom_autoscroller",
+    "publisher": "Quentin Engles",
+    "email": "hollowdoor99@gmail.com",
     "licenseFile": "node_modules/dom-autoscroller/LICENSE"
   },
   "dragula@3.7.1-h1": {
     "licenses": "MIT",
     "repository": "https://github.com/onehippo/dragula",
+    "publisher": "Nicolas Bevacqua",
+    "email": "nicolasbevacqua@gmail.com",
+    "url": "http://bevacqua.io/",
     "licenseFile": "node_modules/dragula/license"
   },
   "es6-shim@0.35.0": {
     "licenses": "MIT",
     "repository": "https://github.com/paulmillr/es6-shim",
+    "publisher": "Paul Miller",
+    "url": "http://paulmillr.com",
     "licenseFile": "node_modules/es6-shim/LICENSE"
   },
   "hippo-cm@": {
@@ -80,20 +109,38 @@
   "jquery@2.2.0": {
     "licenses": "MIT",
     "repository": "https://github.com/jquery/jquery",
+    "publisher": "jQuery Foundation and other contributors",
+    "url": "https://github.com/jquery/jquery/blob/2.2.0/AUTHORS.txt",
     "licenseFile": "node_modules/jquery/LICENSE.txt"
+  },
+  "lodash.debounce@4.0.8": {
+    "licenses": "MIT",
+    "repository": "https://github.com/lodash/lodash",
+    "publisher": "John-David Dalton",
+    "email": "john.david.dalton@gmail.com",
+    "url": "http://allyoucanleet.com/",
+    "licenseFile": "node_modules/lodash.debounce/LICENSE"
   },
   "more-events@1.3.2": {
     "licenses": "MIT",
-    "repository": "https://github.com/hollowdoor/more_events"
+    "repository": "https://github.com/hollowdoor/more_events",
+    "publisher": "Quentin Engles",
+    "email": "hollowdoor99@gmail.com"
+  },
+  "mutation-summary@0.0.0": {
+    "licenses": "Apache 2.0",
+    "repository": "https://code.google.com/p/mutation-summary/"
   },
   "ng-device-detector@3.0.1": {
     "licenses": "MIT",
     "repository": "https://github.com/srfrnk/ng-device-detector",
+    "publisher": "srfrnk",
     "licenseFile": "node_modules/ng-device-detector/license.txt"
   },
   "ng-focus-if@1.0.5": {
     "licenses": "MIT",
     "repository": "https://github.com/hiebj/ng-focus-if",
+    "publisher": "Jonathan Hieb",
     "licenseFile": "node_modules/ng-focus-if/LICENSE"
   },
   "open-sans-fontface@1.4.2": {
@@ -102,16 +149,22 @@
   },
   "pointer-point@2.4.0": {
     "licenses": "MIT",
-    "repository": "https://github.com/hollowdoor/pointer_point"
+    "repository": "https://github.com/hollowdoor/pointer_point",
+    "publisher": "Quentin Engles",
+    "email": "hollowdoor99@gmail.com"
   },
   "re-tree@0.0.2": {
     "licenses": "MIT",
     "repository": "https://github.com/srfrnk/re-tree",
+    "publisher": "srfrnk",
     "licenseFile": "node_modules/re-tree/license.txt"
   },
   "ticky@1.0.1": {
     "licenses": "MIT",
     "repository": "https://github.com/bevacqua/ticky",
+    "publisher": "Nicolas Bevacqua",
+    "email": "nicolasbevacqua@gmail.com",
+    "url": "http://bevacqua.io/",
     "licenseFile": "node_modules/ticky/license"
   },
   "velocity-animate@1.2.3": {

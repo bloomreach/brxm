@@ -136,7 +136,6 @@
   "TOOLBAR_SWITCH_VIEWER_MODE": "Viewer mode",
   "TOOLBAR_SWITCH_VIEWER_MODE_EDIT": "Edit",
   "TOOLBAR_SWITCH_VIEWER_MODE_VIEW": "View",
-  "TOOLBAR_VIEW_AS_INFIX": ", the ",
   "TOOLBAR_VIEW_AS_LABEL": "As viewed by:",
   "TOOLBAR_VIEW_ON_LABEL": "On:",
   "VALIDATION_ILLEGAL_CHARACTERS": "One or more invalid characters ({{characters}}) have been entered",
