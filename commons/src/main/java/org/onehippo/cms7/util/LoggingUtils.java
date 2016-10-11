@@ -32,9 +32,9 @@ public class LoggingUtils {
      *
      * @param logger logger to use
      * @param t      the exception
-     * @param msg    a plain message
+     * @param msg    a plain message. No {} placeholder is needed for the Throwable
      */
-    public static void warnException(final Logger logger, final Throwable t, final String msg) {
+    public static void warn(final Logger logger, final Throwable t, final String msg) {
         if (logger.isDebugEnabled()) {
             logger.warn(msg, t);
         } else {
@@ -47,10 +47,10 @@ public class LoggingUtils {
      *
      * @param logger logger to use
      * @param t      the exception
-     * @param format message format, taking a single argument
+     * @param format message format, taking a single argument. No {} placeholder is needed for the Throwable
      * @param arg    argument to interpolate into formatted message
      */
-    public static void warnException(final Logger logger, final Throwable t, final String format, final Object arg) {
+    public static void warn(final Logger logger, final Throwable t, final String format, final Object arg) {
         if (logger.isDebugEnabled()) {
             logger.warn(format, arg, t);
         } else {
@@ -63,11 +63,11 @@ public class LoggingUtils {
      *
      * @param logger logger to use
      * @param t      the exception
-     * @param format message format, taking two arguments
+     * @param format message format, taking two arguments. No {} placeholder is needed for the Throwable
      * @param arg1   first argument to interpolate into formatted message
      * @param arg2   second argument to interpolate into formatted message
      */
-    public static void warnException(final Logger logger, final Throwable t, final String format, final Object arg1, final Object arg2) {
+    public static void warn(final Logger logger, final Throwable t, final String format, final Object arg1, final Object arg2) {
         if (logger.isDebugEnabled()) {
             logger.warn(format, arg1, arg2, t);
         } else {
@@ -80,10 +80,10 @@ public class LoggingUtils {
      *
      * @param logger    logger to use
      * @param t         the exception
-     * @param format    message format, taking three or more arguments
+     * @param format    message format, taking three or more arguments. No {} placeholder is needed for the Throwable
      * @param arguments arguments to interpolate into formatted message
      */
-    public static void warnException(final Logger logger, final Throwable t, final String format, final Object... arguments) {
+    public static void warn(final Logger logger, final Throwable t, final String format, final Object... arguments) {
         final Object[] moreArguments = Arrays.copyOf(arguments, arguments.length + 1);
         if (logger.isDebugEnabled()) {
             moreArguments[arguments.length] = t;

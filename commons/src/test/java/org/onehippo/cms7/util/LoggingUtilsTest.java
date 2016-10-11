@@ -34,31 +34,31 @@ public class LoggingUtilsTest {
     public void variations() {
         final Exception e = new IllegalStateException("Exception message");
 
-        LoggingUtils.warnException(log, e, "Simple");
+        LoggingUtils.warn(log, e, "Simple");
         assertThat(LoggingAppender.message, equalTo("Simple: Exception message"));
         assertThat(LoggingAppender.throwable, equalTo(null));
-        LoggingUtils.warnException(dbg, e, "Simple");
+        LoggingUtils.warn(dbg, e, "Simple");
         assertThat(LoggingAppender.message, equalTo("Simple"));
         assertThat(LoggingAppender.throwable, equalTo(e));
 
-        LoggingUtils.warnException(log, e, "Simple {}", "arg1");
+        LoggingUtils.warn(log, e, "Simple {}", "arg1");
         assertThat(LoggingAppender.message, equalTo("Simple arg1: Exception message"));
         assertThat(LoggingAppender.throwable, equalTo(null));
-        LoggingUtils.warnException(dbg, e, "Simple {}", "arg1");
+        LoggingUtils.warn(dbg, e, "Simple {}", "arg1");
         assertThat(LoggingAppender.message, equalTo("Simple arg1"));
         assertThat(LoggingAppender.throwable, equalTo(e));
 
-        LoggingUtils.warnException(log, e, "Simple {} {}", "arg1", "arg2");
+        LoggingUtils.warn(log, e, "Simple {} {}", "arg1", "arg2");
         assertThat(LoggingAppender.message, equalTo("Simple arg1 arg2: Exception message"));
         assertThat(LoggingAppender.throwable, equalTo(null));
-        LoggingUtils.warnException(dbg, e, "Simple {} {}", "arg1", "arg2");
+        LoggingUtils.warn(dbg, e, "Simple {} {}", "arg1", "arg2");
         assertThat(LoggingAppender.message, equalTo("Simple arg1 arg2"));
         assertThat(LoggingAppender.throwable, equalTo(e));
 
-        LoggingUtils.warnException(log, e, "Simple {} {} {}", "arg1", "arg2", "arg3");
+        LoggingUtils.warn(log, e, "Simple {} {} {}", "arg1", "arg2", "arg3");
         assertThat(LoggingAppender.message, equalTo("Simple arg1 arg2 arg3: Exception message"));
         assertThat(LoggingAppender.throwable, equalTo(null));
-        LoggingUtils.warnException(dbg, e, "Simple {} {} {}", "arg1", "arg2", "arg3");
+        LoggingUtils.warn(dbg, e, "Simple {} {} {}", "arg1", "arg2", "arg3");
         assertThat(LoggingAppender.message, equalTo("Simple arg1 arg2 arg3"));
         assertThat(LoggingAppender.throwable, equalTo(e));
     }
