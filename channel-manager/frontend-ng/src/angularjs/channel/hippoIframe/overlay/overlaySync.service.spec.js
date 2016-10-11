@@ -110,7 +110,7 @@ describe('OverlaySyncService', () => {
 
   it('should trigger onDOMChanged when the iframe DOM is changed', (done) => {
     spyOn(OverlaySyncService, 'onDOMChanged');
-    loadIframeFixture(iframeWindow => {
+    loadIframeFixture((iframeWindow) => {
       OverlaySyncService.onDOMChanged.calls.reset();
       OverlaySyncService.onDOMChanged.and.callFake(done);
       $(iframeWindow.document.body).css('color', 'green');
