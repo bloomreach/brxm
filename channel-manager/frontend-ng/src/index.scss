@@ -14,14 +14,6 @@
 
 @import 'styles/variables';
 
-// Open Sans font
-@import '../node_modules/open-sans-fontface/sass/variables';
-@import '../node_modules/open-sans-fontface/sass/mixins';
-@import '../node_modules/open-sans-fontface/sass/Regular';
-
-// Angular Material framework
-@import '../node_modules/angular-material/modules/scss/angular-material.scss';
-
 @import 'styles/button-toggle';
 @import 'styles/buttons';
 @import 'styles/iframe';

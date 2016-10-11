@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('ChangesMenu', () => {
   let ChannelService;
   let DialogService;
@@ -27,7 +30,7 @@ describe('ChangesMenu', () => {
   let $compile;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((
       _$compile_,

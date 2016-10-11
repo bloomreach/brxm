@@ -79,7 +79,7 @@ $text-light: rgba(255, 255, 255, .87);
 
 // Typography
 $font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
-$OpenSansPath: '../fonts';
+$OpenSansPath: '~open-sans-fontface/fonts';
 
 //TODO Clean these variables, replace with color palette
 $white: #fff;
@@ -125,3 +125,9 @@ $select-invalid-color:                        #f70029;
 
 // Toolbar
 $toolbar-height:                              40px;
+
+// Layout breakpoints
+$layout-breakpoint-xs:     600px !default;
+$layout-breakpoint-sm:     960px !default;
+$layout-breakpoint-md:     1280px !default;
+$layout-breakpoint-lg:     1920px !default;

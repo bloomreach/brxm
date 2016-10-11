@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('FeedbackService', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('FeedbackService', () => {
   let $log;
   let $translate;
   let $mdToast;
@@ -26,7 +27,7 @@ describe('FeedbackService', () => {
   const message = 'Test toast message';
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$log_, _$translate_, _$mdToast_, _FeedbackService_) => {
       $log = _$log_;

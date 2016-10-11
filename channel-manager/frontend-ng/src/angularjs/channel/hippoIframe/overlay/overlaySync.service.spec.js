@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('OverlaySyncService', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('OverlaySyncService', () => {
   let OverlaySyncService;
   let $iframe;
   let $base;
@@ -26,7 +27,7 @@ describe('OverlaySyncService', () => {
   let $window;
 
   beforeEach(() => {
-    module('hippo-cm.channel.hippoIframe.overlay');
+    angular.mock.module('hippo-cm.channel.hippoIframe.overlay');
 
     inject((_$window_, _OverlaySyncService_, _DomService_) => {
       $window = _$window_;
@@ -109,7 +110,7 @@ describe('OverlaySyncService', () => {
 
   it('should trigger onDOMChanged when the iframe DOM is changed', (done) => {
     spyOn(OverlaySyncService, 'onDOMChanged');
-    loadIframeFixture(iframeWindow => {
+    loadIframeFixture((iframeWindow) => {
       OverlaySyncService.onDOMChanged.calls.reset();
       OverlaySyncService.onDOMChanged.and.callFake(done);
       $(iframeWindow.document.body).css('color', 'green');
@@ -118,7 +119,7 @@ describe('OverlaySyncService', () => {
 
   it('should sync when the iframe DOM is changed', (done) => {
     spyOn(OverlaySyncService, 'syncIframe');
-    loadIframeFixture(iframeWindow => {
+    loadIframeFixture((iframeWindow) => {
       OverlaySyncService.syncIframe.calls.reset();
       OverlaySyncService.syncIframe.and.callFake(done);
       $(iframeWindow.document.body).css('color', 'green');

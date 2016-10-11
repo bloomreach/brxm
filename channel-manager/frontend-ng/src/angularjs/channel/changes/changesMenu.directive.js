@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-export function changesMenuDirective() {
+import template from './changesMenu.html';
+
+function changesMenuDirective() {
   return {
     restrict: 'E',
-    templateUrl: 'channel/changes/changesMenu.html',
+    template,
     controller: 'ChangesMenuCtrl as changes',
     bindToController: {
       onManageChanges: '&',
     },
   };
 }
+
+export default changesMenuDirective;

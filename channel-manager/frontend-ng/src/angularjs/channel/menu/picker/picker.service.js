@@ -15,7 +15,9 @@
  *
  */
 
-export class PickerService {
+import template from './picker.html';
+
+class PickerService {
 
   constructor(DialogService, HstService) {
     'ngInject';
@@ -28,7 +30,7 @@ export class PickerService {
   show(cfg) {
     return this.DialogService.show(angular.extend(cfg, {
       clickOutsideToClose: true,
-      templateUrl: 'channel/menu/picker/picker.html',
+      template,
       controller: 'PickerCtrl',
       controllerAs: 'picker',
       bindToController: true,
@@ -54,3 +56,5 @@ export class PickerService {
     });
   }
 }
+
+export default PickerService;

@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-import { channelManagerApi } from './api/api.js';
-import { channelModule } from './channel/channel.js';
-import { config } from './hippo-cm.config.js';
+import angular from 'angular';
+import ngMaterial from 'angular-material';
+import ngTranslate from 'angular-translate';
+import 'angular-translate-loader-static-files';
+import uiRouter from 'angular-ui-router';
 
-export const hippoCmng = angular
+import channelManagerApi from './api/api';
+import channelModule from './channel/channel';
+import config from './hippo-cm.config';
+
+const hippoCmng = angular
   .module('hippo-cm', [
-    'ngMaterial',
-    'pascalprecht.translate',
-    'ui.router',
-    'templates',
+    ngMaterial,
+    ngTranslate,
+    uiRouter,
     channelManagerApi.name,
     channelModule.name,
   ])
   .config(config);
+
+export default hippoCmng;

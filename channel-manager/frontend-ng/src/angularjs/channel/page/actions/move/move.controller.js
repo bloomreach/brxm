@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class PageMoveCtrl {
+class PageMoveCtrl {
   constructor($log, $translate, ChannelService, SiteMapService, SiteMapItemService, HippoIframeService,
               FeedbackService) {
     'ngInject';
@@ -49,7 +49,7 @@ export class PageMoveCtrl {
     ChannelService.getNewPageModel()
       .then((data) => {
         this.locations = data.locations || [];
-        this.location = this.locations.find((location) => this.item.parentLocation.id === location.id);
+        this.location = this.locations.find(location => this.item.parentLocation.id === location.id);
 
         // filter out locations that are on the current sitemap location, or downstream of it
         if (this.location) {
@@ -63,7 +63,7 @@ export class PageMoveCtrl {
           this.locations = filteredLocations;
         }
       })
-      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
+      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
   }
 
   move() {
@@ -80,6 +80,8 @@ export class PageMoveCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MOVE_FAILED', this.errorMap));
+      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MOVE_FAILED', this.errorMap));
   }
 }
+
+export default PageMoveCtrl;

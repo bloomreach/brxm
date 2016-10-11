@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('getByProperty filter', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('getByProperty filter', () => {
   let getByPropertyFilter;
   const items = [
     {
@@ -36,7 +37,7 @@ describe('getByProperty filter', () => {
     },
   ];
 
-  beforeEach(module('hippo-cm.utils'));
+  beforeEach(angular.mock.module('hippo-cm.utils'));
 
   beforeEach(inject((_getByPropertyFilter_) => {
     getByPropertyFilter = _getByPropertyFilter_;

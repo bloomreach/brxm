@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('PageActionCreate', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('PageActionCreate', () => {
   let $q;
   let $scope;
   let $rootScope;
@@ -30,7 +31,7 @@ describe('PageActionCreate', () => {
   let pageModel;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$q_, _$rootScope_, _$compile_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_,
             _SiteMapService_) => {
@@ -79,7 +80,7 @@ describe('PageActionCreate', () => {
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('page-create');
+    return $element.controller('pageCreate');
   }
 
   it('initializes correctly', () => {
