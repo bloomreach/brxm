@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('ConfigService', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('ConfigService', () => {
   let ConfigService;
 
   beforeEach(() => {
@@ -24,7 +25,7 @@ describe('ConfigService', () => {
     window.APP_CONFIG.apiUrlPrefix = 'https://127.0.0.1:9080/web/one/two';
     window.APP_CONFIG.contextPaths = ['/one', '/two'];
 
-    module('hippo-cm-api');
+    angular.mock.module('hippo-cm-api');
 
     inject((_ConfigService_) => {
       ConfigService = _ConfigService_;

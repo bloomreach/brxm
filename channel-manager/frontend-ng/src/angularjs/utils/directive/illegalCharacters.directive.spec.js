@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-describe('IllegalCharactersDirective', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('IllegalCharactersDirective', () => {
   let $rootScope;
   let $compile;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$rootScope_, _$compile_) => {
       $rootScope = _$rootScope_;

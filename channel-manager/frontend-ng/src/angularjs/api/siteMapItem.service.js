@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class SiteMapItemService {
+class SiteMapItemService {
   constructor($q, ConfigService, HstService, FeedbackService) {
     'ngInject';
 
@@ -65,11 +65,13 @@ export class SiteMapItemService {
 
   updateItem(item, siteMapId) {
     return this.HstService.doPost(item, siteMapId, 'update')
-      .then((response) => response.data);
+      .then(response => response.data);
   }
 
   _load(siteMapId, itemId) {
     return this.HstService.doGet(siteMapId, 'item', itemId)
-      .then((response) => response.data);
+      .then(response => response.data);
   }
 }
+
+export default SiteMapItemService;

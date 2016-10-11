@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ChannelSettingsCtrl {
+class ChannelSettingsCtrl {
   constructor($translate, FeedbackService, ChannelService, HippoIframeService, ConfigService) {
     'ngInject';
 
@@ -57,7 +57,7 @@ export class ChannelSettingsCtrl {
 
   touchRequiredFields() {
     if (this.form.$error.required) {
-      this.form.$error.required.forEach((requiredField) => requiredField.$setDirty());
+      this.form.$error.required.forEach(requiredField => requiredField.$setDirty());
     }
   }
 
@@ -100,3 +100,5 @@ export class ChannelSettingsCtrl {
     });
   }
 }
+
+export default ChannelSettingsCtrl;

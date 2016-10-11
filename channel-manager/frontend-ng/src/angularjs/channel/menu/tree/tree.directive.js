@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-export function hippoTreeDirective() {
+import template from './tree.html';
+
+function hippoTreeDirective() {
   'ngInject';
 
   return {
@@ -27,8 +29,10 @@ export function hippoTreeDirective() {
       selectedItem: '=',
       draggable: '=',
     },
-    templateUrl: 'channel/menu/tree/tree.html',
+    template,
     controller: 'HippoTreeCtrl',
     controllerAs: 'hippoTree',
   };
 }
+
+export default hippoTreeDirective;

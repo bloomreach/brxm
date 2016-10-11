@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export class PathService {
+class PathService {
 
   concatPaths(...paths) {
     if (!paths) {
@@ -57,3 +57,5 @@ export class PathService {
   }
 }
 
+
+export default PathService;

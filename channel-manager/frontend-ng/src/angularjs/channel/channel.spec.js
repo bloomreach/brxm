@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-describe('The hippo-cm.channel module', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('The hippo-cm.channel module', () => {
   let ChannelService;
 
   beforeEach(() => {
-    module('hippo-cm', ($provide, ChannelServiceProvider) => {
+    angular.mock.module('hippo-cm', ($provide, ChannelServiceProvider) => {
       const channelService = ChannelServiceProvider.$get();
 
       spyOn(channelService, 'initialize');

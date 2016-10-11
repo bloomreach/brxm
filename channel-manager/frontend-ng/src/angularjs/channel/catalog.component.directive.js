@@ -16,7 +16,7 @@
 
 // TODO: Look at this construct, feels weird
 
-export function CatalogComponentDirective(CatalogService) {
+function CatalogComponentDirective(CatalogService) {
   'ngInject';
 
   return {
@@ -29,3 +29,5 @@ export function CatalogComponentDirective(CatalogService) {
     },
   };
 }
+
+export default CatalogComponentDirective;

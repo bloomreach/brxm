@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-export function getByPropertyFilter() {
+function getByPropertyFilter() {
   'ngInject';
 
   return (collection, propertyName, propertyValue, subCollection) => {
     function findPropertiesAndSubProperties(newCollection) {
-      for (let i = 0; i < newCollection.length; i++) {
+      for (let i = 0; i < newCollection.length; i += 1) {
         if (newCollection[i][propertyName] === propertyValue) {
           return newCollection[i];
         }
@@ -33,3 +33,5 @@ export function getByPropertyFilter() {
     return findPropertiesAndSubProperties(collection);
   };
 }
+
+export default getByPropertyFilter;

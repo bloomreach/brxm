@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('HstService', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('HstService', () => {
   let $q;
   let $httpBackend;
   let hstService;
@@ -30,7 +31,7 @@ describe('HstService', () => {
   const handshakeUrl = `${contextPath}${apiUrlPrefix}/${rootUuid}./composermode/${hostname}/${mountId}`;
 
   beforeEach(() => {
-    module('hippo-cm-api');
+    angular.mock.module('hippo-cm-api');
 
     ConfigServiceMock = {
       apiUrlPrefix,
@@ -39,7 +40,7 @@ describe('HstService', () => {
       rootUuid,
     };
 
-    module(($provide) => {
+    angular.mock.module(($provide) => {
       $provide.value('ConfigService', ConfigServiceMock);
     });
 
@@ -220,8 +221,8 @@ describe('HstService', () => {
     const catchSpy = jasmine.createSpy('catchSpy');
     const url = `${contextPath}${apiUrlPrefix}/${rootUuid}./channels/test`;
     $httpBackend.expectGET(url).respond(500);
-    hstService.
-      getChannel('test')
+    hstService
+      .getChannel('test')
       .catch(catchSpy);
 
     $httpBackend.flush();

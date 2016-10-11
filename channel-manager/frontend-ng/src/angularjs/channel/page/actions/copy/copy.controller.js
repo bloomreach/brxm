@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class PageCopyCtrl {
+class PageCopyCtrl {
   constructor($log, $translate, ChannelService, SessionService, SiteMapService, SiteMapItemService, HippoIframeService,
               FeedbackService) {
     'ngInject';
@@ -46,7 +46,7 @@ export class PageCopyCtrl {
       this.channels = ChannelService.getPageModifiableChannels();
       if (this.channels && (this.channels.length > 1 ||
         (this.channels.length === 1 && this.channels[0].id !== this.channelId))) {
-        this.channel = this.channels.find((channel) => channel.id === this.channelId) || this.channels[0];
+        this.channel = this.channels.find(channel => channel.id === this.channelId) || this.channels[0];
         this.isCrossChannelCopyAvailable = true;
       }
     }
@@ -69,7 +69,7 @@ export class PageCopyCtrl {
       .then((data) => {
         this._returnToNewUrl(data.renderPathInfo);
       })
-      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_COPY_FAILED', this.errorMap));
+      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_COPY_FAILED', this.errorMap));
   }
 
   _returnToNewUrl(renderPathInfo) {
@@ -100,11 +100,13 @@ export class PageCopyCtrl {
     this.ChannelService.getNewPageModel(mountId)
       .then((data) => {
         this.locations = data.locations || [];
-        this.location = this.locations.find((location) => this.item.parentLocation.id === location.id);
+        this.location = this.locations.find(location => this.item.parentLocation.id === location.id);
         if (!this.location && this.locations.length > 0) {
           this.location = this.locations[0];
         }
       })
-      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED'));
+      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_LOCATIONS_RETRIEVAL_FAILED'));
   }
 }
+
+export default PageCopyCtrl;

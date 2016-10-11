@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ChannelService {
+class ChannelService {
   constructor(
       $log,
       $rootScope,
@@ -92,7 +92,7 @@ export class ChannelService {
     this.ConfigService.setContextPathForChannel(contextPath);
 
     return this.HstService.getChannel(channelId)
-      .then((channel) => this.SessionService.initialize(channel.hostname, channel.mountId)
+      .then(channel => this.SessionService.initialize(channel.hostname, channel.mountId)
         .then(() => {
           this._setChannel(channel);
           return channel.id;
@@ -125,7 +125,7 @@ export class ChannelService {
   }
 
   getPreviewPaths() {
-    return this.ConfigService.contextPaths.map((path) => this._makeContextPrefix(path));
+    return this.ConfigService.contextPaths.map(path => this._makeContextPrefix(path));
   }
 
   makePath(renderPathInfo) {
@@ -242,7 +242,7 @@ export class ChannelService {
   getNewPageModel(mountId) {
     const params = mountId ? { mountId } : undefined;
     return this.HstService.doGetWithParams(this.getMountId(), params, 'newpagemodel')
-      .then((response) => response.data);
+      .then(response => response.data);
   }
 
   getChannelInfoDescription() {
@@ -289,3 +289,5 @@ export class ChannelService {
     return this.HstService.doDelete(this.ConfigService.rootUuid, 'channels', this.getId());
   }
 }
+
+export default ChannelService;

@@ -1,21 +1,5 @@
-/*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-'use strict';
-// TODO: move this to api/cms.service.mock.spec.js
+import 'angular';
+import 'angular-mocks';
 
 function createMessageBus() {
   const subscriptions = {};
@@ -32,7 +16,7 @@ function createMessageBus() {
       return false;
     }
     const scopeParameter = scope || window;
-    for (let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i += 1) {
       const entry = list[i];
       if (entry.callback === callback && entry.scope === scopeParameter) {
         list.splice(i, 1);
@@ -48,7 +32,7 @@ function createMessageBus() {
     }
 
     const len = entries.length;
-    for (let i = 0; i < len; i++) {
+    for (let i = 0; i < len; i += 1) {
       const entry = entries[i];
       if (entry.callback.apply(entry.scope, args) === false) {
         return false;
@@ -116,13 +100,13 @@ function mockHost() {
 }
 
 function mockFallbackTranslations() {
-  module('hippo-cm', ($provide, $translateProvider) => {
+  angular.mock.module('hippo-cm', ($provide, $translateProvider) => {
     $translateProvider.translations('en', {});
   });
 }
 
 function mockMdIcon() {
-  module('hippo-cm', ($provide) => {
+  angular.mock.module('hippo-cm', ($provide) => {
     // mock md-icon directive to ignore GET requests fetching SVG files
     $provide.factory('mdIconDirective', () => angular.noop);
   });
@@ -131,3 +115,6 @@ function mockMdIcon() {
 beforeEach(mockHost);
 beforeEach(mockFallbackTranslations);
 beforeEach(mockMdIcon);
+
+const context = require.context('./angularjs', true, /\.js$/);
+context.keys().forEach(context);

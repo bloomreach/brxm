@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-describe('ExperimentStateService', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('ExperimentStateService', () => {
   let ExperimentStateService;
   let $translate;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_ExperimentStateService_, _$translate_) => {
       ExperimentStateService = _ExperimentStateService_;

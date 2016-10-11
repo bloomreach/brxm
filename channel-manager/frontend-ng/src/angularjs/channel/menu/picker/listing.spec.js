@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-describe('Listing', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('Listing', () => {
   let $rootScope;
   let $compile;
   let $scope;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$rootScope_, _$compile_) => {
       $rootScope = _$rootScope_;

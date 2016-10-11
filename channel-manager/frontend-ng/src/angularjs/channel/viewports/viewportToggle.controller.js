@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ViewportToggleCtrl {
+class ViewportToggleCtrl {
   constructor($translate, ScalingService) {
     'ngInject';
 
@@ -24,17 +24,17 @@ export class ViewportToggleCtrl {
     this.viewPorts = [
       {
         id: 'DESKTOP',
-        icon: 'images/desktop.svg',
+        icon: '/cms/angular/hippo-cm/images/desktop.svg',
         width: 0,
       },
       {
         id: 'TABLET',
-        icon: 'images/tablet.svg',
+        icon: '/cms/angular/hippo-cm/images/tablet.svg',
         width: 720,
       },
       {
         id: 'PHONE',
-        icon: 'images/phone.svg',
+        icon: '/cms/angular/hippo-cm/images/phone.svg',
         width: 320,
       },
     ];
@@ -55,3 +55,5 @@ export class ViewportToggleCtrl {
     this.ScalingService.setViewPortWidth(this.selectedViewPort.width);
   }
 }
+
+export default ViewportToggleCtrl;

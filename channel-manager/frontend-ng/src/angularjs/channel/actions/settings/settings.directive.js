@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-export function channelSettingsDirective() {
+import template from './settings.html';
+
+function channelSettingsDirective() {
   'ngInject';
 
   return {
@@ -24,8 +26,10 @@ export function channelSettingsDirective() {
       onSuccess: '&',
       onError: '&',
     },
-    templateUrl: 'channel/actions/settings/settings.html',
+    template,
     controller: 'ChannelSettingsCtrl',
     controllerAs: 'channelSettings',
   };
 }
+
+export default channelSettingsDirective;

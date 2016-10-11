@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-export function helpIconDirective() {
+import template from './helpIcon.html';
+
+function helpIconDirective() {
   'ngInject';
 
   return {
@@ -22,6 +24,8 @@ export function helpIconDirective() {
     scope: {
       text: '@',
     },
-    templateUrl: 'channel/actions/settings/property/helpIcon/helpIcon.html',
+    template,
   };
 }
+
+export default helpIconDirective;

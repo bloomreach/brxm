@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { PageStructureElement } from './pageStructureElement';
+import PageStructureElement from './pageStructureElement';
 
-export class EmbeddedLink extends PageStructureElement {
+class EmbeddedLink extends PageStructureElement {
 
   constructor(commentElement, metaData) {
     super('embeddedLink', metaData, commentElement, commentElement, null);
@@ -34,3 +34,5 @@ export class EmbeddedLink extends PageStructureElement {
     return this.enclosingElement;
   }
 }
+
+export default EmbeddedLink;

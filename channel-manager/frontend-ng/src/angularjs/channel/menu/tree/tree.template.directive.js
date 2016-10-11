@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export function hippoTreeTemplateDirective() {
+function hippoTreeTemplateDirective() {
   'ngInject';
 
   return {
@@ -24,3 +24,5 @@ export function hippoTreeTemplateDirective() {
     },
   };
 }
+
+export default hippoTreeTemplateDirective;

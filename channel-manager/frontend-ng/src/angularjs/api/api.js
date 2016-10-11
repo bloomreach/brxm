@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import { CatalogService } from './catalog.service';
-import { CmsService } from './cms.service';
-import { ConfigService } from './config.service';
-import { ContentService } from './content.service';
-import { DialogService } from './dialog.service';
-import { HstService } from './hst.service';
-import { SessionService } from './session.service';
-import { SiteMapService } from './siteMap.service';
-import { SiteMapItemService } from './siteMapItem.service';
-import { SiteMenuService } from './siteMenu.service';
-import { HstConstants } from './hst.constants';
+import CatalogService from './catalog.service';
+import CmsService from './cms.service';
+import ConfigService from './config.service';
+import ContentService from './content.service';
+import DialogService from './dialog.service';
+import HstService from './hst.service';
+import SessionService from './session.service';
+import SiteMapService from './siteMap.service';
+import SiteMapItemService from './siteMapItem.service';
+import SiteMenuService from './siteMenu.service';
+import HstConstants from './hst.constants';
 
-export const channelManagerApi = angular
+const channelManagerApi = angular
   .module('hippo-cm-api', [])
   .service('CatalogService', CatalogService)
   .service('CmsService', CmsService)
@@ -39,3 +39,5 @@ export const channelManagerApi = angular
   .service('SiteMapItemService', SiteMapItemService)
   .service('SiteMenuService', SiteMenuService)
   .constant('HstConstants', HstConstants);
+
+export default channelManagerApi;

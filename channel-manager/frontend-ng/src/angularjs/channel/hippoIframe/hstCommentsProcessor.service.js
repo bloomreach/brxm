@@ -18,10 +18,11 @@
 let log;
 let HST;
 
-export class HstCommentsProcessorService {
+class HstCommentsProcessorService {
 
   constructor($log, HstConstants) {
     'ngInject';
+
     log = $log;
     HST = HstConstants;
   }
@@ -32,7 +33,7 @@ export class HstCommentsProcessorService {
     }
     // IE doesn't support 'evaluate', see
     // https://developer.mozilla.org/en/docs/Web/API/Document/evaluate#Browser_compatibility
-    if (!!document.evaluate) {
+    if (document.evaluate) {
       this.processCommentsWithXPath(document, callback);
     } else {
       this.processCommentsWithDomWalking(document, callback);
@@ -40,14 +41,14 @@ export class HstCommentsProcessorService {
   }
 
   processFragment(jQueryNodeCollection, callback) {
-    for (let i = 0; i < jQueryNodeCollection.length; i++) {
+    for (let i = 0; i < jQueryNodeCollection.length; i += 1) {
       this.processCommentsWithDomWalking(jQueryNodeCollection[i], callback);
     }
   }
 
   processCommentsWithXPath(document, callback) {
     const query = document.evaluate('//comment()', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    for (let i = 0; i < query.snapshotLength; i++) {
+    for (let i = 0; i < query.snapshotLength; i += 1) {
       this._processComment(query.snapshotItem(i), callback);
     }
   }
@@ -60,7 +61,7 @@ export class HstCommentsProcessorService {
     if (node.nodeType === 8) {
       this._processComment(node, callback);
     } else {
-      for (let i = 0; i < node.childNodes.length; i++) {
+      for (let i = 0; i < node.childNodes.length; i += 1) {
         this.processCommentsWithDomWalking(node.childNodes[i], callback);
       }
     }
@@ -149,3 +150,5 @@ export class HstCommentsProcessorService {
     return false;
   }
 }
+
+export default HstCommentsProcessorService;

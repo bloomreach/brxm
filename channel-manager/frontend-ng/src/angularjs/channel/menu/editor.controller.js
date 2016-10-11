@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class MenuEditorCtrl {
+class MenuEditorCtrl {
   constructor($scope, $translate, SiteMenuService, HippoIframeService, DialogService,
               FeedbackService, ChannelService, PickerService, ConfigService) {
     'ngInject';
@@ -77,7 +77,7 @@ export class MenuEditorCtrl {
         if (source.nodesScope !== destNodesScope || source.index !== dest.index) {
           SiteMenuService.moveMenuItem(sourceId, destId, dest.index)
             .then(() => { this.isMenuModified = true; })
-            .catch((response) => this._handleError(response, 'ERROR_MENU_MOVE_FAILED'));
+            .catch(response => this._handleError(response, 'ERROR_MENU_MOVE_FAILED'));
         }
       },
     };
@@ -125,7 +125,7 @@ export class MenuEditorCtrl {
         this.selectedItem = editableItem;
         this._startEditingItem(editableItem);
       })
-      .catch((response) => this._handleError(response, 'ERROR_MENU_CREATE_FAILED'))
+      .catch(response => this._handleError(response, 'ERROR_MENU_CREATE_FAILED'))
       .finally(() => delete this.isSaving.newItem);
   }
 
@@ -169,7 +169,7 @@ export class MenuEditorCtrl {
         this.isMenuModified = true;
         this.stopEditingItem();
       })
-      .catch((response) => this._handleError(response, 'ERROR_MENU_ITEM_SAVE_FAILED'));
+      .catch(response => this._handleError(response, 'ERROR_MENU_ITEM_SAVE_FAILED'));
   }
 
   _handleError(response, defaultKey) {
@@ -187,7 +187,7 @@ export class MenuEditorCtrl {
         this.isMenuModified = true;
         this.stopEditingItem();
       })
-      .catch((response) => this._handleError(response, 'ERROR_MENU_ITEM_DELETE_FAILED'));
+      .catch(response => this._handleError(response, 'ERROR_MENU_ITEM_DELETE_FAILED'));
   }
 
   _confirmDelete() {
@@ -209,3 +209,5 @@ export class MenuEditorCtrl {
     return Object.keys(this.editingItem.localParameters).length !== 0;
   }
 }
+
+export default MenuEditorCtrl;

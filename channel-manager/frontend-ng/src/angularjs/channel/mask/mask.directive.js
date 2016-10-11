@@ -16,7 +16,7 @@
 
 // TODO: Remove directive and use ng-class in channel.html
 
-export function maskDirective(MaskService, CmsService) {
+function maskDirective(MaskService, CmsService) {
   'ngInject';
 
   return {
@@ -28,3 +28,5 @@ export function maskDirective(MaskService, CmsService) {
     },
   };
 }
+
+export default maskDirective;

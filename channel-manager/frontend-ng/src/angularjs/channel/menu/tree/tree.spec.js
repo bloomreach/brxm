@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-describe('The tree rendered by the tree directive', () => {
-  'use strict';
 
+import angular from 'angular';
+import 'angular-mocks';
+
+describe('The tree rendered by the tree directive', () => {
   const defaultItems = [
     {
       title: 'Item 1',
@@ -49,7 +51,7 @@ describe('The tree rendered by the tree directive', () => {
   let $scope;
   let $compile;
 
-  beforeEach(module('hippo-cm.ui.tree'));
+  beforeEach(angular.mock.module('hippo-cm.ui.tree'));
 
   beforeEach(inject((_$rootScope_, _$compile_) => {
     $rootScope = _$rootScope_;
@@ -70,7 +72,7 @@ describe('The tree rendered by the tree directive', () => {
     $compile($element)($scope);
     $scope.$digest();
     const tree = $element.find('div.angular-ui-tree > ol.angular-ui-tree-nodes');
-    const ctrl = $element.controller('hippo-tree');
+    const ctrl = $element.controller('hippoTree');
 
     return { tree, ctrl };
   }

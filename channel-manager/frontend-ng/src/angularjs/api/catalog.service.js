@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class CatalogService {
+class CatalogService {
   constructor(HstService) {
     'ngInject';
 
@@ -55,6 +55,8 @@ export class CatalogService {
   }
 
   getComponentByDomElement(domElement) {
-    return this.components.find((component) => component.catalogJQueryElement[0] === domElement);
+    return this.components.find(component => component.catalogJQueryElement[0] === domElement);
   }
 }
+
+export default CatalogService;

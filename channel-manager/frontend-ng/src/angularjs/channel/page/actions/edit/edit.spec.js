@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('PageActionEdit', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('PageActionEdit', () => {
   let $q;
   let $scope;
   let $rootScope;
@@ -47,7 +48,7 @@ describe('PageActionEdit', () => {
   };
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$q_, _$rootScope_, _$compile_, _$translate_, _$mdDialog_, _ChannelService_, _FeedbackService_,
             _HippoIframeService_, _SiteMapService_, _SiteMapItemService_) => {
@@ -81,7 +82,7 @@ describe('PageActionEdit', () => {
     mockAlert.textContent.and.returnValue(mockAlert);
     mockAlert.ok.and.returnValue(mockAlert);
 
-    spyOn($translate, 'instant').and.callFake((key) => key);
+    spyOn($translate, 'instant').and.callFake(key => key);
     spyOn($mdDialog, 'alert').and.returnValue(mockAlert);
     spyOn($mdDialog, 'show');
     spyOn(ChannelService, 'getNewPageModel').and.returnValue($q.when(pageModel));
@@ -102,7 +103,7 @@ describe('PageActionEdit', () => {
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('page-edit');
+    return $element.controller('pageEdit');
   }
 
   it('initializes correctly', () => {

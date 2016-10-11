@@ -16,6 +16,9 @@
 
 /* eslint-disable prefer-const */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 describe('ChannelLeftSidePanelToggle', () => {
   'use strict';
 
@@ -25,7 +28,7 @@ describe('ChannelLeftSidePanelToggle', () => {
   let ChannelService;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$rootScope_, _$compile_, _ChannelSidePanelService_, _ChannelService_) => {
       $rootScope = _$rootScope_;
