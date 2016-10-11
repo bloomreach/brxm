@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-/* eslint-disable prefer-const */
-
 import PageStructureElement from './pageStructureElement';
 
 class ComponentElement extends PageStructureElement {
   constructor(startCommentDomElement, metaData, container, commentProcessor) {
-    let [boxDomElement, endCommentDomElement] = commentProcessor.locateComponent(metaData.uuid, startCommentDomElement);
+    const elements = commentProcessor.locateComponent(metaData.uuid, startCommentDomElement);
+    const endCommentDomElement = elements[1];
+    let boxDomElement = elements[0];
 
     if (!PageStructureElement.isXTypeNoMarkup(container.metaData)) {
       boxDomElement = startCommentDomElement.parentNode;
