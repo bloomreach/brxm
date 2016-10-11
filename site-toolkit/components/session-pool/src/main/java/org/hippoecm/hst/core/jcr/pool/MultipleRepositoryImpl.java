@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -246,7 +246,7 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         final ResourceLifecycleManagement[] resourceLifecycleManagements = getResourceLifecycleManagements();
         for (ResourceLifecycleManagement resourceLifecycleManagement : resourceLifecycleManagements) {
             try {
-                resourceLifecycleManagement.disposeAllResources();
+                resourceLifecycleManagement.disposeResourcesAndReset();
             } catch (Exception e) {
                 log.warn("Exception while disposing resources", e);
             }
@@ -344,6 +344,11 @@ public class MultipleRepositoryImpl implements MultipleRepository {
         }
 
         public void disposeAllResources() {
+
+        }
+
+        public void disposeResourcesAndReset() {
+            disposeAllResources();
             tlCurrentRepository.remove();
         }
 

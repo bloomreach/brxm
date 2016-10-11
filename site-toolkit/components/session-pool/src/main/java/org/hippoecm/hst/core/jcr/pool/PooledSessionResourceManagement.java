@@ -102,6 +102,12 @@ public class PooledSessionResourceManagement implements ResourceLifecycleManagem
         tlPooledSessions.remove();
         tlActiveState.remove();
     }
+
+    public void disposeResourcesAndReset() {
+        disposeAllResources();
+        tlPooledSessions.remove();
+        tlActiveState.remove();
+    }
     
     public Object visitResources(ResourceVisitor visitor) {
         if (visitor == null) {

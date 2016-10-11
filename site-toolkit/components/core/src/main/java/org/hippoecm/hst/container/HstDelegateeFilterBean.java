@@ -604,7 +604,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         if (repository instanceof MultipleRepository) {
             final ResourceLifecycleManagement[] resourceLifecycleManagements = ((MultipleRepository) repository).getResourceLifecycleManagements();
             for (ResourceLifecycleManagement resourceLifecycleManagement : resourceLifecycleManagements) {
-                resourceLifecycleManagement.disposeAllResources();
+                resourceLifecycleManagement.disposeResourcesAndReset();
             }
         }
     }

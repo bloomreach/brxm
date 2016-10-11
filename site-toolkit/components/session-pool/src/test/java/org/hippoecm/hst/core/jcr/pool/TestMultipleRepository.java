@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -173,7 +173,7 @@ public class TestMultipleRepository extends AbstractSessionPoolSpringTestCase {
                 defaultRepository == ((MultipleRepositoryImpl) multipleRepository).getCurrentThreadRepository());
         
         for (ResourceLifecycleManagement rlm : rlms) {
-            rlm.disposeAllResources();
+            rlm.disposeResourcesAndReset();
         }
         
         assertNull("Current session's repository should have been removed after resource disposal.", 
@@ -214,7 +214,7 @@ public class TestMultipleRepository extends AbstractSessionPoolSpringTestCase {
                     // Container will invoke this (CleanUpValve) clean up step:
                     for (ResourceLifecycleManagement rlm : rlms) {
                         try {
-                            rlm.disposeAllResources();
+                            rlm.disposeResourcesAndReset();
                         } catch (Exception e) {
                             log.error("Failed to disposeAll: " + Thread.currentThread() + ", " + rlm + ", " + rlms, e);
                         }

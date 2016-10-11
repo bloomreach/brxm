@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -336,7 +336,10 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
             for (ResourceLifecycleManagement resourceLifecycleManagement : getCurrentResourceLifecycleManagements()) {
                 resourceLifecycleManagement.disposeAllResources();
             }
-            
+        }
+
+        public void disposeResourcesAndReset() {
+            disposeAllResources();
             Set<String> credsDomains = tlCurrentCredsDomains.get();
             if (credsDomains != null) {
                 credsDomains.clear();

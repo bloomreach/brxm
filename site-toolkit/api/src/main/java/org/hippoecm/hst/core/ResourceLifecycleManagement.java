@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -79,7 +79,13 @@ public interface ResourceLifecycleManagement {
      * Dispose all the resources.
      */
     void disposeAllResources();
-    
+
+    /**
+     * Dispose all the resources and reset this {@link ResourceLifecycleManagement}, for example clearing any thread
+     * local state
+     */
+    void disposeResourcesAndReset();
+
     /**
      * Traverses all the resource, calling the visitor's visit method at each one.
      * 
