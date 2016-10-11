@@ -38,6 +38,7 @@ export class ChannelRightSidePanelCtrl {
   _clearDocument() {
     this.doc = null;
     this.docType = null;
+    this.focusedFieldId = null;
   }
 
   _loadDocument(id) {
@@ -67,6 +68,27 @@ export class ChannelRightSidePanelCtrl {
         this.ChannelSidePanelService.close('right');
       }
     });
+  }
+
+  isEmptyMultiple(field) {
+    return field.multiple && this.doc.fields[field.id].length === 0;
+  }
+
+  getFieldAsArray(fieldId) {
+    const field = this.doc.fields[fieldId];
+    return angular.isArray(field) ? field : [field];
+  }
+
+  onFieldFocus(field) {
+    this.focusedFieldId = field.id;
+  }
+
+  onFieldBlur() {
+    this.focusedFieldId = null;
+  }
+
+  isFieldFocused(field) {
+    return this.focusedFieldId === field.id;
   }
 
   close() {
