@@ -21,13 +21,13 @@ element. -->
 <!-- internal log4j logging settings. The "null" value for the threshold -->
 <!-- attribute can be misleading. The threshold field of a repository    -->
 <!-- cannot be set to null. The "null" value for the threshold attribute -->
-<!-- simply means don't touch the threshold field, the threshold field   --> 
+<!-- simply means don't touch the threshold field, the threshold field   -->
 <!-- keeps its old value.                                                -->
-     
+
 <!ATTLIST log4j:configuration
-  xmlns:log4j              CDATA #FIXED "http://jakarta.apache.org/log4j/" 
-  threshold                (all|debug|info|warn|error|fatal|off|null) "null"
-  debug                    (true|false|null)  "null"
+    xmlns:log4j              CDATA #FIXED "http://jakarta.apache.org/log4j/"
+    threshold                (all|debug|info|warn|error|fatal|off|null) "null"
+    debug                    (true|false|null)  "null"
 >
 
 <!-- renderer elements allow the user to customize the conversion of  -->
@@ -35,8 +35,8 @@ element. -->
 
 <!ELEMENT renderer EMPTY>
 <!ATTLIST renderer
-  renderedClass  CDATA #REQUIRED
-  renderingClass CDATA #REQUIRED
+    renderedClass  CDATA #REQUIRED
+    renderingClass CDATA #REQUIRED
 >
 
 <!-- Appenders must have a name and a class. -->
@@ -44,39 +44,39 @@ element. -->
 <!-- and filters. They may also reference (or include) other appenders. -->
 <!ELEMENT appender (errorHandler?, param*, layout?, filter*, appender-ref*)>
 <!ATTLIST appender
-  name      ID  #REQUIRED
-  class     CDATA   #REQUIRED
+    name      ID  #REQUIRED
+    class     CDATA   #REQUIRED
 >
 
 <!ELEMENT layout (param*)>
 <!ATTLIST layout
-  class     CDATA   #REQUIRED
+    class     CDATA   #REQUIRED
 >
 
 <!ELEMENT filter (param*)>
 <!ATTLIST filter
-  class     CDATA   #REQUIRED
+    class     CDATA   #REQUIRED
 >
 
 <!-- ErrorHandlers can be of any class. They can admit any number of -->
 <!-- parameters. -->
 
-<!ELEMENT errorHandler (param*, root-ref?, logger-ref*,  appender-ref?)> 
+<!ELEMENT errorHandler (param*, root-ref?, logger-ref*,  appender-ref?)>
 <!ATTLIST errorHandler
-   class        CDATA   #REQUIRED 
+    class        CDATA   #REQUIRED
 >
 
 <!ELEMENT root-ref EMPTY>
 
 <!ELEMENT logger-ref EMPTY>
 <!ATTLIST logger-ref
-  ref IDREF #REQUIRED
+    ref IDREF #REQUIRED
 >
 
 <!ELEMENT param EMPTY>
 <!ATTLIST param
-  name      CDATA   #REQUIRED
-  value     CDATA   #REQUIRED
+    name      CDATA   #REQUIRED
+    value     CDATA   #REQUIRED
 >
 
 
@@ -94,8 +94,8 @@ element. -->
 <!-- The level class is org.apache.log4j.Level by default -->
 <!ELEMENT level (param*)>
 <!ATTLIST level
-  class   CDATA #IMPLIED
-  value   CDATA #REQUIRED
+    class   CDATA #IMPLIED
+    value   CDATA #REQUIRED
 >
 
 
@@ -108,7 +108,7 @@ element. -->
 <!ATTLIST category
   class         CDATA   #IMPLIED
   name      CDATA   #REQUIRED
-  additivity    (true|false) "true"  
+  additivity    (true|false) "true"
 >
 -->
 
@@ -116,22 +116,22 @@ element. -->
 <!-- touch the level of the named logger. -->
 <!ELEMENT logger (level?, appender-ref*)>
 <!ATTLIST logger
-  class         CDATA   #IMPLIED
-  name      ID  #REQUIRED
-  additivity    (true|false) "true"  
+    class         CDATA   #IMPLIED
+    name      ID  #REQUIRED
+    additivity    (true|false) "true"
 >
 
 <!--
     DEPRECATED
 
 <!ELEMENT categoryFactory (param*)>
-<!ATTLIST categoryFactory 
+<!ATTLIST categoryFactory
    class        CDATA #REQUIRED>
 -->
 
 <!ELEMENT appender-ref EMPTY>
 <!ATTLIST appender-ref
-  ref IDREF #REQUIRED
+    ref IDREF #REQUIRED
 >
 
 <!-- If no priority element is specified, then the configurator MUST not -->
@@ -145,15 +145,15 @@ element. -->
 <!-- ==================================================================== -->
 <!ELEMENT log4j:eventSet (log4j:event*)>
 <!ATTLIST log4j:eventSet
-  xmlns:log4j             CDATA #FIXED "http://jakarta.apache.org/log4j/" 
-  version                (1.1|1.2) "1.2" 
-  includesLocationInfo   (true|false) "true"
+    xmlns:log4j             CDATA #FIXED "http://jakarta.apache.org/log4j/"
+    version                (1.1|1.2) "1.2"
+    includesLocationInfo   (true|false) "true"
 >
 
 
 
-<!ELEMENT log4j:event (log4j:message, log4j:NDC?, log4j:throwable?, 
-                       log4j:locationInfo?) >
+<!ELEMENT log4j:event (log4j:message, log4j:NDC?, log4j:throwable?,
+    log4j:locationInfo?) >
 
 <!-- The timestamp format is application dependent. -->
 <!ATTLIST log4j:event
@@ -170,8 +170,8 @@ element. -->
 
 <!ELEMENT log4j:locationInfo EMPTY>
 <!ATTLIST log4j:locationInfo
-  class  CDATA  #REQUIRED
-  method CDATA  #REQUIRED
-  file   CDATA  #REQUIRED
-  line   CDATA  #REQUIRED
+    class  CDATA  #REQUIRED
+    method CDATA  #REQUIRED
+    file   CDATA  #REQUIRED
+    line   CDATA  #REQUIRED
 >

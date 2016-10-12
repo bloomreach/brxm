@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="new-resource-bundle">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippostd:templatequery</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippostd:icon" sv:type="String">
+    <sv:value>adddocument_ico</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippostd:modify" sv:type="String" sv:multiple="true">
+    <sv:value>./_name</sv:value>
+    <sv:value>$name</sv:value>
+    <sv:value>./hippotranslation:locale</sv:value>
+    <sv:value>$inherited</sv:value>
+    <sv:value>./hippotranslation:id</sv:value>
+    <sv:value>$uuid</sv:value>
+    <sv:value>./hippostdpubwf:createdBy</sv:value>
+    <sv:value>$holder</sv:value>
+    <sv:value>./hippostdpubwf:creationDate</sv:value>
+    <sv:value>$now</sv:value>
+    <sv:value>./hippostdpubwf:lastModifiedBy</sv:value>
+    <sv:value>$holder</sv:value>
+    <sv:value>./hippostdpubwf:lastModificationDate</sv:value>
+    <sv:value>$now</sv:value>
+    <sv:value>./hippostd:holder</sv:value>
+    <sv:value>$holder</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:language" sv:type="String">
+    <sv:value>xpath</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:statement" sv:type="String">
+    <sv:value>//element(*,hipposysedit:namespacefolder)/element(*,mix:referenceable)/element(*,hipposysedit:templatetype)/hipposysedit:prototypes/element(hipposysedit:prototype,resourcebundle:resourcebundle)</sv:value>
+  </sv:property>
+</sv:node>
