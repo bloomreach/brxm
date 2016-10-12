@@ -42,7 +42,7 @@ export class ChannelRightSidePanelCtrl {
   }
 
   _loadDocument(id) {
-    this.ContentService.getDocument(id)
+    this.ContentService.createDraft(id)
       .then((doc) => {
         this.ContentService.getDocumentType(doc.info.type.id)
           .then((docType) => {

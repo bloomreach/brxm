@@ -33,14 +33,30 @@ public interface DocumentsService {
     }
 
     /**
-     * Read the contents and state of a document into a JSON-serializable representation
+     * Creates a draft version of a document and locks it for editing by the current CMS user.
      *
-     * @param id      UUID of the requested document (handle)
+     * If all goes well, the document's content is returned.
+     *
+     * @param uuid    UUID of the requested document (handle)
      * @param session user-authenticated JCR session for reading from the repository
      * @param locale  locale of the current CMS session
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws DocumentNotFoundException
      *                If the requested UUID was not found or is not a document
      */
-    Document getDocument(final String id, final Session session, final Locale locale) throws DocumentNotFoundException;
+    Document createDraft(final String uuid, final Session session, final Locale locale)
+            throws DocumentNotFoundException;
+
+    /**
+     * Read the unpublished variant of a document
+     *
+     * @param uuid    UUID of the requested document (handle)
+     * @param session user-authenticated JCR session for reading from the repository
+     * @param locale  locale of the current CMS session
+     * @return        JSON-serializable representation of the parts supported for exposing
+     * @throws DocumentNotFoundException
+     *                If the requested UUID was not found or is not a document
+     */
+    Document getUnpublished(final String uuid, final Session session, final Locale locale)
+            throws DocumentNotFoundException;
 }
