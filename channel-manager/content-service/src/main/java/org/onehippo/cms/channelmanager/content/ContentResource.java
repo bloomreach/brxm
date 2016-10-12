@@ -28,13 +28,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
-import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
-import org.onehippo.cms.channelmanager.content.model.document.Document;
-import org.onehippo.cms.channelmanager.content.model.document.EditingInfo;
-import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
-import org.onehippo.cms.channelmanager.content.service.DocumentTypesService;
-import org.onehippo.cms.channelmanager.content.service.DocumentsService;
+import org.onehippo.cms.channelmanager.content.document.DocumentNotFoundException;
+import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypeNotFoundException;
+import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
+import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 
 @Produces("application/json")
 @Path("/")
