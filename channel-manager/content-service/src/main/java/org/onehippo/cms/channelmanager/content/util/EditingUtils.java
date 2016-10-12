@@ -34,7 +34,6 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.model.document.EditingInfo;
 import org.onehippo.cms.channelmanager.content.model.document.UserInfo;
-import org.onehippo.cms7.util.LoggingUtils;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +74,7 @@ public class EditingUtils {
                 info.setState(EditingInfo.State.UNAVAILABLE_REQUEST_PENDING);
             }
         } catch (RepositoryException | WorkflowException | RemoteException e) {
-            LoggingUtils.warn(log, e, "Failed to determine editing info for node '{}'", JcrUtils.getNodePathQuietly(handle));
+            log.warn("Failed to determine editing info for node '{}'", JcrUtils.getNodePathQuietly(handle), e);
         }
         return info;
     }

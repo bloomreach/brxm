@@ -28,7 +28,6 @@ import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
-import org.onehippo.cms7.util.LoggingUtils;
 import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +68,7 @@ public class ContentTypeContext {
         try {
             return Optional.ofNullable(service.getContentTypes().getType(id));
         } catch (RepositoryException e) {
-            LoggingUtils.warn(log, e, "Failed to retrieve content type '{}'", id);
+            log.warn("Failed to retrieve content type '{}'", id, e);
         }
         return Optional.empty();
     }

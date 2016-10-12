@@ -25,7 +25,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
-import org.onehippo.cms7.util.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +56,7 @@ public class TwoColumnFieldSorter extends DefaultFieldSorter {
                         .ifPresent(sortedFields::add);
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warn(log, e, "Problem sorting fields of content type {}",
-                                       context.getContentType().getName());
+            log.warn("Problem sorting fields of content type {}", context.getContentType().getName(), e);
         }
 
         return sortedFields;
@@ -76,8 +74,8 @@ public class TwoColumnFieldSorter extends DefaultFieldSorter {
                 }
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warn(log, e, "Problem checking the wicket id of content type field {}",
-                                       JcrUtils.getNodePathQuietly(editorFieldNode));
+            log.warn("Problem checking the wicket id of content type field {}",
+                    JcrUtils.getNodePathQuietly(editorFieldNode), e);
         }
         return Optional.empty();
     }

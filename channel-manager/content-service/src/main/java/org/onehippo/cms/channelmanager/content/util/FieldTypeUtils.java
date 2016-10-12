@@ -28,7 +28,6 @@ import org.onehippo.cms.channelmanager.content.model.documenttype.FieldType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.StringFieldType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
-import org.onehippo.cms7.util.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,7 +143,7 @@ public class FieldTypeUtils {
                 final Class<? extends FieldType> fieldTypeClass = FIELD_TYPE_MAP.get(jcrType).fieldType;
                 return Optional.of(fieldTypeClass.newInstance());
             } catch (InstantiationException|IllegalAccessException e) {
-                LoggingUtils.warn(log, e, "Problem creating a field type for type '{}'", jcrType);
+                log.warn("Problem creating a field type for type '{}'", jcrType, e);
             }
         }
         return Optional.empty();

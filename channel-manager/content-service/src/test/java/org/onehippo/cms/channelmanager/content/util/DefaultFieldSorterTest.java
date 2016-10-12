@@ -74,11 +74,14 @@ public class DefaultFieldSorterTest {
     @Test
     public void sortFieldsWithRepositoryException() throws Exception {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final ContentType contentType = createMock(ContentType.class);
         final Node contentRoot = createMock(Node.class);
 
         expect(context.getContentTypeRoot()).andReturn(contentRoot);
+        expect(context.getContentType()).andReturn(contentType);
+        expect(contentType.getName()).andReturn("bla");
         expect(contentRoot.getNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andThrow(new RepositoryException());
-        replay(context, contentRoot);
+        replay(context, contentType, contentRoot);
 
         final List<FieldTypeContext> fields = sorter.sortFields(context);
 

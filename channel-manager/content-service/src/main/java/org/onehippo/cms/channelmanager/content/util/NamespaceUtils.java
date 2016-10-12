@@ -26,7 +26,6 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms7.util.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,8 +84,8 @@ public class NamespaceUtils {
                 return Optional.of(editorFieldNode.getProperty(PROPERTY_PLUGIN_CLASS).getString());
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warn(log, e, "Failed to read property '{}' for field {}", PROPERTY_PLUGIN_CLASS,
-                                       JcrUtils.getNodePathQuietly(editorFieldNode));
+            log.warn("Failed to read property '{}' for field {}", PROPERTY_PLUGIN_CLASS,
+                    JcrUtils.getNodePathQuietly(editorFieldNode), e);
         }
         return Optional.empty();
     }
@@ -115,8 +114,8 @@ public class NamespaceUtils {
                 return Optional.of(LAYOUT_SORTER.get(LAYOUT_PLUGIN_CLASS_ONE_COLUMN));
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warn(log, e, "Failed to determine layout of content type {}",
-                    JcrUtils.getNodePathQuietly(contentTypeRootNode));
+            log.warn("Failed to determine layout of content type {}",
+                    JcrUtils.getNodePathQuietly(contentTypeRootNode), e);
         }
         return Optional.empty();
     }

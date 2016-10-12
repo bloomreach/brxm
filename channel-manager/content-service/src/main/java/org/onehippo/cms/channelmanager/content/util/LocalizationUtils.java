@@ -24,7 +24,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.util.LoggingUtils;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
@@ -123,7 +122,7 @@ public class LocalizationUtils {
                 return Optional.of(editorFieldNode.getProperty(configProperty).getString());
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warn(log, e, "Failed to read property '{}'", configProperty);
+            log.warn("Failed to read property '{}'", configProperty, e);
         }
         return Optional.empty();
     }

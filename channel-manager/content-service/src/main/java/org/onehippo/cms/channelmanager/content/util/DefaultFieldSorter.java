@@ -26,7 +26,6 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
-import org.onehippo.cms7.util.LoggingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +48,7 @@ public class DefaultFieldSorter implements FieldSorter {
                 createFieldContext(editorFieldNode, nodeTypeNode, context).ifPresent(sortedFields::add);
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warn(log, e, "Failed to sort fields of content type");
+            log.warn("Failed to sort fields of content type {}", context.getContentType().getName(), e);
         }
 
         return sortedFields;
@@ -68,7 +67,7 @@ public class DefaultFieldSorter implements FieldSorter {
                 }
             }
         } catch (RepositoryException e) {
-            LoggingUtils.warn(log, e, "Failed to create field context");
+            log.warn("Failed to create field context", editorFieldNode, e);
         }
         return Optional.empty();
     }
