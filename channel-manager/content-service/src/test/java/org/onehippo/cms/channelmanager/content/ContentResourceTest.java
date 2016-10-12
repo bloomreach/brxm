@@ -90,7 +90,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.getUnpublished(requestedUuid, userSession, locale)).andReturn(testDocument);
+        expect(documentsService.getPublished(requestedUuid, userSession, locale)).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -106,7 +106,7 @@ public class ContentResourceTest extends CXFTest {
     public void getUnpublishedDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.getUnpublished(requestedUuid, userSession, locale)).andThrow(new DocumentNotFoundException());
+        expect(documentsService.getPublished(requestedUuid, userSession, locale)).andThrow(new DocumentNotFoundException());
         replay(documentsService);
 
         when()

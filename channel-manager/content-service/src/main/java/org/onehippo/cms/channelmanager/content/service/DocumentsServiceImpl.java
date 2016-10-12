@@ -67,7 +67,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document getUnpublished(final String uuid, final Session session, final Locale locale)
+    public Document getPublished(final String uuid, final Session session, final Locale locale)
             throws DocumentNotFoundException {
         if ("test".equals(uuid)) {
             return MockResponse.createTestDocument(uuid);
@@ -79,7 +79,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final DocumentType docType = getDocumentType(handle, locale);
         final Document document = assembleDocument(uuid, handle, workflow, docType);
 
-        WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.UNPUBLISHED)
+        WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED)
                 .ifPresent(unpublished -> loadFields(document, unpublished, docType));
         return document;
     }

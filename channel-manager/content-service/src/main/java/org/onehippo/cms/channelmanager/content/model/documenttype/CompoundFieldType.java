@@ -17,13 +17,24 @@
 package org.onehippo.cms.channelmanager.content.model.documenttype;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.service.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.util.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.util.FieldTypeContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CompoundFieldType extends FieldType {
+    private static final Logger log = LoggerFactory.getLogger(CompoundFieldType.class);
+
     public CompoundFieldType() {
         setType(Type.COMPOUND);
         setFields(new ArrayList<>());
@@ -39,5 +50,26 @@ public class CompoundFieldType extends FieldType {
                                                                              fieldType.getFields(), contentTypeContext, docType);
                     return fieldType.getFields().isEmpty() ? null : fieldType;
                 });
+    }
+
+    @Override
+    public Optional<Object> readFrom(Node node) {
+        final String nodeName = getId();
+        final List<Map<String, Object>> values = new ArrayList<>();
+        try {
+            for (Node child : new NodeIterable(node.getNodes(nodeName))) {
+                Map<String, Object> valueMap = new HashMap<>();
+                for (FieldType fieldType : getFields()) {
+                    fieldType.readFrom(child).ifPresent(value -> valueMap.put(fieldType.getId(), value));
+                }
+                if (!valueMap.isEmpty()) {
+                    values.add(valueMap);
+                }
+            }
+            return values.isEmpty() ? Optional.empty() : Optional.of(values);
+        } catch (RepositoryException e) {
+            log.warn("Failed to read nodes for compound type '{}'", getId(), e);
+        }
+        return Optional.empty();
     }
 }

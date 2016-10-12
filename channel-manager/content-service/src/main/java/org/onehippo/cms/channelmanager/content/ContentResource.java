@@ -66,12 +66,12 @@ public class ContentResource {
     // for easy debugging:
     @GET
     @Path("documents/{id}")
-    public Response getUnpublishedDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
+    public Response getPublishedDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
         final Locale locale = sessionDataProvider.getLocale(servletRequest);
         final DocumentsService documentsService = DocumentsService.get();
         try {
-            final Document document = documentsService.getUnpublished(id, userSession, locale);
+            final Document document = documentsService.getPublished(id, userSession, locale);
             return Response.ok().entity(document).build();
         } catch (DocumentNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();

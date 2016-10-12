@@ -144,7 +144,7 @@ public class EditingUtils {
             final Session session = handle.getSession();
             return Optional.of(document.getNode(session));
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Problem retrieving draft node", e);
+            log.warn("Failed to retrieve draft node", e);
         }
         return Optional.empty();
     }

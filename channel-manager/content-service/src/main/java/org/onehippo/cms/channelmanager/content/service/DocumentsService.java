@@ -48,7 +48,7 @@ public interface DocumentsService {
             throws DocumentNotFoundException;
 
     /**
-     * Read the unpublished variant of a document
+     * Read the published variant of a document
      *
      * @param uuid    UUID of the requested document (handle)
      * @param session user-authenticated JCR session for reading from the repository
@@ -57,6 +57,6 @@ public interface DocumentsService {
      * @throws DocumentNotFoundException
      *                If the requested UUID was not found or is not a document
      */
-    Document getUnpublished(final String uuid, final Session session, final Locale locale)
+    Document getPublished(final String uuid, final Session session, final Locale locale)
             throws DocumentNotFoundException;
 }

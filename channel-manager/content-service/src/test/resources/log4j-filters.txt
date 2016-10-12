@@ -24,4 +24,5 @@ Failed to sort fields of content type
 Failed to create field context
 Failed to retrieve content type 'type'
 Failed to read property 'caption'
+Failed to retrieve draft node
 Node with identifier 'unknown-uuid' does not exist
