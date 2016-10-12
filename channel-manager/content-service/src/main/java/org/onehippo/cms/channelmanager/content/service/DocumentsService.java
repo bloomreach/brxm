@@ -35,7 +35,7 @@ public interface DocumentsService {
     /**
      * Creates a draft version of a document and locks it for editing by the current CMS user.
      *
-     * If all goes well, the document's contents are returned.
+     * If all goes well, the document's content is returned.
      *
      * @param uuid    UUID of the requested document (handle)
      * @param session user-authenticated JCR session for reading from the repository

@@ -53,13 +53,14 @@ public class DocumentsServiceImpl implements DocumentsService {
                                                        .orElseThrow(DocumentNotFoundException::new);
         final DocumentType docType = getDocumentType(handle, locale);
         final Document document = assembleDocument(uuid, handle, workflow, docType);
+        final EditingInfo editingInfo = document.getInfo().getEditingInfo();
 
-        if (document.getInfo().getEditingInfo().getState() == EditingInfo.State.AVAILABLE) {
+        if (editingInfo.getState() == EditingInfo.State.AVAILABLE) {
             final Optional<Node> optionalDraft = EditingUtils.createDraft(workflow, handle);
             if (optionalDraft.isPresent()) {
                 loadFields(document, optionalDraft.get(), docType);
             } else {
-                document.getInfo().getEditingInfo().setState(EditingInfo.State.UNAVAILABLE);
+                editingInfo.setState(EditingInfo.State.UNAVAILABLE);
             }
         }
         return document;
