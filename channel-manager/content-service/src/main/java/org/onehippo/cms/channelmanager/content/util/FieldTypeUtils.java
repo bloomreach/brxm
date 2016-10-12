@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.onehippo.cms.channelmanager.content.model.documenttype.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.FieldType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.MultilineStringFieldType;
@@ -36,7 +37,9 @@ import org.slf4j.LoggerFactory;
  */
 public class FieldTypeUtils {
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
+    private static final String FIELD_TYPE_COMPOUND = "Compound";
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
+    private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
 
     // Known non-validating validator values
     private static final Set<String> IGNORED_VALIDATORS;
@@ -71,6 +74,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP = new HashMap<>();
         FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Text", new TypeDescriptor(MultilineStringFieldType.class, PROPERTY_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
     }
 
     public static class TypeDescriptor {
@@ -110,8 +114,7 @@ public class FieldTypeUtils {
      * Check if a item represents a supported field type.
      */
     public static boolean isSupportedFieldType(final FieldTypeContext context) {
-        final String type = context.getContentTypeItem().getItemType();
-        return FIELD_TYPE_MAP.containsKey(type);
+        return determineDescriptor(context.getContentTypeItem()).isPresent();
     }
 
     /**
@@ -121,31 +124,32 @@ public class FieldTypeUtils {
      * unknown to the content service. Therefore, such fields should not be included in the exposed document type.
      */
     public static boolean usesDefaultFieldPlugin(final FieldTypeContext context) {
-        final ContentTypeItem item = context.getContentTypeItem();
-        final TypeDescriptor descriptor = FIELD_TYPE_MAP.get(item.getItemType());
+        final Optional<TypeDescriptor> descriptor = determineDescriptor(context.getContentTypeItem());
+        final Optional<String> pluginClass = NamespaceUtils.getPluginClassForField(context.getEditorConfigNode());
 
-        if (descriptor == null) {
-            return false;
-        }
-
-        Optional<String> pluginClass = NamespaceUtils.getPluginClassForField(context.getEditorConfigNode());
-        return descriptor.defaultPluginClass.equals(pluginClass.orElse(""));
+        return descriptor.isPresent() && descriptor.get().defaultPluginClass.equals(pluginClass.orElse(""));
     }
 
     /**
-     * Translate the JCR type of a (supported!) field into its corresponding {@link FieldType}.Type value
+     * Create a FieldType of the appropriate sub-type and initialize it.
+     *
+     * @param context            Information relevant for the current field
+     * @param contentTypeContext Information relevant for the current content type (document or compound)
+     * @param docType            Reference to the document type being assembled
+     * @return                   Initialized FieldType instance or nothing, wrapped in an Optional
      */
-    public static Optional<FieldType> createFieldType(final ContentTypeItem item) {
-        final String jcrType = item.getItemType();
+    public static Optional<FieldType> createAndInitFieldType(final FieldTypeContext context,
+                                                                 final ContentTypeContext contentTypeContext,
+                                                                 final DocumentType docType) {
 
-        if (FIELD_TYPE_MAP.containsKey(jcrType)) {
-            try {
-                final Class<? extends FieldType> fieldTypeClass = FIELD_TYPE_MAP.get(jcrType).fieldType;
-                return Optional.of(fieldTypeClass.newInstance());
-            } catch (InstantiationException|IllegalAccessException e) {
-                log.warn("Problem creating a field type for type '{}'", jcrType, e);
-            }
-        }
-        return Optional.empty();
+        return determineDescriptor(context.getContentTypeItem())
+                .map(descriptor -> descriptor.fieldType)
+                .flatMap(clazz -> FieldTypeFactory.createFieldType((Class<? extends FieldType>)clazz))
+                .flatMap(fieldType -> fieldType.init(context, contentTypeContext, docType));
+    }
+
+    private static Optional<TypeDescriptor> determineDescriptor(final ContentTypeItem item) {
+        final String type = item.isProperty() ? item.getItemType() : FIELD_TYPE_COMPOUND;
+        return Optional.ofNullable(FIELD_TYPE_MAP.get(type));
     }
 }

@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.service;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.jcr.Node;
@@ -23,6 +24,8 @@ import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
+import org.onehippo.cms.channelmanager.content.model.documenttype.FieldType;
+import org.onehippo.cms.channelmanager.content.util.ContentTypeContext;
 
 /**
  * DocumentTypesService exposes an API for reading document types
@@ -43,7 +46,7 @@ public interface DocumentTypesService {
      * @throws DocumentTypeNotFoundException
      *                if assembling the document type specification failed in a non-recoverable manner
      */
-    DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
+    DocumentType getDocumentType(String id, Session userSession, Locale locale)
             throws DocumentTypeNotFoundException;
 
     /**
@@ -55,5 +58,15 @@ public interface DocumentTypesService {
      * @throws DocumentTypeNotFoundException
      *                if assembling the document type failed in a non-recoverable manner
      */
-    DocumentType getDocumentType(final Node handle, final Locale locale) throws DocumentTypeNotFoundException;
+    DocumentType getDocumentType(Node handle, Locale locale) throws DocumentTypeNotFoundException;
+
+    /**
+     * Populate the fields of a compound content type.
+     *
+     * @param id            ID of the desired compound content type
+     * @param fields        list of @{link FieldType}s to be populated
+     * @param parentContext reference to parent (compound ot document type) context, including user session and locale
+     * @param docType       reference to {@link DocumentType} being assembled
+     */
+    void populateFieldsForCompoundType(String id, List<FieldType> fields, ContentTypeContext parentContext, DocumentType docType);
 }

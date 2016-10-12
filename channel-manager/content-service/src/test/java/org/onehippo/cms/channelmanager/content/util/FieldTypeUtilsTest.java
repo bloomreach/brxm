@@ -25,12 +25,12 @@ import javax.jcr.Node;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.model.documenttype.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.FieldType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.model.documenttype.StringFieldType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
-import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -39,101 +39,192 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(NamespaceUtils.class)
+@PrepareForTest({NamespaceUtils.class, FieldTypeFactory.class})
 public class FieldTypeUtilsTest {
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
 
     @Test
-    public void validateSupportedFieldTypes() {
+    public void isSupportedFieldTypeString() {
         final FieldTypeContext context = createMock(FieldTypeContext.class);
         final ContentTypeItem item = createMock(ContentTypeItem.class);
 
-        expect(context.getContentTypeItem()).andReturn(item).anyTimes();
+        expect(context.getContentTypeItem()).andReturn(item);
+        expect(item.isProperty()).andReturn(true);
         expect(item.getItemType()).andReturn("String");
         replay(item, context);
+
         assertThat(FieldTypeUtils.isSupportedFieldType(context), equalTo(true));
-        reset(item);
-
-        expect(item.getItemType()).andReturn("Text");
-        replay(item);
-        assertThat(FieldTypeUtils.isSupportedFieldType(context), equalTo(true));
-        reset(item);
-
-        expect(item.getItemType()).andReturn("Html");
-        replay(item);
-        assertThat(FieldTypeUtils.isSupportedFieldType(context), equalTo(false));
-        reset(item);
-
-        expect(item.getItemType()).andReturn(null);
-        replay(item);
-        assertThat(FieldTypeUtils.isSupportedFieldType(context), equalTo(false));
     }
 
     @Test
-    public void validatePluginClassValidation() {
+    public void isSupportedFieldTypeText() {
         final FieldTypeContext context = createMock(FieldTypeContext.class);
         final ContentTypeItem item = createMock(ContentTypeItem.class);
-        final Node editorFieldNode = createMock(Node.class);
-        PowerMock.mockStatic(NamespaceUtils.class);
 
-        expect(context.getContentTypeItem()).andReturn(item).anyTimes();
-        expect(context.getEditorConfigNode()).andReturn(editorFieldNode).anyTimes();
-        expect(item.getName()).andReturn("dummy").anyTimes();
-        expect(item.getItemType()).andReturn("String").anyTimes();
-        replay(context, item);
-
-        // deals with empty value
-        expect(NamespaceUtils.getPluginClassForField(editorFieldNode)).andReturn(Optional.empty());
-        PowerMock.replayAll();
-        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(context), equalTo(false));
-        PowerMock.verifyAll();
-
-        // rejects dummy text
-        PowerMock.resetAll();
-        expect(NamespaceUtils.getPluginClassForField(editorFieldNode)).andReturn(Optional.of("sometext"));
-        PowerMock.replayAll();
-        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(context), equalTo(false));
-
-        // accept correct value for both String and Text
-        reset(item);
-        expect(item.getName()).andReturn("dummy").anyTimes();
-        expect(item.getItemType()).andReturn("String");
+        expect(context.getContentTypeItem()).andReturn(item);
+        expect(item.isProperty()).andReturn(true);
         expect(item.getItemType()).andReturn("Text");
-        replay(item);
+        replay(item, context);
 
-        PowerMock.resetAll();
-        expect(NamespaceUtils.getPluginClassForField(editorFieldNode)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN)).anyTimes();
+        assertThat(FieldTypeUtils.isSupportedFieldType(context), equalTo(true));
+    }
+
+    @Test
+    public void isSupportedFieldTypeHtml() {
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+
+        expect(context.getContentTypeItem()).andReturn(item);
+        expect(item.isProperty()).andReturn(true);
+        expect(item.getItemType()).andReturn("Html");
+        replay(item, context);
+
+        assertThat(FieldTypeUtils.isSupportedFieldType(context), equalTo(false));
+    }
+
+    @Test
+    public void isSupportedFieldTypeCompound() {
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+
+        expect(context.getContentTypeItem()).andReturn(item);
+        expect(item.isProperty()).andReturn(false);
+        replay(item, context);
+
+        assertThat(FieldTypeUtils.isSupportedFieldType(context), equalTo(true));
+    }
+
+    @Test
+    public void usesDefaultFieldPluginNoDescriptor() {
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+        final Node node = createMock(Node.class);
+
+        PowerMock.mockStaticPartial(NamespaceUtils.class, "getPluginClassForField");
+
+        expect(context.getContentTypeItem()).andReturn(item);
+        expect(context.getEditorConfigNode()).andReturn(node);
+        expect(item.isProperty()).andReturn(true);
+        expect(item.getItemType()).andReturn("Unknown");
+        expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.empty());
+        replay(item, context);
         PowerMock.replayAll();
 
-        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(context), equalTo(true));
+        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(context), equalTo(false));
+    }
+
+    @Test
+    public void usesDefaultFieldPluginNoPluginClass() {
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+        final Node node = createMock(Node.class);
+
+        PowerMock.mockStaticPartial(NamespaceUtils.class, "getPluginClassForField");
+
+        expect(context.getContentTypeItem()).andReturn(item);
+        expect(context.getEditorConfigNode()).andReturn(node);
+        expect(item.isProperty()).andReturn(true);
+        expect(item.getItemType()).andReturn("String");
+        expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.empty());
+        replay(item, context);
+        PowerMock.replayAll();
+
+        assertThat(FieldTypeUtils.usesDefaultFieldPlugin(context), equalTo(false));
+    }
+
+    @Test
+    public void usesDefaultFieldPlugin() {
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+        final Node node = createMock(Node.class);
+
+        PowerMock.mockStaticPartial(NamespaceUtils.class, "getPluginClassForField");
+
+        expect(context.getContentTypeItem()).andReturn(item);
+        expect(context.getEditorConfigNode()).andReturn(node);
+        expect(item.isProperty()).andReturn(true);
+        expect(item.getItemType()).andReturn("String");
+        expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
+        replay(item, context);
+        PowerMock.replayAll();
+
         assertThat(FieldTypeUtils.usesDefaultFieldPlugin(context), equalTo(true));
     }
 
     @Test
-    public void validateDeriveFieldType() {
-        final ContentTypeProperty property = createMock(ContentTypeProperty.class);
+    public void createAndInitFieldTypeString() {
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+        final StringFieldType fieldType = createMock(StringFieldType.class);
+        final ContentTypeContext contentTypeContext = createMock(ContentTypeContext.class);
+        final DocumentType docType = createMock(DocumentType.class);
 
-        expect(property.getItemType()).andReturn("String");
-        expect(property.getItemType()).andReturn("Text");
-        replay(property);
+        PowerMock.mockStaticPartial(FieldTypeFactory.class, "createFieldType");
 
-        assertThat(FieldTypeUtils.createFieldType(property).get().getClass(), equalTo(StringFieldType.class));
-        assertThat(FieldTypeUtils.createFieldType(property).get().getClass(), equalTo(MultilineStringFieldType.class));
+        expect(context.getContentTypeItem()).andReturn(item);
+        expect(item.isProperty()).andReturn(true);
+        expect(item.getItemType()).andReturn("String");
+        expect(fieldType.init(context, contentTypeContext, docType)).andReturn(Optional.of(fieldType));
+        expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(fieldType));
+        replay(context, item, fieldType);
+        PowerMock.replayAll();
+
+        assertThat(FieldTypeUtils.createAndInitFieldType(context, contentTypeContext, docType).get(), equalTo(fieldType));
+    }
+
+    @Test
+    public void createAndInitFieldTypeMultilineString() {
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+        final MultilineStringFieldType fieldType = createMock(MultilineStringFieldType.class);
+
+        PowerMock.mockStaticPartial(FieldTypeFactory.class, "createFieldType");
+
+        expect(context.getContentTypeItem()).andReturn(item);
+        expect(item.isProperty()).andReturn(true);
+        expect(item.getItemType()).andReturn("Text");
+        expect(fieldType.init(context, null, null)).andReturn(Optional.of(fieldType));
+        expect(FieldTypeFactory.createFieldType(MultilineStringFieldType.class)).andReturn(Optional.of(fieldType));
+        replay(context, item, fieldType);
+        PowerMock.replayAll();
+
+        assertThat(FieldTypeUtils.createAndInitFieldType(context, null, null).get(), equalTo(fieldType));
     }
 
     @Test(expected = NoSuchElementException.class)
-    public void validateDeriveFieldTypeOfUnknownType() {
-        final ContentTypeProperty property = createMock(ContentTypeProperty.class);
+    public void createAndInitFieldTypeCompoundUnsupportedPropertyType() {
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
 
-        expect(property.getItemType()).andReturn("Html");
-        replay(property);
+        expect(context.getContentTypeItem()).andReturn(item);
+        expect(item.isProperty()).andReturn(true);
+        expect(item.getItemType()).andReturn("Unknown");
+        replay(context, item);
 
-        FieldTypeUtils.createFieldType(property).get();
+        FieldTypeUtils.createAndInitFieldType(context, null, null).get();
+    }
+
+    @Test
+    public void createAndInitFieldTypeCompound() {
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final ContentTypeItem item = createMock(ContentTypeItem.class);
+        final CompoundFieldType fieldType = createMock(CompoundFieldType.class);
+
+        PowerMock.mockStaticPartial(FieldTypeFactory.class, "createFieldType");
+
+        expect(context.getContentTypeItem()).andReturn(item);
+        expect(item.isProperty()).andReturn(false);
+        expect(item.getName()).andReturn("my:compound");
+        expect(FieldTypeFactory.createFieldType(CompoundFieldType.class)).andReturn(Optional.of(fieldType));
+        expect(fieldType.init(context, null, null)).andReturn(Optional.of(fieldType));
+        replay(context, item, fieldType);
+        PowerMock.replayAll();
+
+        assertThat(FieldTypeUtils.createAndInitFieldType(context, null, null).get(), equalTo(fieldType));
     }
 
     @Test

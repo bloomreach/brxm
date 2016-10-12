@@ -27,6 +27,14 @@ import javax.jcr.Node;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import org.onehippo.cms.channelmanager.content.util.ContentTypeContext;
+import org.onehippo.cms.channelmanager.content.util.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.util.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.util.FieldValidators;
+import org.onehippo.cms.channelmanager.content.util.LocalizationUtils;
+import org.onehippo.cms7.services.contenttype.ContentTypeItem;
+import org.onehippo.repository.l10n.ResourceBundle;
+
 /**
  * This bean represents a field type, used for the fields of a {@link DocumentType}.
  * It can be serialized into JSON to expose it through a REST API.
@@ -45,8 +53,10 @@ public class FieldType {
 
     private Set<Validator> validators;
 
-    private List<FieldType> fields; // the child-fields of a complex field type (COMPOUND or CHOICE)
+    // TODO: move up into CompoundFieldType?
+    protected List<FieldType> fields; // the child-fields of a complex field type (COMPOUND or CHOICE)
 
+    // TODO: move up into PropertyFieldType?
     @JsonIgnore
     private boolean storedAsMultiValueProperty;
 
@@ -141,7 +151,41 @@ public class FieldType {
     }
 
     // TODO: once we phase out the ns:testdocument, this method and class should be made abstract.
+    /**
+     * Read a document field instance from a document variant node
+     *
+     * @param node JCR node to read th value from
+     * @return     Object representing the value, or nothing, wrapped in an Optional
+     */
     public Optional<Object> readFrom(Node node) {
         return Optional.empty();
-    };
+    }
+
+    /**
+     * Initialize a FieldType, given various information sources:
+     *
+     * @param context            field-specific information
+     * @param contentTypeContext content type-specific information (may be document of compound)
+     * @param docType            reference to the document type being assembled
+     * @return                   itself
+     */
+    public Optional<FieldType> init(FieldTypeContext context, ContentTypeContext contentTypeContext, DocumentType docType) {
+        final Optional<ResourceBundle> resourceBundle = contentTypeContext.getResourceBundle();
+        final Node editorFieldConfig = context.getEditorConfigNode();
+        final ContentTypeItem item = context.getContentTypeItem();
+        final String fieldId = item.getName();
+
+        setId(fieldId);
+
+        LocalizationUtils.determineFieldDisplayName(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setDisplayName);
+        LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
+
+        if (item.isMultiple() || item.getValidators().contains(FieldValidators.OPTIONAL)) {
+            setMultiple(true);
+        }
+
+        FieldTypeUtils.determineValidators(this, docType, item.getValidators());
+
+        return Optional.of(this);
+    }
 }

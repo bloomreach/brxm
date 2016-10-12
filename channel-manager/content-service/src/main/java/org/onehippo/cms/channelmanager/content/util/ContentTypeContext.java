@@ -41,6 +41,7 @@ public class ContentTypeContext {
     private final ContentType contentType;
     private final Optional<ResourceBundle> resourceBundle;
     private final Node contentTypeRoot;
+    private final Locale locale;
 
     /**
      * Create a new {@link ContentTypeContext} for the identified content type and the current CMS session.
@@ -60,7 +61,7 @@ public class ContentTypeContext {
         final Node documentTypeRoot = NamespaceUtils.getDocumentTypeRootNode(id, userSession)
                 .orElseThrow(ContentTypeException::new);
 
-        return new ContentTypeContext(contentType, resourceBundle, documentTypeRoot);
+        return new ContentTypeContext(contentType, resourceBundle, documentTypeRoot, locale);
     }
 
     private static Optional<ContentType> getContentType(final String id) {
@@ -74,11 +75,13 @@ public class ContentTypeContext {
     }
 
     private ContentTypeContext(final ContentType contentType,
-                              final Optional<ResourceBundle> resourceBundle,
-                              final Node documentTypeRoot) {
+                               final Optional<ResourceBundle> resourceBundle,
+                               final Node documentTypeRoot,
+                               final Locale locale) {
         this.contentType = contentType;
         this.resourceBundle = resourceBundle;
         this.contentTypeRoot = documentTypeRoot;
+        this.locale = locale;
     }
 
     public ContentType getContentType() {
@@ -91,5 +94,9 @@ public class ContentTypeContext {
 
     public Node getContentTypeRoot() {
         return contentTypeRoot;
+    }
+
+    public Locale getLocale() {
+        return locale;
     }
 }

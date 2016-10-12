@@ -25,10 +25,17 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.channelmanager.content.util.ContentTypeContext;
+import org.onehippo.cms.channelmanager.content.util.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.util.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.util.FieldValidators;
+import org.onehippo.cms.channelmanager.content.util.LocalizationUtils;
+import org.onehippo.cms7.services.contenttype.ContentTypeItem;
+import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StringFieldType extends FieldType {
+public class StringFieldType extends PropertyFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(StringFieldType.class);
 
@@ -36,6 +43,7 @@ public class StringFieldType extends FieldType {
         this.setType(Type.STRING);
     }
 
+    @Override
     public Optional<Object> readFrom(final Node node) {
         final String property = getId();
         try {

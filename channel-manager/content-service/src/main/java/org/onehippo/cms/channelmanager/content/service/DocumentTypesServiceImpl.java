@@ -28,14 +28,12 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.exception.ContentTypeException;
 import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
+import org.onehippo.cms.channelmanager.content.model.documenttype.FieldType;
 import org.onehippo.cms.channelmanager.content.util.ContentTypeContext;
-import org.onehippo.cms.channelmanager.content.util.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.util.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.util.FieldValidators;
 import org.onehippo.cms.channelmanager.content.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.util.MockResponse;
 import org.onehippo.cms.channelmanager.content.util.NamespaceUtils;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,12 +72,28 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
         validateDocumentType(context, id);
 
         final DocumentType docType = new DocumentType();
-
         docType.setId(id);
         LocalizationUtils.determineDocumentDisplayName(id, context.getResourceBundle()).ifPresent(docType::setDisplayName);
-        populateFields(docType, context);
+
+        populateFields(docType.getFields(), context, docType);
 
         return docType;
+    }
+
+    @Override
+    public void populateFieldsForCompoundType(final String id, final List<FieldType> fields,
+                                              final ContentTypeContext parentContext, final DocumentType docType) {
+        try {
+            final Session userSession = parentContext.getContentTypeRoot().getSession();
+            final Locale locale = parentContext.getLocale();
+            final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext(id, userSession, locale);
+
+            populateFields(fields, context, docType);
+        } catch (RepositoryException e) {
+            log.warn("Failed to retrieve user session", e);
+        } catch (ContentTypeException e) {
+            log.debug("Failed to create context for content type '{}'", id, e);
+        }
     }
 
     private static ContentTypeContext getContentTypeContext(final String id, final Session userSession,
@@ -100,38 +114,16 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
         }
     }
 
-    private static void populateFields(final DocumentType docType, final ContentTypeContext context) {
-        NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
-                .ifPresent(sorter -> sorter.sortFields(context)
+    private static void populateFields(final List<FieldType> fields, final ContentTypeContext contentType,
+                                       final DocumentType docType) {
+
+        NamespaceUtils.retrieveFieldSorter(contentType.getContentTypeRoot())
+                .ifPresent(sorter -> sorter.sortFields(contentType)
                         .stream()
                         .filter(FieldTypeUtils::isSupportedFieldType)
                         .filter(FieldTypeUtils::usesDefaultFieldPlugin)
-                        .forEach(fieldContext -> addPropertyField(docType, context, fieldContext))
+                        .forEach(fieldType -> FieldTypeUtils.createAndInitFieldType(fieldType, contentType, docType)
+                                .ifPresent(fields::add))
                 );
-    }
-
-    private static void addPropertyField(final DocumentType docType,
-                                         final ContentTypeContext context,
-                                         final FieldTypeContext fieldContext) {
-        final ContentTypeItem item = fieldContext.getContentTypeItem();
-        FieldTypeUtils.createFieldType(item).ifPresent((fieldType) -> {
-            final String fieldId = item.getName();
-
-            fieldType.setId(fieldId);
-
-            LocalizationUtils.determineFieldDisplayName(fieldId, context.getResourceBundle(), fieldContext.getEditorConfigNode())
-                    .ifPresent(fieldType::setDisplayName);
-            LocalizationUtils.determineFieldHint(fieldId, context.getResourceBundle(), fieldContext.getEditorConfigNode())
-                    .ifPresent(fieldType::setHint);
-            fieldType.setStoredAsMultiValueProperty(item.isMultiple());
-
-            if (item.isMultiple() || item.getValidators().contains(FieldValidators.OPTIONAL)) {
-                fieldType.setMultiple(true);
-            }
-
-            FieldTypeUtils.determineValidators(fieldType, docType, item.getValidators());
-
-            docType.addField(fieldType);
-        });
     }
 }
