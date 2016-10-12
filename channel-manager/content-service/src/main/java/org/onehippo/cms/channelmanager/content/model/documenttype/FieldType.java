@@ -53,12 +53,8 @@ public class FieldType {
 
     private Set<Validator> validators;
 
-    // TODO: move up into CompoundFieldType?
+    // TODO: move up into CompoundFieldType? - currently not possible due to deserialization in MockResponse.
     protected List<FieldType> fields; // the child-fields of a complex field type (COMPOUND or CHOICE)
-
-    // TODO: move up into PropertyFieldType?
-    @JsonIgnore
-    private boolean storedAsMultiValueProperty;
 
     public enum Type {
         STRING,
@@ -135,19 +131,8 @@ public class FieldType {
         return fields;
     }
 
-    public void addField(final FieldType field) {
-        if (fields == null) {
-            fields = new ArrayList<>();
-        }
-        fields.add(field);
-    }
-
-    public boolean isStoredAsMultiValueProperty() {
-        return storedAsMultiValueProperty;
-    }
-
-    public void setStoredAsMultiValueProperty(final boolean storedAsMultiValueProperty) {
-        this.storedAsMultiValueProperty = storedAsMultiValueProperty;
+    public void setFields(final List<FieldType> fields) {
+        this.fields = fields;
     }
 
     // TODO: once we phase out the ns:testdocument, this method and class should be made abstract.

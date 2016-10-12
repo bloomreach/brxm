@@ -25,7 +25,8 @@ import org.onehippo.cms.channelmanager.content.util.FieldTypeContext;
 
 public class CompoundFieldType extends FieldType {
     public CompoundFieldType() {
-        fields = new ArrayList<>();
+        setType(Type.COMPOUND);
+        setFields(new ArrayList<>());
     }
 
     @Override

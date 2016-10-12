@@ -18,18 +18,31 @@ package org.onehippo.cms.channelmanager.content.model.documenttype;
 
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.onehippo.cms.channelmanager.content.util.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.util.FieldTypeContext;
 
 public class PropertyFieldType extends FieldType {
+    @JsonIgnore
+    private boolean storedAsMultiValueProperty;
+
     @Override
     public Optional<FieldType> init(final FieldTypeContext context,
                                     final ContentTypeContext contentTypeContext,
                                     final DocumentType docType) {
         return super.init(context, contentTypeContext, docType)
                 .map(fieldType -> {
-                    fieldType.setStoredAsMultiValueProperty(context.getContentTypeItem().isMultiple());
+                    setStoredAsMultiValueProperty(context.getContentTypeItem().isMultiple());
                     return this;
                 });
+    }
+
+    public boolean isStoredAsMultiValueProperty() {
+        return storedAsMultiValueProperty;
+    }
+
+    public void setStoredAsMultiValueProperty(final boolean storedAsMultiValueProperty) {
+        this.storedAsMultiValueProperty = storedAsMultiValueProperty;
     }
 }
