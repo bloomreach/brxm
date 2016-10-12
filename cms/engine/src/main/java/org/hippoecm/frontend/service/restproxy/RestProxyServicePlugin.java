@@ -42,6 +42,7 @@ import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.service.restproxy.custom.json.deserializers.AnnotationJsonDeserializer;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.CmsSessionUtil;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
@@ -195,7 +196,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         if (cmsSessionContext == null) {
             CmsInternalCmsContextService cmsContextService = (CmsInternalCmsContextService)HippoServiceRegistry.getService(CmsContextService.class);
             cmsSessionContext = cmsContextService.create(httpSession);
-            cmsContextService.setData(cmsSessionContext, CmsSessionContext.REPOSITORY_CREDENTIALS, ((PluginUserSession) UserSession.get()).getCredentials());
+            CmsSessionUtil.populateCmsSessionContext(cmsContextService, cmsSessionContext, (PluginUserSession) UserSession.get());
         }
         // The accept method is called to solve an issue as the REST call was sent with 'text/plain' as an accept header
         // which caused problems matching with the relevant JAXRS resource

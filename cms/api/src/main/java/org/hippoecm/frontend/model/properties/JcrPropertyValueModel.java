@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -203,7 +203,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
                     Value[] newValues = new Value[oldValues.length];
                     for (int i = 0; i < oldValues.length; i++) {
                         if (i == index) {
-                            newValues[i] = (value == null ? createNullValue() : value);
+                            newValues[i] = (value == null ? createEmptyValue() : value);
                         } else {
                             newValues[i] = oldValues[i];
                         }
@@ -219,7 +219,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
                     }
                 } else {
                     if (value == null && propDef != null && propDef.isMandatory()) {
-                        value = createNullValue();
+                        value = createEmptyValue();
                     }
                     if (!prop.isMultiple()) {
                         prop.setValue(value);
@@ -261,10 +261,8 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
                 switch (value.getType()) {
                 case PropertyType.BOOLEAN:
                     return (T) Boolean.valueOf(value.getBoolean());
-                case PropertyType.DATE: {
-                    Date date = value.getDate().getTime();
-                    return date.compareTo(PropertyValueProvider.NULL_DATE) == 0 ? null : (T)date;
-                }
+                case PropertyType.DATE:
+                    return (T) value.getDate().getTime();
                 case PropertyType.DOUBLE:
                     return (T) Double.valueOf(value.getDouble());
                 case PropertyType.LONG:
@@ -344,11 +342,11 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
         this.index = index;
     }
 
-    private Value createNullValue() throws UnsupportedRepositoryOperationException, RepositoryException {
+    private Value createEmptyValue() throws UnsupportedRepositoryOperationException, RepositoryException {
         ValueFactory factory = UserSession.get().getJcrSession().getValueFactory();
         int propertyType = getType();
         propertyType  = (propertyType == PropertyType.UNDEFINED) ? PropertyType.STRING : propertyType;
-        String propertyValue = (propertyType == PropertyType.DATE) ? PropertyValueProvider.NULL_DATE_VALUE : StringUtils.EMPTY;
+        String propertyValue = (propertyType == PropertyType.DATE) ? PropertyValueProvider.EMPTY_DATE_VALUE : StringUtils.EMPTY;
         return factory.createValue(propertyValue, propertyType);
     }
 

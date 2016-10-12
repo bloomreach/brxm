@@ -1,15 +1,15 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
@@ -198,19 +198,9 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 postClose(contexts);
 
                 try {
-                    if (mode == Mode.EDIT || getMode() == Mode.EDIT) {
-                        switch (mode) {
-                            case EDIT:
-                                workflow.obtainEditableInstance();
-                                break;
-                            case VIEW:
-                            case COMPARE:
-                                workflow.commitEditableInstance();
-                                break;
-                        }
+                    if (executeWorkflowForMode(mode, workflow)) {
+                        super.setMode(mode);
                     }
-                    super.setMode(mode);
-
                 } finally {
                     start();
                 }
@@ -224,6 +214,32 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 throw new EditorException("Workflow error when setting editor mode", e);
             }
         }
+    }
+
+    private boolean executeWorkflowForMode(final Mode mode, final EditableWorkflow workflow) throws RepositoryException, RemoteException, WorkflowException {
+        if (mode == Mode.EDIT || getMode() == Mode.EDIT) {
+            switch (mode) {
+                case EDIT:
+                    if (!isWorkflowMethodAvailable(workflow, "obtainEditableInstance")) {
+                        return false;
+                    }
+                    workflow.obtainEditableInstance();
+                    break;
+                case VIEW:
+                case COMPARE:
+                    if (!isWorkflowMethodAvailable(workflow, "commitEditableInstance")) {
+                        return false;
+                    }
+                    workflow.commitEditableInstance();
+                    break;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isWorkflowMethodAvailable(Workflow workflow, String methodName) throws RepositoryException, RemoteException, WorkflowException {
+        Serializable hint = workflow.hints().get(methodName);
+        return hint == null || Boolean.parseBoolean(hint.toString());
     }
 
     public void onEvent(EventIterator events) {

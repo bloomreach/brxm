@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.google.common.base.Strings;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
@@ -51,10 +53,12 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
 
     public static final String MAX_FILE_SIZE      = "max.file.size";
     public static final String EXTENSIONS_ALLOWED = "extensions.allowed";
+    public static final String MIME_TYPES_ALLOWED = "mimetypes.allowed";
 
     private ValidationResult result;
     private List<Validator> validators;
     private List<String> allowedExtensions;
+    private List<String> allowedMimeTypes;
     private IValueMap values;
 
     public DefaultUploadValidationService() {
@@ -64,11 +68,15 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     public DefaultUploadValidationService(IValueMap params) {
         validators = new LinkedList<>();
         allowedExtensions = new LinkedList<>();
+        allowedMimeTypes = new LinkedList<>();
 
         if (params.containsKey(EXTENSIONS_ALLOWED)) {
             setAllowedExtensions(params.getStringArray(EXTENSIONS_ALLOWED));
         } else {
             setAllowedExtensions(getDefaultExtensionsAllowed());
+        }
+        if (params.containsKey(MIME_TYPES_ALLOWED)) {
+            setAllowedMimeTypes(params.getStringArray(MIME_TYPES_ALLOWED));
         }
 
         values = params;
@@ -151,6 +159,9 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
 
     private void validateMimeType(final FileUpload upload) {
         String mimeType = upload.getContentType();
+        if (allowedMimeTypes.contains(mimeType)) {
+            return;
+        }
         try (InputStream is = upload.getInputStream()){
             MimeTypeHelper.validateMimeType(is, mimeType);
         } catch (InvalidMimeTypeException e) {
@@ -160,6 +171,16 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
             }
         } catch (IOException e) {
             log.error("Failed to get input stream from the uploaded file:" + upload.getClientFileName(), e);
+        }
+    }
+
+
+    public void setAllowedMimeTypes(final String[] mimeTypes) {
+        allowedMimeTypes.clear();
+        for (String type : mimeTypes) {
+            if (!Strings.isNullOrEmpty(type)) {
+                allowedMimeTypes.add(type);
+            }
         }
     }
 
