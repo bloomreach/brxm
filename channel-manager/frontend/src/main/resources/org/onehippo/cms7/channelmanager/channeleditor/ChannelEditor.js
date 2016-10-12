@@ -59,10 +59,15 @@
     },
 
     loadChannel: function(channelId, initialPath) {
-      this.hostToIFrame.publish('clear-channel');
+      this._clearChannel();
       this._setChannel(channelId).when(function(channelRecord) {
         this.hostToIFrame.publish('load-channel', channelRecord.json, initialPath);
       }.bind(this));
+    },
+
+    _clearChannel: function() {
+      this.selectedChannel = null;
+      this.hostToIFrame.publish('clear-channel');
     },
 
     _reloadChannels: function() {
