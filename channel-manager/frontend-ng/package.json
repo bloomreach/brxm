@@ -5,10 +5,8 @@
   "description": "Channel manager NG for Hippo B.V.",
   "scripts": {
     "gulp": "gulp",
-    "build": "gulp",
-    "serve": "gulp serve",
-    "serveDist": "gulp serveDist",
-    "profile": "gulp webpack:profile",
+    "build": "gulp build",
+    "start": "gulp serve",
     "test": "gulp test",
     "test:auto": "gulp test:auto"
   },

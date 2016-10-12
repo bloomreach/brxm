@@ -30,39 +30,45 @@ Run the commands below in the project root directory.
         $ npm start
 
 # Useful commands
-## When starting gulp tasks using cli
-### List all gulp tasks available
-
-    $ gulp --tasks
-
-### Run unit tests (Chrome needs to be installed)
-
-    $ gulp test
-
-### Build application for development
-
-    $ gulp build
-
-### Build optimized application for production
-
-    $ gulp buildDist
-
-### Serve and watch files for development with BrowserSync
-
-    $ gulp serve
-
 ## When starting gulp tasks through npm
-If you do not install the gulp-cli you can run the following with npm
-
-    $ npm run gulp [some defined gulp task]
-
-### List all gulp tasks available
+List all gulp tasks available
 
     $ npm run gulp -- --tasks
 
-### Run unit tests (Chrome needs to be installed)
+Serve and watch files for development
+
+    $ npm start
+
+Run unit tests and watch for changes to rerun (Chrome needs to be installed)
+
+    $ npm run test:auto
+
+Run unit tests once (Chrome needs to be installed)
+
     $ npm test
 
-### Serve and watch files for development with BrowserSync
-    $ npm start
+If you do not install the gulp-cli you can still run any gulp task with npm
+
+    $ npm run gulp [some defined gulp task]
+
+## When starting gulp tasks using gulp-cli
+List all gulp tasks available
+
+    $ gulp --tasks
+
+Serve and watch files for development
+
+    $ gulp serve
+
+Run unit tests and watch for changes to rerun (Chrome needs to be installed)
+
+    $ gulp test:auto
+
+Run unit tests once (Chrome needs to be installed)
+
+    $ gulp test
+
+Build optimized application for production
+
+    $ gulp build
 
