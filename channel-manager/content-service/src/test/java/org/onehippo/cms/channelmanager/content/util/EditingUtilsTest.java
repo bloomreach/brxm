@@ -228,47 +228,28 @@ public class EditingUtilsTest {
     }
 
     @Test
-    public void getOrMakeDraftWithObtainEditableInstance() throws Exception {
+    public void createDraft() throws Exception {
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
         final Session session = createMock(Session.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final Document document = createMock(Document.class);
-        final EditingInfo editingInfo = new EditingInfo();
-        editingInfo.setState(EditingInfo.State.AVAILABLE);
 
         expect(workflow.obtainEditableInstance()).andReturn(document);
         expect(document.getNode(session)).andReturn(draft);
         expect(handle.getSession()).andReturn(session);
         replay(workflow, document, handle);
 
-        assertThat(EditingUtils.getOrMakeDraft(editingInfo, workflow, handle).get(), equalTo(draft));
-    }
-
-    @Test
-    public void getOrMakeDraftIfUnavailable() throws Exception {
-        final Node handle = createMock(Node.class);
-        final Node draft = createMock(Node.class);
-        final EditingInfo editingInfo = new EditingInfo();
-        editingInfo.setState(EditingInfo.State.UNAVAILABLE);
-
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getDocumentVariantNode");
-
-        expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
-        PowerMock.replayAll();
-
-        assertThat(EditingUtils.getOrMakeDraft(editingInfo, null, handle).get(), equalTo(draft));
+        assertThat(EditingUtils.createDraft(workflow, handle).get(), equalTo(draft));
     }
 
     @Test(expected = NoSuchElementException.class)
-    public void getOrMakeDraftWithWorkflowException() throws Exception {
+    public void createDraftWithWorkflowException() throws Exception {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-        final EditingInfo editingInfo = new EditingInfo();
-        editingInfo.setState(EditingInfo.State.AVAILABLE);
 
         expect(workflow.obtainEditableInstance()).andThrow(new WorkflowException("bla"));
         replay(workflow);
 
-        EditingUtils.getOrMakeDraft(editingInfo, workflow, null).get();
+        EditingUtils.createDraft(workflow, null).get();
     }
 }

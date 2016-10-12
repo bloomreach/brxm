@@ -72,7 +72,7 @@ describe('ChannelRightSidePanel', () => {
     });
 
     ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'close']);
-    ContentService = jasmine.createSpyObj('ContentService', ['getDocument', 'getDocumentType']);
+    ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType']);
 
     $scope = $rootScope.$new();
     const $element = angular.element('<div></div>');
@@ -101,14 +101,14 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('opens a document', () => {
-    ContentService.getDocument.and.returnValue($q.resolve(testDocument));
+    ContentService.createDraft.and.returnValue($q.resolve(testDocument));
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     spyOn($scope, '$broadcast');
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
 
-    expect(ContentService.getDocument).toHaveBeenCalledWith('test');
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect($ctrl.doc).toBe(null);
     expect($ctrl.docType).toBe(null);
 
