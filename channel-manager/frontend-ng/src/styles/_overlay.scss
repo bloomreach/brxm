@@ -14,7 +14,7 @@
 
 @import 'variables';
 
-@mixin overlay-position() {
+@mixin overlay-position {
   bottom: 0;
   left: 0;
   pointer-events: none;
@@ -23,18 +23,18 @@
   top: 0;
 }
 
-@mixin overlay-border-component($suffix:"") {
+@mixin overlay-border-component($suffix: '') {
   border: 1px solid $blue-500 unquote($suffix);
   box-shadow: inset 0 0 0 1px $half-white unquote($suffix);
 }
 
-@mixin overlay-border-container() {
+@mixin overlay-border-container {
   border: 1px solid $black;
   box-shadow: inset 0 0 0 1px $half-white;
 }
 
 .overlay {
-  @include overlay-position();
+  @include overlay-position;
 }
 
 overlay-element {
@@ -50,16 +50,16 @@ overlay-element {
 .overlay-label {
   border: 1px solid $half-white;
   color: $white;
+  display: none;
   font-size: 12px;
   height: 26px;
   left: 0;
   position: absolute;
   top: 0;
-  display: none;
 
   .overlay-label-text {
-    padding: 0 6px;
     display: none;
+    padding: 0 6px;
   }
 
   &.overlay-label-with-icon .overlay-label-text {
@@ -67,14 +67,15 @@ overlay-element {
   }
 
   .overlay-label-icon {
-    margin: -2px 2px 0 2px;
     color: $white;
     display: none;
+    margin: -2px 2px 0;
   }
 }
 
 .overlay-element-container {
-  @include overlay-border-container();
+  @include overlay-border-container;
+
   display: none;
   z-index: 10;
 
@@ -99,9 +100,10 @@ overlay-element {
 }
 
 .overlay-element-component {
-  @include overlay-border-component();
-  display: none;
+  @include overlay-border-component;
+
   cursor: pointer;
+  display: none;
 
   > .overlay-label {
     background: $blue-500;
@@ -147,28 +149,29 @@ overlay-element {
 
 .overlay-lock-icon {
   background: $black;
-  color: white;
+  color: $grey-50;
   cursor: default;
   float: right;
+  margin-right: -1px;
   // prevent the on-hover effect of a component against a container's edge by shifting the lock icon 1px up and right
   margin-top: -1px;
-  margin-right: -1px;
   pointer-events: all;
 }
 
 .overlay-lock-tooltip ._md-content {
   // make 'lock' tooltips black without transparency so the channel does not shine through
-  background-color: #000 !important;
+  background-color: $grey-900 !important;
 }
 
 .channel-dragula-mirror {
-  @include overlay-position();
+  @include overlay-position;
 
   > .gu-mirror {
     @include overlay-border-component('!important');
+
     overflow: hidden !important;
-    position: absolute !important;
     pointer-events: none !important;
+    position: absolute !important;
   }
 }
 
@@ -200,5 +203,4 @@ overlay-element {
       box-shadow: inset 0 0 0 1px $half-white, inset 0 0 160px 1px $black-shadow;
     }
   }
-
 }

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 // Color palettes
+// Blue palette
 $blue-50: #cfe7fc;
 $blue-100: #94c9f7;
 $blue-200: #5faff5;
@@ -28,6 +29,7 @@ $blue-a200: #4da0ff;
 $blue-a400: #267dff;
 $blue-a700: #0357ff;
 
+// Orange palette
 $orange-50: #fce1cf;
 $orange-100: #f7ba94;
 $orange-200: #f59356;
@@ -43,6 +45,7 @@ $orange-a200: #ff9659;
 $orange-a400: #ff751a;
 $orange-a700: #ff5203;
 
+// Red palette
 $red-50: #fccfcf;
 $red-100: #fc8c8c;
 $red-200: #fa5151;
@@ -58,6 +61,7 @@ $red-a200: #ff596a;
 $red-a400: #ff334e;
 $red-a700: #f70029;
 
+// Grey palette
 $grey-50: #fff;
 $grey-100: #f4f4f5;
 $grey-200: #e8e8ea;
@@ -79,21 +83,18 @@ $text-light: rgba(255, 255, 255, .87);
 
 // Typography
 $font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
-$OpenSansPath: '~open-sans-fontface/fonts';
 
 //TODO Clean these variables, replace with color palette
 $white: #fff;
 $black: #000;
-$blue-shadow: rgba(0, 94, 171, 0.25);
-$black-shadow: rgba(0, 0, 0, 0.25);
-$half-white: rgba(255, 255, 255, 0.50);
-
+$blue-shadow: rgba(0, 94, 171, .25);
+$black-shadow: rgba(0, 0, 0, .25);
+$half-white: rgba(255, 255, 255, .5);
 $canvas-bgcolor: #c1c3c5;
 
 // the default background color in browsers is white, so make the sheet white too
 $sheet-bgcolor: #fff;
-
-$list-item-active-bgcolor: rgba(158, 158, 158, 0.2);
+$list-item-active-bgcolor: rgba(158, 158, 158, .2);
 
 // Picker
 $picker-subheader-bgcolor: $grey-100;
@@ -101,33 +102,33 @@ $picker-border-color: $grey-400;
 $picker-actions-color: $grey-100;
 
 // Tree
-$tree-bg:                                     $white;
-$tree-color:                                  $black;
-$tree-icon-color:                             $black;
-$tree-border-radius:                          4px;
-$tree-border-color:                           $black;
-$tree-font-size:                              13px;
-$tree-hover-bg:                               $half-white;
+$tree-bg: $white;
+$tree-color: $black;
+$tree-icon-color: $black;
+$tree-border-radius: 4px;
+$tree-border-color: $black;
+$tree-font-size: 13px;
+$tree-hover-bg: $half-white;
 
 // Active tree item
-$tree-active-bg:                              $blue-500;
-$tree-active-border-color:                    $blue-shadow;
-$tree-active-color:                           $white;
+$tree-active-bg: $blue-500;
+$tree-active-border-color: $blue-shadow;
+$tree-active-color: $white;
 
 // DragDrop placeholder
-$tree-dd-bg:                                  $black-shadow;
+$tree-dd-bg: $black-shadow;
 
 // Do not use transparent tooltips
-$tooltip-bg:                                  $black;
+$tooltip-bg: $black;
 
 // Style mdSelect
-$select-invalid-color:                        #f70029;
+$select-invalid-color: #f70029;
 
 // Toolbar
-$toolbar-height:                              40px;
+$toolbar-height: 40px;
 
 // Layout breakpoints
-$layout-breakpoint-xs:     600px !default;
-$layout-breakpoint-sm:     960px !default;
-$layout-breakpoint-md:     1280px !default;
-$layout-breakpoint-lg:     1920px !default;
+$layout-breakpoint-xs: 600px !default;
+$layout-breakpoint-sm: 960px !default;
+$layout-breakpoint-md: 1280px !default;
+$layout-breakpoint-lg: 1920px !default;

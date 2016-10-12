@@ -45,7 +45,7 @@
   box-sizing: border-box;
   cursor: grabbing;
   filter: alpha(opacity=90);
-  opacity: 0.9;
+  opacity: .9;
   pointer-events: none;
   position: absolute;
   z-index: 999;
@@ -55,18 +55,27 @@
 .angular-ui-tree-handle {
   .drag-enabled & {
     cursor: move;
-    cursor: grab;
+
+    .ie11 & {
+      cursor: grab;
+    }
   }
 
   .hippo-tree-is-dragging & {
     cursor: move;
-    cursor: grabbing;
+
+    .ie11 & {
+      cursor: grabbing;
+    }
   }
 }
 
 .hippo-tree-is-dragging {
   cursor: move;
-  cursor: grabbing;
+
+  .ie11 & {
+    cursor: grabbing;
+  }
 }
 
 .has-styling {
@@ -124,12 +133,12 @@
 
   .hippo-tree-item-toggle {
     border: 0;
-    padding: 0;
     display: inline-block;
+    padding: 0;
 
     md-icon {
+      transition-duration: .2s;
       transition-property: transform;
-      transition-duration: 0.2s;
 
       // TODO: temporary workaround for missing right-arrow
       &.rotate-left {

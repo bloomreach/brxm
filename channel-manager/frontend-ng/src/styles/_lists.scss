@@ -15,8 +15,8 @@
 //TODO: This should be doable with just Material?
 md-list-item {
   .component-icon {
-    width: 40px;
     padding-right: 4px;
+    width: 40px;
 
     img {
       max-width: 100%;
@@ -41,8 +41,9 @@ md-list-item {
     }
   }
 
-  md-list-item.active {
+  .active {
     background-color: $blue-500;
+
     p,
     md-icon {
       color: $white;
