@@ -334,12 +334,12 @@
             </configuration>
           </execution>
           <execution>
-            <id>grunt-build</id>
+            <id>npm-build</id>
             <phase>process-resources</phase>
             <goals><goal>exec</goal></goals>
             <configuration>
-              <executable>grunt</executable>
-              <commandlineArgs>build --no-color</commandlineArgs>
+              <executable>npm</executable>
+              <commandlineArgs>run build</commandlineArgs>
             </configuration>
           </execution>
         </executions>

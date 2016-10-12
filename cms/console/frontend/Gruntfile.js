@@ -53,17 +53,11 @@ module.exports = function (grunt) {
         },
     });
 
-    grunt.registerTask('default', 'install');
+    grunt.registerTask('default', 'build');
 
     // build theme
     grunt.registerTask('build', 'Build the theme', [
         'clean:copies',
         'copy:binaries',
     ]);
-
-    // install
-    grunt.registerTask('install', 'Build and install the theme', [
-        'build'
-    ]);
-
 };

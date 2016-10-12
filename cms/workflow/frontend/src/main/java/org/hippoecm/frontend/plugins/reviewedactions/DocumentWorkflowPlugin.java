@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,11 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -53,10 +57,13 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
+import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 
 public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
+
+    private static final String DEFAULT_FOLDERWORKFLOW_CATEGORY = "embedded";
 
     private StdWorkflow deleteAction;
     private StdWorkflow requestDeleteAction;
@@ -203,6 +210,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     protected boolean checkPermissions() {
                         return isWritePermissionGranted(destination.getChainedModel());
                     }
+
+                    @Override
+                    protected boolean checkFolderTypes() {
+                        return isDocumentAllowedInFolder(DocumentWorkflowPlugin.this.getModel(), destination.getChainedModel());
+                    }
                 };
             }
 
@@ -270,6 +282,11 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                     @Override
                     protected boolean checkPermissions() {
                         return isWritePermissionGranted(destination.getChainedModel());
+                    }
+
+                    @Override
+                    protected boolean checkFolderTypes() {
+                        return isDocumentAllowedInFolder(DocumentWorkflowPlugin.this.getModel(), destination.getChainedModel());
                     }
                 };
             }
@@ -436,6 +453,48 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             } catch (RepositoryException ignore) {
             }
         }
+        return false;
+    }
+
+    private static boolean isDocumentAllowedInFolder(final WorkflowDescriptorModel documentModel, IModel<Node> destinationFolder) {
+
+        try {
+            final Node handle = documentModel.getNode();
+            if (handle.hasNode(handle.getName())) {
+                final String documentType =  handle.getNode(handle.getName()).getPrimaryNodeType().getName();
+
+                // get allowed folder types from hints() method on folder workflow
+                final Workflow workflow = new WorkflowDescriptorModel(DEFAULT_FOLDERWORKFLOW_CATEGORY, destinationFolder.getObject()).getWorkflow();
+                if (workflow instanceof FolderWorkflow) {
+                    final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) workflow.hints().get("prototypes");
+
+                    // squash all configured values into one set
+                    final Set<String> allowedTypes = new HashSet<>();
+                    for (final String key : prototypes.keySet()) {
+                        allowedTypes.addAll(prototypes.get(key));
+                    }
+
+                    log.debug("Document type {} {} allowed in folder {} by folderTypes {}",
+                            documentType, (allowedTypes.contains(documentType) ? "" : "NOT"),
+                            destinationFolder.getObject().getPath(), allowedTypes);
+                    return allowedTypes.contains(documentType);
+                }
+                else {
+                    log.info("Workflow by category {} on subject {} is not a FolderWorkflow but {}",
+                            DEFAULT_FOLDERWORKFLOW_CATEGORY, destinationFolder.getObject(),
+                            ((workflow == null) ? "null" : workflow.getClass().getName()));
+                }
+            }
+            else {
+                log.error("(Supposed) document handle {} does not have same-name subnode", handle.getPath());
+            }
+        } catch (RepositoryException | RemoteException e) {
+            log.error(e.getClass().getName() + " during check for workflow allowed in folder: " + e.getMessage());
+        } catch (WorkflowException we) {
+            log.error(we.getClass().getName() + " during workflow execution", we);
+        }
+
+        // forbid workflow action if something's wrong
         return false;
     }
 }

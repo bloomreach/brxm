@@ -25,6 +25,7 @@ import javax.jcr.SimpleCredentials;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -63,6 +64,7 @@ public class LoginPanel extends Panel {
     public static final JavaScriptResourceReference PREVENT_RESUBMIT_SCRIPT_REFERENCE =
             new JavaScriptResourceReference(LoginPanel.class, "PreventResubmit.js");
 
+    private static final String CONSOLE_LOCALE = "en";
     private static final String LOCALE_COOKIE = "loc";
     private static final int LOCALE_COOKIE_MAXAGE = 365 * 24 * 3600; // expire one year from now
     private final static String DEFAULT_KEY = "invalid.login";
@@ -166,18 +168,28 @@ public class LoginPanel extends Panel {
             passwordTextField.setResetPassword(false);
 
             final String defaultLocale = locales.get(0);
-            final String cookieLocale = getCookieValue(LOCALE_COOKIE);
-            final String sessionLocale = getSession().getLocale().getLanguage();
-            if (cookieLocale != null && locales.contains(cookieLocale)) {
-                selectedLocale = cookieLocale;
-            } else if (sessionLocale != null && locales.contains(sessionLocale)) {
-                selectedLocale = sessionLocale;
-            } else {
-                selectedLocale = defaultLocale;
+
+            final boolean consoleLogin = WebApplicationHelper.getApplicationName().equals(Main.PLUGIN_APPLICATION_VALUE_CONSOLE);
+
+            if (consoleLogin) {
+                // forced language (en) selection for console app
+                selectedLocale = CONSOLE_LOCALE;
+            }
+            else {
+                final String cookieLocale = getCookieValue(LOCALE_COOKIE);
+                final String sessionLocale = getSession().getLocale().getLanguage();
+                if (cookieLocale != null && locales.contains(cookieLocale)) {
+                    selectedLocale = cookieLocale;
+                } else if (sessionLocale != null && locales.contains(sessionLocale)) {
+                    selectedLocale = sessionLocale;
+                } else {
+                    selectedLocale = defaultLocale;
+                }
             }
             getSession().setLocale(getSelectedLocale());
 
-            addLabelledComponent(new Label("locale-label", new ResourceModel("locale-label")));
+            final Label localeLabel = new Label("locale-label", new ResourceModel("locale-label"));
+            addLabelledComponent(localeLabel);
             add(locale = new DropDownChoice<>("locale",
                     new PropertyModel<String>(LoginPanel.this, "selectedLocale") {
                         @Override
@@ -190,7 +202,7 @@ public class LoginPanel extends Panel {
                     new IChoiceRenderer<String>() {
                         public String getDisplayValue(String key) {
                             final Locale locale = new Locale(key);
-                            return locale.getDisplayLanguage(locale);
+                            return StringUtils.capitalize(locale.getDisplayLanguage(locale));
                         }
 
                         public String getIdValue(String object, int index) {
@@ -217,6 +229,11 @@ public class LoginPanel extends Panel {
 
             submitButton = new Button("submit", new ResourceModel("submit-label"));
             addLabelledComponent(submitButton);
+
+            // hide language selection for console app
+            if (consoleLogin) {
+                locale.setVisible(false);
+            }
         }
 
         @Override

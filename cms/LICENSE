@@ -489,7 +489,6 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/ColorQu
 ------------------------------------------------------------------------------------------------------------------------
 jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.11.0.js
 jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.9.2.js
-api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.ui.widget.js
 
     Copyright 2012-2014 jQuery Foundation and other contributors
     http://jquery.com/
@@ -536,15 +535,6 @@ jquery/src/main/resources/org/onehippo/cms7/jquery/plugins/jquery.class.js
     OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ------------------------------------------------------------------------------------------------------------------------
-tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java
-
-   NameGen Java style, coded in 2006-2008 by Curtis Rueden
-   http://www.restlesscoder.net/software/namegen-java
-
-   This code is dedicated to the public domain.
-   All copyrights (and warranties) are disclaimed.
-
-------------------------------------------------------------------------------------------------------------------------
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/util/simple-hint.css
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/util/simple-hint.js
 perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/codemirror.css
@@ -587,65 +577,3 @@ perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/the
     licences.
        This code is dedicated to the public domain.
        All copyrights (and warranties) are disclaimed.
-------------------------------------------------------------------------------------------------------------------------
-api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload.js
-api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-ui.js
-api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-image.js
-api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-validate.js
-api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.fileupload-process.js
-api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/jquery.iframe-transport.js
-api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/load-image-meta.js
-api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/canvas-to-blob.js
-api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/load-image.js
-api/src/main/java/org/hippoecm/frontend/plugins/jquery/upload/js/tmpl.js
-
-    These packages use the following plugins from https://blueimp.net:
-        - jQuery FileUpload
-        - jQuery Iframe Transport
-        - Canvas to Blob
-        - Load Image
-        - JavaScript Templates
-
-    Copyright Sebastian Tschan, MIT licensed.
-
-    The general MIT License template follows:
-
-    Copyright (c) <year> <copyright holders>
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-    documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
-    rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-    permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
-    Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
-    WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
-    OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-    OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-------------------------------------------------------------------------------------------------------------------------
-engine/src/main/java/org/hippoecm/frontend/plugins/login/jstz.min.js
-
-    MIT License
-
-    Copyright (c) 2012 Jon Nylander, project maintained at
-    https://bitbucket.org/pellepim/jstimezonedetect
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights to
-    use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-    of the Software, and to permit persons to whom the Software is furnished to
-    do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in
-    all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    THE SOFTWARE.
