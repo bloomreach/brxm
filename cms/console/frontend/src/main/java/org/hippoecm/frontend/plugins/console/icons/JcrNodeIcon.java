@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,6 +59,8 @@ public class JcrNodeIcon {
         // hst config
         primaryTypeNameIcons.put("hst:hst", FontAwesomeIcon.CLOUD);
         primaryTypeNameIcons.put("hst:sitemapitem", FontAwesomeIcon.SITEMAP);
+        primaryTypeNameIcons.put("hst:sitemapitemhandlers", FontAwesomeIcon.COMPASS);
+        primaryTypeNameIcons.put("hst:sitemapitemhandler", FontAwesomeIcon.COMPASS_ROTATE_90);
         primaryTypeNameIcons.put("hst:sitemap", FontAwesomeIcon.SITEMAP);
         primaryTypeNameIcons.put("hst:template", FontAwesomeIcon.FILE_TEXT_O);
         primaryTypeNameIcons.put("hst:templates", FontAwesomeIcon.FILE_O);
@@ -131,6 +133,13 @@ public class JcrNodeIcon {
         primaryTypeNameIcons.put("hipposys:queryfolder", FontAwesomeIcon.QUESTION_CIRCLE);
         primaryTypeNameIcons.put("hipposys:queryfolder", FontAwesomeIcon.QUESTION_CIRCLE);
         primaryTypeNameIcons.put("hippostd:templatequery", FontAwesomeIcon.QUESTION);
+        primaryTypeNameIcons.put("hipposys:resourcebundles", FontAwesomeIcon.BOOKMARK_O);
+        primaryTypeNameIcons.put("hipposys:resourcebundle", FontAwesomeIcon.BOOKMARK);
+        primaryTypeNameIcons.put("hipposys:domainfolder", FontAwesomeIcon.SHIELD);
+        primaryTypeNameIcons.put("hipposys:domain", FontAwesomeIcon.SHIELD_ROTATE_270);
+        primaryTypeNameIcons.put("hipposys:domainrule", FontAwesomeIcon.SHIELD_ROTATE_270);
+        primaryTypeNameIcons.put("hipposys:facetrule", FontAwesomeIcon.PIECHART);
+        primaryTypeNameIcons.put("hipposys:authrole", FontAwesomeIcon.USER_PLUS);
 
         // targeting
         primaryTypeNameIcons.put("targeting:experiments", FontAwesomeIcon.FLASK);
@@ -163,6 +172,8 @@ public class JcrNodeIcon {
         primaryTypeNameIcons.put("targeting:expression", FontAwesomeIcon.ANGLE_DOUBLE_RIGHT);
         primaryTypeNameIcons.put("targeting:negate", FontAwesomeIcon.ANGLE_DOUBLE_RIGHT);
         primaryTypeNameIcons.put("targeting:abstractandexpression", FontAwesomeIcon.ANGLE_DOUBLE_RIGHT);
+        primaryTypeNameIcons.put("targeting:services", FontAwesomeIcon.SUN_O);
+        primaryTypeNameIcons.put("targeting:service", FontAwesomeIcon.CERTIFICATE);
 
         pathCssClass.put("/hst:hst", "hst");
         pathCssClass.put("/" + CONFIGURATION_PATH, "conf");
