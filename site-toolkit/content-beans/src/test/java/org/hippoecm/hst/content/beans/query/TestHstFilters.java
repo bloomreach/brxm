@@ -16,6 +16,7 @@
 package org.hippoecm.hst.content.beans.query;
 
 
+import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
@@ -91,11 +92,8 @@ public class TestHstFilters extends AbstractBeanTestCase {
         // Calendar/Date
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(1475155000000L);
-        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-        assertEquals("xs:dateTime('2016-09-29T13:16:40.000Z')", filter.getStringValue(cal));
-
-        // this should work but doesn't yet, see HSTTWO-3826
-        // assertEquals("xs:dateTime('2016-09-29T13:16:40.000Z')", filter.getStringValue(cal.getTime()));
+        assertEquals("xs:dateTime('"+ISO8601.format(cal)+"')", filter.getStringValue(cal));
+        assertEquals("xs:dateTime('" + ISO8601.format(cal) + "')", filter.getStringValue(cal.getTime()));
     }
 
     @Test(expected = FilterException.class)
