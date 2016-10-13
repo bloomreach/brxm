@@ -37,7 +37,7 @@ describe('getByProperty filter', () => {
     },
   ];
 
-  beforeEach(angular.mock.module('hippo-cm.utils'));
+  beforeEach(angular.mock.module('hippo-cm'));
 
   beforeEach(inject((_getByPropertyFilter_) => {
     getByPropertyFilter = _getByPropertyFilter_;

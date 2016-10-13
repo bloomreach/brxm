@@ -22,7 +22,7 @@ describe('DomService', () => {
   const fixturesPath = `/${jasmine.getFixtures().fixturesPath}`;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.utils');
+    angular.mock.module('hippo-cm');
 
     angular.mock.module(($provide) => {
       $provide.value('$document', [{
@@ -37,7 +37,7 @@ describe('DomService', () => {
       DomService = _DomService_;
     });
 
-    jasmine.getFixtures().load('utils/dom.service.fixture.html');
+    jasmine.getFixtures().load('services/dom.service.fixture.html');
   });
 
   function testInIframe(callback) {
@@ -45,12 +45,12 @@ describe('DomService', () => {
     iframe.on('load', () => {
       callback(iframe[0].contentWindow);
     });
-    iframe.attr('src', `${fixturesPath}/utils/dom.service.iframe.fixture.html`);
+    iframe.attr('src', `${fixturesPath}/services/dom.service.iframe.fixture.html`);
   }
 
   it('can add a css file to the head', (done) => {
     testInIframe((iframeWindow) => {
-      const cssFile = `${fixturesPath}/utils/dom.service.fixture.css`;
+      const cssFile = `${fixturesPath}/services/dom.service.fixture.css`;
       DomService.addCss(iframeWindow, cssFile)
         .then(() => {
           const red = $j(iframeWindow.document).find('#red');
@@ -62,7 +62,7 @@ describe('DomService', () => {
 
   it('can add a script file to the body', (done) => {
     testInIframe((iframeWindow) => {
-      const script = `${fixturesPath}/utils/dom.service.fixture.js`;
+      const script = `${fixturesPath}/services/dom.service.fixture.js`;
       expect(iframeWindow.DomServiceTestScriptLoaded).not.toBeDefined();
       DomService.addScript(iframeWindow, script)
         .then(() => {
@@ -93,7 +93,7 @@ describe('DomService', () => {
   }
 
   it('can copy the computed style of an element', () => {
-    window.loadStyleFixtures('utils/dom.service.fixture.css');
+    window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
     DomService.copyComputedStyleExcept(source[0], target[0]);
@@ -101,7 +101,7 @@ describe('DomService', () => {
   });
 
   it('merges the existing style attribute of the target with the copied computed style of the source element', () => {
-    window.loadStyleFixtures('utils/dom.service.fixture.css');
+    window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
 
@@ -115,7 +115,7 @@ describe('DomService', () => {
   });
 
   it('can copy the computed style of an element except excluded properties', () => {
-    window.loadStyleFixtures('utils/dom.service.fixture.css');
+    window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
 
@@ -127,7 +127,7 @@ describe('DomService', () => {
   });
 
   it('can copy the computed style of descendants', () => {
-    window.loadStyleFixtures('utils/dom.service.fixture.css');
+    window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
 
@@ -136,7 +136,7 @@ describe('DomService', () => {
   });
 
   it('can copy the computed style of descendants except excluded properties', () => {
-    window.loadStyleFixtures('utils/dom.service.fixture.css');
+    window.loadStyleFixtures('services/dom.service.fixture.css');
     const source = $j('#copyComputedStyleSource');
     const target = $j('#copyComputedStyleTarget');
 

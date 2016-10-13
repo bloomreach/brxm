@@ -31,15 +31,15 @@ import SiteMapService from './services/siteMap.service';
 import SiteMapItemService from './services/siteMapItem.service';
 import SiteMenuService from './services/siteMenu.service';
 import HstConstants from './services/hst.constants';
-
+import DomService from './services/dom.service';
+import FeedbackService from './services/feedback.service';
+import PathService from './services/path.service';
 import illegalCharactersDirective from './directives/illegalCharacters.directive';
 import stopPropagationDirective from './directives/stopPropagation.directive';
 import scrollToIfDirective from './directives/scrollToIf.directive';
-
 import startWithSlashFilter from './filters/startWithSlash.filter';
 import getByPropertyFilter from './filters/getByProperty.filter';
 import incrementPropertyFilter from './filters/incrementProperty.filter';
-
 import channelModule from './channel/channel';
 import config from './hippo-cm.config';
 import run from './hippo-cm.run';
@@ -64,6 +64,9 @@ const hippoCmng = angular
   .service('SiteMapService', SiteMapService)
   .service('SiteMapItemService', SiteMapItemService)
   .service('SiteMenuService', SiteMenuService)
+  .service('DomService', DomService)
+  .service('FeedbackService', FeedbackService)
+  .service('PathService', PathService)
   .directive('illegalCharacters', illegalCharactersDirective)
   .directive('stopPropagation', stopPropagationDirective)
   .directive('scrollToIf', scrollToIfDirective)
