@@ -183,13 +183,13 @@ public class EventProcessor implements EventListener {
                 addEvent(event);
             }
             if (events.size() > 0) {
-                // Schedule events to be processed 2 seconds in the future.
+                // Schedule events to be processed 0.25 seconds in the future.
                 // If other events arrive during this period the task will
                 // be cancelled and a new task is scheduled.
                 // This allows us to process events in bigger batches,
                 // thus preventing multiple calls to processEvents() where a single
                 // call suffices.
-                future = executor.schedule(task, 2, TimeUnit.SECONDS);
+                future = executor.schedule(task, 250, TimeUnit.MILLISECONDS);
             }
         }
     }

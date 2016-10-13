@@ -98,6 +98,7 @@ import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.CmsSessionUtil;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -361,7 +362,7 @@ public class Main extends PluginApplication {
                                 String cmsSessionContextId = cmsSessionContext != null ? cmsSessionContext.getId() : null;
                                 if (cmsSessionContextId == null) {
                                     CmsSessionContext newCmsSessionContext = cmsContextService.create(httpSession);
-                                    cmsContextService.setData(newCmsSessionContext, CmsSessionContext.REPOSITORY_CREDENTIALS, userCredentials.getJcrCredentials());
+                                    CmsSessionUtil.populateCmsSessionContext(cmsContextService, newCmsSessionContext, userSession);
                                     cmsSessionContextId = newCmsSessionContext.getId();
 
                                 }
