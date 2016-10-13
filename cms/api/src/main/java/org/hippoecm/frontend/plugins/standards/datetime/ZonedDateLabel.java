@@ -20,7 +20,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
-import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Session;
@@ -57,10 +56,10 @@ public class ZonedDateLabel extends Label {
         @Override
         public String getObject() {
             final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(dateStyle);
-            formatter.withLocale(getLocale());
+            final DateTimeFormatter withLocale = formatter.withLocale(getLocale());
 
             final ZonedDateTime zonedDateTime = model.getObject();
-            return zonedDateTime == null ? StringUtils.EMPTY : zonedDateTime.format(formatter);
+            return zonedDateTime == null ? StringUtils.EMPTY : zonedDateTime.format(withLocale);
         }
 
         private static Locale getLocale() {
