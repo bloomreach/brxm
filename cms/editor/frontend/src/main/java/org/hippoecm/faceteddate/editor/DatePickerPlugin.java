@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.wicket.datetime.StyleDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -33,6 +34,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.datetime.DateFieldWidget;
+import org.hippoecm.frontend.model.properties.MapEmptyDateToNullModel;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
@@ -50,9 +52,9 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
 
         setOutputMarkupId(true);
 
-        Node dateNode = ((JcrNodeModel) getDefaultModel()).getNode();
-        JcrPropertyValueModel<Date> valueModel = new JcrPropertyValueModel<Date>(
-                new JcrPropertyModel(dateNode.getProperty(HIPPOSTD_DATE)));
+        final Node dateNode = ((JcrNodeModel) getDefaultModel()).getNode();
+        final IModel<Date> valueModel = new MapEmptyDateToNullModel(new JcrPropertyValueModel<>(
+                new JcrPropertyModel(dateNode.getProperty(HIPPOSTD_DATE))));
 
         final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
         if (mode == IEditor.Mode.VIEW) {
@@ -64,7 +66,7 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
 
     class View extends Fragment {
 
-        public View(String id, Node dateNode, JcrPropertyValueModel<Date> valueModel) throws RepositoryException {
+        public View(String id, Node dateNode, IModel<Date> valueModel) throws RepositoryException {
             super(id, "view", DatePickerPlugin.this);
 
             add(new DateLabel("label", valueModel, new StyleDateConverter(true)));
