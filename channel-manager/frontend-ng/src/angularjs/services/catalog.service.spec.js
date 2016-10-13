@@ -24,7 +24,7 @@ describe('ComponentsService', () => {
   let CatalogService;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm-api');
+    angular.mock.module('hippo-cm');
 
     HstServiceMock = jasmine.createSpyObj('HstService', [
       'doGet',

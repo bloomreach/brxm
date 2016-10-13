@@ -20,7 +20,18 @@ import ngTranslate from 'angular-translate';
 import 'angular-translate-loader-static-files';
 import uiRouter from 'angular-ui-router';
 
-import channelManagerApi from './api/api';
+import CatalogService from './services/catalog.service';
+import CmsService from './services/cms.service';
+import ConfigService from './services/config.service';
+import ContentService from './services/content.service';
+import DialogService from './services/dialog.service';
+import HstService from './services/hst.service';
+import SessionService from './services/session.service';
+import SiteMapService from './services/siteMap.service';
+import SiteMapItemService from './services/siteMapItem.service';
+import SiteMenuService from './services/siteMenu.service';
+import HstConstants from './services/hst.constants';
+
 import channelModule from './channel/channel';
 import config from './hippo-cm.config';
 import run from './hippo-cm.run';
@@ -30,10 +41,20 @@ const hippoCmng = angular
     ngMaterial,
     ngTranslate,
     uiRouter,
-    channelManagerApi.name,
     channelModule.name,
   ])
   .config(config)
-  .run(run);
+  .run(run)
+  .service('CatalogService', CatalogService)
+  .service('CmsService', CmsService)
+  .service('ConfigService', ConfigService)
+  .service('ContentService', ContentService)
+  .service('DialogService', DialogService)
+  .service('HstService', HstService)
+  .service('SessionService', SessionService)
+  .service('SiteMapService', SiteMapService)
+  .service('SiteMapItemService', SiteMapItemService)
+  .service('SiteMenuService', SiteMenuService)
+  .constant('HstConstants', HstConstants);
 
 export default hippoCmng;

@@ -31,7 +31,7 @@ describe('HstService', () => {
   const handshakeUrl = `${contextPath}${apiUrlPrefix}/${rootUuid}./composermode/${hostname}/${mountId}`;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm-api');
+    angular.mock.module('hippo-cm');
 
     ConfigServiceMock = {
       apiUrlPrefix,
