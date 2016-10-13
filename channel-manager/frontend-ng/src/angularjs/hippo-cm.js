@@ -36,6 +36,10 @@ import illegalCharactersDirective from './directives/illegalCharacters.directive
 import stopPropagationDirective from './directives/stopPropagation.directive';
 import scrollToIfDirective from './directives/scrollToIf.directive';
 
+import startWithSlashFilter from './filters/startWithSlash.filter';
+import getByPropertyFilter from './filters/getByProperty.filter';
+import incrementPropertyFilter from './filters/incrementProperty.filter';
+
 import channelModule from './channel/channel';
 import config from './hippo-cm.config';
 import run from './hippo-cm.run';
@@ -62,6 +66,9 @@ const hippoCmng = angular
   .service('SiteMenuService', SiteMenuService)
   .directive('illegalCharacters', illegalCharactersDirective)
   .directive('stopPropagation', stopPropagationDirective)
-  .directive('scrollToIf', scrollToIfDirective);
+  .directive('scrollToIf', scrollToIfDirective)
+  .filter('getByProperty', getByPropertyFilter)
+  .filter('incrementProperty', incrementPropertyFilter)
+  .filter('startWithSlash', startWithSlashFilter);
 
 export default hippoCmng;

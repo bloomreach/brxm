@@ -17,17 +17,11 @@
 import DomService from './dom.service';
 import FeedbackService from './feedback.service';
 import PathService from './path.service';
-import startWithSlashFilter from './filter/startWithSlash.filter';
-import getByPropertyFilter from './filter/getByProperty.filter';
-import incrementPropertyFilter from './filter/incrementProperty.filter';
 
 const utilsModule = angular
   .module('hippo-cm.utils', [])
   .service('DomService', DomService)
   .service('FeedbackService', FeedbackService)
-  .service('PathService', PathService)
-  .filter('getByProperty', getByPropertyFilter)
-  .filter('incrementProperty', incrementPropertyFilter)
-  .filter('startWithSlash', startWithSlashFilter);
+  .service('PathService', PathService);
 
 export default utilsModule;
