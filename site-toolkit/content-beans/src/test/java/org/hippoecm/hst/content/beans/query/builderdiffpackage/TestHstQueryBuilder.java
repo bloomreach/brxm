@@ -657,7 +657,8 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
                                 )
                         )
                 )
-                .orderByAscending("myhippoproject:title").orderByDescending("myhippoproject:date")
+                .orderByAscending("myhippoproject:title")
+                .orderByDescending("myhippoproject:date")
                 .offset(10).limit(5)
                 .build();
 
@@ -1380,5 +1381,22 @@ public class TestHstQueryBuilder extends AbstractBeanTestCase {
 
         assertHstQueriesEquals(hstQuery, fluentQuery);
         assertHstQueriesEquals(hstQuery, fluentQuery2);
+    }
+
+    @Test
+    public void missing_date_resolution_works_correctly() throws Exception {
+        HstQuery hstQuery = queryManager.createQuery(baseContentBean);
+        Calendar cal = Calendar.getInstance();
+        Filter filter = hstQuery.createFilter();
+        filter.addLessThan("myhippoproject:date", cal);
+        hstQuery.setFilter(filter);
+        HstQuery fluentQuery = create(baseContentBean)
+                .where(
+                        constraint("myhippoproject:date").lessThan(cal)
+                )
+                .build();
+
+        assertHstQueriesEquals(hstQuery, fluentQuery);
+
     }
 }
