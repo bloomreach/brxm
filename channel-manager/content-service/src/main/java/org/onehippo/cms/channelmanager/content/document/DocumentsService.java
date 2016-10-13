@@ -16,8 +16,6 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
-import java.util.Locale;
-
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.document.model.Document;
@@ -38,24 +36,31 @@ public interface DocumentsService {
      *
      * @param uuid    UUID of the requested document (handle)
      * @param session user-authenticated JCR session for reading from the repository
-     * @param locale  locale of the current CMS session
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws DocumentNotFoundException
      *                If the requested UUID was not found or is not a document
      */
-    Document createDraft(final String uuid, final Session session, final Locale locale)
-            throws DocumentNotFoundException;
+    Document createDraft(String uuid, Session session) throws DocumentNotFoundException;
+
+    /**
+     * Update the draft version of a document, and keep it locked for further editing.
+     *
+     * @param uuid     UUID of the document to be updated
+     * @param document Document containing the to-be-persisted content
+     * @param session  user-authenticated JCR session for writing to the repository
+     * @throws DocumentNotFoundException
+     *                If the requested UUID was not found or is not a document
+     */
+    void updateDraft(String uuid, Document document, Session session) throws DocumentNotFoundException;
 
     /**
      * Read the published variant of a document
      *
      * @param uuid    UUID of the requested document (handle)
      * @param session user-authenticated JCR session for reading from the repository
-     * @param locale  locale of the current CMS session
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws DocumentNotFoundException
      *                If the requested UUID was not found or is not a document
      */
-    Document getPublished(final String uuid, final Session session, final Locale locale)
-            throws DocumentNotFoundException;
+    Document getPublished(String uuid, Session session) throws DocumentNotFoundException;
 }

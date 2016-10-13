@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -44,7 +45,7 @@ public interface DocumentTypesService {
      * @throws DocumentTypeNotFoundException
      *                if assembling the document type specification failed in a non-recoverable manner
      */
-    DocumentType getDocumentType(String id, Session userSession, Locale locale)
+    DocumentType getDocumentType(String id, Session userSession, Optional<Locale> locale)
             throws DocumentTypeNotFoundException;
 
     /**
@@ -56,7 +57,7 @@ public interface DocumentTypesService {
      * @throws DocumentTypeNotFoundException
      *                if assembling the document type failed in a non-recoverable manner
      */
-    DocumentType getDocumentType(Node handle, Locale locale) throws DocumentTypeNotFoundException;
+    DocumentType getDocumentType(Node handle, Optional<Locale> locale) throws DocumentTypeNotFoundException;
 
     /**
      * Populate the fields of a compound content type.

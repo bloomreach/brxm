@@ -17,11 +17,13 @@
 package org.onehippo.cms.channelmanager.content;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -49,10 +51,9 @@ public class ContentResource {
     @Path("documents/{id}/draft")
     public Response createDraftDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
-        final Locale locale = sessionDataProvider.getLocale(servletRequest);
         final DocumentsService documentsService = DocumentsService.get();
         try {
-            final Document document = documentsService.createDraft(id, userSession, locale);
+            final Document document = documentsService.createDraft(id, userSession);
             if (document.getInfo().getEditingInfo().getState() == EditingInfo.State.AVAILABLE) {
                 return Response.status(Response.Status.CREATED).entity(document).build();
             } else {
@@ -63,15 +64,28 @@ public class ContentResource {
         }
     }
 
+    @PUT
+    @Path("documents/{id}/draft")
+    public Response updateDraftDocument(@PathParam("id") String id, Document document,
+                                        @Context HttpServletRequest servletRequest) {
+        final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
+        final DocumentsService documentsService = DocumentsService.get();
+        try {
+            documentsService.updateDraft(id, document, userSession);
+            return Response.ok().entity(document).build();
+        } catch (DocumentNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
     // for easy debugging:
     @GET
     @Path("documents/{id}")
     public Response getPublishedDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
         final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
-        final Locale locale = sessionDataProvider.getLocale(servletRequest);
         final DocumentsService documentsService = DocumentsService.get();
         try {
-            final Document document = documentsService.getPublished(id, userSession, locale);
+            final Document document = documentsService.getPublished(id, userSession);
             return Response.ok().entity(document).build();
         } catch (DocumentNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -85,7 +99,7 @@ public class ContentResource {
         final Locale locale = sessionDataProvider.getLocale(servletRequest);
         final DocumentTypesService documentTypesService = DocumentTypesService.get();
         try {
-            final DocumentType docType = documentTypesService.getDocumentType(id, userSession, locale);
+            final DocumentType docType = documentTypesService.getDocumentType(id, userSession, Optional.of(locale));
             return Response.ok().entity(docType).build();
         } catch (DocumentTypeNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();

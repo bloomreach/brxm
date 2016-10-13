@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.NodeIterable;
@@ -74,5 +75,54 @@ public class CompoundFieldType extends FieldType {
             log.warn("Failed to read nodes for compound type '{}'", getId(), e);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public int writeTo(Node node, Optional<Object> optionalValue) {
+        final String nodeName = getId();
+        try {
+            final NodeIterator iterator = node.getNodes(nodeName);
+            long numberOfNodes = iterator.getSize();
+            if (!optionalValue.isPresent() && numberOfNodes > 0) {
+                return 1;
+            }
+
+            final Object value = optionalValue.get();
+            if (isMultiple()) {
+                if (!(value instanceof List)) {
+                    return 1;
+                }
+                final List listOfValues = (List)value;
+                if (listOfValues.size() != numberOfNodes) {
+                    return 1;
+                }
+                int errors = 0;
+                for (int i = 0; i < numberOfNodes; i++) {
+                    errors += writeToCompoundNode(iterator.nextNode(), listOfValues.get(i));
+                }
+                return errors;
+            }
+
+            if (numberOfNodes != 1) {
+                return 1;
+            }
+            return writeToCompoundNode(iterator.nextNode(), value);
+
+        } catch (RepositoryException e) {
+            log.warn("Failed to write Compound value to node {}", nodeName, e);
+        }
+        return 1;
+    }
+
+    private int writeToCompoundNode(final Node compound, final Object value) {
+        if (!(value instanceof Map)) {
+            return 1;
+        }
+        final Map valueMap = (Map)value;
+        int errors = 0;
+        for (FieldType field : getFields()) {
+            errors += field.writeTo(compound, Optional.ofNullable(valueMap.get(field.getId())));
+        }
+        return errors;
     }
 }

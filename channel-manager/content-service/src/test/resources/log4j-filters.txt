@@ -25,4 +25,7 @@ Failed to create field context
 Failed to retrieve content type 'type'
 Failed to read property 'caption'
 Failed to retrieve draft node
+Failed to read string field 'test:id' from 'bla'
+Failed to write singular String value to property test:id
+Failed to write multiple String value to property test:id
 Node with identifier 'unknown-uuid' does not exist

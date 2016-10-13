@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.jcr.Session;
@@ -43,9 +44,11 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static com.jayway.restassured.http.ContentType.JSON;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -90,7 +93,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.getPublished(requestedUuid, userSession, locale)).andReturn(testDocument);
+        expect(documentsService.getPublished(requestedUuid, userSession)).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -106,7 +109,7 @@ public class ContentResourceTest extends CXFTest {
     public void getUnpublishedDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.getPublished(requestedUuid, userSession, locale)).andThrow(new DocumentNotFoundException());
+        expect(documentsService.getPublished(requestedUuid, userSession)).andThrow(new DocumentNotFoundException());
         replay(documentsService);
 
         when()
@@ -121,7 +124,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final FluentDocument testDocument = createDocument(uuid).withState(EditingInfo.State.AVAILABLE);
 
-        expect(documentsService.createDraft(requestedUuid, userSession, locale)).andReturn(testDocument);
+        expect(documentsService.createDraft(requestedUuid, userSession)).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/available-document.json");
@@ -139,7 +142,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final FluentDocument testDocument = createDocument(uuid).withState(EditingInfo.State.UNAVAILABLE);
 
-        expect(documentsService.createDraft(requestedUuid, userSession, locale)).andReturn(testDocument);
+        expect(documentsService.createDraft(requestedUuid, userSession)).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/unavailable-document.json");
@@ -155,7 +158,7 @@ public class ContentResourceTest extends CXFTest {
     public void createDraftDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.createDraft(requestedUuid, userSession, locale)).andThrow(new DocumentNotFoundException());
+        expect(documentsService.createDraft(requestedUuid, userSession)).andThrow(new DocumentNotFoundException());
         replay(documentsService);
 
         when()
@@ -164,6 +167,29 @@ public class ContentResourceTest extends CXFTest {
                 .statusCode(404);
     }
 
+    // TODO add tests for updating a draft.
+    /*
+    @Test
+    public void updateDraftDocument() throws Exception {
+        final String uuid = "returned-uuid";
+
+        documentsService.updateDraft(uuid, anyObject(), userSession);
+        expectLastCall();
+        replay(documentsService);
+
+        final String receivedBody = normalizeJsonResource("/empty-document.json");
+
+        given()
+                .contentType(JSON)
+                .body(receivedBody)
+        .when()
+                .put("/documents/" + uuid + "/draft")
+        .then()
+                .statusCode(200)
+                .body(equalTo(receivedBody));
+    }
+    */
+
     @Test
     public void retrieveDocumentType() throws Exception {
         final String requestedId = "ns:testdocument";
@@ -171,7 +197,7 @@ public class ContentResourceTest extends CXFTest {
         final DocumentType docType = new DocumentType();
         docType.setId(returnedId);
 
-        expect(documentTypesService.getDocumentType(requestedId, userSession, locale)).andReturn(docType);
+        expect(documentTypesService.getDocumentType(requestedId, userSession, Optional.of(locale))).andReturn(docType);
         replay(documentTypesService);
 
         final String expectedBody = normalizeJsonResource("/empty-documenttype.json");
@@ -187,7 +213,7 @@ public class ContentResourceTest extends CXFTest {
     public void documentTypeNotFound() throws Exception {
         final String requestedId = "ns:testdocument";
 
-        expect(documentTypesService.getDocumentType(requestedId, userSession, locale))
+        expect(documentTypesService.getDocumentType(requestedId, userSession, Optional.of(locale)))
                 .andThrow(new DocumentTypeNotFoundException());
         replay(documentTypesService);
 

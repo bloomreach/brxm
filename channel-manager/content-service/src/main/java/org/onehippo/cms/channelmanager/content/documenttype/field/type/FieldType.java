@@ -46,11 +46,11 @@ public class FieldType {
     private String displayName;   // using the correct language/locale
     private String hint;          // using the correct language/locale
 
-    private Boolean multiple;     // Boolean (i.s.o. boolean) removes the 'false' value from JSON output
+    private boolean multiple;
     // private boolean orderable; // future improvement
     // private boolean readOnly;  // future improvement
 
-    private Set<Validator> validators;
+    private Set<Validator> validators = new HashSet<>();
 
     // TODO: move up into CompoundFieldType? - currently not possible due to deserialization in MockResponse.
     protected List<FieldType> fields; // the child-fields of a complex field type (COMPOUND or CHOICE)
@@ -107,7 +107,7 @@ public class FieldType {
         this.hint = hint;
     }
 
-    public Boolean isMultiple() {
+    public boolean isMultiple() {
         return multiple;
     }
 
@@ -120,9 +120,6 @@ public class FieldType {
     }
 
     public void addValidator(final Validator validator) {
-        if (validators == null) {
-            validators = new HashSet<>();
-        }
         validators.add(validator);
     }
 
@@ -138,11 +135,22 @@ public class FieldType {
     /**
      * Read a document field instance from a document variant node
      *
-     * @param node JCR node to read th value from
+     * @param node JCR node to read the value from
      * @return     Object representing the value, or nothing, wrapped in an Optional
      */
     public Optional<Object> readFrom(Node node) {
         return Optional.empty();
+    }
+
+    /**
+     * Write a field value to the draft variant of a document.
+     *
+     * @param draft JCR node to write the value to
+     * @param value value to write
+     * @return      number of (sub-)fields where writing the value resulted in an error
+     */
+    public int writeTo(Node draft, Optional<Object> value) {
+        return 1;
     }
 
     /**
