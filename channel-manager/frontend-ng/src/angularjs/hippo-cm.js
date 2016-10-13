@@ -32,6 +32,10 @@ import SiteMapItemService from './services/siteMapItem.service';
 import SiteMenuService from './services/siteMenu.service';
 import HstConstants from './services/hst.constants';
 
+import illegalCharactersDirective from './directives/illegalCharacters.directive';
+import stopPropagationDirective from './directives/stopPropagation.directive';
+import scrollToIfDirective from './directives/scrollToIf.directive';
+
 import channelModule from './channel/channel';
 import config from './hippo-cm.config';
 import run from './hippo-cm.run';
@@ -45,6 +49,7 @@ const hippoCmng = angular
   ])
   .config(config)
   .run(run)
+  .constant('HstConstants', HstConstants)
   .service('CatalogService', CatalogService)
   .service('CmsService', CmsService)
   .service('ConfigService', ConfigService)
@@ -55,6 +60,8 @@ const hippoCmng = angular
   .service('SiteMapService', SiteMapService)
   .service('SiteMapItemService', SiteMapItemService)
   .service('SiteMenuService', SiteMenuService)
-  .constant('HstConstants', HstConstants);
+  .directive('illegalCharacters', illegalCharactersDirective)
+  .directive('stopPropagation', stopPropagationDirective)
+  .directive('scrollToIf', scrollToIfDirective);
 
 export default hippoCmng;

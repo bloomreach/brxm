@@ -20,9 +20,6 @@ import PathService from './path.service';
 import startWithSlashFilter from './filter/startWithSlash.filter';
 import getByPropertyFilter from './filter/getByProperty.filter';
 import incrementPropertyFilter from './filter/incrementProperty.filter';
-import illegalCharactersDirective from './directive/illegalCharacters.directive';
-import stopPropagationDirective from './directive/stopPropagation.directive';
-import scrollToIfDirective from './directive/scrollToIf.directive';
 
 const utilsModule = angular
   .module('hippo-cm.utils', [])
@@ -31,9 +28,6 @@ const utilsModule = angular
   .service('PathService', PathService)
   .filter('getByProperty', getByPropertyFilter)
   .filter('incrementProperty', incrementPropertyFilter)
-  .filter('startWithSlash', startWithSlashFilter)
-  .directive('illegalCharacters', illegalCharactersDirective)
-  .directive('stopPropagation', stopPropagationDirective)
-  .directive('scrollToIf', scrollToIfDirective);
+  .filter('startWithSlash', startWithSlashFilter);
 
 export default utilsModule;
