@@ -169,8 +169,11 @@ public class FieldType {
 
         setId(fieldId);
 
-        LocalizationUtils.determineFieldDisplayName(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setDisplayName);
-        LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
+        // only load displayName and hints if locale-info is available.
+        contentTypeContext.getLocale().ifPresent(dummy -> {
+            LocalizationUtils.determineFieldDisplayName(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setDisplayName);
+            LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
+        });
 
         if (item.isMultiple() || item.getValidators().contains(FieldValidators.OPTIONAL)) {
             setMultiple(true);
