@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Factory for creating new instances of subclasses of FieldType.
  *
- * We keep this class as small as possible, as the newInstance() call is hard to mo
+ * We keep this class as small as possible, as the newInstance() call is hard to mock.
  */
 public class FieldTypeFactory {
     private static final Logger log = LoggerFactory.getLogger(FieldTypeFactory.class);
