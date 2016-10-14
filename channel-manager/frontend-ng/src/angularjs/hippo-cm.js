@@ -30,7 +30,7 @@ import SessionService from './services/session.service';
 import SiteMapService from './services/siteMap.service';
 import SiteMapItemService from './services/siteMapItem.service';
 import SiteMenuService from './services/siteMenu.service';
-import HstConstants from './services/hst.constants';
+import HstConstants from './constants/hst.constants';
 import DomService from './services/dom.service';
 import FeedbackService from './services/feedback.service';
 import PathService from './services/path.service';
