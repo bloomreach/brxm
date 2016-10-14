@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             fragment = new Fragment(id, "embed", this);
             fragment.add(new Label("filesize", Model.of(formatter.format(stream.length().bytes()))));
             fragment.add(new Label("mimetype", Model.of(stream.getContentType())));
-            fragment.add(createFileLink(stream, getModelObject()));
+            fragment.add(createFileLink(stream, stream.getChainedModel().getObject()));
 
             if (stream.getContentType().equals(MIME_TYPE_HIPPO_BLANK)) {
                 fragment.setVisible(false);
