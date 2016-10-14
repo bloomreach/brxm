@@ -45,7 +45,11 @@ export class ChannelSidePanelService {
   open(side) {
     if (!this.isOpen(side)) {
       this.$mdSidenav(this.panels[side].element).open();
-      this.ScalingService.setPushWidth(side, this.panels[side].jQueryElement.width());
+      let sidePanelWidth = this.panels[side].jQueryElement.width();
+      if (side === 'right') {
+        sidePanelWidth = 450;
+      }
+      this.ScalingService.setPushWidth(side, sidePanelWidth);
     }
   }
 
