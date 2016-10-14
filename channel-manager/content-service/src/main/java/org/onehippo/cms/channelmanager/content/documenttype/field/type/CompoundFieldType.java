@@ -67,7 +67,9 @@ public class CompoundFieldType extends FieldType {
                     values.add(valueMap);
                 }
             }
-            return values.isEmpty() ? Optional.empty() : Optional.of(values);
+            if (!values.isEmpty()) {
+                return Optional.of(isMultiple() ? values : values.get(0));
+            }
         } catch (RepositoryException e) {
             log.warn("Failed to read nodes for compound type '{}'", getId(), e);
         }
