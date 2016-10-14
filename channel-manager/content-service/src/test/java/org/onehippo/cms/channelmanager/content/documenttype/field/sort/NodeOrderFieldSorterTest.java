@@ -27,7 +27,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.sort.DefaultFieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -40,8 +39,8 @@ import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class DefaultFieldSorterTest {
-    private final DefaultFieldSorter sorter = new DefaultFieldSorter();
+public class NodeOrderFieldSorterTest {
+    private final NodeOrderFieldSorter sorter = new NodeOrderFieldSorter();
 
     @Test
     public void sortFields() throws Exception {

@@ -27,9 +27,8 @@ import javax.jcr.Session;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms.channelmanager.content.documenttype.field.sort.DefaultFieldSorter;
+import org.onehippo.cms.channelmanager.content.documenttype.field.sort.NodeOrderFieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.TwoColumnFieldSorter;
-import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -134,7 +133,7 @@ public class NamespaceUtilsTest {
         replay(root, editorNode);
         PowerMock.replayAll();
 
-        assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof DefaultFieldSorter);
+        assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof NodeOrderFieldSorter);
     }
 
     @Test
@@ -153,7 +152,7 @@ public class NamespaceUtilsTest {
         replay(root, editorNode);
         PowerMock.replayAll();
 
-        assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof DefaultFieldSorter);
+        assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof NodeOrderFieldSorter);
     }
 
     @Test
@@ -166,7 +165,7 @@ public class NamespaceUtilsTest {
         expect(editorNode.hasNode("root")).andReturn(false);
         replay(root, editorNode);
 
-        assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof DefaultFieldSorter);
+        assertThat("default sorter is retrieved", NamespaceUtils.retrieveFieldSorter(root).get() instanceof NodeOrderFieldSorter);
     }
 
     @Test(expected = NoSuchElementException.class)

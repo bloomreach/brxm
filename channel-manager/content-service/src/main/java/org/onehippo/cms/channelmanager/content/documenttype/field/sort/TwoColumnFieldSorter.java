@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  *
  * Fields of the left column go first, fields of the right column go last.
  */
-public class TwoColumnFieldSorter extends DefaultFieldSorter {
+public class TwoColumnFieldSorter extends NodeOrderFieldSorter {
     private static final Logger log = LoggerFactory.getLogger(TwoColumnFieldSorter.class);
     private static final String PROPERTY_WICKET_ID = "wicket.id";
 

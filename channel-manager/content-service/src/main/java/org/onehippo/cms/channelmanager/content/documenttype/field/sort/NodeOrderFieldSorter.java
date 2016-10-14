@@ -33,10 +33,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Sorts fields of a content type with single-column layout.
+ * Sorts fields of a content type in the order of the editor template nodes.
  */
-public class DefaultFieldSorter implements FieldSorter {
-    private static final Logger log = LoggerFactory.getLogger(DefaultFieldSorter.class);
+public class NodeOrderFieldSorter implements FieldSorter {
+    private static final Logger log = LoggerFactory.getLogger(NodeOrderFieldSorter.class);
 
     @Override
     public List<FieldTypeContext> sortFields(final ContentTypeContext context) {

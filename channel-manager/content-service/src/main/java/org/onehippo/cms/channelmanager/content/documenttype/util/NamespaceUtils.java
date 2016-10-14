@@ -26,7 +26,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.sort.DefaultFieldSorter;
+import org.onehippo.cms.channelmanager.content.documenttype.field.sort.NodeOrderFieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.TwoColumnFieldSorter;
 import org.slf4j.Logger;
@@ -51,7 +51,7 @@ public class NamespaceUtils {
     static {
         LAYOUT_SORTER = new HashMap<>();
 
-        LAYOUT_SORTER.put(LAYOUT_PLUGIN_CLASS_ONE_COLUMN, new DefaultFieldSorter());
+        LAYOUT_SORTER.put(LAYOUT_PLUGIN_CLASS_ONE_COLUMN, new NodeOrderFieldSorter());
         LAYOUT_SORTER.put(LAYOUT_PLUGIN_CLASS_TWO_COLUMN, new TwoColumnFieldSorter());
     }
 
