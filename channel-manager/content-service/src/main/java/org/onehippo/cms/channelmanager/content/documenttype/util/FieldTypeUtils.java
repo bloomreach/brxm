@@ -80,12 +80,12 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
     }
 
-    public static class TypeDescriptor {
-        public final Class<? extends FieldType> fieldType;
+    private static class TypeDescriptor {
+        public final Class<? extends FieldType> fieldTypeClass;
         public final String defaultPluginClass;
 
-        public TypeDescriptor(final Class<? extends FieldType> fieldType, final String defaultPluginClass) {
-            this.fieldType = fieldType;
+        public TypeDescriptor(final Class<? extends FieldType> fieldTypeClass, final String defaultPluginClass) {
+            this.fieldTypeClass = fieldTypeClass;
             this.defaultPluginClass = defaultPluginClass;
         }
     }
@@ -146,7 +146,7 @@ public class FieldTypeUtils {
                                                                  final DocumentType docType) {
 
         return determineDescriptor(context.getContentTypeItem())
-                .map(descriptor -> descriptor.fieldType)
+                .map(descriptor -> descriptor.fieldTypeClass)
                 .flatMap(clazz -> FieldTypeFactory.createFieldType((Class<? extends FieldType>)clazz))
                 .flatMap(fieldType -> fieldType.init(context, contentTypeContext, docType));
     }
