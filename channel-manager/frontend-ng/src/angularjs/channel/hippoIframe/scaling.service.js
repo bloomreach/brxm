@@ -119,11 +119,11 @@ export class ScalingService {
       }
 
       if (this.panels.left.pushWidth && this.panels.right.pushWidth) {
-        elementsToScale.css('transform-origin', 'top center');
+        elementsToScale.css('transform-origin', '41.5% top');
       } else if ((!this.panels.left.pushWidth && this.panels.right.pushWidth)) {
-        elementsToScale.css('transform-origin', 'top left');
+        elementsToScale.css('transform-origin', 'left top');
       } else if ((this.panels.left.pushWidth && !this.panels.right.pushWidth)) {
-        elementsToScale.css('transform-origin', 'top right');
+        elementsToScale.css('transform-origin', 'right top');
       }
     }
     this.scaleFactor = newScale;
