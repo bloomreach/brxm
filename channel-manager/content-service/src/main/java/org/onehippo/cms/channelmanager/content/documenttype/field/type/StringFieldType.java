@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * definition. As such, a "no-change" read-and-write operation may have the effect that the document is
  * adjusted towards better consistency with the field type definition.
  */
-public class StringFieldType extends PropertyFieldType {
+public class StringFieldType extends FieldType {
 
     private static final Logger log = LoggerFactory.getLogger(StringFieldType.class);
 
@@ -63,17 +63,17 @@ public class StringFieldType extends PropertyFieldType {
                 if (jcrProperty.isMultiple()) {
                     final Value[] values = jcrProperty.getValues();
                     if (isMultiple()) {
-                        if (isStoredAsMultiValueProperty()) {
+                        if (isOptional()) {
+                            if (values.length > 0) {
+                                return Optional.of(Collections.singletonList(values[0].getString()));
+                            }
+                        } else {
                             final List<String> list = new ArrayList<>();
                             for (Value v : values) {
                                 list.add(v.getString());
                             }
                             if (!list.isEmpty()) {
                                 return Optional.of(list);
-                            }
-                        } else {
-                            if (values.length > 0) {
-                                return Optional.of(Collections.singletonList(values[0].getString()));
                             }
                         }
                     } else {
@@ -119,7 +119,7 @@ public class StringFieldType extends PropertyFieldType {
             if (isRequired && listOfValues.isEmpty()) {
                 return 1; // need at least one value for required field
             }
-            if (!isStoredAsMultiValueProperty() && listOfValues.size() > 1) {
+            if (isOptional() && listOfValues.size() > 1) {
                 return 1; // "optional" field can have no more than 1 value
             }
 
@@ -142,10 +142,10 @@ public class StringFieldType extends PropertyFieldType {
                 if (listOfValues.isEmpty()) {
                     removeProperty(node, property);
                 } else {
-                    if (isStoredAsMultiValueProperty()) {
-                        node.setProperty(property, (String[]) listOfValues.toArray());
-                    } else {
+                    if (isOptional()) {
                         node.setProperty(property, (String) listOfValues.get(0));
+                    } else {
+                        node.setProperty(property, (String[]) listOfValues.toArray());
                     }
                 }
                 return 0;

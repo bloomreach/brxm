@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.jcr.Node;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -49,6 +50,10 @@ public class FieldType {
     private boolean multiple;
     // private boolean orderable; // future improvement
     // private boolean readOnly;  // future improvement
+
+    @JsonIgnore
+    private boolean optional;     // optional field has cardinality 0 or 1.
+                                  // the API exposes multiple=true for optional fields
 
     private Set<Validator> validators = new HashSet<>();
 
@@ -115,6 +120,14 @@ public class FieldType {
         this.multiple = multiple;
     }
 
+    public boolean isOptional() {
+        return optional;
+    }
+
+    public void setOptional(final boolean optional) {
+        this.optional = optional;
+    }
+
     public Set<Validator> getValidators() {
         return validators;
     }
@@ -175,7 +188,10 @@ public class FieldType {
             LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
         });
 
-        if (item.isMultiple() || item.getValidators().contains(FieldValidators.OPTIONAL)) {
+        if (item.getValidators().contains(FieldValidators.OPTIONAL)) {
+            setOptional(true);
+        }
+        if (item.isMultiple() || isOptional()) {
             setMultiple(true);
         }
 

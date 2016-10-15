@@ -78,6 +78,7 @@ public class StringFieldTypeTest {
         final Node node = MockNode.root();
 
         fieldType.setId(PROPERTY);
+        fieldType.setOptional(true);
         fieldType.setMultiple(true);
 
         assertThat(fieldType.readFrom(node).isPresent(), equalTo(false));
@@ -92,6 +93,7 @@ public class StringFieldTypeTest {
         final Node node = MockNode.root();
 
         fieldType.setId(PROPERTY);
+        fieldType.setOptional(true);
         fieldType.setMultiple(true);
 
         node.setProperty(PROPERTY, new String[0]);
@@ -108,7 +110,6 @@ public class StringFieldTypeTest {
 
         fieldType.setId(PROPERTY);
         fieldType.setMultiple(true);
-        fieldType.setStoredAsMultiValueProperty(true);
 
         assertThat(fieldType.readFrom(node).isPresent(), equalTo(false));
 
@@ -126,7 +127,6 @@ public class StringFieldTypeTest {
 
         fieldType.setId(PROPERTY);
         fieldType.setMultiple(true);
-        fieldType.setStoredAsMultiValueProperty(true);
 
         node.setProperty(PROPERTY, "Value");
         assertThat(fieldType.readFrom(node).get(), equalTo(Collections.singletonList("Value")));
@@ -203,6 +203,7 @@ public class StringFieldTypeTest {
         final Node node = MockNode.root();
 
         fieldType.setId(PROPERTY);
+        fieldType.setOptional(true);
         fieldType.setMultiple(true);
         node.setProperty(PROPERTY, "Old Value");
 
@@ -233,6 +234,7 @@ public class StringFieldTypeTest {
         final Node node = MockNode.root();
 
         fieldType.setId(PROPERTY);
+        fieldType.setOptional(true);
         fieldType.setMultiple(true);
         fieldType.addValidator(FieldType.Validator.REQUIRED);
         node.setProperty(PROPERTY, "Old Value");
@@ -265,6 +267,7 @@ public class StringFieldTypeTest {
         final Node node = MockNode.root();
 
         fieldType.setId(PROPERTY);
+        fieldType.setOptional(true);
         fieldType.setMultiple(true);
 
         assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(0));
@@ -292,6 +295,7 @@ public class StringFieldTypeTest {
         final Node node = MockNode.root();
 
         fieldType.setId(PROPERTY);
+        fieldType.setOptional(true);
         fieldType.setMultiple(true);
         fieldType.addValidator(FieldType.Validator.REQUIRED);
 
@@ -321,7 +325,6 @@ public class StringFieldTypeTest {
 
         fieldType.setId(PROPERTY);
         fieldType.setMultiple(true);
-        fieldType.setStoredAsMultiValueProperty(true);
         node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
 
         assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(0));
@@ -361,7 +364,6 @@ public class StringFieldTypeTest {
 
         fieldType.setId(PROPERTY);
         fieldType.setMultiple(true);
-        fieldType.setStoredAsMultiValueProperty(true);
         fieldType.addValidator(FieldType.Validator.REQUIRED);
         node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
 
@@ -406,7 +408,6 @@ public class StringFieldTypeTest {
 
         fieldType.setId(PROPERTY);
         fieldType.setMultiple(true);
-        fieldType.setStoredAsMultiValueProperty(true);
 
         assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(0));
         assertThat(node.hasProperty(PROPERTY), equalTo(false));
@@ -438,7 +439,6 @@ public class StringFieldTypeTest {
 
         fieldType.setId(PROPERTY);
         fieldType.setMultiple(true);
-        fieldType.setStoredAsMultiValueProperty(true);
         fieldType.addValidator(FieldType.Validator.REQUIRED);
 
         assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(1)); // must not be missing
@@ -465,7 +465,6 @@ public class StringFieldTypeTest {
 
         fieldType.setId(PROPERTY);
         fieldType.setMultiple(true);
-        fieldType.setStoredAsMultiValueProperty(true);
         node.setProperty(PROPERTY, "Old Value"); // singular property in spite of multiple type
 
         assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(0));
@@ -506,7 +505,6 @@ public class StringFieldTypeTest {
 
         fieldType.setId(PROPERTY);
         fieldType.setMultiple(true);
-        fieldType.setStoredAsMultiValueProperty(true);
         node.setProperty(PROPERTY, new String[0]); // multiple, empty property
 
         assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(0));
@@ -536,7 +534,6 @@ public class StringFieldTypeTest {
 
         fieldType.setId(PROPERTY);
         fieldType.setMultiple(true);
-        fieldType.setStoredAsMultiValueProperty(true);
         expect(node.hasProperty(PROPERTY)).andThrow(new RepositoryException());
         replay(node);
 

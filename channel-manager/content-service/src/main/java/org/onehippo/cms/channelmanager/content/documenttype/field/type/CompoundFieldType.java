@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +70,14 @@ public class CompoundFieldType extends FieldType {
                 }
             }
             if (!values.isEmpty()) {
-                return Optional.of(isMultiple() ? values : values.get(0));
+                if (isMultiple()) {
+                    if (isOptional() && values.size() > 1) {
+                        return Optional.of(Collections.singletonList(values.get(0))); // optional has max cardinality 1
+                    }
+                    return Optional.of(values);
+                } else {
+                    return Optional.of(values.get(0));
+                }
             }
         } catch (RepositoryException e) {
             log.warn("Failed to read nodes for compound type '{}'", getId(), e);
@@ -83,33 +91,52 @@ public class CompoundFieldType extends FieldType {
         try {
             final NodeIterator iterator = node.getNodes(nodeName);
             long numberOfNodes = iterator.getSize();
-            if (!optionalValue.isPresent() && numberOfNodes > 0) {
-                return 1;
-            }
 
-            final Object value = optionalValue.get();
             if (isMultiple()) {
+                final Object value = optionalValue.orElse(Collections.emptyList());
                 if (!(value instanceof List)) {
                     return 1;
                 }
                 final List listOfValues = (List)value;
-                if (listOfValues.size() != numberOfNodes) {
-                    return 1;
+                if (isOptional()) {
+                    if (listOfValues.size() > 1) {
+                        return 1;
+                    }
+                    if (listOfValues.size() > numberOfNodes) {
+                        return 1; // creation of new nodes not yet supported
+                    }
+                } else {
+                    if (listOfValues.size() != numberOfNodes) {
+                        return 1; // cardinality change not yet supported.
+                    }
                 }
                 int errors = 0;
-                for (int i = 0; i < numberOfNodes; i++) {
+                for (int i = 0; i < listOfValues.size(); i++) {
                     errors += writeToCompoundNode(iterator.nextNode(), listOfValues.get(i));
+                }
+                if (isOptional()) {
+                    // delete excess nodes
+                    while (iterator.hasNext()) {
+                        iterator.nextNode().remove();
+                    }
                 }
                 return errors;
             }
 
-            if (numberOfNodes != 1) {
-                return 1;
+            final Object value = optionalValue.orElse("invalid");
+            if (numberOfNodes == 0) {
+                return 1; // creation of new nodes not yet supported
             }
-            return writeToCompoundNode(iterator.nextNode(), value);
+            int errors = writeToCompoundNode(iterator.nextNode(), value);
+
+            // delete excess nodes
+            while (iterator.hasNext()) {
+                iterator.nextNode().remove();
+            }
+            return errors;
 
         } catch (RepositoryException e) {
-            log.warn("Failed to write Compound value to node {}", nodeName, e);
+            log.warn("Failed to write compound value to node {}", nodeName, e);
         }
         return 1;
     }
