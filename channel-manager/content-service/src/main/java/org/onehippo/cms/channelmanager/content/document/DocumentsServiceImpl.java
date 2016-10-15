@@ -81,11 +81,14 @@ public class DocumentsServiceImpl implements DocumentsService {
         final DocumentType docType = getDocumentType(handle);
 
         WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
-                .ifPresent(draft -> writeFields(document, draft, docType));
-
-        // TODO what about problems writing to the repository?
-
-        persistChangesAndKeepEditing(session, workflow);
+                .ifPresent(draft -> {
+                    if (writeFields(document, draft, docType)) {
+                        cancelPendingChanges(session);
+                        // TODO: tell the caller that the operation failed. Throw new kind of exception?
+                    } else {
+                        persistChangesAndKeepEditing(session, workflow);
+                    }
+                });
     }
 
     @Override
@@ -139,6 +142,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
+    // TODO: how to communicate about write errors...?
     private boolean writeFields(final Document document, final Node variant, final DocumentType docType) {
         int errors = 0;
         final Map<String, Object> valueMap = document.getFields();
@@ -146,6 +150,14 @@ public class DocumentsServiceImpl implements DocumentsService {
             errors += fieldType.writeTo(variant, Optional.ofNullable(valueMap.get(fieldType.getId())));
         }
         return errors > 0;
+    }
+
+    private void cancelPendingChanges(final Session session) {
+        try {
+            session.refresh(false);
+        } catch(RepositoryException e) {
+            log.warn("Problem cancelling pending changes", e);
+        }
     }
 
     private void persistChangesAndKeepEditing(final Session session, final EditableWorkflow workflow) {
