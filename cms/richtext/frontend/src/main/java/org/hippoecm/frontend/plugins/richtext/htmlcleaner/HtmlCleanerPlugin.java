@@ -159,7 +159,6 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
         final HtmlCleaner cleaner = new HtmlCleaner();
         final CleanerProperties properties = cleaner.getProperties();
         properties.setOmitHtmlEnvelope(true);
-        properties.setTranslateSpecialEntities(false);
         properties.setOmitXmlDeclaration(true);
         properties.setOmitComments(omitComments);
         return cleaner;
