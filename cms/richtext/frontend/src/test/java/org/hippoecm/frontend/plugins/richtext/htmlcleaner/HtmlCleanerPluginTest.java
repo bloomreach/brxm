@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -119,6 +119,15 @@ public class HtmlCleanerPluginTest extends PluginTest {
                 "&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;\">link</a>");
         log.debug(html);
         assertEquals("<a href=\"\">link</a>", html);
+    }
+
+    @Test
+    public void testCharacterEntityConversion() throws Exception {
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, getPluginConfig());
+
+        String html = htmlCleanerPlugin.clean("&nbsp; &gt; &lt; &amp; á &aacute;");
+        log.debug(html);
+        assertEquals("&nbsp; &gt; &lt; &amp; á á", html);
     }
 
     @Test
