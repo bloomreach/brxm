@@ -37,11 +37,11 @@ Serve and watch files for development
 
 Run unit tests and watch for changes to rerun (Chrome needs to be installed)
 
-    $ npm run test:auto
+    $ npm test
 
 Run unit tests once (Chrome needs to be installed)
 
-    $ npm test
+    $ npm run testOnce
 
 List all gulp tasks available
 
@@ -58,15 +58,15 @@ List all gulp tasks available
 
 Serve and watch files for development
 
-    $ gulp serve
+    $ gulp start
 
 Run unit tests and watch for changes to rerun (Chrome needs to be installed)
 
-    $ gulp test:auto
+    $ gulp test
 
 Run unit tests once (Chrome needs to be installed)
 
-    $ gulp test
+    $ gulp testOnce
 
 Build optimized application for production
 
