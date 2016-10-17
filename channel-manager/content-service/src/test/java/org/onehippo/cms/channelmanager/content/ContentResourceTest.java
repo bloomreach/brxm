@@ -29,14 +29,14 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms.channelmanager.content.exception.DocumentNotFoundException;
-import org.onehippo.cms.channelmanager.content.exception.DocumentTypeNotFoundException;
-import org.onehippo.cms.channelmanager.content.model.document.Document;
-import org.onehippo.cms.channelmanager.content.model.document.DocumentInfo;
-import org.onehippo.cms.channelmanager.content.model.document.EditingInfo;
-import org.onehippo.cms.channelmanager.content.model.documenttype.DocumentType;
-import org.onehippo.cms.channelmanager.content.service.DocumentTypesService;
-import org.onehippo.cms.channelmanager.content.service.DocumentsService;
+import org.onehippo.cms.channelmanager.content.document.DocumentNotFoundException;
+import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypeNotFoundException;
+import org.onehippo.cms.channelmanager.content.document.model.Document;
+import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
+import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
+import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 import org.onehippo.jaxrs.cxf.CXFTest;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -90,7 +90,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
 
-        expect(documentsService.getUnpublished(requestedUuid, userSession, locale)).andReturn(testDocument);
+        expect(documentsService.getPublished(requestedUuid, userSession, locale)).andReturn(testDocument);
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/empty-document.json");
@@ -106,7 +106,7 @@ public class ContentResourceTest extends CXFTest {
     public void getUnpublishedDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.getUnpublished(requestedUuid, userSession, locale)).andThrow(new DocumentNotFoundException());
+        expect(documentsService.getPublished(requestedUuid, userSession, locale)).andThrow(new DocumentNotFoundException());
         replay(documentsService);
 
         when()

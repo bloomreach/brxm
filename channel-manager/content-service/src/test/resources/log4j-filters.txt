@@ -18,3 +18,11 @@ Empty contextPath
 No Server set for org.apache.cxf.transport.http_jetty.JettyHTTPServerEngine
 Failed to determine editing info for node 'bla'
 Failed to create user session for 'tester'
+Failed to read property 'plugin.class'
+Failed to determine layout of content type
+Failed to sort fields of content type
+Failed to create field context
+Failed to retrieve content type 'type'
+Failed to read property 'caption'
+Failed to retrieve draft node
+Node with identifier 'unknown-uuid' does not exist
