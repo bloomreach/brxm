@@ -184,6 +184,19 @@
      <resource>
        <directory>src/main/resources</directory>
        <filtering>true</filtering>
+       <includes>
+         <include>org/hippoecm/hst/pagecomposer/SpringComponentManager-pagecomposer.xml</include>
+       </includes>
+     </resource>
+     <resource>
+       <directory>src/main/resources</directory>
+       <filtering>false</filtering>
+       <includes>
+         <include>**/*</include>
+       </includes>
+       <excludes>
+         <exclude>org/hippoecm/hst/pagecomposer/SpringComponentManager-pagecomposer.xml</exclude>
+       </excludes>
      </resource>
    </resources>
     <plugins>
