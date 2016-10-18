@@ -87,10 +87,10 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
             final int level = parentContext.getLevel() + 1;
             final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext(id, userSession, locale, level);
 
-            if (parentContext.getLevel() < MAX_NESTING_LEVEL) {
+            if (level <= MAX_NESTING_LEVEL) {
                 populateFields(fields, context, docType);
             } else {
-                log.info("Ignoring fields of {}-level-deep nested compound, nesting maximum reached", MAX_NESTING_LEVEL);
+                log.info("Ignoring fields of {}-level-deep nested compound, nesting maximum reached", level);
             }
         } catch (RepositoryException e) {
             log.warn("Failed to retrieve user session", e);
