@@ -15,10 +15,11 @@
  */
 
 export class ViewportToggleCtrl {
-  constructor($translate) {
+  constructor($translate, OverlaySyncService) {
     'ngInject';
 
     this.$translate = $translate;
+    this.OverlaySyncService = OverlaySyncService;
 
     this.viewPorts = [
       {
@@ -43,9 +44,15 @@ export class ViewportToggleCtrl {
 
   activate() {
     this.selectedViewPort = this.viewPorts[0];
+    this.viewPortChanged();
   }
 
   getDisplayName(viewport) {
     return this.$translate.instant(`VIEWPORT_${viewport.id}`);
+  }
+
+  viewPortChanged() {
+    this.OverlaySyncService.setViewPortWidth(this.selectedViewPort.width);
+    this.OverlaySyncService.syncIframe();
   }
 }
