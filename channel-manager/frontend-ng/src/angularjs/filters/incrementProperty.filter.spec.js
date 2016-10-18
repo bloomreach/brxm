@@ -20,7 +20,7 @@ import 'angular-mocks';
 describe('incrementProperty filter', () => {
   let incrementPropertyFilter;
 
-  beforeEach(angular.mock.module('hippo-cm.utils'));
+  beforeEach(angular.mock.module('hippo-cm'));
   beforeEach(inject((_incrementPropertyFilter_) => {
     incrementPropertyFilter = _incrementPropertyFilter_;
   }));

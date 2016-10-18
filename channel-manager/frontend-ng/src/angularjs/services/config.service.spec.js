@@ -25,7 +25,7 @@ describe('ConfigService', () => {
     window.APP_CONFIG.apiUrlPrefix = 'https://127.0.0.1:9080/web/one/two';
     window.APP_CONFIG.contextPaths = ['/one', '/two'];
 
-    angular.mock.module('hippo-cm-api');
+    angular.mock.module('hippo-cm');
 
     inject((_ConfigService_) => {
       ConfigService = _ConfigService_;

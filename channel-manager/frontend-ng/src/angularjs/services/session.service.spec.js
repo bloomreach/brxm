@@ -24,7 +24,7 @@ describe('SessionService', () => {
   let HstService;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm-api');
+    angular.mock.module('hippo-cm');
 
     inject((_$rootScope_, _$q_, _SessionService_, _HstService_) => {
       $rootScope = _$rootScope_;
