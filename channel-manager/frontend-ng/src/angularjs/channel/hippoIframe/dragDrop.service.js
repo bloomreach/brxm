@@ -21,7 +21,7 @@ const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 
 export class DragDropService {
 
-  constructor($rootScope, $q, ConfigService, DomService, HstService, PageStructureService, ScalingService,
+  constructor($rootScope, $q, ConfigService, DomService, HstService, PageStructureService,
               ChannelService, ScrollService, FeedbackService) {
     'ngInject';
 
@@ -31,7 +31,6 @@ export class DragDropService {
     this.DomService = DomService;
     this.HstService = HstService;
     this.PageStructureService = PageStructureService;
-    this.ScalingService = ScalingService;
     this.ChannelService = ChannelService;
     this.ScrollService = ScrollService;
     this.FeedbackService = FeedbackService;
@@ -250,7 +249,7 @@ export class DragDropService {
   }
 
   _dispatchMouseDownInIframe($event, component) {
-    const [clientX, clientY] = this.ScalingService.getScaleFactor() === 1.0 ? this._shiftCoordinates($event) : this._shiftAndDescaleCoordinates($event);
+    const [clientX, clientY] = this._shiftCoordinates($event);
     const iframeMouseDownEvent = this.DomService.createMouseDownEvent(this.iframe, clientX, clientY);
     const iframeElement = component.getBoxElement();
     iframeElement[0].dispatchEvent(iframeMouseDownEvent);
@@ -264,24 +263,4 @@ export class DragDropService {
 
     return [shiftedX, shiftedY];
   }
-
-  _shiftAndDescaleCoordinates($event) {
-    const iframeOffset = this.iframeJQueryElement.offset();
-    const baseOffset = this.baseJQueryElement.offset();
-    const scale = this.ScalingService.getScaleFactor();
-
-    // Shift horizontal using the base offset since the iframe offset is also scaled
-    // and hence to far to the right.
-    const shiftedX = $event.clientX - baseOffset.left;
-    const shiftedY = $event.clientY - iframeOffset.top;
-
-    // The user sees the scaled iframe, but the browser actually uses the unscaled coordinates,
-    // so we have to transform the click in the scaled iframe to its 'descaled' position.
-    const iframeWidth = this.iframeJQueryElement.width();
-    const shiftedAndDescaledX = (shiftedX - (iframeWidth * (1 - scale))) / scale;
-    const shiftedAndDescaledY = shiftedY / scale;
-
-    return [shiftedAndDescaledX, shiftedAndDescaledY];
-  }
-
 }

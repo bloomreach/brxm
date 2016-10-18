@@ -21,7 +21,6 @@ describe('ChannelCtrl', () => {
 
   let ChannelService;
   let ComponentsService;
-  let ScalingService;
   let FeedbackService;
   let PageMetaDataService;
   let SessionService;
@@ -69,12 +68,6 @@ describe('ChannelCtrl', () => {
         'getRenderVariant',
       ]);
 
-      ScalingService = jasmine.createSpyObj('ScalingService', [
-        'init',
-        'setPushWidth',
-        'sync',
-      ]);
-
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', [
         'load',
         'reload',
@@ -86,7 +79,6 @@ describe('ChannelCtrl', () => {
         ComponentsService,
         ChannelService,
         PageMetaDataService,
-        ScalingService,
         HippoIframeService,
       });
     });
@@ -96,18 +88,6 @@ describe('ChannelCtrl', () => {
 
   it('loads the initial page', () => {
     expect(HippoIframeService.load).toHaveBeenCalledWith('/testPath');
-  });
-
-  it('resets the ScalingService pushWidth state during initialization', () => {
-    ScalingService.setPushWidth.calls.reset();
-    inject(($controller) => {
-      $controller('ChannelCtrl', {
-        $scope: $rootScope.$new(),
-        ScalingService,
-      });
-      expect(ScalingService.setPushWidth).toHaveBeenCalledWith('left', 0);
-      expect(ScalingService.setPushWidth).toHaveBeenCalledWith('right', 0);
-    });
   });
 
   it('checks with the session service is the current user has write access', () => {
@@ -204,7 +184,6 @@ describe('ChannelCtrl', () => {
     ChannelCtrl.hideSubpage();
     expect(ChannelCtrl.isSubpageOpen()).toBe(false);
     $timeout.flush();
-    expect(ScalingService.sync).toHaveBeenCalled();
 
     ChannelCtrl.showSubpage('test');
     ChannelCtrl.onSubpageError('key', { param: 'value' });

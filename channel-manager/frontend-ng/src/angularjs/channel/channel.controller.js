@@ -28,7 +28,6 @@ export class ChannelCtrl {
       FeedbackService,
       HippoIframeService,
       PageMetaDataService,
-      ScalingService,
       SessionService
     ) {
     'ngInject';
@@ -41,14 +40,9 @@ export class ChannelCtrl {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
-    this.ScalingService = ScalingService;
     this.SessionService = SessionService;
     this.isEditMode = false;
     this.isCreatingPreview = false;
-
-    // reset service state to avoid weird scaling when controller is reloaded due to state change
-    ScalingService.setPushWidth('left', 0);
-    ScalingService.setPushWidth('right', 0);
 
     ComponentAdderService.setCatalogContainerClass('catalog-dd-container');
     ComponentAdderService.setCatalogContainerItemClass('catalog-dd-container-item');
@@ -132,9 +126,6 @@ export class ChannelCtrl {
 
   hideSubpage() {
     delete this.currentSubpage;
-    this.$timeout(() => {
-      this.ScalingService.sync();
-    }, 0);
   }
 
   onSubpageSuccess(key, params) {

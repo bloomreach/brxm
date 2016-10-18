@@ -15,11 +15,10 @@
  */
 
 export class ViewportToggleCtrl {
-  constructor($translate, ScalingService) {
+  constructor($translate) {
     'ngInject';
 
     this.$translate = $translate;
-    this.ScalingService = ScalingService;
 
     this.viewPorts = [
       {
@@ -44,14 +43,9 @@ export class ViewportToggleCtrl {
 
   activate() {
     this.selectedViewPort = this.viewPorts[0];
-    this.viewPortChanged();
   }
 
   getDisplayName(viewport) {
     return this.$translate.instant(`VIEWPORT_${viewport.id}`);
-  }
-
-  viewPortChanged() {
-    this.ScalingService.setViewPortWidth(this.selectedViewPort.width);
   }
 }

@@ -15,11 +15,10 @@
  */
 
 export class ChannelSidePanelService {
-  constructor($mdSidenav, ScalingService) {
+  constructor($mdSidenav) {
     'ngInject';
 
     this.$mdSidenav = $mdSidenav;
-    this.ScalingService = ScalingService;
     this.panels = {
       left: {
         element: 'channel-left-side-panel',
@@ -45,11 +44,6 @@ export class ChannelSidePanelService {
   open(side) {
     if (!this.isOpen(side)) {
       this.$mdSidenav(this.panels[side].element).open();
-      let sidePanelWidth = this.panels[side].jQueryElement.width();
-      if (side === 'right') {
-        sidePanelWidth = 450;
-      }
-      this.ScalingService.setPushWidth(side, sidePanelWidth);
     }
   }
 
@@ -60,8 +54,6 @@ export class ChannelSidePanelService {
   close(side) {
     if (this.isOpen(side)) {
       this.$mdSidenav(this.panels[side].element).close();
-
-      this.ScalingService.setPushWidth(side, 0);
     }
   }
 }
