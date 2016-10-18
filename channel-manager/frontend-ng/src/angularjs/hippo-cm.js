@@ -20,6 +20,7 @@ import ngTranslate from 'angular-translate';
 import 'angular-translate-loader-static-files';
 import uiRouter from 'angular-ui-router';
 
+// TODO: Move some of these toplevel modules into functional specific folders/modules
 import CatalogService from './services/catalog.service';
 import CmsService from './services/cms.service';
 import ConfigService from './services/config.service';
