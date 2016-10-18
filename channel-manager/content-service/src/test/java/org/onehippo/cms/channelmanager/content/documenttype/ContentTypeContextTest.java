@@ -25,8 +25,6 @@ import javax.jcr.Session;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeException;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -70,11 +68,12 @@ public class ContentTypeContextTest {
         replay(contentTypeService, contentTypes);
         PowerMock.replayAll();
 
-        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext("type", session, locale);
+        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext("type", session, locale, 2);
 
         assertThat(context.getContentType(), equalTo(contentType));
         assertThat(context.getContentTypeRoot(), equalTo(rootNode));
         assertThat(context.getResourceBundle().isPresent(), equalTo(false));
+        assertThat(context.getLevel(), equalTo(2));
     }
 
     @Test(expected = ContentTypeException.class)
@@ -89,7 +88,7 @@ public class ContentTypeContextTest {
         replay(contentTypeService);
         PowerMock.replayAll();
 
-        ContentTypeContext.createDocumentTypeContext("type", null, null);
+        ContentTypeContext.createDocumentTypeContext("type", null, null, 0);
     }
 
     @Test(expected = ContentTypeException.class)
@@ -113,6 +112,6 @@ public class ContentTypeContextTest {
         replay(contentTypeService, contentTypes);
         PowerMock.replayAll();
 
-        ContentTypeContext.createDocumentTypeContext("type", session, locale);
+        ContentTypeContext.createDocumentTypeContext("type", session, locale, 0);
     }
 }
