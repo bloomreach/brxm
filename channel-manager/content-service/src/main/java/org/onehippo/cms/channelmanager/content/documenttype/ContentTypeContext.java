@@ -43,6 +43,7 @@ public class ContentTypeContext {
     private final Optional<ResourceBundle> resourceBundle;
     private final Node contentTypeRoot;
     private final Locale locale;
+    private final int level;
 
     /**
      * Create a new {@link ContentTypeContext} for the identified content type and the current CMS session.
@@ -50,11 +51,15 @@ public class ContentTypeContext {
      * @param id          identifies the requested content type, e.g. "myhippoproject:newsdocument"
      * @param userSession JCR session using the privileges of the requesting user
      * @param locale      locale of the current CMS session
+     * @param level       the nesting level of this content type in a document type. Top-level content types have
+     *                    level 0, fields in top-level compounds have level 1, fields in nested compounds
+     *                    have level 2, etc.
      * @return            {@link ContentTypeContext} for creating a {@link DocumentType}
      * @throws ContentTypeException
      *                    if creation of a ContentTypeContext failed.
      */
-    public static ContentTypeContext createDocumentTypeContext(final String id, final Session userSession, final Locale locale)
+    public static ContentTypeContext createDocumentTypeContext(final String id, final Session userSession,
+                                                               final Locale locale, final int level)
             throws ContentTypeException {
 
         final ContentType contentType = getContentType(id).orElseThrow(ContentTypeException::new);
@@ -62,7 +67,7 @@ public class ContentTypeContext {
         final Node documentTypeRoot = NamespaceUtils.getDocumentTypeRootNode(id, userSession)
                 .orElseThrow(ContentTypeException::new);
 
-        return new ContentTypeContext(contentType, resourceBundle, documentTypeRoot, locale);
+        return new ContentTypeContext(contentType, resourceBundle, documentTypeRoot, locale, level);
     }
 
     private static Optional<ContentType> getContentType(final String id) {
@@ -78,11 +83,13 @@ public class ContentTypeContext {
     private ContentTypeContext(final ContentType contentType,
                                final Optional<ResourceBundle> resourceBundle,
                                final Node documentTypeRoot,
-                               final Locale locale) {
+                               final Locale locale,
+                               final int level) {
         this.contentType = contentType;
         this.resourceBundle = resourceBundle;
         this.contentTypeRoot = documentTypeRoot;
         this.locale = locale;
+        this.level = level;
     }
 
     public ContentType getContentType() {
@@ -99,5 +106,9 @@ public class ContentTypeContext {
 
     public Locale getLocale() {
         return locale;
+    }
+
+    public int getLevel() {
+        return level;
     }
 }

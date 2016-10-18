@@ -108,7 +108,7 @@ public class FieldType {
     }
 
     public Boolean isMultiple() {
-        return multiple;
+        return multiple != null && multiple;
     }
 
     public void setMultiple(final boolean multiple) {
