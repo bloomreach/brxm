@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-.hippo-editor-field-subfield:hover > .contentpicker-blocks > .hippo-editor-field-subfield-controls {
+.hippo-editor-field:hover > .hippo-editor-field-subfield-controls {
   opacity: 1;
+}
+
+.hippo-editor-field > .hippo-editor-field-subfield-controls {
+  padding: 4px;
 }
 
 .contentpicker-blocks div.hippo-diff-added {
