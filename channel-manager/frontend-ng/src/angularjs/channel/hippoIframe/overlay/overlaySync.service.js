@@ -134,7 +134,8 @@ export class OverlaySyncService {
     this.$iframe.css('min-width', '0');
 
     if (this.viewPortWidth === 0) {
-      // Desktop mode - no width constraints
+      // Desktop mode
+      this.$iframe.css('min-width', '1280px');
       this.$sheet.css('max-width', 'none');
       this.$iframe.width('');
       this.$overlay.width('');
