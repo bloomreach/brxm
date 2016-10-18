@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-class PathService {
 
+class PathService {
   concatPaths(...paths) {
     if (!paths) {
       return paths;
@@ -56,6 +56,5 @@ class PathService {
     return result;
   }
 }
-
 
 export default PathService;

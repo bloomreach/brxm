@@ -21,7 +21,7 @@ describe('stopPropagationDirective', () => {
   let $rootScope;
   let $compile;
 
-  beforeEach(angular.mock.module('hippo-cm.utils'));
+  beforeEach(angular.mock.module('hippo-cm'));
   beforeEach(inject((_$rootScope_, _$compile_) => {
     $rootScope = _$rootScope_;
     $compile = _$compile_;

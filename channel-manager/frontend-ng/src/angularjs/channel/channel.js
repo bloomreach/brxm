@@ -33,7 +33,6 @@ import channelViewportsModule from './viewports/viewports';
 
 const channelModule = angular
   .module('hippo-cm.channel', [
-    'hippo-cm-api',
     channelSubpageModule.name,
     channelChangesModule.name,
     channelPageModule.name,

@@ -70,10 +70,11 @@ public class ContentTypeContextTest {
         replay(contentTypeService, contentTypes);
         PowerMock.replayAll();
 
-        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext("type", session, Optional.of(locale));
+        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext("type", session, 2, Optional.of(locale));
 
         assertThat(context.getContentType(), equalTo(contentType));
         assertThat(context.getContentTypeRoot(), equalTo(rootNode));
+        assertThat(context.getLevel(), equalTo(2));
         assertThat(context.getResourceBundle().get(), equalTo(resourceBundle));
         assertThat(context.getLocale().get(), equalTo(locale));
     }
@@ -97,10 +98,11 @@ public class ContentTypeContextTest {
         replay(contentTypeService, contentTypes);
         PowerMock.replayAll();
 
-        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext("type", session, Optional.empty());
+        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext("type", session, 2, Optional.empty());
 
         assertThat(context.getContentType(), equalTo(contentType));
         assertThat(context.getContentTypeRoot(), equalTo(rootNode));
+        assertThat(context.getLevel(), equalTo(2));
         assertThat(context.getResourceBundle().isPresent(), equalTo(false));
         assertThat(context.getLocale().isPresent(), equalTo(false));
     }
@@ -117,7 +119,7 @@ public class ContentTypeContextTest {
         replay(contentTypeService);
         PowerMock.replayAll();
 
-        ContentTypeContext.createDocumentTypeContext("type", null, null);
+        ContentTypeContext.createDocumentTypeContext("type", null, 0, null);
     }
 
     @Test(expected = ContentTypeException.class)
@@ -138,6 +140,6 @@ public class ContentTypeContextTest {
         replay(contentTypeService, contentTypes);
         PowerMock.replayAll();
 
-        ContentTypeContext.createDocumentTypeContext("type", session, Optional.empty());
+        ContentTypeContext.createDocumentTypeContext("type", session, 0, Optional.empty());
     }
 }

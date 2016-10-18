@@ -17,7 +17,6 @@
 // TODO: Rename this to ExtApiService
 
 class CmsService {
-
   constructor($window, $log) {
     'ngInject';
 

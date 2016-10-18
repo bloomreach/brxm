@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 public class DocumentTypesServiceImpl implements DocumentTypesService {
     private static final Logger log = LoggerFactory.getLogger(DocumentTypesServiceImpl.class);
     private static final DocumentTypesServiceImpl INSTANCE = new DocumentTypesServiceImpl();
+    private static final int MAX_NESTING_LEVEL = 10;
 
     public static DocumentTypesServiceImpl getInstance() {
         return INSTANCE;
@@ -65,7 +66,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
             return MockResponse.createTestDocumentType();
         }
 
-        final ContentTypeContext context = getContentTypeContext(id, userSession, locale);
+        final ContentTypeContext context = getContentTypeContext(id, userSession, 0, locale);
 
         validateDocumentType(context, id);
 
@@ -83,10 +84,15 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
                                               final ContentTypeContext parentContext, final DocumentType docType) {
         try {
             final Session userSession = parentContext.getContentTypeRoot().getSession();
+            final int level = parentContext.getLevel() + 1;
             final Optional<Locale> locale = parentContext.getLocale();
-            final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext(id, userSession, locale);
+            final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext(id, userSession, level, locale);
 
-            populateFields(fields, context, docType);
+            if (level <= MAX_NESTING_LEVEL) {
+                populateFields(fields, context, docType);
+            } else {
+                log.info("Ignoring fields of {}-level-deep nested compound, nesting maximum reached", level);
+            }
         } catch (RepositoryException e) {
             log.warn("Failed to retrieve user session", e);
         } catch (ContentTypeException e) {
@@ -95,9 +101,10 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
     }
 
     private static ContentTypeContext getContentTypeContext(final String id, final Session userSession,
-                                                            final Optional<Locale> locale) throws DocumentTypeNotFoundException {
+                                                            final int level, final Optional<Locale> locale)
+            throws DocumentTypeNotFoundException {
         try {
-            return ContentTypeContext.createDocumentTypeContext(id, userSession, locale);
+            return ContentTypeContext.createDocumentTypeContext(id, userSession, level, locale);
         } catch (ContentTypeException e) {
             log.warn("Failed to retrieve context for content type '{}'", id, e);
             throw new DocumentTypeNotFoundException();

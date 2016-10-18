@@ -26,7 +26,7 @@ describe('CmsService', () => {
     spyOn(window.CMS_TO_APP, 'subscribe').and.callThrough();
     spyOn(window.CMS_TO_APP, 'subscribeOnce').and.callThrough();
 
-    angular.mock.module('hippo-cm-api');
+    angular.mock.module('hippo-cm');
 
     inject((_$window_, _CmsService_) => {
       $window = _$window_;

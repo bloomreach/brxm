@@ -22,7 +22,7 @@ describe('DialogService', () => {
   let DialogService;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm-api');
+    angular.mock.module('hippo-cm');
 
     inject((_$mdDialog_, _DialogService_) => {
       $mdDialog = _$mdDialog_;

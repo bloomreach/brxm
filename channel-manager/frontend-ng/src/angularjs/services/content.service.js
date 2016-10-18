@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// TODO: Create spec file for this service
+
 const CMS_CONTEXT_PATH = window.parent ? window.parent.location.pathname : '/cms/';
 const CMS_CONTENT_REST_API_PATH = 'ws/content';
 
