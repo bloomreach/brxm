@@ -996,7 +996,7 @@
                   <cargo.jvmargs>
                     <![CDATA[-agentlib:jdwp=transport=dt_socket,address=${cargo.debug.address},server=y,suspend=${cargo.debug.suspend} -noverify ${javaagent} ${cargo.jvm.args}]]>
                   </cargo.jvmargs>
-                  <cargo.servlet.uriencoding>UTF-8</cargo.servlet.uriencoding>
+                  <cargo.tomcat.uriencoding>UTF-8</cargo.tomcat.uriencoding>
                   <cargo.servlet.users>admin::manager-script,manager-gui</cargo.servlet.users>
                 </properties>
               </configuration>
