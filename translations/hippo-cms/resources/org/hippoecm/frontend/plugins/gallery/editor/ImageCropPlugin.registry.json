@@ -12,21 +12,13 @@
     "crop-button-tip-inactive-width" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "RESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "nl" : "RESOLVED"
       }
     },
     "crop-button-tip-inactive-height" : {
       "status" : "UPDATED",
       "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "RESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "nl" : "RESOLVED"
       }
     },
     "crop-button-tip" : {

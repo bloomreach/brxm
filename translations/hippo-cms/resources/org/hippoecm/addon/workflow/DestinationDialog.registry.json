@@ -24,11 +24,7 @@
     "foldertypes.denied" : {
       "status" : "ADDED",
       "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "RESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
+        "nl" : "RESOLVED"
       }
     }
   }

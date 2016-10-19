@@ -5,5 +5,6 @@
   "hipposys:Boolean": {"fr": {"jcr:name": "Booléen"}},
   "hipposys:Date": {"fr": {"jcr:name": "Date"}},
   "hipposys:Long": {"fr": {"jcr:name": "Nombre entier"}},
-  "hipposys:Double": {"fr": {"jcr:name": "Nombre décimal"}}
+  "hipposys:Double": {"fr": {"jcr:name": "Nombre décimal"}},
+  "hipposys:CalendarDate": {"fr": {"jcr:name": "Date de calendrier"}}
 }}

@@ -12,4 +12,14 @@
   <sv:property sv:name="hippo:resourcebundles" sv:type="String">
     <sv:value>type-translations_de.json</sv:value>
   </sv:property>
+</sv:node><sv:node sv:name="poll-component-param-translations_de">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippo:initializeitem</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:sequence" sv:type="Double">
+    <sv:value>1000.0</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippo:resourcebundles" sv:type="String">
+    <sv:value>component-param-translations_de.json</sv:value>
+  </sv:property>
 </sv:node></sv:node>

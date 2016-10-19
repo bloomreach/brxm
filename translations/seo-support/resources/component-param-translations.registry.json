@@ -2,116 +2,68 @@
   "bundleType" : "REPOSITORY",
   "keyData" : {
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/menu-name" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/group.descriptionsettings" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/site-title-in-template" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/site-title" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/menu-item-allow-expanded" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/dc-schema-link" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/group.dcsettings" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/enable-dc-language" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/document-description-bean-props" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/group.titlesettings" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/dc-terms-link" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/site-dc-copyright-link" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/template-page-title" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/default-meta-description" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/document-title-bean-props" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "hippo:hst.componentparameters.org.onehippo.forge.seo.support.SEOHelperComponentParamsInfo/dc-language" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

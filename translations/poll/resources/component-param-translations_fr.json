@@ -1,0 +1,9 @@
+{"hippo:hst": {"componentparameters": {"org": {"onehippo": {"forge": {"poll": {"component": {
+  "PollComponentInfo": {"fr":   {
+    "poll-pollCompoundName": "Nom du composé de sondage",
+    "poll-dataPath": "Chemin pour stocker les données de sondage ",
+    "poll-docsPath": "Chemin pour des documents de sondage relatif aux racines du contenu du site",
+    "poll-docsClass": "Classe de documents de sondage"
+  }},
+  "PollDocumentComponentInfo": {"fr": {"poll-docsPath": "Document de sondage"}}
+}}}}}}}}
