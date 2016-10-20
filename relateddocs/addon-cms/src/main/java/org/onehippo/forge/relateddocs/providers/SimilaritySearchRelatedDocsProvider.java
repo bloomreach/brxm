@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ import javax.jcr.query.RowIterator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.repository.api.HippoQuery;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.relateddocs.RelatedDoc;
 import org.onehippo.forge.relateddocs.RelatedDocCollection;
 import org.onehippo.forge.relateddocs.RelatedDocsNodeType;
@@ -67,17 +68,18 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
             nodeModel = new JcrNodeModel(documentModel.getNode().getNode(RelatedDocsNodeType.NT_RELATEDDOCS));
         } catch (PathNotFoundException e) {
             //I think when a new document is opened, the document doesn't contain the "relateddocs" node yet, so we *may* need to create one -- Vijay
-            log.info("Relateddocs node for current document not found, returning empty docs, so creating one." + e.getMessage());
+            log.info("Relateddocs node for current document not found, returning empty docs, so creating one.{}", e.getMessage());
             nodeModel = new JcrNodeModel(documentModel.getNode().addNode(RelatedDocsNodeType.NT_RELATEDDOCS, RelatedDocsNodeType.NT_RELATEDDOCS));
         }
 
         RelatedDocCollection currentCollection = new RelatedDocCollection(nodeModel);
-        Set<String> uuidSet = new HashSet<String>();
+        Set<String> uuidSet = new HashSet<>();
         for (RelatedDoc r : currentCollection) {
             uuidSet.add(r.getUuid());
         }
 
         Node docNode = documentModel.getNode();
+        Node parentNode = docNode.getParent();
         String xpathQuery = createXPathQuery(docNode);
 
         if (log.isDebugEnabled()) {
@@ -99,7 +101,32 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
             // retrieve the found document from the repository
             try {
                 Node document = nodeModel.getNode().getSession().getNode(path);
-                collection.add(new RelatedDoc(new JcrNodeModel(document), this.score * myScore));
+                Node itsParent = ((HippoNode) document).getCanonicalNode();
+                if (parentNode.isSame(itsParent)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Found parent {}", itsParent.getPath());
+                    }
+                    continue;
+                }
+                if (document.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    if (uuidSet.contains(document.getIdentifier())) {
+                        continue;
+                    }
+                    if (log.isDebugEnabled()) {
+                        log.debug("Found related document {}", document.getPath());
+                    }
+                    collection.add(new RelatedDoc(new JcrNodeModel(document), this.score * myScore));
+                } else if (itsParent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    if (uuidSet.contains(itsParent.getIdentifier())) {
+                        continue;
+                    }
+                    // exclude prototype stuff: note need to check this
+                    final JcrNodeModel jcrNodeModel = new JcrNodeModel(itsParent);
+                    if (jcrNodeModel.getNode().getPath().endsWith("hippo:prototype")) {
+                        continue;
+                    }
+                    collection.add(new RelatedDoc(jcrNodeModel, this.score * myScore));
+                }
             } catch (RepositoryException e) {
                 log.error("Error handling SimilaritySearch results", e.getMessage());
             }
