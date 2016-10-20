@@ -18,7 +18,7 @@ gulp tasks via `npm run` or simply stick with the predefined `npm start` and
    localhost:8080/cms/angular/hippo-cm/... to the Webpack dev server.
 
     cd <your project>
-    mvn -Pcargo.run -Dcargo.jvm.args='-Dwicket.configuration=development -Dresource.proxies=hippo-cm@http://localhost:9090/cms/angular/hippo-cm'
+    mvn -Pcargo.run -Dcargo.jvm.args='-Dwicket.configuration=development -Dresource.proxies=angular/hippo-cm@http://localhost:9090/cms'
 
 # Installation
 ### Install project dependencies
