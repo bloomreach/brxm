@@ -39,8 +39,9 @@ public class ResourceServletProxyTest {
 
     @Test
     public void testProxy() throws Exception {
-        final ProxyServlet proxyServlet = new ProxyServlet("hippo-proxy@classpath:org/onehippo/cms7/utilities/servlet");
-        final HttpServletResponse response = proxyServlet.get("/hippo-proxy/index.js");
+        final ProxyServlet proxyServlet = new ProxyServlet("/servlet",
+                "servlet/test@classpath:org/onehippo/cms7/utilities");
+        final HttpServletResponse response = proxyServlet.get("/test/index.js");
 
         assertEquals(200, response.getStatus());
         assertEquals("text/javascript", response.getContentType());
@@ -48,23 +49,24 @@ public class ResourceServletProxyTest {
 
     @Test
     public void testProxies() throws Exception {
-        final ProxyServlet proxyServlet = new ProxyServlet("proxy1@classpath:org/onehippo/cms7/utilities/servlet," +
-                "proxy2@classpath:META-INF/test");
+        final ProxyServlet proxyServlet = new ProxyServlet("/servlet",
+                "servlet/test@classpath:org/onehippo/cms7/utilities," +
+                "servlet/test2@classpath:META-INF");
 
-        final HttpServletResponse response1 = proxyServlet.get("/proxy1/index.js");
+        final HttpServletResponse response1 = proxyServlet.get("/test/index.js");
         assertEquals(200, response1.getStatus());
         assertEquals("text/javascript", response1.getContentType());
 
-        final HttpServletResponse response2 = proxyServlet.get("/proxy2/onehippo.gif");
+        final HttpServletResponse response2 = proxyServlet.get("/test2/onehippo.gif");
         assertEquals(200, response2.getStatus());
         assertEquals("image/gif", response2.getContentType());
     }
 
     @Test
     public void testProxyDisabled() throws Exception {
-        final ProxyServlet proxyServlet = new ProxyServlet("");
+        final ProxyServlet proxyServlet = new ProxyServlet("/servlet", "");
 
-        final HttpServletResponse response = proxyServlet.get("/hippo-cm/index.js");
+        final HttpServletResponse response = proxyServlet.get("/sub/index.js");
         assertEquals(404, response.getStatus());
     }
 
@@ -87,11 +89,15 @@ public class ResourceServletProxyTest {
 
         final ResourceServlet servlet;
 
-        ProxyServlet(final String resourceProxies) throws ServletException {
+        ProxyServlet(final String jarPathPrefix, final String resourceProxies) throws ServletException {
             System.setProperty("resource.proxies", resourceProxies);
 
             servlet = new ResourceServlet();
-            servlet.init(new MockServletConfig());
+
+            final MockServletConfig config = new MockServletConfig();
+
+            config.addInitParameter("jarPathPrefix", jarPathPrefix);
+            servlet.init(config);
         }
 
         HttpServletResponse get(final String path) throws ServletException, IOException {

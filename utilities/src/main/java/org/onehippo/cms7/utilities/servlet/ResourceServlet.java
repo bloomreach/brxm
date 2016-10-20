@@ -304,17 +304,28 @@ public class ResourceServlet extends HttpServlet {
             }
         }
 
+        proxies = initProxies(jarPathPrefix);
+    }
+
+    private static HashMap<String, String> initProxies(final String jarPathPrefix) {
+        final HashMap<String, String> proxies = new HashMap<>();
         final String proxiesAsString = System.getProperty(PROXIES_SYSTEM_PROPERTY);
-        proxies = new HashMap<>();
+
         if (StringUtils.isNotBlank(proxiesAsString)) {
             Arrays.stream(StringUtils.split(proxiesAsString, PROXY_SEPARATOR))
                     .filter(StringUtils::isNotBlank)
                     .map(proxyLine -> StringUtils.split(proxyLine, PROXY_FROM_TO_SEPARATOR))
                     .forEach(fromTo -> {
                         if (fromTo.length > 1) {
-                            final String from = "/" + StringUtils.trim(fromTo[0]) + "/";
-                            final String to = StringUtils.trim(fromTo[1]) + "/";
-                            proxies.put(from, to);
+                            // Example config: from=angular/hippo-cm, to=http://localhost:9090/cms, jarPath=/angular
+                            // Results in mapping "/hippo-cm/" -> "http://localhost:9090/cms/angular/hippo-cm/"
+                            String from = "/" + StringUtils.trim(fromTo[0]) + "/";
+                            String to = StringUtils.trim(fromTo[1]);
+                            if (from.startsWith(jarPathPrefix + "/")) {
+                                to = to + from;
+                                from = StringUtils.removeStart(from, jarPathPrefix);
+                                proxies.put(from, to);
+                            }
                         }
                     });
         }
@@ -326,6 +337,8 @@ public class ResourceServlet extends HttpServlet {
 
             logBorderedMessage(messages);
         }
+
+        return proxies;
     }
 
     @Override
