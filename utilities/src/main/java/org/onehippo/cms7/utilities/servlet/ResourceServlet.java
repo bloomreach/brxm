@@ -264,8 +264,6 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_COMPRESSED_MIME_TYPES.add(Pattern.compile("text/.*"));
     }
 
-    private static final Map<String, String> PROXIES = initProxies();
-
     private String jarPathPrefix;
     private boolean gzipEnabled;
     private boolean webResourceEnabled;
@@ -274,6 +272,8 @@ public class ResourceServlet extends HttpServlet {
     private Set<Pattern> allowedResourcePaths;
     private Set<Pattern> compressedMimeTypes;
     private Map<String, String> mimeTypes;
+
+    private Map<String, String> proxies;
 
     @Override
     public void init() throws ServletException {
@@ -303,6 +303,29 @@ public class ResourceServlet extends HttpServlet {
                 }
             }
         }
+
+        final String proxiesAsString = System.getProperty(PROXIES_SYSTEM_PROPERTY);
+        proxies = new HashMap<>();
+        if (StringUtils.isNotBlank(proxiesAsString)) {
+            Arrays.stream(StringUtils.split(proxiesAsString, PROXY_SEPARATOR))
+                    .filter(StringUtils::isNotBlank)
+                    .map(proxyLine -> StringUtils.split(proxyLine, PROXY_FROM_TO_SEPARATOR))
+                    .forEach(fromTo -> {
+                        if (fromTo.length > 1) {
+                            final String from = "/" + StringUtils.trim(fromTo[0]) + "/";
+                            final String to = StringUtils.trim(fromTo[1]) + "/";
+                            proxies.put(from, to);
+                        }
+                    });
+        }
+
+        if (!proxies.isEmpty()) {
+            final List<String> messages = new ArrayList<>(proxies.size() + 1);
+            messages.add(PROXY_ENABLED_MESSAGE);
+            proxies.forEach((from, to) -> messages.add(String.format("from %s to %s", from, to)));
+
+            logBorderedMessage(messages);
+        }
     }
 
     @Override
@@ -329,7 +352,7 @@ public class ResourceServlet extends HttpServlet {
         long modifiedSince = request.getDateHeader(HTTP_IF_MODIFIED_SINCE_HEADER);
         final URLConnection conn = resource.openConnection();
 
-        if (!PROXIES.isEmpty() && conn instanceof HttpURLConnection) {
+        if (!proxies.isEmpty() && conn instanceof HttpURLConnection) {
 
             if (modifiedSince >= 0) {
                 conn.setIfModifiedSince(modifiedSince);
@@ -373,33 +396,6 @@ public class ResourceServlet extends HttpServlet {
         }
     }
 
-    private static Map<String, String> initProxies() {
-        final Map<String, String> proxies = new HashMap<>();
-        final String proxiesAsString = System.getProperty(PROXIES_SYSTEM_PROPERTY);
-
-        if (StringUtils.isNotBlank(proxiesAsString)) {
-            Arrays.stream(StringUtils.split(proxiesAsString, PROXY_SEPARATOR))
-                    .filter(StringUtils::isNotBlank)
-                    .map(proxyLine -> StringUtils.split(proxyLine, PROXY_FROM_TO_SEPARATOR))
-                    .forEach(fromTo -> {
-                        if (fromTo.length > 1) {
-                            final String from = "/" + StringUtils.trim(fromTo[0]) + "/";
-                            final String to = StringUtils.trim(fromTo[1]) + "/";
-                            proxies.put(from, to);
-                        }
-                    });
-        }
-
-        if (!proxies.isEmpty()) {
-            final List<String> messages = new ArrayList<>(proxies.size() + 1);
-            messages.add(PROXY_ENABLED_MESSAGE);
-            proxies.forEach((from, to) -> messages.add(String.format("from %s to %s", from, to)));
-
-            logBorderedMessage(messages);
-        }
-        return proxies;
-    }
-
     private Set<Pattern> initPatterns(final String paramName, Set<Pattern> defaultPatterns) {
         final String param = getInitParameter(paramName, null);
 
@@ -426,7 +422,7 @@ public class ResourceServlet extends HttpServlet {
             return null;
         }
 
-        for (Map.Entry<String, String> entry : PROXIES.entrySet()) {
+        for (Map.Entry<String, String> entry : proxies.entrySet()) {
             final String from = entry.getKey();
             final String to = entry.getValue();
 
