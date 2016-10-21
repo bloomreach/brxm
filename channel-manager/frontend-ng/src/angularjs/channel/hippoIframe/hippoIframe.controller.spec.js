@@ -24,7 +24,6 @@ describe('hippoIframeCtrl', () => {
   let scope;
   let $q;
   let $rootScope;
-  let ScalingService;
   let DragDropService;
   let OverlaySyncService;
   let hstCommentsProcessorService;
@@ -48,7 +47,7 @@ describe('hippoIframeCtrl', () => {
     angular.mock.module('hippo-cm');
 
     inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlaySyncService_,
-            _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,
+            _PageStructureService_, _hstCommentsProcessorService_, _PageMetaDataService_,
             _ChannelService_, _CmsService_, _ChannelSidePanelService_, _HippoIframeService_,
             _DialogService_, _DomService_) => {
       $rootScope = _$rootScope_;
@@ -57,7 +56,6 @@ describe('hippoIframeCtrl', () => {
       DragDropService = _DragDropService_;
       OverlaySyncService = _OverlaySyncService_;
       PageStructureService = _PageStructureService_;
-      ScalingService = _ScalingService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       PageMetaDataService = _PageMetaDataService_;
       ChannelService = _ChannelService_;
@@ -69,7 +67,6 @@ describe('hippoIframeCtrl', () => {
       scope = $rootScope.$new();
     });
 
-    spyOn(ScalingService, 'init');
     spyOn(DragDropService, 'init');
     spyOn(OverlaySyncService, 'init');
     spyOn(DomService, 'getAppRootUrl').and.returnValue('http://cms.example.com/app/root/');

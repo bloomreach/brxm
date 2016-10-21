@@ -22,5 +22,4 @@ const channelViewportsModule = angular
   .controller('ViewportToggleCtrl', ViewportToggleCtrl)
   .directive('viewportToggle', viewportToggleDirective);
 
-
 export default channelViewportsModule;

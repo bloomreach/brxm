@@ -14,7 +14,8 @@
   limitations under the License.
   -->
 
-<md-sidenav class="md-sidenav-right channel-right-side-panel" md-component-id="channel-right-side-panel" layout="column">
+<md-sidenav md-is-locked-open="$ctrl.isLockedOpen()" class="md-sidenav-right channel-right-side-panel qa-side-panel-right"
+            md-component-id="channel-right-side-panel" layout="column">
   <md-toolbar>
     <div class="md-toolbar-tools">
       <h1 class="md-title text-truncate">
@@ -30,7 +31,7 @@
 
         <!-- edge case: a multiple field with zero values -->
         <md-input-container ng-if="::$ctrl.isEmptyMultiple(field)"
-                            class="md-block form-field-multiple"
+                            class="md-block form-field-multiple qa-field"
                             md-no-float>
           <label>{{ ::field.displayName }}</label>
           <input disabled value="{{ 'NONE' | translate }}" placeholder="">
@@ -38,7 +39,7 @@
 
         <!-- other cases -->
         <md-input-container ng-if="::!$ctrl.isEmptyMultiple(field)"
-                            class="md-block"
+                            class="md-block qa-field"
                             ng-class="::{'form-field-multiple': field.multiple}"
                             md-no-float
                             ng-repeat="value in ::$ctrl.getFieldAsArray(field.id)"
@@ -70,8 +71,8 @@
   <md-toolbar>
     <div class="md-toolbar-tools">
       <span flex></span>
-      <md-button ng-click="$ctrl.close()">{{'CLOSE' | translate }}</md-button>
-      <md-button disabled>{{'SAVE' | translate }}</md-button>
+      <md-button class="qa-close" ng-click="$ctrl.close()">{{'CLOSE' | translate }}</md-button>
+      <md-button class="qa-save" disabled>{{'SAVE' | translate }}</md-button>
     </div>
   </md-toolbar>
 </md-sidenav>

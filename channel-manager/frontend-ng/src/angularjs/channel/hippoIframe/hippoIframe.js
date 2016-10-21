@@ -23,7 +23,6 @@ import HippoIframeCtrl from './hippoIframe.controller';
 import HippoIframeService from './hippoIframe.service';
 import HstCommentsProcessorService from './hstCommentsProcessor.service';
 import LinkProcessorService from './linkProcessor.service';
-import ScalingService from './scaling.service';
 import ScrollService from './scroll.service';
 import DragDropService from './dragDrop.service';
 
@@ -38,7 +37,6 @@ const channelHippoIframeModule = angular
   .service('HippoIframeService', HippoIframeService)
   .service('hstCommentsProcessorService', HstCommentsProcessorService)
   .service('linkProcessorService', LinkProcessorService)
-  .service('ScalingService', ScalingService)
   .service('ScrollService', ScrollService)
   .service('DragDropService', DragDropService);
 

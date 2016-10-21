@@ -20,7 +20,6 @@ import 'angular-mocks';
 describe('DragDropService', () => {
   let $q;
   let DragDropService;
-  let ScalingService;
   let PageStructureService;
   let HstService;
   let ChannelService;
@@ -40,14 +39,12 @@ describe('DragDropService', () => {
 
     inject((_$q_,
             _DragDropService_,
-            _ScalingService_,
             _PageStructureService_,
             _HstService_,
             _ChannelService_,
             _FeedbackService_) => {
       $q = _$q_;
       DragDropService = _DragDropService_;
-      ScalingService = _ScalingService_;
       PageStructureService = _PageStructureService_;
       HstService = _HstService_;
       ChannelService = _ChannelService_;
@@ -159,7 +156,6 @@ describe('DragDropService', () => {
         left: 10,
         top: 20,
       });
-      spyOn(ScalingService, 'getScaleFactor').and.returnValue(1.0);
       spyOn(iframeComponentElement1, 'dispatchEvent');
 
       DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
@@ -173,39 +169,6 @@ describe('DragDropService', () => {
       expect(dispatchedEvent.clientX).toEqual(90);
       expect(dispatchedEvent.clientY).toEqual(180);
 
-      done();
-    });
-  });
-
-  it('forwards a shifted mouse event to the iframe when it starts dragging in a scaled iframe', (done) => {
-    loadIframeFixture(() => {
-      const mockedMouseDownEvent = {
-        clientX: 150,
-        clientY: 150,
-      };
-      const iframeComponentElement1 = component1.getBoxElement()[0];
-
-      base.offset({
-        left: 10,
-        top: 10,
-      });
-      iframe.offset({
-        left: 20,
-        top: 20,
-      });
-      iframe.width(200);
-
-      spyOn(ScalingService, 'getScaleFactor').and.returnValue(0.5);
-      spyOn(iframeComponentElement1, 'dispatchEvent');
-
-      DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
-
-      const dispatchedEvent = iframeComponentElement1.dispatchEvent.calls.argsFor(0)[0];
-
-      expect(dispatchedEvent.type).toEqual('mousedown');
-      expect(dispatchedEvent.bubbles).toEqual(true);
-      expect(dispatchedEvent.clientX).toEqual(80);
-      expect(dispatchedEvent.clientY).toEqual(260);
       done();
     });
   });

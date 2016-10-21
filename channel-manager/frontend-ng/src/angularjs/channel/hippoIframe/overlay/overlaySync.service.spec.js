@@ -159,7 +159,7 @@ describe('OverlaySyncService', () => {
         'max-width': 'none',
       });
       expect($iframe).toHaveCss({
-        'min-width': '0px',
+        'min-width': '1280px',
       });
 
       expect($iframe.height()).toEqual(600);
