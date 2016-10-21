@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
@@ -88,12 +87,14 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
                                 .message("added group " + groupname);
                         eventBus.post(event);
                     }
-                    Session.get().info(getString("group-created", groupModel));
                     // one up
-                    List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
-                    breadCrumbModel.setActive(l.get(l.size() -2));
+                    List<IBreadCrumbParticipant> allBreadCrumbs = breadCrumbModel.allBreadCrumbParticipants();
+                    final IBreadCrumbParticipant parentBreadCrumb = allBreadCrumbs.get(allBreadCrumbs.size() - 2);
+                    parentBreadCrumb.getComponent().info(getString("group-created", groupModel));
+                    breadCrumbModel.setActive(parentBreadCrumb);
                 } catch (RepositoryException e) {
-                    Session.get().warn(getString("group-create-failed", groupModel));
+                    target.add(CreateGroupPanel.this);
+                    this.error(getString("group-create-failed", groupModel));
                     log.error("Unable to create group '" + groupname + "' : ", e);
                 }
             }

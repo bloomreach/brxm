@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -85,6 +85,13 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         this.context = context;
 
         add(new PanelPluginBreadCrumbLink("create-group", breadCrumbModel) {
+
+            @Override
+            public void onClick(final AjaxRequestTarget target) {
+                clearMessages(this.getParent());
+                super.onClick(target);
+            }
+
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
                 return new CreateGroupPanel(componentId, breadCrumbModel);
@@ -152,6 +159,14 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         redraw();
     }
 
+    private void clearMessages(final Component component) {
+        if(component != null) {
+            if (component.hasFeedbackMessage()) {
+                getFeedbackMessages().clear();
+            }
+        }
+    }
+
     private class AjaxGroupViewActionLinkLabel extends Panel {
 
         private AjaxGroupViewActionLinkLabel(final String id, Group group) {
@@ -197,6 +212,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
 
         @Override
         public void onClick(final AjaxRequestTarget target) {
+            clearMessages(findParent(ListGroupsPanel.class));
             context.getService(IDialogService.class.getName(), IDialogService.class).show(
                     new DeleteDialog<Group>(groupModel, this) {
                         private static final long serialVersionUID = 1L;
