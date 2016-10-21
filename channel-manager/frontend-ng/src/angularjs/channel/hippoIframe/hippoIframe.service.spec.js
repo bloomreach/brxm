@@ -55,6 +55,14 @@ describe('HippoIframeService', () => {
     iframe.attr('src', iframeSrc);
   }
 
+  it('knows when a page has been loaded', () => {
+    expect(HippoIframeService.isPageLoaded()).toBe(false);
+    HippoIframeService.load('dummy');
+    expect(HippoIframeService.isPageLoaded()).toBe(false);
+    HippoIframeService.signalPageLoadCompleted();
+    expect(HippoIframeService.isPageLoaded()).toBe(true);
+  });
+
   it('does not reload the iframe when no page has been loaded yet', (done) => {
     HippoIframeService.initialize(undefined); // undo initialization
 
@@ -136,16 +144,10 @@ describe('HippoIframeService', () => {
     expect(HippoIframeService.getCurrentRenderPathInfo()).toBe('dummy');
   });
 
-  it('triggers a reload when trying to load the current page', (done) => {
-    ChannelService.extractRenderPathInfo.and.returnValue('/target');
-    ChannelService.makePath.and.returnValue(iframeSrc);
-    spyOn(HippoIframeService, 'reload');
-    loadIframeFixture(() => { // give the iframe something to reload.
-      HippoIframeService.signalPageLoadCompleted();
-      HippoIframeService.load('dummy');
-      expect(HippoIframeService.reload).toHaveBeenCalled();
-      done();
-    });
+  it('resets the current renderPathInfo when the iframe path cannot be found', () => {
+    HippoIframeService.initialize(undefined); // undo initialization
+    HippoIframeService.signalPageLoadCompleted();
+    expect(HippoIframeService.getCurrentRenderPathInfo()).not.toBeDefined();
   });
 
   it('uses jQuery to trigger a reload if the src attribute matches the to-be-loaded path', () => {

@@ -38,22 +38,18 @@ class HippoIframeService {
 
   load(renderPathInfo) {
     const targetPath = this.ChannelService.makePath(renderPathInfo);
-    if (targetPath !== this.loadedPath) {
-      this.pageLoaded = false;
 
-      if (targetPath !== this.src) {
-        // setting the src attribute of the iframe makes us go to the desired page.
-        this.src = targetPath;
-      } else if (this.iframeJQueryElement /* pro-forma check */) {
-        // we may have set the src attribute of the iframe to the targetPath before,
-        // but then navigated away from that location by following site-internal links.
-        // In order to get back to the location that already matches the iframe's src attribute
-        // value, we use jQuery's attr() method, which triggers a load of the specified src.
-        this.iframeJQueryElement.attr('src', this.src);
-      }
-    } else {
-      // we're already on the right page
-      this.reload();
+    this.pageLoaded = false;
+
+    if (targetPath !== this.src) {
+      // setting the src attribute of the iframe makes us go to the desired page.
+      this.src = targetPath;
+    } else if (this.iframeJQueryElement /* pro-forma check */) {
+      // we may have set the src attribute of the iframe to the targetPath before,
+      // but then navigated away from that location by following site-internal links.
+      // In order to get back to the location that already matches the iframe's src attribute
+      // value, we use jQuery's attr() method, which triggers a load of the specified src.
+      this.iframeJQueryElement.attr('src', this.src);
     }
   }
 
@@ -82,7 +78,7 @@ class HippoIframeService {
 
   // called by the hippoIframe controller when the processing of the loaded page is completed.
   signalPageLoadCompleted() {
-    this._determineLoadedPathAndRenderPathInfo();
+    this.renderPathInfo = this._determineRenderPathInfo();
     this.pageLoaded = true;
 
     const deferred = this.deferredReload;
@@ -93,14 +89,13 @@ class HippoIframeService {
     }
   }
 
-  _determineLoadedPathAndRenderPathInfo() {
+  _determineRenderPathInfo() {
     try {
-      this.loadedPath = this.iframeJQueryElement[0].contentWindow.location.pathname;
-      this.renderPathInfo = this.ChannelService.extractRenderPathInfo(this.loadedPath);
+      const loadedPath = this.iframeJQueryElement[0].contentWindow.location.pathname;
+      return this.ChannelService.extractRenderPathInfo(loadedPath);
     } catch (ignoredError) {
-      // if pathname is not found, reset loadedPath and renderPathInfo
-      this.loadedPath = undefined;
-      this.renderPathInfo = undefined;
+      // if pathname is not found, reset renderPathInfo
+      return undefined;
     }
   }
 }
