@@ -28,7 +28,6 @@ export class ChannelRightSidePanelCtrl {
     ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), (documentId) => {
       this.openDocument(documentId);
     });
-    this.closePanelOnEditModeTurnedOff();
     this._clearDocument();
   }
 
@@ -66,14 +65,6 @@ export class ChannelRightSidePanelCtrl {
 
   isLockedOpen() {
     return this.ChannelSidePanelService.isOpen('right');
-  }
-
-  closePanelOnEditModeTurnedOff() {
-    this.$scope.$watch('$ctrl.editMode', () => {
-      if (!this.editMode) {
-        this.ChannelSidePanelService.close('right');
-      }
-    });
   }
 
   isEmptyMultiple(field) {
