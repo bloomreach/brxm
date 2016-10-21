@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import template from './leftSidePanel.html';
+
 export class ChannelLeftSidePanelCtrl {
   constructor($scope, $element, ChannelSidePanelService, ChannelService, SiteMapService, HippoIframeService) {
     'ngInject';
@@ -69,7 +71,7 @@ const channelLeftSidePanelComponentModule = angular
       editMode: '=',
     },
     controller: ChannelLeftSidePanelCtrl,
-    templateUrl: 'channel/sidePanels/leftSidePanel/leftSidePanel.html',
+    template,
   });
 
 export default channelLeftSidePanelComponentModule;

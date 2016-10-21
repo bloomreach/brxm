@@ -31,14 +31,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-channel-manager-visual-editing</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
-
   <build>
     <defaultGoal>validate</defaultGoal>
     <plugins>
@@ -62,7 +54,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>run gulp buildDist -- --fail-on-gulp-error</commandlineArgs>
+              <commandlineArgs>run build</commandlineArgs>
             </configuration>
           </execution>
           <execution>
@@ -71,7 +63,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>test -- --fail-on-gulp-error</commandlineArgs>
+              <commandlineArgs>run testOnce</commandlineArgs>
               <skip>${skipTests}</skip>
             </configuration>
           </execution>

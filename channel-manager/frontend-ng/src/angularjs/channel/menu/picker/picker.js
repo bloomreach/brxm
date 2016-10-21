@@ -15,13 +15,13 @@
  */
 
 
-import { ListingCtrl } from './listing.controller';
-import { listingDirective } from './listing.directive';
-import { PickerService } from './picker.service';
-import { PickerCtrl } from './picker.controller';
-import { uiTreeModule } from '../tree/tree.js';
+import ListingCtrl from './listing.controller';
+import listingDirective from './listing.directive';
+import PickerService from './picker.service';
+import PickerCtrl from './picker.controller';
+import uiTreeModule from '../tree/tree';
 
-export const pickerModule = angular
+const pickerModule = angular
   .module('hippo-cm.channel.menu.picker', [
     uiTreeModule.name,
   ])
@@ -29,3 +29,5 @@ export const pickerModule = angular
   .controller('ListingCtrl', ListingCtrl)
   .service('PickerService', PickerService)
   .directive('listing', listingDirective);
+
+export default pickerModule;

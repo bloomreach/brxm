@@ -14,21 +14,65 @@
   limitations under the License.
   -->
 
-<md-sidenav md-is-locked-open="$ctrl.isLockedOpen()" class="md-sidenav-right channel-right-side-panel" md-component-id="channel-right-side-panel" md-disable-backdrop layout="column">
-  <div flex="none" layout="row" layout-align="start center">
-    <md-button class="md-icon-button"
-               aria-label="{{'CLOSE' | translate }}"
-               title="{{'CLOSE' | translate }}"
-               ng-click="$ctrl.close()">
-      <md-icon>close</md-icon>
-    </md-button>
-    <h1 class="md-title">{{'EDIT_DOCUMENT' | translate }}</h1>
-  </div>
+<md-sidenav md-is-locked-open="$ctrl.isLockedOpen()" class="md-sidenav-right channel-right-side-panel qa-side-panel-right"
+            md-component-id="channel-right-side-panel" layout="column">
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h1 class="md-title text-truncate">
+        {{ 'EDIT_DOCUMENT' | translate:$ctrl.doc }}
+        <md-tooltip md-delay="500">{{ $ctrl.doc.displayName }}</md-tooltip>
+      </h1>
+    </div>
+  </md-toolbar>
   <md-content flex="grow" layout-padding>
+    <form class="form-dense-layout" layout="column" ng-if="$ctrl.doc">
+      <div ng-repeat="field in ::$ctrl.docType.fields"
+           ng-class="{'form-field-focused': $ctrl.isFieldFocused(field) }">
 
+        <!-- edge case: a multiple field with zero values -->
+        <md-input-container ng-if="::$ctrl.isEmptyMultiple(field)"
+                            class="md-block form-field-multiple qa-field"
+                            md-no-float>
+          <label>{{ ::field.displayName }}</label>
+          <input disabled value="{{ 'NONE' | translate }}" placeholder="">
+        </md-input-container>
+
+        <!-- other cases -->
+        <md-input-container ng-if="::!$ctrl.isEmptyMultiple(field)"
+                            class="md-block qa-field"
+                            ng-class="::{'form-field-multiple': field.multiple}"
+                            md-no-float
+                            ng-repeat="value in ::$ctrl.getFieldAsArray(field.id)"
+                            ng-switch="field.type">
+
+          <label ng-if="$first">{{ ::field.displayName }}</label>
+
+          <!-- editors per field type -->
+          <input ng-switch-when="STRING"
+                 ng-model="value"
+                 placeholder=""
+                 ng-focus="$ctrl.onFieldFocus(field)"
+                 ng-blur="$ctrl.onFieldBlur()">
+          <textarea ng-switch-when="MULTILINE_STRING"
+                    ng-model="value"
+                    placeholder=""
+                    md-no-resize
+                    ng-focus="$ctrl.onFieldFocus(field)"
+                    ng-blur="$ctrl.onFieldBlur()">
+          </textarea>
+
+          <!-- TODO: remove once all field types for PSP1 have been implemented -->
+          <input ng-switch-default disabled value="TODO">
+
+        </md-input-container>
+      </div>
+    </form>
   </md-content>
-  <div layout="row" layout-align="end center" flex="none">
-    <md-button class="md-primary">{{'SAVE' | translate }}</md-button>
-    <md-button class="md-primary">{{'SAVE_AND_CLOSE' | translate }}</md-button>
-  </div>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <span flex></span>
+      <md-button class="qa-close" ng-click="$ctrl.close()">{{'CLOSE' | translate }}</md-button>
+      <md-button class="qa-save" disabled>{{'SAVE' | translate }}</md-button>
+    </div>
+  </md-toolbar>
 </md-sidenav>

@@ -19,7 +19,7 @@ const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
 const MOUSELEAVE_EVENT_NAME = 'mouseleave.dragDropService';
 const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 
-export class DragDropService {
+class DragDropService {
 
   constructor($rootScope, $q, ConfigService, DomService, HstService, PageStructureService,
               ChannelService, ScrollService, FeedbackService) {
@@ -83,8 +83,8 @@ export class DragDropService {
 
     return this.dragulaPromise.then(() => {
       const iframeContainerElements = containers
-        .filter((container) => !container.isDisabled())
-        .map((container) => container.getBoxElement()[0]);
+        .filter(container => !container.isDisabled())
+        .map(container => container.getBoxElement()[0]);
 
       this.dragulaOptions = {
         ignoreInputTextSelection: false,
@@ -97,7 +97,7 @@ export class DragDropService {
       this.drake.on('drag', (el, source) => this._onStartDrag(source));
       this.drake.on('cloned', (clone, original) => this._onMirrorCreated(clone, original));
       this.drake.on('over', (el, container) => this._updateDragDirection(container));
-      this.drake.on('dragend', (el) => this._onStopDragOrClick(el));
+      this.drake.on('dragend', el => this._onStopDragOrClick(el));
       this.drake.on('drop', (el, target, source, sibling) => this._onDrop(el, target, source, sibling));
 
       this.ScrollService.enable(() => this.draggingOrClicking);
@@ -172,8 +172,32 @@ export class DragDropService {
   }
 
   _onMirrorCreated(mirrorElement, originalElement) {
-    this.DomService.copyComputedStyleExcept(originalElement, mirrorElement, ['border-[a-z]*', 'box-shadow', 'height', 'margin-[a-z]*', 'overflow', 'opacity', 'pointer-events', 'position', '[a-z\\\-]*user-select', 'width']);
-    this.DomService.copyComputedStyleOfDescendantsExcept(originalElement, mirrorElement, ['opacity', 'pointer-events', '[a-z\\\-]*user-select']);
+    this.DomService.copyComputedStyleExcept(
+      originalElement,
+      mirrorElement,
+      [
+        'border-[a-z]*',
+        'box-shadow',
+        'height',
+        'margin-[a-z]*',
+        'overflow',
+        'opacity',
+        'pointer-events',
+        'position',
+        '[a-z\\-]*user-select',
+        'width',
+      ]
+    );
+
+    this.DomService.copyComputedStyleOfDescendantsExcept(
+      originalElement,
+      mirrorElement,
+      [
+        'opacity',
+        'pointer-events',
+        '[a-z\\-]*user-select',
+      ]
+    );
 
     const iframeOffset = this.iframeJQueryElement.offset();
     $(MIRROR_WRAPPER_SELECTOR).offset(iframeOffset);
@@ -218,7 +242,7 @@ export class DragDropService {
 
     // next, push the updated container representation(s) to the backend
     const backendCallPromises = [];
-    changedContainers.forEach((container) => backendCallPromises.push(this._updateContainer(container)));
+    changedContainers.forEach(container => backendCallPromises.push(this._updateContainer(container)));
 
     // last, re-render the changed container(s) so their meta-data is updated and we're sure they look right
     this.$q.all(backendCallPromises)
@@ -239,13 +263,13 @@ export class DragDropService {
 
   _renderContainers(containers) {
     const renderPromises = [];
-    containers.forEach((container) => renderPromises.push(this._renderContainer(container)));
+    containers.forEach(container => renderPromises.push(this._renderContainer(container)));
     return this.$q.all(renderPromises);
   }
 
   _renderContainer(container) {
     return this.PageStructureService.renderContainer(container)
-      .then((newContainer) => this.replaceContainer(container, newContainer));
+      .then(newContainer => this.replaceContainer(container, newContainer));
   }
 
   _dispatchMouseDownInIframe($event, component) {
@@ -264,3 +288,5 @@ export class DragDropService {
     return [shiftedX, shiftedY];
   }
 }
+
+export default DragDropService;

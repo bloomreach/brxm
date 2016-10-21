@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class HippoIframeService {
+class HippoIframeService {
 
   constructor($q, $log, ChannelService, CmsService) {
     'ngInject';
@@ -104,3 +104,5 @@ export class HippoIframeService {
     }
   }
 }
+
+export default HippoIframeService;

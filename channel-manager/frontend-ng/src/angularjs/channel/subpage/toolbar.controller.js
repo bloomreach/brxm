@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-export class SubpageToolbarCtrl {
+class SubpageToolbarCtrl {
   constructor($translate) {
     'ngInject';
 
     this.ariaLabel = $translate.instant(this.mode === 'cancel' ? 'TOOLBAR_BUTTON_CLOSE' : 'TOOLBAR_BUTTON_BACK');
-    this.icon = (this.mode === 'cancel') ? 'images/close.svg' : 'images/back.svg';
+    this.icon = (this.mode === 'cancel') ? '/cms/angular/hippo-cm/images/close.svg' : '/cms/angular/hippo-cm/images/back.svg';
   }
 }
+
+export default SubpageToolbarCtrl;

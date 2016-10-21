@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('ChannelSettings', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('ChannelSettings', () => {
   let $scope;
   let $rootScope;
   let $compile;
@@ -37,7 +38,7 @@ describe('ChannelSettings', () => {
   };
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _FeedbackService_, _HippoIframeService_,
             _ConfigService_) => {
@@ -93,7 +94,7 @@ describe('ChannelSettings', () => {
       },
     };
 
-    spyOn($translate, 'instant').and.callFake((key) => key);
+    spyOn($translate, 'instant').and.callFake(key => key);
     spyOn(ChannelService, 'getName').and.returnValue('test-name');
     spyOn(ChannelService, 'reload').and.returnValue($q.when(channel));
     spyOn(ChannelService, 'getChannel').and.returnValue(channel);
@@ -115,7 +116,7 @@ describe('ChannelSettings', () => {
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('channel-settings');
+    return $element.controller('channelSettings');
   }
 
   it('initializes correctly when fetching channel setting from backend is successful', () => {

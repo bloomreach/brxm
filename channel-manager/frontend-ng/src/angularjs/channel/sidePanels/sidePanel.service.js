@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-export class ChannelSidePanelService {
+class ChannelSidePanelService {
   constructor($mdSidenav) {
     'ngInject';
 
     this.$mdSidenav = $mdSidenav;
-    this.panels = {
-      left: {
-        element: 'channel-left-side-panel',
-      },
-      right: {
-        element: 'channel-right-side-panel',
-      },
-    };
+    this.panels = { };
   }
 
-  initialize(side, jQueryElement) {
-    this.panels[side].jQueryElement = jQueryElement;
+  initialize(side, jQueryElement, onOpenCallback) {
+    const panel = {
+      jQueryElement,
+      sideNavComponentId: jQueryElement.attr('md-component-id'),
+      onOpenCallback: onOpenCallback || angular.noop,
+    };
+
+    this.panels[side] = panel;
   }
 
   toggle(side) {
@@ -41,19 +40,23 @@ export class ChannelSidePanelService {
     }
   }
 
-  open(side) {
+  open(side, ...params) {
     if (!this.isOpen(side)) {
-      this.$mdSidenav(this.panels[side].element).open();
+      const panel = this.panels[side];
+      this.$mdSidenav(panel.sideNavComponentId).open();
+      panel.onOpenCallback(...params);
     }
   }
 
   isOpen(side) {
-    return this.panels[side].jQueryElement && this.$mdSidenav(this.panels[side].element).isOpen();
+    return this.panels[side] && this.$mdSidenav(this.panels[side].sideNavComponentId).isOpen();
   }
 
   close(side) {
     if (this.isOpen(side)) {
-      this.$mdSidenav(this.panels[side].element).close();
+      this.$mdSidenav(this.panels[side].sideNavComponentId).close();
     }
   }
 }
+
+export default ChannelSidePanelService;

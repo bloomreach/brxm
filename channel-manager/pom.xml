@@ -39,6 +39,7 @@
     <hippo.cms.version>4.1.0-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>4.1.0-SNAPSHOT</hippo.hst.version>
     <hippo.commons.version>3.1.0-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>3.1.0-SNAPSHOT</hippo.services.version>
     <hippo.addon-hst-configuration-editor.version>3.1.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
 
     <commons-lang.version>2.6</commons-lang.version>
@@ -49,7 +50,9 @@
 
     <!-- test related -->
     <junit.version>4.12</junit.version>
-    <easymock.version>3.0</easymock.version>
+    <easymock.version>3.4</easymock.version>
+    <!-- Make sure that powermock and easymock are compatible -->
+    <powermock.version>1.6.5</powermock.version>
   </properties>
 
   <repositories>
@@ -118,6 +121,11 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services</artifactId>
+        <version>${hippo.services.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-api</artifactId>
         <version>${hippo.repository.version}</version>
         <scope>provided</scope>
@@ -126,6 +134,18 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-jaxrs</artifactId>
         <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-builtin</artifactId>
+        <version>${hippo.repository.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons-lang.version}</version>
         <scope>provided</scope>
       </dependency>
 
@@ -143,6 +163,18 @@
         <scope>test</scope>
       </dependency>
       <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-api-easymock</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-module-junit4</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-testutils</artifactId>
         <version>${hippo.repository.version}</version>
@@ -156,7 +188,7 @@
     <module>frontend-ng</module>
     <module>frontend</module>
     <module>repository</module>
-    <module>visual-editing</module>
+    <module>content-service</module>
   </modules>
 
   <scm>
@@ -230,8 +262,8 @@
                 <exclude>frontend-ng/coverage/**/*</exclude>
 
                 <!-- repository content XML -->
+                <exclude>content-service/src/main/resources/**/*.xml</exclude>
                 <exclude>repository/src/main/resources/**/*.xml</exclude>
-                <exclude>visual-editing/src/main/resources/**/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>

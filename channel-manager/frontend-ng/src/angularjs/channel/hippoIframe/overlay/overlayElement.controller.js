@@ -16,7 +16,7 @@
 
 const MIN_HEIGHT = '40px';
 
-export class OverlayElementCtrl {
+class OverlayElementCtrl {
 
   constructor($scope, $document, $element, $translate, ExperimentStateService, OverlaySyncService) {
     'ngInject';
@@ -120,3 +120,5 @@ export class OverlayElementCtrl {
     return angular.element(div);
   }
 }
+
+export default OverlayElementCtrl;

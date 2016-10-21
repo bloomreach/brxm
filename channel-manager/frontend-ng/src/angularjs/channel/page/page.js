@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import { RenderingService } from './rendering.service';
-import { ExtJsHandlerService } from './extJsHandler.service';
-import { PageMetaDataService } from './pageMetaData.service';
-import { PageStructureService } from './pageStructure.service';
-import { run } from './page.run';
+import RenderingService from './rendering.service';
+import ExtJsHandlerService from './extJsHandler.service';
+import PageMetaDataService from './pageMetaData.service';
+import PageStructureService from './pageStructure.service';
+import run from './page.run';
 
-export const channelPageModule = angular
+const channelPageModule = angular
   .module('hippo-cm.channel.page', [])
   .service('RenderingService', RenderingService)
   .service('ExtJsHandlerService', ExtJsHandlerService)
   .service('PageMetaDataService', PageMetaDataService)
   .service('PageStructureService', PageStructureService)
   .run(run);
+
+export default channelPageModule;

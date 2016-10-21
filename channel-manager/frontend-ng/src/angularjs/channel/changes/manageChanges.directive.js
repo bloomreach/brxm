@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-export function changeManagementDirective() {
+import template from './manageChanges.html';
+
+function changeManagementDirective() {
   return {
     restrict: 'E',
-    templateUrl: 'channel/changes/manageChanges.html',
+    template,
     controller: 'ChangeManagementCtrl as changeMan',
     bindToController: {
       onDone: '&',
     },
   };
 }
+
+export default changeManagementDirective;

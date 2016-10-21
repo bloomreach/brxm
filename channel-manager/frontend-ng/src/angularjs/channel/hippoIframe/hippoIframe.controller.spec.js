@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { EmbeddedLink } from '../page/element/embeddedLink';
+import angular from 'angular';
+import 'angular-mocks';
+import EmbeddedLink from '../page/element/embeddedLink';
 
 describe('hippoIframeCtrl', () => {
-  'use strict';
-
   let PageStructureService;
   let hippoIframeCtrl;
   let scope;
@@ -44,7 +44,7 @@ describe('hippoIframeCtrl', () => {
 
   beforeEach(() => {
     let $compile;
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlaySyncService_,
             _PageStructureService_, _hstCommentsProcessorService_, _PageMetaDataService_,
@@ -71,7 +71,6 @@ describe('hippoIframeCtrl', () => {
     spyOn(OverlaySyncService, 'init');
     spyOn(DomService, 'getAppRootUrl').and.returnValue('http://cms.example.com/app/root/');
     spyOn(DomService, 'addCss').and.returnValue($q.resolve());
-
 
     scope.testEditMode = false;
     scope.onEditMenu = jasmine.createSpy('onEditMenu');
@@ -177,93 +176,16 @@ describe('hippoIframeCtrl', () => {
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
-  it('checks if content is unlocked', () => {
-    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
-    const contentLink = new EmbeddedLink(contentLinkComment, {
-      uuid: '1234',
-    });
-
-    const locked = hippoIframeCtrl.contentIsLocked(contentLink);
-
-    expect(locked).toBe(false);
-  });
-
-  it('checks if content is locked', () => {
-    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
-    const contentLink = new EmbeddedLink(contentLinkComment, {
-      uuid: '1234',
-      holderId: 'test',
-    });
-
-    const locked = hippoIframeCtrl.contentIsLocked(contentLink);
-
-    expect(locked).toBe(true);
-  });
-
-  it('sends an "open-content" event to the CMS to open content', () => {
-    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
-    const contentLink = new EmbeddedLink(contentLinkComment, {
-      uuid: '1234',
-      holderName: 'differentUser',
-    });
-    hippoIframeCtrl.ConfigService = {
-      cmsUser: 'test',
-    };
-    spyOn(CmsService, 'publish');
-    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(true);
-
-    hippoIframeCtrl.openContent(contentLink);
-
-    expect(CmsService.publish).toHaveBeenCalledWith('open-content', '1234');
-  });
-
   it('opens right side panel when clicking the edit content button', () => {
     const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
     const contentLink = new EmbeddedLink(contentLinkComment, {
       uuid: '1234',
     });
     spyOn(ChannelSidePanelService, 'open');
-    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(false);
 
     hippoIframeCtrl.openContent(contentLink);
 
-    expect(ChannelSidePanelService.open).toHaveBeenCalledWith('right');
-  });
-
-  it('gets the edit content tooltip for the content link', () => {
-    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(false);
-
-    const tooltip = hippoIframeCtrl.getContentLinkTooltip({});
-
-    expect(tooltip).toBe(hippoIframeCtrl.$translate.instant('EDIT_CONTENT'));
-  });
-
-  it('gets the locked by tooltip for the content link', () => {
-    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(true);
-
-    const tooltip = hippoIframeCtrl.getContentLinkTooltip({
-      metaData: {
-        holderName: 'test',
-      },
-    });
-
-    expect(tooltip).toBe(hippoIframeCtrl.$translate.instant('LOCKED_BY'), { user: 'test' });
-  });
-
-  it('gets the edit icon for the content link', () => {
-    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(false);
-
-    const icon = hippoIframeCtrl.getContentLinkIcon({});
-
-    expect(icon).toBe('images/edit-document.svg');
-  });
-
-  it('gets the locked icon for the content link', () => {
-    spyOn(hippoIframeCtrl, 'contentIsLocked').and.returnValue(true);
-
-    const icon = hippoIframeCtrl.getContentLinkIcon({});
-
-    expect(icon).toBe('images/lock.svg');
+    expect(ChannelSidePanelService.open).toHaveBeenCalledWith('right', '1234');
   });
 
   it('calls the registered callback for editing a menu', () => {

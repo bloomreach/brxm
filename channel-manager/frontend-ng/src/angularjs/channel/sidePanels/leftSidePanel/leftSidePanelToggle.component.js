@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import template from './leftSidePanelToggle.html';
+
 export class ChannelLeftSidePanelToggleCtrl {
   constructor(ChannelSidePanelService, ChannelService) {
     'ngInject';
@@ -38,7 +40,7 @@ const channelLeftSidePanelToggleComponentModule = angular
       disabled: '=',
     },
     controller: ChannelLeftSidePanelToggleCtrl,
-    templateUrl: 'channel/sidePanels/leftSidePanel/leftSidePanelToggle.html',
+    template,
   });
 
 export default channelLeftSidePanelToggleComponentModule;

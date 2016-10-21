@@ -14,15 +14,54 @@
  * limitations under the License.
  */
 
+import template from './rightSidePanel.html';
+
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, ChannelSidePanelService) {
+  constructor($scope, $element, $timeout, ChannelSidePanelService, ContentService) {
     'ngInject';
 
     this.$scope = $scope;
+    this.$timeout = $timeout;
     this.ChannelSidePanelService = ChannelSidePanelService;
+    this.ContentService = ContentService;
 
-    ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'));
+    ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), (documentId) => {
+      this.openDocument(documentId);
+    });
     this.closePanelOnEditModeTurnedOff();
+    this._clearDocument();
+  }
+
+  openDocument(documentId) {
+    this._clearDocument();
+    this._loadDocument(documentId);
+  }
+
+  _clearDocument() {
+    this.doc = null;
+    this.docType = null;
+    this.focusedFieldId = null;
+  }
+
+  _loadDocument(id) {
+    this.ContentService.createDraft(id)
+      .then((doc) => {
+        this.ContentService.getDocumentType(doc.info.type.id)
+          .then((docType) => {
+            this.doc = doc;
+            this.docType = docType;
+            this._resizeTextareas();
+          });
+      });
+    // TODO: handle error
+  }
+
+  _resizeTextareas() {
+    // Set initial size of textareas (see Angular Material issue #9745).
+    // Use $timeout to ensure that the sidenav has become visible.
+    this.$timeout(() => {
+      this.$scope.$broadcast('md-resize-textarea');
+    });
   }
 
   isLockedOpen() {
@@ -37,6 +76,27 @@ export class ChannelRightSidePanelCtrl {
     });
   }
 
+  isEmptyMultiple(field) {
+    return field.multiple && this.doc.fields[field.id].length === 0;
+  }
+
+  getFieldAsArray(fieldId) {
+    const field = this.doc.fields[fieldId];
+    return angular.isArray(field) ? field : [field];
+  }
+
+  onFieldFocus(field) {
+    this.focusedFieldId = field.id;
+  }
+
+  onFieldBlur() {
+    this.focusedFieldId = null;
+  }
+
+  isFieldFocused(field) {
+    return this.focusedFieldId === field.id;
+  }
+
   close() {
     this.ChannelSidePanelService.close('right');
   }
@@ -49,7 +109,7 @@ const channelRightSidePanelComponentModule = angular
       editMode: '=',
     },
     controller: ChannelRightSidePanelCtrl,
-    templateUrl: 'channel/sidePanels/rightSidePanel/rightSidePanel.html',
+    template,
   });
 
 export default channelRightSidePanelComponentModule;

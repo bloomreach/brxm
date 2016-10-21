@@ -15,40 +15,84 @@
  */
 
 describe('ChannelRightSidePanel', () => {
-  'use strict';
-
+  let $componentController;
+  let $q;
   let $rootScope;
-  let $compile;
+  let $timeout;
   let ChannelSidePanelService;
-  let parentScope;
+  let ContentService;
+
+  let $ctrl;
+  let $scope;
+
+  const stringField = {
+    id: 'ns:string',
+    type: 'STRING',
+  };
+  const multipleStringField = {
+    id: 'ns:multiplestring',
+    type: 'STRING',
+    multiple: true,
+  };
+  const emptyMultipleStringField = {
+    id: 'ns:emptymultiplestring',
+    type: 'STRING',
+    multiple: true,
+  };
+  const testDocumentType = {
+    id: 'ns:testdocument',
+    fields: [
+      stringField,
+      multipleStringField,
+      emptyMultipleStringField,
+    ],
+  };
+  const testDocument = {
+    id: 'test',
+    info: {
+      type: {
+        id: 'ns:testdocument',
+      },
+    },
+    fields: {
+      'ns:string': 'String value',
+      'ns:multiplestring': ['One', 'Two'],
+      'ns:emptymultiplestring': [],
+    },
+  };
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_) => {
+      $componentController = _$componentController_;
+      $q = _$q_;
       $rootScope = _$rootScope_;
-      $compile = _$compile_;
-      ChannelSidePanelService = _ChannelSidePanelService_;
+      $timeout = _$timeout_;
     });
 
-    spyOn(ChannelSidePanelService, 'initialize');
-    spyOn(ChannelSidePanelService, 'close');
+    ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'close']);
+    ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType']);
+
+    $scope = $rootScope.$new();
+    const $element = angular.element('<div></div>');
+    $ctrl = $componentController('channelRightSidePanel', {
+      $scope,
+      $element,
+      $timeout,
+      ChannelSidePanelService,
+      ContentService,
+    }, {
+      editMode: false,
+    });
+    $rootScope.$apply();
   });
 
-  function instantiateController(editMode) {
-    parentScope = $rootScope.$new();
-    parentScope.editMode = editMode;
-    const el = angular.element('<channel-right-side-panel edit-mode="editMode"></channel-right-side-panel>');
-    $compile(el)(parentScope);
-    $rootScope.$digest();
-    return el.controller('channel-right-side-panel');
-  }
-
   it('initializes the channel right side panel service upon instantiation', () => {
-    instantiateController(false);
-
     expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalled();
+    expect($ctrl.doc).toBe(null);
+    expect($ctrl.docType).toBe(null);
   });
 
   it('knows when it is locked open', () => {
@@ -64,11 +108,62 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('closes the panel', () => {
-    const $ctrl = instantiateController(false);
-
     $ctrl.close();
-
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+  });
+
+  it('opens a document', () => {
+    ContentService.createDraft.and.returnValue($q.resolve(testDocument));
+    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+    spyOn($scope, '$broadcast');
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    expect($ctrl.doc).toBe(null);
+    expect($ctrl.docType).toBe(null);
+
+    $rootScope.$apply();
+
+    expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
+
+    expect($ctrl.doc).toEqual(testDocument);
+    expect($ctrl.docType).toEqual(testDocumentType);
+
+    $timeout.flush();
+    expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
+  });
+
+  it('recognizes an empty multiple field', () => {
+    $ctrl.docType = testDocumentType;
+    $ctrl.doc = testDocument;
+
+    expect($ctrl.isEmptyMultiple(stringField)).toBeFalsy();
+    expect($ctrl.isEmptyMultiple(multipleStringField)).toBeFalsy();
+    expect($ctrl.isEmptyMultiple(emptyMultipleStringField)).toBeTruthy();
+  });
+
+  it('can get a field as an array', () => {
+    $ctrl.doc = testDocument;
+
+    expect($ctrl.getFieldAsArray('ns:string')).toEqual(['String value']);
+    expect($ctrl.getFieldAsArray('ns:multiplestring')).toEqual(['One', 'Two']);
+    expect($ctrl.getFieldAsArray('ns:emptymultiplestring')).toEqual([]);
+  });
+
+  it('keeps track of the focused field', () => {
+    expect($ctrl.isFieldFocused(stringField)).toBe(false);
+
+    $ctrl.onFieldFocus(stringField);
+    expect($ctrl.isFieldFocused(stringField)).toBe(true);
+
+    $ctrl.onFieldFocus(multipleStringField);
+    expect($ctrl.isFieldFocused(stringField)).toBe(false);
+    expect($ctrl.isFieldFocused(multipleStringField)).toBe(true);
+
+    $ctrl.onFieldBlur();
+    expect($ctrl.isFieldFocused(multipleStringField)).toBe(false);
   });
 });
 

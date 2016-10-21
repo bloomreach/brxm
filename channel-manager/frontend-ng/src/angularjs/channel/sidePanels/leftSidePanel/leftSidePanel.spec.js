@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('ChannelLeftSidePanel', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('ChannelLeftSidePanel', () => {
   let $rootScope;
   let $compile;
   let ChannelSidePanelService;
@@ -29,7 +30,7 @@ describe('ChannelLeftSidePanel', () => {
   ];
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$rootScope_, _$compile_, _ChannelSidePanelService_, _ChannelService_, _SiteMapService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;

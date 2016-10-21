@@ -51,7 +51,7 @@
     saveVariant: function (variant) {
       Ext.Ajax.request({
         method: 'POST',
-        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(variant) + '?FORCE_CLIENT_HOST=true',
+        url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(variant) + '?Force-Client-Host=true',
         success: function () {
           this.fireEvent('save', variant);
         },

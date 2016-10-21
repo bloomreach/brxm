@@ -17,12 +17,12 @@ md-sidenav {
 }
 
 .md-button.md-icon-button.md-icon-button-left-side-panel {
-  padding-left: 0;
   margin-left: 0;
+  padding-left: 0;
 }
 
 .channel-left-side-panel {
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  border-right: 1px solid $grey-200;
 }
 .channel-right-side-panel {
   border-left: 1px solid rgba(0, 0, 0, 0.12);
@@ -40,10 +40,42 @@ md-sidenav {
 }
 
 .catalog-dd-container-item {
-  cursor: move; // IE 11&edge
   cursor: grab;
 
-  &:active, &.gu-mirror {
+  .ie11 & {
+    cursor: move;
+  }
+
+  &:active,
+  &.gu-mirror {
     cursor: grabbing;
   }
+}
+
+.channel-right-side-panel {
+  width: 440px;
+
+  md-toolbar {
+    background: $grey-50;
+    color: $text-dark;
+
+    &:first-child {
+      border-bottom: 1px solid $grey-200;
+    }
+    &:last-child {
+      border-top: 1px solid $grey-200;
+    }
+  }
+  .md-button {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

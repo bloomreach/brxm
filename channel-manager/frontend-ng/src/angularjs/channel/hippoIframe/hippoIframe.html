@@ -45,10 +45,10 @@
             <overlay-element structure-element="contentLink">
               <md-button class="overlay-element-fab overlay-element-fab-content-link md-fab md-mini md-hue-2 qa-content-link"
                          ng-click="iframe.openContent(contentLink)">
-                <md-icon aria-label="{{iframe.getContentLinkTooltip(contentLink)}}"
-                         md-svg-src="{{iframe.getContentLinkIcon(contentLink)}}"></md-icon>
+                <md-icon aria-label="{{ 'EDIT_CONTENT' | translate }}"
+                         md-svg-src="/cms/angular/hippo-cm/images/edit-document.svg"></md-icon>
                 <md-tooltip md-direction="top">
-                  {{iframe.getContentLinkTooltip(contentLink)}}
+                  {{ 'EDIT_CONTENT' | translate }}
                 </md-tooltip>
               </md-button>
             </overlay-element>
@@ -58,7 +58,7 @@
               <md-button class="overlay-element-fab md-fab md-mini md-hue-2 qa-edit-menu-link"
                          ng-click="iframe.openMenuEditor(editMenuLink)">
                 <md-icon aria-label="{{'IFRAME_EDIT_MENU' | translate }}"
-                         md-svg-src="images/edit-menu.svg">
+                         md-svg-src="/cms/angular/hippo-cm/images/edit-menu.svg">
                 </md-icon>
                 <md-tooltip md-direction="top">
                   {{'IFRAME_EDIT_MENU' | translate}}

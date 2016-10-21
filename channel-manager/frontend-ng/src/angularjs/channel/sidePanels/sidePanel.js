@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { ChannelSidePanelService } from './sidePanel.service';
+import ChannelSidePanelService from './sidePanel.service';
 import channelLeftSidePanelToggleComponentModule from './leftSidePanel/leftSidePanelToggle.component';
 import channelLeftSidePanelComponentModule from './leftSidePanel/leftSidePanel.component';
 import channelRightSidePanelComponentModule from './rightSidePanel/rightSidePanel.component';
 
-export const channelSidePanelModule = angular
+const channelSidePanelModule = angular
   .module('hippo-cm.channel.sidePanel', [
     channelLeftSidePanelToggleComponentModule.name,
     channelLeftSidePanelComponentModule.name,
     channelRightSidePanelComponentModule.name,
   ])
   .service('ChannelSidePanelService', ChannelSidePanelService);
+
+export default channelSidePanelModule;

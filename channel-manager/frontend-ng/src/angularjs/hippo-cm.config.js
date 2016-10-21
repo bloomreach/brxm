@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-export function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $translateProvider) {
+import template from './hippo-cm.html';
+
+function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $translateProvider) {
   'ngInject';
 
   $urlRouterProvider.otherwise('/');
 
+  // TODO: Switch to component router
   $stateProvider.state('hippo-cm', {
     url: '/',
-    templateUrl: 'hippo-cm.html',
+    template,
     resolve: {
       translations: ($translate, ConfigService) => {
         $translateProvider.useStaticFilesLoader({
-          prefix: 'i18n/',
+          prefix: '/cms/angular/hippo-cm/i18n/',
           suffix: `.json?antiCache=${ConfigService.antiCache}`,
         });
         return $translate.use(ConfigService.locale)
@@ -123,3 +126,4 @@ export function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $
     .backgroundPalette('hippo-grey');
 }
 
+export default config;

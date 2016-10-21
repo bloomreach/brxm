@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-export function run(ExtJsHandlerService) {
+function run(ExtJsHandlerService) {
   'ngInject';
 
   ExtJsHandlerService.initialize();
 }
+
+export default run;

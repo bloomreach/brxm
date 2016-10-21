@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class HippoIframeCtrl {
+class HippoIframeCtrl {
   constructor(
     $q,
     $log,
@@ -72,7 +72,7 @@ export class HippoIframeCtrl {
     );
     DragDropService.init(this.iframeJQueryElement, baseJQueryElement);
 
-    const deleteComponentHandler = (componentId) => this.deleteComponent(componentId);
+    const deleteComponentHandler = componentId => this.deleteComponent(componentId);
     CmsService.subscribe('delete-component', deleteComponentHandler);
     $scope.$on('$destroy', () => CmsService.unsubscribe('delete-component', deleteComponentHandler));
 
@@ -194,7 +194,7 @@ export class HippoIframeCtrl {
   _parseLinks() {
     const iframeDom = this._getIframeDom();
     const protocolAndHost = `${iframeDom.location.protocol}//${iframeDom.location.host}`;
-    const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map((path) => protocolAndHost + path);
+    const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map(path => protocolAndHost + path);
 
     this.linkProcessorService.run(iframeDom, internalLinkPrefixes);
   }
@@ -207,36 +207,9 @@ export class HippoIframeCtrl {
     return !this.editMode ? this.PageStructureService.getContentLinks() : [];
   }
 
-  contentIsLocked(contentLink) {
-    return typeof contentLink.metaData.holderId !== 'undefined';
-  }
-
   openContent(contentLink) {
-    if (this.contentIsLocked(contentLink) && contentLink.metaData.holderId !== this.ConfigService.cmsUser) {
-      this.CmsService.publish('open-content', contentLink.getUuid());
-    } else {
-      this.ChannelSidePanelService.open('right');
-    }
-  }
-
-  getContentLinkTooltip(contentLink) {
-    let result;
-    if (this.contentIsLocked(contentLink)) {
-      result = this.$translate.instant('LOCKED_BY', { user: contentLink.metaData.holderName });
-    } else {
-      result = this.$translate.instant('EDIT_CONTENT');
-    }
-    return result;
-  }
-
-  getContentLinkIcon(contentLink) {
-    let result;
-    if (this.contentIsLocked(contentLink)) {
-      result = 'images/lock.svg';
-    } else {
-      result = 'images/edit-document.svg';
-    }
-    return result;
+    const contentId = contentLink.getUuid();
+    this.ChannelSidePanelService.open('right', contentId);
   }
 
   getEditMenuLinks() {
@@ -251,3 +224,5 @@ export class HippoIframeCtrl {
     return this.HippoIframeService.getSrc();
   }
 }
+
+export default HippoIframeCtrl;
