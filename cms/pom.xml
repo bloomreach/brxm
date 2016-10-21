@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>4.1.0-SNAPSHOT</version>
+  <version>4.2.0-SNAPSHOT</version>
 
   <inceptionYear>2007</inceptionYear>
 
@@ -84,11 +84,11 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.commons.version>3.1.0-SNAPSHOT</hippo.commons.version>
-    <hippo.frontend.theme.version>3.1.0-SNAPSHOT</hippo.frontend.theme.version>
-    <hippo.utilities.version>3.1.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.services.version>3.1.0-SNAPSHOT</hippo.services.version>
-    <hippo.repository.version>4.1.0-SNAPSHOT</hippo.repository.version>
+    <hippo.commons.version>3.2.0-SNAPSHOT</hippo.commons.version>
+    <hippo.frontend.theme.version>3.2.0-SNAPSHOT</hippo.frontend.theme.version>
+    <hippo.utilities.version>3.2.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>3.2.0-SNAPSHOT</hippo.services.version>
+    <hippo.repository.version>4.2.0-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>3.4</easymock.version>
