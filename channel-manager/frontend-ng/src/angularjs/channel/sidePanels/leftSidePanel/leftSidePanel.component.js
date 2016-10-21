@@ -27,19 +27,10 @@ export class ChannelLeftSidePanelCtrl {
     this.HippoIframeService = HippoIframeService;
 
     ChannelSidePanelService.initialize('left', $element.find('.channel-left-side-panel'));
-    this.closePanelOnEditModeTurnedOff();
   }
 
   isLockedOpen() {
     return this.ChannelSidePanelService.isOpen('left');
-  }
-
-  closePanelOnEditModeTurnedOff() {
-    this.$scope.$watch('$ctrl.editMode', () => {
-      if (!this.editMode) {
-        this.ChannelSidePanelService.close('left');
-      }
-    });
   }
 
   showComponentsTab() {
