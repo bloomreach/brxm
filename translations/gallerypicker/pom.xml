@@ -25,10 +25,10 @@
   
   <name>Hippo Plugin Gallery Picker Translations</name>
   <artifactId>hippo-plugin-gallerypicker-l10n</artifactId>
-  <version>3.1.0-SNAPSHOT</version>
+  <version>3.2.0-SNAPSHOT</version>
   
   <properties>
-    <hippo.plugin.gallerypicker.version>3.1.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.gallerypicker.version>3.2.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
   </properties>
   
   <dependencies>

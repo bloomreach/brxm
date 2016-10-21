@@ -25,10 +25,10 @@
   
   <name>Hippo Essentials Components Translations</name>
   <artifactId>hippo-essentials-components-l10n</artifactId>
-  <version>3.1.0-SNAPSHOT</version>
+  <version>3.2.0-SNAPSHOT</version>
   
   <properties>
-    <hippo.essentials-components.version>3.1.0-SNAPSHOT</hippo.essentials-components.version>
+    <hippo.essentials-components.version>3.2.0-SNAPSHOT</hippo.essentials-components.version>
   </properties>
   
   <dependencies>
