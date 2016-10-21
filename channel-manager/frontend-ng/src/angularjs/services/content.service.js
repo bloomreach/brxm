@@ -14,37 +14,35 @@
  * limitations under the License.
  */
 
-// TODO: Create spec file for this service
-
-const CMS_CONTEXT_PATH = window.parent ? window.parent.location.pathname : '/cms/';
-const CMS_CONTENT_REST_API_PATH = 'ws/content';
+const REST_API_PATH = 'ws/content';
 
 class ContentService {
 
-  constructor($http, PathService) {
+  constructor($http, ConfigService, PathService) {
     'ngInject';
 
     this.$http = $http;
+    this.ConfigService = ConfigService;
     this.PathService = PathService;
   }
 
   createDraft(id) {
-    return this.$http.post(this._draftUrlForDocument(id))
-      .then(result => result.data);
+    return this._send('POST', ['documents', id, 'draft']);
+  }
+
+  saveDraft(doc) {
+    return this._send('PUT', ['documents', doc.id, 'draft'], doc);
   }
 
   getDocumentType(id) {
-    return this._doGet('documenttypes', id);
+    return this._send('GET', ['documenttypes', id]);
   }
 
-  _doGet(path, id) {
-    const apiUrl = this.PathService.concatPaths(CMS_CONTEXT_PATH, CMS_CONTENT_REST_API_PATH, path, id);
-    return this.$http.get(apiUrl)
+  _send(method, pathElements, data) {
+    const url = this.PathService.concatPaths(this.ConfigService.getCmsContextPath(), REST_API_PATH, ...pathElements);
+    const headers = {};
+    return this.$http({ method, url, headers, data })
       .then(result => result.data);
-  }
-
-  _draftUrlForDocument(id) {
-    return this.PathService.concatPaths(CMS_CONTEXT_PATH, CMS_CONTENT_REST_API_PATH, 'documents', id, 'draft');
   }
 }
 

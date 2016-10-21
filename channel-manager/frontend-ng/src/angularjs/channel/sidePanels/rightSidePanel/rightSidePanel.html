@@ -25,7 +25,7 @@
     </div>
   </md-toolbar>
   <md-content flex="grow" layout-padding>
-    <form class="form-dense-layout" layout="column" ng-if="$ctrl.doc">
+    <form name="$ctrl.form" class="form-dense-layout" layout="column" ng-if="$ctrl.doc">
       <div ng-repeat="field in ::$ctrl.docType.fields"
            ng-class="{'form-field-focused': $ctrl.isFieldFocused(field) }">
 
@@ -49,12 +49,12 @@
 
           <!-- editors per field type -->
           <input ng-switch-when="STRING"
-                 ng-model="value"
+                 ng-model="$ctrl.doc.fields[field.id]"
                  placeholder=""
                  ng-focus="$ctrl.onFieldFocus(field)"
                  ng-blur="$ctrl.onFieldBlur()">
           <textarea ng-switch-when="MULTILINE_STRING"
-                    ng-model="value"
+                    ng-model="$ctrl.doc.fields[field.id]"
                     placeholder=""
                     md-no-resize
                     ng-focus="$ctrl.onFieldFocus(field)"
@@ -71,8 +71,15 @@
   <md-toolbar>
     <div class="md-toolbar-tools">
       <span flex></span>
-      <md-button class="qa-close" ng-click="$ctrl.close()">{{'CLOSE' | translate }}</md-button>
-      <md-button class="qa-save" disabled>{{'SAVE' | translate }}</md-button>
+      <md-button class="qa-close"
+                 ng-click="$ctrl.close()">
+        {{'CLOSE' | translate }}
+      </md-button>
+      <md-button class="qa-save"
+                 ng-click="$ctrl.saveDocument()"
+                 ng-disabled="$ctrl.form.$pristine">
+        {{'SAVE' | translate }}
+      </md-button>
     </div>
   </md-toolbar>
 </md-sidenav>
