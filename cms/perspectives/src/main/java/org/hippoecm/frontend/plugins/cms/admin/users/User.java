@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -363,10 +363,10 @@ public class User implements Comparable<User>, IClusterable {
         return getLocalMemberships(false);
     }
 
-    public List<DetachableGroup> getLocalMemberships(Boolean excludeSystemUsers) {
+    public List<DetachableGroup> getLocalMemberships(final boolean excludeSystemUsers) {
         final String escapedUsername = Text.escapeIllegalXpathSearchChars(username).replaceAll("'", "''");
-        final String queryString = excludeSystemUsers ?
-          QUERY_AND_NOT_A_SYSTEM_GROUP.replace("{}", escapedUsername) : QUERY_LOCAL_MEMBERSHIPS.replace("{}", escapedUsername);
+        final String xpathQuery = excludeSystemUsers ? QUERY_AND_NOT_A_SYSTEM_GROUP : QUERY_LOCAL_MEMBERSHIPS;
+        final String queryString = xpathQuery.replace("{}", escapedUsername);
         final List<DetachableGroup> localMemberships = new ArrayList<DetachableGroup>();
         try {
             final Query query = getQueryManager().createQuery(queryString, Query.XPATH);
@@ -392,7 +392,7 @@ public class User implements Comparable<User>, IClusterable {
         return getLocalMembershipsAsListOfGroups(false);
     }
 
-    public List<Group> getLocalMembershipsAsListOfGroups(Boolean excludeSystemUsers) {
+    public List<Group> getLocalMembershipsAsListOfGroups(final boolean excludeSystemUsers) {
         List<Group> groups = new ArrayList<Group>();
         for (DetachableGroup group : getLocalMemberships(excludeSystemUsers)) {
             groups.add(group.getObject());
