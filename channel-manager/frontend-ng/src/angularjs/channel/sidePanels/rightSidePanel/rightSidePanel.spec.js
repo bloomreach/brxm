@@ -71,7 +71,7 @@ describe('ChannelRightSidePanel', () => {
       $timeout = _$timeout_;
     });
 
-    ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'close']);
+    ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'isOpen', 'close']);
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType']);
 
     $scope = $rootScope.$new();
@@ -96,15 +96,13 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('knows when it is locked open', () => {
-    const ctrl = instantiateController();
-    spyOn(ChannelSidePanelService, 'isOpen').and.returnValue(true);
-    expect(ctrl.isLockedOpen()).toBe(true);
+    ChannelSidePanelService.isOpen.and.returnValue(true);
+    expect($ctrl.isLockedOpen()).toBe(true);
   });
 
   it('knows when it is not locked open', () => {
-    const ctrl = instantiateController();
-    spyOn(ChannelSidePanelService, 'isOpen').and.returnValue(false);
-    expect(ctrl.isLockedOpen()).toBe(false);
+    ChannelSidePanelService.isOpen.and.returnValue(false);
+    expect($ctrl.isLockedOpen()).toBe(false);
   });
 
   it('closes the panel', () => {
