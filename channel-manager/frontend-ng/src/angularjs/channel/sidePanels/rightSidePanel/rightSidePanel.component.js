@@ -25,6 +25,10 @@ export class ChannelRightSidePanelCtrl {
     this.closePanelOnEditModeTurnedOff();
   }
 
+  isLockedOpen() {
+    return this.ChannelSidePanelService.isOpen('right');
+  }
+
   closePanelOnEditModeTurnedOff() {
     this.$scope.$watch('$ctrl.editMode', () => {
       if (!this.editMode) {

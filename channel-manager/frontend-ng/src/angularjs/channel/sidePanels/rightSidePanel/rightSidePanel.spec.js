@@ -51,6 +51,18 @@ describe('ChannelRightSidePanel', () => {
     expect(ChannelSidePanelService.close).toHaveBeenCalled();
   });
 
+  it('knows when it is locked open', () => {
+    const ctrl = instantiateController();
+    spyOn(ChannelSidePanelService, 'isOpen').and.returnValue(true);
+    expect(ctrl.isLockedOpen()).toBe(true);
+  });
+
+  it('knows when it is not locked open', () => {
+    const ctrl = instantiateController();
+    spyOn(ChannelSidePanelService, 'isOpen').and.returnValue(false);
+    expect(ctrl.isLockedOpen()).toBe(false);
+  });
+
   it('closes the panel', () => {
     const $ctrl = instantiateController(false);
 
