@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.List;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.util.DateTools;
+import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.query.constraint.DateConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +37,9 @@ public class Filter {
 
     private boolean negated = false;
 
-    private final static boolean DEFAULT_FULLTEXT_WILDCARD_POSTFIXED = true;
+    private final boolean fulltextWildcardPostfixEnabled;
 
-    private boolean fulltextWildcardPostfixed = DEFAULT_FULLTEXT_WILDCARD_POSTFIXED;
+    private final int fulltextWildcardPostfixMinLength;
 
     private final Session session;
 
@@ -54,7 +55,13 @@ public class Filter {
     private ChildFilterType firstAddedType;
 
     public Filter(final Session session) {
+        this(session, HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_ENABLED, HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_MINLENGTH);
+    }
+
+    public Filter(final Session session, final boolean wildcardPostfixEnabled, final int wildcardPostfixMinLength) {
         this.session = session;
+        this.fulltextWildcardPostfixEnabled = wildcardPostfixEnabled;
+        this.fulltextWildcardPostfixMinLength = wildcardPostfixMinLength;
     }
 
     private enum ChildFilterType {
@@ -87,23 +94,23 @@ public class Filter {
         } else {
             String parsedText = FullTextSearchParser.fullTextParseCmsSimpleSearchMode(fullTextSearch, false);
 
-            if (fulltextWildcardPostfixed) {
-                String parsedTextWildCardPostFixed = FullTextSearchParser.fullTextParseCmsSimpleSearchMode(fullTextSearch, true);
-                if (parsedTextWildCardPostFixed.length() > 0) {
+            if (fulltextWildcardPostfixEnabled) {
+                final String parsedTextWildcarded = FullTextSearchParser.fullTextParseCmsSimpleSearchMode(fullTextSearch, true, fulltextWildcardPostfixMinLength);
+                if (parsedTextWildcarded.length() > 0) {
                     if (parsedText.length() > 0) {
                         whereClauseBuilder.append("(");
                         addContainsToBuilder(whereClauseBuilder,  scope, parsedText);
                         whereClauseBuilder.append(" or ");
-                        addContainsToBuilder(whereClauseBuilder,  scope, parsedTextWildCardPostFixed);
+                        addContainsToBuilder(whereClauseBuilder, scope, parsedTextWildcarded);
                         whereClauseBuilder.append(")");
                     } else {
-                        addContainsToBuilder(whereClauseBuilder,  scope, parsedTextWildCardPostFixed);
+                        addContainsToBuilder(whereClauseBuilder, scope, parsedTextWildcarded);
                     }
-                } else if (whereClauseBuilder.length() > 0) {
-                    addContainsToBuilder(whereClauseBuilder,  scope, whereClauseBuilder.toString());
+                } else if (parsedText.length() > 0) {
+                    addContainsToBuilder(whereClauseBuilder, scope, parsedText);
                 }
-            } else if (whereClauseBuilder.length() > 0) {
-                addContainsToBuilder(whereClauseBuilder,  scope, whereClauseBuilder.toString());
+            } else if (parsedText.length() > 0) {
+                addContainsToBuilder(whereClauseBuilder, scope, parsedText);
             }
             log.info("Translated fullTextSearch '{}' to where clause '{}'.", fullTextSearch, whereClauseBuilder.toString());
         }

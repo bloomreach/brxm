@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,13 +41,18 @@ public class JcrQueryBuilder {
     private List<String> excludeScopes = new ArrayList<String>();
     private List<String> orderByList = new ArrayList<String>();
 
+    private final boolean wildcardPostfixEnabled;
+    private final int wildcardPostfixMinLength;
+
     private Filter filter;
 
     private String nodeType;
     private List<String> selected = new ArrayList<String>();
 
-    public JcrQueryBuilder(Session session) {
+    public JcrQueryBuilder(final Session session, final boolean wildcardPostfixEnabled, final int wildcardPostfixMinLength) {
         this.session = session;
+        this.wildcardPostfixEnabled = wildcardPostfixEnabled;
+        this.wildcardPostfixMinLength = wildcardPostfixMinLength;
     }
 
     public String getNodeType() {
@@ -226,4 +231,11 @@ public class JcrQueryBuilder {
         this.limit = limit;
     }
 
+    public boolean isWildcardPostfixEnabled() {
+        return wildcardPostfixEnabled;
+    }
+
+    public int getWildcardPostfixMinLength() {
+        return wildcardPostfixMinLength;
+    }
 }
