@@ -62,7 +62,6 @@ describe('ChannelLeftSidePanel', () => {
     instantiateController(false);
 
     expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
-    expect(ChannelSidePanelService.close).toHaveBeenCalled();
   });
 
   it('knows when it is locked open', () => {

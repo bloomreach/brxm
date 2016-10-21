@@ -90,7 +90,6 @@ describe('ChannelRightSidePanel', () => {
 
   it('initializes the channel right side panel service upon instantiation', () => {
     expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
-    expect(ChannelSidePanelService.close).toHaveBeenCalled();
     expect($ctrl.doc).toBe(null);
     expect($ctrl.docType).toBe(null);
   });
