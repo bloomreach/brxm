@@ -24,10 +24,29 @@ md-sidenav {
 .channel-left-side-panel {
   border-right: 1px solid $grey-200;
 }
+
 .channel-right-side-panel {
-  border-left: 1px solid rgba(0, 0, 0, 0.12);
-  max-width: 440px !important;
-  width: 440px !important;
+  border-left: 1px solid $grey-200;
+  max-width: 440px;
+  width: 440px;
+
+  md-toolbar {
+    background: $grey-50;
+    color: $text-dark;
+
+    &:first-child {
+      border-bottom: 1px solid $grey-200;
+    }
+    &:last-child {
+      border-top: 1px solid $grey-200;
+    }
+  }
+  .md-button {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 .list-item-active {
@@ -49,28 +68,6 @@ md-sidenav {
   &:active,
   &.gu-mirror {
     cursor: grabbing;
-  }
-}
-
-.channel-right-side-panel {
-  width: 440px;
-
-  md-toolbar {
-    background: $grey-50;
-    color: $text-dark;
-
-    &:first-child {
-      border-bottom: 1px solid $grey-200;
-    }
-    &:last-child {
-      border-top: 1px solid $grey-200;
-    }
-  }
-  .md-button {
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
   }
 }
 
