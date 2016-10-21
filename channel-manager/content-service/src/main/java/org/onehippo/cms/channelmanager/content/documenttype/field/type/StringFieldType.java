@@ -145,7 +145,8 @@ public class StringFieldType extends FieldType {
                     if (isOptional()) {
                         node.setProperty(property, (String) listOfValues.get(0));
                     } else {
-                        node.setProperty(property, (String[]) listOfValues.toArray());
+                        final String[] arrayOfValues = new String[listOfValues.size()];
+                        node.setProperty(property, (String[]) listOfValues.toArray(arrayOfValues));
                     }
                 }
                 return 0;
