@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@
     <cglib.version>2.2.2</cglib.version>
 
     <hippo.repository.version>4.1.0-SNAPSHOT</hippo.repository.version>
+    <hippo.services.version>3.1.0-SNAPSHOT</hippo.services.version>
     <hippo.utilities.version>3.1.0-SNAPSHOT</hippo.utilities.version>
 
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
@@ -100,6 +101,13 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms7-utilities</artifactId>
         <version>${hippo.utilities.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services</artifactId>
+        <version>${hippo.services.version}</version>
+        <scope>provided</scope>
       </dependency>
 
       <!-- Apache Commons -->
