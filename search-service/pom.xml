@@ -28,7 +28,7 @@
   <url>http://www.onehippo.com/</url>
 
   <artifactId>hippo-search-service</artifactId>
-  <version>3.1.0-SNAPSHOT</version>
+  <version>3.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2012</inceptionYear>
 
@@ -54,8 +54,8 @@
     <aspectj.version>1.8.4</aspectj.version>
     <cglib.version>2.2.2</cglib.version>
 
-    <hippo.repository.version>4.1.0-SNAPSHOT</hippo.repository.version>
-    <hippo.utilities.version>3.1.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.repository.version>4.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.utilities.version>3.2.0-SNAPSHOT</hippo.utilities.version>
 
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
