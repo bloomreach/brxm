@@ -103,7 +103,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         createButtonContainer.add(createUserLink);
         add(createButtonContainer);
 
-        List<IColumn> columns = new ArrayList<IColumn>();
+        List<IColumn> columns = new ArrayList<>();
 
         columns.add(new AbstractColumn<User, String>(new ResourceModel("user-username"), "username") {
             private static final long serialVersionUID = 1L;
@@ -114,12 +114,12 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
                 item.add(action);
             }
         });
-        columns.add(new PropertyColumn(new ResourceModel("user-firstname"), "frontend:firstname", "firstName"));
-        columns.add(new PropertyColumn(new ResourceModel("user-lastname"), "frontend:lastname", "lastName"));
+        columns.add(new PropertyColumn<>(new ResourceModel("user-firstname"), "frontend:firstname", "firstName"));
+        columns.add(new PropertyColumn<>(new ResourceModel("user-lastname"), "frontend:lastname", "lastName"));
         columns.add(new AbstractColumn(new ResourceModel("user-email")) {
             @Override
             public void populateItem(final Item cellItem, final String componentId, final IModel model) {
-                cellItem.add(new SmartLinkLabel(componentId, new PropertyModel<String>(model, "email")));
+                cellItem.add(new SmartLinkLabel(componentId, new PropertyModel<>(model, "email")));
             }
         });
         columns.add(new AbstractColumn<User, String>(new ResourceModel("user-group")) {
@@ -166,7 +166,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         form.setOutputMarkupId(true);
         add(form);
 
-        final TextField<String> search = new TextField<String>("search-query",
+        final TextField<String> search = new TextField<>("search-query",
                                                                new PropertyModel<String>(userDataProvider, "searchTerm"));
         search.add(StringValidator.minimumLength(1));
         search.setRequired(false);

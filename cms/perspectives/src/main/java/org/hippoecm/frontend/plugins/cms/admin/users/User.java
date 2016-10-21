@@ -115,7 +115,7 @@ public class User implements Comparable<User>, IClusterable {
     private Calendar passwordLastModified;
     private long passwordMaxAge = -1L;
 
-    private Map<String, String> properties = new TreeMap<String, String>();
+    private Map<String, String> properties = new TreeMap<>();
     private transient List<DetachableGroup> externalMemberships;
 
     private transient Node node;
@@ -126,7 +126,7 @@ public class User implements Comparable<User>, IClusterable {
      * Returns the QueryManager.
      *
      * @return the QueryManager
-     * @throws RepositoryException
+     * @throws RepositoryException for any unexpected repository problem
      */
     public static QueryManager getQueryManager() throws RepositoryException {
         return ((UserSession) Session.get()).getQueryManager();
@@ -159,9 +159,7 @@ public class User implements Comparable<User>, IClusterable {
     public static String createPasswordHash(final String password) throws RepositoryException {
         try {
             return PasswordHelper.getHash(password.toCharArray());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RepositoryException("Unable to hash password", e);
-        } catch (IOException e) {
+        } catch (NoSuchAlgorithmException | IOException e) {
             throw new RepositoryException("Unable to hash password", e);
         }
     }
@@ -367,8 +365,9 @@ public class User implements Comparable<User>, IClusterable {
         final String escapedUsername = Text.escapeIllegalXpathSearchChars(username).replaceAll("'", "''");
         final String xpathQuery = excludeSystemUsers ? QUERY_AND_NOT_A_SYSTEM_GROUP : QUERY_LOCAL_MEMBERSHIPS;
         final String queryString = xpathQuery.replace("{}", escapedUsername);
-        final List<DetachableGroup> localMemberships = new ArrayList<DetachableGroup>();
+        final List<DetachableGroup> localMemberships = new ArrayList<>();
         try {
+            @SuppressWarnings("deprecation") // we have to use XPath
             final Query query = getQueryManager().createQuery(queryString, Query.XPATH);
             final NodeIterator iter = query.execute().getNodes();
             while (iter.hasNext()) {
@@ -393,7 +392,7 @@ public class User implements Comparable<User>, IClusterable {
     }
 
     public List<Group> getLocalMembershipsAsListOfGroups(final boolean excludeSystemUsers) {
-        List<Group> groups = new ArrayList<Group>();
+        List<Group> groups = new ArrayList<>();
         for (DetachableGroup group : getLocalMemberships(excludeSystemUsers)) {
             groups.add(group.getObject());
         }
@@ -438,7 +437,7 @@ public class User implements Comparable<User>, IClusterable {
     /**
      * Create a new user.
      *
-     * @throws RepositoryException
+     * @throws RepositoryException for any unexpected repository problem
      */
     public void create() throws RepositoryException {
         create(null);
@@ -446,8 +445,8 @@ public class User implements Comparable<User>, IClusterable {
 
     /**
      * Create a new user with setting security provider by the specified name
-     * @param securityProviderName
-     * @throws RepositoryException
+     * @param securityProviderName to set the provider for the new user
+     * @throws RepositoryException for any unexpected repository problem
      */
     public void create(final String securityProviderName) throws RepositoryException {
         if (userExists(getUsername())) {
@@ -478,10 +477,10 @@ public class User implements Comparable<User>, IClusterable {
     /**
      * Wrapper needed for spi layer which doesn't know if a property exists or not.
      *
-     * @param node
-     * @param name
-     * @param value
-     * @throws RepositoryException
+     * @param node the node to update
+     * @param name name of the String property to change
+     * @param value new value for the String property if it exists
+     * @throws RepositoryException for any unexpected repository problem
      */
     private void setOrRemoveStringProperty(final Node node, final String name, final String value) throws RepositoryException {
         if (value == null && !node.hasProperty(name)) {
@@ -493,7 +492,7 @@ public class User implements Comparable<User>, IClusterable {
     /**
      * save the current user.
      *
-     * @throws RepositoryException
+     * @throws RepositoryException for any unexpected repository problem
      */
     public void save() throws RepositoryException {
         if (node.isNodeType(NT_USER)) {
@@ -515,7 +514,7 @@ public class User implements Comparable<User>, IClusterable {
     /**
      * Deletes the current user, including its group memberships.
      *
-     * @throws RepositoryException
+     * @throws RepositoryException for any unexpected repository problem
      */
     public void delete() throws RepositoryException {
 
@@ -538,7 +537,7 @@ public class User implements Comparable<User>, IClusterable {
      * Save the current user's password with a hashing function.
      *
      * @param password the password
-     * @throws RepositoryException
+     * @throws RepositoryException for any unexpected repository problem
      */
     public void savePassword(final String password) throws RepositoryException {
         // remember old password
@@ -592,7 +591,7 @@ public class User implements Comparable<User>, IClusterable {
      * @param password                  the password to check
      * @param numberOfPreviousPasswords the number of previous passwords to compare to
      * @return true if the password is the same as one of the previous passwords, false otherwise
-     * @throws RepositoryException
+     * @throws RepositoryException for any unexpected repository problem
      */
     public boolean isPreviousPassword(final char[] password, final int numberOfPreviousPasswords) throws RepositoryException {
         // is current password?
