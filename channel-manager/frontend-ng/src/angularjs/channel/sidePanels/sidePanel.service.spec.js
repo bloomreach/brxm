@@ -36,7 +36,7 @@ describe('ChannelSidePanelService', () => {
     });
   });
 
-  it('forwards the toggle to the mdSidenav service', () => {
+  it('toggles a named side-panel', () => {
     const element = angular.element('<div></div>');
     element.width(250);
     ChannelSidePanelService.initialize('left', element);
