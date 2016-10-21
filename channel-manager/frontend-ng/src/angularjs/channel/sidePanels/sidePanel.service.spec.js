@@ -18,7 +18,6 @@
 
 describe('ChannelSidePanelService', () => {
   let ChannelSidePanelService;
-  let ScalingService;
   const leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close']);
 
   beforeEach(() => {
@@ -30,36 +29,29 @@ describe('ChannelSidePanelService', () => {
       $provide.value('$mdSidenav', $mdSidenav);
     });
 
-    inject((_ChannelSidePanelService_, _ScalingService_) => {
+    inject((_ChannelSidePanelService_) => {
       ChannelSidePanelService = _ChannelSidePanelService_;
-      ScalingService = _ScalingService_;
     });
-
-    spyOn(ScalingService, 'setPushWidth');
   });
 
-  it('forwards the toggle to the mdSidenav service and updates the scaling service', () => {
+  it('toggles a named side-panel', () => {
     const element = angular.element('<div></div>');
     element.width(250);
     ChannelSidePanelService.initialize('left', element);
 
-    ScalingService.setPushWidth.calls.reset();
-    leftSidePanel.toggle.calls.reset();
-    leftSidePanel.isOpen.and.returnValue(true);
-
-    ChannelSidePanelService.toggle('left');
-
-    expect(leftSidePanel.toggle).toHaveBeenCalled();
-    expect(ScalingService.setPushWidth).toHaveBeenCalledWith(250);
-
-    ScalingService.setPushWidth.calls.reset();
     leftSidePanel.toggle.calls.reset();
     leftSidePanel.isOpen.and.returnValue(false);
 
     ChannelSidePanelService.toggle('left');
 
-    expect(leftSidePanel.toggle).toHaveBeenCalled();
-    expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
+    expect(leftSidePanel.open).toHaveBeenCalled();
+
+    leftSidePanel.toggle.calls.reset();
+    leftSidePanel.isOpen.and.returnValue(true);
+
+    ChannelSidePanelService.toggle('left');
+
+    expect(leftSidePanel.close).toHaveBeenCalled();
   });
 
   it('forwards the is-open check to the mdSidenav service', () => {
@@ -82,22 +74,18 @@ describe('ChannelSidePanelService', () => {
     const element = angular.element('<div></div>');
     ChannelSidePanelService.initialize('left', element);
 
-    ScalingService.setPushWidth.calls.reset();
     leftSidePanel.close.calls.reset();
     leftSidePanel.isOpen.and.returnValue(true);
 
     ChannelSidePanelService.close('left');
 
-    expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
     expect(leftSidePanel.close).toHaveBeenCalled();
 
-    ScalingService.setPushWidth.calls.reset();
     leftSidePanel.close.calls.reset();
     leftSidePanel.isOpen.and.returnValue(false);
 
     ChannelSidePanelService.close('left');
 
-    expect(ScalingService.setPushWidth).not.toHaveBeenCalled();
     expect(leftSidePanel.close).not.toHaveBeenCalled();
   });
 

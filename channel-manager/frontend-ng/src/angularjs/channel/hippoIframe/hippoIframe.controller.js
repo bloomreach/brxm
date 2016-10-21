@@ -32,7 +32,6 @@ class HippoIframeCtrl {
     OverlaySyncService,
     PageStructureService,
     PageMetaDataService,
-    ScalingService,
     HippoIframeService,
     ChannelSidePanelService
   ) {
@@ -71,7 +70,6 @@ class HippoIframeCtrl {
       this.iframeJQueryElement,
       $element.find('.overlay')
     );
-    ScalingService.init($element);
     DragDropService.init(this.iframeJQueryElement, baseJQueryElement);
 
     const deleteComponentHandler = componentId => this.deleteComponent(componentId);

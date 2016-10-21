@@ -15,11 +15,10 @@
  */
 
 class ChannelSidePanelService {
-  constructor($mdSidenav, ScalingService) {
+  constructor($mdSidenav) {
     'ngInject';
 
     this.$mdSidenav = $mdSidenav;
-    this.ScalingService = ScalingService;
     this.panels = { };
   }
 
@@ -34,11 +33,10 @@ class ChannelSidePanelService {
   }
 
   toggle(side) {
-    this.$mdSidenav(this.panels[side].sideNavComponentId).toggle();
-
-    if (side === 'left') {
-      // TODO: Remove this when scaling is fixed
-      this.ScalingService.setPushWidth(this.isOpen(side) ? this.panels[side].jQueryElement.width() : 0);
+    if (this.isOpen(side)) {
+      this.close(side);
+    } else {
+      this.open(side);
     }
   }
 
@@ -57,11 +55,6 @@ class ChannelSidePanelService {
   close(side) {
     if (this.isOpen(side)) {
       this.$mdSidenav(this.panels[side].sideNavComponentId).close();
-
-      if (side === 'left') {
-        // TODO: Remove this when scaling is fixed
-        this.ScalingService.setPushWidth(0);
-      }
     }
   }
 }

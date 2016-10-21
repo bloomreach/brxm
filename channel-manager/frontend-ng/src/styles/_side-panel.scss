@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+md-sidenav {
+  height: 100%;
+}
+
 .md-button.md-icon-button.md-icon-button-left-side-panel {
   margin-left: 0;
   padding-left: 0;
@@ -19,6 +23,30 @@
 
 .channel-left-side-panel {
   border-right: 1px solid $grey-200;
+}
+
+.channel-right-side-panel {
+  border-left: 1px solid $grey-200;
+  max-width: 440px;
+  width: 440px;
+
+  md-toolbar {
+    background: $grey-50;
+    color: $text-dark;
+
+    &:first-child {
+      border-bottom: 1px solid $grey-200;
+    }
+    &:last-child {
+      border-top: 1px solid $grey-200;
+    }
+  }
+  .md-button {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 .list-item-active {
@@ -40,28 +68,6 @@
   &:active,
   &.gu-mirror {
     cursor: grabbing;
-  }
-}
-
-.channel-right-side-panel {
-  width: 440px;
-
-  md-toolbar {
-    background: $grey-50;
-    color: $text-dark;
-
-    &:first-child {
-      border-bottom: 1px solid $grey-200;
-    }
-    &:last-child {
-      border-top: 1px solid $grey-200;
-    }
-  }
-  .md-button {
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
   }
 }
 
