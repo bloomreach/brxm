@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.onehippo.cms7.services.search.query;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import org.junit.Test;
 import org.onehippo.cms7.services.search.commons.query.InitialQueryImpl;
@@ -121,6 +122,9 @@ public class QueryTest {
 
     @Test
     public void testStringVisitor() throws Exception {
+
+        Locale.setDefault(Locale.Category.FORMAT, Locale.ENGLISH);
+
         long fixedTime = 1348827767244L;
         QueryImpl query =  new InitialQueryImpl()
                 .ofType("hippo:document")
@@ -140,6 +144,9 @@ public class QueryTest {
 
     @Test
     public void testStringVisitorRangeQuery() throws Exception {
+
+        Locale.setDefault(Locale.Category.FORMAT, Locale.ENGLISH);
+
         long fixedTime = 1348827767244L;
         Date after = new Date(fixedTime);
         Calendar beforeCal = Calendar.getInstance();
@@ -164,6 +171,9 @@ public class QueryTest {
 
     @Test
     public void testStringVisitorRangeQueryNonDefaultResolution() throws Exception {
+
+        Locale.setDefault(Locale.Category.FORMAT, Locale.ENGLISH);
+
         long fixedTime = 1348827767244L;
         Date after = new Date(fixedTime);
         Calendar beforeCal = Calendar.getInstance();
