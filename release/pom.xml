@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>28.4-SNAPSHOT</version>
+    <version>28.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
@@ -73,7 +73,7 @@
     <hippo.plugin.sitemap.version>3.2.0-SNAPSHOT</hippo.plugin.sitemap.version>
     <hippo.plugin.taxonomy.version>3.2.0-SNAPSHOT</hippo.plugin.taxonomy.version>
 
-    <hippo.maven.plugin.l10n>1.1.0-SNAPSHOT</hippo.maven.plugin.l10n>
+    <hippo.maven.plugin.l10n>1.0.3-SNAPSHOT</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
     <hippo.cms.locales/>
   </properties>
