@@ -21,7 +21,9 @@
     </c:choose>
   </div>
 </c:if>
-  <%--@elvariable id="editMode" type="java.lang.Boolean"--%>
+<%--@elvariable id="editMode" type="java.lang.Boolean"--%>
 <c:if test="${requestScope.editMode && (requestScope.document eq null)}">
-  <img src="<hst:link path='/images/essentials/catalog-component-icons/faq.png'/>"> Click to edit FAQ
+  <div>
+    <img src="<hst:link path='/images/essentials/catalog-component-icons/faq.png'/>"> Click to edit FAQ
+  </div>
 </c:if>
