@@ -42,4 +42,13 @@ describe('ConfigService', () => {
     ConfigService.setContextPathForChannel('testpath');
     expect(ConfigService.contextPath).toBe('testpath');
   });
+
+  it('knows the CMS context path', () => {
+    expect(ConfigService.getCmsContextPath()).toBe('/test/');
+  });
+
+  it('falls back to a default CMS context path', () => {
+    delete window.parent;
+    expect(ConfigService.getCmsContextPath()).toBe('/cms/');
+  });
 });

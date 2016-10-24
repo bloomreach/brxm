@@ -72,7 +72,7 @@ describe('ChannelRightSidePanel', () => {
     });
 
     ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'isOpen', 'close']);
-    ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType']);
+    ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft']);
 
     $scope = $rootScope.$new();
     const $element = angular.element('<div></div>');
@@ -85,6 +85,7 @@ describe('ChannelRightSidePanel', () => {
     }, {
       editMode: false,
     });
+    $ctrl.form = jasmine.createSpyObj('form', ['$setPristine']);
     $rootScope.$apply();
   });
 
@@ -127,6 +128,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect($ctrl.doc).toEqual(testDocument);
     expect($ctrl.docType).toEqual(testDocumentType);
+    expect($ctrl.form.$setPristine).toHaveBeenCalled();
 
     $timeout.flush();
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
@@ -161,6 +163,23 @@ describe('ChannelRightSidePanel', () => {
 
     $ctrl.onFieldBlur();
     expect($ctrl.isFieldFocused(multipleStringField)).toBe(false);
+  });
+
+  it('saves a document', () => {
+    const savedDoc = {
+      id: '123',
+    };
+    ContentService.saveDraft.and.returnValue($q.resolve(savedDoc));
+
+    $ctrl.doc = testDocument;
+    $ctrl.saveDocument();
+
+    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+
+    $rootScope.$apply();
+
+    expect($ctrl.doc).toEqual(savedDoc);
+    expect($ctrl.form.$setPristine).toHaveBeenCalled();
   });
 });
 

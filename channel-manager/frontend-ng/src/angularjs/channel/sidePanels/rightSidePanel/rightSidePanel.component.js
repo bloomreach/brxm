@@ -40,6 +40,13 @@ export class ChannelRightSidePanelCtrl {
     this.doc = null;
     this.docType = null;
     this.focusedFieldId = null;
+    this._resetForm();
+  }
+
+  _resetForm() {
+    if (this.form) {
+      this.form.$setPristine();
+    }
   }
 
   _loadDocument(id) {
@@ -65,6 +72,14 @@ export class ChannelRightSidePanelCtrl {
 
   isLockedOpen() {
     return this.ChannelSidePanelService.isOpen('right');
+  }
+
+  saveDocument() {
+    this.ContentService.saveDraft(this.doc)
+      .then((savedDoc) => {
+        this.doc = savedDoc;
+        this._resetForm();
+      });
   }
 
   isEmptyMultiple(field) {

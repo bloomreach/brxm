@@ -107,6 +107,9 @@ function mockHost() {
   );
 
   window.parent = {
+    location: {
+      pathname: '/test/',
+    },
     Ext: {
       getCmp() {
         return parentIFramePanel;

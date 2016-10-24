@@ -35,6 +35,10 @@ class ConfigService {
   setContextPathForChannel(contextPath) {
     this.contextPath = contextPath;
   }
+
+  getCmsContextPath() {
+    return window.parent ? window.parent.location.pathname : '/cms/';
+  }
 }
 
 export default ConfigService;

@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -46,7 +47,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
     private DocumentTypesServiceImpl() { }
 
     @Override
-    public DocumentType getDocumentType(final Node handle, final Locale locale)
+    public DocumentType getDocumentType(final Node handle, final Optional<Locale> locale)
             throws DocumentTypeNotFoundException {
         try {
             final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(DocumentTypeNotFoundException::new);
@@ -59,13 +60,13 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
     }
 
     @Override
-    public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
+    public DocumentType getDocumentType(final String id, final Session userSession, final Optional<Locale> locale)
             throws DocumentTypeNotFoundException {
         if ("ns:testdocument".equals(id)) {
             return MockResponse.createTestDocumentType();
         }
 
-        final ContentTypeContext context = getContentTypeContext(id, userSession, locale, 0);
+        final ContentTypeContext context = getContentTypeContext(id, userSession, 0, locale);
 
         validateDocumentType(context, id);
 
@@ -83,9 +84,9 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
                                               final ContentTypeContext parentContext, final DocumentType docType) {
         try {
             final Session userSession = parentContext.getContentTypeRoot().getSession();
-            final Locale locale = parentContext.getLocale();
             final int level = parentContext.getLevel() + 1;
-            final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext(id, userSession, locale, level);
+            final Optional<Locale> locale = parentContext.getLocale();
+            final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext(id, userSession, level, locale);
 
             if (level <= MAX_NESTING_LEVEL) {
                 populateFields(fields, context, docType);
@@ -100,10 +101,10 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
     }
 
     private static ContentTypeContext getContentTypeContext(final String id, final Session userSession,
-                                                            final Locale locale, final int level)
+                                                            final int level, final Optional<Locale> locale)
             throws DocumentTypeNotFoundException {
         try {
-            return ContentTypeContext.createDocumentTypeContext(id, userSession, locale, level);
+            return ContentTypeContext.createDocumentTypeContext(id, userSession, level, locale);
         } catch (ContentTypeException e) {
             log.warn("Failed to retrieve context for content type '{}'", id, e);
             throw new DocumentTypeNotFoundException();

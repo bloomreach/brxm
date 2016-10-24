@@ -16,12 +16,15 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
-import java.util.Locale;
+import java.rmi.RemoteException;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
@@ -35,8 +38,11 @@ import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.MockResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentsServiceImpl implements DocumentsService {
+    private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
     private static final DocumentsService INSTANCE = new DocumentsServiceImpl();
 
     static DocumentsService getInstance() {
@@ -46,12 +52,12 @@ public class DocumentsServiceImpl implements DocumentsService {
     private DocumentsServiceImpl() { }
 
     @Override
-    public Document createDraft(final String uuid, final Session session, final Locale locale)
+    public Document createDraft(final String uuid, final Session session)
             throws DocumentNotFoundException {
         final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(DocumentNotFoundException::new);
         final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)
                                                        .orElseThrow(DocumentNotFoundException::new);
-        final DocumentType docType = getDocumentType(handle, locale);
+        final DocumentType docType = getDocumentType(handle);
         final Document document = assembleDocument(uuid, handle, workflow, docType);
         final EditingInfo editingInfo = document.getInfo().getEditingInfo();
 
@@ -67,7 +73,26 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document getPublished(final String uuid, final Session session, final Locale locale)
+    public void updateDraft(final String uuid, final Document document, final Session session)
+            throws DocumentNotFoundException {
+        final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(DocumentNotFoundException::new);
+        final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)
+                .orElseThrow(DocumentNotFoundException::new);
+        final DocumentType docType = getDocumentType(handle);
+
+        WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
+                .ifPresent(draft -> {
+                    if (writeFields(document, draft, docType)) {
+                        cancelPendingChanges(session);
+                        // TODO: tell the caller that the operation failed. Throw new kind of exception?
+                    } else {
+                        persistChangesAndKeepEditing(session, workflow);
+                    }
+                });
+    }
+
+    @Override
+    public Document getPublished(final String uuid, final Session session)
             throws DocumentNotFoundException {
         if ("test".equals(uuid)) {
             return MockResponse.createTestDocument(uuid);
@@ -76,7 +101,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(DocumentNotFoundException::new);
         final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)
                                                        .orElseThrow(DocumentNotFoundException::new);
-        final DocumentType docType = getDocumentType(handle, locale);
+        final DocumentType docType = getDocumentType(handle);
         final Document document = assembleDocument(uuid, handle, workflow, docType);
 
         WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED)
@@ -84,10 +109,10 @@ public class DocumentsServiceImpl implements DocumentsService {
         return document;
     }
 
-    private DocumentType getDocumentType(final Node handle, final Locale locale)
+    private DocumentType getDocumentType(final Node handle)
             throws DocumentNotFoundException {
         try {
-            return DocumentTypesService.get().getDocumentType(handle, locale);
+            return DocumentTypesService.get().getDocumentType(handle, Optional.empty());
         } catch (DocumentTypeNotFoundException e) {
             final String handlePath = JcrUtils.getNodePathQuietly(handle);
             throw new DocumentNotFoundException("Failed to retrieve type of document '" + handlePath + "'", e);
@@ -114,6 +139,35 @@ public class DocumentsServiceImpl implements DocumentsService {
     private void loadFields(final Document document, final Node variant, final DocumentType docType) {
         for (FieldType field : docType.getFields()) {
             field.readFrom(variant).ifPresent(value -> document.addField(field.getId(), value));
+        }
+    }
+
+    // TODO: how to communicate about write errors...?
+    private boolean writeFields(final Document document, final Node variant, final DocumentType docType) {
+        int errors = 0;
+        final Map<String, Object> valueMap = document.getFields();
+        for (FieldType fieldType : docType.getFields()) {
+            errors += fieldType.writeTo(variant, Optional.ofNullable(valueMap.get(fieldType.getId())));
+        }
+        return errors > 0;
+    }
+
+    private void cancelPendingChanges(final Session session) {
+        try {
+            session.refresh(false);
+        } catch(RepositoryException e) {
+            log.warn("Problem cancelling pending changes", e);
+        }
+    }
+
+    private void persistChangesAndKeepEditing(final Session session, final EditableWorkflow workflow) {
+        try {
+            session.save();
+            workflow.commitEditableInstance();
+            session.refresh(true); // TODO: copied from CMS, probably not necessary, discuss!
+            workflow.obtainEditableInstance();
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.warn("Failed to persist changes and keep editing", e);
         }
     }
 }
