@@ -52,7 +52,7 @@
         (see HSTTWO-3747). To ensure it is also initialiazed when the page is *not* reloaded, the following snippet is
         used.
       --%>
-    <c:if test="${editMode}">
+    <c:if test="${requestScope.editMode}">
       <script type="text/javascript">
         if (window.jQuery && window.jQuery.fn.carousel) {
           jQuery('#${componentId}').carousel();
