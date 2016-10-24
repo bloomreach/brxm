@@ -21,6 +21,7 @@ describe('ChannelRightSidePanel', () => {
   let $timeout;
   let ChannelSidePanelService;
   let ContentService;
+  let HippoIframeService;
 
   let $ctrl;
   let $scope;
@@ -73,6 +74,7 @@ describe('ChannelRightSidePanel', () => {
 
     ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'isOpen', 'close']);
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft']);
+    HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
     $scope = $rootScope.$new();
     const $element = angular.element('<div></div>');
@@ -82,6 +84,7 @@ describe('ChannelRightSidePanel', () => {
       $timeout,
       ChannelSidePanelService,
       ContentService,
+      HippoIframeService,
     }, {
       editMode: false,
     });
@@ -180,6 +183,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect($ctrl.doc).toEqual(savedDoc);
     expect($ctrl.form.$setPristine).toHaveBeenCalled();
+    expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 });
 
