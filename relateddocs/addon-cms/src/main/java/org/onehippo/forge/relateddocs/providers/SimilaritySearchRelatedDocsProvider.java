@@ -29,7 +29,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.relateddocs.RelatedDoc;
 import org.onehippo.forge.relateddocs.RelatedDocCollection;
 import org.onehippo.forge.relateddocs.RelatedDocsNodeType;
@@ -73,13 +72,13 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
         }
 
         RelatedDocCollection currentCollection = new RelatedDocCollection(nodeModel);
-        Set<String> uuidSet = new HashSet<>();
+        Set<String> currentUuidSet = new HashSet<>();
         for (RelatedDoc r : currentCollection) {
-            uuidSet.add(r.getUuid());
+            currentUuidSet.add(r.getUuid());
         }
 
         Node docNode = documentModel.getNode();
-        Node parentNode = docNode.getParent();
+        Node docHandleNode = docNode.getParent();
         String xpathQuery = createXPathQuery(docNode);
 
         if (log.isDebugEnabled()) {
@@ -101,32 +100,25 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
             // retrieve the found document from the repository
             try {
                 Node document = nodeModel.getNode().getSession().getNode(path);
-                Node itsParent = ((HippoNode) document).getCanonicalNode();
-                if (parentNode.isSame(itsParent)) {
+                Node canonicalDocument = ((HippoNode) document).getCanonicalNode();
+                if (docHandleNode.isSame(canonicalDocument)) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Found parent {}", itsParent.getPath());
+                        log.debug("Skipping same handle node as 'self' at {}", canonicalDocument.getPath());
                     }
                     continue;
                 }
-                if (document.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    if (uuidSet.contains(document.getIdentifier())) {
-                        continue;
-                    }
+
+                if (currentUuidSet.contains(document.getIdentifier())) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Found related document {}", document.getPath());
+                        log.debug("Not adding already selected document {}", document.getPath());
                     }
-                    collection.add(new RelatedDoc(new JcrNodeModel(document), this.score * myScore));
-                } else if (itsParent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                    if (uuidSet.contains(itsParent.getIdentifier())) {
-                        continue;
-                    }
-                    // exclude prototype stuff: note need to check this
-                    final JcrNodeModel jcrNodeModel = new JcrNodeModel(itsParent);
-                    if (jcrNodeModel.getNode().getPath().endsWith("hippo:prototype")) {
-                        continue;
-                    }
-                    collection.add(new RelatedDoc(jcrNodeModel, this.score * myScore));
+                    continue;
                 }
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Adding related document {}", document.getPath());
+                }
+                collection.add(new RelatedDoc(new JcrNodeModel(document), this.score * myScore));
             } catch (RepositoryException e) {
                 log.error("Error handling SimilaritySearch results", e.getMessage());
             }
