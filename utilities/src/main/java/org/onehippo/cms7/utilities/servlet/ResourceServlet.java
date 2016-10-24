@@ -19,11 +19,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -192,22 +198,25 @@ import org.slf4j.LoggerFactory;
  */
 public class ResourceServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
-
     private static Logger log = LoggerFactory.getLogger(ResourceServlet.class);
+
+    private static final String PROXY_FROM_TO_SEPARATOR = "@";
+    private static final String PROXY_SEPARATOR = ",";
+    private static final String PROXIES_SYSTEM_PROPERTY = "resource.proxies";
+    private static final String PROXY_ENABLED_MESSAGE = "Resource proxy enabled with the following mapping(s)";
 
     private static final Pattern WEBAPP_PROTECTED_PATH = Pattern.compile("/?WEB-INF/.*");
 
+    private static final String HTTP_IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
     private static final String HTTP_LAST_MODIFIED_HEADER = "Last-Modified";
-
     private static final String HTTP_EXPIRES_HEADER = "Expires";
-
     private static final String HTTP_CACHE_CONTROL_HEADER = "Cache-Control";
 
     private static final int CACHE_TIME_OUT_1_YEAR_IN_SECONDS = 31556926;
 
     private static final Set<Pattern> DEFAULT_ALLOWED_RESOURCE_PATHS = new HashSet<>();
     static {
+        DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.html"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.js"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.css"));
         DEFAULT_ALLOWED_RESOURCE_PATHS.add(Pattern.compile("^/.*\\.png"));
@@ -228,6 +237,7 @@ public class ResourceServlet extends HttpServlet {
 
     private static final Map<String, String> DEFAULT_MIME_TYPES = new HashMap<>();
     static {
+        DEFAULT_MIME_TYPES.put(".html", "text/html");
         DEFAULT_MIME_TYPES.put(".css", "text/css");
         DEFAULT_MIME_TYPES.put(".js", "text/javascript");
         DEFAULT_MIME_TYPES.put(".gif", "image/gif");
@@ -254,19 +264,16 @@ public class ResourceServlet extends HttpServlet {
         DEFAULT_COMPRESSED_MIME_TYPES.add(Pattern.compile("text/.*"));
     }
 
-    private Set<Pattern> allowedResourcePaths;
+    private String jarPathPrefix;
+    private boolean gzipEnabled;
+    private boolean webResourceEnabled;
+    private boolean jarResourceEnabled;
 
+    private Set<Pattern> allowedResourcePaths;
+    private Set<Pattern> compressedMimeTypes;
     private Map<String, String> mimeTypes;
 
-    private Set<Pattern> compressedMimeTypes;
-
-    private String jarPathPrefix;
-
-    private boolean gzipEnabled;
-
-    private boolean webResourceEnabled;
-
-    private boolean jarResourceEnabled;
+    private Map<String, String> proxies;
 
     @Override
     public void init() throws ServletException {
@@ -296,18 +303,56 @@ public class ResourceServlet extends HttpServlet {
                 }
             }
         }
+
+        proxies = initProxies(jarPathPrefix);
+    }
+
+    private static HashMap<String, String> initProxies(final String jarPathPrefix) {
+        final HashMap<String, String> proxies = new HashMap<>();
+        final String proxiesAsString = System.getProperty(PROXIES_SYSTEM_PROPERTY);
+
+        if (StringUtils.isNotBlank(proxiesAsString)) {
+            Arrays.stream(StringUtils.split(proxiesAsString, PROXY_SEPARATOR))
+                    .filter(StringUtils::isNotBlank)
+                    .map(proxyLine -> StringUtils.split(proxyLine, PROXY_FROM_TO_SEPARATOR))
+                    .forEach(fromTo -> {
+                        if (fromTo.length > 1) {
+                            // Example config: from=angular/hippo-cm, to=http://localhost:9090/cms, jarPath=/angular
+                            // Results in mapping "/hippo-cm/" -> "http://localhost:9090/cms/angular/hippo-cm/"
+                            String from = "/" + StringUtils.trim(fromTo[0]) + "/";
+                            String to = StringUtils.trim(fromTo[1]);
+                            if (from.startsWith(jarPathPrefix + "/")) {
+                                to = to + from;
+                                from = StringUtils.removeStart(from, jarPathPrefix);
+                                proxies.put(from, to);
+                            }
+                        }
+                    });
+        }
+
+        if (!proxies.isEmpty()) {
+            final List<String> messages = new ArrayList<>(proxies.size() + 1);
+            messages.add(PROXY_ENABLED_MESSAGE);
+            proxies.forEach((from, to) -> messages.add(String.format("from %s to %s", from, to)));
+
+            logBorderedMessage(messages);
+        }
+
+        return proxies;
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String resourcePath = StringUtils.substringBefore(request.getPathInfo(), ";");
+        String queryParams = request.getQueryString();
+        queryParams = StringUtils.isEmpty(queryParams) ? "" :  "?" + queryParams;
 
         if (log.isDebugEnabled()) {
-            log.debug("Processing request for resource {}.", resourcePath);
+            log.debug("Processing request for resource {}{}.", resourcePath, queryParams);
         }
 
-        URL resource = getResourceURL(resourcePath);
+        URL resource = getResourceURL(resourcePath, queryParams);
 
         if (resource == null) {
             if (log.isDebugEnabled()) {
@@ -317,16 +362,35 @@ public class ResourceServlet extends HttpServlet {
             return;
         }
 
-        long ifModifiedSince = request.getDateHeader("If-Modified-Since");
+        long modifiedSince = request.getDateHeader(HTTP_IF_MODIFIED_SINCE_HEADER);
+        final URLConnection conn = resource.openConnection();
 
-        URLConnection conn = resource.openConnection();
+        if (!proxies.isEmpty() && conn instanceof HttpURLConnection) {
+
+            if (modifiedSince >= 0) {
+                conn.setIfModifiedSince(modifiedSince);
+            }
+
+            HttpURLConnection httpConn = (HttpURLConnection) conn;
+            try {
+                if (httpConn.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+                    log.debug("Resource not found: {}", resourcePath);
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
+            } catch (ConnectException e) {
+                log.error("Failed to connect to proxy URL {}", resource);
+                throw e;
+            }
+        }
+
         long lastModified = conn.getLastModified();
 
-        if (ifModifiedSince >= lastModified) {
+        if (modifiedSince >= lastModified) {
             if (log.isDebugEnabled()) {
                 log.debug("Resource: {} Not Modified.", resourcePath);
             }
-            response.setStatus(304);
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
 
@@ -353,7 +417,7 @@ public class ResourceServlet extends HttpServlet {
         }
 
         final Set<Pattern> set = new HashSet<>();
-        String [] patterns = StringUtils.split(param, ", \t\r\n");
+        final String [] patterns = StringUtils.split(param, ", \t\r\n");
         for (final String pattern : patterns) {
             if (!StringUtils.isBlank(pattern)) {
                 set.add(Pattern.compile(pattern));
@@ -362,13 +426,26 @@ public class ResourceServlet extends HttpServlet {
         return set;
     }
 
-    private URL getResourceURL(String resourcePath) throws MalformedURLException {
+    private URL getResourceURL(final String resourcePath, final String queryParams) throws MalformedURLException {
         if (!isAllowed(resourcePath)) {
             if (log.isWarnEnabled()) {
                 log.warn("An attempt to access a protected resource at {} was disallowed.", resourcePath);
             }
 
             return null;
+        }
+
+        for (Map.Entry<String, String> entry : proxies.entrySet()) {
+            final String from = entry.getKey();
+            final String to = entry.getValue();
+
+            if (resourcePath.startsWith(from)) {
+                final String url = to + StringUtils.substringAfter(resourcePath, from) + queryParams;
+
+                log.debug("Loading resource from proxy {}", url);
+
+                return new URL(url);
+            }
         }
 
         URL resource = null;
@@ -415,10 +492,10 @@ public class ResourceServlet extends HttpServlet {
     }
 
     private void prepareResponse(HttpServletResponse response, URL resource, long lastModified, int contentLength) throws IOException {
-        String resourcePath = resource.getPath();
+        final String resourcePath = resource.getPath();
         String mimeType = null;
 
-        int offset = resourcePath.lastIndexOf('.');
+        final int offset = resourcePath.lastIndexOf('.');
         if (-1 != offset) {
             String extension = resource.getPath().substring(offset);
             mimeType = mimeTypes.get(extension);
@@ -450,9 +527,9 @@ public class ResourceServlet extends HttpServlet {
 
     private OutputStream selectOutputStream(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (gzipEnabled) {
-            String mimeType = response.getContentType();
+            final String mimeType = response.getContentType();
             if (matchesCompressedMimeTypes(mimeType)) {
-                String acceptEncoding = request.getHeader("Accept-Encoding");
+                final String acceptEncoding = request.getHeader("Accept-Encoding");
                 if (acceptEncoding != null && acceptEncoding.contains("gzip")) {
                     if (log.isDebugEnabled()) {
                         log.debug("Enabling GZIP compression for the current response.");
@@ -496,23 +573,39 @@ public class ResourceServlet extends HttpServlet {
         return cl;
     }
 
+    private static void logBorderedMessage(final List<String> messages) {
+        final String prefix = "** ";
+        final String suffix = " **";
+        final int fixLength = prefix.length() + suffix.length();
+
+        // find longest message
+        messages.stream().max(Comparator.comparingInt(String::length)).ifPresent(longest -> {
+            final int width = longest.length() + fixLength;
+            final String border = StringUtils.repeat("*", width);
+            log.info(border);
+            messages.forEach(msg -> {
+                final String rightPadding = StringUtils.repeat(" ", width - fixLength - msg.length());
+                log.info(prefix + msg + rightPadding + suffix);
+            });
+            log.info(border);
+        });
+    }
+
     private class GZIPResponseStream extends ServletOutputStream {
 
         private ByteArrayOutputStream byteStream = null;
-
+        private ServletOutputStream servletStream = null;
         private GZIPOutputStream gzipStream = null;
-
-        private boolean closed = false;
 
         private HttpServletResponse response = null;
 
-        private ServletOutputStream servletStream = null;
+        private boolean closed = false;
 
         GZIPResponseStream(HttpServletResponse response) throws IOException {
             super();
             closed = false;
             this.response = response;
-            this.servletStream = response.getOutputStream();
+            servletStream = response.getOutputStream();
             byteStream = new ByteArrayOutputStream();
             gzipStream = new GZIPOutputStream(byteStream);
         }
@@ -557,6 +650,5 @@ public class ResourceServlet extends HttpServlet {
             }
             gzipStream.write(b, off, len);
         }
-
     }
 }
