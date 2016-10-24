@@ -103,6 +103,13 @@
         <version>${hippo.utilities.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services</artifactId>
+        <version>${hippo.services.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
       <!-- Apache Commons -->
       
       <dependency>
