@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,12 @@ public interface Highlight extends Serializable {
      * Returns the field name for this highlight excerpts.
      * @return
      */
-    public String getField();
+    String getField();
 
     /**
      * Returns the excerpts of this highlight.
      * @return
      */
-    public List<String> getExcerpts();
+    List<String> getExcerpts();
 
 }

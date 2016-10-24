@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,39 +28,39 @@ public interface FieldsDocument {
      * Return type name
      * @return
      */
-    public String getPrimaryTypeName();
+    String getPrimaryTypeName();
 
     /**
      * Returns content ID
      * @return
      */
-    public ContentId getContentId();
+    ContentId getContentId();
 
     /**
      * Checks whether field with the name exists
      * @param name
      * @return
      */
-    public boolean hasField(String name);
+    boolean hasField(String name);
 
     /**
      * @return a list of fields defined in this document
      */
-    public Collection<String> getFieldNames();
+    Collection<String> getFieldNames();
 
     /**
      * Get the value or collection of values for a given field.  
      */
-    public Object getFieldValue(String name);
+    Object getFieldValue(String name);
 
     /**
      * Get a collection of values for a given field name
      */
-    public Collection<Object> getFieldValues(String name);
+    Collection<Object> getFieldValues(String name);
 
     /**
      * returns the first value for a field
      */
-    public Object getFirstFieldValue(String name);
+    Object getFirstFieldValue(String name);
 
 }

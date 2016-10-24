@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
 
 public interface HitIterator extends Iterator<Hit> {
 
-    public HitIterator EMPTY = new HitIterator() {
+    HitIterator EMPTY = new HitIterator() {
         @Override
         public void skip(final int skipCount) {
         }
@@ -58,6 +58,6 @@ public interface HitIterator extends Iterator<Hit> {
      * Returns the next content in the iteration.
      * @return
      */
-    public Hit nextHit();
+    Hit nextHit();
 
 }
