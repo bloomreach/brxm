@@ -45,6 +45,8 @@ public class EditingUtils {
 
     private static final Logger log = LoggerFactory.getLogger(EditingUtils.class);
     private static final String HINT_IN_USE_BY = "inUseBy";
+    private static final String HINT_COMMIT_EDITABLE_INSTANCE = "commitEditableInstance";
+    private static final String HINT_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
     private static final String HINT_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
     private static final String HINT_REQUESTS = "requests";
 
@@ -94,6 +96,37 @@ public class EditingUtils {
             }
         }
 
+        return false;
+    }
+
+    /**
+     * Check if a document can be updated, given its workflow.
+     *
+     * @param workflow editable workflow of a document
+     * @return         true if document can be updated, false otherwise
+     */
+    public static boolean canUpdateDocument(final EditableWorkflow workflow) {
+        return isHintAvailable(workflow, HINT_COMMIT_EDITABLE_INSTANCE);
+    }
+
+    /**
+     * Check if a document can be updated, given its workflow.
+     *
+     * @param workflow editable workflow of a document
+     * @return         true if document can be updated, false otherwise
+     */
+    public static boolean canDeleteDraft(final EditableWorkflow workflow) {
+        return isHintAvailable(workflow, HINT_DISPOSE_EDITABLE_INSTANCE);
+    }
+
+    private static boolean isHintAvailable(final EditableWorkflow workflow, final String hint) {
+        try {
+            Map<String, Serializable> hints = workflow.hints();
+            return hints.containsKey(hint) && ((Boolean)hints.get(hint));
+
+        } catch (WorkflowException | RemoteException | RepositoryException e) {
+            log.warn("Failed reading hints from workflow", e);
+        }
         return false;
     }
 

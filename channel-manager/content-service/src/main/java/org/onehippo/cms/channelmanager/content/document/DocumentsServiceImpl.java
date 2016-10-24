@@ -32,6 +32,7 @@ import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
+import org.onehippo.cms.channelmanager.content.document.model.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 public class DocumentsServiceImpl implements DocumentsService {
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
+    private static final String WORKFLOW_CATEGORY_EDIT = "editing";
     private static final DocumentsService INSTANCE = new DocumentsServiceImpl();
 
     static DocumentsService getInstance() {
@@ -55,7 +57,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     public Document createDraft(final String uuid, final Session session)
             throws DocumentNotFoundException {
         final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(DocumentNotFoundException::new);
-        final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)
+        final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
                                                        .orElseThrow(DocumentNotFoundException::new);
         final DocumentType docType = getDocumentType(handle);
         final Document document = assembleDocument(uuid, handle, workflow, docType);
@@ -74,21 +76,43 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     @Override
     public void updateDraft(final String uuid, final Document document, final Session session)
-            throws DocumentNotFoundException {
+            throws DocumentNotFoundException, OperationFailedException {
         final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(DocumentNotFoundException::new);
-        final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)
+        final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
                 .orElseThrow(DocumentNotFoundException::new);
         final DocumentType docType = getDocumentType(handle);
 
-        WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
-                .ifPresent(draft -> {
-                    if (writeFields(document, draft, docType)) {
-                        cancelPendingChanges(session);
-                        // TODO: tell the caller that the operation failed. Throw new kind of exception?
-                    } else {
-                        persistChangesAndKeepEditing(session, workflow);
-                    }
-                });
+        if (!EditingUtils.canUpdateDocument(workflow)) {
+            throw new OperationFailedException(new ErrorInfo(ErrorInfo.Reason.NOT_HOLDER));
+        }
+        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
+                .orElseThrow(OperationFailedException::new);
+
+        if (writeFields(document, draft, docType)) {
+            cancelPendingChanges(session);
+            throw new OperationFailedException(); // TODO: report per-field errors?
+        } else {
+            persistChangesAndKeepEditing(session, workflow);
+        }
+    }
+
+    @Override
+    public void deleteDraft(final String uuid, final Session session) throws DocumentNotFoundException, OperationFailedException {
+        final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(DocumentNotFoundException::new);
+        final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
+                .orElseThrow(DocumentNotFoundException::new);
+
+        if (!EditingUtils.canDeleteDraft(workflow)) {
+            throw new OperationFailedException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED));
+        }
+
+        try {
+            workflow.disposeEditableInstance();
+            session.refresh(false);
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.warn("Failed to dispose of editable instance", e);
+            throw new OperationFailedException();
+        }
     }
 
     @Override
@@ -155,19 +179,31 @@ public class DocumentsServiceImpl implements DocumentsService {
     private void cancelPendingChanges(final Session session) {
         try {
             session.refresh(false);
-        } catch(RepositoryException e) {
+        } catch (RepositoryException e) {
             log.warn("Problem cancelling pending changes", e);
         }
     }
 
-    private void persistChangesAndKeepEditing(final Session session, final EditableWorkflow workflow) {
+    private void persistChangesAndKeepEditing(final Session session, final EditableWorkflow workflow)
+            throws OperationFailedException {
         try {
             session.save();
             workflow.commitEditableInstance();
-            session.refresh(true); // TODO: copied from CMS, probably not necessary, discuss!
-            workflow.obtainEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to persist changes and keep editing", e);
+            log.warn("Failed to persist changes");
+            throw new OperationFailedException();
+        }
+
+        try {
+            session.refresh(true); // TODO: copied from CMS, assume that this makes the changes to the unpublished
+                                   // variant visible in this session, discuss the need to do this.
+            workflow.obtainEditableInstance();
+        } catch (WorkflowException e) {
+            log.warn("Failed to re-obtain ownership of document", e);
+            throw new OperationFailedException(new ErrorInfo(ErrorInfo.Reason.HOLDERSHIP_LOST));
+        } catch (RepositoryException | RemoteException e) {
+            log.warn("Failed to re-obtain ownership of document", e);
+            throw new OperationFailedException();
         }
     }
 }

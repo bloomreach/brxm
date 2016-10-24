@@ -153,6 +153,45 @@ public class EditingUtilsTest {
     }
 
     @Test
+    public void canUpdateDocument() throws Exception {
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints).anyTimes();
+        replay(workflow);
+
+        assertThat(EditingUtils.canUpdateDocument(workflow), equalTo(false));
+
+        hints.put("commitEditableInstance", Boolean.FALSE);
+        assertThat(EditingUtils.canUpdateDocument(workflow), equalTo(false));
+
+        hints.put("commitEditableInstance", Boolean.TRUE);
+        assertThat(EditingUtils.canUpdateDocument(workflow), equalTo(true));
+    }
+
+    @Test
+    public void canUpdateDocumentWithException() throws Exception {
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+
+        expect(workflow.hints()).andThrow(new WorkflowException("bla"));
+        replay(workflow);
+
+        assertThat(EditingUtils.canUpdateDocument(workflow), equalTo(false));
+    }
+
+    @Test
+    public void canDeleteDraft() throws Exception {
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+        hints.put("disposeEditableInstance", Boolean.TRUE);
+
+        expect(workflow.hints()).andReturn(hints);
+        replay(workflow);
+
+        assertThat(EditingUtils.canDeleteDraft(workflow), equalTo(true));
+    }
+
+    @Test
     public void determineHolderWithRepositoryException() throws Exception {
         final Session session = createMock(Session.class);
         final HippoWorkspace workspace = createMock(HippoWorkspace.class);
