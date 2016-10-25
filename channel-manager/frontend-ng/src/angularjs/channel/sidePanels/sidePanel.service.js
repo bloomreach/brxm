@@ -41,20 +41,24 @@ class ChannelSidePanelService {
   }
 
   open(side, ...params) {
-    if (!this.isOpen(side)) {
-      const panel = this.panels[side];
-      this.$mdSidenav(panel.sideNavComponentId).open();
+    const panel = this.panels[side];
+    if (panel) {
+      if (!this.isOpen(side)) {
+        this.$mdSidenav(panel.sideNavComponentId).open();
+      }
       panel.onOpenCallback(...params);
     }
   }
 
   isOpen(side) {
-    return this.panels[side] && this.$mdSidenav(this.panels[side].sideNavComponentId).isOpen();
+    const panel = this.panels[side];
+    return panel && this.$mdSidenav(panel.sideNavComponentId).isOpen();
   }
 
   close(side) {
     if (this.isOpen(side)) {
-      this.$mdSidenav(this.panels[side].sideNavComponentId).close();
+      const panel = this.panels[side];
+      this.$mdSidenav(panel.sideNavComponentId).close();
     }
   }
 }

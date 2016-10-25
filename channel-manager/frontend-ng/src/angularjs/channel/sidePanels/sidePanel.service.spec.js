@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-/* eslint-disable prefer-const */
-
 describe('ChannelSidePanelService', () => {
   let ChannelSidePanelService;
   const leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close']);
@@ -97,6 +95,12 @@ describe('ChannelSidePanelService', () => {
     expect(leftSidePanel.open).toHaveBeenCalled();
   });
 
+  it('ignores the open call when the a side panel has not been rendered yet', () => {
+    expect(() => {
+      ChannelSidePanelService.open('left');
+    }).not.toThrow(jasmine.any(Error));
+  });
+
   it('calls the onOpen callback when specified', () => {
     const element = angular.element('<div md-component-id="left"></div>');
     const onOpen = jasmine.createSpy('onOpen');
@@ -104,6 +108,18 @@ describe('ChannelSidePanelService', () => {
     ChannelSidePanelService.initialize('left', element, onOpen);
 
     ChannelSidePanelService.open('left');
+    expect(onOpen).toHaveBeenCalled();
+  });
+
+  it('calls the onOpen callback when the side-panel is already open', () => {
+    const element = angular.element('<div md-component-id="left"></div>');
+    const onOpen = jasmine.createSpy('onOpen');
+
+    ChannelSidePanelService.initialize('left', element, onOpen);
+
+    leftSidePanel.isOpen.and.returnValue(true);
+    ChannelSidePanelService.open('left');
+
     expect(onOpen).toHaveBeenCalled();
   });
 
