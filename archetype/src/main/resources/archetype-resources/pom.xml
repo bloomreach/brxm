@@ -248,9 +248,6 @@
             <artifactId>cargo-maven2-plugin</artifactId>
             <configuration>
               <configuration>
-                <properties>
-                  <catalina.servlet.uriencoding>UTF-8</catalina.servlet.uriencoding>
-                </properties>
                 <configfiles>
                   <configfile>
                     <file>${project.basedir}/conf/context.xml</file>
