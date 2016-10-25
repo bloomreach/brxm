@@ -21,7 +21,7 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
+import javax.jcr.query .Query;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
 
@@ -66,8 +66,7 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
         try {
             nodeModel = new JcrNodeModel(documentModel.getNode().getNode(RelatedDocsNodeType.NT_RELATEDDOCS));
         } catch (PathNotFoundException e) {
-            //I think when a new document is opened, the document doesn't contain the "relateddocs" node yet, so we *may* need to create one -- Vijay
-            log.info("Relateddocs node for current document not found, returning empty docs, so creating one.{}", e.getMessage());
+            log.info("Relateddocs node for current document not found, returning empty docs, so creating one. Message={}.", e.getMessage());
             nodeModel = new JcrNodeModel(documentModel.getNode().addNode(RelatedDocsNodeType.NT_RELATEDDOCS, RelatedDocsNodeType.NT_RELATEDDOCS));
         }
 
@@ -82,7 +81,7 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
         String xpathQuery = createXPathQuery(docNode);
 
         if (log.isDebugEnabled()) {
-            log.debug("Executing query{}: ", xpathQuery);
+            log.debug("Executing query: {}", xpathQuery);
         }
         @SuppressWarnings(value = "deprecation")
         Query query = nodeModel.getNode().getSession().getWorkspace().getQueryManager().createQuery(
@@ -103,24 +102,24 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
                 Node canonicalDocument = ((HippoNode) document).getCanonicalNode();
                 if (docHandleNode.isSame(canonicalDocument)) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Skipping same handle node as 'self' at {}", canonicalDocument.getPath());
+                    log.debug("Skipping same handle node as 'self' at {}", canonicalDocument.getPath());
                     }
                     continue;
                 }
 
                 if (currentUuidSet.contains(document.getIdentifier())) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Not adding already selected document {}", document.getPath());
+                    log.debug("Not adding already selected document {}", document.getPath());
                     }
                     continue;
                 }
 
                 if (log.isDebugEnabled()) {
-                    log.debug("Adding related document {}", document.getPath());
+                log.debug("Adding related document {}", document.getPath());
                 }
                 collection.add(new RelatedDoc(new JcrNodeModel(document), this.score * myScore));
             } catch (RepositoryException e) {
-                log.error("Error handling SimilaritySearch results", e.getMessage());
+                log.error("{} handling SimilaritySearch result on path {}. Message={}", e.getClass().getName(), path, e.getMessage());
             }
         }
         return collection;
