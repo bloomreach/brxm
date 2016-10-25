@@ -21,7 +21,7 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.query .Query;
+import javax.jcr.query.Query;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
 
@@ -102,20 +102,20 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
                 Node canonicalDocument = ((HippoNode) document).getCanonicalNode();
                 if (docHandleNode.isSame(canonicalDocument)) {
                     if (log.isDebugEnabled()) {
-                    log.debug("Skipping same handle node as 'self' at {}", canonicalDocument.getPath());
+                        log.debug("Skipping same handle node as 'self' at {}", canonicalDocument.getPath());
                     }
                     continue;
                 }
 
                 if (currentUuidSet.contains(document.getIdentifier())) {
                     if (log.isDebugEnabled()) {
-                    log.debug("Not adding already selected document {}", document.getPath());
+                        log.debug("Not adding already selected document {}", document.getPath());
                     }
                     continue;
                 }
 
                 if (log.isDebugEnabled()) {
-                log.debug("Adding related document {}", document.getPath());
+                    log.debug("Adding related document {}", document.getPath());
                 }
                 collection.add(new RelatedDoc(new JcrNodeModel(document), this.score * myScore));
             } catch (RepositoryException e) {
