@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.browse;
 import java.util.Iterator;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -36,6 +37,7 @@ import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.util.JcrUtils;
 
 public class BrowserPerspective extends Perspective {
@@ -175,6 +177,28 @@ public class BrowserPerspective extends Perspective {
         nodeService.detach();
 
         super.onDetach();
+    }
+
+    @Override
+    protected void onActivated() {
+        super.onActivated();
+        try {
+            // Load changes made to the repository through different perspectives/sessions
+            UserSession.get().getJcrSession().refresh(false);
+        } catch (RepositoryException e) {
+            log.warn("Failed to refresh JCR session upon entering the browser perspecive", e);
+        }
+    }
+
+    @Override
+    protected void onDeactivated() {
+        super.onDeactivated();
+        try {
+            // Save pending changes to avoid conflicts with Visual Editing
+            UserSession.get().getJcrSession().save();
+        } catch (RepositoryException e) {
+            log.warn("Failed to save JCR session upon leaving the browser perspective", e);
+        }
     }
 
     private boolean hasOpenTabs() {
