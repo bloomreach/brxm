@@ -19,12 +19,11 @@ import MutationSummary from 'mutation-summary';
 
 class OverlaySyncService {
 
-  constructor($rootScope, $log, $window, DomService) {
+  constructor($rootScope, $log, DomService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.$log = $log;
-    this.$window = $window;
     this.DomService = DomService;
 
     this.overlayElements = [];
@@ -75,15 +74,16 @@ class OverlaySyncService {
       queries: [{ all: true }],
     });
 
-    $(this._getIframeWindow()).on('unload', () => this._onUnLoad());
-    $(this.$window).on('resize.overlaysync', () => this.syncIframe());
+    const iframeWindow = this._getIframeWindow();
+    $(iframeWindow).on('unload', () => this._onUnLoad());
+    $(iframeWindow).on('resize.overlaysync', () => this._syncOverlayElements());
   }
 
   _onUnLoad() {
     this.$rootScope.$apply(() => {
       this.overlayElements = [];
       this.observer.disconnect();
-      $(this.$window).off('.overlaysync');
+      $(this._getIframeWindow()).off('.overlaysync');
     });
   }
 
