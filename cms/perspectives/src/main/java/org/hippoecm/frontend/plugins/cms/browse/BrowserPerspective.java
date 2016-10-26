@@ -184,7 +184,7 @@ public class BrowserPerspective extends Perspective {
         super.onActivated();
         try {
             // Load changes made to the repository through different perspectives/sessions
-            UserSession.get().getJcrSession().refresh(false);
+            UserSession.get().getJcrSession().refresh(true);
         } catch (RepositoryException e) {
             log.warn("Failed to refresh JCR session upon entering the browser perspecive", e);
         }
