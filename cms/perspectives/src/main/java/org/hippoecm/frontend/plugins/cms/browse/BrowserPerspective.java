@@ -20,8 +20,10 @@ import java.util.Iterator;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -185,6 +187,14 @@ public class BrowserPerspective extends Perspective {
         try {
             // Load changes made to the repository through different perspectives/sessions
             UserSession.get().getJcrSession().refresh(true);
+
+            // Reload all open tabs/documents so changes become visible immediately
+            if (hasOpenTabs()) {
+                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                if (target != null) {
+                    target.add(tabs);
+                }
+            }
         } catch (RepositoryException e) {
             log.warn("Failed to refresh JCR session upon entering the browser perspecive", e);
         }
