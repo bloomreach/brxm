@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="hippo:initialize">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" sv:name="hippo:initialize">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
@@ -563,6 +563,21 @@
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
       <sv:value>4.0.0</sv:value>
+    </sv:property>
+  </sv:node>
+  <!-- Update workflow definition to fix REPO-1597, should be turned into reload-on-startup when we release 12.0 -->
+  <sv:node sv:name="hipposcxml-scxml-configuration-documentworkflow-delta">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>603.0</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:modules/scxmlregistry/hippo:moduleconfig/hipposcxml:definitions/documentworkflow/hipposcxml:source</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value h:file="documentworkflow.scxml"/>
     </sv:property>
   </sv:node>
 

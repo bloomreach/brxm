@@ -16,6 +16,7 @@
 package org.onehippo.repository.documentworkflow.integration;
 
 import javax.jcr.Node;
+import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.version.VersionHistory;
@@ -36,6 +37,7 @@ import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -115,4 +117,16 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         assertFalse((Boolean) workflow.hints().get("obtainEditableInstance"));
     }
 
+    @Test
+    public void holderObtainsEditiableInstanceAsSaved() throws Exception {
+        Session anotherAdmin = session.impersonate(CREDENTIALS);
+        DocumentWorkflow workflow = getDocumentWorkflow(handle);
+        final Node draft = workflow.obtainEditableInstance().getNode(session);
+        assertEquals(SYSTEMUSER_ID, draft.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString());
+        draft.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY, "test-user");
+        session.save();
+        DocumentWorkflow anotherWorkflow = getDocumentWorkflow(anotherAdmin.getNodeByIdentifier(handle.getIdentifier()));
+        final Node anotherDraft = anotherWorkflow.obtainEditableInstance().getNode(anotherAdmin);
+        assertEquals("test-user", anotherDraft.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString());
+    }
 }

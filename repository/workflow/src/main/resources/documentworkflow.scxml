@@ -142,26 +142,29 @@
       <!-- target-less transition to 'obtain' an editable draft document variant by creating or updating a draft variant
            by copying (the contents of) the current unpublished variant if available or else the published variant -->
       <transition event="obtainEditableInstance">
-        <if cond="!!unpublished">
-          <!-- unpublished document exists: copy it to draft first -->
-          <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
-        <elseif cond="!!published"/>
-          <!-- else if published document exists: first copy it to unpublished -->
-          <hippo:copyVariant sourceState="published" targetState="unpublished"/>
-          <if cond="live">
-            <hippo:configVariant variant="published" availabilities="live"/>
-          <else/>
-            <hippo:configVariant variant="published" availabilities=""/>
+        <!-- copy/update draft unless user already is holder (editing) -->
+        <if cond="!editor">
+          <if cond="!!unpublished">
+            <!-- unpublished document exists: copy it to draft first, unless we're already editor -->
+            <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
+          <elseif cond="!!published"/>
+            <!-- else if published document exists: first copy it to unpublished -->
+            <hippo:copyVariant sourceState="published" targetState="unpublished"/>
+            <if cond="live">
+              <hippo:configVariant variant="published" availabilities="live"/>
+              <else/>
+              <hippo:configVariant variant="published" availabilities=""/>
+            </if>
+            <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
+            <!-- create a JCR version of the published document via the unpublished variant -->
+            <hippo:version variant="unpublished"/>
+            <!-- now copy the unpublished variant to draft -->
+            <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
           </if>
-          <hippo:configVariant variant="unpublished" versionable="true" availabilities="preview"/>
-          <!-- create a JCR version of the published document via the unpublished variant -->
-          <hippo:version variant="unpublished"/>
-          <!-- now copy the unpublished variant to draft -->
-          <hippo:copyVariant sourceState="unpublished" targetState="draft"/>
+          <!-- mark the draft document as modified, set the user as editor and remove possibly copied availabilities -->
+          <hippo:configVariant variant="draft" applyModified="true" setHolder="true" availabilities=""/>
         </if>
-        <!-- mark the draft document as modified, set the user as editor and remove possibly copied availabilities -->
-        <hippo:configVariant variant="draft" applyModified="true" setHolder="true" availabilities=""/>
-        <!-- store the newly created or updated draft document as result -->
+        <!-- store the (newly created or updated) draft document as result -->
         <hippo:result value="draft"/>
       </transition>
 
