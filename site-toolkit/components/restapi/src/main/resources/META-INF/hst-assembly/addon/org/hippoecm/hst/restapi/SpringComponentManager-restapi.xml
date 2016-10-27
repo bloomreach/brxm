@@ -37,12 +37,17 @@
 
   <bean id="restApiCorsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter"/>
 
+  <bean id="restApiExceptionMapper" class="org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper">
+    <property name="printStackTrace" value="false" />
+  </bean>
+
   <!-- Built-in Entity Providers which are annotated with javax.ws.rs.ext.Provider. -->
   <bean id="defaultRestApiEntityProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
     <property name="sourceList">
       <list>
         <ref bean="restApiJsonProvider"/>
         <ref bean="restApiCorsFilter"/>
+        <ref bean="restApiExceptionMapper"/>
       </list>
     </property>
   </bean>
