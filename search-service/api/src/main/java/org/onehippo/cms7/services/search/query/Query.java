@@ -17,7 +17,7 @@ package org.onehippo.cms7.services.search.query;
 
 public interface Query {
 
-    public Query EMPTY = new EmptyQuery();
+    Query EMPTY = new EmptyQuery();
 
     /**
      * Instructs the search service to return the de-duplicated set of parent nodes of the search results. This is

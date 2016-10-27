@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,14 +31,14 @@ public interface SearchService {
      * @return
      * @throws SearchServiceException
      */
-    public boolean isAlive();
+    boolean isAlive();
 
     /**
      * Creates search query
      * @return
      * @throws SearchServiceException
      */
-    public InitialQuery createQuery() throws SearchServiceException;
+    InitialQuery createQuery() throws SearchServiceException;
 
     /**
      * Performs search query
@@ -46,7 +46,7 @@ public interface SearchService {
      * @return
      * @throws SearchServiceException
      */
-    public QueryResult search(Query searchQuery) throws SearchServiceException;
+    QueryResult search(Query searchQuery) throws SearchServiceException;
 
     /**
      * Returns a reflected view on a query.
@@ -55,6 +55,6 @@ public interface SearchService {
      * @return
      * @throws SearchServiceException
      */
-    public QueryNode asQueryNode(Query query) throws SearchServiceException;
+    QueryNode asQueryNode(Query query) throws SearchServiceException;
 
 }

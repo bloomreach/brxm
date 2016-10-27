@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package org.onehippo.cms7.services.search.result;
  */
 public interface QueryResult {
 
-    public QueryResult EMPTY = new QueryResult() {
+    QueryResult EMPTY = new QueryResult() {
 
         @Override
         public HitIterator getHits() {
@@ -38,13 +38,13 @@ public interface QueryResult {
      * Returns returned content item list
      * @return
      */
-    public HitIterator getHits();
+    HitIterator getHits();
 
     /**
      * Returns the total count of hits
      * @return the total count of hits
      */
-    public long getTotalHitCount();
+    long getTotalHitCount();
 
 
 }
