@@ -160,6 +160,7 @@ public final class FullTextSearchParser {
      *
      * @deprecated please use HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_MINLENGTH
      */
+    @Deprecated
     public static int getMinimalLength() {
         return HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_MINLENGTH;
     }
