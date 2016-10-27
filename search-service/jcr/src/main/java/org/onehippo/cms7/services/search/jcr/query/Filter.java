@@ -50,7 +50,7 @@ public class Filter {
      * This allows us to change those filters even after those are added to filter
      * @see #getJcrExpression()
      */
-    private List<FilterTypeWrapper> childFilters = new ArrayList<FilterTypeWrapper>();
+    private List<FilterTypeWrapper> childFilters = new ArrayList<>();
 
     private ChildFilterType firstAddedType;
 
@@ -76,11 +76,11 @@ public class Filter {
     public void addContains(String scope, String fullTextSearch) throws JcrQueryException {
         scope = JcrQueryUtils.toXPathProperty(scope, true, "addContains", new String[]{"."});
 
-        if(fullTextSearch == null) {
+        if (fullTextSearch == null) {
             throw new JcrQueryException("Not allowed to search on 'null'.");
         }
 
-        StringBuilder whereClauseBuilder = new StringBuilder();
+        final StringBuilder containsBuilder = new StringBuilder();
         // we rewrite a search for * into a more efficient search
         if("*".equals(fullTextSearch)) {
             if(".".equals(scope)) {
@@ -98,24 +98,26 @@ public class Filter {
                 final String parsedTextWildcarded = FullTextSearchParser.fullTextParseCmsSimpleSearchMode(fullTextSearch, true, fulltextWildcardPostfixMinLength);
                 if (parsedTextWildcarded.length() > 0) {
                     if (parsedText.length() > 0) {
-                        whereClauseBuilder.append("(");
-                        addContainsToBuilder(whereClauseBuilder,  scope, parsedText);
-                        whereClauseBuilder.append(" or ");
-                        addContainsToBuilder(whereClauseBuilder, scope, parsedTextWildcarded);
-                        whereClauseBuilder.append(")");
+                        containsBuilder.append("(");
+                        addContainsToBuilder(containsBuilder,  scope, parsedText);
+                        containsBuilder.append(" or ");
+                        addContainsToBuilder(containsBuilder, scope, parsedTextWildcarded);
+                        containsBuilder.append(")");
                     } else {
-                        addContainsToBuilder(whereClauseBuilder, scope, parsedTextWildcarded);
+                        addContainsToBuilder(containsBuilder, scope, parsedTextWildcarded);
                     }
                 } else if (parsedText.length() > 0) {
-                    addContainsToBuilder(whereClauseBuilder, scope, parsedText);
+                    addContainsToBuilder(containsBuilder, scope, parsedText);
                 }
             } else if (parsedText.length() > 0) {
-                addContainsToBuilder(whereClauseBuilder, scope, parsedText);
+                addContainsToBuilder(containsBuilder, scope, parsedText);
             }
-            log.info("Translated fullTextSearch '{}' to where clause '{}'.", fullTextSearch, whereClauseBuilder.toString());
+            log.info("Translated fullTextSearch '{}' to function '{}' with wildcarding={} and minimum length={}.",
+                    fullTextSearch, containsBuilder.toString(), fulltextWildcardPostfixEnabled, fulltextWildcardPostfixMinLength);
         }
-        if (whereClauseBuilder.length() > 0) {
-            addExpression(whereClauseBuilder.toString());
+
+        if (containsBuilder.length() > 0) {
+            addExpression(containsBuilder.toString());
         }
     }
 
@@ -319,7 +321,7 @@ public class Filter {
             return;
         }
         if(builder.length() == 0) {
-            builder.append("(").append(filter.getJcrExpression()).append(")");;
+            builder.append("(").append(filter.getJcrExpression()).append(")");
         } else {
             builder.append(" and ").append("(").append(filter.getJcrExpression()).append(")");
         }
@@ -378,7 +380,6 @@ public class Filter {
 
     /**
      * Process AND or OR filters
-     * @return  jcr query expression  or null 
      */
     private void processChildFilters(StringBuilder childFiltersExpression) {
         for (FilterTypeWrapper filter : childFilters) {
