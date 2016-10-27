@@ -23,9 +23,15 @@ import org.onehippo.cms7.services.search.jcr.query.JcrQueryVisitor;
 import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 
 public class TestUtils {
+
     public static String getQueryAsString(final QueryImpl query, final Session session) {
+        return getQueryAsString(query, session, HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_ENABLED, HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_MINLENGTH);
+    }
+
+    public static String getQueryAsString(final QueryImpl query, final Session session,
+                                          final boolean wildcardPostfixEnabled, final int wildcardPostfixMinlenth) {
         final JcrQueryBuilder builder = new JcrQueryBuilder(session,
-                HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_ENABLED, HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_MINLENGTH);
+                        wildcardPostfixEnabled, wildcardPostfixMinlenth);
         JcrQueryVisitor visitor = new JcrQueryVisitor(builder, session);
         query.accept(visitor);
         return builder.getQueryString();
