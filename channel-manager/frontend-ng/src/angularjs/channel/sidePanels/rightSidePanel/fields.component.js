@@ -30,8 +30,12 @@ export class ChannelFieldsCtrl {
     return field.multiple && (!this.fieldValues[field.id] || this.fieldValues[field.id].length === 0);
   }
 
-  isFieldFocused(field) {
-    return this.focusedFieldId === field.id;
+  hasFocusedField(field) {
+    let hasFocusedField = false;
+    if (field.fields && field.fields.findIndex(newField => newField.focused) !== -1) {
+      hasFocusedField = true;
+    }
+    return hasFocusedField;
   }
 
   getFieldAsArray(fieldId) {
@@ -40,11 +44,11 @@ export class ChannelFieldsCtrl {
   }
 
   onFieldFocus(field) {
-    this.focusedFieldId = field.id;
+    field.focused = true;
   }
 
-  onFieldBlur() {
-    this.focusedFieldId = null;
+  onFieldBlur(field) {
+    field.focused = false;
   }
 }
 

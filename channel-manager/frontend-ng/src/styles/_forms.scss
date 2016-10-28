@@ -28,6 +28,20 @@
   }
 }
 
-.form-field-focused label {
-  color: $blue-500 !important;
+.form-field-compound {
+  border-left: 3px solid $grey-500;
+}
+
+.form-field-focused {
+  &.form-field-compound {
+    border-color: $blue-500;
+  }
+  &> md-input-container {
+    &> h5 {
+      color: $blue-500 !important;
+      md-icon {
+        color: $blue-500 !important;
+      }
+    }
+  }
 }

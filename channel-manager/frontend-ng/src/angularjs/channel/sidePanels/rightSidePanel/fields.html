@@ -1,5 +1,8 @@
 <div ng-repeat="fieldType in ::$ctrl.fieldTypes"
-     ng-class="{'form-field-focused': $ctrl.isFieldFocused(fieldType) }">
+     ng-class="{
+      'form-field-focused': $ctrl.hasFocusedField(fieldType),
+      'form-field-compound': fieldType.type == 'COMPOUND'
+     }">
 
   <!-- edge case: a multiple field with zero values -->
   <md-input-container ng-if="::$ctrl.isEmptyMultiple(fieldType)"
@@ -17,20 +20,24 @@
                       ng-repeat="value in ::$ctrl.getFieldAsArray(fieldType.id)"
                       ng-switch="fieldType.type">
 
-    <label ng-if="$first">{{ ::fieldType.displayName }}</label>
+    <h5 ng-if="fieldType.type == 'COMPOUND'">
+      <md-icon class="material-icons">keyboard_arrow_down</md-icon>
+      {{ ::fieldType.displayName }}
+    </h5>
+    <label ng-if="$first && fieldType.type != 'COMPOUND'">{{ ::fieldType.displayName }}</label>
 
     <!-- editors per field type -->
     <input ng-switch-when="STRING"
            ng-model="$ctrl.fieldValues[fieldType.id]"
            placeholder=""
            ng-focus="$ctrl.onFieldFocus(fieldType)"
-           ng-blur="$ctrl.onFieldBlur()">
+           ng-blur="$ctrl.onFieldBlur(fieldType)">
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="$ctrl.fieldValues[fieldType.id]"
               placeholder=""
               md-no-resize
               ng-focus="$ctrl.onFieldFocus(fieldType)"
-              ng-blur="$ctrl.onFieldBlur()">
+              ng-blur="$ctrl.onFieldBlur(fieldType)">
     </textarea>
 
     <channel-fields field-types="::fieldType.fields" field-values="$ctrl.fieldValues[fieldType.id]"
