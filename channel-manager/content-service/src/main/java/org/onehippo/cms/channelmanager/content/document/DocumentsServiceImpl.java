@@ -86,7 +86,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new OperationFailedException(new ErrorInfo(ErrorInfo.Reason.NOT_HOLDER));
         }
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
-                .orElseThrow(OperationFailedException::new);
+                .orElseThrow(DocumentNotFoundException::new);
 
         if (writeFields(document, draft, docType)) {
             cancelPendingChanges(session);
@@ -190,7 +190,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             session.save();
             workflow.commitEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to persist changes");
+            log.warn("Failed to persist changes", e);
             throw new OperationFailedException();
         }
 

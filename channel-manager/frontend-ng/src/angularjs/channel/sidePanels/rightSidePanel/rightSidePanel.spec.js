@@ -73,7 +73,7 @@ describe('ChannelRightSidePanel', () => {
     });
 
     ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'isOpen', 'close']);
-    ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft']);
+    ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
     $scope = $rootScope.$new();
@@ -110,6 +110,12 @@ describe('ChannelRightSidePanel', () => {
 
   it('closes the panel', () => {
     $ctrl.close();
+    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+
+    $ctrl.doc = testDocument;
+    $ctrl.close();
+    expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
   });
 
