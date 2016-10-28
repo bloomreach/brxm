@@ -23,6 +23,7 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 
@@ -42,11 +43,11 @@ public interface DocumentTypesService {
      * @param userSession user-authenticated JCR session for read-only access
      * @param locale  locale of the current CMS session
      * @return        JSON-serializable representation of the parts supported for exposing
-     * @throws DocumentTypeNotFoundException
+     * @throws ErrorWithPayloadException
      *                if assembling the document type specification failed in a non-recoverable manner
      */
     DocumentType getDocumentType(String id, Session userSession, Optional<Locale> locale)
-            throws DocumentTypeNotFoundException;
+            throws ErrorWithPayloadException;
 
     /**
      * Read the supported part of a document type into a JSON-serializable representation
@@ -54,10 +55,10 @@ public interface DocumentTypesService {
      * @param handle  JCR node representing a document handle to derive the type ID and session from
      * @param locale  locale of the current CMS session
      * @return        JSON-serializable representation of the parts supported for exposing
-     * @throws DocumentTypeNotFoundException
+     * @throws ErrorWithPayloadException
      *                if assembling the document type failed in a non-recoverable manner
      */
-    DocumentType getDocumentType(Node handle, Optional<Locale> locale) throws DocumentTypeNotFoundException;
+    DocumentType getDocumentType(Node handle, Optional<Locale> locale) throws ErrorWithPayloadException;
 
     /**
      * Populate the fields of a compound content type.

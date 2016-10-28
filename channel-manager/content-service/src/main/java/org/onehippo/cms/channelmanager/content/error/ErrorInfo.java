@@ -14,23 +14,30 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.document;
+package org.onehippo.cms.channelmanager.content.error;
 
-import org.onehippo.cms.channelmanager.content.document.model.ErrorInfo;
+/**
+ * ErrorInfo provides the client with additional information about the failure of a requested operation
+ *
+ * By "additional", we mean information on top of the HTTP response status code.
+ */
+public class ErrorInfo {
 
-public class OperationFailedException extends Exception {
+    private Reason reason;
 
-    private final ErrorInfo errorInfo;
-
-    public OperationFailedException() {
-        this(new ErrorInfo(ErrorInfo.Reason.UNKNOWN));
+    public ErrorInfo(Reason reason) {
+        this.reason = reason;
     }
 
-    public OperationFailedException(final ErrorInfo errorInfo) {
-        this.errorInfo = errorInfo;
+    public Reason getReason() {
+        return reason;
     }
 
-    public ErrorInfo getErrorInfo() {
-        return errorInfo;
+    public enum Reason {
+        UNKNOWN,
+        NOT_HOLDER,
+        HOLDERSHIP_LOST,
+        ALREADY_DELETED
+        // add more specific failure reasons here.
     }
 }

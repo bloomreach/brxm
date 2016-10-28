@@ -14,7 +14,17 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.documenttype;
+package org.onehippo.cms.channelmanager.content.error;
 
-public class DocumentTypeNotFoundException extends Exception {
+import javax.ws.rs.core.Response;
+
+public class BadRequestException extends ErrorWithPayloadException {
+
+    public BadRequestException() {
+        this(null);
+    }
+
+    public BadRequestException(final Object payload) {
+        super(Response.Status.BAD_REQUEST, payload);
+    }
 }

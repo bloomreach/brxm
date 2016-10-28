@@ -24,6 +24,7 @@ import org.hippoecm.repository.util.WorkflowUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.repository.mock.MockNode;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -41,12 +42,12 @@ public class DocumentsServiceImplTest {
         session = rootNode.getSession();
     }
 
-    @Test(expected = DocumentNotFoundException.class)
+    @Test(expected = NotFoundException.class)
     public void nodeNotFound() throws Exception {
         documentsService.getPublished("unknown-uuid", session);
     }
 
-    @Test(expected = DocumentNotFoundException.class)
+    @Test(expected = NotFoundException.class)
     public void nodeNotHandle() throws Exception {
         final Node handle = rootNode.addNode("testDocument", "invalid-type");
         final String id = handle.getIdentifier();

@@ -14,30 +14,17 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.document.model;
+package org.onehippo.cms.channelmanager.content.error;
 
-/**
- * ErrorInfo provides the client with additional information about the failure of a requested operation
- *
- * By "additional", we mean information on top of the HTTP response status code.
- */
-public class ErrorInfo {
+import javax.ws.rs.core.Response;
 
-    private Reason reason;
+public class InternalServerErrorException extends ErrorWithPayloadException {
 
-    public ErrorInfo(Reason reason) {
-        this.reason = reason;
+    public InternalServerErrorException() {
+        this(null);
     }
 
-    public Reason getReason() {
-        return reason;
-    }
-
-    public enum Reason {
-        UNKNOWN,
-        NOT_HOLDER,
-        HOLDERSHIP_LOST,
-        ALREADY_DELETED
-        // add more specific failure reasons here.
+    public InternalServerErrorException(final Object payload) {
+        super(Response.Status.INTERNAL_SERVER_ERROR, payload);
     }
 }
