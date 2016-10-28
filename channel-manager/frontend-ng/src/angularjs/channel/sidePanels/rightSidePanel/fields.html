@@ -33,8 +33,8 @@
               ng-blur="$ctrl.onFieldBlur()">
     </textarea>
 
-    <!-- TODO: remove once all field types for PSP1 have been implemented -->
-    <input ng-switch-default disabled value="TODO">
+    <channel-fields field-types="::fieldType.fields" field-values="$ctrl.fieldValues[fieldType.id]"
+                    ng-switch-when="COMPOUND"></channel-fields>
 
   </md-input-container>
 </div>
