@@ -27,7 +27,7 @@ export class ChannelFieldsCtrl {
   }
 
   isEmptyMultiple(field) {
-    return field.multiple && this.fieldValues[field.id].length === 0;
+    return field.multiple && (!this.fieldValues[field.id] || this.fieldValues[field.id].length === 0);
   }
 
   isFieldFocused(field) {
