@@ -84,27 +84,6 @@ export class ChannelRightSidePanelCtrl {
       });
   }
 
-  isEmptyMultiple(field) {
-    return field.multiple && this.doc.fields[field.id].length === 0;
-  }
-
-  getFieldAsArray(fieldId) {
-    const field = this.doc.fields[fieldId];
-    return angular.isArray(field) ? field : [field];
-  }
-
-  onFieldFocus(field) {
-    this.focusedFieldId = field.id;
-  }
-
-  onFieldBlur() {
-    this.focusedFieldId = null;
-  }
-
-  isFieldFocused(field) {
-    return this.focusedFieldId === field.id;
-  }
-
   close() {
     this.ChannelSidePanelService.close('right');
   }

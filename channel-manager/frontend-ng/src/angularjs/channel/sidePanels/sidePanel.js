@@ -18,12 +18,14 @@ import ChannelSidePanelService from './sidePanel.service';
 import channelLeftSidePanelToggleComponentModule from './leftSidePanel/leftSidePanelToggle.component';
 import channelLeftSidePanelComponentModule from './leftSidePanel/leftSidePanel.component';
 import channelRightSidePanelComponentModule from './rightSidePanel/rightSidePanel.component';
+import channelFieldsComponentModule from './rightSidePanel/fields.component';
 
 const channelSidePanelModule = angular
   .module('hippo-cm.channel.sidePanel', [
     channelLeftSidePanelToggleComponentModule.name,
     channelLeftSidePanelComponentModule.name,
     channelRightSidePanelComponentModule.name,
+    channelFieldsComponentModule.name,
   ])
   .service('ChannelSidePanelService', ChannelSidePanelService);
 

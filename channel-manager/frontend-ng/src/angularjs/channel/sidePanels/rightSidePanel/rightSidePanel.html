@@ -26,46 +26,7 @@
   </md-toolbar>
   <md-content flex="grow" layout-padding>
     <form name="$ctrl.form" class="form-dense-layout" layout="column" ng-if="$ctrl.doc">
-      <div ng-repeat="field in ::$ctrl.docType.fields"
-           ng-class="{'form-field-focused': $ctrl.isFieldFocused(field) }">
-
-        <!-- edge case: a multiple field with zero values -->
-        <md-input-container ng-if="::$ctrl.isEmptyMultiple(field)"
-                            class="md-block form-field-multiple qa-field"
-                            md-no-float>
-          <label>{{ ::field.displayName }}</label>
-          <input disabled value="{{ 'NONE' | translate }}" placeholder="">
-        </md-input-container>
-
-        <!-- other cases -->
-        <md-input-container ng-if="::!$ctrl.isEmptyMultiple(field)"
-                            class="md-block qa-field"
-                            ng-class="::{'form-field-multiple': field.multiple}"
-                            md-no-float
-                            ng-repeat="value in ::$ctrl.getFieldAsArray(field.id)"
-                            ng-switch="field.type">
-
-          <label ng-if="$first">{{ ::field.displayName }}</label>
-
-          <!-- editors per field type -->
-          <input ng-switch-when="STRING"
-                 ng-model="$ctrl.doc.fields[field.id]"
-                 placeholder=""
-                 ng-focus="$ctrl.onFieldFocus(field)"
-                 ng-blur="$ctrl.onFieldBlur()">
-          <textarea ng-switch-when="MULTILINE_STRING"
-                    ng-model="$ctrl.doc.fields[field.id]"
-                    placeholder=""
-                    md-no-resize
-                    ng-focus="$ctrl.onFieldFocus(field)"
-                    ng-blur="$ctrl.onFieldBlur()">
-          </textarea>
-
-          <!-- TODO: remove once all field types for PSP1 have been implemented -->
-          <input ng-switch-default disabled value="TODO">
-
-        </md-input-container>
-      </div>
+      <channel-fields field-types="::$ctrl.docType.fields" field-values="$ctrl.doc.fields"></channel-fields>
     </form>
   </md-content>
   <md-toolbar>
