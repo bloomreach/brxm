@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@ package org.onehippo.cms7.services.search.jcr.query;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
+import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Input utilities for user searches.
- *
  */
 public final class FullTextSearchParser {
 
@@ -34,8 +34,6 @@ public final class FullTextSearchParser {
     private static final char MINUS_SIGN = '-';
 
     private final static String ignoredChars = DEFAULT_IGNORED_CHARS;
-
-    private final static int minimalLength = 3;
 
     private static final String WHITESPACE_PATTERN = "\\s+";
 
@@ -63,6 +61,11 @@ public final class FullTextSearchParser {
     }
 
     public static String fullTextParseCmsSimpleSearchMode(String value, final boolean wildcardPostfix) {
+        return fullTextParseCmsSimpleSearchMode(value, wildcardPostfix, HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_MINLENGTH);
+    }
+
+    public static String fullTextParseCmsSimpleSearchMode(String value, final boolean wildcardPostfix, final int minimalLength) {
+
         value = foldToASCIIReplacer(value.trim());
         StringBuilder whereClauseBuilder = new StringBuilder();
         boolean isOperatorToken;
@@ -108,8 +111,9 @@ public final class FullTextSearchParser {
                 isOperatorToken = false;
             }
 
-            if (wildcardPostfix && tb.length() < getMinimalLength() && !isOperatorToken) {
-                // for wildcard postfixing we demand the term to be at least as long as #getMinimalLength()
+
+            if (wildcardPostfix && tb.length() < minimalLength && !isOperatorToken) {
+                // for wildcard postfixing we demand the term to be at least as long as minimal length
                 continue;
             }
 
@@ -144,15 +148,21 @@ public final class FullTextSearchParser {
             // 1: WildcardSearch is set to true
             // 2: The term length is at least equal to minimal length: This is to avoid expensive kind of a* searches
             // 3: The term is not an operator token like AND or OR
-            if (wildcardPostfix && tb.length() >= getMinimalLength() && !isOperatorToken) {
+            if (wildcardPostfix && tb.length() >= minimalLength && !isOperatorToken) {
                 whereClauseBuilder.append('*');
             }
         }
         return whereClauseBuilder.toString();
     }
 
+    /**
+     * Return the default minimal length
+     *
+     * @deprecated please use HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_MINLENGTH
+     */
+    @Deprecated
     public static int getMinimalLength() {
-        return minimalLength;
+        return HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_MINLENGTH;
     }
 
 

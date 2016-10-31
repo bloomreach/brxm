@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.List;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.util.DateTools;
+import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 import org.onehippo.cms7.services.search.query.constraint.DateConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +37,9 @@ public class Filter {
 
     private boolean negated = false;
 
-    private final static boolean DEFAULT_FULLTEXT_WILDCARD_POSTFIXED = true;
+    private final boolean fulltextWildcardPostfixEnabled;
 
-    private boolean fulltextWildcardPostfixed = DEFAULT_FULLTEXT_WILDCARD_POSTFIXED;
+    private final int fulltextWildcardPostfixMinLength;
 
     private final Session session;
 
@@ -49,12 +50,18 @@ public class Filter {
      * This allows us to change those filters even after those are added to filter
      * @see #getJcrExpression()
      */
-    private List<FilterTypeWrapper> childFilters = new ArrayList<FilterTypeWrapper>();
+    private List<FilterTypeWrapper> childFilters = new ArrayList<>();
 
     private ChildFilterType firstAddedType;
 
     public Filter(final Session session) {
+        this(session, HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_ENABLED, HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_MINLENGTH);
+    }
+
+    public Filter(final Session session, final boolean wildcardPostfixEnabled, final int wildcardPostfixMinLength) {
         this.session = session;
+        this.fulltextWildcardPostfixEnabled = wildcardPostfixEnabled;
+        this.fulltextWildcardPostfixMinLength = wildcardPostfixMinLength;
     }
 
     private enum ChildFilterType {
@@ -69,11 +76,11 @@ public class Filter {
     public void addContains(String scope, String fullTextSearch) throws JcrQueryException {
         scope = JcrQueryUtils.toXPathProperty(scope, true, "addContains", new String[]{"."});
 
-        if(fullTextSearch == null) {
+        if (fullTextSearch == null) {
             throw new JcrQueryException("Not allowed to search on 'null'.");
         }
 
-        StringBuilder whereClauseBuilder = new StringBuilder();
+        final StringBuilder containsBuilder = new StringBuilder();
         // we rewrite a search for * into a more efficient search
         if("*".equals(fullTextSearch)) {
             if(".".equals(scope)) {
@@ -87,28 +94,30 @@ public class Filter {
         } else {
             String parsedText = FullTextSearchParser.fullTextParseCmsSimpleSearchMode(fullTextSearch, false);
 
-            if (fulltextWildcardPostfixed) {
-                String parsedTextWildCardPostFixed = FullTextSearchParser.fullTextParseCmsSimpleSearchMode(fullTextSearch, true);
-                if (parsedTextWildCardPostFixed.length() > 0) {
+            if (fulltextWildcardPostfixEnabled) {
+                final String parsedTextWildcarded = FullTextSearchParser.fullTextParseCmsSimpleSearchMode(fullTextSearch, true, fulltextWildcardPostfixMinLength);
+                if (parsedTextWildcarded.length() > 0) {
                     if (parsedText.length() > 0) {
-                        whereClauseBuilder.append("(");
-                        addContainsToBuilder(whereClauseBuilder,  scope, parsedText);
-                        whereClauseBuilder.append(" or ");
-                        addContainsToBuilder(whereClauseBuilder,  scope, parsedTextWildCardPostFixed);
-                        whereClauseBuilder.append(")");
+                        containsBuilder.append("(");
+                        addContainsToBuilder(containsBuilder,  scope, parsedText);
+                        containsBuilder.append(" or ");
+                        addContainsToBuilder(containsBuilder, scope, parsedTextWildcarded);
+                        containsBuilder.append(")");
                     } else {
-                        addContainsToBuilder(whereClauseBuilder,  scope, parsedTextWildCardPostFixed);
+                        addContainsToBuilder(containsBuilder, scope, parsedTextWildcarded);
                     }
-                } else if (whereClauseBuilder.length() > 0) {
-                    addContainsToBuilder(whereClauseBuilder,  scope, whereClauseBuilder.toString());
+                } else if (parsedText.length() > 0) {
+                    addContainsToBuilder(containsBuilder, scope, parsedText);
                 }
-            } else if (whereClauseBuilder.length() > 0) {
-                addContainsToBuilder(whereClauseBuilder,  scope, whereClauseBuilder.toString());
+            } else if (parsedText.length() > 0) {
+                addContainsToBuilder(containsBuilder, scope, parsedText);
             }
-            log.info("Translated fullTextSearch '{}' to where clause '{}'.", fullTextSearch, whereClauseBuilder.toString());
+            log.info("Translated fullTextSearch '{}' to function '{}' with wildcarding={} and minimum length={}.",
+                    fullTextSearch, containsBuilder.toString(), fulltextWildcardPostfixEnabled, fulltextWildcardPostfixMinLength);
         }
-        if (whereClauseBuilder.length() > 0) {
-            addExpression(whereClauseBuilder.toString());
+
+        if (containsBuilder.length() > 0) {
+            addExpression(containsBuilder.toString());
         }
     }
 
@@ -312,7 +321,7 @@ public class Filter {
             return;
         }
         if(builder.length() == 0) {
-            builder.append("(").append(filter.getJcrExpression()).append(")");;
+            builder.append("(").append(filter.getJcrExpression()).append(")");
         } else {
             builder.append(" and ").append("(").append(filter.getJcrExpression()).append(")");
         }
@@ -371,7 +380,6 @@ public class Filter {
 
     /**
      * Process AND or OR filters
-     * @return  jcr query expression  or null 
      */
     private void processChildFilters(StringBuilder childFiltersExpression) {
         for (FilterTypeWrapper filter : childFilters) {

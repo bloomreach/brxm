@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,30 @@ import org.slf4j.LoggerFactory;
 
 public class HippoJcrSearchService implements SearchService, QueryPersistService {
 
-    static final Logger log = LoggerFactory.getLogger(HippoJcrSearchService.class);
+    private static final Logger log = LoggerFactory.getLogger(HippoJcrSearchService.class);
+
+    public static final boolean DEFAULT_WILDCARD_POSTFIX_ENABLED = true;
+    public static final int DEFAULT_WILDCARD_POSTFIX_MINLENGTH = 3;
+
+    private boolean wildcardPostfixEnabled = DEFAULT_WILDCARD_POSTFIX_ENABLED;
+    private int wildcardPostfixMinLength = DEFAULT_WILDCARD_POSTFIX_MINLENGTH;
 
     private Session session;
+
+    /**
+     * Default constructor
+     */
+    public HippoJcrSearchService() {
+    }
+
+    /**
+     * Parameterized constructor
+     */
+    public HippoJcrSearchService(final Session session, final boolean wildcardPostfixEnabled, final int wildcardPostfixMinLength) {
+        this.session = session;
+        this.wildcardPostfixEnabled = wildcardPostfixEnabled;
+        this.wildcardPostfixMinLength = wildcardPostfixMinLength;
+    }
 
     public Session getSession() {
         return session;
@@ -68,7 +89,7 @@ public class HippoJcrSearchService implements SearchService, QueryPersistService
             throw new IllegalArgumentException("Search service only accepts queries created by itself");
         }
         QueryNode query = (QueryNode) searchQuery;
-        JcrQueryBuilder queryBuilder = new JcrQueryBuilder(session);
+        final JcrQueryBuilder queryBuilder = new JcrQueryBuilder(session, this.isWildcardPostfixEnabled(), this.getWildcardPostfixMinLength());
         query.accept(new JcrQueryVisitor(queryBuilder, session));
         final String queryString = queryBuilder.getQueryString();
         try {
@@ -122,4 +143,13 @@ public class HippoJcrSearchService implements SearchService, QueryPersistService
             throw new SearchServiceException(re);
         }
     }
+
+    public boolean isWildcardPostfixEnabled() {
+        return wildcardPostfixEnabled;
+    }
+
+    public int getWildcardPostfixMinLength() {
+        return wildcardPostfixMinLength;
+    }
+
 }

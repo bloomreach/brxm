@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -199,4 +199,70 @@ public class TestJcrQueryBuilder extends RepositoryTestCase {
         assertEquals("//*[" + COMMON_SCOPE + " and (((jcr:contains(.,'this') or jcr:contains(.,'this*'))))]" + COMMON_ORDERBY, queryAsString);
     }
 
-}
+    @Test
+    public void test_contains_with_small_term_with_wildcarding() {
+        InitialQueryImpl initialQuery = new InitialQueryImpl();
+        QueryImpl query = initialQuery.from("/").where(QueryUtils.text().contains("ab"));
+
+        // small terms are not wildcarded
+        String queryAsString = TestUtils.getQueryAsString(query, session, true, 3);
+        assertEquals("//*[" + COMMON_SCOPE + " and (jcr:contains(.,'ab'))]" + COMMON_ORDERBY, queryAsString);
+    }
+
+    @Test
+    public void test_contains_with_small_term_without_wildcarding() {
+        InitialQueryImpl initialQuery = new InitialQueryImpl();
+        QueryImpl query = initialQuery.from("/").where(QueryUtils.text().contains("ab"));
+
+        String queryAsString = TestUtils.getQueryAsString(query, session, false, 3);
+        assertEquals("//*[" + COMMON_SCOPE + " and (jcr:contains(.,'ab'))]" + COMMON_ORDERBY, queryAsString);
+    }
+
+    @Test
+    public void test_contains_with_big_term_with_wildcarding_at_min_length() {
+        InitialQueryImpl initialQuery = new InitialQueryImpl();
+        QueryImpl query = initialQuery.from("/").where(QueryUtils.text().contains("abcdefghij"));
+
+        String queryAsString = TestUtils.getQueryAsString(query, session, true, "abcdefghij".length());
+        assertEquals("//*[" + COMMON_SCOPE + " and ((jcr:contains(.,'abcdefghij') or jcr:contains(.,'abcdefghij*')))]" + COMMON_ORDERBY, queryAsString);
+    }
+
+    @Test
+    public void test_contains_with_big_term_with_wildcarding_at_min_length_plus_one() {
+        InitialQueryImpl initialQuery = new InitialQueryImpl();
+        QueryImpl query = initialQuery.from("/").where(QueryUtils.text().contains("abcdefghij"));
+
+        String queryAsString = TestUtils.getQueryAsString(query, session, true, "abcdefghij".length() + 1);
+        assertEquals("//*[" + COMMON_SCOPE + " and (jcr:contains(.,'abcdefghij'))]" + COMMON_ORDERBY, queryAsString);
+    }
+
+    @Test
+    public void test_contains_with_big_term_without_wildcarding() {
+        InitialQueryImpl initialQuery = new InitialQueryImpl();
+        QueryImpl query = initialQuery.from("/").where(QueryUtils.text().contains("abcdefghij"));
+
+        String queryAsString = TestUtils.getQueryAsString(query, session, false, 99999999/*not used!*/);
+        assertEquals("//*[" + COMMON_SCOPE + " and (jcr:contains(.,'abcdefghij'))]" + COMMON_ORDERBY, queryAsString);
+    }
+
+    @Test
+    public void test_contains_with_mixed_terms_with_wildcarding() {
+        InitialQueryImpl initialQuery = new InitialQueryImpl();
+        QueryImpl query = initialQuery.from("/").where(QueryUtils.text().contains("12 123456"));
+
+        String queryAsString = TestUtils.getQueryAsString(query, session);
+
+        assertEquals("//*[" + COMMON_SCOPE + " and ((jcr:contains(.,'12 123456') or jcr:contains(.,'123456*')))]" + COMMON_ORDERBY, queryAsString);
+    }
+
+    @Test
+    public void test_contains_with_mixed_terms_without_wildcarding() {
+        InitialQueryImpl initialQuery = new InitialQueryImpl();
+        QueryImpl query = initialQuery.from("/").where(QueryUtils.text().contains("12 123456"));
+
+        String queryAsString = TestUtils.getQueryAsString(query, session, false, -1);
+
+        assertEquals("//*[" + COMMON_SCOPE + " and (jcr:contains(.,'12 123456'))]" + COMMON_ORDERBY, queryAsString);
+    }
+
+ }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,18 @@ import javax.jcr.Session;
 import org.onehippo.cms7.services.search.commons.query.QueryImpl;
 import org.onehippo.cms7.services.search.jcr.query.JcrQueryBuilder;
 import org.onehippo.cms7.services.search.jcr.query.JcrQueryVisitor;
+import org.onehippo.cms7.services.search.jcr.service.HippoJcrSearchService;
 
 public class TestUtils {
+
     public static String getQueryAsString(final QueryImpl query, final Session session) {
-        final JcrQueryBuilder builder = new JcrQueryBuilder(session);
+        return getQueryAsString(query, session, HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_ENABLED, HippoJcrSearchService.DEFAULT_WILDCARD_POSTFIX_MINLENGTH);
+    }
+
+    public static String getQueryAsString(final QueryImpl query, final Session session,
+                                          final boolean wildcardPostfixEnabled, final int wildcardPostfixMinlenth) {
+        final JcrQueryBuilder builder = new JcrQueryBuilder(session,
+                        wildcardPostfixEnabled, wildcardPostfixMinlenth);
         JcrQueryVisitor visitor = new JcrQueryVisitor(builder, session);
         query.accept(visitor);
         return builder.getQueryString();
