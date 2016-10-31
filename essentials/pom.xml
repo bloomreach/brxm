@@ -240,6 +240,7 @@
                 <exclude>plugins/**/*.ftl</exclude>
                 <exclude>plugins/**/*.jsp</exclude>
                 <exclude>plugins/rest-services/src/main/resources/BeanNameResource.txt</exclude>
+                <exclude>plugins/rest-services/src/main/resources/spring-plain-rest-api.xml</exclude>
               </excludes>
             </configuration>
           </plugin>
