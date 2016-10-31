@@ -80,6 +80,30 @@ describe('ContentService', () => {
     expect(result).toEqual(doc);
   });
 
+  it('can delete a draft', () => {
+    const successCallback = jasmine.createSpy('successCallback');
+    const failureCallback = jasmine.createSpy('failureCallback');
+
+    $httpBackend.expectDELETE('/test/ws/content/documents/123/draft').respond(200);
+    ContentService.deleteDraft('123').then(successCallback, failureCallback);
+    $httpBackend.flush();
+
+    expect(successCallback).toHaveBeenCalled();
+    expect(failureCallback).not.toHaveBeenCalled();
+  });
+
+  it('fails to delete a draft', () => {
+    const successCallback = jasmine.createSpy('successCallback');
+    const failureCallback = jasmine.createSpy('failureCallback');
+
+    $httpBackend.expectDELETE('/test/ws/content/documents/123/draft').respond(403);
+    ContentService.deleteDraft('123').then(successCallback, failureCallback);
+    $httpBackend.flush();
+
+    expect(successCallback).not.toHaveBeenCalled();
+    expect(failureCallback).toHaveBeenCalled();
+  });
+
   it('can get a document type', () => {
     const docType = {
       id: 'test',

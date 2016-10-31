@@ -106,6 +106,9 @@ export class ChannelRightSidePanelCtrl {
   }
 
   close() {
+    if (this.doc) {
+      this.ContentService.deleteDraft(this.doc.id);
+    }
     this.ChannelSidePanelService.close('right');
   }
 }
