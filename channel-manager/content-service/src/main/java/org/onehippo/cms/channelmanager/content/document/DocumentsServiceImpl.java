@@ -89,10 +89,10 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .orElseThrow(DocumentNotFoundException::new);
 
         if (writeFields(document, draft, docType)) {
+            persistChangesAndKeepEditing(session, workflow);
+        } else {
             cancelPendingChanges(session);
             throw new OperationFailedException(); // TODO: report per-field errors?
-        } else {
-            persistChangesAndKeepEditing(session, workflow);
         }
     }
 
@@ -173,7 +173,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         for (FieldType fieldType : docType.getFields()) {
             errors += fieldType.writeTo(variant, Optional.ofNullable(valueMap.get(fieldType.getId())));
         }
-        return errors > 0;
+        return errors == 0;
     }
 
     private void cancelPendingChanges(final Session session) {
