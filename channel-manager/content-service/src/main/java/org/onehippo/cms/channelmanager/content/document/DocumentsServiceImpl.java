@@ -108,7 +108,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         try {
             workflow.disposeEditableInstance();
-            session.refresh(false);
+            session.refresh(false); // TODO: should we use 'true' instead?
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to dispose of editable instance", e);
             throw new OperationFailedException();
@@ -199,10 +199,10 @@ public class DocumentsServiceImpl implements DocumentsService {
                                    // variant visible in this session, discuss the need to do this.
             workflow.obtainEditableInstance();
         } catch (WorkflowException e) {
-            log.warn("Failed to re-obtain ownership of document", e);
+            log.warn("User '{}' failed to re-obtain ownership of document", session.getUserID(), e);
             throw new OperationFailedException(new ErrorInfo(ErrorInfo.Reason.HOLDERSHIP_LOST));
         } catch (RepositoryException | RemoteException e) {
-            log.warn("Failed to re-obtain ownership of document", e);
+            log.warn("User '{}' failed to re-obtain ownership of document", session.getUserID(), e);
             throw new OperationFailedException();
         }
     }
