@@ -36,10 +36,6 @@ public class RepositoryRestful implements Repository, Restful {
     private String layout;
     private String url;
     private Snapshot snapshots;
-/*
-    // To extend the repository snapshots with updatePolicy and checksumPolicy will break backwards compatibility
-    private RepositoryPolicy snapshots;
-*/
     private String targetPom;
     private RepositoryPolicy releases;
 
@@ -82,22 +78,6 @@ public class RepositoryRestful implements Repository, Restful {
     public void setUrl(final String url) {
         this.url = url;
     }
-/*
-    // To extend the repository snapshots with updatePolicy and checksumPolicy will break backwards compatibility
-
-    @XmlElementRef(type = RepositoryPolicyRestful.class, name = "snapshots")
-    @JsonSubTypes({@JsonSubTypes.Type(value = RepositoryPolicyRestful.class, name = "snapshots")})
-    @JsonTypeInfo(defaultImpl = RepositoryPolicyRestful.class, use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-    @Override
-    public RepositoryPolicy getSnapshots() {
-        return snapshots;
-    }
-
-    @Override
-    public void setSnapshots(final RepositoryPolicy snapshots) {
-        this.snapshots = snapshots;
-    }
-*/
 
     @XmlElementRef(type = SnapshotRestful.class, name = "snapshots")
     @JsonSubTypes({@JsonSubTypes.Type(value = SnapshotRestful.class, name = "snapshots")})

@@ -44,13 +44,6 @@ public interface Repository {
 
     void setSnapshots(Snapshot snapshots);
 
-/*
-    // To extend the repository snapshots with updatePolicy and checksumPolicy will break backwards compatibility
-    RepositoryPolicy getSnapshots();
-
-    void setSnapshots(RepositoryPolicy snapshots);
-*/
-
     String getTargetPom();
 
     void setTargetPom(String type);
