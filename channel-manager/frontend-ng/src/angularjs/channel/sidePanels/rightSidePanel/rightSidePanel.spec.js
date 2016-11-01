@@ -154,20 +154,6 @@ describe('ChannelRightSidePanel', () => {
     expect($ctrl.getFieldAsArray('ns:emptymultiplestring')).toEqual([]);
   });
 
-  it('keeps track of the focused field', () => {
-    expect($ctrl.isFieldFocused(stringField)).toBe(false);
-
-    $ctrl.onFieldFocus(stringField);
-    expect($ctrl.isFieldFocused(stringField)).toBe(true);
-
-    $ctrl.onFieldFocus(multipleStringField);
-    expect($ctrl.isFieldFocused(stringField)).toBe(false);
-    expect($ctrl.isFieldFocused(multipleStringField)).toBe(true);
-
-    $ctrl.onFieldBlur();
-    expect($ctrl.isFieldFocused(multipleStringField)).toBe(false);
-  });
-
   it('saves a document', () => {
     const savedDoc = {
       id: '123',
