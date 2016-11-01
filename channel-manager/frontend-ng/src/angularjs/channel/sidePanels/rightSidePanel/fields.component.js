@@ -31,11 +31,19 @@ export class ChannelFieldsCtrl {
   }
 
   hasFocusedField(field) {
-    let hasFocusedField = false;
-    if (field.fields && field.fields.findIndex(newField => newField.focused) !== -1) {
-      hasFocusedField = true;
+    if (!field.fields) {
+      return false;
     }
-    return hasFocusedField;
+
+    let hasFocused = field.fields.findIndex(newField => newField.focused) !== -1;
+    for (var newField of field.fields) {
+      const childFieldHasFocused = this.hasFocusedField(newField);
+      if (childFieldHasFocused) {
+        hasFocused = true;
+      }
+    }
+
+    return hasFocused;
   }
 
   getFieldAsArray(fieldId) {
