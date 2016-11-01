@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -97,36 +97,38 @@ public class JcrHippoRepository implements Repository {
         this.hstJmvEnabledUsers = hstJmvEnabledUsers;
     }
 
-    private synchronized void initHippoRepository() throws RepositoryException {
-        if (repositoryInitialized) {
-            return;
-        }
-
-        try {
-            log.info("Trying to get hippo repository from {}.", repositoryURI);
-
-            if (StringUtils.isEmpty(repositoryURI)) {
-                hippoRepository = HippoRepositoryFactory.getHippoRepository();
-            } else if (repositoryURI.startsWith("java:")) {
-                InitialContext ctx = new InitialContext();
-                Object repositoryObject = ctx.lookup(repositoryURI);
-
-                if (repositoryObject instanceof Repository) {
-                    jcrDelegateeRepository = (Repository) repositoryObject;
-                } else if (repositoryObject instanceof HippoRepository) {
-                    hippoRepository = (HippoRepository) repositoryObject;
-                } else {
-                    throw new RepositoryException("Unknown repository object from " + repositoryURI + ": " + repositoryObject);
-                }
-            } else {
-                hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryURI);
+    private void initHippoRepository() throws RepositoryException {
+        synchronized (JcrHippoRepository.class) {
+            if (repositoryInitialized) {
+                return;
             }
 
-            log.info("Has retrieved hippo repository from {}.", repositoryURI);
-        } catch (Exception e) {
-            throw new RepositoryException(e);
-        } finally {
-            repositoryInitialized = (jcrDelegateeRepository != null || hippoRepository != null);
+            try {
+                log.info("Trying to get hippo repository from {}.", repositoryURI);
+
+                if (StringUtils.isEmpty(repositoryURI)) {
+                    hippoRepository = HippoRepositoryFactory.getHippoRepository();
+                } else if (repositoryURI.startsWith("java:")) {
+                    InitialContext ctx = new InitialContext();
+                    Object repositoryObject = ctx.lookup(repositoryURI);
+
+                    if (repositoryObject instanceof Repository) {
+                        jcrDelegateeRepository = (Repository)repositoryObject;
+                    } else if (repositoryObject instanceof HippoRepository) {
+                        hippoRepository = (HippoRepository)repositoryObject;
+                    } else {
+                        throw new RepositoryException("Unknown repository object from " + repositoryURI + ": " + repositoryObject);
+                    }
+                } else {
+                    hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryURI);
+                }
+
+                log.info("Has retrieved hippo repository from {}.", repositoryURI);
+            } catch (Exception e) {
+                throw new RepositoryException(e);
+            } finally {
+                repositoryInitialized = (jcrDelegateeRepository != null || hippoRepository != null);
+            }
         }
     }
 

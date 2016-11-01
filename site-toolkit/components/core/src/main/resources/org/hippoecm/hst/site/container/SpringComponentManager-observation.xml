@@ -43,7 +43,7 @@
     </constructor-arg>
   </bean>
 
-  <!-- Start EventListenersContainer on context stopped event -->
+  <!-- Stops EventListenersContainer on context stopped event -->
   <bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">
     <constructor-arg>
       <map>
