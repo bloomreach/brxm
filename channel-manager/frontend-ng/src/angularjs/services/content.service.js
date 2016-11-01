@@ -34,6 +34,10 @@ class ContentService {
     return this._send('PUT', ['documents', doc.id, 'draft'], doc);
   }
 
+  deleteDraft(id) {
+    return this._send('DELETE', ['documents', id, 'draft']);
+  }
+
   getDocumentType(id) {
     return this._send('GET', ['documenttypes', id]);
   }
