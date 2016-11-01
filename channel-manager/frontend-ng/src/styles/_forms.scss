@@ -28,8 +28,12 @@
   }
 }
 
-.form-field-compound {
-  border-left: 3px solid $grey-500;
+form {
+  &> channel-fields {
+    &> .form-field-compound {
+      border-left: 3px solid $grey-500;
+    }
+  }
 }
 
 .form-field-focused {
