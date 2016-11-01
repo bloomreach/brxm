@@ -196,8 +196,20 @@ export class OverlaySyncService {
     const overlayJQueryElement = structureElement.getOverlayElement();
     const iframeJQueryElement = structureElement.getBoxElement();
 
-    const rect = iframeJQueryElement[0].getBoundingClientRect();
+    if (iframeJQueryElement.hasClass('hst-cmseditlink')) {
+      if (this.DomService.isVisible(iframeJQueryElement[0])) {
+        overlayJQueryElement.show();
+        this._drawElement(overlayJQueryElement, iframeJQueryElement);
+      } else {
+        overlayJQueryElement.hide();
+      }
+    } else {
+      this._drawElement(overlayJQueryElement, iframeJQueryElement);
+    }
+  }
 
+  _drawElement(overlayJQueryElement, iframeJQueryElement) {
+    const rect = iframeJQueryElement[0].getBoundingClientRect();
     overlayJQueryElement.css('top', `${rect.top}px`);
     overlayJQueryElement.css('left', `${rect.left}px`);
     overlayJQueryElement.css('height', `${rect.height}px`);

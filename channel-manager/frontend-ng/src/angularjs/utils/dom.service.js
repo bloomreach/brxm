@@ -148,4 +148,12 @@ export class DomService {
     }
     return this._scrollBarWidth;
   }
+
+  isVisible(el) {
+    if (el.nodeType !== 1 || el.tagName.toLowerCase() === 'body') {
+      return true;
+    }
+    const style = window.getComputedStyle(el, null);
+    return style.visibility !== 'hidden' && $(el).is(':visible');
+  }
 }
