@@ -24,11 +24,13 @@ describe('OverlaySyncService', () => {
   let $sheet;
   let $scrollX;
   let $overlay;
+  let $window;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe.overlay');
 
-    inject((_OverlaySyncService_, _DomService_) => {
+    inject((_$window_, _OverlaySyncService_, _DomService_) => {
+      $window = _$window_;
       OverlaySyncService = _OverlaySyncService_;
 
       spyOn(_DomService_, 'getScrollBarWidth').and.returnValue(15);
@@ -121,6 +123,16 @@ describe('OverlaySyncService', () => {
       OverlaySyncService.syncIframe.calls.reset();
       OverlaySyncService.syncIframe.and.callFake(done);
       $(iframeWindow.document.body).css('color', 'green');
+    });
+  });
+
+  it('should sync when the browser is resized', (done) => {
+    spyOn(OverlaySyncService, 'syncIframe');
+    loadIframeFixture(() => {
+      OverlaySyncService.syncIframe.calls.reset();
+      $($window).trigger('resize');
+      expect(OverlaySyncService.syncIframe).toHaveBeenCalled();
+      done();
     });
   });
 
