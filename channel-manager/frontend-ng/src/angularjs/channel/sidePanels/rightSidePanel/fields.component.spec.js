@@ -34,6 +34,36 @@ describe('ChannelFields', () => {
     type: 'STRING',
     multiple: true,
   };
+  const textField = {
+    id: 'ns:text',
+    type: 'MULTILINE_STRING',
+    multiple: false,
+  };
+  const requiredTextField = {
+    id: 'ns:requiredtext',
+    type: 'MULTILINE_STRING',
+    multiple: false,
+    validators: [
+      'REQUIRED',
+    ],
+  };
+  const nestedString = {
+    id: 'ns:nestedstring',
+    type: 'STRING',
+    multiple: false,
+  };
+  const nestedTextCompound = {
+    id: 'ns:nestedtextcompound',
+    type: 'COMPOUND',
+    multiple: false,
+    fields: [textField, requiredTextField],
+  };
+  const nestedCompound = {
+    id: 'ns:nestedcompound',
+    type: 'COMPOUND',
+    multiple: false,
+    fields: [nestedString, nestedTextCompound],
+  };
   const testDocumentType = {
     id: 'ns:testdocument',
     fields: [
@@ -69,7 +99,6 @@ describe('ChannelFields', () => {
       fieldTypes: testDocumentType,
       fieldValues: testDocument.fields,
     });
-    $ctrl.form = jasmine.createSpyObj('form', ['$setPristine']);
     $rootScope.$apply();
   });
 
@@ -90,15 +119,36 @@ describe('ChannelFields', () => {
     expect($ctrl.getFieldAsArray('ns:emptymultiplestring')).toEqual([]);
   });
 
+  it('can check if a field without child fields does not execute hasFocusedField', () => {
+    expect($ctrl.hasFocusedField(stringField)).toBeFalsy();
+    expect($ctrl.hasFocusedField(multipleStringField)).toBeFalsy();
+  });
+
+  it('can check if a field has a focused element', () => {
+    expect($ctrl.hasFocusedField(nestedCompound)).toBeFalsy();
+    $ctrl.onFieldFocus(nestedString);
+    expect($ctrl.hasFocusedField(nestedCompound)).toBeTruthy();
+    nestedString.focused = false; // reset state
+  });
+
+  it('can check if a field has a focused child element', () => {
+    expect($ctrl.hasFocusedField(nestedCompound)).toBeFalsy();
+    $ctrl.onFieldFocus(textField);
+    expect($ctrl.hasFocusedField(nestedCompound)).toBeTruthy();
+    textField.focused = false; // reset state
+  });
+
   it('can set a field to focus', () => {
     expect(stringField.focused).toBeFalsy();
     $ctrl.onFieldFocus(stringField);
     expect(stringField.focused).toBeTruthy();
+    stringField.focused = false; // reset state
   });
 
   it('can set a field to unfocus', () => {
     stringField.focused = true;
     $ctrl.onFieldBlur(stringField);
     expect(stringField.focused).toBeFalsy();
+    stringField.focused = false; // reset state
   });
 });
