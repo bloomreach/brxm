@@ -137,23 +137,6 @@ describe('ChannelRightSidePanel', () => {
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
   });
 
-  it('recognizes an empty multiple field', () => {
-    $ctrl.docType = testDocumentType;
-    $ctrl.doc = testDocument;
-
-    expect($ctrl.isEmptyMultiple(stringField)).toBeFalsy();
-    expect($ctrl.isEmptyMultiple(multipleStringField)).toBeFalsy();
-    expect($ctrl.isEmptyMultiple(emptyMultipleStringField)).toBeTruthy();
-  });
-
-  it('can get a field as an array', () => {
-    $ctrl.doc = testDocument;
-
-    expect($ctrl.getFieldAsArray('ns:string')).toEqual(['String value']);
-    expect($ctrl.getFieldAsArray('ns:multiplestring')).toEqual(['One', 'Two']);
-    expect($ctrl.getFieldAsArray('ns:emptymultiplestring')).toEqual([]);
-  });
-
   it('saves a document', () => {
     const savedDoc = {
       id: '123',
