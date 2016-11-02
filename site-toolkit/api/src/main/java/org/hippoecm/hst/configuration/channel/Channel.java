@@ -26,8 +26,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Channel implements Serializable {
 
+    private static final Logger log = LoggerFactory.getLogger(Channel.class);
     private static final long serialVersionUID = 1L;
     private static final Pattern VIEWPORT_PATTERN = Pattern.compile("^([^:]+):(\\d+)(px)?$");
 
@@ -375,7 +379,11 @@ public class Channel implements Serializable {
         for (String device : devices) {
             final Matcher m = VIEWPORT_PATTERN.matcher(device);
             if (m.matches()) {
-                viewportMap.put(m.group(1), Integer.valueOf(m.group(2)));
+                try {
+                    viewportMap.put(m.group(1), Integer.valueOf(m.group(2)));
+                } catch (NumberFormatException e) {
+                    log.warn("Failed to parse Integer {}", m.group(2), e);
+                }
             }
         }
     }
