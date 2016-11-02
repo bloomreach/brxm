@@ -17,11 +17,9 @@
 import template from './fields.html';
 
 export class ChannelFieldsCtrl {
-  constructor($scope, $timeout, ChannelSidePanelService, ContentService) {
+  constructor(ChannelSidePanelService, ContentService) {
     'ngInject';
 
-    this.$scope = $scope;
-    this.$timeout = $timeout;
     this.ChannelSidePanelService = ChannelSidePanelService;
     this.ContentService = ContentService;
   }
