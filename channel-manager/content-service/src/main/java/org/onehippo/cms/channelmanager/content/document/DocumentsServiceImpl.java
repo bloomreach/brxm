@@ -94,11 +94,30 @@ public class DocumentsServiceImpl implements DocumentsService {
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
                 .orElseThrow(NotFoundException::new);
 
-        if (writeFields(document, draft, docType)) {
-            persistChangesAndKeepEditing(session, workflow);
-        } else {
-            throw new BadRequestException(); // TODO: report per-field errors?
+        // Push fields onto draft node
+        final Map<String, Object> valueMap = document.getFields();
+        for (FieldType fieldType : docType.getFields()) {
+            fieldType.writeTo(draft, Optional.ofNullable(valueMap.get(fieldType.getId())));
         }
+
+        // Persist changes to repository
+        try {
+            session.save();
+        } catch (RepositoryException e) {
+            log.warn("Failed to save changes to draft node of document {}", uuid, e);
+            throw new InternalServerErrorException();
+        }
+
+        // apply validation
+        for (FieldType fieldType : docType.getFields()) {
+            fieldType.validate(fieldType.readFrom(draft))
+                    .ifPresent(error -> document.addValidationError(fieldType.getId(), error));
+        }
+        if (!document.getValidationErrors().isEmpty()) {
+            throw new BadRequestException(document);
+        }
+
+        copyToPreviewAndKeepEditing(session, workflow);
     }
 
     @Override
@@ -169,20 +188,9 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    // TODO: how to communicate about write errors...?
-    private boolean writeFields(final Document document, final Node variant, final DocumentType docType) {
-        int errors = 0;
-        final Map<String, Object> valueMap = document.getFields();
-        for (FieldType fieldType : docType.getFields()) {
-            errors += fieldType.writeTo(variant, Optional.ofNullable(valueMap.get(fieldType.getId())));
-        }
-        return errors == 0;
-    }
-
-    private void persistChangesAndKeepEditing(final Session session, final EditableWorkflow workflow)
+    private void copyToPreviewAndKeepEditing(final Session session, final EditableWorkflow workflow)
             throws ErrorWithPayloadException {
         try {
-            session.save();
             workflow.commitEditableInstance();
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to persist changes", e);

@@ -72,26 +72,6 @@ public class EditingUtilsTest {
     }
 
     @Test
-    public void determineEditingInfoAvailableWhileEditing() throws Exception {
-        final Node handle = createMock(Node.class);
-        final Session session = createMock(Session.class);
-        final Workflow workflow = createMock(Workflow.class);
-        final Map<String, Serializable> hints = new HashMap<>();
-        hints.put("obtainEditableInstance", false);
-        hints.put("inUseBy", "tester");
-
-        expect(handle.getSession()).andReturn(session);
-        expect(session.getUserID()).andReturn("tester");
-        expect(workflow.hints()).andReturn(hints);
-        replay(handle, session, workflow);
-
-        final EditingInfo info = EditingUtils.determineEditingInfo(workflow, handle);
-
-        assertThat(info.getState(), equalTo(EditingInfo.State.AVAILABLE));
-        assertThat(info.getHolder(), equalTo(null));
-    }
-
-    @Test
     public void determineEditingInfoUnavailableHeldByOtherUser() throws Exception {
         final Node handle = createMock(Node.class);
         final Session session = createMock(Session.class);

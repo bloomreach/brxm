@@ -36,7 +36,9 @@ public class ErrorInfo {
     public enum Reason {
         NOT_HOLDER,
         HOLDERSHIP_LOST,
-        ALREADY_DELETED
+        ALREADY_DELETED,
+        INVALID_DATA,
+        CARDINALITY_CHANGE  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
         // add more specific failure reasons here.
     }
 }
