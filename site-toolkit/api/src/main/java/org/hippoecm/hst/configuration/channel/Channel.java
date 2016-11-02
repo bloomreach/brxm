@@ -23,10 +23,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Channel implements Serializable {
 
+    private static final Logger log = LoggerFactory.getLogger(Channel.class);
     private static final long serialVersionUID = 1L;
+    private static final Pattern VIEWPORT_PATTERN = Pattern.compile("^([^:]+):(\\d+)(px)?$");
 
     public static final String DEFAULT_DEVICE = "default";
 
@@ -60,6 +67,7 @@ public class Channel implements Serializable {
     private Set<String> changedBySet = new HashSet<>();
     private String defaultDevice = DEFAULT_DEVICE;
     private List<String> devices = Collections.emptyList();
+    private Map<String, Integer> viewportMap = new HashMap<>();
     private boolean isPreview;
     private String channelNodeLockedBy;
     private String lastModifiedBy;
@@ -116,6 +124,7 @@ public class Channel implements Serializable {
         changedBySet = channel.changedBySet;
         defaultDevice =  channel.defaultDevice;
         devices = channel.devices;
+        viewportMap = channel.viewportMap;
         isPreview = channel.isPreview();
         channelNodeLockedBy = channel.channelNodeLockedBy;
         lastModifiedBy = channel.lastModifiedBy;
@@ -362,6 +371,25 @@ public class Channel implements Serializable {
 
     public void setDevices(List<String> devices) {
         this.devices = devices;
+
+        populateViewportMap();
+    }
+
+    private void populateViewportMap() {
+        for (String device : devices) {
+            final Matcher m = VIEWPORT_PATTERN.matcher(device);
+            if (m.matches()) {
+                try {
+                    viewportMap.put(m.group(1), Integer.valueOf(m.group(2)));
+                } catch (NumberFormatException e) {
+                    log.warn("Failed to parse Integer {}", m.group(2), e);
+                }
+            }
+        }
+    }
+
+    public Map<String, Integer> getViewportMap() {
+        return viewportMap;
     }
 
     public void setPreview(final boolean preview) {
