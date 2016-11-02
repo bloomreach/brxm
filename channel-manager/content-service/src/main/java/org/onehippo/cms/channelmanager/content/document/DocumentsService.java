@@ -36,7 +36,7 @@ public interface DocumentsService {
      * If all goes well, the document's content is returned.
      *
      * @param uuid    UUID of the requested document (handle)
-     * @param session user-authenticated JCR session for reading from the repository
+     * @param session user-authenticated, invocation-scoped JCR session
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException
      *                If creation of the draft failed
@@ -48,7 +48,8 @@ public interface DocumentsService {
      *
      * @param uuid     UUID of the document to be updated
      * @param document Document containing the to-be-persisted content
-     * @param session  user-authenticated JCR session for writing to the repository
+     * @param session  user-authenticated, invocation-scoped JCR session.
+     *                 In case of a bad request, changes may be pending.
      * @throws ErrorWithPayloadException
      *                 If updating the draft failed
      */
@@ -58,7 +59,7 @@ public interface DocumentsService {
      * Delete the draft version of a document, such that it is available for others to edit.
      *
      * @param uuid    UUID of the document for which to delete the draft
-     * @param session user-authenticated JCR session for writing to the repository
+     * @param session user-authenticated, invocation-scoped JCR session
      * @throws ErrorWithPayloadException
      *                If deleting the draft failed
      */
@@ -68,7 +69,7 @@ public interface DocumentsService {
      * Read the published variant of a document
      *
      * @param uuid    UUID of the requested document (handle)
-     * @param session user-authenticated JCR session for reading from the repository
+     * @param session user-authenticated, invocation-scoped JCR session
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException
      *                If retrieval of the live document failed

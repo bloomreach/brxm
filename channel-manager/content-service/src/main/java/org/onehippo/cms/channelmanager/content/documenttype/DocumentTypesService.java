@@ -40,7 +40,7 @@ public interface DocumentTypesService {
      * Read the supported part of a document type into a JSON-serializable representation
      *
      * @param id      ID of the document type, e.g. "myhippoproject:newsdocument"
-     * @param userSession user-authenticated JCR session for read-only access
+     * @param userSession user-authenticated, invocation-scoped JCR session for read-only access
      * @param locale  locale of the current CMS session
      * @return        JSON-serializable representation of the parts supported for exposing
      * @throws ErrorWithPayloadException

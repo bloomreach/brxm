@@ -97,7 +97,6 @@ public class DocumentsServiceImpl implements DocumentsService {
         if (writeFields(document, draft, docType)) {
             persistChangesAndKeepEditing(session, workflow);
         } else {
-            cancelPendingChanges(session);
             throw new BadRequestException(); // TODO: report per-field errors?
         }
     }
@@ -114,7 +113,6 @@ public class DocumentsServiceImpl implements DocumentsService {
 
         try {
             workflow.disposeEditableInstance();
-            session.refresh(false); // TODO: should we use 'true' instead?
         } catch (WorkflowException | RepositoryException | RemoteException e) {
             log.warn("Failed to dispose of editable instance", e);
             throw new InternalServerErrorException();
@@ -181,14 +179,6 @@ public class DocumentsServiceImpl implements DocumentsService {
         return errors == 0;
     }
 
-    private void cancelPendingChanges(final Session session) {
-        try {
-            session.refresh(false);
-        } catch (RepositoryException e) {
-            log.warn("Problem cancelling pending changes", e);
-        }
-    }
-
     private void persistChangesAndKeepEditing(final Session session, final EditableWorkflow workflow)
             throws ErrorWithPayloadException {
         try {
@@ -200,8 +190,6 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
 
         try {
-            session.refresh(true); // TODO: copied from CMS, assume that this makes the changes to the unpublished
-                                   // variant visible in this session, discuss the need to do this.
             workflow.obtainEditableInstance();
         } catch (WorkflowException e) {
             log.warn("User '{}' failed to re-obtain ownership of document", session.getUserID(), e);
