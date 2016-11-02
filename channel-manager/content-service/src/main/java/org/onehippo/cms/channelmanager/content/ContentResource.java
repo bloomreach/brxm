@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -31,6 +32,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.onehippo.cms.channelmanager.content.document.DocumentNotFoundException;
+import org.onehippo.cms.channelmanager.content.document.OperationFailedException;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
@@ -75,6 +77,23 @@ public class ContentResource {
             return Response.ok().entity(document).build();
         } catch (DocumentNotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (OperationFailedException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity(e.getErrorInfo()).build();
+        }
+    }
+
+    @DELETE
+    @Path("documents/{id}/draft")
+    public Response deleteDraftDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
+        final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
+        final DocumentsService documentsService = DocumentsService.get();
+        try {
+            documentsService.deleteDraft(id, userSession);
+            return Response.ok().build();
+        } catch (DocumentNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (OperationFailedException e) {
+            return Response.status(Response.Status.FORBIDDEN).entity(e.getErrorInfo()).build();
         }
     }
 

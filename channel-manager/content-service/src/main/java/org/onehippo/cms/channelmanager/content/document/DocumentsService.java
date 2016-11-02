@@ -50,8 +50,22 @@ public interface DocumentsService {
      * @param session  user-authenticated JCR session for writing to the repository
      * @throws DocumentNotFoundException
      *                If the requested UUID was not found or is not a document
+     * @throws OperationFailedException
+     *                 If the requested UUID matches a document but the operation failed
      */
-    void updateDraft(String uuid, Document document, Session session) throws DocumentNotFoundException;
+    void updateDraft(String uuid, Document document, Session session) throws DocumentNotFoundException, OperationFailedException;
+
+    /**
+     * Delete the draft version of a document, such that it is available for others to edit.
+     *
+     * @param uuid     UUID of the document for which to delete the draft
+     * @param session  user-authenticated JCR session for writing to the repository
+     * @throws DocumentNotFoundException
+     *                 If the requested UUID was not found or is not a document
+     * @throws OperationFailedException
+     *                 If the requested UUID matches a document but the operation failed
+     */
+    void deleteDraft(String uuid, Session session) throws DocumentNotFoundException, OperationFailedException;
 
     /**
      * Read the published variant of a document

@@ -30,4 +30,5 @@ Failed to write singular String value to property test:id
 Failed to write multiple String value to property test:id
 Failed to read nodes for compound type 'node:name'
 Failed to write compound value to node node:name
+Failed reading hints from workflow
 Node with identifier 'unknown-uuid' does not exist

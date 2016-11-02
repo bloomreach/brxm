@@ -31,6 +31,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.DocumentNotFoundException;
+import org.onehippo.cms.channelmanager.content.document.OperationFailedException;
+import org.onehippo.cms.channelmanager.content.document.model.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypeNotFoundException;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
@@ -189,6 +191,49 @@ public class ContentResourceTest extends CXFTest {
                 .body(equalTo(receivedBody));
     }
     */
+
+    @Test
+    public void deleteDraft() throws Exception {
+        final String requestedUuid = "requested-uuid";
+
+        documentsService.deleteDraft(requestedUuid, userSession);
+        expectLastCall();
+        replay(documentsService);
+
+        when()
+                .delete("/documents/" + requestedUuid + "/draft")
+        .then()
+                .statusCode(200);
+    }
+
+    @Test
+    public void deleteDraftNotFound() throws Exception {
+        final String requestedUuid = "requested-uuid";
+
+        documentsService.deleteDraft(requestedUuid, userSession);
+        expectLastCall().andThrow(new DocumentNotFoundException());
+        replay(documentsService);
+
+        when()
+                .delete("/documents/" + requestedUuid + "/draft")
+        .then()
+                .statusCode(404);
+    }
+
+    @Test
+    public void deleteDraftFailed() throws Exception {
+        final String requestedUuid = "requested-uuid";
+
+        documentsService.deleteDraft(requestedUuid, userSession);
+        expectLastCall().andThrow(new OperationFailedException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED)));
+        replay(documentsService);
+
+        when()
+                .delete("/documents/" + requestedUuid + "/draft")
+        .then()
+                .statusCode(403)
+                .body(equalTo("{\"reason\":\"ALREADY_DELETED\"}"));
+    }
 
     @Test
     public void retrieveDocumentType() throws Exception {
