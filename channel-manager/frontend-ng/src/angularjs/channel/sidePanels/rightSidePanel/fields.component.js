@@ -25,6 +25,11 @@ export class ChannelFieldsCtrl {
     return field.multiple && (!this.fieldValues[field.id] || this.fieldValues[field.id].length === 0);
   }
 
+  getFieldAsArray(fieldId) {
+    const field = this.fieldValues[fieldId];
+    return angular.isArray(field) ? field : [field];
+  }
+
   hasFocusedField(field) {
     if (!field.fields) {
       return false;
@@ -38,11 +43,6 @@ export class ChannelFieldsCtrl {
       }
     }
     return hasFocused;
-  }
-
-  getFieldAsArray(fieldId) {
-    const field = this.fieldValues[fieldId];
-    return angular.isArray(field) ? field : [field];
   }
 
   onFieldFocus(field) {
