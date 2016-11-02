@@ -43,6 +43,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HippoServiceRegistry.class, LocalizationUtils.class, NamespaceUtils.class})
@@ -105,8 +106,8 @@ public class ContentTypeContextTest {
         assertThat(context.getContentType(), equalTo(contentType));
         assertThat(context.getContentTypeRoot(), equalTo(rootNode));
         assertThat(context.getLevel(), equalTo(2));
-        assertThat(context.getResourceBundle().isPresent(), equalTo(false));
-        assertThat(context.getLocale().isPresent(), equalTo(false));
+        assertFalse(context.getResourceBundle().isPresent());
+        assertFalse(context.getLocale().isPresent());
     }
 
     @Test(expected = NoSuchElementException.class)
