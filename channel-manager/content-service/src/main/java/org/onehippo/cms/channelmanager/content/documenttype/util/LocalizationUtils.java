@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * LocalizationHelper provides functionality for determining correctly localized document type and field names and hints.
  */
 public class LocalizationUtils {
-    // TODO: these are defined in TranslatorType in the CMS API. Move to repository and avoid duplication?
+    // These are also defined in org.hippoecm.frontend.i18n.types.TypeTranslator (CMS API)
     private static final String HIPPO_TYPES = "hippo:types";
     private static final String JCR_NAME = "jcr:name";
 
