@@ -34,7 +34,6 @@ public class ErrorInfo {
     }
 
     public enum Reason {
-        UNKNOWN,
         NOT_HOLDER,
         HOLDERSHIP_LOST,
         ALREADY_DELETED
