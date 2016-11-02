@@ -17,11 +17,8 @@
 import template from './fields.html';
 
 export class ChannelFieldsCtrl {
-  constructor(ChannelSidePanelService, ContentService) {
+  constructor() {
     'ngInject';
-
-    this.ChannelSidePanelService = ChannelSidePanelService;
-    this.ContentService = ContentService;
   }
 
   isEmptyMultiple(field) {
