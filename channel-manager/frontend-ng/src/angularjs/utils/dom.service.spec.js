@@ -168,5 +168,21 @@ describe('DomService', () => {
     const width = DomService.getScrollBarWidth();
     expect(width).toBeGreaterThan(-1);
   });
+
+  it('can check if an element is hidden on the page', () => {
+    $j('.shouldBeHidden').each((index, el) => {
+      expect(DomService.isVisible($j(el))).toBe(false);
+    });
+  });
+
+  it('can check if an element is visible on the page', () => {
+    $j('.shouldBeVisible').each((index, el) => {
+      expect(DomService.isVisible($j(el))).toBe(true);
+    });
+  });
+
+  it('can check whether the body is visible', () => {
+    expect(DomService.isVisible($j(document.body))).toBe(true);
+  });
 });
 

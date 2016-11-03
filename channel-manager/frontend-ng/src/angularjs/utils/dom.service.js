@@ -148,4 +148,13 @@ export class DomService {
     }
     return this._scrollBarWidth;
   }
+
+  isVisible(jqueryElement) {
+    let isVisible = jqueryElement.is(':visible');
+    if (isVisible) {
+      const style = window.getComputedStyle(jqueryElement[0]);
+      isVisible = style.visibility !== 'hidden';
+    }
+    return isVisible;
+  }
 }
