@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -562,19 +562,19 @@ public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
 
 
     public Property setProperty(String name, Binary value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
-        return node.setProperty(name, value);
+        return factory.getPropertyDecorator(session, node.setProperty(name, value));
     }
 
     public Property setProperty(String name, BigDecimal value) throws ValueFormatException, VersionException, LockException, ConstraintViolationException, RepositoryException {
-        return node.setProperty(name, value);
+        return factory.getPropertyDecorator(session, node.setProperty(name, value));
     }
 
     public NodeIterator getNodes(String[] nameGlobs) throws RepositoryException {
-        return node.getNodes(nameGlobs);
+        return new NodeIteratorDecorator(factory, session, node.getNodes(nameGlobs), this);
     }
 
     public PropertyIterator getProperties(String[] nameGlobs) throws RepositoryException {
-        return node.getProperties(nameGlobs);
+        return new PropertyIteratorDecorator(factory, session, node.getProperties(nameGlobs));
     }
 
     public String getIdentifier() throws RepositoryException {
@@ -582,15 +582,15 @@ public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
     }
 
     public PropertyIterator getReferences(String name) throws RepositoryException {
-        return node.getReferences(name);
+        return new PropertyIteratorDecorator(factory, session, node.getReferences(name));
     }
 
     public PropertyIterator getWeakReferences() throws RepositoryException {
-        return node.getWeakReferences();
+        return new PropertyIteratorDecorator(factory, session, node.getWeakReferences());
     }
 
     public PropertyIterator getWeakReferences(String name) throws RepositoryException {
-        return node.getWeakReferences(name);
+        return new PropertyIteratorDecorator(factory, session, node.getWeakReferences(name));
     }
 
     public void setPrimaryType(String nodeTypeName) throws NoSuchNodeTypeException, VersionException, ConstraintViolationException, LockException, RepositoryException {
@@ -598,7 +598,7 @@ public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
     }
 
     public NodeIterator getSharedSet() throws RepositoryException {
-        return node.getSharedSet();
+        return new NodeIteratorDecorator(factory, session, node.getSharedSet(), this);
     }
 
     public void removeSharedSet() throws VersionException, LockException, ConstraintViolationException, RepositoryException {
