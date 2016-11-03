@@ -116,14 +116,6 @@ class OverlaySyncService {
       const doc = this._getIframeDocument();
 
       if (doc) {
-        // Avoid scrollbars from the site as they are controlled by the application.
-        // Changing a style attribute on Firefox will always invoke a MutationObserver callback, even if the value has
-        // not changed. To prevent ending up in a loop, only set it when the value is not already 'hidden'.
-        const docEl = $(doc.documentElement);
-        if (docEl.css('overflow') !== 'hidden') {
-          docEl.css('overflow', 'hidden');
-        }
-
         // resetting the height will also reset the scroll position so save (and restore) it
         const currentScrollTop = this.$base.scrollTop();
 
