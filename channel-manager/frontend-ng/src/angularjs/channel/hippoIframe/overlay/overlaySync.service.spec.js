@@ -136,6 +136,16 @@ describe('OverlaySyncService', () => {
     });
   });
 
+  it('should sync the overlay when the iframe is resized', (done) => {
+    spyOn(OverlaySyncService, '_syncOverlayElements');
+    loadIframeFixture(() => {
+      OverlaySyncService._syncOverlayElements.calls.reset();
+      $($iframe[0].contentWindow).trigger('resize');
+      expect(OverlaySyncService._syncOverlayElements).toHaveBeenCalled();
+      done();
+    });
+  });
+
   it('should not allow the iframe to show inner scroll bars', (done) => {
     loadIframeFixture((iframeWindow) => {
       const $html = $(iframeWindow.document.documentElement);

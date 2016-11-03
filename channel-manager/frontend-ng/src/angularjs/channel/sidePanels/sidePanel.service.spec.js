@@ -16,7 +16,10 @@
 
 describe('ChannelSidePanelService', () => {
   let ChannelSidePanelService;
+  let $q;
+  let $rootScope;
   const leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close']);
+  const OverlaySyncService = jasmine.createSpyObj('OverlaySyncService', ['syncIframe']);
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -25,11 +28,21 @@ describe('ChannelSidePanelService', () => {
 
     angular.mock.module(($provide) => {
       $provide.value('$mdSidenav', $mdSidenav);
+      $provide.value('OverlaySyncService', OverlaySyncService);
     });
 
-    inject((_ChannelSidePanelService_) => {
+    inject((_ChannelSidePanelService_, _$q_, _$rootScope_) => {
       ChannelSidePanelService = _ChannelSidePanelService_;
+      $q = _$q_;
+      $rootScope = _$rootScope_;
     });
+
+    leftSidePanel.open.and.returnValue($q.resolve());
+    leftSidePanel.close.and.returnValue($q.resolve());
+  });
+
+  afterEach(() => {
+    $rootScope.$digest();
   });
 
   it('toggles a named side-panel', () => {
@@ -129,5 +142,19 @@ describe('ChannelSidePanelService', () => {
     expect(() => {
       ChannelSidePanelService.open('left');
     }).not.toThrow(jasmine.any(Error));
+  });
+
+  it('syncs the iframe once the side-panel has been opened and closed', () => {
+    const element = angular.element('<div></div>');
+    ChannelSidePanelService.initialize('left', element);
+
+    ChannelSidePanelService.open('left');
+    $rootScope.$digest();
+    expect(OverlaySyncService.syncIframe).toHaveBeenCalled();
+
+    OverlaySyncService.syncIframe.calls.reset();
+    ChannelSidePanelService.close('left');
+    $rootScope.$digest();
+    expect(OverlaySyncService.syncIframe).toHaveBeenCalled();
   });
 });

@@ -75,8 +75,14 @@ class OverlaySyncService {
       queries: [{ all: true }],
     });
 
-    $(this._getIframeWindow()).on('unload', () => this._onUnLoad());
     $(this.$window).on('resize.overlaysync', () => this.syncIframe());
+
+    const iframeWindow = this._getIframeWindow();
+    $(iframeWindow).on('unload', () => this._onUnLoad());
+
+    // on iframe resize, only sync the overlay elements and not the iframe dimensions to avoid a loop
+    // (resize iframe -> resize handler triggers -> resize iframe while syncing dimensions -> etc)
+    $(iframeWindow).on('resize.overlaysync', () => this._syncOverlayElements());
   }
 
   _onUnLoad() {
@@ -84,6 +90,7 @@ class OverlaySyncService {
       this.overlayElements = [];
       this.observer.disconnect();
       $(this.$window).off('.overlaysync');
+      $(this._getIframeWindow()).off('.overlaysync');
     });
   }
 
