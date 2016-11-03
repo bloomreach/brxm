@@ -197,7 +197,7 @@ export class OverlaySyncService {
     const iframeJQueryElement = structureElement.getBoxElement();
 
     if (iframeJQueryElement.hasClass('hst-cmseditlink')) {
-      if (this.DomService.isVisible(iframeJQueryElement[0])) {
+      if (this.DomService.isVisible(iframeJQueryElement)) {
         overlayJQueryElement.show();
         this._drawElement(overlayJQueryElement, iframeJQueryElement);
       } else {

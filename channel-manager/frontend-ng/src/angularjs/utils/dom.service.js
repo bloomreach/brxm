@@ -149,11 +149,12 @@ export class DomService {
     return this._scrollBarWidth;
   }
 
-  isVisible(el) {
-    if (el.nodeType !== 1 || el.tagName.toLowerCase() === 'body') {
-      return true;
+  isVisible(jqueryElement) {
+    let isVisible = jqueryElement.is(':visible');
+    if (isVisible) {
+      const style = window.getComputedStyle(jqueryElement[0]);
+      isVisible = style.visibility !== 'hidden';
     }
-    const style = window.getComputedStyle(el, null);
-    return style.visibility !== 'hidden' && $(el).is(':visible');
+    return isVisible;
   }
 }
