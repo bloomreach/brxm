@@ -70,7 +70,7 @@ class CharacterReferenceNormalizer {
 
     private static class CharacterReferenceFinder {
         private final static Pattern pattern = Pattern.compile(
-                "&(?<entity>\\p{Alpha}+);|&#(?<dec>\\p{Digit}+);|&#0*(x|X)(?<hex>\\p{XDigit}+);");
+                "&(?<entity>\\p{Alnum}+);|&#(?<dec>\\p{Digit}+);|&#0*(x|X)(?<hex>\\p{XDigit}+);");
                 /* Regexp with searching for 3 patterns:
                  * 1) character entity reference, e.g. &aacute;
                  * 2) decimal numeric character reference, e.g. &#225;
