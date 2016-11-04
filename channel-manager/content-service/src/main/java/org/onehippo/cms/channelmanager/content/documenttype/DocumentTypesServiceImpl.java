@@ -87,7 +87,7 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     public void populateFieldsForCompoundType(final String id, final List<FieldType> fields,
                                               final ContentTypeContext parentContext, final DocumentType docType) {
         final int level = parentContext.getLevel() + 1;
-        if (level <= MAX_NESTING_LEVEL) {
+        if (level > MAX_NESTING_LEVEL) {
             log.info("Ignoring fields of {}-level-deep nested compound, nesting maximum reached", level);
             return;
         }
