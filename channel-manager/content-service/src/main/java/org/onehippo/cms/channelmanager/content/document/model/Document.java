@@ -19,15 +19,19 @@ package org.onehippo.cms.channelmanager.content.document.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * This bean represents a document, stored in the CMS.
  * It can be serialized into JSON to expose it through a REST API.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Document {
     private String id;                // UUID
     private String displayName;
     private DocumentInfo info;        // read-only information about (the current state of) the document
     private Map<String, Object> fields;
+    private Map<String, Object> validationErrors;
 
     public Document() {
         setInfo(new DocumentInfo());
@@ -66,5 +70,16 @@ public class Document {
             fields = new HashMap<>();
         }
         fields.put(id, field);
+    }
+
+    public Map<String, Object> getValidationErrors() {
+        return validationErrors;
+    }
+
+    public void addValidationError(final String id, final Object error) {
+        if (validationErrors == null) {
+            validationErrors = new HashMap<>();
+        }
+        validationErrors.put(id, error);
     }
 }

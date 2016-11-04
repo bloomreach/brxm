@@ -42,6 +42,8 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ManagedUserSessionInvokerTest {
@@ -80,7 +82,7 @@ public class ManagedUserSessionInvokerTest {
         final Session retrievedSession = invoker.getJcrSession(servletRequest);
 
         verify(servletRequest);
-        assertThat(retrievedSession, equalTo(null));
+        assertNull(retrievedSession);
     }
 
     @Test
@@ -239,9 +241,9 @@ public class ManagedUserSessionInvokerTest {
     }
 
     private void assertForbidden(final Object result) {
-        assertThat(result instanceof MessageContentsList, equalTo(true));
+        assertTrue(result instanceof MessageContentsList);
         final MessageContentsList mcl = (MessageContentsList) result;
-        assertThat(mcl.get(0) instanceof Response, equalTo(true));
+        assertTrue(mcl.get(0) instanceof Response);
         final Response response = (Response) mcl.get(0);
         assertThat(response.getStatus(), equalTo(403));
     }

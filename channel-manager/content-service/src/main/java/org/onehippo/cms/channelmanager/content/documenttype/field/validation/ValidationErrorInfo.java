@@ -14,7 +14,29 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.documenttype;
+package org.onehippo.cms.channelmanager.content.documenttype.field.validation;
 
-public class ContentTypeException extends Exception {
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+/**
+ * Object conveying a document field value validation error to the client.
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ValidationErrorInfo {
+    private Code code;
+
+    public ValidationErrorInfo() { }
+
+    public ValidationErrorInfo(final Code code) {
+        this.code = code;
+    }
+
+    public Code getCode() {
+        return code;
+    }
+
+    public enum Code {
+        REQUIRED_FIELD_EMPTY,
+        REQUIRED_FIELD_ABSENT
+    }
 }

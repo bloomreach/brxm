@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -26,6 +27,10 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.repository.mock.MockNode;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -37,6 +42,10 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(JcrUtils.class)
@@ -81,7 +90,7 @@ public class StringFieldTypeTest {
         fieldType.setOptional(true);
         fieldType.setMultiple(true);
 
-        assertThat(fieldType.readFrom(node).isPresent(), equalTo(false));
+        assertFalse(fieldType.readFrom(node).isPresent());
 
         node.setProperty(PROPERTY, "Value");
         assertThat(fieldType.readFrom(node).get(), equalTo(Collections.singletonList("Value")));
@@ -97,7 +106,7 @@ public class StringFieldTypeTest {
         fieldType.setMultiple(true);
 
         node.setProperty(PROPERTY, new String[0]);
-        assertThat(fieldType.readFrom(node).isPresent(), equalTo(false));
+        assertFalse(fieldType.readFrom(node).isPresent());
 
         node.setProperty(PROPERTY, new String[]{"Value", "Ignore"});
         assertThat(fieldType.readFrom(node).get(), equalTo(Collections.singletonList("Value")));
@@ -111,10 +120,10 @@ public class StringFieldTypeTest {
         fieldType.setId(PROPERTY);
         fieldType.setMultiple(true);
 
-        assertThat(fieldType.readFrom(node).isPresent(), equalTo(false));
+        assertFalse(fieldType.readFrom(node).isPresent());
 
         node.setProperty(PROPERTY, new String[0]);
-        assertThat(fieldType.readFrom(node).isPresent(), equalTo(false));
+        assertFalse(fieldType.readFrom(node).isPresent());
 
         node.setProperty(PROPERTY, new String[]{"Value 1", "Value 2"});
         assertThat(fieldType.readFrom(node).get(), equalTo(Arrays.asList("Value 1", "Value 2")));
@@ -156,7 +165,6 @@ public class StringFieldTypeTest {
     }
 
 
-
     @Test
     public void writeToSingleString() throws Exception {
         final StringFieldType fieldType = new StringFieldType();
@@ -165,35 +173,23 @@ public class StringFieldTypeTest {
         fieldType.setId(PROPERTY);
         node.setProperty(PROPERTY, "Old Value");
 
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(1)); // must not be missing
+        try {
+            fieldType.writeTo(node, Optional.empty());
+            fail("Must not be missing");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Boolean.TRUE)), equalTo(1)); // must be of type String
+        try {
+            fieldType.writeTo(node, Optional.of(Boolean.TRUE));
+            fail("Must be of type String");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
 
-        assertThat(fieldType.writeTo(node, Optional.of("New Value")), equalTo(0));
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value"));
-    }
-
-    @Test
-    public void writeToSingleRequiredString() throws Exception {
-        final StringFieldType fieldType = new StringFieldType();
-        final Node node = MockNode.root();
-
-        fieldType.setId(PROPERTY);
-        fieldType.addValidator(FieldType.Validator.REQUIRED);
-        node.setProperty(PROPERTY, "Old Value");
-
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(1)); // must not be missing
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Boolean.TRUE)), equalTo(1)); // must be of type String
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
-
-        assertThat(fieldType.writeTo(node, Optional.of("")), equalTo(1)); // must not be empty
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
-
-        assertThat(fieldType.writeTo(node, Optional.of("New Value")), equalTo(0));
+        fieldType.writeTo(node, Optional.of("New Value"));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value"));
     }
 
@@ -207,57 +203,39 @@ public class StringFieldTypeTest {
         fieldType.setMultiple(true);
         node.setProperty(PROPERTY, "Old Value");
 
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(0));
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        fieldType.writeTo(node, Optional.empty());
+        assertFalse(node.hasProperty(PROPERTY));
         node.setProperty(PROPERTY, "Old Value");
 
-        assertThat(fieldType.writeTo(node, Optional.of(Collections.emptyList())), equalTo(0));
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        fieldType.writeTo(node, Optional.of(Collections.emptyList()));
+        assertFalse(node.hasProperty(PROPERTY));
         node.setProperty(PROPERTY, "Old Value");
 
-        assertThat(fieldType.writeTo(node, Optional.of("New Value")), equalTo(1)); // must be of type List
+        try {
+            fieldType.writeTo(node, Optional.of("New Value"));
+            fail("Must be of type List");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("one", "two"))), equalTo(1)); // must have length 1
+        try {
+            fieldType.writeTo(node, Optional.of(Arrays.asList("one", "two")));
+            fail("Must have length 1");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList(Boolean.TRUE))), equalTo(1)); // element must be of type String
+        try {
+            fieldType.writeTo(node, Optional.of(Arrays.asList(Boolean.TRUE)));
+            fail("Element must be of type String");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("New Value"))), equalTo(0));
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value"));
-    }
-
-    @Test
-    public void writeToOptionalPresentRequiredString() throws Exception {
-        final StringFieldType fieldType = new StringFieldType();
-        final Node node = MockNode.root();
-
-        fieldType.setId(PROPERTY);
-        fieldType.setOptional(true);
-        fieldType.setMultiple(true);
-        fieldType.addValidator(FieldType.Validator.REQUIRED);
-        node.setProperty(PROPERTY, "Old Value");
-
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(1)); // must not be missing
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Collections.emptyList())), equalTo(1)); // must not be missing
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
-
-        assertThat(fieldType.writeTo(node, Optional.of("New Value")), equalTo(1)); // must be of type List
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("one", "two"))), equalTo(1)); // must have length 1
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList(Boolean.TRUE))), equalTo(1)); // element must be of type String
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList(""))), equalTo(1)); // must not be empty
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("New Value"))), equalTo(0));
+        fieldType.writeTo(node, Optional.of(Arrays.asList("New Value")));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value"));
     }
 
@@ -270,51 +248,37 @@ public class StringFieldTypeTest {
         fieldType.setOptional(true);
         fieldType.setMultiple(true);
 
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(0));
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        fieldType.writeTo(node, Optional.empty());
+        assertFalse(node.hasProperty(PROPERTY));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList())), equalTo(0));
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        fieldType.writeTo(node, Optional.of(Arrays.asList()));
+        assertFalse(node.hasProperty(PROPERTY));
 
-        assertThat(fieldType.writeTo(node, Optional.of("New Value")), equalTo(1)); // must be of type List
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        try {
+            fieldType.writeTo(node, Optional.of("New Value"));
+            fail("Must be of type List");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        assertFalse(node.hasProperty(PROPERTY));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("one", "two"))), equalTo(1)); // must have length 1
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        try {
+            fieldType.writeTo(node, Optional.of(Arrays.asList("one", "two")));
+            fail("Must have length 1");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        assertFalse(node.hasProperty(PROPERTY));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList(Boolean.TRUE))), equalTo(1)); // element must be of type String
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        try {
+            fieldType.writeTo(node, Optional.of(Arrays.asList(Boolean.TRUE)));
+            fail("Element must be of type String");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        assertFalse(node.hasProperty(PROPERTY));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("New Value"))), equalTo(0));
-        assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value"));
-    }
-
-    @Test
-    public void writeToOptionalAbsentRequiredString() throws Exception {
-        final StringFieldType fieldType = new StringFieldType();
-        final Node node = MockNode.root();
-
-        fieldType.setId(PROPERTY);
-        fieldType.setOptional(true);
-        fieldType.setMultiple(true);
-        fieldType.addValidator(FieldType.Validator.REQUIRED);
-
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(1)); // must not be missing
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList())), equalTo(1)); // must not be missing
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
-
-        assertThat(fieldType.writeTo(node, Optional.of("New Value")), equalTo(1)); // must be of type List
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("one", "two"))), equalTo(1)); // must have length 1
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList(Boolean.TRUE))), equalTo(1)); // element must be of type String
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("New Value"))), equalTo(0));
+        fieldType.writeTo(node, Optional.of(Arrays.asList("New Value")));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value"));
     }
 
@@ -327,78 +291,49 @@ public class StringFieldTypeTest {
         fieldType.setMultiple(true);
         node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
 
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(0));
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        fieldType.writeTo(node, Optional.empty());
+        assertFalse(node.hasProperty(PROPERTY));
         node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
 
-        assertThat(fieldType.writeTo(node, Optional.of(Collections.emptyList())), equalTo(0));
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        fieldType.writeTo(node, Optional.of(Collections.emptyList()));
+        assertFalse(node.hasProperty(PROPERTY));
         node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
 
-        assertThat(fieldType.writeTo(node, Optional.of("New 1")), equalTo(1)); // must be of type List
+        try {
+            fieldType.writeTo(node, Optional.of("New 1"));
+            fail("Must be of type List");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
         assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(2));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("Single Value"))), equalTo(0));
+        fieldType.writeTo(node, Optional.of(Arrays.asList("Single Value")));
         assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(1));
         node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("One", "Two", "Three"))), equalTo(0));
+        fieldType.writeTo(node, Optional.of(Arrays.asList("One", "Two", "Three")));
         assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(3));
         node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList(Boolean.TRUE, Boolean.TRUE))), equalTo(2)); // element must be of type String
+        try {
+            fieldType.writeTo(node, Optional.of(Arrays.asList(Boolean.TRUE, Boolean.TRUE)));
+            fail("Element must be of type String");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
         assertThat(node.getProperty(PROPERTY).getValues()[0].getString(), equalTo("Old 1"));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("New 1", Boolean.TRUE))), equalTo(1)); // ...all of them!
+        try {
+            fieldType.writeTo(node, Optional.of(Arrays.asList("New 1", Boolean.TRUE)));
+            fail("...all of them!");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
         assertThat(node.getProperty(PROPERTY).getValues()[0].getString(), equalTo("Old 1"));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("New 1", ""))), equalTo(0));
+        fieldType.writeTo(node, Optional.of(Arrays.asList("New 1", "")));
         assertThat(node.getProperty(PROPERTY).getValues()[0].getString(), equalTo("New 1"));
         assertThat(node.getProperty(PROPERTY).getValues()[1].getString(), equalTo(""));
-    }
-
-    @Test
-    public void writeToMultiplePresentRequiredString() throws Exception {
-        final StringFieldType fieldType = new StringFieldType();
-        final Node node = MockNode.root();
-
-        fieldType.setId(PROPERTY);
-        fieldType.setMultiple(true);
-        fieldType.addValidator(FieldType.Validator.REQUIRED);
-        node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
-
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(1)); // must not be missing
-        assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(2));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Collections.emptyList())), equalTo(1)); // must not be missing
-        assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(2));
-
-        assertThat(fieldType.writeTo(node, Optional.of("New 1")), equalTo(1)); // must be of type List
-        assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(2));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("Single Value"))), equalTo(0));
-        assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(1));
-        node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("One", "Two", "Three"))), equalTo(0));
-        assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(3));
-        node.setProperty(PROPERTY, new String[]{"Old 1", "Old 2"});
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList(Boolean.TRUE, Boolean.TRUE))), equalTo(2)); // element must be of type String
-        assertThat(node.getProperty(PROPERTY).getValues()[0].getString(), equalTo("Old 1"));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("New 1", Boolean.TRUE))), equalTo(1)); // ...all of them!
-        assertThat(node.getProperty(PROPERTY).getValues()[0].getString(), equalTo("Old 1"));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("New 1", ""))), equalTo(1)); // all elements must be non-empty
-        assertThat(node.getProperty(PROPERTY).getValues()[0].getString(), equalTo("Old 1"));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("", ""))), equalTo(2)); // all elements must be non-empty
-        assertThat(node.getProperty(PROPERTY).getValues()[0].getString(), equalTo("Old 1"));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("New 1", "New 2"))), equalTo(0));
-        assertThat(node.getProperty(PROPERTY).getValues()[0].getString(), equalTo("New 1"));
-        assertThat(node.getProperty(PROPERTY).getValues()[1].getString(), equalTo("New 2"));
     }
 
     @Test
@@ -409,53 +344,42 @@ public class StringFieldTypeTest {
         fieldType.setId(PROPERTY);
         fieldType.setMultiple(true);
 
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(0));
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        fieldType.writeTo(node, Optional.empty());
+        assertFalse(node.hasProperty(PROPERTY));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Collections.emptyList())), equalTo(0));
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        fieldType.writeTo(node, Optional.of(Collections.emptyList()));
+        assertFalse(node.hasProperty(PROPERTY));
 
-        assertThat(fieldType.writeTo(node, Optional.of("New 1")), equalTo(1)); // must be List
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        try {
+            fieldType.writeTo(node, Optional.of("New 1"));
+            fail("Must be List");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        assertFalse(node.hasProperty(PROPERTY));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList(Boolean.TRUE, Boolean.TRUE))), equalTo(2)); // element must be of type String
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        try {
+            fieldType.writeTo(node, Optional.of(Arrays.asList(Boolean.TRUE, Boolean.TRUE)));
+            fail("Element must be of type String");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        assertFalse(node.hasProperty(PROPERTY));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("New 1", Boolean.TRUE))), equalTo(1)); // ...all of them!
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        try {
+            fieldType.writeTo(node, Optional.of(Arrays.asList("New 1", Boolean.TRUE)));
+            fail("...all of them!");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        assertFalse(node.hasProperty(PROPERTY));
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList(""))), equalTo(0));
+        fieldType.writeTo(node, Optional.of(Arrays.asList("")));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo(""));
         node.getProperty(PROPERTY).remove();
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("One", "Two", "Three"))), equalTo(0));
+        fieldType.writeTo(node, Optional.of(Arrays.asList("One", "Two", "Three")));
         assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(3));
-    }
-
-    @Test
-    public void writeToMultipleAbsentRequiredString() throws Exception {
-        final StringFieldType fieldType = new StringFieldType();
-        final Node node = MockNode.root();
-
-        fieldType.setId(PROPERTY);
-        fieldType.setMultiple(true);
-        fieldType.addValidator(FieldType.Validator.REQUIRED);
-
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(1)); // must not be missing
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Collections.emptyList())), equalTo(1)); // must not be missing
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Boolean.TRUE)), equalTo(1)); // must be List
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList(Boolean.TRUE, ""))), equalTo(2)); // must be string and not empty
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
-
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("One", "Two"))), equalTo(0));
-        assertThat(node.getProperty(PROPERTY).getValues()[0].getString(), equalTo("One"));
-        assertThat(node.getProperty(PROPERTY).getValues()[1].getString(), equalTo("Two"));
     }
 
     @Test
@@ -467,15 +391,20 @@ public class StringFieldTypeTest {
         fieldType.setMultiple(true);
         node.setProperty(PROPERTY, "Old Value"); // singular property in spite of multiple type
 
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(0));
-        assertThat(node.hasProperty(PROPERTY), equalTo(false));
+        fieldType.writeTo(node, Optional.empty());
+        assertFalse(node.hasProperty(PROPERTY));
         node.setProperty(PROPERTY, "Old Value"); // singular property in spite of multiple type
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("One", "Two"))), equalTo(0));
-        assertThat(node.getProperty(PROPERTY).isMultiple(), equalTo(true));
+        fieldType.writeTo(node, Optional.of(Arrays.asList("One", "Two")));
+        assertTrue(node.getProperty(PROPERTY).isMultiple());
         node.setProperty(PROPERTY, "Old Value"); // singular property in spite of multiple type
 
-        assertThat(fieldType.writeTo(node, Optional.of("New Value")), equalTo(1));
+        try {
+            fieldType.writeTo(node, Optional.of("New Value"));
+            fail("Must be List");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
     }
 
@@ -487,15 +416,25 @@ public class StringFieldTypeTest {
         fieldType.setId(PROPERTY);
         node.setProperty(PROPERTY, new String[]{"Old Value"}); // multiple property in spite of singular type
 
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(1));
-        assertThat(node.hasProperty(PROPERTY), equalTo(true));
+        try {
+            fieldType.writeTo(node, Optional.empty());
+            fail("Must be String");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        assertTrue(node.hasProperty(PROPERTY));
 
-        assertThat(fieldType.writeTo(node, Optional.of("New Value")), equalTo(0));
+        fieldType.writeTo(node, Optional.of("New Value"));
         assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value"));
         node.setProperty(PROPERTY, new String[]{"Old Value"}); // multiple property in spite of singular type
 
-        assertThat(fieldType.writeTo(node, Optional.of(Arrays.asList("New Value"))), equalTo(1));
-        assertThat(node.getProperty(PROPERTY).isMultiple(), equalTo(true));
+        try {
+            fieldType.writeTo(node, Optional.of(Arrays.asList("New Value")));
+            fail("Must be String");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        assertTrue(node.getProperty(PROPERTY).isMultiple());
     }
 
     @Test
@@ -507,10 +446,10 @@ public class StringFieldTypeTest {
         fieldType.setMultiple(true);
         node.setProperty(PROPERTY, new String[0]); // multiple, empty property
 
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(0));
+        fieldType.writeTo(node, Optional.empty());
         assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(0)); // mutliple property still there
 
-        assertThat(fieldType.writeTo(node, Optional.of(Collections.emptyList())), equalTo(0));
+        fieldType.writeTo(node, Optional.of(Collections.emptyList()));
         assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(0)); // mutliple property still there
     }
 
@@ -523,7 +462,12 @@ public class StringFieldTypeTest {
         expect(node.setProperty(PROPERTY, "New Value")).andThrow(new RepositoryException());
         replay(node);
 
-        assertThat(fieldType.writeTo(node, Optional.of("New Value")), equalTo(1));
+        try {
+            fieldType.writeTo(node, Optional.of("New Value"));
+            fail("Exception not thrown");
+        } catch (InternalServerErrorException e) {
+            assertNull(e.getPayload());
+        }
         verify(node);
     }
 
@@ -537,7 +481,67 @@ public class StringFieldTypeTest {
         expect(node.hasProperty(PROPERTY)).andThrow(new RepositoryException());
         replay(node);
 
-        assertThat(fieldType.writeTo(node, Optional.empty()), equalTo(1));
+        try {
+            fieldType.writeTo(node, Optional.empty());
+            fail("Exception not thrown");
+        } catch (InternalServerErrorException e) {
+            assertNull(e.getPayload());
+        }
         verify(node);
+    }
+
+    @Test
+    public void validateNonRequired() {
+        final StringFieldType fieldType = new StringFieldType();
+
+        assertFalse(fieldType.validate(Optional.empty()).isPresent());
+        assertFalse(fieldType.validate(Optional.of("")).isPresent());
+        assertFalse(fieldType.validate(Optional.of("blabla")).isPresent());
+        assertFalse(fieldType.validate(Optional.of(Collections.emptyList())).isPresent());
+        assertFalse(fieldType.validate(Optional.of(Arrays.asList("one", "two"))).isPresent());
+    }
+
+    @Test
+    public void validateSingleRequired() {
+        final StringFieldType fieldType = new StringFieldType();
+
+        fieldType.addValidator(FieldType.Validator.REQUIRED);
+
+        assertThat(((ValidationErrorInfo) fieldType.validate(Optional.of("")).get()).getCode(),
+                equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertFalse(fieldType.validate(Optional.of("blabla")).isPresent());
+    }
+
+    @Test
+    public void validateMultipleRequired() {
+        final StringFieldType fieldType = new StringFieldType();
+
+        fieldType.addValidator(FieldType.Validator.REQUIRED);
+
+        assertThat(((ValidationErrorInfo) fieldType.validate(Optional.empty()).get()).getCode(),
+                equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_ABSENT));
+
+        Object error = fieldType.validate(Optional.of(Arrays.asList("bla", ""))).get();
+        assertTrue((error instanceof List));
+        List<ValidationErrorInfo> errorList = (List<ValidationErrorInfo>) error;
+        assertThat(errorList.size(), equalTo(2));
+        assertNull(errorList.get(0).getCode());
+        assertThat(errorList.get(1).getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+
+        error = fieldType.validate(Optional.of(Arrays.asList("", "bla"))).get();
+        assertTrue((error instanceof List));
+        errorList = (List<ValidationErrorInfo>) error;
+        assertThat(errorList.size(), equalTo(2));
+        assertThat(errorList.get(0).getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertNull(errorList.get(1).getCode());
+
+        error = fieldType.validate(Optional.of(Arrays.asList("", ""))).get();
+        assertTrue((error instanceof List));
+        errorList = (List<ValidationErrorInfo>) error;
+        assertThat(errorList.size(), equalTo(2));
+        assertThat(errorList.get(0).getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(errorList.get(1).getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+
+        assertFalse(fieldType.validate(Optional.of(Arrays.asList("bla", "blo"))).isPresent());
     }
 }

@@ -1,11 +1,9 @@
 {
   "id":"returned-uuid",
-  "displayName":null,
   "info":{
     "type":null,
     "editing":{
       "state":"UNAVAILABLE"
     }
-  },
-  "fields":null
+  }
 }

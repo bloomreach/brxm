@@ -28,10 +28,14 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.NodeIterable;
-import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,70 +90,132 @@ public class CompoundFieldType extends FieldType {
     }
 
     @Override
-    public int writeTo(Node node, Optional<Object> optionalValue) {
+    public void writeTo(final Node node, Optional<Object> optionalValue) throws ErrorWithPayloadException {
         final String nodeName = getId();
         try {
             final NodeIterator iterator = node.getNodes(nodeName);
             long numberOfNodes = iterator.getSize();
 
             if (isMultiple()) {
-                final Object value = optionalValue.orElse(Collections.emptyList());
-                if (!(value instanceof List)) {
-                    return 1;
+                final List values = checkMultipleType(optionalValue, numberOfNodes);
+                for (Object value : values) {
+                    writeToCompoundNode(iterator.nextNode(), value);
                 }
-                final List listOfValues = (List)value;
-                if (isOptional()) {
-                    if (listOfValues.size() > 1) {
-                        return 1;
-                    }
-                    if (listOfValues.size() > numberOfNodes) {
-                        return 1; // creation of new nodes not yet supported
-                    }
-                } else {
-                    if (listOfValues.size() != numberOfNodes) {
-                        return 1; // cardinality change not yet supported.
-                    }
-                }
-                int errors = 0;
-                for (int i = 0; i < listOfValues.size(); i++) {
-                    errors += writeToCompoundNode(iterator.nextNode(), listOfValues.get(i));
-                }
-                if (isOptional()) {
-                    // delete excess nodes
-                    while (iterator.hasNext()) {
-                        iterator.nextNode().remove();
-                    }
-                }
-                return errors;
+            } else {
+                final Object value = checkSingularType(optionalValue, numberOfNodes);
+                writeToCompoundNode(iterator.nextNode(), value);
             }
 
-            final Object value = optionalValue.orElse("invalid");
-            if (numberOfNodes == 0) {
-                return 1; // creation of new nodes not yet supported
-            }
-            int errors = writeToCompoundNode(iterator.nextNode(), value);
-
-            // delete excess nodes
+            // delete excess nodes to match field type
             while (iterator.hasNext()) {
                 iterator.nextNode().remove();
             }
-            return errors;
-
         } catch (RepositoryException e) {
             log.warn("Failed to write compound value to node {}", nodeName, e);
+            throw new InternalServerErrorException();
         }
-        return 1;
     }
 
-    private int writeToCompoundNode(final Node compound, final Object value) {
+    private Object checkSingularType(final Optional<Object> optionalValue, final long currentCount) throws BadRequestException {
+        final Object value = optionalValue.orElse("invalid");
+        if (currentCount == 0) {
+            throw BAD_REQUEST_CARDINALITY_CHANGE; // creation of new nodes not yet supported
+        }
+        return value;
+    }
+
+    private List checkMultipleType(final Optional<Object> optionalValue, final long currentCount) throws BadRequestException {
+        final Object value = optionalValue.orElse(Collections.emptyList());
+        if (!(value instanceof List)) {
+            throw BAD_REQUEST_INVALID_DATA;
+        }
+        final List values = (List)value;
+        if (isOptional()) {
+            if (values.size() > 1) {
+                throw BAD_REQUEST_INVALID_DATA;
+            }
+            if (values.size() == 1 && currentCount == 0) {
+                throw BAD_REQUEST_CARDINALITY_CHANGE; // creation of new nodes not yet supported
+            }
+        } else {
+            if (!values.isEmpty() && values.size() != currentCount) {
+                throw BAD_REQUEST_CARDINALITY_CHANGE;
+            }
+        }
+        return values;
+    }
+
+    private void writeToCompoundNode(final Node compound, final Object value) throws ErrorWithPayloadException {
         if (!(value instanceof Map)) {
-            return 1;
+            throw BAD_REQUEST_INVALID_DATA;
         }
         final Map valueMap = (Map)value;
-        int errors = 0;
         for (FieldType field : getFields()) {
-            errors += field.writeTo(compound, Optional.ofNullable(valueMap.get(field.getId())));
+            field.writeTo(compound, Optional.ofNullable(valueMap.get(field.getId())));
         }
-        return errors;
+    }
+
+    @Override
+    public Optional<Object> validate(final Optional<Object> optionalValue) {
+        final boolean isRequired = getValidators().contains(Validator.REQUIRED);
+        if (isRequired) {
+            if (!optionalValue.isPresent()) {
+                return Optional.of(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_ABSENT));
+            }
+        }
+
+        return validateCompounds(optionalValue);
+    }
+
+    /**
+     * Here, we perform the validation of the nested fields inside the compound.
+     *
+     * If the field is "multiple", its value - if present - is represented by an ordered list of compound
+     * value maps. In order for a client to be able to associate a single value map with its corresponding
+     * "error map", we construct a list of error maps of equal length. In case of a valid compound value map,
+     * the error map will be there, but it will be empty.
+     *
+     * If the field is "single", its value - again, if present - is represented by a single compound value
+     * map. In case of a valid compound value map, the error map will be empty, and we drop it, i.e. we return
+     * an empty Optional.
+     *
+     * @param optionalValue optional Value for a single or multiple compound field.
+     * @return
+     */
+    private Optional<Object> validateCompounds(final Optional<Object> optionalValue) {
+        if (optionalValue.isPresent()) {
+            final Object value = optionalValue.get();
+            if (value instanceof List) {
+                final List<Map<String, Object>> valueMapList = (List) value;
+                final List<Map<String, Object>> errorMapList = new ArrayList<>();
+                boolean errorFound = false;
+                for (Map<String, Object> valueMap : valueMapList) {
+                    final Map<String, Object> errorMap = validateCompound(valueMap);
+                    if (!errorMap.isEmpty()) {
+                        errorFound = true;
+                    }
+                    errorMapList.add(errorMap);
+                }
+
+                if (errorFound) {
+                    return Optional.of(errorMapList);
+                }
+            } else {
+                final Map<String, Object> errorMap = validateCompound((Map<String, Object>)value);
+                if (!errorMap.isEmpty()) {
+                    return Optional.of(errorMap);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private Map<String, Object> validateCompound(final Map<String, Object> valueMap) {
+        final Map<String, Object> errorMap = new HashMap<>();
+        for (FieldType fieldType : getFields()) {
+            final Optional<Object> optionalValue = Optional.ofNullable(valueMap.get(fieldType.getId()));
+            fieldType.validate(optionalValue).ifPresent(error -> errorMap.put(fieldType.getId(), error));
+        }
+        return errorMap;
     }
 }

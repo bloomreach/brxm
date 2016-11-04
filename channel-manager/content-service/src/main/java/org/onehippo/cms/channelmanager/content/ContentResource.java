@@ -31,12 +31,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.onehippo.cms.channelmanager.content.document.DocumentNotFoundException;
-import org.onehippo.cms.channelmanager.content.document.OperationFailedException;
-import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypeNotFoundException;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
-import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 
@@ -52,76 +48,69 @@ public class ContentResource {
     @POST
     @Path("documents/{id}/draft")
     public Response createDraftDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
-        final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
-        final DocumentsService documentsService = DocumentsService.get();
-        try {
-            final Document document = documentsService.createDraft(id, userSession);
-            if (document.getInfo().getEditingInfo().getState() == EditingInfo.State.AVAILABLE) {
-                return Response.status(Response.Status.CREATED).entity(document).build();
-            } else {
-                return Response.status(Response.Status.FORBIDDEN).entity(document).build();
-            }
-        } catch (DocumentNotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+        return executeTask(servletRequest, Response.Status.CREATED,
+                (session) -> DocumentsService.get().createDraft(id, session));
     }
 
     @PUT
     @Path("documents/{id}/draft")
     public Response updateDraftDocument(@PathParam("id") String id, Document document,
                                         @Context HttpServletRequest servletRequest) {
-        final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
-        final DocumentsService documentsService = DocumentsService.get();
-        try {
-            documentsService.updateDraft(id, document, userSession);
-            return Response.ok().entity(document).build();
-        } catch (DocumentNotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        } catch (OperationFailedException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity(e.getErrorInfo()).build();
-        }
+        return executeTask(servletRequest, Response.Status.OK, (session) -> {
+            DocumentsService.get().updateDraft(id, document, session);
+            return document;
+        });
     }
 
     @DELETE
     @Path("documents/{id}/draft")
     public Response deleteDraftDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
-        final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
-        final DocumentsService documentsService = DocumentsService.get();
-        try {
-            documentsService.deleteDraft(id, userSession);
-            return Response.ok().build();
-        } catch (DocumentNotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        } catch (OperationFailedException e) {
-            return Response.status(Response.Status.FORBIDDEN).entity(e.getErrorInfo()).build();
-        }
+        return executeTask(servletRequest, Response.Status.OK, (session) -> {
+            DocumentsService.get().deleteDraft(id, session);
+            return null; // no response data
+        });
     }
 
     // for easy debugging:
     @GET
     @Path("documents/{id}")
     public Response getPublishedDocument(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
-        final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
-        final DocumentsService documentsService = DocumentsService.get();
-        try {
-            final Document document = documentsService.getPublished(id, userSession);
-            return Response.ok().entity(document).build();
-        } catch (DocumentNotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+        return executeTask(servletRequest, Response.Status.OK,
+                (session) -> DocumentsService.get().getPublished(id, session));
     }
 
     @GET
     @Path("documenttypes/{id}")
     public Response getDocumentType(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
-        final Session userSession = sessionDataProvider.getJcrSession(servletRequest);
         final Locale locale = sessionDataProvider.getLocale(servletRequest);
-        final DocumentTypesService documentTypesService = DocumentTypesService.get();
+        return executeTask(servletRequest, Response.Status.OK,
+                (session) -> DocumentTypesService.get().getDocumentType(id, session, Optional.of(locale)));
+    }
+
+    /**
+     * Shared logic for providing the EndPointTask with contextual input and handling the packaging of its response
+     * (which may be an error, encapsulated in an Exception).
+     *
+     * @param servletRequest current HTTP servlet request to derive contextual input
+     * @param successResponse HTTP status code in case of success
+     * @param task           the EndPointTask to execute
+     * @return               a JAX-RS response towards the client
+     */
+    private Response executeTask(final HttpServletRequest servletRequest,
+                                 final Response.Status successResponse,
+                                 final EndPointTask task) {
+        final Session session = sessionDataProvider.getJcrSession(servletRequest);
+
         try {
-            final DocumentType docType = documentTypesService.getDocumentType(id, userSession, Optional.of(locale));
-            return Response.ok().entity(docType).build();
-        } catch (DocumentTypeNotFoundException e) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            final Object result = task.execute(session);
+            return Response.status(successResponse).entity(result).build();
+        } catch (ErrorWithPayloadException e) {
+            return Response.status(e.getStatus()).entity(e.getPayload()).build();
         }
+    }
+
+    @FunctionalInterface
+    private interface EndPointTask {
+        Object execute(Session session) throws ErrorWithPayloadException;
     }
 }

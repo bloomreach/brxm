@@ -26,7 +26,6 @@ import javax.jcr.RepositoryException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.onehippo.repository.l10n.ResourceBundle;

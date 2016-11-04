@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -42,6 +43,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({HippoServiceRegistry.class, LocalizationUtils.class, NamespaceUtils.class})
@@ -64,13 +66,14 @@ public class ContentTypeContextTest {
         expect(HippoServiceRegistry.getService(anyObject())).andReturn(contentTypeService);
         expect(contentTypeService.getContentTypes()).andReturn(contentTypes);
         expect(contentTypes.getType("type")).andReturn(contentType);
+        expect(contentType.getName()).andReturn("type");
         expect(LocalizationUtils.getResourceBundleForDocument("type", locale)).andReturn(Optional.of(resourceBundle));
         expect(NamespaceUtils.getDocumentTypeRootNode("type", session)).andReturn(Optional.of(rootNode));
 
-        replay(contentTypeService, contentTypes);
+        replay(contentTypeService, contentTypes, contentType);
         PowerMock.replayAll();
 
-        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext("type", session, 2, Optional.of(locale));
+        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext("type", session, 2, Optional.of(locale)).get();
 
         assertThat(context.getContentType(), equalTo(contentType));
         assertThat(context.getContentTypeRoot(), equalTo(rootNode));
@@ -98,16 +101,16 @@ public class ContentTypeContextTest {
         replay(contentTypeService, contentTypes);
         PowerMock.replayAll();
 
-        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext("type", session, 2, Optional.empty());
+        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext("type", session, 2, Optional.empty()).get();
 
         assertThat(context.getContentType(), equalTo(contentType));
         assertThat(context.getContentTypeRoot(), equalTo(rootNode));
         assertThat(context.getLevel(), equalTo(2));
-        assertThat(context.getResourceBundle().isPresent(), equalTo(false));
-        assertThat(context.getLocale().isPresent(), equalTo(false));
+        assertFalse(context.getResourceBundle().isPresent());
+        assertFalse(context.getLocale().isPresent());
     }
 
-    @Test(expected = ContentTypeException.class)
+    @Test(expected = NoSuchElementException.class)
     public void createDocumentTypeContextWithRepositoryException() throws Exception {
         final ContentTypeService contentTypeService = createMock(ContentTypeService.class);
 
@@ -119,10 +122,10 @@ public class ContentTypeContextTest {
         replay(contentTypeService);
         PowerMock.replayAll();
 
-        ContentTypeContext.createDocumentTypeContext("type", null, 0, null);
+        ContentTypeContext.createDocumentTypeContext("type", null, 0, null).get();
     }
 
-    @Test(expected = ContentTypeException.class)
+    @Test(expected = NoSuchElementException.class)
     public void createDocumentTypeContextWithMissingDocumentTypeRoot() throws Exception {
         final ContentTypeService contentTypeService = createMock(ContentTypeService.class);
         final ContentTypes contentTypes = createMock(ContentTypes.class);
@@ -140,6 +143,6 @@ public class ContentTypeContextTest {
         replay(contentTypeService, contentTypes);
         PowerMock.replayAll();
 
-        ContentTypeContext.createDocumentTypeContext("type", session, 0, Optional.empty());
+        ContentTypeContext.createDocumentTypeContext("type", session, 0, Optional.empty()).get();
     }
 }
