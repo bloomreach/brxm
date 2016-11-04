@@ -82,4 +82,8 @@ public class Document {
         }
         validationErrors.put(id, error);
     }
+
+    public boolean hasValidationErrors() {
+        return validationErrors != null && !validationErrors.isEmpty();
+    }
 }

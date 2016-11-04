@@ -113,7 +113,7 @@ class DocumentsServiceImpl implements DocumentsService {
             fieldType.validate(fieldType.readFrom(draft))
                     .ifPresent(error -> document.addValidationError(fieldType.getId(), error));
         }
-        if (!document.getValidationErrors().isEmpty()) {
+        if (document.hasValidationErrors()) {
             throw new BadRequestException(document);
         }
 
