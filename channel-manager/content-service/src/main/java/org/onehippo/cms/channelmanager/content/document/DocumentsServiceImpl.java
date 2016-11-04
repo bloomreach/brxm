@@ -46,7 +46,7 @@ import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentsServiceImpl implements DocumentsService {
+class DocumentsServiceImpl implements DocumentsService {
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
     private static final String WORKFLOW_CATEGORY_EDIT = "editing";
     private static final DocumentsService INSTANCE = new DocumentsServiceImpl();
@@ -89,7 +89,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         final DocumentType docType = getDocumentType(handle);
 
         if (!EditingUtils.canUpdateDocument(workflow)) {
-            throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.NOT_HOLDER));
+            throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.NOT_HOLDER));
         }
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
                 .orElseThrow(NotFoundException::new);
@@ -127,7 +127,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .orElseThrow(NotFoundException::new);
 
         if (!EditingUtils.canDeleteDraft(workflow)) {
-            throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED));
+            throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED));
         }
 
         try {

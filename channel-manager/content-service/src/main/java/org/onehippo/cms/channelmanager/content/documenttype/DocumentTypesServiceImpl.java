@@ -26,20 +26,19 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.error.BadRequestException;
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
-import org.onehippo.cms.channelmanager.content.error.NotFoundException;
+import org.onehippo.cms.channelmanager.content.MockResponse;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
-import org.onehippo.cms.channelmanager.content.MockResponse;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentTypesServiceImpl implements DocumentTypesService {
+class DocumentTypesServiceImpl implements DocumentTypesService {
     private static final Logger log = LoggerFactory.getLogger(DocumentTypesServiceImpl.class);
     private static final DocumentTypesServiceImpl INSTANCE = new DocumentTypesServiceImpl();
     private static final int MAX_NESTING_LEVEL = 10;
@@ -111,7 +110,7 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
             throws ErrorWithPayloadException {
         if (!context.getContentType().isDocumentType()) {
             log.debug("Requested type '{}' is not document type", id);
-            throw new BadRequestException();
+            throw new NotFoundException();
         }
     }
 
