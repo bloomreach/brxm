@@ -21,21 +21,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
-import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -100,31 +97,12 @@ public class CompoundFieldType extends FieldType {
             long numberOfNodes = iterator.getSize();
 
             if (isMultiple()) {
-                final Object value = optionalValue.orElse(Collections.emptyList());
-                if (!(value instanceof List)) {
-                    throw BAD_REQUEST_INVALID_DATA;
-                }
-                final List listOfValues = (List)value;
-                if (isOptional()) {
-                    if (listOfValues.size() > 1) {
-                        throw BAD_REQUEST_INVALID_DATA;
-                    }
-                    if (listOfValues.size() > numberOfNodes) {
-                        throw BAD_REQUEST_CARDINALITY_CHANGE; // creation of new nodes not yet supported
-                    }
-                } else {
-                    if (!listOfValues.isEmpty() && listOfValues.size() != numberOfNodes) {
-                        throw BAD_REQUEST_CARDINALITY_CHANGE;
-                    }
-                }
-                for (Object v : listOfValues) {
-                    writeToCompoundNode(iterator.nextNode(), v);
+                final List values = checkMultipleType(optionalValue, numberOfNodes);
+                for (Object value : values) {
+                    writeToCompoundNode(iterator.nextNode(), value);
                 }
             } else {
-                final Object value = optionalValue.orElse("invalid");
-                if (numberOfNodes == 0) {
-                    throw BAD_REQUEST_CARDINALITY_CHANGE; // creation of new nodes not yet supported
-                }
+                final Object value = checkSingularType(optionalValue, numberOfNodes);
                 writeToCompoundNode(iterator.nextNode(), value);
             }
 
@@ -136,6 +114,35 @@ public class CompoundFieldType extends FieldType {
             log.warn("Failed to write compound value to node {}", nodeName, e);
             throw new InternalServerErrorException();
         }
+    }
+
+    private Object checkSingularType(final Optional<Object> optionalValue, final long currentCount) throws BadRequestException {
+        final Object value = optionalValue.orElse("invalid");
+        if (currentCount == 0) {
+            throw BAD_REQUEST_CARDINALITY_CHANGE; // creation of new nodes not yet supported
+        }
+        return value;
+    }
+
+    private List checkMultipleType(final Optional<Object> optionalValue, final long currentCount) throws BadRequestException {
+        final Object value = optionalValue.orElse(Collections.emptyList());
+        if (!(value instanceof List)) {
+            throw BAD_REQUEST_INVALID_DATA;
+        }
+        final List values = (List)value;
+        if (isOptional()) {
+            if (values.size() > 1) {
+                throw BAD_REQUEST_INVALID_DATA;
+            }
+            if (values.size() == 1 && currentCount == 0) {
+                throw BAD_REQUEST_CARDINALITY_CHANGE; // creation of new nodes not yet supported
+            }
+        } else {
+            if (!values.isEmpty() && values.size() != currentCount) {
+                throw BAD_REQUEST_CARDINALITY_CHANGE;
+            }
+        }
+        return values;
     }
 
     private void writeToCompoundNode(final Node compound, final Object value) throws ErrorWithPayloadException {
