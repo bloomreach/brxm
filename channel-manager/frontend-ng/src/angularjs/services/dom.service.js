@@ -162,14 +162,12 @@ class DomService {
     const allElements = document.querySelectorAll('body *');
     const count = allElements.length;
     let lowest = 0;
-    let el = null;
 
     // use plain for-loop for performance
     for (let i = 0; i < count; i += 1) {
       const bottom = this.getBottom(allElements[i]);
       if (bottom > lowest) {
         lowest = bottom;
-        el = allElements[i];
       }
     }
 
