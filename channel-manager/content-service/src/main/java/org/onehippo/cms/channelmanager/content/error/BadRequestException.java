@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.document;
+package org.onehippo.cms.channelmanager.content.error;
 
-import org.onehippo.cms.channelmanager.content.document.model.ErrorInfo;
+import javax.ws.rs.core.Response;
 
-public class OperationFailedException extends Exception {
+public class BadRequestException extends ErrorWithPayloadException {
 
-    private final ErrorInfo errorInfo;
-
-    public OperationFailedException() {
-        this(new ErrorInfo(ErrorInfo.Reason.UNKNOWN));
+    public BadRequestException() {
+        this(null);
     }
 
-    public OperationFailedException(final ErrorInfo errorInfo) {
-        this.errorInfo = errorInfo;
-    }
-
-    public ErrorInfo getErrorInfo() {
-        return errorInfo;
+    public BadRequestException(final Object payload) {
+        super(Response.Status.BAD_REQUEST, payload);
     }
 }

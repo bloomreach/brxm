@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.document.model;
+package org.onehippo.cms.channelmanager.content.error;
 
 /**
  * ErrorInfo provides the client with additional information about the failure of a requested operation
@@ -34,10 +34,11 @@ public class ErrorInfo {
     }
 
     public enum Reason {
-        UNKNOWN,
         NOT_HOLDER,
         HOLDERSHIP_LOST,
-        ALREADY_DELETED
+        ALREADY_DELETED,
+        INVALID_DATA,
+        CARDINALITY_CHANGE  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
         // add more specific failure reasons here.
     }
 }

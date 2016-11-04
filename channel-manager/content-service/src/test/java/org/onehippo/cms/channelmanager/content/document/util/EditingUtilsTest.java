@@ -48,6 +48,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({EditingUtils.class, WorkflowUtils.class, JcrUtils.class})
@@ -68,27 +71,7 @@ public class EditingUtilsTest {
         final EditingInfo info = EditingUtils.determineEditingInfo(workflow, handle);
 
         assertThat(info.getState(), equalTo(EditingInfo.State.AVAILABLE));
-        assertThat(info.getHolder(), equalTo(null));
-    }
-
-    @Test
-    public void determineEditingInfoAvailableWhileEditing() throws Exception {
-        final Node handle = createMock(Node.class);
-        final Session session = createMock(Session.class);
-        final Workflow workflow = createMock(Workflow.class);
-        final Map<String, Serializable> hints = new HashMap<>();
-        hints.put("obtainEditableInstance", false);
-        hints.put("inUseBy", "tester");
-
-        expect(handle.getSession()).andReturn(session);
-        expect(session.getUserID()).andReturn("tester");
-        expect(workflow.hints()).andReturn(hints);
-        replay(handle, session, workflow);
-
-        final EditingInfo info = EditingUtils.determineEditingInfo(workflow, handle);
-
-        assertThat(info.getState(), equalTo(EditingInfo.State.AVAILABLE));
-        assertThat(info.getHolder(), equalTo(null));
+        assertNull(info.getHolder());
     }
 
     @Test
@@ -113,7 +96,7 @@ public class EditingUtilsTest {
         final EditingInfo info = EditingUtils.determineEditingInfo(workflow, handle);
 
         assertThat(info.getState(), equalTo(EditingInfo.State.UNAVAILABLE_HELD_BY_OTHER_USER));
-        assertThat(info.getHolder(), equalTo(null));
+        assertNull(info.getHolder());
     }
 
     @Test
@@ -132,7 +115,7 @@ public class EditingUtilsTest {
         final EditingInfo info = EditingUtils.determineEditingInfo(workflow, handle);
 
         assertThat(info.getState(), equalTo(EditingInfo.State.UNAVAILABLE_REQUEST_PENDING));
-        assertThat(info.getHolder(), equalTo(null));
+        assertNull(info.getHolder());
     }
 
     @Test
@@ -160,13 +143,13 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andReturn(hints).anyTimes();
         replay(workflow);
 
-        assertThat(EditingUtils.canUpdateDocument(workflow), equalTo(false));
+        assertFalse(EditingUtils.canUpdateDocument(workflow));
 
         hints.put("commitEditableInstance", Boolean.FALSE);
-        assertThat(EditingUtils.canUpdateDocument(workflow), equalTo(false));
+        assertFalse(EditingUtils.canUpdateDocument(workflow));
 
         hints.put("commitEditableInstance", Boolean.TRUE);
-        assertThat(EditingUtils.canUpdateDocument(workflow), equalTo(true));
+        assertTrue(EditingUtils.canUpdateDocument(workflow));
     }
 
     @Test
@@ -176,7 +159,7 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andThrow(new WorkflowException("bla"));
         replay(workflow);
 
-        assertThat(EditingUtils.canUpdateDocument(workflow), equalTo(false));
+        assertFalse(EditingUtils.canUpdateDocument(workflow));
     }
 
     @Test
@@ -188,7 +171,7 @@ public class EditingUtilsTest {
         expect(workflow.hints()).andReturn(hints);
         replay(workflow);
 
-        assertThat(EditingUtils.canDeleteDraft(workflow), equalTo(true));
+        assertTrue(EditingUtils.canDeleteDraft(workflow));
     }
 
     @Test
@@ -203,7 +186,7 @@ public class EditingUtilsTest {
         UserInfo info = EditingUtils.determineHolder("otherUser", session);
 
         assertThat(info.getId(), equalTo("otherUser"));
-        assertThat(info.getDisplayName(), equalTo(null));
+        assertNull(info.getDisplayName());
     }
 
     @Test

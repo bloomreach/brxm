@@ -30,10 +30,11 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.cms.channelmanager.content.document.DocumentNotFoundException;
-import org.onehippo.cms.channelmanager.content.document.OperationFailedException;
-import org.onehippo.cms.channelmanager.content.document.model.ErrorInfo;
-import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypeNotFoundException;
+import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
+import org.onehippo.cms.channelmanager.content.error.NotFoundException;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
@@ -46,7 +47,6 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static com.jayway.restassured.http.ContentType.JSON;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -111,7 +111,7 @@ public class ContentResourceTest extends CXFTest {
     public void getUnpublishedDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.getPublished(requestedUuid, userSession)).andThrow(new DocumentNotFoundException());
+        expect(documentsService.getPublished(requestedUuid, userSession)).andThrow(new NotFoundException());
         replay(documentsService);
 
         when()
@@ -144,7 +144,7 @@ public class ContentResourceTest extends CXFTest {
         final String uuid = "returned-uuid";
         final FluentDocument testDocument = createDocument(uuid).withState(EditingInfo.State.UNAVAILABLE);
 
-        expect(documentsService.createDraft(requestedUuid, userSession)).andReturn(testDocument);
+        expect(documentsService.createDraft(requestedUuid, userSession)).andThrow(new ForbiddenException(testDocument));
         replay(documentsService);
 
         final String expectedBody = normalizeJsonResource("/unavailable-document.json");
@@ -160,7 +160,7 @@ public class ContentResourceTest extends CXFTest {
     public void createDraftDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
-        expect(documentsService.createDraft(requestedUuid, userSession)).andThrow(new DocumentNotFoundException());
+        expect(documentsService.createDraft(requestedUuid, userSession)).andThrow(new NotFoundException());
         replay(documentsService);
 
         when()
@@ -211,7 +211,7 @@ public class ContentResourceTest extends CXFTest {
         final String requestedUuid = "requested-uuid";
 
         documentsService.deleteDraft(requestedUuid, userSession);
-        expectLastCall().andThrow(new DocumentNotFoundException());
+        expectLastCall().andThrow(new NotFoundException());
         replay(documentsService);
 
         when()
@@ -221,18 +221,33 @@ public class ContentResourceTest extends CXFTest {
     }
 
     @Test
-    public void deleteDraftFailed() throws Exception {
+    public void deleteDraftBadRequest() throws Exception {
         final String requestedUuid = "requested-uuid";
 
         documentsService.deleteDraft(requestedUuid, userSession);
-        expectLastCall().andThrow(new OperationFailedException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED)));
+        expectLastCall().andThrow(new BadRequestException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED)));
         replay(documentsService);
 
         when()
                 .delete("/documents/" + requestedUuid + "/draft")
         .then()
-                .statusCode(403)
+                .statusCode(400)
                 .body(equalTo("{\"reason\":\"ALREADY_DELETED\"}"));
+    }
+
+    @Test
+    public void deleteDraftServerError() throws Exception {
+        final String requestedUuid = "requested-uuid";
+
+        documentsService.deleteDraft(requestedUuid, userSession);
+        expectLastCall().andThrow(new InternalServerErrorException());
+        replay(documentsService);
+
+        when()
+                .delete("/documents/" + requestedUuid + "/draft")
+        .then()
+                .statusCode(500)
+                .body(equalTo("")); // no additional ErrorInfo.
     }
 
     @Test
@@ -259,7 +274,7 @@ public class ContentResourceTest extends CXFTest {
         final String requestedId = "ns:testdocument";
 
         expect(documentTypesService.getDocumentType(requestedId, userSession, Optional.of(locale)))
-                .andThrow(new DocumentTypeNotFoundException());
+                .andThrow(new NotFoundException());
         replay(documentTypesService);
 
         when()

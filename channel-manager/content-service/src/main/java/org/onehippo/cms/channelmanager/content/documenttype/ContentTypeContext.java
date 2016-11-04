@@ -54,21 +54,25 @@ public class ContentTypeContext {
      *                       level 0, fields in top-level compounds have level 1, fields in nested compounds
      *                       have level 2, etc.
      * @param optionalLocale locale of the current CMS session
-     * @return               {@link ContentTypeContext} for creating a {@link DocumentType}
-     * @throws ContentTypeException
-     *                       if creation of a ContentTypeContext failed.
+     * @return               {@link ContentTypeContext} for creating a {@link DocumentType}, wrapped in an Optional
      */
-    public static ContentTypeContext createDocumentTypeContext(final String id, final Session userSession,
-                                                               final int level, final Optional<Locale> optionalLocale)
-            throws ContentTypeException {
+    public static Optional<ContentTypeContext> createDocumentTypeContext(final String id,
+                                                                         final Session userSession,
+                                                                         final int level,
+                                                                         final Optional<Locale> optionalLocale) {
+        final Optional<ContentType> optionalContentType = getContentType(id);
+        if (!optionalContentType.isPresent()) {
+            return Optional.empty();
+        }
 
-        final ContentType contentType = getContentType(id).orElseThrow(ContentTypeException::new);
-        final Node documentTypeRoot = NamespaceUtils.getDocumentTypeRootNode(id, userSession)
-                .orElseThrow(ContentTypeException::new);
-        final Optional<ResourceBundle> resourceBundle = optionalLocale
-                .flatMap(locale -> LocalizationUtils.getResourceBundleForDocument(id, locale));
+        final Optional<Node> optionalDocumentTypeRoot = NamespaceUtils.getDocumentTypeRootNode(id, userSession);
+        if (!optionalDocumentTypeRoot.isPresent()) {
+            return Optional.empty();
+        }
 
-        return new ContentTypeContext(contentType, documentTypeRoot, level, optionalLocale, resourceBundle);
+        return Optional.of(new ContentTypeContext(optionalContentType.get(),
+                                                  optionalDocumentTypeRoot.get(),
+                                                  level, optionalLocale));
     }
 
     private static Optional<ContentType> getContentType(final String id) {
@@ -84,13 +88,13 @@ public class ContentTypeContext {
     private ContentTypeContext(final ContentType contentType,
                                final Node documentTypeRoot,
                                final int level,
-                               final Optional<Locale> locale,
-                               final Optional<ResourceBundle> resourceBundle) {
+                               final Optional<Locale> optionalLocale) {
         this.contentType = contentType;
         this.contentTypeRoot = documentTypeRoot;
         this.level = level;
-        this.locale = locale;
-        this.resourceBundle = resourceBundle;
+        this.locale = optionalLocale;
+        this.resourceBundle = optionalLocale
+                .flatMap(locale -> LocalizationUtils.getResourceBundleForDocument(contentType.getName(), locale));
     }
 
     public ContentType getContentType() {

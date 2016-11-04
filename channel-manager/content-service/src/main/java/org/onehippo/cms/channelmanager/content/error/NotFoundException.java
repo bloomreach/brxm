@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.document;
+package org.onehippo.cms.channelmanager.content.error;
 
-public class DocumentNotFoundException extends Exception {
+import javax.ws.rs.core.Response;
 
-    public DocumentNotFoundException() {
-    }
+public class NotFoundException extends ErrorWithPayloadException {
 
-    public DocumentNotFoundException(final String message) {
-        super(message);
-    }
-
-    public DocumentNotFoundException(final String message, final Throwable cause) {
-        super(message, cause);
+    public NotFoundException() {
+        super(Response.Status.NOT_FOUND, null);
     }
 }

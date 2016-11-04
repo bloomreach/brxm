@@ -66,7 +66,7 @@ public class EditingUtils {
             final Session session = handle.getSession();
             final Map<String, Serializable> hints = workflow.hints();
 
-            if (isDocumentEditable(hints, session)) {
+            if (isActionAvailable(hints, HINT_OBTAIN_EDITABLE_INSTANCE)) {
                 info.setState(EditingInfo.State.AVAILABLE);
             } else if (hints.containsKey(HINT_IN_USE_BY)) {
                 info.setState(EditingInfo.State.UNAVAILABLE_HELD_BY_OTHER_USER);
@@ -80,25 +80,6 @@ public class EditingUtils {
         return info;
     }
 
-    private static boolean isDocumentEditable(final Map<String, Serializable> hints, final Session session) {
-        if ((Boolean) hints.get(HINT_OBTAIN_EDITABLE_INSTANCE)) {
-            return true;
-        }
-
-        // TODO: initial tests suggested that once the user has obtained the editable instance of a document,
-        //       the hints would have set the obtainEditableInstance flag to false and the inUseBy flag to the
-        //       current holder (self). Subsequent tests no longer observed this behaviour. Should we keep below
-        //       extra check or not?
-        if (hints.containsKey(HINT_IN_USE_BY)) {
-            final String inUseBy = (String) hints.get(HINT_IN_USE_BY);
-            if (inUseBy.equals(session.getUserID())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /**
      * Check if a document can be updated, given its workflow.
      *
@@ -106,7 +87,7 @@ public class EditingUtils {
      * @return         true if document can be updated, false otherwise
      */
     public static boolean canUpdateDocument(final EditableWorkflow workflow) {
-        return isHintAvailable(workflow, HINT_COMMIT_EDITABLE_INSTANCE);
+        return isActionAvailable(workflow, HINT_COMMIT_EDITABLE_INSTANCE);
     }
 
     /**
@@ -116,18 +97,22 @@ public class EditingUtils {
      * @return         true if document can be updated, false otherwise
      */
     public static boolean canDeleteDraft(final EditableWorkflow workflow) {
-        return isHintAvailable(workflow, HINT_DISPOSE_EDITABLE_INSTANCE);
+        return isActionAvailable(workflow, HINT_DISPOSE_EDITABLE_INSTANCE);
     }
 
-    private static boolean isHintAvailable(final EditableWorkflow workflow, final String hint) {
+    private static boolean isActionAvailable(final EditableWorkflow workflow, final String action) {
         try {
             Map<String, Serializable> hints = workflow.hints();
-            return hints.containsKey(hint) && ((Boolean)hints.get(hint));
+            return isActionAvailable(hints, action);
 
         } catch (WorkflowException | RemoteException | RepositoryException e) {
             log.warn("Failed reading hints from workflow", e);
         }
         return false;
+    }
+
+    private static boolean isActionAvailable(final Map<String, Serializable> hints, final String action) {
+        return hints.containsKey(action) && ((Boolean)hints.get(action));
     }
 
     /**
@@ -146,8 +131,6 @@ public class EditingUtils {
             final String firstName = user.getFirstName();
             final String lastName = user.getLastName();
 
-            // TODO: Below logic was copied from the org.hippoecm.frontend.plugins.cms.admin.users.User.java
-            // (hippo-cms-perspectives). Move this logic into the repository's User class to be able to share it?
             StringBuilder sb = new StringBuilder();
             if (firstName != null) {
                 sb.append(firstName.trim());

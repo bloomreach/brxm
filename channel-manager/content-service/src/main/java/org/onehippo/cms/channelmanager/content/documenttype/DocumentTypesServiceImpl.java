@@ -26,16 +26,19 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.channelmanager.content.MockResponse;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
-import org.onehippo.cms.channelmanager.content.MockResponse;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentTypesServiceImpl implements DocumentTypesService {
+class DocumentTypesServiceImpl implements DocumentTypesService {
     private static final Logger log = LoggerFactory.getLogger(DocumentTypesServiceImpl.class);
     private static final DocumentTypesServiceImpl INSTANCE = new DocumentTypesServiceImpl();
     private static final int MAX_NESTING_LEVEL = 10;
@@ -48,25 +51,26 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
 
     @Override
     public DocumentType getDocumentType(final Node handle, final Optional<Locale> locale)
-            throws DocumentTypeNotFoundException {
+            throws ErrorWithPayloadException {
         try {
-            final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(DocumentTypeNotFoundException::new);
+            final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(NotFoundException::new);
 
             return getDocumentType(id, handle.getSession(), locale);
         } catch (RepositoryException e) {
             log.warn("Failed to retrieve document type from node '{}'", JcrUtils.getNodePathQuietly(handle), e);
+            throw new InternalServerErrorException();
         }
-        throw new DocumentTypeNotFoundException();
     }
 
     @Override
     public DocumentType getDocumentType(final String id, final Session userSession, final Optional<Locale> locale)
-            throws DocumentTypeNotFoundException {
+            throws ErrorWithPayloadException {
         if ("ns:testdocument".equals(id)) {
             return MockResponse.createTestDocumentType();
         }
 
-        final ContentTypeContext context = getContentTypeContext(id, userSession, 0, locale);
+        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext(id, userSession, 0, locale)
+                .orElseThrow(NotFoundException::new);
 
         validateDocumentType(context, id);
 
@@ -82,40 +86,31 @@ public class DocumentTypesServiceImpl implements DocumentTypesService {
     @Override
     public void populateFieldsForCompoundType(final String id, final List<FieldType> fields,
                                               final ContentTypeContext parentContext, final DocumentType docType) {
+        final int level = parentContext.getLevel() + 1;
+        if (level <= MAX_NESTING_LEVEL) {
+            log.info("Ignoring fields of {}-level-deep nested compound, nesting maximum reached", level);
+            return;
+        }
+
         try {
             final Session userSession = parentContext.getContentTypeRoot().getSession();
-            final int level = parentContext.getLevel() + 1;
-            final Optional<Locale> locale = parentContext.getLocale();
-            final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext(id, userSession, level, locale);
+            final Optional<Locale> optionalLocale = parentContext.getLocale();
+            final Optional<ContentTypeContext> optionalContext
+                    = ContentTypeContext.createDocumentTypeContext(id, userSession, level, optionalLocale);
 
-            if (level <= MAX_NESTING_LEVEL) {
-                populateFields(fields, context, docType);
-            } else {
-                log.info("Ignoring fields of {}-level-deep nested compound, nesting maximum reached", level);
+            if (optionalContext.isPresent()) {
+                populateFields(fields, optionalContext.get(), docType);
             }
         } catch (RepositoryException e) {
             log.warn("Failed to retrieve user session", e);
-        } catch (ContentTypeException e) {
-            log.debug("Failed to create context for content type '{}'", id, e);
-        }
-    }
-
-    private static ContentTypeContext getContentTypeContext(final String id, final Session userSession,
-                                                            final int level, final Optional<Locale> locale)
-            throws DocumentTypeNotFoundException {
-        try {
-            return ContentTypeContext.createDocumentTypeContext(id, userSession, level, locale);
-        } catch (ContentTypeException e) {
-            log.warn("Failed to retrieve context for content type '{}'", id, e);
-            throw new DocumentTypeNotFoundException();
         }
     }
 
     private static void validateDocumentType(final ContentTypeContext context, final String id)
-            throws DocumentTypeNotFoundException {
+            throws ErrorWithPayloadException {
         if (!context.getContentType().isDocumentType()) {
             log.debug("Requested type '{}' is not document type", id);
-            throw new DocumentTypeNotFoundException();
+            throw new NotFoundException();
         }
     }
 

@@ -27,6 +27,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,12 +60,12 @@ public class StringFieldType extends FieldType {
      */
     @Override
     public Optional<Object> readFrom(final Node node) {
-        final String property = getId();
+        final String propertyName = getId();
         try {
-            if (hasProperty(node, property)) {
-                final Property jcrProperty = node.getProperty(property);
-                if (jcrProperty.isMultiple()) {
-                    final Value[] values = jcrProperty.getValues();
+            if (hasProperty(node, propertyName)) {
+                final Property property = node.getProperty(propertyName);
+                if (property.isMultiple()) {
+                    final Value[] values = property.getValues();
                     if (isMultiple()) {
                         if (isOptional()) {
                             if (values.length > 0) {
@@ -83,14 +87,14 @@ public class StringFieldType extends FieldType {
                 } else {
                     if (isMultiple()) {
                         // field type is multiple, but value is singular
-                        return Optional.of(Collections.singletonList(jcrProperty.getString()));
+                        return Optional.of(Collections.singletonList(property.getString()));
                     } else {
-                        return Optional.of(jcrProperty.getString());
+                        return Optional.of(property.getString());
                     }
                 }
             }
         } catch (RepositoryException e) {
-            log.warn("Failed to read string field '{}' from '{}'", property, JcrUtils.getNodePathQuietly(node), e);
+            log.warn("Failed to read string field '{}' from '{}'", propertyName, JcrUtils.getNodePathQuietly(node), e);
         }
         return readFromEmptyProperty();
     }
@@ -107,87 +111,112 @@ public class StringFieldType extends FieldType {
     }
 
     @Override
-    public int writeTo(Node node, Optional<Object> optionalValue) {
-        final String property = getId();
-        final boolean isRequired = getValidators().contains(Validator.REQUIRED);
+    public void writeTo(final Node node, final Optional<Object> optionalValue) throws ErrorWithPayloadException {
+        final String propertyName = getId();
         final Object value = optionalValue.orElse(Collections.emptyList());
-        if (isMultiple()) {
-            if (!(value instanceof List)) {
-                return 1; // we require a list of Strings
-            }
-            final List listOfValues = (List)value;
-            if (isRequired && listOfValues.isEmpty()) {
-                return 1; // need at least one value for required field
-            }
-            if (isOptional() && listOfValues.size() > 1) {
-                return 1; // "optional" field can have no more than 1 value
-            }
-
-            int errors = 0;
-            for (Object v : listOfValues) {
-                if (!(v instanceof String)) {
-                    errors++;
-                    continue;
-                }
-                final String s = (String)v;
-                if (isRequired && s.isEmpty()) {
-                    errors++;
-                }
-            }
-            if (errors > 0) {
-                return errors;
-            }
-
-            try {
-                if (listOfValues.isEmpty()) {
-                    removeProperty(node, property);
-                } else {
-                    if (isOptional()) {
-                        node.setProperty(property, (String) listOfValues.get(0));
-                    } else {
-                        final String[] arrayOfValues = new String[listOfValues.size()];
-                        node.setProperty(property, (String[]) listOfValues.toArray(arrayOfValues));
-                    }
-                }
-                return 0;
-            } catch (RepositoryException e) {
-                log.warn("Failed to write multiple String value to property {}", property, e);
-                return 1;
-            }
-        }
-
-        // is single field
-        if (!(value instanceof String)) {
-            return 1;
-        }
-        final String string = (String)value;
-        if (isRequired && string.isEmpty()) {
-            return 1;
-        }
         try {
-            node.setProperty(property, string);
-            return 0;
+            if (isMultiple()) {
+                final List listOfValues = checkMultipleType(value);
+                writeMultipleValue(node, propertyName, listOfValues);
+            } else {
+                final String string = checkSingularType(value);
+                node.setProperty(propertyName, string);
+            }
         } catch (RepositoryException e) {
-            log.warn("Failed to write singular String value to property {}", property, e);
-            return 1;
+            log.warn("Failed to write singular String value to property {}", propertyName, e);
+            throw new InternalServerErrorException();
         }
     }
 
-    private void removeProperty(final Node node, final String property) throws RepositoryException {
-        if (hasProperty(node, property)) {
-            node.getProperty(property).remove();
+    private String checkSingularType(final Object value) throws BadRequestException {
+        if (!(value instanceof String)) {
+            throw BAD_REQUEST_INVALID_DATA;
+        }
+        return (String)value;
+    }
+
+    private List checkMultipleType(final Object value) throws BadRequestException {
+        if (!(value instanceof List)) {
+            throw BAD_REQUEST_INVALID_DATA;
+        }
+        final List listOfValues = (List)value;
+        if (isOptional() && listOfValues.size() > 1) {
+            throw BAD_REQUEST_INVALID_DATA;
+        }
+
+        for (Object v : listOfValues) {
+            if (!(v instanceof String)) {
+                throw BAD_REQUEST_INVALID_DATA;
+            }
+        }
+        return listOfValues;
+    }
+
+    private void writeMultipleValue(final Node node, final String propertyName, final List values) throws RepositoryException {
+        if (values.isEmpty()) {
+            removeProperty(node, propertyName);
+        } else {
+            if (isOptional()) {
+                node.setProperty(propertyName, (String) values.get(0));
+            } else {
+                final String[] arrayOfValues = new String[values.size()];
+                node.setProperty(propertyName, (String[]) values.toArray(arrayOfValues));
+            }
         }
     }
 
-    private boolean hasProperty(final Node node, final String property) throws RepositoryException {
-        if (!node.hasProperty(property)) {
+    private void removeProperty(final Node node, final String propertyName) throws RepositoryException {
+        if (hasProperty(node, propertyName)) {
+            node.getProperty(propertyName).remove();
+        }
+    }
+
+    private boolean hasProperty(final Node node, final String propertyName) throws RepositoryException {
+        if (!node.hasProperty(propertyName)) {
             return false;
         }
-        final Property jcrProperty = node.getProperty(property);
-        if (!jcrProperty.isMultiple()) {
+        final Property property = node.getProperty(propertyName);
+        if (!property.isMultiple()) {
             return true;
         }
         // empty multiple property is equivalent to no property.
-        return jcrProperty.getValues().length > 0;
+        return property.getValues().length > 0;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Optional<Object> validate(final Optional<Object> optionalValue) {
+        final boolean isRequired = getValidators().contains(Validator.REQUIRED);
+        if (isRequired) {
+            if (optionalValue.isPresent()) {
+                final Object value = optionalValue.get();
+                if (value instanceof List) {
+                    return validateMultiple((List<String>) value);
+                } else {
+                    final String string = (String) value;
+                    if (string.isEmpty()) {
+                        return Optional.of(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+                    }
+                }
+            } else {
+                return Optional.of(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_ABSENT));
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<Object> validateMultiple(final List<String> values) {
+        final List<ValidationErrorInfo> errorList = new ArrayList<>();
+        boolean errorFound = false;
+        for (String string : values) {
+            if (string.isEmpty()) {
+                errorList.add(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+                errorFound = true;
+            } else {
+                errorList.add(new ValidationErrorInfo());
+            }
+        }
+        return errorFound ? Optional.of(errorList) : Optional.empty();
     }
 }

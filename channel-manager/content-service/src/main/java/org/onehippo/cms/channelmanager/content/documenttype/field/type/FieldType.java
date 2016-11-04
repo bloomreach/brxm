@@ -29,9 +29,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.util.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.FieldValidators;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.l10n.ResourceBundle;
 
@@ -41,6 +46,11 @@ import org.onehippo.repository.l10n.ResourceBundle;
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class FieldType {
+
+    protected static final BadRequestException BAD_REQUEST_INVALID_DATA
+            = new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+    protected static final BadRequestException BAD_REQUEST_CARDINALITY_CHANGE
+            = new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
 
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
@@ -144,7 +154,7 @@ public class FieldType {
         this.fields = fields;
     }
 
-    // TODO: once we phase out the ns:testdocument, this method and class should be made abstract.
+    // TODO make abstract after phasing out the MockResponse.
     /**
      * Read a document field instance from a document variant node
      *
@@ -155,15 +165,29 @@ public class FieldType {
         return Optional.empty();
     }
 
+    // TODO make abstract after phasing out the MockResponse.
     /**
-     * Write a field value to the draft variant of a document.
+     * Write the optional value of this field to the provided JCR node.
      *
-     * @param draft JCR node to write the value to
-     * @param value value to write
-     * @return      number of (sub-)fields where writing the value resulted in an error
+     * @param node          JCR node to store the value on
+     * @param optionalValue value to write, or nothing, wrapped in an Optional
+     * @throws ErrorWithPayloadException
+     *                      indicates that writing the provided value ran into an unrecoverable error
      */
-    public int writeTo(Node draft, Optional<Object> value) {
-        return 1;
+    public void writeTo(Node node, Optional<Object> optionalValue) throws ErrorWithPayloadException {
+        throw new InternalServerErrorException();
+    }
+
+    // TODO make abstract after phasing out the MockResponse.
+    /**
+     * Validate the current value of this field against all applicable (and supported) validators.
+     *
+     * @param optionalValue value to validate, or nothing, wrapped in an Optional
+     * @return     validation error or nothing, wrapped in an Optional.
+     *             The validation error can be either a {@link ValidationErrorInfo} or a map of sub-validation errors.
+     */
+    public Optional<Object> validate(final Optional<Object> optionalValue) {
+        return Optional.empty();
     }
 
     /**
