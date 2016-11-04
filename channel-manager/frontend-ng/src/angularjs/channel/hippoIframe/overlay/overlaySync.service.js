@@ -61,6 +61,7 @@ class OverlaySyncService {
   }
 
   _onLoad() {
+    this._setHeight(0);
     this.syncIframe();
 
     const document = this._getIframeDocument();
@@ -116,21 +117,9 @@ class OverlaySyncService {
       const doc = this._getIframeDocument();
 
       if (doc) {
-        // resetting the height will also reset the scroll position so save (and restore) it
-        const currentScrollTop = this.$base.scrollTop();
-
-        // reset the height
-        this.$sheet.height('');
-        this.$iframe.height('');
-        this.$scrollX.height('');
-
-        // if there is a horizontal scrollbar (because the site is wider than the viewport),
-        // the scrollbar height must be added to the iframe height.
         const isHorizontalScrollBarVisible = this._syncWidth(doc);
-        this._syncHeight(doc, isHorizontalScrollBarVisible);
-
-        // restore scroll position
-        this.$base.scrollTop(currentScrollTop);
+        const height = this._getIframeHeight(doc);
+        this._setHeight(height, isHorizontalScrollBarVisible);
       }
     }
   }
@@ -172,13 +161,15 @@ class OverlaySyncService {
     return false;
   }
 
-  _syncHeight(iframeDocument, isHorizontalScrollBarVisible) {
-    // because we set 'overflow: hidden on the <html> element of a site (to be able to control scrolling), we need to
-    // query both the <html> and the <body> height to find an accurate value
-    const htmlHeight = $(iframeDocument.documentElement).height();
-    const bodyHeight = $(iframeDocument.body).height();
-    const height = Math.max(htmlHeight, bodyHeight);
+  _getIframeHeight(doc) {
+    const heightMarker = $('.hippo-channel-manager-page-height-marker', doc);
+    if (heightMarker.length > 0) {
+      return this.DomService.getBottom(heightMarker[0]);
+    }
+    return this.DomService.getLowestElementBottom(doc);
+  }
 
+  _setHeight(height, isHorizontalScrollBarVisible) {
     this.$sheet.height(height);
     this.$iframe.height(height);
     this.$overlay.height(height);
