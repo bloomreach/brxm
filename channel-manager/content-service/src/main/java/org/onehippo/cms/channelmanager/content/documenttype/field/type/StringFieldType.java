@@ -28,6 +28,7 @@ import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
@@ -115,41 +116,52 @@ public class StringFieldType extends FieldType {
         final Object value = optionalValue.orElse(Collections.emptyList());
         try {
             if (isMultiple()) {
-                if (!(value instanceof List)) {
-                    throw BAD_REQUEST_INVALID_DATA;
-                }
-                final List listOfValues = (List)value;
-                if (isOptional() && listOfValues.size() > 1) {
-                    throw BAD_REQUEST_INVALID_DATA;
-                }
-
-                for (Object v : listOfValues) {
-                    if (!(v instanceof String)) {
-                        throw BAD_REQUEST_INVALID_DATA;
-                    }
-                }
-
-                if (listOfValues.isEmpty()) {
-                    removeProperty(node, propertyName);
-                } else {
-                    if (isOptional()) {
-                        node.setProperty(propertyName, (String) listOfValues.get(0));
-                    } else {
-                        final String[] arrayOfValues = new String[listOfValues.size()];
-                        node.setProperty(propertyName, (String[]) listOfValues.toArray(arrayOfValues));
-                    }
-                }
+                final List listOfValues = checkMultipleType(value);
+                writeMultipleValue(node, propertyName, listOfValues);
             } else {
-                if (!(value instanceof String)) {
-                    throw BAD_REQUEST_INVALID_DATA;
-                }
-                final String string = (String)value;
-
+                final String string = checkSingularType(value);
                 node.setProperty(propertyName, string);
             }
         } catch (RepositoryException e) {
             log.warn("Failed to write singular String value to property {}", propertyName, e);
             throw new InternalServerErrorException();
+        }
+    }
+
+    private String checkSingularType(final Object value) throws BadRequestException {
+        if (!(value instanceof String)) {
+            throw BAD_REQUEST_INVALID_DATA;
+        }
+        return (String)value;
+    }
+
+    private List checkMultipleType(final Object value) throws BadRequestException {
+        if (!(value instanceof List)) {
+            throw BAD_REQUEST_INVALID_DATA;
+        }
+        final List listOfValues = (List)value;
+        if (isOptional() && listOfValues.size() > 1) {
+            throw BAD_REQUEST_INVALID_DATA;
+        }
+
+        for (Object v : listOfValues) {
+            if (!(v instanceof String)) {
+                throw BAD_REQUEST_INVALID_DATA;
+            }
+        }
+        return listOfValues;
+    }
+
+    private void writeMultipleValue(final Node node, final String propertyName, final List values) throws RepositoryException {
+        if (values.isEmpty()) {
+            removeProperty(node, propertyName);
+        } else {
+            if (isOptional()) {
+                node.setProperty(propertyName, (String) values.get(0));
+            } else {
+                final String[] arrayOfValues = new String[values.size()];
+                node.setProperty(propertyName, (String[]) values.toArray(arrayOfValues));
+            }
         }
     }
 
