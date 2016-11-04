@@ -169,5 +169,14 @@ describe('DomService', () => {
     const width = DomService.getScrollBarWidth();
     expect(width).toBeGreaterThan(-1);
   });
+
+  it('can calculate the bottom of an element', () => {
+    const bottomEl = $j('#bottomEl')[0];
+    expect(DomService.getBottom(bottomEl)).toBe(76);
+  });
+
+  it('can calculate the bottom of the lowest element in a document', () => {
+    expect(DomService.getLowestElementBottom(document)).toBe(1050);
+  });
 });
 

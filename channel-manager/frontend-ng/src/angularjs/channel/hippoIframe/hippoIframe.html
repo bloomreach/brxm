@@ -20,7 +20,8 @@
       <div class="channel-iframe-scroll-x" flex layout="row">
         <iframe class="qa-view"
                 flex="noshrink"
-                ng-src="{{ iframe.getSrc() }}"></iframe>
+                ng-src="{{ iframe.getSrc() }}"
+                scrolling="no"></iframe>
         <div class="overlay qa-overlay" component-adder>
           <div ng-repeat="container in iframe.getContainers()" class="qa-container">
             <overlay-element class="overlay-element-container"

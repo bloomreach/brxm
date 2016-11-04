@@ -146,23 +146,14 @@ describe('OverlaySyncService', () => {
     });
   });
 
-  it('should not allow the iframe to show inner scroll bars', (done) => {
-    loadIframeFixture((iframeWindow) => {
-      const $html = $(iframeWindow.document.documentElement);
-      expect($html).toHaveCss({
-        overflow: 'hidden',
-      });
-      done();
-    });
-  });
-
   it('should not constrain the viewport by default', (done) => {
     spyOn(OverlaySyncService, 'onDOMChanged');
 
-    loadIframeFixture((iframeWindow) => {
-      const $doc = $(iframeWindow.document.body);
-      $doc.width(1200);
-      $doc.height(600);
+    loadIframeFixture(() => {
+      const $container = $iframe.contents().find('.container');
+
+      $container.width(1200);
+      $container.height(600);
       OverlaySyncService.syncIframe();
 
       expect($sheet).toHaveCss({
@@ -172,9 +163,25 @@ describe('OverlaySyncService', () => {
         'min-width': '1280px',
       });
 
-      expect($iframe.height()).toEqual(600);
-      expect($overlay.height()).toEqual(600);
-      expect($scrollX.height()).toEqual(600);
+      expect($iframe.height()).toEqual(600 + 2);
+      expect($overlay.height()).toEqual(600 + 2);
+      expect($scrollX.height()).toEqual(600 + 2);
+
+      done();
+    });
+  });
+
+  it('should calculate the iframe height based on the height marker element when present', (done) => {
+    spyOn(OverlaySyncService, 'onDOMChanged');
+
+    loadIframeFixture(() => {
+      $iframe.contents().find('body').append(`<div class="hippo-channel-manager-page-height-marker" 
+                                                   style="position: absolute; top: 1000px; margin-bottom: 42px;"/>`);
+      OverlaySyncService.syncIframe();
+
+      expect($iframe.height()).toEqual(1042);
+      expect($overlay.height()).toEqual(1042);
+      expect($scrollX.height()).toEqual(1042);
 
       done();
     });
@@ -194,20 +201,20 @@ describe('OverlaySyncService', () => {
   it('should show a horizontal scrollbar when viewport is constrained and site is not responsive', (done) => {
     spyOn(OverlaySyncService, 'onDOMChanged');
 
-    loadIframeFixture((iframeWindow) => {
-      const $doc = $(iframeWindow.document.body);
-      $doc.width(1200);
-      $doc.height(600);
+    loadIframeFixture(() => {
+      const $container = $iframe.contents().find('.container');
+      $container.width(1200);
+      $container.height(600);
 
       OverlaySyncService.setViewPortWidth(720);
       OverlaySyncService.syncIframe();
 
-      expect($iframe.width()).toEqual(1200);
-      expect($overlay.width()).toEqual(1200);
+      expect($iframe.width()).toEqual(1200 + 4);
+      expect($overlay.width()).toEqual(1200 + 4);
 
-      expect($iframe.height()).toEqual(600);
-      expect($overlay.height()).toEqual(600);
-      expect($scrollX.height()).toEqual(615);
+      expect($iframe.height()).toEqual(600 + 2);
+      expect($overlay.height()).toEqual(600 + 2);
+      expect($scrollX.height()).toEqual(600 + 15 + 2);
       done();
     });
   });
