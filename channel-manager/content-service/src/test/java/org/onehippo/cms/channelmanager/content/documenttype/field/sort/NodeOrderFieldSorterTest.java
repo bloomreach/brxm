@@ -53,10 +53,14 @@ public class NodeOrderFieldSorterTest {
                 .addNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE, "bla");
         final Node editorConfig = contentTypeRoot.addNode("editor:templates", "bla").addNode("_default_", "bla");
         editorConfig.addNode("no-field", "bla");
-        final Node editorField1 = editorConfig.addNode("field1", "bla");
-        editorConfig.addNode("field2", "bla");
-        editorConfig.addNode("also-no-field", "bla");
-        editorConfig.addNode("field3", "bla");
+        final Node editorFieldA = editorConfig.addNode("field-a", "bla");
+        editorFieldA.setProperty("field", "field1");
+        final Node editorFieldB = editorConfig.addNode("field-b", "bla");
+        editorFieldB.setProperty("field", "field3");
+        final Node editorFieldOther = editorConfig.addNode("also-no-field", "bla");
+        editorFieldOther.setProperty("field", "blabla");
+        final Node editorFieldC = editorConfig.addNode("field-c", "bla");
+        editorFieldC.setProperty("field", "field2");
 
         nodeType.addNode("field1", "bla").setProperty(HippoNodeType.HIPPO_PATH, "path1");
         nodeType.addNode("field2", "bla").setProperty(HippoNodeType.HIPPO_PATH, "path2");
@@ -71,7 +75,9 @@ public class NodeOrderFieldSorterTest {
 
         assertThat(fields.size(), equalTo(3));
         assertThat(fields.get(0).getContentTypeItem(), equalTo(item));
-        assertThat(fields.get(0).getEditorConfigNode(), equalTo(editorField1));
+        assertThat(fields.get(0).getEditorConfigNode(), equalTo(editorFieldA));
+        assertThat(fields.get(1).getEditorConfigNode(), equalTo(editorFieldB));
+        assertThat(fields.get(2).getEditorConfigNode(), equalTo(editorFieldC));
     }
 
     @Test
@@ -95,7 +101,8 @@ public class NodeOrderFieldSorterTest {
     public void createFieldContextWithRepositoryException() throws Exception {
         final Node editorConfig = createMock(Node.class);
 
-        expect(editorConfig.getName()).andThrow(new RepositoryException());
+        expect(editorConfig.hasProperty("field")).andThrow(new RepositoryException());
+        expect(editorConfig.getPath()).andReturn("/bla");
         replay(editorConfig);
 
         sorter.createFieldContext(editorConfig, null, null).get();
@@ -106,18 +113,21 @@ public class NodeOrderFieldSorterTest {
         final Node editorConfig = createMock(Node.class);
         final Node nodeType = createMock(Node.class);
         final Node fieldType = createMock(Node.class);
+        final Property fieldProperty = createMock(Property.class);
         final Property pathProperty = createMock(Property.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
 
-        expect(editorConfig.getName()).andReturn("field");
+        expect(editorConfig.hasProperty("field")).andReturn(true);
+        expect(editorConfig.getProperty("field")).andReturn(fieldProperty);
+        expect(fieldProperty.getString()).andReturn("field");
         expect(nodeType.hasNode("field")).andReturn(true);
         expect(nodeType.getNode("field")).andReturn(fieldType);
         expect(fieldType.getProperty(HippoNodeType.HIPPO_PATH)).andReturn(pathProperty);
         expect(pathProperty.getString()).andReturn("path");
         expect(context.getContentType()).andReturn(contentType);
         expect(contentType.getItem("path")).andReturn(null);
-        replay(editorConfig, nodeType, fieldType, pathProperty, context, contentType);
+        replay(editorConfig, fieldProperty, nodeType, fieldType, pathProperty, context, contentType);
 
         sorter.createFieldContext(editorConfig, nodeType, context).get();
     }

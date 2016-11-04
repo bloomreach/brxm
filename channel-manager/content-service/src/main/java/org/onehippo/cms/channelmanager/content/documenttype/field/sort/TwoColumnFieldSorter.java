@@ -59,7 +59,7 @@ public class TwoColumnFieldSorter extends NodeOrderFieldSorter {
                         .ifPresent(sortedFields::add);
             }
         } catch (RepositoryException e) {
-            log.warn("Problem sorting fields of content type {}", context.getContentType().getName(), e);
+            log.warn("Failed to sort fields of content type {}", context.getContentType().getName(), e);
         }
 
         return sortedFields;
@@ -77,7 +77,7 @@ public class TwoColumnFieldSorter extends NodeOrderFieldSorter {
                 }
             }
         } catch (RepositoryException e) {
-            log.warn("Problem checking the wicket id of content type field {}",
+            log.warn("Failed to check the wicket id of content type field {}",
                     JcrUtils.getNodePathQuietly(editorFieldNode), e);
         }
         return Optional.empty();

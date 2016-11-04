@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -60,17 +61,19 @@ public class NodeOrderFieldSorter implements FieldSorter {
     protected Optional<FieldTypeContext> createFieldContext(final Node editorFieldNode, final Node nodeTypeNode,
                                                             final ContentTypeContext context) {
         try {
-            final String fieldName = editorFieldNode.getName();
-            if (nodeTypeNode.hasNode(fieldName)) {
-                final Node fieldTypeNode = nodeTypeNode.getNode(fieldName);
-                final String path = fieldTypeNode.getProperty(HippoNodeType.HIPPO_PATH).getString();
-                final ContentTypeItem item = context.getContentType().getItem(path);
-                if (item != null) {
-                    return Optional.of(new FieldTypeContext(editorFieldNode, item));
+            if (editorFieldNode.hasProperty("field")) {
+                final String fieldName = editorFieldNode.getProperty("field").getString();
+                if (nodeTypeNode.hasNode(fieldName)) {
+                    final Node fieldTypeNode = nodeTypeNode.getNode(fieldName);
+                    final String path = fieldTypeNode.getProperty(HippoNodeType.HIPPO_PATH).getString();
+                    final ContentTypeItem item = context.getContentType().getItem(path);
+                    if (item != null) {
+                        return Optional.of(new FieldTypeContext(editorFieldNode, item));
+                    }
                 }
             }
         } catch (RepositoryException e) {
-            log.warn("Failed to create field context", editorFieldNode, e);
+            log.warn("Failed to create field context for node {}", JcrUtils.getNodePathQuietly(editorFieldNode), e);
         }
         return Optional.empty();
     }
