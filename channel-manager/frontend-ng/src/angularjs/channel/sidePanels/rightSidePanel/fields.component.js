@@ -36,12 +36,12 @@ export class ChannelFieldsCtrl {
     }
 
     let hasFocused = field.fields.findIndex(newField => newField.focused) !== -1;
-    for (const newField of field.fields) {
+    field.fields.forEach((newField) => {
       const childFieldHasFocused = this.hasFocusedField(newField);
       if (childFieldHasFocused) {
         hasFocused = true;
       }
-    }
+    });
     return hasFocused;
   }
 
