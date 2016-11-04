@@ -184,27 +184,14 @@ public class StringFieldType extends FieldType {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Optional<Object> validate(final Optional<Object> optionalValue) {
         final boolean isRequired = getValidators().contains(Validator.REQUIRED);
         if (isRequired) {
             if (optionalValue.isPresent()) {
                 final Object value = optionalValue.get();
                 if (value instanceof List) {
-                    final List<String> listOfStrings = (List<String>) value;
-                    final List<ValidationErrorInfo> errorList = new ArrayList<>();
-                    boolean errorFound = false;
-                    for (String string : listOfStrings) {
-                        if (string.isEmpty()) {
-                            errorList.add(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
-                            errorFound = true;
-                        } else {
-                            errorList.add(new ValidationErrorInfo());
-                        }
-
-                        if (errorFound) {
-                            return Optional.of(errorList);
-                        }
-                    }
+                    return validateMultiple((List<String>) value);
                 } else {
                     final String string = (String) value;
                     if (string.isEmpty()) {
@@ -217,5 +204,19 @@ public class StringFieldType extends FieldType {
         }
 
         return Optional.empty();
+    }
+
+    private Optional<Object> validateMultiple(final List<String> values) {
+        final List<ValidationErrorInfo> errorList = new ArrayList<>();
+        boolean errorFound = false;
+        for (String string : values) {
+            if (string.isEmpty()) {
+                errorList.add(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+                errorFound = true;
+            } else {
+                errorList.add(new ValidationErrorInfo());
+            }
+        }
+        return errorFound ? Optional.of(errorList) : Optional.empty();
     }
 }

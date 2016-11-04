@@ -528,6 +528,20 @@ public class StringFieldTypeTest {
         assertNull(errorList.get(0).getCode());
         assertThat(errorList.get(1).getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
 
+        error = fieldType.validate(Optional.of(Arrays.asList("", "bla"))).get();
+        assertTrue((error instanceof List));
+        errorList = (List<ValidationErrorInfo>) error;
+        assertThat(errorList.size(), equalTo(2));
+        assertThat(errorList.get(0).getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertNull(errorList.get(1).getCode());
+
+        error = fieldType.validate(Optional.of(Arrays.asList("", ""))).get();
+        assertTrue((error instanceof List));
+        errorList = (List<ValidationErrorInfo>) error;
+        assertThat(errorList.size(), equalTo(2));
+        assertThat(errorList.get(0).getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(errorList.get(1).getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+
         assertFalse(fieldType.validate(Optional.of(Arrays.asList("bla", "blo"))).isPresent());
     }
 }
