@@ -29,13 +29,13 @@
     <input disabled value="{{ 'NONE' | translate }}" placeholder="">
   </md-input-container>
 
-  <div ng-switch-when="COMPOUND">
-    <h5>
+  <div ng-switch-when="COMPOUND"
+       ng-repeat="value in ::$ctrl.getFieldAsArray(fieldType.id)">
+    <h5 ng-if="$first">
       <md-icon class="material-icons">keyboard_arrow_down</md-icon>
       {{ ::fieldType.displayName }}
     </h5>
     <channel-fields ng-if="fieldType.multiple"
-                    ng-repeat="value in ::$ctrl.getFieldAsArray(fieldType.id)"
                     field-types="::fieldType.fields"
                     field-values="$ctrl.fieldValues[fieldType.id][$index]">
     </channel-fields>
