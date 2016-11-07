@@ -73,6 +73,7 @@
                 ng-if="fieldType.multiple"
                 ng-model="$ctrl.fieldValues[fieldType.id][$index]"
                 placeholder=""
+                aria-label="{{::fieldType.displayName}}"
                 md-no-resize
                 ng-focus="$ctrl.onFieldFocus(fieldType)"
                 ng-blur="$ctrl.onFieldBlur(fieldType)">
@@ -81,6 +82,7 @@
                 ng-if="!fieldType.multiple"
                 ng-model="$ctrl.fieldValues[fieldType.id]"
                 placeholder=""
+                aria-label="{{::fieldType.displayName}}"
                 md-no-resize
                 ng-focus="$ctrl.onFieldFocus(fieldType)"
                 ng-blur="$ctrl.onFieldBlur(fieldType)">
