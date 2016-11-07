@@ -28,11 +28,22 @@
   }
 }
 
+.field-wrapper {
+  padding: $form-padding;
+}
+
 form {
   &> channel-fields {
     &> .form-field-compound {
       border-left: 3px solid $grey-500;
     }
+  }
+}
+
+.form-field-compound {
+  padding: 0 8px;
+  h5 {
+    margin-left: -6px;
   }
 }
 
@@ -52,7 +63,7 @@ form {
 channel-fields {
   channel-fields {
     md-input-container {
-      margin-left: 4px;
+      margin-left: 6px;
     }
   }
 }

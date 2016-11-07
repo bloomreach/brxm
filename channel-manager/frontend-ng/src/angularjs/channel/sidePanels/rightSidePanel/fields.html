@@ -13,7 +13,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div ng-repeat="fieldType in ::$ctrl.fieldTypes"
+<div class="field-wrapper"
+     ng-repeat="fieldType in ::$ctrl.fieldTypes"
      ng-class="{
       'form-field-focused': $ctrl.hasFocusedField(fieldType),
       'form-field-compound': fieldType.type == 'COMPOUND'
