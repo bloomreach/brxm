@@ -166,7 +166,6 @@ class DomService {
     }
     return isVisible;
   }
-}
 
   getLowestElementBottom(document) {
     const allElements = document.querySelectorAll('body *');
