@@ -26,7 +26,7 @@ export class ChannelFieldsCtrl {
   }
 
   getFieldAsArray(fieldId) {
-    const field = this.fieldValues[fieldId];
+    const field = this.fieldValues[fieldId] || [];
     return angular.isArray(field) ? field : [field];
   }
 
