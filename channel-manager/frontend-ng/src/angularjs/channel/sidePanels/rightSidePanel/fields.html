@@ -61,12 +61,14 @@
              ng-if="fieldType.multiple"
              ng-model="$ctrl.fieldValues[fieldType.id][$index]"
              placeholder=""
+             aria-label="{{::fieldType.displayName}}"
              ng-focus="$ctrl.onFieldFocus(fieldType)"
              ng-blur="$ctrl.onFieldBlur(fieldType)">
       <input ng-switch-when="STRING"
              ng-if="!fieldType.multiple"
              ng-model="$ctrl.fieldValues[fieldType.id]"
              placeholder=""
+             aria-label="{{::fieldType.displayName}}"
              ng-focus="$ctrl.onFieldFocus(fieldType)"
              ng-blur="$ctrl.onFieldBlur(fieldType)">
       <textarea ng-switch-when="MULTILINE_STRING"
