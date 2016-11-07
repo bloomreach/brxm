@@ -158,6 +158,16 @@ class DomService {
     return rectBottom + marginBottom;
   }
 
+  isVisible(jqueryElement) {
+    let isVisible = jqueryElement.is(':visible');
+    if (isVisible) {
+      const style = window.getComputedStyle(jqueryElement[0]);
+      isVisible = style.visibility !== 'hidden';
+    }
+    return isVisible;
+  }
+}
+
   getLowestElementBottom(document) {
     const allElements = document.querySelectorAll('body *');
     const count = allElements.length;
