@@ -179,6 +179,11 @@ describe('DomService', () => {
     expect(DomService.getLowestElementBottom(document)).toBe(1050);
   });
 
+  it('can calculate the bottom margin of an element', () => {
+    const bottomEl = $j('#bottomEl')[0];
+    expect(DomService.getBottomMargin(bottomEl)).toBe(6);
+  });
+
   it('can check if an element is hidden on the page', () => {
     $j('.shouldBeHidden').each((index, el) => {
       expect(DomService.isVisible($j(el))).toBe(false);
