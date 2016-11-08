@@ -30,6 +30,7 @@
   </md-input-container>
 
   <div ng-switch-when="COMPOUND"
+       ng-if="::!$ctrl.isEmptyMultiple(fieldType)"
        ng-repeat="value in ::$ctrl.getFieldAsArray(fieldType.id)">
     <h5 ng-if="$first">
       <md-icon class="material-icons">keyboard_arrow_down</md-icon>
@@ -46,9 +47,9 @@
   </div>
 
   <!-- other cases -->
-  <div ng-switch-default>
-    <md-input-container ng-if="::!$ctrl.isEmptyMultiple(fieldType)"
-                        class="md-block qa-field"
+  <div ng-switch-default
+       ng-if="::!$ctrl.isEmptyMultiple(fieldType)">
+    <md-input-container class="md-block qa-field"
                         ng-class="::{'form-field-multiple': fieldType.multiple}"
                         md-no-float
                         ng-repeat="value in ::$ctrl.getFieldAsArray(fieldType.id)"
