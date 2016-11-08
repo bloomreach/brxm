@@ -153,9 +153,16 @@ class DomService {
 
   getBottom(element) {
     const rectBottom = element.getBoundingClientRect().bottom;
-    const marginBottomPx = element.ownerDocument.defaultView.getComputedStyle(element).marginBottom;
-    const marginBottom = parseInt(marginBottomPx, 10);
+    const marginBottom = this.getBottomMargin(element);
     return rectBottom + marginBottom;
+  }
+
+  getBottomMargin(element) {
+    const computedStyle = window.getComputedStyle(element);
+    if (computedStyle && computedStyle.marginBottom) {
+      return parseInt(computedStyle.marginBottom, 10);
+    }
+    return 0;
   }
 
   isVisible(jqueryElement) {
