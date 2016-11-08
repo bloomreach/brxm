@@ -13,11 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div ng-repeat="fieldType in ::$ctrl.fieldTypes"
+<div class="field-wrapper"
+     ng-repeat="fieldType in ::$ctrl.fieldTypes"
      ng-class="{
       'form-field-focused': $ctrl.hasFocusedField(fieldType),
       'form-field-compound': fieldType.type == 'COMPOUND'
-     }">
+     }"
+     ng-switch="fieldType.type">
 
   <!-- edge case: a multiple field with zero values -->
   <md-input-container ng-if="::$ctrl.isEmptyMultiple(fieldType)"
@@ -27,36 +29,68 @@
     <input disabled value="{{ 'NONE' | translate }}" placeholder="">
   </md-input-container>
 
-  <!-- other cases -->
-  <md-input-container ng-if="::!$ctrl.isEmptyMultiple(fieldType)"
-                      class="md-block qa-field"
-                      ng-class="::{'form-field-multiple': fieldType.multiple}"
-                      md-no-float
-                      ng-repeat="value in ::$ctrl.getFieldAsArray(fieldType.id)"
-                      ng-switch="fieldType.type">
-
-    <h5 ng-if="fieldType.type == 'COMPOUND'">
+  <div ng-switch-when="COMPOUND"
+       ng-if="::!$ctrl.isEmptyMultiple(fieldType)"
+       ng-repeat="value in ::$ctrl.getFieldAsArray(fieldType.id)">
+    <h5 ng-if="$first">
       <md-icon class="material-icons">keyboard_arrow_down</md-icon>
       {{ ::fieldType.displayName }}
     </h5>
-    <label ng-if="$first && fieldType.type != 'COMPOUND'">{{ ::fieldType.displayName }}</label>
+    <channel-fields ng-if="fieldType.multiple"
+                    field-types="::fieldType.fields"
+                    field-values="$ctrl.fieldValues[fieldType.id][$index]">
+    </channel-fields>
+    <channel-fields ng-if="!fieldType.multiple"
+                    field-types="::fieldType.fields"
+                    field-values="$ctrl.fieldValues[fieldType.id]">
+    </channel-fields>
+  </div>
 
-    <!-- editors per field type -->
-    <input ng-switch-when="STRING"
-           ng-model="$ctrl.fieldValues[fieldType.id]"
-           placeholder=""
-           ng-focus="$ctrl.onFieldFocus(fieldType)"
-           ng-blur="$ctrl.onFieldBlur(fieldType)">
-    <textarea ng-switch-when="MULTILINE_STRING"
-              ng-model="$ctrl.fieldValues[fieldType.id]"
-              placeholder=""
-              md-no-resize
-              ng-focus="$ctrl.onFieldFocus(fieldType)"
-              ng-blur="$ctrl.onFieldBlur(fieldType)">
-    </textarea>
+  <!-- other cases -->
+  <div ng-switch-default
+       ng-if="::!$ctrl.isEmptyMultiple(fieldType)">
+    <md-input-container class="md-block qa-field"
+                        ng-class="::{'form-field-multiple': fieldType.multiple}"
+                        md-no-float
+                        ng-repeat="value in ::$ctrl.getFieldAsArray(fieldType.id)"
+                        ng-switch="fieldType.type">
 
-    <channel-fields field-types="::fieldType.fields" field-values="$ctrl.fieldValues[fieldType.id]"
-                    ng-switch-when="COMPOUND"></channel-fields>
+      <label ng-if="$first">{{ ::fieldType.displayName }}</label>
 
-  </md-input-container>
+      <!-- editors per field type -->
+      <input ng-switch-when="STRING"
+             ng-if="fieldType.multiple"
+             ng-model="$ctrl.fieldValues[fieldType.id][$index]"
+             placeholder=""
+             aria-label="{{::fieldType.displayName}}"
+             ng-focus="$ctrl.onFieldFocus(fieldType)"
+             ng-blur="$ctrl.onFieldBlur(fieldType)">
+      <input ng-switch-when="STRING"
+             ng-if="!fieldType.multiple"
+             ng-model="$ctrl.fieldValues[fieldType.id]"
+             placeholder=""
+             aria-label="{{::fieldType.displayName}}"
+             ng-focus="$ctrl.onFieldFocus(fieldType)"
+             ng-blur="$ctrl.onFieldBlur(fieldType)">
+      <textarea ng-switch-when="MULTILINE_STRING"
+                ng-if="fieldType.multiple"
+                ng-model="$ctrl.fieldValues[fieldType.id][$index]"
+                placeholder=""
+                aria-label="{{::fieldType.displayName}}"
+                md-no-resize
+                ng-focus="$ctrl.onFieldFocus(fieldType)"
+                ng-blur="$ctrl.onFieldBlur(fieldType)">
+      </textarea>
+      <textarea ng-switch-when="MULTILINE_STRING"
+                ng-if="!fieldType.multiple"
+                ng-model="$ctrl.fieldValues[fieldType.id]"
+                placeholder=""
+                aria-label="{{::fieldType.displayName}}"
+                md-no-resize
+                ng-focus="$ctrl.onFieldFocus(fieldType)"
+                ng-blur="$ctrl.onFieldBlur(fieldType)">
+      </textarea>
+
+    </md-input-container>
+  </div>
 </div>

@@ -28,6 +28,10 @@
   }
 }
 
+.field-wrapper {
+  padding: $form-padding;
+}
+
 form {
   &> channel-fields {
     &> .form-field-compound {
@@ -36,11 +40,18 @@ form {
   }
 }
 
+.form-field-compound {
+  padding: 0 8px;
+  h5 {
+    margin-left: -6px;
+  }
+}
+
 .form-field-focused {
   &.form-field-compound {
     border-color: $blue-500;
   }
-  &> md-input-container {
+  &> div {
     &> h5 {
       color: $blue-500 !important;
       md-icon {
@@ -52,7 +63,7 @@ form {
 channel-fields {
   channel-fields {
     md-input-container {
-      margin-left: 4px;
+      margin-left: 6px;
     }
   }
 }
