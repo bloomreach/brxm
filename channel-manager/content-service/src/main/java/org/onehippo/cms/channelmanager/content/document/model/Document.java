@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.document.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -30,8 +31,8 @@ public class Document {
     private String id;                // UUID
     private String displayName;
     private DocumentInfo info;        // read-only information about (the current state of) the document
-    private Map<String, Object> fields;
-    private Map<String, Object> validationErrors;
+    private Map<String, List> fields;
+    private Map<String, List> validationErrors;
 
     public Document() {
         setInfo(new DocumentInfo());
@@ -61,22 +62,22 @@ public class Document {
         this.info = info;
     }
 
-    public Map<String, Object> getFields() {
+    public Map<String, List> getFields() {
         return fields;
     }
 
-    public void addField(final String id, final Object field) {
+    public void addField(final String id, final List field) {
         if (fields == null) {
             fields = new HashMap<>();
         }
         fields.put(id, field);
     }
 
-    public Map<String, Object> getValidationErrors() {
+    public Map<String, List> getValidationErrors() {
         return validationErrors;
     }
 
-    public void addValidationError(final String id, final Object error) {
+    public void addValidationError(final String id, final List error) {
         if (validationErrors == null) {
             validationErrors = new HashMap<>();
         }

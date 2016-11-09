@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -57,13 +58,13 @@ public class FieldType {
     private String displayName;   // using the correct language/locale
     private String hint;          // using the correct language/locale
 
-    private boolean multiple;
+    @JsonIgnore
+    private int minValues = 1;
+    @JsonIgnore
+    private int maxValues = 1;
+
     // private boolean orderable; // future improvement
     // private boolean readOnly;  // future improvement
-
-    @JsonIgnore
-    private boolean optional;     // optional field has cardinality 0 or 1.
-                                  // the API exposes multiple=true for optional fields
 
     private Set<Validator> validators = new HashSet<>();
 
@@ -122,20 +123,20 @@ public class FieldType {
         this.hint = hint;
     }
 
-    public boolean isMultiple() {
-        return multiple;
+    public int getMinValues() {
+        return minValues;
     }
 
-    public void setMultiple(final boolean multiple) {
-        this.multiple = multiple;
+    public void setMinValues(final int minValues) {
+        this.minValues = minValues;
     }
 
-    public boolean isOptional() {
-        return optional;
+    public int getMaxValues() {
+        return maxValues;
     }
 
-    public void setOptional(final boolean optional) {
-        this.optional = optional;
+    public void setMaxValues(final int maxValues) {
+        this.maxValues = maxValues;
     }
 
     public Set<Validator> getValidators() {
@@ -144,6 +145,10 @@ public class FieldType {
 
     public void addValidator(final Validator validator) {
         validators.add(validator);
+    }
+
+    public boolean isRequired() {
+        return getValidators().contains(Validator.REQUIRED);
     }
 
     public List<FieldType> getFields() {
@@ -161,7 +166,7 @@ public class FieldType {
      * @param node JCR node to read the value from
      * @return     Object representing the value, or nothing, wrapped in an Optional
      */
-    public Optional<Object> readFrom(Node node) {
+    public Optional<List> readFrom(Node node) {
         return Optional.empty();
     }
 
@@ -182,11 +187,11 @@ public class FieldType {
     /**
      * Validate the current value of this field against all applicable (and supported) validators.
      *
-     * @param optionalValue value to validate, or nothing, wrapped in an Optional
+     * @param optionalValues value(s) to validate, or nothing, wrapped in an Optional
      * @return     validation error or nothing, wrapped in an Optional.
      *             The validation error can be either a {@link ValidationErrorInfo} or a map of sub-validation errors.
      */
-    public Optional<Object> validate(final Optional<Object> optionalValue) {
+    public Optional<List> validate(final Optional<List> optionalValues) {
         return Optional.empty();
     }
 
@@ -212,15 +217,51 @@ public class FieldType {
             LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
         });
 
-        if (item.getValidators().contains(FieldValidators.OPTIONAL)) {
-            setOptional(true);
-        }
-        if (item.isMultiple() || isOptional()) {
-            setMultiple(true);
-        }
-
         FieldTypeUtils.determineValidators(this, docType, item.getValidators());
 
+        // determine cardinality
+        if (item.getValidators().contains(FieldValidators.OPTIONAL)) {
+            setMinValues(0);
+            setMaxValues(1);
+        }
+        if (item.isMultiple()) {
+            setMinValues(0);
+            setMaxValues(Integer.MAX_VALUE);
+        }
+
         return Optional.of(this);
+    }
+
+    protected void trimToMaxValues(final List list) {
+        while (list.size() > maxValues) {
+            list.remove(list.size() - 1);
+        }
+    }
+
+    protected <T> List<T> checkValue(final Optional<Object> optionalValue, final Class<T> listItemClass) throws BadRequestException {
+        final Object value = optionalValue.orElse(Collections.emptyList());
+        if (!(value instanceof List)) {
+            throw BAD_REQUEST_INVALID_DATA;
+        }
+        final List values = (List)value;
+
+        // check cardinality
+        if (values.size() < getMinValues()) {
+            throw BAD_REQUEST_INVALID_DATA;
+        }
+        if (values.size() > getMaxValues()) {
+            throw BAD_REQUEST_INVALID_DATA;
+        }
+
+        if (isRequired() && values.isEmpty()) {
+            throw BAD_REQUEST_INVALID_DATA;
+        }
+
+        for (Object v : values) {
+            if (!(listItemClass.isAssignableFrom(v.getClass()))) {
+                throw BAD_REQUEST_INVALID_DATA;
+            }
+        }
+        return (List<T>) values;
     }
 }

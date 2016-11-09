@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.document;
 
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -95,7 +96,7 @@ class DocumentsServiceImpl implements DocumentsService {
                 .orElseThrow(NotFoundException::new);
 
         // Push fields onto draft node
-        final Map<String, Object> valueMap = document.getFields();
+        final Map<String, List> valueMap = document.getFields();
         for (FieldType fieldType : docType.getFields()) {
             fieldType.writeTo(draft, Optional.ofNullable(valueMap.get(fieldType.getId())));
         }
