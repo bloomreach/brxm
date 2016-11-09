@@ -13,17 +13,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div class="field-wrapper"
-     ng-repeat="fieldType in ::$ctrl.fieldTypes"
-     ng-class="{
-      'form-field-focused': $ctrl.hasFocusedField(fieldType),
-      'form-field-compound': fieldType.type == 'COMPOUND'
-     }"
-     ng-switch="fieldType.type">
-
+<div ng-repeat="fieldType in ::$ctrl.fieldTypes"
+     ng-switch="fieldType.type"
+     class="field-wrapper">
   <!-- edge case: a multiple field with zero values -->
   <md-input-container ng-if="::!$ctrl.hasValue(fieldType)"
-                      class="md-block qa-field"
+                      class="md-block field qa-field"
                       md-no-float>
     <label>{{ ::fieldType.displayName }}</label>
     <input disabled value="{{ 'NONE' | translate }}" placeholder="">
@@ -31,6 +26,11 @@
 
   <div ng-switch-when="COMPOUND"
        ng-if="::$ctrl.hasValue(fieldType)"
+       class="field"
+       ng-class="{
+        'form-field-focused': $ctrl.hasFocusedField(fieldType),
+        'form-field-compound': fieldType.type == 'COMPOUND'
+       }"
        ng-repeat="value in ::$ctrl.fieldValues[fieldType.id]">
     <h5>
       <md-icon class="material-icons">keyboard_arrow_down</md-icon>
@@ -42,7 +42,8 @@
   </div>
 
   <!-- other cases -->
-  <div ng-switch-default
+  <div class="field"
+       ng-switch-default
        ng-if="::$ctrl.hasValue(fieldType)">
     <md-input-container class="md-block qa-field"
                         md-no-float
