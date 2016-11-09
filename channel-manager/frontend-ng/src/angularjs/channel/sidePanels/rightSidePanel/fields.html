@@ -22,68 +22,45 @@
      ng-switch="fieldType.type">
 
   <!-- edge case: a multiple field with zero values -->
-  <md-input-container ng-if="::$ctrl.isEmptyMultiple(fieldType)"
-                      class="md-block form-field-multiple qa-field"
+  <md-input-container ng-if="::!$ctrl.hasValue(fieldType)"
+                      class="md-block qa-field"
                       md-no-float>
     <label>{{ ::fieldType.displayName }}</label>
     <input disabled value="{{ 'NONE' | translate }}" placeholder="">
   </md-input-container>
 
   <div ng-switch-when="COMPOUND"
-       ng-if="::!$ctrl.isEmptyMultiple(fieldType)"
-       ng-repeat="value in ::$ctrl.getFieldAsArray(fieldType.id)">
-    <h5 ng-if="$first">
+       ng-if="::$ctrl.hasValue(fieldType)"
+       ng-repeat="value in ::$ctrl.fieldValues[fieldType.id]">
+    <h5>
       <md-icon class="material-icons">keyboard_arrow_down</md-icon>
-      {{ ::fieldType.displayName }}
+      {{ ::$ctrl.getDisplayNameForCompound(fieldType, $index) }}
     </h5>
-    <channel-fields ng-if="fieldType.multiple"
-                    field-types="::fieldType.fields"
+    <channel-fields field-types="::fieldType.fields"
                     field-values="$ctrl.fieldValues[fieldType.id][$index]">
-    </channel-fields>
-    <channel-fields ng-if="!fieldType.multiple"
-                    field-types="::fieldType.fields"
-                    field-values="$ctrl.fieldValues[fieldType.id]">
     </channel-fields>
   </div>
 
   <!-- other cases -->
   <div ng-switch-default
-       ng-if="::!$ctrl.isEmptyMultiple(fieldType)">
+       ng-if="::$ctrl.hasValue(fieldType)">
     <md-input-container class="md-block qa-field"
-                        ng-class="::{'form-field-multiple': fieldType.multiple}"
                         md-no-float
-                        ng-repeat="value in ::$ctrl.getFieldAsArray(fieldType.id)"
+                        ng-repeat="value in ::$ctrl.fieldValues[fieldType.id]"
                         ng-switch="fieldType.type">
 
       <label ng-if="$first">{{ ::fieldType.displayName }}</label>
 
       <!-- editors per field type -->
       <input ng-switch-when="STRING"
-             ng-if="fieldType.multiple"
              ng-model="$ctrl.fieldValues[fieldType.id][$index]"
              placeholder=""
              aria-label="{{::fieldType.displayName}}"
              ng-focus="$ctrl.onFieldFocus(fieldType)"
              ng-blur="$ctrl.onFieldBlur(fieldType)">
-      <input ng-switch-when="STRING"
-             ng-if="!fieldType.multiple"
-             ng-model="$ctrl.fieldValues[fieldType.id]"
-             placeholder=""
-             aria-label="{{::fieldType.displayName}}"
-             ng-focus="$ctrl.onFieldFocus(fieldType)"
-             ng-blur="$ctrl.onFieldBlur(fieldType)">
+
       <textarea ng-switch-when="MULTILINE_STRING"
-                ng-if="fieldType.multiple"
                 ng-model="$ctrl.fieldValues[fieldType.id][$index]"
-                placeholder=""
-                aria-label="{{::fieldType.displayName}}"
-                md-no-resize
-                ng-focus="$ctrl.onFieldFocus(fieldType)"
-                ng-blur="$ctrl.onFieldBlur(fieldType)">
-      </textarea>
-      <textarea ng-switch-when="MULTILINE_STRING"
-                ng-if="!fieldType.multiple"
-                ng-model="$ctrl.fieldValues[fieldType.id]"
                 placeholder=""
                 aria-label="{{::fieldType.displayName}}"
                 md-no-resize

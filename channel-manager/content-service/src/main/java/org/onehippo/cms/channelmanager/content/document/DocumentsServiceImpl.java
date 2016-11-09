@@ -38,7 +38,6 @@ import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
-import org.onehippo.cms.channelmanager.content.MockResponse;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
@@ -141,10 +140,6 @@ class DocumentsServiceImpl implements DocumentsService {
 
     @Override
     public Document getPublished(final String uuid, final Session session) throws ErrorWithPayloadException {
-        if ("test".equals(uuid)) {
-            return MockResponse.createTestDocument(uuid);
-        }
-
         final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(NotFoundException::new);
         final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)
                                                        .orElseThrow(NotFoundException::new);

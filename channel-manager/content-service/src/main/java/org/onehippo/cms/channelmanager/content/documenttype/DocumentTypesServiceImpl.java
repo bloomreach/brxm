@@ -26,7 +26,6 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.MockResponse;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.FieldTypeUtils;
@@ -65,10 +64,6 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     @Override
     public DocumentType getDocumentType(final String id, final Session userSession, final Optional<Locale> locale)
             throws ErrorWithPayloadException {
-        if ("ns:testdocument".equals(id)) {
-            return MockResponse.createTestDocumentType();
-        }
-
         final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext(id, userSession, 0, locale)
                 .orElseThrow(NotFoundException::new);
 

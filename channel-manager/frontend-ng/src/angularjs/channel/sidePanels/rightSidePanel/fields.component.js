@@ -21,16 +21,9 @@ export class ChannelFieldsCtrl {
     'ngInject';
   }
 
-  isEmptyMultiple(field) {
-    return field.multiple && (!this.fieldValues[field.id] || this.fieldValues[field.id].length === 0);
-  }
-
-  getFieldAsArray(fieldId) {
-    let field = this.fieldValues[fieldId];
-    if (typeof field === 'undefined') {
-      field = [];
-    }
-    return angular.isArray(field) ? field : [field];
+  hasValue(field) {
+    const values = this.fieldValues[field.id];
+    return angular.isArray(values) && values.length > 0;
   }
 
   hasFocusedField(field) {
@@ -46,6 +39,17 @@ export class ChannelFieldsCtrl {
       }
     });
     return hasFocused;
+  }
+
+  getDisplayNameForCompound(field, index) {
+    if (this.hasValue(field)) {
+      const values = this.fieldValues[field.id];
+      if (values.length > 1) {
+        return `${field.displayName} (${index + 1})`;
+      }
+    }
+
+    return field.displayName;
   }
 
   onFieldFocus(field) {

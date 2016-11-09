@@ -27,22 +27,18 @@ describe('ChannelFields', () => {
   const multipleStringField = {
     id: 'ns:multiplestring',
     type: 'STRING',
-    multiple: true,
   };
   const emptyMultipleStringField = {
     id: 'ns:emptymultiplestring',
     type: 'STRING',
-    multiple: true,
   };
   const textField = {
     id: 'ns:text',
     type: 'MULTILINE_STRING',
-    multiple: false,
   };
   const requiredTextField = {
     id: 'ns:requiredtext',
     type: 'MULTILINE_STRING',
-    multiple: false,
     validators: [
       'REQUIRED',
     ],
@@ -50,18 +46,15 @@ describe('ChannelFields', () => {
   const nestedString = {
     id: 'ns:nestedstring',
     type: 'STRING',
-    multiple: false,
   };
   const nestedTextCompound = {
     id: 'ns:nestedtextcompound',
     type: 'COMPOUND',
-    multiple: false,
     fields: [textField, requiredTextField],
   };
   const nestedCompound = {
     id: 'ns:nestedcompound',
     type: 'COMPOUND',
-    multiple: false,
     fields: [nestedString, nestedTextCompound],
   };
   const testDocumentType = {
@@ -80,7 +73,7 @@ describe('ChannelFields', () => {
       },
     },
     fields: {
-      'ns:string': 'String value',
+      'ns:string': ['String value'],
       'ns:multiplestring': ['One', 'Two'],
       'ns:emptymultiplestring': [],
     },
@@ -108,15 +101,26 @@ describe('ChannelFields', () => {
   });
 
   it('recognizes an empty multiple field', () => {
-    expect($ctrl.isEmptyMultiple(stringField)).toBeFalsy();
-    expect($ctrl.isEmptyMultiple(multipleStringField)).toBeFalsy();
-    expect($ctrl.isEmptyMultiple(emptyMultipleStringField)).toBeTruthy();
+    expect($ctrl.hasValue(stringField)).toBe(true);
+    expect($ctrl.hasValue(multipleStringField)).toBe(true);
+    expect($ctrl.hasValue(emptyMultipleStringField)).toBe(false);
+
+    testDocument.fields.invalid = 'not an array';
+    expect($ctrl.hasValue({ id: 'invalid' })).toBe(false);
   });
 
-  it('can get a field as an array', () => {
-    expect($ctrl.getFieldAsArray('ns:string')).toEqual(['String value']);
-    expect($ctrl.getFieldAsArray('ns:multiplestring')).toEqual(['One', 'Two']);
-    expect($ctrl.getFieldAsArray('ns:emptymultiplestring')).toEqual([]);
+  it('enumerates multiple compound fields', () => {
+    const field = {
+      id: 'multiple-compounds',
+      displayName: 'Compound Name',
+    };
+
+    expect($ctrl.getDisplayNameForCompound(field, 3)).toBe('Compound Name'); // no value
+    testDocument.fields['multiple-compounds'] = ['bla'];
+    expect($ctrl.getDisplayNameForCompound(field, 3)).toBe('Compound Name'); // single value
+    testDocument.fields['multiple-compounds'] = ['bla', 'bli'];
+    expect($ctrl.getDisplayNameForCompound(field, 0)).toBe('Compound Name (1)'); // multiple values, enumerate
+    expect($ctrl.getDisplayNameForCompound(field, 3)).toBe('Compound Name (4)'); // multiple values, enumerate
   });
 
   it('can check if a field without child fields does not execute hasFocusedField', () => {
