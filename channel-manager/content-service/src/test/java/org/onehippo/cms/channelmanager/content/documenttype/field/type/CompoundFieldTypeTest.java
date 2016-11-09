@@ -29,6 +29,7 @@ import javax.jcr.RepositoryException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -83,11 +84,10 @@ public class CompoundFieldTypeTest {
     public void readFromSinglePresentCompound() throws Exception {
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Value");
 
-        final List list = fieldType.readFrom(node).get();
+        final List<FieldValue> list = fieldType.readFrom(node).get();
         assertThat(list.size(), equalTo(1));
-        assertTrue(list.get(0) instanceof Map);
-        final Map map = (Map) list.get(0);
-        assertThat(map.get(STRING_PROPERTY_1), equalTo(Collections.singletonList("Value")));
+        final Map<String, List<FieldValue>> map = list.get(0).getFields();
+        assertThat(map.get(STRING_PROPERTY_1).get(0).getValue(), equalTo("Value"));
         assertFalse(map.containsKey("compound:field"));
     }
 
@@ -101,11 +101,10 @@ public class CompoundFieldTypeTest {
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Value 1");
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Value 2");
 
-        final List values = fieldType.readFrom(node).get();
+        final List<FieldValue> values = fieldType.readFrom(node).get();
         assertThat(values.size(), equalTo(1));
-        assertTrue(values.get(0) instanceof Map);
-        final Map map = (Map)values.get(0);
-        assertThat(map.get(STRING_PROPERTY_1), equalTo(Collections.singletonList("Value 1")));
+        final Map<String, List<FieldValue>> map = values.get(0).getFields();
+        assertThat(map.get(STRING_PROPERTY_1).get(0).getValue(), equalTo("Value 1"));
         assertFalse(map.containsKey("compound:field"));
     }
 
@@ -114,11 +113,10 @@ public class CompoundFieldTypeTest {
         fieldType.setMinValues(0);
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Value");
 
-        final List values = fieldType.readFrom(node).get();
+        final List<FieldValue> values = fieldType.readFrom(node).get();
         assertThat(values.size(), equalTo(1));
-        assertTrue(values.get(0) instanceof Map);
-        final Map map = (Map)values.get(0);
-        assertThat(map.get(STRING_PROPERTY_1), equalTo(Collections.singletonList("Value")));
+        final Map<String, List<FieldValue>> map = values.get(0).getFields();
+        assertThat(map.get(STRING_PROPERTY_1).get(0).getValue(), equalTo("Value"));
         assertFalse(map.containsKey("compound:field"));
     }
 
@@ -135,11 +133,10 @@ public class CompoundFieldTypeTest {
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Value 1");
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Value 2");
 
-        final List values = fieldType.readFrom(node).get();
+        final List<FieldValue> values = fieldType.readFrom(node).get();
         assertThat(values.size(), equalTo(1));
-        assertTrue(values.get(0) instanceof Map);
-        final Map map = (Map)values.get(0);
-        assertThat(map.get(STRING_PROPERTY_1), equalTo(Collections.singletonList("Value 1")));
+        final Map<String, List<FieldValue>> map = values.get(0).getFields();
+        assertThat(map.get(STRING_PROPERTY_1).get(0).getValue(), equalTo("Value 1"));
     }
 
     @Test
@@ -148,11 +145,10 @@ public class CompoundFieldTypeTest {
         fieldType.setMaxValues(Integer.MAX_VALUE);
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Value");
 
-        final List values = fieldType.readFrom(node).get();
+        final List<FieldValue> values = fieldType.readFrom(node).get();
         assertThat(values.size(), equalTo(1));
-        assertTrue(values.get(0) instanceof Map);
-        final Map map = (Map)values.get(0);
-        assertThat(map.get(STRING_PROPERTY_1), equalTo(Collections.singletonList("Value")));
+        final Map<String, List<FieldValue>> map = values.get(0).getFields();
+        assertThat(map.get(STRING_PROPERTY_1).get(0).getValue(), equalTo("Value"));
         assertFalse(map.containsKey("compound:field"));
     }
 
@@ -171,12 +167,12 @@ public class CompoundFieldTypeTest {
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Value 1");
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Value 2");
 
-        final List values = fieldType.readFrom(node).get();
+        final List<FieldValue> values = fieldType.readFrom(node).get();
         assertThat(values.size(), equalTo(2));
-        final Map map1 = (Map)values.get(0);
-        assertThat(map1.get(STRING_PROPERTY_1), equalTo(Collections.singletonList("Value 1")));
-        final Map map2 = (Map)values.get(1);
-        assertThat(map2.get(STRING_PROPERTY_1), equalTo(Collections.singletonList("Value 2")));
+        final Map<String, List<FieldValue>> map1 = values.get(0).getFields();
+        assertThat(map1.get(STRING_PROPERTY_1).get(0).getValue(), equalTo("Value 1"));
+        final Map<String, List<FieldValue>> map2 = values.get(1).getFields();
+        assertThat(map2.get(STRING_PROPERTY_1).get(0).getValue(), equalTo("Value 2"));
     }
 
     @Test
@@ -210,31 +206,31 @@ public class CompoundFieldTypeTest {
         }
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
-        Map<String, Object> value = new HashMap<>();
+        FieldValue value = new FieldValue();
         try {
             fieldType.writeTo(node, Optional.of(value));
-            fail("Must be List of Map");
+            fail("Must be List of FieldValue");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
         }
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
         try {
-            fieldType.writeTo(node, Optional.of(Collections.singletonList("No Map")));
-            fail("Must be List of Map");
+            fieldType.writeTo(node, Optional.of(Collections.singletonList("No FieldValue")));
+            fail("Must be List of FieldValue");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
         }
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
-        fieldType.writeTo(node, Optional.of(listOf(validCompound())));
+        fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
         assertTrue(isWrittenSuccessfully(node.getNode(NODE_NAME)));
     }
 
     @Test
     public void writeToSingleAbsentCompound() throws Exception {
         try {
-            fieldType.writeTo(node, Optional.of(listOf(validCompound())));
+            fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
             fail("Unable to create compound node");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
@@ -247,7 +243,7 @@ public class CompoundFieldTypeTest {
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value 1");
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value 1");
 
-        fieldType.writeTo(node, Optional.of(listOf(validCompound())));
+        fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
 
         NodeIterator iterator = node.getNodes(NODE_NAME);
         assertThat(iterator.getSize(), equalTo(1L));
@@ -276,9 +272,9 @@ public class CompoundFieldTypeTest {
         }
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
-        Map<String, Object> value = new HashMap<>();
+        Map<String, List<FieldValue>> map = new HashMap<>();
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(value, value)));
+            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf(map), valueOf(map))));
             fail("Must not be more than 1 value");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
@@ -286,14 +282,14 @@ public class CompoundFieldTypeTest {
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
         try {
-            fieldType.writeTo(node, Optional.of(Collections.singletonList(value)));
+            fieldType.writeTo(node, Optional.of(listOf(valueOf(map))));
             fail("Map values must be accepted by sub-fields");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
         }
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
-        fieldType.writeTo(node, Optional.of(listOf(validCompound())));
+        fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
         assertTrue(isWrittenSuccessfully(node.getNode(NODE_NAME)));
     }
 
@@ -308,7 +304,7 @@ public class CompoundFieldTypeTest {
         assertFalse(node.hasNode(NODE_NAME));
 
         try {
-            fieldType.writeTo(node, Optional.of(listOf(validCompound())));
+            fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
             fail("Can't create new node");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
@@ -323,7 +319,7 @@ public class CompoundFieldTypeTest {
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value 1");
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value 2");
 
-        fieldType.writeTo(node, Optional.of(listOf(validCompound())));
+        fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
 
         NodeIterator iterator = node.getNodes(NODE_NAME);
         assertThat(iterator.getSize(), equalTo(1L));
@@ -353,9 +349,9 @@ public class CompoundFieldTypeTest {
         }
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
-        Map<String, Object> value = new HashMap<>();
+        Map<String, List<FieldValue>> map = new HashMap<>();
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(value, value)));
+            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf(map), valueOf(map))));
             fail("Must not be more than 1 value");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
@@ -363,14 +359,14 @@ public class CompoundFieldTypeTest {
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
         try {
-            fieldType.writeTo(node, Optional.of(Collections.singletonList(value)));
+            fieldType.writeTo(node, Optional.of(listOf(valueOf(map))));
             fail("Map values must be accepted by sub-fields");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
         }
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
-        fieldType.writeTo(node, Optional.of(listOf(validCompound())));
+        fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
         assertTrue(isWrittenSuccessfully(node.getNode(NODE_NAME)));
     }
 
@@ -386,7 +382,7 @@ public class CompoundFieldTypeTest {
         assertFalse(node.hasNode(NODE_NAME));
 
         try {
-            fieldType.writeTo(node, Optional.of(listOf(validCompound())));
+            fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
             fail("Cannot create node");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
@@ -402,23 +398,23 @@ public class CompoundFieldTypeTest {
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value 1");
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value 2");
 
-        Map<String, Object> value = validCompound();
+        Map<String, List<FieldValue>> map = validCompound();
 
         try {
-            fieldType.writeTo(node, Optional.of(listOf(value)));
+            fieldType.writeTo(node, Optional.of(listOf(valueOf(map))));
             fail("Cardinality too low");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
         }
 
         try {
-            fieldType.writeTo(node, Optional.of(Arrays.asList(value, value, value)));
+            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf(map), valueOf(map), valueOf(map))));
             fail("Cardinality too high");
         } catch (BadRequestException e) {
             assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.CARDINALITY_CHANGE));
         }
 
-        fieldType.writeTo(node, Optional.of(Arrays.asList(value, value)));
+        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf(map), valueOf(map))));
 
         NodeIterator iterator = node.getNodes(NODE_NAME);
         assertThat(iterator.getSize(), equalTo(2L));
@@ -446,73 +442,80 @@ public class CompoundFieldTypeTest {
 
     @Test
     public void validateEmpty() {
-        assertFalse(fieldType.validate(Optional.empty()).isPresent());
-        assertFalse(fieldType.validate(Optional.of(Collections.emptyList())).isPresent());
+        assertTrue(fieldType.validate(Optional.empty()));
+        assertTrue(fieldType.validate(Optional.of(Collections.emptyList())));
     }
 
     @Test
     public void validateSingle() {
         stringField2.addValidator(FieldType.Validator.REQUIRED);
 
-        Map<String, Object> valueMap = validCompound();
-        assertFalse(fieldType.validate(Optional.of(listOf(valueMap))).isPresent());
+        Map<String, List<FieldValue>> valueMap = validCompound();
+        assertTrue(fieldType.validate(Optional.of(listOf(valueOf(valueMap)))));
 
-        // remove required
-        valueMap.put(STRING_PROPERTY_2, Collections.singletonList(""));
-        final List errors = fieldType.validate(Optional.of(listOf(valueMap))).get();
-        assertThat(errors.size(), equalTo(1));
-        assertTrue(errors.get(0) instanceof Map);
-        final Map<String, List> errorMap = (Map<String, List>) errors.get(0);
-        assertFalse(errorMap.containsKey(STRING_PROPERTY_1));
-        assertTrue(errorMap.containsKey(STRING_PROPERTY_2));
-        final ValidationErrorInfo errorInfo = (ValidationErrorInfo) errorMap.get(STRING_PROPERTY_2).get(0);
-        assertTrue(errorInfo.getCode() == ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY);
+        valueMap.put(STRING_PROPERTY_2, listOf(valueOf(""))); // remove required
+
+        assertFalse(fieldType.validate(Optional.of(listOf(valueOf(valueMap)))));
+        assertFalse(valueMap.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
+        assertThat(valueMap.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
+                equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
     }
 
     @Test
     public void validateMultiple() {
+        Map<String, List<FieldValue>> valueA;
+        Map<String, List<FieldValue>> valueB;
+
         stringField2.addValidator(FieldType.Validator.REQUIRED);
 
-        Map<String, Object> goodValue = validCompound();
-        Map<String, Object> badValue = validCompound();
-        badValue.put(STRING_PROPERTY_2, Collections.singletonList("")); // invalid, because required
+        valueA = validCompound();
+        valueB = validCompound();
 
-        assertFalse(fieldType.validate(Optional.of(Arrays.asList(goodValue, goodValue))).isPresent());
-
-        List errorMapList;
-        Map<String, List> errorMap;
+        assertTrue(fieldType.validate(Optional.of(Arrays.asList(valueOf(valueA), valueOf(valueB)))));
 
         // error in first instance
-        errorMapList = fieldType.validate(Optional.of(Arrays.asList(goodValue, badValue))).get();
-        assertThat(errorMapList.size(), equalTo(2));
-        assertTrue(((Map)errorMapList.get(0)).isEmpty());
-        errorMap = (Map<String, List>)errorMapList.get(1);
-        ValidationErrorInfo errorInfo = (ValidationErrorInfo) errorMap.get(STRING_PROPERTY_2).get(0);
-        assertThat(errorInfo.getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        valueA = validCompound();
+        valueA.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
+        valueB = validCompound();
+
+        assertFalse(fieldType.validate(Optional.of(Arrays.asList(valueOf(valueA), valueOf(valueB)))));
+        assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
+        assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
+                equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
+        assertFalse(valueB.get(STRING_PROPERTY_2).get(0).hasErrorInfo());
 
         // error in second instance
-        errorMapList = fieldType.validate(Optional.of(Arrays.asList(badValue, goodValue))).get();
-        assertThat(errorMapList.size(), equalTo(2));
-        errorMap = (Map<String, List>)errorMapList.get(0);
-        errorInfo = (ValidationErrorInfo) errorMap.get(STRING_PROPERTY_2).get(0);
-        assertThat(errorInfo.getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
-        assertTrue(((Map)errorMapList.get(1)).isEmpty());
+        valueA = validCompound();
+        valueB = validCompound();
+        valueB.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
+
+        assertFalse(fieldType.validate(Optional.of(Arrays.asList(valueOf(valueA), valueOf(valueB)))));
+        assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
+        assertFalse(valueA.get(STRING_PROPERTY_2).get(0).hasErrorInfo());
+        assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
+        assertThat(valueB.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
+                equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
 
         // error in both instances
-        errorMapList = fieldType.validate(Optional.of(Arrays.asList(badValue, badValue))).get();
-        assertThat(errorMapList.size(), equalTo(2));
-        errorMap = (Map<String, List>)errorMapList.get(0);
-        errorInfo = (ValidationErrorInfo) errorMap.get(STRING_PROPERTY_2).get(0);
-        assertThat(errorInfo.getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
-        errorMap = (Map<String, List>)errorMapList.get(1);
-        errorInfo = (ValidationErrorInfo) errorMap.get(STRING_PROPERTY_2).get(0);
-        assertThat(errorInfo.getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        valueA = validCompound();
+        valueA.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
+        valueB = validCompound();
+        valueB.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
+
+        assertFalse(fieldType.validate(Optional.of(Arrays.asList(valueOf(valueA), valueOf(valueB)))));
+        assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
+        assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
+                equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
+        assertThat(valueB.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
+                equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
     }
 
-    private Map<String, Object> validCompound() {
-        Map<String, Object> map = new HashMap<>();
-        map.put(STRING_PROPERTY_1, Collections.singletonList("New Value for String property 1"));
-        map.put(STRING_PROPERTY_2, Collections.singletonList("New Value for String property 2"));
+    private Map<String, List<FieldValue>> validCompound() {
+        Map<String, List<FieldValue>> map = new HashMap<>();
+        map.put(STRING_PROPERTY_1, listOf(valueOf("New Value for String property 1")));
+        map.put(STRING_PROPERTY_2, listOf(valueOf("New Value for String property 2")));
         return map;
     }
 
@@ -521,7 +524,15 @@ public class CompoundFieldTypeTest {
             && node.getProperty(STRING_PROPERTY_2).getString().equals("New Value for String property 2");
     }
 
-    private List<Map> listOf(final Map map) {
-        return Collections.singletonList(map);
+    private FieldValue valueOf(final Map<String, List<FieldValue>> value) {
+        return new FieldValue(value);
+    }
+
+    private FieldValue valueOf(final String value) {
+        return new FieldValue(value);
+    }
+
+    private List<FieldValue> listOf(final FieldValue value) {
+        return Collections.singletonList(value);
     }
 }

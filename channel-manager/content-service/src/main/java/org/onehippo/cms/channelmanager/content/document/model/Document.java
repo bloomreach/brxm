@@ -31,8 +31,7 @@ public class Document {
     private String id;                // UUID
     private String displayName;
     private DocumentInfo info;        // read-only information about (the current state of) the document
-    private Map<String, List> fields;
-    private Map<String, List> validationErrors;
+    private Map<String, List<FieldValue>> fields;
 
     public Document() {
         setInfo(new DocumentInfo());
@@ -62,29 +61,14 @@ public class Document {
         this.info = info;
     }
 
-    public Map<String, List> getFields() {
+    public Map<String, List<FieldValue>> getFields() {
         return fields;
     }
 
-    public void addField(final String id, final List field) {
+    public void addField(final String id, final List<FieldValue> field) {
         if (fields == null) {
             fields = new HashMap<>();
         }
         fields.put(id, field);
-    }
-
-    public Map<String, List> getValidationErrors() {
-        return validationErrors;
-    }
-
-    public void addValidationError(final String id, final List error) {
-        if (validationErrors == null) {
-            validationErrors = new HashMap<>();
-        }
-        validationErrors.put(id, error);
-    }
-
-    public boolean hasValidationErrors() {
-        return validationErrors != null && !validationErrors.isEmpty();
     }
 }

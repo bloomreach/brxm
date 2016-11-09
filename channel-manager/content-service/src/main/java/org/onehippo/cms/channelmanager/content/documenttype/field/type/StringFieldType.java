@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -58,36 +59,36 @@ public class StringFieldType extends FieldType {
      * rejected upon write.
      */
     @Override
-    public Optional<List> readFrom(final Node node) {
-        final List<String> values = readValues(node);
+    public Optional<List<FieldValue>> readFrom(final Node node) {
+        final List<FieldValue> values = readValues(node);
 
         // Adjust values towards valid cardinality
         trimToMaxValues(values);
         while (values.size() < getMinValues()) {
-            values.add("");
+            values.add(new FieldValue(""));
         }
 
         // Fix missing required
         if (isRequired() && values.isEmpty()) {
-            values.add("");
+            values.add(new FieldValue(""));
         }
 
         return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
 
-    private List<String> readValues(final Node node) {
+    private List<FieldValue> readValues(final Node node) {
         final String propertyName = getId();
-        final List<String> values = new ArrayList<>();
+        final List<FieldValue> values = new ArrayList<>();
 
         try {
             if (node.hasProperty(propertyName)) {
                 final Property property = node.getProperty(propertyName);
                 if (property.isMultiple()) {
                     for (Value v : property.getValues()) {
-                        values.add(v.getString());
+                        values.add(new FieldValue(v.getString()));
                     }
                 } else {
-                    values.add(property.getString());
+                    values.add(new FieldValue(property.getString()));
                 }
             }
         } catch (RepositoryException e) {
@@ -100,7 +101,7 @@ public class StringFieldType extends FieldType {
     @Override
     public void writeTo(final Node node, final Optional<Object> optionalValue) throws ErrorWithPayloadException {
         final String propertyName = getId();
-        final List<String> values = checkValue(optionalValue, String.class);
+        final List<FieldValue> values = checkValue(optionalValue, String.class);
 
         try {
             if (values.isEmpty()) {
@@ -109,9 +110,9 @@ public class StringFieldType extends FieldType {
                 }
             } else {
                 if (getMaxValues() > 1) {
-                    node.setProperty(propertyName, values.toArray(new String[values.size()]));
+                    node.setProperty(propertyName, values.stream().map(FieldValue::getValue).toArray(String[]::new));
                 } else {
-                    node.setProperty(propertyName, values.get(0));
+                    node.setProperty(propertyName, values.get(0).getValue());
                 }
             }
         } catch (RepositoryException e) {
@@ -134,23 +135,20 @@ public class StringFieldType extends FieldType {
 
     @Override
     @SuppressWarnings("unchecked")
-    public Optional<List> validate(final Optional<List> optionalValue) {
+    public boolean validate(final Optional<List<FieldValue>> optionalValue) {
         // fallback to empty list should never happen, as this is caught by the writeTo-validation (checkValue)
-        final List<String> valueList = optionalValue.orElse(Collections.emptyList());
+        final List<FieldValue> valueList = optionalValue.orElse(Collections.emptyList());
+        boolean isValid = true;
+
         if (isRequired()) {
-            final List<ValidationErrorInfo> errorList = new ArrayList<>();
-            boolean errorFound = false;
-            for (String string : valueList) {
-                if (string.isEmpty()) {
-                    errorList.add(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
-                    errorFound = true;
-                } else {
-                    errorList.add(new ValidationErrorInfo());
+            for (FieldValue value : valueList) {
+                if (value.getValue().isEmpty()) {
+                    value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+                    isValid = false;
                 }
             }
-            return errorFound ? Optional.of(errorList) : Optional.empty();
         }
 
-        return Optional.empty();
+        return isValid;
     }
 }

@@ -19,6 +19,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -27,17 +28,16 @@ import javax.jcr.Node;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.util.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.FieldValidators;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.l10n.ResourceBundle;
 
@@ -46,12 +46,7 @@ import org.onehippo.repository.l10n.ResourceBundle;
  * It can be serialized into JSON to expose it through a REST API.
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class FieldType {
-
-    protected static final BadRequestException BAD_REQUEST_INVALID_DATA
-            = new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
-    protected static final BadRequestException BAD_REQUEST_CARDINALITY_CHANGE
-            = new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
+public abstract class FieldType {
 
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
@@ -159,18 +154,14 @@ public class FieldType {
         this.fields = fields;
     }
 
-    // TODO make abstract after phasing out the MockResponse.
     /**
      * Read a document field instance from a document variant node
      *
      * @param node JCR node to read the value from
-     * @return     Object representing the value, or nothing, wrapped in an Optional
+     * @return     Object representing the values, or nothing, wrapped in an Optional
      */
-    public Optional<List> readFrom(Node node) {
-        return Optional.empty();
-    }
+    public abstract Optional<List<FieldValue>> readFrom(Node node);
 
-    // TODO make abstract after phasing out the MockResponse.
     /**
      * Write the optional value of this field to the provided JCR node.
      *
@@ -179,21 +170,15 @@ public class FieldType {
      * @throws ErrorWithPayloadException
      *                      indicates that writing the provided value ran into an unrecoverable error
      */
-    public void writeTo(Node node, Optional<Object> optionalValue) throws ErrorWithPayloadException {
-        throw new InternalServerErrorException();
-    }
+    public abstract void writeTo(Node node, Optional<Object> optionalValue) throws ErrorWithPayloadException;
 
-    // TODO make abstract after phasing out the MockResponse.
     /**
      * Validate the current value of this field against all applicable (and supported) validators.
      *
      * @param optionalValues value(s) to validate, or nothing, wrapped in an Optional
-     * @return     validation error or nothing, wrapped in an Optional.
-     *             The validation error can be either a {@link ValidationErrorInfo} or a map of sub-validation errors.
+     * @return     true upon success, false if at least one validation error was encountered.
      */
-    public Optional<List> validate(final Optional<List> optionalValues) {
-        return Optional.empty();
-    }
+    public abstract boolean validate(final Optional<List<FieldValue>> optionalValues);
 
     /**
      * Initialize a FieldType, given various information sources:
@@ -238,7 +223,10 @@ public class FieldType {
         }
     }
 
-    protected <T> List<T> checkValue(final Optional<Object> optionalValue, final Class<T> listItemClass) throws BadRequestException {
+    protected List<FieldValue> checkValue(final Optional<Object> optionalValue, final Class listItemClass)
+            throws BadRequestException {
+        final BadRequestException BAD_REQUEST_INVALID_DATA
+                = new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
         final Object value = optionalValue.orElse(Collections.emptyList());
         if (!(value instanceof List)) {
             throw BAD_REQUEST_INVALID_DATA;
@@ -257,11 +245,23 @@ public class FieldType {
             throw BAD_REQUEST_INVALID_DATA;
         }
 
+        // check individual values
         for (Object v : values) {
-            if (!(listItemClass.isAssignableFrom(v.getClass()))) {
+            if (!(v instanceof FieldValue)) {
                 throw BAD_REQUEST_INVALID_DATA;
             }
+            final FieldValue fieldValue = (FieldValue) v;
+
+            if (listItemClass.equals(String.class)) {
+                if (!fieldValue.hasValue()) {
+                    throw BAD_REQUEST_INVALID_DATA;
+                }
+            } else if (listItemClass.equals(Map.class)) {
+                if (!fieldValue.hasFields()) {
+                    throw BAD_REQUEST_INVALID_DATA;
+                }
+            }
         }
-        return (List<T>) values;
+        return (List<FieldValue>) values;
     }
 }
