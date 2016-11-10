@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,37 +23,29 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 
-/**
- * Dialog for easy creating confirmation dialogs;
- */
-public class DeleteDialog<T extends Serializable> extends AbstractDialog<T> {
-
-    private static final long serialVersionUID = 1L;
+public class DeleteDialog<T extends Serializable> extends Dialog<T> {
 
     private Component component;
 
     @SuppressWarnings({"unused"})
     public DeleteDialog() {
-        add(new Label("label", new ResourceModel(getTextKey())));
-        setFocusOnCancel();
+        init();
     }
 
     public DeleteDialog(final IModel<T> model, final Component component) {
         super(model);
         this.component = component;
-        add(new Label("label", new StringResourceModel(getTextKey(), component, model)));
-        setFocusOnCancel();
+        init();
     }
 
     public DeleteDialog(final T object, final Component component) {
-        this(new Model<T>(object), component);
+        this(Model.of(object), component);
     }
 
-    public IModel getTitle() {
+    public IModel<String> getTitle() {
         if (component == null) {
             return new ResourceModel(getTitleKey());
         } else {
@@ -69,9 +61,19 @@ public class DeleteDialog<T extends Serializable> extends AbstractDialog<T> {
         return "confirm-delete-text";
     }
 
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.SMALL;
+    private void init() {
+        setFocusOnCancel();
+        setSize(DialogConstants.SMALL);
+
+        add(new Label("label", getLabelModel()));
+    }
+
+    private IModel<String> getLabelModel() {
+        if (component == null) {
+            return new ResourceModel(getTextKey());
+        } else {
+            return new StringResourceModel(getTextKey(), component, getModel());
+        }
     }
 
 }
