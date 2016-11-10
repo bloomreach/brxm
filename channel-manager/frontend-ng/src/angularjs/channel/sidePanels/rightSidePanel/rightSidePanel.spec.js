@@ -169,5 +169,11 @@ describe('ChannelRightSidePanel', () => {
     $ctrl.viewFullContent();
     expect(CmsService.publish).toHaveBeenCalledWith('view-content', testDocument.id);
   });
+
+  it('edits the full content by publishing an edit-content event', () => {
+    $ctrl.doc = testDocument;
+    $ctrl.editFullContent();
+    expect(CmsService.publish).toHaveBeenCalledWith('edit-content', testDocument.id);
+  });
 });
 

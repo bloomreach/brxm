@@ -89,6 +89,10 @@ export class ChannelRightSidePanelCtrl {
     this.CmsService.publish('view-content', this.doc.id);
   }
 
+  editFullContent() {
+    this.CmsService.publish('edit-content', this.doc.id);
+  }
+
   close() {
     if (this.doc) {
       this.ContentService.deleteDraft(this.doc.id);
