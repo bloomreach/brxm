@@ -33,6 +33,7 @@ import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -95,7 +96,7 @@ class DocumentsServiceImpl implements DocumentsService {
                 .orElseThrow(NotFoundException::new);
 
         // Push fields onto draft node
-        final Map<String, List> valueMap = document.getFields();
+        final Map<String, List<FieldValue>> valueMap = document.getFields();
         for (FieldType fieldType : docType.getFields()) {
             fieldType.writeTo(draft, Optional.ofNullable(valueMap.get(fieldType.getId())));
         }
@@ -108,12 +109,7 @@ class DocumentsServiceImpl implements DocumentsService {
             throw new InternalServerErrorException();
         }
 
-        // apply validation
-        for (FieldType fieldType : docType.getFields()) {
-            fieldType.validate(fieldType.readFrom(draft))
-                    .ifPresent(error -> document.addValidationError(fieldType.getId(), error));
-        }
-        if (document.hasValidationErrors()) {
+        if (!isValid(document, docType)) {
             throw new BadRequestException(document);
         }
 
@@ -182,6 +178,17 @@ class DocumentsServiceImpl implements DocumentsService {
         for (FieldType field : docType.getFields()) {
             field.readFrom(variant).ifPresent(value -> document.addField(field.getId(), value));
         }
+    }
+
+    private boolean isValid(final Document document, final DocumentType docType) {
+        boolean isValid = true;
+        final Map<String, List<FieldValue>> valueMap = document.getFields();
+        for (FieldType fieldType : docType.getFields()) {
+            if (!fieldType.validate(Optional.ofNullable(valueMap.get(fieldType.getId())))) {
+                isValid = false;
+            }
+        }
+        return isValid;
     }
 
     private void copyToPreviewAndKeepEditing(final Session session, final EditableWorkflow workflow)

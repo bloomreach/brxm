@@ -43,7 +43,7 @@
 
     <channel-fields ng-hide="CollapseToggle.isCollapsed"
                     field-types="::fieldType.fields"
-                    field-values="$ctrl.fieldValues[fieldType.id][$index]">
+                    field-values="::fieldValue.fields">
     </channel-fields>
   </div>
 
@@ -53,21 +53,21 @@
        ng-if="::$ctrl.hasValue(fieldType)">
     <md-input-container class="md-block qa-field"
                         md-no-float
-                        ng-repeat="value in ::$ctrl.fieldValues[fieldType.id]"
+                        ng-repeat="fieldValue in ::$ctrl.fieldValues[fieldType.id]"
                         ng-switch="fieldType.type">
 
       <label ng-if="$first">{{ ::fieldType.displayName }}</label>
 
       <!-- editors per field type -->
       <input ng-switch-when="STRING"
-             ng-model="$ctrl.fieldValues[fieldType.id][$index]"
+             ng-model="fieldValue.value"
              placeholder=""
              aria-label="{{::fieldType.displayName}}"
              ng-focus="$ctrl.onFieldFocus(fieldType)"
              ng-blur="$ctrl.onFieldBlur(fieldType)">
 
       <textarea ng-switch-when="MULTILINE_STRING"
-                ng-model="$ctrl.fieldValues[fieldType.id][$index]"
+                ng-model="fieldValue.value"
                 placeholder=""
                 aria-label="{{::fieldType.displayName}}"
                 md-no-resize
