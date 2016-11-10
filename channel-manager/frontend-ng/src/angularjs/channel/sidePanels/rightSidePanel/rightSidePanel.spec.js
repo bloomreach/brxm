@@ -20,6 +20,7 @@ describe('ChannelRightSidePanel', () => {
   let $rootScope;
   let $timeout;
   let ChannelSidePanelService;
+  let CmsService;
   let ContentService;
   let HippoIframeService;
 
@@ -74,6 +75,7 @@ describe('ChannelRightSidePanel', () => {
 
     ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'isOpen', 'close']);
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
+    CmsService = jasmine.createSpyObj('CmsService', ['publish']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
     $scope = $rootScope.$new();
@@ -83,6 +85,7 @@ describe('ChannelRightSidePanel', () => {
       $element,
       $timeout,
       ChannelSidePanelService,
+      CmsService,
       ContentService,
       HippoIframeService,
     }, {
@@ -159,6 +162,12 @@ describe('ChannelRightSidePanel', () => {
     expect($ctrl.doc).toEqual(savedDoc);
     expect($ctrl.form.$setPristine).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
+  });
+
+  it('views the full content by publishing a view-content event', () => {
+    $ctrl.doc = testDocument;
+    $ctrl.viewFullContent();
+    expect(CmsService.publish).toHaveBeenCalledWith('view-content', testDocument.id);
   });
 });
 

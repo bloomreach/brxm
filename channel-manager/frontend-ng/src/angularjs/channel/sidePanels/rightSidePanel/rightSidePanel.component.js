@@ -17,12 +17,13 @@
 import template from './rightSidePanel.html';
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, $timeout, ChannelSidePanelService, ContentService, HippoIframeService) {
+  constructor($scope, $element, $timeout, ChannelSidePanelService, CmsService, ContentService, HippoIframeService) {
     'ngInject';
 
     this.$scope = $scope;
     this.$timeout = $timeout;
     this.ChannelSidePanelService = ChannelSidePanelService;
+    this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.HippoIframeService = HippoIframeService;
 
@@ -82,6 +83,10 @@ export class ChannelRightSidePanelCtrl {
         this._resetForm();
         this.HippoIframeService.reload();
       });
+  }
+
+  viewFullContent() {
+    this.CmsService.publish('view-content', this.doc.id);
   }
 
   close() {

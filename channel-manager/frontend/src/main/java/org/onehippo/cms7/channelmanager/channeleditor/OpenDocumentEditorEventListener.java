@@ -44,10 +44,12 @@ class OpenDocumentEditorEventListener extends ExtEventListener {
 
     private final String editorManagerServiceId;
     private final IPluginContext context;
+    private final IEditor.Mode mode;
 
-    public OpenDocumentEditorEventListener(final IPluginConfig config, final IPluginContext context) {
+    OpenDocumentEditorEventListener(final IPluginConfig config, final IPluginContext context, final IEditor.Mode mode) {
         editorManagerServiceId = config.getString(IEditorManager.EDITOR_ID, "service.edit");
         this.context = context;
+        this.mode = mode;
     }
 
     static ExtEventAjaxBehavior getExtEventBehavior() {
@@ -77,7 +79,7 @@ class OpenDocumentEditorEventListener extends ExtEventListener {
             if (editor == null) {
                 editor = editorManager.openEditor(documentHandleModel);
             }
-            editor.setMode(IEditor.Mode.EDIT);
+            editor.setMode(mode);
             editor.focus();
         } catch (ItemNotFoundException e) {
             ChannelEditor.log.warn("Could not find document with uuid '{}'", documentHandleUuid, e);
