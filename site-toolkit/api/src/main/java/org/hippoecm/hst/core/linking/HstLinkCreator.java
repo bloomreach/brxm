@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -147,7 +147,8 @@ public interface HstLinkCreator {
     List<HstLink> createAllAvailableCanonicals(Node node, HstRequestContext requestContext, String type);
     
     /**
-     * Expert: Creates a {@link List} of all available canonical links for <code>node</code>, within the hostgroup <code>hostGroupName</code> and where where the backing {@link Mount} of the {@link HstLink} has at least one {@link Mount#getTypes()} equal to <code>type</code>  
+     * Expert: Creates a {@link List} of all available canonical links for <code>node</code>, within the hostgroup <code>hostGroupName</code>
+     * and where where the backing {@link Mount} of the {@link HstLink} has at least one {@link Mount#getTypes()} equal to <code>type</code>
      * @param node
      * @param requestContext the HstRequestContext
      * @param type the <code>type</code> that the {@link Mount}'s belonging to the available canonical links should be of

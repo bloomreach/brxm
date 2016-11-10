@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -30,6 +33,7 @@ import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 
@@ -46,7 +50,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
 
         ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
-        HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
+        HstLink homePageLink = linkCreator.create((HippoBean)homeBean, requestContext);
         assertEquals("link.getPath for homepage node should be '", "", homePageLink.getPath());
         assertEquals("wrong absolute link for homepage", "/site/", (homePageLink.toUrlForm(requestContext, false)));
         assertEquals("wrong fully qualified url for homepage", "http://localhost/site/", (homePageLink.toUrlForm(requestContext, true)));
@@ -55,7 +59,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:80", "/home");
         obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
-        homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
+        homePageLink = linkCreator.create((HippoBean)homeBean, requestContext);
         assertEquals("link.getPath for homepage node should be ''", "", homePageLink.getPath());
         assertEquals("wrong absolute link for homepage", "/site/", (homePageLink.toUrlForm(requestContext, false)));
         // for absolute links, we do not include port 80 !!
@@ -64,7 +68,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:443", "/home");
         obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
-        homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
+        homePageLink = linkCreator.create((HippoBean)homeBean, requestContext);
         assertEquals("link.getPath for homepage node should be ''", "", homePageLink.getPath());
         assertEquals("wrong absolute link for homepage", "/site/", (homePageLink.toUrlForm(requestContext, false)));
         // for absolute links, we do not include port 443 !!
@@ -74,7 +78,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
         obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
-        homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
+        homePageLink = linkCreator.create((HippoBean)homeBean, requestContext);
         assertEquals("link.getPath for homepage node should be ''", "", homePageLink.getPath());
         assertEquals("wrong absolute link for homepage", "/site/", (homePageLink.toUrlForm(requestContext, false)));
         // for absolute links, we do not include port 443 !!
@@ -85,7 +89,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8081", "/home");
         obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
-        homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
+        homePageLink = linkCreator.create((HippoBean)homeBean, requestContext);
         assertEquals("link.getPath for homepage node should be ''", "", homePageLink.getPath());
         assertEquals("wrong absolute link for homepage", "/site/", (homePageLink.toUrlForm(requestContext, false)));
         assertEquals("wrong fully qualified url for homepage", "http://localhost:8081/site/", (homePageLink.toUrlForm(requestContext, true)));
@@ -94,7 +98,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
         obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
-        HstLink newsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+        HstLink newsLink = linkCreator.create((HippoBean)newsBean, requestContext);
         assertEquals("wrong link.getPath for News/News1", "news/News1.html", newsLink.getPath());
         assertEquals("wrong absolute link for News/News1", "/site/news/News1.html", (newsLink.toUrlForm(requestContext, false)));
         assertEquals("wrong fully qualified url for News/News1", "http://localhost:8080/site/news/News1.html", (newsLink.toUrlForm(requestContext, true)));
@@ -125,7 +129,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
-            HstLink newsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+            HstLink newsLink = linkCreator.create((HippoBean)newsBean, requestContext);
             assertFalse("since news/_default_.html is marked as 'deleted' is should not for linkrewriting", "news/News1.html".equals(newsLink.getPath()));
         } finally {
             restoreHstConfigBackup(session);
@@ -149,7 +153,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
                 newsSiteMapItemCopy.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "News");
                 newsSiteMapItemCopy.setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID, "hst:pages/newsoverview");
                 JcrUtils.copy(session, "/hst:hst/hst:configurations/unittestproject/hst:sitemap/news",
-                        "/hst:hst/hst:configurations/unittestproject/hst:sitemap/newsmultiple"+i + "/news");
+                        "/hst:hst/hst:configurations/unittestproject/hst:sitemap/newsmultiple" + i + "/news");
                 newsSiteMapItemCopy.getNode("news").getProperty("hst:refId").remove();
                 newsSiteMapItemCopy.getNode("news/_default_.html").getProperty("hst:refId").remove();
             }
@@ -160,7 +164,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
-            HstLink newsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+            HstLink newsLink = linkCreator.create((HippoBean)newsBean, requestContext);
             assertEquals("wrong link.getPath for News/News1", "news/News1.html", newsLink.getPath());
         } finally {
             restoreHstConfigBackup(session);
@@ -193,7 +197,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/home");
             ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
             Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
-            HstLink newsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+            HstLink newsLink = linkCreator.create((HippoBean)newsBean, requestContext);
             assertEquals("wrong link.getPath for News/News1: Should be the lexically ordered first one"
                     , "aaa1/News1.html", newsLink.getPath());
         } finally {
@@ -236,7 +240,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
 
         ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
-        HstLink newsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+        HstLink newsLink = linkCreator.create((HippoBean)newsBean, requestContext);
         assertEquals("wrong link.getPath for News/News1", "alsonews/news2/News1.html", newsLink.getPath());
         assertEquals("wrong absolute link for News/News1", "/site/alsonews/news2/News1.html", (newsLink.toUrlForm(requestContext, false)));
         assertEquals("wrong fully qualified url for News/News1", "http://localhost:8080/site/alsonews/news2/News1.html", (newsLink.toUrlForm(requestContext, true)));
@@ -254,7 +258,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
 
         ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
-        HstLink newsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+        HstLink newsLink = linkCreator.create((HippoBean)newsBean, requestContext);
         assertEquals("wrong link.getPath for News/News1", "newsCtxOnly/foo/news/News1.html", newsLink.getPath());
         assertEquals("wrong absolute link for News/News1", "/site/newsCtxOnly/foo/news/News1.html", (newsLink.toUrlForm(requestContext, false)));
         assertEquals("wrong fully qualified url for News/News1", "http://localhost:8080/site/newsCtxOnly/foo/news/News1.html", (newsLink.toUrlForm(requestContext, true)));
@@ -386,7 +390,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost:8080", "/newswith_linkrewriting_excluded");
         ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         Object newsBean = obm.getObject("/unittestcontent/documents/unittestproject/News/News1");
-        HstLink newsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+        HstLink newsLink = linkCreator.create((HippoBean)newsBean, requestContext);
         // even though current context is /newswith_linkrwriting_excluded and it has sitemap items that could create a link for
         // the news item, it is not
         assertEquals("wrong link.getPath for News/News1", "news/News1.html", newsLink.getPath());
@@ -395,7 +399,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         // and at the same time specify fallback is false, that we do get a pagenotfound link, because .. has only items
         // that are specified for linkrewriting = false
         HstSiteMapItem preferSiteMapItem = requestContext.getSiteMapMatcher().match("newswith_linkrwriting_excluded", requestContext.getResolvedMount()).getHstSiteMapItem();
-        newsLink = linkCreator.create(((HippoBean) newsBean).getNode(), requestContext, preferSiteMapItem, false);
+        newsLink = linkCreator.create(((HippoBean)newsBean).getNode(), requestContext, preferSiteMapItem, false);
         assertEquals("wrong link.getPath for News/News1", "pagenotfound", newsLink.getPath());
 
     }
@@ -409,7 +413,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
 
         ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         Object newsBean = obm.getObject("/unittestcontent/documents/unittestsubproject/News/2008/SubNews1");
-        HstLink crossSiteNewsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+        HstLink crossSiteNewsLink = linkCreator.create((HippoBean)newsBean, requestContext);
 
         assertEquals("wrong link.getPath for News/2008/SubNews1 ", "news/2008/SubNews1.html", crossSiteNewsLink.getPath());
         assertEquals("wrong absolute link for News/News1", "/site/subsite/news/2008/SubNews1.html", (crossSiteNewsLink.toUrlForm(requestContext, false)));
@@ -421,7 +425,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
 
         obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         newsBean = obm.getObject("/unittestcontent/documents/unittestsubproject/News/2008/SubNews1");
-        HstLink notFoundCrossSiteNewsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+        HstLink notFoundCrossSiteNewsLink = linkCreator.create((HippoBean)newsBean, requestContext);
 
         assertEquals("wrong link.getPath for News/2008/SubNews1: We should not be able to " +
                 "link from preview to live cross-site ", "pagenotfound", notFoundCrossSiteNewsLink.getPath());
@@ -435,7 +439,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
 
         obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
         newsBean = obm.getObject("/unittestcontent/documents/unittestsubproject/News/2008/SubNews1");
-        HstLink crossSiteAndDomainNewsLink = linkCreator.create((HippoBean) newsBean, requestContext);
+        HstLink crossSiteAndDomainNewsLink = linkCreator.create((HippoBean)newsBean, requestContext);
 
         assertEquals("wrong link.getPath for News/2008/SubNews1 ", "news/2008/SubNews1.html", crossSiteAndDomainNewsLink.getPath());
         assertEquals("wrong absolute link for News/News1", "http://sub.unit.test:8080/site/news/2008/SubNews1.html", (crossSiteAndDomainNewsLink.toUrlForm(requestContext, false)));
@@ -454,7 +458,7 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
      * @throws Exception
      */
     @Test
-    public void testAllCanonnicalHstLinksForBean() throws Exception {
+    public void testAllCanonicalHstLinksForBean() throws Exception {
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("www.unit.test:8080", "/news2");
         // the current request is for the unittestproject. Now, we fetch a node from the unittestsubproject and ask a link for it. The
         // unittestsubproject mount is located below the current unittest live mount
@@ -537,44 +541,51 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
      * This test assures the following linkrewriting capabilities:
      *
      * If you have a configuration like this:
-     *   global (mount)
-     *      sub1 (mount)
-     *          subsub1(mount)
-     *      sub2 (mount)
-     *
-     *   documents
-     *      content
-     *        global
-     *           sub1
-     *             subsub1
-     *           sub2
-     *
-     *   and you have:
-     *
-     *   mount 'global' --> /documents/content/unittestcontent
-     *   mount 'global/sub1' --> /documents/content/global/unittestcontent/common
-     *   mount 'global/sub1/subsub1' --> /documents/content/global/unittestcontent/common/aboutfolder
-     *   mount 'global/sub2' --> /documents/content/global/unittestcontent/News
-     *
-     *   The the HST MUST do the following linkrewriting:
-     *
-     *   1) If my current context is the global site, and I have some document bean of a node below
-     *   /documents/content/global, then
-     *
-     *      a) If the global sitemap can create a link for it, the HST needs to return a link for the global site
-     *      b) If the global sitemap cannot create a link for it, the HST needs to try to create a link with another mount: For
-     *      example sub1, subsub1 or sub2. If sub1 and subsub1 are both capable of creating a link, then the following algorithm is applied
-     *                1) Firstly order the candidate mounts to have the same primary type as the current Mount of this HstLinkResolver
-     *                 2) Secondly order the candidate mounts that have the most 'types' in common with the current Mount of this HstLinkResolver
-     *                 3) Thirdly order the Mounts to have the fewest types first: The fewer types it has, and the number of matching types is equal to the current Mount, indicates
-     *                 that it can be considered more precise
-     *                 4) Fourthly order the Mounts first that have the deepest (most slashes) #getCanonicalContentPath() : The deeper the more specific.
-     *
-     *
-     *   2) If my current context is for example /global/sub1 and sub1 cannot create a link for the bean, then a fallback to
-     *   global, or global/sub1/subsub1 or global/sub2 should be tried
-     *
+     * global (mount)
+     * sub1 (mount)
+     * subsub1(mount)
+     * sub2 (mount)
+     * <p>
+     * documents
+     * content
+     * global
+     * sub1
+     * subsub1
+     * sub2
+     * <p>
+     * and you have:
+     * <p>
+     * mount 'global' --> /documents/content/unittestcontent
+     * mount 'global/sub1' --> /documents/content/global/unittestcontent/common
+     * mount 'global/sub1/subsub1' --> /documents/content/global/unittestcontent/common/aboutfolder
+     * mount 'global/sub2' --> /documents/content/global/unittestcontent/News
+     * <p>
+     * The the HST MUST do the following linkrewriting:
+     * <p>
+     * 1) If my current context is the global site, and I have some document bean of a node below
+     * /documents/content/global, then
+     * <p>
+     * a) If the global sitemap can create a link for it, the HST needs to return a link for the global site
+     * b) If the global sitemap cannot create a link for it, the HST needs to try to create a link with another mount:
+     * For
+     * example sub1, subsub1 or sub2. If sub1 and subsub1 are both capable of creating a link, then the following
+     * algorithm is applied
+     * 1) Firstly order the candidate mounts to have the same primary type as the current Mount of this HstLinkResolver
+     * 2) Secondly order the candidate mounts that have the most 'types' in common with the current Mount of this
+     * HstLinkResolver
+     * 3) Thirdly order the Mounts to have the fewest types first: The fewer types it has, and the number of matching
+     * types is equal to the current Mount, indicates
+     * that it can be considered more precise
+     * 4) Fourthly order the Mounts first that have the deepest (most slashes) #getCanonicalContentPath() : The deeper
+     * the more specific.
+     * <p>
+     * <p>
+     * 2) If my current context is for example /global/sub1 and sub1 cannot create a link for the bean, then a fallback
+     * to
+     * global, or global/sub1/subsub1 or global/sub2 should be tried
+     * <p>
      * Available since https://issues.onehippo.com/browse/HSTTWO-1670
+     *
      * @throws Exception
      */
     @Test
@@ -718,4 +729,178 @@ public class HstLinkRewritingIT extends AbstractHstLinkRewritingIT {
         assertEquals("/site/ho+me?hint=one#chapter1" + URLEncoder.encode("&delay=two", "UTF-8"), result);
     }
 
+    @Test
+    public void hst_link_for_document_referenced_by_index_sitemap_item_results_in_link_to_parent_sitemap_item() throws Exception {
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+
+        ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+        HippoBean contactBean = (HippoBean)obm.getObject("/unittestcontent/documents/unittestproject/common/aboutfolder/contact");
+        HstLink contactPageLink = linkCreator.create(contactBean, requestContext);
+        assertEquals("link.getPath for contact page  should be 'aboutfolder' because below the 'aboutfolder' the '_index' item " +
+                "points to the 'contact' document.", "aboutfolder", contactPageLink.getPath());
+
+        {
+            List<HstLink> all = linkCreator.createAll(contactBean.getNode(), requestContext, true);
+            for (HstLink link : all) {
+                assertEquals("link.getPath for contact page  should be 'aboutfolder' because below the 'aboutfolder' the '_index' item " +
+                        "points to the 'contact' document.", "aboutfolder", link.getPath());
+            }
+        }
+        {
+            List<HstLink> all = linkCreator.createAllAvailableCanonicals(contactBean.getNode(), requestContext);
+            for (HstLink link : all) {
+                assertEquals("link.getPath for contact page  should be 'aboutfolder' because below the 'aboutfolder' the '_index' item " +
+                        "points to the 'contact' document.", "aboutfolder", link.getPath());
+            }
+        }
+    }
+
+    @Test
+    public void hst_link_for_document_referenced_by_index_via_placeholder_sitemap_item_results_in_link_to_parent_sitemap_item() throws Exception {
+        Session session = createSession();
+        createHstConfigBackup(session);
+        // point the _index_ sitemap item to ${parent}/contact : Thus prove poperty placeholder works fine
+        session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_index_")
+                .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/contact");
+        session.save();
+        Thread.sleep(100);
+        try {
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+            ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+            HippoBean contactBean = (HippoBean)obm.getObject("/unittestcontent/documents/unittestproject/common/aboutfolder/contact");
+            HstLink contactPageLink = linkCreator.create(contactBean, requestContext);
+            assertEquals("link.getPath for contact page  should be 'aboutfolder' because below the 'aboutfolder' the '_index' item " +
+                    "points to the 'contact' document.", "aboutfolder", contactPageLink.getPath());
+
+            {
+                List<HstLink> all = linkCreator.createAll(contactBean.getNode(), requestContext, true);
+                for (HstLink link : all) {
+                    assertEquals("link.getPath for contact page  should be 'aboutfolder' because below the 'aboutfolder' the '_index' item " +
+                            "points to the 'contact' document.", "aboutfolder", link.getPath());
+                }
+            }
+            {
+                List<HstLink> all = linkCreator.createAllAvailableCanonicals(contactBean.getNode(), requestContext);
+                for (HstLink link : all) {
+                    assertEquals("link.getPath for contact page  should be 'aboutfolder' because below the 'aboutfolder' the '_index' item " +
+                            "points to the 'contact' document.", "aboutfolder", link.getPath());
+                }
+            }
+
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+
+    }
+
+    @Test
+    public void hst_link_for_document_referenced_by_index_via_unresolvable_placeholder_sitemap_item_results_in_normal_default_matched_item() throws Exception {
+        Session session = createSession();
+        createHstConfigBackup(session);
+        // point the _index_ sitemap item to ${parent}/${3} : ${3} is not resolvable
+        session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_index_")
+                .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/${3}");
+        session.save();
+        Thread.sleep(100);
+        try {
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+            ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+            HippoBean contactBean = (HippoBean) obm.getObject("/unittestcontent/documents/unittestproject/common/aboutfolder/contact");
+            HstLink contactPageLink = linkCreator.create(contactBean, requestContext);
+            assertEquals("link.getPath for contact page  should be 'aboutfolder/contact.html' because below the 'aboutfolder' the '_index' item " +
+                    "does not point 'contact' document.", "aboutfolder/contact.html", contactPageLink.getPath());
+
+            {
+                List<HstLink> all = linkCreator.createAll(contactBean.getNode(), requestContext, true);
+                for (HstLink link : all) {
+                    assertEquals("link.getPath for contact page  should be 'aboutfolder/contact.html' because below the 'aboutfolder' the '_index' item " +
+                            "does not point 'contact' document.", "aboutfolder/contact.html", link.getPath());
+                }
+            }
+            {
+                List<HstLink> all = linkCreator.createAllAvailableCanonicals(contactBean.getNode(), requestContext);
+                for (HstLink link : all) {
+                    assertEquals("link.getPath for contact page  should be 'aboutfolder/contact.html' because below the 'aboutfolder' the '_index' item " +
+                            "does not point 'contact' document.", "aboutfolder/contact.html", link.getPath());
+                }
+            }
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void hst_link_for_document_referenced_by_index_sitemap_item_results_in_link_to_parent_sitemap_item_for_wildcards_as_well() throws Exception {
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+
+        ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+        HippoBean addressBean = (HippoBean)obm.getObject("/unittestcontent/documents/unittestproject/common/aboutfolder/aboutsubfolder/address");
+        HstLink addressPageLink = linkCreator.create(addressBean, requestContext);
+        assertEquals("link.getPath for address page  should be 'aboutfolder/aboutsubfolder' because below the 'aboutfolder/aboutsubfolder' the '_index' item " +
+                "points to the 'address' document.", "aboutfolder/aboutsubfolder", addressPageLink.getPath());
+
+        {
+            List<HstLink> all = linkCreator.createAll(addressBean.getNode(), requestContext, true);
+            for (HstLink link : all) {
+                assertEquals("link.getPath for address page  should be 'aboutfolder/aboutsubfolder' because below the 'aboutfolder/aboutsubfolder' the '_index' item " +
+                        "points to the 'address' document.", "aboutfolder/aboutsubfolder", link.getPath());
+            }
+        }
+        {
+            List<HstLink> all = linkCreator.createAllAvailableCanonicals(addressBean.getNode(), requestContext);
+            for (HstLink link : all) {
+                assertEquals("link.getPath for address page  should be 'aboutfolder/aboutsubfolder' because below the 'aboutfolder/aboutsubfolder' the '_index' item " +
+                        "points to the 'address' document.", "aboutfolder/aboutsubfolder", link.getPath());
+            }
+        }
+    }
+
+
+    @Test
+    public void hst_link_for_document_referenced_by_index_sitemap_item_results_in_link_to_parent_sitemap_item_for_multiple_property_placeholders_as_well() throws Exception {
+        Session session = createSession();
+        createHstConfigBackup(session);
+        // point the relative content path of the _index_ sitemap item to ${parent}/${1} resulting in for example
+        // the pathInfo /aboutfolder/aboutsubfolder to point to document /aboutfolder/aboutsubfolder/aboutsubfolder
+        // (note we created the document 'aboutsubfolder' below folder 'aboutsubfolder' to prove this
+        session.getNode("/hst:hst/hst:configurations/unittestproject/hst:sitemap/aboutfolder/_default_/_index_")
+                .setProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH, "${parent}/${1}");
+        session.save();
+        Thread.sleep(100);
+        try {
+            HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+
+            ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+            // below 'aboutsubfolder' we have a document called 'aboutsubfolder'
+            HippoBean aboutSubFolderDocument = (HippoBean)obm.getObject("/unittestcontent/documents/unittestproject/common/aboutfolder/aboutsubfolder/aboutsubfolder");
+            HstLink aboutSubFolderDocumentLink = linkCreator.create(aboutSubFolderDocument, requestContext);
+            assertEquals("link.getPath for address page  should be 'aboutfolder/aboutsubfolder' because below the 'aboutfolder/aboutsubfolder' the '_index' item " +
+                    "points to '${parent}/${1}' document.", "aboutfolder/aboutsubfolder", aboutSubFolderDocumentLink.getPath());
+
+            {
+                List<HstLink> all = linkCreator.createAll(aboutSubFolderDocument.getNode(), requestContext, true);
+                for (HstLink link : all) {
+                    assertEquals("link.getPath for address page  should be 'aboutfolder/aboutsubfolder' because below the 'aboutfolder/aboutsubfolder' the '_index' item " +
+                            "points to '${parent}/${1}' document.", "aboutfolder/aboutsubfolder", link.getPath());
+                }
+            }
+            {
+                List<HstLink> all = linkCreator.createAllAvailableCanonicals(aboutSubFolderDocument.getNode(), requestContext);
+                for (HstLink link : all) {
+                    assertEquals("link.getPath for address page  should be 'aboutfolder/aboutsubfolder' because below the 'aboutfolder/aboutsubfolder' the '_index' item " +
+                            "points to '${parent}/${1}' document.", "aboutfolder/aboutsubfolder", link.getPath());
+                }
+            }
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    protected Session createSession() throws RepositoryException {
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
+        return repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+    }
 }

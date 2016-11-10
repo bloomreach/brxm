@@ -29,6 +29,7 @@ import java.util.TreeMap;
 
 import com.google.common.collect.Sets;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
@@ -176,6 +177,10 @@ public class LocationMapResolver {
             if (r == null) {
                 continue;
             }
+            ResolvedLocationMapTreeItemImpl parent;
+            if (HstNodeTypes.INDEX.equals(r.getSiteMapItem().getValue()) && (parent = getResolvedParent(r)) != null) {
+                r = parent;
+            }
             log.debug("Trying to resolve '{}' took '{}' ms.", path, String.valueOf((System.nanoTime() - start) / 1000000D));
             return r;
         }
@@ -250,7 +255,12 @@ public class LocationMapResolver {
                     for (HstSiteMapItem hstSiteMapItem : matchedLocationMapTreeItem.getHstSiteMapItems()) {
                         ResolvedLocationMapTreeItem r = createResolvedLocationMapTreeItem(normalizedPath, hstSiteMapItem, propertyPlaceHolderMap);
                         if (r != null) {
-                            resolvedLocationMapTreeItemList.add(r);
+                            ResolvedLocationMapTreeItemImpl parent;
+                            if (HstNodeTypes.INDEX.equals(r.getSiteMapItem().getValue()) && (parent = getResolvedParent(r)) != null) {
+                                resolvedLocationMapTreeItemList.add(parent);
+                            } else {
+                                resolvedLocationMapTreeItemList.add(r);
+                            }
                         }
                     }
 
@@ -276,7 +286,12 @@ public class LocationMapResolver {
                     for (HstSiteMapItem hstSiteMapItem : matchedLocationMapTreeItem.getHstSiteMapItems()) {
                         ResolvedLocationMapTreeItem r = createResolvedLocationMapTreeItem(normalizedPath, hstSiteMapItem, propertyPlaceHolderMap);
                         if (r != null) {
-                            resolvedLocationMapTreeItemList.add(r);
+                            ResolvedLocationMapTreeItemImpl parent;
+                            if (HstNodeTypes.INDEX.equals(r.getSiteMapItem().getValue()) && (parent = getResolvedParent(r)) != null) {
+                                resolvedLocationMapTreeItemList.add(parent);
+                            } else {
+                                resolvedLocationMapTreeItemList.add(r);
+                            }
                         }
                     }
                 }
@@ -290,7 +305,12 @@ public class LocationMapResolver {
                 for (HstSiteMapItem hstSiteMapItem : matchedLocationMapTreeItem.getHstSiteMapItems()) {
                     ResolvedLocationMapTreeItem r = createResolvedLocationMapTreeItem(normalizedPath, hstSiteMapItem, propertyPlaceHolderMap);
                     if (r != null) {
-                        resolvedLocationMapTreeItemList.add(r);
+                        ResolvedLocationMapTreeItemImpl parent;
+                        if (HstNodeTypes.INDEX.equals(r.getSiteMapItem().getValue()) && (parent = getResolvedParent(r)) != null) {
+                            resolvedLocationMapTreeItemList.add(parent);
+                        } else {
+                            resolvedLocationMapTreeItemList.add(r);
+                        }
                     }
                 }
             }
@@ -300,6 +320,16 @@ public class LocationMapResolver {
                 normalizedPath, String.valueOf((System.nanoTime() - start) / 1000000D), resolvedLocationMapTreeItemList.size());
 
         return resolvedLocationMapTreeItemList;
+    }
+
+    /**
+     * @return the parent of {@code r} and if {@code r} does not have a parent, return null
+     */
+    private ResolvedLocationMapTreeItemImpl getResolvedParent(final ResolvedLocationMapTreeItem r) {
+        if (r.getSiteMapItem().getParentItem() == null || !r.getPath().contains("/")) {
+            return null;
+        }
+        return new ResolvedLocationMapTreeItemImpl(StringUtils.substringBeforeLast(r.getPath(), "/"), r.getSiteMapItem().getParentItem(), false);
     }
 
 
