@@ -32,7 +32,7 @@
         'form-field-focused': $ctrl.hasFocusedField(fieldType),
         'form-field-compound': fieldType.type == 'COMPOUND'
        }"
-       ng-repeat="value in ::$ctrl.fieldValues[fieldType.id]"
+       ng-repeat="fieldValue in ::$ctrl.fieldValues[fieldType.id]"
        collapse-toggle>
 
     <h5 ng-click="CollapseToggle.toggle()" class="collapse-toggle">
