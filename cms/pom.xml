@@ -20,11 +20,11 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>28.4-SNAPSHOT</version>
+    <version>28.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>4.1.0-SNAPSHOT</version>
+  <version>4.2.0-SNAPSHOT</version>
 
   <inceptionYear>2007</inceptionYear>
 
@@ -84,11 +84,11 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.commons.version>3.1.0-SNAPSHOT</hippo.commons.version>
-    <hippo.frontend.theme.version>3.1.0-SNAPSHOT</hippo.frontend.theme.version>
-    <hippo.utilities.version>3.1.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.services.version>3.1.0-SNAPSHOT</hippo.services.version>
-    <hippo.repository.version>4.1.0-SNAPSHOT</hippo.repository.version>
+    <hippo.commons.version>3.2.0-SNAPSHOT</hippo.commons.version>
+    <hippo.frontend.theme.version>3.2.0-SNAPSHOT</hippo.frontend.theme.version>
+    <hippo.utilities.version>3.2.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.services.version>3.2.0-SNAPSHOT</hippo.services.version>
+    <hippo.repository.version>4.2.0-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>3.4</easymock.version>
@@ -128,7 +128,7 @@
     <yui.sources.version>1.01.12</yui.sources.version>
     <hippo.htmldiff.version>1.01.04</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.05</hippo.jcrdiff.version>
-    <hippo.ckeditor.version>4.5.11-h1-SNAPSHOT</hippo.ckeditor.version>
+    <hippo.ckeditor.version>4.5.11-h1</hippo.ckeditor.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
     <sf.htmlcleaner.version>2.16</sf.htmlcleaner.version>

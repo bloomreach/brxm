@@ -44,6 +44,11 @@ public class CharacterReferenceNormalizerTest {
     }
 
     @Test
+    public void test_named_entities_with_numbers_are_converted() {
+        assertEquals("¾", CharacterReferenceNormalizer.normalize("&frac34;"));
+    }
+
+    @Test
     public void test_incorrect_numeric_entity_conversion() {
         assertEquals("&amp;#12ab; &amp;#x12abz;", CharacterReferenceNormalizer.normalize("&#12ab; &#x12abz;"));
         assertEquals("&amp;#", CharacterReferenceNormalizer.normalize("&#"));
