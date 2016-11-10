@@ -75,7 +75,7 @@ public class ExpandedParentTreeRepresentationTest extends AbstractTestTreePicker
 
         final AbstractTreePickerRepresentation aboutFolderRepresentation = commonFolderRepresentation.getItems().get(1);
         assertEquals("aboutfolder", aboutFolderRepresentation.getDisplayName());
-        assertFalse("Folder 'aboutfolder' should not be able to be matched in sitemap ", aboutFolderRepresentation.isSelectable());
+        assertTrue("Folder 'aboutfolder' can be matched in sitemap ", aboutFolderRepresentation.isSelectable());
         assertFalse("'aboutfolder' should be expanded", aboutFolderRepresentation.isCollapsed());
 
         final AbstractTreePickerRepresentation aboutDocumentRepresentation = aboutFolderRepresentation.getItems().get(0);
