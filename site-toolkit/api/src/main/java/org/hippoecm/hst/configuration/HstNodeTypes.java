@@ -19,6 +19,7 @@ public interface HstNodeTypes {
 
     String WILDCARD = "_default_";
     String ANY = "_any_";
+    String INDEX = "_index_";
 
     String NODETYPE_HST_SITES = "hst:sites";
     String NODETYPE_HST_SITE = "hst:site";

@@ -19,12 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkImpl;
 import org.hippoecm.hst.core.linking.HstLinkProcessor;
@@ -35,6 +38,10 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.ANY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.INDEX;
+import static org.hippoecm.hst.configuration.HstNodeTypes.WILDCARD;
+
 /**
  * BasicHstSiteMapMatcher
  * 
@@ -43,13 +50,7 @@ import org.slf4j.LoggerFactory;
 public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
     
     private final static Logger log = LoggerFactory.getLogger(BasicHstSiteMapMatcher.class);
-    
-    // the equivalence for *
-    public final static String WILDCARD = "_default_";
-    
-    // the equivalence for **
-    public final static String ANY = "_any_";
-     
+
     private HstLinkProcessor linkProcessor;
     
     public void setLinkProcessor(HstLinkProcessor linkProcessor) {
@@ -153,18 +154,53 @@ public class BasicHstSiteMapMatcher implements HstSiteMapMatcher{
             }
             
         }
-        
-        if(log.isInfoEnabled()){
-            String path = matchedSiteMapItem.getId();
-            path = path.replace("_default_", "*");
-            path = path.replace("_any_", "**");
-            log.info("For path '{}' we found SiteMapItem with path '{}'", pathInfo, path);
-            log.debug("Params for resolved sitemap item: '{}'", params);
+
+        // check wether there is an _index_ sitemap item:
+        HstSiteMapItem index = matchedSiteMapItem.getChild(INDEX);
+        if (index != null) {
+            log.info("Found an '{}' sitemap item below '{}'. Check if the relative content path points to an existing folder/document.",
+                    INDEX, getSiteMapItemPath(matchedSiteMapItem));
+            ResolvedSiteMapItemImpl indexResolvedSiteMapItem = new ResolvedSiteMapItemImpl(index, params, pathInfo + "/" + INDEX, resolvedMount);
+            if (indexResolvedSiteMapItem.getRelativeContentPath() != null) {
+                // check whether the folder/document being referred to by the indexResolvedSiteMapItem exists : If so, use _index_ item as match
+                String absolutePath = mount.getContentPath() + "/" + indexResolvedSiteMapItem.getRelativeContentPath();
+                try {
+                    if (RequestContextProvider.get() != null && RequestContextProvider.get().getSession().itemExists(absolutePath)) {
+                        log.info("Use '{}' sitemap item below '{}' because content path '{}' for the '{}' item exists.",
+                                INDEX, getSiteMapItemPath(matchedSiteMapItem), absolutePath, INDEX);
+                        logMatchedItem(pathInfo, params, matchedSiteMapItem);
+                        return indexResolvedSiteMapItem;
+                    } else {
+                        log.info("Don't use '{}' sitemap item below '{}' because content path '{}' for the '{}' item does NOT exist.",
+                                INDEX, getSiteMapItemPath(matchedSiteMapItem), absolutePath, INDEX);
+                    }
+                } catch (RepositoryException e) {
+                    log.warn("Unable to get JCR session needed to check existing of the document belonging to the _index_ " +
+                            "sitemap item.", e);
+                }
+            }
         }
-        
+
+        logMatchedItem(pathInfo, params, matchedSiteMapItem);
+
         ResolvedSiteMapItem r = new ResolvedSiteMapItemImpl(matchedSiteMapItem, params, pathInfo, resolvedMount);
         return r;
     
+    }
+
+    private void logMatchedItem(final String pathInfo, final Properties params, final HstSiteMapItem matchedSiteMapItem) {
+        if (log.isInfoEnabled()) {
+            String path = getSiteMapItemPath(matchedSiteMapItem);
+            log.info("For path '{}' we found SiteMapItem with path '{}'", pathInfo, path);
+            log.debug("Params for resolved sitemap item: '{}'", params);
+        }
+    }
+
+    private String getSiteMapItemPath(final HstSiteMapItem matchedSiteMapItem) {
+        String path = matchedSiteMapItem.getId();
+        path = path.replace(WILDCARD, "*");
+        path = path.replace(ANY, "**");
+        return path;
     }
 
     private HstSiteMapItem resolveMatchingSiteMap(HstSiteMapItem hstSiteMapItem, Properties params, int position, String[] elements) {

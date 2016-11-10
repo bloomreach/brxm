@@ -829,7 +829,7 @@ public class HstSiteMapItemService implements HstSiteMapItem, CanonicalInfo, Con
         return postfix;
     }
 
-    public String getExtension(){
+    public String getExtension() {
         return extension;
     }
 
