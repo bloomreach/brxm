@@ -42,12 +42,12 @@
   h5 {
     margin-left: -8px;
   }
-  &.form-field-focused {
+  &.has-focused-element {
     border-color: $blue-500 !important;
   }
 }
 
-.form-field-focused {
+.has-focused-element {
   &> h5 {
     color: $blue-500 !important;
     md-icon {

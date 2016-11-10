@@ -28,7 +28,6 @@
        ng-if="::$ctrl.hasValue(fieldType)"
        class="field"
        ng-class="{
-        'form-field-focused': $ctrl.hasFocusedField(fieldType),
         'form-field-compound': fieldType.type == 'COMPOUND'
        }"
        ng-repeat="value in ::$ctrl.fieldValues[fieldType.id]">
@@ -57,16 +56,16 @@
              ng-model="$ctrl.fieldValues[fieldType.id][$index]"
              placeholder=""
              aria-label="{{::fieldType.displayName}}"
-             ng-focus="$ctrl.onFieldFocus(fieldType)"
-             ng-blur="$ctrl.onFieldBlur(fieldType)">
+             ng-focus="$ctrl.onFieldFocus($event)"
+             ng-blur="$ctrl.onFieldBlur($event)">
 
       <textarea ng-switch-when="MULTILINE_STRING"
                 ng-model="$ctrl.fieldValues[fieldType.id][$index]"
                 placeholder=""
                 aria-label="{{::fieldType.displayName}}"
                 md-no-resize
-                ng-focus="$ctrl.onFieldFocus(fieldType)"
-                ng-blur="$ctrl.onFieldBlur(fieldType)">
+                ng-focus="$ctrl.onFieldFocus($event)"
+                ng-blur="$ctrl.onFieldBlur($event)">
       </textarea>
 
     </md-input-container>

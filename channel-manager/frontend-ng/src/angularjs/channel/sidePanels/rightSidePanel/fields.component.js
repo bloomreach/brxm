@@ -26,21 +26,6 @@ export class ChannelFieldsCtrl {
     return angular.isArray(values) && values.length > 0;
   }
 
-  hasFocusedField(field) {
-    if (!field.fields) {
-      return false;
-    }
-
-    let hasFocused = field.fields.findIndex(newField => newField.focused) !== -1;
-    field.fields.forEach((newField) => {
-      const childFieldHasFocused = this.hasFocusedField(newField);
-      if (childFieldHasFocused) {
-        hasFocused = true;
-      }
-    });
-    return hasFocused;
-  }
-
   getDisplayNameForCompound(field, index) {
     if (this.hasValue(field)) {
       const values = this.fieldValues[field.id];
@@ -52,12 +37,26 @@ export class ChannelFieldsCtrl {
     return field.displayName;
   }
 
-  onFieldFocus(field) {
-    field.focused = true;
+  onFieldFocus($event) {
+    const focusedElement = angular.element($event.target);
+    let p = focusedElement.parent();
+    while (p.length > 0) {
+      if (p.hasClass('form-field-compound')) {
+        p.addClass('has-focused-element');
+      }
+      p = p.parent();
+    }
   }
 
-  onFieldBlur(field) {
-    field.focused = false;
+  onFieldBlur($event) {
+    const focusedElement = angular.element($event.target);
+    let p = focusedElement.parent();
+    while (p.length > 0) {
+      if (p.hasClass('form-field-compound')) {
+        p.removeClass('has-focused-element');
+      }
+      p = p.parent();
+    }
   }
 }
 
