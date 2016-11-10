@@ -195,7 +195,9 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             try {
                 for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
                     HstComponentWindow window = sortedComponentWindows[i];
-                    window.getResponseState().flush();
+                    // skip the response body to avoid the response getting already committed (which is not allowed
+                    // in case of a redirect
+                    window.getResponseState().flush(true);
                 }
 
                 boolean permanent = false;
