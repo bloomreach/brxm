@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.model;
 
-import java.util.function.Supplier;
-
 import org.apache.wicket.model.AbstractReadOnlyModel;
 
 /**
@@ -24,9 +22,9 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
  */
 public class ReadOnlyModel<T> extends AbstractReadOnlyModel<T> {
 
-    private final Supplier<T> supplier;
+    private final SerializableSupplier<T> supplier;
 
-    private ReadOnlyModel(final Supplier<T> supplier) {
+    private ReadOnlyModel(final SerializableSupplier<T> supplier) {
         this.supplier = supplier;
     }
 
@@ -35,7 +33,7 @@ public class ReadOnlyModel<T> extends AbstractReadOnlyModel<T> {
         return supplier.get();
     }
 
-    public static <T> ReadOnlyModel<T> of(final Supplier<T> supplier) {
+    public static <T> ReadOnlyModel<T> of(final SerializableSupplier<T> supplier) {
         return new ReadOnlyModel<>(supplier);
     }
 }
