@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,6 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
@@ -85,12 +84,6 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         this.context = context;
 
         add(new PanelPluginBreadCrumbLink("create-group", breadCrumbModel) {
-
-            @Override
-            public void onClick(final AjaxRequestTarget target) {
-                clearMessages(this.getParent());
-                super.onClick(target);
-            }
 
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
@@ -159,14 +152,6 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         redraw();
     }
 
-    private void clearMessages(final Component component) {
-        if(component != null) {
-            if (component.hasFeedbackMessage()) {
-                getFeedbackMessages().clear();
-            }
-        }
-    }
-
     private class AjaxGroupViewActionLinkLabel extends Panel {
 
         private AjaxGroupViewActionLinkLabel(final String id, Group group) {
@@ -212,7 +197,6 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
 
         @Override
         public void onClick(final AjaxRequestTarget target) {
-            clearMessages(findParent(ListGroupsPanel.class));
             context.getService(IDialogService.class.getName(), IDialogService.class).show(
                     new DeleteDialog<Group>(groupModel, this) {
                         private static final long serialVersionUID = 1L;
@@ -239,20 +223,26 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
             String groupname = group.getGroupname();
             try {
                 group.delete();
-                Session.get().info(getString("group-removed", model));
 
-                List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
-                getBreadCrumbModel().setActive(l.get(l.size() - 2));
+                // retrieve info message before activating a new ListGroupPanel, as by then a message with key
+                // 'group-removed' is no longer found
+                final String infoMsg = getString("group-removed", model);
+                activateParent();
                 activate(new IBreadCrumbPanelFactory() {
                     public BreadCrumbPanel create(final String componentId, final IBreadCrumbModel breadCrumbModel) {
-                        return new ListGroupsPanel(componentId, context, breadCrumbModel, new GroupDataProvider());
+                        final ListGroupsPanel groupsPanel = new ListGroupsPanel(componentId, context, breadCrumbModel, new GroupDataProvider());
+                        groupsPanel.info(infoMsg);
+                        return groupsPanel;
                     }
                 });
             } catch (RepositoryException e) {
-                Session.get().warn(getString("group-remove-failed", model));
+                ListGroupsPanel.this.error(getString("group-remove-failed", model));
+                AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+                if (target !=  null) {
+                    target.add(ListGroupsPanel.this);
+                }
                 log.error("Unable to delete group '" + groupname + "' : ", e);
             }
         }
     }
-
 }

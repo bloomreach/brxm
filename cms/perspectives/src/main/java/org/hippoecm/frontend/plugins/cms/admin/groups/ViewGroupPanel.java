@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -133,22 +133,26 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
     }
 
     private void deleteGroup(final Group group, final IPluginContext context) {
-        String groupname = group.getGroupname();
+        final String groupname = group.getGroupname();
         try {
             group.delete();
-            Session.get().info(getString("group-removed", Model.of(group)));
-            // one up
-            List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
-            getBreadCrumbModel().setActive(l.get(l.size() - 2));
+            final String infoMsg = getString("group-removed", Model.of(group));
+            activateParent();
 
             activate(new IBreadCrumbPanelFactory() {
                 public BreadCrumbPanel create(final String componentId,
                                               final IBreadCrumbModel breadCrumbModel) {
-                    return new ListGroupsPanel(componentId, context, breadCrumbModel, new GroupDataProvider());
+                    final ListGroupsPanel groupsPanel = new ListGroupsPanel(componentId, context, breadCrumbModel, new GroupDataProvider());
+                    groupsPanel.info(infoMsg);
+                    return groupsPanel;
                 }
             });
         } catch (RepositoryException e) {
-            Session.get().warn(getString("group-remove-failed", Model.of(group)));
+            error(getString("group-remove-failed", Model.of(group)));
+            AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+            if (target !=  null) {
+                target.add(this);
+            }
             log.error("Unable to delete group '" + groupname + "' : ", e);
         }
     }

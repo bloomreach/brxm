@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,8 +14,6 @@
  *  limitations under the License.
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
-
-import java.util.List;
 
 import javax.jcr.RepositoryException;
 
@@ -54,7 +52,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
     public CreateGroupPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
-        
+
         // add form with markup id setter so it can be updated via ajax
         form = new Form("form", new CompoundPropertyModel(groupModel));
         form.setOutputMarkupId(true);
@@ -65,7 +63,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
         fc.add(StringValidator.minimumLength(2));
         fc.add(new GroupnameValidator());
         form.add(fc);
-        
+
         form.add(new TextField("description"));
 
         form.add(new AjaxButton("create-button", form) {
@@ -77,6 +75,8 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
                 String groupname = group.getGroupname();
                 try {
                     group.create();
+                    final String infoMsg = getString("group-created", groupModel);
+
                     HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
                     if (eventBus != null) {
                         UserSession userSession = UserSession.get();
@@ -87,14 +87,12 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
                                 .message("added group " + groupname);
                         eventBus.post(event);
                     }
-                    // one up
-                    List<IBreadCrumbParticipant> allBreadCrumbs = breadCrumbModel.allBreadCrumbParticipants();
-                    final IBreadCrumbParticipant parentBreadCrumb = allBreadCrumbs.get(allBreadCrumbs.size() - 2);
-                    parentBreadCrumb.getComponent().info(getString("group-created", groupModel));
-                    breadCrumbModel.setActive(parentBreadCrumb);
+
+                    final IBreadCrumbParticipant parentBreadCrumb = activateParent();
+                    parentBreadCrumb.getComponent().info(infoMsg);
                 } catch (RepositoryException e) {
                     target.add(CreateGroupPanel.this);
-                    this.error(getString("group-create-failed", groupModel));
+                    error(getString("group-create-failed", groupModel));
                     log.error("Unable to create group '" + groupname + "' : ", e);
                 }
             }
@@ -111,9 +109,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                // one up
-                List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
-                breadCrumbModel.setActive(l.get(l.size() -2));
+                activateParent();
             }
         }.setDefaultFormProcessing(false));
     }
