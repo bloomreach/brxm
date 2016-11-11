@@ -195,12 +195,12 @@
 }
 
 .hippo-console-menu-advanced {
-  padding: 8px;
+  padding: 10px;
   float: right;
 }
 
 .hippo-console-menu-logout {
-  padding: 8px;
+  padding: 10px;
   float: right;
 }
 
@@ -965,7 +965,7 @@ body.hippo-root div.yui-log-container {
   position: fixed;
   background-color: #f9f9f9;
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4);
-  margin-top: 5px;
+  margin-top: 8px;
 }
 
 .dropdown-content li {
@@ -991,3 +991,32 @@ body.hippo-root div.yui-log-container {
   background-color:#4587d6;
   color: white;
  }
+
+.dropdown-link-green {
+  color:green;
+}
+
+em .dropdown-link-green {
+  padding: 7px 12px;
+  display: block;
+  font-weight: normal;
+  font-style: normal;
+}
+
+.dropdown-link-red {
+  color: red;
+}
+em .dropdown-link-red {
+  padding: 7px 12px;
+  display: block;
+  font-weight: normal;
+  font-style: normal;
+}
+
+.dropdown-link-disabled {
+  color: grey;
+  font-weight: normal;
+  font-style: normal;
+  padding: 7px 12px;
+  display: block;
+}
