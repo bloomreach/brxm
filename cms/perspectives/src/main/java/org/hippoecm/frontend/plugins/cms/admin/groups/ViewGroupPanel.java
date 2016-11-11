@@ -137,16 +137,9 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         try {
             group.delete();
             final String infoMsg = getString("group-removed", Model.of(group));
-            activateParent();
+            final IBreadCrumbParticipant activateParent = activateParent();
+            activateParent.getComponent().info(infoMsg);
 
-            activate(new IBreadCrumbPanelFactory() {
-                public BreadCrumbPanel create(final String componentId,
-                                              final IBreadCrumbModel breadCrumbModel) {
-                    final ListGroupsPanel groupsPanel = new ListGroupsPanel(componentId, context, breadCrumbModel, new GroupDataProvider());
-                    groupsPanel.info(infoMsg);
-                    return groupsPanel;
-                }
-            });
         } catch (RepositoryException e) {
             error(getString("group-remove-failed", Model.of(group)));
             AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
