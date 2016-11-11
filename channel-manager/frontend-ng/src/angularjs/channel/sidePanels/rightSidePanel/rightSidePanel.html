@@ -14,8 +14,10 @@
   limitations under the License.
   -->
 
-<md-sidenav md-is-locked-open="$ctrl.isLockedOpen()" class="md-sidenav-right channel-right-side-panel qa-side-panel-right"
-            md-component-id="channel-right-side-panel" layout="column">
+<md-sidenav md-component-id="channel-right-side-panel"
+            class="md-sidenav-right channel-right-side-panel qa-side-panel-right"
+            md-is-locked-open="$ctrl.isLockedOpen()"
+            layout="column">
   <md-toolbar>
     <div class="md-toolbar-tools">
       <h1 class="md-title text-truncate">
@@ -25,7 +27,15 @@
     </div>
   </md-toolbar>
   <md-content flex="grow">
-    <form name="$ctrl.form" class="form-dense-layout" layout="column" ng-if="$ctrl.doc">
+    <div ng-if="$ctrl.doc && $ctrl.doc.info.editing.state && $ctrl.doc.info.editing.state != 'AVAILABLE'"
+         class="md-padding"
+         md-colors="{background: 'hippo-orange-50'}">
+      <div>{{::$ctrl.doc.info.editing.state | translate}}</div>
+    </div>
+    <form ng-if="$ctrl.doc && $ctrl.doc.info.editing.state && $ctrl.doc.info.editing.state == 'AVAILABLE'"
+          name="$ctrl.form"
+          class="form-dense-layout"
+          layout="column">
       <channel-fields class="top-level" field-types="::$ctrl.docType.fields" field-values="$ctrl.doc.fields"></channel-fields>
     </form>
   </md-content>
