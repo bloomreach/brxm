@@ -67,10 +67,10 @@ export class ChannelRightSidePanelCtrl {
           this.doc = {
             info: {
               editing: {
-                state: "UNAVAILABLE"
-              }
-            }
-          }
+                state: 'UNAVAILABLE',
+              },
+            },
+          };
         }
       });
   }
