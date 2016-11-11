@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -133,6 +133,7 @@ public enum FontAwesomeIcon {
     COMMENTS("fa-comments"),
     COMMENTS_O("fa-comments-o"),
     COMPASS("fa-compass"),
+    COMPASS_ROTATE_90("fa-compass fa-rotate-90"),
     COMPRESS("fa-compress"),
     COPY("fa-copy"),
     CREDIT_CARD("fa-credit-card"),
@@ -286,6 +287,7 @@ public enum FontAwesomeIcon {
     PHONE("fa-phone"),
     PHONE_SQUARE("fa-phone-square"),
     PICTURE_O("fa-picture-o"),
+    PIECHART("fa-pie-chart"),
     PINTEREST("fa-pinterest"),
     PINTEREST_SQUARE("fa-pinterest-square"),
     PLANE("fa-plane"),
@@ -328,6 +330,8 @@ public enum FontAwesomeIcon {
     SHARE_SQUARE("fa-share-square"),
     SHARE_SQUARE_O("fa-share-square-o"),
     SHIELD("fa-shield"),
+    SHIELD_FLIP_HORIZONTAL("fa-shield fa-flip-horizontal"),
+    SHIELD_ROTATE_270("fa-shield fa-rotate-270"),
     SHIRTSINBULK(" fa-shirtsinbulk"),
     SHOPPING_CART("fa-shopping-cart"),
     SIGN_IN("fa-sign-in"),
@@ -407,6 +411,7 @@ public enum FontAwesomeIcon {
     UPLOAD("fa-upload"),
     USD("fa-usd"),
     USER("fa-user"),
+    USER_PLUS("fa-user-plus"),
     USER_MD("fa-user-md"),
     USER_SECRET("fa-user-secret"),
     USERS("fa-users"),

@@ -1,5 +1,5 @@
 <!--
-  * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -15,8 +15,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:extend>
-    <label>Delete nodes with child nodes:</label>
-    <input type="checkbox" wicket:id="deleteFolders" style="margin-bottom: 10px; font-size: 15px;"/>
-    <div wicket:id="multitree"/>
+  <div class="message">
+    Select multiple nodes for deletion in the tree below.
+  </div>
+  <div class="message">
+    <label>
+      <input type="checkbox" wicket:id="deleteFolders">
+      <span>&nbsp;Delete nodes with child nodes</span>
+    </label>
+  </div>
+  <div wicket:id="multitree"/>
 </wicket:extend>
 </html>

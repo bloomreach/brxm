@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -149,7 +149,11 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
     protected void onOk() {
         try {
             if (checkPermissions()) {
-                invokeWorkflow();
+                if (checkFolderTypes()) {
+                    invokeWorkflow();
+                } else {
+                    error(new StringResourceModel("foldertypes.denied", this, null).getString());
+                }
             } else {
                 error(new StringResourceModel("permission.denied", this, null).getString());
             }
@@ -187,6 +191,14 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
     }
 
     protected boolean checkPermissions() {
+        return true;
+    }
+
+    /**
+     * Check if the destination folder is allowed by foldertype configuration to contain the type of document being
+     * worked on.
+     */
+    protected boolean checkFolderTypes() {
         return true;
     }
 

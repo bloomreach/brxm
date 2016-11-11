@@ -26,10 +26,10 @@ import java.util.Locale;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.EventListenerIterator;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -98,11 +98,16 @@ import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.CmsSessionUtil;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.onehippo.sso.CredentialCipher;
+import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.services.cmscontext.CmsContextService;
+import org.onehippo.cms7.services.cmscontext.CmsContextServiceImpl;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +128,10 @@ public class Main extends PluginApplication {
     public final static String MAXUPLOAD_PARAM = "upload-limit";
     public final static String ENCRYPT_URLS = "encrypt-urls";
     public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
+
     public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
+    public final static String PLUGIN_APPLICATION_VALUE_CMS = "cms";
+    public final static String PLUGIN_APPLICATION_VALUE_CONSOLE = "console";
 
     // comma separated init parameter
     public final static String ACCEPTED_ORIGIN_WHITELIST = "accepted-origin-whitelist";
@@ -160,6 +168,9 @@ public class Main extends PluginApplication {
     }
 
     private HippoRepository repository;
+
+    private CmsContextServiceImpl cmsContextServiceImpl;
+    private CmsInternalCmsContextService cmsContextService;
 
     @Override
     protected void init() {
@@ -295,74 +306,93 @@ public class Main extends PluginApplication {
             }
         }));
 
+        String applicationName = getPluginApplicationName();
 
-        /*
-         * HST SAML kind of authentication handler needed for Template Composer integration
-         *
-         */
-        mount(new MountMapper("auth", new IMountedRequestMapper() {
+        if (PLUGIN_APPLICATION_VALUE_CMS.equals(applicationName)) {
 
-            @Override
-            public IRequestHandler mapRequest(final Request request, final MountParameters mountParams) {
+            // the following is only applicable and needed for the CMS application, not the Console
 
-                PluginUserSession userSession = (PluginUserSession) Session.get();
-                final UserCredentials userCredentials = userSession.getUserCredentials();
+            /*
+             * HST SAML kind of authentication handler needed for Template Composer integration
+             *
+             */
+            cmsContextService = (CmsInternalCmsContextService)HippoServiceRegistry.getService(CmsContextService.class);
+            if ( cmsContextService == null) {
+                cmsContextServiceImpl = new CmsContextServiceImpl();
+                cmsContextService = cmsContextServiceImpl;
+                HippoServiceRegistry.registerService(cmsContextServiceImpl, new Class[]{CmsContextService.class,CmsInternalCmsContextService.class});
+            }
+            mount(new MountMapper("auth", new IMountedRequestMapper() {
 
-                IRequestHandler requestTarget = new BookmarkablePageRequestHandler(new PageProvider(getHomePage(), null));
+                @Override
+                public IRequestHandler mapRequest(final Request request, final MountParameters mountParams) {
 
-                IRequestParameters requestParameters = request.getRequestParameters();
-                final List<StringValue> keyParams = requestParameters.getParameterValues("key");
-                final List<StringValue> destinationUrlParams = requestParameters.getParameterValues("destinationUrl");
+                    IRequestHandler requestTarget = new BookmarkablePageRequestHandler(new PageProvider(getHomePage(), null));
 
-                if (userCredentials != null && destinationUrlParams.size() > 0) {
+                    IRequestParameters requestParameters = request.getRequestParameters();
+                    final List<StringValue> cmsCSIDParams = requestParameters.getParameterValues("cmsCSID");
+                    final List<StringValue> destinationUrlParams = requestParameters.getParameterValues("destinationUrl");
 
-                    requestTarget = new IRequestHandler() {
+                    PluginUserSession userSession = (PluginUserSession) Session.get();
+                    final UserCredentials userCredentials = userSession.getUserCredentials();
 
-                        @Override
-                        public void respond(IRequestCycle requestCycle) {
-                            String destinationUrl = destinationUrlParams.get(0).toString();
-                            WebResponse response = (WebResponse) RequestCycle.get().getResponse();
-                            if (keyParams == null || keyParams.get(0) == null) {
-                                // redirect to destinationURL and include marker that it is a retry. This way
-                                // the destination can choose to not redirect for SSO handshake again if it still does not
-                                // have a key
-                                if (destinationUrl.contains("?")) {
-                                    response.sendRedirect(destinationUrl + "&retry");
-                                } else {
-                                    response.sendRedirect(destinationUrl + "?retry");
+                    HttpSession httpSession = ((ServletWebRequest)request).getContainerRequest().getSession();
+                    final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+
+                    if (destinationUrlParams.size() > 0 && (cmsSessionContext != null || userCredentials != null)) {
+
+                        requestTarget = new IRequestHandler() {
+
+                            @Override
+                            public void respond(IRequestCycle requestCycle) {
+                                String destinationUrl = destinationUrlParams.get(0).toString();
+                                WebResponse response = (WebResponse) RequestCycle.get().getResponse();
+                                String cmsCSID = cmsCSIDParams == null ? null : cmsCSIDParams.get(0) == null ? null : cmsCSIDParams.get(0).toString();
+                                if (!cmsContextService.getId().equals(cmsCSID)) {
+                                    // redirect to destinationURL and include marker that it is a retry. This way
+                                    // the destination can choose to not redirect for SSO handshake again if it still does not
+                                    // have a key
+                                    if (destinationUrl.contains("?")) {
+                                        response.sendRedirect(destinationUrl + "&retry");
+                                    } else {
+                                        response.sendRedirect(destinationUrl + "?retry");
+                                    }
+                                    return;
                                 }
-                                return;
-                            }
-                            String key = keyParams.get(0).toString();
-                            CredentialCipher cipher = CredentialCipher.getInstance();
-                            String encryptedString = cipher.getEncryptedString(key, (SimpleCredentials) userCredentials.getJcrCredentials());
+                                String cmsSessionContextId = cmsSessionContext != null ? cmsSessionContext.getId() : null;
+                                if (cmsSessionContextId == null) {
+                                    CmsSessionContext newCmsSessionContext = cmsContextService.create(httpSession);
+                                    CmsSessionUtil.populateCmsSessionContext(cmsContextService, newCmsSessionContext, userSession);
+                                    cmsSessionContextId = newCmsSessionContext.getId();
 
-                            if (destinationUrl.contains("?")) {
-                                response.sendRedirect(destinationUrl + "&cred=" + encryptedString);
-                            } else {
-                                response.sendRedirect(destinationUrl + "?cred=" + encryptedString);
+                                }
+                                if (destinationUrl.contains("?")) {
+                                    response.sendRedirect(destinationUrl + "&cmsCSID="+ cmsContextService.getId()+"&cmsSCID=" + cmsSessionContextId);
+                                } else {
+                                    response.sendRedirect(destinationUrl + "?cmsCSID="+ cmsContextService.getId()+"&cmsSCID=" + cmsSessionContextId);
+                                }
                             }
-                        }
 
-                        @Override
-                        public void detach(IRequestCycle requestCycle) {
-                            //Nothing to detach.
-                        }
-                    };
+                            @Override
+                            public void detach(IRequestCycle requestCycle) {
+                                //Nothing to detach.
+                            }
+                        };
+                    }
+                    return requestTarget;
                 }
-                return requestTarget;
-            }
 
-            @Override
-            public int getCompatibilityScore(final Request request) {
-                return 0;
-            }
+                @Override
+                public int getCompatibilityScore(final Request request) {
+                    return 0;
+                }
 
-            @Override
-            public Mount mapHandler(final IRequestHandler requestHandler) {
-                return null;
-            }
-        }));
+                @Override
+                public Mount mapHandler(final IRequestHandler requestHandler) {
+                    return null;
+                }
+            }));
+        }
 
         // caching resource stream locator implementation that allows the class argument to be null.
         final IResourceStreamLocator resourceStreamLocator = resourceSettings.getResourceStreamLocator();
@@ -470,7 +500,6 @@ public class Main extends PluginApplication {
         });
 
         if (log.isInfoEnabled()) {
-            String applicationName = getPluginApplicationName();
             log.info("Hippo CMS application " + applicationName + " has started");
         }
     }
@@ -507,7 +536,7 @@ public class Main extends PluginApplication {
 
     @Override
     public String getPluginApplicationName() {
-        return getConfigurationParameter(PLUGIN_APPLICATION_NAME_PARAMETER, "cms");
+        return getConfigurationParameter(PLUGIN_APPLICATION_NAME_PARAMETER, PLUGIN_APPLICATION_VALUE_CMS);
     }
 
     @Override
@@ -578,6 +607,11 @@ public class Main extends PluginApplication {
 
     @Override
     protected void onDestroy() {
+        if (cmsContextServiceImpl != null) {
+            HippoServiceRegistry.unregisterService(cmsContextServiceImpl, CmsContextService.class);
+            cmsContextServiceImpl = null;
+        }
+        cmsContextService = null;
         if (repository != null) {
             // remove listeners
             JcrObservationManager jom = JcrObservationManager.getInstance();

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
@@ -32,10 +31,10 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
@@ -60,10 +59,11 @@ import org.slf4j.LoggerFactory;
  * Panel showing information regarding the groups.
  */
 public class ViewGroupPanel extends AdminBreadCrumbPanel {
-    private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(ViewGroupPanel.class);
 
     private final Group group;
+    private final GroupMembersListView groupMembersListView;
 
     public ViewGroupPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
                           final Group group) {
@@ -72,23 +72,20 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
 
         this.group = group;
 
-        add(new Label("view-group-panel-title",
-                new StringResourceModel("group-view-title", this, new Model<Group>(group))));
+        final Model<Group> groupModel = Model.of(group);
+        add(new Label("view-group-panel-title", new StringResourceModel("group-view-title", this, groupModel)));
 
         // common group properties
-        add(new Label("groupname", new PropertyModel(group, "groupname")));
-        add(new Label("description", new PropertyModel(group, "description")));
+        add(new Label("groupname", group.getGroupname())); // groups cannot be renamed, so no model needed
+        add(new Label("description", ReadOnlyModel.of(group::getDescription)));
 
-        PermissionsListView permissionsListView =
-                new PermissionsListView(group, "permissions",
-                        new Model<ArrayList<PermissionBean>>(new ArrayList<PermissionBean>(group.getPermissions())),
-                        context);
+        PermissionsListView permissionsListView = new PermissionsListView(group, "permissions", context);
         add(permissionsListView);
 
         // actions
         PanelPluginBreadCrumbLink edit = new PanelPluginBreadCrumbLink("edit-group", breadCrumbModel) {
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
-                return new EditGroupPanel(componentId, breadCrumbModel, new Model<Group>(group));
+                return new EditGroupPanel(componentId, breadCrumbModel, groupModel);
             }
         };
         edit.setVisible(!group.isExternal());
@@ -97,21 +94,17 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         PanelPluginBreadCrumbLink members = new PanelPluginBreadCrumbLink("set-group-members", breadCrumbModel) {
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
-                return new SetMembersPanel(componentId, breadCrumbModel, new Model<Group>(group));
+                return new SetMembersPanel(componentId, breadCrumbModel, groupModel);
             }
         };
         members.setVisible(!group.isExternal());
         add(members);
 
         add(new AjaxLinkLabel("delete-group", new ResourceModel("group-delete")) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(AjaxRequestTarget target) {
                 context.getService(IDialogService.class.getName(), IDialogService.class).show(
                         new DeleteDialog<Group>(group, this) {
-                            private static final long serialVersionUID = 1L;
-
                             @Override
                             protected void onOk() {
                                 deleteGroup(group, context);
@@ -132,11 +125,10 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         });
 
         Label groupMembersLabel = new Label("group-members-label",
-                new StringResourceModel("group-members-label", this, new Model<Group>(group)));
+                new StringResourceModel("group-members-label", this, groupModel));
         add(groupMembersLabel);
-        ArrayList<DetachableUser> membersOfGroup = new ArrayList<DetachableUser>(group.getMembersAsDetachableUsers());
-        Model<ArrayList<DetachableUser>> listModel = new Model<ArrayList<DetachableUser>>(membersOfGroup);
-        GroupMembersListView groupMembersListView = new GroupMembersListView(group, "groupmembers", listModel, context);
+
+        groupMembersListView = new GroupMembersListView(group, "groupmembers", context);
         add(groupMembersListView);
     }
 
@@ -144,7 +136,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         String groupname = group.getGroupname();
         try {
             group.delete();
-            Session.get().info(getString("group-removed", new Model<Group>(group)));
+            Session.get().info(getString("group-removed", Model.of(group)));
             // one up
             List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
             getBreadCrumbModel().setActive(l.get(l.size() - 2));
@@ -156,22 +148,21 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                 }
             });
         } catch (RepositoryException e) {
-            Session.get().warn(getString("group-remove-failed", new Model<Group>(group)));
+            Session.get().warn(getString("group-remove-failed", Model.of(group)));
             log.error("Unable to delete group '" + groupname + "' : ", e);
         }
     }
 
     public IModel<String> getTitle(Component component) {
-        return new StringResourceModel("group-view-title", component, new Model<Group>(group));
+        return new StringResourceModel("group-view-title", component, Model.of(group));
     }
 
     /**
      * List view for showing the permissions of the group.
      */
     private final class PermissionsListView extends ListView<PermissionBean> {
-        private static final long serialVersionUID = 1L;
-        private Group group;
 
+        private final Group group;
         private final IPluginContext context;
 
         /**
@@ -179,13 +170,10 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
          *
          * @param group     The group
          * @param id        The id of the listview.
-         * @param listModel The list which must be rendered by the listview
          * @param context   The current context
          */
-        public PermissionsListView(final Group group, final String id,
-                                   final IModel<ArrayList<PermissionBean>> listModel,
-                                   final IPluginContext context) {
-            super(id, listModel);
+        public PermissionsListView(final Group group, final String id, final IPluginContext context) {
+            super(id, group.getPermissions());
             this.group = group;
             this.context = context;
             setReuseItems(false);
@@ -202,24 +190,19 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                     "securityDomain",
                     ViewGroupPanel.this,
                     permissionBean.getDomain(),
-                    new PropertyModel<String>(domain, "name")
+                    Model.of(domain.getName())
             );
             item.add(action);
-            item.add(new Label("role", new Model<String>(roleName)));
+            item.add(new Label("role", roleName));
             item.add(new AjaxLinkLabel("remove", new ResourceModel("group-delete-role-domain-combination")) {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
                     context.getService(IDialogService.class.getName(), IDialogService.class).show(
                             new DeleteDialog<PermissionBean>(permissionBean, this) {
-                                private static final long serialVersionUID = 1L;
-
                                 @Override
                                 protected void onOk() {
                                     deleteRoleDomainCombination(permissionBean);
-                                    PermissionsListView listView = PermissionsListView.this;
-                                    listView.setModelObject(new ArrayList<PermissionBean>(group.getPermissions()));
+                                    PermissionsListView.this.setModelObject(group.getPermissions());
                                 }
 
                                 @Override
@@ -262,11 +245,11 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                                         + " from role " + authRole.getRole());
                 eventBus.post(event);
             }
-            Session.get().info(getString("group-role-domain-combination-removed", new Model<Group>(groupToChange)));
+            Session.get().info(getString("group-role-domain-combination-removed", Model.of(groupToChange)));
             List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
             getBreadCrumbModel().setActive(l.get(l.size() - 1));
         } catch (RepositoryException e) {
-            Session.get().error(getString("group-delete-role-domain-combination-failed", new Model<Group>(groupToChange)));
+            Session.get().error(getString("group-delete-role-domain-combination-failed", Model.of(groupToChange)));
             log.error("Failed to remove role domain combination", e);
         }
     }
@@ -275,19 +258,14 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
      * List view for the group members.
      */
     private final class GroupMembersListView extends ListView<DetachableUser> {
-        private static final long serialVersionUID = 1L;
-        private Group group;
 
+        private final Group group;
         private final IPluginContext context;
-        private IModel<ArrayList<DetachableUser>> listModel;
 
-        public GroupMembersListView(final Group group, final String id,
-                                    final IModel<ArrayList<DetachableUser>> listModel,
-                                    final IPluginContext context) {
-            super(id, listModel);
+        public GroupMembersListView(final Group group, final String id, final IPluginContext context) {
+            super(id, group.getMembersAsDetachableUsers());
             this.group = group;
             this.context = context;
-            this.listModel = listModel;
             setReuseItems(false);
         }
 
@@ -300,29 +278,28 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             ));
         }
 
+        void updateMembers() {
+            setModelObject(group.getMembersAsDetachableUsers());
+        }
+
         private class DeleteGroupMembershipActionLinkLabel extends AjaxLinkLabel {
 
             private final User user;
 
-            private DeleteGroupMembershipActionLinkLabel(final String id, final IModel model, final User user) {
+            private DeleteGroupMembershipActionLinkLabel(final String id, final IModel<String> model, final User user) {
                 super(id, model);
                 this.user = user;
             }
 
-            private static final long serialVersionUID = 1L;
-
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 context.getService(IDialogService.class.getName(), IDialogService.class).show(
-                        new DeleteDialog<User>(new Model<User>(user), this) {
-                            private static final long serialVersionUID = 1L;
-
+                        new DeleteDialog<User>(Model.of(user), this) {
                             @Override
                             protected void onOk() {
                                 final String userName = user.getUsername();
                                 deleteGroupMemberShip(userName);
-                                List<DetachableUser> updatedGroupMembers = group.getMembersAsDetachableUsers();
-                                listModel.setObject(new ArrayList<DetachableUser>(updatedGroupMembers));
+                                updateMembers();
                             }
 
                             @Override
@@ -365,5 +342,11 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             Session.get().error(getString("group-member-remove-failed", null));
             log.error("Failed to remove memberships", e);
         }
+    }
+
+    @Override
+    public void onActivate(IBreadCrumbParticipant previous) {
+        super.onActivate(previous);
+        groupMembersListView.updateMembers();
     }
 }

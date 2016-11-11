@@ -1,5 +1,5 @@
 /*
-* Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+* Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -571,7 +571,7 @@ public class RichTextModelTest {
 
     @Test
     public void htmlEntitiesArePreserved() {
-        testPreserved("&gt;&lt;&amp;&quot;&acute;");
+        testPreserved("&gt;&lt;&amp;&nbsp;");
     }
 
     @Test
@@ -587,7 +587,7 @@ public class RichTextModelTest {
     @Test
     public void codeBlockIsPreserved() {
         testPreserved("<pre class=\"sh_xml\">&lt;hst:defineObjects/&gt;\n" +
-                "&lt;c:set var=&quot;isPreview&quot; value=&quot;${hstRequest.requestContext.preview}&quot;/&gt;\n" +
+                "&lt;c:set var=\"isPreview\" value=\"${hstRequest.requestContext.preview}\"/&gt;\n" +
                 "</pre>");
     }
 

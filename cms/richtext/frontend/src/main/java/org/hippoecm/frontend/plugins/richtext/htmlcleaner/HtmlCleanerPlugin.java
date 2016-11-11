@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,11 +31,8 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
 import org.htmlcleaner.CleanerProperties;
-import org.htmlcleaner.CompactHtmlSerializer;
 import org.htmlcleaner.HtmlCleaner;
-import org.htmlcleaner.PrettyHtmlSerializer;
 import org.htmlcleaner.Serializer;
-import org.htmlcleaner.SimpleHtmlSerializer;
 import org.htmlcleaner.TagNode;
 import org.htmlcleaner.TagNodeVisitor;
 
@@ -55,7 +52,7 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
     private static final String OMIT_COMMENTS = "omitComments";
     private static final String FILTER = "filter";
     private static final String JAVASCRIPT_PROTOCOL = "javascript:";
-    private static final TextEscaper escaper = new TextEscaper();
+    private static final HippoCompactHtmlSerializer escaper = new HippoCompactHtmlSerializer(new CleanerProperties());
 
     private final Map<String, Element> whitelist = new HashMap<>();
     private final String charset;
@@ -162,7 +159,6 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
         final HtmlCleaner cleaner = new HtmlCleaner();
         final CleanerProperties properties = cleaner.getProperties();
         properties.setOmitHtmlEnvelope(true);
-        properties.setTranslateSpecialEntities(false);
         properties.setOmitXmlDeclaration(true);
         properties.setOmitComments(omitComments);
         return cleaner;
@@ -171,11 +167,11 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
     private Serializer createSerializer(final CleanerProperties properties) {
         switch (serializer) {
             case PRETTY:
-                return new PrettyHtmlSerializer(properties);
+                return new HippoPrettyHtmlSerializer(properties);
             case COMPACT:
-                return new CompactHtmlSerializer(properties);
+                return new HippoCompactHtmlSerializer(properties);
             default:
-                return new SimpleHtmlSerializer(properties);
+                return new HippoSimpleHtmlSerializer(properties);
         }
     }
 
@@ -190,17 +186,4 @@ public class HtmlCleanerPlugin extends Plugin implements IHtmlCleanerService {
         }
     }
 
-    private static class TextEscaper extends CompactHtmlSerializer {
-        private TextEscaper() {
-            super(new CleanerProperties() {{
-                setRecognizeUnicodeChars(true);
-                setTranslateSpecialEntities(true);
-            }});
-        }
-
-        @Override
-        protected String escapeText(final String s) {
-            return super.escapeText(s);
-        }
-    }
 }

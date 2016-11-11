@@ -34,9 +34,11 @@ import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
 import org.apache.wicket.util.template.TextTemplate;
+import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.WebApplicationHelper;
 
 public class DefaultLoginPlugin extends SimpleLoginPlugin {
 
@@ -80,7 +82,8 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
             super(id, autoComplete, locales, handler);
 
             final IPluginConfig config = getPluginConfig();
-            final boolean isTimeZoneVisible = config.getBoolean(SHOW_TIMEZONES_CONFIG_PARAM);
+            final boolean consoleLogin = WebApplicationHelper.getApplicationName().equals(Main.PLUGIN_APPLICATION_VALUE_CONSOLE);
+            final boolean isTimeZoneVisible = !consoleLogin && config.getBoolean(SHOW_TIMEZONES_CONFIG_PARAM);
 
             if (isTimeZoneVisible) {
                 availableTimeZones = getSelectableTimezones(config.getStringArray(SELECTABLE_TIMEZONES_CONFIG_PARAM));

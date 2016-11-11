@@ -1,8 +1,0 @@
----------------
-Hippo CMS Theme
----------------
-
-The Hippo CMS theme contains the style for Hippo CMS. It utilizes nodejs and grunt to manage the css, js, image,
-and font files that the application needs.
-
-See the instructions in ../README

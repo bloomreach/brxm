@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class PropertyValueProviderTest extends PluginTest {
     }
 
     @Test
-    public void testAddNewAddsNoDefaultPropertyForSingleDateField() throws RepositoryException {
+    public void testAddNewAddsDefaultPropertyForSingleDateField() throws RepositoryException {
         Node testNode = this.root.addNode(TEST_NODE_NAME,"frontendtest:model");
         JcrPropertyModel propertyModel = new JcrPropertyModel(testNode.getPath() + "/frontendtest:date");
         IFieldDescriptor field = new JavaFieldDescriptor("frontendtest:date", new JavaTypeDescriptor("date",
@@ -86,28 +86,29 @@ public class PropertyValueProviderTest extends PluginTest {
                 .getItemModel());
         provider.addNew();
 
-        assertEquals("Expected to store null-date value in the date property",
-                PropertyValueProvider.NULL_DATE, testNode.getProperty("frontendtest:date").getDate().getTime());
+        assertEquals("Expected to store empty-date value in the date property",
+                PropertyValueProvider.EMPTY_DATE, testNode.getProperty("frontendtest:date").getDate().getTime());
 
         assertEquals(1, provider.size());
         JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
-        assertEquals("Expected to return 'null' for the field storing null-date value", null, pvm.getObject());
+        assertEquals("Expected to return empty-date for the field storing empty-date value",
+                PropertyValueProvider.EMPTY_DATE, pvm.getObject());
 
         provider.detach();
         assertEquals(1, provider.size());
         pvm = provider.iterator(0, 1).next();
-        assertEquals(null, pvm.getObject());
+        assertEquals(PropertyValueProvider.EMPTY_DATE, pvm.getObject());
     }
 
     /**
      * Create a multi-value date property with two empty-values and an initialized value. Expect to return a multi-value
-     * date field having an array of two null and an initialized date values.
+     * date field having an array of two empty-date and an initialized date values.
      *
      * @throws RepositoryException
      */
     @Test
     public void canStoreEmptyValuesInMultiValuesDateField() throws RepositoryException {
-        final Date[] dates = new Date[]{null, new Date(), null};
+        final Date[] dates = new Date[]{PropertyValueProvider.EMPTY_DATE, new Date(), PropertyValueProvider.EMPTY_DATE};
         final int valuesCount = dates.length;
 
         Node testNode = this.root.addNode(TEST_NODE_NAME,"frontendtest:model");
@@ -140,16 +141,16 @@ public class PropertyValueProviderTest extends PluginTest {
     }
 
     /**
-     * Create a multi-value date property with a null-date value, expected to have a date field with an empty value
+     * Create a multi-value date property with a empty-date value, expected to have a date field with an empty value
      * @throws RepositoryException
      */
     @Test
     public void canReadEmptyValueInMultiValuesDateField() throws RepositoryException {
-        final Calendar nullDateCalendar = Calendar.getInstance();
-        nullDateCalendar.setTime(PropertyValueProvider.NULL_DATE);
+        final Calendar emptyDateCalendar = Calendar.getInstance();
+        emptyDateCalendar.setTime(PropertyValueProvider.EMPTY_DATE);
 
         Node testNode = this.root.addNode(TEST_NODE_NAME, "frontendtest:relaxed");
-        testNode.setProperty("frontendtest:dates", nullDateCalendar);
+        testNode.setProperty("frontendtest:dates", emptyDateCalendar);
         session.save();
 
         JcrPropertyModel propertyModel = new JcrPropertyModel(testNode.getPath() + "/frontendtest:dates");
@@ -161,7 +162,7 @@ public class PropertyValueProviderTest extends PluginTest {
 
         assertEquals(1, provider.size());
         JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
-        assertEquals(null, pvm.getObject());
+        assertEquals(PropertyValueProvider.EMPTY_DATE, pvm.getObject());
         assertFalse(session.hasPendingChanges());
     }
 
@@ -177,7 +178,7 @@ public class PropertyValueProviderTest extends PluginTest {
 
         assertEquals(1, provider.size());
         JcrPropertyValueModel pvm = provider.iterator(0, 1).next();
-        assertEquals(null, pvm.getObject());
+        assertEquals(PropertyValueProvider.EMPTY_DATE, pvm.getObject());
         Date date = new Date();
         pvm.setObject(date);
         provider.detach();

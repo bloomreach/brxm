@@ -716,6 +716,33 @@
       "from": "grunt-autoprefixer@3.0.3",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/grunt-autoprefixer/-/grunt-autoprefixer-3.0.3.tgz"
     },
+    "grunt-cli": {
+      "version": "1.2.0",
+      "from": "grunt-cli@latest",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/grunt-cli/-/grunt-cli-1.2.0.tgz",
+      "dependencies": {
+        "findup-sync": {
+          "version": "0.3.0",
+          "from": "findup-sync@>=0.3.0 <0.4.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/findup-sync/-/findup-sync-0.3.0.tgz"
+        },
+        "glob": {
+          "version": "5.0.15",
+          "from": "glob@>=5.0.0 <5.1.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/glob/-/glob-5.0.15.tgz"
+        },
+        "minimatch": {
+          "version": "3.0.3",
+          "from": "minimatch@>=2.0.0 <3.0.0||>=3.0.0 <4.0.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/minimatch/-/minimatch-3.0.3.tgz"
+        },
+        "nopt": {
+          "version": "3.0.6",
+          "from": "nopt@>=3.0.6 <3.1.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/nopt/-/nopt-3.0.6.tgz"
+        }
+      }
+    },
     "grunt-contrib-clean": {
       "version": "0.6.0",
       "from": "grunt-contrib-clean@0.6.0",
@@ -840,6 +867,11 @@
           "resolved": "https://registry.npmjs.org/lodash/-/lodash-2.4.2.tgz"
         }
       }
+    },
+    "grunt-known-options": {
+      "version": "1.1.0",
+      "from": "grunt-known-options@>=1.1.0 <1.2.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/grunt-known-options/-/grunt-known-options-1.1.0.tgz"
     },
     "grunt-legacy-log": {
       "version": "0.1.3",
@@ -1724,6 +1756,11 @@
       "version": "1.0.1",
       "from": "require-main-filename@>=1.0.1 <2.0.0",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/require-main-filename/-/require-main-filename-1.0.1.tgz"
+    },
+    "resolve": {
+      "version": "1.1.7",
+      "from": "resolve@>=1.1.0 <1.2.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/resolve/-/resolve-1.1.7.tgz"
     },
     "retinajs": {
       "version": "2.0.1",

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public final class NodeIconUtils {
     public static Component createJcrNodeIcon(final String id, final TreeNode node) {
         final IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
         if (nodeModel ==  null || nodeModel.getObject() == null) {
-            return createDefaultNodeIcon(id);
+            return createUnknownNodeIcon(id);
         }
 
         final Node jcrNode = nodeModel.getObject();
@@ -56,8 +56,8 @@ public final class NodeIconUtils {
         return icon;
     }
 
-    private static Component createDefaultNodeIcon(final String id) {
-        return new IconLabel(id, JcrNodeIcon.FA_DEFAULT_NODE_CSS_CLASS);
+    private static Component createUnknownNodeIcon(final String id) {
+        return new IconLabel(id, JcrNodeIcon.FA_UNKNOWN_NODE_CSS_CLASS);
     }
 
     private static String determineNodeTooltip(final Node jcrNode) {

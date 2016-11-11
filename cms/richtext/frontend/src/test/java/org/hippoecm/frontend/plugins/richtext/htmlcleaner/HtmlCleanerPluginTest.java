@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -119,6 +119,67 @@ public class HtmlCleanerPluginTest extends PluginTest {
                 "&#58;&#97;&#108;&#101;&#114;&#116;&#40;&#39;&#88;&#83;&#83;&#39;&#41;\">link</a>");
         log.debug(html);
         assertEquals("<a href=\"\">link</a>", html);
+    }
+
+    @Test
+    public void testCharacterEntityConversion() throws Exception {
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, getPluginConfig());
+
+        String html = htmlCleanerPlugin.clean("&nbsp; &gt; &lt; &amp; á &aacute;");
+        log.debug(html);
+        assertEquals("&nbsp; &gt; &lt; &amp; á á", html);
+    }
+
+    @Test
+    public void testQuoteConversion() throws Exception {
+        final IPluginConfig pluginConfig = getPluginConfig();
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, pluginConfig);
+
+        final String html = htmlCleanerPlugin.clean("' \" &apos; &quot;", false, null, null);
+
+        assertEquals("' \" ' \"", html);
+    }
+
+    @Test
+    public void expectScriptTagIsNotRemoved() throws Exception {
+        final IPluginConfig pluginConfig = getPluginConfig();
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, pluginConfig);
+
+        final String original = "<h1><style type=\"text/css\" scoped>h1 {color:black;}</style>42</h1>";
+        final String expected = "<h1><style type=\"text/css\" scoped=\"scoped\">h1 {color:black;}</style>42</h1>";
+        final String html = htmlCleanerPlugin.clean(original, false, null, null);
+
+        assertEquals(expected, html);
+    }
+
+    @Test
+    public void expectLoopFinishes() throws Exception {
+        final IPluginConfig pluginConfig = getPluginConfig();
+        final HtmlCleanerPlugin htmlCleanerPlugin = new HtmlCleanerPlugin(null, pluginConfig);
+
+        final String original = "<div>\n" +
+                " <picture>\n" +
+                "<source media=\"(max-width: 700px)\" sizes=\"(max-width: 500px) 50vw, 10vw\"\n" +
+                "srcset=\"stick-figure-narrow.png 138w, stick-figure-hd-narrow.png 138w\">\n" +
+                "\n" +
+                "<source media=\"(max-width: 1400px)\" sizes=\"(max-width: 1000px) 100vw, 50vw\"\n" +
+                "srcset=\"stick-figure.png 416w, stick-figure-hd.png 416w\">\n" +
+                "\n" +
+                "<img src=\"stick-original.png\" alt=\"Human\">\n" +
+                "</picture>\n" +
+                "</div>";
+        final String expected = "<div>\n" +
+                " <picture>\n" +
+                "<audio><source media=\"(max-width: 700px)\" sizes=\"(max-width: 500px) 50vw, 10vw\" srcset=\"stick-figure-narrow.png 138w, stick-figure-hd-narrow.png 138w\" />\n" +
+                "\n" +
+                "<source media=\"(max-width: 1400px)\" sizes=\"(max-width: 1000px) 100vw, 50vw\" srcset=\"stick-figure.png 416w, stick-figure-hd.png 416w\" />\n" +
+                "\n" +
+                "<img src=\"stick-original.png\" alt=\"Human\" />\n" +
+                "</audio></picture></div>";
+
+        final String html = htmlCleanerPlugin.clean(original, false, null, null);
+
+        assertEquals(expected, html);
     }
 
     @Test
