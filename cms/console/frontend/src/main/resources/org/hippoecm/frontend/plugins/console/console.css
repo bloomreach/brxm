@@ -204,6 +204,10 @@
   float: right;
 }
 
+.hippo-console-menu-logout a:hover {
+  text-decoration: underline;
+}
+
 .hippo-console-menu-advanced li {
   float: left;
   margin-left: 10px;
