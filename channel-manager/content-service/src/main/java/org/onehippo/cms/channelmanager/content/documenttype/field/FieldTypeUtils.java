@@ -143,7 +143,10 @@ public class FieldTypeUtils {
         return determineDescriptor(context)
                 .filter(descriptor -> usesDefaultFieldPlugin(context, descriptor))
                 .flatMap(descriptor -> FieldTypeFactory.createFieldType(descriptor.fieldTypeClass))
-                .flatMap(fieldType -> fieldType.init(context));
+                .map(fieldType -> {
+                    fieldType.init(context);
+                    return fieldType.isValid() ? fieldType : null;
+                });
     }
 
     private static Optional<TypeDescriptor> determineDescriptor(final FieldTypeContext context) {

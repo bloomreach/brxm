@@ -52,9 +52,8 @@ public class StringFieldType extends FieldType {
     }
 
     @Override
-    public Optional<FieldType> init(final FieldTypeContext fieldContext) {
+    public void init(final FieldTypeContext fieldContext) {
         initFromFieldType(fieldContext);
-        return Optional.of(this);
     }
 
     /**

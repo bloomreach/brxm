@@ -76,7 +76,12 @@ public class ChoiceFieldType extends FieldType {
     }
 
     @Override
-    public Optional<FieldType> init(final FieldTypeContext fieldContext) {
+    public boolean isValid() {
+        return !choices.isEmpty();
+    }
+
+    @Override
+    public void init(final FieldTypeContext fieldContext) {
         final ContentTypeContext parentContext = fieldContext.getParentContext();
 
         initFromFieldType(fieldContext);
@@ -85,7 +90,6 @@ public class ChoiceFieldType extends FieldType {
                     populateProviderBasedChoices(node, parentContext);
                     populateListBasedChoices(node, parentContext);
                 });
-        return choices.isEmpty() ? Optional.empty() : Optional.of(this);
     }
 
     private void populateProviderBasedChoices(final Node editorFieldNode, final ContentTypeContext parentContext) {
@@ -101,7 +105,8 @@ public class ChoiceFieldType extends FieldType {
                         if (contentType.isCompoundType()) {
                             final FieldTypeContext context = new FieldTypeContext(item, parentContext);
                             final CompoundFieldType choice = new CompoundFieldType();
-                            if (choice.init(context).isPresent()) {
+                            choice.init(context);
+                            if (choice.isValid()) {
                                 choices.add(choice);
                             }
                         }
@@ -129,7 +134,8 @@ public class ChoiceFieldType extends FieldType {
                 ContentTypeContext.createFromParent(choiceId, parentContext).ifPresent(context -> {
                     if (context.getContentType().isCompoundType()) {
                         final CompoundFieldType choice = new CompoundFieldType();
-                        if (choice.init(context).isPresent()) {
+                        choice.init(context);
+                        if (choice.isValid()) {
                             choices.add(choice);
                         }
                     }

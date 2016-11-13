@@ -52,13 +52,19 @@ public class CompoundFieldType extends FieldType {
     }
 
     @Override
-    public Optional<FieldType> init(final FieldTypeContext fieldContext) {
+    public boolean isValid() {
+        return !fields.isEmpty();
+    }
+
+    @Override
+    public void init(final FieldTypeContext fieldContext) {
         final String id = fieldContext.getContentTypeItem().getItemType();
 
-        initFromFieldType(fieldContext);
-
-        return ContentTypeContext.createFromParent(id, fieldContext.getParentContext())
-                .flatMap(this::populateSubFields);
+        ContentTypeContext.createFromParent(id, fieldContext.getParentContext())
+                .ifPresent(context -> {
+                    initFromFieldType(fieldContext);
+                    FieldTypeUtils.populateFields(fields, context);
+                });
     }
 
     /**
@@ -70,14 +76,9 @@ public class CompoundFieldType extends FieldType {
      * @param context context for the compound type's own content type.
      * @return        successfully initialized (and populated) compound
      */
-    public Optional<FieldType> init(final ContentTypeContext context) {
+    public void init(final ContentTypeContext context) {
         initFromContentType(context);
-        return populateSubFields(context);
-    }
-
-    private Optional<FieldType> populateSubFields(final ContentTypeContext context) {
         FieldTypeUtils.populateFields(fields, context);
-        return fields.isEmpty() ? Optional.empty() : Optional.of(this);
     }
 
     @Override

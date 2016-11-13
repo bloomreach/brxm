@@ -148,15 +148,20 @@ public abstract class FieldType {
     }
 
     /**
-     * Initialize a {@link FieldType}, given a parent content type context and a field context.
+     * Check if an initialized field is "valid", i.e. should be present in a document type.
      *
-     * The parentContext represents the content type
-     * (document or compound) within which the field exists. The context represents the field in that context.
-     *
-     * @param fieldContext  information about the field (as part of a content type)
-     * @return              Successfully initialized field or nothing, wrapped in an Optional
+     * @return true or false
      */
-    public abstract Optional<FieldType> init(FieldTypeContext fieldContext);
+    public boolean isValid() {
+        return true;
+    }
+
+    /**
+     * Initialize a {@link FieldType}, given a field context.
+     *
+     * @param fieldContext  information about the field (as part of a parent content type)
+     */
+    public abstract void init(FieldTypeContext fieldContext);
 
     /**
      * Read a document field instance from a document variant node

@@ -316,7 +316,9 @@ public class FieldTypeUtilsTest {
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(fieldType));
-        expect(fieldType.init(fieldContext)).andReturn(Optional.empty());
+        fieldType.init(fieldContext);
+        expectLastCall();
+        expect(fieldType.isValid()).andReturn(false);
         replay(sorter, context, fieldContext, item, fieldType);
         PowerMock.replayAll();
 
@@ -349,7 +351,9 @@ public class FieldTypeUtilsTest {
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(fieldType));
-        expect(fieldType.init(fieldContext)).andReturn(Optional.of(fieldType));
+        fieldType.init(fieldContext);
+        expectLastCall();
+        expect(fieldType.isValid()).andReturn(true);
         replay(sorter, context, fieldContext, item, fieldType);
         PowerMock.replayAll();
 
@@ -391,8 +395,12 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN)).anyTimes();
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(stringField));
         expect(FieldTypeFactory.createFieldType(MultilineStringFieldType.class)).andReturn(Optional.of(multilineStringField));
-        expect(stringField.init(fieldContext1)).andReturn(Optional.of(stringField));
-        expect(multilineStringField.init(fieldContext2)).andReturn(Optional.of(multilineStringField));
+        stringField.init(fieldContext1);
+        expectLastCall();
+        expect(stringField.isValid()).andReturn(true);
+        multilineStringField.init(fieldContext2);
+        expectLastCall();
+        expect(multilineStringField.isValid()).andReturn(true);
         replay(sorter, context, fieldContext1, fieldContext2, item1, item2, stringField, multilineStringField);
         PowerMock.replayAll();
 
@@ -428,7 +436,9 @@ public class FieldTypeUtilsTest {
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(COMPOUND_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(CompoundFieldType.class)).andReturn(Optional.of(fieldType));
-        expect(fieldType.init(fieldContext)).andReturn(Optional.of(fieldType));
+        fieldType.init(fieldContext);
+        expectLastCall();
+        expect(fieldType.isValid()).andReturn(true);
         replay(sorter, context, fieldContext, item, fieldType);
         PowerMock.replayAll();
 
@@ -463,7 +473,9 @@ public class FieldTypeUtilsTest {
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(CHOICE_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(ChoiceFieldType.class)).andReturn(Optional.of(fieldType));
-        expect(fieldType.init(fieldContext)).andReturn(Optional.of(fieldType));
+        fieldType.init(fieldContext);
+        expectLastCall();
+        expect(fieldType.isValid()).andReturn(true);
         replay(sorter, context, fieldContext, item, fieldType);
         PowerMock.replayAll();
 
