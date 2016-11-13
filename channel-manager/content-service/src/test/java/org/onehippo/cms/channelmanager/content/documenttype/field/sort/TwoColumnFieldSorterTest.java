@@ -86,11 +86,11 @@ public class TwoColumnFieldSorterTest {
         final List<FieldTypeContext> fields = sorter.sortFields(context);
 
         assertThat(fields.size(), equalTo(5));
-        assertThat(fields.get(0).getEditorConfigNode().getName(), equalTo("field1-left"));
-        assertThat(fields.get(1).getEditorConfigNode().getName(), equalTo("field2-left"));
-        assertThat(fields.get(2).getEditorConfigNode().getName(), equalTo("field1-right"));
-        assertThat(fields.get(3).getEditorConfigNode().getName(), equalTo("field2-right"));
-        assertThat(fields.get(4).getEditorConfigNode().getName(), equalTo("field3-right"));
+        assertThat(fields.get(0).getEditorConfigNode().get().getName(), equalTo("field1-left"));
+        assertThat(fields.get(1).getEditorConfigNode().get().getName(), equalTo("field2-left"));
+        assertThat(fields.get(2).getEditorConfigNode().get().getName(), equalTo("field1-right"));
+        assertThat(fields.get(3).getEditorConfigNode().get().getName(), equalTo("field2-right"));
+        assertThat(fields.get(4).getEditorConfigNode().get().getName(), equalTo("field3-right"));
     }
 
     @Test

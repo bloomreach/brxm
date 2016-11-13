@@ -16,7 +16,6 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -24,7 +23,6 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 
 /**
@@ -59,14 +57,4 @@ public interface DocumentTypesService {
      *                if assembling the document type failed in a non-recoverable manner
      */
     DocumentType getDocumentType(Node handle, Optional<Locale> locale) throws ErrorWithPayloadException;
-
-    /**
-     * Populate the fields of a compound content type.
-     *
-     * @param id            ID of the desired compound content type
-     * @param fields        list of @{link FieldType}s to be populated
-     * @param parentContext reference to parent (compound ot document type) context, including user session and locale
-     * @param docType       reference to {@link DocumentType} being assembled
-     */
-    void populateFieldsForCompoundType(String id, List<FieldType> fields, ContentTypeContext parentContext, DocumentType docType);
 }

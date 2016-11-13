@@ -38,11 +38,13 @@ import org.slf4j.LoggerFactory;
  */
 public class ContentTypeContext {
     private static final Logger log = LoggerFactory.getLogger(ContentTypeContext.class);
+    private static final int MAX_NESTING_LEVEL = 10;
 
     private final ContentType contentType;
     private final Node contentTypeRoot;
-    private final int level;
     private final Optional<Locale> locale;
+    private final DocumentType documentType;
+    private final int level;
     private final Optional<ResourceBundle> resourceBundle;
 
     /**
@@ -50,32 +52,55 @@ public class ContentTypeContext {
      *
      * @param id             identifies the requested content type, e.g. "myhippoproject:newsdocument"
      * @param userSession    JCR session using the privileges of the requesting user
-     * @param level          the nesting level of this content type in a document type. Top-level content types have
-     *                       level 0, fields in top-level compounds have level 1, fields in nested compounds
-     *                       have level 2, etc.
      * @param optionalLocale locale of the current CMS session
+     * @param docType        {@link DocumentType} being assembled
      * @return               {@link ContentTypeContext} for creating a {@link DocumentType}, wrapped in an Optional
      */
-    public static Optional<ContentTypeContext> createDocumentTypeContext(final String id,
-                                                                         final Session userSession,
-                                                                         final int level,
-                                                                         final Optional<Locale> optionalLocale) {
-        final Optional<ContentType> optionalContentType = getContentType(id);
-        if (!optionalContentType.isPresent()) {
-            return Optional.empty();
-        }
-
-        final Optional<Node> optionalDocumentTypeRoot = NamespaceUtils.getDocumentTypeRootNode(id, userSession);
-        if (!optionalDocumentTypeRoot.isPresent()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(new ContentTypeContext(optionalContentType.get(),
-                                                  optionalDocumentTypeRoot.get(),
-                                                  level, optionalLocale));
+    public static Optional<ContentTypeContext> createForDocumentType(final String id,
+                                                                     final Session userSession,
+                                                                     final Optional<Locale> optionalLocale,
+                                                                     final DocumentType docType) {
+        return create(id, userSession, optionalLocale, docType, 0);
     }
 
-    private static Optional<ContentType> getContentType(final String id) {
+    /**
+     * Create a new {@link ContentTypeContext} for the identified content type, given a parent context.
+     *
+     * @param id            identifies the requested content type, e.g. "myhippoproject:newsdocument"
+     * @param parentContext content type context supplying the JCR session and locale to use.
+     * @return              {@link ContentTypeContext} for creating a {@link DocumentType}, wrapped in an Optional
+     */
+    public static Optional<ContentTypeContext> createFromParent(final String id, final ContentTypeContext parentContext) {
+        final int level = parentContext.getLevel() + 1;
+        if (level <= MAX_NESTING_LEVEL) {
+            try {
+                final Session userSession = parentContext.getContentTypeRoot().getSession();
+
+                return create(id, userSession, parentContext.getLocale(), parentContext.getDocumentType(), level);
+            } catch (RepositoryException e) {
+                log.warn("Failed to retrieve user session", e);
+            }
+        } else {
+            log.info("Ignoring fields of {}-level-deep nested compound, nesting maximum reached", level);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Upon successful retrieval of the contentType and the contentTypeRoot Node,
+     * create a new {@link ContentTypeContext} instance.
+     */
+    private static Optional<ContentTypeContext> create(final String id,
+                                                       final Session userSession,
+                                                       final Optional<Locale> locale,
+                                                       final DocumentType docType,
+                                                       final int level) {
+        return getContentType(id)
+                .flatMap(contentType -> NamespaceUtils.getDocumentTypeRootNode(id, userSession)
+                        .map(contentTypeRoot -> new ContentTypeContext(contentType, contentTypeRoot, locale, docType, level)));
+    }
+
+    public static Optional<ContentType> getContentType(final String id) {
         final ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
             return Optional.ofNullable(service.getContentTypes().getType(id));
@@ -87,12 +112,15 @@ public class ContentTypeContext {
 
     private ContentTypeContext(final ContentType contentType,
                                final Node documentTypeRoot,
-                               final int level,
-                               final Optional<Locale> optionalLocale) {
+                               final Optional<Locale> optionalLocale,
+                               final DocumentType documentType,
+                               final int level) {
         this.contentType = contentType;
         this.contentTypeRoot = documentTypeRoot;
-        this.level = level;
         this.locale = optionalLocale;
+        this.documentType = documentType;
+        this.level = level;
+
         this.resourceBundle = optionalLocale
                 .flatMap(locale -> LocalizationUtils.getResourceBundleForDocument(contentType.getName(), locale));
     }
@@ -105,12 +133,16 @@ public class ContentTypeContext {
         return contentTypeRoot;
     }
 
-    public int getLevel() {
-        return level;
-    }
-
     public Optional<Locale> getLocale() {
         return locale;
+    }
+
+    public DocumentType getDocumentType() {
+        return documentType;
+    }
+
+    public int getLevel() {
+        return level;
     }
 
     public Optional<ResourceBundle> getResourceBundle() {

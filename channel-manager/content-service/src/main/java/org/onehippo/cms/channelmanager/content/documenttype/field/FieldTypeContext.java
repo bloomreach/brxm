@@ -16,27 +16,41 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
+import java.util.Optional;
+
 import javax.jcr.Node;
 
+import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 
 /**
  * FieldTypeContext groups and wraps sources of information about a document type field.
  */
 public class FieldTypeContext {
-    private final Node editorConfigNode;
     private final ContentTypeItem contentTypeItem;
+    private final Node editorConfigNode;
+    private final ContentTypeContext parentContext;
 
-    public FieldTypeContext(final Node editorConfigNode, final ContentTypeItem contentTypeItem) {
-        this.editorConfigNode = editorConfigNode;
+    public FieldTypeContext(final ContentTypeItem contentTypeItem, final ContentTypeContext parentContext,
+                            final Node editorConfigNode) {
         this.contentTypeItem = contentTypeItem;
+        this.parentContext = parentContext;
+        this.editorConfigNode = editorConfigNode;
     }
 
-    public Node getEditorConfigNode() {
-        return editorConfigNode;
+    public FieldTypeContext(final ContentTypeItem contentTypeItem, final ContentTypeContext parentContext) {
+        this(contentTypeItem, parentContext, null);
     }
 
     public ContentTypeItem getContentTypeItem() {
         return contentTypeItem;
+    }
+
+    public ContentTypeContext getParentContext() {
+        return parentContext;
+    }
+
+    public Optional<Node> getEditorConfigNode() {
+        return Optional.ofNullable(editorConfigNode);
     }
 }

@@ -34,6 +34,7 @@ import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.util.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
@@ -77,7 +78,7 @@ class DocumentsServiceImpl implements DocumentsService {
             return new ForbiddenException(document);
         });
 
-        loadFields(document, draft, docType);
+        FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
         return document;
     }
 
@@ -96,10 +97,7 @@ class DocumentsServiceImpl implements DocumentsService {
                 .orElseThrow(NotFoundException::new);
 
         // Push fields onto draft node
-        final Map<String, List<FieldValue>> valueMap = document.getFields();
-        for (FieldType fieldType : docType.getFields()) {
-            fieldType.writeTo(draft, Optional.ofNullable(valueMap.get(fieldType.getId())));
-        }
+        FieldTypeUtils.writeFieldValues(document.getFields(), docType.getFields(), draft);
 
         // Persist changes to repository
         try {
@@ -109,7 +107,7 @@ class DocumentsServiceImpl implements DocumentsService {
             throw new InternalServerErrorException();
         }
 
-        if (!isValid(document, docType)) {
+        if (!FieldTypeUtils.validateFieldValues(document.getFields(), docType.getFields())) {
             throw new BadRequestException(document);
         }
 
@@ -143,7 +141,7 @@ class DocumentsServiceImpl implements DocumentsService {
         final Document document = assembleDocument(uuid, handle, workflow, docType);
 
         WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED)
-                .ifPresent(unpublished -> loadFields(document, unpublished, docType));
+                .ifPresent(node -> FieldTypeUtils.readFieldValues(node, docType.getFields(), document.getFields()));
         return document;
     }
 
@@ -172,23 +170,6 @@ class DocumentsServiceImpl implements DocumentsService {
         documentInfo.setEditingInfo(editingInfo);
 
         return document;
-    }
-
-    private void loadFields(final Document document, final Node variant, final DocumentType docType) {
-        for (FieldType field : docType.getFields()) {
-            field.readFrom(variant).ifPresent(value -> document.addField(field.getId(), value));
-        }
-    }
-
-    private boolean isValid(final Document document, final DocumentType docType) {
-        boolean isValid = true;
-        final Map<String, List<FieldValue>> valueMap = document.getFields();
-        for (FieldType fieldType : docType.getFields()) {
-            if (!fieldType.validate(Optional.ofNullable(valueMap.get(fieldType.getId())))) {
-                isValid = false;
-            }
-        }
-        return isValid;
     }
 
     private void copyToPreviewAndKeepEditing(final Session session, final EditableWorkflow workflow)

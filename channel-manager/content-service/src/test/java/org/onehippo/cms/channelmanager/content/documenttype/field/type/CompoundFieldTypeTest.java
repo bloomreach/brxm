@@ -442,8 +442,7 @@ public class CompoundFieldTypeTest {
 
     @Test
     public void validateEmpty() {
-        assertTrue(fieldType.validate(Optional.empty()));
-        assertTrue(fieldType.validate(Optional.of(Collections.emptyList())));
+        assertTrue(fieldType.validate(Collections.emptyList()));
     }
 
     @Test
@@ -451,11 +450,11 @@ public class CompoundFieldTypeTest {
         stringField2.addValidator(FieldType.Validator.REQUIRED);
 
         Map<String, List<FieldValue>> valueMap = validCompound();
-        assertTrue(fieldType.validate(Optional.of(listOf(valueOf(valueMap)))));
+        assertTrue(fieldType.validate(listOf(valueOf(valueMap))));
 
         valueMap.put(STRING_PROPERTY_2, listOf(valueOf(""))); // remove required
 
-        assertFalse(fieldType.validate(Optional.of(listOf(valueOf(valueMap)))));
+        assertFalse(fieldType.validate(listOf(valueOf(valueMap))));
         assertFalse(valueMap.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertThat(valueMap.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
                 equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
@@ -471,14 +470,14 @@ public class CompoundFieldTypeTest {
         valueA = validCompound();
         valueB = validCompound();
 
-        assertTrue(fieldType.validate(Optional.of(Arrays.asList(valueOf(valueA), valueOf(valueB)))));
+        assertTrue(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
 
         // error in first instance
         valueA = validCompound();
         valueA.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
         valueB = validCompound();
 
-        assertFalse(fieldType.validate(Optional.of(Arrays.asList(valueOf(valueA), valueOf(valueB)))));
+        assertFalse(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
                 equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
@@ -490,7 +489,7 @@ public class CompoundFieldTypeTest {
         valueB = validCompound();
         valueB.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
-        assertFalse(fieldType.validate(Optional.of(Arrays.asList(valueOf(valueA), valueOf(valueB)))));
+        assertFalse(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertFalse(valueA.get(STRING_PROPERTY_2).get(0).hasErrorInfo());
         assertFalse(valueB.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
@@ -503,7 +502,7 @@ public class CompoundFieldTypeTest {
         valueB = validCompound();
         valueB.put(STRING_PROPERTY_2, listOf(valueOf(""))); // invalid, because required
 
-        assertFalse(fieldType.validate(Optional.of(Arrays.asList(valueOf(valueA), valueOf(valueB)))));
+        assertFalse(fieldType.validate(Arrays.asList(valueOf(valueA), valueOf(valueB))));
         assertFalse(valueA.get(STRING_PROPERTY_1).get(0).hasErrorInfo());
         assertThat(valueA.get(STRING_PROPERTY_2).get(0).getErrorInfo().getCode(),
                 equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));

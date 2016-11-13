@@ -23,14 +23,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.jcr.Node;
+
+import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeFactory;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +46,10 @@ import org.slf4j.LoggerFactory;
 public class FieldTypeUtils {
     private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
     private static final String FIELD_TYPE_COMPOUND = "Compound";
+    private static final String FIELD_TYPE_CHOICE = "Choice";
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
+    private static final String CONTENT_BLOCKS_PLUGIN = "org.onehippo.forge.contentblocks.ContentBlocksFieldPlugin";
 
     // Known non-validating validator values
     private static final Set<String> IGNORED_VALIDATORS;
@@ -78,6 +85,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Text", new TypeDescriptor(MultilineStringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
     }
 
     private static class TypeDescriptor {
@@ -114,10 +122,86 @@ public class FieldTypeUtils {
     }
 
     /**
+     * Populate the list of fields of a content type, in the context of assembling a Document Type
+     *
+     * @param fields      list of fields to populate
+     * @param context     determines which fields are available
+     */
+    public static void populateFields(final List<FieldType> fields, final ContentTypeContext context) {
+
+        NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
+                .ifPresent(sorter -> sorter.sortFields(context)
+                        .stream()
+                        .filter(FieldTypeUtils::isSupportedFieldType)
+                        .filter(FieldTypeUtils::usesDefaultFieldPlugin)
+                        .forEach(fieldTypeContext -> createAndInitFieldType(fieldTypeContext)
+                                .ifPresent(fields::add))
+                );
+    }
+
+    /**
+     * Try to read a list of fields from a node into a map of values.
+     *
+     * @param node     JCR node to read from
+     * @param fields   fields to read
+     * @param valueMap map of values to populate
+     */
+    public static void readFieldValues(final Node node,
+                                       final List<FieldType> fields,
+                                       final Map<String, List<FieldValue>> valueMap) {
+        for (FieldType field : fields) {
+            field.readFrom(node).ifPresent(values -> valueMap.put(field.getId(), values));
+        }
+    }
+
+    /**
+     * Write the values of a set of fields to a (JCR) node, facilitated by a list of field types.
+     *
+     * Values not defined in the list of field types are ignored.
+     *
+     * @param valueMap set of field type ID -> list of field values mappings. Values are not checked yet.
+     * @param fields   set of field type definitions, specifying how to interpret the corresponding field values
+     * @param node     the JCR node to write the field values to.
+     * @throws ErrorWithPayloadException
+     *                 if fieldType#writeTo() bumps into an error.
+     */
+    public static void writeFieldValues(final Map<String, List<FieldValue>> valueMap,
+                                        final List<FieldType> fields,
+                                        final Node node) throws ErrorWithPayloadException {
+        for (FieldType fieldType : fields) {
+            fieldType.writeTo(node, Optional.ofNullable(valueMap.get(fieldType.getId())));
+        }
+    }
+
+    /**
+     * Validate the values of a set of fields against a list of field types.
+     *
+     * Values not defined in the list of field types are ignored.
+     *
+     * @param valueMap set of field type ID -> to be validated list of field values mappings
+     * @param fields   set of field type definitions, including the applicable validators
+     * @return         true if all checked field values are valid, false otherwise.
+     */
+    public static boolean validateFieldValues(final Map<String, List<FieldValue>> valueMap, final List<FieldType> fields) {
+        boolean isValid = true;
+
+        for (FieldType fieldType : fields) {
+            final String fieldId = fieldType.getId();
+            if (valueMap.containsKey(fieldId)) {
+                if (!fieldType.validate(valueMap.get(fieldId))) {
+                    isValid = false;
+                }
+            }
+        }
+
+        return isValid;
+    }
+
+    /**
      * Check if a item represents a supported field type.
      */
     public static boolean isSupportedFieldType(final FieldTypeContext context) {
-        return determineDescriptor(context.getContentTypeItem()).isPresent();
+        return determineDescriptor(context).isPresent();
     }
 
     /**
@@ -127,8 +211,9 @@ public class FieldTypeUtils {
      * unknown to the content service. Therefore, such fields should not be included in the exposed document type.
      */
     public static boolean usesDefaultFieldPlugin(final FieldTypeContext context) {
-        final Optional<TypeDescriptor> descriptor = determineDescriptor(context.getContentTypeItem());
-        final Optional<String> pluginClass = NamespaceUtils.getPluginClassForField(context.getEditorConfigNode());
+        final Optional<TypeDescriptor> descriptor = determineDescriptor(context);
+        final Optional<String> pluginClass = context.getEditorConfigNode()
+                .flatMap(NamespaceUtils::getPluginClassForField);
 
         return descriptor.isPresent() && descriptor.get().defaultPluginClass.equals(pluginClass.orElse(""));
     }
@@ -137,22 +222,20 @@ public class FieldTypeUtils {
      * Create a FieldType of the appropriate sub-type and initialize it.
      *
      * @param context            Information relevant for the current field
-     * @param contentTypeContext Information relevant for the current content type (document or compound)
-     * @param docType            Reference to the document type being assembled
      * @return                   Initialized FieldType instance or nothing, wrapped in an Optional
      */
-    public static Optional<FieldType> createAndInitFieldType(final FieldTypeContext context,
-                                                                 final ContentTypeContext contentTypeContext,
-                                                                 final DocumentType docType) {
+    public static Optional<FieldType> createAndInitFieldType(final FieldTypeContext context) {
 
-        return determineDescriptor(context.getContentTypeItem())
+        return determineDescriptor(context)
                 .map(descriptor -> descriptor.fieldTypeClass)
                 .flatMap(clazz -> FieldTypeFactory.createFieldType((Class<? extends FieldType>)clazz))
-                .flatMap(fieldType -> fieldType.init(context, contentTypeContext, docType));
+                .flatMap(fieldType -> fieldType.init(context));
     }
 
-    private static Optional<TypeDescriptor> determineDescriptor(final ContentTypeItem item) {
-        final String type = item.isProperty() ? item.getItemType() : FIELD_TYPE_COMPOUND;
+    private static Optional<TypeDescriptor> determineDescriptor(final FieldTypeContext context) {
+        final ContentTypeItem item = context.getContentTypeItem();
+        final String type = item.isProperty() ? item.getItemType() :
+                (ChoiceFieldType.isChoiceField(context) ? FIELD_TYPE_CHOICE : FIELD_TYPE_COMPOUND);
         return Optional.ofNullable(FIELD_TYPE_MAP.get(type));
     }
 }

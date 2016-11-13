@@ -19,9 +19,10 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import javax.jcr.Node;
 
@@ -48,6 +49,9 @@ import org.onehippo.repository.l10n.ResourceBundle;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public abstract class FieldType {
 
+    protected static final Supplier<ErrorWithPayloadException> INVALID_DATA
+            = () -> new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
     private String displayName;   // using the correct language/locale
@@ -62,9 +66,6 @@ public abstract class FieldType {
     // private boolean readOnly;  // future improvement
 
     private Set<Validator> validators = new HashSet<>();
-
-    // TODO: move up into CompoundFieldType? - currently not possible due to deserialization in MockResponse.
-    protected List<FieldType> fields; // the child-fields of a complex field type (COMPOUND or CHOICE)
 
     public enum Type {
         STRING,
@@ -146,13 +147,16 @@ public abstract class FieldType {
         return getValidators().contains(Validator.REQUIRED);
     }
 
-    public List<FieldType> getFields() {
-        return fields;
-    }
-
-    public void setFields(final List<FieldType> fields) {
-        this.fields = fields;
-    }
+    /**
+     * Initialize a {@link FieldType}, given a parent content type context and a field context.
+     *
+     * The parentContext represents the content type
+     * (document or compound) within which the field exists. The context represents the field in that context.
+     *
+     * @param fieldContext  information about the field (as part of a content type)
+     * @return              Successfully initialized field or nothing, wrapped in an Optional
+     */
+    public abstract Optional<FieldType> init(FieldTypeContext fieldContext);
 
     /**
      * Read a document field instance from a document variant node
@@ -165,6 +169,11 @@ public abstract class FieldType {
     /**
      * Write the optional value of this field to the provided JCR node.
      *
+     * We purposefully pass in the value as an optional, because the validation of the cardinality constraint
+     * happens during this call. If we would not do the call if the field has no value, then the validation
+     * against the field's cardinality constraints or against the field's current number of values would not
+     * take place.
+     *
      * @param node          JCR node to store the value on
      * @param optionalValue value to write, or nothing, wrapped in an Optional
      * @throws ErrorWithPayloadException
@@ -175,34 +184,37 @@ public abstract class FieldType {
     /**
      * Validate the current value of this field against all applicable (and supported) validators.
      *
-     * @param optionalValues value(s) to validate, or nothing, wrapped in an Optional
-     * @return     true upon success, false if at least one validation error was encountered.
+     * @param valueList list of field value(s) to validate
+     * @return          true upon success, false if at least one validation error was encountered.
      */
-    public abstract boolean validate(final Optional<List<FieldValue>> optionalValues);
+    public abstract boolean validate(final List<FieldValue> valueList);
 
     /**
-     * Initialize a FieldType, given various information sources:
+     * Initialize a field based on its field type context.
      *
-     * @param context            field-specific information
-     * @param contentTypeContext content type-specific information (may be document of compound)
-     * @param docType            reference to the document type being assembled
-     * @return                   itself
+     * Under normal circumstances (as opposed to #initFromContentType), a field gets initialized based on its
+     * field type context, i.e. the field has a certain purpose inside a parent content type.
+     * This method helps initializing the generic part of an implementation of {@link FieldType}.
+     *
+     * @param fieldContext  information about the field (as part of a content type)
      */
-    public Optional<FieldType> init(FieldTypeContext context, ContentTypeContext contentTypeContext, DocumentType docType) {
-        final Optional<ResourceBundle> resourceBundle = contentTypeContext.getResourceBundle();
-        final Node editorFieldConfig = context.getEditorConfigNode();
-        final ContentTypeItem item = context.getContentTypeItem();
+    protected void initFromFieldType(FieldTypeContext fieldContext) {
+        final ContentTypeContext parentContext = fieldContext.getParentContext();
+        final ContentTypeItem item = fieldContext.getContentTypeItem();
         final String fieldId = item.getName();
 
         setId(fieldId);
 
         // only load displayName and hints if locale-info is available.
-        contentTypeContext.getLocale().ifPresent(dummy -> {
+        if (parentContext.getLocale().isPresent()) {
+            final Optional<ResourceBundle> resourceBundle = parentContext.getResourceBundle();
+            final Optional<Node> editorFieldConfig = fieldContext.getEditorConfigNode();
+
             LocalizationUtils.determineFieldDisplayName(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setDisplayName);
             LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
-        });
+        }
 
-        FieldTypeUtils.determineValidators(this, docType, item.getValidators());
+        FieldTypeUtils.determineValidators(this, parentContext.getDocumentType(), item.getValidators());
 
         // determine cardinality
         if (item.getValidators().contains(FieldValidators.OPTIONAL)) {
@@ -213,8 +225,30 @@ public abstract class FieldType {
             setMinValues(0);
             setMaxValues(Integer.MAX_VALUE);
         }
+    }
 
-        return Optional.of(this);
+    /**
+     * Initialize a (complex) field based on its content type context.
+     *
+     * For now, this helper method is only used for compound fields that are children of a CHOICE field.
+     * In such a situation, the field does not have a corresponding editorFieldConfig nor a ContentTypeService-
+     * based parent context. As such, there is no hint capability, and the field's display name will always
+     * be the localized name of the compound's content type.
+     * Also, these fields are always assumed to be singular (minValues == maxValues == 1), and it is not possible
+     * to specify validators for them.
+     *
+     * @param context context of the content type representing *this* field type
+     */
+    protected void initFromContentType(final ContentTypeContext context) {
+        final String fieldId = context.getContentType().getName();
+
+        setId(fieldId);
+
+        // only load displayName if locale-info is available.
+        if (context.getLocale().isPresent()) {
+            final Optional<ResourceBundle> resourceBundle = context.getResourceBundle();
+            LocalizationUtils.determineDocumentDisplayName(fieldId, resourceBundle).ifPresent(this::setDisplayName);
+        }
     }
 
     protected void trimToMaxValues(final List list) {
@@ -223,7 +257,8 @@ public abstract class FieldType {
         }
     }
 
-    protected List<FieldValue> checkValue(final Optional<Object> optionalValue, final Class listItemClass)
+    @SuppressWarnings("unchecked")
+    protected List<FieldValue> checkValue(final Optional<Object> optionalValue)
             throws BadRequestException {
         final BadRequestException BAD_REQUEST_INVALID_DATA
                 = new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
@@ -250,18 +285,19 @@ public abstract class FieldType {
             if (!(v instanceof FieldValue)) {
                 throw BAD_REQUEST_INVALID_DATA;
             }
-            final FieldValue fieldValue = (FieldValue) v;
-
-            if (listItemClass.equals(String.class)) {
-                if (!fieldValue.hasValue()) {
-                    throw BAD_REQUEST_INVALID_DATA;
-                }
-            } else if (listItemClass.equals(Map.class)) {
-                if (!fieldValue.hasFields()) {
-                    throw BAD_REQUEST_INVALID_DATA;
-                }
-            }
         }
         return (List<FieldValue>) values;
+    }
+
+    protected boolean validateValues(final List<FieldValue> valueList, final Predicate<FieldValue> validator) {
+        boolean isValid = true;
+
+        for (FieldValue value : valueList) {
+            if (!validator.test(value)) {
+                isValid = false;
+            }
+        }
+
+        return isValid;
     }
 }
