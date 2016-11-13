@@ -51,11 +51,6 @@ public class StringFieldType extends FieldType {
         this.setType(Type.STRING);
     }
 
-    @Override
-    public void init(final FieldTypeContext fieldContext) {
-        initFromFieldType(fieldContext);
-    }
-
     /**
      * Read an optional value (singular or multiple) from a node's property.
      *

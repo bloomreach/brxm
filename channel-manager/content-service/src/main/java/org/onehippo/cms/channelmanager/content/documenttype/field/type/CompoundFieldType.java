@@ -58,27 +58,10 @@ public class CompoundFieldType extends FieldType {
 
     @Override
     public void init(final FieldTypeContext fieldContext) {
-        final String id = fieldContext.getContentTypeItem().getItemType();
+        super.init(fieldContext);
 
-        ContentTypeContext.createFromParent(id, fieldContext.getParentContext())
-                .ifPresent(context -> {
-                    initFromFieldType(fieldContext);
-                    FieldTypeUtils.populateFields(fields, context);
-                });
-    }
-
-    /**
-     * Initialize the compound field when it is a direct child of a list-based CHOICE field.
-     *
-     * In that situation, there is not {@link FieldTypeContext}, so we have to resort to the compound's
-     * content type instead.
-     *
-     * @param context context for the compound type's own content type.
-     * @return        successfully initialized (and populated) compound
-     */
-    public void init(final ContentTypeContext context) {
-        initFromContentType(context);
-        FieldTypeUtils.populateFields(fields, context);
+        fieldContext.createContextForCompound()
+                .ifPresent(context -> FieldTypeUtils.populateFields(fields, context));
     }
 
     @Override

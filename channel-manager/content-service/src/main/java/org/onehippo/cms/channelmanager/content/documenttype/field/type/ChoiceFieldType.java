@@ -29,11 +29,15 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
+import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,68 +86,124 @@ public class ChoiceFieldType extends FieldType {
 
     @Override
     public void init(final FieldTypeContext fieldContext) {
-        final ContentTypeContext parentContext = fieldContext.getParentContext();
+        super.init(fieldContext);
 
-        initFromFieldType(fieldContext);
         fieldContext.getEditorConfigNode()
                 .ifPresent(node -> {
+                    final ContentTypeContext parentContext = fieldContext.getParentContext();
+
                     populateProviderBasedChoices(node, parentContext);
                     populateListBasedChoices(node, parentContext);
                 });
     }
 
+    /**
+     * Provider-based choices use a custom compound content type, known to the content type service to specify
+     * the available choices. We retrieve the name of the provider compound, derive its content type and loop
+     * over its children/fields to populate our list of choices.
+     */
     private void populateProviderBasedChoices(final Node editorFieldNode, final ContentTypeContext parentContext) {
-        try {
-            if (!editorFieldNode.hasProperty(PROPERTY_PROVIDER_ID)) {
-                return; // not a provider-based choice field
-            }
+        getProviderId(editorFieldNode)
+                .ifPresent(providerId -> ContentTypeContext.getContentType(providerId)
+                        .ifPresent(provider -> populateChoicesForProvider(provider, parentContext)));
+    }
 
-            final String providerId = editorFieldNode.getProperty(PROPERTY_PROVIDER_ID).getString();
-            ContentTypeContext.getContentType(providerId).ifPresent(provider -> {
-                for (ContentTypeItem item : provider.getChildren().values()) {
-                    ContentTypeContext.getContentType(item.getItemType()).ifPresent(contentType -> {
-                        if (contentType.isCompoundType()) {
-                            final FieldTypeContext context = new FieldTypeContext(item, parentContext);
-                            final CompoundFieldType choice = new CompoundFieldType();
-                            choice.init(context);
-                            if (choice.isValid()) {
-                                choices.add(choice);
-                            }
-                        }
-                    });
-                }
-            });
+    private Optional<String> getProviderId(final Node editorFieldNode) {
+        try {
+            if (editorFieldNode.hasProperty(PROPERTY_PROVIDER_ID)) {
+                return Optional.of(editorFieldNode.getProperty(PROPERTY_PROVIDER_ID).getString());
+            }
         } catch (RepositoryException e) {
             log.warn("Failed to determine provider-based choices for field {}",
                     JcrUtils.getNodePathQuietly(editorFieldNode), e);
         }
+        return Optional.empty();
     }
 
+    private void populateChoicesForProvider(final ContentType provider, final ContentTypeContext parentContext) {
+        for (ContentTypeItem item : provider.getChildren().values()) {
+            ContentTypeContext.getContentType(item.getItemType()).ifPresent(contentType -> {
+                if (contentType.isCompoundType()) {
+                    createChoiceFromFieldType(new FieldTypeContext(item, parentContext));
+                }
+            });
+        }
+    }
+
+    /**
+     * Typically, our provider compound has no editor configuration, and therefore no caption, and likely also no
+     * translated field names. In such a case, we "patch" the choice's display name by falling back to the compound's
+     * localized name.
+     */
+    private void createChoiceFromFieldType(final FieldTypeContext context) {
+        final CompoundFieldType choice = new CompoundFieldType();
+        choice.init(context);
+        if (choice.isValid()) {
+            choice.setId(context.getContentTypeItem().getItemType());
+            patchDisplayNameForChoice(choice, context);
+            choices.add(choice);
+        }
+    }
+
+    private void patchDisplayNameForChoice(final CompoundFieldType choice, final FieldTypeContext context) {
+        context.createContextForCompound().ifPresent(compoundContext -> patchDisplayNameForChoice(choice, compoundContext));
+    }
+
+    /**
+     * List-based choices use a property on the choice field's editor comfiguration node, specifying the names of
+     * the available compound types. We retrieve and normalize these names. Since this choice relationship bypasses
+     * the content type service's model, no FieldTypeContext is available for any choice. Instead, we create a
+     * ContentTypeContext for each choice, and use that to populate our list of choices.
+     */
     private void populateListBasedChoices(final Node editorFieldNode, final ContentTypeContext parentContext) {
+        final String[] choiceNames = getListBasedChoiceNames(editorFieldNode);
+
+        for (String choiceName : choiceNames) {
+            final String choiceId = normalizeChoiceName(choiceName, parentContext);
+
+            ContentTypeContext.createFromParent(choiceId, parentContext).ifPresent(context -> {
+                if (context.getContentType().isCompoundType()) {
+                    createChoiceFromContentType(context);
+                }
+            });
+        }
+    }
+
+    private String[] getListBasedChoiceNames(final Node editorFieldNode) {
         try {
-            if (!editorFieldNode.hasProperty(PROPERTY_COMPOUND_LIST)) {
-                return; // not a provider-based choice field
-            }
-
-            final String[] choiceNames = editorFieldNode.getProperty(PROPERTY_COMPOUND_LIST).getString().split("\\s*,\\s*");
-            for (String choiceName : choiceNames) {
-                final String choiceId = choiceName.contains(":")
-                        ? choiceName
-                        : parentContext.getContentType().getPrefix() + ":" + choiceName;
-
-                ContentTypeContext.createFromParent(choiceId, parentContext).ifPresent(context -> {
-                    if (context.getContentType().isCompoundType()) {
-                        final CompoundFieldType choice = new CompoundFieldType();
-                        choice.init(context);
-                        if (choice.isValid()) {
-                            choices.add(choice);
-                        }
-                    }
-                });
+            if (editorFieldNode.hasProperty(PROPERTY_COMPOUND_LIST)) {
+                return editorFieldNode.getProperty(PROPERTY_COMPOUND_LIST).getString().split("\\s*,\\s*");
             }
         } catch (RepositoryException e) {
             log.warn("Failed to determine list-based choices for field {}",
                     JcrUtils.getNodePathQuietly(editorFieldNode), e);
+        }
+        return new String[0];
+    }
+
+    private String normalizeChoiceName(final String choiceName, final ContentTypeContext context) {
+        return choiceName.contains(":") ? choiceName : context.getContentType().getPrefix() + ":" + choiceName;
+    }
+
+    /**
+     * Since no FieldTypeContext is available for a list-based choice,
+     * we have to initialize our compound field manually.
+     */
+    private void createChoiceFromContentType(final ContentTypeContext context) {
+        final CompoundFieldType choice = new CompoundFieldType();
+        FieldTypeUtils.populateFields(choice.getFields(), context);
+        if (choice.isValid()) {
+            choice.setId(context.getContentType().getName());
+            patchDisplayNameForChoice(choice, context);
+            choices.add(choice);
+        }
+    }
+
+    private void patchDisplayNameForChoice(final CompoundFieldType choice, final ContentTypeContext context) {
+        if (choice.getDisplayName() == null) {
+            final Optional<ResourceBundle> resourceBundle = context.getResourceBundle();
+            LocalizationUtils.determineDocumentDisplayName(choice.getId(), resourceBundle)
+                    .ifPresent(choice::setDisplayName);
         }
     }
 
@@ -164,8 +224,8 @@ public class ChoiceFieldType extends FieldType {
                 final String choiceId = child.getPrimaryNodeType().getName();
 
                 findChoice(choiceId).ifPresent(choice -> {
-                    final FieldValue value = choice.readSingleFrom(child);
-                    values.add(new FieldValue(choiceId, value));
+                    final FieldValue choiceValue = choice.readSingleFrom(child);
+                    values.add(new FieldValue(choiceId, choiceValue));
                 });
 
                 // nodes that have no corresponding choices are ignored

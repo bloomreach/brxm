@@ -53,4 +53,9 @@ public class FieldTypeContext {
     public Optional<Node> getEditorConfigNode() {
         return Optional.ofNullable(editorConfigNode);
     }
+
+    public Optional<ContentTypeContext> createContextForCompound() {
+        final String id = getContentTypeItem().getItemType();
+        return ContentTypeContext.createFromParent(id, getParentContext());
+    }
 }

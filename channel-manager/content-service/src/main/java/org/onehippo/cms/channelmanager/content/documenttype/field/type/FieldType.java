@@ -161,7 +161,34 @@ public abstract class FieldType {
      *
      * @param fieldContext  information about the field (as part of a parent content type)
      */
-    public abstract void init(FieldTypeContext fieldContext);
+    public void init(FieldTypeContext fieldContext) {
+        final ContentTypeContext parentContext = fieldContext.getParentContext();
+        final ContentTypeItem item = fieldContext.getContentTypeItem();
+        final String fieldId = item.getName();
+
+        setId(fieldId);
+
+        // only load displayName and hints if locale-info is available.
+        if (parentContext.getLocale().isPresent()) {
+            final Optional<ResourceBundle> resourceBundle = parentContext.getResourceBundle();
+            final Optional<Node> editorFieldConfig = fieldContext.getEditorConfigNode();
+
+            LocalizationUtils.determineFieldDisplayName(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setDisplayName);
+            LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
+        }
+
+        FieldTypeUtils.determineValidators(this, parentContext.getDocumentType(), item.getValidators());
+
+        // determine cardinality
+        if (item.getValidators().contains(FieldValidators.OPTIONAL)) {
+            setMinValues(0);
+            setMaxValues(1);
+        }
+        if (item.isMultiple()) {
+            setMinValues(0);
+            setMaxValues(Integer.MAX_VALUE);
+        }
+    }
 
     /**
      * Read a document field instance from a document variant node
@@ -193,68 +220,6 @@ public abstract class FieldType {
      * @return          true upon success, false if at least one validation error was encountered.
      */
     public abstract boolean validate(final List<FieldValue> valueList);
-
-    /**
-     * Initialize a field based on its field type context.
-     *
-     * Under normal circumstances (as opposed to #initFromContentType), a field gets initialized based on its
-     * field type context, i.e. the field has a certain purpose inside a parent content type.
-     * This method helps initializing the generic part of an implementation of {@link FieldType}.
-     *
-     * @param fieldContext  information about the field (as part of a content type)
-     */
-    protected void initFromFieldType(FieldTypeContext fieldContext) {
-        final ContentTypeContext parentContext = fieldContext.getParentContext();
-        final ContentTypeItem item = fieldContext.getContentTypeItem();
-        final String fieldId = item.getName();
-
-        setId(fieldId);
-
-        // only load displayName and hints if locale-info is available.
-        if (parentContext.getLocale().isPresent()) {
-            final Optional<ResourceBundle> resourceBundle = parentContext.getResourceBundle();
-            final Optional<Node> editorFieldConfig = fieldContext.getEditorConfigNode();
-
-            LocalizationUtils.determineFieldDisplayName(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setDisplayName);
-            LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
-        }
-
-        FieldTypeUtils.determineValidators(this, parentContext.getDocumentType(), item.getValidators());
-
-        // determine cardinality
-        if (item.getValidators().contains(FieldValidators.OPTIONAL)) {
-            setMinValues(0);
-            setMaxValues(1);
-        }
-        if (item.isMultiple()) {
-            setMinValues(0);
-            setMaxValues(Integer.MAX_VALUE);
-        }
-    }
-
-    /**
-     * Initialize a (complex) field based on its content type context.
-     *
-     * For now, this helper method is only used for compound fields that are children of a CHOICE field.
-     * In such a situation, the field does not have a corresponding editorFieldConfig nor a ContentTypeService-
-     * based parent context. As such, there is no hint capability, and the field's display name will always
-     * be the localized name of the compound's content type.
-     * Also, these fields are always assumed to be singular (minValues == maxValues == 1), and it is not possible
-     * to specify validators for them.
-     *
-     * @param context context of the content type representing *this* field type
-     */
-    protected void initFromContentType(final ContentTypeContext context) {
-        final String fieldId = context.getContentType().getName();
-
-        setId(fieldId);
-
-        // only load displayName if locale-info is available.
-        if (context.getLocale().isPresent()) {
-            final Optional<ResourceBundle> resourceBundle = context.getResourceBundle();
-            LocalizationUtils.determineDocumentDisplayName(fieldId, resourceBundle).ifPresent(this::setDisplayName);
-        }
-    }
 
     protected void trimToMaxValues(final List list) {
         while (list.size() > maxValues) {
