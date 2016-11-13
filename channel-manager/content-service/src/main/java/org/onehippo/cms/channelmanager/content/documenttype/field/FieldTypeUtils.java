@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.onehippo.cms.channelmanager.content.documenttype.util;
+package org.onehippo.cms.channelmanager.content.documenttype.field;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,14 +27,14 @@ import javax.jcr.Node;
 
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeFactory;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.slf4j.Logger;
@@ -128,16 +128,48 @@ public class FieldTypeUtils {
      * @param context     determines which fields are available
      */
     public static void populateFields(final List<FieldType> fields, final ContentTypeContext context) {
-
         NamespaceUtils.retrieveFieldSorter(context.getContentTypeRoot())
-                .ifPresent(sorter -> sorter.sortFields(context)
-                        .stream()
-                        .filter(FieldTypeUtils::isSupportedFieldType)
-                        .filter(FieldTypeUtils::usesDefaultFieldPlugin)
-                        .forEach(fieldTypeContext -> createAndInitFieldType(fieldTypeContext)
-                                .ifPresent(fields::add))
-                );
+                .ifPresent(sorter -> sortValidateAndAddFields(sorter, context, fields));
     }
+
+    private static void sortValidateAndAddFields(final FieldSorter sorter, final ContentTypeContext context,
+                                                 final List<FieldType> fields) {
+        sorter.sortFields(context)
+                .stream()
+                .forEach(field -> validateCreateAndInit(field).ifPresent(fields::add));
+    }
+
+    private static Optional<FieldType> validateCreateAndInit(final FieldTypeContext context) {
+        return determineDescriptor(context)
+                .filter(descriptor -> usesDefaultFieldPlugin(context, descriptor))
+                .flatMap(descriptor -> FieldTypeFactory.createFieldType(descriptor.fieldTypeClass))
+                .flatMap(fieldType -> fieldType.init(context));
+    }
+
+    private static Optional<TypeDescriptor> determineDescriptor(final FieldTypeContext context) {
+        return Optional.ofNullable(FIELD_TYPE_MAP.get(determineFieldType(context)));
+    }
+
+    private static String determineFieldType(final FieldTypeContext context) {
+        final ContentTypeItem item = context.getContentTypeItem();
+        if (item.isProperty()) {
+            return item.getItemType();
+        }
+
+        return ChoiceFieldType.isChoiceField(context) ? FIELD_TYPE_CHOICE : FIELD_TYPE_COMPOUND;
+    }
+
+    private static boolean usesDefaultFieldPlugin(final FieldTypeContext context, final TypeDescriptor descriptor) {
+        return determinePluginClass(context)
+                .filter(descriptor.defaultPluginClass::equals)
+                .isPresent();
+    }
+
+    private static Optional<String> determinePluginClass(final FieldTypeContext context) {
+        return context.getEditorConfigNode()
+                .flatMap(NamespaceUtils::getPluginClassForField);
+    }
+
 
     /**
      * Try to read a list of fields from a node into a map of values.
@@ -195,47 +227,5 @@ public class FieldTypeUtils {
         }
 
         return isValid;
-    }
-
-    /**
-     * Check if a item represents a supported field type.
-     */
-    public static boolean isSupportedFieldType(final FieldTypeContext context) {
-        return determineDescriptor(context).isPresent();
-    }
-
-    /**
-     * Check if a (supported!) field makes use of its default CMS rendering plugin.
-     *
-     * Fields that use a different rendering plugin may have been set-up with a special meaning,
-     * unknown to the content service. Therefore, such fields should not be included in the exposed document type.
-     */
-    public static boolean usesDefaultFieldPlugin(final FieldTypeContext context) {
-        final Optional<TypeDescriptor> descriptor = determineDescriptor(context);
-        final Optional<String> pluginClass = context.getEditorConfigNode()
-                .flatMap(NamespaceUtils::getPluginClassForField);
-
-        return descriptor.isPresent() && descriptor.get().defaultPluginClass.equals(pluginClass.orElse(""));
-    }
-
-    /**
-     * Create a FieldType of the appropriate sub-type and initialize it.
-     *
-     * @param context            Information relevant for the current field
-     * @return                   Initialized FieldType instance or nothing, wrapped in an Optional
-     */
-    public static Optional<FieldType> createAndInitFieldType(final FieldTypeContext context) {
-
-        return determineDescriptor(context)
-                .map(descriptor -> descriptor.fieldTypeClass)
-                .flatMap(clazz -> FieldTypeFactory.createFieldType((Class<? extends FieldType>)clazz))
-                .flatMap(fieldType -> fieldType.init(context));
-    }
-
-    private static Optional<TypeDescriptor> determineDescriptor(final FieldTypeContext context) {
-        final ContentTypeItem item = context.getContentTypeItem();
-        final String type = item.isProperty() ? item.getItemType() :
-                (ChoiceFieldType.isChoiceField(context) ? FIELD_TYPE_CHOICE : FIELD_TYPE_COMPOUND);
-        return Optional.ofNullable(FIELD_TYPE_MAP.get(type));
     }
 }
