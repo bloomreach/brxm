@@ -23,9 +23,7 @@ import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 
-/**
- * @version "$Id$"
- */
+@Deprecated
 public interface QueryBuilder {
 
     @Nonnull

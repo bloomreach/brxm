@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
+import org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
@@ -45,8 +46,7 @@ import org.onehippo.cms7.essentials.components.info.EssentialsSortable;
 import org.onehippo.cms7.essentials.components.paging.DefaultPagination;
 import org.onehippo.cms7.essentials.components.paging.Pageable;
 import org.onehippo.cms7.essentials.components.utils.SiteUtils;
-import org.onehippo.cms7.essentials.components.utils.query.HstQueryBuilder;
-import org.onehippo.cms7.essentials.components.utils.query.QueryBuilder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -223,13 +223,12 @@ public class EssentialsListComponent extends CommonComponent {
      */
     protected <T extends EssentialsListComponentInfo>
     HstQuery buildQuery(final HstRequest request, final T paramInfo, final HippoBean scope) {
-        final QueryBuilder builder = new HstQueryBuilder(this, request);
         final String documentTypes = paramInfo.getDocumentTypes();
         final String[] types = SiteUtils.parseCommaSeparatedValue(documentTypes);
         if (log.isDebugEnabled()) {
             log.debug("Searching for document types:  {}, and including subtypes: {}", documentTypes, paramInfo.getIncludeSubtypes());
         }
-        return builder.scope(scope).documents(types).includeSubtypes().build();
+        return HstQueryBuilder.create(scope).ofTypes(types).build();
     }
 
     @Deprecated

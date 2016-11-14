@@ -38,11 +38,7 @@ import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * HstQuery wrapper
- *
- * @version "$Id$"
- */
+@Deprecated
 public class HstQueryBuilder implements QueryBuilder {
 
     private static Logger log = LoggerFactory.getLogger(HstQueryBuilder.class);
