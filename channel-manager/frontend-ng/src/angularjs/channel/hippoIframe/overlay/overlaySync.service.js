@@ -18,7 +18,6 @@ import debounce from 'lodash.debounce';
 import MutationSummary from 'mutation-summary';
 
 class OverlaySyncService {
-
   constructor($rootScope, $log, $window, DomService) {
     'ngInject';
 
