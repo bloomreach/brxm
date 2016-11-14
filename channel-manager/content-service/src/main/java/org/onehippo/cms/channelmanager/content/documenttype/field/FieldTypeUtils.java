@@ -29,6 +29,7 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
@@ -159,7 +160,7 @@ public class FieldTypeUtils {
             return item.getItemType();
         }
 
-        return ChoiceFieldType.isChoiceField(context) ? FIELD_TYPE_CHOICE : FIELD_TYPE_COMPOUND;
+        return ChoiceFieldUtils.isChoiceField(context) ? FIELD_TYPE_CHOICE : FIELD_TYPE_COMPOUND;
     }
 
     private static boolean usesDefaultFieldPlugin(final FieldTypeContext context, final TypeDescriptor descriptor) {

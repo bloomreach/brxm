@@ -30,11 +30,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeFactory;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
@@ -57,7 +55,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({NamespaceUtils.class, FieldTypeFactory.class, ChoiceFieldType.class})
+@PrepareForTest({NamespaceUtils.class, FieldTypeFactory.class, ChoiceFieldUtils.class})
 public class FieldTypeUtilsTest {
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String COMPOUND_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
@@ -424,7 +422,7 @@ public class FieldTypeUtilsTest {
         final CompoundFieldType fieldType = createMock(CompoundFieldType.class);
 
         PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter", "getPluginClassForField");
-        PowerMock.mockStaticPartial(ChoiceFieldType.class, "isChoiceField");
+        PowerMock.mockStaticPartial(ChoiceFieldUtils.class, "isChoiceField");
         PowerMock.mockStaticPartial(FieldTypeFactory.class, "createFieldType");
 
         expect(context.getContentTypeRoot()).andReturn(null);
@@ -432,7 +430,7 @@ public class FieldTypeUtilsTest {
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
         expect(fieldContext.getContentTypeItem()).andReturn(item);
         expect(item.isProperty()).andReturn(false);
-        expect(ChoiceFieldType.isChoiceField(fieldContext)).andReturn(false);
+        expect(ChoiceFieldUtils.isChoiceField(fieldContext)).andReturn(false);
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(COMPOUND_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(CompoundFieldType.class)).andReturn(Optional.of(fieldType));
@@ -461,7 +459,7 @@ public class FieldTypeUtilsTest {
         final ChoiceFieldType fieldType = createMock(ChoiceFieldType.class);
 
         PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter", "getPluginClassForField");
-        PowerMock.mockStaticPartial(ChoiceFieldType.class, "isChoiceField");
+        PowerMock.mockStaticPartial(ChoiceFieldUtils.class, "isChoiceField");
         PowerMock.mockStaticPartial(FieldTypeFactory.class, "createFieldType");
 
         expect(context.getContentTypeRoot()).andReturn(null);
@@ -469,7 +467,7 @@ public class FieldTypeUtilsTest {
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
         expect(fieldContext.getContentTypeItem()).andReturn(item);
         expect(item.isProperty()).andReturn(false);
-        expect(ChoiceFieldType.isChoiceField(fieldContext)).andReturn(true);
+        expect(ChoiceFieldUtils.isChoiceField(fieldContext)).andReturn(true);
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(CHOICE_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(ChoiceFieldType.class)).andReturn(Optional.of(fieldType));
