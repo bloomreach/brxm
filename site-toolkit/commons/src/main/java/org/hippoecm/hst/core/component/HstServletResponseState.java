@@ -755,14 +755,22 @@ public class HstServletResponseState implements HstResponseState {
     }
 
     public void flush() throws IOException {
-        doFlush(null);
+        doFlush(null, false);
     }
 
     public void flush(Writer writer) throws IOException {
-        doFlush(writer);
+        doFlush(writer, false);
     }
 
-    private void flushUnflushedChildrenHeaders(final HstComponentWindow hcw) throws IOException {
+    public void flush(final boolean skipMessageBody) throws IOException {
+        doFlush(null, skipMessageBody);
+    }
+
+    public void flush(Writer writer, final boolean skipMessageBody) throws IOException {
+        doFlush(writer, skipMessageBody);
+    }
+
+    private void flushUnflushedChildrenHeaders(final HstComponentWindow hcw, final boolean skipMessageBody) throws IOException {
         if (hcw == null || isActionResponse) {
             return;
         }
@@ -775,7 +783,7 @@ public class HstServletResponseState implements HstResponseState {
                 log.info("Child window '{}' of window '{}' never got flushed. Flushing its possible present response headers now.",
                         child.getName(), hcw.getName());
                 // if this child contains unflushed children, those children will be triggered by child#doFlush
-                child.getResponseState().flush(NULL_WRITER);
+                child.getResponseState().flush(NULL_WRITER, skipMessageBody);
             }
         }
     }
@@ -784,15 +792,16 @@ public class HstServletResponseState implements HstResponseState {
      * @param writer The writer to write to or {@code null}. The writer MUST be {@code null} when invoked from {@link #flush()}
      *               because if {@code getParentWriter()} gets invoked in {@link #flush()}, the backing http servlet response already
      *               gets committed and a redirect is not possible any more.
+     * @param skipMessageBody Whether or not to include the message body or not
      */
-    private void doFlush(Writer writer) throws IOException {
+    private void doFlush(Writer writer, final boolean skipMessageBody) throws IOException {
         if (flushed) {
             //throw new IllegalStateException("Already flushed");
             // Just ignore...
             return;
         }
 
-        flushUnflushedChildrenHeaders(window);
+        flushUnflushedChildrenHeaders(window, skipMessageBody);
 
         flushed = true;
 
@@ -862,7 +871,7 @@ public class HstServletResponseState implements HstResponseState {
                 addHeadContributionsReport();
             }
 
-            if (!hasError && redirectLocation == null) {
+            if (!hasError && redirectLocation == null && !skipMessageBody) {
                 if (outputStream != null) {
                     if (!closed) {
                         outputStream.flush();
@@ -991,10 +1000,6 @@ public class HstServletResponseState implements HstResponseState {
         this.parentResponse.setLocale(locale);
     }
 
-    /**
-     * After invoking this method, the backing http servlet response becomes committed. After this method gets
-     * invoked, not more response headers can be set and no redirect can be done any more
-     */
     protected Writer getParentWriter() throws IOException {
         try {
             return getResponseWriter();

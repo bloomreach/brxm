@@ -153,9 +153,36 @@ public interface HstResponseState
     
     void clear();
 
+    /**
+     * * Flushes the {@link HstResponseState} including the message body (response content)
+     * @throws IOException
+     */
     void flush() throws IOException;
 
+    /**
+     * Flushes the {@link HstResponseState} to {@code writer} including the message body (response content)
+     * @param writer
+     * @throws IOException
+     */
     void flush(Writer writer) throws IOException;
+
+    /**
+     * Flushes the {@link HstResponseState} but depending on {@code skipMessageBody} skips writing the actual response
+     * message body
+     * @param skipMessageBody
+     * @throws IOException
+     */
+    void flush(boolean skipMessageBody) throws IOException;
+
+    /**
+     * Flushes the {@link HstResponseState} to {@code writer} but depending on {@code skipMessageBody} skips writing
+     * the actual response
+     * message body
+     * @param writer
+     * @param skipMessageBody
+     * @throws IOException
+     */
+    void flush(Writer writer, boolean skipMessageBody) throws IOException;
 
     boolean isFlushed();
 
