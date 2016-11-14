@@ -76,43 +76,13 @@ public class ContentTypeContextTest {
         PowerMock.replayAll();
 
         final ContentTypeContext context
-                = ContentTypeContext.createForDocumentType("type", session, Optional.of(locale), docType).get();
+                = ContentTypeContext.createForDocumentType("type", session, locale, docType).get();
 
         assertThat(context.getContentType(), equalTo(contentType));
         assertThat(context.getContentTypeRoot(), equalTo(rootNode));
         assertThat(context.getLevel(), equalTo(0));
         assertThat(context.getResourceBundle().get(), equalTo(resourceBundle));
-        assertThat(context.getLocale().get(), equalTo(locale));
-    }
-
-    @Test
-    public void createDocumentTypeContextWithMissingLocale() throws Exception {
-        final ContentTypeService contentTypeService = createMock(ContentTypeService.class);
-        final ContentTypes contentTypes = createMock(ContentTypes.class);
-        final ContentType contentType = createMock(ContentType.class);
-        final Session session = createMock(Session.class);
-        final Node rootNode = createMock(Node.class);
-        final DocumentType docType = new DocumentType();
-
-        PowerMock.mockStaticPartial(HippoServiceRegistry.class, "getService");
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "getDocumentTypeRootNode");
-
-        expect(HippoServiceRegistry.getService(anyObject())).andReturn(contentTypeService);
-        expect(contentTypeService.getContentTypes()).andReturn(contentTypes);
-        expect(contentTypes.getType("type")).andReturn(contentType);
-        expect(NamespaceUtils.getDocumentTypeRootNode("type", session)).andReturn(Optional.of(rootNode));
-
-        replay(contentTypeService, contentTypes);
-        PowerMock.replayAll();
-
-        final ContentTypeContext context
-                = ContentTypeContext.createForDocumentType("type", session, Optional.empty(), docType).get();
-
-        assertThat(context.getContentType(), equalTo(contentType));
-        assertThat(context.getContentTypeRoot(), equalTo(rootNode));
-        assertThat(context.getLevel(), equalTo(0));
-        assertFalse(context.getResourceBundle().isPresent());
-        assertFalse(context.getLocale().isPresent());
+        assertThat(context.getLocale(), equalTo(locale));
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -148,6 +118,6 @@ public class ContentTypeContextTest {
         replay(contentTypeService, contentTypes);
         PowerMock.replayAll();
 
-        ContentTypeContext.createForDocumentType("type", session, Optional.empty(), null).get();
+        ContentTypeContext.createForDocumentType("type", session, null, null).get();
     }
 }

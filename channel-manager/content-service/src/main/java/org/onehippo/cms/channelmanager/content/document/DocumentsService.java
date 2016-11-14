@@ -16,6 +16,8 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
+import java.util.Locale;
+
 import javax.jcr.Session;
 
 import org.onehippo.cms.channelmanager.content.document.model.Document;
@@ -41,7 +43,7 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException
      *                If creation of the draft failed
      */
-    Document createDraft(String uuid, Session session) throws ErrorWithPayloadException;
+    Document createDraft(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
 
     /**
      * Update the draft version of a document, and keep it locked for further editing.
@@ -53,7 +55,7 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException
      *                 If updating the draft failed
      */
-    void updateDraft(String uuid, Document document, Session session) throws ErrorWithPayloadException;
+    void updateDraft(String uuid, Document document, Session session, Locale locale) throws ErrorWithPayloadException;
 
     /**
      * Delete the draft version of a document, such that it is available for others to edit.
@@ -63,7 +65,7 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException
      *                If deleting the draft failed
      */
-    void deleteDraft(String uuid, Session session) throws ErrorWithPayloadException;
+    void deleteDraft(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
 
     /**
      * Read the published variant of a document
@@ -74,5 +76,5 @@ public interface DocumentsService {
      * @throws ErrorWithPayloadException
      *                If retrieval of the live document failed
      */
-    Document getPublished(String uuid, Session session) throws ErrorWithPayloadException;
+    Document getPublished(String uuid, Session session, Locale locale) throws ErrorWithPayloadException;
 }

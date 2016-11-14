@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.document;
 
 import java.rmi.RemoteException;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -56,12 +57,12 @@ class DocumentsServiceImpl implements DocumentsService {
     private DocumentsServiceImpl() { }
 
     @Override
-    public Document createDraft(final String uuid, final Session session)
+    public Document createDraft(final String uuid, final Session session, final Locale locale)
             throws ErrorWithPayloadException {
         final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(NotFoundException::new);
         final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
                                                        .orElseThrow(NotFoundException::new);
-        final DocumentType docType = getDocumentType(handle);
+        final DocumentType docType = getDocumentType(handle, locale);
         final Document document = assembleDocument(uuid, handle, workflow, docType);
         final EditingInfo editingInfo = document.getInfo().getEditingInfo();
         if (editingInfo.getState() != EditingInfo.State.AVAILABLE) {
@@ -79,12 +80,12 @@ class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public void updateDraft(final String uuid, final Document document, final Session session)
+    public void updateDraft(final String uuid, final Document document, final Session session, final Locale locale)
             throws ErrorWithPayloadException {
         final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(NotFoundException::new);
         final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
                 .orElseThrow(NotFoundException::new);
-        final DocumentType docType = getDocumentType(handle);
+        final DocumentType docType = getDocumentType(handle, locale);
 
         if (!EditingUtils.canUpdateDocument(workflow)) {
             throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.NOT_HOLDER));
@@ -111,7 +112,7 @@ class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public void deleteDraft(final String uuid, final Session session) throws ErrorWithPayloadException {
+    public void deleteDraft(final String uuid, final Session session, final Locale locale) throws ErrorWithPayloadException {
         final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(NotFoundException::new);
         final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
                 .orElseThrow(NotFoundException::new);
@@ -129,11 +130,11 @@ class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document getPublished(final String uuid, final Session session) throws ErrorWithPayloadException {
+    public Document getPublished(final String uuid, final Session session, final Locale locale) throws ErrorWithPayloadException {
         final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(NotFoundException::new);
         final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)
                                                        .orElseThrow(NotFoundException::new);
-        final DocumentType docType = getDocumentType(handle);
+        final DocumentType docType = getDocumentType(handle, locale);
         final Document document = assembleDocument(uuid, handle, workflow, docType);
 
         WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED)
@@ -141,10 +142,10 @@ class DocumentsServiceImpl implements DocumentsService {
         return document;
     }
 
-    private DocumentType getDocumentType(final Node handle)
+    private DocumentType getDocumentType(final Node handle, final Locale locale)
             throws ErrorWithPayloadException {
         try {
-            return DocumentTypesService.get().getDocumentType(handle, Optional.empty());
+            return DocumentTypesService.get().getDocumentType(handle, locale);
         } catch (ErrorWithPayloadException e) {
             log.warn("Failed to retrieve type of document '{}'", JcrUtils.getNodePathQuietly(handle), e);
             throw new InternalServerErrorException();

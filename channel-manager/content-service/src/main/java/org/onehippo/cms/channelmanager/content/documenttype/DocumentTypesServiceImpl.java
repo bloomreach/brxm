@@ -45,7 +45,7 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     private DocumentTypesServiceImpl() { }
 
     @Override
-    public DocumentType getDocumentType(final Node handle, final Optional<Locale> locale)
+    public DocumentType getDocumentType(final Node handle, final Locale locale)
             throws ErrorWithPayloadException {
         try {
             final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(NotFoundException::new);
@@ -58,7 +58,7 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     }
 
     @Override
-    public DocumentType getDocumentType(final String id, final Session userSession, final Optional<Locale> locale)
+    public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
             throws ErrorWithPayloadException {
         final DocumentType docType = new DocumentType();
         final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, userSession, locale, docType)

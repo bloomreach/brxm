@@ -169,13 +169,11 @@ public abstract class FieldType {
         setId(fieldId);
 
         // only load displayName and hints if locale-info is available.
-        if (parentContext.getLocale().isPresent()) {
-            final Optional<ResourceBundle> resourceBundle = parentContext.getResourceBundle();
-            final Optional<Node> editorFieldConfig = fieldContext.getEditorConfigNode();
+        final Optional<ResourceBundle> resourceBundle = parentContext.getResourceBundle();
+        final Optional<Node> editorFieldConfig = fieldContext.getEditorConfigNode();
 
-            LocalizationUtils.determineFieldDisplayName(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setDisplayName);
-            LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
-        }
+        LocalizationUtils.determineFieldDisplayName(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setDisplayName);
+        LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
 
         FieldTypeUtils.determineValidators(this, parentContext.getDocumentType(), item.getValidators());
 

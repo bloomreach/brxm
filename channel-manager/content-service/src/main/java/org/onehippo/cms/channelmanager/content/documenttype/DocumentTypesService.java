@@ -44,7 +44,7 @@ public interface DocumentTypesService {
      * @throws ErrorWithPayloadException
      *                if assembling the document type specification failed in a non-recoverable manner
      */
-    DocumentType getDocumentType(String id, Session userSession, Optional<Locale> locale)
+    DocumentType getDocumentType(String id, Session userSession, Locale locale)
             throws ErrorWithPayloadException;
 
     /**
@@ -56,5 +56,5 @@ public interface DocumentTypesService {
      * @throws ErrorWithPayloadException
      *                if assembling the document type failed in a non-recoverable manner
      */
-    DocumentType getDocumentType(Node handle, Optional<Locale> locale) throws ErrorWithPayloadException;
+    DocumentType getDocumentType(Node handle, Locale locale) throws ErrorWithPayloadException;
 }
