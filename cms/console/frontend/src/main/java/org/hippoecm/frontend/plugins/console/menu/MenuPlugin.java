@@ -15,10 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.console.menu;
 
+import javax.jcr.Node;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.event.Broadcast;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
@@ -45,11 +50,10 @@ import org.hippoecm.frontend.plugins.console.menu.save.SaveDialogLink;
 import org.hippoecm.frontend.plugins.standards.sort.NodeSortPanel;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
-import javax.jcr.Node;
-
 public class MenuPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
+    public static final JavaScriptResourceReference SCRIPT_REFERENCE = new JavaScriptResourceReference(MenuPlugin.class, "MenuPlugin.js");
 
     private SaveDialogLink saveDialogLink;
     private NodeSortPanel sorter;
@@ -209,7 +213,13 @@ public class MenuPlugin extends RenderPlugin {
             if (sorter.isDirty()) {
                 target.add(sorter);
             }
+            target.appendJavaScript("Hippo.ConsoleMenuPlugin.render();");
         }
     }
 
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(JavaScriptHeaderItem.forReference(SCRIPT_REFERENCE));
+    }
 }

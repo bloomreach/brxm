@@ -262,7 +262,11 @@ li.hippo-console-menu-actions-save.session-changes a {
   background: #f2f2f2
 }
 
-.hippo-console-tree-sorter a:hover, .hippo-console-save a:hover, .hippo-console-tree-add a:hover {
+.hippo-console-tree-sorter a:hover,
+.hippo-console-save a:hover,
+.hippo-console-tree-add a:hover,
+.hippo-console-tree-sorter a:focus,
+.hippo-console-tree-add a:focus{
   color: white;
   background: #1f3f63;
 }
@@ -511,7 +515,8 @@ li.hippo-console-menu-actions-save.session-changes a {
   margin-right: 10px
 }
 
-.hippo-console-save li.hippo-console-menu-actions-save a:hover {
+.hippo-console-save li.hippo-console-menu-actions-save a:hover,
+.hippo-console-save li.hippo-console-menu-actions-save a:focus {
   background: green;
 }
 
@@ -519,7 +524,8 @@ li.hippo-console-menu-actions-save.session-changes a {
   padding: 5px
 }
 
-.hippo-console-save li.hippo-console-menu-actions-reset a:hover {
+.hippo-console-save li.hippo-console-menu-actions-reset a:hover,
+.hippo-console-save li.hippo-console-menu-actions-reset a:focus {
   background: red;
 }
 
@@ -974,23 +980,26 @@ body.hippo-root div.yui-log-container {
 
 .dropdown-content li {
   float: none;
-  margin: 0px;
+  margin: 0;
 }
-
 .dropdown-content a {
   padding: 7px 12px;
   text-decoration: none;
   display: block;
 }
 
+.dropdown-content li.highlight a,
+.dropdown-content a:focus,
 .dropdown-content a:hover {
   background-color: #e2e2e2;
 }
 
+.dropdown:focus .dropdown-content,
 .dropdown:hover .dropdown-content {
   display: block;
 }
 
+.dropdown:focus .dropbtn,
 .dropdown:hover .dropbtn {
   background-color:#4587d6;
   color: white;
