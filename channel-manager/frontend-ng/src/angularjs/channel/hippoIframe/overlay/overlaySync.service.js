@@ -117,7 +117,7 @@ class OverlaySyncService {
       const doc = this._getIframeDocument();
 
       if (doc) {
-        const isHorizontalScrollBarVisible = this._syncWidth(doc);
+        const isHorizontalScrollBarVisible = this._syncWidth();
         const height = this._getIframeHeight(doc);
         this._setHeight(height, isHorizontalScrollBarVisible);
       }
@@ -131,32 +131,13 @@ class OverlaySyncService {
    * @returns {boolean} true when the site in the iframe is wider than the viewport
    * @private
    */
-  _syncWidth(iframeDocument) {
-    // reset min-width on iframe
-    this.$iframe.css('min-width', '0');
-
+  _syncWidth() {
     if (this.viewPortWidth === 0) {
-      // Desktop mode
-      this.$iframe.css('min-width', '1280px');
-      this.$sheet.css('max-width', 'none');
-      this.$iframe.width('');
-      this.$overlay.width('');
+      // Any device mode
+      this.$sheet.css('max-width', '');
     } else {
-      // viewport is constrained
-      const width = `${this.viewPortWidth}px`;
-      this.$sheet.css('max-width', width);
-      this.$iframe.width(width);
-
-      const iframeDocumentWidth = $(iframeDocument).width();
-      if (iframeDocumentWidth <= this.viewPortWidth) {
-        this.$overlay.width(width);
-      } else {
-        // site has min-width bigger than viewport, so it needs a horizontal scrollbar
-        this.$iframe.width(iframeDocumentWidth);
-        this.$iframe.css('min-width', `${iframeDocumentWidth}px`);
-        this.$overlay.width(iframeDocumentWidth);
-        return true;
-      }
+      // viewport is constrained (Desktop, Tablet, Mobile)
+      this.$sheet.css('max-width', `${this.viewPortWidth}px`);
     }
     return false;
   }
