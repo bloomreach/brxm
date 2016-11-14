@@ -15,31 +15,42 @@
  */
 
 class ViewportToggleCtrl {
-  constructor($translate, OverlaySyncService) {
+  constructor($translate, OverlaySyncService, ChannelService) {
     'ngInject';
 
     this.$translate = $translate;
     this.OverlaySyncService = OverlaySyncService;
+    this.ChannelService = ChannelService;
+
+    this.setViewPorts();
+    this.activate();
+  }
+
+  setViewPorts() {
+    const viewportMap = this.ChannelService.getChannel().viewportMap;
 
     this.viewPorts = [
       {
+        id: 'ANY_DEVICE',
+        icon: '/cms/angular/hippo-cm/images/any_device.svg',
+        maxWidth: 0,
+      },
+      {
         id: 'DESKTOP',
         icon: '/cms/angular/hippo-cm/images/desktop.svg',
-        width: 0,
+        maxWidth: viewportMap.desktop ? viewportMap.desktop : 1280,
       },
       {
         id: 'TABLET',
         icon: '/cms/angular/hippo-cm/images/tablet.svg',
-        width: 720,
+        maxWidth: viewportMap.tablet ? viewportMap.tablet : 720,
       },
       {
         id: 'PHONE',
         icon: '/cms/angular/hippo-cm/images/phone.svg',
-        width: 320,
+        maxWidth: viewportMap.phone ? viewportMap.phone : 320,
       },
     ];
-
-    this.activate();
   }
 
   activate() {
@@ -52,7 +63,7 @@ class ViewportToggleCtrl {
   }
 
   viewPortChanged() {
-    this.OverlaySyncService.setViewPortWidth(this.selectedViewPort.width);
+    this.OverlaySyncService.setViewPortWidth(this.selectedViewPort.maxWidth);
     this.OverlaySyncService.syncIframe();
   }
 }
