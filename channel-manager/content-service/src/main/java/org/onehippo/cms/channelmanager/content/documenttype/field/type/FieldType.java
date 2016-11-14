@@ -228,32 +228,29 @@ public abstract class FieldType {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<FieldValue> checkValue(final Optional<Object> optionalValue)
-            throws BadRequestException {
-        final BadRequestException BAD_REQUEST_INVALID_DATA
-                = new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+    protected List<FieldValue> checkValue(final Optional<Object> optionalValue) throws ErrorWithPayloadException {
         final Object value = optionalValue.orElse(Collections.emptyList());
         if (!(value instanceof List)) {
-            throw BAD_REQUEST_INVALID_DATA;
+            throw INVALID_DATA.get();
         }
         final List values = (List)value;
 
         // check cardinality
         if (values.size() < getMinValues()) {
-            throw BAD_REQUEST_INVALID_DATA;
+            throw INVALID_DATA.get();
         }
         if (values.size() > getMaxValues()) {
-            throw BAD_REQUEST_INVALID_DATA;
+            throw INVALID_DATA.get();
         }
 
         if (isRequired() && values.isEmpty()) {
-            throw BAD_REQUEST_INVALID_DATA;
+            throw INVALID_DATA.get();
         }
 
         // check individual values
         for (Object v : values) {
             if (!(v instanceof FieldValue)) {
-                throw BAD_REQUEST_INVALID_DATA;
+                throw INVALID_DATA.get();
             }
         }
         return (List<FieldValue>) values;
