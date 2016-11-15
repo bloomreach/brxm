@@ -16,7 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -75,11 +75,11 @@ public class ChoiceFieldUtils {
      *
      * @param editorFieldNode JCR node representing the field's editor configuration
      * @param parentContext   context of the choice field's parent content type
-     * @param choices         list of compound fields to populate
+     * @param choices         map of compound fields to populate
      */
     public static void populateProviderBasedChoices(final Node editorFieldNode,
                                                     final ContentTypeContext parentContext,
-                                                    final List<CompoundFieldType> choices) {
+                                                    final Map<String, CompoundFieldType> choices) {
         getProviderId(editorFieldNode)
                 .ifPresent(providerId -> ContentTypeContext.getContentType(providerId)
                         .ifPresent(provider -> populateChoicesForProvider(provider, parentContext, choices)));
@@ -98,7 +98,7 @@ public class ChoiceFieldUtils {
     }
 
     private static void populateChoicesForProvider(final ContentType provider, final ContentTypeContext parentContext,
-                                                   final List<CompoundFieldType> choices) {
+                                                   final Map<String, CompoundFieldType> choices) {
         for (ContentTypeItem item : provider.getChildren().values()) {
             ContentTypeContext.getContentType(item.getItemType()).ifPresent(contentType -> {
                 if (contentType.isCompoundType()) {
@@ -106,12 +106,13 @@ public class ChoiceFieldUtils {
                     //             the choice compound. We could try to find a node and add it to the fieldContext.
                     final FieldTypeContext fieldContext = new FieldTypeContext(item, parentContext);
                     final CompoundFieldType choice = new CompoundFieldType();
+                    final String id = item.getItemType();
 
                     choice.init(fieldContext);
-                    choice.setId(item.getItemType());
+                    choice.setId(id);
                     patchDisplayNameForChoice(choice, fieldContext);
 
-                    choices.add(choice);
+                    choices.put(id, choice);
                 }
             });
         }
@@ -134,7 +135,7 @@ public class ChoiceFieldUtils {
      */
     public static void populateListBasedChoices(final Node editorFieldNode,
                                                 final ContentTypeContext parentContext,
-                                                final List<CompoundFieldType> choices) {
+                                                final Map<String, CompoundFieldType> choices) {
         final String[] choiceNames = getListBasedChoiceNames(editorFieldNode);
 
         for (String choiceName : choiceNames) {
@@ -143,14 +144,15 @@ public class ChoiceFieldUtils {
             ContentTypeContext.createFromParent(choiceId, parentContext).ifPresent(choiceContext -> {
                 if (choiceContext.getContentType().isCompoundType()) {
                     final CompoundFieldType choice = new CompoundFieldType();
+                    final String id = choiceContext.getContentType().getName();
 
                     // Since no FieldTypeContext is available for a list-based choice,
                     // we have to initialize our compound field manually.
-                    choice.setId(choiceContext.getContentType().getName());
+                    choice.setId(id);
                     patchDisplayNameForChoice(choice, choiceContext);
                     FieldTypeUtils.populateFields(choice.getFields(), choiceContext);
 
-                    choices.add(choice);
+                    choices.put(id, choice);
                 }
             });
         }

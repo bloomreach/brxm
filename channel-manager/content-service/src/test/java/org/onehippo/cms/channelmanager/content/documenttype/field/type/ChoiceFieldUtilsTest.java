@@ -125,7 +125,7 @@ public class ChoiceFieldUtilsTest {
     public void populateProviderBasedChoicesWithNoProviderId() {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
+        final Map<String, CompoundFieldType> choices = new HashMap<>();
 
         ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices);
 
@@ -136,7 +136,7 @@ public class ChoiceFieldUtilsTest {
     public void populateProviderBasedChoicesWithRepositoryException() throws Exception {
         final Node node = createMock(Node.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
+        final Map<String, CompoundFieldType> choices = new HashMap<>();
 
         PowerMock.mockStaticPartial(JcrUtils.class, "getNodePathQuietly");
 
@@ -158,7 +158,7 @@ public class ChoiceFieldUtilsTest {
     public void populateProviderBasedChoicesWithoutContentType() throws Exception {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
+        final Map<String, CompoundFieldType> choices = new HashMap<>();
 
         PowerMock.mockStaticPartial(ContentTypeContext.class, "getContentType");
 
@@ -178,7 +178,7 @@ public class ChoiceFieldUtilsTest {
     public void populateProviderBasedChoicesWithChoiceWithoutContentType() throws Exception {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
+        final Map<String, CompoundFieldType> choices = new HashMap<>();
         final ContentType provider = createMock(ContentType.class);
         final Map<String, ContentTypeChild> choiceMap = new HashMap<>();
         final ContentTypeChild choice = createMock(ContentTypeChild.class);
@@ -209,7 +209,7 @@ public class ChoiceFieldUtilsTest {
     public void populateProviderBasedChoicesWithNonCompoundChoice() throws Exception {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
+        final Map<String, CompoundFieldType> choices = new HashMap<>();
         final ContentType provider = createMock(ContentType.class);
         final Map<String, ContentTypeChild> choiceMap = new HashMap<>();
         final ContentTypeChild choice = createMock(ContentTypeChild.class);
@@ -242,7 +242,7 @@ public class ChoiceFieldUtilsTest {
     public void initProviderIdWithValidChoice() throws Exception {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
+        final Map<String, CompoundFieldType> choices = new HashMap<>();
         final ContentType provider = createMock(ContentType.class);
         final Map<String, ContentTypeChild> choiceMap = new HashMap<>();
         final ContentTypeChild choice = createMock(ContentTypeChild.class);
@@ -275,14 +275,14 @@ public class ChoiceFieldUtilsTest {
         PowerMock.verifyAll();
 
         assertThat(choices.size(), equalTo(1));
-        assertThat(choices.get(0), equalTo(compoundField));
+        assertThat(choices.get("choiceType"), equalTo(compoundField));
     }
 
     @Test
     public void populateListBasedChoicesWithoutCompoundList() {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
+        final Map<String, CompoundFieldType> choices = new HashMap<>();
 
         ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices);
 
@@ -293,7 +293,7 @@ public class ChoiceFieldUtilsTest {
     public void populateListBasedChoicesWithException() throws Exception {
         final Node node = createMock(Node.class);
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
+        final Map<String, CompoundFieldType> choices = new HashMap<>();
 
         PowerMock.mockStaticPartial(JcrUtils.class, "getNodePathQuietly");
 
@@ -315,7 +315,7 @@ public class ChoiceFieldUtilsTest {
     public void populateListBasedChoicesWithChoicesWithoutContentType() throws Exception {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
+        final Map<String, CompoundFieldType> choices = new HashMap<>();
         final ContentType contentType = createMock(ContentType.class);
 
         PowerMock.mockStaticPartial(ContentTypeContext.class, "createFromParent");
@@ -343,7 +343,7 @@ public class ChoiceFieldUtilsTest {
     public void populateListBasedChoicesWithNonCompoundChoice() throws Exception {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
+        final Map<String, CompoundFieldType> choices = new HashMap<>();
         final ContentTypeContext childContext = createMock(ContentTypeContext.class);
         final ContentType compound = createMock(ContentType.class);
 
@@ -369,7 +369,7 @@ public class ChoiceFieldUtilsTest {
     public void populateListBasedChoicesWithValidCompound() throws Exception {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
+        final Map<String, CompoundFieldType> choices = new HashMap<>();
         final ContentTypeContext childContext = createMock(ContentTypeContext.class);
         final ContentType compound = createMock(ContentType.class);
         final CompoundFieldType compoundField = PowerMock.createMockAndExpectNew(CompoundFieldType.class);
@@ -399,14 +399,14 @@ public class ChoiceFieldUtilsTest {
         PowerMock.verifyAll();
 
         assertThat(choices.size(), equalTo(1));
-        assertThat(choices.get(0), equalTo(compoundField));
+        assertThat(choices.get("compound:id"), equalTo(compoundField));
     }
 
     @Test
     public void populateListBasedChoicesWithValidCompoundAndPatchedDisplayName() throws Exception {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
+        final Map<String, CompoundFieldType> choices = new HashMap<>();
         final ContentTypeContext childContext = createMock(ContentTypeContext.class);
         final ContentType compound = createMock(ContentType.class);
         final CompoundFieldType compoundField = PowerMock.createMockAndExpectNew(CompoundFieldType.class);
@@ -443,6 +443,6 @@ public class ChoiceFieldUtilsTest {
         PowerMock.verifyAll();
 
         assertThat(choices.size(), equalTo(1));
-        assertThat(choices.get(0), equalTo(compoundField));
+        assertThat(choices.get("compound:id"), equalTo(compoundField));
     }
 }

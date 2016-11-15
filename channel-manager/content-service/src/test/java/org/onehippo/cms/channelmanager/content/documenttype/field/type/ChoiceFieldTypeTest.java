@@ -31,6 +31,9 @@ import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.repository.mock.MockNode;
 import org.powermock.api.easymock.PowerMock;
@@ -45,7 +48,9 @@ import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({FieldTypeUtils.class, LocalizationUtils.class, ChoiceFieldUtils.class})
@@ -60,8 +65,8 @@ public class ChoiceFieldTypeTest {
         choice.setId("choice");
 
         // choice field has 2 choices.
-        choice.getChoices().add(compound1);
-        choice.getChoices().add(compound2);
+        choice.getChoices().put("compound1", compound1);
+        choice.getChoices().put("compound2", compound2);
 
         expect(compound1.getId()).andReturn("compound1").anyTimes();
         expect(compound2.getId()).andReturn("compound2").anyTimes();
@@ -73,10 +78,6 @@ public class ChoiceFieldTypeTest {
 
         assertThat(choice.getType(), equalTo(FieldType.Type.CHOICE));
         assertTrue(choice.getChoices().isEmpty());
-        assertFalse(choice.isValid());
-
-        choice.getChoices().add(new CompoundFieldType());
-        assertTrue(choice.isValid());
     }
 
     @Test
@@ -140,8 +141,8 @@ public class ChoiceFieldTypeTest {
         verifyAll();
 
         assertThat(valueList.size(), equalTo(1));
-        assertThat(valueList.get(0).getChoiceId(), equalTo("compound2"));
-        assertThat(valueList.get(0).getChoiceValue(), equalTo(value));
+        assertThat(valueList.get(0).getChosenId(), equalTo("compound2"));
+        assertThat(valueList.get(0).getChosenValue(), equalTo(value));
     }
 
     @Test
@@ -161,8 +162,8 @@ public class ChoiceFieldTypeTest {
         verifyAll();
 
         assertThat(valueList.size(), equalTo(1));
-        assertThat(valueList.get(0).getChoiceId(), equalTo("compound2"));
-        assertThat(valueList.get(0).getChoiceValue(), equalTo(value1));
+        assertThat(valueList.get(0).getChosenId(), equalTo("compound2"));
+        assertThat(valueList.get(0).getChosenValue(), equalTo(value1));
         // The second value is trimmed
     }
 
@@ -184,10 +185,10 @@ public class ChoiceFieldTypeTest {
         verifyAll();
 
         assertThat(valueList.size(), equalTo(2));
-        assertThat(valueList.get(0).getChoiceId(), equalTo("compound2"));
-        assertThat(valueList.get(0).getChoiceValue(), equalTo(value1));
-        assertThat(valueList.get(1).getChoiceId(), equalTo("compound1"));
-        assertThat(valueList.get(1).getChoiceValue(), equalTo(value2));
+        assertThat(valueList.get(0).getChosenId(), equalTo("compound2"));
+        assertThat(valueList.get(0).getChosenValue(), equalTo(value1));
+        assertThat(valueList.get(1).getChosenId(), equalTo("compound1"));
+        assertThat(valueList.get(1).getChosenValue(), equalTo(value2));
     }
 
     @Test
@@ -204,11 +205,217 @@ public class ChoiceFieldTypeTest {
     }
 
 
+    @Test
+    public void writeToSingleValue() throws Exception {
+        final Node node = MockNode.root();
+        final Node choiceNode = node.addNode("choice", "compound2");
+        final FieldValue compoundValue = new FieldValue("bla");
+        final FieldValue choiceValue = new FieldValue("compound2", compoundValue);
 
+        node.addNode("untouched", "bla"); // ignore
+        node.addNode("choice", "unsupported"); // invalid, remove
+        node.addNode("choice", "compound1"); // excess, remove
+
+        compound2.writeSingleTo(choiceNode, compoundValue);
+        expectLastCall();
+        replayAll();
+
+        choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
+
+        verifyAll();
+        assertTrue(node.hasNode("untouched"));
+        assertThat(node.getNodes("choice").getSize(), equalTo(1L));
+    }
+
+    @Test
+    public void writeToWithException() throws Exception {
+        final Node node = createMock(Node.class);
+        final FieldValue compoundValue = new FieldValue("bla");
+        final FieldValue choiceValue = new FieldValue("compound2", compoundValue);
+
+        expect(node.getNodes("choice")).andThrow(new RepositoryException());
+        replay(node);
+
+        try {
+            choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
+            fail("No exception");
+        } catch (InternalServerErrorException e) {
+            assertNull(e.getPayload());
+        }
+
+        verify(node);
+    }
+
+    @Test
+    public void writeToWrongChoice() throws Exception {
+        final Node node = MockNode.root();
+        final FieldValue compoundValue = new FieldValue("bla");
+        final FieldValue choiceValue = new FieldValue("compound1", compoundValue);
+
+        final Node choiceNode = node.addNode("choice", "compound2");
+
+        replayAll();
+
+        try {
+            choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
+            fail("No exception");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+
+        verifyAll();
+        assertThat(node.getNode("choice"), equalTo(choiceNode));
+    }
+
+    @Test
+    public void writeToInvalidChoice() throws Exception {
+        final Node node = MockNode.root();
+        final FieldValue compoundValue = new FieldValue("bla");
+        final FieldValue choiceValue = new FieldValue("invalid", compoundValue);
+
+        final Node choiceNode = node.addNode("choice", "compound2");
+
+        replayAll();
+
+        try {
+            choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
+            fail("No exception");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+
+        verifyAll();
+        assertThat(node.getNode("choice"), equalTo(choiceNode));
+    }
+
+    @Test
+    public void writeToMissingChoiceId() throws Exception {
+        final Node node = MockNode.root();
+        final FieldValue compoundValue = new FieldValue("bla");
+        final FieldValue choiceValue = new FieldValue("compound2", compoundValue);
+
+        final Node choiceNode = node.addNode("choice", "compound2");
+        choiceValue.setChosenId(null);
+
+        replayAll();
+
+        try {
+            choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
+            fail("No exception");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+
+        verifyAll();
+        assertThat(node.getNode("choice"), equalTo(choiceNode));
+    }
+
+    @Test
+    public void writeToMissingChoiceValue() throws Exception {
+        final Node node = MockNode.root();
+        final FieldValue compoundValue = new FieldValue("bla");
+        final FieldValue choiceValue = new FieldValue("compound2", compoundValue);
+
+        final Node choiceNode = node.addNode("choice", "compound2");
+        choiceValue.setChosenValue(null);
+
+        replayAll();
+
+        try {
+            choice.writeTo(node, Optional.of(Collections.singletonList(choiceValue)));
+            fail("No exception");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo)e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+
+        verifyAll();
+        assertThat(node.getNode("choice"), equalTo(choiceNode));
+    }
+
+    /* WIP
+    @Test
+    public void writeToMultipleChoiceValues() throws Exception {
+        final Node node = MockNode.root();
+        final Node choiceNode1 = node.addNode("choice", "compound2");
+        final Node choiceNode2 = node.addNode("choice", "compound1");
+        final FieldValue compoundValue1 = new FieldValue("value for compound 2");
+        final FieldValue choiceValue1 = new FieldValue("compound2", compoundValue1);
+        final FieldValue compoundValue2 = new FieldValue("value for compound 1");
+        final FieldValue choiceValue2 = new FieldValue("compound1", compoundValue2);
+
+        choice.setMaxValues(Integer.MAX_VALUE);
+
+        compound1.writeSingleTo(choiceNode2, choiceValue2);
+        expectLastCall();
+        compound2.writeSingleTo(choiceNode1, choiceValue1);
+        expectLastCall();
+        replayAll();
+
+        choice.writeTo(node, Optional.of(Arrays.asList(choiceValue1, choiceValue2)));
+
+        verifyAll();
+    }
+*/
     // TODO Add tests for writing and validating values
 
 
     /*
+    public void writeTo(final Node node, final Optional<Object> optionalValue) throws ErrorWithPayloadException {
+        final List<FieldValue> values = checkValue(optionalValue);
+
+        try {
+            removeInvalidChoices(node); // This is symmetric to ignoring them in #readValues.
+
+            final NodeIterator iterator = node.getNodes(getId());
+            long numberOfNodes = iterator.getSize();
+
+            // Additional cardinality check due to not yet being able to create new
+            // (or remove a subset of the old) compound nodes, unless there are more nodes than allowed
+            if (!values.isEmpty() && values.size() != numberOfNodes && !(numberOfNodes > getMaxValues())) {
+                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
+            }
+
+            for (FieldValue value : values) {
+                writeSingleTo(iterator.nextNode(), value);
+            }
+
+            // delete excess nodes to match field type
+            while (iterator.hasNext()) {
+                iterator.nextNode().remove();
+            }
+        } catch (RepositoryException e) {
+            log.warn("Failed to write compound value to node {}", getId(), e);
+            throw new InternalServerErrorException();
+        }
+    }
+
+    private void writeSingleTo(final Node node, final FieldValue value) throws ErrorWithPayloadException, RepositoryException {
+        // each value must specify a choice ID
+        final String choiceId = value.findChosenId().orElseThrow(INVALID_DATA);
+
+        final String nodeType = node.getPrimaryNodeType().getName();
+        if (!nodeType.equals(choiceId)) {
+            // existing node is of different type than requested value (reordering not supported)
+            throw INVALID_DATA.get();
+        }
+
+        // each choiceId must be a valid choice
+        final CompoundFieldType compound = findChoice(choiceId).orElseThrow(INVALID_DATA);
+
+        // each value must specify a choice value
+        final FieldValue choiceValue = value.findChosenValue().orElseThrow(INVALID_DATA);
+
+        compound.writeSingleTo(node, choiceValue);
+    }
+
+    private void removeInvalidChoices(final Node node) throws RepositoryException {
+        for (Node child : new NodeIterable(node.getNodes(getId()))) {
+            final String nodeType = child.getPrimaryNodeType().getName();
+            if (!findChoice(nodeType).isPresent()) {
+                child.remove();
+            }
+        }
+    }
             */
 
     private void replayAll() {

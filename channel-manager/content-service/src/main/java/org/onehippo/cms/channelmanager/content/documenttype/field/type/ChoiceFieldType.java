@@ -17,7 +17,9 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
@@ -42,19 +44,14 @@ import org.slf4j.LoggerFactory;
 public class ChoiceFieldType extends FieldType {
     private static final Logger log = LoggerFactory.getLogger(ChoiceFieldType.class);
 
-    private final List<CompoundFieldType> choices = new ArrayList<>();
+    private final Map<String, CompoundFieldType> choices = new HashMap<>();
 
     public ChoiceFieldType() {
         setType(Type.CHOICE);
     }
 
-    public List<CompoundFieldType> getChoices() {
+    public Map<String, CompoundFieldType> getChoices() {
         return choices;
-    }
-
-    @Override
-    public boolean isValid() {
-        return !choices.isEmpty();
     }
 
     @Override
@@ -124,28 +121,28 @@ public class ChoiceFieldType extends FieldType {
                 iterator.nextNode().remove();
             }
         } catch (RepositoryException e) {
-            log.warn("Failed to write compound value to node {}", getId(), e);
+            log.warn("Failed to write value for choice type '{}'", getId(), e);
             throw new InternalServerErrorException();
         }
     }
 
     private void writeSingleTo(final Node node, final FieldValue value) throws ErrorWithPayloadException, RepositoryException {
-        // each value must specify a choice ID
-        final String choiceId = value.findChoiceId().orElseThrow(INVALID_DATA);
+        // each value must specify a chosen ID
+        final String chosenId = value.findChosenId().orElseThrow(INVALID_DATA);
 
-        final String nodeType = node.getPrimaryNodeType().getName();
-        if (!nodeType.equals(choiceId)) {
+        final String choiceId = node.getPrimaryNodeType().getName();
+        if (!choiceId.equals(chosenId)) {
             // existing node is of different type than requested value (reordering not supported)
             throw INVALID_DATA.get();
         }
 
-        // each choiceId must be a valid choice
-        final CompoundFieldType compound = findChoice(choiceId).orElseThrow(INVALID_DATA);
+        // each chosenId must be a valid choice
+        final CompoundFieldType compound = findChoice(chosenId).orElseThrow(INVALID_DATA);
 
         // each value must specify a choice value
-        final FieldValue choiceValue = value.findChoiceValue().orElseThrow(INVALID_DATA);
+        final FieldValue chosenValue = value.findChosenValue().orElseThrow(INVALID_DATA);
 
-        compound.writeSingleTo(node, choiceValue);
+        compound.writeSingleTo(node, chosenValue);
     }
 
 
@@ -165,17 +162,15 @@ public class ChoiceFieldType extends FieldType {
 
     private boolean validateSingle(final FieldValue value) {
         // dispatch validation of the values to the corresponding compound fields
-        // #readValues guarantees that the value has a valid choiceId, and a choiceValue
-        final String choiceId = value.findChoiceId().get();
-        final CompoundFieldType compound = findChoice(choiceId).get();
-        final FieldValue choiceValue = value.findChoiceValue().get();
+        // #readValues guarantees that the value has a valid chosenId, and a choiceValue
+        final String chosenId = value.findChosenId().get();
+        final CompoundFieldType compound = findChoice(chosenId).get();
+        final FieldValue choiceValue = value.findChosenValue().get();
 
         return compound.validateSingle(choiceValue);
     }
 
-    private Optional<CompoundFieldType> findChoice(final String choiceId) {
-        return choices.stream()
-                .filter(choice -> choice.getId().equals(choiceId))
-                .findAny();
+    private Optional<CompoundFieldType> findChoice(final String chosenId) {
+        return Optional.ofNullable(choices.get(chosenId));
     }
 }

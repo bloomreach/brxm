@@ -36,8 +36,8 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.validation.Val
 public class FieldValue {
     private String value;                         // Stringified value for primitive fields
     private Map<String, List<FieldValue>> fields; // Subfields of compound
-    private String choiceId;                      // ID of a choice in case of a choice field
-    private FieldValue choiceValue;               // Singular value of a choice field
+    private String chosenId;                      // ID of a choice in case of a choice field
+    private FieldValue chosenValue;               // Singular value of a choice field
 
     // private String id;    // ID for reordering, unique within a level (list) of field values
     private ValidationErrorInfo errorInfo;
@@ -53,8 +53,8 @@ public class FieldValue {
     }
 
     public FieldValue(final String choiceId, final FieldValue choiceValue) {
-        this.choiceId = choiceId;
-        this.choiceValue = choiceValue;
+        this.chosenId = choiceId;
+        this.chosenValue = choiceValue;
     }
 
     public Optional<String> findValue() {
@@ -83,30 +83,30 @@ public class FieldValue {
         this.fields = fields;
     }
 
-    public Optional<String> findChoiceId() {
-        return Optional.ofNullable(choiceId);
+    public Optional<String> findChosenId() {
+        return Optional.ofNullable(chosenId);
     }
 
     // use for serialization and testing only, to avoid NPE.
-    public String getChoiceId() {
-        return choiceId;
+    public String getChosenId() {
+        return chosenId;
     }
 
-    public void setChoiceId(final String choiceId) {
-        this.choiceId = choiceId;
+    public void setChosenId(final String chosenId) {
+        this.chosenId = chosenId;
     }
 
-    public Optional<FieldValue> findChoiceValue() {
-        return Optional.ofNullable(choiceValue);
+    public Optional<FieldValue> findChosenValue() {
+        return Optional.ofNullable(chosenValue);
     }
 
     // use for serialization and testing only, to avoid NPE.
-    public FieldValue getChoiceValue() {
-        return choiceValue;
+    public FieldValue getChosenValue() {
+        return chosenValue;
     }
 
-    public void setChoiceValue(final FieldValue choiceValue) {
-        this.choiceValue = choiceValue;
+    public void setChosenValue(final FieldValue chosenValue) {
+        this.chosenValue = chosenValue;
     }
 
     public ValidationErrorInfo getErrorInfo() {
