@@ -27,8 +27,6 @@ import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -145,7 +143,7 @@ public class StringFieldType extends FieldType {
         boolean isValid = true;
 
         if (isRequired()) {
-            if (!validateValues(valueList, this::validateSingle)) {
+            if (!validateValues(valueList, this::validateSingleRequired)) {
                 isValid = false;
             }
         }
@@ -153,7 +151,7 @@ public class StringFieldType extends FieldType {
         return isValid;
     }
 
-    private boolean validateSingle(final FieldValue value) {
+    private boolean validateSingleRequired(final FieldValue value) {
         // #readFrom guarantees that value.getValue is not empty.
         if (value.findValue().get().isEmpty()) {
             value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
