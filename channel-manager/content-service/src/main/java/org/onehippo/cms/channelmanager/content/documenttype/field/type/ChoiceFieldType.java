@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +45,8 @@ import org.slf4j.LoggerFactory;
 public class ChoiceFieldType extends FieldType {
     private static final Logger log = LoggerFactory.getLogger(ChoiceFieldType.class);
 
-    private final Map<String, CompoundFieldType> choices = new HashMap<>();
+    // The order of the entries in the choice map matters, so we use a *linked* hash map.
+    private final Map<String, CompoundFieldType> choices = new LinkedHashMap<>();
 
     public ChoiceFieldType() {
         setType(Type.CHOICE);
