@@ -27,12 +27,23 @@
     </div>
   </md-toolbar>
   <md-content flex="grow">
-    <div ng-if="$ctrl.doc && $ctrl.doc.info.editing.state && $ctrl.doc.info.editing.state != 'AVAILABLE'"
+    <div ng-if="$ctrl.doc && $ctrl.state != 'AVAILABLE'"
          class="md-padding"
-         md-colors="{background: 'hippo-orange-50'}">
-      <div>{{::$ctrl.doc.info.editing.state | translate}}</div>
+         md-colors="{background: 'hippo-red-50'}">
+      <h4>{{::$ctrl.unavailableTitle | translate}}</h4>
+      <div>{{::$ctrl.unavailableMessage }}</div>
+      <p ng-if="$ctrl.linkToFullEditor">
+        <a href="#" layout="row" layout-align="start end">
+          <span class="inline-icon-wrapper">
+            <md-icon md-svg-src="/cms/angular/hippo-cm/images/document.svg"></md-icon>
+          </span>
+          <span>
+            {{'UNAVAILABLE_SWITCH_TO_THE_FULL_EDITOR' | translate}}
+          </span>
+        </a>
+      </p>
     </div>
-    <form ng-if="$ctrl.doc && $ctrl.doc.info.editing.state && $ctrl.doc.info.editing.state == 'AVAILABLE'"
+    <form ng-if="$ctrl.doc && $ctrl.state == 'AVAILABLE'"
           name="$ctrl.form"
           class="form-dense-layout"
           layout="column">

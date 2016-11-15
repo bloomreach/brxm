@@ -17,11 +17,12 @@
 import template from './rightSidePanel.html';
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, $timeout, ChannelSidePanelService, ContentService, HippoIframeService) {
+  constructor($scope, $element, $timeout, $translate, ChannelSidePanelService, ContentService, HippoIframeService) {
     'ngInject';
 
     this.$scope = $scope;
     this.$timeout = $timeout;
+    this.$translate = $translate;
     this.ChannelSidePanelService = ChannelSidePanelService;
     this.ContentService = ContentService;
     this.HippoIframeService = HippoIframeService;
@@ -63,15 +64,39 @@ export class ChannelRightSidePanelCtrl {
       .catch((error) => {
         if (error) {
           this.doc = error.data;
+          this.state = this.doc.info.editing.state;
         } else {
-          this.doc = {
-            info: {
-              editing: {
-                state: 'UNAVAILABLE',
-              },
-            },
-          };
+          this.state = 'UNAVAILABLE_CONTENT';
         }
+
+        const errorMap = {
+          UNAVAILABLE: {
+            title: 'UNAVAILABLE_CONTENT_TITLE',
+            linkToFullEditor: true,
+            message: this.$translate.instant('UNAVAILABLE'),
+          },
+          UNAVAILABLE_CONTENT: {
+            title: 'UNAVAILABLE_CONTENT_HERE_TITLE',
+            linkToFullEditor: true,
+            message: this.$translate.instant('UNAVAILABLE_CONTENT'),
+          },
+          UNAVAILABLE_CUSTOM_VALIDATION_PRESENT: {
+            title: 'UNAVAILABLE_DOCUMENT_HERE_TITLE',
+            linkToFullEditor: true,
+            message: this.$translate.instant('UNAVAILABLE_CUSTOM_VALIDATION_PRESENT'),
+          },
+          UNAVAILABLE_HELD_BY_OTHER_USER: {
+            title: 'UNAVAILABLE_DOCUMENT_TITLE',
+            message: this.$translate.instant('UNAVAILABLE_HELD_BY_OTHER_USER', { user: this.doc.info.editing.holder.displayName ? this.doc.info.editing.holder.displayName : this.doc.info.editing.holder.id }),
+          },
+          UNAVAILABLE_REQUEST_PENDING: {
+            title: 'UNAVAILABLE_DOCUMENT_TITLE',
+            message: this.$translate.instant('UNAVAILABLE_REQUEST_PENDING'),
+          },
+        };
+        this.unavailableTitle = errorMap[this.state].title;
+        this.unavailableMessage = errorMap[this.state].message;
+        this.linkToFullEditor = errorMap[this.state].linkToFullEditor;
       });
   }
 
