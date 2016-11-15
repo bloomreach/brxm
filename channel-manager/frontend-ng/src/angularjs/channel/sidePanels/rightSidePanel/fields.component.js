@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-import collapseToggle from './collapseToggle.directive';
+import collapse from './collapse.directive';
 import template from './fields.html';
 
 class ChannelFieldsCtrl {
-  constructor() {
-    'ngInject';
-  }
 
   hasValue(field) {
     const values = this.fieldValues[field.id];
@@ -72,6 +69,6 @@ const channelFieldsComponentModule = angular
     controller: ChannelFieldsCtrl,
     template,
   })
-  .directive('collapseToggle', collapseToggle);
+  .directive('collapse', collapse);
 
 export default channelFieldsComponentModule;

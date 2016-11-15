@@ -21,3 +21,23 @@
     outline: none;
   }
 }
+
+.collapse-element {
+  display: block;
+  overflow: hidden;
+  transition: height $swift-ease-out;
+
+  &.collapsed {
+    transition: height $swift-ease-in;
+  }
+}
+
+.collapse-icon {
+  transition: transform $swift-ease-out;
+
+  &.collapsed {
+    transform: rotate(-90deg);
+    transition: transform $swift-ease-in;
+  }
+}
+
