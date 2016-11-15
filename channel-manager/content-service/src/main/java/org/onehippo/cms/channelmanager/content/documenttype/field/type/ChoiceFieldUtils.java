@@ -102,30 +102,24 @@ public class ChoiceFieldUtils {
         for (ContentTypeItem item : provider.getChildren().values()) {
             ContentTypeContext.getContentType(item.getItemType()).ifPresent(contentType -> {
                 if (contentType.isCompoundType()) {
-                    createChoiceFromFieldType(new FieldTypeContext(item, parentContext)).ifPresent(choices::add);
+                    // Suggestion: the provider compound may have an editor configuration, helping to initialize
+                    //             the choice compound. We could try to find a node and add it to the fieldContext.
+                    final FieldTypeContext fieldContext = new FieldTypeContext(item, parentContext);
+                    final CompoundFieldType choice = new CompoundFieldType();
+
+                    choice.init(fieldContext);
+                    choice.setId(item.getItemType());
+                    patchDisplayNameForChoice(choice, fieldContext);
+
+                    choices.add(choice);
                 }
             });
         }
     }
 
-    /**
-     * Typically, our provider compound has no editor configuration, and therefore no caption, and likely also no
-     * translated field names. In such a case, we "patch" the choice's display name by falling back to the compound's
-     * localized name.
-     */
-    private static Optional<CompoundFieldType> createChoiceFromFieldType(final FieldTypeContext context) {
-        final CompoundFieldType choice = new CompoundFieldType();
-        choice.init(context);
-        if (choice.isValid()) {
-            choice.setId(context.getContentTypeItem().getItemType());
-            patchDisplayNameForChoice(choice, context);
-            return Optional.of(choice);
-        }
-        return Optional.empty();
-    }
-
-    private static void patchDisplayNameForChoice(final CompoundFieldType choice, final FieldTypeContext context) {
-        context.createContextForCompound().ifPresent(compoundContext -> patchDisplayNameForChoice(choice, compoundContext));
+    private static void patchDisplayNameForChoice(final CompoundFieldType choice, final FieldTypeContext fieldContext) {
+        fieldContext.createContextForCompound()
+                .ifPresent(choiceContext -> patchDisplayNameForChoice(choice, choiceContext));
     }
 
     /**
@@ -146,9 +140,17 @@ public class ChoiceFieldUtils {
         for (String choiceName : choiceNames) {
             final String choiceId = normalizeChoiceName(choiceName, parentContext);
 
-            ContentTypeContext.createFromParent(choiceId, parentContext).ifPresent(context -> {
-                if (context.getContentType().isCompoundType()) {
-                    createChoiceFromContentType(context).ifPresent(choices::add);
+            ContentTypeContext.createFromParent(choiceId, parentContext).ifPresent(choiceContext -> {
+                if (choiceContext.getContentType().isCompoundType()) {
+                    final CompoundFieldType choice = new CompoundFieldType();
+
+                    // Since no FieldTypeContext is available for a list-based choice,
+                    // we have to initialize our compound field manually.
+                    choice.setId(choiceContext.getContentType().getName());
+                    patchDisplayNameForChoice(choice, choiceContext);
+                    FieldTypeUtils.populateFields(choice.getFields(), choiceContext);
+
+                    choices.add(choice);
                 }
             });
         }
@@ -168,21 +170,6 @@ public class ChoiceFieldUtils {
 
     private static String normalizeChoiceName(final String choiceName, final ContentTypeContext context) {
         return choiceName.contains(":") ? choiceName : context.getContentType().getPrefix() + ":" + choiceName;
-    }
-
-    /**
-     * Since no FieldTypeContext is available for a list-based choice,
-     * we have to initialize our compound field manually.
-     */
-    private static Optional<CompoundFieldType> createChoiceFromContentType(final ContentTypeContext context) {
-        final CompoundFieldType choice = new CompoundFieldType();
-        FieldTypeUtils.populateFields(choice.getFields(), context);
-        if (choice.isValid()) {
-            choice.setId(context.getContentType().getName());
-            patchDisplayNameForChoice(choice, context);
-            return Optional.of(choice);
-        }
-        return Optional.empty();
     }
 
     private static void patchDisplayNameForChoice(final CompoundFieldType choice, final ContentTypeContext context) {

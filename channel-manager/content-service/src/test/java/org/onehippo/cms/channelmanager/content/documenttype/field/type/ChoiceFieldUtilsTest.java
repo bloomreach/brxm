@@ -239,44 +239,6 @@ public class ChoiceFieldUtilsTest {
     }
 
     @Test
-    public void populateProviderBasedChoicesWithInvalidChoice() throws Exception {
-        final Node node = MockNode.root();
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
-        final ContentType provider = createMock(ContentType.class);
-        final Map<String, ContentTypeChild> choiceMap = new HashMap<>();
-        final ContentTypeChild choice = createMock(ContentTypeChild.class);
-        final ContentType compound = createMock(ContentType.class);
-        final FieldTypeContext compoundContext = PowerMock.createMockAndExpectNew(FieldTypeContext.class, choice, parentContext);
-        final CompoundFieldType compoundField = PowerMock.createMockAndExpectNew(CompoundFieldType.class);
-
-        PowerMock.mockStaticPartial(ContentTypeContext.class, "getContentType");
-
-        node.setProperty("cpItemsPath", "choice:provider");
-        expect(ContentTypeContext.getContentType("choice:provider")).andReturn(Optional.of(provider));
-        expect(provider.getChildren()).andReturn(choiceMap);
-
-        // Choice has a content type and gets instantiated, but turns out to be invalid and gets not added
-        choiceMap.put("choice", choice);
-        expect(choice.getItemType()).andReturn("choiceType");
-        expect(ContentTypeContext.getContentType("choiceType")).andReturn(Optional.of(compound));
-        expect(compound.isCompoundType()).andReturn(true);
-        compoundField.init(compoundContext);
-        expectLastCall();
-        expect(compoundField.isValid()).andReturn(false);
-
-        replay(provider, choice, compound);
-        PowerMock.replayAll();
-
-        ChoiceFieldUtils.populateProviderBasedChoices(node, parentContext, choices);
-
-        verify(provider, choice, compound);
-        PowerMock.verifyAll();
-
-        assertTrue(choices.isEmpty());
-    }
-
-    @Test
     public void initProviderIdWithValidChoice() throws Exception {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
@@ -300,8 +262,6 @@ public class ChoiceFieldUtilsTest {
         expect(compound.isCompoundType()).andReturn(true);
         compoundField.init(compoundContext);
         expectLastCall();
-        expect(compoundField.isValid()).andReturn(true);
-        expect(compoundContext.getContentTypeItem()).andReturn(choice);
         compoundField.setId("choiceType");
         expectLastCall();
         expect(compoundContext.createContextForCompound()).andReturn(Optional.empty());
@@ -406,39 +366,6 @@ public class ChoiceFieldUtilsTest {
     }
 
     @Test
-    public void populateListBasedChoicesWithInvalidCompound() throws Exception {
-        final Node node = MockNode.root();
-        final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
-        final List<CompoundFieldType> choices = new ArrayList<>();
-        final ContentTypeContext childContext = createMock(ContentTypeContext.class);
-        final ContentType compound = createMock(ContentType.class);
-        final CompoundFieldType compoundField = PowerMock.createMockAndExpectNew(CompoundFieldType.class);
-        final List<FieldType> compoundFields = new ArrayList<>();
-
-        PowerMock.mockStaticPartial(ContentTypeContext.class, "createFromParent");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "populateFields");
-
-        node.setProperty("compoundList", "prefixed:choice");
-        expect(ContentTypeContext.createFromParent("prefixed:choice", parentContext)).andReturn(Optional.of(childContext));
-        expect(childContext.getContentType()).andReturn(compound);
-        expect(compound.isCompoundType()).andReturn(true);
-        expect(compoundField.getFields()).andReturn(compoundFields);
-        FieldTypeUtils.populateFields(compoundFields, childContext);
-        expectLastCall();
-        expect(compoundField.isValid()).andReturn(false);
-
-        replay(parentContext, childContext, compound);
-        PowerMock.replayAll();
-
-        ChoiceFieldUtils.populateListBasedChoices(node, parentContext, choices);
-
-        verify(parentContext, childContext, compound);
-        PowerMock.verifyAll();
-
-        assertTrue(choices.isEmpty());
-    }
-
-    @Test
     public void populateListBasedChoicesWithValidCompound() throws Exception {
         final Node node = MockNode.root();
         final ContentTypeContext parentContext = createMock(ContentTypeContext.class);
@@ -458,7 +385,6 @@ public class ChoiceFieldUtilsTest {
         expect(compoundField.getFields()).andReturn(compoundFields);
         FieldTypeUtils.populateFields(compoundFields, childContext);
         expectLastCall();
-        expect(compoundField.isValid()).andReturn(true);
         expect(compound.getName()).andReturn("compound:id");
         compoundField.setId("compound:id");
         expectLastCall();
@@ -497,7 +423,6 @@ public class ChoiceFieldUtilsTest {
         expect(compoundField.getFields()).andReturn(compoundFields);
         FieldTypeUtils.populateFields(compoundFields, childContext);
         expectLastCall();
-        expect(compoundField.isValid()).andReturn(true);
         expect(compound.getName()).andReturn("compound:id");
         compoundField.setId("compound:id");
         expectLastCall();
