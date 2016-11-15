@@ -110,12 +110,7 @@ public class CompoundFieldType extends FieldType {
             }
 
             for (FieldValue value : values) {
-                final Map valueMap = value.getFields();
-                final Node compound = iterator.nextNode();
-                for (FieldType field : getFields()) {
-                    Object fieldValue = valueMap.get(field.getId());
-                    field.writeTo(compound, Optional.ofNullable(fieldValue));
-                }
+                writeSingleTo(iterator.nextNode(), value);
             }
 
             // delete excess nodes to match field type
