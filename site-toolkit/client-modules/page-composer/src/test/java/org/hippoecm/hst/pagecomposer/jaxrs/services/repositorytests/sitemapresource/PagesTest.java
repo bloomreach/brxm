@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,7 +129,7 @@ public class PagesTest extends AbstractSiteMapResourceTest {
 
         boolean found = false;
         for (SiteMapPageRepresentation siteMapPageRepresentation : siteMapPagesRepresentation.getPages()) {
-            // hst:default/hst:siteap/webfiles sitemap item has now hst:containerresource = false hence should be part of pages overview
+            // hst:default/hst:sitemap/webfiles sitemap item has now hst:containerresource = false hence should be part of pages overview
             if ("webfiles".equals(siteMapPageRepresentation.getPathInfo())) {
                 found = true;
                 break;
@@ -137,6 +137,25 @@ public class PagesTest extends AbstractSiteMapResourceTest {
         }
         assertTrue("page with pathInfo 'webfiles' expected", found);
     }
+
+    @Test
+    public void skip_pages_for_sitemap_items_that_are_index_items() throws Exception {
+        initContext();
+        final SiteMapResource siteMapResource = createResource();
+        final Response response = siteMapResource.getSiteMapPages();
+        SiteMapPagesRepresentation siteMapPagesRepresentation =
+                (SiteMapPagesRepresentation) ((ExtResponseRepresentation) response.getEntity()).getData();
+
+        boolean found = false;
+        for (SiteMapPageRepresentation siteMapPageRepresentation : siteMapPagesRepresentation.getPages()) {
+            if ("_index_".equals(siteMapPageRepresentation.getName())) {
+                found = true;
+                break;
+            }
+        }
+        assertFalse("page for sitemap item '_index_' should be skipped", found);
+    }
+
 
     // If set to 'false' the /webfiles sitemap
     // item should become visible as channel mngr page

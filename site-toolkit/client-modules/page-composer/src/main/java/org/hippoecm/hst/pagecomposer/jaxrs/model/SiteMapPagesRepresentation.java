@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
@@ -27,6 +28,8 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.INDEX;
 
 public class SiteMapPagesRepresentation {
 
@@ -47,12 +50,7 @@ public class SiteMapPagesRepresentation {
         for (HstSiteMapItem child : siteMap.getSiteMapItems()) {
             addPages(child, null, homePagePathInfo, previewConfigurationPath);
         }
-        Collections.sort(pages, new Comparator<SiteMapPageRepresentation>() {
-            @Override
-            public int compare(final SiteMapPageRepresentation o1, final SiteMapPageRepresentation o2) {
-                return o1.getPathInfo().compareTo(o2.getPathInfo());
-            }
-        });
+        Collections.sort(pages, (o1, o2) -> o1.getPathInfo().compareTo(o2.getPathInfo()));
         // move homepage to first location
         return this;
     }
@@ -65,6 +63,11 @@ public class SiteMapPagesRepresentation {
             // wildcards are not the pages we want to expose
             log.debug("Skip '{}' from page overview because only explicit non-wildcard sitemap items can be shown as 'pages'" +
                     " in the channel manager", siteMapItem);
+            return;
+        }
+        if (INDEX.equals(siteMapItem.getValue())) {
+            log.debug("Skip '{}' from page overview because '{}' items do not need to be shown as pages since the " +
+                    "parent item shows the same page", siteMapItem, INDEX);
             return;
         }
         if (siteMapItem.isContainerResource() || siteMapItem.isHiddenInChannelManager()) {
