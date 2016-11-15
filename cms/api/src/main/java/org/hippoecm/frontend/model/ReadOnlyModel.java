@@ -20,7 +20,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 /**
  * Read-only Wicket model that accepts a lambda function to return the object.
  */
-public class ReadOnlyModel<T> extends AbstractReadOnlyModel<T> {
+public final class ReadOnlyModel<T> extends AbstractReadOnlyModel<T> {
 
     private final SerializableSupplier<T> supplier;
 
