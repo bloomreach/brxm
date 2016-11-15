@@ -34,4 +34,5 @@ Failed reading hints from workflow
 Failed to determine if field is of type CHOICE
 Failed to determine provider-based choices for field
 Failed to determine list-based choices for field
+Failed to read nodes for choice type 'choice'
 Node with identifier 'unknown-uuid' does not exist

@@ -94,7 +94,7 @@ public class ChoiceFieldType extends FieldType {
                 // nodes that have no corresponding choices are ignored
             }
         } catch (RepositoryException e) {
-            log.warn("Failed to read nodes for compound type '{}'", getId(), e);
+            log.warn("Failed to read nodes for choice type '{}'", getId(), e);
         }
         return values;
     }
