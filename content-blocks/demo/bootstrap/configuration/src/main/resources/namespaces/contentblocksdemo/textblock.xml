@@ -117,7 +117,7 @@
           <sv:value>frontend:plugin</sv:value>
         </sv:property>
         <sv:property sv:name="caption" sv:type="String">
-          <sv:value>Text</sv:value>
+          <sv:value>Text Caption</sv:value>
         </sv:property>
         <sv:property sv:name="field" sv:type="String">
           <sv:value>hippostd_html</sv:value>

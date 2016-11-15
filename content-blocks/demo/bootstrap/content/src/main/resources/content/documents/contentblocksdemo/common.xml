@@ -302,11 +302,19 @@
             <sv:value>hippostd:html</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;p&gt;This document has the content blocks added to the docment type using a list of comma separated strings.&amp;nbsp;&lt;/p&gt; 
-&lt;p&gt;See step 2.2a&amp;nbsp;in the&amp;nbsp; 
-&lt;a href="http://content-blocks.forge.onehippo.org/cmsconfiguration.html" target="_blank"&gt;CMS Configuration page&lt;/a&gt;&amp;nbsp;in the documentation for more information.&lt;/p&gt;</sv:value>
+            <sv:value>&lt;p&gt;This document has content blocks added to the document type using a list of comma separated strings.&amp;nbsp;&lt;/p&gt;
+              &lt;p&gt;See the &lt;a href="https://www.onehippo.org/library/concepts/plugins/content-blocks/configuration.html" target="_blank"&gt;Content
+              Blocks Configuration page&lt;/a&gt;&amp;nbsp;in the documentation for more information.&lt;/p&gt;</sv:value>
           </sv:property>
         </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentblocksdemo:contentblocksitem">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:html</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;p&gt;This is not a Text Block compound but a standard Rich Text Editor, &lt;strong&gt;showing no caption!&lt;/strong&gt;&lt;/p&gt;</sv:value>
+        </sv:property>
       </sv:node>
       <sv:node sv:name="contentblocksdemo:contentblocksitem">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -401,11 +409,19 @@
             <sv:value>hippostd:html</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;p&gt;This document has the content blocks added to the docment type using a list of comma separated strings.&amp;nbsp;&lt;/p&gt; 
-&lt;p&gt;See step 2.2a&amp;nbsp;in the&amp;nbsp; 
-&lt;a href="http://content-blocks.forge.onehippo.org/cmsconfiguration.html" target="_blank"&gt;CMS Configuration page&lt;/a&gt;&amp;nbsp;in the documentation for more information.&lt;/p&gt;</sv:value>
+            <sv:value>&lt;p&gt;This document has content blocks added to the document type using a list of comma separated strings.&amp;nbsp;&lt;/p&gt;
+              &lt;p&gt;See the &lt;a href="https://www.onehippo.org/library/concepts/plugins/content-blocks/configuration.html" target="_blank"&gt;Content
+              Blocks Configuration page&lt;/a&gt;&amp;nbsp;in the documentation for more information.&lt;/p&gt;</sv:value>
           </sv:property>
         </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentblocksdemo:contentblocksitem">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:html</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;p&gt;This is not a Text Block compound but a standard Rich Text Editor, &lt;strong&gt;showing no caption!&lt;/strong&gt;&lt;/p&gt;</sv:value>
+        </sv:property>
       </sv:node>
       <sv:node sv:name="contentblocksdemo:contentblocksitem">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -502,11 +518,19 @@
             <sv:value>hippostd:html</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;p&gt;This document has the content blocks added to the docment type using a list of comma separated strings.&amp;nbsp;&lt;/p&gt; 
-&lt;p&gt;See step 2.2a&amp;nbsp;in the&amp;nbsp; 
-&lt;a href="http://content-blocks.forge.onehippo.org/cmsconfiguration.html" target="_blank"&gt;CMS Configuration page&lt;/a&gt;&amp;nbsp;in the documentation for more information.&lt;/p&gt;</sv:value>
+            <sv:value>&lt;p&gt;This document has content blocks added to the document type using a list of comma separated strings.&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;See the &lt;a href="https://www.onehippo.org/library/concepts/plugins/content-blocks/configuration.html" target="_blank"&gt;Content
+              Blocks Configuration page&lt;/a&gt;&amp;nbsp;in the documentation for more information.&lt;/p&gt;</sv:value>
           </sv:property>
         </sv:node>
+      </sv:node>
+      <sv:node sv:name="contentblocksdemo:contentblocksitem">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:html</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:content" sv:type="String">
+          <sv:value>&lt;p&gt;This is not a Text Block compound but a standard Rich Text Editor, &lt;strong&gt;showing no caption!&lt;/strong&gt;&lt;/p&gt;</sv:value>
+        </sv:property>
       </sv:node>
       <sv:node sv:name="contentblocksdemo:contentblocksitem">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -614,9 +638,9 @@
             <sv:value>hippostd:html</sv:value>
           </sv:property>
           <sv:property sv:name="hippostd:content" sv:type="String">
-            <sv:value>&lt;p&gt;This document has the content blocks added to the docment type using a compound provider (which is a compound).&amp;nbsp;&lt;/p&gt; 
-&lt;p&gt;See step 2.2b in the 
-&lt;a href="http://content-blocks.forge.onehippo.org/cmsconfiguration.html" target="_blank"&gt;CMS Configuration page&lt;/a&gt; in the documentation for more information.&lt;/p&gt;</sv:value>
+            <sv:value>&lt;p&gt;This document has the content blocks added to the docment type using a compound provider (which is a compound).&amp;nbsp;&lt;/p&gt;
+              &lt;p&gt;See step 2.2b in the
+              &lt;a href="http://content-blocks.forge.onehippo.org/cmsconfiguration.html" target="_blank"&gt;CMS Configuration page&lt;/a&gt; in the documentation for more information.&lt;/p&gt;</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
