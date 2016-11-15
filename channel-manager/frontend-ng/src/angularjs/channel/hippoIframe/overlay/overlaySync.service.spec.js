@@ -159,9 +159,6 @@ describe('OverlaySyncService', () => {
       expect($sheet).toHaveCss({
         'max-width': 'none',
       });
-      expect($iframe).toHaveCss({
-        'min-width': '1280px',
-      });
 
       expect($iframe.height()).toEqual(600 + 2);
       expect($overlay.height()).toEqual(600 + 2);
@@ -192,8 +189,6 @@ describe('OverlaySyncService', () => {
       OverlaySyncService.setViewPortWidth(720);
       OverlaySyncService.syncIframe();
       expect($sheet.width()).toEqual(720);
-      expect($iframe.width()).toEqual(720);
-      expect($overlay.width()).toEqual(720);
       done();
     });
   });
@@ -208,9 +203,6 @@ describe('OverlaySyncService', () => {
 
       OverlaySyncService.setViewPortWidth(720);
       OverlaySyncService.syncIframe();
-
-      expect($iframe.width()).toEqual(1200 + 4);
-      expect($overlay.width()).toEqual(1200 + 4);
 
       expect($iframe.height()).toEqual(600 + 2);
       expect($overlay.height()).toEqual(600 + 2);
