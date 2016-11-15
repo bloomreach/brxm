@@ -17,11 +17,12 @@
 import template from './rightSidePanel.html';
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, $timeout, ChannelSidePanelService, CmsService, ContentService, HippoIframeService) {
+  constructor($scope, $element, $timeout, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService) {
     'ngInject';
 
     this.$scope = $scope;
     this.$timeout = $timeout;
+    this.$q = $q;
     this.ChannelSidePanelService = ChannelSidePanelService;
     this.CmsService = CmsService;
     this.ContentService = ContentService;
@@ -77,16 +78,27 @@ export class ChannelRightSidePanelCtrl {
   }
 
   saveDocument() {
-    this.ContentService.saveDraft(this.doc)
-      .then((savedDoc) => {
-        this.doc = savedDoc;
-        this._resetForm();
-        this.HippoIframeService.reload();
-      });
+    return this._saveDraft()
+      .then(() => this.HippoIframeService.reload());
   }
 
   viewFullContent() {
-    this.CmsService.publish('view-content', this.doc.id);
+    this._saveDraft()
+      // The CMS automatically unlocks content that is being viewed, so close the side-panel to reflect that.
+      // It will will unlock the document if needed, so don't delete the draft here.
+      .then(() => this._closePanel())
+      .then(() => this.CmsService.publish('view-content', this.doc.id));
+  }
+
+  _saveDraft() {
+    if (this.form.$pristine) {
+      return this.$q.resolve();
+    }
+    return this.ContentService.saveDraft(this.doc)
+      .then((savedDoc) => {
+        this.doc = savedDoc;
+        this._resetForm();
+      });
   }
 
   editFullContent() {
@@ -94,9 +106,17 @@ export class ChannelRightSidePanelCtrl {
   }
 
   close() {
+    this._deleteDraft();
+    this._closePanel();
+  }
+
+  _deleteDraft() {
     if (this.doc) {
       this.ContentService.deleteDraft(this.doc.id);
     }
+  }
+
+  _closePanel() {
     this.ChannelSidePanelService.close('right');
   }
 }

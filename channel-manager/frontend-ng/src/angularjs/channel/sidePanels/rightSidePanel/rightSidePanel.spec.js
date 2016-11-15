@@ -153,6 +153,7 @@ describe('ChannelRightSidePanel', () => {
     ContentService.saveDraft.and.returnValue($q.resolve(savedDoc));
 
     $ctrl.doc = testDocument;
+    $ctrl.form.$pristine = false;
     $ctrl.saveDocument();
 
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
@@ -164,10 +165,40 @@ describe('ChannelRightSidePanel', () => {
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
-  it('views the full content by publishing a view-content event', () => {
+  it('does not save a document when there are no changes', () => {
     $ctrl.doc = testDocument;
+    $ctrl.form.$pristine = true;
+
+    $ctrl.saveDocument();
+    $rootScope.$apply();
+
+    expect(ContentService.saveDraft).not.toHaveBeenCalled();
+  });
+
+  it('views the full content by saving changes, closing the panel and publishing a view-content event', () => {
+    $ctrl.doc = testDocument;
+    ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
+    ChannelSidePanelService.close.and.returnValue($q.resolve());
+
     $ctrl.viewFullContent();
+    $rootScope.$digest();
+
+    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(CmsService.publish).toHaveBeenCalledWith('view-content', testDocument.id);
+  });
+
+  it('does not view the full content if saving changes failed', () => {
+    $ctrl.doc = testDocument;
+    ContentService.saveDraft.and.returnValue($q.reject());
+
+    $ctrl.viewFullContent();
+    $rootScope.$digest();
+
+    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+    expect(CmsService.publish).not.toHaveBeenCalled();
   });
 
   it('edits the full content by publishing an edit-content event', () => {
