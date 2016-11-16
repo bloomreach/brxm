@@ -122,6 +122,8 @@ describe('ChannelFields', () => {
     $ctrl.focusCompound('ns:compound', 0);
 
     expect(onFieldFocus).toHaveBeenCalled();
+
+    // include the index of the compound to distinguish 'multiple' compounds
     expect($ctrl.hasFocusedField('ns:compound', 0)).toBe(true);
     expect($ctrl.hasFocusedField('ns:compound', 1)).toBe(false);
     expect($ctrl.hasFocusedField('ns:string', 0)).toBe(false);
