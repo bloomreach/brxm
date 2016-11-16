@@ -52,6 +52,7 @@ export class ChannelRightSidePanelCtrl {
         this.ContentService.getDocumentType(doc.info.type.id)
           .then((docType) => {
             this.doc = doc;
+            this.state = this.doc.info.editing.state;
             this.docType = docType;
             this._resizeTextareas();
           });
