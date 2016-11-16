@@ -19,9 +19,10 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import javax.jcr.Node;
 
@@ -32,8 +33,8 @@ import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.util.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.util.FieldValidators;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldValidators;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
@@ -47,6 +48,9 @@ import org.onehippo.repository.l10n.ResourceBundle;
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public abstract class FieldType {
+
+    protected static final Supplier<ErrorWithPayloadException> INVALID_DATA
+            = () -> new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
 
     private String id;            // "namespace:fieldname", unique within a "level" of fields.
     private Type type;
@@ -62,9 +66,6 @@ public abstract class FieldType {
     // private boolean readOnly;  // future improvement
 
     private Set<Validator> validators = new HashSet<>();
-
-    // TODO: move up into CompoundFieldType? - currently not possible due to deserialization in MockResponse.
-    protected List<FieldType> fields; // the child-fields of a complex field type (COMPOUND or CHOICE)
 
     public enum Type {
         STRING,
@@ -146,12 +147,45 @@ public abstract class FieldType {
         return getValidators().contains(Validator.REQUIRED);
     }
 
-    public List<FieldType> getFields() {
-        return fields;
+    /**
+     * Check if an initialized field is "valid", i.e. should be present in a document type.
+     *
+     * @return true or false
+     */
+    public boolean isValid() {
+        return true;
     }
 
-    public void setFields(final List<FieldType> fields) {
-        this.fields = fields;
+    /**
+     * Initialize a {@link FieldType}, given a field context.
+     *
+     * @param fieldContext  information about the field (as part of a parent content type)
+     */
+    public void init(FieldTypeContext fieldContext) {
+        final ContentTypeContext parentContext = fieldContext.getParentContext();
+        final ContentTypeItem item = fieldContext.getContentTypeItem();
+        final String fieldId = item.getName();
+
+        setId(fieldId);
+
+        // only load displayName and hints if locale-info is available.
+        final Optional<ResourceBundle> resourceBundle = parentContext.getResourceBundle();
+        final Optional<Node> editorFieldConfig = fieldContext.getEditorConfigNode();
+
+        LocalizationUtils.determineFieldDisplayName(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setDisplayName);
+        LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
+
+        FieldTypeUtils.determineValidators(this, parentContext.getDocumentType(), item.getValidators());
+
+        // determine cardinality
+        if (item.getValidators().contains(FieldValidators.OPTIONAL)) {
+            setMinValues(0);
+            setMaxValues(1);
+        }
+        if (item.isMultiple()) {
+            setMinValues(0);
+            setMaxValues(Integer.MAX_VALUE);
+        }
     }
 
     /**
@@ -165,6 +199,11 @@ public abstract class FieldType {
     /**
      * Write the optional value of this field to the provided JCR node.
      *
+     * We purposefully pass in the value as an optional, because the validation of the cardinality constraint
+     * happens during this call. If we would not do the call if the field has no value, then the validation
+     * against the field's cardinality constraints or against the field's current number of values would not
+     * take place.
+     *
      * @param node          JCR node to store the value on
      * @param optionalValue value to write, or nothing, wrapped in an Optional
      * @throws ErrorWithPayloadException
@@ -175,47 +214,10 @@ public abstract class FieldType {
     /**
      * Validate the current value of this field against all applicable (and supported) validators.
      *
-     * @param optionalValues value(s) to validate, or nothing, wrapped in an Optional
-     * @return     true upon success, false if at least one validation error was encountered.
+     * @param valueList list of field value(s) to validate
+     * @return          true upon success, false if at least one validation error was encountered.
      */
-    public abstract boolean validate(final Optional<List<FieldValue>> optionalValues);
-
-    /**
-     * Initialize a FieldType, given various information sources:
-     *
-     * @param context            field-specific information
-     * @param contentTypeContext content type-specific information (may be document of compound)
-     * @param docType            reference to the document type being assembled
-     * @return                   itself
-     */
-    public Optional<FieldType> init(FieldTypeContext context, ContentTypeContext contentTypeContext, DocumentType docType) {
-        final Optional<ResourceBundle> resourceBundle = contentTypeContext.getResourceBundle();
-        final Node editorFieldConfig = context.getEditorConfigNode();
-        final ContentTypeItem item = context.getContentTypeItem();
-        final String fieldId = item.getName();
-
-        setId(fieldId);
-
-        // only load displayName and hints if locale-info is available.
-        contentTypeContext.getLocale().ifPresent(dummy -> {
-            LocalizationUtils.determineFieldDisplayName(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setDisplayName);
-            LocalizationUtils.determineFieldHint(fieldId, resourceBundle, editorFieldConfig).ifPresent(this::setHint);
-        });
-
-        FieldTypeUtils.determineValidators(this, docType, item.getValidators());
-
-        // determine cardinality
-        if (item.getValidators().contains(FieldValidators.OPTIONAL)) {
-            setMinValues(0);
-            setMaxValues(1);
-        }
-        if (item.isMultiple()) {
-            setMinValues(0);
-            setMaxValues(Integer.MAX_VALUE);
-        }
-
-        return Optional.of(this);
-    }
+    public abstract boolean validate(final List<FieldValue> valueList);
 
     protected void trimToMaxValues(final List list) {
         while (list.size() > maxValues) {
@@ -223,45 +225,44 @@ public abstract class FieldType {
         }
     }
 
-    protected List<FieldValue> checkValue(final Optional<Object> optionalValue, final Class listItemClass)
-            throws BadRequestException {
-        final BadRequestException BAD_REQUEST_INVALID_DATA
-                = new BadRequestException(new ErrorInfo(ErrorInfo.Reason.INVALID_DATA));
+    @SuppressWarnings("unchecked")
+    protected List<FieldValue> checkValue(final Optional<Object> optionalValue) throws ErrorWithPayloadException {
         final Object value = optionalValue.orElse(Collections.emptyList());
         if (!(value instanceof List)) {
-            throw BAD_REQUEST_INVALID_DATA;
+            throw INVALID_DATA.get();
         }
         final List values = (List)value;
 
         // check cardinality
         if (values.size() < getMinValues()) {
-            throw BAD_REQUEST_INVALID_DATA;
+            throw INVALID_DATA.get();
         }
         if (values.size() > getMaxValues()) {
-            throw BAD_REQUEST_INVALID_DATA;
+            throw INVALID_DATA.get();
         }
 
         if (isRequired() && values.isEmpty()) {
-            throw BAD_REQUEST_INVALID_DATA;
+            throw INVALID_DATA.get();
         }
 
         // check individual values
         for (Object v : values) {
             if (!(v instanceof FieldValue)) {
-                throw BAD_REQUEST_INVALID_DATA;
-            }
-            final FieldValue fieldValue = (FieldValue) v;
-
-            if (listItemClass.equals(String.class)) {
-                if (!fieldValue.hasValue()) {
-                    throw BAD_REQUEST_INVALID_DATA;
-                }
-            } else if (listItemClass.equals(Map.class)) {
-                if (!fieldValue.hasFields()) {
-                    throw BAD_REQUEST_INVALID_DATA;
-                }
+                throw INVALID_DATA.get();
             }
         }
         return (List<FieldValue>) values;
+    }
+
+    protected boolean validateValues(final List<FieldValue> valueList, final Predicate<FieldValue> validator) {
+        boolean isValid = true;
+
+        for (FieldValue value : valueList) {
+            if (!validator.test(value)) {
+                isValid = false;
+            }
+        }
+
+        return isValid;
     }
 }

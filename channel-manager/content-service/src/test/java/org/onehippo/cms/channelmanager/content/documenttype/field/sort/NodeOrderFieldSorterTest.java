@@ -75,9 +75,9 @@ public class NodeOrderFieldSorterTest {
 
         assertThat(fields.size(), equalTo(3));
         assertThat(fields.get(0).getContentTypeItem(), equalTo(item));
-        assertThat(fields.get(0).getEditorConfigNode(), equalTo(editorFieldA));
-        assertThat(fields.get(1).getEditorConfigNode(), equalTo(editorFieldB));
-        assertThat(fields.get(2).getEditorConfigNode(), equalTo(editorFieldC));
+        assertThat(fields.get(0).getEditorConfigNode().get(), equalTo(editorFieldA));
+        assertThat(fields.get(1).getEditorConfigNode().get(), equalTo(editorFieldB));
+        assertThat(fields.get(2).getEditorConfigNode().get(), equalTo(editorFieldC));
     }
 
     @Test

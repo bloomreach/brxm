@@ -16,7 +16,6 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -26,11 +25,9 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.util.DocumentUtils;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
-import org.onehippo.cms.channelmanager.content.documenttype.util.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
@@ -40,7 +37,6 @@ import org.slf4j.LoggerFactory;
 class DocumentTypesServiceImpl implements DocumentTypesService {
     private static final Logger log = LoggerFactory.getLogger(DocumentTypesServiceImpl.class);
     private static final DocumentTypesServiceImpl INSTANCE = new DocumentTypesServiceImpl();
-    private static final int MAX_NESTING_LEVEL = 10;
 
     public static DocumentTypesServiceImpl getInstance() {
         return INSTANCE;
@@ -49,7 +45,7 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     private DocumentTypesServiceImpl() { }
 
     @Override
-    public DocumentType getDocumentType(final Node handle, final Optional<Locale> locale)
+    public DocumentType getDocumentType(final Node handle, final Locale locale)
             throws ErrorWithPayloadException {
         try {
             final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(NotFoundException::new);
@@ -62,63 +58,22 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     }
 
     @Override
-    public DocumentType getDocumentType(final String id, final Session userSession, final Optional<Locale> locale)
+    public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)
             throws ErrorWithPayloadException {
-        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext(id, userSession, 0, locale)
+        final DocumentType docType = new DocumentType();
+        final ContentTypeContext context = ContentTypeContext.createForDocumentType(id, userSession, locale, docType)
                 .orElseThrow(NotFoundException::new);
 
-        validateDocumentType(context, id);
-
-        final DocumentType docType = new DocumentType();
-        docType.setId(id);
-        LocalizationUtils.determineDocumentDisplayName(id, context.getResourceBundle()).ifPresent(docType::setDisplayName);
-
-        populateFields(docType.getFields(), context, docType);
-
-        return docType;
-    }
-
-    @Override
-    public void populateFieldsForCompoundType(final String id, final List<FieldType> fields,
-                                              final ContentTypeContext parentContext, final DocumentType docType) {
-        final int level = parentContext.getLevel() + 1;
-        if (level > MAX_NESTING_LEVEL) {
-            log.info("Ignoring fields of {}-level-deep nested compound, nesting maximum reached", level);
-            return;
-        }
-
-        try {
-            final Session userSession = parentContext.getContentTypeRoot().getSession();
-            final Optional<Locale> optionalLocale = parentContext.getLocale();
-            final Optional<ContentTypeContext> optionalContext
-                    = ContentTypeContext.createDocumentTypeContext(id, userSession, level, optionalLocale);
-
-            if (optionalContext.isPresent()) {
-                populateFields(fields, optionalContext.get(), docType);
-            }
-        } catch (RepositoryException e) {
-            log.warn("Failed to retrieve user session", e);
-        }
-    }
-
-    private static void validateDocumentType(final ContentTypeContext context, final String id)
-            throws ErrorWithPayloadException {
         if (!context.getContentType().isDocumentType()) {
             log.debug("Requested type '{}' is not document type", id);
             throw new NotFoundException();
         }
-    }
 
-    private static void populateFields(final List<FieldType> fields, final ContentTypeContext contentType,
-                                       final DocumentType docType) {
+        docType.setId(id);
+        LocalizationUtils.determineDocumentDisplayName(id, context.getResourceBundle()).ifPresent(docType::setDisplayName);
 
-        NamespaceUtils.retrieveFieldSorter(contentType.getContentTypeRoot())
-                .ifPresent(sorter -> sorter.sortFields(contentType)
-                        .stream()
-                        .filter(FieldTypeUtils::isSupportedFieldType)
-                        .filter(FieldTypeUtils::usesDefaultFieldPlugin)
-                        .forEach(fieldType -> FieldTypeUtils.createAndInitFieldType(fieldType, contentType, docType)
-                                .ifPresent(fields::add))
-                );
+        FieldTypeUtils.populateFields(docType.getFields(), context);
+
+        return docType;
     }
 }

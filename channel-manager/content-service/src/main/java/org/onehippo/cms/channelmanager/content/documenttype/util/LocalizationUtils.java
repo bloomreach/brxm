@@ -83,12 +83,12 @@ public class LocalizationUtils {
      *
      * @param fieldId         ID of the field, e.g. "myhippoproject:title"
      * @param resourceBundle  Document type's optional resource bundle
-     * @param editorFieldNode JCR node representing the field in the content editor
+     * @param editorFieldNode Optional JCR node representing the field in the content editor
      * @return                Display name or nothing, wrapped in an Optional
      */
     public static Optional<String> determineFieldDisplayName(final String fieldId,
                                                              final Optional<ResourceBundle> resourceBundle,
-                                                             final Node editorFieldNode) {
+                                                             final Optional<Node> editorFieldNode) {
         return determineFieldLabel(resourceBundle, fieldId, editorFieldNode, "caption");
     }
 
@@ -97,18 +97,18 @@ public class LocalizationUtils {
      *
      * @param fieldId         ID of the field, e.g. "myhippoproject:title"
      * @param resourceBundle  Document type's optional resource bundle
-     * @param editorFieldNode JCR node representing the field in the content editor
+     * @param editorFieldNode Optional JCR node representing the field in the content editor
      * @return                Hint or nothing, wrapped in an Optional
      */
     public static Optional<String> determineFieldHint(final String fieldId,
                                                       final Optional<ResourceBundle> resourceBundle,
-                                                      final Node editorFieldNode) {
+                                                      final Optional<Node> editorFieldNode) {
         return determineFieldLabel(resourceBundle, fieldId + "#hint", editorFieldNode, "hint");
     }
 
     private static Optional<String> determineFieldLabel(final Optional<ResourceBundle> resourceBundle,
                                                         final String resourceKey,
-                                                        final Node editorFieldNode,
+                                                        final Optional<Node> editorFieldNode,
                                                         final String configProperty) {
         // Try to return a localized label
         Optional<String> label = resourceBundle.map(rb -> rb.getString(resourceKey));
@@ -117,13 +117,15 @@ public class LocalizationUtils {
         }
 
         // Try to read a property off the field's plugin config
-        try {
-            if (editorFieldNode.hasProperty(configProperty)) {
-                return Optional.of(editorFieldNode.getProperty(configProperty).getString());
+        return editorFieldNode.map(node -> {
+            try {
+                if (node.hasProperty(configProperty)) {
+                    return node.getProperty(configProperty).getString();
+                }
+            } catch (RepositoryException e) {
+                log.warn("Failed to read property '{}'", configProperty, e);
             }
-        } catch (RepositoryException e) {
-            log.warn("Failed to read property '{}'", configProperty, e);
-        }
-        return Optional.empty();
+            return null;
+        });
     }
 }

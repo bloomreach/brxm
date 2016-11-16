@@ -68,7 +68,7 @@ public class NodeOrderFieldSorter implements FieldSorter {
                     final String path = fieldTypeNode.getProperty(HippoNodeType.HIPPO_PATH).getString();
                     final ContentTypeItem item = context.getContentType().getItem(path);
                     if (item != null) {
-                        return Optional.of(new FieldTypeContext(editorFieldNode, item));
+                        return Optional.of(new FieldTypeContext(item, context, editorFieldNode));
                     }
                 }
             }

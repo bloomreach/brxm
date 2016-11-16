@@ -31,4 +31,9 @@ Failed to write multiple String value to property test:id
 Failed to read nodes for compound type 'node:name'
 Failed to write compound value to node node:name
 Failed reading hints from workflow
+Failed to determine if field is of type CHOICE
+Failed to determine provider-based choices for field
+Failed to determine list-based choices for field
+Failed to read nodes for choice type 'choice'
+Failed to write value for choice type 'choice'
 Node with identifier 'unknown-uuid' does not exist

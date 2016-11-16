@@ -17,7 +17,6 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,7 +100,7 @@ public class StringFieldType extends FieldType {
     @Override
     public void writeTo(final Node node, final Optional<Object> optionalValue) throws ErrorWithPayloadException {
         final String propertyName = getId();
-        final List<FieldValue> values = checkValue(optionalValue, String.class);
+        final List<FieldValue> values = checkValue(optionalValue);
 
         try {
             if (values.isEmpty()) {
@@ -109,10 +108,15 @@ public class StringFieldType extends FieldType {
                     node.getProperty(propertyName).remove();
                 }
             } else {
+                final String[] strings = new String[values.size()];
+                for (int i = 0; i < strings.length; i++) {
+                    strings[i] = values.get(i).findValue().orElseThrow(INVALID_DATA);
+                }
+
                 if (getMaxValues() > 1) {
-                    node.setProperty(propertyName, values.stream().map(FieldValue::getValue).toArray(String[]::new));
+                    node.setProperty(propertyName, strings);
                 } else {
-                    node.setProperty(propertyName, values.get(0).getValue());
+                    node.setProperty(propertyName, strings[0]);
                 }
             }
         } catch (RepositoryException e) {
@@ -135,20 +139,24 @@ public class StringFieldType extends FieldType {
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean validate(final Optional<List<FieldValue>> optionalValue) {
-        // fallback to empty list should never happen, as this is caught by the writeTo-validation (checkValue)
-        final List<FieldValue> valueList = optionalValue.orElse(Collections.emptyList());
+    public boolean validate(final List<FieldValue> valueList) {
         boolean isValid = true;
 
         if (isRequired()) {
-            for (FieldValue value : valueList) {
-                if (value.getValue().isEmpty()) {
-                    value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
-                    isValid = false;
-                }
+            if (!validateValues(valueList, this::validateSingleRequired)) {
+                isValid = false;
             }
         }
 
         return isValid;
+    }
+
+    private boolean validateSingleRequired(final FieldValue value) {
+        // #readFrom guarantees that value.getValue is not empty.
+        if (value.findValue().get().isEmpty()) {
+            value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+            return false;
+        }
+        return true;
     }
 }

@@ -17,31 +17,25 @@
 import template from './rightSidePanel.html';
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, $timeout, ChannelSidePanelService, ContentService, HippoIframeService) {
+  constructor($scope, $element, $timeout, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService) {
     'ngInject';
 
     this.$scope = $scope;
     this.$timeout = $timeout;
+    this.$q = $q;
     this.ChannelSidePanelService = ChannelSidePanelService;
+    this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.HippoIframeService = HippoIframeService;
 
     ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), (documentId) => {
       this.openDocument(documentId);
     });
-    this._clearDocument();
   }
 
   openDocument(documentId) {
-    this._clearDocument();
-    this._loadDocument(documentId);
-  }
-
-  _clearDocument() {
-    this.doc = null;
-    this.docType = null;
-    this.focusedFieldId = null;
     this._resetForm();
+    this._loadDocument(documentId);
   }
 
   _resetForm() {
@@ -76,7 +70,7 @@ export class ChannelRightSidePanelCtrl {
   }
 
   saveDocument() {
-    this.ContentService.saveDraft(this.doc)
+    return this._saveDraft()
       .then((savedDoc) => {
         this.doc = savedDoc;
         this._resetForm();
@@ -84,11 +78,49 @@ export class ChannelRightSidePanelCtrl {
       });
   }
 
+  viewFullContent() {
+    this._saveDraft()
+      // The CMS automatically unlocks content that is being viewed, so close the side-panel to reflect that.
+      // It will will unlock the document if needed, so don't delete the draft here.
+      .then(() => {
+        this._closePanel();
+        this.CmsService.publish('view-content', this.doc.id);
+      });
+  }
+
+  _saveDraft() {
+    if (this.form.$pristine) {
+      return this.$q.resolve();
+    }
+    return this.ContentService.saveDraft(this.doc);
+  }
+
+  editFullContent() {
+    this.CmsService.publish('edit-content', this.doc.id);
+  }
+
   close() {
+    this._deleteDraft();
+    this._closePanel();
+  }
+
+  _deleteDraft() {
     if (this.doc) {
       this.ContentService.deleteDraft(this.doc.id);
     }
-    this.ChannelSidePanelService.close('right');
+  }
+
+  _closePanel() {
+    this.ChannelSidePanelService.close('right')
+      .then(() => {
+        // clear document to save on binding overhead (a closed sidenav is not removed from the DOM)
+        this._clearDocument();
+      });
+  }
+
+  _clearDocument() {
+    delete this.doc;
+    delete this.docType;
   }
 }
 

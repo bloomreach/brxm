@@ -20,6 +20,7 @@ describe('ChannelRightSidePanel', () => {
   let $rootScope;
   let $timeout;
   let ChannelSidePanelService;
+  let CmsService;
   let ContentService;
   let HippoIframeService;
 
@@ -74,6 +75,7 @@ describe('ChannelRightSidePanel', () => {
 
     ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'isOpen', 'close']);
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
+    CmsService = jasmine.createSpyObj('CmsService', ['publish']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
     $scope = $rootScope.$new();
@@ -83,6 +85,7 @@ describe('ChannelRightSidePanel', () => {
       $element,
       $timeout,
       ChannelSidePanelService,
+      CmsService,
       ContentService,
       HippoIframeService,
     }, {
@@ -94,8 +97,8 @@ describe('ChannelRightSidePanel', () => {
 
   it('initializes the channel right side panel service upon instantiation', () => {
     expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
-    expect($ctrl.doc).toBe(null);
-    expect($ctrl.docType).toBe(null);
+    expect($ctrl.doc).not.toBeDefined();
+    expect($ctrl.docType).not.toBeDefined();
   });
 
   it('knows when it is locked open', () => {
@@ -109,6 +112,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('closes the panel', () => {
+    ChannelSidePanelService.close.and.returnValue($q.resolve());
     $ctrl.close();
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
@@ -128,8 +132,8 @@ describe('ChannelRightSidePanel', () => {
     onOpenCallback('test');
 
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect($ctrl.doc).toBe(null);
-    expect($ctrl.docType).toBe(null);
+    expect($ctrl.doc).not.toBeDefined();
+    expect($ctrl.docType).not.toBeDefined();
 
     $rootScope.$apply();
 
@@ -150,6 +154,7 @@ describe('ChannelRightSidePanel', () => {
     ContentService.saveDraft.and.returnValue($q.resolve(savedDoc));
 
     $ctrl.doc = testDocument;
+    $ctrl.form.$pristine = false;
     $ctrl.saveDocument();
 
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
@@ -159,6 +164,48 @@ describe('ChannelRightSidePanel', () => {
     expect($ctrl.doc).toEqual(savedDoc);
     expect($ctrl.form.$setPristine).toHaveBeenCalled();
     expect(HippoIframeService.reload).toHaveBeenCalled();
+  });
+
+  it('does not save a document when there are no changes', () => {
+    $ctrl.doc = testDocument;
+    $ctrl.form.$pristine = true;
+
+    $ctrl.saveDocument();
+    $rootScope.$apply();
+
+    expect(ContentService.saveDraft).not.toHaveBeenCalled();
+  });
+
+  it('views the full content by saving changes, closing the panel and publishing a view-content event', () => {
+    $ctrl.doc = testDocument;
+    ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
+    ChannelSidePanelService.close.and.returnValue($q.resolve());
+
+    $ctrl.viewFullContent();
+    $rootScope.$digest();
+
+    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+    expect(CmsService.publish).toHaveBeenCalledWith('view-content', testDocument.id);
+  });
+
+  it('does not view the full content if saving changes failed', () => {
+    $ctrl.doc = testDocument;
+    ContentService.saveDraft.and.returnValue($q.reject());
+
+    $ctrl.viewFullContent();
+    $rootScope.$digest();
+
+    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+    expect(CmsService.publish).not.toHaveBeenCalled();
+  });
+
+  it('edits the full content by publishing an edit-content event', () => {
+    $ctrl.doc = testDocument;
+    $ctrl.editFullContent();
+    expect(CmsService.publish).toHaveBeenCalledWith('edit-content', testDocument.id);
   });
 });
 
