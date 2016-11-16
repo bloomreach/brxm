@@ -147,6 +147,10 @@ public abstract class FieldType {
         return getValidators().contains(Validator.REQUIRED);
     }
 
+    public boolean hasUnsupportedValidator() {
+        return getValidators().contains(Validator.UNSUPPORTED);
+    }
+
     /**
      * Check if an initialized field is "valid", i.e. should be present in a document type.
      *

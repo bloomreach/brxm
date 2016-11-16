@@ -205,7 +205,9 @@ public class FieldTypeUtils {
                                         final List<FieldType> fields,
                                         final Node node) throws ErrorWithPayloadException {
         for (FieldType fieldType : fields) {
-            fieldType.writeTo(node, Optional.ofNullable(valueMap.get(fieldType.getId())));
+            if (!fieldType.hasUnsupportedValidator()) {
+                fieldType.writeTo(node, Optional.ofNullable(valueMap.get(fieldType.getId())));
+            }
         }
     }
 
