@@ -137,7 +137,8 @@ public class LocalizationUtilsTest {
         expect(property.getString()).andReturn(displayName);
         replay(resourceBundle, editorFieldNode, property);
 
-        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", Optional.of(resourceBundle), editorFieldNode).get(), equalTo(displayName));
+        assertThat(LocalizationUtils.determineFieldDisplayName("ns:title", Optional.of(resourceBundle),
+                Optional.of(editorFieldNode)).get(), equalTo(displayName));
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -147,7 +148,7 @@ public class LocalizationUtilsTest {
         expect(editorFieldNode.hasProperty("caption")).andThrow(new RepositoryException());
         replay(editorFieldNode);
 
-        LocalizationUtils.determineFieldDisplayName("ns:title", Optional.empty(), editorFieldNode).get();
+        LocalizationUtils.determineFieldDisplayName("ns:title", Optional.empty(), Optional.of(editorFieldNode)).get();
     }
 
     @Test
@@ -172,6 +173,7 @@ public class LocalizationUtilsTest {
         expect(property.getString()).andReturn(hint);
         replay(editorFieldNode, property);
 
-        assertThat(LocalizationUtils.determineFieldHint("ns:title", Optional.empty(), editorFieldNode).get(), equalTo(hint));
+        assertThat(LocalizationUtils.determineFieldHint("ns:title", Optional.empty(),
+                Optional.of(editorFieldNode)).get(), equalTo(hint));
     }
 }

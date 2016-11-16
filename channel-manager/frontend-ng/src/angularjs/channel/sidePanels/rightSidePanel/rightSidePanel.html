@@ -24,6 +24,23 @@
         {{ 'EDIT_DOCUMENT' | translate:$ctrl.doc }}
         <md-tooltip md-delay="500">{{ $ctrl.doc.displayName }}</md-tooltip>
       </h1>
+      <span flex></span>
+      <md-button class="md-icon-button"
+                 aria-label="{{ 'PUBLISH' | translate }}"
+                 ng-if="$ctrl.doc"
+                 ng-click="$ctrl.viewFullContent()">
+        <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
+        <md-icon class="material-icons">publish</md-icon>
+      </md-button>
+      <!-- TODO: enable switch-to-full-editor button when implementing CHANNELMGR-923 -->
+      <md-button class="md-icon-button"
+                 disabled
+                 aria-label="{{ 'SWITCH_TO_FULL_EDITOR' | translate }}"
+                 ng-if="$ctrl.doc"
+                 ng-click="$ctrl.editFullContent()">
+        <md-tooltip md-delay="500">{{ 'SWITCH_TO_FULL_EDITOR' | translate }}</md-tooltip>
+        <md-icon md-svg-src="/cms/angular/hippo-cm/images/document.svg"></md-icon>
+      </md-button>
     </div>
   </md-toolbar>
   <md-content flex="grow">

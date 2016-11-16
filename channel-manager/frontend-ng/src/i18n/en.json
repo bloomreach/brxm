@@ -115,6 +115,7 @@
   "SUBPAGE_PAGE_LABEL_TITLE": "Page title",
   "SUBPAGE_PAGE_LABEL_URL_STEM": "URL",
   "SUBPAGE_PAGE_MOVE_TITLE": "Move page '{{pageName}}'",
+  "SWITCH_TO_FULL_EDITOR": "Switch to full editor",
   "TITLE": "Title",
   "TITLE_REQUIRED": "Title is required",
   "TOOLBAR_BUTTON_BACK": "Back",

@@ -17,28 +17,15 @@
 import template from './fields.html';
 
 export class ChannelFieldsCtrl {
-  constructor() {
-    'ngInject';
+
+  $onInit() {
+    this.onFieldFocus = this.onFieldFocus || angular.noop;
+    this.onFieldBlur = this.onFieldBlur || angular.noop;
   }
 
   hasValue(field) {
     const values = this.fieldValues[field.id];
     return angular.isArray(values) && values.length > 0;
-  }
-
-  hasFocusedField(field) {
-    if (!field.fields) {
-      return false;
-    }
-
-    let hasFocused = field.fields.findIndex(newField => newField.focused) !== -1;
-    field.fields.forEach((newField) => {
-      const childFieldHasFocused = this.hasFocusedField(newField);
-      if (childFieldHasFocused) {
-        hasFocused = true;
-      }
-    });
-    return hasFocused;
   }
 
   getDisplayNameForCompound(field, index) {
@@ -52,12 +39,18 @@ export class ChannelFieldsCtrl {
     return field.displayName;
   }
 
-  onFieldFocus(field) {
-    field.focused = true;
+  focusCompound(fieldTypeId, index) {
+    this.compoundWithFocusedField = this.fieldValues[fieldTypeId][index];
+    this.onFieldFocus();
   }
 
-  onFieldBlur(field) {
-    field.focused = false;
+  blurCompound() {
+    this.compoundWithFocusedField = null;
+    this.onFieldBlur();
+  }
+
+  hasFocusedField(fieldTypeId, index) {
+    return this.compoundWithFocusedField === this.fieldValues[fieldTypeId][index];
   }
 }
 
@@ -67,6 +60,8 @@ const channelFieldsComponentModule = angular
     bindings: {
       fieldTypes: '=',
       fieldValues: '=',
+      onFieldFocus: '&',
+      onFieldBlur: '&',
     },
     controller: ChannelFieldsCtrl,
     template,

@@ -23,9 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ValidationErrorInfo {
-    private Code code;
-
-    public ValidationErrorInfo() { }
+    private final Code code;
 
     public ValidationErrorInfo(final Code code) {
         this.code = code;
@@ -36,7 +34,6 @@ public class ValidationErrorInfo {
     }
 
     public enum Code {
-        REQUIRED_FIELD_EMPTY,
-        REQUIRED_FIELD_ABSENT
+        REQUIRED_FIELD_EMPTY
     }
 }
