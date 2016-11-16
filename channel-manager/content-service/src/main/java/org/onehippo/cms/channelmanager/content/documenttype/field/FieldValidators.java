@@ -29,5 +29,6 @@ public interface FieldValidators {
     String REFERENCES = "references";
     String REQUIRED = "required";
     String RESOURCE_REQUIRED = "resource-required";
+    String CONTENT_BLOCKS = "contentblocks-validator";
 
 }
