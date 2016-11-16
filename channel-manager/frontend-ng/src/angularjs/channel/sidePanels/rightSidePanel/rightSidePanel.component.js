@@ -79,26 +79,28 @@ export class ChannelRightSidePanelCtrl {
 
   saveDocument() {
     return this._saveDraft()
-      .then(() => this.HippoIframeService.reload());
+      .then((savedDoc) => {
+        this.doc = savedDoc;
+        this._resetForm();
+        this.HippoIframeService.reload();
+      });
   }
 
   viewFullContent() {
     this._saveDraft()
       // The CMS automatically unlocks content that is being viewed, so close the side-panel to reflect that.
       // It will will unlock the document if needed, so don't delete the draft here.
-      .then(() => this._closePanel())
-      .then(() => this.CmsService.publish('view-content', this.doc.id));
+      .then(() => {
+        this._closePanel();
+        this.CmsService.publish('view-content', this.doc.id);
+      });
   }
 
   _saveDraft() {
     if (this.form.$pristine) {
       return this.$q.resolve();
     }
-    return this.ContentService.saveDraft(this.doc)
-      .then((savedDoc) => {
-        this.doc = savedDoc;
-        this._resetForm();
-      });
+    return this.ContentService.saveDraft(this.doc);
   }
 
   editFullContent() {
