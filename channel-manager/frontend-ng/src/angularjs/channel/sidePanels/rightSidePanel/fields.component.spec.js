@@ -56,6 +56,9 @@ describe('ChannelFields', () => {
       type: {
         id: 'ns:testdocument',
       },
+      editing: {
+        state: 'AVAILABLE',
+      },
     },
     fields: {
       'ns:string': ['String value'],
