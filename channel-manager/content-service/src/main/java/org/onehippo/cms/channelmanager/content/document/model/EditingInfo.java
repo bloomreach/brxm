@@ -28,7 +28,8 @@ public class EditingInfo {
         AVAILABLE,
         UNAVAILABLE,
         UNAVAILABLE_HELD_BY_OTHER_USER,
-        UNAVAILABLE_REQUEST_PENDING
+        UNAVAILABLE_REQUEST_PENDING,
+        UNAVAILABLE_CUSTOM_VALIDATION_PRESENT
     }
 
     private State state = State.UNAVAILABLE;

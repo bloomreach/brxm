@@ -69,6 +69,11 @@ class DocumentsServiceImpl implements DocumentsService {
             throw new ForbiddenException(document);
         }
 
+        if (docType.isReadOnlyDueToUnknownValidator()) {
+            editingInfo.setState(EditingInfo.State.UNAVAILABLE_CUSTOM_VALIDATION_PRESENT);
+            throw new ForbiddenException(document);
+        }
+
         final Node draft = EditingUtils.createDraft(workflow, handle).orElseThrow(() -> {
             // Apparently, holdership of a document has only just been acquired by another user. Check hints once more?
             editingInfo.setState(EditingInfo.State.UNAVAILABLE);
