@@ -17,12 +17,14 @@
 import template from './rightSidePanel.html';
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, $timeout, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService) {
+  constructor($scope, $element, $timeout, $translate, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService) {
     'ngInject';
 
     this.$scope = $scope;
     this.$timeout = $timeout;
+    this.$translate = $translate;
     this.$q = $q;
+
     this.ChannelSidePanelService = ChannelSidePanelService;
     this.CmsService = CmsService;
     this.ContentService = ContentService;
@@ -50,11 +52,48 @@ export class ChannelRightSidePanelCtrl {
         this.ContentService.getDocumentType(doc.info.type.id)
           .then((docType) => {
             this.doc = doc;
+            this.state = this.doc.info.editing.state;
             this.docType = docType;
             this._resizeTextareas();
           });
+      })
+      .catch((error) => {
+        if (error) {
+          this.doc = error.data;
+          this.state = this.doc.info.editing.state;
+        } else {
+          this.state = 'UNAVAILABLE_CONTENT';
+        }
+
+        const errorMap = {
+          UNAVAILABLE: {
+            title: 'UNAVAILABLE_CONTENT_TITLE',
+            linkToFullEditor: true,
+            message: this.$translate.instant('UNAVAILABLE'),
+          },
+          UNAVAILABLE_CONTENT: {
+            title: 'UNAVAILABLE_CONTENT_HERE_TITLE',
+            linkToFullEditor: true,
+            message: this.$translate.instant('UNAVAILABLE_CONTENT'),
+          },
+          UNAVAILABLE_CUSTOM_VALIDATION_PRESENT: {
+            title: 'UNAVAILABLE_DOCUMENT_HERE_TITLE',
+            linkToFullEditor: true,
+            message: this.$translate.instant('UNAVAILABLE_CUSTOM_VALIDATION_PRESENT'),
+          },
+          UNAVAILABLE_HELD_BY_OTHER_USER: {
+            title: 'UNAVAILABLE_DOCUMENT_TITLE',
+            message: this.$translate.instant('UNAVAILABLE_HELD_BY_OTHER_USER', { user: this.doc.info.editing.holder.displayName ? this.doc.info.editing.holder.displayName : this.doc.info.editing.holder.id }),
+          },
+          UNAVAILABLE_REQUEST_PENDING: {
+            title: 'UNAVAILABLE_DOCUMENT_TITLE',
+            message: this.$translate.instant('UNAVAILABLE_REQUEST_PENDING'),
+          },
+        };
+        this.unavailableTitle = errorMap[this.state].title;
+        this.unavailableMessage = errorMap[this.state].message;
+        this.linkToFullEditor = errorMap[this.state].linkToFullEditor;
       });
-    // TODO: handle error
   }
 
   _resizeTextareas() {
