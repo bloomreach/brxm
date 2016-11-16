@@ -79,7 +79,13 @@ class OpenDocumentEditorEventListener extends ExtEventListener {
             if (editor == null) {
                 editor = editorManager.openEditor(documentHandleModel);
             }
-            editor.setMode(mode);
+            if (!mode.equals(editor.getMode())) {
+                if (mode.equals(IEditor.Mode.VIEW)) {
+                    editor.done();
+                } else {
+                    editor.setMode(mode);
+                }
+            }
             editor.focus();
         } catch (ItemNotFoundException e) {
             ChannelEditor.log.warn("Could not find document with uuid '{}'", documentHandleUuid, e);
