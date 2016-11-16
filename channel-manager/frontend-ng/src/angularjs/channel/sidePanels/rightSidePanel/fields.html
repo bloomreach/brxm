@@ -17,7 +17,7 @@
      ng-switch="fieldType.type"
      class="field-wrapper">
   <!-- edge case: a multiple field with zero values -->
-  <md-input-container ng-if="::!$ctrl.hasValue(fieldType)"
+  <md-input-container ng-if="!$ctrl.hasValue(fieldType)"
                       class="md-block field qa-field"
                       md-no-float>
     <label>{{ ::fieldType.displayName }}</label>
@@ -25,29 +25,29 @@
   </md-input-container>
 
   <div ng-switch-when="COMPOUND"
-       ng-if="::$ctrl.hasValue(fieldType)"
+       ng-if="$ctrl.hasValue(fieldType)"
        class="field"
        ng-class="{
         'form-field-focused': $ctrl.hasFocusedField(fieldType),
         'form-field-compound': fieldType.type == 'COMPOUND'
        }"
-       ng-repeat="fieldValue in ::$ctrl.fieldValues[fieldType.id]">
+       ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]">
     <h5>
       <md-icon class="material-icons">keyboard_arrow_down</md-icon>
       {{ ::$ctrl.getDisplayNameForCompound(fieldType, $index) }}
     </h5>
     <channel-fields field-types="::fieldType.fields"
-                    field-values="::fieldValue.fields">
+                    field-values="fieldValue.fields">
     </channel-fields>
   </div>
 
   <!-- other cases -->
   <div class="field"
        ng-switch-default
-       ng-if="::$ctrl.hasValue(fieldType)">
+       ng-if="$ctrl.hasValue(fieldType)">
     <md-input-container class="md-block qa-field"
                         md-no-float
-                        ng-repeat="fieldValue in ::$ctrl.fieldValues[fieldType.id]"
+                        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
                         ng-switch="fieldType.type">
 
       <label ng-if="$first">{{ ::fieldType.displayName }}</label>
