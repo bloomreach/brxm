@@ -15,10 +15,11 @@
  */
 
 class ChannelSidePanelService {
-  constructor($mdSidenav, OverlaySyncService) {
+  constructor($mdSidenav, $q, OverlaySyncService) {
     'ngInject';
 
     this.$mdSidenav = $mdSidenav;
+    this.$q = $q;
     this.OverlaySyncService = OverlaySyncService;
     this.panels = { };
   }
@@ -61,10 +62,11 @@ class ChannelSidePanelService {
   close(side) {
     if (this.isOpen(side)) {
       const panel = this.panels[side];
-      this.$mdSidenav(panel.sideNavComponentId).close().then(() => {
+      return this.$mdSidenav(panel.sideNavComponentId).close().then(() => {
         this.OverlaySyncService.syncIframe();
       });
     }
+    return this.$q.resolve();
   }
 }
 

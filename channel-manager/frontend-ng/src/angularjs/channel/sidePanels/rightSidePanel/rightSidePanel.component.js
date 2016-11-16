@@ -31,19 +31,11 @@ export class ChannelRightSidePanelCtrl {
     ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), (documentId) => {
       this.openDocument(documentId);
     });
-    this._clearDocument();
   }
 
   openDocument(documentId) {
-    this._clearDocument();
-    this._loadDocument(documentId);
-  }
-
-  _clearDocument() {
-    this.doc = null;
-    this.docType = null;
-    this.focusedFieldId = null;
     this._resetForm();
+    this._loadDocument(documentId);
   }
 
   _resetForm() {
@@ -119,7 +111,16 @@ export class ChannelRightSidePanelCtrl {
   }
 
   _closePanel() {
-    this.ChannelSidePanelService.close('right');
+    this.ChannelSidePanelService.close('right')
+      .then(() => {
+        // clear document to save on binding overhead (a closed sidenav is not removed from the DOM)
+        this._clearDocument();
+      });
+  }
+
+  _clearDocument() {
+    delete this.doc;
+    delete this.docType;
   }
 }
 

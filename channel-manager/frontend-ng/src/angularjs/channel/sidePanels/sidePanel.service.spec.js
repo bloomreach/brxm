@@ -41,10 +41,6 @@ describe('ChannelSidePanelService', () => {
     leftSidePanel.close.and.returnValue($q.resolve());
   });
 
-  afterEach(() => {
-    $rootScope.$digest();
-  });
-
   it('toggles a named side-panel', () => {
     const element = angular.element('<div></div>');
     element.width(250);
@@ -81,23 +77,32 @@ describe('ChannelSidePanelService', () => {
     expect(ChannelSidePanelService.isOpen('left')).toBeFalsy();
   });
 
-  it('closes the left side panel if it is open', () => {
+  it('closes a side panel if it is open', (done) => {
     const element = angular.element('<div></div>');
     ChannelSidePanelService.initialize('left', element);
 
     leftSidePanel.close.calls.reset();
     leftSidePanel.isOpen.and.returnValue(true);
 
-    ChannelSidePanelService.close('left');
+    ChannelSidePanelService.close('left').then(() => {
+      expect(leftSidePanel.close).toHaveBeenCalled();
+      done();
+    });
+    $rootScope.$digest();
+  });
 
-    expect(leftSidePanel.close).toHaveBeenCalled();
+  it('skips closing a side panel if it is was already closed', (done) => {
+    const element = angular.element('<div></div>');
+    ChannelSidePanelService.initialize('left', element);
 
     leftSidePanel.close.calls.reset();
     leftSidePanel.isOpen.and.returnValue(false);
 
-    ChannelSidePanelService.close('left');
-
-    expect(leftSidePanel.close).not.toHaveBeenCalled();
+    ChannelSidePanelService.close('left').then(() => {
+      expect(leftSidePanel.close).not.toHaveBeenCalled();
+      done();
+    });
+    $rootScope.$digest();
   });
 
   it('forwards the open call to the mdSidenav service', () => {

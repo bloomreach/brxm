@@ -97,8 +97,8 @@ describe('ChannelRightSidePanel', () => {
 
   it('initializes the channel right side panel service upon instantiation', () => {
     expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
-    expect($ctrl.doc).toBe(null);
-    expect($ctrl.docType).toBe(null);
+    expect($ctrl.doc).not.toBeDefined();
+    expect($ctrl.docType).not.toBeDefined();
   });
 
   it('knows when it is locked open', () => {
@@ -112,6 +112,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('closes the panel', () => {
+    ChannelSidePanelService.close.and.returnValue($q.resolve());
     $ctrl.close();
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
@@ -131,8 +132,8 @@ describe('ChannelRightSidePanel', () => {
     onOpenCallback('test');
 
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect($ctrl.doc).toBe(null);
-    expect($ctrl.docType).toBe(null);
+    expect($ctrl.doc).not.toBeDefined();
+    expect($ctrl.docType).not.toBeDefined();
 
     $rootScope.$apply();
 
