@@ -14,47 +14,7 @@
  * limitations under the License.
  */
 
-class CollapseCtrl {
-
-  constructor($element, $animate) {
-    'ngInject';
-
-    this.$animate = $animate;
-    this.$element = $element;
-    this.isCollapsed = false;
-    this.toggledElement = $element.find('.collapse-element');
-  }
-
-  toggle() {
-    if (this.isCollapsed) {
-      this.open();
-    } else {
-      this.collapse();
-    }
-
-    this.isCollapsed = !this.isCollapsed;
-  }
-
-  collapse() {
-    this.toggledElementHeight = this.toggledElement.height();
-    this.toggledElement.height(this.toggledElementHeight);
-
-    this.$animate.addClass(this.toggledElement, '.collapsed', {
-      from: { height: this.toggledElementHeight },
-      to: { height: 0 },
-    });
-  }
-
-  open() {
-    this.$animate.removeClass(this.toggledElement, '.collapsed', {
-      from: { height: 0 },
-      to: { height: this.toggledElementHeight },
-    }).then(() => {
-      this.toggledElement.height('');
-    });
-  }
-
-}
+import CollapseCtrl from './collapse.controller';
 
 function collapse() {
   return {
