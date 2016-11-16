@@ -40,6 +40,10 @@ md-sidenav {
     &:last-child {
       border-top: 1px solid $grey-200;
     }
+
+    md-icon {
+      color: $grey-600;
+    }
   }
   .md-button {
     margin-left: 0;

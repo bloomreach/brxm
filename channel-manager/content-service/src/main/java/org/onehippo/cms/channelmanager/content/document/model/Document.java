@@ -35,6 +35,7 @@ public class Document {
 
     public Document() {
         setInfo(new DocumentInfo());
+        setFields(new HashMap<>());
     }
 
     public String getId() {
@@ -65,10 +66,7 @@ public class Document {
         return fields;
     }
 
-    public void addField(final String id, final List<FieldValue> field) {
-        if (fields == null) {
-            fields = new HashMap<>();
-        }
-        fields.put(id, field);
+    public void setFields(final Map<String, List<FieldValue>> fields) {
+        this.fields = fields;
     }
 }

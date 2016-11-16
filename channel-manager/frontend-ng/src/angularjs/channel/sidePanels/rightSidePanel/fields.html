@@ -18,7 +18,7 @@
      class="field-wrapper">
 
   <!-- edge case: a multiple field with zero values -->
-  <md-input-container ng-if="::!$ctrl.hasValue(fieldType)"
+  <md-input-container ng-if="!$ctrl.hasValue(fieldType)"
                       class="md-block field qa-field"
                       md-no-float>
     <label>{{ ::fieldType.displayName }}</label>
@@ -26,13 +26,12 @@
   </md-input-container>
 
   <div ng-switch-when="COMPOUND"
-       ng-if="::$ctrl.hasValue(fieldType)"
-       class="field"
+       ng-if="$ctrl.hasValue(fieldType)"
+       class="field form-field-compound"
        ng-class="{
-        'form-field-focused': $ctrl.hasFocusedField(fieldType),
-        'form-field-compound': fieldType.type == 'COMPOUND'
+         'has-focused-field': $ctrl.hasFocusedField(fieldType.id, $index)
        }"
-       ng-repeat="fieldValue in ::$ctrl.fieldValues[fieldType.id]"
+       ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
        collapse>
 
     <h5 class="collapse-toggle" ng-click="collapse.toggle()">
@@ -44,7 +43,9 @@
     </h5>
 
     <channel-fields field-types="::fieldType.fields"
-                    field-values="::fieldValue.fields"
+                    field-values="fieldValue.fields"
+                    on-field-focus="$ctrl.focusCompound(fieldType.id, $index)"
+                    on-field-blur="$ctrl.blurCompound()"
                     class="collapse-element"
                     ng-class="{'collapsed': collapse.isCollapsed}">
     </channel-fields>
@@ -53,10 +54,10 @@
   <!-- other cases -->
   <div class="field"
        ng-switch-default
-       ng-if="::$ctrl.hasValue(fieldType)">
+       ng-if="$ctrl.hasValue(fieldType)">
     <md-input-container class="md-block qa-field"
                         md-no-float
-                        ng-repeat="fieldValue in ::$ctrl.fieldValues[fieldType.id]"
+                        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
                         ng-switch="fieldType.type">
 
       <label ng-if="$first">{{ ::fieldType.displayName }}</label>
@@ -66,16 +67,16 @@
              ng-model="fieldValue.value"
              placeholder=""
              aria-label="{{::fieldType.displayName}}"
-             ng-focus="$ctrl.onFieldFocus(fieldType)"
-             ng-blur="$ctrl.onFieldBlur(fieldType)">
+             ng-focus="$ctrl.onFieldFocus()"
+             ng-blur="$ctrl.onFieldBlur()">
 
       <textarea ng-switch-when="MULTILINE_STRING"
                 ng-model="fieldValue.value"
                 placeholder=""
                 aria-label="{{::fieldType.displayName}}"
                 md-no-resize
-                ng-focus="$ctrl.onFieldFocus(fieldType)"
-                ng-blur="$ctrl.onFieldBlur(fieldType)">
+                ng-focus="$ctrl.onFieldFocus()"
+                ng-blur="$ctrl.onFieldBlur()">
       </textarea>
 
     </md-input-container>

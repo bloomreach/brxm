@@ -16,6 +16,8 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
+import java.util.Locale;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -34,24 +36,26 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class DocumentsServiceImplTest {
     private Node rootNode;
     private Session session;
+    private Locale locale;
     private DocumentsServiceImpl documentsService = (DocumentsServiceImpl) DocumentsService.get();
 
     @Before
     public void setup() throws RepositoryException {
         rootNode = MockNode.root();
         session = rootNode.getSession();
+        locale = new Locale("en");
     }
 
     @Test(expected = NotFoundException.class)
     public void nodeNotFound() throws Exception {
-        documentsService.getPublished("unknown-uuid", session);
+        documentsService.getPublished("unknown-uuid", session, locale);
     }
 
     @Test(expected = NotFoundException.class)
     public void nodeNotHandle() throws Exception {
         final Node handle = rootNode.addNode("testDocument", "invalid-type");
         final String id = handle.getIdentifier();
-        documentsService.getPublished(id, session);
+        documentsService.getPublished(id, session, locale);
     }
 
 /*

@@ -26,6 +26,7 @@ import javax.jcr.Session;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -58,6 +59,7 @@ public class ContentTypeContextTest {
         final Session session = createMock(Session.class);
         final Node rootNode = createMock(Node.class);
         final Locale locale = new Locale("en");
+        final DocumentType docType = new DocumentType();
 
         PowerMock.mockStaticPartial(HippoServiceRegistry.class, "getService");
         PowerMock.mockStaticPartial(LocalizationUtils.class, "getResourceBundleForDocument");
@@ -73,41 +75,14 @@ public class ContentTypeContextTest {
         replay(contentTypeService, contentTypes, contentType);
         PowerMock.replayAll();
 
-        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext("type", session, 2, Optional.of(locale)).get();
+        final ContentTypeContext context
+                = ContentTypeContext.createForDocumentType("type", session, locale, docType).get();
 
         assertThat(context.getContentType(), equalTo(contentType));
         assertThat(context.getContentTypeRoot(), equalTo(rootNode));
-        assertThat(context.getLevel(), equalTo(2));
+        assertThat(context.getLevel(), equalTo(0));
         assertThat(context.getResourceBundle().get(), equalTo(resourceBundle));
-        assertThat(context.getLocale().get(), equalTo(locale));
-    }
-
-    @Test
-    public void createDocumentTypeContextWithMissingLocale() throws Exception {
-        final ContentTypeService contentTypeService = createMock(ContentTypeService.class);
-        final ContentTypes contentTypes = createMock(ContentTypes.class);
-        final ContentType contentType = createMock(ContentType.class);
-        final Session session = createMock(Session.class);
-        final Node rootNode = createMock(Node.class);
-
-        PowerMock.mockStaticPartial(HippoServiceRegistry.class, "getService");
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "getDocumentTypeRootNode");
-
-        expect(HippoServiceRegistry.getService(anyObject())).andReturn(contentTypeService);
-        expect(contentTypeService.getContentTypes()).andReturn(contentTypes);
-        expect(contentTypes.getType("type")).andReturn(contentType);
-        expect(NamespaceUtils.getDocumentTypeRootNode("type", session)).andReturn(Optional.of(rootNode));
-
-        replay(contentTypeService, contentTypes);
-        PowerMock.replayAll();
-
-        final ContentTypeContext context = ContentTypeContext.createDocumentTypeContext("type", session, 2, Optional.empty()).get();
-
-        assertThat(context.getContentType(), equalTo(contentType));
-        assertThat(context.getContentTypeRoot(), equalTo(rootNode));
-        assertThat(context.getLevel(), equalTo(2));
-        assertFalse(context.getResourceBundle().isPresent());
-        assertFalse(context.getLocale().isPresent());
+        assertThat(context.getLocale(), equalTo(locale));
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -122,7 +97,7 @@ public class ContentTypeContextTest {
         replay(contentTypeService);
         PowerMock.replayAll();
 
-        ContentTypeContext.createDocumentTypeContext("type", null, 0, null).get();
+        ContentTypeContext.createForDocumentType("type", null, null, null).get();
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -143,6 +118,6 @@ public class ContentTypeContextTest {
         replay(contentTypeService, contentTypes);
         PowerMock.replayAll();
 
-        ContentTypeContext.createDocumentTypeContext("type", session, 0, Optional.empty()).get();
+        ContentTypeContext.createForDocumentType("type", session, null, null).get();
     }
 }

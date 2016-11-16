@@ -24,8 +24,6 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +38,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
@@ -514,42 +511,39 @@ public class StringFieldTypeTest {
     public void validateNonRequired() {
         final StringFieldType fieldType = new StringFieldType();
 
-        assertTrue(fieldType.validate(Optional.empty()));
-        assertTrue(fieldType.validate(Optional.of(Collections.emptyList())));
-        assertTrue(fieldType.validate(Optional.of(listOf(valueOf("")))));
-        assertTrue(fieldType.validate(Optional.of(listOf(valueOf("blabla")))));
-        assertTrue(fieldType.validate(Optional.of(Arrays.asList(valueOf("one"), valueOf("two")))));
+        assertTrue(fieldType.validate(Collections.emptyList()));
+        assertTrue(fieldType.validate(listOf(valueOf(""))));
+        assertTrue(fieldType.validate(listOf(valueOf("blabla"))));
+        assertTrue(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two"))));
     }
 
     @Test
     public void validateRequired() {
-        List<ValidationErrorInfo> errors;
         final StringFieldType fieldType = new StringFieldType();
 
         fieldType.addValidator(FieldType.Validator.REQUIRED);
 
         // valid values
-        assertTrue(fieldType.validate(Optional.empty()));
-        assertTrue(fieldType.validate(Optional.of(listOf(valueOf("one")))));
-        assertTrue(fieldType.validate(Optional.of(Arrays.asList(valueOf("one"), valueOf("two")))));
+        assertTrue(fieldType.validate(listOf(valueOf("one"))));
+        assertTrue(fieldType.validate(Arrays.asList(valueOf("one"), valueOf("two"))));
 
         // invalid values
         FieldValue v = valueOf("");
-        assertFalse(fieldType.validate(Optional.of(listOf(v))));
+        assertFalse(fieldType.validate(listOf(v)));
         assertThat(v.getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
 
         List<FieldValue> l = Arrays.asList(valueOf("bla"), valueOf(""));
-        assertFalse(fieldType.validate(Optional.of(l)));
+        assertFalse(fieldType.validate(l));
         assertFalse(l.get(0).hasErrorInfo());
         assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
 
         l = Arrays.asList(valueOf(""), valueOf("bla"));
-        assertFalse(fieldType.validate(Optional.of(l)));
+        assertFalse(fieldType.validate(l));
         assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
         assertFalse(l.get(1).hasErrorInfo());
 
         l = Arrays.asList(valueOf(""), valueOf(""));
-        assertFalse(fieldType.validate(Optional.of(l)));
+        assertFalse(fieldType.validate(l));
         assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
         assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
     }

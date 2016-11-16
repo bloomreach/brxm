@@ -27,7 +27,6 @@ public class EditingInfo {
     public enum State {
         AVAILABLE,
         UNAVAILABLE,
-        UNAVAILABLE_ACCESS_DENIED,
         UNAVAILABLE_HELD_BY_OTHER_USER,
         UNAVAILABLE_REQUEST_PENDING
     }

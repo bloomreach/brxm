@@ -17,7 +17,6 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +29,8 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
@@ -43,21 +41,27 @@ import org.slf4j.LoggerFactory;
 public class CompoundFieldType extends FieldType {
     private static final Logger log = LoggerFactory.getLogger(CompoundFieldType.class);
 
+    private final List<FieldType> fields = new ArrayList<>();
+
     public CompoundFieldType() {
         setType(Type.COMPOUND);
-        setFields(new ArrayList<>());
+    }
+
+    public List<FieldType> getFields() {
+        return fields;
     }
 
     @Override
-    public Optional<FieldType> init(final FieldTypeContext context,
-                                    final ContentTypeContext contentTypeContext,
-                                    final DocumentType docType) {
-        return super.init(context, contentTypeContext, docType)
-                .map(fieldType -> {
-                    DocumentTypesService.get().populateFieldsForCompoundType(context.getContentTypeItem().getItemType(),
-                                                                             fieldType.getFields(), contentTypeContext, docType);
-                    return fieldType.getFields().isEmpty() ? null : fieldType;
-                });
+    public boolean isValid() {
+        return !fields.isEmpty();
+    }
+
+    @Override
+    public void init(final FieldTypeContext fieldContext) {
+        super.init(fieldContext);
+
+        fieldContext.createContextForCompound()
+                .ifPresent(context -> FieldTypeUtils.populateFields(fields, context));
     }
 
     @Override
@@ -74,13 +78,9 @@ public class CompoundFieldType extends FieldType {
         final List<FieldValue> values = new ArrayList<>();
         try {
             for (Node child : new NodeIterable(node.getNodes(nodeName))) {
-                Map<String, List<FieldValue>> valueMap = new HashMap<>();
-                for (FieldType fieldType : getFields()) {
-                    fieldType.readFrom(child).ifPresent(value -> valueMap.put(fieldType.getId(), value));
-                }
                 // Note: we add the valueMap to the values even if it is empty, because we need to
                 // maintain the 1-to-1 mapping between exposed values and internal nodes.
-                values.add(new FieldValue(valueMap));
+                values.add(readSingleFrom(child));
             }
         } catch (RepositoryException e) {
             log.warn("Failed to read nodes for compound type '{}'", getId(), e);
@@ -88,10 +88,16 @@ public class CompoundFieldType extends FieldType {
         return values;
     }
 
+    public FieldValue readSingleFrom(final Node node) {
+        Map<String, List<FieldValue>> valueMap = new HashMap<>();
+        FieldTypeUtils.readFieldValues(node, getFields(), valueMap);
+        return new FieldValue(valueMap);
+    }
+
     @Override
     public void writeTo(final Node node, Optional<Object> optionalValue) throws ErrorWithPayloadException {
         final String nodeName = getId();
-        final List<FieldValue> values = checkValue(optionalValue, Map.class);
+        final List<FieldValue> values = checkValue(optionalValue);
 
         try {
             final NodeIterator iterator = node.getNodes(nodeName);
@@ -104,12 +110,7 @@ public class CompoundFieldType extends FieldType {
             }
 
             for (FieldValue value : values) {
-                Map valueMap = value.getFields();
-                final Node compound = iterator.nextNode();
-                for (FieldType field : getFields()) {
-                    Object fieldValue = valueMap.get(field.getId());
-                    field.writeTo(compound, Optional.ofNullable(fieldValue));
-                }
+                writeSingleTo(iterator.nextNode(), value);
             }
 
             // delete excess nodes to match field type
@@ -122,25 +123,22 @@ public class CompoundFieldType extends FieldType {
         }
     }
 
+    public void writeSingleTo(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException {
+        final Map<String, List<FieldValue>> valueMap = fieldValue.findFields().orElseThrow(INVALID_DATA);
+
+        FieldTypeUtils.writeFieldValues(valueMap, getFields(), node);
+    }
+
     @Override
-    public boolean validate(final Optional<List<FieldValue>> optionalValues) {
+    public boolean validate(final List<FieldValue> valueList) {
+        return validateValues(valueList, this::validateSingle);
+    }
+
+    public boolean validateSingle(final FieldValue value) {
         // The "required: validator only applies to the cardinality of a compound field, and has
-        // therefore already been checked during the writeTo-validation (checkValue).
+        // therefore already been checked during the writeTo-validation (#checkValue).
 
-        boolean isValid = true;
-        final List<FieldValue> valueList = optionalValues.orElse(Collections.emptyList());
-
-        for (FieldValue value : valueList) {
-            final Map<String, List<FieldValue>> valueMap = value.getFields();
-            for (FieldType fieldType : getFields()) {
-                final String fieldId = fieldType.getId();
-                final Optional<List<FieldValue>> optionalChildValues = Optional.ofNullable(valueMap.get(fieldId));
-                if (!fieldType.validate(optionalChildValues)) {
-                    isValid = false;
-                }
-            }
-        }
-
-        return isValid;
+        // #readSingleFrom guarantees that value.getFields is not empty
+        return FieldTypeUtils.validateFieldValues(value.findFields().get(), getFields());
     }
 }
