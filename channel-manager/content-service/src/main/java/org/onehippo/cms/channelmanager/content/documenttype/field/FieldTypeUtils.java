@@ -67,6 +67,7 @@ public class FieldTypeUtils {
     static {
         IGNORED_VALIDATORS = new HashSet<>();
         IGNORED_VALIDATORS.add(FieldValidators.OPTIONAL); // optional "validator" indicates that the field may be absent (cardinality).
+        IGNORED_VALIDATORS.add(FieldValidators.CONTENT_BLOCKS); // takes care of recorsion for content blocks. We implement this ourselves.
 
         VALIDATOR_MAP = new HashMap<>();
         VALIDATOR_MAP.put(FieldValidators.REQUIRED, FieldType.Validator.REQUIRED);
@@ -205,7 +206,9 @@ public class FieldTypeUtils {
                                         final List<FieldType> fields,
                                         final Node node) throws ErrorWithPayloadException {
         for (FieldType fieldType : fields) {
-            fieldType.writeTo(node, Optional.ofNullable(valueMap.get(fieldType.getId())));
+            if (!fieldType.hasUnsupportedValidator()) {
+                fieldType.writeTo(node, Optional.ofNullable(valueMap.get(fieldType.getId())));
+            }
         }
     }
 

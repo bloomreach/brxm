@@ -518,9 +518,33 @@ public class FieldTypeUtilsTest {
         final FieldValue value2 = new FieldValue("two");
         valueMap.put("field2", Arrays.asList(value1, value2));
 
+        expect(field1.hasUnsupportedValidator()).andReturn(false);
         expect(field1.getId()).andReturn("field1");
         field1.writeTo(node, Optional.empty());
         expectLastCall();
+        expect(field2.hasUnsupportedValidator()).andReturn(false);
+        expect(field2.getId()).andReturn("field2");
+        field2.writeTo(node, Optional.of(Arrays.asList(value1, value2)));
+        expectLastCall();
+        replay(field1, field2);
+
+        FieldTypeUtils.writeFieldValues(valueMap, Arrays.asList(field1, field2), node);
+
+        verify(field1, field2);
+    }
+
+    @Test
+    public void writeFieldValuesWithUnknownValidator() throws Exception {
+        final StringFieldType field1 = createMock(StringFieldType.class);
+        final StringFieldType field2 = createMock(StringFieldType.class);
+        final Node node = createMock(Node.class);
+        final Map<String, List<FieldValue>> valueMap = new HashMap<>();
+        final FieldValue value1 = new FieldValue("one");
+        final FieldValue value2 = new FieldValue("two");
+        valueMap.put("field2", Arrays.asList(value1, value2));
+
+        expect(field1.hasUnsupportedValidator()).andReturn(true);
+        expect(field2.hasUnsupportedValidator()).andReturn(false);
         expect(field2.getId()).andReturn("field2");
         field2.writeTo(node, Optional.of(Arrays.asList(value1, value2)));
         expectLastCall();

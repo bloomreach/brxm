@@ -26,18 +26,19 @@
 
   <div ng-switch-when="COMPOUND"
        ng-if="$ctrl.hasValue(fieldType)"
-       class="field"
+       class="field form-field-compound qa-compound"
        ng-class="{
-        'form-field-focused': $ctrl.hasFocusedField(fieldType),
-        'form-field-compound': fieldType.type == 'COMPOUND'
-       }"
+         'has-focused-field': $ctrl.hasFocusedField(fieldType.id, $index)
+        }"
        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]">
     <h5>
       <md-icon class="material-icons">keyboard_arrow_down</md-icon>
       {{ ::$ctrl.getDisplayNameForCompound(fieldType, $index) }}
     </h5>
     <channel-fields field-types="::fieldType.fields"
-                    field-values="fieldValue.fields">
+                    field-values="fieldValue.fields"
+                    on-field-focus="$ctrl.focusCompound(fieldType.id, $index)"
+                    on-field-blur="$ctrl.blurCompound()">
     </channel-fields>
   </div>
 
@@ -57,16 +58,16 @@
              ng-model="fieldValue.value"
              placeholder=""
              aria-label="{{::fieldType.displayName}}"
-             ng-focus="$ctrl.onFieldFocus(fieldType)"
-             ng-blur="$ctrl.onFieldBlur(fieldType)">
+             ng-focus="$ctrl.onFieldFocus()"
+             ng-blur="$ctrl.onFieldBlur()">
 
       <textarea ng-switch-when="MULTILINE_STRING"
                 ng-model="fieldValue.value"
                 placeholder=""
                 aria-label="{{::fieldType.displayName}}"
                 md-no-resize
-                ng-focus="$ctrl.onFieldFocus(fieldType)"
-                ng-blur="$ctrl.onFieldBlur(fieldType)">
+                ng-focus="$ctrl.onFieldFocus()"
+                ng-blur="$ctrl.onFieldBlur()">
       </textarea>
 
     </md-input-container>

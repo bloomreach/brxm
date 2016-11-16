@@ -19,6 +19,8 @@ describe('ChannelFields', () => {
   let $rootScope;
 
   let $ctrl;
+  let onFieldFocus;
+  let onFieldBlur;
 
   const stringField = {
     id: 'ns:string',
@@ -32,30 +34,12 @@ describe('ChannelFields', () => {
     id: 'ns:emptymultiplestring',
     type: 'STRING',
   };
-  const textField = {
-    id: 'ns:text',
-    type: 'MULTILINE_STRING',
-  };
-  const requiredTextField = {
-    id: 'ns:requiredtext',
-    type: 'MULTILINE_STRING',
-    validators: [
-      'REQUIRED',
+  const compoundField = {
+    id: 'ns:compound',
+    type: 'COMPOUND',
+    fields: [
+      stringField,
     ],
-  };
-  const nestedString = {
-    id: 'ns:nestedstring',
-    type: 'STRING',
-  };
-  const nestedTextCompound = {
-    id: 'ns:nestedtextcompound',
-    type: 'COMPOUND',
-    fields: [textField, requiredTextField],
-  };
-  const nestedCompound = {
-    id: 'ns:nestedcompound',
-    type: 'COMPOUND',
-    fields: [nestedString, nestedTextCompound],
   };
   const testDocumentType = {
     id: 'ns:testdocument',
@@ -63,6 +47,7 @@ describe('ChannelFields', () => {
       stringField,
       multipleStringField,
       emptyMultipleStringField,
+      compoundField,
     ],
   };
   const testDocument = {
@@ -71,11 +56,19 @@ describe('ChannelFields', () => {
       type: {
         id: 'ns:testdocument',
       },
+      editing: {
+        state: 'AVAILABLE',
+      },
     },
     fields: {
       'ns:string': ['String value'],
       'ns:multiplestring': ['One', 'Two'],
       'ns:emptymultiplestring': [],
+      'ns:compound': [
+        {
+          'ns:string': 'String value in compound',
+        },
+      ],
     },
   };
 
@@ -87,10 +80,15 @@ describe('ChannelFields', () => {
       $rootScope = _$rootScope_;
     });
 
+    onFieldFocus = jasmine.createSpy('onFieldFocus');
+    onFieldBlur = jasmine.createSpy('onFieldBlur');
+
     $ctrl = $componentController('channelFields', {
     }, {
       fieldTypes: testDocumentType,
       fieldValues: testDocument.fields,
+      onFieldFocus,
+      onFieldBlur,
     });
     $rootScope.$apply();
   });
@@ -123,36 +121,30 @@ describe('ChannelFields', () => {
     expect($ctrl.getDisplayNameForCompound(field, 3)).toBe('Compound Name (4)'); // multiple values, enumerate
   });
 
-  it('can check if a field without child fields does not execute hasFocusedField', () => {
-    expect($ctrl.hasFocusedField(stringField)).toBeFalsy();
-    expect($ctrl.hasFocusedField(multipleStringField)).toBeFalsy();
+  it('keeps track of the compound with the focused field', () => {
+    $ctrl.focusCompound('ns:compound', 0);
+
+    expect(onFieldFocus).toHaveBeenCalled();
+
+    // include the index of the compound to distinguish 'multiple' compounds
+    expect($ctrl.hasFocusedField('ns:compound', 0)).toBe(true);
+    expect($ctrl.hasFocusedField('ns:compound', 1)).toBe(false);
+    expect($ctrl.hasFocusedField('ns:string', 0)).toBe(false);
+
+    $ctrl.blurCompound();
+    expect(onFieldBlur).toHaveBeenCalled();
+    expect($ctrl.hasFocusedField('ns:compound', 0)).toBe(false);
   });
 
-  it('can check if a field has a focused element', () => {
-    expect($ctrl.hasFocusedField(nestedCompound)).toBeFalsy();
-    $ctrl.onFieldFocus(nestedString);
-    expect($ctrl.hasFocusedField(nestedCompound)).toBeTruthy();
-    nestedString.focused = false; // reset state
-  });
-
-  it('can check if a field has a focused child element', () => {
-    expect($ctrl.hasFocusedField(nestedCompound)).toBeFalsy();
-    $ctrl.onFieldFocus(textField);
-    expect($ctrl.hasFocusedField(nestedCompound)).toBeTruthy();
-    textField.focused = false; // reset state
-  });
-
-  it('can set a field to focus', () => {
-    expect(stringField.focused).toBeFalsy();
-    $ctrl.onFieldFocus(stringField);
-    expect(stringField.focused).toBeTruthy();
-    stringField.focused = false; // reset state
-  });
-
-  it('can set a field to unfocus', () => {
-    stringField.focused = true;
-    $ctrl.onFieldBlur(stringField);
-    expect(stringField.focused).toBeFalsy();
-    stringField.focused = false; // reset state
+  it('ignores the onFieldFocus and onFieldBlur callbacks when they are not defined', () => {
+    expect(() => {
+      $ctrl = $componentController('channelFields', {}, {
+        fieldTypes: testDocumentType,
+        fieldValues: testDocument.fields,
+      });
+      $ctrl.$onInit();
+      $ctrl.onFieldFocus();
+      $ctrl.onFieldBlur();
+    }).not.toThrow();
   });
 });
