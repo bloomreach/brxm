@@ -17,8 +17,10 @@
 import template from './fields.html';
 
 export class ChannelFieldsCtrl {
-  constructor() {
-    'ngInject';
+
+  $onInit() {
+    this.onFieldFocus = this.onFieldFocus || angular.noop;
+    this.onFieldBlur = this.onFieldBlur || angular.noop;
   }
 
   hasValue(field) {
@@ -37,26 +39,18 @@ export class ChannelFieldsCtrl {
     return field.displayName;
   }
 
-  onFieldFocus($event) {
-    const focusedElement = angular.element($event.target);
-    let p = focusedElement.parent();
-    while (p.length > 0) {
-      if (p.hasClass('form-field-compound')) {
-        p.addClass('has-focused-element');
-      }
-      p = p.parent();
-    }
+  focusCompound(fieldTypeId, index) {
+    this.compoundWithFocusedField = this.fieldValues[fieldTypeId][index];
+    this.onFieldFocus();
   }
 
-  onFieldBlur($event) {
-    const focusedElement = angular.element($event.target);
-    let p = focusedElement.parent();
-    while (p.length > 0) {
-      if (p.hasClass('form-field-compound')) {
-        p.removeClass('has-focused-element');
-      }
-      p = p.parent();
-    }
+  blurCompound() {
+    this.compoundWithFocusedField = null;
+    this.onFieldBlur();
+  }
+
+  hasFocusedField(fieldTypeId, index) {
+    return this.compoundWithFocusedField === this.fieldValues[fieldTypeId][index];
   }
 }
 
@@ -66,6 +60,8 @@ const channelFieldsComponentModule = angular
     bindings: {
       fieldTypes: '=',
       fieldValues: '=',
+      onFieldFocus: '&',
+      onFieldBlur: '&',
     },
     controller: ChannelFieldsCtrl,
     template,

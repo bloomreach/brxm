@@ -19,6 +19,8 @@ describe('ChannelFields', () => {
   let $rootScope;
 
   let $ctrl;
+  let onFieldFocus;
+  let onFieldBlur;
 
   const stringField = {
     id: 'ns:string',
@@ -32,12 +34,20 @@ describe('ChannelFields', () => {
     id: 'ns:emptymultiplestring',
     type: 'STRING',
   };
+  const compoundField = {
+    id: 'ns:compound',
+    type: 'COMPOUND',
+    fields: [
+      stringField,
+    ],
+  };
   const testDocumentType = {
     id: 'ns:testdocument',
     fields: [
       stringField,
       multipleStringField,
       emptyMultipleStringField,
+      compoundField,
     ],
   };
   const testDocument = {
@@ -51,23 +61,31 @@ describe('ChannelFields', () => {
       'ns:string': ['String value'],
       'ns:multiplestring': ['One', 'Two'],
       'ns:emptymultiplestring': [],
+      'ns:compound': [
+        {
+          'ns:string': 'String value in compound',
+        },
+      ],
     },
   };
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    jasmine.getFixtures().load('channel/sidePanels/rightSidePanel/fields.component.fixture.html');
-
     inject((_$componentController_, _$rootScope_) => {
       $componentController = _$componentController_;
       $rootScope = _$rootScope_;
     });
 
+    onFieldFocus = jasmine.createSpy('onFieldFocus');
+    onFieldBlur = jasmine.createSpy('onFieldBlur');
+
     $ctrl = $componentController('channelFields', {
     }, {
       fieldTypes: testDocumentType,
       fieldValues: testDocument.fields,
+      onFieldFocus,
+      onFieldBlur,
     });
     $rootScope.$apply();
   });
@@ -100,135 +118,28 @@ describe('ChannelFields', () => {
     expect($ctrl.getDisplayNameForCompound(field, 3)).toBe('Compound Name (4)'); // multiple values, enumerate
   });
 
-  const parentComponentGetsClassAdded = (focusedParents, unFocusedParents, field) => {
-    for (const element of focusedParents) {
-      expect(element).not.toHaveClass('has-focused-element');
-    }
-    $ctrl.onFieldFocus({
-      target: field,
-    });
-    for (const element of focusedParents) {
-      expect(element).toHaveClass('has-focused-element');
-      element.removeClass('has-focused-element');
-    }
-    for (const element of unFocusedParents) {
-      expect(element).not.toHaveClass('has-focused-element');
-    }
-  };
-  const parentComponentGetsClassRemoved = (focusedParents, unFocusedParents, field) => {
-    for (const element of unFocusedParents) {
-      element.addClass('has-focused-element');
-    }
-    $ctrl.onFieldBlur({
-      target: field,
-    });
-    for (const element of focusedParents) {
-      expect(element).not.toHaveClass('has-focused-element');
-    }
-    for (const element of unFocusedParents) {
-      expect(element).not.toHaveClass('has-focused-element');
-    }
-  };
+  it('keeps track of the compound with the focused field', () => {
+    $ctrl.focusCompound('ns:compound', 0);
 
-  // standard compound field
-  it('can find a parent compound and add the appropriate class', () => {
-    const stringCompound = $j('#string_compound');
+    expect(onFieldFocus).toHaveBeenCalled();
+    expect($ctrl.hasFocusedField('ns:compound', 0)).toBe(true);
+    expect($ctrl.hasFocusedField('ns:compound', 1)).toBe(false);
+    expect($ctrl.hasFocusedField('ns:string', 0)).toBe(false);
 
-    parentComponentGetsClassAdded([stringCompound], [], $j('#input_17'));
-    parentComponentGetsClassAdded([stringCompound], [], $j('#input_18'));
-    parentComponentGetsClassAdded([stringCompound], [], $j('#input_19'));
-    parentComponentGetsClassAdded([stringCompound], [], $j('#input_20'));
-    parentComponentGetsClassAdded([stringCompound], [], $j('#input_21'));
-  });
-  it('can find a parent compound and remove the appropriate class', () => {
-    const stringCompound = $j('#string_compound');
-
-    parentComponentGetsClassRemoved([], [stringCompound], $j('#input_17'));
-    parentComponentGetsClassRemoved([], [stringCompound], $j('#input_18'));
-    parentComponentGetsClassRemoved([], [stringCompound], $j('#input_19'));
-    parentComponentGetsClassRemoved([], [stringCompound], $j('#input_20'));
-    parentComponentGetsClassRemoved([], [stringCompound], $j('#input_21'));
+    $ctrl.blurCompound();
+    expect(onFieldBlur).toHaveBeenCalled();
+    expect($ctrl.hasFocusedField('ns:compound', 0)).toBe(false);
   });
 
-  // multiple compound field
-  it('can find a parent compound when using a multiple compound and add the appropriate class', () => {
-    const multipleStringCompoundOne = $j('#multiple_string_compound_1');
-    const multipleStringCompoundTwo = $j('#multiple_string_compound_2');
-
-    parentComponentGetsClassAdded([multipleStringCompoundOne], [multipleStringCompoundTwo], $j('#input_27'));
-    parentComponentGetsClassAdded([multipleStringCompoundOne], [multipleStringCompoundTwo], $j('#input_28'));
-    parentComponentGetsClassAdded([multipleStringCompoundOne], [multipleStringCompoundTwo], $j('#input_29'));
-    parentComponentGetsClassAdded([multipleStringCompoundOne], [multipleStringCompoundTwo], $j('#input_30'));
-    parentComponentGetsClassAdded([multipleStringCompoundOne], [multipleStringCompoundTwo], $j('#input_31'));
-
-    parentComponentGetsClassAdded([multipleStringCompoundTwo], [multipleStringCompoundOne], $j('#input_32'));
-    parentComponentGetsClassAdded([multipleStringCompoundTwo], [multipleStringCompoundOne], $j('#input_33'));
-    parentComponentGetsClassAdded([multipleStringCompoundTwo], [multipleStringCompoundOne], $j('#input_34'));
-    parentComponentGetsClassAdded([multipleStringCompoundTwo], [multipleStringCompoundOne], $j('#input_35'));
-    parentComponentGetsClassAdded([multipleStringCompoundTwo], [multipleStringCompoundOne], $j('#input_36'));
-  });
-  it('can find a parent compound when using a multiple compound and remove the appropriate class', () => {
-    const multipleStringCompoundOne = $j('#multiple_string_compound_1');
-    const multipleStringCompoundTwo = $j('#multiple_string_compound_2');
-
-    parentComponentGetsClassRemoved([multipleStringCompoundTwo], [multipleStringCompoundOne], $j('#input_27'));
-    parentComponentGetsClassRemoved([multipleStringCompoundTwo], [multipleStringCompoundOne], $j('#input_28'));
-    parentComponentGetsClassRemoved([multipleStringCompoundTwo], [multipleStringCompoundOne], $j('#input_29'));
-    parentComponentGetsClassRemoved([multipleStringCompoundTwo], [multipleStringCompoundOne], $j('#input_30'));
-    parentComponentGetsClassRemoved([multipleStringCompoundTwo], [multipleStringCompoundOne], $j('#input_31'));
-
-    parentComponentGetsClassRemoved([multipleStringCompoundOne], [multipleStringCompoundTwo], $j('#input_32'));
-    parentComponentGetsClassRemoved([multipleStringCompoundOne], [multipleStringCompoundTwo], $j('#input_33'));
-    parentComponentGetsClassRemoved([multipleStringCompoundOne], [multipleStringCompoundTwo], $j('#input_34'));
-    parentComponentGetsClassRemoved([multipleStringCompoundOne], [multipleStringCompoundTwo], $j('#input_35'));
-    parentComponentGetsClassRemoved([multipleStringCompoundOne], [multipleStringCompoundTwo], $j('#input_36'));
-  });
-
-  // nested compound field
-  it('can find a nested parent compound and add the appropriate class', () => {
-    const nestedCompound = $j('#nested_compound');
-    const nestedTextCompound = $j('#nested_text_compound');
-    const optionalRecursiveCompound = $j('#optional_recursive_compound');
-    const nestedSecondTextCompound = $j('#nested_second_text_compound');
-
-    parentComponentGetsClassAdded([nestedCompound], [nestedTextCompound, optionalRecursiveCompound, nestedSecondTextCompound], $j('#input_37'));
-    parentComponentGetsClassAdded([nestedCompound, nestedTextCompound], [optionalRecursiveCompound, nestedSecondTextCompound], $j('#input_38'));
-    parentComponentGetsClassAdded([nestedCompound, nestedTextCompound], [optionalRecursiveCompound, nestedSecondTextCompound], $j('#input_39'));
-    parentComponentGetsClassAdded([nestedCompound, nestedTextCompound], [optionalRecursiveCompound, nestedSecondTextCompound], $j('#input_40'));
-    parentComponentGetsClassAdded([nestedCompound, nestedTextCompound], [optionalRecursiveCompound, nestedSecondTextCompound], $j('#input_41'));
-    parentComponentGetsClassAdded([nestedCompound, nestedTextCompound], [optionalRecursiveCompound, nestedSecondTextCompound], $j('#input_42'));
-    parentComponentGetsClassAdded([nestedCompound, nestedTextCompound], [optionalRecursiveCompound, nestedSecondTextCompound], $j('#input_43'));
-    parentComponentGetsClassAdded([nestedCompound, nestedTextCompound], [optionalRecursiveCompound, nestedSecondTextCompound], $j('#input_44'));
-
-    parentComponentGetsClassAdded([nestedCompound, optionalRecursiveCompound], [nestedTextCompound, nestedSecondTextCompound], $j('#input_45'));
-    parentComponentGetsClassAdded([nestedCompound, optionalRecursiveCompound, nestedSecondTextCompound], [nestedTextCompound], $j('#input_46'));
-    parentComponentGetsClassAdded([nestedCompound, optionalRecursiveCompound, nestedSecondTextCompound], [nestedTextCompound], $j('#input_47'));
-    parentComponentGetsClassAdded([nestedCompound, optionalRecursiveCompound, nestedSecondTextCompound], [nestedTextCompound], $j('#input_48'));
-    parentComponentGetsClassAdded([nestedCompound, optionalRecursiveCompound, nestedSecondTextCompound], [nestedTextCompound], $j('#input_49'));
-    parentComponentGetsClassAdded([nestedCompound, optionalRecursiveCompound, nestedSecondTextCompound], [nestedTextCompound], $j('#input_50'));
-    parentComponentGetsClassAdded([nestedCompound, optionalRecursiveCompound], [nestedTextCompound, nestedSecondTextCompound], $j('#input_51'));
-  });
-  it('can find a nested parent compound and remove the appropriate class', () => {
-    const nestedCompound = $j('#nested_compound');
-    const nestedTextCompound = $j('#nested_text_compound');
-    const optionalRecursiveCompound = $j('#optional_recursive_compound');
-    const nestedSecondTextCompound = $j('#nested_second_text_compound');
-
-    parentComponentGetsClassRemoved([nestedTextCompound, optionalRecursiveCompound, nestedSecondTextCompound], [nestedCompound], $j('#input_37'));
-    parentComponentGetsClassRemoved([optionalRecursiveCompound, nestedSecondTextCompound], [nestedCompound, nestedTextCompound], $j('#input_38'));
-    parentComponentGetsClassRemoved([optionalRecursiveCompound, nestedSecondTextCompound], [nestedCompound, nestedTextCompound], $j('#input_39'));
-    parentComponentGetsClassRemoved([optionalRecursiveCompound, nestedSecondTextCompound], [nestedCompound, nestedTextCompound], $j('#input_40'));
-    parentComponentGetsClassRemoved([optionalRecursiveCompound, nestedSecondTextCompound], [nestedCompound, nestedTextCompound], $j('#input_41'));
-    parentComponentGetsClassRemoved([optionalRecursiveCompound, nestedSecondTextCompound], [nestedCompound, nestedTextCompound], $j('#input_42'));
-    parentComponentGetsClassRemoved([optionalRecursiveCompound, nestedSecondTextCompound], [nestedCompound, nestedTextCompound], $j('#input_43'));
-    parentComponentGetsClassRemoved([optionalRecursiveCompound, nestedSecondTextCompound], [nestedCompound, nestedTextCompound], $j('#input_44'));
-
-    parentComponentGetsClassRemoved([nestedTextCompound, nestedSecondTextCompound], [nestedCompound, optionalRecursiveCompound], $j('#input_45'));
-    parentComponentGetsClassRemoved([nestedTextCompound, nestedSecondTextCompound], [nestedCompound, optionalRecursiveCompound], $j('#input_46'));
-    parentComponentGetsClassRemoved([nestedTextCompound, nestedSecondTextCompound], [nestedCompound, optionalRecursiveCompound], $j('#input_47'));
-    parentComponentGetsClassRemoved([nestedTextCompound, nestedSecondTextCompound], [nestedCompound, optionalRecursiveCompound], $j('#input_48'));
-    parentComponentGetsClassRemoved([nestedTextCompound, nestedSecondTextCompound], [nestedCompound, optionalRecursiveCompound], $j('#input_49'));
-    parentComponentGetsClassRemoved([nestedTextCompound, nestedSecondTextCompound], [nestedCompound, optionalRecursiveCompound], $j('#input_50'));
-    parentComponentGetsClassRemoved([nestedTextCompound, nestedSecondTextCompound], [nestedCompound, optionalRecursiveCompound], $j('#input_51'));
+  it('ignores the onFieldFocus and onFieldBlur callbacks when they are not defined', () => {
+    expect(() => {
+      $ctrl = $componentController('channelFields', {}, {
+        fieldTypes: testDocumentType,
+        fieldValues: testDocument.fields,
+      });
+      $ctrl.$onInit();
+      $ctrl.onFieldFocus();
+      $ctrl.onFieldBlur();
+    }).not.toThrow();
   });
 });
