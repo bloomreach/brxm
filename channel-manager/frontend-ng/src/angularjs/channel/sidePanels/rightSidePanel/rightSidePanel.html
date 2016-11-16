@@ -44,7 +44,7 @@
     </div>
   </md-toolbar>
   <md-content flex="grow">
-    <div ng-if="$ctrl.doc && $ctrl.state != 'AVAILABLE'"
+    <div ng-if="$ctrl.doc && $ctrl.state !== 'AVAILABLE'"
          class="md-padding"
          md-colors="{background: 'hippo-red-50'}">
       <h4>{{::$ctrl.unavailableTitle | translate}}</h4>
@@ -60,7 +60,7 @@
         </a>
       </p>
     </div>
-    <form ng-if="$ctrl.doc && $ctrl.state == 'AVAILABLE'"
+    <form ng-if="$ctrl.doc && $ctrl.state === 'AVAILABLE'"
           name="$ctrl.form"
           class="form-dense-layout"
           layout="column">
