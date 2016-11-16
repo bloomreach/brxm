@@ -15,8 +15,14 @@
 // Support 'dense' layout of forms in which fields take up less space.
 // This concept is part of the Material spec but not implemented in Angular Material.
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   &:first-child {
     margin-top: 0;
   }
 }
+
