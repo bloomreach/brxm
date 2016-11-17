@@ -206,23 +206,6 @@ public class CompoundFieldTypeTest {
         }
         assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
-        FieldValue value = new FieldValue();
-        try {
-            fieldType.writeTo(node, Optional.of(value));
-            fail("Must be List of FieldValue");
-        } catch (BadRequestException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
-        }
-        assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
-
-        try {
-            fieldType.writeTo(node, Optional.of(Collections.singletonList("No FieldValue")));
-            fail("Must be List of FieldValue");
-        } catch (BadRequestException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
-        }
-        assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
-
         fieldType.writeTo(node, Optional.of(listOf(valueOf(validCompound()))));
         assertTrue(isWrittenSuccessfully(node.getNode(NODE_NAME)));
     }
@@ -263,14 +246,6 @@ public class CompoundFieldTypeTest {
         fieldType.writeTo(node, Optional.of(Collections.emptyList()));
         assertFalse(node.hasNode(NODE_NAME));
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value");
-
-        try {
-            fieldType.writeTo(node, Optional.of(Collections.EMPTY_MAP));
-            fail("Must be List");
-        } catch (BadRequestException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
-        }
-        assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
         Map<String, List<FieldValue>> map = new HashMap<>();
         try {
@@ -340,14 +315,6 @@ public class CompoundFieldTypeTest {
         fieldType.writeTo(node, Optional.of(Collections.emptyList()));
         assertFalse(node.hasNode(NODE_NAME));
         node.addNode(NODE_NAME, "compound:type").setProperty(STRING_PROPERTY_1, "Old Value");
-
-        try {
-            fieldType.writeTo(node, Optional.of(Collections.EMPTY_MAP));
-            fail("Must be List");
-        } catch (BadRequestException e) {
-            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
-        }
-        assertThat(node.getNode(NODE_NAME).getProperty(STRING_PROPERTY_1).getString(), equalTo("Old Value"));
 
         Map<String, List<FieldValue>> map = new HashMap<>();
         try {

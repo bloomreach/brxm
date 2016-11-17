@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,8 +99,9 @@ public class ChoiceFieldType extends FieldType {
     }
 
     @Override
-    public void writeTo(final Node node, final Optional<Object> optionalValue) throws ErrorWithPayloadException {
-        final List<FieldValue> values = checkValue(optionalValue);
+    public void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues) throws ErrorWithPayloadException {
+        final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
+        checkCardinality(values);
 
         try {
             removeInvalidChoices(node); // This is symmetric to ignoring them in #readValues.
