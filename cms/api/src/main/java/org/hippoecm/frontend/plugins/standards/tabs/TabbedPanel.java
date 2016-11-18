@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -46,6 +49,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.visit.IVisit;
@@ -53,16 +57,23 @@ import org.apache.wicket.util.visit.IVisitor;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
+import org.hippoecm.frontend.dialog.Dialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.ICardView;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TabbedPanel extends WebMarkupContainer {
 
+    private static final Logger log = LoggerFactory.getLogger(TabbedPanel.class);
     private static final long serialVersionUID = 1L;
 
     abstract static class CloseLink<T> extends AbstractLink {
@@ -121,13 +132,20 @@ public class TabbedPanel extends WebMarkupContainer {
 
     private int maxTabLength = 12;
     private final List<TabsPlugin.Tab> tabs;
+    private TabsPlugin.Tab selectedTab;
     private MarkupContainer panelContainer;
     private MarkupContainer tabsContainer;
     private IconSize iconType = IconSize.M;
     private transient boolean redraw = false;
     private CardView cardView;
+    private IDialogService dialogService;
 
     public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs, MarkupContainer tabsContainer) {
+        this(id, plugin, tabs, tabsContainer, null);
+    }
+
+    public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs, MarkupContainer tabsContainer,
+                       IDialogService dialogService) {
         super(id, new Model<>(-1));
 
         if (tabs == null) {
@@ -137,6 +155,7 @@ public class TabbedPanel extends WebMarkupContainer {
         this.plugin = plugin;
         this.tabs = tabs;
         this.tabsContainer = tabsContainer;
+        this.dialogService = dialogService;
 
         setOutputMarkupId(true);
 
@@ -428,7 +447,7 @@ public class TabbedPanel extends WebMarkupContainer {
             return;
         }
 
-        ITab tab = tabs.get(index);
+        TabsPlugin.Tab tab = tabs.get(index);
 
         WebMarkupContainer panel = tab.getPanel(TAB_PANEL_ID);
 
@@ -443,8 +462,58 @@ public class TabbedPanel extends WebMarkupContainer {
                     "ITab.getPanel() returned a panel with invalid id [" + panel.getId() + "]. You must always return a panel with id equal to the provided panelId parameter. TabbedPanel [" + getPath() + "] ITab index [" + index + "]");
         }
 
-        cardView.select((TabsPlugin.Tab) tab);
+        if (selectedTab != tab) {
+            if (selectedTab != null) {
+                final Session session = UserSession.get().getJcrSession();
+                try {
+                    // Save pending changes to avoid conflicts with Visual Editing
+                    session.save();
+                } catch (RepositoryException e) {
+                    log.warn("Failed to save JCR session upon leaving tab, discarding changes");
+                    if (dialogService != null) {
+                        dialogService.show(new OnSaveErrorAlert(selectedTab));
+                    }
+                    try {
+                        session.refresh(false);
+                    } catch (RepositoryException e2) {
+                        log.warn("Also failed to discard changes with message {}. Initial exception was:", e2.getMessage(), e);
+                    }
+                }
+            }
+
+            try {
+                // Load changes made to the repository by someone else, and redraw the tab panel
+                UserSession.get().getJcrSession().refresh(true);
+                final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                if (target != null) {
+                    target.add(panel);
+                }
+            } catch (RepositoryException e) {
+                log.warn("Failed to refresh JCR session upon selecting tab", e);
+            }
+
+            selectedTab = tab;
+        }
+
+        cardView.select(tab);
 //        panelContainer.replace(panel);
+    }
+
+    private static class OnSaveErrorAlert extends Dialog<String> {
+        public OnSaveErrorAlert(final ITab tab) {
+            super(Model.of("dummy"));
+
+            setCancelVisible(false);
+            setSize(DialogConstants.SMALL_AUTO);
+
+            add(new Label("message", new StringResourceModel("message", this, null, tab.getTitle())));
+            add(HippoIcon.fromSprite("icon", Icon.EXCLAMATION_TRIANGLE, IconSize.L));
+        }
+
+        @Override
+        public IModel<String> getTitle() {
+            return new StringResourceModel("title", this, null);
+        }
     }
 
     public final int getSelectedTab() {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -145,9 +145,7 @@ public class TabsPlugin extends RenderPlugin {
                         tabbedPanel.addFirst();
                     } else {
                         tabs.add(tabbie);
-                        if (tabs.size() == 1) {
-                            tabbedPanel.setSelectedTab(0);
-                        }
+                        tabbedPanel.setSelectedTab(tabs.size() - 1);
                         tabbedPanel.addLast();
                     }
                 }
@@ -172,7 +170,9 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     protected TabbedPanel newTabbedPanel(String id, List<Tab> tabs, MarkupContainer tabsContainer) {
-        return new TabbedPanel(id, TabsPlugin.this, tabs, tabsContainer);
+        final IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
+                                                                           IDialogService.class);
+        return new TabbedPanel(id, TabsPlugin.this, tabs, tabsContainer, dialogService);
     }
 
     @Override

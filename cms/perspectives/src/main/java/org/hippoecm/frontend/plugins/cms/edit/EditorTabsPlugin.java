@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
@@ -35,7 +36,9 @@ public class EditorTabsPlugin extends TabsPlugin {
 
     @Override
     protected TabbedPanel newTabbedPanel(String id, List<TabsPlugin.Tab> tabs, MarkupContainer tabsContainer) {
-        return new TabbedPanel(id, EditorTabsPlugin.this, tabs, tabsContainer) {
+        final IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
+                                                                           IDialogService.class);
+        return new TabbedPanel(id, EditorTabsPlugin.this, tabs, tabsContainer, dialogService) {
 
             @Override
             protected Form getPanelContainerForm() {
