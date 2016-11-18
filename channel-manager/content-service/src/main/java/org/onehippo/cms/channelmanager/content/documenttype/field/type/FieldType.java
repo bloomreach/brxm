@@ -16,7 +16,6 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -213,7 +212,7 @@ public abstract class FieldType {
      * @throws ErrorWithPayloadException
      *                      indicates that writing the provided value ran into an unrecoverable error
      */
-    public abstract void writeTo(Node node, Optional<Object> optionalValue) throws ErrorWithPayloadException;
+    public abstract void writeTo(Node node, Optional<List<FieldValue>> optionalValue) throws ErrorWithPayloadException;
 
     /**
      * Validate the current value of this field against all applicable (and supported) validators.
@@ -230,14 +229,8 @@ public abstract class FieldType {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<FieldValue> checkValue(final Optional<Object> optionalValue) throws ErrorWithPayloadException {
-        final Object value = optionalValue.orElse(Collections.emptyList());
-        if (!(value instanceof List)) {
-            throw INVALID_DATA.get();
-        }
-        final List values = (List)value;
-
-        // check cardinality
+    protected void checkCardinality(final List<FieldValue> values)
+            throws ErrorWithPayloadException {
         if (values.size() < getMinValues()) {
             throw INVALID_DATA.get();
         }
@@ -248,14 +241,6 @@ public abstract class FieldType {
         if (isRequired() && values.isEmpty()) {
             throw INVALID_DATA.get();
         }
-
-        // check individual values
-        for (Object v : values) {
-            if (!(v instanceof FieldValue)) {
-                throw INVALID_DATA.get();
-            }
-        }
-        return (List<FieldValue>) values;
     }
 
     protected boolean validateValues(final List<FieldValue> valueList, final Predicate<FieldValue> validator) {
