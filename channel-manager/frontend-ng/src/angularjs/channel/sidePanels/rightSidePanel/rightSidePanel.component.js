@@ -17,7 +17,7 @@
 import template from './rightSidePanel.html';
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, $timeout, $translate, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService) {
+  constructor($scope, $element, $timeout, $translate, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     this.$scope = $scope;
@@ -29,6 +29,7 @@ export class ChannelRightSidePanelCtrl {
     this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.HippoIframeService = HippoIframeService;
+    this.FeedbackService = FeedbackService;
 
     ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), (documentId) => {
       this.openDocument(documentId);
@@ -57,9 +58,9 @@ export class ChannelRightSidePanelCtrl {
             this._resizeTextareas();
           });
       })
-      .catch((error) => {
-        if (error) {
-          this.doc = error.data;
+      .catch((response) => {
+        if (response) {
+          this.doc = response.data;
           this.state = this.doc.info.editing.state;
         } else {
           this.state = 'UNAVAILABLE_CONTENT';
@@ -114,6 +115,13 @@ export class ChannelRightSidePanelCtrl {
         this.doc = savedDoc;
         this._resetForm();
         this.HippoIframeService.reload();
+      })
+      .catch((response) => {
+        if (response && response.data && response.data.reason) {
+          this.FeedbackService.showErrorResponse(response, `ERROR_${response.data.reason}`);
+        } else {
+          this.FeedbackService.showErrorResponse(response, 'ERROR_UNABLE_TO_SAVE');
+        }
       });
   }
 
