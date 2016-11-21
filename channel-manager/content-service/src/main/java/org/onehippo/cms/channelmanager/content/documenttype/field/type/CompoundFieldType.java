@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
-import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
@@ -95,9 +95,10 @@ public class CompoundFieldType extends FieldType {
     }
 
     @Override
-    public void writeTo(final Node node, Optional<Object> optionalValue) throws ErrorWithPayloadException {
+    public void writeTo(final Node node, Optional<List<FieldValue>> optionalValues) throws ErrorWithPayloadException {
         final String nodeName = getId();
-        final List<FieldValue> values = checkValue(optionalValue);
+        final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
+        checkCardinality(values);
 
         try {
             final NodeIterator iterator = node.getNodes(nodeName);
@@ -136,7 +137,7 @@ public class CompoundFieldType extends FieldType {
 
     public boolean validateSingle(final FieldValue value) {
         // The "required: validator only applies to the cardinality of a compound field, and has
-        // therefore already been checked during the writeTo-validation (#checkValue).
+        // therefore already been checked during the writeTo-validation (#checkCardinality).
 
         // #readSingleFrom guarantees that value.getFields is not empty
         return FieldTypeUtils.validateFieldValues(value.findFields().get(), getFields());

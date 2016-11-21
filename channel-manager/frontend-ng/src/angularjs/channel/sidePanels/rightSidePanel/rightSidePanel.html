@@ -45,10 +45,10 @@
   </md-toolbar>
   <md-content flex="grow">
     <div ng-if="$ctrl.doc && $ctrl.state !== 'AVAILABLE'"
-         class="md-padding"
+         class="md-padding qa-feedback"
          md-colors="{background: 'hippo-red-50'}">
-      <h4>{{::$ctrl.unavailableTitle | translate}}</h4>
-      <div>{{::$ctrl.unavailableMessage }}</div>
+      <h4 class="qa-feedback-title">{{::$ctrl.unavailableTitle | translate}}</h4>
+      <div class="qa-feedback-message">{{::$ctrl.unavailableMessage }}</div>
       <p ng-if="$ctrl.linkToFullEditor">
         <a href="#" layout="row" layout-align="start end">
           <span class="inline-icon-wrapper">

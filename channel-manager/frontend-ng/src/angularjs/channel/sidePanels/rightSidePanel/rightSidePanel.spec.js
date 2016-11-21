@@ -55,6 +55,9 @@ describe('ChannelRightSidePanel', () => {
       type: {
         id: 'ns:testdocument',
       },
+      editing: {
+        state: 'AVAILABLE',
+      },
     },
     fields: {
       'ns:string': 'String value',

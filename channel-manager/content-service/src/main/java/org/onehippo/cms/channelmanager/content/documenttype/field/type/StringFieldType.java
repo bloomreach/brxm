@@ -17,6 +17,7 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,9 +99,11 @@ public class StringFieldType extends FieldType {
     }
 
     @Override
-    public void writeTo(final Node node, final Optional<Object> optionalValue) throws ErrorWithPayloadException {
+    public void writeTo(final Node node, final Optional<List<FieldValue>> optionalValues)
+            throws ErrorWithPayloadException {
         final String propertyName = getId();
-        final List<FieldValue> values = checkValue(optionalValue);
+        final List<FieldValue> values = optionalValues.orElse(Collections.emptyList());
+        checkCardinality(values);
 
         try {
             if (values.isEmpty()) {
