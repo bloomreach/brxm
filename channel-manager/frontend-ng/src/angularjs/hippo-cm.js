@@ -15,6 +15,7 @@
  */
 
 import angular from 'angular';
+import ngAnimate from 'angular-animate';
 import ngMaterial from 'angular-material';
 import ngTranslate from 'angular-translate';
 import 'angular-translate-loader-static-files';
@@ -49,6 +50,7 @@ const hippoCmng = angular
   .module('hippo-cm', [
     ngMaterial,
     ngTranslate,
+    ngAnimate,
     uiRouter,
     channelModule.name,
   ])
