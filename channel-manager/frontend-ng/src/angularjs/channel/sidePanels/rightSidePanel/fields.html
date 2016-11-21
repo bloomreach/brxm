@@ -17,10 +17,10 @@
      ng-repeat="fieldType in ::$ctrl.fieldTypes"
      ng-switch="fieldType.type">
 
-  <div ng-switch-when="COMPOUND"
-       ng-if="$ctrl.hasValue(fieldType)"
-       class="field form-field-compound qa-compound"
+  <div class="field field-compound qa-compound"
        ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldType.id, $index)}"
+       ng-switch-when="COMPOUND"
+       ng-if="$ctrl.hasValue(fieldType)"
        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]">
     <h5>
       <md-icon class="material-icons">keyboard_arrow_down</md-icon>

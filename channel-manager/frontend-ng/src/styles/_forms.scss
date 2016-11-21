@@ -28,7 +28,7 @@
 
 .top-level {
   &> .field-wrapper {
-    &> .form-field-compound {
+    &> .field-compound {
       border-left: 3px solid $grey-500;
     }
     &> .field {
@@ -37,7 +37,7 @@
   }
 }
 
-.form-field-compound {
+.field-compound {
   padding-left: 8px !important;
   h5 {
     margin-left: -8px;
