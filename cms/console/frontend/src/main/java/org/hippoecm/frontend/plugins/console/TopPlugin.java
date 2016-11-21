@@ -20,18 +20,27 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebComponent;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TopPlugin extends RenderPlugin {
 
-    static final Logger log = LoggerFactory.getLogger(TopPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(TopPlugin.class);
+
+    private static SystemInfoDataProvider systemDataProvider = new SystemInfoDataProvider();
 
     public TopPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
+        final WebMarkupContainer logo = new WebMarkupContainer("logo");
+        logo.add(TitleAttribute.set("Hippo Release Version: " + systemDataProvider.getReleaseVersion()));
+        add(logo);
 
         WebComponent toolbar = new WebComponent("bar.styles");
 

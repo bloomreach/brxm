@@ -15,34 +15,12 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <div class="hippo-console-menu-logo" wicket:id="logo"></div>
     <ul class="hippo-console-menu-logout">
       <li>
         <span class="name" wicket:id="username"/>
       </li>
-      <li>
+      <li class="logout-link">
         <a href="#" wicket:id="logout-link">Logout</a>
-      </li>
-    </ul>
-    <ul class="hippo-console-menu-advanced">
-      <li wicket:id="view"><span wicket:id="item" /></li>
-      <li class="dropdown">
-        <span class="dropbtn">XML</span>
-        <ul class="dropdown-content" wicket:id="extension.xml.menu"></ul>
-      </li>
-      <li class="dropdown">
-        <span class="dropbtn">CND</span>
-        <ul class="dropdown-content" wicket:id="extension.cnd.menu">
-        </ul>
-      </li>
-      <li class="dropdown">
-        <span class="dropbtn">Node</span>
-        <ul class="dropdown-content" wicket:id="extension.node.menu">
-        </ul>
-      </li>
-      <li class="dropdown">
-        <span class="dropbtn">System</span>
-        <ul class="dropdown-content" wicket:id="extension.system.menu"></ul>
       </li>
     </ul>
   </wicket:panel>

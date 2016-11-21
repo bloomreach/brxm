@@ -200,8 +200,12 @@
 }
 
 .hippo-console-menu-logout {
-  padding: 10px;
   float: right;
+  margin-left: 35px;
+}
+
+.hippo-console-menu-logout .logout-link {
+  margin-left: 7px;
 }
 
 .hippo-console-menu-logout a:hover {
@@ -417,7 +421,7 @@ li.hippo-console-menu-actions-save.session-changes a {
   vertical-align: bottom
 }
 
-.hippo-console-logout::after {
+.hippo-console-menu-top::after {
   clear: both;
   content: "";
   display: block;
@@ -432,22 +436,22 @@ li.hippo-console-menu-actions-save.session-changes a {
   background: white url('hippo-logo.svg') no-repeat scroll 0 0/50px 46px;
 }
 
-.hippo-console-menu button {
+.hippo-console-menu-buttons button {
   text-align: center;
   font-size: 12px;
   font-weight: bold;
 }
 
-.hippo-console-logout {
+.hippo-console-menu-top {
   font-size: 11px
 }
 
-.hippo-console-logout span.name {
+.hippo-console-menu-top span.name {
   font-weight: bold;
   text-transform: capitalize
 }
 
-.hippo-console-logout li {
+.hippo-console-menu-top li {
   display: inline
 }
 

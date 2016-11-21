@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,26 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.logout;
+package org.hippoecm.frontend.plugins.console.menu;
 
 import javax.jcr.Node;
 
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.ILogoutService;
-import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.service.render.ListViewPlugin;
 
-public class LogoutPlugin extends RenderPlugin<Node> {
+public class AdvancedMenuPlugin extends ListViewPlugin<Node> {
 
-    public LogoutPlugin(IPluginContext context, IPluginConfig config) {
+    public AdvancedMenuPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-
-        final String username = getSession().getJcrSession().getUserID();
-        add(new Label("username", Model.of(username)));
-
-        final ILogoutService logoutService = getPluginContext().getService(ILogoutService.SERVICE_ID, ILogoutService.class);
-        add(new LogoutLink("logout-link", logoutService));
     }
+
 }

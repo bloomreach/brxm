@@ -16,6 +16,43 @@
 -->
 <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:esv="http://www.onehippo.org/jcr/xmlimport" sv:name="console" esv:merge="combine">
   <sv:node sv:name="console" esv:merge="combine">
+    <!-- new plugin for the advanced menu -->
+    <sv:node sv:name="advancedmenu">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="extension.cnd.menu" sv:type="String">
+        <sv:value>service.menu.cnd</sv:value>
+      </sv:property>
+      <sv:property sv:name="extension.logout" sv:type="String">
+        <sv:value>service.logout</sv:value>
+      </sv:property>
+      <sv:property sv:name="extension.node.menu" sv:type="String">
+        <sv:value>service.menu.node</sv:value>
+      </sv:property>
+      <sv:property sv:name="extension.system.menu" sv:type="String">
+        <sv:value>service.menu.system</sv:value>
+      </sv:property>
+      <sv:property sv:name="extension.xml.menu" sv:type="String">
+        <sv:value>service.menu.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="item" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.AdvancedMenuPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.extensions" sv:type="String" sv:multiple="true">
+        <sv:value>extension.system.menu</sv:value>
+        <sv:value>extension.node.menu</sv:value>
+        <sv:value>extension.cnd.menu</sv:value>
+        <sv:value>extension.xml.menu</sv:value>
+        <sv:value>extension.logout</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.advancedmenu</sv:value>
+      </sv:property>
+    </sv:node>
     <!-- 4 new plugins for the menu dropdowns -->
     <sv:node sv:name="cnddropdown">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -105,8 +142,11 @@
       </sv:node>
     </sv:node>
     <sv:node sv:name="top" esv:merge="combine">
+      <sv:property sv:name="extension.advancedmenu" sv:type="String">
+        <sv:value>service.advancedmenu</sv:value>
+      </sv:property>
       <sv:property sv:name="wicket.extensions" sv:type="String" esv:merge="override" sv:multiple="true">
-        <sv:value>extension.logout</sv:value>
+        <sv:value>extension.advancedmenu</sv:value>
         <sv:value>extension.menu</sv:value>
       </sv:property>
     </sv:node>
