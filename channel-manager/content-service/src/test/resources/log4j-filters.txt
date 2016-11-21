@@ -38,6 +38,7 @@ Failed to read nodes for choice type 'choice'
 Failed to write value for choice type 'choice'
 Node with identifier 'unknown-uuid' does not exist
 Failed to retrieve type of document '/bla'
+Failed to retrieve JCR session for node '/bla'
 User 'admin' failed to re-obtain ownership of document
 Failed to dispose of editable instance
 Failed to save changes to draft node of document uuid

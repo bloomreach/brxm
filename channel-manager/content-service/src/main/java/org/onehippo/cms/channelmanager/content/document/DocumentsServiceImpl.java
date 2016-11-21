@@ -150,10 +150,15 @@ class DocumentsServiceImpl implements DocumentsService {
 
     private DocumentType getDocumentType(final Node handle, final Locale locale)
             throws ErrorWithPayloadException {
+        final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(InternalServerErrorException::new);
+
         try {
-            return DocumentTypesService.get().getDocumentType(handle, locale);
+            return DocumentTypesService.get().getDocumentType(id, handle.getSession(), locale);
+        } catch (RepositoryException e) {
+            log.warn("Failed to retrieve JCR session for node '{}'", JcrUtils.getNodePathQuietly(handle), e);
+            throw new InternalServerErrorException();
         } catch (ErrorWithPayloadException e) {
-            log.warn("Failed to retrieve type of document '{}'", JcrUtils.getNodePathQuietly(handle), e);
+            log.debug("Failed to retrieve type of document '{}'", JcrUtils.getNodePathQuietly(handle), e);
             throw new InternalServerErrorException();
         }
     }

@@ -68,22 +68,26 @@ import static org.junit.Assert.fail;
 @PrepareForTest({WorkflowUtils.class, DocumentUtils.class, DocumentTypesService.class,
         JcrUtils.class, EditingUtils.class, FieldTypeUtils.class})
 public class DocumentsServiceImplTest {
-    private Node rootNode;
     private Session session;
     private Locale locale;
     private DocumentsServiceImpl documentsService = (DocumentsServiceImpl) DocumentsService.get();
 
     @Before
     public void setup() throws RepositoryException {
-        rootNode = MockNode.root();
         session = createMock(Session.class);
         locale = new Locale("en");
+
+        PowerMock.mockStatic(DocumentTypesService.class);
+        PowerMock.mockStatic(DocumentUtils.class);
+        PowerMock.mockStatic(EditingUtils.class);
+        PowerMock.mockStatic(FieldTypeUtils.class);
+        PowerMock.mockStatic(JcrUtils.class);
+        PowerMock.mockStatic(WorkflowUtils.class);
     }
 
     @Test
     public void createDraftNotAHandle() throws Exception {
         final String uuid = "uuid";
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
         PowerMock.replayAll();
 
@@ -102,9 +106,6 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
 
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getWorkflow");
-
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.empty());
 
@@ -121,26 +122,16 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void createDraftNoDocumentType() throws Exception {
+    public void createDraftNoDocumentNodeType() throws Exception {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-        final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getWorkflow");
-        PowerMock.mockStaticPartial(DocumentTypesService.class, "get");
-        PowerMock.mockStaticPartial(JcrUtils.class, "getNodePathQuietly");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
-        expect(DocumentTypesService.get()).andReturn(documentTypesService);
-        expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
-
-        expect(documentTypesService.getDocumentType(handle, locale)).andThrow(new NotFoundException());
 
         PowerMock.replayAll();
-        replay(documentTypesService);
 
         try {
             documentsService.createDraft(uuid, session, locale);
@@ -149,7 +140,67 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        verify(documentTypesService);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void createDraftNoSession() throws Exception {
+        final String uuid = "uuid";
+        final String variantType = "variant:type";
+        final Node handle = createMock(Node.class);
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType));
+        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(DocumentTypesService.get()).andReturn(documentTypesService);
+        expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
+
+        expect(handle.getSession()).andThrow(new RepositoryException());
+
+        PowerMock.replayAll();
+        replay(handle);
+
+        try {
+            documentsService.createDraft(uuid, session, locale);
+            fail("No Exception");
+        } catch (InternalServerErrorException e) {
+            assertNull(e.getPayload());
+        }
+
+        verify(handle);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void createDraftNoDocumentType() throws Exception {
+        final String uuid = "uuid";
+        final String variantType = "variant:type";
+        final Node handle = createMock(Node.class);
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType));
+        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(DocumentTypesService.get()).andReturn(documentTypesService);
+        expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
+
+        expect(handle.getSession()).andReturn(session);
+        expect(documentTypesService.getDocumentType(variantType, session, locale)).andThrow(new NotFoundException());
+
+        PowerMock.replayAll();
+        replay(handle, documentTypesService);
+
+        try {
+            documentsService.createDraft(uuid, session, locale);
+            fail("No Exception");
+        } catch (InternalServerErrorException e) {
+            assertNull(e.getPayload());
+        }
+
+        verify(handle, documentTypesService);
         PowerMock.verifyAll();
     }
 
@@ -162,10 +213,6 @@ public class DocumentsServiceImplTest {
         final EditingInfo editingInfo = new EditingInfo();
 
         editingInfo.setState(EditingInfo.State.UNAVAILABLE);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle", "getDisplayName");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "determineEditingInfo");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Document Display Name"));
@@ -201,10 +248,6 @@ public class DocumentsServiceImplTest {
 
         editingInfo.setState(EditingInfo.State.AVAILABLE);
 
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle", "getDisplayName");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "determineEditingInfo");
-
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
@@ -239,10 +282,6 @@ public class DocumentsServiceImplTest {
         final EditingInfo editingInfo = new EditingInfo();
 
         editingInfo.setState(EditingInfo.State.AVAILABLE);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle", "getDisplayName");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "determineEditingInfo", "createDraft");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.empty());
@@ -281,11 +320,6 @@ public class DocumentsServiceImplTest {
 
         editingInfo.setState(EditingInfo.State.AVAILABLE);
 
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle", "getDisplayName");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "determineEditingInfo", "createDraft");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "readFieldValues");
-
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
@@ -313,8 +347,6 @@ public class DocumentsServiceImplTest {
         final Document document = new Document();
         final String uuid = "uuid";
 
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
 
         PowerMock.replayAll();
@@ -334,9 +366,6 @@ public class DocumentsServiceImplTest {
         final Document document = new Document();
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getDocumentVariantNode");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.empty());
@@ -359,9 +388,6 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getDocumentVariantNode", "getWorkflow");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
@@ -386,10 +412,6 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getDocumentVariantNode", "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "canUpdateDocument");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
@@ -417,25 +439,14 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
         final Node draft = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-        final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getDocumentVariantNode", "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "canUpdateDocument");
-        PowerMock.mockStaticPartial(DocumentTypesService.class, "get");
-        PowerMock.mockStaticPartial(JcrUtils.class, "getNodePathQuietly");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canUpdateDocument(workflow)).andReturn(true);
-        expect(DocumentTypesService.get()).andReturn(documentTypesService);
-        expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
-
-        expect(documentTypesService.getDocumentType(handle, locale)).andThrow(new NotFoundException());
 
         PowerMock.replayAll();
-        replay(documentTypesService);
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
@@ -444,7 +455,6 @@ public class DocumentsServiceImplTest {
             assertNull(e.getPayload());
         }
 
-        verify(documentTypesService);
         PowerMock.verifyAll();
     }
 
@@ -457,11 +467,6 @@ public class DocumentsServiceImplTest {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
         final BadRequestException badRequest = new BadRequestException();
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getDocumentVariantNode", "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "canUpdateDocument");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeFieldValues");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
@@ -494,11 +499,6 @@ public class DocumentsServiceImplTest {
         final Node draft = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getDocumentVariantNode", "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "canUpdateDocument");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeFieldValues");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
@@ -533,11 +533,6 @@ public class DocumentsServiceImplTest {
         final Node draft = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getDocumentVariantNode", "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "canUpdateDocument");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeFieldValues", "validateFieldValues");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
@@ -574,11 +569,6 @@ public class DocumentsServiceImplTest {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
 
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getDocumentVariantNode", "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "canUpdateDocument");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeFieldValues", "validateFieldValues");
-
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
@@ -614,11 +604,6 @@ public class DocumentsServiceImplTest {
         final Node draft = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getDocumentVariantNode", "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "canUpdateDocument");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeFieldValues", "validateFieldValues");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
@@ -660,11 +645,6 @@ public class DocumentsServiceImplTest {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
 
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getDocumentVariantNode", "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "canUpdateDocument");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeFieldValues", "validateFieldValues");
-
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
@@ -703,11 +683,6 @@ public class DocumentsServiceImplTest {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
 
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getDocumentVariantNode", "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "canUpdateDocument");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeFieldValues", "validateFieldValues");
-
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
@@ -735,8 +710,6 @@ public class DocumentsServiceImplTest {
     public void deleteDraftNotAHandle() throws Exception {
         final String uuid = "uuid";
 
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.empty());
 
         PowerMock.replayAll();
@@ -755,9 +728,6 @@ public class DocumentsServiceImplTest {
     public void deleteDraftNoWorkflow() throws Exception {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getWorkflow");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.empty());
@@ -779,10 +749,6 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "canDeleteDraft");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
@@ -807,10 +773,6 @@ public class DocumentsServiceImplTest {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
-
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "canDeleteDraft");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
@@ -838,10 +800,6 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
 
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getWorkflow");
-        PowerMock.mockStaticPartial(EditingUtils.class, "canDeleteDraft");
-
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canDeleteDraft(workflow)).andReturn(true);
@@ -867,11 +825,6 @@ public class DocumentsServiceImplTest {
         final DocumentType docType = provideDocumentType(handle);
         final EditingInfo editingInfo = new EditingInfo();
 
-        PowerMock.mockStaticPartial(DocumentUtils.class, "getHandle", "getDisplayName");
-        PowerMock.mockStaticPartial(WorkflowUtils.class, "getWorkflow", "getDocumentVariantNode");
-        PowerMock.mockStaticPartial(EditingUtils.class, "determineEditingInfo");
-        PowerMock.mockStaticPartial(FieldTypeUtils.class, "readFieldValues");
-
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(DocumentUtils.getDisplayName(handle)).andReturn(Optional.of("Document Display Name"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
@@ -896,15 +849,16 @@ public class DocumentsServiceImplTest {
 
 
     private DocumentType provideDocumentType(final Node handle) throws Exception {
+        final String variantType = "variant:type";
         final DocumentType docType = createMock(DocumentType.class);
         final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
 
-        PowerMock.mockStaticPartial(DocumentTypesService.class, "get");
-
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType));
         expect(DocumentTypesService.get()).andReturn(documentTypesService);
-        expect(documentTypesService.getDocumentType(handle, locale)).andReturn(docType);
+        expect(documentTypesService.getDocumentType(variantType, session, locale)).andReturn(docType);
+        expect(handle.getSession()).andReturn(session);
 
-        replay(documentTypesService);
+        replay(documentTypesService, handle);
 
         return docType;
     }
