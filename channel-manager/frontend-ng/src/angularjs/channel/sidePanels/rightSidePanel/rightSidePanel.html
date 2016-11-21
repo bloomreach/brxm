@@ -22,16 +22,21 @@
     <div class="md-toolbar-tools">
       <h1 class="md-title text-truncate">
         {{ 'EDIT_DOCUMENT' | translate:$ctrl.doc }}
+
         <md-tooltip md-delay="500">{{ $ctrl.doc.displayName }}</md-tooltip>
       </h1>
+
       <span flex></span>
+
       <md-button class="md-icon-button"
                  aria-label="{{ 'PUBLISH' | translate }}"
                  ng-if="$ctrl.doc"
                  ng-click="$ctrl.viewFullContent()">
         <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
+
         <md-icon class="material-icons">publish</md-icon>
       </md-button>
+
       <!-- TODO: enable switch-to-full-editor button when implementing CHANNELMGR-923 -->
       <md-button class="md-icon-button"
                  disabled
@@ -39,41 +44,56 @@
                  ng-if="$ctrl.doc"
                  ng-click="$ctrl.editFullContent()">
         <md-tooltip md-delay="500">{{ 'SWITCH_TO_FULL_EDITOR' | translate }}</md-tooltip>
+
         <md-icon md-svg-src="/cms/angular/hippo-cm/images/document.svg"></md-icon>
       </md-button>
     </div>
   </md-toolbar>
+
   <md-content flex="grow">
     <div ng-if="$ctrl.doc && $ctrl.state !== 'AVAILABLE'"
          class="md-padding"
          md-colors="{background: 'hippo-red-50'}">
       <h4>{{::$ctrl.unavailableTitle | translate}}</h4>
+
       <div>{{::$ctrl.unavailableMessage }}</div>
+
       <p ng-if="$ctrl.linkToFullEditor">
-        <a href="#" layout="row" layout-align="start end">
+        <a href="#"
+           layout="row"
+           layout-align="start end">
           <span class="inline-icon-wrapper">
             <md-icon md-svg-src="/cms/angular/hippo-cm/images/document.svg"></md-icon>
           </span>
+
           <span>
             {{'UNAVAILABLE_SWITCH_TO_THE_FULL_EDITOR' | translate}}
           </span>
         </a>
       </p>
     </div>
+
     <form ng-if="$ctrl.doc && $ctrl.state === 'AVAILABLE'"
           name="$ctrl.form"
           class="form-dense-layout"
           layout="column">
-      <channel-fields class="top-level" field-types="::$ctrl.docType.fields" field-values="$ctrl.doc.fields"></channel-fields>
+
+      <channel-fields class="top-level"
+                      field-types="::$ctrl.docType.fields"
+                      field-values="$ctrl.doc.fields">
+      </channel-fields>
     </form>
   </md-content>
+
   <md-toolbar>
     <div class="md-toolbar-tools">
       <span flex></span>
+
       <md-button class="qa-close"
                  ng-click="$ctrl.close()">
         {{'CLOSE' | translate }}
       </md-button>
+
       <md-button class="qa-save"
                  ng-click="$ctrl.saveDocument()"
                  ng-disabled="$ctrl.form.$pristine">
