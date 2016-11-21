@@ -164,7 +164,7 @@ public class TabsPlugin extends RenderPlugin {
 
             @Override
             public void onRemoveService(IRenderService service, String name) {
-                Tab tab = findTabbie(service);
+                final Tab tab = findTab(service);
                 if (tab != null) {
                     onTabDeactivated(tab);
 
@@ -199,17 +199,17 @@ public class TabsPlugin extends RenderPlugin {
     public void render(PluginRequestTarget target) {
         super.render(target);
         tabbedPanel.render(target);
-        for (Tab tabbie : tabs) {
-            tabbie.renderer.render(target);
+        for (Tab tab : tabs) {
+            tab.renderer.render(target);
         }
     }
 
     @Override
     public void focus(IRenderService child) {
-        Tab tabbie = findTabbie(child);
-        if (tabbie != null) {
-            tabbie.select();
-            onSelectTab(tabs.indexOf(tabbie));
+        Tab tab = findTab(child);
+        if (tab != null) {
+            tab.select();
+            onSelectTab(tabs.indexOf(tab));
         }
         super.focus(child);
     }
@@ -235,10 +235,10 @@ public class TabsPlugin extends RenderPlugin {
         return !this.tabs.isEmpty();
     }
 
-    void onSelect(Tab tabbie, AjaxRequestTarget target) {
-        tabbie.renderer.focus(null);
-        onSelectTab(tabs.indexOf(tabbie));
-        fireTabSelectionEvent(tabbie, target);
+    void onSelect(Tab tab, AjaxRequestTarget target) {
+        tab.renderer.focus(null);
+        onSelectTab(tabs.indexOf(tab));
+        fireTabSelectionEvent(tab, target);
     }
 
     private void fireTabSelectionEvent(final Tab tab, final AjaxRequestTarget target) {
@@ -277,7 +277,7 @@ public class TabsPlugin extends RenderPlugin {
 
     /**
      * Template method for subclasses.  Called when a tab is selected, either
-     * explicitly (user clicks tab) or implicitly (tabbie requests focus).
+     * explicitly (user clicks tab) or implicitly (tab requests focus).
      *
      * @param index Index of the tab
      */
@@ -386,7 +386,7 @@ public class TabsPlugin extends RenderPlugin {
 
     }
 
-    private Tab findTabbie(IRenderService service) {
+    private Tab findTab(IRenderService service) {
         for (Tab tab : tabs) {
             if (tab.renderer == service) {
                 return tab;
