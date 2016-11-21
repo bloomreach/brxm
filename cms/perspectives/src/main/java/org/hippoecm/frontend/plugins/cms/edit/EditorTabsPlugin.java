@@ -17,6 +17,9 @@ package org.hippoecm.frontend.plugins.cms.edit;
 
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -27,18 +30,21 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
+import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EditorTabsPlugin extends TabsPlugin {
 
+    private static final Logger log = LoggerFactory.getLogger(EditorTabsPlugin.class);
+    
     public EditorTabsPlugin(final IPluginContext context, final IPluginConfig properties) {
         super(context, properties);
     }
 
     @Override
     protected TabbedPanel newTabbedPanel(String id, List<TabsPlugin.Tab> tabs, MarkupContainer tabsContainer) {
-        final IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
-                                                                           IDialogService.class);
-        return new TabbedPanel(id, EditorTabsPlugin.this, tabs, tabsContainer, dialogService) {
+        return new TabbedPanel(id, EditorTabsPlugin.this, tabs, tabsContainer) {
 
             @Override
             protected Form getPanelContainerForm() {
@@ -55,9 +61,56 @@ public class EditorTabsPlugin extends TabsPlugin {
         };
     }
 
+    @Override
+    protected void onTabActivated(final Tab tab) {
+        super.onTabActivated(tab);
+        loadExternalChanges();
+        tab.redraw();
+    }
+
+    private void loadExternalChanges() {
+        try {
+            UserSession.get().getJcrSession().refresh(true);
+        } catch (RepositoryException e) {
+            log.warn("Failed to refresh JCR session upon selecting tab", e);
+        }
+    }
+
+    @Override
+    protected void onTabDeactivated(final Tab tab) {
+        super.onTabDeactivated(tab);
+        savePendingChanges(tab);
+    }
+
+    private void savePendingChanges(final Tab tab) {
+        final Session session = UserSession.get().getJcrSession();
+        try {
+            session.save();
+        } catch (RepositoryException e) {
+            log.warn("Failed to save JCR session upon leaving tab, discarding changes");
+            showErrorAlert(tab);
+            discardChanges(session, e);
+        }
+    }
+
+    private void showErrorAlert(final Tab tab) {
+        final IDialogService dialogService = getDialogService();
+        if (dialogService != null) {
+            dialogService.show(new OnSaveErrorAlert(tab));
+        }
+    }
+
+    private void discardChanges(final Session session, final RepositoryException cause) {
+        try {
+            session.refresh(false);
+        } catch (RepositoryException e) {
+            log.warn("Also failed to discard changes with message '{}'. Initial exception was:", e.getMessage(), cause);
+        }
+    }
+
     private static class PreventDefaultFormSubmitBehavior extends AjaxEventBehavior {
 
-        public PreventDefaultFormSubmitBehavior() {
+        PreventDefaultFormSubmitBehavior() {
             super("onsubmit");
         }
 

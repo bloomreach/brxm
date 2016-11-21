@@ -37,6 +37,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IClusterable;
@@ -138,30 +139,43 @@ public class TabsPlugin extends RenderPlugin {
                 // add the plugin
                 service.bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
                 if (service != emptyPanel) {
-                    Tab tabbie = new Tab(service);
+                    final int selectedTabIndex = tabbedPanel.getSelectedTab();
+                    if (selectedTabIndex >= 0) {
+                        final Tab selectedTab = tabs.get(selectedTabIndex);
+                        onTabDeactivated(selectedTab);
+                    }
+
+                    final Tab tab = new Tab(service);
                     if (openleft) {
-                        tabs.add(0, tabbie);
+                        tabs.add(0, tab);
                         tabbedPanel.setSelectedTab(0);
                         tabbedPanel.addFirst();
                     } else {
-                        tabs.add(tabbie);
-                        tabbedPanel.setSelectedTab(tabs.size() - 1);
+                        tabs.add(tab);
+                        if (tabs.size() == 1) {
+                            tabbedPanel.setSelectedTab(0);
+                        }
                         tabbedPanel.addLast();
                     }
+
+                    onTabActivated(tab);
                 }
             }
 
             @Override
             public void onRemoveService(IRenderService service, String name) {
-                Tab tabbie = findTabbie(service);
-                if (tabbie != null) {
-                    tabs.remove(tabbie);
-                    tabbie.destroy();
+                Tab tab = findTabbie(service);
+                if (tab != null) {
+                    onTabDeactivated(tab);
+
+                    tabs.remove(tab);
+                    tab.destroy();
+
                     if (tabs.isEmpty()) {
                         tabbedPanel.setSelectedTab(-1);
                     }
                     service.unbind();
-                    tabbedPanel.removed(tabbie);
+                    tabbedPanel.removed(tab);
                 }
             }
         };
@@ -170,9 +184,7 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     protected TabbedPanel newTabbedPanel(String id, List<Tab> tabs, MarkupContainer tabsContainer) {
-        final IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
-                                                                           IDialogService.class);
-        return new TabbedPanel(id, TabsPlugin.this, tabs, tabsContainer, dialogService);
+        return new TabbedPanel(id, TabsPlugin.this, tabs, tabsContainer);
     }
 
     @Override
@@ -384,8 +396,12 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     public void hide() {
-        if (tabbedPanel.getSelectedTab() > -1) {
-            previousSelectedTabIndex = tabbedPanel.getSelectedTab();
+        final int selectedTabIndex = tabbedPanel.getSelectedTab();
+        if (selectedTabIndex > -1) {
+            final Tab selectedTab = tabs.get(selectedTabIndex);
+            onTabDeactivated(selectedTab);
+
+            previousSelectedTabIndex = selectedTabIndex;
             tabbedPanel.setSelectedTab(-1);
             tabbedPanel.redraw();
         }
@@ -394,6 +410,10 @@ public class TabsPlugin extends RenderPlugin {
     public void show() {
         if (previousSelectedTabIndex > -1) {
             tabbedPanel.setSelectedTab(previousSelectedTabIndex);
+
+            final Tab previousSelectedTab = tabs.get(previousSelectedTabIndex);
+            onTabActivated(previousSelectedTab);
+
             tabbedPanel.redraw();
             previousSelectedTabIndex = -1;
         }
@@ -401,6 +421,14 @@ public class TabsPlugin extends RenderPlugin {
 
     protected final TabbedPanel getTabbedPanel() {
         return tabbedPanel;
+    }
+
+    protected void onTabActivated(final Tab tab) {
+        // hook method for sub-classes to execute logic when a tab is activated
+    }
+
+    protected void onTabDeactivated(final Tab tab) {
+        // hook method for sub-classes to execute logic when a tab is deactivated
     }
 
     protected class Tab implements ITab, IObserver<IObservable> {
@@ -443,6 +471,14 @@ public class TabsPlugin extends RenderPlugin {
             context.registerTracker(decoratorTracker, serviceId);
         }
 
+        public void redraw() {
+            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            if (target != null) {
+                final Panel panel = getPanel(TabbedPanel.TAB_PANEL_ID);
+                target.add(panel);
+            }
+        }
+
         void destroy() {
             IPluginContext context = getPluginContext();
             String serviceId = context.getReference(renderer).getServiceId();
@@ -459,6 +495,7 @@ public class TabsPlugin extends RenderPlugin {
                     }
                 }
                 getTabbedPanel().setSelectedTab(tabs.indexOf(lastTab));
+                onTabActivated(lastTab);
                 lastTab.lastSelected = ++TabsPlugin.this.selectCount;
                 lastTab.renderer.focus(null);
                 getTabbedPanel().redraw();
@@ -555,10 +592,21 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         void select() {
-            if (tabs.indexOf(this) != getTabbedPanel().getSelectedTab()) {
-                getTabbedPanel().setSelectedTab(tabs.indexOf(this));
+            final TabbedPanel panel = getTabbedPanel();
+            final int selectedTabIndex = panel.getSelectedTab();
+            final int myIndex = tabs.indexOf(this);
+
+            if (myIndex != selectedTabIndex) {
+                if (selectedTabIndex >= 0) {
+                    final Tab selectedTab = tabs.get(selectedTabIndex);
+                    onTabDeactivated(selectedTab);
+                }
+
+                panel.setSelectedTab(myIndex);
+                onTabActivated(this);
+
                 lastSelected = ++TabsPlugin.this.selectCount;
-                getTabbedPanel().redraw();
+                panel.redraw();
             }
         }
 
