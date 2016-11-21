@@ -69,6 +69,11 @@ class DocumentsServiceImpl implements DocumentsService {
             throw new ForbiddenException(document);
         }
 
+        if (docType.isReadOnlyDueToUnknownValidator()) {
+            editingInfo.setState(EditingInfo.State.UNAVAILABLE_CUSTOM_VALIDATION_PRESENT);
+            throw new ForbiddenException(document);
+        }
+
         final Node draft = EditingUtils.createDraft(workflow, handle).orElseThrow(() -> {
             // Apparently, holdership of a document has only just been acquired by another user. Check hints once more?
             editingInfo.setState(EditingInfo.State.UNAVAILABLE);
@@ -83,15 +88,16 @@ class DocumentsServiceImpl implements DocumentsService {
     public void updateDraft(final String uuid, final Document document, final Session session, final Locale locale)
             throws ErrorWithPayloadException {
         final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(NotFoundException::new);
+        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
+                .orElseThrow(NotFoundException::new);
         final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
                 .orElseThrow(NotFoundException::new);
-        final DocumentType docType = getDocumentType(handle, locale);
 
         if (!EditingUtils.canUpdateDocument(workflow)) {
             throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.NOT_HOLDER));
         }
-        final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
-                .orElseThrow(NotFoundException::new);
+
+        final DocumentType docType = getDocumentType(handle, locale);
 
         // Push fields onto draft node
         FieldTypeUtils.writeFieldValues(document.getFields(), docType.getFields(), draft);
