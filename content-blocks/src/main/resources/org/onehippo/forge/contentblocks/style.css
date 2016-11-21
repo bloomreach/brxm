@@ -96,10 +96,8 @@
 
 .content-block-title {
   font-weight: bold;
-  font-size: small;
-  padding-top: 5px;
-  padding-left: 8px;
-  padding-bottom: 2px;
+  font-size: 14px;
+  padding-bottom: 4px;
 }
 
 /* Dialog style */
