@@ -28,7 +28,8 @@
 
 .top-level {
   &> .field-wrapper {
-    &> .field-compound {
+    &> .field-compound,
+    &> .field-choice {
       border-left: 3px solid $grey-500;
     }
     &> .field {
@@ -37,7 +38,8 @@
   }
 }
 
-.field-compound {
+.field-compound,
+.field-choice {
   padding-left: 8px !important;
   h5 {
     margin-left: -8px;

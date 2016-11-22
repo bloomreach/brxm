@@ -35,6 +35,24 @@
     </channel-fields>
   </div>
 
+  <div class="field field-choice qa-choice";
+       ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldType.id, $index)}"
+       ng-switch-when="CHOICE"
+       ng-if="$ctrl.hasValue(fieldType)"
+       ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]">
+    <h5>
+      <md-icon class="material-icons">keyboard_arrow_down</md-icon>
+
+      {{ ::$ctrl.getDisplayNameForCompound(fieldType, $index) }}
+    </h5>
+
+    <channel-fields field-types="::fieldType.choices[fieldValue.chosenId].fields";
+                    field-values="fieldValue.chosenValue.fields";
+                    on-field-focus="$ctrl.focusCompound(fieldType.id, $index)"
+                    on-field-blur="$ctrl.blurCompound()">
+    </channel-fields>
+  </div>
+
   <!-- other cases -->
   <div class="field"
        ng-switch-default>
