@@ -559,6 +559,13 @@ public class TabsPlugin extends RenderPlugin {
             return (Panel) renderer;
         }
 
+        public void discard() throws EditorException {
+            final IEditor editor = getEditor();
+            if (editor != null) {
+                editor.discard();
+            }
+        }
+
         // package internals
 
         IEditor getEditor() {

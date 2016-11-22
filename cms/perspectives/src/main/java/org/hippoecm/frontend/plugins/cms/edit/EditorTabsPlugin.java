@@ -25,11 +25,11 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
-import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
+import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,24 +72,18 @@ public class EditorTabsPlugin extends TabsPlugin {
         try {
             session.save();
         } catch (RepositoryException e) {
-            log.warn("Failed to save JCR session upon leaving tab, discarding changes");
-            showErrorAlert(tab);
-            discardChanges(session, e);
+            final String user = session.getUserID();
+            final String tabName = tab.getTitle().getObject();
+            log.warn("User '{}' failed to save session when leaving editor tab '{}', discarding changes. Cause:", user, tabName, e);
+            discardChanges(tab);
         }
     }
 
-    private void showErrorAlert(final Tab tab) {
-        final IDialogService dialogService = getDialogService();
-        if (dialogService != null) {
-            dialogService.show(new OnSaveErrorAlert(tab));
-        }
-    }
-
-    private void discardChanges(final Session session, final RepositoryException cause) {
+    private void discardChanges(final Tab tab) {
         try {
-            session.refresh(false);
-        } catch (RepositoryException e) {
-            log.warn("Also failed to discard changes with message '{}'. Initial exception was:", e.getMessage(), cause);
+            tab.discard();
+        } catch (EditorException e) {
+            log.warn("Also failed to discard changes", e);
         }
     }
 
