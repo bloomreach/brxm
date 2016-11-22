@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+import collapse from './collapse.directive';
 import template from './fields.html';
 
-export class ChannelFieldsCtrl {
+class ChannelFieldsCtrl {
 
   $onInit() {
     this.onFieldFocus = this.onFieldFocus || angular.noop;
@@ -65,6 +66,7 @@ const channelFieldsComponentModule = angular
     },
     controller: ChannelFieldsCtrl,
     template,
-  });
+  })
+  .directive('collapse', collapse);
 
 export default channelFieldsComponentModule;

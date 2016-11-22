@@ -17,19 +17,13 @@
 package org.onehippo.cms.channelmanager.content.documenttype;
 
 import java.util.Locale;
-import java.util.Optional;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.util.DocumentUtils;
-import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.util.LocalizationUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
-import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,19 +37,6 @@ class DocumentTypesServiceImpl implements DocumentTypesService {
     }
 
     private DocumentTypesServiceImpl() { }
-
-    @Override
-    public DocumentType getDocumentType(final Node handle, final Locale locale)
-            throws ErrorWithPayloadException {
-        try {
-            final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(NotFoundException::new);
-
-            return getDocumentType(id, handle.getSession(), locale);
-        } catch (RepositoryException e) {
-            log.warn("Failed to retrieve document type from node '{}'", JcrUtils.getNodePathQuietly(handle), e);
-            throw new InternalServerErrorException();
-        }
-    }
 
     @Override
     public DocumentType getDocumentType(final String id, final Session userSession, final Locale locale)

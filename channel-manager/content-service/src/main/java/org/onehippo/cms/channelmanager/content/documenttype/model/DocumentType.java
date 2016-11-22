@@ -27,11 +27,11 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType
  * This bean represents a document type, known to the CMS.
  * It can be serialized into JSON to expose it through a REST API.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DocumentType {
     private String id; // "namespace:typename"
     private String displayName;
-    private Boolean readOnlyDueToUnknownValidator;
+    private boolean readOnlyDueToUnknownValidator;
     private final List<FieldType> fields; // ordered list of fields
 
     public DocumentType() {
@@ -54,7 +54,7 @@ public class DocumentType {
         this.displayName = displayName;
     }
 
-    public Boolean isReadOnlyDueToUnknownValidator() {
+    public boolean isReadOnlyDueToUnknownValidator() {
         return readOnlyDueToUnknownValidator;
     }
 
