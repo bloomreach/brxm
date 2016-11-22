@@ -37,7 +37,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IClusterable;
@@ -469,14 +468,6 @@ public class TabsPlugin extends RenderPlugin {
                 }
             };
             context.registerTracker(decoratorTracker, serviceId);
-        }
-
-        public void redraw() {
-            final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            if (target != null) {
-                final Panel panel = getPanel(TabbedPanel.TAB_PANEL_ID);
-                target.add(panel);
-            }
         }
 
         void destroy() {

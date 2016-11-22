@@ -62,21 +62,6 @@ public class EditorTabsPlugin extends TabsPlugin {
     }
 
     @Override
-    protected void onTabActivated(final Tab tab) {
-        super.onTabActivated(tab);
-        loadExternalChanges();
-        tab.redraw();
-    }
-
-    private void loadExternalChanges() {
-        try {
-            UserSession.get().getJcrSession().refresh(true);
-        } catch (RepositoryException e) {
-            log.warn("Failed to refresh JCR session upon selecting tab", e);
-        }
-    }
-
-    @Override
     protected void onTabDeactivated(final Tab tab) {
         super.onTabDeactivated(tab);
         savePendingChanges(tab);
