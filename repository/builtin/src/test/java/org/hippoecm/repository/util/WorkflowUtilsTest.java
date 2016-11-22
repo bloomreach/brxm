@@ -37,6 +37,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class WorkflowUtilsTest {
@@ -129,6 +130,22 @@ public class WorkflowUtilsTest {
         assertThat(WorkflowUtils.getWorkflow(node, "category", EditableWorkflow.class).get(), equalTo(workflow));
         assertThat(WorkflowUtils.getWorkflow(node, "category", Workflow.class).get(), equalTo(workflow));
         assertThat(WorkflowUtils.getWorkflow(node, "category", DocumentWorkflow.class).isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void getWorkflowNotFound() throws Exception {
+        final Node node = createMock(Node.class);
+        final Session session = createMock(Session.class);
+        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
+        final WorkflowManager wfm = createMock(WorkflowManager.class);
+
+        expect(node.getSession()).andReturn(session).anyTimes();
+        expect(session.getWorkspace()).andReturn(workspace).anyTimes();
+        expect(workspace.getWorkflowManager()).andReturn(wfm).anyTimes();
+        expect(wfm.getWorkflow("category", node)).andReturn(null);
+        replay(node, session, workspace, wfm);
+
+        assertFalse(WorkflowUtils.getWorkflow(node, "category", EditableWorkflow.class).isPresent());
     }
 
     @Test(expected = NoSuchElementException.class)
