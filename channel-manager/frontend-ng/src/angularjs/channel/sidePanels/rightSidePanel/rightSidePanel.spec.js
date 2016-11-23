@@ -279,7 +279,7 @@ describe('ChannelRightSidePanel', () => {
     };
     spyOn($translate, 'instant');
     ContentService.createDraft.and.returnValue($q.resolve(response));
-    ContentService.getDocumentType.and.returnValue($q.reject());
+    ContentService.getDocumentType.and.returnValue($q.reject({}));
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');

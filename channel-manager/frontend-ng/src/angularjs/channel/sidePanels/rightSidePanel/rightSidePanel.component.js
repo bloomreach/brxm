@@ -16,6 +16,33 @@
 
 import template from './rightSidePanel.html';
 
+const ERROR_MAP = {
+  UNAVAILABLE: {
+    title: 'UNAVAILABLE_CONTENT_TITLE',
+    linkToFullEditor: true,
+    messageKey: 'UNAVAILABLE',
+  },
+  UNAVAILABLE_CONTENT: {
+    title: 'UNAVAILABLE_CONTENT_HERE_TITLE',
+    linkToFullEditor: true,
+    messageKey: 'UNAVAILABLE_CONTENT',
+  },
+  UNAVAILABLE_CUSTOM_VALIDATION_PRESENT: {
+    title: 'UNAVAILABLE_DOCUMENT_HERE_TITLE',
+    linkToFullEditor: true,
+    messageKey: 'UNAVAILABLE_CUSTOM_VALIDATION_PRESENT',
+  },
+  UNAVAILABLE_HELD_BY_OTHER_USER: {
+    title: 'UNAVAILABLE_DOCUMENT_TITLE',
+    messageKey: 'UNAVAILABLE_HELD_BY_OTHER_USER',
+    hasUser: true,
+  },
+  UNAVAILABLE_REQUEST_PENDING: {
+    title: 'UNAVAILABLE_DOCUMENT_TITLE',
+    messageKey: 'UNAVAILABLE_REQUEST_PENDING',
+  },
+};
+
 export class ChannelRightSidePanelCtrl {
   constructor($scope, $element, $timeout, $translate, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService) {
     'ngInject';
@@ -30,32 +57,6 @@ export class ChannelRightSidePanelCtrl {
     this.ContentService = ContentService;
     this.HippoIframeService = HippoIframeService;
 
-    this.errorMap = {
-      UNAVAILABLE: {
-        title: 'UNAVAILABLE_CONTENT_TITLE',
-        linkToFullEditor: true,
-        messageKey: 'UNAVAILABLE',
-      },
-      UNAVAILABLE_CONTENT: {
-        title: 'UNAVAILABLE_CONTENT_HERE_TITLE',
-        linkToFullEditor: true,
-        messageKey: 'UNAVAILABLE_CONTENT',
-      },
-      UNAVAILABLE_CUSTOM_VALIDATION_PRESENT: {
-        title: 'UNAVAILABLE_DOCUMENT_HERE_TITLE',
-        linkToFullEditor: true,
-        messageKey: 'UNAVAILABLE_CUSTOM_VALIDATION_PRESENT',
-      },
-      UNAVAILABLE_HELD_BY_OTHER_USER: {
-        title: 'UNAVAILABLE_DOCUMENT_TITLE',
-        messageKey: 'UNAVAILABLE_HELD_BY_OTHER_USER',
-        hasUser: true,
-      },
-      UNAVAILABLE_REQUEST_PENDING: {
-        title: 'UNAVAILABLE_DOCUMENT_TITLE',
-        messageKey: 'UNAVAILABLE_REQUEST_PENDING',
-      },
-    };
     this.defaultTitle = $translate.instant('EDIT_CONTENT');
 
     ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), (documentId) => {
@@ -89,15 +90,13 @@ export class ChannelRightSidePanelCtrl {
   _loadDocument(id) {
     this.documentId = id;
     this.ContentService.createDraft(id)
-      .then((doc) => {
-        this.ContentService.getDocumentType(doc.info.type.id)
+      .then(doc => this.ContentService.getDocumentType(doc.info.type.id)
           .then((docType) => {
             this.docType = docType;
             this._onLoaded(doc);
             this.editing = true;
           })
-          .catch(() => this._onLoaded());
-      })
+      )
       .catch(response => this._onLoaded(response.data));
   }
 
@@ -118,7 +117,7 @@ export class ChannelRightSidePanelCtrl {
   }
 
   _updateFeedback() {
-    const error = this.errorMap[this.state];
+    const error = ERROR_MAP[this.state];
     const params = {};
 
     if (error) {
