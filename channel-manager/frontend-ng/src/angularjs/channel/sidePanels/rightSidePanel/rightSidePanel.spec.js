@@ -19,6 +19,7 @@ describe('ChannelRightSidePanel', () => {
   let $q;
   let $rootScope;
   let $timeout;
+  let $translate;
   let ChannelSidePanelService;
   let CmsService;
   let ContentService;
@@ -69,11 +70,12 @@ describe('ChannelRightSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_) => {
+    inject((_$componentController_, _$q_, _$rootScope_, _$timeout_, _$translate_) => {
       $componentController = _$componentController_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $timeout = _$timeout_;
+      $translate = _$translate_;
     });
 
     ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'isOpen', 'close']);
@@ -120,7 +122,8 @@ describe('ChannelRightSidePanel', () => {
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
 
-    $ctrl.doc = testDocument;
+    $ctrl.documentId = 'test';
+    $ctrl.editing = true;
     $ctrl.close();
     expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
@@ -148,6 +151,147 @@ describe('ChannelRightSidePanel', () => {
 
     $timeout.flush();
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
+  });
+
+  it('fails to open a document owned by another user', () => {
+    const response = {
+      info: {
+        editing: {
+          state: 'UNAVAILABLE_HELD_BY_OTHER_USER',
+          holder: {
+            displayName: 'John Tester',
+          },
+        },
+      },
+      displayName: 'Document Display Name',
+    };
+    spyOn($translate, 'instant');
+    ContentService.createDraft.and.returnValue($q.reject({ data: response }));
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    $rootScope.$digest();
+
+    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
+    expect($ctrl.doc).toBe(response);
+    expect($ctrl.state).toBe('UNAVAILABLE_HELD_BY_OTHER_USER');
+    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_HELD_BY_OTHER_USER', { user: 'John Tester' });
+    expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', response);
+  });
+
+  it('falls back to the user\'s id if there is no display name', () => {
+    const response = {
+      info: {
+        editing: {
+          state: 'UNAVAILABLE_HELD_BY_OTHER_USER',
+          holder: {
+            id: 'tester',
+          },
+        },
+      },
+    };
+    spyOn($translate, 'instant');
+    ContentService.createDraft.and.returnValue($q.reject({ data: response }));
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    $rootScope.$digest();
+
+    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
+    expect($ctrl.doc).toBe(response);
+    expect($ctrl.state).toBe('UNAVAILABLE_HELD_BY_OTHER_USER');
+    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_HELD_BY_OTHER_USER', { user: 'tester' });
+    expect($translate.instant).not.toHaveBeenCalledWith('EDIT_DOCUMENT', response);
+  });
+
+  it('fails to open a document with a publication request', () => {
+    const response = {
+      info: {
+        editing: {
+          state: 'UNAVAILABLE_REQUEST_PENDING',
+        },
+      },
+      displayName: 'Document Display Name',
+    };
+    spyOn($translate, 'instant');
+    ContentService.createDraft.and.returnValue($q.reject({ data: response }));
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    $rootScope.$digest();
+
+    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
+    expect($ctrl.doc).toBe(response);
+    expect($ctrl.state).toBe('UNAVAILABLE_REQUEST_PENDING');
+    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_REQUEST_PENDING', { });
+  });
+
+  it('fails to open a document with random data in the response', () => {
+    const response = { bla: 'test' };
+    spyOn($translate, 'instant');
+    ContentService.createDraft.and.returnValue($q.reject({ data: response }));
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    $rootScope.$digest();
+
+    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
+    expect($ctrl.doc).toBe(response);
+    expect($ctrl.state).toBe('UNAVAILABLE_CONTENT');
+    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_CONTENT', { });
+  });
+
+  it('fails to open a document with no data in the response', () => {
+    spyOn($translate, 'instant');
+    ContentService.createDraft.and.returnValue($q.reject({}));
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    $rootScope.$digest();
+
+    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
+    expect($ctrl.doc).toBeUndefined();
+    expect($ctrl.state).toBe('UNAVAILABLE_CONTENT');
+    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_CONTENT', { });
+  });
+
+  it('fails to open a document with no type', () => {
+    const response = {
+      info: {
+        editing: {
+          state: 'AVAILABLE',
+        },
+        type: {
+          id: 'document:type',
+        },
+      },
+      displayName: 'Document Display Name',
+    };
+    spyOn($translate, 'instant');
+    ContentService.createDraft.and.returnValue($q.resolve(response));
+    ContentService.getDocumentType.and.returnValue($q.reject());
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    $rootScope.$digest();
+
+    expect(ContentService.getDocumentType).toHaveBeenCalledWith('document:type');
+    expect($ctrl.doc).toBeUndefined();
+    expect($ctrl.docType).toBeUndefined();
+    expect($ctrl.state).toBe('UNAVAILABLE_CONTENT');
+    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_CONTENT', { });
   });
 
   it('saves a document', () => {
@@ -180,6 +324,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('views the full content by saving changes, closing the panel and publishing a view-content event', () => {
+    $ctrl.documentId = 'test';
     $ctrl.doc = testDocument;
     ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
     ChannelSidePanelService.close.and.returnValue($q.resolve());
@@ -190,7 +335,7 @@ describe('ChannelRightSidePanel', () => {
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    expect(CmsService.publish).toHaveBeenCalledWith('view-content', testDocument.id);
+    expect(CmsService.publish).toHaveBeenCalledWith('view-content', 'test');
   });
 
   it('does not view the full content if saving changes failed', () => {
@@ -206,9 +351,9 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('edits the full content by publishing an edit-content event', () => {
-    $ctrl.doc = testDocument;
+    $ctrl.documentId = 'test';
     $ctrl.editFullContent();
-    expect(CmsService.publish).toHaveBeenCalledWith('edit-content', testDocument.id);
+    expect(CmsService.publish).toHaveBeenCalledWith('edit-content', 'test');
   });
 });
 
