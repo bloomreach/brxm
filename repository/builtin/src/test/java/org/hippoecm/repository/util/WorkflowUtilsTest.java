@@ -122,6 +122,7 @@ public class WorkflowUtilsTest {
         final Workflow workflow = createMock(EditableWorkflow.class);
 
         expect(node.getSession()).andReturn(session).anyTimes();
+        expect(node.getPath()).andReturn("/bla");
         expect(session.getWorkspace()).andReturn(workspace).anyTimes();
         expect(workspace.getWorkflowManager()).andReturn(wfm).anyTimes();
         expect(wfm.getWorkflow("category", node)).andReturn(workflow).anyTimes();
@@ -140,6 +141,7 @@ public class WorkflowUtilsTest {
         final WorkflowManager wfm = createMock(WorkflowManager.class);
 
         expect(node.getSession()).andReturn(session).anyTimes();
+        expect(node.getPath()).andReturn("/bla");
         expect(session.getWorkspace()).andReturn(workspace).anyTimes();
         expect(workspace.getWorkflowManager()).andReturn(wfm).anyTimes();
         expect(wfm.getWorkflow("category", node)).andReturn(null);
