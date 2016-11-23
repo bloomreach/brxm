@@ -201,7 +201,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('shows a toast when document save fails and there is no data returned', () => {
-    ContentService.saveDraft.and.returnValue($q.reject());
+    ContentService.saveDraft.and.returnValue($q.reject({}));
 
     $ctrl.doc = testDocument;
     $ctrl.form.$pristine = false;
