@@ -17,15 +17,20 @@
 import template from './rightSidePanel.html';
 
 const ERROR_MAP = {
-  UNAVAILABLE: {
+  UNAVAILABLE: { // default catch-all
     title: 'UNAVAILABLE_CONTENT_TITLE',
     linkToFullEditor: true,
     messageKey: 'UNAVAILABLE',
   },
-  UNAVAILABLE_CONTENT: {
+  NOT_A_DOCUMENT: {
     title: 'UNAVAILABLE_CONTENT_HERE_TITLE',
     linkToFullEditor: true,
     messageKey: 'UNAVAILABLE_CONTENT',
+  },
+  NOT_FOUND: {
+    title: 'UNAVAILABLE_NOT_FOUND_TITLE',
+    messageKey: 'UNAVAILABLE_NOT_FOUND',
+    hideContentButtons: true,
   },
   UNAVAILABLE_CUSTOM_VALIDATION_PRESENT: {
     title: 'UNAVAILABLE_DOCUMENT_HERE_TITLE',
@@ -73,12 +78,11 @@ export class ChannelRightSidePanelCtrl {
 
   _resetState() {
     delete this.doc;
-    delete this.loaded;
     delete this.editing;
     delete this.feedback;
+    delete this.hideContentButtons;
 
     this.title = this.defaultTitle;
-    this.state = 'UNAVAILABLE_CONTENT';
 
     this._resetForm();
   }
@@ -94,35 +98,41 @@ export class ChannelRightSidePanelCtrl {
     this.ContentService.createDraft(id)
       .then(doc => this.ContentService.getDocumentType(doc.info.type.id)
           .then((docType) => {
-            this.docType = docType;
-            this._onLoaded(doc);
             this.editing = true;
+            this.docType = docType;
+            this._onLoadResponse({ data: doc });
           })
       )
-      .catch(response => this._onLoaded(response.data));
+      .catch(response => this._onLoadResponse(response));
   }
 
-  _onLoaded(doc) {
-    if (doc) {
-      this.doc = doc;
-      if (doc.displayName) {
-        this.title = this.$translate.instant('EDIT_DOCUMENT', doc);
-      }
-      if (doc.info && doc.info.editing) {
-        this.state = doc.info.editing.state;
+  _onLoadResponse(response) {
+    let errorKey;
+    if (this._isDocument(response.data)) {
+      this.doc = response.data;
+      if (this.doc.displayName) {
+        this.title = this.$translate.instant('EDIT_DOCUMENT', this.doc);
       }
       this._resizeTextareas();
+
+      errorKey = this.doc.info.editing.state;
+    } else if (this._isErrorInfo(response.data)) {
+      errorKey = response.data.reason;
+    } else if (response.status === 404) {
+      errorKey = 'NOT_FOUND';
+    } else {
+      errorKey = 'UNAVAILABLE';
     }
 
-    this._updateFeedback();
-    this.loaded = true;
+    this._handleResponse(errorKey);
   }
 
-  _updateFeedback() {
-    const error = ERROR_MAP[this.state];
-    const params = {};
+  _handleResponse(errorKey) {
+    const error = ERROR_MAP[errorKey];
+    const error = ERROR_MAP[errorKey];
 
     if (error) {
+      const params = {};
       if (error.hasUser) {
         params.user = this._getHolder();
       }
@@ -132,6 +142,7 @@ export class ChannelRightSidePanelCtrl {
         message: this.$translate.instant(error.messageKey, params),
         linkToFullEditor: error.linkToFullEditor,
       };
+      this.hideContentButtons = error.hideContentButtons;
     }
   }
 
@@ -166,7 +177,7 @@ export class ChannelRightSidePanelCtrl {
         }
 
         let defaultKey = 'ERROR_UNABLE_TO_SAVE';
-        if (response.data && response.data.reason) {
+        if (this._isErrorInfo(response.data)) {
           defaultKey = `ERROR_${response.data.reason}`;
         }
         this.FeedbackService.showErrorResponse(undefined, defaultKey, undefined, this.$element);
@@ -175,6 +186,10 @@ export class ChannelRightSidePanelCtrl {
 
   _isDocument(object) {
     return object && object.id; // Document has an ID field, ErrorInfo doesn't.
+  }
+
+  _isErrorInfo(object) {
+    return object && object.reason; // ErrorInfo has a reason field, Document doesn't.
   }
 
   viewFullContent() {

@@ -154,6 +154,8 @@
   "UNAVAILABLE_DOCUMENT_TITLE": "Document not editable",
   "UNAVAILABLE_DOCUMENT_HERE_TITLE": "Can't edit this document here",
   "UNAVAILABLE_HELD_BY_OTHER_USER": "The document is locked by {{user}}.",
+  "UNAVAILABLE_NOT_FOUND_TITLE": "Content not found",
+  "UNAVAILABLE_NOT_FOUND": "The requested content has not been found. It may have been deleted since the page was rendered.",
   "UNAVAILABLE_REQUEST_PENDING": "The document is waiting to be published or unpublished.",
   "UNAVAILABLE_SWITCH_TO_THE_FULL_EDITOR": "Switch to the full editor",
   "VALIDATION_ILLEGAL_CHARACTERS": "One or more invalid characters ({{characters}}) have been entered",

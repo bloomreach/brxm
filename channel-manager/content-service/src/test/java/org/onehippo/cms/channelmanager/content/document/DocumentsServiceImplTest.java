@@ -16,6 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +46,7 @@ import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.onehippo.repository.mock.MockNode;
 import org.powermock.api.easymock.PowerMock;
@@ -102,12 +104,12 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void createDraftNoWorkflow() throws Exception {
+    public void createDraftNoNodeType() throws Exception {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.empty());
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.empty());
 
         PowerMock.replayAll();
 
@@ -122,12 +124,56 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
+    public void createDraftDeleted() throws Exception {
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("hippo:deleted"));
+
+        PowerMock.replayAll();
+
+        try {
+            documentsService.createDraft(uuid, session, locale);
+            fail("No Exception");
+        } catch (NotFoundException e) {
+            assertNull(e.getPayload());
+        }
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void createDraftNoWorkflow() throws Exception {
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
+        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.empty());
+
+        PowerMock.replayAll();
+
+        try {
+            documentsService.createDraft(uuid, session, locale);
+            fail("No Exception");
+        } catch (MethodNotAllowed e) {
+            assertTrue(e.getPayload() instanceof ErrorInfo);
+            ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NOT_A_DOCUMENT));
+        }
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
     public void createDraftNoDocumentNodeType() throws Exception {
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:nodetype"));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
 
@@ -152,7 +198,7 @@ public class DocumentsServiceImplTest {
         final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
-        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType)).anyTimes();
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(DocumentTypesService.get()).andReturn(documentTypesService);
         expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
@@ -182,7 +228,7 @@ public class DocumentsServiceImplTest {
         final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
-        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType)).anyTimes();
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(DocumentTypesService.get()).andReturn(documentTypesService);
         expect(JcrUtils.getNodePathQuietly(handle)).andReturn("/bla");
@@ -362,36 +408,40 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
-    public void updateDraftVariantNotFound() throws Exception {
+    public void updateDraftNoWorkflow() throws Exception {
         final Document document = new Document();
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
-        expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.empty());
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
+        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.empty());
 
         PowerMock.replayAll();
 
         try {
             documentsService.updateDraft(uuid, document, session, locale);
             fail("No Exception");
-        } catch (NotFoundException e) {
-            assertNull(e.getPayload());
+        } catch (MethodNotAllowed e) {
+            assertTrue(e.getPayload() instanceof ErrorInfo);
+            ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NOT_A_DOCUMENT));
         }
 
         PowerMock.verifyAll();
     }
 
     @Test
-    public void updateDraftNoWorkflow() throws Exception {
+    public void updateDraftVariantNotFound() throws Exception {
         final Document document = new Document();
         final String uuid = "uuid";
         final Node handle = createMock(Node.class);
-        final Node draft = createMock(Node.class);
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
-        expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
-        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.empty());
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
+        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.empty());
 
         PowerMock.replayAll();
 
@@ -414,6 +464,7 @@ public class DocumentsServiceImplTest {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canUpdateDocument(workflow)).andReturn(false);
@@ -441,6 +492,7 @@ public class DocumentsServiceImplTest {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.empty());
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
@@ -730,6 +782,7 @@ public class DocumentsServiceImplTest {
         final Node handle = createMock(Node.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.empty());
 
         PowerMock.replayAll();
@@ -737,8 +790,10 @@ public class DocumentsServiceImplTest {
         try {
             documentsService.deleteDraft(uuid, session, locale);
             fail("No Exception");
-        } catch (NotFoundException e) {
-            assertNull(e.getPayload());
+        } catch (MethodNotAllowed e) {
+            assertTrue(e.getPayload() instanceof ErrorInfo);
+            ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NOT_A_DOCUMENT));
         }
 
         PowerMock.verifyAll();
@@ -751,6 +806,7 @@ public class DocumentsServiceImplTest {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canDeleteDraft(workflow)).andReturn(false);
 
@@ -775,6 +831,7 @@ public class DocumentsServiceImplTest {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canDeleteDraft(workflow)).andReturn(true);
 
@@ -801,6 +858,7 @@ public class DocumentsServiceImplTest {
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canDeleteDraft(workflow)).andReturn(true);
 
@@ -853,7 +911,7 @@ public class DocumentsServiceImplTest {
         final DocumentType docType = createMock(DocumentType.class);
         final DocumentTypesService documentTypesService = createMock(DocumentTypesService.class);
 
-        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of(variantType)).anyTimes();
         expect(DocumentTypesService.get()).andReturn(documentTypesService);
         expect(documentTypesService.getDocumentType(variantType, session, locale)).andReturn(docType);
         expect(handle.getSession()).andReturn(session);
