@@ -17,10 +17,11 @@
 import template from './rightSidePanel.html';
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, $timeout, $translate, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService) {
+  constructor($scope, $element, $timeout, $translate, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     this.$scope = $scope;
+    this.$element = $element;
     this.$timeout = $timeout;
     this.$translate = $translate;
     this.$q = $q;
@@ -29,6 +30,7 @@ export class ChannelRightSidePanelCtrl {
     this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.HippoIframeService = HippoIframeService;
+    this.FeedbackService = FeedbackService;
 
     ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), (documentId) => {
       this.openDocument(documentId);
@@ -57,9 +59,9 @@ export class ChannelRightSidePanelCtrl {
             this._resizeTextareas();
           });
       })
-      .catch((error) => {
-        if (error) {
-          this.doc = error.data;
+      .catch((response) => {
+        if (response) {
+          this.doc = response.data;
           this.state = this.doc.info.editing.state;
         } else {
           this.state = 'UNAVAILABLE_CONTENT';
@@ -114,7 +116,23 @@ export class ChannelRightSidePanelCtrl {
         this.doc = savedDoc;
         this._resetForm();
         this.HippoIframeService.reload();
+      })
+      .catch((response) => {
+        if (this._isDocument(response.data)) {
+          // CHANNELMGR-898: handle validation error on a per-field basis
+          return;
+        }
+
+        let defaultKey = 'ERROR_UNABLE_TO_SAVE';
+        if (response.data && response.data.reason) {
+          defaultKey = `ERROR_${response.data.reason}`;
+        }
+        this.FeedbackService.showErrorResponse(undefined, defaultKey, undefined, this.$element);
       });
+  }
+
+  _isDocument(object) {
+    return object && object.id; // Document has an ID field, ErrorInfo doesn't.
   }
 
   viewFullContent() {

@@ -23,6 +23,7 @@ describe('ChannelRightSidePanel', () => {
   let CmsService;
   let ContentService;
   let HippoIframeService;
+  let FeedbackService;
 
   let $ctrl;
   let $scope;
@@ -78,6 +79,8 @@ describe('ChannelRightSidePanel', () => {
 
     ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'isOpen', 'close']);
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
+    FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse']);
+
     CmsService = jasmine.createSpyObj('CmsService', ['publish']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
@@ -91,6 +94,7 @@ describe('ChannelRightSidePanel', () => {
       CmsService,
       ContentService,
       HippoIframeService,
+      FeedbackService,
     }, {
       editMode: false,
     });
@@ -177,6 +181,37 @@ describe('ChannelRightSidePanel', () => {
     $rootScope.$apply();
 
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
+  });
+
+  it('shows a toast when document save fails', () => {
+    const response = {
+      reason: 'TEST',
+    };
+    ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
+
+    $ctrl.doc = testDocument;
+    $ctrl.form.$pristine = false;
+    $ctrl.saveDocument();
+
+    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+
+    $rootScope.$apply();
+
+    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_TEST', undefined, $ctrl.$element);
+  });
+
+  it('shows a toast when document save fails and there is no data returned', () => {
+    ContentService.saveDraft.and.returnValue($q.reject());
+
+    $ctrl.doc = testDocument;
+    $ctrl.form.$pristine = false;
+    $ctrl.saveDocument();
+
+    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+
+    $rootScope.$apply();
+
+    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_UNABLE_TO_SAVE', undefined, $ctrl.$element);
   });
 
   it('views the full content by saving changes, closing the panel and publishing a view-content event', () => {
