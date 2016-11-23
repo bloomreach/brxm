@@ -139,8 +139,14 @@ public class HstPageInfo extends PageInfo {
     }
 
     private long getTime(final Header expiresHeader) throws ParseException {
-        final SimpleDateFormat rfc1123DateFormat = getRFC1123DateFormat();
-        return rfc1123DateFormat.parse(String.valueOf(expiresHeader.getValue())).getTime();
+        try {
+            return Long.parseLong(String.valueOf(expiresHeader.getValue()));
+        } catch (NumberFormatException e) {
+            // could not parse expires header to long, test whether the format is in RFC1123 format which is the
+            // case when the date header is set via org.hippoecm.hst.core.component.HstResponseState.setDateHeader()
+            final SimpleDateFormat rfc1123DateFormat = getRFC1123DateFormat();
+            return rfc1123DateFormat.parse(String.valueOf(expiresHeader.getValue())).getTime();
+        }
     }
 
     static SimpleDateFormat getRFC1123DateFormat() {
