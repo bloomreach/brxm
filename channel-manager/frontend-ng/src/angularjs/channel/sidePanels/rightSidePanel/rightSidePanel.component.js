@@ -58,9 +58,9 @@ export class ChannelRightSidePanelCtrl {
             this._resizeTextareas();
           });
       })
-      .catch((error) => {
-        if (error) {
-          this.doc = error.data;
+      .catch((response) => {
+        if (response) {
+          this.doc = response.data;
           this.state = this.doc.info.editing.state;
         } else {
           this.state = 'UNAVAILABLE_CONTENT';
