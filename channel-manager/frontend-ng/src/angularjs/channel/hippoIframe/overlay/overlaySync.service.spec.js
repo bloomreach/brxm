@@ -46,7 +46,7 @@ describe('OverlaySyncService', () => {
   });
 
   function loadIframeFixture(callback) {
-    OverlaySyncService.init($base, $sheet, $scrollX, $iframe, $overlay);
+    OverlaySyncService.init($base, $sheet, $iframe, $overlay);
     $iframe.one('load', () => {
       const iframeWindow = $iframe[0].contentWindow;
       try {

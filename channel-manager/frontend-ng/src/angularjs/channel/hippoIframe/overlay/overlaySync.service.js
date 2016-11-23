@@ -38,10 +38,9 @@ class OverlaySyncService {
     this.viewPortWidth = 0;
   }
 
-  init($base, $sheet, $scrollX, $iframe, $overlay) {
+  init($base, $sheet, $iframe, $overlay) {
     this.$base = $base;
     this.$sheet = $sheet;
-    this.$scrollX = $scrollX;
     this.$iframe = $iframe;
     this.$overlay = $overlay;
 
@@ -108,75 +107,69 @@ class OverlaySyncService {
     this.viewPortWidth = viewPortWidth;
   }
 
-  getViewPortWidth() {
-    return this.viewPortWidth;
-  }
-
   _syncDimensions() {
-    if (this.$iframe && this.$overlay) {
-      const doc = this._getIframeDocument();
-
-      if (doc) {
-        const isHorizontalScrollBarVisible = this._syncWidth(doc);
-        const height = this._getIframeHeight(doc);
-        this._setHeight(height, isHorizontalScrollBarVisible);
-      }
+    if (!this.$iframe) {
+      return;
     }
+
+    const iframeDocument = this._getIframeDocument();
+    if (!iframeDocument) {
+      return;
+    }
+
+    this._constrainWidth();
+
+    let iframeWidth = this._getIframeWidth(iframeDocument);
+    const iframeHeight = this._getIframeHeight(iframeDocument);
+    const visibleHeight = this.$base.height();
+
+    if (iframeHeight > visibleHeight) {
+      iframeWidth -= this.DomService.getScrollBarWidth();
+    }
+
+    this._setWidth(iframeWidth);
+    this._setHeight(iframeHeight);
   }
 
-  /**
-   * Sync the width of the iframe and overlay. The width can be constrained by the viewPortWidth.
-   *
-   * @param iframeDocument The document object of the rendered channel in the iframe.
-   * @returns {boolean} true when the site in the iframe is wider than the viewport
-   * @private
-   */
-  _syncWidth(iframeDocument) {
-    // reset min-width on iframe
+  _constrainWidth() {
     this.$iframe.css('min-width', '0');
 
     if (this.viewPortWidth === 0) {
-      // Desktop mode
+      // desktop mode
       this.$iframe.css('min-width', '1280px');
       this.$sheet.css('max-width', 'none');
       this.$iframe.width('');
       this.$overlay.width('');
     } else {
-      // viewport is constrained
+      // tablet or phone mode
       const width = `${this.viewPortWidth}px`;
       this.$sheet.css('max-width', width);
       this.$iframe.width(width);
-
-      const iframeDocumentWidth = $(iframeDocument).width();
-      if (iframeDocumentWidth <= this.viewPortWidth) {
-        this.$overlay.width(width);
-      } else {
-        // site has min-width bigger than viewport, so it needs a horizontal scrollbar
-        this.$iframe.width(iframeDocumentWidth);
-        this.$iframe.css('min-width', `${iframeDocumentWidth}px`);
-        this.$overlay.width(iframeDocumentWidth);
-        return true;
-      }
     }
-    return false;
   }
 
-  _getIframeHeight(doc) {
-    const heightMarker = $('.hippo-channel-manager-page-height-marker', doc);
+  _getIframeWidth(iframeDocument) {
+    return $(iframeDocument).width();
+  }
+
+  _getIframeHeight(iframeDocument) {
+    const heightMarker = $('.hippo-channel-manager-page-height-marker', iframeDocument);
     if (heightMarker.length > 0) {
       return this.DomService.getBottom(heightMarker[0]);
     }
-    return this.DomService.getLowestElementBottom(doc);
+    return this.DomService.getLowestElementBottom(iframeDocument);
   }
 
-  _setHeight(height, isHorizontalScrollBarVisible) {
+  _setWidth(width) {
+    this.$iframe.width(width);
+    this.$iframe.css('min-width', `${width}px`);
+    this.$overlay.width(width);
+  }
+
+  _setHeight(height) {
     this.$sheet.height(height);
     this.$iframe.height(height);
     this.$overlay.height(height);
-
-    // setting the absolute height on scrollX ensures that the scroll-position will be maintained when scaling
-    const scrollHeight = height + (isHorizontalScrollBarVisible ? this.DomService.getScrollBarWidth() : 0);
-    this.$scrollX.height(scrollHeight);
   }
 
   _syncOverlayElements() {
