@@ -21,6 +21,7 @@ export class ChannelRightSidePanelCtrl {
     'ngInject';
 
     this.$scope = $scope;
+    this.$element = $element;
     this.$timeout = $timeout;
     this.$translate = $translate;
     this.$q = $q;
@@ -117,12 +118,21 @@ export class ChannelRightSidePanelCtrl {
         this.HippoIframeService.reload();
       })
       .catch((response) => {
-        if (response && response.data && response.data.reason) {
-          this.FeedbackService.showErrorResponse(response, `ERROR_${response.data.reason}`);
-        } else {
-          this.FeedbackService.showErrorResponse(response, 'ERROR_UNABLE_TO_SAVE');
+        if (this._isDocument(response.data)) {
+          // CHANNELMGR-898: handle validation error on a per-field basis
+          return;
         }
+
+        let defaultKey = 'ERROR_UNABLE_TO_SAVE';
+        if (response.data && response.data.reason) {
+          defaultKey = `ERROR_${response.data.reason}`;
+        }
+        this.FeedbackService.showErrorResponse(undefined, defaultKey, undefined, this.$element);
       });
+  }
+
+  _isDocument(object) {
+    return object && object.id; // Document has an ID field, ErrorInfo doesn't.
   }
 
   viewFullContent() {

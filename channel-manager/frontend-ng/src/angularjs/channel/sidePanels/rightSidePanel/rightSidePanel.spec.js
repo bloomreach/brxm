@@ -184,13 +184,10 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('shows a toast when document save fails', () => {
-    const savedDoc = {
-      data: {
-        reason: 'TEST',
-      },
-      id: '123',
+    const response = {
+      reason: 'TEST',
     };
-    ContentService.saveDraft.and.returnValue($q.reject(savedDoc));
+    ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
 
     $ctrl.doc = testDocument;
     $ctrl.form.$pristine = false;
@@ -200,14 +197,11 @@ describe('ChannelRightSidePanel', () => {
 
     $rootScope.$apply();
 
-    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(savedDoc, 'ERROR_TEST');
+    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_TEST', undefined, $ctrl.$element);
   });
 
   it('shows a toast when document save fails and there is no data returned', () => {
-    const savedDoc = {
-      id: '123',
-    };
-    ContentService.saveDraft.and.returnValue($q.reject(savedDoc));
+    ContentService.saveDraft.and.returnValue($q.reject());
 
     $ctrl.doc = testDocument;
     $ctrl.form.$pristine = false;
@@ -217,7 +211,7 @@ describe('ChannelRightSidePanel', () => {
 
     $rootScope.$apply();
 
-    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(savedDoc, 'ERROR_UNABLE_TO_SAVE');
+    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_UNABLE_TO_SAVE', undefined, $ctrl.$element);
   });
 
   it('views the full content by saving changes, closing the panel and publishing a view-content event', () => {

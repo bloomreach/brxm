@@ -35,13 +35,9 @@ class FeedbackService {
     this._showErrorMessage(key, params, target);
   }
 
-  showErrorResponse(response, defaultKey, errorMap) {
-    this._showErrorResponse(response, defaultKey, errorMap);
-  }
-
   showErrorResponseOnSubpage(response, defaultKey, errorMap) {
     const target = this._getSubpageTarget();
-    this._showErrorResponse(response, defaultKey, errorMap, target);
+    this.showErrorResponse(response, defaultKey, errorMap, target);
   }
 
   _getSubpageTarget() {
@@ -53,7 +49,7 @@ class FeedbackService {
     this._show(text, target);
   }
 
-  _showErrorResponse(response, defaultKey, errorMap = {}, target) {
+  showErrorResponse(response, defaultKey, errorMap = {}, target) {
     if (!response) {
       this._showErrorMessage(defaultKey, undefined, target);
       return;
