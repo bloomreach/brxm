@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -138,32 +138,43 @@ public class TabsPlugin extends RenderPlugin {
                 // add the plugin
                 service.bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
                 if (service != emptyPanel) {
-                    Tab tabbie = new Tab(service);
+                    final int selectedTabIndex = tabbedPanel.getSelectedTab();
+                    if (selectedTabIndex >= 0) {
+                        final Tab selectedTab = tabs.get(selectedTabIndex);
+                        onTabDeactivated(selectedTab);
+                    }
+
+                    final Tab tab = new Tab(service);
                     if (openleft) {
-                        tabs.add(0, tabbie);
+                        tabs.add(0, tab);
                         tabbedPanel.setSelectedTab(0);
                         tabbedPanel.addFirst();
                     } else {
-                        tabs.add(tabbie);
+                        tabs.add(tab);
                         if (tabs.size() == 1) {
                             tabbedPanel.setSelectedTab(0);
                         }
                         tabbedPanel.addLast();
                     }
+
+                    onTabActivated(tab);
                 }
             }
 
             @Override
             public void onRemoveService(IRenderService service, String name) {
-                Tab tabbie = findTabbie(service);
-                if (tabbie != null) {
-                    tabs.remove(tabbie);
-                    tabbie.destroy();
+                final Tab tab = findTab(service);
+                if (tab != null) {
+                    onTabDeactivated(tab);
+
+                    tabs.remove(tab);
+                    tab.destroy();
+
                     if (tabs.isEmpty()) {
                         tabbedPanel.setSelectedTab(-1);
                     }
                     service.unbind();
-                    tabbedPanel.removed(tabbie);
+                    tabbedPanel.removed(tab);
                 }
             }
         };
@@ -187,17 +198,17 @@ public class TabsPlugin extends RenderPlugin {
     public void render(PluginRequestTarget target) {
         super.render(target);
         tabbedPanel.render(target);
-        for (Tab tabbie : tabs) {
-            tabbie.renderer.render(target);
+        for (Tab tab : tabs) {
+            tab.renderer.render(target);
         }
     }
 
     @Override
     public void focus(IRenderService child) {
-        Tab tabbie = findTabbie(child);
-        if (tabbie != null) {
-            tabbie.select();
-            onSelectTab(tabs.indexOf(tabbie));
+        Tab tab = findTab(child);
+        if (tab != null) {
+            tab.select();
+            onSelectTab(tabs.indexOf(tab));
         }
         super.focus(child);
     }
@@ -223,10 +234,10 @@ public class TabsPlugin extends RenderPlugin {
         return !this.tabs.isEmpty();
     }
 
-    void onSelect(Tab tabbie, AjaxRequestTarget target) {
-        tabbie.renderer.focus(null);
-        onSelectTab(tabs.indexOf(tabbie));
-        fireTabSelectionEvent(tabbie, target);
+    void onSelect(Tab tab, AjaxRequestTarget target) {
+        tab.renderer.focus(null);
+        onSelectTab(tabs.indexOf(tab));
+        fireTabSelectionEvent(tab, target);
     }
 
     private void fireTabSelectionEvent(final Tab tab, final AjaxRequestTarget target) {
@@ -265,7 +276,7 @@ public class TabsPlugin extends RenderPlugin {
 
     /**
      * Template method for subclasses.  Called when a tab is selected, either
-     * explicitly (user clicks tab) or implicitly (tabbie requests focus).
+     * explicitly (user clicks tab) or implicitly (tab requests focus).
      *
      * @param index Index of the tab
      */
@@ -374,7 +385,7 @@ public class TabsPlugin extends RenderPlugin {
 
     }
 
-    private Tab findTabbie(IRenderService service) {
+    private Tab findTab(IRenderService service) {
         for (Tab tab : tabs) {
             if (tab.renderer == service) {
                 return tab;
@@ -384,8 +395,12 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     public void hide() {
-        if (tabbedPanel.getSelectedTab() > -1) {
-            previousSelectedTabIndex = tabbedPanel.getSelectedTab();
+        final int selectedTabIndex = tabbedPanel.getSelectedTab();
+        if (selectedTabIndex > -1) {
+            final Tab selectedTab = tabs.get(selectedTabIndex);
+            onTabDeactivated(selectedTab);
+
+            previousSelectedTabIndex = selectedTabIndex;
             tabbedPanel.setSelectedTab(-1);
             tabbedPanel.redraw();
         }
@@ -394,6 +409,10 @@ public class TabsPlugin extends RenderPlugin {
     public void show() {
         if (previousSelectedTabIndex > -1) {
             tabbedPanel.setSelectedTab(previousSelectedTabIndex);
+
+            final Tab previousSelectedTab = tabs.get(previousSelectedTabIndex);
+            onTabActivated(previousSelectedTab);
+
             tabbedPanel.redraw();
             previousSelectedTabIndex = -1;
         }
@@ -401,6 +420,14 @@ public class TabsPlugin extends RenderPlugin {
 
     protected final TabbedPanel getTabbedPanel() {
         return tabbedPanel;
+    }
+
+    protected void onTabActivated(final Tab tab) {
+        // hook method for sub-classes to execute logic when a tab is activated
+    }
+
+    protected void onTabDeactivated(final Tab tab) {
+        // hook method for sub-classes to execute logic when a tab is deactivated
     }
 
     protected class Tab implements ITab, IObserver<IObservable> {
@@ -459,6 +486,7 @@ public class TabsPlugin extends RenderPlugin {
                     }
                 }
                 getTabbedPanel().setSelectedTab(tabs.indexOf(lastTab));
+                onTabActivated(lastTab);
                 lastTab.lastSelected = ++TabsPlugin.this.selectCount;
                 lastTab.renderer.focus(null);
                 getTabbedPanel().redraw();
@@ -531,6 +559,13 @@ public class TabsPlugin extends RenderPlugin {
             return (Panel) renderer;
         }
 
+        public void discard() throws EditorException {
+            final IEditor editor = getEditor();
+            if (editor != null) {
+                editor.discard();
+            }
+        }
+
         // package internals
 
         IEditor getEditor() {
@@ -555,10 +590,21 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         void select() {
-            if (tabs.indexOf(this) != getTabbedPanel().getSelectedTab()) {
-                getTabbedPanel().setSelectedTab(tabs.indexOf(this));
+            final TabbedPanel panel = getTabbedPanel();
+            final int selectedTabIndex = panel.getSelectedTab();
+            final int myIndex = tabs.indexOf(this);
+
+            if (myIndex != selectedTabIndex) {
+                if (selectedTabIndex >= 0) {
+                    final Tab selectedTab = tabs.get(selectedTabIndex);
+                    onTabDeactivated(selectedTab);
+                }
+
+                panel.setSelectedTab(myIndex);
+                onTabActivated(this);
+
                 lastSelected = ++TabsPlugin.this.selectCount;
-                getTabbedPanel().redraw();
+                panel.redraw();
             }
         }
 
