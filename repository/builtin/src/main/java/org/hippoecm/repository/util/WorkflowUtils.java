@@ -84,10 +84,13 @@ public final class WorkflowUtils {
             final WorkflowManager workflowManager = workspace.getWorkflowManager();
             final Workflow workflow = workflowManager.getWorkflow(category, node);
 
-            if (clazz.isAssignableFrom(workflow.getClass())) {
+            if (workflow == null) {
+                log.info("Failed to find a workflow for category '{}' and node '{}'", category, node.getPath());
+            } else if (clazz.isAssignableFrom(workflow.getClass())) {
                 return Optional.of((T)workflow);
             } else {
-                log.info("Obtained workflow is not of desired class {}", clazz.getName());
+                log.info("Failed to obtain workflow of desired class '{}' for category '{}' and node '{}'.",
+                        clazz.getName(), category, node.getPath());
             }
         } catch (RepositoryException e) {
             if (log.isDebugEnabled()) {
