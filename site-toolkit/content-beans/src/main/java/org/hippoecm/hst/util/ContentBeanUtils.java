@@ -15,34 +15,16 @@
  */
 package org.hippoecm.hst.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.jcr.Credentials;
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.security.auth.Subject;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
-import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
-import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
-import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
-import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
+import org.hippoecm.hst.content.beans.standard.*;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.LazySession;
@@ -56,6 +38,12 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.*;
+import javax.security.auth.Subject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Note most of the utilities in this class rely on that the {@link HstRequestContext} is available via a thread local via
@@ -108,18 +96,6 @@ public class ContentBeanUtils {
     }
 
     /**
-     * @deprecated since 7.9.0 : objectConverter not used any more.
-     * use {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, String, Class, boolean)} instead
-     */
-    @Deprecated
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope,
-                                                    String linkPath, ObjectConverter converter,
-                                                    Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException{
-        return createIncomingBeansQuery(bean, scope, linkPath, beanMappingClass, includeSubTypes);
-
-    }
-
-    /**
      * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it
      *  You need to add a <code>linkPath</code>: this is that path, that the incoming beans use to link to the HippoDocumentBean {@code bean}. For example, with 'myproject:link/@hippo:docbase' or even 'wildcard/@hippo:docbase' or
      * 'wildcard/wildcard/@hippo:docbase' where wildcard = *
@@ -140,18 +116,6 @@ public class ContentBeanUtils {
         linkPaths.add(linkPath);
         return createIncomingBeansQuery(bean, scope, linkPaths, beanMappingClass, includeSubTypes);
 
-    }
-
-    /**
-     * @deprecated since 7.9.0 : objectConverter not used any more.
-     * use {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, int, Class, boolean)} instead
-     */
-    @Deprecated
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope, int depth,
-                                                    ObjectConverter converter, Class<? extends HippoBean> beanMappingClass,
-                                                    boolean includeSubTypes) throws QueryException{
-
-        return createIncomingBeansQuery(bean, scope, depth, beanMappingClass, includeSubTypes);
     }
 
     /**
@@ -180,17 +144,6 @@ public class ContentBeanUtils {
         }
         return createIncomingBeansQuery(bean, scope, linkPaths, beanMappingClass, includeSubTypes);
      }
-
-    /**
-     * @deprecated since 7.9.0 : objectConverter not used any more.
-     * use {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, List, Class, boolean)} instead
-     */
-    @Deprecated
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope,
-                                                    List<String> linkPaths, ObjectConverter converter,
-                                                    Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException{
-        return createIncomingBeansQuery(bean, scope, linkPaths, beanMappingClass, includeSubTypes);
-    }
 
     /**
      * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it 
