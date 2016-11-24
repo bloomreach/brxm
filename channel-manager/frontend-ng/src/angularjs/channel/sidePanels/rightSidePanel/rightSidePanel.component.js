@@ -16,11 +16,39 @@
 
 import template from './rightSidePanel.html';
 
+const ERROR_MAP = {
+  UNAVAILABLE: {
+    title: 'UNAVAILABLE_CONTENT_TITLE',
+    linkToFullEditor: true,
+    messageKey: 'UNAVAILABLE',
+  },
+  UNAVAILABLE_CONTENT: {
+    title: 'UNAVAILABLE_CONTENT_HERE_TITLE',
+    linkToFullEditor: true,
+    messageKey: 'UNAVAILABLE_CONTENT',
+  },
+  UNAVAILABLE_CUSTOM_VALIDATION_PRESENT: {
+    title: 'UNAVAILABLE_DOCUMENT_HERE_TITLE',
+    linkToFullEditor: true,
+    messageKey: 'UNAVAILABLE_CUSTOM_VALIDATION_PRESENT',
+  },
+  UNAVAILABLE_HELD_BY_OTHER_USER: {
+    title: 'UNAVAILABLE_DOCUMENT_TITLE',
+    messageKey: 'UNAVAILABLE_HELD_BY_OTHER_USER',
+    hasUser: true,
+  },
+  UNAVAILABLE_REQUEST_PENDING: {
+    title: 'UNAVAILABLE_DOCUMENT_TITLE',
+    messageKey: 'UNAVAILABLE_REQUEST_PENDING',
+  },
+};
+
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, $timeout, $translate, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService) {
+  constructor($scope, $element, $timeout, $translate, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     this.$scope = $scope;
+    this.$element = $element;
     this.$timeout = $timeout;
     this.$translate = $translate;
     this.$q = $q;
@@ -29,6 +57,9 @@ export class ChannelRightSidePanelCtrl {
     this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.HippoIframeService = HippoIframeService;
+    this.FeedbackService = FeedbackService;
+
+    this.defaultTitle = $translate.instant('EDIT_CONTENT');
 
     ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), (documentId) => {
       this.openDocument(documentId);
@@ -36,8 +67,20 @@ export class ChannelRightSidePanelCtrl {
   }
 
   openDocument(documentId) {
-    this._resetForm();
+    this._resetState();
     this._loadDocument(documentId);
+  }
+
+  _resetState() {
+    delete this.doc;
+    delete this.loaded;
+    delete this.editing;
+    delete this.feedback;
+
+    this.title = this.defaultTitle;
+    this.state = 'UNAVAILABLE_CONTENT';
+
+    this._resetForm();
   }
 
   _resetForm() {
@@ -47,53 +90,54 @@ export class ChannelRightSidePanelCtrl {
   }
 
   _loadDocument(id) {
+    this.documentId = id;
     this.ContentService.createDraft(id)
-      .then((doc) => {
-        this.ContentService.getDocumentType(doc.info.type.id)
+      .then(doc => this.ContentService.getDocumentType(doc.info.type.id)
           .then((docType) => {
-            this.doc = doc;
-            this.state = this.doc.info.editing.state;
             this.docType = docType;
-            this._resizeTextareas();
-          });
-      })
-      .catch((error) => {
-        if (error) {
-          this.doc = error.data;
-          this.state = this.doc.info.editing.state;
-        } else {
-          this.state = 'UNAVAILABLE_CONTENT';
-        }
+            this._onLoaded(doc);
+            this.editing = true;
+          })
+      )
+      .catch(response => this._onLoaded(response.data));
+  }
 
-        const errorMap = {
-          UNAVAILABLE: {
-            title: 'UNAVAILABLE_CONTENT_TITLE',
-            linkToFullEditor: true,
-            message: this.$translate.instant('UNAVAILABLE'),
-          },
-          UNAVAILABLE_CONTENT: {
-            title: 'UNAVAILABLE_CONTENT_HERE_TITLE',
-            linkToFullEditor: true,
-            message: this.$translate.instant('UNAVAILABLE_CONTENT'),
-          },
-          UNAVAILABLE_CUSTOM_VALIDATION_PRESENT: {
-            title: 'UNAVAILABLE_DOCUMENT_HERE_TITLE',
-            linkToFullEditor: true,
-            message: this.$translate.instant('UNAVAILABLE_CUSTOM_VALIDATION_PRESENT'),
-          },
-          UNAVAILABLE_HELD_BY_OTHER_USER: {
-            title: 'UNAVAILABLE_DOCUMENT_TITLE',
-            message: this.$translate.instant('UNAVAILABLE_HELD_BY_OTHER_USER', { user: this.doc.info.editing.holder.displayName ? this.doc.info.editing.holder.displayName : this.doc.info.editing.holder.id }),
-          },
-          UNAVAILABLE_REQUEST_PENDING: {
-            title: 'UNAVAILABLE_DOCUMENT_TITLE',
-            message: this.$translate.instant('UNAVAILABLE_REQUEST_PENDING'),
-          },
-        };
-        this.unavailableTitle = errorMap[this.state].title;
-        this.unavailableMessage = errorMap[this.state].message;
-        this.linkToFullEditor = errorMap[this.state].linkToFullEditor;
-      });
+  _onLoaded(doc) {
+    if (doc) {
+      this.doc = doc;
+      if (doc.displayName) {
+        this.title = this.$translate.instant('EDIT_DOCUMENT', doc);
+      }
+      if (doc.info && doc.info.editing) {
+        this.state = doc.info.editing.state;
+      }
+      this._resizeTextareas();
+    }
+
+    this._updateFeedback();
+    this.loaded = true;
+  }
+
+  _updateFeedback() {
+    const error = ERROR_MAP[this.state];
+    const params = {};
+
+    if (error) {
+      if (error.hasUser) {
+        params.user = this._getHolder();
+      }
+
+      this.feedback = {
+        title: error.title,
+        message: this.$translate.instant(error.messageKey, params),
+        linkToFullEditor: error.linkToFullEditor,
+      };
+    }
+  }
+
+  _getHolder() {
+    return this.doc.info.editing.holder.displayName
+        || this.doc.info.editing.holder.id;
   }
 
   _resizeTextareas() {
@@ -114,7 +158,23 @@ export class ChannelRightSidePanelCtrl {
         this.doc = savedDoc;
         this._resetForm();
         this.HippoIframeService.reload();
+      })
+      .catch((response) => {
+        if (this._isDocument(response.data)) {
+          // CHANNELMGR-898: handle validation error on a per-field basis
+          return;
+        }
+
+        let defaultKey = 'ERROR_UNABLE_TO_SAVE';
+        if (response.data && response.data.reason) {
+          defaultKey = `ERROR_${response.data.reason}`;
+        }
+        this.FeedbackService.showErrorResponse(undefined, defaultKey, undefined, this.$element);
       });
+  }
+
+  _isDocument(object) {
+    return object && object.id; // Document has an ID field, ErrorInfo doesn't.
   }
 
   viewFullContent() {
@@ -123,19 +183,19 @@ export class ChannelRightSidePanelCtrl {
       // It will will unlock the document if needed, so don't delete the draft here.
       .then(() => {
         this._closePanel();
-        this.CmsService.publish('view-content', this.doc.id);
+        this.CmsService.publish('view-content', this.documentId);
       });
   }
 
   _saveDraft() {
-    if (this.form.$pristine) {
+    if (!this.form || this.form.$pristine) {
       return this.$q.resolve();
     }
     return this.ContentService.saveDraft(this.doc);
   }
 
   editFullContent() {
-    this.CmsService.publish('edit-content', this.doc.id);
+    this.CmsService.publish('edit-content', this.documentId);
   }
 
   close() {
@@ -144,8 +204,8 @@ export class ChannelRightSidePanelCtrl {
   }
 
   _deleteDraft() {
-    if (this.doc) {
-      this.ContentService.deleteDraft(this.doc.id);
+    if (this.editing) {
+      this.ContentService.deleteDraft(this.documentId);
     }
   }
 
