@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,7 +41,13 @@ public interface PageCacheKey extends Serializable {
      * </p>
      * @param subKey the key to which the fragment belongs, not allowed to be <code>null</code>
      * @param keyFragment the fragment for the subKey, not allowed to be <code>null</code>
+     * @throws IllegalStateException is this {@link PageCacheKey} has been sealed via {@link #seal()}
      */
-    void setAttribute(String subKey, Serializable keyFragment);
+    void setAttribute(String subKey, Serializable keyFragment) throws IllegalStateException;
 
+    /**
+     * After {@link #seal()} is invoked, a call to {@link #setAttribute(String, Serializable)} will result in
+     * an {@link IllegalStateException}
+     */
+    void seal();
 }
