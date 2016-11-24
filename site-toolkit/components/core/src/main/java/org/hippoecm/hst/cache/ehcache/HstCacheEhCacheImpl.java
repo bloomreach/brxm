@@ -88,6 +88,7 @@ public class HstCacheEhCacheImpl implements HstCache {
         if (secondLevelCache != null && !uncacheableKeys.containsKey(key)) {
             final Element secondLevelElement = secondLevelCache.get(key, Element.class);
             if (secondLevelElement != null) {
+                log.debug("Found element in second level cache for key : {}", key);
                 // when this cache is decorated with eh blocking cache, we need to "put" with the exact same key instance
                 // as used in the get, otherwise keys with the same hashcode/equals will still be blocked. Is very
                 // opaque when using eh blocking cache. That is why we need to create a new 'Element' object
@@ -101,9 +102,16 @@ public class HstCacheEhCacheImpl implements HstCache {
                 // cached entry: When the entry is evicted from the second level cache, it also needs to be evicted from the primary cache
                 // because otherwise in a clustered setup, different primary caches can start to contain different
                 // cached responses resulting in alternating pages (per cluster node) which is not acceptable
-                final long newTTL = secondLevelElement.getTimeToLive() - timeLived;
+                final long newTTL;
+                if (secondLevelElement.getTimeToLive() == 0) {
+                    // the element got a time to live of 0 (never happens normally) meaning eternal in primary ehcache. newTTL can also
+                    // be eternal
+                    newTTL = 0;
+                } else {
+                    newTTL = secondLevelElement.getTimeToLive() - timeLived;
+                }
 
-                if (newTTL <= 0) {
+                if (newTTL < 0) {
                     // if newTTL < 0 : just expired from second level cache
                     if (staleCache != null) {
                         // since we do support stale cached responses, let's inject this stale element in the primary
@@ -130,7 +138,7 @@ public class HstCacheEhCacheImpl implements HstCache {
                 // blocking lock on key for blocking caches will be released: From then on, other requests for the
                 // same key get the stale response. We now return null, resulting in that the current thread continues
                 // to recreate the element, which in the end, will replace the staleElement from primary cache
-                log.info("Temporarily restoring stale element created at '{}' in primary cache. Current thread will continue" +
+                log.debug("Temporarily restoring stale element created at '{}' in primary cache. Current thread will continue" +
                         " recreating the element to be cached which will later on replace the stale item in primary cache.", staleElement.getCreationTime());
                 // use key instance to clear the lock on the key instance
                 final Element elementBasedOnKeyInstance = new Element(key, staleElement.getObjectValue(), 1, staleElement.getCreationTime(), 0, 0, 0);
