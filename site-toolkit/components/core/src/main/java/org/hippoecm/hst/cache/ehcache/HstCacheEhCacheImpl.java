@@ -17,6 +17,7 @@ package org.hippoecm.hst.cache.ehcache;
 
 import java.util.concurrent.Callable;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
 import org.slf4j.Logger;
@@ -40,6 +41,14 @@ public class HstCacheEhCacheImpl implements HstCache {
     private Cache staleCache;
 
     private Cache secondLevelCache;
+
+    /**
+     * Cache that contains uncacheable keys which can be used to avoid more expensive lookups in second level page
+     * cache in case that cache is outside the JVM (for example redis)
+     */
+    private LRUMap uncacheableKeys;
+    // one global object for uncacheableKeys LRUMap because it is only about the keys
+    private final static Boolean DUMMY_VALUE = Boolean.TRUE;
 
     private volatile int invalidationCounter;
 
@@ -65,6 +74,7 @@ public class HstCacheEhCacheImpl implements HstCache {
     @SuppressWarnings("unused")
     public void setSecondLevelCache(final Cache secondLevelCache) {
         this.secondLevelCache = secondLevelCache;
+        uncacheableKeys = new LRUMap(1000);
     }
 
     public CacheElement get(Object key) {
@@ -75,9 +85,7 @@ public class HstCacheEhCacheImpl implements HstCache {
             }
             return new CacheElementEhCacheImpl(element);
         }
-        if (secondLevelCache != null) {
-            // TODO keep track of 'uncacheable' in local simple guava cache because for those we do not need
-            // TODO a lookup in secondLevelPageCache
+        if (secondLevelCache != null && !uncacheableKeys.containsKey(key)) {
             final Element secondLevelElement = secondLevelCache.get(key, Element.class);
             if (secondLevelElement != null) {
                 // when this cache is decorated with eh blocking cache, we need to "put" with the exact same key instance
@@ -190,8 +198,9 @@ public class HstCacheEhCacheImpl implements HstCache {
         if (!element.isCacheable()) {
             final CacheElement uncacheable = createElement(element.getKey(), null);
             ehcache.put(((CacheElementEhCacheImpl)uncacheable).element);
-            // TODO keep track in guave cache of uncacheable keys in case there is a second level cache to avoid
-            // TODO unneccesary lookups
+            if (secondLevelCache != null && uncacheableKeys != null) {
+                uncacheableKeys.put(element.getKey(), DUMMY_VALUE);
+            }
             return;
         }
         CacheElementEhCacheImpl cacheElem = (CacheElementEhCacheImpl)element;
