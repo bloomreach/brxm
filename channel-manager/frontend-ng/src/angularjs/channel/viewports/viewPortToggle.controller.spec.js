@@ -37,20 +37,23 @@ describe('ViewportToggleCtrl', () => {
     spyOn($translate, 'instant');
   });
 
-  describe('setViewPorts', () => {
-    it('should set the viewport widths from the backend if it exists or default to default values', () => {
-      spyOn(ChannelService, 'getChannel').and.returnValue({
-        viewportMap: {
-          desktop: 1167,
-          tablet: 678,
-          phone: 256,
-        },
-      });
-      $ctrl = $controller('ViewportToggleCtrl', {
-        $scope: $rootScope.$new(),
-        ChannelService,
-      });
+  function createController(viewportMap) {
+    spyOn(ChannelService, 'getChannel').and.returnValue({
+      viewportMap,
+    });
+    return $controller('ViewportToggleCtrl', {
+      $scope: $rootScope.$new(),
+      ChannelService,
+    });
+  }
 
+  describe('setViewPorts', () => {
+    it('should set the viewport widths from the backend', () => {
+      $ctrl = createController({
+        desktop: 1167,
+        tablet: 678,
+        phone: 256,
+      });
       $ctrl.setViewPorts();
       $rootScope.$apply();
 
@@ -61,15 +64,9 @@ describe('ViewportToggleCtrl', () => {
       expect($ctrl.viewPorts[3].id).toBe('PHONE');
       expect($ctrl.viewPorts[3].maxWidth).toBe(256);
     });
-    it('should set the viewport widths from the backend if it exists or default to default values', () => {
-      spyOn(ChannelService, 'getChannel').and.returnValue({
-        viewportMap: {},
-      });
-      $ctrl = $controller('ViewportToggleCtrl', {
-        $scope: $rootScope.$new(),
-        ChannelService,
-      });
 
+    it('should use the default viewport width values when the backend does not return any', () => {
+      $ctrl = createController({});
       $ctrl.setViewPorts();
       $rootScope.$apply();
 
@@ -83,16 +80,8 @@ describe('ViewportToggleCtrl', () => {
   });
 
   describe('getDisplayName', () => {
-    beforeEach(() => {
-      spyOn(ChannelService, 'getChannel').and.returnValue({
-        viewportMap: {},
-      });
-      $ctrl = $controller('ViewportToggleCtrl', {
-        $scope: $rootScope.$new(),
-        ChannelService,
-      });
-    });
     it('should return the display name', () => {
+      $ctrl = createController({});
       $ctrl.getDisplayName({
         id: 'TEST',
       });
