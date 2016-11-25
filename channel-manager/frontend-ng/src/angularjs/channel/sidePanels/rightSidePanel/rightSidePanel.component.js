@@ -44,7 +44,8 @@ const ERROR_MAP = {
 };
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, $timeout, $translate, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService, FeedbackService) {
+  constructor($scope, $element, $timeout, $translate, $q, ChannelSidePanelService, CmsService, ContentService,
+              DialogService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     this.$scope = $scope;
@@ -56,10 +57,13 @@ export class ChannelRightSidePanelCtrl {
     this.ChannelSidePanelService = ChannelSidePanelService;
     this.CmsService = CmsService;
     this.ContentService = ContentService;
+    this.DialogService = DialogService;
     this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
 
     this.defaultTitle = $translate.instant('EDIT_CONTENT');
+    this.closeLabel = $translate.instant('CLOSE');
+    this.cancelLabel = $translate.instant('CANCEL');
 
     ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), (documentId) => {
       this.openDocument(documentId);
@@ -188,7 +192,7 @@ export class ChannelRightSidePanelCtrl {
   }
 
   _saveDraft() {
-    if (!this.form || this.form.$pristine) {
+    if (!this._isFormDirty()) {
       return this.$q.resolve();
     }
     return this.ContentService.saveDraft(this.doc);
@@ -198,9 +202,34 @@ export class ChannelRightSidePanelCtrl {
     this.CmsService.publish('edit-content', this.documentId);
   }
 
+  closeButtonLabel() {
+    return this._isFormDirty() ? this.cancelLabel : this.closeLabel;
+  }
+
+  _isFormDirty() {
+    return this.form && this.form.$dirty;
+  }
+
   close() {
-    this._deleteDraft();
-    this._closePanel();
+    this._confirmIfFormDirty().then(() => {
+      this._deleteDraft();
+      this._closePanel();
+    });
+  }
+
+  _confirmIfFormDirty() {
+    if (!this._isFormDirty()) {
+      return this.$q.resolve();
+    }
+    const messageParams = {
+      documentName: this.doc.displayName,
+    };
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', messageParams))
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.cancelLabel);
+
+    return this.DialogService.show(confirm);
   }
 
   _deleteDraft() {
