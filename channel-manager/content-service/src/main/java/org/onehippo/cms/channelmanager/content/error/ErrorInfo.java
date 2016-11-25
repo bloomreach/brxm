@@ -38,7 +38,8 @@ public class ErrorInfo {
         HOLDERSHIP_LOST,
         ALREADY_DELETED,
         INVALID_DATA,
-        CARDINALITY_CHANGE  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
+        CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).
+        NOT_A_DOCUMENT
         // add more specific failure reasons here.
     }
 }

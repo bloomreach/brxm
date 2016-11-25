@@ -18,12 +18,12 @@ package org.onehippo.cms.channelmanager.content.document;
 
 import java.rmi.RemoteException;
 import java.util.Locale;
-import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.util.DocumentUtils;
@@ -41,6 +41,7 @@ import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
+import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +60,8 @@ class DocumentsServiceImpl implements DocumentsService {
     @Override
     public Document createDraft(final String uuid, final Session session, final Locale locale)
             throws ErrorWithPayloadException {
-        final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(NotFoundException::new);
-        final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
-                                                       .orElseThrow(NotFoundException::new);
+        final Node handle = getHandle(uuid, session);
+        final EditableWorkflow workflow = getWorkflow(handle);
         final DocumentType docType = getDocumentType(handle, locale);
         final Document document = assembleDocument(uuid, handle, workflow, docType);
         final EditingInfo editingInfo = document.getInfo().getEditingInfo();
@@ -87,10 +87,9 @@ class DocumentsServiceImpl implements DocumentsService {
     @Override
     public void updateDraft(final String uuid, final Document document, final Session session, final Locale locale)
             throws ErrorWithPayloadException {
-        final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(NotFoundException::new);
+        final Node handle = getHandle(uuid, session);
+        final EditableWorkflow workflow = getWorkflow(handle);
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
-                .orElseThrow(NotFoundException::new);
-        final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
                 .orElseThrow(NotFoundException::new);
 
         if (!EditingUtils.canUpdateDocument(workflow)) {
@@ -118,10 +117,10 @@ class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public void deleteDraft(final String uuid, final Session session, final Locale locale) throws ErrorWithPayloadException {
-        final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(NotFoundException::new);
-        final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
-                .orElseThrow(NotFoundException::new);
+    public void deleteDraft(final String uuid, final Session session, final Locale locale)
+            throws ErrorWithPayloadException {
+        final Node handle = getHandle(uuid, session);
+        final EditableWorkflow workflow = getWorkflow(handle);
 
         if (!EditingUtils.canDeleteDraft(workflow)) {
             throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.ALREADY_DELETED));
@@ -136,16 +135,33 @@ class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document getPublished(final String uuid, final Session session, final Locale locale) throws ErrorWithPayloadException {
-        final Node handle = DocumentUtils.getHandle(uuid, session).orElseThrow(NotFoundException::new);
-        final EditableWorkflow workflow = WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)
-                                                       .orElseThrow(NotFoundException::new);
+    public Document getPublished(final String uuid, final Session session, final Locale locale)
+            throws ErrorWithPayloadException {
+        final Node handle = getHandle(uuid, session);
+        final EditableWorkflow workflow = getWorkflow(handle);
         final DocumentType docType = getDocumentType(handle, locale);
         final Document document = assembleDocument(uuid, handle, workflow, docType);
 
         WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED)
                 .ifPresent(node -> FieldTypeUtils.readFieldValues(node, docType.getFields(), document.getFields()));
         return document;
+    }
+
+    private Node getHandle(final String uuid, final Session session) throws ErrorWithPayloadException {
+        return DocumentUtils.getHandle(uuid, session)
+                .filter(this::isValidHandle)
+                .orElseThrow(NotFoundException::new);
+    }
+
+    private boolean isValidHandle(final Node handle) {
+        return DocumentUtils.getVariantNodeType(handle)
+                .filter(type -> !type.equals(HippoNodeType.NT_DELETED))
+                .isPresent();
+    }
+
+    private EditableWorkflow getWorkflow(final Node handle) throws ErrorWithPayloadException {
+        return WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
+                .orElseThrow(() -> new MethodNotAllowed(new ErrorInfo(ErrorInfo.Reason.NOT_A_DOCUMENT)));
     }
 
     private DocumentType getDocumentType(final Node handle, final Locale locale)

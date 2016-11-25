@@ -223,6 +223,7 @@ describe('ChannelRightSidePanel', () => {
 
   it('fails to open a document owned by another user', () => {
     const response = {
+      id: 'test-id',
       info: {
         editing: {
           state: 'UNAVAILABLE_HELD_BY_OTHER_USER',
@@ -244,13 +245,13 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBe(response);
-    expect($ctrl.state).toBe('UNAVAILABLE_HELD_BY_OTHER_USER');
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_HELD_BY_OTHER_USER', { user: 'John Tester' });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_HELD_BY_OTHER_USER_MESSAGE', { user: 'John Tester' });
     expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', response);
   });
 
   it('falls back to the user\'s id if there is no display name', () => {
     const response = {
+      id: 'test-id',
       info: {
         editing: {
           state: 'UNAVAILABLE_HELD_BY_OTHER_USER',
@@ -271,13 +272,13 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBe(response);
-    expect($ctrl.state).toBe('UNAVAILABLE_HELD_BY_OTHER_USER');
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_HELD_BY_OTHER_USER', { user: 'tester' });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_HELD_BY_OTHER_USER_MESSAGE', { user: 'tester' });
     expect($translate.instant).not.toHaveBeenCalledWith('EDIT_DOCUMENT', response);
   });
 
   it('fails to open a document with a publication request', () => {
     const response = {
+      id: 'test-id',
       info: {
         editing: {
           state: 'UNAVAILABLE_REQUEST_PENDING',
@@ -296,8 +297,40 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBe(response);
-    expect($ctrl.state).toBe('UNAVAILABLE_REQUEST_PENDING');
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_REQUEST_PENDING', { });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_REQUEST_PENDING_MESSAGE', { });
+  });
+
+  it('fails to open a document which is not a document', () => {
+    const response = {
+      reason: 'NOT_A_DOCUMENT',
+    };
+    spyOn($translate, 'instant');
+    ContentService.createDraft.and.returnValue($q.reject({ data: response }));
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    $rootScope.$digest();
+
+    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
+    expect($ctrl.doc).toBeUndefined();
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_A_DOCUMENT_MESSAGE', { });
+  });
+
+  it('fails to open a non-existent document', () => {
+    spyOn($translate, 'instant');
+    ContentService.createDraft.and.returnValue($q.reject({ status: 404 }));
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    $rootScope.$digest();
+
+    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
+    expect($ctrl.doc).toBeUndefined();
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE', { });
   });
 
   it('fails to open a document with random data in the response', () => {
@@ -312,9 +345,8 @@ describe('ChannelRightSidePanel', () => {
     $rootScope.$digest();
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBe(response);
-    expect($ctrl.state).toBe('UNAVAILABLE_CONTENT');
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_CONTENT', { });
+    expect($ctrl.doc).toBeUndefined();
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
   });
 
   it('fails to open a document with no data in the response', () => {
@@ -329,8 +361,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
-    expect($ctrl.state).toBe('UNAVAILABLE_CONTENT');
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_CONTENT', { });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
   });
 
   it('fails to open a document with no type', () => {
@@ -358,8 +389,7 @@ describe('ChannelRightSidePanel', () => {
     expect(ContentService.getDocumentType).toHaveBeenCalledWith('document:type');
     expect($ctrl.doc).toBeUndefined();
     expect($ctrl.docType).toBeUndefined();
-    expect($ctrl.state).toBe('UNAVAILABLE_CONTENT');
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_CONTENT', { });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
   });
 
   it('saves a document', () => {
