@@ -23,6 +23,7 @@ describe('ChannelRightSidePanel', () => {
   let ChannelSidePanelService;
   let CmsService;
   let ContentService;
+  let DialogService;
   let HippoIframeService;
   let FeedbackService;
 
@@ -84,6 +85,7 @@ describe('ChannelRightSidePanel', () => {
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse']);
 
     CmsService = jasmine.createSpyObj('CmsService', ['publish']);
+    DialogService = jasmine.createSpyObj('DialogService', ['confirm', 'show']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
     $scope = $rootScope.$new();
@@ -95,6 +97,7 @@ describe('ChannelRightSidePanel', () => {
       ChannelSidePanelService,
       CmsService,
       ContentService,
+      DialogService,
       HippoIframeService,
       FeedbackService,
     }, {
@@ -120,17 +123,68 @@ describe('ChannelRightSidePanel', () => {
     expect($ctrl.isLockedOpen()).toBe(false);
   });
 
+  it('shows the correct close button label', () => {
+    $ctrl.closeLabel = 'Close';
+    $ctrl.cancelLabel = 'Cancel';
+    expect($ctrl.closeButtonLabel()).toBe('Close');
+
+    $ctrl.form.$dirty = true;
+    expect($ctrl.closeButtonLabel()).toBe('Cancel');
+
+    $ctrl.form.$dirty = false;
+    expect($ctrl.closeButtonLabel()).toBe('Close');
+
+    delete $ctrl.form;
+    expect($ctrl.closeButtonLabel()).toBe('Close');
+  });
+
   it('closes the panel', () => {
     ChannelSidePanelService.close.and.returnValue($q.resolve());
     $ctrl.close();
+    $rootScope.$digest();
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
 
     $ctrl.documentId = 'test';
     $ctrl.editing = true;
     $ctrl.close();
+    $rootScope.$digest();
     expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+  });
+
+  it('asks for confirmation when cancelling changes', () => {
+    const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
+    dialog.textContent.and.returnValue(dialog);
+    dialog.ok.and.returnValue(dialog);
+    dialog.cancel.and.returnValue(dialog);
+    DialogService.confirm.and.returnValue(dialog);
+    DialogService.show.and.returnValue($q.resolve());
+    ChannelSidePanelService.close.and.returnValue($q.resolve());
+    $ctrl.documentId = 'test';
+    $ctrl.form.$dirty = true;
+    $ctrl.editing = true;
+    $ctrl.close();
+    $rootScope.$digest();
+
+    expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
+    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+  });
+
+  it('asks doesn\'t delete and close if discarding is not confirmed', () => {
+    const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
+    dialog.textContent.and.returnValue(dialog);
+    dialog.ok.and.returnValue(dialog);
+    dialog.cancel.and.returnValue(dialog);
+    DialogService.confirm.and.returnValue(dialog);
+    DialogService.show.and.returnValue($q.reject());
+    $ctrl.documentId = 'test';
+    $ctrl.form.$dirty = true;
+    $ctrl.close();
+    $rootScope.$digest();
+
+    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+    expect(ChannelSidePanelService.close).not.toHaveBeenCalled();
   });
 
   it('opens a document', () => {
@@ -305,7 +359,7 @@ describe('ChannelRightSidePanel', () => {
     ContentService.saveDraft.and.returnValue($q.resolve(savedDoc));
 
     $ctrl.doc = testDocument;
-    $ctrl.form.$pristine = false;
+    $ctrl.form.$dirty = true;
     $ctrl.saveDocument();
 
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
@@ -319,7 +373,6 @@ describe('ChannelRightSidePanel', () => {
 
   it('does not save a document when there are no changes', () => {
     $ctrl.doc = testDocument;
-    $ctrl.form.$pristine = true;
 
     $ctrl.saveDocument();
     $rootScope.$apply();
@@ -334,7 +387,7 @@ describe('ChannelRightSidePanel', () => {
     ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
 
     $ctrl.doc = testDocument;
-    $ctrl.form.$pristine = false;
+    $ctrl.form.$dirty = true;
     $ctrl.saveDocument();
 
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
@@ -348,7 +401,7 @@ describe('ChannelRightSidePanel', () => {
     ContentService.saveDraft.and.returnValue($q.reject({}));
 
     $ctrl.doc = testDocument;
-    $ctrl.form.$pristine = false;
+    $ctrl.form.$dirty = true;
     $ctrl.saveDocument();
 
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
@@ -361,6 +414,7 @@ describe('ChannelRightSidePanel', () => {
   it('views the full content by saving changes, closing the panel and publishing a view-content event', () => {
     $ctrl.documentId = 'test';
     $ctrl.doc = testDocument;
+    $ctrl.form.$dirty = true;
     ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
     ChannelSidePanelService.close.and.returnValue($q.resolve());
 
@@ -375,6 +429,7 @@ describe('ChannelRightSidePanel', () => {
 
   it('does not view the full content if saving changes failed', () => {
     $ctrl.doc = testDocument;
+    $ctrl.form.$dirty = true;
     ContentService.saveDraft.and.returnValue($q.reject());
 
     $ctrl.viewFullContent();
