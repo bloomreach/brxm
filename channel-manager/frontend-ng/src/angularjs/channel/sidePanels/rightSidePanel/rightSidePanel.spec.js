@@ -181,7 +181,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBe(response);
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_HELD_BY_OTHER_USER', { user: 'John Tester' });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_HELD_BY_OTHER_USER_MESSAGE', { user: 'John Tester' });
     expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', response);
   });
 
@@ -208,7 +208,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBe(response);
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_HELD_BY_OTHER_USER', { user: 'tester' });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_HELD_BY_OTHER_USER_MESSAGE', { user: 'tester' });
     expect($translate.instant).not.toHaveBeenCalledWith('EDIT_DOCUMENT', response);
   });
 
@@ -233,7 +233,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBe(response);
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_REQUEST_PENDING', { });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_REQUEST_PENDING_MESSAGE', { });
   });
 
   it('fails to open a document which is not a document', () => {
@@ -251,7 +251,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_CONTENT', { });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_A_DOCUMENT_MESSAGE', { });
   });
 
   it('fails to open a non-existent document', () => {
@@ -266,7 +266,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE_NOT_FOUND', { });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE', { });
   });
 
   it('fails to open a document with random data in the response', () => {
@@ -282,7 +282,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE', { });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
   });
 
   it('fails to open a document with no data in the response', () => {
@@ -297,7 +297,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE', { });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
   });
 
   it('fails to open a document with no type', () => {
@@ -325,7 +325,7 @@ describe('ChannelRightSidePanel', () => {
     expect(ContentService.getDocumentType).toHaveBeenCalledWith('document:type');
     expect($ctrl.doc).toBeUndefined();
     expect($ctrl.docType).toBeUndefined();
-    expect($translate.instant).toHaveBeenCalledWith('UNAVAILABLE', { });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
   });
 
   it('saves a document', () => {

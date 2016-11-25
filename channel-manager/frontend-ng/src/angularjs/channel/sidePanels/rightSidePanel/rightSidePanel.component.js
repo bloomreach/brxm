@@ -18,33 +18,33 @@ import template from './rightSidePanel.html';
 
 const ERROR_MAP = {
   UNAVAILABLE: { // default catch-all
-    title: 'UNAVAILABLE_CONTENT_TITLE',
+    title: 'FEEDBACK_DEFAULT_TITLE',
     linkToFullEditor: true,
-    messageKey: 'UNAVAILABLE',
+    messageKey: 'FEEDBACK_DEFAULT_MESSAGE',
   },
   NOT_A_DOCUMENT: {
-    title: 'UNAVAILABLE_CONTENT_HERE_TITLE',
+    title: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
     linkToFullEditor: true,
-    messageKey: 'UNAVAILABLE_CONTENT',
+    messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
   },
   NOT_FOUND: {
-    title: 'UNAVAILABLE_NOT_FOUND_TITLE',
-    messageKey: 'UNAVAILABLE_NOT_FOUND',
+    title: 'FEEDBACK_NOT_FOUND_TITLE',
+    messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
     hideContentButtons: true,
   },
   UNAVAILABLE_CUSTOM_VALIDATION_PRESENT: {
-    title: 'UNAVAILABLE_DOCUMENT_HERE_TITLE',
+    title: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_TITLE',
     linkToFullEditor: true,
-    messageKey: 'UNAVAILABLE_CUSTOM_VALIDATION_PRESENT',
+    messageKey: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_MESSAGE',
   },
   UNAVAILABLE_HELD_BY_OTHER_USER: {
-    title: 'UNAVAILABLE_DOCUMENT_TITLE',
-    messageKey: 'UNAVAILABLE_HELD_BY_OTHER_USER',
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
     hasUser: true,
   },
   UNAVAILABLE_REQUEST_PENDING: {
-    title: 'UNAVAILABLE_DOCUMENT_TITLE',
-    messageKey: 'UNAVAILABLE_REQUEST_PENDING',
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
   },
 };
 
