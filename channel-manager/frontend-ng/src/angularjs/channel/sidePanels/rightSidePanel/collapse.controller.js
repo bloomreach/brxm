@@ -22,7 +22,7 @@ class CollapseCtrl {
     this.$animate = $animate;
     this.$element = $element;
     this.isCollapsed = false;
-    this.toggledElement = $element.find('>.collapse-element');
+    this.toggledElement = $element.find('> .collapse-element');
   }
 
   toggle() {

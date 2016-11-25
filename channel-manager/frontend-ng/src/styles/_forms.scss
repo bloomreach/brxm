@@ -28,8 +28,10 @@
 
 .top-level {
   &> .field-wrapper {
-    &> .form-field-compound {
+    &> .field.field-indented {
       border-left: 3px solid $grey-500;
+      // break the border to indicate start of new field
+      margin-bottom: 8px;
     }
     &> .field {
       padding: $form-padding;
@@ -37,17 +39,27 @@
   }
 }
 
-.form-field-compound {
+.field-indented {
   padding-left: 8px !important;
-  h5 {
-    margin-left: -8px;
+  &> h5 {
+    margin-left: 16px;
   }
-  &.has-focused-field {
-    border-color: $blue-500 !important;
+  &.field-compound > h5 {
+    margin-left: -8px; // 24px space for the collapse-icon
+  }
+  md-input-container {
+    margin-left: 18px;
+  }
+}
+
+.field-choice {
+  &> h5 {
+    padding-bottom: 8px; // nice spacing between choice field name and chosen compound
   }
 }
 
 .has-focused-field {
+  border-color: $blue-500 !important;
   &> h5 {
     color: $blue-500 !important;
     md-icon {
@@ -56,19 +68,7 @@
   }
 }
 
-.field-wrapper {
-  margin-bottom: 16px;
-
-  h5 {
-    margin-bottom: 0;
-  }
-}
-
-channel-fields {
-  channel-fields {
-    md-input-container {
-      margin-left: 18px;
-    }
-  }
+.field-wrapper h5 {
+  margin-bottom: 0;
 }
 

@@ -1,7 +1,7 @@
 <!--
   Copyright 2016 Hippo B.V. (http://www.onehippo.com)
 
-  Licensed under the Apache License, Version 2.0 (the "License");
+  Licensed under the Apache License, Version 2.0 (the "License")
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
 
@@ -13,27 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<div ng-repeat="fieldType in $ctrl.fieldTypes"
-     ng-switch="fieldType.type"
-     class="field-wrapper">
+<div class="field-wrapper"
+     ng-repeat="fieldType in $ctrl.fieldTypes"
+     ng-switch="fieldType.type">
 
-  <!-- edge case: a multiple field with zero values -->
-  <md-input-container ng-if="!$ctrl.hasValue(fieldType)"
-                      class="md-block field qa-field"
-                      md-no-float>
-    <label>{{ ::fieldType.displayName }}</label>
-    <input disabled value="{{ 'NONE' | translate }}" placeholder="">
-  </md-input-container>
-
-  <div ng-switch-when="COMPOUND"
+  <div class="field field-indented field-compound qa-compound"
+       ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldType.id, $index)}"
+       ng-switch-when="COMPOUND"
        ng-if="$ctrl.hasValue(fieldType)"
-       class="field form-field-compound qa-compound"
-       ng-class="{
-         'has-focused-field': $ctrl.hasFocusedField(fieldType.id, $index)
-       }"
        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
        collapse>
-
     <h5 class="collapse-toggle" ng-click="collapse.toggle()">
       <md-icon class="material-icons collapse-icon" ng-class="{'collapsed': collapse.isCollapsed}">
         keyboard_arrow_down
@@ -42,20 +31,50 @@
       {{ ::$ctrl.getDisplayNameForCompound(fieldType, $index) }}
     </h5>
 
-    <channel-fields field-types="::fieldType.fields"
+    <channel-fields class="collapse-element"
+                    field-types="::fieldType.fields"
                     field-values="fieldValue.fields"
                     on-field-focus="$ctrl.focusCompound(fieldType.id, $index)"
-                    on-field-blur="$ctrl.blurCompound()"
-                    class="collapse-element"
-                    ng-class="{'collapsed': collapse.isCollapsed}">
+                    on-field-blur="$ctrl.blurCompound()">
     </channel-fields>
+  </div>
+
+  <div class="field field-indented field-choice qa-choice"
+       ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldType.id, $index)}"
+       ng-switch-when="CHOICE"
+       ng-if="$ctrl.hasValue(fieldType)"
+       ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]">
+    <h5>
+      {{ ::$ctrl.getDisplayNameForCompound(fieldType, $index) }}
+    </h5>
+
+    <!-- Currently, each choice is a COMPOUND with a single value -->
+    <div class="field field-indented field-compound qa-compound"
+         ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldType.id, $index)}"
+         collapse>
+      <h5 class="collapse-toggle" ng-click="collapse.toggle()">
+        <md-icon class="material-icons collapse-icon" ng-class="{'collapsed': collapse.isCollapsed}">
+          keyboard_arrow_down
+        </md-icon>
+
+        {{ ::fieldType.choices[fieldValue.chosenId].displayName }}
+      </h5>
+
+      <channel-fields class="collapse-element"
+                      field-types="::fieldType.choices[fieldValue.chosenId].fields"
+                      field-values="fieldValue.chosenValue.fields"
+                      on-field-focus="$ctrl.focusCompound(fieldType.id, $index)"
+                      on-field-blur="$ctrl.blurCompound()">
+      </channel-fields>
+    </div>
   </div>
 
   <!-- other cases -->
   <div class="field"
-       ng-switch-default
-       ng-if="$ctrl.hasValue(fieldType)">
-    <md-input-container class="md-block qa-field"
+       ng-switch-default>
+
+    <md-input-container ng-if="$ctrl.hasValue(fieldType)"
+                        class="md-block qa-field"
                         md-no-float
                         ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
                         ng-switch="fieldType.type">

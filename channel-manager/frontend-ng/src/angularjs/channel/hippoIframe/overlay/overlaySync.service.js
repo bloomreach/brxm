@@ -18,7 +18,6 @@ import debounce from 'lodash.debounce';
 import MutationSummary from 'mutation-summary';
 
 class OverlaySyncService {
-
   constructor($rootScope, $log, $window, DomService) {
     'ngInject';
 
@@ -135,8 +134,7 @@ class OverlaySyncService {
     this.$iframe.css('min-width', '0');
 
     if (this.viewPortWidth === 0) {
-      // desktop mode
-      this.$iframe.css('min-width', '1280px');
+      // 'any device'
       this.$sheet.css('max-width', 'none');
       this.$iframe.width('');
       this.$overlay.width('');

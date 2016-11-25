@@ -159,10 +159,6 @@ describe('OverlaySyncService', () => {
       expect($sheet).toHaveCss({
         'max-width': 'none',
       });
-      expect($iframe).toHaveCss({
-        'min-width': '1280px',
-      });
-
       expect($iframe.height()).toEqual(600 + 2);
       expect($overlay.height()).toEqual(600 + 2);
       expect($scrollX.height()).toEqual(600 + 2);
