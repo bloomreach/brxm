@@ -118,13 +118,8 @@ class OverlaySyncService {
 
     this._constrainWidth();
 
-    let iframeWidth = this._getIframeWidth(iframeDocument);
+    const iframeWidth = this._getIframeWidth(iframeDocument);
     const iframeHeight = this._getIframeHeight(iframeDocument);
-    const visibleHeight = this.$base.height();
-
-    if (iframeHeight > visibleHeight) {
-      iframeWidth -= this.DomService.getScrollBarWidth();
-    }
 
     this._setWidth(iframeWidth);
     this._setHeight(iframeHeight);
@@ -137,7 +132,6 @@ class OverlaySyncService {
       // 'any device'
       this.$sheet.css('max-width', 'none');
       this.$iframe.width('');
-      this.$overlay.width('');
     } else {
       // tablet or phone mode
       const width = `${this.viewPortWidth}px`;
