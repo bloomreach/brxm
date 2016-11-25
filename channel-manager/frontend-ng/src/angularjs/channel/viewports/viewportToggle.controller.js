@@ -32,7 +32,8 @@ class ViewportToggleCtrl {
     this.viewPorts = [
       {
         id: 'ANY_DEVICE',
-        icon: '/cms/angular/hippo-cm/images/any_device.svg',
+        // TODO replace with proper icon for 'any device'
+        icon: '/cms/angular/hippo-cm/images/close.svg',
         maxWidth: 0,
       },
       {
