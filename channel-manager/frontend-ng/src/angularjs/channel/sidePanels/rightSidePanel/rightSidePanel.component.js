@@ -129,7 +129,6 @@ export class ChannelRightSidePanelCtrl {
 
   _handleResponse(errorKey) {
     const error = ERROR_MAP[errorKey];
-    const error = ERROR_MAP[errorKey];
 
     if (error) {
       const params = {};
