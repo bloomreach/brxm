@@ -30,6 +30,7 @@
       <md-button class="md-icon-button"
                  aria-label="{{ 'PUBLISH' | translate }}"
                  ng-if="$ctrl.loaded"
+                 ng-disabled="!$ctrl.editing"
                  ng-click="$ctrl.viewFullContent()">
         <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
 
