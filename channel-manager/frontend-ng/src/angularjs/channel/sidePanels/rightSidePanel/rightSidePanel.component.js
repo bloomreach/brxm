@@ -221,9 +221,11 @@ export class ChannelRightSidePanelCtrl {
     if (!this._isFormDirty()) {
       return this.$q.resolve();
     }
-
+    const messageParams = {
+      documentName: this.doc.displayName,
+    };
     const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_DISCARD_OWN_CHANGES_MESSAGE'))
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', messageParams))
       .ok(this.$translate.instant('DISCARD'))
       .cancel(this.cancelLabel);
 

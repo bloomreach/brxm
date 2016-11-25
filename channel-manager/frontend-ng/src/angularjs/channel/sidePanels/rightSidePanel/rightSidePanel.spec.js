@@ -154,6 +154,8 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('asks for confirmation when cancelling changes', () => {
+    spyOn($translate, 'instant');
+
     const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
     dialog.textContent.and.returnValue(dialog);
     dialog.ok.and.returnValue(dialog);
@@ -161,14 +163,21 @@ describe('ChannelRightSidePanel', () => {
     DialogService.confirm.and.returnValue(dialog);
     DialogService.show.and.returnValue($q.resolve());
     ChannelSidePanelService.close.and.returnValue($q.resolve());
+    $ctrl.doc = {
+      displayName: 'test',
+    };
     $ctrl.documentId = 'test';
     $ctrl.form.$dirty = true;
     $ctrl.editing = true;
+
     $ctrl.close();
     $rootScope.$digest();
 
     expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
+      documentName: 'test',
+    });
   });
 
   it('asks doesn\'t delete and close if discarding is not confirmed', () => {
@@ -178,6 +187,7 @@ describe('ChannelRightSidePanel', () => {
     dialog.cancel.and.returnValue(dialog);
     DialogService.confirm.and.returnValue(dialog);
     DialogService.show.and.returnValue($q.reject());
+    $ctrl.doc = {};
     $ctrl.documentId = 'test';
     $ctrl.form.$dirty = true;
     $ctrl.close();
