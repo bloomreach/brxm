@@ -315,6 +315,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
+    expect($ctrl.disableContentButtons).toBeFalsy();
     expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_A_DOCUMENT_MESSAGE', { });
   });
 
@@ -330,6 +331,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
+    expect($ctrl.disableContentButtons).toBeTruthy();
     expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE', { });
   });
 
