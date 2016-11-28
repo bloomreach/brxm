@@ -17,34 +17,40 @@
 import template from './rightSidePanel.html';
 
 const ERROR_MAP = {
-  UNAVAILABLE: {
-    title: 'UNAVAILABLE_CONTENT_TITLE',
+  UNAVAILABLE: { // default catch-all
+    title: 'FEEDBACK_DEFAULT_TITLE',
     linkToFullEditor: true,
-    messageKey: 'UNAVAILABLE',
+    messageKey: 'FEEDBACK_DEFAULT_MESSAGE',
   },
-  UNAVAILABLE_CONTENT: {
-    title: 'UNAVAILABLE_CONTENT_HERE_TITLE',
+  NOT_A_DOCUMENT: {
+    title: 'FEEDBACK_NOT_A_DOCUMENT_TITLE',
     linkToFullEditor: true,
-    messageKey: 'UNAVAILABLE_CONTENT',
+    messageKey: 'FEEDBACK_NOT_A_DOCUMENT_MESSAGE',
+  },
+  NOT_FOUND: {
+    title: 'FEEDBACK_NOT_FOUND_TITLE',
+    messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
+    hideContentButtons: true,
   },
   UNAVAILABLE_CUSTOM_VALIDATION_PRESENT: {
-    title: 'UNAVAILABLE_DOCUMENT_HERE_TITLE',
+    title: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_TITLE',
     linkToFullEditor: true,
-    messageKey: 'UNAVAILABLE_CUSTOM_VALIDATION_PRESENT',
+    messageKey: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_MESSAGE',
   },
   UNAVAILABLE_HELD_BY_OTHER_USER: {
-    title: 'UNAVAILABLE_DOCUMENT_TITLE',
-    messageKey: 'UNAVAILABLE_HELD_BY_OTHER_USER',
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
     hasUser: true,
   },
   UNAVAILABLE_REQUEST_PENDING: {
-    title: 'UNAVAILABLE_DOCUMENT_TITLE',
-    messageKey: 'UNAVAILABLE_REQUEST_PENDING',
+    title: 'FEEDBACK_NOT_EDITABLE_TITLE',
+    messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
   },
 };
 
 export class ChannelRightSidePanelCtrl {
-  constructor($scope, $element, $timeout, $translate, $q, ChannelSidePanelService, CmsService, ContentService, HippoIframeService, FeedbackService) {
+  constructor($scope, $element, $timeout, $translate, $q, ChannelSidePanelService, CmsService, ContentService,
+              DialogService, HippoIframeService, FeedbackService) {
     'ngInject';
 
     this.$scope = $scope;
@@ -56,10 +62,13 @@ export class ChannelRightSidePanelCtrl {
     this.ChannelSidePanelService = ChannelSidePanelService;
     this.CmsService = CmsService;
     this.ContentService = ContentService;
+    this.DialogService = DialogService;
     this.HippoIframeService = HippoIframeService;
     this.FeedbackService = FeedbackService;
 
     this.defaultTitle = $translate.instant('EDIT_CONTENT');
+    this.closeLabel = $translate.instant('CLOSE');
+    this.cancelLabel = $translate.instant('CANCEL');
 
     ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), (documentId) => {
       this.openDocument(documentId);
@@ -73,12 +82,11 @@ export class ChannelRightSidePanelCtrl {
 
   _resetState() {
     delete this.doc;
-    delete this.loaded;
     delete this.editing;
     delete this.feedback;
+    delete this.hideContentButtons;
 
     this.title = this.defaultTitle;
-    this.state = 'UNAVAILABLE_CONTENT';
 
     this._resetForm();
   }
@@ -94,35 +102,40 @@ export class ChannelRightSidePanelCtrl {
     this.ContentService.createDraft(id)
       .then(doc => this.ContentService.getDocumentType(doc.info.type.id)
           .then((docType) => {
-            this.docType = docType;
-            this._onLoaded(doc);
             this.editing = true;
+            this.docType = docType;
+            this._onLoadResponse({ data: doc });
           })
       )
-      .catch(response => this._onLoaded(response.data));
+      .catch(response => this._onLoadResponse(response));
   }
 
-  _onLoaded(doc) {
-    if (doc) {
-      this.doc = doc;
-      if (doc.displayName) {
-        this.title = this.$translate.instant('EDIT_DOCUMENT', doc);
-      }
-      if (doc.info && doc.info.editing) {
-        this.state = doc.info.editing.state;
+  _onLoadResponse(response) {
+    let errorKey;
+    if (this._isDocument(response.data)) {
+      this.doc = response.data;
+      if (this.doc.displayName) {
+        this.title = this.$translate.instant('EDIT_DOCUMENT', this.doc);
       }
       this._resizeTextareas();
+
+      errorKey = this.doc.info.editing.state;
+    } else if (this._isErrorInfo(response.data)) {
+      errorKey = response.data.reason;
+    } else if (response.status === 404) {
+      errorKey = 'NOT_FOUND';
+    } else {
+      errorKey = 'UNAVAILABLE';
     }
 
-    this._updateFeedback();
-    this.loaded = true;
+    this._handleResponse(errorKey);
   }
 
-  _updateFeedback() {
-    const error = ERROR_MAP[this.state];
-    const params = {};
+  _handleResponse(errorKey) {
+    const error = ERROR_MAP[errorKey];
 
     if (error) {
+      const params = {};
       if (error.hasUser) {
         params.user = this._getHolder();
       }
@@ -132,6 +145,7 @@ export class ChannelRightSidePanelCtrl {
         message: this.$translate.instant(error.messageKey, params),
         linkToFullEditor: error.linkToFullEditor,
       };
+      this.hideContentButtons = error.hideContentButtons;
     }
   }
 
@@ -166,7 +180,7 @@ export class ChannelRightSidePanelCtrl {
         }
 
         let defaultKey = 'ERROR_UNABLE_TO_SAVE';
-        if (response.data && response.data.reason) {
+        if (this._isErrorInfo(response.data)) {
           defaultKey = `ERROR_${response.data.reason}`;
         }
         this.FeedbackService.showErrorResponse(undefined, defaultKey, undefined, this.$element);
@@ -175,6 +189,10 @@ export class ChannelRightSidePanelCtrl {
 
   _isDocument(object) {
     return object && object.id; // Document has an ID field, ErrorInfo doesn't.
+  }
+
+  _isErrorInfo(object) {
+    return object && object.reason; // ErrorInfo has a reason field, Document doesn't.
   }
 
   viewFullContent() {
@@ -188,7 +206,7 @@ export class ChannelRightSidePanelCtrl {
   }
 
   _saveDraft() {
-    if (!this.form || this.form.$pristine) {
+    if (!this._isFormDirty()) {
       return this.$q.resolve();
     }
     return this.ContentService.saveDraft(this.doc);
@@ -198,9 +216,34 @@ export class ChannelRightSidePanelCtrl {
     this.CmsService.publish('edit-content', this.documentId);
   }
 
+  closeButtonLabel() {
+    return this._isFormDirty() ? this.cancelLabel : this.closeLabel;
+  }
+
+  _isFormDirty() {
+    return this.form && this.form.$dirty;
+  }
+
   close() {
-    this._deleteDraft();
-    this._closePanel();
+    this._confirmIfFormDirty().then(() => {
+      this._deleteDraft();
+      this._closePanel();
+    });
+  }
+
+  _confirmIfFormDirty() {
+    if (!this._isFormDirty()) {
+      return this.$q.resolve();
+    }
+    const messageParams = {
+      documentName: this.doc.displayName,
+    };
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', messageParams))
+      .ok(this.$translate.instant('DISCARD'))
+      .cancel(this.cancelLabel);
+
+    return this.DialogService.show(confirm);
   }
 
   _deleteDraft() {

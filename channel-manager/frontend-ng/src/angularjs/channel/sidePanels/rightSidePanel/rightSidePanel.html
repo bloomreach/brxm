@@ -29,7 +29,7 @@
 
       <md-button class="md-icon-button"
                  aria-label="{{ 'PUBLISH' | translate }}"
-                 ng-if="$ctrl.loaded"
+                 ng-if="!$ctrl.hideContentButtons"
                  ng-disabled="!$ctrl.editing"
                  ng-click="$ctrl.viewFullContent()">
         <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
@@ -41,7 +41,7 @@
       <md-button class="md-icon-button"
                  disabled
                  aria-label="{{ 'SWITCH_TO_FULL_EDITOR' | translate }}"
-                 ng-if="$ctrl.loaded"
+                 ng-if="!$ctrl.hideContentButtons"
                  ng-click="$ctrl.editFullContent()">
         <md-tooltip md-delay="500">{{ 'SWITCH_TO_FULL_EDITOR' | translate }}</md-tooltip>
 
@@ -67,7 +67,7 @@
           </span>
 
           <span>
-            {{'UNAVAILABLE_SWITCH_TO_THE_FULL_EDITOR' | translate}}
+            {{'FEEDBACK_SWITCH_TO_THE_FULL_EDITOR' | translate}}
           </span>
         </a>
       </p>
@@ -91,7 +91,7 @@
 
       <md-button class="qa-close"
                  ng-click="$ctrl.close()">
-        {{'CLOSE' | translate }}
+        {{ $ctrl.closeButtonLabel() }}
       </md-button>
 
       <md-button class="qa-save"

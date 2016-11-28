@@ -66,7 +66,6 @@ class HippoIframeCtrl {
     OverlaySyncService.init(
       baseJQueryElement,
       $element.find('.channel-iframe-sheet'),
-      $element.find('.channel-iframe-scroll-x'),
       this.iframeJQueryElement,
       $element.find('.overlay')
     );

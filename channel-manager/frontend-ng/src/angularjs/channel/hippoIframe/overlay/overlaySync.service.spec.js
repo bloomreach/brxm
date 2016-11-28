@@ -22,7 +22,6 @@ describe('OverlaySyncService', () => {
   let $iframe;
   let $base;
   let $sheet;
-  let $scrollX;
   let $overlay;
   let $window;
 
@@ -40,13 +39,12 @@ describe('OverlaySyncService', () => {
 
     $base = $j('.channel-iframe-base');
     $sheet = $j('.channel-iframe-sheet');
-    $scrollX = $j('.channel-iframe-scroll-x');
     $iframe = $j('.iframe');
     $overlay = $j('.overlay');
   });
 
   function loadIframeFixture(callback) {
-    OverlaySyncService.init($base, $sheet, $scrollX, $iframe, $overlay);
+    OverlaySyncService.init($base, $sheet, $iframe, $overlay);
     $iframe.one('load', () => {
       const iframeWindow = $iframe[0].contentWindow;
       try {
@@ -159,13 +157,8 @@ describe('OverlaySyncService', () => {
       expect($sheet).toHaveCss({
         'max-width': 'none',
       });
-      expect($iframe).toHaveCss({
-        'min-width': '1280px',
-      });
-
       expect($iframe.height()).toEqual(600 + 2);
       expect($overlay.height()).toEqual(600 + 2);
-      expect($scrollX.height()).toEqual(600 + 2);
 
       done();
     });
@@ -181,7 +174,6 @@ describe('OverlaySyncService', () => {
 
       expect($iframe.height()).toEqual(1042);
       expect($overlay.height()).toEqual(1042);
-      expect($scrollX.height()).toEqual(1042);
 
       done();
     });
@@ -214,7 +206,6 @@ describe('OverlaySyncService', () => {
 
       expect($iframe.height()).toEqual(600 + 2);
       expect($overlay.height()).toEqual(600 + 2);
-      expect($scrollX.height()).toEqual(600 + 15 + 2);
       done();
     });
   });
