@@ -97,6 +97,9 @@ class DocumentsServiceImpl implements DocumentsService {
         }
 
         final DocumentType docType = getDocumentType(handle, locale);
+        if (docType.isReadOnlyDueToUnknownValidator()) {
+            throw new ForbiddenException();
+        }
 
         // Push fields onto draft node
         FieldTypeUtils.writeFieldValues(document.getFields(), docType.getFields(), draft);

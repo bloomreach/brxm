@@ -16,7 +16,6 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -48,7 +47,6 @@ import org.onehippo.cms.channelmanager.content.error.ForbiddenException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.MethodNotAllowed;
 import org.onehippo.cms.channelmanager.content.error.NotFoundException;
-import org.onehippo.repository.mock.MockNode;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -511,6 +509,36 @@ public class DocumentsServiceImplTest {
     }
 
     @Test
+    public void updateDraftUnknownValidator() throws Exception {
+        final Document document = new Document();
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        final Node draft = createMock(Node.class);
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final DocumentType docType = provideDocumentType(handle);
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
+        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(EditingUtils.canUpdateDocument(workflow)).andReturn(true);
+
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(true);
+
+        PowerMock.replayAll();
+        replay(docType);
+
+        try {
+            documentsService.updateDraft(uuid, document, session, locale);
+            fail("No Exception");
+        } catch (ForbiddenException e) {
+            assertNull(e.getPayload());
+        }
+
+        verify(docType);
+        PowerMock.verifyAll();
+    }
+
+    @Test
     public void updateDraftWriteFailure() throws Exception {
         final Document document = new Document();
         final String uuid = "uuid";
@@ -527,6 +555,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall().andThrow(badRequest);
 
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
 
         PowerMock.replayAll();
@@ -559,6 +588,7 @@ public class DocumentsServiceImplTest {
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
 
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList());
         session.save();
         expectLastCall().andThrow(new RepositoryException());
@@ -594,6 +624,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(false);
 
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
         session.save();
         expectLastCall();
@@ -629,6 +660,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
 
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
         session.save();
         expectLastCall();
@@ -665,6 +697,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
 
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
         session.save();
         expectLastCall();
@@ -705,6 +738,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
 
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
         session.save();
         expectLastCall();
@@ -743,6 +777,7 @@ public class DocumentsServiceImplTest {
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
 
+        expect(docType.isReadOnlyDueToUnknownValidator()).andReturn(false);
         expect(docType.getFields()).andReturn(Collections.emptyList()).anyTimes();
         session.save();
         expectLastCall();
