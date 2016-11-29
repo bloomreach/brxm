@@ -30,7 +30,7 @@ const ERROR_MAP = {
   NOT_FOUND: {
     title: 'FEEDBACK_NOT_FOUND_TITLE',
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
-    hideContentButtons: true,
+    disableContentButtons: true,
   },
   UNAVAILABLE_CUSTOM_VALIDATION_PRESENT: {
     title: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_TITLE',
@@ -84,7 +84,7 @@ export class ChannelRightSidePanelCtrl {
     delete this.doc;
     delete this.editing;
     delete this.feedback;
-    delete this.hideContentButtons;
+    delete this.disableContentButtons;
 
     this.title = this.defaultTitle;
 
@@ -145,7 +145,7 @@ export class ChannelRightSidePanelCtrl {
         message: this.$translate.instant(error.messageKey, params),
         linkToFullEditor: error.linkToFullEditor,
       };
-      this.hideContentButtons = error.hideContentButtons;
+      this.disableContentButtons = error.disableContentButtons;
     }
   }
 
