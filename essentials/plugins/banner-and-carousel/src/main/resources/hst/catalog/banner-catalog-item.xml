@@ -32,7 +32,7 @@
     <sv:value>essentials-banner{{templateExtension}}</sv:value>
   </sv:property>
   <sv:property sv:name="hst:xtype" sv:type="String">
-    <sv:value>HST.Item</sv:value>
+    <sv:value>hst.item</sv:value>
   </sv:property>
 </sv:node>
 

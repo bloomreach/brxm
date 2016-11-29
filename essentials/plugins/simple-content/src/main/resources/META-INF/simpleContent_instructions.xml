@@ -51,26 +51,26 @@
     <xml action="copy" source="hst/template-content-jsp.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <file action="copy" source="jsp/contentpage-main.jsp" target="{{jspRoot}}/hstdefault/contentpage-main.jsp"/>
     <xml action="copy" source="hst/template-content-list-jsp.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
-    <file action="copy" source="jsp/contentlist-main-contentlist.jsp" target="{{jspRoot}}/{{namespace}}/contentlist-main-contentlist.jsp"/>
+    <file action="copy" source="jsp/contentlist-main-contentlist.jsp" target="{{jspRoot}}/hstdefault/contentlist-main-contentlist.jsp"/>
   </instructionSet>
 
   <instructionSet group="freemarker">
     <xml action="copy" source="hst/template-content-freemarker.xml" target="/hst:hst/hst:configurations/hst:default/hst:templates"/>
     <xml action="copy" source="hst/template-content-list-freemarker.xml" target="/hst:hst/hst:configurations/{{namespace}}/hst:templates"/>
     <freemarker action="copy" source="freemarker/contentpage-main.ftl" target="{{freemarkerRoot}}/hstdefault/contentpage-main.ftl"/>
-    <freemarker action="copy" source="freemarker/contentlist-main-contentlist.ftl" target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist.ftl"/>
+    <freemarker action="copy" source="freemarker/contentlist-main-contentlist.ftl" target="{{freemarkerRoot}}/hstdefault/contentlist-main-contentlist.ftl"/>
   </instructionSet>
 
   <instructionSet group="extraTemplates">
     <freemarker action="copy"
                 source="freemarker/contentlist-main-contentlist-variant.ftl"
-                target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist/variant.ftl"/>
+                target="{{freemarkerRoot}}/hstdefault/contentlist-main-contentlist/variant.ftl"/>
     <file action="copy"
           source="freemarker/contentlist-main-contentlist.properties"
-          target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist.properties"/>
+          target="{{freemarkerRoot}}/hstdefault/contentlist-main-contentlist.properties"/>
     <file action="copy"
           source="freemarker/contentlist-main-contentlist_nl.properties"
-          target="{{freemarkerRoot}}/{{namespace}}/contentlist-main-contentlist_nl.properties"/>
+          target="{{freemarkerRoot}}/hstdefault/contentlist-main-contentlist_nl.properties"/>
     <freemarker action="copy"
                 source="freemarker/contentpage-main-variant.ftl"
                 target="{{freemarkerRoot}}/hstdefault/contentpage-main/variant.ftl"/>

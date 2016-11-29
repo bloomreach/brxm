@@ -999,6 +999,15 @@ public final class JavaSourceUtils {
         return false;
     }
 
+    public static HippoEssentialsGeneratedObject  getHippoEssentialsAnnotation(final Path beanPath, final MethodDeclaration node) {
+        @SuppressWarnings({UNCHECKED, RAWTYPES})
+        final List modifiers = node.modifiers();
+        if (modifiers == null) {
+            return null;
+        }
+        return getGeneratedObject(modifiers, beanPath);
+    }
+
     public static String  getHippoEssentialsAnnotation(final MethodDeclaration node) {
         @SuppressWarnings({UNCHECKED, RAWTYPES})
         final List modifiers = node.modifiers();
@@ -1038,6 +1047,10 @@ public final class JavaSourceUtils {
     public static HippoEssentialsGeneratedObject getHippoGeneratedAnnotation(final Path path) {
         @SuppressWarnings({UNCHECKED, RAWTYPES})
         final List modifiers = getClassAnnotations(path);
+        return getGeneratedObject(modifiers, path);
+    }
+
+    private static HippoEssentialsGeneratedObject getGeneratedObject(final List modifiers, final Path path) {
         for (Object modifier : modifiers) {
             if (modifier instanceof NormalAnnotation) {
                 final NormalAnnotation annotation = (NormalAnnotation) modifier;
@@ -1055,6 +1068,8 @@ public final class JavaSourceUtils {
 
     private static HippoEssentialsGeneratedObject populateGeneratedObject(final Path path, final NormalAnnotation annotation) {
         final HippoEssentialsGeneratedObject o = new HippoEssentialsGeneratedObject();
+        // set default:
+        o.setAllowModifications(true);
         o.setFilePath(path);
         @SuppressWarnings(RAWTYPES)
         final List values = annotation.values();

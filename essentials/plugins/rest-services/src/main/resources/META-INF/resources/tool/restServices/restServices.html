@@ -28,12 +28,19 @@
           <input type="checkbox" ng-model="isGenericContentRestApiEnabled"> Enable generic REST resources
         </label>
       </div>
-      <p>Choose the base URL for the generic REST resources</p>
-      <div class="input-group">
-        <span class="input-group-addon">http://localhost:8080/site/</span>
-        <input type="text" class="form-control" placeholder="<Endpoint name>"
-               ng-model="genericRestName" ng-pattern="/^[a-z\-]{1,}$/"
-               ng-required="isGenericContentRestApiEnabled"/>
+      <div ng-show="isGenericContentRestApiEnabled">
+        <p>Choose the base URL for the generic REST resources</p>
+        <div class="input-group">
+          <span class="input-group-addon">http://localhost:8080/site/</span>
+          <input type="text" class="form-control" placeholder="<Endpoint name>"
+                 ng-model="genericRestName" ng-pattern="/^[a-z\-]{1,}$/"
+                 ng-required="isGenericContentRestApiEnabled"/>
+        </div>
+        <p style="padding-top: 8px">The following REST resource will be available:
+          <a href="http://localhost:8080/site/{{genericRestName}}/documents" target="_blank">
+            http://localhost:8080/site/{{genericRestName}}/documents
+          </a>
+        </p>
       </div>
     </form>
     <form novalidate name="manualRestForm">

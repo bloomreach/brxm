@@ -26,7 +26,7 @@
       <sv:value>Faq Main</sv:value>
     </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
-      <sv:value>HST.vBox</sv:value>
+      <sv:value>hst.vbox</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
