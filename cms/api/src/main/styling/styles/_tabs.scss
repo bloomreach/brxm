@@ -103,10 +103,8 @@
   }
 }
 
-// highlight selected tab when there's no active breadcrumb of another perspective
-// or there's no breadcrumb of another perspective at all
-:not(.hippo-breadcrumb-active) + .hippo-tabs-documents,
-.hippo-tabs-documents:first-child {
+// highlight selected tab
+.hippo-tabs-documents {
   .selected:hover,
   .selected {
     border-right-color: $document-tab-selected-bgcolor;

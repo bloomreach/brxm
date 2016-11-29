@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -408,6 +408,9 @@ public class TabbedPanel extends WebMarkupContainer {
         if (!hasBeenRendered() && getSelectedTab() == -1 && !tabs.isEmpty()) {
             // select the first tab by default
             setSelectedTab(0);
+
+            final TabsPlugin.Tab firstTab = tabs.get(0);
+            plugin.onTabActivated(firstTab);
         }
     }
 
