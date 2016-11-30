@@ -76,8 +76,10 @@ export class ChannelRightSidePanelCtrl {
   }
 
   openDocument(documentId) {
-    this._resetState();
-    this._loadDocument(documentId);
+    this._savePendingChanges(() => {
+      this._resetState();
+      this._loadDocument(documentId);
+    });
   }
 
   _resetState() {
@@ -193,16 +195,21 @@ export class ChannelRightSidePanelCtrl {
   }
 
   openFullContent(mode) {
-    this._checkSaveChanges()
-      .then(() => {
-        // don't return the result of saveDocument so a failing save does not switch to the full content
-        this.saveDocument()
-          .then(() => this._closePanelAndOpenContent(mode));
-      })
-      .catch(() => this._closePanelAndOpenContent(mode));
+    this._savePendingChanges(() => {
+      this._closePanelAndOpenContent(mode);
+    });
   }
 
-  _checkSaveChanges() {
+  _savePendingChanges(done) {
+    this._confirmSaveChanges()
+      .then(() => {
+        // don't return the result of saveDocument so a failing save does not switch to the full content
+        this.saveDocument().then(done);
+      })
+      .catch(done);
+  }
+
+  _confirmSaveChanges() {
     if (!this._isFormDirty()) {
       return this.$q.reject();
     }
