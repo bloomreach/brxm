@@ -204,7 +204,7 @@
           <sv:value>Add New Content Item</sv:value>
         </sv:property>
         <sv:property sv:name="compoundList" sv:type="String">
-          <sv:value>videoblock, imageblock, textblock</sv:value>
+          <sv:value>videoblock, imageblock, textblock, hippostd:html</sv:value>
         </sv:property>
         <sv:property sv:name="contentPickerType" sv:type="String">
           <sv:value>links</sv:value>
@@ -216,7 +216,7 @@
           <sv:value>contentblocks</sv:value>
         </sv:property>
         <sv:property sv:name="hint" sv:type="String">
-          <sv:value>Add a video, image or textblock</sv:value>
+          <sv:value>Add a video, image, textblock or regular HTML field</sv:value>
         </sv:property>
         <sv:property sv:name="mode" sv:type="String">
           <sv:value>${mode}</sv:value>
