@@ -214,9 +214,7 @@ describe('ChannelRightSidePanel', () => {
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
   });
 
-
   describe('with an existing document', () => {
-
     const newDocument = {
       id: 'newdoc',
       info: {
@@ -293,6 +291,17 @@ describe('ChannelRightSidePanel', () => {
       $rootScope.$digest();
 
       expect(DialogService.show).toHaveBeenCalledWith(dialog);
+      expect(ContentService.saveDraft).not.toHaveBeenCalled();
+      expectNewDocument();
+    });
+
+    it('does not save pending changes when there are none', () => {
+      $ctrl.form.$dirty = false;
+
+      onOpenCallback('newdoc');
+      $rootScope.$digest();
+
+      expect(DialogService.show).not.toHaveBeenCalled();
       expect(ContentService.saveDraft).not.toHaveBeenCalled();
       expectNewDocument();
     });
