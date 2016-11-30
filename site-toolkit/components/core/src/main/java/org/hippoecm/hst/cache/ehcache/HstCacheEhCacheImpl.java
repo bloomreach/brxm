@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.cache.ehcache;
 
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.collections.map.LRUMap;
@@ -72,9 +73,24 @@ public class HstCacheEhCacheImpl implements HstCache {
     }
 
     @SuppressWarnings("unused")
+    public void setStaleCache(final Optional<Cache> staleCacheOptional) {
+        if (staleCacheOptional.isPresent()) {
+            this.staleCache = staleCacheOptional.get();
+        }
+    }
+
+    @SuppressWarnings("unused")
     public void setSecondLevelCache(final Cache secondLevelCache) {
         this.secondLevelCache = secondLevelCache;
         uncacheableKeys = new LRUMap(1000);
+    }
+
+    @SuppressWarnings("unused")
+    public void setSecondLevelCache(final Optional<Cache> secondLevelCacheOptional) {
+        if (secondLevelCacheOptional.isPresent()) {
+            this.secondLevelCache = secondLevelCacheOptional.get();
+            uncacheableKeys = new LRUMap(1000);
+        }
     }
 
     public CacheElement get(Object key) {
