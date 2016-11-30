@@ -29,6 +29,7 @@ describe('ChannelRightSidePanel', () => {
 
   let $ctrl;
   let $scope;
+  let dialog;
 
   const stringField = {
     id: 'ns:string',
@@ -87,6 +88,12 @@ describe('ChannelRightSidePanel', () => {
     CmsService = jasmine.createSpyObj('CmsService', ['publish']);
     DialogService = jasmine.createSpyObj('DialogService', ['confirm', 'show']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
+
+    dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
+    dialog.textContent.and.returnValue(dialog);
+    dialog.ok.and.returnValue(dialog);
+    dialog.cancel.and.returnValue(dialog);
+    DialogService.confirm.and.returnValue(dialog);
 
     $scope = $rootScope.$new();
     const $element = angular.element('<div></div>');
@@ -156,11 +163,6 @@ describe('ChannelRightSidePanel', () => {
   it('asks for confirmation when cancelling changes', () => {
     spyOn($translate, 'instant');
 
-    const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
-    dialog.textContent.and.returnValue(dialog);
-    dialog.ok.and.returnValue(dialog);
-    dialog.cancel.and.returnValue(dialog);
-    DialogService.confirm.and.returnValue(dialog);
     DialogService.show.and.returnValue($q.resolve());
     ChannelSidePanelService.close.and.returnValue($q.resolve());
     $ctrl.doc = {
@@ -181,11 +183,6 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('asks doesn\'t delete and close if discarding is not confirmed', () => {
-    const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
-    dialog.textContent.and.returnValue(dialog);
-    dialog.ok.and.returnValue(dialog);
-    dialog.cancel.and.returnValue(dialog);
-    DialogService.confirm.and.returnValue(dialog);
     DialogService.show.and.returnValue($q.reject());
     $ctrl.doc = {};
     $ctrl.documentId = 'test';
@@ -204,13 +201,9 @@ describe('ChannelRightSidePanel', () => {
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
+    $rootScope.$digest();
 
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect($ctrl.doc).not.toBeDefined();
-    expect($ctrl.docType).not.toBeDefined();
-
-    $rootScope.$apply();
-
     expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
 
     expect($ctrl.doc).toEqual(testDocument);
@@ -219,6 +212,99 @@ describe('ChannelRightSidePanel', () => {
 
     $timeout.flush();
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
+  });
+
+  describe('with an existing document', () => {
+    const newDocument = {
+      id: 'newdoc',
+      info: {
+        type: {
+          id: 'ns:newdoctype',
+        },
+        editing: {
+          state: 'AVAILABLE',
+        },
+      },
+    };
+    const newDocumentType = {
+      id: 'ns:newdoctype',
+    };
+    let onOpenCallback;
+
+    beforeEach(() => {
+      $ctrl.doc = testDocument;
+      $ctrl.docType = testDocumentType;
+
+      ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
+      ContentService.createDraft.and.returnValue($q.resolve(newDocument));
+      ContentService.getDocumentType.and.returnValue($q.resolve(newDocumentType));
+      spyOn($scope, '$broadcast');
+
+      onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    });
+
+    function expectNewDocument() {
+      expect(ContentService.createDraft).toHaveBeenCalledWith('newdoc');
+      expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:newdoctype');
+
+      expect($ctrl.doc).toEqual(newDocument);
+      expect($ctrl.docType).toEqual(newDocumentType);
+      expect($ctrl.form.$setPristine).toHaveBeenCalled();
+
+      $timeout.flush();
+      expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
+    }
+
+    it('can save pending changes before opening a new document', () => {
+      $ctrl.form.$dirty = true;
+      DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
+
+      onOpenCallback('newdoc');
+      $rootScope.$digest();
+
+      expect(DialogService.show).toHaveBeenCalledWith(dialog);
+      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+      expectNewDocument();
+    });
+
+    it('does not open the new document when saving pending changes in the old document failed', () => {
+      $ctrl.form.$dirty = true;
+      DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
+      ContentService.saveDraft.and.returnValue($q.reject({}));
+
+      onOpenCallback('newdoc');
+      $rootScope.$digest();
+
+      expect(DialogService.show).toHaveBeenCalledWith(dialog);
+      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+      expect(ContentService.createDraft).not.toHaveBeenCalled();
+
+      expect($ctrl.doc).toEqual(testDocument);
+      expect($ctrl.docType).toEqual(testDocumentType);
+    });
+
+    it('can discard pending changes to an existing document before opening a new document', () => {
+      $ctrl.form.$dirty = true;
+      DialogService.show.and.returnValue($q.reject()); // Say 'Discard'
+
+      onOpenCallback('newdoc');
+      $rootScope.$digest();
+
+      expect(DialogService.show).toHaveBeenCalledWith(dialog);
+      expect(ContentService.saveDraft).not.toHaveBeenCalled();
+      expectNewDocument();
+    });
+
+    it('does not save pending changes when there are none', () => {
+      $ctrl.form.$dirty = false;
+
+      onOpenCallback('newdoc');
+      $rootScope.$digest();
+
+      expect(DialogService.show).not.toHaveBeenCalled();
+      expect(ContentService.saveDraft).not.toHaveBeenCalled();
+      expectNewDocument();
+    });
   });
 
   it('fails to open a document owned by another user', () => {
@@ -239,10 +325,9 @@ describe('ChannelRightSidePanel', () => {
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
-
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     $rootScope.$digest();
 
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBe(response);
     expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_HELD_BY_OTHER_USER_MESSAGE', { user: 'John Tester' });
@@ -266,10 +351,9 @@ describe('ChannelRightSidePanel', () => {
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
-
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     $rootScope.$digest();
 
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBe(response);
     expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_HELD_BY_OTHER_USER_MESSAGE', { user: 'tester' });
@@ -291,10 +375,9 @@ describe('ChannelRightSidePanel', () => {
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
-
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     $rootScope.$digest();
 
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBe(response);
     expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_REQUEST_PENDING_MESSAGE', { });
@@ -309,10 +392,9 @@ describe('ChannelRightSidePanel', () => {
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
-
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     $rootScope.$digest();
 
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
     expect($ctrl.disableContentButtons).toBeFalsy();
@@ -325,10 +407,9 @@ describe('ChannelRightSidePanel', () => {
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
-
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     $rootScope.$digest();
 
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
     expect($ctrl.disableContentButtons).toBeTruthy();
@@ -342,10 +423,9 @@ describe('ChannelRightSidePanel', () => {
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
-
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     $rootScope.$digest();
 
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
     expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
@@ -357,10 +437,9 @@ describe('ChannelRightSidePanel', () => {
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
-
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     $rootScope.$digest();
 
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
     expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
@@ -384,10 +463,9 @@ describe('ChannelRightSidePanel', () => {
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
-
-    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     $rootScope.$digest();
 
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).toHaveBeenCalledWith('document:type');
     expect($ctrl.doc).toBeUndefined();
     expect($ctrl.docType).toBeUndefined();
@@ -406,7 +484,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
 
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     expect($ctrl.doc).toEqual(savedDoc);
     expect($ctrl.form.$setPristine).toHaveBeenCalled();
@@ -417,7 +495,7 @@ describe('ChannelRightSidePanel', () => {
     $ctrl.doc = testDocument;
 
     $ctrl.saveDocument();
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
   });
@@ -434,7 +512,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
 
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {}, $ctrl.$element);
   });
@@ -448,7 +526,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
 
-    $rootScope.$apply();
+    $rootScope.$digest();
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UNABLE_TO_SAVE', {}, $ctrl.$element);
   });
@@ -468,11 +546,6 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('can discard pending changes before opening the full content', () => {
-    const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
-    dialog.textContent.and.returnValue(dialog);
-    dialog.ok.and.returnValue(dialog);
-    dialog.cancel.and.returnValue(dialog);
-    DialogService.confirm.and.returnValue(dialog);
     DialogService.show.and.returnValue($q.reject()); // Say 'Discard'
     ChannelSidePanelService.close.and.returnValue($q.resolve());
     $ctrl.documentId = 'test';
@@ -490,11 +563,6 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('saves pending changes before opening the full content', () => {
-    const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
-    dialog.textContent.and.returnValue(dialog);
-    dialog.ok.and.returnValue(dialog);
-    dialog.cancel.and.returnValue(dialog);
-    DialogService.confirm.and.returnValue(dialog);
     DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
     $ctrl.documentId = 'test';
     $ctrl.doc = testDocument;
@@ -513,11 +581,6 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('does not open the full content if saving changes failed', () => {
-    const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
-    dialog.textContent.and.returnValue(dialog);
-    dialog.ok.and.returnValue(dialog);
-    dialog.cancel.and.returnValue(dialog);
-    DialogService.confirm.and.returnValue(dialog);
     DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
     $ctrl.doc = testDocument;
     $ctrl.form.$dirty = true;
