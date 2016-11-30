@@ -82,7 +82,7 @@ describe('ChannelRightSidePanel', () => {
 
     ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'isOpen', 'close']);
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
-    FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse']);
+    FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
 
     CmsService = jasmine.createSpyObj('CmsService', ['publish']);
     DialogService = jasmine.createSpyObj('DialogService', ['confirm', 'show']);
@@ -420,7 +420,7 @@ describe('ChannelRightSidePanel', () => {
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
   });
 
-  it('shows a toast when document save fails', () => {
+  it('shows an error when document save fails', () => {
     const response = {
       reason: 'TEST',
     };
@@ -434,10 +434,10 @@ describe('ChannelRightSidePanel', () => {
 
     $rootScope.$apply();
 
-    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_TEST', undefined, $ctrl.$element);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {}, $ctrl.$element);
   });
 
-  it('shows a toast when document save fails and there is no data returned', () => {
+  it('shows an error when document save fails and there is no data returned', () => {
     ContentService.saveDraft.and.returnValue($q.reject({}));
 
     $ctrl.doc = testDocument;
@@ -448,7 +448,7 @@ describe('ChannelRightSidePanel', () => {
 
     $rootScope.$apply();
 
-    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_UNABLE_TO_SAVE', undefined, $ctrl.$element);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UNABLE_TO_SAVE', {}, $ctrl.$element);
   });
 
   it('directly views the full content if the form is not dirty', () => {
@@ -464,7 +464,7 @@ describe('ChannelRightSidePanel', () => {
     expect(CmsService.publish).toHaveBeenCalledWith('view-content', 'test');
   });
 
-  it('can skip saving pending changes when viewing the full content', () => {
+  it('can discard pending changes before viewing the full content', () => {
     const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
     dialog.textContent.and.returnValue(dialog);
     dialog.ok.and.returnValue(dialog);

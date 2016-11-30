@@ -177,11 +177,8 @@ export class ChannelRightSidePanelCtrl {
         if (this._isDocument(response.data)) {
           // CHANNELMGR-898: handle validation error on a per-field basis
         } else {
-          let defaultKey = 'ERROR_UNABLE_TO_SAVE';
-          if (this._isErrorInfo(response.data)) {
-            defaultKey = `ERROR_${response.data.reason}`;
-          }
-          this.FeedbackService.showErrorResponse(undefined, defaultKey, undefined, this.$element);
+          const errorKey = this._isErrorInfo(response.data) ? `ERROR_${response.data.reason}` : 'ERROR_UNABLE_TO_SAVE';
+          this.FeedbackService.showError(errorKey, {}, this.$element);
         }
         return this.$q.reject(); // tell the caller that saving has failed.
       });
@@ -198,10 +195,26 @@ export class ChannelRightSidePanelCtrl {
   viewFullContent() {
     this._checkSaveChanges()
       .then(() => {
+        // don't return the result of saveDocument so a failing save does not switch to the full content
         this.saveDocument()
           .then(() => this._closeAndBrowseToView());
       })
       .catch(() => this._closeAndBrowseToView());
+  }
+
+  _checkSaveChanges() {
+    if (!this._isFormDirty()) {
+      return this.$q.reject();
+    }
+    const messageParams = {
+      documentName: this.doc.displayName,
+    };
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_SAVE_CHANGES_MESSAGE', messageParams))
+      .ok(this.$translate.instant('SAVE'))
+      .cancel(this.$translate.instant('DISCARD'));
+
+    return this.DialogService.show(confirm);
   }
 
   _closeAndBrowseToView() {
@@ -248,21 +261,6 @@ export class ChannelRightSidePanelCtrl {
       .textContent(this.$translate.instant('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', messageParams))
       .ok(this.$translate.instant('DISCARD'))
       .cancel(this.cancelLabel);
-
-    return this.DialogService.show(confirm);
-  }
-
-  _checkSaveChanges() {
-    if (!this._isFormDirty()) {
-      return this.$q.reject();
-    }
-    const messageParams = {
-      documentName: this.doc.displayName,
-    };
-    const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_SAVE_CHANGES_MESSAGE', messageParams))
-      .ok(this.$translate.instant('SAVE'))
-      .cancel(this.$translate.instant('DISCARD'));
 
     return this.DialogService.show(confirm);
   }
