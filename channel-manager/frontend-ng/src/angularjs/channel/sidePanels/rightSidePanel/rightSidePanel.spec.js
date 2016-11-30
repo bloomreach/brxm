@@ -453,20 +453,21 @@ describe('ChannelRightSidePanel', () => {
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UNABLE_TO_SAVE', {}, $ctrl.$element);
   });
 
-  it('directly views the full content if the form is not dirty', () => {
+  it('directly opens the full content in a certain mode if the form is not dirty', () => {
     $ctrl.documentId = 'test';
     ChannelSidePanelService.close.and.returnValue($q.resolve());
 
-    $ctrl.viewFullContent();
+    const mode = 'view';
+    $ctrl.openFullContent(mode);
     $rootScope.$digest();
 
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
-    expect(CmsService.publish).toHaveBeenCalledWith('view-content', 'test');
+    expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', mode);
   });
 
-  it('can discard pending changes before viewing the full content', () => {
+  it('can discard pending changes before opening the full content', () => {
     const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
     dialog.textContent.and.returnValue(dialog);
     dialog.ok.and.returnValue(dialog);
@@ -478,17 +479,17 @@ describe('ChannelRightSidePanel', () => {
     $ctrl.doc = { displayName: 'Display Name' };
     $ctrl.form.$dirty = true;
 
-    $ctrl.viewFullContent();
+    $ctrl.openFullContent('edit');
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalledWith(dialog);
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
-    expect(CmsService.publish).toHaveBeenCalledWith('view-content', 'test');
+    expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', 'edit');
   });
 
-  it('saves pending changes before viewing the full content', () => {
+  it('saves pending changes before opening the full content', () => {
     const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
     dialog.textContent.and.returnValue(dialog);
     dialog.ok.and.returnValue(dialog);
@@ -501,17 +502,17 @@ describe('ChannelRightSidePanel', () => {
     ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
     ChannelSidePanelService.close.and.returnValue($q.resolve());
 
-    $ctrl.viewFullContent();
+    $ctrl.openFullContent('edit');
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalledWith(dialog);
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
-    expect(CmsService.publish).toHaveBeenCalledWith('view-content', 'test');
+    expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', 'edit');
   });
 
-  it('does not view the full content if saving changes failed', () => {
+  it('does not open the full content if saving changes failed', () => {
     const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
     dialog.textContent.and.returnValue(dialog);
     dialog.ok.and.returnValue(dialog);
@@ -522,7 +523,7 @@ describe('ChannelRightSidePanel', () => {
     $ctrl.form.$dirty = true;
     ContentService.saveDraft.and.returnValue($q.reject({}));
 
-    $ctrl.viewFullContent();
+    $ctrl.openFullContent('view');
     $rootScope.$digest();
 
     expect(DialogService.show).toHaveBeenCalledWith(dialog);
@@ -530,12 +531,6 @@ describe('ChannelRightSidePanel', () => {
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(ChannelSidePanelService.close).not.toHaveBeenCalled();
     expect(CmsService.publish).not.toHaveBeenCalled();
-  });
-
-  it('edits the full content by publishing an edit-content event', () => {
-    $ctrl.documentId = 'test';
-    $ctrl.editFullContent();
-    expect(CmsService.publish).toHaveBeenCalledWith('edit-content', 'test');
   });
 });
 

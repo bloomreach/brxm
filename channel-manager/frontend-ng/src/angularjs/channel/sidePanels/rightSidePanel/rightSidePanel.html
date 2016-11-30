@@ -30,7 +30,7 @@
       <md-button class="md-icon-button"
                  aria-label="{{ 'PUBLISH' | translate }}"
                  ng-disabled="!$ctrl.editing || $ctrl.disableContentButtons"
-                 ng-click="$ctrl.viewFullContent()">
+                 ng-click="$ctrl.openFullContent('view')">
         <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
 
         <md-icon class="material-icons">publish</md-icon>
@@ -41,7 +41,7 @@
                  disabled
                  aria-label="{{ 'SWITCH_TO_FULL_EDITOR' | translate }}"
                  ng-disabled="$ctrl.disableContentButtons"
-                 ng-click="$ctrl.editFullContent()">
+                 ng-click="$ctrl.openFullContent('edit')">
         <md-tooltip md-delay="500">{{ 'SWITCH_TO_FULL_EDITOR' | translate }}</md-tooltip>
 
         <md-icon md-svg-src="/cms/angular/hippo-cm/images/document.svg"></md-icon>
