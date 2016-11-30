@@ -27,7 +27,6 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.json.JSONException;
@@ -48,8 +47,7 @@ public class ChannelEditor extends ExtPanel {
     private static final long DEFAULT_INITIAL_CONNECTION_TIMEOUT = 60000L;
     private static final long DEFAULT_EXT_AJAX_TIMEOUT = 30000L;
 
-    private static final String VIEW_DOCUMENT_EVENT = "view-document";
-    private static final String EDIT_DOCUMENT_EVENT = "edit-document";
+    private static final String OPEN_DOCUMENT_EVENT = "open-document";
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -115,8 +113,7 @@ public class ChannelEditor extends ExtPanel {
         // and a message from the ng app (a click) to show the hst-config-editor card
         this.hideHstConfigEditor = true;
 
-        addEventListener(VIEW_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context, IEditor.Mode.VIEW));
-        addEventListener(EDIT_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context, IEditor.Mode.EDIT));
+        addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
     }
 
     @Override
@@ -148,8 +145,7 @@ public class ChannelEditor extends ExtPanel {
     @Override
     protected ExtEventAjaxBehavior newExtEventBehavior(final String event) {
         switch (event) {
-            case VIEW_DOCUMENT_EVENT:
-            case EDIT_DOCUMENT_EVENT:
+            case OPEN_DOCUMENT_EVENT:
                 return OpenDocumentEditorEventListener.getExtEventBehavior();
             default:
                 return super.newExtEventBehavior(event);

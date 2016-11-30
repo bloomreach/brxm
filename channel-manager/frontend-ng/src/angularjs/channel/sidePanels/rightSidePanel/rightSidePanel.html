@@ -30,18 +30,17 @@
       <md-button class="md-icon-button"
                  aria-label="{{ 'PUBLISH' | translate }}"
                  ng-disabled="!$ctrl.editing || $ctrl.disableContentButtons"
-                 ng-click="$ctrl.viewFullContent()">
+                 ng-click="$ctrl.openFullContent('view')">
         <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
 
         <md-icon class="material-icons">publish</md-icon>
       </md-button>
 
-      <!-- TODO: enable switch-to-full-editor button when implementing CHANNELMGR-923 -->
       <md-button class="md-icon-button"
                  disabled
                  aria-label="{{ 'SWITCH_TO_FULL_EDITOR' | translate }}"
                  ng-disabled="$ctrl.disableContentButtons"
-                 ng-click="$ctrl.editFullContent()">
+                 ng-click="$ctrl.openFullContent('edit')">
         <md-tooltip md-delay="500">{{ 'SWITCH_TO_FULL_EDITOR' | translate }}</md-tooltip>
 
         <md-icon md-svg-src="/cms/angular/hippo-cm/images/document.svg"></md-icon>
@@ -55,21 +54,15 @@
          md-colors="{background: 'hippo-red-50'}">
       <h4 class="qa-feedback-title">{{::$ctrl.feedback.title | translate}}</h4>
 
-      <div class="qa-feedback-message">{{::$ctrl.feedback.message }}</div>
-      <p ng-if="$ctrl.feedback.linkToFullEditor">
-        <!-- TODO: enable switch-to-full-editor button when implementing CHANNELMGR-923 -->
-        <a href="#"
-           layout="row"
-           layout-align="start end">
-          <span class="inline-icon-wrapper">
-            <md-icon md-svg-src="/cms/angular/hippo-cm/images/document.svg"></md-icon>
-          </span>
-
-          <span>
-            {{'FEEDBACK_SWITCH_TO_THE_FULL_EDITOR' | translate}}
-          </span>
-        </a>
+      <p class="qa-feedback-message">
+        {{::$ctrl.feedback.message }}
       </p>
+
+      <md-button ng-if="$ctrl.feedback.linkToFullEditor"
+                 ng-click="$ctrl.openFullContent('edit')">
+        <md-icon md-svg-src="/cms/angular/hippo-cm/images/document.svg"></md-icon>
+        {{'FEEDBACK_SWITCH_TO_THE_FULL_EDITOR' | translate}}
+      </md-button>
     </div>
 
     <form ng-if="$ctrl.editing"

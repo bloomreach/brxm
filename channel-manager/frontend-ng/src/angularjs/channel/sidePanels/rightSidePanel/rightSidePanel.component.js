@@ -192,14 +192,14 @@ export class ChannelRightSidePanelCtrl {
     return object && object.reason; // ErrorInfo has a reason field, Document doesn't.
   }
 
-  viewFullContent() {
+  openFullContent(mode) {
     this._checkSaveChanges()
       .then(() => {
         // don't return the result of saveDocument so a failing save does not switch to the full content
         this.saveDocument()
-          .then(() => this._closeAndBrowseToView());
+          .then(() => this._closePanelAndOpenContent(mode));
       })
-      .catch(() => this._closeAndBrowseToView());
+      .catch(() => this._closePanelAndOpenContent(mode));
   }
 
   _checkSaveChanges() {
@@ -217,11 +217,13 @@ export class ChannelRightSidePanelCtrl {
     return this.DialogService.show(confirm);
   }
 
-  _closeAndBrowseToView() {
+  _closePanelAndOpenContent(mode) {
     // The CMS automatically unlocks content that is being viewed, so close the side-panel to reflect that.
     // It will will unlock the document if needed, so don't delete the draft here.
     this._closePanel();
-    this.CmsService.publish('view-content', this.documentId);
+
+    // mode can be 'view' or 'edit', so the event names can be 'view-content' and 'edit-content'
+    this.CmsService.publish('open-content', this.documentId, mode);
   }
 
   _saveDraft() {
@@ -229,10 +231,6 @@ export class ChannelRightSidePanelCtrl {
       return this.$q.resolve();
     }
     return this.ContentService.saveDraft(this.doc);
-  }
-
-  editFullContent() {
-    this.CmsService.publish('edit-content', this.documentId);
   }
 
   closeButtonLabel() {
