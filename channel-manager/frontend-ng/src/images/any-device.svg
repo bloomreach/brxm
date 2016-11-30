@@ -15,19 +15,10 @@
   limitations under the License.
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-  <defs>
-    <style>
-      .a { 
-        fill: none;
-        stroke: currentColor;
-        stroke-miterlimit: 10;
-      }
-    </style>
-  </defs>
-  <path class="a" d="M9.5,21.5a1,1,0,0,0,1-1V6.4a1,1,0,0,0-1-.9H2.5a1,1,0,0,0-1,.9V20.6a1,1,0,0,0,1,.9Z"/>
-  <line class="a" x1="1" y1="17.5" x2="10" y2="17.5"/>
-  <line class="a" x1="5" y1="19.5" x2="7" y2="19.5"/>
-  <line class="a" x1="10" y1="18.5" x2="18" y2="18.5"/>
-  <line class="a" x1="13.5" y1="15.5" x2="13.5" y2="18"/>
-  <path class="a" d="M4.5,6V3.3a.7.7,0,0,1,.6-.8H21.9a.7.7,0,0,1,.6.8V14.7a.7.7,0,0,1-.6.8H10"/>
+  <path fill="none" stroke="currentColor" stroke-miterlimit="10" d="M9.5,21.5a1,1,0,0,0,1-1V6.4a1,1,0,0,0-1-.9H2.5a1,1,0,0,0-1,.9V20.6a1,1,0,0,0,1,.9Z"/>
+  <line fill="none" stroke="currentColor" stroke-miterlimit="10" x1="1" y1="17.5" x2="10" y2="17.5"/>
+  <line fill="none" stroke="currentColor" stroke-miterlimit="10" x1="5" y1="19.5" x2="7" y2="19.5"/>
+  <line fill="none" stroke="currentColor" stroke-miterlimit="10" x1="10" y1="18.5" x2="18" y2="18.5"/>
+  <line fill="none" stroke="currentColor" stroke-miterlimit="10" x1="13.5" y1="15.5" x2="13.5" y2="18"/>
+  <path fill="none" stroke="currentColor" stroke-miterlimit="10" d="M4.5,6V3.3a.7.7,0,0,1,.6-.8H21.9a.7.7,0,0,1,.6.8V14.7a.7.7,0,0,1-.6.8H10"/>
 </svg>
