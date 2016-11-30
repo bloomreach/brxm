@@ -176,14 +176,11 @@ export class ChannelRightSidePanelCtrl {
       .catch((response) => {
         if (this._isDocument(response.data)) {
           // CHANNELMGR-898: handle validation error on a per-field basis
-          return;
+        } else {
+          const errorKey = this._isErrorInfo(response.data) ? `ERROR_${response.data.reason}` : 'ERROR_UNABLE_TO_SAVE';
+          this.FeedbackService.showError(errorKey, {}, this.$element);
         }
-
-        let defaultKey = 'ERROR_UNABLE_TO_SAVE';
-        if (this._isErrorInfo(response.data)) {
-          defaultKey = `ERROR_${response.data.reason}`;
-        }
-        this.FeedbackService.showErrorResponse(undefined, defaultKey, undefined, this.$element);
+        return this.$q.reject(); // tell the caller that saving has failed.
       });
   }
 
@@ -196,13 +193,35 @@ export class ChannelRightSidePanelCtrl {
   }
 
   viewFullContent() {
-    this._saveDraft()
-      // The CMS automatically unlocks content that is being viewed, so close the side-panel to reflect that.
-      // It will will unlock the document if needed, so don't delete the draft here.
+    this._checkSaveChanges()
       .then(() => {
-        this._closePanel();
-        this.CmsService.publish('view-content', this.documentId);
-      });
+        // don't return the result of saveDocument so a failing save does not switch to the full content
+        this.saveDocument()
+          .then(() => this._closeAndBrowseToView());
+      })
+      .catch(() => this._closeAndBrowseToView());
+  }
+
+  _checkSaveChanges() {
+    if (!this._isFormDirty()) {
+      return this.$q.reject();
+    }
+    const messageParams = {
+      documentName: this.doc.displayName,
+    };
+    const confirm = this.DialogService.confirm()
+      .textContent(this.$translate.instant('CONFIRM_SAVE_CHANGES_MESSAGE', messageParams))
+      .ok(this.$translate.instant('SAVE'))
+      .cancel(this.$translate.instant('DISCARD'));
+
+    return this.DialogService.show(confirm);
+  }
+
+  _closeAndBrowseToView() {
+    // The CMS automatically unlocks content that is being viewed, so close the side-panel to reflect that.
+    // It will will unlock the document if needed, so don't delete the draft here.
+    this._closePanel();
+    this.CmsService.publish('view-content', this.documentId);
   }
 
   _saveDraft() {
@@ -225,13 +244,13 @@ export class ChannelRightSidePanelCtrl {
   }
 
   close() {
-    this._confirmIfFormDirty().then(() => {
+    this._confirmDiscardChanges().then(() => {
       this._deleteDraft();
       this._closePanel();
     });
   }
 
-  _confirmIfFormDirty() {
+  _confirmDiscardChanges() {
     if (!this._isFormDirty()) {
       return this.$q.resolve();
     }

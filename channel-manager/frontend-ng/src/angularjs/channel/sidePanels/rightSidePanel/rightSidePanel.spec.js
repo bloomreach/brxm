@@ -82,7 +82,7 @@ describe('ChannelRightSidePanel', () => {
 
     ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'isOpen', 'close']);
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
-    FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse']);
+    FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
 
     CmsService = jasmine.createSpyObj('CmsService', ['publish']);
     DialogService = jasmine.createSpyObj('DialogService', ['confirm', 'show']);
@@ -422,7 +422,7 @@ describe('ChannelRightSidePanel', () => {
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
   });
 
-  it('shows a toast when document save fails', () => {
+  it('shows an error when document save fails', () => {
     const response = {
       reason: 'TEST',
     };
@@ -436,10 +436,10 @@ describe('ChannelRightSidePanel', () => {
 
     $rootScope.$apply();
 
-    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_TEST', undefined, $ctrl.$element);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {}, $ctrl.$element);
   });
 
-  it('shows a toast when document save fails and there is no data returned', () => {
+  it('shows an error when document save fails and there is no data returned', () => {
     ContentService.saveDraft.and.returnValue($q.reject({}));
 
     $ctrl.doc = testDocument;
@@ -450,10 +450,51 @@ describe('ChannelRightSidePanel', () => {
 
     $rootScope.$apply();
 
-    expect(FeedbackService.showErrorResponse).toHaveBeenCalledWith(undefined, 'ERROR_UNABLE_TO_SAVE', undefined, $ctrl.$element);
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_UNABLE_TO_SAVE', {}, $ctrl.$element);
   });
 
-  it('views the full content by saving changes, closing the panel and publishing a view-content event', () => {
+  it('directly views the full content if the form is not dirty', () => {
+    $ctrl.documentId = 'test';
+    ChannelSidePanelService.close.and.returnValue($q.resolve());
+
+    $ctrl.viewFullContent();
+    $rootScope.$digest();
+
+    expect(ContentService.saveDraft).not.toHaveBeenCalled();
+    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect(CmsService.publish).toHaveBeenCalledWith('view-content', 'test');
+  });
+
+  it('can discard pending changes before viewing the full content', () => {
+    const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
+    dialog.textContent.and.returnValue(dialog);
+    dialog.ok.and.returnValue(dialog);
+    dialog.cancel.and.returnValue(dialog);
+    DialogService.confirm.and.returnValue(dialog);
+    DialogService.show.and.returnValue($q.reject()); // Say 'Discard'
+    ChannelSidePanelService.close.and.returnValue($q.resolve());
+    $ctrl.documentId = 'test';
+    $ctrl.doc = { displayName: 'Display Name' };
+    $ctrl.form.$dirty = true;
+
+    $ctrl.viewFullContent();
+    $rootScope.$digest();
+
+    expect(DialogService.show).toHaveBeenCalledWith(dialog);
+    expect(ContentService.saveDraft).not.toHaveBeenCalled();
+    expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect(CmsService.publish).toHaveBeenCalledWith('view-content', 'test');
+  });
+
+  it('saves pending changes before viewing the full content', () => {
+    const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
+    dialog.textContent.and.returnValue(dialog);
+    dialog.ok.and.returnValue(dialog);
+    dialog.cancel.and.returnValue(dialog);
+    DialogService.confirm.and.returnValue(dialog);
+    DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
     $ctrl.documentId = 'test';
     $ctrl.doc = testDocument;
     $ctrl.form.$dirty = true;
@@ -463,22 +504,31 @@ describe('ChannelRightSidePanel', () => {
     $ctrl.viewFullContent();
     $rootScope.$digest();
 
+    expect(DialogService.show).toHaveBeenCalledWith(dialog);
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
-    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
     expect(CmsService.publish).toHaveBeenCalledWith('view-content', 'test');
   });
 
   it('does not view the full content if saving changes failed', () => {
+    const dialog = jasmine.createSpyObj('dialog', ['textContent', 'ok', 'cancel']);
+    dialog.textContent.and.returnValue(dialog);
+    dialog.ok.and.returnValue(dialog);
+    dialog.cancel.and.returnValue(dialog);
+    DialogService.confirm.and.returnValue(dialog);
+    DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
     $ctrl.doc = testDocument;
     $ctrl.form.$dirty = true;
-    ContentService.saveDraft.and.returnValue($q.reject());
+    ContentService.saveDraft.and.returnValue($q.reject({}));
 
     $ctrl.viewFullContent();
     $rootScope.$digest();
 
+    expect(DialogService.show).toHaveBeenCalledWith(dialog);
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+    expect(ChannelSidePanelService.close).not.toHaveBeenCalled();
     expect(CmsService.publish).not.toHaveBeenCalled();
   });
 
