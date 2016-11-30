@@ -122,18 +122,35 @@ describe('ChannelFields', () => {
   });
 
   it('keeps track of the compound with the focused field', () => {
-    $ctrl.focusCompound('ns:compound', 0);
+    const someField = { test: 'bla' };
+    $ctrl.focusCompound(someField);
 
     expect(onFieldFocus).toHaveBeenCalled();
 
     // include the index of the compound to distinguish 'multiple' compounds
-    expect($ctrl.hasFocusedField('ns:compound', 0)).toBe(true);
-    expect($ctrl.hasFocusedField('ns:compound', 1)).toBe(false);
-    expect($ctrl.hasFocusedField('ns:string', 0)).toBe(false);
+    expect($ctrl.hasFocusedField(someField)).toBe(true);
+    expect($ctrl.hasFocusedField({ test: 'bla' })).toBe(false); // different object
+    expect($ctrl.hasFocusedField()).toBe(false);
 
     $ctrl.blurCompound();
     expect(onFieldBlur).toHaveBeenCalled();
-    expect($ctrl.hasFocusedField('ns:compound', 0)).toBe(false);
+    expect($ctrl.hasFocusedField(someField)).toBe(false);
+  });
+
+  it('keeps track of the field type with the focused field', () => {
+    const someFieldType = { test: 'bla' };
+    $ctrl.focusFieldType(someFieldType);
+
+    expect(onFieldFocus).toHaveBeenCalled();
+
+    // include the index of the compound to distinguish 'multiple' compounds
+    expect($ctrl.hasFocusedFieldType(someFieldType)).toBe(true);
+    expect($ctrl.hasFocusedFieldType({ test: 'bla' })).toBe(false); // different object
+    expect($ctrl.hasFocusedFieldType()).toBe(false);
+
+    $ctrl.blurFieldType();
+    expect(onFieldBlur).toHaveBeenCalled();
+    expect($ctrl.hasFocusedFieldType(someFieldType)).toBe(false);
   });
 
   it('ignores the onFieldFocus and onFieldBlur callbacks when they are not defined', () => {

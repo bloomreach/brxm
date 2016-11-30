@@ -18,7 +18,7 @@
      ng-switch="fieldType.type">
 
   <div class="field field-indented field-compound qa-compound"
-       ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldType.id, $index)}"
+       ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
        ng-switch-when="COMPOUND"
        ng-if="$ctrl.hasValue(fieldType)"
        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
@@ -34,13 +34,13 @@
     <channel-fields class="collapse-element"
                     field-types="::fieldType.fields"
                     field-values="fieldValue.fields"
-                    on-field-focus="$ctrl.focusCompound(fieldType.id, $index)"
+                    on-field-focus="$ctrl.focusCompound(fieldValue)"
                     on-field-blur="$ctrl.blurCompound()">
     </channel-fields>
   </div>
 
   <div class="field field-indented field-choice qa-choice"
-       ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldType.id, $index)}"
+       ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
        ng-switch-when="CHOICE"
        ng-if="$ctrl.hasValue(fieldType)"
        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]">
@@ -50,7 +50,7 @@
 
     <!-- Currently, each choice is a COMPOUND with a single value -->
     <div class="field field-indented field-compound qa-compound"
-         ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldType.id, $index)}"
+         ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
          collapse>
       <h5 class="collapse-toggle" ng-click="collapse.toggle()">
         <md-icon class="material-icons collapse-icon" ng-class="{'collapsed': collapse.isCollapsed}">
@@ -63,7 +63,7 @@
       <channel-fields class="collapse-element"
                       field-types="::fieldType.choices[fieldValue.chosenId].fields"
                       field-values="fieldValue.chosenValue.fields"
-                      on-field-focus="$ctrl.focusCompound(fieldType.id, $index)"
+                      on-field-focus="$ctrl.focusCompound(fieldValue)"
                       on-field-blur="$ctrl.blurCompound()">
       </channel-fields>
     </div>
@@ -71,6 +71,7 @@
 
   <!-- other cases -->
   <div class="field"
+       ng-class="{'has-focused-field': $ctrl.hasFocusedFieldType(fieldType)}"
        ng-switch-default>
 
     <md-input-container ng-if="$ctrl.hasValue(fieldType)"
@@ -86,16 +87,16 @@
              ng-model="fieldValue.value"
              placeholder=""
              aria-label="{{::fieldType.displayName}}"
-             ng-focus="$ctrl.onFieldFocus()"
-             ng-blur="$ctrl.onFieldBlur()">
+             ng-focus="$ctrl.focusFieldType(fieldType)"
+             ng-blur="$ctrl.blurFieldType()">
 
       <textarea ng-switch-when="MULTILINE_STRING"
                 ng-model="fieldValue.value"
                 placeholder=""
                 aria-label="{{::fieldType.displayName}}"
                 md-no-resize
-                ng-focus="$ctrl.onFieldFocus()"
-                ng-blur="$ctrl.onFieldBlur()">
+                ng-focus="$ctrl.focusFieldType(fieldType)"
+                ng-blur="$ctrl.blurFieldType()">
       </textarea>
 
     </md-input-container>

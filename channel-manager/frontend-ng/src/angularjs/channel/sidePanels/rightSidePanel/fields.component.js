@@ -40,8 +40,8 @@ class ChannelFieldsCtrl {
     return field.displayName;
   }
 
-  focusCompound(fieldTypeId, index) {
-    this.compoundWithFocusedField = this.fieldValues[fieldTypeId][index];
+  focusCompound(fieldValue) {
+    this.compoundWithFocusedField = fieldValue;
     this.onFieldFocus();
   }
 
@@ -50,8 +50,22 @@ class ChannelFieldsCtrl {
     this.onFieldBlur();
   }
 
-  hasFocusedField(fieldTypeId, index) {
-    return this.compoundWithFocusedField === this.fieldValues[fieldTypeId][index];
+  hasFocusedField(fieldValue) {
+    return this.compoundWithFocusedField === fieldValue;
+  }
+
+  focusFieldType(fieldType) {
+    this.fieldTypeWithFocus = fieldType;
+    this.onFieldFocus();
+  }
+
+  blurFieldType() {
+    delete this.fieldTypeWithFocus;
+    this.onFieldBlur();
+  }
+
+  hasFocusedFieldType(fieldType) {
+    return this.fieldTypeWithFocus === fieldType;
   }
 }
 

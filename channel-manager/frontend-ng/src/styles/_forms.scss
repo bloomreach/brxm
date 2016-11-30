@@ -66,6 +66,9 @@
       color: $blue-500 !important;
     }
   }
+  &> md-input-container > label {
+    color: $blue-500 !important;
+  }
 }
 
 .field-wrapper h5 {
