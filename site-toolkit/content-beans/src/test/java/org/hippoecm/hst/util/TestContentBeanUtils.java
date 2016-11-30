@@ -50,9 +50,7 @@ public class TestContentBeanUtils extends AbstractHstQueryTest {
     public ExpectedException thrown = ExpectedException.none();
 
     private static final String ANOTHER_SAMPLE_DOCUMENT_PATH = "/content/documents/contentbeanstest/content/another-sample-document";
-    private static final String SAMPLE_DOCUMENT_PATH = "/content/documents/contentbeanstest/content/sample-document";
     private static final String CONTENT_PATH = "/content/documents/contentbeanstest/content/";
-    private static final String SHALLOW_LINK_DOCUMENT_PATH = "/content/documents/contentbeanstest/content/shalow-link-document";
 
     @Test
     public void testCreateIncomingBeansQueryPrimaryMethodWithSubtypes() throws QueryException, ObjectBeanManagerException, RepositoryException {
