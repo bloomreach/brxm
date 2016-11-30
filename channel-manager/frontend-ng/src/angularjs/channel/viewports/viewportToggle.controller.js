@@ -32,23 +32,22 @@ class ViewportToggleCtrl {
     this.viewPorts = [
       {
         id: 'ANY_DEVICE',
-        // TODO replace with proper icon for 'any device'
-        icon: '/cms/angular/hippo-cm/images/close.svg',
+        icon: 'images/any-device.svg',
         maxWidth: 0,
       },
       {
         id: 'DESKTOP',
-        icon: '/cms/angular/hippo-cm/images/desktop.svg',
+        icon: 'images/desktop.svg',
         maxWidth: viewportMap.desktop ? viewportMap.desktop : 1280,
       },
       {
         id: 'TABLET',
-        icon: '/cms/angular/hippo-cm/images/tablet.svg',
+        icon: 'images/tablet.svg',
         maxWidth: viewportMap.tablet ? viewportMap.tablet : 720,
       },
       {
         id: 'PHONE',
-        icon: '/cms/angular/hippo-cm/images/phone.svg',
+        icon: 'images/phone.svg',
         maxWidth: viewportMap.phone ? viewportMap.phone : 320,
       },
     ];
