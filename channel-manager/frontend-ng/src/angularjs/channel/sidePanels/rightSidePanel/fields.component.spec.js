@@ -127,7 +127,6 @@ describe('ChannelFields', () => {
 
     expect(onFieldFocus).toHaveBeenCalled();
 
-    // include the index of the compound to distinguish 'multiple' compounds
     expect($ctrl.hasFocusedField(someField)).toBe(true);
     expect($ctrl.hasFocusedField({ test: 'bla' })).toBe(false); // different object
     expect($ctrl.hasFocusedField()).toBe(false);
@@ -143,7 +142,6 @@ describe('ChannelFields', () => {
 
     expect(onFieldFocus).toHaveBeenCalled();
 
-    // include the index of the compound to distinguish 'multiple' compounds
     expect($ctrl.hasFocusedFieldType(someFieldType)).toBe(true);
     expect($ctrl.hasFocusedFieldType({ test: 'bla' })).toBe(false); // different object
     expect($ctrl.hasFocusedFieldType()).toBe(false);
