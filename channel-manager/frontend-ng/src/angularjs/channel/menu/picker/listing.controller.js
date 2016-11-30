@@ -25,16 +25,16 @@ class ListingCtrl {
 
     switch (docState) {
       case 'new':
-        iconPath = '/cms/angular/hippo-cm/images/document-status-new.svg';
+        iconPath = 'images/document-status-new.svg';
         break;
       case 'changed':
-        iconPath = '/cms/angular/hippo-cm/images/document-status-changed.svg';
+        iconPath = 'images/document-status-changed.svg';
         break;
       case 'live':
-        iconPath = '/cms/angular/hippo-cm/images/document-status-live.svg';
+        iconPath = 'images/document-status-live.svg';
         break;
       default:
-        iconPath = '/cms/angular/hippo-cm/images/document.svg';
+        iconPath = 'images/document.svg';
     }
 
     return iconPath;
@@ -44,7 +44,7 @@ class ListingCtrl {
     let iconPath;
 
     if (item.type === 'folder') {
-      iconPath = '/cms/angular/hippo-cm/images/folder-closed.svg';
+      iconPath = 'images/folder-closed.svg';
     } else {
       iconPath = this._getDocumentStatusIcon(item);
     }
