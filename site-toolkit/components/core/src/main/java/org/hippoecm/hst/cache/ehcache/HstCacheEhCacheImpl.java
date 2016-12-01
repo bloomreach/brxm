@@ -118,6 +118,8 @@ public class HstCacheEhCacheImpl implements HstCache {
                 // cached entry: When the entry is evicted from the second level cache, it also needs to be evicted from the primary cache
                 // because otherwise in a clustered setup, different primary caches can start to contain different
                 // cached responses resulting in alternating pages (per cluster node) which is not acceptable
+                // Note that when storing an Ehcache Element in the second level cache, the second level cache is
+                // responsible for possibly changing the element its getTimeToLive() to a proper value, see HSTTWO-3877
                 final long newTTL;
                 if (secondLevelElement.getTimeToLive() == 0) {
                     // the element got a time to live of 0 (never happens normally) meaning eternal in primary ehcache. newTTL can also
