@@ -43,3 +43,6 @@ User 'admin' failed to re-obtain ownership of document
 Failed to dispose of editable instance
 Failed to save changes to draft node of document uuid
 Failed to persist changes
+Failed to retrieve editor config node content type '/bla'
+Failed to retrieve child node 'fieldName' from node type node '/bla'.
+Failed to retrieve content type 'namespaced:type'

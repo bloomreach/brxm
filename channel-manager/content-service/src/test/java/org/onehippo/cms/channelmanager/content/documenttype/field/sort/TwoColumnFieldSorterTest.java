@@ -16,121 +16,101 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.sort;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.HippoNodeType;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
-import org.onehippo.cms.channelmanager.content.documenttype.field.sort.TwoColumnFieldSorter;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
-import org.onehippo.cms7.services.contenttype.ContentType;
-import org.onehippo.cms7.services.contenttype.ContentTypeItem;
-import org.onehippo.repository.mock.MockNode;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({NamespaceUtils.class, FieldTypeContext.class})
 public class TwoColumnFieldSorterTest {
     private final FieldSorter sorter = new TwoColumnFieldSorter();
 
-    @Test
-    public void sortFields() throws Exception {
-        final ContentTypeContext context = createMock(ContentTypeContext.class);
-        final ContentType type = createMock(ContentType.class);
-        final ContentTypeItem item = createMock(ContentTypeItem.class);
-
-        final Node root = MockNode.root();
-        final Node contentTypeRoot = root.addNode("bla", "bla");
-        final Node nodeType = contentTypeRoot.addNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE, "bla")
-                                             .addNode(HippoNodeType.HIPPOSYSEDIT_NODETYPE, "bla");
-        nodeType.addNode("has-node-type-field", "bla").setProperty(HippoNodeType.HIPPO_PATH, "path");
-
-        final Node editorConfig = contentTypeRoot.addNode("editor:templates", "bla")
-                                                 .addNode("_default_", "bla");
-        editorConfig.addNode("no-field", "bla");
-        final Node field1Right = editorConfig.addNode("field1-right", "bla");
-        field1Right.setProperty("field", "has-node-type-field");
-        field1Right.setProperty("wicket.id", "test.right.item");
-        editorConfig.addNode("unplaced-field", "bla").setProperty("field", "has-node-type-field");
-        editorConfig.addNode("also-no-field", "bla").setProperty("field", "no-node-type-field");
-        final Node field2Right = editorConfig.addNode("field2-right", "bla");
-        field2Right.setProperty("field", "has-node-type-field");
-        field2Right.setProperty("wicket.id", "test.right.item");
-        final Node misplacedField = editorConfig.addNode("misplaced-field", "bla");
-        misplacedField.setProperty("field", "has-node-type-field");
-        misplacedField.setProperty("wicket.id", "abra.cadabra");
-        final Node field1Left = editorConfig.addNode("field1-left", "bla");
-        field1Left.setProperty("field", "has-node-type-field");
-        field1Left.setProperty("wicket.id", "test.left.item");
-        final Node field2Left = editorConfig.addNode("field2-left", "bla");
-        field2Left.setProperty("field", "has-node-type-field");
-        field2Left.setProperty("wicket.id", "test.left.item");
-        final Node field3Right = editorConfig.addNode("field3-right", "bla");
-        field3Right.setProperty("field", "has-node-type-field");
-        field3Right.setProperty("wicket.id", "test.right.item");
-
-        expect(context.getContentTypeRoot()).andReturn(contentTypeRoot);
-        expect(context.getContentType()).andReturn(type).anyTimes();
-        expect(type.getItem(anyObject())).andReturn(item).anyTimes();
-        replay(context, type);
-
-        final List<FieldTypeContext> fields = sorter.sortFields(context);
-
-        assertThat(fields.size(), equalTo(5));
-        assertThat(fields.get(0).getEditorConfigNode().get().getName(), equalTo("field1-left"));
-        assertThat(fields.get(1).getEditorConfigNode().get().getName(), equalTo("field2-left"));
-        assertThat(fields.get(2).getEditorConfigNode().get().getName(), equalTo("field1-right"));
-        assertThat(fields.get(3).getEditorConfigNode().get().getName(), equalTo("field2-right"));
-        assertThat(fields.get(4).getEditorConfigNode().get().getName(), equalTo("field3-right"));
+    @Before
+    public void setup() {
+        PowerMock.mockStatic(FieldTypeContext.class);
+        PowerMock.mockStatic(NamespaceUtils.class);
     }
 
     @Test
-    public void sortFieldsWithGlobalException() throws Exception {
+    public void sortFields() {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
-        final ContentType type = createMock(ContentType.class);
-        final Node contentTypeRoot = createMock(Node.class);
+        final Node rootNode = createMock(Node.class);
+        final Node node1 = createMock(Node.class);
+        final Node node2 = createMock(Node.class);
+        final Node node3 = createMock(Node.class);
+        final Node node4 = createMock(Node.class);
+        final Node node5 = createMock(Node.class);
+        final List<Node> nodes = Arrays.asList(node1, node2, node3, node4, node5);
+        final FieldTypeContext fieldContext1 = createMock(FieldTypeContext.class);
+        final FieldTypeContext fieldContext2 = createMock(FieldTypeContext.class);
+        final FieldTypeContext fieldContext5 = createMock(FieldTypeContext.class);
 
-        expect(context.getContentType()).andReturn(type);
-        expect(type.getName()).andReturn("bla");
-        expect(context.getContentTypeRoot()).andReturn(contentTypeRoot);
-        expect(contentTypeRoot.getNode(NamespaceUtils.EDITOR_CONFIG_PATH)).andThrow(new RepositoryException());
-        replay(context, type, contentTypeRoot);
+
+        expect(NamespaceUtils.getEditorFieldConfigNodes(rootNode)).andReturn(nodes);
+        expect(NamespaceUtils.getWicketIdForField(node1)).andReturn(Optional.of("bla.right.item")).anyTimes();
+        expect(NamespaceUtils.getWicketIdForField(node2)).andReturn(Optional.of("bli.left.item")).anyTimes();
+        expect(NamespaceUtils.getWicketIdForField(node3)).andReturn(Optional.empty()).anyTimes();
+        expect(NamespaceUtils.getWicketIdForField(node4)).andReturn(Optional.of("blo.left.item")).anyTimes();
+        expect(NamespaceUtils.getWicketIdForField(node5)).andReturn(Optional.of("blu.right.item")).anyTimes();
+
+        expect(FieldTypeContext.create(node1, context)).andReturn(Optional.of(fieldContext1));
+        expect(FieldTypeContext.create(node2, context)).andReturn(Optional.of(fieldContext2));
+        expect(FieldTypeContext.create(node4, context)).andReturn(Optional.empty());
+        expect(FieldTypeContext.create(node5, context)).andReturn(Optional.of(fieldContext5));
+
+        expect(context.getContentTypeRoot()).andReturn(rootNode);
+
+        PowerMock.replayAll();
+        replay(context);
 
         final List<FieldTypeContext> fields = sorter.sortFields(context);
+
+        assertThat(fields.size(), equalTo(3));
+        assertThat(fields.get(0), equalTo(fieldContext2));
+        assertThat(fields.get(1), equalTo(fieldContext1));
+        assertThat(fields.get(2), equalTo(fieldContext5));
+
+        verify(context);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void sortFieldsNoFields() {
+        final ContentTypeContext context = createMock(ContentTypeContext.class);
+        final Node rootNode = createMock(Node.class);
+
+        expect(NamespaceUtils.getEditorFieldConfigNodes(rootNode)).andReturn(Collections.emptyList());
+
+        expect(context.getContentTypeRoot()).andReturn(rootNode);
+
+        PowerMock.replayAll();
+        replay(context);
+
+        List<FieldTypeContext> fields = sorter.sortFields(context);
 
         assertThat(fields.size(), equalTo(0));
+
+        verify(context);
+        PowerMock.verifyAll();
     }
-
-    /*
-       public List<FieldTypeContext> sortFields(final ContentTypeContext context) {
-        final List<FieldTypeContext> sortedFields = new ArrayList<>();
-        final Node rootNode = context.getContentTypeRoot();
-
-        try {
-            final Node editorConfigNode = rootNode.getNode(NamespaceUtils.EDITOR_CONFIG_PATH);
-            final Node nodeTypeNode = rootNode.getNode(NamespaceUtils.NODE_TYPE_PATH);
-
-            for (final Node editorFieldNode : new NodeIterable(editorConfigNode.getNodes())) {
-                createFieldContextForWicketIdSuffix(".left.item", editorFieldNode, nodeTypeNode, context)
-                        .ifPresent(sortedFields::add);
-            }
-
-            for (final Node editorFieldNode : new NodeIterable(editorConfigNode.getNodes())) {
-                createFieldContextForWicketIdSuffix(".right.item", editorFieldNode, nodeTypeNode, context)
-                        .ifPresent(sortedFields::add);
-            }
-        } catch (RepositoryException e) {
-            log.warn("Failed to sort fields of content type {}", context.getContentType().getName(), e);
-        }
-
-     */
 }

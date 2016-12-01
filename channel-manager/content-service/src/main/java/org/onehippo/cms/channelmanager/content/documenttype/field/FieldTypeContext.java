@@ -21,6 +21,9 @@ import java.util.Optional;
 import javax.jcr.Node;
 
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.SlimContentTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
+import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 
 /**
@@ -30,6 +33,49 @@ public class FieldTypeContext {
     private final ContentTypeItem contentTypeItem;
     private final Node editorConfigNode;
     private final ContentTypeContext parentContext;
+
+    /**
+     * Create a FieldTypeContext given an editor configuration field node and a content type context.
+     *
+     * We only consider nodes that have a "field" property, and try to find the corresponding child node of the
+     * content type's nodeType node (or of a supertype of the content type, to support inheritance).
+     *
+     * @param editorFieldConfigNode JCR node representing the field's editor configuration
+     * @param context               content type context within which to create the field type context
+     * @return                      derived FieldTypeContext or nothing, wrapped in an Optional
+     */
+    public static Optional<FieldTypeContext> create(final Node editorFieldConfigNode, final ContentTypeContext context) {
+        return NamespaceUtils.getFieldProperty(editorFieldConfigNode)
+                .flatMap(fieldName -> createForFieldName(fieldName, context, editorFieldConfigNode));
+    }
+
+    private static Optional<FieldTypeContext> createForFieldName(final String fieldName,
+                                                                 final ContentTypeContext context,
+                                                                 final Node editorFieldConfigNode) {
+        return context.getTypesForFields()
+                .stream()
+                .map(type -> createForParentType(type, fieldName, context, editorFieldConfigNode))
+                .filter(fieldContext -> fieldContext != null)
+                .findFirst();
+    }
+
+    private static FieldTypeContext createForParentType(final SlimContentTypeContext parent,
+                                                                  final String fieldName,
+                                                                  final ContentTypeContext context,
+                                                                  final Node editorFieldConfigNode) {
+        return NamespaceUtils.getPathForNodeTypeField(parent.getNodeTypeNode(), fieldName)
+                .map(path -> createForItem(path, parent.getContentType(), context, editorFieldConfigNode))
+                .orElse(null);
+    }
+
+
+    private static FieldTypeContext createForItem(final String itemName,
+                                                  final ContentType parentType,
+                                                  final ContentTypeContext context,
+                                                  final Node editorFieldConfigNode) {
+        final ContentTypeItem item = parentType.getItem(itemName);
+        return item != null ? new FieldTypeContext(item, context, editorFieldConfigNode) : null;
+    }
 
     public FieldTypeContext(final ContentTypeItem contentTypeItem, final ContentTypeContext parentContext,
                             final Node editorConfigNode) {

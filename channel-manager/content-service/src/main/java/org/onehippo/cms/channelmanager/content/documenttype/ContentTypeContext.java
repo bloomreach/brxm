@@ -16,6 +16,8 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -41,26 +43,44 @@ public class ContentTypeContext {
     private static final int MAX_NESTING_LEVEL = 10;
 
     private final ContentType contentType;
+    private final Session session;
     private final Node contentTypeRoot;
     private final Locale locale;
     private final DocumentType documentType;
     private final int level;
-    private final Optional<ResourceBundle> resourceBundle;
+    private final ResourceBundle resourceBundle;
+    private final List<SlimContentTypeContext> typesForFields;
+
+    /**
+     * Retrieve the data for a specific content type.
+     *
+     * @param id ID of the content type, e.g. "myhippoproject:addresscompound"
+     * @return   {@link ContentType} corresponding to the requested ID, or nothing, wrapped in an Optional
+     */
+    public static Optional<ContentType> getContentType(final String id) {
+        final ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
+        try {
+            return Optional.ofNullable(service.getContentTypes().getType(id));
+        } catch (RepositoryException e) {
+            log.warn("Failed to retrieve content type '{}'", id, e);
+        }
+        return Optional.empty();
+    }
 
     /**
      * Create a new {@link ContentTypeContext} for the identified content type and the current CMS session.
      *
-     * @param id             identifies the requested content type, e.g. "myhippoproject:newsdocument"
-     * @param userSession    JCR session using the privileges of the requesting user
-     * @param Locale locale of the current CMS session
-     * @param docType        {@link DocumentType} being assembled
-     * @return               {@link ContentTypeContext} for creating a {@link DocumentType}, wrapped in an Optional
+     * @param id      identifies the requested content type, e.g. "myhippoproject:newsdocument"
+     * @param session JCR session using the privileges of the requesting user
+     * @param Locale  locale of the current CMS session
+     * @param docType {@link DocumentType} being assembled
+     * @return        {@link ContentTypeContext} for creating a {@link DocumentType}, wrapped in an Optional
      */
     public static Optional<ContentTypeContext> createForDocumentType(final String id,
-                                                                     final Session userSession,
+                                                                     final Session session,
                                                                      final Locale Locale,
                                                                      final DocumentType docType) {
-        return create(id, userSession, Locale, docType, 0);
+        return create(id, session, Locale, docType, 0);
     }
 
     /**
@@ -72,14 +92,8 @@ public class ContentTypeContext {
      */
     public static Optional<ContentTypeContext> createFromParent(final String id, final ContentTypeContext parentContext) {
         final int level = parentContext.getLevel() + 1;
-        if (level <= MAX_NESTING_LEVEL) {
-            try {
-                final Session userSession = parentContext.getContentTypeRoot().getSession();
-
-                return create(id, userSession, parentContext.getLocale(), parentContext.getDocumentType(), level);
-            } catch (RepositoryException e) {
-                log.warn("Failed to retrieve user session", e);
-            }
+        if (level < MAX_NESTING_LEVEL) {
+            return create(id, parentContext.getSession(), parentContext.getLocale(), parentContext.getDocumentType(), level);
         } else {
             log.info("Ignoring fields of {}-level-deep nested compound, nesting maximum reached", level);
         }
@@ -91,41 +105,42 @@ public class ContentTypeContext {
      * create a new {@link ContentTypeContext} instance.
      */
     private static Optional<ContentTypeContext> create(final String id,
-                                                       final Session userSession,
+                                                       final Session session,
                                                        final Locale locale,
                                                        final DocumentType docType,
                                                        final int level) {
         return getContentType(id)
-                .flatMap(contentType -> NamespaceUtils.getDocumentTypeRootNode(id, userSession)
-                        .map(contentTypeRoot -> new ContentTypeContext(contentType, contentTypeRoot, locale, docType, level)));
+                .flatMap(contentType -> NamespaceUtils.getContentTypeRootNode(id, session)
+                        .map(contentTypeRoot -> new ContentTypeContext(id, contentType, session, contentTypeRoot,
+                                                                       locale, docType, level)));
     }
 
-    public static Optional<ContentType> getContentType(final String id) {
-        final ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
-        try {
-            return Optional.ofNullable(service.getContentTypes().getType(id));
-        } catch (RepositoryException e) {
-            log.warn("Failed to retrieve content type '{}'", id, e);
-        }
-        return Optional.empty();
-    }
-
-    private ContentTypeContext(final ContentType contentType,
+    private ContentTypeContext(final String id,
+                               final ContentType contentType,
+                               final Session session,
                                final Node documentTypeRoot,
                                final Locale locale,
                                final DocumentType documentType,
                                final int level) {
         this.contentType = contentType;
+        this.session = session;
         this.contentTypeRoot = documentTypeRoot;
         this.locale = locale;
         this.documentType = documentType;
         this.level = level;
 
-        this.resourceBundle = LocalizationUtils.getResourceBundleForDocument(contentType.getName(), locale);
+        this.resourceBundle = LocalizationUtils.getResourceBundleForDocument(id, locale).orElse(null);
+        this.typesForFields = new ArrayList<>();
+
+        populateTypesForFields(id);
     }
 
     public ContentType getContentType() {
         return contentType;
+    }
+
+    public Session getSession() {
+        return session;
     }
 
     public Node getContentTypeRoot() {
@@ -145,6 +160,33 @@ public class ContentTypeContext {
     }
 
     public Optional<ResourceBundle> getResourceBundle() {
-        return resourceBundle;
+        return Optional.ofNullable(resourceBundle);
+    }
+
+    public List<SlimContentTypeContext> getTypesForFields() {
+        return typesForFields;
+    }
+
+    /**
+     * Prepare the list of {@link SlimContentTypeContext}s representing the content types applicable for field scanning.
+     *
+     * On top of the main/primary content type of this content type context, the content type's supertypes
+     * are also considered applicable, if they have a corresponding nodeTypeNode with child nodes.
+     */
+    private void populateTypesForFields(final String id) {
+        makeSlimContentTypeContext(id, contentType, true).ifPresent(typesForFields::add);
+
+        contentType.getSuperTypes().stream()
+                .forEach(superTypeName -> getContentType(superTypeName)
+                        .flatMap(superType -> makeSlimContentTypeContext(superTypeName, superType, false))
+                        .ifPresent(typesForFields::add));
+    }
+
+    private Optional<SlimContentTypeContext> makeSlimContentTypeContext(final String id,
+                                                                        final ContentType contentType,
+                                                                        final boolean allowChildless) {
+        return NamespaceUtils.getContentTypeRootNode(id, session)
+                .flatMap(rootNode -> NamespaceUtils.getNodeTypeNode(rootNode, allowChildless)
+                        .map(nodeTypeNode -> new SlimContentTypeContext(contentType, nodeTypeNode)));
     }
 }

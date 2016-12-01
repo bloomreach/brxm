@@ -16,7 +16,9 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,12 +40,11 @@ import org.slf4j.LoggerFactory;
  */
 public class NamespaceUtils {
 
-    public static final String NODE_TYPE_PATH = HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE;
-    public static final String EDITOR_CONFIG_PATH = "editor:templates/_default_";
+    static final String NODE_TYPE_PATH = HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE;
+    static final String EDITOR_CONFIG_PATH = "editor:templates/_default_";
 
     private static final Logger log = LoggerFactory.getLogger(NamespaceUtils.class);
 
-    private static final String PROPERTY_PLUGIN_CLASS = "plugin.class";
     private static final String LAYOUT_PLUGIN_CLASS_ONE_COLUMN = "org.hippoecm.frontend.service.render.ListViewPlugin";
     private static final String LAYOUT_PLUGIN_CLASS_TWO_COLUMN = "org.hippoecm.frontend.editor.layout.TwoColumn";
     private static final Map<String, FieldSorter> LAYOUT_SORTER;
@@ -62,7 +63,7 @@ public class NamespaceUtils {
      * @param session system JCR session meant for read-only access
      * @return        document type root node or nothing, wrapped in an Optional
      */
-    public static Optional<Node> getDocumentTypeRootNode(final String typeId, final Session session) {
+    public static Optional<Node> getContentTypeRootNode(final String typeId, final Session session) {
         try {
             final String[] part = typeId.split(":");
             if (part.length == 2) {
@@ -76,19 +77,110 @@ public class NamespaceUtils {
     }
 
     /**
-     * Retrieve the (CMS) plugin class in use for a specific field.
+     * Retrieve a content type's nodeType node
      *
-     * @param editorFieldNode JCR node representing an editor field (or group of fields)
-     * @return                the plugin class name or nothing, wrapped in an Optional
+     * @param contentTypeRootNode JCR root node of the content type
+     * @param allowChildless      when set to false and the nodeType node exists but has no children, ignore it
+     * @return                    JCR nodeType node or nothing, wrapped in an Optional
      */
-    public static Optional<String> getPluginClassForField(final Node editorFieldNode) {
+    public static Optional<Node> getNodeTypeNode(final Node contentTypeRootNode, final boolean allowChildless) {
         try {
-            if (editorFieldNode.hasProperty(PROPERTY_PLUGIN_CLASS)) {
-                return Optional.of(editorFieldNode.getProperty(PROPERTY_PLUGIN_CLASS).getString());
+            if (contentTypeRootNode.hasNode(NODE_TYPE_PATH)) {
+                final Node nodeTypeNode = contentTypeRootNode.getNode(NODE_TYPE_PATH);
+                if (allowChildless || nodeTypeNode.hasNodes()) {
+                    return Optional.of(nodeTypeNode);
+                }
             }
         } catch (RepositoryException e) {
-            log.warn("Failed to read property '{}' for field {}", PROPERTY_PLUGIN_CLASS,
-                    JcrUtils.getNodePathQuietly(editorFieldNode), e);
+            log.debug("Failed to find nodeType node for content type '{}'.",
+                    JcrUtils.getNodePathQuietly(contentTypeRootNode), e);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Retrieve the editor configuration node of a content type, given its root node.
+     *
+     * We suppress the warning because JCR unfortunately defines NodeIterator to be a subclass
+     * of the raw Iterator instead of Iterator<Node>.
+     *
+     * @param contentTypeRootNode root node of the content type
+     * @return                    editor config node or nothing, wrapped in an Optional
+     */
+    @SuppressWarnings("unchecked") // Unfortunately, JCR defines NodeIterator as
+    public static List<Node> getEditorFieldConfigNodes(final Node contentTypeRootNode) {
+        final List<Node> editorFieldConfigNodes = new ArrayList<>();
+        try {
+            if (contentTypeRootNode.hasNode(EDITOR_CONFIG_PATH)) {
+                final Node editorConfigNode = contentTypeRootNode.getNode(EDITOR_CONFIG_PATH);
+
+                editorConfigNode.getNodes().forEachRemaining(node -> editorFieldConfigNodes.add((Node)node));
+            }
+        } catch (RepositoryException e) {
+            log.warn("Failed to retrieve editor config node content type '{}'.",
+                     JcrUtils.getNodePathQuietly(contentTypeRootNode), e);
+        }
+        return editorFieldConfigNodes;
+    }
+
+    /**
+     * Retrieve the "hipposysedit:path" value from a child node of a nodeType node.
+     *
+     * @param nodeTypeNode JCR nodeType node of a content type
+     * @param fieldName    name of the desired child node
+     * @return             Value of the path property or nothing, wrapped in an Optional
+     */
+    public static Optional<String> getPathForNodeTypeField(final Node nodeTypeNode, final String fieldName) {
+        try {
+            if (nodeTypeNode.hasNode(fieldName)) {
+                final Node fieldTypeNode = nodeTypeNode.getNode(fieldName);
+                return getStringProperty(fieldTypeNode, HippoNodeType.HIPPO_PATH);
+            }
+        } catch (RepositoryException e) {
+            log.warn("Failed to retrieve child node '{}' from node type node '{}'.", fieldName,
+                    JcrUtils.getNodePathQuietly(nodeTypeNode), e);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Retrieve the (CMS) plugin class in use for a specific field.
+     *
+     * @param editorFieldConfigNode JCR node representing an editor field (or group of fields)
+     * @return                      the plugin class name or nothing, wrapped in an Optional
+     */
+    public static Optional<String> getPluginClassForField(final Node editorFieldConfigNode) {
+        return getStringProperty(editorFieldConfigNode, "plugin.class");
+    }
+
+    /**
+     * Retrieve the Wicket ID for a specific field
+     *
+     * @param editorFieldConfigNode JCR node representing an editor field configuration node
+     * @return                      the Wicket ID or nothing, wrapped in an Optional
+     */
+    public static Optional<String> getWicketIdForField(final Node editorFieldConfigNode) {
+        return getStringProperty(editorFieldConfigNode, "wicket.id");
+    }
+
+    /**
+     * Retrieve the "field" property for a specific field
+     *
+     * @param editorFieldConfigNode JCR node representing an editor field configuration node
+     * @return                      valuie of the "field" property or nothing, wrapped in an Optional
+     */
+    public static Optional<String> getFieldProperty(final Node editorFieldConfigNode) {
+        return getStringProperty(editorFieldConfigNode, "field");
+    }
+
+    private static Optional<String> getStringProperty(final Node node, final String propertyName) {
+        try {
+            if (node.hasProperty(propertyName)) {
+                return Optional.of(node.getProperty(propertyName).getString());
+            }
+        } catch (RepositoryException e) {
+            log.warn("Failed to read property '{}' from node '{}'.", propertyName,
+                    JcrUtils.getNodePathQuietly(node), e);
         }
         return Optional.empty();
     }
