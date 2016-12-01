@@ -230,7 +230,13 @@ public class HstCacheEhCacheImpl implements HstCache {
         CacheElementEhCacheImpl cacheElem = (CacheElementEhCacheImpl)element;
         ehcache.put(cacheElem.element);
         if (secondLevelCache != null) {
-            secondLevelCache.put(cacheElem.getKey(), cacheElem.element);
+            try {
+                // clone the element to cache first because the second level cache might change the TTL of the
+                // cached element
+                secondLevelCache.put(cacheElem.getKey(), cacheElem.element.clone());
+            } catch (CloneNotSupportedException e) {
+                log.warn("Could not clone '{}' : {}", cacheElem.element.getObjectKey(), e.toString());
+            }
         }
         if (staleCache != null) {
             staleCache.put(cacheElem.element.getObjectKey(), cacheElem.element);
