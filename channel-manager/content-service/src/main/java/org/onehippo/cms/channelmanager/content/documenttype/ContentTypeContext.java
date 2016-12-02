@@ -49,7 +49,7 @@ public class ContentTypeContext {
     private final DocumentType documentType;
     private final int level;
     private final ResourceBundle resourceBundle;
-    private final List<SlimContentTypeContext> typesForFields;
+    private final List<FieldScanningContext> fieldScanningContexts;
 
     /**
      * Retrieve the data for a specific content type.
@@ -130,7 +130,7 @@ public class ContentTypeContext {
         this.level = level;
 
         this.resourceBundle = LocalizationUtils.getResourceBundleForDocument(id, locale).orElse(null);
-        this.typesForFields = new ArrayList<>();
+        this.fieldScanningContexts = new ArrayList<>();
 
         populateTypesForFields(id);
     }
@@ -163,30 +163,30 @@ public class ContentTypeContext {
         return Optional.ofNullable(resourceBundle);
     }
 
-    public List<SlimContentTypeContext> getTypesForFields() {
-        return typesForFields;
+    public List<FieldScanningContext> getFieldScanningContexts() {
+        return fieldScanningContexts;
     }
 
     /**
-     * Prepare the list of {@link SlimContentTypeContext}s representing the content types applicable for field scanning.
+     * Prepare the list of {@link FieldScanningContext}s representing the content types applicable for field scanning.
      *
      * On top of the main/primary content type of this content type context, the content type's supertypes
      * are also considered applicable, if they have a corresponding nodeTypeNode with child nodes.
      */
     private void populateTypesForFields(final String id) {
-        makeSlimContentTypeContext(id, contentType, true).ifPresent(typesForFields::add);
+        makeSlimContentTypeContext(id, contentType, true).ifPresent(fieldScanningContexts::add);
 
         contentType.getSuperTypes().stream()
                 .forEach(superTypeName -> getContentType(superTypeName)
                         .flatMap(superType -> makeSlimContentTypeContext(superTypeName, superType, false))
-                        .ifPresent(typesForFields::add));
+                        .ifPresent(fieldScanningContexts::add));
     }
 
-    private Optional<SlimContentTypeContext> makeSlimContentTypeContext(final String id,
-                                                                        final ContentType contentType,
-                                                                        final boolean allowChildless) {
+    private Optional<FieldScanningContext> makeSlimContentTypeContext(final String id,
+                                                                      final ContentType contentType,
+                                                                      final boolean allowChildless) {
         return NamespaceUtils.getContentTypeRootNode(id, session)
                 .flatMap(rootNode -> NamespaceUtils.getNodeTypeNode(rootNode, allowChildless)
-                        .map(nodeTypeNode -> new SlimContentTypeContext(contentType, nodeTypeNode)));
+                        .map(nodeTypeNode -> new FieldScanningContext(contentType, nodeTypeNode)));
     }
 }

@@ -187,7 +187,7 @@ public class ContentTypeContextTest {
         assertThat(context.getDocumentType(), equalTo(docType));
         assertThat(context.getLevel(), equalTo(0));
         assertThat(context.getResourceBundle().get(), equalTo(resourceBundle));
-        assertTrue(context.getTypesForFields().isEmpty());
+        assertTrue(context.getFieldScanningContexts().isEmpty());
 
         verify(contentType);
         PowerMock.verifyAll();
@@ -249,11 +249,11 @@ public class ContentTypeContextTest {
         assertThat(context.getDocumentType(), equalTo(docType));
         assertThat(context.getLevel(), equalTo(0));
         assertFalse(context.getResourceBundle().isPresent());
-        assertThat(context.getTypesForFields().size(), equalTo(2));
-        assertThat(context.getTypesForFields().get(0).getContentType(), equalTo(contentType));
-        assertThat(context.getTypesForFields().get(0).getNodeTypeNode(), equalTo(mainNodeTypeNode));
-        assertThat(context.getTypesForFields().get(1).getContentType(), equalTo(superType4));
-        assertThat(context.getTypesForFields().get(1).getNodeTypeNode(), equalTo(superType4NodeTypeNode));
+        assertThat(context.getFieldScanningContexts().size(), equalTo(2));
+        assertThat(context.getFieldScanningContexts().get(0).getContentType(), equalTo(contentType));
+        assertThat(context.getFieldScanningContexts().get(0).getNodeTypeNode(), equalTo(mainNodeTypeNode));
+        assertThat(context.getFieldScanningContexts().get(1).getContentType(), equalTo(superType4));
+        assertThat(context.getFieldScanningContexts().get(1).getNodeTypeNode(), equalTo(superType4NodeTypeNode));
 
         verify(contentType);
         PowerMock.verifyAll();
@@ -307,7 +307,7 @@ public class ContentTypeContextTest {
         assertThat(context.getDocumentType(), equalTo(docType));
         assertThat(context.getLevel(), equalTo(5));
         assertThat(context.getResourceBundle().get(), equalTo(resourceBundle));
-        assertTrue(context.getTypesForFields().isEmpty());
+        assertTrue(context.getFieldScanningContexts().isEmpty());
 
         verify(parentContext, contentType);
         PowerMock.verifyAll();

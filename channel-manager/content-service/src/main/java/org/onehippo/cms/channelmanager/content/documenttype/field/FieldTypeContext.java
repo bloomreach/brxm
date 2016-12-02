@@ -21,7 +21,7 @@ import java.util.Optional;
 import javax.jcr.Node;
 
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.SlimContentTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.FieldScanningContext;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -52,19 +52,19 @@ public class FieldTypeContext {
     private static Optional<FieldTypeContext> createForFieldName(final String fieldName,
                                                                  final ContentTypeContext context,
                                                                  final Node editorFieldConfigNode) {
-        return context.getTypesForFields()
+        return context.getFieldScanningContexts()
                 .stream()
-                .map(type -> createForParentType(type, fieldName, context, editorFieldConfigNode))
+                .map(scanningContext -> createForParentType(scanningContext, fieldName, context, editorFieldConfigNode))
                 .filter(fieldContext -> fieldContext != null)
                 .findFirst();
     }
 
-    private static FieldTypeContext createForParentType(final SlimContentTypeContext parent,
-                                                                  final String fieldName,
-                                                                  final ContentTypeContext context,
-                                                                  final Node editorFieldConfigNode) {
-        return NamespaceUtils.getPathForNodeTypeField(parent.getNodeTypeNode(), fieldName)
-                .map(path -> createForItem(path, parent.getContentType(), context, editorFieldConfigNode))
+    private static FieldTypeContext createForParentType(final FieldScanningContext scanningContext,
+                                                        final String fieldName,
+                                                        final ContentTypeContext context,
+                                                        final Node editorFieldConfigNode) {
+        return NamespaceUtils.getPathForNodeTypeField(scanningContext.getNodeTypeNode(), fieldName)
+                .map(path -> createForItem(path, scanningContext.getContentType(), context, editorFieldConfigNode))
                 .orElse(null);
     }
 

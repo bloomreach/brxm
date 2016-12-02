@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
-import org.onehippo.cms.channelmanager.content.documenttype.SlimContentTypeContext;
+import org.onehippo.cms.channelmanager.content.documenttype.FieldScanningContext;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -73,7 +73,7 @@ public class FieldTypeContextTest {
 
         expect(NamespaceUtils.getFieldProperty(editorFieldConfigNode)).andReturn(Optional.of("fieldName"));
 
-        expect(context.getTypesForFields()).andReturn(Collections.emptyList());
+        expect(context.getFieldScanningContexts()).andReturn(Collections.emptyList());
 
         PowerMock.replayAll();
         replay(context);
@@ -90,12 +90,12 @@ public class FieldTypeContextTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final Node nodeTypeNode = createMock(Node.class);
-        final SlimContentTypeContext type = new SlimContentTypeContext(contentType, nodeTypeNode);
+        final FieldScanningContext type = new FieldScanningContext(contentType, nodeTypeNode);
 
         expect(NamespaceUtils.getFieldProperty(editorFieldConfigNode)).andReturn(Optional.of("fieldName"));
         expect(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode, "fieldName")).andReturn(Optional.empty());
 
-        expect(context.getTypesForFields()).andReturn(Collections.singletonList(type));
+        expect(context.getFieldScanningContexts()).andReturn(Collections.singletonList(type));
 
         PowerMock.replayAll();
         replay(context);
@@ -112,12 +112,12 @@ public class FieldTypeContextTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final Node nodeTypeNode = createMock(Node.class);
-        final SlimContentTypeContext type = new SlimContentTypeContext(contentType, nodeTypeNode);
+        final FieldScanningContext type = new FieldScanningContext(contentType, nodeTypeNode);
 
         expect(NamespaceUtils.getFieldProperty(editorFieldConfigNode)).andReturn(Optional.of("fieldName"));
         expect(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode, "fieldName")).andReturn(Optional.of("itemName"));
 
-        expect(context.getTypesForFields()).andReturn(Collections.singletonList(type));
+        expect(context.getFieldScanningContexts()).andReturn(Collections.singletonList(type));
         expect(contentType.getItem("itemName")).andReturn(null);
 
         PowerMock.replayAll();
@@ -135,13 +135,13 @@ public class FieldTypeContextTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final ContentType contentType = createMock(ContentType.class);
         final Node nodeTypeNode = createMock(Node.class);
-        final SlimContentTypeContext type = new SlimContentTypeContext(contentType, nodeTypeNode);
+        final FieldScanningContext type = new FieldScanningContext(contentType, nodeTypeNode);
         final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
 
         expect(NamespaceUtils.getFieldProperty(editorFieldConfigNode)).andReturn(Optional.of("fieldName"));
         expect(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode, "fieldName")).andReturn(Optional.of("itemName"));
 
-        expect(context.getTypesForFields()).andReturn(Collections.singletonList(type));
+        expect(context.getFieldScanningContexts()).andReturn(Collections.singletonList(type));
         expect(contentType.getItem("itemName")).andReturn(contentTypeItem);
 
         PowerMock.replayAll();
@@ -164,15 +164,15 @@ public class FieldTypeContextTest {
         final ContentType contentType2 = createMock(ContentType.class);
         final Node nodeTypeNode1 = createMock(Node.class);
         final Node nodeTypeNode2 = createMock(Node.class);
-        final SlimContentTypeContext type1 = new SlimContentTypeContext(contentType1, nodeTypeNode1);
-        final SlimContentTypeContext type2 = new SlimContentTypeContext(contentType2, nodeTypeNode2);
+        final FieldScanningContext type1 = new FieldScanningContext(contentType1, nodeTypeNode1);
+        final FieldScanningContext type2 = new FieldScanningContext(contentType2, nodeTypeNode2);
         final ContentTypeItem contentTypeItem = createMock(ContentTypeItem.class);
 
         expect(NamespaceUtils.getFieldProperty(editorFieldConfigNode)).andReturn(Optional.of("fieldName"));
         expect(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode1, "fieldName")).andReturn(Optional.empty());
         expect(NamespaceUtils.getPathForNodeTypeField(nodeTypeNode2, "fieldName")).andReturn(Optional.of("itemName"));
 
-        expect(context.getTypesForFields()).andReturn(Arrays.asList(type1, type2));
+        expect(context.getFieldScanningContexts()).andReturn(Arrays.asList(type1, type2));
         expect(contentType2.getItem("itemName")).andReturn(contentTypeItem);
 
         PowerMock.replayAll();

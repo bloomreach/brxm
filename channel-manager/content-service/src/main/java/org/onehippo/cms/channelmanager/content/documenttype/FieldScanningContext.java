@@ -21,16 +21,16 @@ import javax.jcr.Node;
 import org.onehippo.cms7.services.contenttype.ContentType;
 
 /**
- * The slim content type context has been introduced to aid the scanning of fields of a content type,
+ * The FieldScanningContext has been introduced to aid the scanning of fields of a content type,
  * considering the content-type's super types (content type inheritance). Grouping a content type with
  * a JCR node, and passing them around as a single parameter helps to avoid unnecessarily duplicated
  * computations.
  */
-public class SlimContentTypeContext {
+public class FieldScanningContext {
     private final ContentType contentType;
     private final Node nodeTypeNode;
 
-    public SlimContentTypeContext(final ContentType contentType, final Node nodeTypeNode) {
+    public FieldScanningContext(final ContentType contentType, final Node nodeTypeNode) {
         this.contentType = contentType;
         this.nodeTypeNode = nodeTypeNode;
     }
