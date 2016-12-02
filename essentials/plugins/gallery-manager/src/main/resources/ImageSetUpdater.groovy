@@ -117,7 +117,7 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
 
     private void processImageVariant(Node node, Node data, String variantName) throws RepositoryException {
 
-        // original not to be reconfigured/regererated so skip it
+        // original not to be reconfigured/regenerated so skip it
         if (HippoGalleryNodeType.IMAGE_SET_ORIGINAL.equals(variantName)) {
             log.debug "Skipping processing the original"
             return
@@ -181,7 +181,7 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
             Node variantNode = variantNodes.nextNode();
             String variantName = variantNode.getName();
 
-            // original not to be reconfigured/regererated so skip it
+            // original not to be reconfigured/regenerated so skip it
             if (HippoGalleryNodeType.IMAGE_SET_ORIGINAL.equals(variantName)) {
                 log.debug "Skipping reading original variant configuration"
                 continue
