@@ -629,21 +629,4 @@ public class FieldTypeUtilsTest {
         assertFalse(FieldTypeUtils.validateFieldValues(valueMap, Arrays.asList(field1, field2)));
         verify(field1, field2);
     }
-
-    /*
-    public static boolean validateFieldValues(final Map<String, List<FieldValue>> valueMap, final List<FieldType> fields) {
-        boolean isValid = true;
-
-        for (FieldType fieldType : fields) {
-            final String fieldId = fieldType.getId();
-            if (valueMap.containsKey(fieldId)) {
-                if (!fieldType.validate(valueMap.get(fieldId))) {
-                    isValid = false;
-                }
-            }
-        }
-
-        return isValid;
-    }
-     */
 }
