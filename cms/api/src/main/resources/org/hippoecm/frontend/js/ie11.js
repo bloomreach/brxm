@@ -15,8 +15,8 @@
  */
 
 jQuery(document).ready(function() {
-  // The following is a fix for CMS-10548 which is specific for IE11 on Windows 10.
-  // Stackoverflow suggested this and after adding a magic timeout it delivered.
+  // Fix rendering of inline SVGs in IE11 on Windows 10. This is a known bug that Microsoft won't fix anymore:
+  // https://connect.microsoft.com/IE/feedback/details/2337112/svg-use-elements-disappear-on-windows-10
   setTimeout(function() {
     jQuery('use').each(function() {
       if (this.href && this.href.baseVal) {
