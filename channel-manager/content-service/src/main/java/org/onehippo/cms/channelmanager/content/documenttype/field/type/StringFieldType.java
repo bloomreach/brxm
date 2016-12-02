@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 public class StringFieldType extends FieldType {
 
     private static final Logger log = LoggerFactory.getLogger(StringFieldType.class);
+    private static final String DEFAULT_VALUE = "";
 
     public StringFieldType() {
         this.setType(Type.STRING);
@@ -113,7 +114,7 @@ public class StringFieldType extends FieldType {
             } else {
                 final String[] strings = new String[values.size()];
                 for (int i = 0; i < strings.length; i++) {
-                    strings[i] = values.get(i).findValue().orElseThrow(INVALID_DATA);
+                    strings[i] = values.get(i).findValue().orElse(DEFAULT_VALUE);
                 }
 
                 if (getMaxValues() > 1) {
@@ -155,8 +156,7 @@ public class StringFieldType extends FieldType {
     }
 
     private boolean validateSingleRequired(final FieldValue value) {
-        // #readFrom guarantees that value.getValue is not empty.
-        if (value.findValue().get().isEmpty()) {
+        if (value.findValue().orElse(DEFAULT_VALUE).isEmpty()) {
             value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
             return false;
         }
