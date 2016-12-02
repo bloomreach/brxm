@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import javax.jcr.Node;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
@@ -60,6 +61,13 @@ public class FieldTypeUtilsTest {
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
     private static final String COMPOUND_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
     private static final String CHOICE_FIELD_PLUGIN = "org.onehippo.forge.contentblocks.ContentBlocksFieldPlugin";
+
+    @Before
+    public void setup() {
+        PowerMock.mockStatic(ChoiceFieldUtils.class);
+        PowerMock.mockStatic(FieldTypeFactory.class);
+        PowerMock.mockStatic(NamespaceUtils.class);
+    }
 
     @Test
     public void validateIgnoredValidator() {
@@ -115,8 +123,6 @@ public class FieldTypeUtilsTest {
         final List<FieldType> fields = new ArrayList<>();
         final ContentTypeContext context = createMock(ContentTypeContext.class);
 
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter");
-
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.empty());
         expect(context.getContentTypeRoot()).andReturn(null);
         replay(context);
@@ -134,8 +140,6 @@ public class FieldTypeUtilsTest {
         final List<FieldType> fields = new ArrayList<>();
         final FieldSorter sorter = createMock(FieldSorter.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
-
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter");
 
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.emptyList());
@@ -157,8 +161,6 @@ public class FieldTypeUtilsTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         final ContentTypeItem item = createMock(ContentTypeItem.class);
-
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter");
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
@@ -183,8 +185,6 @@ public class FieldTypeUtilsTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         final ContentTypeItem item = createMock(ContentTypeItem.class);
-
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter");
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
@@ -211,8 +211,6 @@ public class FieldTypeUtilsTest {
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
-
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter", "getPluginClassForField");
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
@@ -241,8 +239,6 @@ public class FieldTypeUtilsTest {
         final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
 
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter", "getPluginClassForField");
-
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
@@ -269,9 +265,6 @@ public class FieldTypeUtilsTest {
         final FieldTypeContext fieldContext = createMock(FieldTypeContext.class);
         final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
-
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter", "getPluginClassForField");
-        PowerMock.mockStaticPartial(FieldTypeFactory.class, "createFieldType");
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
@@ -301,9 +294,6 @@ public class FieldTypeUtilsTest {
         final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
         final StringFieldType fieldType = createMock(StringFieldType.class);
-
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter", "getPluginClassForField");
-        PowerMock.mockStaticPartial(FieldTypeFactory.class, "createFieldType");
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
@@ -337,9 +327,6 @@ public class FieldTypeUtilsTest {
         final Node node = createMock(Node.class);
         final StringFieldType fieldType = createMock(StringFieldType.class);
 
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter", "getPluginClassForField");
-        PowerMock.mockStaticPartial(FieldTypeFactory.class, "createFieldType");
-
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
@@ -370,44 +357,57 @@ public class FieldTypeUtilsTest {
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext1 = createMock(FieldTypeContext.class);
         final FieldTypeContext fieldContext2 = createMock(FieldTypeContext.class);
+        final FieldTypeContext fieldContext3 = createMock(FieldTypeContext.class);
         final ContentTypeItem item1 = createMock(ContentTypeItem.class);
         final ContentTypeItem item2 = createMock(ContentTypeItem.class);
+        final ContentTypeItem item3 = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
-        final StringFieldType stringField = createMock(StringFieldType.class);
+        final StringFieldType stringField1 = createMock(StringFieldType.class);
+        final StringFieldType stringField2 = createMock(StringFieldType.class);
         final MultilineStringFieldType multilineStringField = createMock(MultilineStringFieldType.class);
-
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter", "getPluginClassForField");
-        PowerMock.mockStaticPartial(FieldTypeFactory.class, "createFieldType");
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
-        expect(sorter.sortFields(context)).andReturn(Arrays.asList(fieldContext1, fieldContext2));
+        expect(sorter.sortFields(context)).andReturn(Arrays.asList(fieldContext1, fieldContext2, fieldContext3));
         expect(fieldContext1.getContentTypeItem()).andReturn(item1);
         expect(item1.isProperty()).andReturn(true);
         expect(item1.getItemType()).andReturn("String");
         expect(fieldContext2.getContentTypeItem()).andReturn(item2);
         expect(item2.isProperty()).andReturn(true);
         expect(item2.getItemType()).andReturn("Text");
+        expect(fieldContext3.getContentTypeItem()).andReturn(item3);
+        expect(item3.isProperty()).andReturn(true);
+        expect(item3.getItemType()).andReturn("Label");
         expect(fieldContext1.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(fieldContext2.getEditorConfigNode()).andReturn(Optional.of(node));
+        expect(fieldContext3.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN)).anyTimes();
-        expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(stringField));
+        expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(stringField1));
         expect(FieldTypeFactory.createFieldType(MultilineStringFieldType.class)).andReturn(Optional.of(multilineStringField));
-        stringField.init(fieldContext1);
+        expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(stringField2));
+        stringField1.init(fieldContext1);
         expectLastCall();
-        expect(stringField.isValid()).andReturn(true);
+        expect(stringField1.isValid()).andReturn(true);
         multilineStringField.init(fieldContext2);
         expectLastCall();
         expect(multilineStringField.isValid()).andReturn(true);
-        replay(sorter, context, fieldContext1, fieldContext2, item1, item2, stringField, multilineStringField);
+        stringField2.init(fieldContext3);
+        expectLastCall();
+        expect(stringField2.isValid()).andReturn(true);
+
         PowerMock.replayAll();
+        replay(sorter, context, fieldContext1, fieldContext2, fieldContext3, item1, item2, item3,
+                stringField1, multilineStringField, stringField2);
 
         FieldTypeUtils.populateFields(fields, context);
 
-        assertThat(fields.size(), equalTo(2));
-        assertThat(fields.get(0), equalTo(stringField));
+        assertThat(fields.size(), equalTo(3));
+        assertThat(fields.get(0), equalTo(stringField1));
         assertThat(fields.get(1), equalTo(multilineStringField));
-        verify(sorter, context, fieldContext1, fieldContext2, item1, item2, stringField, multilineStringField);
+        assertThat(fields.get(2), equalTo(stringField2));
+
+        verify(sorter, context, fieldContext1, fieldContext2, fieldContext3, item1, item2, item3,
+                stringField1, multilineStringField, stringField2);
         PowerMock.verifyAll();
     }
 
@@ -420,10 +420,6 @@ public class FieldTypeUtilsTest {
         final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
         final CompoundFieldType fieldType = createMock(CompoundFieldType.class);
-
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter", "getPluginClassForField");
-        PowerMock.mockStaticPartial(ChoiceFieldUtils.class, "isChoiceField");
-        PowerMock.mockStaticPartial(FieldTypeFactory.class, "createFieldType");
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
@@ -457,10 +453,6 @@ public class FieldTypeUtilsTest {
         final ContentTypeItem item = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
         final ChoiceFieldType fieldType = createMock(ChoiceFieldType.class);
-
-        PowerMock.mockStaticPartial(NamespaceUtils.class, "retrieveFieldSorter", "getPluginClassForField");
-        PowerMock.mockStaticPartial(ChoiceFieldUtils.class, "isChoiceField");
-        PowerMock.mockStaticPartial(FieldTypeFactory.class, "createFieldType");
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));

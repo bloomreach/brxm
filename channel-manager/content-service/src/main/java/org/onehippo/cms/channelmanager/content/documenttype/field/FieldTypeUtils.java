@@ -38,14 +38,11 @@ import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFie
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * FieldTypeUtils provides utility methods for populating and dealing with field types.
  */
 public class FieldTypeUtils {
-    private static final Logger log = LoggerFactory.getLogger(FieldTypeUtils.class);
     private static final String FIELD_TYPE_COMPOUND = "Compound";
     private static final String FIELD_TYPE_CHOICE = "Choice";
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
@@ -84,6 +81,7 @@ public class FieldTypeUtils {
         FIELD_VALIDATOR_WHITELIST.add(FieldValidators.RESOURCE_REQUIRED);
 
         FIELD_TYPE_MAP = new HashMap<>();
+        FIELD_TYPE_MAP.put("Label", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Text", new TypeDescriptor(MultilineStringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
