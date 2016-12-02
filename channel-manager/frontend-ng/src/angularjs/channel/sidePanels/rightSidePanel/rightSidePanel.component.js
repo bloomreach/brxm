@@ -101,6 +101,7 @@ export class ChannelRightSidePanelCtrl {
 
   _loadDocument(id) {
     this.documentId = id;
+    this.loading = true;
     this.ContentService.createDraft(id)
       .then(doc => this.ContentService.getDocumentType(doc.info.type.id)
           .then((docType) => {
@@ -113,6 +114,8 @@ export class ChannelRightSidePanelCtrl {
   }
 
   _onLoadResponse(response) {
+    delete this.loading;
+
     let errorKey;
     if (this._isDocument(response.data)) {
       this.doc = response.data;

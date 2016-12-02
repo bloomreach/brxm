@@ -18,17 +18,12 @@ md-toolbar.hippo-toolbar {
   height: $toolbar-height;
   min-height: $toolbar-height;
 
-  md-progress-linear {
-    height: 2px;
+  .md-container {
+    background-color: $grey-200;
+  }
 
-    .md-container {
-      background-color: $grey-200;
-      height: 2px;
-    }
-
-    .md-bar {
-      background-color: $grey-400;
-    }
+  .md-bar {
+    background-color: $grey-400;
   }
 
   .md-button {
@@ -110,6 +105,14 @@ md-toolbar.hippo-toolbar {
       left: 6px;
       position: relative;
     }
+  }
+}
+
+md-toolbar md-progress-linear {
+  height: 2px;
+
+  .md-container {
+    height: 2px;
   }
 }
 
