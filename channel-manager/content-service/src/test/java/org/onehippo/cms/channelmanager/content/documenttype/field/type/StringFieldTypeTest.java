@@ -25,10 +25,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.util.JcrUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
+import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
@@ -49,10 +52,91 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(JcrUtils.class)
+@PrepareForTest({JcrUtils.class, NamespaceUtils.class})
 public class StringFieldTypeTest {
 
     private static final String PROPERTY = "test:id";
+
+    @Before
+    public void setup() {
+        PowerMock.mockStatic(JcrUtils.class);
+        PowerMock.mockStatic(NamespaceUtils.class);
+    }
+
+    @Test
+    public void initializeMaxLengthNoEditorConfig() throws Exception {
+        final StringFieldType fieldType = new StringFieldType();
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+
+        expect(context.getEditorConfigNode()).andReturn(Optional.empty());
+
+        replay(context);
+
+        fieldType.initializeMaxLength(context);
+        assertNull(fieldType.getMaxLength());
+
+        verify(context);
+    }
+
+    @Test
+    public void initializeMaxLengthNoMaxLength() throws Exception {
+        final StringFieldType fieldType = new StringFieldType();
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final Node editorFieldConfigNode = createMock(Node.class);
+
+        expect(NamespaceUtils.getMaxLength(editorFieldConfigNode)).andReturn(Optional.empty());
+
+        expect(context.getEditorConfigNode()).andReturn(Optional.of(editorFieldConfigNode));
+
+        PowerMock.replayAll();
+        replay(context);
+
+        fieldType.initializeMaxLength(context);
+        assertNull(fieldType.getMaxLength());
+
+        verify(context);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void initializeMaxLengthBadFormat() throws Exception {
+        final StringFieldType fieldType = new StringFieldType();
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final Node editorFieldConfigNode = createMock(Node.class);
+
+        expect(NamespaceUtils.getMaxLength(editorFieldConfigNode)).andReturn(Optional.of("bad format"));
+
+        expect(context.getEditorConfigNode()).andReturn(Optional.of(editorFieldConfigNode));
+
+        PowerMock.replayAll();
+        replay(context);
+
+        fieldType.initializeMaxLength(context);
+        assertNull(fieldType.getMaxLength());
+
+        verify(context);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void initializeMaxLengthGoodFormat() throws Exception {
+        final StringFieldType fieldType = new StringFieldType();
+        final FieldTypeContext context = createMock(FieldTypeContext.class);
+        final Node editorFieldConfigNode = createMock(Node.class);
+
+        expect(NamespaceUtils.getMaxLength(editorFieldConfigNode)).andReturn(Optional.of("123"));
+
+        expect(context.getEditorConfigNode()).andReturn(Optional.of(editorFieldConfigNode));
+
+        PowerMock.replayAll();
+        replay(context);
+
+        fieldType.initializeMaxLength(context);
+        assertThat(fieldType.getMaxLength(), equalTo(123L));
+
+        verify(context);
+        PowerMock.verifyAll();
+    }
 
     @Test
     public void readFromSingleString() throws Exception {
@@ -163,8 +247,7 @@ public class StringFieldTypeTest {
         final StringFieldType fieldType = new StringFieldType();
         final Node node = createMock(Node.class);
 
-        PowerMock.mockStaticPartial(JcrUtils.class, "getNodePathQuietly");
-
+        fieldType.setId(PROPERTY);
         fieldType.setId(PROPERTY);
         expect(node.hasProperty(PROPERTY)).andThrow(new RepositoryException());
         expect(JcrUtils.getNodePathQuietly(node)).andReturn("bla");

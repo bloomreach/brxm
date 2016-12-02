@@ -42,6 +42,7 @@ public class NamespaceUtils {
 
     static final String NODE_TYPE_PATH = HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE;
     static final String EDITOR_CONFIG_PATH = "editor:templates/_default_";
+    static final String CLUSTER_OPTIONS = "cluster.options";
 
     private static final Logger log = LoggerFactory.getLogger(NamespaceUtils.class);
 
@@ -131,14 +132,29 @@ public class NamespaceUtils {
      * @return             Value of the path property or nothing, wrapped in an Optional
      */
     public static Optional<String> getPathForNodeTypeField(final Node nodeTypeNode, final String fieldName) {
+        return getStringPropertyFromChildNode(nodeTypeNode, fieldName, HippoNodeType.HIPPO_PATH);
+    }
+
+    /**
+     * Retrieve the maxlength cluster option property from an editor field configuration node.
+     *
+     * @param editorFieldConfigNode JCR node representing a field's editor configuration
+     * @return                      String value of the property or nothing, wrapped in an Optional
+     */
+    public static Optional<String> getMaxLength(final Node editorFieldConfigNode) {
+        return getStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, "maxlength");
+    }
+
+    private static Optional<String> getStringPropertyFromChildNode(final Node node, final String childName,
+                                                                   final String propertyName) {
         try {
-            if (nodeTypeNode.hasNode(fieldName)) {
-                final Node fieldTypeNode = nodeTypeNode.getNode(fieldName);
-                return getStringProperty(fieldTypeNode, HippoNodeType.HIPPO_PATH);
+            if (node.hasNode(childName)) {
+                final Node childNode = node.getNode(childName);
+                return getStringProperty(childNode, propertyName);
             }
         } catch (RepositoryException e) {
-            log.warn("Failed to retrieve child node '{}' from node type node '{}'.", fieldName,
-                    JcrUtils.getNodePathQuietly(nodeTypeNode), e);
+            log.warn("Failed to retrieve child node '{}' of node '{}'.", childName,
+                    JcrUtils.getNodePathQuietly(node), e);
         }
         return Optional.empty();
     }
