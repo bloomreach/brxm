@@ -66,7 +66,7 @@
       color: $blue-500 !important;
     }
   }
-  &> md-input-container > label {
+  &> md-input-container:not(.md-input-invalid) > label {
     color: $blue-500 !important;
   }
 }

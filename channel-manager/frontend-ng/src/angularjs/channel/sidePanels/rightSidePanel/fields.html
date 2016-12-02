@@ -17,6 +17,7 @@
      ng-repeat="fieldType in $ctrl.fieldTypes"
      ng-switch="fieldType.type">
 
+  <!-- Compound field -->
   <div class="field field-indented field-compound qa-compound"
        ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
        ng-switch-when="COMPOUND"
@@ -39,6 +40,7 @@
     </channel-fields>
   </div>
 
+  <!-- Choice field -->
   <div class="field field-indented field-choice qa-choice"
        ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
        ng-switch-when="CHOICE"
@@ -69,7 +71,7 @@
     </div>
   </div>
 
-  <!-- other cases -->
+  <!-- Other fields -->
   <div class="field"
        ng-class="{'has-focused-field': $ctrl.hasFocusedFieldType(fieldType)}"
        ng-switch-default>
@@ -87,6 +89,7 @@
              ng-model="fieldValue.value"
              placeholder=""
              aria-label="{{::fieldType.displayName}}"
+             ng-required="{{::fieldType.required}}"
              ng-focus="$ctrl.focusFieldType(fieldType)"
              ng-blur="$ctrl.blurFieldType()">
 
@@ -94,6 +97,7 @@
                 ng-model="fieldValue.value"
                 placeholder=""
                 aria-label="{{::fieldType.displayName}}"
+                ng-required="{{::fieldType.required}}"
                 md-no-resize
                 ng-focus="$ctrl.focusFieldType(fieldType)"
                 ng-blur="$ctrl.blurFieldType()">
