@@ -107,7 +107,7 @@ public class NamespaceUtils {
      * @param contentTypeRootNode root node of the content type
      * @return                    editor config node or nothing, wrapped in an Optional
      */
-    @SuppressWarnings("unchecked") // Unfortunately, JCR defines NodeIterator as
+    @SuppressWarnings("unchecked")
     public static List<Node> getEditorFieldConfigNodes(final Node contentTypeRootNode) {
         final List<Node> editorFieldConfigNodes = new ArrayList<>();
         try {
