@@ -84,7 +84,8 @@ public class StringFieldTypeTest {
         final FieldTypeContext context = createMock(FieldTypeContext.class);
         final Node editorFieldConfigNode = createMock(Node.class);
 
-        expect(NamespaceUtils.getMaxLength(editorFieldConfigNode)).andReturn(Optional.empty());
+        expect(NamespaceUtils.getClusterOption(editorFieldConfigNode, "maxlength"))
+                .andReturn(Optional.empty());
 
         expect(context.getEditorConfigNode()).andReturn(Optional.of(editorFieldConfigNode));
 
@@ -104,7 +105,8 @@ public class StringFieldTypeTest {
         final FieldTypeContext context = createMock(FieldTypeContext.class);
         final Node editorFieldConfigNode = createMock(Node.class);
 
-        expect(NamespaceUtils.getMaxLength(editorFieldConfigNode)).andReturn(Optional.of("bad format"));
+        expect(NamespaceUtils.getClusterOption(editorFieldConfigNode, "maxlength"))
+                .andReturn(Optional.of("bad format"));
 
         expect(context.getEditorConfigNode()).andReturn(Optional.of(editorFieldConfigNode));
 
@@ -124,7 +126,8 @@ public class StringFieldTypeTest {
         final FieldTypeContext context = createMock(FieldTypeContext.class);
         final Node editorFieldConfigNode = createMock(Node.class);
 
-        expect(NamespaceUtils.getMaxLength(editorFieldConfigNode)).andReturn(Optional.of("123"));
+        expect(NamespaceUtils.getClusterOption(editorFieldConfigNode, "maxlength"))
+                .andReturn(Optional.of("123"));
 
         expect(context.getEditorConfigNode()).andReturn(Optional.of(editorFieldConfigNode));
 

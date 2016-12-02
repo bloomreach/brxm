@@ -141,8 +141,9 @@ public class NamespaceUtils {
      * @param editorFieldConfigNode JCR node representing a field's editor configuration
      * @return                      String value of the property or nothing, wrapped in an Optional
      */
-    public static Optional<String> getMaxLength(final Node editorFieldConfigNode) {
-        return getStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, "maxlength");
+    public static Optional<String> getClusterOption(final Node editorFieldConfigNode,
+                                                    final String propertyName) {
+        return getStringPropertyFromChildNode(editorFieldConfigNode, CLUSTER_OPTIONS, propertyName);
     }
 
     private static Optional<String> getStringPropertyFromChildNode(final Node node, final String childName,

@@ -62,14 +62,16 @@ public class StringFieldType extends FieldType {
 
     void initializeMaxLength(final FieldTypeContext fieldContext) {
         fieldContext.getEditorConfigNode()
-                .ifPresent(editorFieldConfigNode -> NamespaceUtils.getMaxLength(editorFieldConfigNode)
-                        .ifPresent(maxLengthString -> {
-                            try {
-                                maxLength = Long.valueOf(maxLengthString);
-                            } catch (NumberFormatException e) {
-                                log.info("Failed to parser value of String's max length '{}'", maxLengthString, e);
-                            }
-                        }));
+                .ifPresent(editorFieldConfigNode -> NamespaceUtils.getClusterOption(editorFieldConfigNode, "maxlength")
+                        .ifPresent(this::setMaxLength));
+    }
+
+    private void setMaxLength(final String maxLengthString) {
+        try {
+            maxLength = Long.valueOf(maxLengthString);
+        } catch (NumberFormatException e) {
+            log.info("Failed to parser value of String's max length '{}'", maxLengthString, e);
+        }
     }
 
     public Long getMaxLength() {
