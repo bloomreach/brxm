@@ -52,6 +52,7 @@
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
         <property name="cacheName" value="binariesCache" />
+        <property name="maxEntriesLocalHeap" value="${default.binaries.cache.maxEntries}"/>
         <property name="timeToLive" value="${default.binaries.cache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
