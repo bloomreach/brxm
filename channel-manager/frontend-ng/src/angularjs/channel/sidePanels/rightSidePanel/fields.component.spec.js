@@ -162,4 +162,36 @@ describe('ChannelFields', () => {
       $ctrl.onFieldBlur();
     }).not.toThrow();
   });
+
+  it('generates names for root-level fields', () => {
+    expect($ctrl.getFieldName(stringField)).toEqual('ns:string');
+    expect($ctrl.getFieldName(multipleStringField)).toEqual('ns:multiplestring');
+    expect($ctrl.getFieldName(compoundField)).toEqual('ns:compound');
+  });
+
+  it('generates names for nested fields', () => {
+    $ctrl = $componentController('channelFields', {
+    }, {
+      name: 'ns:compound',
+      fieldTypes: compoundField,
+      fieldValues: [stringField],
+    });
+    expect($ctrl.getFieldName(stringField)).toEqual('ns:compound/ns:string');
+  });
+
+  it('returns the form error object of a field', () => {
+    const error = {};
+    $ctrl.form = {
+      'ns:string': {
+        $error: error,
+      },
+    };
+    expect($ctrl.getFieldError(stringField)).toEqual(error);
+  });
+
+  it('returns null as form error object for an known field', () => {
+    $ctrl.form = {
+    };
+    expect($ctrl.getFieldError(stringField)).toEqual(null);
+  });
 });

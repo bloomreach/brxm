@@ -24,6 +24,16 @@ class ChannelFieldsCtrl {
     this.onFieldBlur = this.onFieldBlur || angular.noop;
   }
 
+  getFieldName(fieldType) {
+    return this.name ? `${this.name}/${fieldType.id}` : fieldType.id;
+  }
+
+  getFieldError(fieldType) {
+    const fieldName = this.getFieldName(fieldType);
+    const field = this.form[fieldName];
+    return field ? field.$error : null;
+  }
+
   hasValue(field) {
     const values = this.fieldValues[field.id];
     return angular.isArray(values) && values.length > 0;
@@ -73,12 +83,16 @@ const channelFieldsComponentModule = angular
   .module('hippo-cm.channel.fieldsComponentModule', [])
   .component('channelFields', {
     bindings: {
+      name: '@',
       fieldTypes: '=',
       fieldValues: '=',
       onFieldFocus: '&',
       onFieldBlur: '&',
     },
     controller: ChannelFieldsCtrl,
+    require: {
+      form: '^^form',
+    },
     template,
   })
   .directive('collapse', collapse);

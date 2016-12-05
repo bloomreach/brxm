@@ -33,6 +33,7 @@
     </h5>
 
     <channel-fields class="collapse-element"
+                    name="{{ ::$ctrl.getFieldName(fieldType) }}"
                     field-types="::fieldType.fields"
                     field-values="fieldValue.fields"
                     on-field-focus="$ctrl.focusCompound(fieldValue)"
@@ -63,6 +64,7 @@
       </h5>
 
       <channel-fields class="collapse-element"
+                      name="{{ ::$ctrl.getFieldName(fieldType) }}"
                       field-types="::fieldType.choices[fieldValue.chosenId].fields"
                       field-values="fieldValue.chosenValue.fields"
                       on-field-focus="$ctrl.focusCompound(fieldValue)"
@@ -87,6 +89,7 @@
       <!-- editors per field type -->
       <input ng-switch-when="STRING"
              ng-model="fieldValue.value"
+             name="{{ ::$ctrl.getFieldName(fieldType) }}"
              placeholder=""
              ng-attr-maxlength="{{::fieldType.maxLength}}"
              aria-label="{{::fieldType.displayName}}"
@@ -96,6 +99,7 @@
 
       <textarea ng-switch-when="MULTILINE_STRING"
                 ng-model="fieldValue.value"
+                name="{{ ::$ctrl.getFieldName(fieldType) }}"
                 placeholder=""
                 aria-label="{{::fieldType.displayName}}"
                 ng-required="{{::fieldType.required}}"
@@ -103,6 +107,10 @@
                 ng-focus="$ctrl.focusFieldType(fieldType)"
                 ng-blur="$ctrl.blurFieldType()">
       </textarea>
+
+      <div ng-messages="$ctrl.getFieldError(fieldType)">
+        <div ng-message="required">{{ 'ERROR_FIELD_REQUIRED' | translate:fieldType }}</div>
+      </div>
 
     </md-input-container>
   </div>

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import ngMessages from 'angular-messages';
 import template from './rightSidePanel.html';
 
 const ERROR_MAP = {
@@ -294,7 +295,9 @@ export class ChannelRightSidePanelCtrl {
 }
 
 const channelRightSidePanelComponentModule = angular
-  .module('hippo-cm.channel.rightSidePanelComponentModule', [])
+  .module('hippo-cm.channel.rightSidePanelComponentModule', [
+    ngMessages,
+  ])
   .component('channelRightSidePanel', {
     bindings: {
       editMode: '=',
