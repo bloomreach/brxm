@@ -214,6 +214,18 @@ describe('ChannelRightSidePanel', () => {
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
   });
 
+  it('knows that a document is loading', () => {
+    ContentService.createDraft.and.returnValue($q.resolve(testDocument));
+    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+
+    $ctrl._loadDocument('test');
+
+    expect($ctrl.loading).toBeTruthy();
+
+    $rootScope.$digest();
+    expect($ctrl.loading).toBeFalsy();
+  });
+
   describe('with an existing document', () => {
     const newDocument = {
       id: 'newdoc',

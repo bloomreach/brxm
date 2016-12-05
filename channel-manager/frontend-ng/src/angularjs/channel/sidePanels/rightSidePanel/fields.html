@@ -88,6 +88,7 @@
       <input ng-switch-when="STRING"
              ng-model="fieldValue.value"
              placeholder=""
+             ng-attr-maxlength="{{::fieldType.maxLength}}"
              aria-label="{{::fieldType.displayName}}"
              ng-required="{{::fieldType.required}}"
              ng-focus="$ctrl.focusFieldType(fieldType)"

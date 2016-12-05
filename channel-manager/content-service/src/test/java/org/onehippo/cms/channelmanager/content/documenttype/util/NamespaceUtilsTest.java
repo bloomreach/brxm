@@ -254,6 +254,27 @@ public class NamespaceUtilsTest {
     }
 
     @Test
+    public void getStringPropertyFromClusterOptions() throws Exception {
+        final String propertyName = "maxlength";
+        final Node editorFieldConfigNode = createMock(Node.class);
+        final Node clusterOptionsNode = createMock(Node.class);
+        final Property property = createMock(Property.class);
+
+        expect(editorFieldConfigNode.hasNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(true);
+        expect(editorFieldConfigNode.getNode(NamespaceUtils.CLUSTER_OPTIONS)).andReturn(clusterOptionsNode);
+        expect(clusterOptionsNode.hasProperty(propertyName)).andReturn(true);
+        expect(clusterOptionsNode.getProperty(propertyName)).andReturn(property);
+        expect(property.getString()).andReturn("256");
+
+        replay(editorFieldConfigNode, clusterOptionsNode, property);
+
+        assertThat(NamespaceUtils.getClusterOption(editorFieldConfigNode, propertyName).get(),
+                equalTo("256"));
+
+        verify(editorFieldConfigNode, clusterOptionsNode, property);
+    }
+
+    @Test
     public void getPluginClass() throws Exception {
         final String pluginClass = "pluginClass";
         final Property property = createMock(Property.class);

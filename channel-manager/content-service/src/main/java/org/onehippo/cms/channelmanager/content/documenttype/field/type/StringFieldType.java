@@ -28,7 +28,9 @@ import javax.jcr.Value;
 
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.validation.ValidationErrorInfo;
+import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
@@ -47,8 +49,34 @@ public class StringFieldType extends FieldType {
     private static final Logger log = LoggerFactory.getLogger(StringFieldType.class);
     private static final String DEFAULT_VALUE = "";
 
+    private Long maxLength;
+
     public StringFieldType() {
         this.setType(Type.STRING);
+    }
+
+    @Override
+    public void init(final FieldTypeContext fieldContext) {
+        super.init(fieldContext);
+        initializeMaxLength(fieldContext);
+    }
+
+    void initializeMaxLength(final FieldTypeContext fieldContext) {
+        fieldContext.getEditorConfigNode()
+                .ifPresent(editorFieldConfigNode -> NamespaceUtils.getClusterOption(editorFieldConfigNode, "maxlength")
+                        .ifPresent(this::setMaxLength));
+    }
+
+    private void setMaxLength(final String maxLengthString) {
+        try {
+            maxLength = Long.valueOf(maxLengthString);
+        } catch (NumberFormatException e) {
+            log.info("Failed to parser value of String's max length '{}'", maxLengthString, e);
+        }
+    }
+
+    public Long getMaxLength() {
+        return maxLength;
     }
 
     /**
