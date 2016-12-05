@@ -271,6 +271,20 @@
       <sv:value>4.0.0</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="domain-defaultread-hippo-translation-type-hippo-translation-facet">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>nodetype</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:domains/defaultread/hippo-translation/type-hippo-translation/hipposys:facet</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>908.1</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="domain-defaultread-hippo-compound">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
