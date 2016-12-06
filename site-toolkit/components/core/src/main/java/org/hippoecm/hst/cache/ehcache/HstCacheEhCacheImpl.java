@@ -110,7 +110,8 @@ public class HstCacheEhCacheImpl implements HstCache {
                 // opaque when using eh blocking cache. That is why we need to create a new 'Element' object
                 // with the same key instance as in the get of this method
 
-                final Element elementBasedOnKeyInstance = new Element(key, secondLevelElement.getObjectValue(), 1, secondLevelElement.getCreationTime(), 0, 0, 0);
+
+                final Element elementBasedOnKeyInstance = new Element(key, secondLevelElement.getObjectValue());
 
                 final long timeLived = (System.currentTimeMillis() - secondLevelElement.getCreationTime()) / 1000;
 
