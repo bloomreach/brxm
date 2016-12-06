@@ -3,7 +3,9 @@
 <#-- @ftlvariable name="document" type="{{beansPackage}}.Video" -->
 <#-- @ftlvariable name="cparam" type="org.onehippo.cms7.essentials.components.info.EssentialsVideoComponentInfo"--%> -->
 <#if document??>
-  <iframe width="${cparam.width}" height="${cparam.height}" src="${document.link?html}?autoplay=1" frameborder="0" allowfullscreen></iframe>
+  <div>
+    <iframe width="${cparam.width}" height="${cparam.height}" src="${document.link?html}?autoplay=1" frameborder="0" allowfullscreen></iframe>
+  </div>
 <#-- @ftlvariable name="editMode" type="java.lang.Boolean"-->
 <#elseif editMode>
   <div>
