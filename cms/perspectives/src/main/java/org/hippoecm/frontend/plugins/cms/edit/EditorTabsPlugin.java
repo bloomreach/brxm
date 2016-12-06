@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@ package org.hippoecm.frontend.plugins.cms.edit;
 
 import java.util.List;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -26,9 +29,15 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
+import org.hippoecm.frontend.service.EditorException;
+import org.hippoecm.frontend.session.UserSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EditorTabsPlugin extends TabsPlugin {
 
+    private static final Logger log = LoggerFactory.getLogger(EditorTabsPlugin.class);
+    
     public EditorTabsPlugin(final IPluginContext context, final IPluginConfig properties) {
         super(context, properties);
     }
@@ -52,9 +61,35 @@ public class EditorTabsPlugin extends TabsPlugin {
         };
     }
 
+    @Override
+    protected void onTabDeactivated(final Tab tab) {
+        super.onTabDeactivated(tab);
+        savePendingChanges(tab);
+    }
+
+    private void savePendingChanges(final Tab tab) {
+        final Session session = UserSession.get().getJcrSession();
+        try {
+            session.save();
+        } catch (RepositoryException e) {
+            final String user = session.getUserID();
+            final String tabName = tab.getTitle().getObject();
+            log.warn("User '{}' failed to save session when leaving editor tab '{}', discarding changes. Cause:", user, tabName, e);
+            discardChanges(tab);
+        }
+    }
+
+    private void discardChanges(final Tab tab) {
+        try {
+            tab.discard();
+        } catch (EditorException e) {
+            log.warn("Also failed to discard changes", e);
+        }
+    }
+
     private static class PreventDefaultFormSubmitBehavior extends AjaxEventBehavior {
 
-        public PreventDefaultFormSubmitBehavior() {
+        PreventDefaultFormSubmitBehavior() {
             super("onsubmit");
         }
 

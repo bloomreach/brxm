@@ -1,6 +1,6 @@
 /*
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,5 +55,9 @@ public class CmsHeaderItem extends HippoHeaderItem {
         JavaScriptReferenceHeaderItem.forReference(FUTURE_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(MESSAGE_BUS_JS).render(response);
         JavaScriptReferenceHeaderItem.forReference(isDevelopmentMode() ? THEME_MIN_JS : THEME_JS).render(response);
+
+        if (isBrowserInternetExplorer() && getBrowserVersion() == 11) {
+            JavaScriptReferenceHeaderItem.forReference(IE11_JS).render(response);
+        }
     }
 }
