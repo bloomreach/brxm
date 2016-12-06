@@ -19,6 +19,7 @@ import javax.jcr.Node;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.ILogoutService;
@@ -33,6 +34,8 @@ public class LogoutPlugin extends RenderPlugin<Node> {
         add(new Label("username", Model.of(username)));
 
         final ILogoutService logoutService = getPluginContext().getService(ILogoutService.SERVICE_ID, ILogoutService.class);
-        add(new LogoutLink("logout-link", logoutService));
+        final IDialogService dialogService = getDialogService();
+
+        add(new LogoutLink("logout-link", logoutService, dialogService));
     }
 }
