@@ -79,32 +79,32 @@ export class PageStructureElement {
    */
   replaceDOM(htmlFragment) {
     const endCommentNode = this.getEndComment()[0];
-    let node = this.getStartComment()[0];
-    while (node && node !== endCommentNode) {
-      const toBeRemoved = node;
-      node = node.nextSibling;
-      toBeRemoved.parentNode.removeChild(toBeRemoved);
-    }
+    const node = this._removeSiblingsUntil(this.getStartComment()[0], endCommentNode);
 
     if (!node) {
       throw new Error('Inconsistent PageStructureElement: startComment and endComment elements should be sibling');
     }
 
-    // For containers of type NoMarkup, D&D may have placed a moved component outside the start and end comments,
-    // specifically: behind the end comment. This would lead to lingering, duplicate components in the DOM.
-    // To get rid of these "misplaced" elements, we also remove all subsequent elements. See CHANNELMGR-1030.
+    // For containers of type NoMarkup, D&D may have placed a moved component after the end comment.
+    // This would lead to lingering, duplicate components in the DOM. To get rid of these "misplaced"
+    // elements, we also remove all subsequent elements. See CHANNELMGR-1030.
     if (PageStructureElement.isXTypeNoMarkup(this.metaData)) {
-      node = node.nextSibling; // Don't remove the end marker
-      while (node) {
-        const toBeRemoved = node;
-        node = node.nextSibling;
-        toBeRemoved.parentNode.removeChild(toBeRemoved);
-      }
+      this._removeSiblingsUntil(endCommentNode.nextSibling); // Don't remove the end marker
     }
 
     const jQueryNodeCollection = $(htmlFragment);
     this.getEndComment().replaceWith(jQueryNodeCollection);
     return jQueryNodeCollection;
+  }
+
+  _removeSiblingsUntil(startNode, endNode) {
+    let node = startNode;
+    while (node && node !== endNode) {
+      const toBeRemoved = node;
+      node = node.nextSibling;
+      toBeRemoved.parentNode.removeChild(toBeRemoved);
+    }
+    return node;
   }
 
   static isXTypeNoMarkup(metaData) {
