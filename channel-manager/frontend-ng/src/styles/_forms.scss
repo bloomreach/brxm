@@ -75,6 +75,9 @@
   label {
     color: $red-a700 !important;
   }
+  .md-input.ng-invalid {
+    border-color: $red-a700 !important;
+  }
   // ensure that error messages are also shown if an element has not been touched
   .md-input-message-animation:not(.ng-animate) {
     opacity: 1;
