@@ -64,8 +64,19 @@ describe('ChannelRightSidePanel', () => {
       },
     },
     fields: {
-      'ns:string': 'String value',
-      'ns:multiplestring': ['One', 'Two'],
+      'ns:string': [
+        {
+          value: 'String value',
+        },
+      ],
+      'ns:multiplestring': [
+        {
+          value: 'One',
+        },
+        {
+          value: 'Two',
+        },
+      ],
       'ns:emptymultiplestring': [],
     },
   };
@@ -527,6 +538,57 @@ describe('ChannelRightSidePanel', () => {
     $rootScope.$digest();
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {}, $ctrl.$element);
+  });
+
+  describe('when document save fails because of an invalid field', () => {
+    beforeEach(() => {
+      const saveResponse = angular.copy(testDocument);
+      saveResponse.fields['ns:string'] = [
+        {
+          value: '',
+          errorInfo: {
+            code: 'REQUIRED_FIELD_EMPTY',
+          },
+        },
+      ];
+
+      ContentService.saveDraft.and.returnValue($q.reject({ data: saveResponse }));
+
+      $ctrl.doc = testDocument;
+      $ctrl.docType = testDocumentType;
+      $ctrl.form.$dirty = true;
+    });
+
+    it('shows an error and reloads the document type', () => {
+      const reloadedDocumentType = angular.copy(testDocumentType);
+      ContentService.getDocumentType.and.returnValue($q.resolve(reloadedDocumentType));
+
+      $ctrl.saveDocument();
+
+      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+
+      $rootScope.$digest();
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {}, $ctrl.$element);
+      expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
+      expect($ctrl.docType).toBe(reloadedDocumentType);
+    });
+
+    it('shows an error when reloading the document type fails', () => {
+      ContentService.getDocumentType.and.returnValue($q.reject({ status: 404 }));
+      spyOn($translate, 'instant');
+
+      $ctrl.saveDocument();
+
+      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+
+      $rootScope.$digest();
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {}, $ctrl.$element);
+      expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
+      expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE', {});
+      expect($ctrl.docType).toBe(testDocumentType);
+    });
   });
 
   it('shows an error when document save fails and there is no data returned', () => {

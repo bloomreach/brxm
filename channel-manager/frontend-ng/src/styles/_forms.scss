@@ -71,8 +71,15 @@
   }
 }
 
-.has-invalid-field > md-input-container > label {
-  color: $red-a700 !important;
+.has-invalid-field {
+  label {
+    color: $red-a700 !important;
+  }
+  // ensure that error messages are also shown if an element has not been touched
+  .md-input-message-animation:not(.ng-animate) {
+    opacity: 1;
+    margin-top: 0;
+  }
 }
 
 .field-wrapper h5 {

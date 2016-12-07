@@ -180,14 +180,24 @@ export class ChannelRightSidePanelCtrl {
         this.HippoIframeService.reload();
       })
       .catch((response) => {
-        if (this._isDocument(response.data)) {
-          // CHANNELMGR-898: handle validation error on a per-field basis
-        } else {
-          const errorKey = this._isErrorInfo(response.data) ? `ERROR_${response.data.reason}` : 'ERROR_UNABLE_TO_SAVE';
-          this.FeedbackService.showError(errorKey, {}, this.$element);
+        const errorKey = this._getSaveErrorKey(response);
+        this.FeedbackService.showError(errorKey, {}, this.$element);
+
+        if (errorKey === 'ERROR_INVALID_DATA') {
+          this._reloadDocumentType();
         }
+
         return this.$q.reject(); // tell the caller that saving has failed.
       });
+  }
+
+  _getSaveErrorKey(response) {
+    if (this._isDocument(response.data)) {
+      return 'ERROR_INVALID_DATA';
+    } else if (this._isErrorInfo(response.data)) {
+      return `ERROR_${response.data.reason}`;
+    }
+    return 'ERROR_UNABLE_TO_SAVE';
   }
 
   _isDocument(object) {
@@ -196,6 +206,16 @@ export class ChannelRightSidePanelCtrl {
 
   _isErrorInfo(object) {
     return object && object.reason; // ErrorInfo has a reason field, Document doesn't.
+  }
+
+  _reloadDocumentType() {
+    this.ContentService.getDocumentType(this.doc.info.type.id)
+      .then((docType) => {
+        this.docType = docType;
+      })
+      .catch((response) => {
+        this._onLoadResponse(response);
+      });
   }
 
   openFullContent(mode) {

@@ -84,6 +84,7 @@
     <md-input-container ng-if="$ctrl.hasValue(fieldType)"
                         class="md-block qa-field"
                         md-no-float
+                        md-is-error="!$ctrl.isValid(fieldType)"
                         ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
                         ng-switch="fieldType.type">
 
