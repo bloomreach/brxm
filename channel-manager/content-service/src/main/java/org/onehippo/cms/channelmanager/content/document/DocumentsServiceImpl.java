@@ -236,7 +236,7 @@ class DocumentsServiceImpl implements DocumentsService {
             workflow.obtainEditableInstance();
         } catch (WorkflowException e) {
             log.warn("User '{}' failed to re-obtain ownership of document", session.getUserID(), e);
-            throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.HOLDERSHIP_LOST));
+            throw new InternalServerErrorException(errorInfoWithUserInfo(workflow, session));
         } catch (RepositoryException | RemoteException e) {
             log.warn("User '{}' failed to re-obtain ownership of document", session.getUserID(), e);
             throw new InternalServerErrorException();

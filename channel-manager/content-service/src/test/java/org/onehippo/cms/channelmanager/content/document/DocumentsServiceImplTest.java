@@ -727,11 +727,16 @@ public class DocumentsServiceImplTest {
         final Node draft = createMock(Node.class);
         final EditableWorkflow workflow = createMock(EditableWorkflow.class);
         final DocumentType docType = provideDocumentType(handle);
+        final UserInfo userInfo = new UserInfo();
+        userInfo.setId("tester");
+        userInfo.setDisplayName("Joe Tester");
 
         expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canUpdateDocument(workflow)).andReturn(true);
+        expect(EditingUtils.determineHolderId(workflow)).andReturn(Optional.of("tester"));
+        expect(EditingUtils.makeUserInfo("tester", session)).andReturn(userInfo);
         FieldTypeUtils.writeFieldValues(document.getFields(), Collections.emptyList(), draft);
         expectLastCall();
         expect(FieldTypeUtils.validateFieldValues(document.getFields(), Collections.emptyList())).andReturn(true);
@@ -753,7 +758,9 @@ public class DocumentsServiceImplTest {
         } catch (InternalServerErrorException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
             ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.HOLDERSHIP_LOST));
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.OTHER_HOLDER));
+            assertThat(errorInfo.getParams().get("userId"), equalTo("tester"));
+            assertThat(errorInfo.getParams().get("userName"), equalTo("Joe Tester"));
         }
 
         verify(docType, session, workflow);
