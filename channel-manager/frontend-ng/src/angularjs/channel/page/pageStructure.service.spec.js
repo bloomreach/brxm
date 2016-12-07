@@ -772,6 +772,29 @@ describe('PageStructureService', () => {
     expect(PageStructureService.getContainerByOverlayElement(overlayElement)).toBeUndefined();
   });
 
+  it('re-renders a NoMarkup container', () => {
+    registerNoMarkupContainer();
+    PageStructureService.attachEmbeddedLinks();
+
+    const container = PageStructureService.getContainers()[0];
+    container.getEndComment().after('<p>Trailing element, to be removed</p>'); // insert trailing dom element
+    expect(container.getEndComment().next().length).toBe(1);
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "NoMarkup container", "HST-XType": "HST.nomarkup", "uuid": "container-nomarkup" } -->
+        <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          <p id="test">Some markup in component A</p>
+        <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+      <!-- { "HST-End": "true", "uuid": "container-nomarkup" } -->
+      `;
+    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    PageStructureService.renderContainer(container);
+    $rootScope.$digest();
+
+    const newContainer = PageStructureService.getContainers()[0];
+    expect(newContainer).not.toBe(container);
+    expect(newContainer.getEndComment().next().length).toBe(0);
+  });
+
   it('re-renders a container with an edit menu link', (done) => {
     // set up page structure with component and edit menu link in it
     registerVBoxContainer();
