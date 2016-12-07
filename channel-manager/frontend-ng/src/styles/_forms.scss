@@ -66,9 +66,13 @@
       color: $blue-500 !important;
     }
   }
-  &> md-input-container:not(.md-input-invalid) > label {
+  &:not(.has-invalid-field) > md-input-container > label {
     color: $blue-500 !important;
   }
+}
+
+.has-invalid-field > md-input-container > label {
+  color: $red-a700 !important;
 }
 
 .field-wrapper h5 {

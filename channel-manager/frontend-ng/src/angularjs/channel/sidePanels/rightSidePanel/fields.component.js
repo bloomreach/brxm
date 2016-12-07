@@ -24,14 +24,49 @@ class ChannelFieldsCtrl {
     this.onFieldBlur = this.onFieldBlur || angular.noop;
   }
 
-  getFieldName(fieldType) {
-    return this.name ? `${this.name}/${fieldType.id}` : fieldType.id;
+  getFieldName(fieldType, index) {
+    const fieldName = this.name ? `${this.name}/${fieldType.id}` : fieldType.id;
+    return index > 0 ? `${fieldName}[${index}]` : fieldName;
   }
 
   getFieldError(fieldType) {
+    const fieldValues = this.fieldValues[fieldType.id];
+    if (fieldValues) {
+      return fieldValues.length === 1 ? this._getSingleFieldError(fieldType) : this._getMultipleFieldError(fieldType, fieldValues);
+    }
+    return null;
+  }
+
+  _getSingleFieldError(fieldType) {
     const fieldName = this.getFieldName(fieldType);
     const field = this.form[fieldName];
     return field ? field.$error : null;
+  }
+
+  _getMultipleFieldError(fieldType, fieldValues) {
+    let combinedError = null;
+    for (let i = 0, len = fieldValues.length; i < len; i += 1) {
+      const fieldName = this.getFieldName(fieldType, i);
+      const field = this.form[fieldName];
+      if (field) {
+        combinedError = angular.extend(combinedError || {}, field.$error);
+      }
+    }
+    return combinedError;
+  }
+
+  isValid(fieldType) {
+    const fieldValues = this.fieldValues[fieldType.id];
+    if (fieldValues) {
+      for (let i = 0, len = fieldValues.length; i < len; i += 1) {
+        const fieldName = this.getFieldName(fieldType, i);
+        const field = this.form[fieldName];
+        if (field && field.$invalid) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   hasValue(field) {

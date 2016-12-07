@@ -75,7 +75,10 @@
 
   <!-- Other fields -->
   <div class="field"
-       ng-class="{'has-focused-field': $ctrl.hasFocusedFieldType(fieldType)}"
+       ng-class="{
+        'has-focused-field': $ctrl.hasFocusedFieldType(fieldType),
+        'has-invalid-field': !$ctrl.isValid(fieldType)
+       }"
        ng-switch-default>
 
     <md-input-container ng-if="$ctrl.hasValue(fieldType)"
@@ -89,7 +92,7 @@
       <!-- editors per field type -->
       <input ng-switch-when="STRING"
              ng-model="fieldValue.value"
-             name="{{ ::$ctrl.getFieldName(fieldType) }}"
+             name="{{ ::$ctrl.getFieldName(fieldType, $index) }}"
              placeholder=""
              ng-attr-maxlength="{{::fieldType.maxLength}}"
              aria-label="{{::fieldType.displayName}}"
@@ -99,7 +102,7 @@
 
       <textarea ng-switch-when="MULTILINE_STRING"
                 ng-model="fieldValue.value"
-                name="{{ ::$ctrl.getFieldName(fieldType) }}"
+                name="{{ ::$ctrl.getFieldName(fieldType, $index) }}"
                 placeholder=""
                 aria-label="{{::fieldType.displayName}}"
                 ng-required="{{::fieldType.required}}"
@@ -108,7 +111,8 @@
                 ng-blur="$ctrl.blurFieldType()">
       </textarea>
 
-      <div ng-messages="$ctrl.getFieldError(fieldType)">
+      <div ng-if="$last"
+           ng-messages="$ctrl.getFieldError(fieldType)">
         <div ng-message="required">{{ 'ERROR_FIELD_REQUIRED' | translate:fieldType }}</div>
       </div>
 
