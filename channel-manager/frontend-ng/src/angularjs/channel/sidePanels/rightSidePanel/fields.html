@@ -23,13 +23,12 @@
        ng-if="$ctrl.hasValue(fieldType)"
        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
        collapse>
-    <h5 class="collapse-toggle" ng-click="collapse.toggle()">
-      <md-icon class="material-icons collapse-icon" ng-class="{'collapsed': collapse.isCollapsed}">
-        keyboard_arrow_down
-      </md-icon>
-
-      {{ ::$ctrl.getDisplayNameForCompound(fieldType, $index) }}
-    </h5>
+    <field-title class="collapse-toggle"
+                 ng-click="collapse.toggle()"
+                 collapsed="collapse.isCollapsed"
+                 text="$ctrl.getDisplayNameForCompound(fieldType, $index)"
+                 hint="fieldType.hint">
+    </field-title>
 
     <channel-fields class="collapse-element"
                     field-types="::fieldType.fields"
@@ -52,13 +51,13 @@
     <div class="field field-indented field-compound qa-compound"
          ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
          collapse>
-      <h5 class="collapse-toggle" ng-click="collapse.toggle()">
-        <md-icon class="material-icons collapse-icon" ng-class="{'collapsed': collapse.isCollapsed}">
-          keyboard_arrow_down
-        </md-icon>
+      <field-title class="collapse-toggle"
+                   ng-click="collapse.toggle()"
+                   collapsed="collapse.isCollapsed"
+                   text="$ctrl.getDisplayNameForCompound(fieldType, $index)"
+                   hint="fieldType.hint">
+      </field-title>
 
-        {{ ::fieldType.choices[fieldValue.chosenId].displayName }}
-      </h5>
 
       <channel-fields class="collapse-element"
                       field-types="::fieldType.choices[fieldValue.chosenId].fields"

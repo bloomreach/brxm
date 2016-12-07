@@ -1,0 +1,16 @@
+<h5>
+  <md-icon class="material-icons collapse-icon"
+           ng-class="{'collapsed': $ctrl.isCollapsed}">
+    keyboard_arrow_down
+  </md-icon>
+
+  {{ $ctrl.text }}
+
+  <md-icon ng-if="$ctrl.hint">
+    info_outline
+
+    <md-tooltip>
+      {{ $ctrl.hint }}
+    </md-tooltip>
+  </md-icon>
+</h5>
