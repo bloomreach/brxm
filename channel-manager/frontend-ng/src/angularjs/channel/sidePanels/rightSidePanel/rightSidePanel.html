@@ -88,7 +88,7 @@
 
       <md-button class="qa-save"
                  ng-click="$ctrl.saveDocument()"
-                 ng-disabled="!$ctrl.editing || $ctrl.form.$pristine">
+                 ng-disabled="!$ctrl.editing || $ctrl.form.$pristine || $ctrl.form.$invalid">
         {{'SAVE' | translate }}
       </md-button>
     </div>
