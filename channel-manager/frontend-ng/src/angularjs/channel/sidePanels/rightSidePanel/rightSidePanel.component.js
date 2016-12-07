@@ -182,8 +182,18 @@ export class ChannelRightSidePanelCtrl {
         if (this._isDocument(response.data)) {
           // CHANNELMGR-898: handle validation error on a per-field basis
         } else {
-          const errorKey = this._isErrorInfo(response.data) ? `ERROR_${response.data.reason}` : 'ERROR_UNABLE_TO_SAVE';
-          this.FeedbackService.showError(errorKey, {}, this.$element);
+          const params = {};
+          let errorKey;
+          if (this._isErrorInfo(response.data)) {
+            errorKey = `ERROR_${response.data.reason}`;
+            if (response.data.reason === 'OTHER_HOLDER') {
+              params.user = response.data.params.userName || response.data.params.userId;
+            }
+          } else {
+            errorKey = 'ERROR_UNABLE_TO_SAVE';
+          }
+
+          this.FeedbackService.showError(errorKey, params, this.$element);
         }
         return this.$q.reject(); // tell the caller that saving has failed.
       });

@@ -529,6 +529,47 @@ describe('ChannelRightSidePanel', () => {
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_TEST', {}, $ctrl.$element);
   });
 
+  it('shows an error when document save fails due to other user now being the holder', () => {
+    const response = {
+      reason: 'OTHER_HOLDER',
+      params: {
+        userId: 'tester',
+      },
+    };
+    ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
+
+    $ctrl.doc = testDocument;
+    $ctrl.form.$dirty = true;
+    $ctrl.saveDocument();
+
+    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+
+    $rootScope.$digest();
+
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'tester' }, $ctrl.$element);
+  });
+
+  it('shows an error when document save fails due to other *named* user now being the holder', () => {
+    const response = {
+      reason: 'OTHER_HOLDER',
+      params: {
+        userId: 'tester',
+        userName: 'Joe Tester',
+      },
+    };
+    ContentService.saveDraft.and.returnValue($q.reject({ data: response }));
+
+    $ctrl.doc = testDocument;
+    $ctrl.form.$dirty = true;
+    $ctrl.saveDocument();
+
+    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+
+    $rootScope.$digest();
+
+    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'Joe Tester' }, $ctrl.$element);
+  });
+
   it('shows an error when document save fails and there is no data returned', () => {
     ContentService.saveDraft.and.returnValue($q.reject({}));
 
