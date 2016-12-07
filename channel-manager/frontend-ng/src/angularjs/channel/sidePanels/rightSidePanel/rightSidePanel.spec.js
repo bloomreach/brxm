@@ -225,6 +225,19 @@ describe('ChannelRightSidePanel', () => {
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
   });
 
+  it('ignores a non-existing form when opening a document', () => {
+    ContentService.createDraft.and.returnValue($q.resolve(testDocument));
+    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+    delete $ctrl.form;
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+
+    expect(() => {
+      onOpenCallback('test');
+      $rootScope.$digest();
+    }).not.toThrow();
+  });
+
   it('knows that a document is loading', () => {
     ContentService.createDraft.and.returnValue($q.resolve(testDocument));
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
