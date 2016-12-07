@@ -16,15 +16,14 @@
 
 import template from './fieldTitle.html';
 
-const fieldTitleComponentModule = angular
-  .module('hippo-cm.channel.fieldTitleComponentModule', [])
-  .component('fieldTitle', {
-    bindings: {
-      collapsed: '<',
-      text: '<',
-      hint: '<',
-    },
-    template,
-  });
+const fieldTitleComponent = {
+  bindings: {
+    collapsed: '<',
+    text: '<',
+    hint: '<',
+    fieldType: '<',
+  },
+  template,
+};
 
-export default fieldTitleComponentModule;
+export default fieldTitleComponent;

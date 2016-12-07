@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 import rightSidePanelComponent from './rightSidePanel.component';
+import fieldTitleComponent from './fieldTitle.component';
 
 const rightSidePanelModule = angular
   .module('hippo-cm.channel.rightSidePanelModule', [])
-  .component('rightSidePanel', rightSidePanelComponent);
+  .component('rightSidePanel', rightSidePanelComponent)
+  .component('fieldTitle', fieldTitleComponent);
 
 export default rightSidePanelModule;
 

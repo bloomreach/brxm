@@ -75,3 +75,13 @@
   margin-bottom: 0;
 }
 
+field-title {
+  label {
+    pointer-events: auto !important;
+  }
+
+  md-icon {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+}
