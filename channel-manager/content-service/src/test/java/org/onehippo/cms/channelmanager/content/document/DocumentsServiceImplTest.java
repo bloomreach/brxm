@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
+import org.onehippo.cms.channelmanager.content.document.model.UserInfo;
 import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
@@ -466,6 +467,7 @@ public class DocumentsServiceImplTest {
         expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
         expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
         expect(EditingUtils.canUpdateDocument(workflow)).andReturn(false);
+        expect(EditingUtils.determineHolderId(workflow)).andReturn(Optional.empty());
 
         PowerMock.replayAll();
 
@@ -475,7 +477,44 @@ public class DocumentsServiceImplTest {
         } catch (ForbiddenException e) {
             assertTrue(e.getPayload() instanceof ErrorInfo);
             ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
-            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NOT_HOLDER));
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.NO_HOLDER));
+            assertNull(errorInfo.getParams());
+        }
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void updateDraftOtherHolder() throws Exception {
+        final Document document = new Document();
+        final String uuid = "uuid";
+        final Node handle = createMock(Node.class);
+        final Node draft = createMock(Node.class);
+        final EditableWorkflow workflow = createMock(EditableWorkflow.class);
+        final UserInfo userInfo = new UserInfo();
+
+        userInfo.setId("tester");
+        userInfo.setDisplayName("Joe Tester");
+
+        expect(DocumentUtils.getHandle(uuid, session)).andReturn(Optional.of(handle));
+        expect(DocumentUtils.getVariantNodeType(handle)).andReturn(Optional.of("some:documenttype"));
+        expect(WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)).andReturn(Optional.of(draft));
+        expect(WorkflowUtils.getWorkflow(handle, "editing", EditableWorkflow.class)).andReturn(Optional.of(workflow));
+        expect(EditingUtils.canUpdateDocument(workflow)).andReturn(false);
+        expect(EditingUtils.determineHolderId(workflow)).andReturn(Optional.of("tester"));
+        expect(EditingUtils.makeUserInfo("tester", session)).andReturn(userInfo);
+
+        PowerMock.replayAll();
+
+        try {
+            documentsService.updateDraft(uuid, document, session, locale);
+            fail("No Exception");
+        } catch (ForbiddenException e) {
+            assertTrue(e.getPayload() instanceof ErrorInfo);
+            ErrorInfo errorInfo = (ErrorInfo) e.getPayload();
+            assertThat(errorInfo.getReason(), equalTo(ErrorInfo.Reason.OTHER_HOLDER));
+            assertThat(errorInfo.getParams().get("userId"), equalTo("tester"));
+            assertThat(errorInfo.getParams().get("userName"), equalTo("Joe Tester"));
         }
 
         PowerMock.verifyAll();

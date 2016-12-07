@@ -16,25 +16,42 @@
 
 package org.onehippo.cms.channelmanager.content.error;
 
+import java.io.Serializable;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * ErrorInfo provides the client with additional information about the failure of a requested operation
  *
  * By "additional", we mean information on top of the HTTP response status code.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorInfo {
 
     private Reason reason;
+    private Map<String, Serializable> params;
 
     public ErrorInfo(Reason reason) {
+        this(reason, null);
+    }
+
+    public ErrorInfo(Reason reason, Map<String, Serializable> params) {
         this.reason = reason;
+        this.params = params;
     }
 
     public Reason getReason() {
         return reason;
     }
 
+    public Map<String, Serializable> getParams() {
+        return params;
+    }
+
     public enum Reason {
-        NOT_HOLDER,
+        NO_HOLDER,
+        OTHER_HOLDER,
         HOLDERSHIP_LOST,
         ALREADY_DELETED,
         INVALID_DATA,

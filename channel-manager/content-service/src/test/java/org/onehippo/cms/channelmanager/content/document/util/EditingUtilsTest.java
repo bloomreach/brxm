@@ -36,7 +36,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
 import org.onehippo.cms.channelmanager.content.document.model.UserInfo;
-import org.onehippo.cms.channelmanager.content.document.util.EditingUtils;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
 import org.powermock.api.easymock.PowerMock;
@@ -46,6 +45,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
@@ -84,12 +84,12 @@ public class EditingUtilsTest {
         hints.put("inUseBy", "otherUser");
         hints.put("requests", "dummy");
 
-        PowerMock.mockStaticPartial(EditingUtils.class, "determineHolder");
+        PowerMock.mockStaticPartial(EditingUtils.class, "makeUserInfo");
 
         expect(handle.getSession()).andReturn(session);
         expect(session.getUserID()).andReturn("tester");
         expect(workflow.hints()).andReturn(hints);
-        expect(EditingUtils.determineHolder("otherUser", session)).andReturn(null);
+        expect(EditingUtils.makeUserInfo("otherUser", session)).andReturn(null);
         replay(handle, session, workflow);
         PowerMock.replayAll();
 
@@ -175,6 +175,48 @@ public class EditingUtilsTest {
     }
 
     @Test
+    public void determineHolderIdWithException() throws Exception {
+        final Workflow workflow = createMock(Workflow.class);
+
+        expect(workflow.hints()).andThrow(new WorkflowException("bla"));
+
+        replay(workflow);
+
+        assertFalse(EditingUtils.determineHolderId(workflow).isPresent());
+
+        verify(workflow);
+    }
+
+    @Test
+    public void determineHolderIdWithoutUser() throws Exception {
+        final Workflow workflow = createMock(Workflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+
+        expect(workflow.hints()).andReturn(hints);
+
+        replay(workflow);
+
+        assertFalse(EditingUtils.determineHolderId(workflow).isPresent());
+
+        verify(workflow);
+    }
+
+    @Test
+    public void determineHolderId() throws Exception {
+        final Workflow workflow = createMock(Workflow.class);
+        final Map<String, Serializable> hints = new HashMap<>();
+        hints.put("inUseBy", "admin");
+
+        expect(workflow.hints()).andReturn(hints);
+
+        replay(workflow);
+
+        assertThat(EditingUtils.determineHolderId(workflow).get(), equalTo("admin"));
+
+        verify(workflow);
+    }
+
+    @Test
     public void determineHolderWithRepositoryException() throws Exception {
         final Session session = createMock(Session.class);
         final HippoWorkspace workspace = createMock(HippoWorkspace.class);
@@ -183,7 +225,7 @@ public class EditingUtilsTest {
         expect(workspace.getSecurityService()).andThrow(new RepositoryException());
         replay(session, workspace);
 
-        UserInfo info = EditingUtils.determineHolder("otherUser", session);
+        UserInfo info = EditingUtils.makeUserInfo("otherUser", session);
 
         assertThat(info.getId(), equalTo("otherUser"));
         assertNull(info.getDisplayName());
@@ -203,7 +245,7 @@ public class EditingUtilsTest {
         expect(user.getLastName()).andReturn(" Doe ");
         replay(session, workspace, ss, user);
 
-        UserInfo info = EditingUtils.determineHolder("otherUser", session);
+        UserInfo info = EditingUtils.makeUserInfo("otherUser", session);
 
         assertThat(info.getId(), equalTo("otherUser"));
         assertThat(info.getDisplayName(), equalTo("John Doe"));
@@ -223,7 +265,7 @@ public class EditingUtilsTest {
         expect(user.getLastName()).andReturn("");
         replay(session, workspace, ss, user);
 
-        UserInfo info = EditingUtils.determineHolder("otherUser", session);
+        UserInfo info = EditingUtils.makeUserInfo("otherUser", session);
 
         assertThat(info.getId(), equalTo("otherUser"));
         assertThat(info.getDisplayName(), equalTo("John"));
@@ -243,7 +285,7 @@ public class EditingUtilsTest {
         expect(user.getLastName()).andReturn(null);
         replay(session, workspace, ss, user);
 
-        UserInfo info = EditingUtils.determineHolder("otherUser", session);
+        UserInfo info = EditingUtils.makeUserInfo("otherUser", session);
 
         assertThat(info.getId(), equalTo("otherUser"));
         assertThat(info.getDisplayName(), equalTo(""));
