@@ -29,17 +29,6 @@ class ChannelFieldsCtrl {
     return angular.isArray(values) && values.length > 0;
   }
 
-  getDisplayNameForCompound(field, index) {
-    if (this.hasValue(field)) {
-      const values = this.fieldValues[field.id];
-      if (values.length > 1) {
-        return `${field.displayName} (${index + 1})`;
-      }
-    }
-
-    return field.displayName;
-  }
-
   focusCompound(fieldValue) {
     this.compoundWithFocusedField = fieldValue;
     this.onFieldFocus();

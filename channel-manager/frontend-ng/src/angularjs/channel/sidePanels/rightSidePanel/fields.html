@@ -28,7 +28,7 @@
         keyboard_arrow_down
       </md-icon>
 
-      {{ ::$ctrl.getDisplayNameForCompound(fieldType, $index) }}
+      {{ ::fieldType.displayName }}
     </h5>
 
     <channel-fields class="collapse-element"
@@ -45,7 +45,7 @@
        ng-if="$ctrl.hasValue(fieldType)"
        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]">
     <h5>
-      {{ ::$ctrl.getDisplayNameForCompound(fieldType, $index) }}
+      {{ ::fieldType.displayName }}
     </h5>
 
     <!-- Currently, each choice is a COMPOUND with a single value -->
