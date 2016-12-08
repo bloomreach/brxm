@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,12 @@ import org.onehippo.cms7.essentials.components.utils.SiteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * QueryBuilder implementation for easier construction of HstQuery objects.
+ *
+ * @deprecated Deprecated since version since 3.2.0 in favor of the HST fluent API's HstQueryBuilder
+ * @see org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder
+ */
 @Deprecated
 public class HstQueryBuilder implements QueryBuilder {
 

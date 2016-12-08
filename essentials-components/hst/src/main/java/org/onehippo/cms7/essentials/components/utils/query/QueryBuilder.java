@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,12 @@ import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 
+/**
+ * QueryBuilder interface for easier construction of HstQuery objects.
+ *
+ * @deprecated Deprecated since version since 3.2.0 in favor of the HST fluent API's HstQueryBuilder
+ * @see org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder
+ */
 @Deprecated
 public interface QueryBuilder {
 
