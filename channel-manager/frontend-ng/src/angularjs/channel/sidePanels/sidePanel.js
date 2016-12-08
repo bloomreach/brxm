@@ -15,13 +15,11 @@
  */
 
 import ChannelSidePanelService from './sidePanel.service';
-import channelLeftSidePanelToggleComponentModule from './leftSidePanel/leftSidePanelToggle.component';
 import leftSidePanelModule from './leftSidePanel/leftSidePanel.module';
 import rightSidePanelModule from './rightSidePanel/rightSidePanel.module';
 
 const channelSidePanelModule = angular
   .module('hippo-cm.channel.sidePanel', [
-    channelLeftSidePanelToggleComponentModule.name,
     leftSidePanelModule,
     rightSidePanelModule,
   ])

@@ -15,10 +15,12 @@
  */
 
 import leftSidePanelComponent from './leftSidePanel.component';
+import leftSidePanelToggleComponent from './leftSidePanelToggle.component';
 
 const leftSidePanelModule = angular
   .module('hippo-cm.channel.leftSidePanelModule', [])
-  .component('leftSidePanel', leftSidePanelComponent);
+  .component('leftSidePanel', leftSidePanelComponent)
+  .component('leftSidePanelToggle', leftSidePanelToggleComponent);
 
 export default leftSidePanelModule.name;
 
