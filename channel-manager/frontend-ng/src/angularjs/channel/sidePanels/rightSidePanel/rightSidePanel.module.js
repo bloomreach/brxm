@@ -25,5 +25,5 @@ const rightSidePanelModule = angular
   .component('documentFieldTitle', documentFieldTitleComponent)
   .directive('collapse', collapse);
 
-export default rightSidePanelModule;
+export default rightSidePanelModule.name;
 
