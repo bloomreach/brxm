@@ -28,10 +28,14 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class EssentialsListComponentTest extends AbstractHstQueryTest {
 
-
+    private static final String ROOT_FOLDER_PATH = "/content/documents/myhippoproject";
     private static final String NEWS_FOLDER_PATH = "/content/documents/myhippoproject/news";
-    private static final String MYHIPPOPROJECT_NEWSDOCUMENT = "myhippoproject:newsdocument";
+    private static final String CONTENT_FOLDER_PATH = "/content/documents/myhippoproject/content";
+    private static final int NR_NEWS_ITEMS = 3;
+    private static final int NR_CONTENT_ITEMS = 2;
 
+    private static final String MYHIPPOPROJECT_NEWSDOCUMENT = "myhippoproject:newsdocument";
+    private static final String MYHIPPOPROJECT_CONTENTDOCUMENT = "myhippoproject:contentdocument";
 
     ObjectConverter objectConverter;
     ObjectBeanManager obm;
@@ -60,10 +64,49 @@ public class EssentialsListComponentTest extends AbstractHstQueryTest {
     }
 
     @Test
-    public void testBuildHstQuery() throws ObjectBeanManagerException, QueryException {
+    public void testBuildHstQuery_News() throws ObjectBeanManagerException, QueryException {
         when(essentialsListComponentInfo.getDocumentTypes()).thenReturn(MYHIPPOPROJECT_NEWSDOCUMENT);
+        when(essentialsListComponentInfo.getPath()).thenReturn(NEWS_FOLDER_PATH);
 
-        HippoFolder scope = (HippoFolder) obm.getObject(NEWS_FOLDER_PATH);
+        HstQueryResult hstQueryResult = executeHstQuery();
+
+        assertEquals(3, hstQueryResult.getSize());
+    }
+
+    @Test
+    public void testBuildHstQuery_NewsFromRoot() throws ObjectBeanManagerException, QueryException {
+        when(essentialsListComponentInfo.getDocumentTypes()).thenReturn(MYHIPPOPROJECT_NEWSDOCUMENT);
+        when(essentialsListComponentInfo.getPath()).thenReturn(ROOT_FOLDER_PATH);
+
+        HstQueryResult hstQueryResult = executeHstQuery();
+
+        assertEquals(NR_NEWS_ITEMS, hstQueryResult.getSize());
+    }
+
+    @Test
+    public void testBuildHstQuery_Content() throws ObjectBeanManagerException, QueryException {
+        when(essentialsListComponentInfo.getDocumentTypes()).thenReturn(MYHIPPOPROJECT_CONTENTDOCUMENT);
+        when(essentialsListComponentInfo.getPath()).thenReturn(CONTENT_FOLDER_PATH);
+
+        HstQueryResult hstQueryResult = executeHstQuery();
+
+        assertEquals(NR_CONTENT_ITEMS, hstQueryResult.getSize());
+    }
+
+
+    @Test
+    public void testBuildHstQuery_ContentAndNewsFromRoot() throws ObjectBeanManagerException, QueryException {
+        when(essentialsListComponentInfo.getDocumentTypes()).thenReturn(MYHIPPOPROJECT_NEWSDOCUMENT + "," + MYHIPPOPROJECT_CONTENTDOCUMENT);
+        when(essentialsListComponentInfo.getPath()).thenReturn(ROOT_FOLDER_PATH);
+
+        HstQueryResult hstQueryResult = executeHstQuery();
+
+        assertEquals(NR_CONTENT_ITEMS + NR_NEWS_ITEMS, hstQueryResult.getSize());
+    }
+
+    private HstQueryResult executeHstQuery() throws ObjectBeanManagerException, QueryException {
+
+        HippoFolder scope = (HippoFolder) obm.getObject(essentialsListComponentInfo.getPath());
         EssentialsListComponent essentialsListComponent = new EssentialsListComponent();
         MockHstRequest hstRequest = new MockHstRequest();
 
@@ -71,6 +114,7 @@ public class EssentialsListComponentTest extends AbstractHstQueryTest {
         HstQueryResult hstQueryResult = hstQuery.execute();
 
         assertTrue(hstQuery.getQueryAsString(true) != null);
-        assertEquals(3, hstQueryResult.getSize());
+
+        return hstQueryResult;
     }
 }
