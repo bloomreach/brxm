@@ -15,14 +15,14 @@
  */
 import rightSidePanelComponent from './rightSidePanel.component';
 import documentFieldsComponent from './documentFields.component';
-import fieldTitleComponent from './fieldTitle.component';
+import documentFieldTitleComponent from './documentFieldTitle.component';
 import collapse from './collapse.directive';
 
 const rightSidePanelModule = angular
   .module('hippo-cm.channel.rightSidePanelModule', [])
   .component('rightSidePanel', rightSidePanelComponent)
   .component('documentFields', documentFieldsComponent)
-  .component('fieldTitle', fieldTitleComponent)
+  .component('documentFieldTitle', documentFieldTitleComponent)
   .directive('collapse', collapse);
 
 export default rightSidePanelModule;

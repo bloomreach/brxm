@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import template from './fieldTitle.html';
+import template from './documentFieldTitle.html';
 
-const fieldTitleComponent = {
+const documentFieldTitleComponent = {
   bindings: {
     collapsed: '<',
     text: '<',
@@ -26,4 +26,4 @@ const fieldTitleComponent = {
   template,
 };
 
-export default fieldTitleComponent;
+export default documentFieldTitleComponent;
