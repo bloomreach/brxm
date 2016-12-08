@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import collapse from './collapse.directive';
 import template from './fields.html';
 
 class ChannelFieldsCtrl {
@@ -69,7 +68,6 @@ const channelFieldsComponentModule = angular
     },
     controller: ChannelFieldsCtrl,
     template,
-  })
-  .directive('collapse', collapse);
+  });
 
 export default channelFieldsComponentModule;
