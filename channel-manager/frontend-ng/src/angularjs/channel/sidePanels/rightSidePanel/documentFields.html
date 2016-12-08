@@ -31,12 +31,12 @@
                  hint="fieldType.hint">
     </field-title>
 
-    <channel-fields class="collapse-element"
+    <document-fields class="collapse-element"
                     field-types="::fieldType.fields"
                     field-values="fieldValue.fields"
                     on-field-focus="$ctrl.focusCompound(fieldValue)"
                     on-field-blur="$ctrl.blurCompound()">
-    </channel-fields>
+    </document-fields>
   </div>
 
   <div class="field field-indented field-choice qa-choice"
@@ -61,12 +61,12 @@
       </field-title>
 
 
-      <channel-fields class="collapse-element"
+      <document-fields class="collapse-element"
                       field-types="::fieldType.choices[fieldValue.chosenId].fields"
                       field-values="fieldValue.chosenValue.fields"
                       on-field-focus="$ctrl.focusCompound(fieldValue)"
                       on-field-blur="$ctrl.blurCompound()">
-      </channel-fields>
+      </document-fields>
     </div>
   </div>
 

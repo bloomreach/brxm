@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import template from './fields.html';
-import ChannelFieldsCtrl from './fields.controller';
+import template from './documentFields.html';
+import DocumentFieldsCtrl from './documentFields.controller';
 
-const channelFieldsComponent = {
+const documentFieldsComponent = {
   bindings: {
     fieldTypes: '=',
     fieldValues: '=',
     onFieldFocus: '&',
     onFieldBlur: '&',
   },
-  controller: ChannelFieldsCtrl,
+  controller: DocumentFieldsCtrl,
   template,
 };
 
-export default channelFieldsComponent;
+export default documentFieldsComponent;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class ChannelFieldsCtrl {
+class DocumentFieldsCtrl {
 
   $onInit() {
     this.onFieldFocus = this.onFieldFocus || angular.noop;
@@ -55,4 +55,4 @@ class ChannelFieldsCtrl {
   }
 }
 
-export default ChannelFieldsCtrl;
+export default DocumentFieldsCtrl;
