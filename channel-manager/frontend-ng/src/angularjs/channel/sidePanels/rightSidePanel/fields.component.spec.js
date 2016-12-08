@@ -107,20 +107,6 @@ describe('ChannelFields', () => {
     expect($ctrl.hasValue({ id: 'invalid' })).toBe(false);
   });
 
-  it('enumerates multiple compound fields', () => {
-    const field = {
-      id: 'multiple-compounds',
-      displayName: 'Compound Name',
-    };
-
-    expect($ctrl.getDisplayNameForCompound(field, 3)).toBe('Compound Name'); // no value
-    testDocument.fields['multiple-compounds'] = ['bla'];
-    expect($ctrl.getDisplayNameForCompound(field, 3)).toBe('Compound Name'); // single value
-    testDocument.fields['multiple-compounds'] = ['bla', 'bli'];
-    expect($ctrl.getDisplayNameForCompound(field, 0)).toBe('Compound Name (1)'); // multiple values, enumerate
-    expect($ctrl.getDisplayNameForCompound(field, 3)).toBe('Compound Name (4)'); // multiple values, enumerate
-  });
-
   it('keeps track of the compound with the focused field', () => {
     const someField = { test: 'bla' };
     $ctrl.focusCompound(someField);

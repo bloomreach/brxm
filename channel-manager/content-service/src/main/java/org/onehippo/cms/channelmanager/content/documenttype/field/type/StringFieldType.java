@@ -67,7 +67,7 @@ public class StringFieldType extends FieldType {
                         .ifPresent(this::setMaxLength));
     }
 
-    private void setMaxLength(final String maxLengthString) {
+    void setMaxLength(final String maxLengthString) {
         try {
             maxLength = Long.valueOf(maxLengthString);
         } catch (NumberFormatException e) {
@@ -142,7 +142,11 @@ public class StringFieldType extends FieldType {
             } else {
                 final String[] strings = new String[values.size()];
                 for (int i = 0; i < strings.length; i++) {
-                    strings[i] = values.get(i).findValue().orElse(DEFAULT_VALUE);
+                    strings[i] = values.get(i).findValue().orElseThrow(INVALID_DATA);
+
+                    if (maxLength != null && strings[i].length() > maxLength) {
+                        throw INVALID_DATA.get();
+                    }
                 }
 
                 if (getMaxValues() > 1) {

@@ -191,6 +191,7 @@ describe('ChannelRightSidePanel', () => {
     expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
       documentName: 'test',
     });
+    expect($ctrl.editing).toBeFalsy();
   });
 
   it('asks doesn\'t delete and close if discarding is not confirmed', () => {
