@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 import rightSidePanelComponent from './rightSidePanel.component';
+import channelFieldsComponent from './fields.component';
 import fieldTitleComponent from './fieldTitle.component';
 import collapse from './collapse.directive';
 
 const rightSidePanelModule = angular
   .module('hippo-cm.channel.rightSidePanelModule', [])
   .component('rightSidePanel', rightSidePanelComponent)
+  .component('channelFields', channelFieldsComponent)
   .component('fieldTitle', fieldTitleComponent)
   .directive('collapse', collapse);
 

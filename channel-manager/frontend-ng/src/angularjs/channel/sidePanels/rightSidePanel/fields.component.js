@@ -15,59 +15,17 @@
  */
 
 import template from './fields.html';
+import ChannelFieldsCtrl from './fields.controller';
 
-class ChannelFieldsCtrl {
+const channelFieldsComponent = {
+  bindings: {
+    fieldTypes: '=',
+    fieldValues: '=',
+    onFieldFocus: '&',
+    onFieldBlur: '&',
+  },
+  controller: ChannelFieldsCtrl,
+  template,
+};
 
-  $onInit() {
-    this.onFieldFocus = this.onFieldFocus || angular.noop;
-    this.onFieldBlur = this.onFieldBlur || angular.noop;
-  }
-
-  hasValue(field) {
-    const values = this.fieldValues[field.id];
-    return angular.isArray(values) && values.length > 0;
-  }
-
-  focusCompound(fieldValue) {
-    this.compoundWithFocusedField = fieldValue;
-    this.onFieldFocus();
-  }
-
-  blurCompound() {
-    this.compoundWithFocusedField = null;
-    this.onFieldBlur();
-  }
-
-  hasFocusedField(fieldValue) {
-    return this.compoundWithFocusedField === fieldValue;
-  }
-
-  focusFieldType(fieldType) {
-    this.fieldTypeWithFocus = fieldType;
-    this.onFieldFocus();
-  }
-
-  blurFieldType() {
-    delete this.fieldTypeWithFocus;
-    this.onFieldBlur();
-  }
-
-  hasFocusedFieldType(fieldType) {
-    return this.fieldTypeWithFocus === fieldType;
-  }
-}
-
-const channelFieldsComponentModule = angular
-  .module('hippo-cm.channel.fieldsComponentModule', [])
-  .component('channelFields', {
-    bindings: {
-      fieldTypes: '=',
-      fieldValues: '=',
-      onFieldFocus: '&',
-      onFieldBlur: '&',
-    },
-    controller: ChannelFieldsCtrl,
-    template,
-  });
-
-export default channelFieldsComponentModule;
+export default channelFieldsComponent;
