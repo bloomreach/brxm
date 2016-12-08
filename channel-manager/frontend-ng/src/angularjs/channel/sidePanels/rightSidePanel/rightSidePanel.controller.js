@@ -68,7 +68,7 @@ class RightSidePanelCtrl {
     this.closeLabel = $translate.instant('CLOSE');
     this.cancelLabel = $translate.instant('CANCEL');
 
-    ChannelSidePanelService.initialize('right', $element.find('.channel-right-side-panel'), (documentId) => {
+    ChannelSidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
       this.openDocument(documentId);
     });
   }
