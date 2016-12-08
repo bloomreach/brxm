@@ -82,6 +82,7 @@ class RightSidePanelCtrl {
 
   _resetState() {
     delete this.doc;
+    delete this.docType;
     delete this.editing;
     delete this.feedback;
     delete this.disableContentButtons;
@@ -204,7 +205,7 @@ class RightSidePanelCtrl {
   _savePendingChanges(done) {
     this._confirmSaveChanges()
       .then(() => {
-        // don't return the result of saveDocument so a failing save does not switch to the full content
+        // don't return the result of saveDocument so a failing save does not invoke the 'done' function
         this.saveDocument().then(done);
       })
       .catch(done);
@@ -279,15 +280,7 @@ class RightSidePanelCtrl {
 
   _closePanel() {
     this.ChannelSidePanelService.close('right')
-      .then(() => {
-        // clear document to save on binding overhead (a closed sidenav is not removed from the DOM)
-        this._clearDocument();
-      });
-  }
-
-  _clearDocument() {
-    delete this.doc;
-    delete this.docType;
+      .then(() => this._resetState());
   }
 }
 

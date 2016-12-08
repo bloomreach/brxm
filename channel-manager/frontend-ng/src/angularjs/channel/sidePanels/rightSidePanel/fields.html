@@ -26,7 +26,7 @@ limitations under the License.
     <field-title class="collapse-toggle"
                  ng-click="collapse.toggle()"
                  collapsed="collapse.isCollapsed"
-                 text="$ctrl.getDisplayNameForCompound(fieldType, $index)"
+                 text="fieldType.displayName"
                  field-type="fieldType.type"
                  hint="fieldType.hint">
     </field-title>
@@ -45,7 +45,7 @@ limitations under the License.
        ng-if="$ctrl.hasValue(fieldType)"
        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]">
     <h5>
-      {{ ::$ctrl.getDisplayNameForCompound(fieldType, $index) }}
+      {{ ::fieldType.displayName }}
     </h5>
 
     <!-- Currently, each choice is a COMPOUND with a single value -->
