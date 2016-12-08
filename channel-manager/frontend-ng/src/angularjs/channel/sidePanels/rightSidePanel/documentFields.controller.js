@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import collapse from './collapse.directive';
-import template from './fields.html';
-
-class ChannelFieldsCtrl {
+class DocumentFieldsCtrl {
 
   $onInit() {
     this.onFieldFocus = this.onFieldFocus || angular.noop;
@@ -58,18 +55,4 @@ class ChannelFieldsCtrl {
   }
 }
 
-const channelFieldsComponentModule = angular
-  .module('hippo-cm.channel.fieldsComponentModule', [])
-  .component('channelFields', {
-    bindings: {
-      fieldTypes: '=',
-      fieldValues: '=',
-      onFieldFocus: '&',
-      onFieldBlur: '&',
-    },
-    controller: ChannelFieldsCtrl,
-    template,
-  })
-  .directive('collapse', collapse);
-
-export default channelFieldsComponentModule;
+export default DocumentFieldsCtrl;

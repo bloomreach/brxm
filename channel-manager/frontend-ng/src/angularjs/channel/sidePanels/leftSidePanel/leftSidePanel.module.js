@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-import template from './rightSidePanel.html';
-import RightSidePanelCtrl from './rightSidePanel.controller';
+import leftSidePanelComponent from './leftSidePanel.component';
+import leftSidePanelToggleComponent from './leftSidePanelToggle.component';
 
-const rightSidePanelComponent = {
-  bindings: {
-    editMode: '=',
-  },
-  controller: RightSidePanelCtrl,
-  template,
-};
+const leftSidePanelModule = angular
+  .module('hippo-cm.channel.leftSidePanelModule', [])
+  .component('leftSidePanel', leftSidePanelComponent)
+  .component('leftSidePanelToggle', leftSidePanelToggleComponent);
 
-export default rightSidePanelComponent;
+export default leftSidePanelModule.name;
+

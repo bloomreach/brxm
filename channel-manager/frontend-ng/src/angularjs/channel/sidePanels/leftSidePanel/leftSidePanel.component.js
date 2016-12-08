@@ -15,54 +15,14 @@
  */
 
 import template from './leftSidePanel.html';
+import LeftSidePanelCtrl from './leftSidePanel.controller';
 
-export class ChannelLeftSidePanelCtrl {
-  constructor($scope, $element, ChannelSidePanelService, ChannelService, SiteMapService, HippoIframeService) {
-    'ngInject';
+const leftSidePanelComponent = {
+  bindings: {
+    editMode: '=',
+  },
+  controller: LeftSidePanelCtrl,
+  template,
+};
 
-    this.$scope = $scope;
-    this.ChannelService = ChannelService;
-    this.ChannelSidePanelService = ChannelSidePanelService;
-    this.SiteMapService = SiteMapService;
-    this.HippoIframeService = HippoIframeService;
-
-    ChannelSidePanelService.initialize('left', $element.find('.channel-left-side-panel'));
-  }
-
-  isLockedOpen() {
-    return this.ChannelSidePanelService.isOpen('left');
-  }
-
-  showComponentsTab() {
-    const catalog = this.getCatalog();
-    return this.editMode && catalog.length > 0;
-  }
-
-  getCatalog() {
-    return this.ChannelService.getCatalog();
-  }
-
-  getSiteMap() {
-    return this.SiteMapService.get();
-  }
-
-  showPage(siteMapItem) {
-    this.HippoIframeService.load(siteMapItem.renderPathInfo);
-  }
-
-  isActiveSiteMapItem(siteMapItem) {
-    return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
-  }
-}
-
-const channelLeftSidePanelComponentModule = angular
-  .module('hippo-cm.channel.leftSidePanelComponentModule', [])
-  .component('channelLeftSidePanel', {
-    bindings: {
-      editMode: '=',
-    },
-    controller: ChannelLeftSidePanelCtrl,
-    template,
-  });
-
-export default channelLeftSidePanelComponentModule;
+export default leftSidePanelComponent;

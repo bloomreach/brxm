@@ -33,14 +33,12 @@ export class ChannelLeftSidePanelToggleCtrl {
   }
 }
 
-const channelLeftSidePanelToggleComponentModule = angular
-  .module('hippo-cm.channel.leftSidePanelToggleComponentModule', [])
-  .component('channelLeftSidePanelToggle', {
-    bindings: {
-      disabled: '=',
-    },
-    controller: ChannelLeftSidePanelToggleCtrl,
-    template,
-  });
+const leftSidePanelToggleComponent = {
+  bindings: {
+    disabled: '=',
+  },
+  controller: ChannelLeftSidePanelToggleCtrl,
+  template,
+};
 
-export default channelLeftSidePanelToggleComponentModule;
+export default leftSidePanelToggleComponent;
