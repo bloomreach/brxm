@@ -52,10 +52,10 @@ describe('ChannelLeftSidePanel', () => {
   function instantiateController(editMode) {
     parentScope = $rootScope.$new();
     parentScope.editMode = editMode;
-    const el = angular.element('<channel-left-side-panel edit-mode="editMode"></channel-left-side-panel>');
+    const el = angular.element('<left-side-panel edit-mode="editMode"></left-side-panel>');
     $compile(el)(parentScope);
     $rootScope.$digest();
-    return el.controller('channel-left-side-panel');
+    return el.controller('left-side-panel');
   }
 
   it('initializes the channel left side panel service upon instantiation', () => {
