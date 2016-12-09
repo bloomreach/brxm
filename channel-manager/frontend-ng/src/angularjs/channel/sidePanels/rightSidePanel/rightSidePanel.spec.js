@@ -245,11 +245,14 @@ describe('ChannelRightSidePanel', () => {
     let onOpenCallback;
 
     beforeEach(() => {
+      $ctrl.documentId = 'documentId';
       $ctrl.doc = testDocument;
       $ctrl.docType = testDocumentType;
+      $ctrl.editing = true;
 
       ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
       ContentService.createDraft.and.returnValue($q.resolve(newDocument));
+      ContentService.deleteDraft.and.returnValue($q.resolve());
       ContentService.getDocumentType.and.returnValue($q.resolve(newDocumentType));
       spyOn($scope, '$broadcast');
 
@@ -277,6 +280,7 @@ describe('ChannelRightSidePanel', () => {
 
       expect(DialogService.show).toHaveBeenCalledWith(dialog);
       expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+      expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
       expectNewDocument();
     });
 
@@ -290,6 +294,7 @@ describe('ChannelRightSidePanel', () => {
 
       expect(DialogService.show).toHaveBeenCalledWith(dialog);
       expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+      expect(ContentService.deleteDraft).not.toHaveBeenCalled();
       expect(ContentService.createDraft).not.toHaveBeenCalled();
 
       expect($ctrl.doc).toEqual(testDocument);
@@ -305,6 +310,7 @@ describe('ChannelRightSidePanel', () => {
 
       expect(DialogService.show).toHaveBeenCalledWith(dialog);
       expect(ContentService.saveDraft).not.toHaveBeenCalled();
+      expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
       expectNewDocument();
     });
 
@@ -316,6 +322,7 @@ describe('ChannelRightSidePanel', () => {
 
       expect(DialogService.show).not.toHaveBeenCalled();
       expect(ContentService.saveDraft).not.toHaveBeenCalled();
+      expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
       expectNewDocument();
     });
   });
@@ -593,10 +600,31 @@ describe('ChannelRightSidePanel', () => {
     expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', 'edit');
   });
 
-  it('does not open the full content if saving changes failed', () => {
+  it('releases holdership of the document when publishing it', () => {
     DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
+    $ctrl.documentId = 'documentId';
     $ctrl.doc = testDocument;
     $ctrl.form.$dirty = true;
+    $ctrl.editing = true;
+    ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
+    ChannelSidePanelService.close.and.returnValue($q.resolve());
+
+    $ctrl.openFullContent('view');
+    $rootScope.$digest();
+
+    expect(DialogService.show).toHaveBeenCalledWith(dialog);
+    expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+    expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
+    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'documentId', 'view');
+  });
+
+  it('does not open the full content if saving changes failed', () => {
+    DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
+    $ctrl.documentId = 'documentId';
+    $ctrl.doc = testDocument;
+    $ctrl.form.$dirty = true;
+    $ctrl.editing = true;
     ContentService.saveDraft.and.returnValue($q.reject({}));
 
     $ctrl.openFullContent('view');

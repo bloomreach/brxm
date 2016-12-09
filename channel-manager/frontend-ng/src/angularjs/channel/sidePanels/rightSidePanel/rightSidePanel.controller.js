@@ -75,6 +75,7 @@ class RightSidePanelCtrl {
 
   openDocument(documentId) {
     this._savePendingChanges(() => {
+      this._deleteDraft();
       this._resetState();
       this._loadDocument(documentId);
     });
@@ -198,6 +199,9 @@ class RightSidePanelCtrl {
 
   openFullContent(mode) {
     this._savePendingChanges(() => {
+      if (mode === 'view') {
+        this._deleteDraft();
+      }
       this._closePanelAndOpenContent(mode);
     });
   }
