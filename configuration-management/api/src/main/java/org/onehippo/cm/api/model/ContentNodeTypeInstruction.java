@@ -15,10 +15,5 @@
  */
 package org.onehippo.cm.api.model;
 
-import java.net.URI;
-
-public interface ConfigurationInstruction {
-    URI getUri();
-    ConfigurationModule getModule();
-    ConfigurationItem getItem();
+public interface ContentNodeTypeInstruction extends Instruction {
 }

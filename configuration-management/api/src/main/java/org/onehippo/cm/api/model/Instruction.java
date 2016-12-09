@@ -16,11 +16,9 @@
 package org.onehippo.cm.api.model;
 
 import java.net.URI;
-import java.util.List;
 
-public interface ConfigurationSource {
+public interface Instruction {
     URI getUri();
     ConfigurationModule getModule();
-    ConfigurationSource getDependsOn();
-    List<Instruction> getInstructions();
+    ConfigurationItem getItem();
 }
