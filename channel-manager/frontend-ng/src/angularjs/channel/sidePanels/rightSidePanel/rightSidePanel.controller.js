@@ -118,7 +118,7 @@ class RightSidePanelCtrl {
           this.editing = true;
           this.docType = docType;
           this._onLoadResponse({ data: doc });
-        }),
+        })
       )
       .catch(response => this._onLoadResponse(response));
   }
