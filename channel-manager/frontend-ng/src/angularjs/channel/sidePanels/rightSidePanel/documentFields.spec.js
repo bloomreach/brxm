@@ -158,7 +158,7 @@ describe('DocumentFields', () => {
   });
 
   it('generates names for nested fields', () => {
-    $ctrl = $componentController('channelFields', {
+    $ctrl = $componentController('documentFields', {
     }, {
       name: 'ns:compound',
       fieldTypes: compoundField,
