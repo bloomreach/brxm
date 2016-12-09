@@ -10,25 +10,26 @@
         <h3>No results for: <c:out value="${requestScope.query}"/></h3>
       </c:when>
       <c:otherwise>
-        <c:forEach var="item" items="${requestScope.pageable.items}" varStatus="status">
-          <c:choose>
-            <c:when test="${hst:isReadable(item, 'title')}">
-              <c:set var="linkName" value="${item.title}"/>
-            </c:when>
-            <c:otherwise>
-              <c:set var="linkName" value="${item.localizedName}"/>
-            </c:otherwise>
-          </c:choose>
-
-          <article>
-            <hst:cmseditlink hippobean="${item}"/>
-            <hst:link var="link" hippobean="${item}"/>
-            <h3><a href="${link}"><c:out value="${linkName}"/></a></h3>
-          </article>
-        </c:forEach>
-        <c:if test="${requestScope.cparam.showPagination}">
-          <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
-        </c:if>
+        <div>
+          <c:forEach var="item" items="${requestScope.pageable.items}" varStatus="status">
+            <c:choose>
+              <c:when test="${hst:isReadable(item, 'title')}">
+                <c:set var="linkName" value="${item.title}"/>
+              </c:when>
+              <c:otherwise>
+                <c:set var="linkName" value="${item.localizedName}"/>
+              </c:otherwise>
+            </c:choose>
+            <article>
+              <hst:cmseditlink hippobean="${item}"/>
+              <hst:link var="link" hippobean="${item}"/>
+              <h3><a href="${link}"><c:out value="${linkName}"/></a></h3>
+            </article>
+          </c:forEach>
+          <c:if test="${requestScope.cparam.showPagination}">
+            <%@ include file="/WEB-INF/jsp/include/pagination.jsp" %>
+          </c:if>
+        </div>
       </c:otherwise>
     </c:choose>
   </c:when>

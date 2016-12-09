@@ -10,4 +10,6 @@
     </p>
   </c:if>
 </div>
-<hst:include ref="container"/>
+<div>
+  <hst:include ref="container"/>
+</div>

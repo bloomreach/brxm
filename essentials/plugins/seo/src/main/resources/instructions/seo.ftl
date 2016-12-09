@@ -49,5 +49,7 @@
 </#if>
 
 <#if hstRequest.requestContext.cmsRequest>
-  <img src="<@hst.link path="/images/essentials/catalog-component-icons/seo.png" />"> Click to edit SEO parameters
+  <div>
+    <img src="<@hst.link path="/images/essentials/catalog-component-icons/seo.png" />"> Click to edit SEO parameters
+  </div>
 </#if>
