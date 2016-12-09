@@ -27,13 +27,13 @@
 }
 
 .top-level {
-  &> .field-wrapper {
-    &> .field.field-indented {
+  & > .field-wrapper {
+    & > .field.field-indented {
       border-left: 3px solid $grey-500;
       // break the border to indicate start of new field
       margin-bottom: 8px;
     }
-    &> .field {
+    & > .field {
       padding: $form-padding;
     }
   }
@@ -41,7 +41,7 @@
 
 .field-indented {
   padding-left: 8px !important;
-  &> h5 {
+  & > h5 {
     margin-left: 16px;
   }
   &.field-compound > h5 {
@@ -53,14 +53,14 @@
 }
 
 .field-choice {
-  &> h5 {
+  & > h5 {
     padding-bottom: 8px; // nice spacing between choice field name and chosen compound
   }
 }
 
 .has-focused-field {
   border-color: $blue-500 !important;
-  &> h5 {
+  & > h5 {
     color: $blue-500 !important;
     md-icon {
       color: $blue-500 !important;
@@ -80,8 +80,8 @@
   }
   // ensure that error messages are also shown if an element has not been touched
   .md-input-message-animation:not(.ng-animate) {
-    opacity: 1;
     margin-top: 0;
+    opacity: 1;
   }
 }
 
