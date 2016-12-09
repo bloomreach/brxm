@@ -24,21 +24,21 @@
        ng-if="$ctrl.hasValue(fieldType)"
        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
        collapse>
-    <h5 class="collapse-toggle" ng-click="collapse.toggle()">
-      <md-icon class="material-icons collapse-icon" ng-class="{'collapsed': collapse.isCollapsed}">
-        keyboard_arrow_down
-      </md-icon>
+    <document-field-title class="collapse-toggle"
+                 ng-click="collapse.toggle()"
+                 collapsed="collapse.isCollapsed"
+                 text="fieldType.displayName"
+                 field-type="fieldType.type"
+                 hint="fieldType.hint">
+    </document-field-title>
 
-      {{ ::fieldType.displayName }}
-    </h5>
-
-    <channel-fields class="collapse-element"
+    <document-fields class="collapse-element"
                     name="{{ ::$ctrl.getFieldName(fieldType) }}"
                     field-types="::fieldType.fields"
                     field-values="fieldValue.fields"
                     on-field-focus="$ctrl.focusCompound(fieldValue)"
                     on-field-blur="$ctrl.blurCompound()">
-    </channel-fields>
+    </document-fields>
   </div>
 
   <!-- Choice field -->
@@ -55,21 +55,22 @@
     <div class="field field-indented field-compound qa-compound"
          ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
          collapse>
-      <h5 class="collapse-toggle" ng-click="collapse.toggle()">
-        <md-icon class="material-icons collapse-icon" ng-class="{'collapsed': collapse.isCollapsed}">
-          keyboard_arrow_down
-        </md-icon>
+      <document-field-title class="collapse-toggle"
+                   ng-click="collapse.toggle()"
+                   collapsed="collapse.isCollapsed"
+                   text="fieldType.choices[fieldValue.chosenId].displayName"
+                   field-type="fieldType.type"
+                   hint="fieldType.hint">
+      </document-field-title>
 
-        {{ ::fieldType.choices[fieldValue.chosenId].displayName }}
-      </h5>
 
-      <channel-fields class="collapse-element"
+      <document-fields class="collapse-element"
                       name="{{ ::$ctrl.getFieldName(fieldType) }}"
                       field-types="::fieldType.choices[fieldValue.chosenId].fields"
                       field-values="fieldValue.chosenValue.fields"
                       on-field-focus="$ctrl.focusCompound(fieldValue)"
                       on-field-blur="$ctrl.blurCompound()">
-      </channel-fields>
+      </document-fields>
     </div>
   </div>
 
@@ -87,7 +88,11 @@
                         ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
                         ng-switch="fieldType.type">
 
-      <label ng-if="$first">{{ ::fieldType.displayName }}</label>
+      <document-field-title ng-if="$first"
+                   text="fieldType.displayName"
+                   field-type="fieldType.type"
+                   hint="fieldType.hint">
+      </document-field-title>
 
       <!-- editors per field type -->
       <input ng-switch-when="STRING"

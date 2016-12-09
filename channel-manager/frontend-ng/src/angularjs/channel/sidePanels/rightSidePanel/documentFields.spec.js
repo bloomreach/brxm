@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('ChannelFields', () => {
+describe('DocumentFields', () => {
   let $componentController;
   let $rootScope;
 
@@ -83,7 +83,7 @@ describe('ChannelFields', () => {
     onFieldFocus = jasmine.createSpy('onFieldFocus');
     onFieldBlur = jasmine.createSpy('onFieldBlur');
 
-    $ctrl = $componentController('channelFields', {
+    $ctrl = $componentController('documentFields', {
     }, {
       fieldTypes: testDocumentType,
       fieldValues: testDocument.fields,
@@ -139,7 +139,7 @@ describe('ChannelFields', () => {
 
   it('ignores the onFieldFocus and onFieldBlur callbacks when they are not defined', () => {
     expect(() => {
-      $ctrl = $componentController('channelFields', {}, {
+      $ctrl = $componentController('documentFields', {}, {
         fieldTypes: testDocumentType,
         fieldValues: testDocument.fields,
       });

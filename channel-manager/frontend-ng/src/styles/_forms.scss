@@ -89,3 +89,16 @@
   margin-bottom: 0;
 }
 
+document-field-title {
+  label {
+    // md-tooltip searches for the first parent with pointer-events
+    // ng-material disables pointer events on labels, they should be enabled
+    // when using md-no-float
+    pointer-events: auto !important;
+  }
+
+  md-icon {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+}

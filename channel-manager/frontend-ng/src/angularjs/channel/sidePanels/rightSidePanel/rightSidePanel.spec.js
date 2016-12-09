@@ -108,7 +108,7 @@ describe('ChannelRightSidePanel', () => {
 
     $scope = $rootScope.$new();
     const $element = angular.element('<div></div>');
-    $ctrl = $componentController('channelRightSidePanel', {
+    $ctrl = $componentController('rightSidePanel', {
       $scope,
       $element,
       $timeout,

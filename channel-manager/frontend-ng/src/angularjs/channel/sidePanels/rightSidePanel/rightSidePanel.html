@@ -14,8 +14,8 @@
   limitations under the License.
   -->
 
-<md-sidenav md-component-id="channel-right-side-panel"
-            class="md-sidenav-right channel-right-side-panel qa-side-panel-right"
+<md-sidenav md-component-id="right-side-panel"
+            class="md-sidenav-right right-side-panel qa-side-panel-right"
             md-is-locked-open="$ctrl.isLockedOpen()"
             layout="column">
   <md-toolbar>
@@ -70,10 +70,10 @@
           name="$ctrl.form"
           class="form-dense-layout">
 
-      <channel-fields class="top-level"
+      <document-fields class="top-level"
                       field-types="$ctrl.docType.fields"
                       field-values="$ctrl.doc.fields">
-      </channel-fields>
+      </document-fields>
     </form>
   </md-content>
 
