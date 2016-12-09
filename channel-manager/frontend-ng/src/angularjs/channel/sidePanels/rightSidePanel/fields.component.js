@@ -45,13 +45,13 @@ class ChannelFieldsCtrl {
 
   _getMultipleFieldError(fieldType, fieldValues) {
     let combinedError = null;
-    for (let i = 0, len = fieldValues.length; i < len; i += 1) {
-      const fieldName = this.getFieldName(fieldType, i);
+    fieldValues.forEach((value, index) => {
+      const fieldName = this.getFieldName(fieldType, index);
       const field = this.form[fieldName];
       if (field) {
-        combinedError = angular.extend(combinedError || {}, field.$error);
+        combinedError = Object.assign(combinedError || {}, field.$error);
       }
-    }
+    });
     return combinedError;
   }
 
