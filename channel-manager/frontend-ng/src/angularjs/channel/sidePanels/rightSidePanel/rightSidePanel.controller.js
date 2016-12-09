@@ -189,44 +189,32 @@ class RightSidePanelCtrl {
         this.HippoIframeService.reload();
       })
       .catch((response) => {
-        const errorKey = this._getSaveErrorKey(response);
-        this.FeedbackService.showError(errorKey, {}, this.$element);
+        const params = {};
+        let errorKey = 'ERROR_UNABLE_TO_SAVE';
 
-        if (errorKey === 'ERROR_INVALID_DATA') {
+        if (this._isErrorInfo(response.data)) {
+          errorKey = `ERROR_${response.data.reason}`;
+
+          if (response.data.reason === 'OTHER_HOLDER') {
+            params.user = response.data.params.userName || response.data.params.userId;
+          }
+        } else if (this._isDocument(response.data)) {
+          errorKey = 'ERROR_INVALID_DATA';
           this._reloadDocumentType();
         }
 
-        // const params = {};
-        // let errorKey;
-        // if (this._isErrorInfo(response.data)) {
-        //   errorKey = `ERROR_${response.data.reason}`;
-        //   if (response.data.reason === 'OTHER_HOLDER') {
-        //     params.user = response.data.params.userName || response.data.params.userId;
-        //   }
-        // } else {
-        //   errorKey = 'ERROR_UNABLE_TO_SAVE';
-        // }
+        this.FeedbackService.showError(errorKey, params, this.$element);
 
-        // this.FeedbackService.showError(errorKey, params, this.$element);
         return this.$q.reject(); // tell the caller that saving has failed.
       });
   }
 
-  _getSaveErrorKey(response) {
-    if (this._isDocument(response.data)) {
-      return 'ERROR_INVALID_DATA';
-    } else if (this._isErrorInfo(response.data)) {
-      return `ERROR_${response.data.reason}`;
-    }
-    return 'ERROR_UNABLE_TO_SAVE';
+  _isDocument(obj) {
+    return obj && obj.id; // Document has an ID field, ErrorInfo doesn't.
   }
 
-  _isDocument(object) {
-    return object && object.id; // Document has an ID field, ErrorInfo doesn't.
-  }
-
-  _isErrorInfo(object) {
-    return object && object.reason; // ErrorInfo has a reason field, Document doesn't.
+  _isErrorInfo(obj) {
+    return obj && obj.reason; // ErrorInfo has a reason field, Document doesn't.
   }
 
   _reloadDocumentType() {
