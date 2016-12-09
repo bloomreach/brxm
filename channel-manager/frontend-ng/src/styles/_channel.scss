@@ -53,7 +53,7 @@ md-toolbar > md-progress-linear {
   }
 }
 
-Style invalid select boxes
+// Style invalid select boxes
 .md-input-invalid md-select {
   // color required invalid select boxes red
   &.ng-invalid ._md-select-value {
@@ -77,7 +77,7 @@ Style invalid select boxes
 }
 
 // avoid that help icon tooltips grow wider than the subpage; wrap text when necessary.
-.tooltip-help-icon ._md-content {
+md-tooltip .md-content {
   height: auto;
   max-width: 500px;
   text-overflow: clip;
