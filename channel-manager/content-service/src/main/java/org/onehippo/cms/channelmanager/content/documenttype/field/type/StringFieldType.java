@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
 public class StringFieldType extends FieldType {
 
     private static final Logger log = LoggerFactory.getLogger(StringFieldType.class);
+    private static final String DEFAULT_VALUE = "";
 
     private Long maxLength;
 
@@ -66,7 +67,7 @@ public class StringFieldType extends FieldType {
                         .ifPresent(this::setMaxLength));
     }
 
-    private void setMaxLength(final String maxLengthString) {
+    void setMaxLength(final String maxLengthString) {
         try {
             maxLength = Long.valueOf(maxLengthString);
         } catch (NumberFormatException e) {
@@ -142,6 +143,10 @@ public class StringFieldType extends FieldType {
                 final String[] strings = new String[values.size()];
                 for (int i = 0; i < strings.length; i++) {
                     strings[i] = values.get(i).findValue().orElseThrow(INVALID_DATA);
+
+                    if (maxLength != null && strings[i].length() > maxLength) {
+                        throw INVALID_DATA.get();
+                    }
                 }
 
                 if (getMaxValues() > 1) {
@@ -183,8 +188,7 @@ public class StringFieldType extends FieldType {
     }
 
     private boolean validateSingleRequired(final FieldValue value) {
-        // #readFrom guarantees that value.getValue is not empty.
-        if (value.findValue().get().isEmpty()) {
+        if (value.findValue().orElse(DEFAULT_VALUE).isEmpty()) {
             value.setErrorInfo(new ValidationErrorInfo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
             return false;
         }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('ChannelFields', () => {
+describe('DocumentFields', () => {
   let $componentController;
   let $rootScope;
 
@@ -83,7 +83,7 @@ describe('ChannelFields', () => {
     onFieldFocus = jasmine.createSpy('onFieldFocus');
     onFieldBlur = jasmine.createSpy('onFieldBlur');
 
-    $ctrl = $componentController('channelFields', {
+    $ctrl = $componentController('documentFields', {
     }, {
       fieldTypes: testDocumentType,
       fieldValues: testDocument.fields,
@@ -139,7 +139,7 @@ describe('ChannelFields', () => {
 
   it('ignores the onFieldFocus and onFieldBlur callbacks when they are not defined', () => {
     expect(() => {
-      $ctrl = $componentController('channelFields', {}, {
+      $ctrl = $componentController('documentFields', {}, {
         fieldTypes: testDocumentType,
         fieldValues: testDocument.fields,
       });
@@ -147,5 +147,85 @@ describe('ChannelFields', () => {
       $ctrl.onFieldFocus();
       $ctrl.onFieldBlur();
     }).not.toThrow();
+  });
+
+  it('generates names for root-level fields', () => {
+    expect($ctrl.getFieldName(stringField)).toEqual('ns:string');
+    expect($ctrl.getFieldName(multipleStringField)).toEqual('ns:multiplestring');
+    expect($ctrl.getFieldName(multipleStringField, 0)).toEqual('ns:multiplestring');
+    expect($ctrl.getFieldName(multipleStringField, 1)).toEqual('ns:multiplestring[1]');
+    expect($ctrl.getFieldName(compoundField)).toEqual('ns:compound');
+  });
+
+  it('generates names for nested fields', () => {
+    $ctrl = $componentController('documentFields', {
+    }, {
+      name: 'ns:compound',
+      fieldTypes: compoundField,
+      fieldValues: [stringField],
+    });
+    expect($ctrl.getFieldName(stringField)).toEqual('ns:compound/ns:string');
+  });
+
+  it('returns the form error object of a single field', () => {
+    const error = {
+      required: true,
+    };
+    $ctrl.form = {
+      'ns:string': {
+        $error: error,
+      },
+    };
+    expect($ctrl.getFieldError(stringField)).toEqual(error);
+  });
+
+  it('returns the combined form error object of a multiple field', () => {
+    $ctrl.form = {
+      'ns:multiplestring': {
+        $error: {
+          required: true,
+        },
+      },
+      'ns:multiplestring[1]': {
+        $error: {
+          maxlength: true,
+        },
+      },
+    };
+    expect($ctrl.getFieldError(multipleStringField)).toEqual({
+      required: true,
+      maxlength: true,
+    });
+  });
+
+  it('returns null as form error object for an unknown field', () => {
+    $ctrl.form = {};
+    expect($ctrl.getFieldError(stringField)).toEqual(null);
+    expect($ctrl.getFieldError(multipleStringField)).toEqual(null);
+  });
+
+  it('returns null as form error object for a field without any values', () => {
+    $ctrl.fieldValues = {};
+    expect($ctrl.getFieldError(stringField)).toEqual(null);
+    expect($ctrl.getFieldError(multipleStringField)).toEqual(null);
+  });
+
+  it('knowns whether a field is valid', () => {
+    $ctrl.form = {
+      'ns:string': {
+        $invalid: true,
+      },
+      'ns:multiplestring[1]': {
+        $invalid: true,
+      },
+    };
+    expect($ctrl.isValid(stringField)).toBe(false);
+    expect($ctrl.isValid(multipleStringField)).toBe(false);
+    expect($ctrl.isValid(compoundField)).toBe(true);
+  });
+
+  it('assumes that a field without any value is valid', () => {
+    $ctrl.fieldValues = {};
+    expect($ctrl.isValid(stringField)).toBe(true);
   });
 });

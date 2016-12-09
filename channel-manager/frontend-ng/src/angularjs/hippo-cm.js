@@ -17,6 +17,7 @@
 import angular from 'angular';
 import ngAnimate from 'angular-animate';
 import ngMaterial from 'angular-material';
+import ngMessages from 'angular-messages';
 import ngTranslate from 'angular-translate';
 import 'angular-translate-loader-static-files';
 import uiRouter from 'angular-ui-router';
@@ -48,6 +49,7 @@ import run from './hippo-cm.run';
 
 const hippoCmng = angular
   .module('hippo-cm', [
+    ngMessages,
     ngMaterial,
     ngTranslate,
     ngAnimate,

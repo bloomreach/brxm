@@ -64,8 +64,19 @@ describe('ChannelRightSidePanel', () => {
       },
     },
     fields: {
-      'ns:string': 'String value',
-      'ns:multiplestring': ['One', 'Two'],
+      'ns:string': [
+        {
+          value: 'String value',
+        },
+      ],
+      'ns:multiplestring': [
+        {
+          value: 'One',
+        },
+        {
+          value: 'Two',
+        },
+      ],
       'ns:emptymultiplestring': [],
     },
   };
@@ -97,7 +108,7 @@ describe('ChannelRightSidePanel', () => {
 
     $scope = $rootScope.$new();
     const $element = angular.element('<div></div>');
-    $ctrl = $componentController('channelRightSidePanel', {
+    $ctrl = $componentController('rightSidePanel', {
       $scope,
       $element,
       $timeout,
@@ -180,6 +191,7 @@ describe('ChannelRightSidePanel', () => {
     expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
       documentName: 'test',
     });
+    expect($ctrl.editing).toBeFalsy();
   });
 
   it('asks doesn\'t delete and close if discarding is not confirmed', () => {
@@ -212,6 +224,19 @@ describe('ChannelRightSidePanel', () => {
 
     $timeout.flush();
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
+  });
+
+  it('ignores a non-existing form when opening a document', () => {
+    ContentService.createDraft.and.returnValue($q.resolve(testDocument));
+    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+    delete $ctrl.form;
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+
+    expect(() => {
+      onOpenCallback('test');
+      $rootScope.$digest();
+    }).not.toThrow();
   });
 
   it('knows that a document is loading', () => {
@@ -568,6 +593,57 @@ describe('ChannelRightSidePanel', () => {
     $rootScope.$digest();
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_OTHER_HOLDER', { user: 'Joe Tester' }, $ctrl.$element);
+  });
+
+  describe('when document save fails because of an invalid field', () => {
+    beforeEach(() => {
+      const saveResponse = angular.copy(testDocument);
+      saveResponse.fields['ns:string'] = [
+        {
+          value: '',
+          errorInfo: {
+            code: 'REQUIRED_FIELD_EMPTY',
+          },
+        },
+      ];
+
+      ContentService.saveDraft.and.returnValue($q.reject({ data: saveResponse }));
+
+      $ctrl.doc = testDocument;
+      $ctrl.docType = testDocumentType;
+      $ctrl.form.$dirty = true;
+    });
+
+    it('shows an error and reloads the document type', () => {
+      const reloadedDocumentType = angular.copy(testDocumentType);
+      ContentService.getDocumentType.and.returnValue($q.resolve(reloadedDocumentType));
+
+      $ctrl.saveDocument();
+
+      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+
+      $rootScope.$digest();
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {}, $ctrl.$element);
+      expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
+      expect($ctrl.docType).toBe(reloadedDocumentType);
+    });
+
+    it('shows an error when reloading the document type fails', () => {
+      ContentService.getDocumentType.and.returnValue($q.reject({ status: 404 }));
+      spyOn($translate, 'instant');
+
+      $ctrl.saveDocument();
+
+      expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
+
+      $rootScope.$digest();
+
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_INVALID_DATA', {}, $ctrl.$element);
+      expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
+      expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE', {});
+      expect($ctrl.docType).toBe(testDocumentType);
+    });
   });
 
   it('shows an error when document save fails and there is no data returned', () => {

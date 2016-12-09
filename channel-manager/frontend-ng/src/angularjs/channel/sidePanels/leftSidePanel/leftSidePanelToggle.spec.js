@@ -42,10 +42,10 @@ describe('ChannelLeftSidePanelToggle', () => {
 
   function instantiateController() {
     const scope = $rootScope.$new();
-    const el = angular.element('<channel-left-side-panel-toggle edit-mode="editMode"></channel-left-side-panel-toggle>');
+    const el = angular.element('<left-side-panel-toggle edit-mode="editMode"></left-side-panel-toggle>');
     $compile(el)(scope);
     $rootScope.$digest();
-    return el.controller('channel-left-side-panel-toggle');
+    return el.controller('left-side-panel-toggle');
   }
 
   it('forwards the toggle call to the left side panel service', () => {

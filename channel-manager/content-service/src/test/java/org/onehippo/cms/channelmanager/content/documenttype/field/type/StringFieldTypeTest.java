@@ -453,6 +453,65 @@ public class StringFieldTypeTest {
     }
 
     @Test
+    public void writeToSingleTooLong() throws Exception {
+        final StringFieldType fieldType = new StringFieldType();
+        final Node node = MockNode.root();
+
+        fieldType.setId(PROPERTY);
+        fieldType.setMaxLength("10");
+        node.setProperty(PROPERTY, "Old Value");
+
+        try {
+            fieldType.writeTo(node, Optional.of(Collections.singletonList(valueOf("Too longggg"))));
+            fail("Must not be too long");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        assertThat(node.getProperty(PROPERTY).getString(), equalTo("Old Value"));
+
+        fieldType.writeTo(node, Optional.of(Collections.singletonList(valueOf("New Value!"))));
+        assertThat(node.getProperty(PROPERTY).getString(), equalTo("New Value!"));
+    }
+
+    @Test
+    public void writeToMultipleTooLong() throws Exception {
+        final StringFieldType fieldType = new StringFieldType();
+        final Node node = MockNode.root();
+
+        fieldType.setId(PROPERTY);
+        fieldType.setMaxValues(Integer.MAX_VALUE);
+        fieldType.setMinValues(0);
+        fieldType.setMaxLength("10");
+
+        try {
+            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("okay"), valueOf("Too longggg"))));
+            fail("Must not be too long");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        assertFalse(node.hasProperty(PROPERTY));
+
+        try {
+            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("Too longggg"), valueOf("okay"))));
+            fail("Must not be too long");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        assertFalse(node.hasProperty(PROPERTY));
+
+        try {
+            fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("Too longggg"), valueOf("Too longggg"))));
+            fail("Must not be too long");
+        } catch (BadRequestException e) {
+            assertThat(((ErrorInfo) e.getPayload()).getReason(), equalTo(ErrorInfo.Reason.INVALID_DATA));
+        }
+        assertFalse(node.hasProperty(PROPERTY));
+
+        fieldType.writeTo(node, Optional.of(Arrays.asList(valueOf("New Value!"), valueOf("New Value!"))));
+        assertThat(node.getProperty(PROPERTY).getValues().length, equalTo(2));
+    }
+
+    @Test
     public void writeToSingleException() throws Exception {
         final StringFieldType fieldType = new StringFieldType();
         final Node node = createMock(Node.class);
@@ -515,7 +574,16 @@ public class StringFieldTypeTest {
         assertFalse(fieldType.validate(listOf(v)));
         assertThat(v.getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
 
+        v = valueOf(null);
+        assertFalse(fieldType.validate(listOf(v)));
+        assertThat(v.getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+
         List<FieldValue> l = Arrays.asList(valueOf("bla"), valueOf(""));
+        assertFalse(fieldType.validate(l));
+        assertFalse(l.get(0).hasErrorInfo());
+        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+
+        l = Arrays.asList(valueOf("bla"), valueOf(null));
         assertFalse(fieldType.validate(l));
         assertFalse(l.get(0).hasErrorInfo());
         assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
@@ -525,7 +593,17 @@ public class StringFieldTypeTest {
         assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
         assertFalse(l.get(1).hasErrorInfo());
 
+        l = Arrays.asList(valueOf(null), valueOf("bla"));
+        assertFalse(fieldType.validate(l));
+        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertFalse(l.get(1).hasErrorInfo());
+
         l = Arrays.asList(valueOf(""), valueOf(""));
+        assertFalse(fieldType.validate(l));
+        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+
+        l = Arrays.asList(valueOf(null), valueOf(null));
         assertFalse(fieldType.validate(l));
         assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
         assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));

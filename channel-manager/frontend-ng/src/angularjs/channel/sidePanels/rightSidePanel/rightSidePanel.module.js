@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import rightSidePanelComponent from './rightSidePanel.component';
+import documentFieldsComponent from './documentFields.component';
+import documentFieldTitleComponent from './documentFieldTitle.component';
+import collapse from './collapse.directive';
 
-import template from './rightSidePanel.html';
-import RightSidePanelCtrl from './rightSidePanel.controller';
+const rightSidePanelModule = angular
+  .module('hippo-cm.channel.rightSidePanelModule', [])
+  .component('rightSidePanel', rightSidePanelComponent)
+  .component('documentFields', documentFieldsComponent)
+  .component('documentFieldTitle', documentFieldTitleComponent)
+  .directive('collapse', collapse);
 
-const rightSidePanelComponent = {
-  bindings: {
-    editMode: '=',
-  },
-  controller: RightSidePanelCtrl,
-  template,
-};
+export default rightSidePanelModule.name;
 
-export default rightSidePanelComponent;

@@ -27,13 +27,13 @@
 }
 
 .top-level {
-  &> .field-wrapper {
-    &> .field.field-indented {
+  & > .field-wrapper {
+    & > .field.field-indented {
       border-left: 3px solid $grey-500;
       // break the border to indicate start of new field
       margin-bottom: 8px;
     }
-    &> .field {
+    & > .field {
       padding: $form-padding;
     }
   }
@@ -41,7 +41,7 @@
 
 .field-indented {
   padding-left: 8px !important;
-  &> h5 {
+  & > h5 {
     margin-left: 16px;
   }
   &.field-compound > h5 {
@@ -53,21 +53,35 @@
 }
 
 .field-choice {
-  &> h5 {
+  & > h5 {
     padding-bottom: 8px; // nice spacing between choice field name and chosen compound
   }
 }
 
 .has-focused-field {
   border-color: $blue-500 !important;
-  &> h5 {
+  & > h5 {
     color: $blue-500 !important;
     md-icon {
       color: $blue-500 !important;
     }
   }
-  &> md-input-container > label {
+  &:not(.has-invalid-field) > md-input-container > label {
     color: $blue-500 !important;
+  }
+}
+
+.has-invalid-field {
+  label {
+    color: $red-a700 !important;
+  }
+  .md-input.ng-invalid {
+    border-color: $red-a700 !important;
+  }
+  // ensure that error messages are also shown if an element has not been touched
+  .md-input-message-animation:not(.ng-animate) {
+    margin-top: 0;
+    opacity: 1;
   }
 }
 
@@ -75,3 +89,16 @@
   margin-bottom: 0;
 }
 
+document-field-title {
+  label {
+    // md-tooltip searches for the first parent with pointer-events
+    // ng-material disables pointer events on labels, they should be enabled
+    // when using md-no-float
+    pointer-events: auto !important;
+  }
+
+  md-icon {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+}

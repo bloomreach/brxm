@@ -17,28 +17,31 @@
      ng-repeat="fieldType in $ctrl.fieldTypes"
      ng-switch="fieldType.type">
 
+  <!-- Compound field -->
   <div class="field field-indented field-compound qa-compound"
        ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
        ng-switch-when="COMPOUND"
        ng-if="$ctrl.hasValue(fieldType)"
        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
        collapse>
-    <h5 class="collapse-toggle" ng-click="collapse.toggle()">
-      <md-icon class="material-icons collapse-icon" ng-class="{'collapsed': collapse.isCollapsed}">
-        keyboard_arrow_down
-      </md-icon>
+    <document-field-title class="collapse-toggle"
+                          ng-click="collapse.toggle()"
+                          collapsed="collapse.isCollapsed"
+                          text="fieldType.displayName"
+                          field-type="fieldType.type"
+                          hint="fieldType.hint">
+    </document-field-title>
 
-      {{ ::fieldType.displayName }}
-    </h5>
-
-    <channel-fields class="collapse-element"
-                    field-types="::fieldType.fields"
-                    field-values="fieldValue.fields"
-                    on-field-focus="$ctrl.focusCompound(fieldValue)"
-                    on-field-blur="$ctrl.blurCompound()">
-    </channel-fields>
+    <document-fields class="collapse-element"
+                     name="{{ ::$ctrl.getFieldName(fieldType) }}"
+                     field-types="::fieldType.fields"
+                     field-values="fieldValue.fields"
+                     on-field-focus="$ctrl.focusCompound(fieldValue)"
+                     on-field-blur="$ctrl.blurCompound()">
+    </document-fields>
   </div>
 
+  <!-- Choice field -->
   <div class="field field-indented field-choice qa-choice"
        ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
        ng-switch-when="CHOICE"
@@ -52,26 +55,31 @@
     <div class="field field-indented field-compound qa-compound"
          ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
          collapse>
-      <h5 class="collapse-toggle" ng-click="collapse.toggle()">
-        <md-icon class="material-icons collapse-icon" ng-class="{'collapsed': collapse.isCollapsed}">
-          keyboard_arrow_down
-        </md-icon>
+      <document-field-title class="collapse-toggle"
+                            ng-click="collapse.toggle()"
+                            collapsed="collapse.isCollapsed"
+                            text="fieldType.choices[fieldValue.chosenId].displayName"
+                            field-type="fieldType.type"
+                            hint="fieldType.hint">
+      </document-field-title>
 
-        {{ ::fieldType.choices[fieldValue.chosenId].displayName }}
-      </h5>
 
-      <channel-fields class="collapse-element"
-                      field-types="::fieldType.choices[fieldValue.chosenId].fields"
-                      field-values="fieldValue.chosenValue.fields"
-                      on-field-focus="$ctrl.focusCompound(fieldValue)"
-                      on-field-blur="$ctrl.blurCompound()">
-      </channel-fields>
+      <document-fields class="collapse-element"
+                       name="{{ ::$ctrl.getFieldName(fieldType) }}"
+                       field-types="::fieldType.choices[fieldValue.chosenId].fields"
+                       field-values="fieldValue.chosenValue.fields"
+                       on-field-focus="$ctrl.focusCompound(fieldValue)"
+                       on-field-blur="$ctrl.blurCompound()">
+      </document-fields>
     </div>
   </div>
 
-  <!-- other cases -->
+  <!-- Other fields -->
   <div class="field"
-       ng-class="{'has-focused-field': $ctrl.hasFocusedFieldType(fieldType)}"
+       ng-class="{
+        'has-focused-field': $ctrl.hasFocusedFieldType(fieldType),
+        'has-invalid-field': !$ctrl.isValid(fieldType)
+       }"
        ng-switch-default>
 
     <md-input-container ng-if="$ctrl.hasValue(fieldType)"
@@ -80,25 +88,39 @@
                         ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
                         ng-switch="fieldType.type">
 
-      <label ng-if="$first">{{ ::fieldType.displayName }}</label>
+      <document-field-title ng-if="$first"
+                            text="fieldType.displayName"
+                            field-type="fieldType.type"
+                            hint="fieldType.hint"
+                            required="fieldType.required">
+      </document-field-title>
 
       <!-- editors per field type -->
       <input ng-switch-when="STRING"
              ng-model="fieldValue.value"
+             name="{{ ::$ctrl.getFieldName(fieldType, $index) }}"
              placeholder=""
              ng-attr-maxlength="{{::fieldType.maxLength}}"
              aria-label="{{::fieldType.displayName}}"
+             ng-required="{{::fieldType.required}}"
              ng-focus="$ctrl.focusFieldType(fieldType)"
              ng-blur="$ctrl.blurFieldType()">
 
       <textarea ng-switch-when="MULTILINE_STRING"
                 ng-model="fieldValue.value"
+                name="{{ ::$ctrl.getFieldName(fieldType, $index) }}"
                 placeholder=""
                 aria-label="{{::fieldType.displayName}}"
+                ng-required="{{::fieldType.required}}"
                 md-no-resize
                 ng-focus="$ctrl.focusFieldType(fieldType)"
                 ng-blur="$ctrl.blurFieldType()">
       </textarea>
+
+      <div ng-if="$last"
+           ng-messages="$ctrl.getFieldError(fieldType)">
+        <div ng-message="required">{{ 'ERROR_FIELD_REQUIRED' | translate:fieldType }}</div>
+      </div>
 
     </md-input-container>
   </div>

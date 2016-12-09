@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-import template from './rightSidePanel.html';
-import RightSidePanelCtrl from './rightSidePanel.controller';
+import template from './documentFields.html';
+import DocumentFieldsCtrl from './documentFields.controller';
 
-const rightSidePanelComponent = {
+const documentFieldsComponent = {
   bindings: {
-    editMode: '=',
+    name: '@',
+    fieldTypes: '=',
+    fieldValues: '=',
+    onFieldFocus: '&',
+    onFieldBlur: '&',
   },
-  controller: RightSidePanelCtrl,
+  controller: DocumentFieldsCtrl,
   template,
+  require: {
+    form: '^^form',
+  },
 };
 
-export default rightSidePanelComponent;
+export default documentFieldsComponent;
