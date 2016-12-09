@@ -68,8 +68,7 @@
 
     <form ng-if="$ctrl.editing"
           name="$ctrl.form"
-          class="form-dense-layout"
-          layout="column">
+          class="form-dense-layout">
 
       <document-fields class="top-level"
                       field-types="$ctrl.docType.fields"
@@ -89,7 +88,7 @@
 
       <md-button class="qa-save"
                  ng-click="$ctrl.saveDocument()"
-                 ng-disabled="!$ctrl.editing || $ctrl.form.$pristine">
+                 ng-disabled="!$ctrl.editing || $ctrl.form.$pristine || $ctrl.form.$invalid">
         {{'SAVE' | translate }}
       </md-button>
     </div>

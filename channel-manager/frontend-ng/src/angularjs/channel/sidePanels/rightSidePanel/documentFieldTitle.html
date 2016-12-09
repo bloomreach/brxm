@@ -36,7 +36,11 @@
 <label layout
        layout-align="start center"
        ng-if="$ctrl.fieldType !== 'COMPOUND' && $ctrl.fieldType !== 'CHOICE'">
-  <span>{{ $ctrl.text }}</span>
+   <span>
+     {{ $ctrl.text }}
+
+     <span ng-if="$ctrl.required">*</span>
+   </span>
 
   <md-icon ng-if="$ctrl.hint">
     info_outline

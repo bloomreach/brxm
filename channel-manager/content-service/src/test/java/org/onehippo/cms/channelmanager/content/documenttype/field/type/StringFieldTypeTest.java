@@ -574,7 +574,16 @@ public class StringFieldTypeTest {
         assertFalse(fieldType.validate(listOf(v)));
         assertThat(v.getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
 
+        v = valueOf(null);
+        assertFalse(fieldType.validate(listOf(v)));
+        assertThat(v.getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+
         List<FieldValue> l = Arrays.asList(valueOf("bla"), valueOf(""));
+        assertFalse(fieldType.validate(l));
+        assertFalse(l.get(0).hasErrorInfo());
+        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+
+        l = Arrays.asList(valueOf("bla"), valueOf(null));
         assertFalse(fieldType.validate(l));
         assertFalse(l.get(0).hasErrorInfo());
         assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
@@ -584,7 +593,17 @@ public class StringFieldTypeTest {
         assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
         assertFalse(l.get(1).hasErrorInfo());
 
+        l = Arrays.asList(valueOf(null), valueOf("bla"));
+        assertFalse(fieldType.validate(l));
+        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertFalse(l.get(1).hasErrorInfo());
+
         l = Arrays.asList(valueOf(""), valueOf(""));
+        assertFalse(fieldType.validate(l));
+        assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+        assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
+
+        l = Arrays.asList(valueOf(null), valueOf(null));
         assertFalse(fieldType.validate(l));
         assertThat(l.get(0).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));
         assertThat(l.get(1).getErrorInfo().getCode(), equalTo(ValidationErrorInfo.Code.REQUIRED_FIELD_EMPTY));

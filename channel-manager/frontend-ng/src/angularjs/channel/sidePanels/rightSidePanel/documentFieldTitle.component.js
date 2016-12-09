@@ -19,9 +19,10 @@ import template from './documentFieldTitle.html';
 const documentFieldTitleComponent = {
   bindings: {
     collapsed: '<',
-    text: '<',
-    hint: '<',
     fieldType: '<',
+    hint: '<',
+    required: '<',
+    text: '<',
   },
   template,
 };

@@ -19,6 +19,7 @@ import DocumentFieldsCtrl from './documentFields.controller';
 
 const documentFieldsComponent = {
   bindings: {
+    name: '@',
     fieldTypes: '=',
     fieldValues: '=',
     onFieldFocus: '&',
@@ -26,6 +27,9 @@ const documentFieldsComponent = {
   },
   controller: DocumentFieldsCtrl,
   template,
+  require: {
+    form: '^^form',
+  },
 };
 
 export default documentFieldsComponent;
