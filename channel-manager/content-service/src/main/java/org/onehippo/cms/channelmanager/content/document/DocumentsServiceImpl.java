@@ -16,14 +16,18 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.util.DocumentUtils;
@@ -32,6 +36,7 @@ import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
 import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
+import org.onehippo.cms.channelmanager.content.document.model.UserInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
@@ -93,7 +98,7 @@ class DocumentsServiceImpl implements DocumentsService {
                 .orElseThrow(NotFoundException::new);
 
         if (!EditingUtils.canUpdateDocument(workflow)) {
-            throw new ForbiddenException(new ErrorInfo(ErrorInfo.Reason.NOT_HOLDER));
+            throw new ForbiddenException(errorInfoWithUserInfo(workflow, session));
         }
 
         final DocumentType docType = getDocumentType(handle, locale);
@@ -117,6 +122,25 @@ class DocumentsServiceImpl implements DocumentsService {
         }
 
         copyToPreviewAndKeepEditing(session, workflow);
+    }
+
+    private ErrorInfo errorInfoWithUserInfo(final Workflow workflow, final Session session) {
+        return EditingUtils.determineHolderId(workflow)
+                .map(holderId -> EditingUtils.makeUserInfo(holderId, session))
+                .map(userInfo -> new ErrorInfo(ErrorInfo.Reason.OTHER_HOLDER, errorInfoParamsForUser(userInfo)))
+                .orElse(new ErrorInfo(ErrorInfo.Reason.NO_HOLDER));
+    }
+
+    private Map<String, Serializable> errorInfoParamsForUser(final UserInfo userInfo) {
+        final Map<String, Serializable> params = new HashMap<>();
+
+        params.put("userId", userInfo.getId());
+        final String userName = userInfo.getDisplayName();
+        if (userName != null) {
+            params.put("userName", userName);
+        }
+
+        return params;
     }
 
     @Override
@@ -212,7 +236,7 @@ class DocumentsServiceImpl implements DocumentsService {
             workflow.obtainEditableInstance();
         } catch (WorkflowException e) {
             log.warn("User '{}' failed to re-obtain ownership of document", session.getUserID(), e);
-            throw new InternalServerErrorException(new ErrorInfo(ErrorInfo.Reason.HOLDERSHIP_LOST));
+            throw new InternalServerErrorException(errorInfoWithUserInfo(workflow, session));
         } catch (RepositoryException | RemoteException e) {
             log.warn("User '{}' failed to re-obtain ownership of document", session.getUserID(), e);
             throw new InternalServerErrorException();

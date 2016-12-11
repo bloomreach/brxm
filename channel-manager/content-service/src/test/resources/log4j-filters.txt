@@ -46,3 +46,4 @@ Failed to persist changes
 Failed to retrieve editor config node content type '/bla'
 Failed to retrieve content type 'namespaced:type'
 Failed to retrieve child node 'fieldName' of node '/bla'.
+Failed to retrieve hints for workflow

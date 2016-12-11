@@ -70,7 +70,7 @@ public class EditingUtils {
                 info.setState(EditingInfo.State.AVAILABLE);
             } else if (hints.containsKey(HINT_IN_USE_BY)) {
                 info.setState(EditingInfo.State.UNAVAILABLE_HELD_BY_OTHER_USER);
-                info.setHolder(determineHolder((String)hints.get(HINT_IN_USE_BY), session));
+                info.setHolder(makeUserInfo((String)hints.get(HINT_IN_USE_BY), session));
             } else if (hints.containsKey(HINT_REQUESTS)) {
                 info.setState(EditingInfo.State.UNAVAILABLE_REQUEST_PENDING);
             }
@@ -78,6 +78,24 @@ public class EditingUtils {
             log.warn("Failed to determine editing info for node '{}'", JcrUtils.getNodePathQuietly(handle), e);
         }
         return info;
+    }
+
+    /**
+     * Retrieve the current holder of a document.
+     *
+     * @param workflow workflow instance of a document.
+     * @return         userId of the holder or nothing, wrapped in an Optional
+     */
+    public static Optional<String> determineHolderId(final Workflow workflow) {
+        try {
+            final Map<String, Serializable> hints = workflow.hints();
+            if (hints.containsKey(HINT_IN_USE_BY)) {
+                return Optional.of((String) hints.get(HINT_IN_USE_BY));
+            }
+        } catch (RepositoryException | WorkflowException | RemoteException e) {
+            log.warn("Failed to retrieve hints for workflow '{}'", workflow, e);
+        }
+        return Optional.empty();
     }
 
     /**
@@ -122,7 +140,7 @@ public class EditingUtils {
      * @param session  JCR session to access information about users
      * @return         New and populated instance of UserInfo
      */
-    public static UserInfo determineHolder(final String holderId, final Session session) {
+    public static UserInfo makeUserInfo(final String holderId, final Session session) {
         final UserInfo holder = new UserInfo();
         holder.setId(holderId);
         try {
