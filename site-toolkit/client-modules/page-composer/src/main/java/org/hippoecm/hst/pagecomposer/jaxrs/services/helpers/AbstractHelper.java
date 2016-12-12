@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
@@ -33,7 +35,6 @@ import com.google.common.collect.Iterables;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -146,11 +147,112 @@ public abstract class AbstractHelper {
                             lockedNode.getPath(), liveConfigurationPath + liveParentRelPath);
                 } else {
                     log.info("Publishing '{}'", lockedNode.getPath());
-                    JcrUtils.copy(session, lockedNode.getPath(), liveConfigurationPath + relPath);
+                    Node copy = JcrUtils.copy(session, lockedNode.getPath(), liveConfigurationPath + relPath);
+                    reorderCopyIfNeeded(lockedNode, copy);
                 }
             }
 
         }
+    }
+
+    /**
+     * Reorder the {@code copy} ot be in the same location as {@code source} with respect to their parents in case the
+     * parents are orderable.
+     * @param source
+     * @param copy
+     * @throws RepositoryException
+     */
+    private void reorderCopyIfNeeded(final Node source, final Node copy) throws RepositoryException {
+
+        if (!source.getParent().getPrimaryNodeType().hasOrderableChildNodes()) {
+            return;
+        }
+
+        Node parentOfCopy = copy.getParent();
+
+        if (!parentOfCopy.getPrimaryNodeType().hasOrderableChildNodes()) {
+            return;
+        }
+
+        if (parentOfCopy.getNodes().getSize() > 1) {
+            // reorder the copied source if needed and if the parent is orderable
+            // find the next sibling of 'source' : We need to try to order the 'copy' before the
+            // same node as the source in preview. In case for some reason the next sibling does not
+            // exist in live, we need to catch the exception and log an error (because it indicates a
+            // live and preview that is out of sync)
+            Node nextSibling = nextSibling(source);
+
+            if (nextSibling != null) {
+                try {
+                    // HST nodes do not allow same name siblings so we do not take into account the index
+                    // if nextSibling is null, the copy will just be at the end of the list which is fine
+                    parentOfCopy.orderBefore(copy.getName(), nextSibling.getName());
+                } catch (ItemNotFoundException e) {
+                    log.error("Cannot reorder '{}' before '{}' because a node with the name '{}' does " +
+                            "not exist in the live configuration which should not be the case because preview " +
+                            "and live configuration are out of sync. The preview configuration node that misses " +
+                            "in live is '{}'." +
+                            "", copy.getPath(), nextSibling.getName(), nextSibling.getPath());
+                }
+            }
+        }
+    }
+
+    /**
+     * <p>
+     * Returns the next sibling {@link Node} of {@code current}. If there is no next sibling it returns {@code null}.
+     * If
+     * the
+     * parent {@link Node} of {@code current} is not an orderable {@link Node}, an {@link
+     * UnsupportedRepositoryOperationException}
+     * will be thrown. Checking whether the parent is orderable can be done easily as follows
+     * <pre>
+     *         Node parent = current.getParent();
+     *         parent.getPrimaryNodeType().hasOrderableChildNodes()
+     *     </pre>
+     * </p>
+     * <p>
+     * If the caller of this method uses this method to reorder nodes, then take into account whether the
+     * parent node allows same name siblings or not. If you do not know, use
+     * <pre>
+     *         Node parent = current.getParent();
+     *         if (parent.getDefinition().allowsSameNameSiblings()) {
+     *             Node next = nextSibling(current);
+     *             parent.orderBefore(current.getName() + "[" + current.getIndex() + "]",
+     *                                next.getName()+ "[" + next.getIndex() + "]");
+     *         } else {
+     *            parent.orderBefore(current.getName(), nextSibling(current).getName());
+     *         }
+     *     </pre>
+     * </p>
+     *
+     * @param current the {@link Node} for which to find the next sibling
+     * @return the next sibling of current if there is a next one and {@code null} in case there is no next sibling
+     * @throws UnsupportedRepositoryOperationException if the parent of {@code current} is not orderable
+     * @throws RepositoryException                     if some repository exception happens
+     */
+    private Node nextSibling(final Node current) throws RepositoryException {
+        Node parent = current.getParent();
+        if (!parent.getPrimaryNodeType().hasOrderableChildNodes()) {
+            throw new UnsupportedRepositoryOperationException(String.format("Node '%s' does not have an orderable parent " +
+                    "hence invoking #nextSibling does not make sense."));
+        }
+
+        boolean snsAllowed = parent.getDefinition().allowsSameNameSiblings();
+        boolean iterAtCurrent = false;
+        for (Node sibling : new NodeIterable(parent.getNodes())) {
+            if (iterAtCurrent) {
+                return sibling;
+            }
+            if (sibling.getName().equals(current.getName())) {
+                if (snsAllowed && sibling.getIndex() == current.getIndex()) {
+                    iterAtCurrent = true;
+                } else {
+                    iterAtCurrent = true;
+                }
+            }
+        }
+        return null;
     }
 
     public void discardChanges(final List<String> userIds) throws RepositoryException {
@@ -174,6 +276,7 @@ public abstract class AbstractHelper {
             }
             lockedNodeRoot.remove();
             JcrUtils.copy(session, liveConfigurationPath + relPath, lockedNodePath);
+            reorderCopyIfNeeded(session.getNode(liveConfigurationPath + relPath), session.getNode(lockedNodePath));
         }
     }
 

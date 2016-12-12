@@ -144,6 +144,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
         final ContainerHelper helper = new ContainerHelper();
         helper.setPageComposerContextService(pageComposerContextService);
 
+
         final ContainerComponentService containerComponentService = new ContainerComponentServiceImpl(pageComposerContextService, helper);
         containerComponentResource.setContainerComponentService(containerComponentService);
         containerComponentResource.setPageComposerContextService(pageComposerContextService);
@@ -164,6 +165,176 @@ public class MountResourceTest extends AbstractMountResourceTest {
                 MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin", "editor"})));
     }
 
+
+    @Test
+    public void publication_of_containers_keep_order_containers_in_live_same_as_order_in_preview() throws Exception {
+        movePagesFromCommonToUnitTestProject();
+        createWorkspaceWithTestContainer();
+        // add second and third sibling container
+        final Node containers = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:containers");
+        final Node containerNode2 = containers.addNode("testcontainer2", "hst:containercomponent");
+        containerNode2.setProperty("hst:xtype", "HST.vBox");
+        final Node containerNode3 = containers.addNode("testcontainer3", "hst:containercomponent");
+        containerNode3.setProperty("hst:xtype", "HST.vBox");
+
+        addReferencedContainerForHomePage();
+        String catalogItemUUID = addCatalogItem();
+        session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(200);
+
+        assertOrderOfContainerNode(containers, "testcontainer", "testcontainer2", "testcontainer3");
+
+        mockNewRequest(session, "localhost", "");
+
+        final PageComposerContextService pccs = mountResource.getPageComposerContextService();
+        final HstRequestContext ctx = pccs.getRequestContext();
+
+        final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
+
+        mountResource.startEdit();
+
+        final Node previewContainers = session.getNode(previewConfigurationPath).getNode("hst:workspace/hst:containers");
+
+        final String previewFirstContainerNodeUUID = session.getNode(previewConfigurationPath)
+                .getNode("hst:workspace/hst:containers/testcontainer").getIdentifier();
+        pccs.getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewFirstContainerNodeUUID);
+
+        // modify
+        ContainerComponentResource containerComponentResource = createContainerResource();
+        containerComponentResource.createContainerItem(catalogItemUUID, 0);
+
+        // publish changes : now the order of 'testcontainer' and 'testcontainer2' should be maintained in live configuration
+        mockNewRequest(session, "localhost", "/home");
+        mountResource.publish();
+
+        // after publication, the order of the containers should be preserved
+        assertOrderOfContainerNode(containers, "testcontainer", "testcontainer2", "testcontainer3");
+        assertOrderOfContainerNode(previewContainers, "testcontainer", "testcontainer2", "testcontainer3");
+
+        // modify middle container to make sure works also correctly
+        final String previewSecondContainerNodeUUID = session.getNode(previewConfigurationPath)
+                .getNode("hst:workspace/hst:containers/testcontainer2").getIdentifier();
+        pccs.getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewSecondContainerNodeUUID);
+
+        // modify
+        containerComponentResource = createContainerResource();
+        containerComponentResource.createContainerItem(catalogItemUUID, 0);
+
+        // publish changes : now the order of 'testcontainer' and 'testcontainer2' should be maintained in live configuration
+        mockNewRequest(session, "localhost", "/home");
+        mountResource.publish();
+
+        // after publication, the order of the containers should be preserved
+        assertOrderOfContainerNode(containers, "testcontainer", "testcontainer2", "testcontainer3");
+        assertOrderOfContainerNode(previewContainers, "testcontainer", "testcontainer2", "testcontainer3");
+
+        // modify last container to make sure works also correctly
+        final String previewThirdContainerNodeUUID = session.getNode(previewConfigurationPath)
+                .getNode("hst:workspace/hst:containers/testcontainer3").getIdentifier();
+        pccs.getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewThirdContainerNodeUUID);
+
+        // modify
+        containerComponentResource = createContainerResource();
+        containerComponentResource.createContainerItem(catalogItemUUID, 0);
+
+        // publish changes : now the order of 'testcontainer' and 'testcontainer2' should be maintained in live configuration
+        mockNewRequest(session, "localhost", "/home");
+        mountResource.publish();
+
+        // after publication, the order of the containers should be preserved
+        assertOrderOfContainerNode(containers, "testcontainer", "testcontainer2", "testcontainer3");
+        assertOrderOfContainerNode(previewContainers, "testcontainer", "testcontainer2", "testcontainer3");
+    }
+
+    @Test
+    public void discarding_changed_containers_keeps_order_containers_in_live_same_as_order_in_preview() throws Exception {
+        movePagesFromCommonToUnitTestProject();
+        createWorkspaceWithTestContainer();
+        // add second and third sibling container
+        final Node containers = session.getNode("/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:containers");
+        final Node containerNode2 = containers.addNode("testcontainer2", "hst:containercomponent");
+        containerNode2.setProperty("hst:xtype", "HST.vBox");
+        final Node containerNode3 = containers.addNode("testcontainer3", "hst:containercomponent");
+        containerNode3.setProperty("hst:xtype", "HST.vBox");
+
+        addReferencedContainerForHomePage();
+        String catalogItemUUID = addCatalogItem();
+        session.save();
+        // give time for jcr events to evict model
+        Thread.sleep(200);
+
+        assertOrderOfContainerNode(containers, "testcontainer", "testcontainer2", "testcontainer3");
+
+        mockNewRequest(session, "localhost", "");
+
+        final PageComposerContextService pccs = mountResource.getPageComposerContextService();
+        final HstRequestContext ctx = pccs.getRequestContext();
+
+        final String previewConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath() + "-preview";
+
+        mountResource.startEdit();
+
+        final Node previewContainers = session.getNode(previewConfigurationPath).getNode("hst:workspace/hst:containers");
+
+        final String previewFirstContainerNodeUUID = session.getNode(previewConfigurationPath)
+                .getNode("hst:workspace/hst:containers/testcontainer").getIdentifier();
+        pccs.getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewFirstContainerNodeUUID);
+
+        // modify
+        ContainerComponentResource containerComponentResource = createContainerResource();
+        containerComponentResource.createContainerItem(catalogItemUUID, 0);
+
+        // discard changes : now the order of 'testcontainer' and 'testcontainer2' should be maintained in preview and live configuration
+        mockNewRequest(session, "localhost", "/home");
+        mountResource.discardChanges();
+
+        // after publication, the order of the containers should be preserved
+        assertOrderOfContainerNode(containers, "testcontainer", "testcontainer2", "testcontainer3");
+        assertOrderOfContainerNode(previewContainers, "testcontainer", "testcontainer2", "testcontainer3");
+
+        // modify middle container to make sure works also correctly
+        final String previewSecondContainerNodeUUID = session.getNode(previewConfigurationPath)
+                .getNode("hst:workspace/hst:containers/testcontainer2").getIdentifier();
+        pccs.getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewSecondContainerNodeUUID);
+
+        // modify
+        containerComponentResource = createContainerResource();
+        containerComponentResource.createContainerItem(catalogItemUUID, 0);
+
+        // discard changes : now the order of 'testcontainer' and 'testcontainer2' should be maintained in preview and live configuration
+        mockNewRequest(session, "localhost", "/home");
+        mountResource.discardChanges();
+
+        // after publication, the order of the containers should be preserved
+        assertOrderOfContainerNode(containers, "testcontainer", "testcontainer2", "testcontainer3");
+        assertOrderOfContainerNode(previewContainers, "testcontainer", "testcontainer2", "testcontainer3");
+
+        // modify last container to make sure works also correctly
+        final String previewThirdContainerNodeUUID = session.getNode(previewConfigurationPath)
+                .getNode("hst:workspace/hst:containers/testcontainer3").getIdentifier();
+        pccs.getRequestContext().setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, previewThirdContainerNodeUUID);
+
+        // modify
+        containerComponentResource = createContainerResource();
+        containerComponentResource.createContainerItem(catalogItemUUID, 0);
+
+        // discard changes : now the order of 'testcontainer' and 'testcontainer2' should be maintained in preview and live configuration
+        mockNewRequest(session, "localhost", "/home");
+        mountResource.discardChanges();
+
+        // after publication, the order of the containers should be preserved
+        assertOrderOfContainerNode(containers, "testcontainer", "testcontainer2", "testcontainer3");
+        assertOrderOfContainerNode(previewContainers, "testcontainer", "testcontainer2", "testcontainer3");
+    }
+
+    private void assertOrderOfContainerNode(final Node containers, final String... names) throws RepositoryException {
+        int i = 0;
+        for (Node container : new NodeIterable(containers.getNodes())) {
+            assertEquals(container.getName(), names[i]);
+            i++;
+        }
+    }
 
     @Test
     public void testEditAndPublishProjectThatStartsWithNumber() throws Exception {
