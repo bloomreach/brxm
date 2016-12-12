@@ -75,53 +75,16 @@
   </div>
 
   <!-- Other fields -->
-  <div class="field"
-       ng-class="{
-        'has-focused-field': $ctrl.hasFocusedFieldType(fieldType),
-        'has-invalid-field': !$ctrl.isValid(fieldType)
-       }"
-       ng-switch-default>
-
-    <md-input-container ng-if="$ctrl.hasValue(fieldType)"
-                        class="md-block qa-field"
-                        md-no-float
-                        ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
-                        ng-switch="fieldType.type">
-
-      <document-field-title ng-if="$first"
-                            text="fieldType.displayName"
-                            field-type="fieldType.type"
-                            hint="fieldType.hint"
-                            required="fieldType.required">
-      </document-field-title>
-
-      <!-- editors per field type -->
-      <input ng-switch-when="STRING"
-             ng-model="fieldValue.value"
-             name="{{ ::$ctrl.getFieldName(fieldType, $index) }}"
-             placeholder=""
-             ng-attr-maxlength="{{::fieldType.maxLength}}"
-             aria-label="{{::fieldType.displayName}}"
-             ng-required="{{::fieldType.required}}"
-             ng-focus="$ctrl.focusFieldType(fieldType)"
-             ng-blur="$ctrl.blurFieldType()">
-
-      <textarea ng-switch-when="MULTILINE_STRING"
-                ng-model="fieldValue.value"
-                name="{{ ::$ctrl.getFieldName(fieldType, $index) }}"
-                placeholder=""
-                aria-label="{{::fieldType.displayName}}"
-                ng-required="{{::fieldType.required}}"
-                md-no-resize
-                ng-focus="$ctrl.focusFieldType(fieldType)"
-                ng-blur="$ctrl.blurFieldType()">
-      </textarea>
-
-      <div ng-if="$last"
-           ng-messages="$ctrl.getFieldError(fieldType)">
-        <div ng-message="required">{{ 'ERROR_FIELD_REQUIRED' | translate:fieldType }}</div>
-      </div>
-
-    </md-input-container>
-  </div>
+  <primitive-field ng-switch-default
+                   class="field"
+                   ng-class="{
+                     'has-focused-field': $ctrl.hasFocusedFieldType(fieldType),
+                     'has-invalid-field': !$ctrl.isValid(fieldType)
+                   }"
+                   name="{{ ::$ctrl.getFieldName(fieldType) }}"
+                   field-type="::fieldType"
+                   field-values="$ctrl.fieldValues[fieldType.id]"
+                   on-field-focus="$ctrl.focusFieldType(fieldType)"
+                   on-field-blur="$ctrl.blurFieldType()">
+  </primitive-field>
 </div>

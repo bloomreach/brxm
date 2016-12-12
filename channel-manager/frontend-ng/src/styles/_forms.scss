@@ -24,6 +24,9 @@
     height: 0;
     min-height: 0;
   }
+  .field {
+    display: block;
+  }
 }
 
 .top-level {
@@ -68,6 +71,9 @@
   }
   &:not(.has-invalid-field) > md-input-container > label {
     color: $blue-500 !important;
+    .required {
+      color: $red-a700 !important; // keep required mark red, like in material
+    }
   }
 }
 
@@ -89,12 +95,20 @@
   margin-bottom: 0;
 }
 
+primitive-field,
 document-field-title {
   label {
     // md-tooltip searches for the first parent with pointer-events
     // ng-material disables pointer events on labels, they should be enabled
     // when using md-no-float
     pointer-events: auto !important;
+
+    .required {
+      margin-left: 4px;
+    }
+    &:after {
+      content: '' !important; // hide material required mark
+    }
   }
 
   md-icon {

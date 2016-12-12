@@ -16,6 +16,7 @@
 import rightSidePanelComponent from './rightSidePanel.component';
 import documentFieldsComponent from './documentFields.component';
 import documentFieldTitleComponent from './documentFieldTitle.component';
+import primitiveFieldComponent from './primitiveField.component';
 import collapse from './collapse.directive';
 
 const rightSidePanelModule = angular
@@ -23,6 +24,7 @@ const rightSidePanelModule = angular
   .component('rightSidePanel', rightSidePanelComponent)
   .component('documentFields', documentFieldsComponent)
   .component('documentFieldTitle', documentFieldTitleComponent)
+  .component('primitiveField', primitiveFieldComponent)
   .directive('collapse', collapse);
 
 export default rightSidePanelModule.name;
