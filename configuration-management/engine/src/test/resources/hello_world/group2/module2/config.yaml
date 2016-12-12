@@ -1,0 +1,4 @@
+- config:
+  - /node:
+      property2: override
+      property3: value3

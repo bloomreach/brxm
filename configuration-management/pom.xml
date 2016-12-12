@@ -38,11 +38,12 @@
 
     <!-- Test dependencies  -->
     <junit.version>4.10</junit.version>
+    <yagi.version>1.0.4</yagi.version>
   </properties>
   
   <modules>
     <module>api</module>
-    <module>parser</module>
+    <module>engine</module>
   </modules>
   
   <repositories>
@@ -66,6 +67,11 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.raml</groupId>
+        <artifactId>yagi</artifactId>
+        <version>${yagi.version}</version>
       </dependency>
     </dependencies>
 
