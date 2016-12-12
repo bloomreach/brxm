@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
-import java.util.List;
 import java.util.Map;
+
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -26,6 +27,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -33,10 +35,19 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
+import org.hippoecm.frontend.plugins.cms.admin.widgets.DeleteDialog;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
+import org.hippoecm.frontend.session.UserSession;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.event.HippoEventConstants;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ViewUserPanel extends AdminBreadCrumbPanel {
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(ViewUserPanel.class);
 
     private final IModel<User> model;
 
@@ -115,20 +126,61 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 context.getService(IDialogService.class.getName(), IDialogService.class).show(
-                        new DeleteUserDialog(userModel, this, context, ViewUserPanel.this) {
+                        new DeleteDialog<User>(user, this) {
 
                             @Override
                             protected void onOk() {
-                                super.onOk();
+                                deleteUser(user);
+                            }
 
-                                // one up
-                                List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
-                                breadCrumbModel.setActive(l.get(l.size() - 2));
+                            @Override
+                            protected String getTitleKey() {
+                                return "user-delete-title";
+                            }
+
+                            @Override
+                            protected String getTextKey() {
+                                return "user-delete-text";
                             }
                         });
             }
         });
         add(new SetMembershipsPanel("set-member-ship-panel", context, breadCrumbModel, userModel));
+    }
+
+    private void deleteUser(final User user) {
+        if (user == null) {
+            log.info("No user model found when trying to delete user. Probably the Ok button was double clicked.");
+            return;
+        }
+        String username = user.getUsername();
+        try {
+            user.delete();
+
+            // Let the outside world know that this user got deleted
+            HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+            if (eventBus != null) {
+                final UserSession userSession = UserSession.get();
+                HippoEvent event = new HippoEvent(userSession.getApplicationName())
+                        .user(userSession.getJcrSession().getUserID()).action("delete-user")
+                        .category(HippoEventConstants.CATEGORY_USER_MANAGEMENT)
+                        .message("deleted user " + username);
+                eventBus.post(event);
+            }
+
+            final String infoMsg = getString("user-removed", new Model<>(user));
+            final IBreadCrumbParticipant parentBreadCrumb = activateParent();
+            parentBreadCrumb.getComponent().info(infoMsg);
+
+        } catch (RepositoryException e) {
+            error(getString("user-remove-failed", new Model<>(user)));
+            AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+            if (target !=  null) {
+                target.add(this);
+            }
+            log.error("Unable to delete user '" + username + "' : ", e);
+        }
+
     }
 
     public IModel<String> getTitle(final Component component) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
@@ -154,12 +153,12 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
                                 .message("created user " + username);
                         eventBus.post(event);
                     }
-                    Session.get().info(getString("user-created", new Model<>(user)));
-                    // one up
-                    List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
-                    breadCrumbModel.setActive(l.get(l.size() - 2));
+                    final String infoMsg = getString("user-created", new Model<>(user));
+                    final IBreadCrumbParticipant parentBreadCrumb = activateParent();
+                    parentBreadCrumb.getComponent().info(infoMsg);
                 } catch (RepositoryException e) {
-                    Session.get().warn(getString("user-create-failed", new Model<>(user)));
+                    target.add(CreateUserPanel.this);
+                    error(getString("user-create-failed", new Model<>(user)));
                     log.error("Unable to create user '" + username + "' : ", e);
                 }
             }
@@ -177,9 +176,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
-                // one up
-                List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
-                breadCrumbModel.setActive(l.get(l.size() - 2));
+                activateParent();
             }
         }.setDefaultFormProcessing(false));
     }
