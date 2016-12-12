@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -174,26 +175,24 @@ public abstract class AbstractHelper {
             return;
         }
 
-        if (parentOfCopy.getNodes().getSize() > 1) {
-            // reorder the copied source if needed and if the parent is orderable
-            // find the next sibling of 'source' : We need to try to order the 'copy' before the
-            // same node as the source in preview. In case for some reason the next sibling does not
-            // exist in live, we need to catch the exception and log an error (because it indicates a
-            // live and preview that is out of sync)
-            Node nextSibling = nextSibling(source);
+        // reorder the copied source if needed and if the parent is orderable
+        // find the next sibling of 'source' : We need to try to order the 'copy' before the
+        // same node as the source in preview. In case for some reason the next sibling does not
+        // exist in live, we need to catch the exception and log an error (because it indicates a
+        // live and preview that is out of sync)
+        Node nextSibling = nextSibling(source);
 
-            if (nextSibling != null) {
-                try {
-                    // HST nodes do not allow same name siblings so we do not take into account the index
-                    // if nextSibling is null, the copy will just be at the end of the list which is fine
-                    parentOfCopy.orderBefore(copy.getName(), nextSibling.getName());
-                } catch (ItemNotFoundException e) {
-                    log.error("Cannot reorder '{}' before '{}' because a node with the name '{}' does " +
-                            "not exist in the live configuration which should not be the case because preview " +
-                            "and live configuration are out of sync. The preview configuration node that misses " +
-                            "in live is '{}'." +
-                            "", copy.getPath(), nextSibling.getName(), nextSibling.getPath());
-                }
+        if (nextSibling != null) {
+            try {
+                // HST nodes do not allow same name siblings so we do not take into account the index
+                // if nextSibling is null, the copy will just be at the end of the list which is fine
+                parentOfCopy.orderBefore(copy.getName(), nextSibling.getName());
+            } catch (ItemNotFoundException e) {
+                log.error("Cannot reorder '{}' before '{}' because a node with the name '{}' does " +
+                        "not exist in the live configuration which should not be the case because preview " +
+                        "and live configuration are out of sync. The preview configuration node that misses " +
+                        "in live is '{}'." +
+                        "", copy.getPath(), nextSibling.getName(), nextSibling.getPath());
             }
         }
     }
@@ -238,21 +237,14 @@ public abstract class AbstractHelper {
                     "hence invoking #nextSibling does not make sense."));
         }
 
-        boolean snsAllowed = parent.getDefinition().allowsSameNameSiblings();
-        boolean iterAtCurrent = false;
-        for (Node sibling : new NodeIterable(parent.getNodes())) {
-            if (iterAtCurrent) {
-                return sibling;
-            }
-            if (sibling.getName().equals(current.getName())) {
-                if (snsAllowed && sibling.getIndex() == current.getIndex()) {
-                    iterAtCurrent = true;
-                } else {
-                    iterAtCurrent = true;
-                }
+        NodeIterator nodeIterator = parent.getNodes();
+        while (nodeIterator.hasNext()) {
+            Node sibling = nodeIterator.nextNode();
+            if (sibling.isSame(current)) {
+                return nodeIterator.hasNext() ? nodeIterator.nextNode() : null;
             }
         }
-        return null;
+        throw new IllegalStateException("Loop through children of parent should had matched current");
     }
 
     public void discardChanges(final List<String> userIds) throws RepositoryException {
