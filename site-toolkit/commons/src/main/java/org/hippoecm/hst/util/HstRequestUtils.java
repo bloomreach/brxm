@@ -168,15 +168,22 @@ public class HstRequestUtils {
      * @return
      */
     public static String [] getRequestHosts(HttpServletRequest request, boolean checkRenderHost) {
-        String host = null;
+        String host;
 
         if (checkRenderHost) {
             host = getRenderingHost(request);
+            if (host != null) {
+                return new String [] { host };
+            }
         }
 
-        if (host == null) {
-            host = request.getHeader("X-Forwarded-Host");
+        host = request.getHeader("Host");
+
+        if (host != null && !"".equals(host)) {
+            return new String [] { host };
         }
+
+        host = request.getHeader("X-Forwarded-Host");
 
         if (host != null) {
             String [] hosts = host.split(",");
@@ -186,12 +193,6 @@ public class HstRequestUtils {
             }
 
             return hosts;
-        }
-
-        host = request.getHeader("Host");
-
-        if (host != null && !"".equals(host)) {
-            return new String [] { host };
         }
 
         // fallback to request server name for HTTP/1.0 clients.
