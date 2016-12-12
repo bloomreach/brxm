@@ -244,7 +244,7 @@ public abstract class AbstractHelper {
                 return nodeIterator.hasNext() ? nodeIterator.nextNode() : null;
             }
         }
-        throw new IllegalStateException("Loop through children of parent should had matched current");
+        throw new ItemNotFoundException("The 'current' item does not longer exist below its parent");
     }
 
     public void discardChanges(final List<String> userIds) throws RepositoryException {
