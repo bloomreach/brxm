@@ -24,8 +24,6 @@ import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
-import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
-import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -107,7 +105,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                         new DeleteDialog<Group>(group, this) {
                             @Override
                             protected void onOk() {
-                                deleteGroup(group, context);
+                                deleteGroup(group);
                                 DomainDataProvider.setDirty();
                             }
 
@@ -132,7 +130,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         add(groupMembersListView);
     }
 
-    private void deleteGroup(final Group group, final IPluginContext context) {
+    private void deleteGroup(final Group group) {
         final String groupname = group.getGroupname();
         try {
             group.delete();

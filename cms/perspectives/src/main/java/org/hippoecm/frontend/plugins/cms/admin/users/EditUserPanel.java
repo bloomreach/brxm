@@ -132,10 +132,11 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
     }
 
     private List<String> getAvailableSecurityProviderNames() {
-        List<String> providers = new ArrayList<String>();
+        List<String> providers = new ArrayList<>();
 
         try {
             UserSession session = UserSession.get();
+            @SuppressWarnings("deprecation")
             Query query = session.getQueryManager().createQuery(QUERY_SECURITY_PROVIDERS, Query.XPATH);
             QueryResult result = query.execute();
 

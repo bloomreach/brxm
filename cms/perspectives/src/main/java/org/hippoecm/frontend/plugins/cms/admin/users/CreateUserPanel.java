@@ -36,7 +36,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -77,7 +76,7 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
         // add form with markup id setter so it can be updated via ajax
         final User user = new User();
-        final Form<User> form = new HippoForm<User>("form", new CompoundPropertyModel<User>(user)) {
+        final Form<User> form = new HippoForm<User>("form", new CompoundPropertyModel<>(user)) {
 
             @Override
             protected void onValidateModelObjects() {
@@ -122,12 +121,12 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
         form.add(emailField);
 
         final PasswordTextField passwordField =
-                new PasswordTextField("password", new PropertyModel<String>(this, "password"));
+                new PasswordTextField("password", new PropertyModel<>(this, "password"));
         passwordField.setResetPassword(false);
         form.add(passwordField);
 
         final PasswordTextField passwordCheckField =
-                new PasswordTextField("password-check", new PropertyModel<String>(this, "passwordCheck"));
+                new PasswordTextField("password-check", new PropertyModel<>(this, "passwordCheck"));
         passwordCheckField.setRequired(false);
         passwordCheckField.setResetPassword(false);
         form.add(passwordCheckField);
@@ -155,12 +154,12 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
                                 .message("created user " + username);
                         eventBus.post(event);
                     }
-                    Session.get().info(getString("user-created", new Model<User>(user)));
+                    Session.get().info(getString("user-created", new Model<>(user)));
                     // one up
                     List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
                     breadCrumbModel.setActive(l.get(l.size() - 2));
                 } catch (RepositoryException e) {
-                    Session.get().warn(getString("user-create-failed", new Model<User>(user)));
+                    Session.get().warn(getString("user-create-failed", new Model<>(user)));
                     log.error("Unable to create user '" + username + "' : ", e);
                 }
             }
