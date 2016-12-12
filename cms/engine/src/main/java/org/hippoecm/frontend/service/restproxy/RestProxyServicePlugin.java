@@ -224,16 +224,18 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
     protected String getFarthestRequestHost() {
         final HttpServletRequest request = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
-        String host = request.getHeader("X-Forwarded-Host");
 
+        String host = request.getHeader("Host");
+        if (host != null && !"".equals(host)) {
+            return host;
+        }
+
+        host = request.getHeader("X-Forwarded-Host");
         if (host != null) {
             String [] hosts = host.split(",");
             return hosts[0].trim();
         }
-        host = request.getHeader("Host");
-        if (host != null && !"".equals(host)) {
-            return host;
-        }
+
         // should never happen : HTTP/1.0 based browser clients are unlikely to login in the cms :)
         int serverPort = request.getServerPort();
         if (serverPort == 80 || serverPort == 443 || serverPort <= 0) {
