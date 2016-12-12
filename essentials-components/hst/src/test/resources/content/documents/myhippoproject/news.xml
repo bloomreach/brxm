@@ -428,6 +428,85 @@
           </sv:node>
         </sv:node>
       </sv:node>
+      <sv:node sv:name="mynews">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippo:handle</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>mix:referenceable</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>43da654e-cfbb-47a8-acc3-56c0035905cc</sv:value>
+        </sv:property>
+        <sv:node sv:name="mynews">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>myhippoproject:MyNews</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>mix:referenceable</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>42e47bd9-75dc-4c1d-a09d-990e427ca574</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
+            <sv:value>live</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>published</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>live</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+            <sv:value>2016-12-01T16:57:00.126+01:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+            <sv:value>2016-12-01T16:57:26.302+01:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+            <sv:value>admin</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+            <sv:value>2016-12-01T16:57:29.171+01:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippotranslation:id" sv:type="String">
+            <sv:value>10c852ef-2907-48ca-ad29-7c76f1cefd7e</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippotranslation:locale" sv:type="String">
+            <sv:value>en</sv:value>
+          </sv:property>
+          <sv:property sv:name="myhippoproject:author" sv:type="String">
+            <sv:value>me</sv:value>
+          </sv:property>
+          <sv:property sv:name="myhippoproject:date" sv:type="Date">
+            <sv:value>2016-12-01T16:57:00.000+01:00</sv:value>
+          </sv:property>
+          <sv:property sv:name="myhippoproject:introduction" sv:type="String">
+            <sv:value>Not to be found</sv:value>
+          </sv:property>
+          <sv:property sv:name="myhippoproject:location" sv:type="String">
+            <sv:value>here</sv:value>
+          </sv:property>
+          <sv:property sv:name="myhippoproject:source" sv:type="String">
+            <sv:value>my thumb</sv:value>
+          </sv:property>
+          <sv:property sv:name="myhippoproject:title" sv:type="String">
+            <sv:value>Not to be found</sv:value>
+          </sv:property>
+          <sv:node sv:name="myhippoproject:content">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippostd:html</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:content" sv:type="String">
+              <sv:value>&lt;p&gt;Not to be found&lt;/p&gt;</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
     </sv:node>
   </sv:node>
 </sv:node>

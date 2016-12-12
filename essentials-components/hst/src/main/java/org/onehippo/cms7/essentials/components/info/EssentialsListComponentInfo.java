@@ -29,7 +29,7 @@ public interface EssentialsListComponentInfo extends EssentialsPageable, Essenti
     )
     String getPath();
 
-    @Parameter(name = "includeSubtypes", required = false)
+    @Parameter(name = "includeSubtypes", defaultValue = "true", required = false)
     Boolean getIncludeSubtypes();
 
     @Parameter(name = "documentTypes", required = false)

@@ -228,7 +228,9 @@ public class EssentialsListComponent extends CommonComponent {
         if (log.isDebugEnabled()) {
             log.debug("Searching for document types:  {}, and including subtypes: {}", documentTypes, paramInfo.getIncludeSubtypes());
         }
-        return HstQueryBuilder.create(scope).ofTypes(types).build();
+
+        HstQueryBuilder builder = HstQueryBuilder.create(scope);
+        return paramInfo.getIncludeSubtypes() ? builder.ofTypes(types).build() : builder.ofPrimaryTypes(types).build();
     }
 
     @Deprecated
