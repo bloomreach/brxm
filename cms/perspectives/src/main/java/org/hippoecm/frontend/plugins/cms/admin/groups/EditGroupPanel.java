@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.cms.admin.groups;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
@@ -68,7 +67,8 @@ public class EditGroupPanel extends AdminBreadCrumbPanel {
                     final IBreadCrumbParticipant parentBreadCrumb = activateParent();
                     parentBreadCrumb.getComponent().info(infoMsg);
                 } catch (RepositoryException e) {
-                    Session.get().warn(getString("group-save-failed", model));
+                    target.add(EditGroupPanel.this);
+                    warn(getString("group-save-failed", model));
                     log.error("Unable to save group '" + groupname + "' : ", e);
                 }
             }

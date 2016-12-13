@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
@@ -98,12 +97,12 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
                     user.save();
                     log.info("User '" + username + "' saved by "
                             + UserSession.get().getJcrSession().getUserID());
-                    Session.get().info(getString("user-saved", model));
-                    // one up
-                    List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
-                    breadCrumbModel.setActive(l.get(l.size() -2));
+                    final String infoMsg = getString("user-saved", model);
+                    final IBreadCrumbParticipant parentBreadcrumb = activateParent();
+                    parentBreadcrumb.getComponent().info(infoMsg);
                 } catch (RepositoryException e) {
-                    Session.get().warn(getString("user-save-failed", model));
+                    target.add(EditUserPanel.this);
+                    warn(getString("user-save-failed", model));
                     log.error("Unable to save user '" + username + "' : ", e);
                 }
             }

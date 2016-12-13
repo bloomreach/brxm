@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
@@ -85,12 +84,12 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
                     user.savePassword(password);
                     log.info("User '" + username + "' password set by "
                             + UserSession.get().getJcrSession().getUserID());
-                    Session.get().info(getString("user-password-set", model));
-                    // one up
-                    List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();
-                    breadCrumbModel.setActive(l.get(l.size() -2));
+                    final String infoMsg = getString("user-password-set", model);
+                    final IBreadCrumbParticipant parentBreadcrumb = activateParent();
+                    parentBreadcrumb.getComponent().info(infoMsg);
                 } catch (RepositoryException e) {
-                    Session.get().warn(getString("user-save-failed", model));
+                    target.add(SetPasswordPanel.this);
+                    warn(getString("user-save-failed", model));
                     log.error("Unable to set password for user '" + username + "' : ", e);
                 }
             }

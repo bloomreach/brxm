@@ -15,12 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
-import java.util.List;
-
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
@@ -240,11 +237,11 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                                         + " from role " + authRole.getRole());
                 eventBus.post(event);
             }
-            Session.get().info(getString("group-role-domain-combination-removed", Model.of(groupToChange)));
-            List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
-            getBreadCrumbModel().setActive(l.get(l.size() - 1));
+            final String infoMsg = getString("group-role-domain-combination-removed", Model.of(groupToChange));
+            final IBreadCrumbParticipant parentBreadcrumb = activateParent();
+            parentBreadcrumb.getComponent().info(infoMsg);
         } catch (RepositoryException e) {
-            Session.get().error(getString("group-delete-role-domain-combination-failed", Model.of(groupToChange)));
+            error(getString("group-delete-role-domain-combination-failed", Model.of(groupToChange)));
             log.error("Failed to remove role domain combination", e);
         }
     }
@@ -330,11 +327,11 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                         .message("removed user " + userName + " from group " + group.getGroupname());
                 eventBus.post(event);
             }
-            Session.get().info(getString("group-member-removed", null));
-            List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
-            getBreadCrumbModel().setActive(l.get(l.size() - 1));
+            final String infoMsg = getString("group-member-removed", null);
+            final IBreadCrumbParticipant parentBreadcrumb = activateParent();
+            parentBreadcrumb.getComponent().info(infoMsg);
         } catch (RepositoryException e) {
-            Session.get().error(getString("group-member-remove-failed", null));
+            error(getString("group-member-remove-failed", null));
             log.error("Failed to remove memberships", e);
         }
     }
