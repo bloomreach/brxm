@@ -15,13 +15,6 @@
  */
 package org.hippoecm.hst.site;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
 import org.slf4j.Logger;
@@ -72,45 +65,20 @@ public class HstServices {
     public static HstRequestProcessor getRequestProcessor() {
         return componentManager.getComponent(HstRequestProcessor.class.getName());
     }
-    
-    public static String getImplementationVersion(){
-        if(HST_VERSION != null) {
+
+    public static String getImplementationVersion() {
+        if (HST_VERSION != null) {
             return HST_VERSION;
         }
-        InputStream istream = null;
-        try {
-            StringBuffer sb = new StringBuffer();
-            String[] classElements = HstServices.class.getName().split("\\.");
-            for (int i=0; i<classElements.length-1; i++) {
-                sb.append("../");
-            }
-            sb.append("META-INF/MANIFEST.MF");
-            URL classResource = HstServices.class.getResource(classElements[classElements.length-1]+".class");
-            URL manifestURL = new URL(classResource, new String(sb));
-            istream = manifestURL.openStream();
-            if (istream != null) {
-                Manifest manifest = new Manifest(istream);
-                Attributes atts = manifest.getMainAttributes();
-                if (atts.getValue("Implementation-Version") != null) {
-                    HST_VERSION = atts.getValue("Implementation-Version");
-                    return HST_VERSION;
-                }
-            }
-        } catch (MalformedURLException ex) {
-           log.warn("Cannot get HST Version", ex);
+
+        final String implVersion = HstServices.class.getPackage().getImplementationVersion();
+
+        if (implVersion != null) {
+            HST_VERSION = implVersion;
+        } else {
+            HST_VERSION = "Undefined";
         }
-        catch (IOException ex) {
-            log.warn("Cannot get HST Version: {}", ex.getMessage());
-        } finally {
-            if(istream != null) {
-                try {
-                    istream.close();
-                } catch (IOException e) {
-                   //
-                }
-            }
-        }
-        HST_VERSION = "Undefined";
+
         return HST_VERSION;
     }
 
