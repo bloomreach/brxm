@@ -81,21 +81,6 @@
       <sv:value>902.3</sv:value>
     </sv:property>
   </sv:node>
-  <!-- delta on frontend console plugin due to CMS-8910 -->
-  <sv:node sv:name="frontend-console-header-delta">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>console-header-delta.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>903.0</sv:value>
-    </sv:property>
-  </sv:node>
 
   <!-- the menu plugin does not render the advanced menu anymore -->
   <sv:node sv:name="frontend-console-console-menu-item">
@@ -131,6 +116,22 @@
     </sv:property>
     <sv:property sv:name="hippo:contentpropdelete" sv:type="String">
       <sv:value>/hippo:configuration/hippo:frontend/console/console/top/extension.logout</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <!-- delta on frontend console plugin due to CMS-8910 -->
+  <sv:node sv:name="frontend-console-header-delta">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>console-header-delta.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>903.0</sv:value>
     </sv:property>
   </sv:node>
 

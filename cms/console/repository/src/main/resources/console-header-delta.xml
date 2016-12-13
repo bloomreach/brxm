@@ -111,29 +111,6 @@
       </sv:property>
     </sv:node>
     <!-- deltas for existing plugin configs -->
-    <sv:node sv:name="logout" esv:merge="combine">
-      <sv:property sv:name="extension.cnd.menu" sv:type="String">
-        <sv:value>service.menu.cnd</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.system.menu" sv:type="String">
-        <sv:value>service.menu.system</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.xml.menu" sv:type="String">
-        <sv:value>service.menu.xml</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.node.menu" sv:type="String">
-        <sv:value>service.menu.node</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.extensions" sv:type="String" sv:multiple="true">
-        <sv:value>extension.system.menu</sv:value>
-        <sv:value>extension.node.menu</sv:value>
-        <sv:value>extension.cnd.menu</sv:value>
-        <sv:value>extension.xml.menu</sv:value>
-      </sv:property>
-      <sv:property sv:name="item" sv:type="String">
-        <sv:value>service.menu.item</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="root" esv:merge="combine">
       <sv:node sv:name="yui.config" esv:merge="combine">
         <sv:property sv:name="header.height" sv:type="String" esv:merge="override">

@@ -27,7 +27,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class LogoutPlugin extends RenderPlugin<Node> {
 
-    public LogoutPlugin(IPluginContext context, IPluginConfig config) {
+    public LogoutPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         final String username = getSession().getJcrSession().getUserID();
@@ -35,7 +35,6 @@ public class LogoutPlugin extends RenderPlugin<Node> {
 
         final ILogoutService logoutService = getPluginContext().getService(ILogoutService.SERVICE_ID, ILogoutService.class);
         final IDialogService dialogService = getDialogService();
-
         add(new LogoutLink("logout-link", logoutService, dialogService));
     }
 }
