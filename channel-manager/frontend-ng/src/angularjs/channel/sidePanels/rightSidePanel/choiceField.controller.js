@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-class PrimitiveFieldCtrl {
+class ChoiceFieldCtrl {
 
   getFieldName(index) {
-    const fieldName = this.name ? `${this.name}/${this.fieldType.id}` : this.fieldType.id;
+    const choiceId = this.fieldValues[index].chosenId;
+    const fieldName = `${this.name}/${choiceId}`;
     return index > 0 ? `${fieldName}[${index}]` : fieldName;
   }
 
-  getFieldError() {
-    let combinedError = null;
-    this.fieldValues.forEach((value, index) => {
-      const fieldName = this.getFieldName(index);
-      const field = this.form[fieldName];
-      if (field) {
-        combinedError = Object.assign(combinedError || {}, field.$error);
-      }
-    });
-    return combinedError;
+  focusChoice() {
+    this.hasFocus = true;
+    this.onFieldFocus();
+  }
+
+  blurChoice() {
+    delete this.hasFocus;
+    this.onFieldBlur();
   }
 }
 
-export default PrimitiveFieldCtrl;
+export default ChoiceFieldCtrl;

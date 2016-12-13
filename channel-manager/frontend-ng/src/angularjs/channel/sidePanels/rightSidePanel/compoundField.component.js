@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-class PrimitiveFieldCtrl {
+import template from './compoundField.html';
+import CompoundFieldCtrl from './compoundField.controller';
 
-  getFieldName(index) {
-    const fieldName = this.name ? `${this.name}/${this.fieldType.id}` : this.fieldType.id;
-    return index > 0 ? `${fieldName}[${index}]` : fieldName;
-  }
+const compoundFieldComponent = {
+  bindings: {
+    name: '@',
+    fieldType: '=',
+    fieldValues: '=',
+    onFieldFocus: '&',
+    onFieldBlur: '&',
+  },
+  controller: CompoundFieldCtrl,
+  template,
+  require: {
+    form: '^^form',
+  },
+};
 
-  getFieldError() {
-    let combinedError = null;
-    this.fieldValues.forEach((value, index) => {
-      const fieldName = this.getFieldName(index);
-      const field = this.form[fieldName];
-      if (field) {
-        combinedError = Object.assign(combinedError || {}, field.$error);
-      }
-    });
-    return combinedError;
-  }
-}
-
-export default PrimitiveFieldCtrl;
+export default compoundFieldComponent;

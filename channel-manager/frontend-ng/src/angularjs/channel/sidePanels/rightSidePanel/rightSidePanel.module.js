@@ -15,16 +15,18 @@
  */
 import rightSidePanelComponent from './rightSidePanel.component';
 import documentFieldsComponent from './documentFields.component';
-import documentFieldTitleComponent from './documentFieldTitle.component';
 import primitiveFieldComponent from './primitiveField.component';
+import choiceFieldComponent from './choiceField.component';
+import compoundFieldComponent from './compoundField.component';
 import collapse from './collapse.directive';
 
 const rightSidePanelModule = angular
   .module('hippo-cm.channel.rightSidePanelModule', [])
   .component('rightSidePanel', rightSidePanelComponent)
   .component('documentFields', documentFieldsComponent)
-  .component('documentFieldTitle', documentFieldTitleComponent)
   .component('primitiveField', primitiveFieldComponent)
+  .component('choiceField', choiceFieldComponent)
+  .component('compoundField', compoundFieldComponent)
   .directive('collapse', collapse);
 
 export default rightSidePanelModule.name;

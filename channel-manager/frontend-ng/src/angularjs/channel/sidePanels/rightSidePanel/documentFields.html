@@ -17,71 +17,39 @@
      ng-repeat="fieldType in $ctrl.fieldTypes"
      ng-switch="fieldType.type">
 
-  <!-- Compound field -->
-  <div class="field field-indented field-compound qa-compound"
-       ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
-       ng-switch-when="COMPOUND"
-       ng-if="$ctrl.hasValue(fieldType)"
-       ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
-       collapse>
-    <document-field-title class="collapse-toggle"
-                          ng-click="collapse.toggle()"
-                          collapsed="collapse.isCollapsed"
-                          text="fieldType.displayName"
-                          field-type="fieldType.type"
-                          hint="fieldType.hint">
-    </document-field-title>
-
-    <document-fields class="collapse-element"
-                     name="{{ ::$ctrl.getFieldName(fieldType) }}"
-                     field-types="::fieldType.fields"
-                     field-values="fieldValue.fields"
-                     on-field-focus="$ctrl.focusCompound(fieldValue)"
-                     on-field-blur="$ctrl.blurCompound()">
-    </document-fields>
+  <div class="field-complex"
+       ng-class="{'has-focused-field': $ctrl.hasFocusedFieldType(fieldType)}">
+    <compound-field ng-switch-when="COMPOUND"
+                    ng-if="$ctrl.hasValue(fieldType)"
+                    ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
+                    name="{{ ::$ctrl.getFieldName(fieldType, $index) }}"
+                    field-type="::fieldType"
+                    field-values="fieldValue.fields"
+                    on-field-focus="$ctrl.focusFieldType(fieldType)"
+                    on-field-blur="$ctrl.blurFieldType()">
+    </compound-field>
   </div>
 
-  <!-- Choice field -->
-  <div class="field field-indented field-choice qa-choice"
-       ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
-       ng-switch-when="CHOICE"
-       ng-if="$ctrl.hasValue(fieldType)"
-       ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]">
-    <h5>
-      {{ ::fieldType.displayName }}
-    </h5>
-
-    <!-- Currently, each choice is a COMPOUND with a single value -->
-    <div class="field field-indented field-compound qa-compound"
-         ng-class="{'has-focused-field': $ctrl.hasFocusedField(fieldValue)}"
-         collapse>
-      <document-field-title class="collapse-toggle"
-                            ng-click="collapse.toggle()"
-                            collapsed="collapse.isCollapsed"
-                            text="fieldType.choices[fieldValue.chosenId].displayName"
-                            field-type="fieldType.type"
-                            hint="fieldType.hint">
-      </document-field-title>
-
-
-      <document-fields class="collapse-element"
-                       name="{{ ::$ctrl.getFieldName(fieldType) }}"
-                       field-types="::fieldType.choices[fieldValue.chosenId].fields"
-                       field-values="fieldValue.chosenValue.fields"
-                       on-field-focus="$ctrl.focusCompound(fieldValue)"
-                       on-field-blur="$ctrl.blurCompound()">
-      </document-fields>
-    </div>
+  <div class="field-complex"
+       ng-class="{'has-focused-field': $ctrl.hasFocusedFieldType(fieldType)}">
+    <choice-field ng-switch-when="CHOICE"
+                  ng-if="$ctrl.hasValue(fieldType)"
+                  name="{{ ::$ctrl.getFieldName(fieldType) }}"
+                  field-type="::fieldType"
+                  field-values="$ctrl.fieldValues[fieldType.id]"
+                  on-field-focus="$ctrl.focusFieldType(fieldType)"
+                  on-field-blur="$ctrl.blurFieldType()">
+    </choice-field>
   </div>
 
-  <!-- Other fields -->
   <primitive-field ng-switch-default
-                   class="field"
+                   ng-if="::$ctrl.hasValue(fieldType)"
                    ng-class="{
                      'has-focused-field': $ctrl.hasFocusedFieldType(fieldType),
                      'has-invalid-field': !$ctrl.isValid(fieldType)
                    }"
-                   name="{{ ::$ctrl.getFieldName(fieldType) }}"
+                   class="field"
+                   name="{{ ::$ctrl.name }}"
                    field-type="::fieldType"
                    field-values="$ctrl.fieldValues[fieldType.id]"
                    on-field-focus="$ctrl.focusFieldType(fieldType)"

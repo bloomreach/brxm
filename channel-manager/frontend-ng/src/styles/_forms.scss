@@ -14,15 +14,18 @@
 
 // Support 'dense' layout of forms in which fields take up less space.
 // This concept is part of the Material spec but not implemented in Angular Material.
-.form-dense-layout md-input-container {
-  margin-bottom: 0;
+.form-dense-layout {
+  padding: 8px 0;
+  md-input-container {
+    margin-bottom: 0;
 
-  &:not(:first-child) {
-    margin-top: 0;
-  }
-  &:not(:last-child) .md-errors-spacer {
-    height: 0;
-    min-height: 0;
+    &:not(:first-child) {
+      margin-top: 0;
+    }
+    &:not(:last-child) .md-errors-spacer {
+      height: 0;
+      min-height: 0;
+    }
   }
   .field {
     display: block;
@@ -31,7 +34,7 @@
 
 .top-level {
   & > .field-wrapper {
-    & > .field.field-indented {
+    & > .field-complex {
       border-left: 3px solid $grey-500;
       // break the border to indicate start of new field
       margin-bottom: 8px;
@@ -52,12 +55,6 @@
   }
   md-input-container {
     margin-left: 18px;
-  }
-}
-
-.field-choice {
-  & > h5 {
-    padding-bottom: 8px; // nice spacing between choice field name and chosen compound
   }
 }
 
@@ -92,10 +89,12 @@
 }
 
 .field-wrapper h5 {
-  margin-bottom: 0;
+  margin-bottom: 4px;
 }
 
 primitive-field,
+compound-field,
+choice-field,
 document-field-title {
   label {
     // md-tooltip searches for the first parent with pointer-events
@@ -106,7 +105,7 @@ document-field-title {
     .required {
       margin-left: 4px;
     }
-    &:after {
+    &::after {
       content: '' !important; // hide material required mark
     }
   }

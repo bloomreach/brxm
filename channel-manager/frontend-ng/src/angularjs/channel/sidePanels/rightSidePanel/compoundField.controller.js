@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import template from './documentFieldTitle.html';
+class ChoiceFieldCtrl {
 
-const documentFieldTitleComponent = {
-  bindings: {
-    collapsed: '<',
-    fieldType: '<',
-    hint: '<',
-    required: '<',
-    text: '<',
-  },
-  template,
-};
+  focusCompound() {
+    this.hasFocus = true;
+    this.onFieldFocus();
+  }
 
-export default documentFieldTitleComponent;
+  blurCompound() {
+    delete this.hasFocus;
+    this.onFieldBlur();
+  }
+}
+
+export default ChoiceFieldCtrl;

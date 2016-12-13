@@ -26,32 +26,6 @@ class DocumentFieldsCtrl {
     return index > 0 ? `${fieldName}[${index}]` : fieldName;
   }
 
-  getFieldError(fieldType) {
-    const fieldValues = this.fieldValues[fieldType.id];
-    if (fieldValues) {
-      return fieldValues.length === 1 ? this._getSingleFieldError(fieldType) : this._getMultipleFieldError(fieldType, fieldValues);
-    }
-    return null;
-  }
-
-  _getSingleFieldError(fieldType) {
-    const fieldName = this.getFieldName(fieldType);
-    const field = this.form[fieldName];
-    return field ? field.$error : null;
-  }
-
-  _getMultipleFieldError(fieldType, fieldValues) {
-    let combinedError = null;
-    fieldValues.forEach((value, index) => {
-      const fieldName = this.getFieldName(fieldType, index);
-      const field = this.form[fieldName];
-      if (field) {
-        combinedError = Object.assign(combinedError || {}, field.$error);
-      }
-    });
-    return combinedError;
-  }
-
   isValid(fieldType) {
     const fieldValues = this.fieldValues[fieldType.id];
     if (fieldValues) {
@@ -69,20 +43,6 @@ class DocumentFieldsCtrl {
   hasValue(field) {
     const values = this.fieldValues[field.id];
     return angular.isArray(values) && values.length > 0;
-  }
-
-  focusCompound(fieldValue) {
-    this.compoundWithFocusedField = fieldValue;
-    this.onFieldFocus();
-  }
-
-  blurCompound() {
-    this.compoundWithFocusedField = null;
-    this.onFieldBlur();
-  }
-
-  hasFocusedField(fieldValue) {
-    return this.compoundWithFocusedField === fieldValue;
   }
 
   focusFieldType(fieldType) {
