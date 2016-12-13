@@ -49,9 +49,15 @@ public class ErrorInfo {
         return params;
     }
 
+    public void setParams(final Map<String, Serializable> params) {
+        this.params = params;
+    }
+
     public enum Reason {
         NO_HOLDER,
         OTHER_HOLDER,
+        REQUEST_PENDING,
+        UNKNOWN_VALIDATOR,
         ALREADY_DELETED,
         INVALID_DATA,
         CARDINALITY_CHANGE,  // the cardinality/multiplicity of a field value changed, which we don't support (yet).

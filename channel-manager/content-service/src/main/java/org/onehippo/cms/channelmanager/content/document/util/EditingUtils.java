@@ -18,6 +18,7 @@ package org.onehippo.cms.channelmanager.content.document.util;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,16 +31,14 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
-import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
-import org.onehippo.cms.channelmanager.content.document.model.UserInfo;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * EditingUtils provides utility methods for dealing with the "editing state" of a document.
- * @see EditingInfo
+ * EditingUtils provides utility methods for dealing with the workflow of a document.
  */
 public class EditingUtils {
 
@@ -53,49 +52,13 @@ public class EditingUtils {
     private EditingUtils() { }
 
     /**
-     * Create and populate a {@link EditingInfo}, given a document's handle node and workflow.
+     * Check if a workflow indicates that editing of a document can be started.
      *
-     * @param workflow Workflow of a document, providing access to its 'hints'
-     * @param handle   JCR node representing the handle of a document
-     * @return         New and populated instance of EditingInfo
+     * @param workflow workflow for the current user on a specific document
+     * @return true/false.
      */
-    public static EditingInfo determineEditingInfo(final Workflow workflow, final Node handle) {
-        final EditingInfo info = new EditingInfo();
-
-        try {
-            final Session session = handle.getSession();
-            final Map<String, Serializable> hints = workflow.hints();
-
-            if (isActionAvailable(hints, HINT_OBTAIN_EDITABLE_INSTANCE)) {
-                info.setState(EditingInfo.State.AVAILABLE);
-            } else if (hints.containsKey(HINT_IN_USE_BY)) {
-                info.setState(EditingInfo.State.UNAVAILABLE_HELD_BY_OTHER_USER);
-                info.setHolder(makeUserInfo((String)hints.get(HINT_IN_USE_BY), session));
-            } else if (hints.containsKey(HINT_REQUESTS)) {
-                info.setState(EditingInfo.State.UNAVAILABLE_REQUEST_PENDING);
-            }
-        } catch (RepositoryException | WorkflowException | RemoteException e) {
-            log.warn("Failed to determine editing info for node '{}'", JcrUtils.getNodePathQuietly(handle), e);
-        }
-        return info;
-    }
-
-    /**
-     * Retrieve the current holder of a document.
-     *
-     * @param workflow workflow instance of a document.
-     * @return         userId of the holder or nothing, wrapped in an Optional
-     */
-    public static Optional<String> determineHolderId(final Workflow workflow) {
-        try {
-            final Map<String, Serializable> hints = workflow.hints();
-            if (hints.containsKey(HINT_IN_USE_BY)) {
-                return Optional.of((String) hints.get(HINT_IN_USE_BY));
-            }
-        } catch (RepositoryException | WorkflowException | RemoteException e) {
-            log.warn("Failed to retrieve hints for workflow '{}'", workflow, e);
-        }
-        return Optional.empty();
+    public static boolean canCreateDraft(final EditableWorkflow workflow) {
+        return isActionAvailable(workflow, HINT_OBTAIN_EDITABLE_INSTANCE);
     }
 
     /**
@@ -104,7 +67,7 @@ public class EditingUtils {
      * @param workflow editable workflow of a document
      * @return         true if document can be updated, false otherwise
      */
-    public static boolean canUpdateDocument(final EditableWorkflow workflow) {
+    public static boolean canUpdateDraft(final EditableWorkflow workflow) {
         return isActionAvailable(workflow, HINT_COMMIT_EDITABLE_INSTANCE);
     }
 
@@ -121,7 +84,7 @@ public class EditingUtils {
     private static boolean isActionAvailable(final EditableWorkflow workflow, final String action) {
         try {
             Map<String, Serializable> hints = workflow.hints();
-            return isActionAvailable(hints, action);
+            return hints.containsKey(action) && ((Boolean)hints.get(action));
 
         } catch (WorkflowException | RemoteException | RepositoryException e) {
             log.warn("Failed reading hints from workflow", e);
@@ -129,23 +92,45 @@ public class EditingUtils {
         return false;
     }
 
-    private static boolean isActionAvailable(final Map<String, Serializable> hints, final String action) {
-        return hints.containsKey(action) && ((Boolean)hints.get(action));
+    /**
+     * Determine the reason why editing failed for the present workflow.
+     *
+     * @param workflow workflow for the current user on a specific document
+     * @param session  current user's JCR session
+     * @return         Specific reason or nothing (unknown), wrapped in an Optional
+     */
+    public static Optional<ErrorInfo> determineEditingFailure(final Workflow workflow, final Session session) {
+        try {
+            final Map<String, Serializable> hints = workflow.hints();
+            if (hints.containsKey(HINT_IN_USE_BY)) {
+                final Map<String, Serializable> params = new HashMap<>();
+                final String userId = (String) hints.get(HINT_IN_USE_BY);
+                params.put("userId", userId);
+                getUserName(userId, session).ifPresent(userName -> params.put("userName", userName));
+
+                return Optional.of(new ErrorInfo(ErrorInfo.Reason.OTHER_HOLDER, params));
+            }
+
+            if (hints.containsKey(HINT_REQUESTS)) {
+                return Optional.of(new ErrorInfo(ErrorInfo.Reason.REQUEST_PENDING));
+            }
+        } catch (RepositoryException | WorkflowException | RemoteException e) {
+            log.warn("Failed to retrieve hints for workflow '{}'", workflow, e);
+        }
+        return Optional.empty();
     }
 
     /**
-     * Create and populate a {@link UserInfo}, given a user's ID
+     * Look up the real user name pertaining to a user ID
      *
-     * @param holderId ID of the desired user
-     * @param session  JCR session to access information about users
-     * @return         New and populated instance of UserInfo
+     * @param userId  ID of some user
+     * @param session current user's JCR session
+     * @return        name of the user or nithing, wrapped in an Optional
      */
-    public static UserInfo makeUserInfo(final String holderId, final Session session) {
-        final UserInfo holder = new UserInfo();
-        holder.setId(holderId);
+    public static Optional<String> getUserName(final String userId, final Session session) {
         try {
             final HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
-            final User user =  workspace.getSecurityService().getUser(holderId);
+            final User user =  workspace.getSecurityService().getUser(userId);
             final String firstName = user.getFirstName();
             final String lastName = user.getLastName();
 
@@ -157,28 +142,46 @@ public class EditingUtils {
             if (lastName != null) {
                 sb.append(lastName.trim());
             }
-            holder.setDisplayName(sb.toString().trim());
+            return Optional.of(sb.toString().trim());
         } catch (RepositoryException e) {
-            log.debug("Unable to determine displayName of holder", e);
+            log.debug("Unable to determine displayName of user '{}'.", userId, e);
         }
-        return holder;
+        return Optional.empty();
     }
 
     /**
      * Create a draft variant node for a document represented by handle node.
      *
      * @param workflow Editable workflow for the desired document
-     * @param handle   JCR handle node for the desired document
+     * @param session  JCR session for obtaining the draft node
      * @return         JCR draft node or nothing, wrapped in an Optional
      */
-    public static Optional<Node> createDraft(final EditableWorkflow workflow, final Node handle) {
+    public static Optional<Node> createDraft(final EditableWorkflow workflow, final Session session) {
         try {
             final Document document = workflow.obtainEditableInstance();
-            final Session session = handle.getSession();
             return Optional.of(document.getNode(session));
         } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to retrieve draft node", e);
+            log.warn("Failed to obtain draft for user '{}'.", session.getUserID(), e);
         }
         return Optional.empty();
+    }
+
+    /**
+     * Copy the (validated) draft to the preview, and re-obtain the editable instance.
+     *
+     * @param workflow Editable workflow for the desired document
+     * @param session  JCR session for re-obtaining the draft node
+     * @return         JCR draft node or nothing, wrapped in an Optional
+     */
+    public static Optional<Node> copyToPreviewAndKeepEditing(final EditableWorkflow workflow, final Session session)
+            throws InternalServerErrorException {
+        try {
+            workflow.commitEditableInstance();
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.warn("Failed to commit changes for user '{}'.", session.getUserID(), e);
+            return Optional.empty();
+        }
+
+        return createDraft(workflow, session);
     }
 }
