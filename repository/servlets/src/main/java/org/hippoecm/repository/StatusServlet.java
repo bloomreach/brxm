@@ -18,23 +18,23 @@ package org.hippoecm.repository;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import javax.jcr.LoginException;
+import javax.jcr.Repository;
+import javax.jcr.Session;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import javax.jcr.LoginException;
-import javax.jcr.Repository;
-import javax.jcr.Session;
-
+import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.util.RepoUtils;
 
 public class StatusServlet extends HttpServlet {
@@ -77,16 +77,21 @@ public class StatusServlet extends HttpServlet {
         writer.println("  <h2>Hippo Repository Status</h2>");
 
         writer.println("  <h3>Version</h3>");
+
+        InputStream istream = null;
+
         try {
-            InputStream istream = null;
             istream = getServletContext().getResourceAsStream("/META-INF/MANIFEST.MF");
             String manifestSource = "war/ear manifest";
+
             if (istream == null) {
                 File manifestFile = new File(getServletContext().getRealPath("/"), "META-INF/MANIFEST.MF");
-                if(manifestFile.exists())
+                if (manifestFile.exists()) {
                     istream = new FileInputStream(manifestFile);
+                }
                 manifestSource = "servlet manifest";
             }
+
             if (istream == null) {
                 try {
                     istream = RepoUtils.getManifestURL(getClass()).openStream();
@@ -95,31 +100,56 @@ public class StatusServlet extends HttpServlet {
                     manifestSource = "none";
                 }
             }
-            writer.println("    Manifest" + (manifestSource != null ? " from "+manifestSource : "") + ":<br/>");
+
+            Manifest manifest = null;
+
             if (istream != null) {
-                Manifest manifest = new Manifest(istream);
+                manifest = new Manifest(istream);
+            }
+
+            String implVersion = null;
+            String implBuild = null;
+
+            if (manifest != null) {
+                writer.println("    Manifest" + (manifestSource != null ? " from " + manifestSource : "") + ":<br/>");
                 Attributes atts = manifest.getMainAttributes();
-                writer.println("    <table style=\"params\" summary=\"request parameters\">");
-                writer.println("    <tr><td>Version</td><td>: " + atts.getValue("Implementation-Version") + "</td></tr>");
-                writer.println("    <tr><td>Build</td><td>: " + atts.getValue("Implementation-Build") + "</td></tr>");
-                writer.println("    </table>");
-                if(manifestSource == null) {
-                    writer.println("<!--");
-                }
+                implVersion = atts.getValue("Implementation-Version");
+                implBuild = atts.getValue("Implementation-Build");
+            }
+
+            if (implVersion == null) {
+                // if the Implementation-Version not found due to a specific classloader in a specific container env,
+                // then fallback to the Java Standard API.
+                implVersion = getClass().getPackage().getImplementationVersion();
+            }
+
+            writer.println("    <table style=\"params\" summary=\"request parameters\">");
+            writer.println("    <tr><td>Version</td><td>: " + implVersion + "</td></tr>");
+            writer.println("    <tr><td>Build</td><td>: " + implBuild + "</td></tr>");
+            writer.println("    </table>");
+
+            if (manifestSource == null) {
+                writer.println("<!--");
+            }
+
+            if (manifest != null) {
                 writer.print("<pre>");
                 ByteArrayOutputStream tmpStream = new ByteArrayOutputStream();
                 manifest.write(tmpStream);
                 writer.print(tmpStream.toString());
                 writer.println("</pre>");
-                if(manifestSource == null) {
-                    writer.println("-->");
-                }
+            }
+
+            if (manifestSource == null) {
+                writer.println("-->");
             }
         } catch(Throwable ex) {
             writer.print("Error occured:<br/><pre>");
             writer.println(ex.getClass().getName()+": "+ex.getMessage());
             ex.printStackTrace(writer);
             writer.println("</pre>");
+        } finally {
+            IOUtils.closeQuietly(istream);
         }
 
         writer.println("  <h3>Repository descriptors</h3>");

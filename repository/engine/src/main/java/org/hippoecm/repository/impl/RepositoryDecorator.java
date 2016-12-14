@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository.impl;
 
-import java.io.IOException;
-import java.util.jar.Manifest;
-
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -27,7 +24,6 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.decorating.DecoratorFactory;
-import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.repository.RepositoryService;
 import org.onehippo.repository.security.JvmCredentials;
 
@@ -90,16 +86,7 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
         } else if(REP_VENDOR_URL_DESC.equals(key)) {
             return "http://www.onehippo.org/";
         } else if(REP_VERSION_DESC.equals(key)) {
-            try {
-                Manifest manifest = RepoUtils.getManifest(getClass());
-                if (manifest != null) {
-                    return manifest.getMainAttributes().getValue("Implementation-Version");
-                } else {
-                    return null;
-                }
-            } catch(IOException ex) {
-                return null;
-            }
+            return getClass().getPackage().getImplementationVersion();
         } else {
             return super.getDescriptor(key);
         }
