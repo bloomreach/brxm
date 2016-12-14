@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+.right-side-panel form {
+  padding: 8px 0;
+}
+
 // Support 'dense' layout of forms in which fields take up less space.
 // This concept is part of the Material spec but not implemented in Angular Material.
 .form-dense-layout {
-  padding: 8px 0;
   md-input-container {
     margin-bottom: 0;
 
@@ -27,6 +30,7 @@
       min-height: 0;
     }
   }
+
   .field {
     display: block;
   }
