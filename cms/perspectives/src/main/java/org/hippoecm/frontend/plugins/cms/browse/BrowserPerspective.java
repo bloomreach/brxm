@@ -152,7 +152,7 @@ public class BrowserPerspective extends Perspective {
                 listing.collapse();
             }
             if (state.isFocusTabs() && tabs != null) {
-                tabs.show();
+                tabs.focusRecentTab();
             }
             if (state.isBlurTabs() && tabs != null) {
                 tabs.hide();
@@ -180,13 +180,14 @@ public class BrowserPerspective extends Perspective {
     @Override
     protected void onActivated() {
         super.onActivated();
-        tabs.show();
+        tabs.focusRecentTabUnlessHidden();
     }
 
     @Override
     protected void onDeactivated() {
         super.onDeactivated();
-        tabs.hide();
+        tabs.blurTabs();
+        tabs.avoidRefocus();
     }
 
     private boolean hasOpenTabs() {
