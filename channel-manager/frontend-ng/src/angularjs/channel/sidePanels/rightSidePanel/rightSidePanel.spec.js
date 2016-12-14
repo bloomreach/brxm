@@ -158,6 +158,14 @@ describe('ChannelRightSidePanel', () => {
     $rootScope.$digest();
     expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect($ctrl.doc).toBeUndefined();
+    expect($ctrl.documentId).toBeUndefined();
+    expect($ctrl.docType).toBeUndefined();
+    expect($ctrl.editing).toBeUndefined();
+    expect($ctrl.feedback).toBeUndefined();
+    expect($ctrl.disableContentButtons).toBeUndefined();
+    expect($ctrl.title).toBe($ctrl.defaultTitle);
+    expect($ctrl.form.$setPristine).toHaveBeenCalled();
   });
 
   it('asks for confirmation when cancelling changes', () => {
@@ -213,6 +221,16 @@ describe('ChannelRightSidePanel', () => {
 
     $timeout.flush();
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
+  });
+
+  it('does nothing when the document has already been opened', () => {
+    $ctrl.documentId = 'test';
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+    $rootScope.$digest();
+
+    expect(ContentService.createDraft).not.toHaveBeenCalled();
   });
 
   it('knows that a document is loading', () => {

@@ -74,15 +74,18 @@ class RightSidePanelCtrl {
   }
 
   openDocument(documentId) {
-    this._savePendingChanges(() => {
-      this._deleteDraft();
-      this._resetState();
-      this._loadDocument(documentId);
-    });
+    if (documentId !== this.documentId) {
+      this._savePendingChanges(() => {
+        this._deleteDraft();
+        this._resetState();
+        this._loadDocument(documentId);
+      });
+    }
   }
 
   _resetState() {
     delete this.doc;
+    delete this.documentId;
     delete this.docType;
     delete this.editing;
     delete this.feedback;
