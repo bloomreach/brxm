@@ -16,11 +16,9 @@
 
 package org.onehippo.cms.channelmanager.content.document;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -35,8 +33,6 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
-import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
-import org.onehippo.cms.channelmanager.content.document.model.UserInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
@@ -67,24 +63,22 @@ class DocumentsServiceImpl implements DocumentsService {
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
         final EditableWorkflow workflow = getWorkflow(handle);
+
+        if (!EditingUtils.canCreateDraft(workflow)) {
+            throw new ForbiddenException(
+                    withDocumentName(EditingUtils.determineEditingFailure(workflow, session).orElse(null), handle)
+            );
+        }
+
         final DocumentType docType = getDocumentType(handle, locale);
-        final Document document = assembleDocument(uuid, handle, workflow, docType);
-        final EditingInfo editingInfo = document.getInfo().getEditingInfo();
-        if (editingInfo.getState() != EditingInfo.State.AVAILABLE) {
-            throw new ForbiddenException(document);
-        }
-
         if (docType.isReadOnlyDueToUnknownValidator()) {
-            editingInfo.setState(EditingInfo.State.UNAVAILABLE_CUSTOM_VALIDATION_PRESENT);
-            throw new ForbiddenException(document);
+            throw new ForbiddenException(
+                    withDocumentName(new ErrorInfo(ErrorInfo.Reason.UNKNOWN_VALIDATOR), handle)
+            );
         }
 
-        final Node draft = EditingUtils.createDraft(workflow, handle).orElseThrow(() -> {
-            // Apparently, holdership of a document has only just been acquired by another user. Check hints once more?
-            editingInfo.setState(EditingInfo.State.UNAVAILABLE);
-            return new ForbiddenException(document);
-        });
-
+        final Node draft = EditingUtils.createDraft(workflow, session).orElseThrow(ForbiddenException::new);
+        final Document document = assembleDocument(uuid, handle, docType);
         FieldTypeUtils.readFieldValues(draft, docType.getFields(), document.getFields());
         return document;
     }
@@ -97,8 +91,8 @@ class DocumentsServiceImpl implements DocumentsService {
         final Node draft = WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.DRAFT)
                 .orElseThrow(NotFoundException::new);
 
-        if (!EditingUtils.canUpdateDocument(workflow)) {
-            throw new ForbiddenException(errorInfoWithUserInfo(workflow, session));
+        if (!EditingUtils.canUpdateDraft(workflow)) {
+            throw new ForbiddenException(errorInfoFromHintsOrNoHolder(workflow, session));
         }
 
         final DocumentType docType = getDocumentType(handle, locale);
@@ -121,26 +115,8 @@ class DocumentsServiceImpl implements DocumentsService {
             throw new BadRequestException(document);
         }
 
-        copyToPreviewAndKeepEditing(session, workflow);
-    }
-
-    private ErrorInfo errorInfoWithUserInfo(final Workflow workflow, final Session session) {
-        return EditingUtils.determineHolderId(workflow)
-                .map(holderId -> EditingUtils.makeUserInfo(holderId, session))
-                .map(userInfo -> new ErrorInfo(ErrorInfo.Reason.OTHER_HOLDER, errorInfoParamsForUser(userInfo)))
-                .orElse(new ErrorInfo(ErrorInfo.Reason.NO_HOLDER));
-    }
-
-    private Map<String, Serializable> errorInfoParamsForUser(final UserInfo userInfo) {
-        final Map<String, Serializable> params = new HashMap<>();
-
-        params.put("userId", userInfo.getId());
-        final String userName = userInfo.getDisplayName();
-        if (userName != null) {
-            params.put("userName", userName);
-        }
-
-        return params;
+        EditingUtils.copyToPreviewAndKeepEditing(workflow, session)
+                .orElseThrow(() -> new InternalServerErrorException(errorInfoFromHintsOrNoHolder(workflow, session)));
     }
 
     @Override
@@ -165,9 +141,8 @@ class DocumentsServiceImpl implements DocumentsService {
     public Document getPublished(final String uuid, final Session session, final Locale locale)
             throws ErrorWithPayloadException {
         final Node handle = getHandle(uuid, session);
-        final EditableWorkflow workflow = getWorkflow(handle);
         final DocumentType docType = getDocumentType(handle, locale);
-        final Document document = assembleDocument(uuid, handle, workflow, docType);
+        final Document document = assembleDocument(uuid, handle, docType);
 
         WorkflowUtils.getDocumentVariantNode(handle, WorkflowUtils.Variant.PUBLISHED)
                 .ifPresent(node -> FieldTypeUtils.readFieldValues(node, docType.getFields(), document.getFields()));
@@ -188,7 +163,9 @@ class DocumentsServiceImpl implements DocumentsService {
 
     private EditableWorkflow getWorkflow(final Node handle) throws ErrorWithPayloadException {
         return WorkflowUtils.getWorkflow(handle, WORKFLOW_CATEGORY_EDIT, EditableWorkflow.class)
-                .orElseThrow(() -> new MethodNotAllowed(new ErrorInfo(ErrorInfo.Reason.NOT_A_DOCUMENT)));
+                .orElseThrow(() -> new MethodNotAllowed(
+                        withDocumentName(new ErrorInfo(ErrorInfo.Reason.NOT_A_DOCUMENT), handle)
+                ));
     }
 
     private DocumentType getDocumentType(final Node handle, final Locale locale)
@@ -206,8 +183,7 @@ class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private Document assembleDocument(final String uuid, final Node handle,
-                                      final EditableWorkflow workflow, final DocumentType docType) {
+    private Document assembleDocument(final String uuid, final Node handle, final DocumentType docType) {
         final Document document = new Document();
         document.setId(uuid);
 
@@ -217,29 +193,23 @@ class DocumentsServiceImpl implements DocumentsService {
 
         DocumentUtils.getDisplayName(handle).ifPresent(document::setDisplayName);
 
-        final EditingInfo editingInfo = EditingUtils.determineEditingInfo(workflow, handle);
-        documentInfo.setEditingInfo(editingInfo);
-
         return document;
     }
 
-    private void copyToPreviewAndKeepEditing(final Session session, final EditableWorkflow workflow)
-            throws ErrorWithPayloadException {
-        try {
-            workflow.commitEditableInstance();
-        } catch (WorkflowException | RepositoryException | RemoteException e) {
-            log.warn("Failed to persist changes", e);
-            throw new InternalServerErrorException();
+    private ErrorInfo withDocumentName(final ErrorInfo errorInfo, final Node handle) {
+        if (errorInfo != null) {
+            DocumentUtils.getDisplayName(handle).ifPresent(displayName -> {
+                if (errorInfo.getParams() == null) {
+                    errorInfo.setParams(new HashMap<>());
+                }
+                errorInfo.getParams().put("displayName", displayName);
+            });
         }
+        return errorInfo;
+    }
 
-        try {
-            workflow.obtainEditableInstance();
-        } catch (WorkflowException e) {
-            log.warn("User '{}' failed to re-obtain ownership of document", session.getUserID(), e);
-            throw new InternalServerErrorException(errorInfoWithUserInfo(workflow, session));
-        } catch (RepositoryException | RemoteException e) {
-            log.warn("User '{}' failed to re-obtain ownership of document", session.getUserID(), e);
-            throw new InternalServerErrorException();
-        }
+    private ErrorInfo errorInfoFromHintsOrNoHolder(final Workflow workflow, final Session session) {
+        return EditingUtils.determineEditingFailure(workflow, session)
+                .orElseGet(() -> new ErrorInfo(ErrorInfo.Reason.NO_HOLDER));
     }
 }

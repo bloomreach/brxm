@@ -83,19 +83,3 @@ md-tooltip .md-content {
   text-overflow: clip;
   white-space: normal;
 }
-
-.dialog-transparent {
-  background-color: transparent;
-  box-shadow: none;
-  color: $grey-50;
-  overflow: visible;
-
-  md-progress-linear {
-    .md-container {
-      background-color: $grey-200;
-    }
-    .md-bar {
-      background-color: $grey-400;
-    }
-  }
-}

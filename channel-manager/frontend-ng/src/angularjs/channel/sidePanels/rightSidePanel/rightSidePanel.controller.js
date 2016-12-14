@@ -30,17 +30,17 @@ const ERROR_MAP = {
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
     disableContentButtons: true,
   },
-  UNAVAILABLE_CUSTOM_VALIDATION_PRESENT: {
+  UNKNOWN_VALIDATOR: {
     title: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_TITLE',
     linkToFullEditor: true,
     messageKey: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_MESSAGE',
   },
-  UNAVAILABLE_HELD_BY_OTHER_USER: {
+  OTHER_HOLDER: {
     title: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_HELD_BY_OTHER_USER_MESSAGE',
     hasUser: true,
   },
-  UNAVAILABLE_REQUEST_PENDING: {
+  REQUEST_PENDING: {
     title: 'FEEDBACK_NOT_EDITABLE_TITLE',
     messageKey: 'FEEDBACK_REQUEST_PENDING_MESSAGE',
   },
@@ -85,14 +85,18 @@ class RightSidePanelCtrl {
   }
 
   openDocument(documentId) {
-    this._savePendingChanges(() => {
-      this._resetState();
-      this._loadDocument(documentId);
-    });
+    if (documentId !== this.documentId) {
+      this._savePendingChanges(() => {
+        this._deleteDraft();
+        this._resetState();
+        this._loadDocument(documentId);
+      });
+    }
   }
 
   _resetState() {
     delete this.doc;
+    delete this.documentId;
     delete this.docType;
     delete this.editing;
     delete this.feedback;
@@ -126,35 +130,45 @@ class RightSidePanelCtrl {
   _onLoadResponse(response) {
     delete this.loading;
 
-    let errorKey;
     if (this._isDocument(response.data)) {
       this.doc = response.data;
       if (this.doc.displayName) {
         this.title = this.$translate.instant('EDIT_DOCUMENT', this.doc);
       }
       this._resizeTextareas();
-
-      errorKey = this.doc.info.editing.state;
-    } else if (this._isErrorInfo(response.data)) {
-      errorKey = response.data.reason;
-    } else if (response.status === 404) {
-      errorKey = 'NOT_FOUND';
     } else {
-      errorKey = 'UNAVAILABLE';
+      let errorKey;
+      let params = {};
+      if (this._isErrorInfo(response.data)) {
+        const errorInfo = response.data;
+        errorKey = errorInfo.reason;
+        if (errorInfo.params) {
+          params = this._extractErrorParams(errorInfo);
+          if (errorInfo.params.displayName) {
+            this.title = this.$translate.instant('EDIT_DOCUMENT', errorInfo.params);
+          }
+        }
+      } else if (response.status === 404) {
+        errorKey = 'NOT_FOUND';
+      } else {
+        errorKey = 'UNAVAILABLE';
+      }
+      this._handleErrorResponse(errorKey, params);
     }
-
-    this._handleResponse(errorKey);
   }
 
-  _handleResponse(errorKey) {
+  _extractErrorParams(errorInfo) {
+    const params = {};
+    if (errorInfo.reason === 'OTHER_HOLDER') {
+      params.user = errorInfo.params.userName || errorInfo.params.userId;
+    }
+    return params;
+  }
+
+  _handleErrorResponse(errorKey, params) {
     const error = ERROR_MAP[errorKey];
 
     if (error) {
-      const params = {};
-      if (error.hasUser) {
-        params.user = this._getHolder();
-      }
-
       this.feedback = {
         title: error.title,
         message: this.$translate.instant(error.messageKey, params),
@@ -162,11 +176,6 @@ class RightSidePanelCtrl {
       };
       this.disableContentButtons = error.disableContentButtons;
     }
-  }
-
-  _getHolder() {
-    return this.doc.info.editing.holder.displayName
-        || this.doc.info.editing.holder.id;
   }
 
   _resizeTextareas() {
@@ -189,15 +198,12 @@ class RightSidePanelCtrl {
         this.HippoIframeService.reload();
       })
       .catch((response) => {
-        const params = {};
+        let params = {};
         let errorKey = 'ERROR_UNABLE_TO_SAVE';
 
         if (this._isErrorInfo(response.data)) {
           errorKey = `ERROR_${response.data.reason}`;
-
-          if (response.data.reason === 'OTHER_HOLDER') {
-            params.user = response.data.params.userName || response.data.params.userId;
-          }
+          params = this._extractErrorParams(response.data);
         } else if (this._isDocument(response.data)) {
           errorKey = 'ERROR_INVALID_DATA';
           this._reloadDocumentType();
@@ -229,6 +235,9 @@ class RightSidePanelCtrl {
 
   openFullContent(mode) {
     this._savePendingChanges(() => {
+      if (mode === 'view') {
+        this._deleteDraft();
+      }
       this._closePanelAndOpenContent(mode);
     });
   }
