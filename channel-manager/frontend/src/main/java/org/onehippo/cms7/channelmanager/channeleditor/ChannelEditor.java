@@ -48,6 +48,7 @@ public class ChannelEditor extends ExtPanel {
     private static final long DEFAULT_EXT_AJAX_TIMEOUT = 30000L;
 
     private static final String OPEN_DOCUMENT_EVENT = "open-document";
+    private static final String CLOSE_DOCUMENT_EVENT = "close-document";
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -114,6 +115,7 @@ public class ChannelEditor extends ExtPanel {
         this.hideHstConfigEditor = true;
 
         addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
+        addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context));
     }
 
     @Override
@@ -147,6 +149,8 @@ public class ChannelEditor extends ExtPanel {
         switch (event) {
             case OPEN_DOCUMENT_EVENT:
                 return OpenDocumentEditorEventListener.getExtEventBehavior();
+            case CLOSE_DOCUMENT_EVENT:
+                return CloseDocumentEditorEventListener.getExtEventBehavior();
             default:
                 return super.newExtEventBehavior(event);
         }

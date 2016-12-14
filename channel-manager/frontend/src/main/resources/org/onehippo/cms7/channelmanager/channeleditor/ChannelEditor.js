@@ -50,12 +50,13 @@
       this.iframeToHost.subscribe('destroy-component-properties-window', this._destroyComponentPropertiesWindow, this);
       this.iframeToHost.subscribe('show-picker', this._showPicker, this);
       this.iframeToHost.subscribe('open-content', this._openContent, this);
+      this.iframeToHost.subscribe('close-content', this._closeContent, this);
       this.iframeToHost.subscribe('show-mask', this._maskSurroundings, this);
       this.iframeToHost.subscribe('remove-mask', this._unmaskSurroundings, this);
       this.iframeToHost.subscribe('edit-alter-ego', this._showAlterEgoEditor, this);
       this.iframeToHost.subscribe('channel-deleted', this._onChannelDeleted, this);
 
-      this.addEvents('open-document-editor', 'show-channel-overview');
+      this.addEvents('show-channel-overview');
     },
 
     loadChannel: function(channelId, initialPath) {
@@ -126,6 +127,10 @@
 
     _openContent: function(uuid, mode) {
       this.fireEvent('open-document', uuid, mode);
+    },
+
+    _closeContent: function(uuid) {
+      this.fireEvent('close-document', uuid);
     },
 
     _setChannel: function(channelId) {

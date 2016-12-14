@@ -229,6 +229,7 @@ describe('ChannelRightSidePanel', () => {
     expect($ctrl.docType).toEqual(testDocumentType);
     expect($ctrl.form.$setPristine).toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', testDocument);
+    expect(CmsService.publish).toHaveBeenCalledWith('close-content', 'test');
 
     $timeout.flush();
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
