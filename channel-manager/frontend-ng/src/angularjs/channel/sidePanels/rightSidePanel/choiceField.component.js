@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-import template from './documentFieldTitle.html';
+import template from './choiceField.html';
+import ChoiceFieldCtrl from './choiceField.controller';
 
-const documentFieldTitleComponent = {
+const choiceFieldComponent = {
   bindings: {
-    collapsed: '<',
+    name: '<',
     fieldType: '<',
-    hint: '<',
-    required: '<',
-    text: '<',
+    fieldValues: '<',
+    onFieldFocus: '&',
+    onFieldBlur: '&',
   },
+  controller: ChoiceFieldCtrl,
   template,
+  require: {
+    form: '^^form',
+  },
 };
 
-export default documentFieldTitleComponent;
+export default choiceFieldComponent;

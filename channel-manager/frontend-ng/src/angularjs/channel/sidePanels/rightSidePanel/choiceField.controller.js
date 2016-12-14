@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-import template from './rightSidePanel.html';
-import RightSidePanelCtrl from './rightSidePanel.controller';
+class ChoiceFieldCtrl {
 
-const rightSidePanelComponent = {
-  controller: RightSidePanelCtrl,
-  template,
-};
+  getFieldName(index) {
+    const choiceId = this.fieldValues[index].chosenId;
+    const fieldName = `${this.name}/${choiceId}`;
+    return index > 0 ? `${fieldName}[${index}]` : fieldName;
+  }
 
-export default rightSidePanelComponent;
+  focusChoice() {
+    this.hasFocus = true;
+    this.onFieldFocus();
+  }
+
+  blurChoice() {
+    delete this.hasFocus;
+    this.onFieldBlur();
+  }
+}
+
+export default ChoiceFieldCtrl;

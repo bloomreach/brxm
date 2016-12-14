@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-import template from './rightSidePanel.html';
-import RightSidePanelCtrl from './rightSidePanel.controller';
+class PrimitiveFieldCtrl {
 
-const rightSidePanelComponent = {
-  controller: RightSidePanelCtrl,
-  template,
-};
+  getFieldName(index) {
+    const fieldName = this.name ? `${this.name}/${this.fieldType.id}` : this.fieldType.id;
+    return index > 0 ? `${fieldName}[${index}]` : fieldName;
+  }
 
-export default rightSidePanelComponent;
+  getFieldError() {
+    let combinedError = null;
+    this.fieldValues.forEach((value, index) => {
+      const fieldName = this.getFieldName(index);
+      const field = this.form[fieldName];
+      if (field) {
+        combinedError = Object.assign(combinedError || {}, field.$error);
+      }
+    });
+    return combinedError;
+  }
+}
+
+export default PrimitiveFieldCtrl;

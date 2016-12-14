@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-import template from './rightSidePanel.html';
-import RightSidePanelCtrl from './rightSidePanel.controller';
+import template from './primitiveField.html';
+import PrimitiveFieldCtrl from './primitiveField.controller';
 
-const rightSidePanelComponent = {
-  controller: RightSidePanelCtrl,
+const primitiveFieldComponent = {
+  bindings: {
+    name: '<',
+    fieldType: '<',
+    fieldValues: '<',
+    onFieldFocus: '&',
+    onFieldBlur: '&',
+  },
+  controller: PrimitiveFieldCtrl,
   template,
+  require: {
+    form: '^^form',
+  },
 };
 
-export default rightSidePanelComponent;
+export default primitiveFieldComponent;

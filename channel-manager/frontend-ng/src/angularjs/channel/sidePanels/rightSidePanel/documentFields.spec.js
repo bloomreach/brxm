@@ -107,21 +107,6 @@ describe('DocumentFields', () => {
     expect($ctrl.hasValue({ id: 'invalid' })).toBe(false);
   });
 
-  it('keeps track of the compound with the focused field', () => {
-    const someField = { test: 'bla' };
-    $ctrl.focusCompound(someField);
-
-    expect(onFieldFocus).toHaveBeenCalled();
-
-    expect($ctrl.hasFocusedField(someField)).toBe(true);
-    expect($ctrl.hasFocusedField({ test: 'bla' })).toBe(false); // different object
-    expect($ctrl.hasFocusedField()).toBe(false);
-
-    $ctrl.blurCompound();
-    expect(onFieldBlur).toHaveBeenCalled();
-    expect($ctrl.hasFocusedField(someField)).toBe(false);
-  });
-
   it('keeps track of the field type with the focused field', () => {
     const someFieldType = { test: 'bla' };
     $ctrl.focusFieldType(someFieldType);
@@ -165,49 +150,6 @@ describe('DocumentFields', () => {
       fieldValues: [stringField],
     });
     expect($ctrl.getFieldName(stringField)).toEqual('ns:compound/ns:string');
-  });
-
-  it('returns the form error object of a single field', () => {
-    const error = {
-      required: true,
-    };
-    $ctrl.form = {
-      'ns:string': {
-        $error: error,
-      },
-    };
-    expect($ctrl.getFieldError(stringField)).toEqual(error);
-  });
-
-  it('returns the combined form error object of a multiple field', () => {
-    $ctrl.form = {
-      'ns:multiplestring': {
-        $error: {
-          required: true,
-        },
-      },
-      'ns:multiplestring[1]': {
-        $error: {
-          maxlength: true,
-        },
-      },
-    };
-    expect($ctrl.getFieldError(multipleStringField)).toEqual({
-      required: true,
-      maxlength: true,
-    });
-  });
-
-  it('returns null as form error object for an unknown field', () => {
-    $ctrl.form = {};
-    expect($ctrl.getFieldError(stringField)).toEqual(null);
-    expect($ctrl.getFieldError(multipleStringField)).toEqual(null);
-  });
-
-  it('returns null as form error object for a field without any values', () => {
-    $ctrl.fieldValues = {};
-    expect($ctrl.getFieldError(stringField)).toEqual(null);
-    expect($ctrl.getFieldError(multipleStringField)).toEqual(null);
   });
 
   it('knowns whether a field is valid', () => {

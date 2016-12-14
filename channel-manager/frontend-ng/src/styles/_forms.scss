@@ -12,27 +12,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+.right-side-panel form {
+  padding: 8px 0;
+}
+
+.field-wrapper h5 {
+  margin-bottom: 4px;
+}
+
 // Support 'dense' layout of forms in which fields take up less space.
 // This concept is part of the Material spec but not implemented in Angular Material.
-.form-dense-layout md-input-container {
-  margin-bottom: 0;
+.form-dense-layout {
+  md-input-container {
+    margin-bottom: 0;
 
-  &:not(:first-child) {
-    margin-top: 0;
+    &:not(:first-child) {
+      margin-top: 0;
+    }
+
+    &:not(:last-child) .md-errors-spacer {
+      height: 0;
+      min-height: 0;
+    }
   }
-  &:not(:last-child) .md-errors-spacer {
-    height: 0;
-    min-height: 0;
+
+  .field {
+    display: block;
   }
 }
 
 .top-level {
   & > .field-wrapper {
-    & > .field.field-indented {
+    & > .field-complex {
       border-left: 3px solid $grey-500;
       // break the border to indicate start of new field
       margin-bottom: 8px;
     }
+
     & > .field {
       padding: $form-padding;
     }
@@ -41,43 +57,50 @@
 
 .field-indented {
   padding-left: 8px !important;
+
   & > h5 {
     margin-left: 16px;
   }
+
   &.field-compound > h5 {
     margin-left: -8px; // 24px space for the collapse-icon
   }
+
   md-input-container {
     margin-left: 18px;
   }
 }
 
-.field-choice {
-  & > h5 {
-    padding-bottom: 8px; // nice spacing between choice field name and chosen compound
-  }
-}
-
 .has-focused-field {
   border-color: $blue-500 !important;
+
   & > h5 {
     color: $blue-500 !important;
+
     md-icon {
       color: $blue-500 !important;
     }
   }
+
   &:not(.has-invalid-field) > md-input-container > label {
     color: $blue-500 !important;
+
+    .required {
+      color: $red-a700 !important; // keep required mark red, like in material
+    }
   }
 }
 
 .has-invalid-field {
-  label {
+  label,
+  md-icon {
     color: $red-a700 !important;
   }
+
   .md-input.ng-invalid {
     border-color: $red-a700 !important;
   }
+
   // ensure that error messages are also shown if an element has not been touched
   .md-input-message-animation:not(.ng-animate) {
     margin-top: 0;
@@ -85,16 +108,23 @@
   }
 }
 
-.field-wrapper h5 {
-  margin-bottom: 0;
+primitive-field,
+compound-field,
+choice-field,
+document-fields {
+  display: block;
 }
 
-document-field-title {
+document-fields {
   label {
     // md-tooltip searches for the first parent with pointer-events
     // ng-material disables pointer events on labels, they should be enabled
     // when using md-no-float
     pointer-events: auto !important;
+
+    &::after {
+      content: '' !important; // hide material required mark
+    }
   }
 
   md-icon {

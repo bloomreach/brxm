@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-import template from './rightSidePanel.html';
-import RightSidePanelCtrl from './rightSidePanel.controller';
+class ChoiceFieldCtrl {
 
-const rightSidePanelComponent = {
-  controller: RightSidePanelCtrl,
-  template,
-};
+  focusCompound() {
+    this.hasFocus = true;
+    this.onFieldFocus();
+  }
 
-export default rightSidePanelComponent;
+  blurCompound() {
+    delete this.hasFocus;
+    this.onFieldBlur();
+  }
+}
+
+export default ChoiceFieldCtrl;

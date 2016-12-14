@@ -19,9 +19,9 @@ import DocumentFieldsCtrl from './documentFields.controller';
 
 const documentFieldsComponent = {
   bindings: {
-    name: '@',
-    fieldTypes: '=',
-    fieldValues: '=',
+    name: '<',
+    fieldTypes: '<',
+    fieldValues: '<',
     onFieldFocus: '&',
     onFieldBlur: '&',
   },

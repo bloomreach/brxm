@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-import template from './rightSidePanel.html';
-import RightSidePanelCtrl from './rightSidePanel.controller';
+import template from './compoundField.html';
+import CompoundFieldCtrl from './compoundField.controller';
 
-const rightSidePanelComponent = {
-  controller: RightSidePanelCtrl,
+const compoundFieldComponent = {
+  bindings: {
+    name: '<',
+    fieldType: '<',
+    fieldValues: '<',
+    onFieldFocus: '&',
+    onFieldBlur: '&',
+  },
+  controller: CompoundFieldCtrl,
   template,
+  require: {
+    form: '^^form',
+  },
 };
 
-export default rightSidePanelComponent;
+export default compoundFieldComponent;
