@@ -186,8 +186,7 @@ public class BrowserPerspective extends Perspective {
     @Override
     protected void onDeactivated() {
         super.onDeactivated();
-        tabs.blurTabs();
-        tabs.avoidRefocus();
+        tabs.blurTabs(true);
     }
 
     private boolean hasOpenTabs() {
