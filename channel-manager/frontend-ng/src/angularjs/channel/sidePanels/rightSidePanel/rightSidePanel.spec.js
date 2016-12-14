@@ -59,9 +59,6 @@ describe('ChannelRightSidePanel', () => {
       type: {
         id: 'ns:testdocument',
       },
-      editing: {
-        state: 'AVAILABLE',
-      },
     },
     fields: {
       'ns:string': [
@@ -283,9 +280,6 @@ describe('ChannelRightSidePanel', () => {
       info: {
         type: {
           id: 'ns:newdoctype',
-        },
-        editing: {
-          state: 'AVAILABLE',
         },
       },
     };
@@ -516,9 +510,6 @@ describe('ChannelRightSidePanel', () => {
   it('fails to open a document with no type', () => {
     const response = {
       info: {
-        editing: {
-          state: 'AVAILABLE',
-        },
         type: {
           id: 'document:type',
         },
