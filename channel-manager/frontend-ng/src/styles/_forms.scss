@@ -106,9 +106,6 @@ document-field-title {
     // when using md-no-float
     pointer-events: auto !important;
 
-    .required {
-      margin-left: 4px;
-    }
     &::after {
       content: '' !important; // hide material required mark
     }

@@ -27,7 +27,10 @@
       keyboard_arrow_down
     </md-icon>
 
-    <span>{{ ::$ctrl.fieldType.displayName }}</span>
+    <span>
+      {{ $ctrl.fieldType.displayName }}
+      <span ng-if="$ctrl.fieldType.required">*</span>
+    </span>
 
     <md-icon ng-if="$ctrl.fieldType.hint">
       info_outline

@@ -24,9 +24,8 @@
          layout-align="start center">
     <span>
       {{ $ctrl.fieldType.displayName }}
+      <span ng-if="$ctrl.fieldType.required">*</span>
     </span>
-
-    <span class="required" ng-if="$ctrl.fieldType.required">*</span>
 
     <md-icon ng-if="$ctrl.fieldType.hint">
       info_outline
