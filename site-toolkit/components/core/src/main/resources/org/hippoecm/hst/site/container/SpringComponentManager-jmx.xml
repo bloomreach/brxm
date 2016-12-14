@@ -102,6 +102,20 @@
       </bean>
     </property>
   </bean>
+
+  <bean id="pageCacheMBeanExporter" class="org.hippoecm.hst.site.container.UnregisterableMBeanExporter">
+    <property name="server" ref="hstMBeanServer" />
+    <property name="registrationPolicy" >
+      <util:constant static-field="org.springframework.jmx.support.RegistrationPolicy.REPLACE_EXISTING"/>
+    </property>
+    <property name="beans">
+      <map>
+        <entry key="org.onehippo.hst:type=Caching,name=#{servletContext.contextPath}_PageCache" value-ref="org.hippoecm.hst.cache.jmx.PageCacheStats"/>
+        <entry key="org.onehippo.hst:type=Caching,name=#{servletContext.contextPath}_BinariesCache" value-ref="org.hippoecm.hst.cache.jmx.BinariesCacheStats"/>
+        <entry key="org.onehippo.hst:type=Caching,name=#{servletContext.contextPath}_WebFilesCache" value-ref="org.hippoecm.hst.cache.jmx.WebFilesCacheStats"/>
+      </map>
+    </property>
+  </bean>
   
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetClass" value="net.sf.ehcache.management.ManagementService" />

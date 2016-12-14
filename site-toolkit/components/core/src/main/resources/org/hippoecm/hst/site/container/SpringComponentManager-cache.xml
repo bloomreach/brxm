@@ -48,6 +48,10 @@
     <property name="timeoutMillis" value="${default.blocking.cache.timeout}"/>
   </bean>
 
+  <bean id="org.hippoecm.hst.cache.jmx.BinariesCacheStats" class="org.hippoecm.hst.cache.jmx.CacheStats"/>
+  <bean id="org.hippoecm.hst.cache.jmx.PageCacheStats" class="org.hippoecm.hst.cache.jmx.CacheStats"/>
+  <bean id="org.hippoecm.hst.cache.jmx.WebFilesCacheStats" class="org.hippoecm.hst.cache.jmx.CacheStats"/>
+
   <bean id="defaultBinariesCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
@@ -55,6 +59,7 @@
         <property name="timeToLive" value="${default.binaries.cache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
+    <property name="cacheStats" ref="org.hippoecm.hst.cache.jmx.BinariesCacheStats"/>
   </bean>
 
   <bean id="pageCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
@@ -65,6 +70,7 @@
         <property name="timeToLive" value="${pageCache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
+    <property name="cacheStats" ref="org.hippoecm.hst.cache.jmx.PageCacheStats"/>
   </bean>
 
   <bean id="webFileCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
@@ -75,6 +81,7 @@
         <property name="timeToLive" value="${webFileCache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
+    <property name="cacheStats" ref="org.hippoecm.hst.cache.jmx.WebFilesCacheStats"/>
   </bean>
 
 

@@ -21,6 +21,7 @@ import java.util.concurrent.Callable;
 import org.apache.commons.collections.map.LRUMap;
 import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
+import org.hippoecm.hst.cache.jmx.CacheStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
@@ -52,6 +53,7 @@ public class HstCacheEhCacheImpl implements HstCache {
     private final static Boolean DUMMY_VALUE = Boolean.TRUE;
 
     private volatile int invalidationCounter;
+    private CacheStats cacheStats;
 
     public HstCacheEhCacheImpl(final Ehcache ehcache) {
         this(ehcache, new PersistenceConfiguration().strategy(PersistenceConfiguration.Strategy.NONE));
@@ -65,6 +67,11 @@ public class HstCacheEhCacheImpl implements HstCache {
             log.warn("Cannot add PersistenceConfiguration since deprecated 'overflowToDisk' or 'diskPersistent' is still " +
                     "configured.");
         }
+    }
+
+    public void setCacheStats(final CacheStats cacheStats) {
+        this.cacheStats = cacheStats;
+        cacheStats.setFirstLevelCache(ehcache);
     }
 
     @SuppressWarnings("unused")
@@ -93,17 +100,32 @@ public class HstCacheEhCacheImpl implements HstCache {
         }
     }
 
-    public CacheElement get(Object key) {
+    public CacheElement get(final Object key) {
+        CacheElement cached = doGet(key);
+        if (cached != null) {
+            cacheStats.incrementCacheHits();
+            return cached;
+        }
+        cacheStats.incrementCacheMisses();
+        return null;
+    }
+
+    private CacheElement doGet(final Object key) {
         Element element = ehcache.get(key);
         if (element != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Serving cached element created at '{}' from primary cache.", element.getCreationTime());
             }
+            cacheStats.incrementFirstLevelCacheHits();
             return new CacheElementEhCacheImpl(element);
         }
+        cacheStats.incrementFirstLevelCacheMisses();
         if (secondLevelCache != null && !uncacheableKeys.containsKey(key)) {
             final Element secondLevelElement = secondLevelCache.get(key, Element.class);
-            if (secondLevelElement != null) {
+            if (secondLevelElement == null) {
+                cacheStats.incrementSecondLevelCacheMisses();
+            } else {
+                cacheStats.incrementSecondLevelCacheHits();
                 log.debug("Found element in second level cache for key : {}", key);
                 // when this cache is decorated with eh blocking cache, we need to "put" with the exact same key instance
                 // as used in the get, otherwise keys with the same hashcode/equals will still be blocked. Is very
@@ -140,19 +162,24 @@ public class HstCacheEhCacheImpl implements HstCache {
                         log.info("Temporarily restoring stale element in primary cache. Current thread will continue" +
                                 " recreating the element to be cached which will later on replace the stale item in primary cache" +
                                 " and stale page cache.");
+                        cacheStats.incrementFirstLevelCacheHits();
                         ehcache.put(elementBasedOnKeyInstance);
                     }
                     return null;
                 }
 
                 elementBasedOnKeyInstance.setTimeToLive((int)newTTL);
+                cacheStats.incrementFirstLevelCacheHits();
                 ehcache.put(elementBasedOnKeyInstance);
                 return new CacheElementEhCacheImpl(elementBasedOnKeyInstance);
             }
         }
         if (staleCache != null) {
             final Element staleElement = staleCache.get(key, Element.class);
-            if (staleElement != null) {
+            if (staleElement == null) {
+                cacheStats.incrementStaleCacheMisses();
+            } else {
+                cacheStats.incrementStaleCacheHits();
                 // put in the primary ehcache the staleElement and return null : This way the
                 // blocking lock on key for blocking caches will be released: From then on, other requests for the
                 // same key get the stale response. We now return null, resulting in that the current thread continues
@@ -161,6 +188,7 @@ public class HstCacheEhCacheImpl implements HstCache {
                         " recreating the element to be cached which will later on replace the stale item in primary cache.", staleElement.getCreationTime());
                 // use key instance to clear the lock on the key instance
                 final Element elementBasedOnKeyInstance = new Element(key, staleElement.getObjectValue(), 1, staleElement.getCreationTime(), 0, 0, 0);
+                cacheStats.incrementFirstLevelCacheHits();
                 ehcache.put(elementBasedOnKeyInstance);
                 return null;
             }
@@ -199,6 +227,7 @@ public class HstCacheEhCacheImpl implements HstCache {
                 // the element is stale, so let's put it in stale cache if this one is present
                 if (staleCache != null) {
                     CacheElementEhCacheImpl cacheElem = (CacheElementEhCacheImpl)element;
+                    cacheStats.incrementStaleCachePuts();
                     staleCache.put(cacheElem.element.getObjectKey(), cacheElem.element);
                 }
             } else {
@@ -224,6 +253,7 @@ public class HstCacheEhCacheImpl implements HstCache {
     public void put(CacheElement element) {
         if (!element.isCacheable()) {
             final CacheElement uncacheable = createElement(element.getKey(), null);
+            // do not count uncacheable puts
             ehcache.put(((CacheElementEhCacheImpl)uncacheable).element);
             if (secondLevelCache != null && uncacheableKeys != null) {
                 uncacheableKeys.put(element.getKey(), DUMMY_VALUE);
@@ -231,17 +261,20 @@ public class HstCacheEhCacheImpl implements HstCache {
             return;
         }
         CacheElementEhCacheImpl cacheElem = (CacheElementEhCacheImpl)element;
+        cacheStats.incrementFirstLevelCachePuts();
         ehcache.put(cacheElem.element);
         if (secondLevelCache != null) {
             try {
                 // clone the element to cache first because the second level cache might change the TTL of the
                 // cached element
+                cacheStats.incrementSecondLevelCachePuts();
                 secondLevelCache.put(cacheElem.getKey(), cacheElem.element.clone());
             } catch (CloneNotSupportedException e) {
                 log.warn("Could not clone '{}' : {}", cacheElem.element.getObjectKey(), e.toString());
             }
         }
         if (staleCache != null) {
+            cacheStats.incrementStaleCachePuts();
             staleCache.put(cacheElem.element.getObjectKey(), cacheElem.element);
         }
     }
