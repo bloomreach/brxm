@@ -18,10 +18,10 @@
      ng-switch="fieldType.type">
 
   <div class="field-complex"
+       ng-switch-when="COMPOUND"
+       ng-if="$ctrl.hasValue(fieldType)"
        ng-class="{'has-focused-field': $ctrl.hasFocusedFieldType(fieldType)}">
-    <compound-field ng-switch-when="COMPOUND"
-                    ng-if="$ctrl.hasValue(fieldType)"
-                    ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
+    <compound-field ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
                     name="$ctrl.getFieldName(fieldType, $index)"
                     field-type="::fieldType"
                     field-values="fieldValue.fields"
@@ -31,10 +31,10 @@
   </div>
 
   <div class="field-complex"
+       ng-switch-when="CHOICE"
+       ng-if="$ctrl.hasValue(fieldType)"
        ng-class="{'has-focused-field': $ctrl.hasFocusedFieldType(fieldType)}">
-    <choice-field ng-switch-when="CHOICE"
-                  ng-if="$ctrl.hasValue(fieldType)"
-                  name="$ctrl.getFieldName(fieldType)"
+    <choice-field name="$ctrl.getFieldName(fieldType)"
                   field-type="::fieldType"
                   field-values="$ctrl.fieldValues[fieldType.id]"
                   on-field-focus="$ctrl.focusFieldType(fieldType)"
