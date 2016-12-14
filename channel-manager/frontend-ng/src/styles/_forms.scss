@@ -96,6 +96,13 @@
   margin-bottom: 4px;
 }
 
+primitive-field,
+compound-field,
+choice-field,
+document-fields {
+  display: block;
+}
+
 document-fields {
   label {
     // md-tooltip searches for the first parent with pointer-events
