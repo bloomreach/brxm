@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorInfo {
 
-    private Reason reason;
+    private final Reason reason;
     private Map<String, Serializable> params;
 
     public ErrorInfo(Reason reason) {
