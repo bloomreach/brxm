@@ -27,6 +27,7 @@ import static org.hippoecm.repository.util.RepoUtils.encodeXpath;
 
 public class RepoUtilsTest {
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testGetManifest() throws Exception {
         final Manifest manifest = RepoUtils.getManifest(HippoRepository.class);
