@@ -19,9 +19,9 @@ import ChoiceFieldCtrl from './choiceField.controller';
 
 const choiceFieldComponent = {
   bindings: {
-    name: '@',
-    fieldType: '=',
-    fieldValues: '=',
+    name: '<',
+    fieldType: '<',
+    fieldValues: '<',
     onFieldFocus: '&',
     onFieldBlur: '&',
   },

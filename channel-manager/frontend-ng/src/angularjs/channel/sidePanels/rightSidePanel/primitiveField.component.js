@@ -19,9 +19,9 @@ import PrimitiveFieldCtrl from './primitiveField.controller';
 
 const primitiveFieldComponent = {
   bindings: {
-    name: '@',
-    fieldType: '=',
-    fieldValues: '=',
+    name: '<',
+    fieldType: '<',
+    fieldValues: '<',
     onFieldFocus: '&',
     onFieldBlur: '&',
   },

@@ -27,7 +27,7 @@
       keyboard_arrow_down
     </md-icon>
 
-    <span>{{ $ctrl.fieldType.displayName }}</span>
+    <span>{{ ::$ctrl.fieldType.displayName }}</span>
 
     <md-icon ng-if="$ctrl.fieldType.hint">
       info_outline
@@ -39,7 +39,7 @@
   </h5>
 
   <document-fields class="collapse-element"
-                   name="{{ ::$ctrl.name }}"
+                   name="$ctrl.name"
                    field-types="::$ctrl.fieldType.fields"
                    field-values="$ctrl.fieldValues"
                    on-field-focus="$ctrl.focusCompound()"

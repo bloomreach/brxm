@@ -19,9 +19,9 @@ import CompoundFieldCtrl from './compoundField.controller';
 
 const compoundFieldComponent = {
   bindings: {
-    name: '@',
-    fieldType: '=',
-    fieldValues: '=',
+    name: '<',
+    fieldType: '<',
+    fieldValues: '<',
     onFieldFocus: '&',
     onFieldBlur: '&',
   },

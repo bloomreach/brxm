@@ -40,7 +40,7 @@
   <!-- editors per field type -->
   <input ng-switch-when="STRING"
          ng-model="fieldValue.value"
-         name="{{ ::$ctrl.getFieldName($index) }}"
+         name="$ctrl.getFieldName($index)"
          placeholder=""
          ng-attr-maxlength="{{::$ctrl.fieldType.maxLength}}"
          aria-label="{{::$ctrl.fieldType.displayName}}"
@@ -50,7 +50,7 @@
 
   <textarea ng-switch-when="MULTILINE_STRING"
             ng-model="fieldValue.value"
-            name="{{ ::$ctrl.getFieldName($index) }}"
+            name="$ctrl.getFieldName($index)"
             placeholder=""
             aria-label="{{::$ctrl.fieldType.displayName}}"
             ng-required="{{::$ctrl.fieldType.required}}"

@@ -22,7 +22,7 @@
     <compound-field ng-switch-when="COMPOUND"
                     ng-if="$ctrl.hasValue(fieldType)"
                     ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
-                    name="{{ ::$ctrl.getFieldName(fieldType, $index) }}"
+                    name="$ctrl.getFieldName(fieldType, $index)"
                     field-type="::fieldType"
                     field-values="fieldValue.fields"
                     on-field-focus="$ctrl.focusFieldType(fieldType)"
@@ -34,7 +34,7 @@
        ng-class="{'has-focused-field': $ctrl.hasFocusedFieldType(fieldType)}">
     <choice-field ng-switch-when="CHOICE"
                   ng-if="$ctrl.hasValue(fieldType)"
-                  name="{{ ::$ctrl.getFieldName(fieldType) }}"
+                  name="$ctrl.getFieldName(fieldType)"
                   field-type="::fieldType"
                   field-values="$ctrl.fieldValues[fieldType.id]"
                   on-field-focus="$ctrl.focusFieldType(fieldType)"
@@ -49,7 +49,7 @@
                      'has-invalid-field': !$ctrl.isValid(fieldType)
                    }"
                    class="field"
-                   name="{{ ::$ctrl.name }}"
+                   name="$ctrl.name"
                    field-type="::fieldType"
                    field-values="$ctrl.fieldValues[fieldType.id]"
                    on-field-focus="$ctrl.focusFieldType(fieldType)"

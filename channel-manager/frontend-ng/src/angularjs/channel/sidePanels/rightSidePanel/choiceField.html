@@ -40,7 +40,7 @@
 
   <div class="collapse-element field-indented">
     <compound-field ng-repeat="fieldValue in $ctrl.fieldValues"
-                    name="{{ ::$ctrl.getFieldName($index) }}"
+                    name="$ctrl.getFieldName($index)"
                     field-type="::$ctrl.fieldType.choices[fieldValue.chosenId]"
                     field-values="fieldValue.chosenValue.fields"
                     on-field-focus="$ctrl.focusChoice()"
