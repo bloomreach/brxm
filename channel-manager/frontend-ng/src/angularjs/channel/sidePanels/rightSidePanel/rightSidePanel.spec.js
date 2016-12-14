@@ -59,9 +59,6 @@ describe('ChannelRightSidePanel', () => {
       type: {
         id: 'ns:testdocument',
       },
-      editing: {
-        state: 'AVAILABLE',
-      },
     },
     fields: {
       'ns:string': [
@@ -215,9 +212,11 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('opens a document', () => {
+    testDocument.displayName = 'Display Name';
     ContentService.createDraft.and.returnValue($q.resolve(testDocument));
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     spyOn($scope, '$broadcast');
+    spyOn($translate, 'instant');
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
@@ -229,6 +228,30 @@ describe('ChannelRightSidePanel', () => {
     expect($ctrl.doc).toEqual(testDocument);
     expect($ctrl.docType).toEqual(testDocumentType);
     expect($ctrl.form.$setPristine).toHaveBeenCalled();
+    expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', testDocument);
+
+    $timeout.flush();
+    expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
+    delete testDocument.displayName;
+  });
+
+  it('opens a document with no display name', () => {
+    ContentService.createDraft.and.returnValue($q.resolve(testDocument));
+    ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
+    spyOn($scope, '$broadcast');
+    spyOn($translate, 'instant');
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+    $rootScope.$digest();
+
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
+
+    expect($ctrl.doc).toEqual(testDocument);
+    expect($ctrl.docType).toEqual(testDocumentType);
+    expect($ctrl.form.$setPristine).toHaveBeenCalled();
+    expect($translate.instant).not.toHaveBeenCalledWith('EDIT_DOCUMENT', testDocument);
 
     $timeout.flush();
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
@@ -275,9 +298,6 @@ describe('ChannelRightSidePanel', () => {
       info: {
         type: {
           id: 'ns:newdoctype',
-        },
-        editing: {
-          state: 'AVAILABLE',
         },
       },
     };
@@ -371,16 +391,12 @@ describe('ChannelRightSidePanel', () => {
 
   it('fails to open a document owned by another user', () => {
     const response = {
-      id: 'test-id',
-      info: {
-        editing: {
-          state: 'UNAVAILABLE_HELD_BY_OTHER_USER',
-          holder: {
-            displayName: 'John Tester',
-          },
-        },
+      reason: 'OTHER_HOLDER',
+      params: {
+        userId: 'jtester',
+        userName: 'John Tester',
+        displayName: 'Display Name',
       },
-      displayName: 'Document Display Name',
     };
     spyOn($translate, 'instant');
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
@@ -391,21 +407,16 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBe(response);
+    expect($ctrl.doc).toBeUndefined();
     expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_HELD_BY_OTHER_USER_MESSAGE', { user: 'John Tester' });
-    expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', response);
+    expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', response.params);
   });
 
   it('falls back to the user\'s id if there is no display name', () => {
     const response = {
-      id: 'test-id',
-      info: {
-        editing: {
-          state: 'UNAVAILABLE_HELD_BY_OTHER_USER',
-          holder: {
-            id: 'tester',
-          },
-        },
+      reason: 'OTHER_HOLDER',
+      params: {
+        userId: 'tester',
       },
     };
     spyOn($translate, 'instant');
@@ -417,20 +428,17 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBe(response);
+    expect($ctrl.doc).toBeUndefined();
     expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_HELD_BY_OTHER_USER_MESSAGE', { user: 'tester' });
-    expect($translate.instant).not.toHaveBeenCalledWith('EDIT_DOCUMENT', response);
+    expect($translate.instant).not.toHaveBeenCalledWith('EDIT_DOCUMENT', response.params);
   });
 
   it('fails to open a document with a publication request', () => {
     const response = {
-      id: 'test-id',
-      info: {
-        editing: {
-          state: 'UNAVAILABLE_REQUEST_PENDING',
-        },
+      reason: 'REQUEST_PENDING',
+      params: {
+        displayName: 'Display Name',
       },
-      displayName: 'Document Display Name',
     };
     spyOn($translate, 'instant');
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
@@ -441,7 +449,7 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
-    expect($ctrl.doc).toBe(response);
+    expect($ctrl.doc).toBeUndefined();
     expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_REQUEST_PENDING_MESSAGE', { });
   });
 
@@ -507,12 +515,26 @@ describe('ChannelRightSidePanel', () => {
     expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
   });
 
+  it('fails to open a document with an unknown error reason', () => {
+    const response = {
+      reason: 'unknown',
+    };
+    spyOn($translate, 'instant');
+    ContentService.createDraft.and.returnValue($q.reject({ data: response }));
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+    $rootScope.$digest();
+
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    expect(ContentService.getDocumentType).not.toHaveBeenCalled();
+    expect($ctrl.doc).toBeUndefined();
+    expect($translate.instant).not.toHaveBeenCalledWith('FEEDBACK_DEFAULT_MESSAGE', { });
+  });
+
   it('fails to open a document with no type', () => {
     const response = {
       info: {
-        editing: {
-          state: 'AVAILABLE',
-        },
         type: {
           id: 'document:type',
         },

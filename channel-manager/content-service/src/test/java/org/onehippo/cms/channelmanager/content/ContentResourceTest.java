@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.jcr.Session;
@@ -36,8 +35,6 @@ import org.onehippo.cms.channelmanager.content.error.BadRequestException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
-import org.onehippo.cms.channelmanager.content.document.model.DocumentInfo;
-import org.onehippo.cms.channelmanager.content.document.model.EditingInfo;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
 import org.onehippo.cms.channelmanager.content.document.DocumentsService;
@@ -90,7 +87,7 @@ public class ContentResourceTest extends CXFTest {
     }
 
     @Test
-    public void getUnpublishedDocument() throws Exception {
+    public void getPublishedDocument() throws Exception {
         final String requestedUuid = "requested-uuid";
         final String uuid = "returned-uuid";
         final Document testDocument = createDocument(uuid);
@@ -108,7 +105,7 @@ public class ContentResourceTest extends CXFTest {
     }
 
     @Test
-    public void getUnpublishedDocumentNotFound() throws Exception {
+    public void getPublishedDocumentNotFound() throws Exception {
         final String requestedUuid = "requested-uuid";
 
         expect(documentsService.getPublished(requestedUuid, userSession, locale)).andThrow(new NotFoundException());
@@ -124,12 +121,12 @@ public class ContentResourceTest extends CXFTest {
     public void createDraftDocument() throws Exception {
         final String requestedUuid = "requested-uuid";
         final String uuid = "returned-uuid";
-        final FluentDocument testDocument = createDocument(uuid).withState(EditingInfo.State.AVAILABLE);
+        final Document testDocument = createDocument(uuid);
 
         expect(documentsService.createDraft(requestedUuid, userSession, locale)).andReturn(testDocument);
         replay(documentsService);
 
-        final String expectedBody = normalizeJsonResource("/available-document.json");
+        final String expectedBody = normalizeJsonResource("/empty-document.json");
 
         when()
                 .post("/documents/" + requestedUuid + "/draft")
@@ -142,12 +139,12 @@ public class ContentResourceTest extends CXFTest {
     public void createDraftDocumentForbidden() throws Exception {
         final String requestedUuid = "requested-uuid";
         final String uuid = "returned-uuid";
-        final FluentDocument testDocument = createDocument(uuid).withState(EditingInfo.State.UNAVAILABLE);
+        final Document testDocument = createDocument(uuid);
 
         expect(documentsService.createDraft(requestedUuid, userSession, locale)).andThrow(new ForbiddenException(testDocument));
         replay(documentsService);
 
-        final String expectedBody = normalizeJsonResource("/unavailable-document.json");
+        final String expectedBody = normalizeJsonResource("/empty-document.json");
 
         when()
                 .post("/documents/" + requestedUuid + "/draft")
@@ -291,22 +288,9 @@ public class ContentResourceTest extends CXFTest {
                 .collect(Collectors.joining(""));
     }
 
-    private FluentDocument createDocument(final String uuid) {
-        final FluentDocument document = new FluentDocument();
+    private Document createDocument(final String uuid) {
+        final Document document = new Document();
         document.setId(uuid);
         return document;
-    }
-
-    private static class FluentDocument extends Document {
-        public FluentDocument withState(final EditingInfo.State state) {
-            final DocumentInfo info = new DocumentInfo();
-            final EditingInfo editingInfo = new EditingInfo();
-
-            this.setInfo(info);
-            info.setEditingInfo(editingInfo);
-            editingInfo.setState(state);
-
-            return this;
-        }
     }
 }

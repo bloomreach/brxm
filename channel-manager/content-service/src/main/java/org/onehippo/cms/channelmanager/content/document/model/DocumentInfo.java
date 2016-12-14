@@ -31,23 +31,12 @@ public class DocumentInfo {
     // enveloped reference to document type: { id: "namespace:typename" }
     private Type type;
 
-    @JsonProperty(value = "editing")
-    private EditingInfo editingInfo;
-
     public Type getType() {
         return type;
     }
 
     public void setTypeId(final String id) {
         type = new Type(id);
-    }
-
-    public EditingInfo getEditingInfo() {
-        return editingInfo;
-    }
-
-    public void setEditingInfo(final EditingInfo editing) {
-        this.editingInfo = editing;
     }
 
     public static class Type {
