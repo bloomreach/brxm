@@ -16,90 +16,20 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.onehippo.cm.api.model.ConfigurationGroup;
-import org.raml.v2.api.loader.ResourceLoader;
-import org.raml.yagi.framework.grammar.BaseGrammar;
-import org.raml.yagi.framework.grammar.RuleFactory;
-import org.raml.yagi.framework.grammar.rule.KeyValueRule;
-import org.raml.yagi.framework.grammar.rule.Rule;
-import org.raml.yagi.framework.nodes.KeyValueNodeImpl;
-import org.raml.yagi.framework.nodes.Node;
-import org.raml.yagi.framework.nodes.snakeyaml.NodeParser;
-import org.raml.yagi.framework.phase.GrammarPhase;
+import org.onehippo.cm.api.model.Configuration;
 
 class ConfigurationParser {
 
     static final String MODULE_CONFIG_FILENAME = "module-config.yaml";
 
-    private static ResourceLoader notFoundResourceLoader = (resourceName) -> null;
-
-    @SuppressWarnings("unused")
-    private static class ParsedProperty extends KeyValueNodeImpl {
-        public ParsedProperty() {
-            super();
-        }
-        public ParsedProperty(ParsedProperty parsedProperty) {
-            super(parsedProperty);
-        }
-        @Override
-        public String toString() {
-            return super.toString();
-        }
-    }
-
-    @SuppressWarnings("unused")
-    private static class ParsedNode extends KeyValueNodeImpl {
-        public ParsedNode() {
-            super();
-        }
-        public ParsedNode(ParsedNode parsedNode) {
-            super(parsedNode);
-        }
-        @Override
-        public String toString() {
-            return super.toString();
-        }
-    }
-
-    private static class Grammar extends BaseGrammar {
-        private Rule getSourceRule() {
-            return objectType().with(nodeField());
-        }
-        private KeyValueRule nodeField() {
-            return field(nodeKey(), nodeValue()).then(ParsedNode.class);
-        }
-        private Rule nodeKey() {
-            return regex("/.*");
-        }
-        private Rule nodeValue() {
-            final RuleFactory ruleFactory = () -> objectType()
-                    .with(propertyField())
-                    .with(nodeField());
-            return named("nodeValue", ruleFactory);
-        }
-        private KeyValueRule propertyField() {
-            return field(regex("[^/]{1}.*"), any()).then(ParsedProperty.class);
-        }
-        private Rule getModuleRule() {
-            return objectType().with(dependsField());
-        }
-        private KeyValueRule dependsField() {
-            return field(string("depends"), stringType());
-        }
-    }
-
-    List<ConfigurationGroup> parse(final List<URL> urls) throws IOException {
-        Map<String, ConfigurationGroupImpl> groups = new LinkedHashMap<>();
+    Map<String, Configuration> parse(final List<URL> urls) throws IOException {
+        return null;
+        /*
+        Map<String, ConfigurationImpl> groups = new LinkedHashMap<>();
         Map<String, ConfigurationModuleImpl> modules = new LinkedHashMap<>();
         Map<ConfigurationModuleImpl, URL> moduleConfigs = new HashMap<>();
         List<URL> sourceConfigs = new ArrayList<>();
@@ -141,30 +71,7 @@ class ConfigurationParser {
         }
 
         return new ArrayList<>(groups.values());
-    }
-
-    private void parseModuleConfig(final URL url,
-                                   final ConfigurationModuleImpl module,
-                                   final Map<String, ConfigurationModuleImpl> modules) throws IOException {
-        final Reader reader = new InputStreamReader(url.openStream(), StandardCharsets.UTF_8);
-        final Node rootNode = NodeParser.parse(notFoundResourceLoader, "/", reader);
-        final GrammarPhase grammarPhase = new GrammarPhase(new Grammar().getModuleRule());
-        final Node node = grammarPhase.apply(rootNode);
-        final Node dependsNode = node.get("depends");
-        if (dependsNode != null) {
-            final String dependsModuleName = dependsNode.toString();
-            final ConfigurationModuleImpl depends = modules.get(dependsModuleName);
-            if (depends == null) {
-                throw new IllegalArgumentException("Cannot find module " + dependsModuleName);
-            }
-            module.addDependency(depends);
-        }
-    }
-
-    private Node parse(final Reader reader) {
-        final Node rootNode = NodeParser.parse(notFoundResourceLoader, "/", reader);
-        final GrammarPhase grammarPhase = new GrammarPhase(new Grammar().getSourceRule());
-        return grammarPhase.apply(rootNode);
+        */
     }
 
 }

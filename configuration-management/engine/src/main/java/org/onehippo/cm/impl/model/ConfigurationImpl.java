@@ -13,41 +13,44 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine;
+package org.onehippo.cm.impl.model;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.onehippo.cm.api.model.ConfigurationGroup;
-import org.onehippo.cm.api.model.ConfigurationModule;
+import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Project;
 
-class ConfigurationGroupImpl implements ConfigurationGroup {
+public class ConfigurationImpl implements Configuration {
 
     private String name;
-    private List<ConfigurationModule> modules;
-
-    ConfigurationGroupImpl(final String name) {
-        this.name = name;
-        this.modules = new ArrayList<>();
-    }
+    private List<String> dependsOn;
+    private Map<String, Project> projects;
 
     @Override
     public String getName() {
         return name;
     }
 
-    @Override
-    public ConfigurationGroup getDependsOn() {
-        return null;
+    public void setName(final String name) {
+        this.name = name;
     }
 
     @Override
-    public List<ConfigurationModule> getModules() {
-        return modules;
+    public List<String> getDependsOn() {
+        return dependsOn;
     }
 
-    void addModule(final ConfigurationModule module) {
-        this.modules.add(module);
+    public void setDependsOn(final List<String> dependsOn) {
+        this.dependsOn = dependsOn;
     }
 
+    @Override
+    public Map<String, Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(final Map<String, Project> projects) {
+        this.projects = projects;
+    }
 }

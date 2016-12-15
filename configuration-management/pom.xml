@@ -37,8 +37,8 @@
     <notice.project.name>Hippo Configuration Management</notice.project.name>
 
     <!-- Test dependencies  -->
-    <junit.version>4.10</junit.version>
-    <yagi.version>1.0.4</yagi.version>
+    <junit.version>4.12</junit.version>
+    <snakeyaml.version>1.17</snakeyaml.version>
   </properties>
   
   <modules>
@@ -69,9 +69,9 @@
         <version>${junit.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.raml</groupId>
-        <artifactId>yagi</artifactId>
-        <version>${yagi.version}</version>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${snakeyaml.version}</version>
       </dependency>
     </dependencies>
 

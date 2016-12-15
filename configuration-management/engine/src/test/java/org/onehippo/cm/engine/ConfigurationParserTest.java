@@ -23,12 +23,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
-import org.onehippo.cm.api.model.ConfigurationGroup;
-import org.onehippo.cm.api.model.ConfigurationModule;
+import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.Project;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -61,41 +63,35 @@ public class ConfigurationParserTest {
         return result;
     }
 
+    @Ignore
     @Test
     public void expect_group_is_loaded() throws IOException {
-        final List<URL> files = collectFiles("/hello_world/group2/module2/module-config.yaml");
+        final List<URL> files = collectFiles("/hello_world/repo-config.yaml");
         final ConfigurationParser parser = new ConfigurationParser();
-        final List<ConfigurationGroup> groups = parser.parse(files);
+        final Map<String, Configuration> configurations = parser.parse(files);
 
-        assertEquals(2, groups.size());
-        final ConfigurationGroup group1 = groups.get(0);
-        assertEquals("group1", group1.getName());
-        assertEquals(null, group1.getDependsOn());
-        assertEquals(1, group1.getModules().size());
-        final ConfigurationModule module1 = group1.getModules().get(0);
-        assertEquals("module1", module1.getName());
-        assertEquals(group1, module1.getGroup());
-        assertEquals(Collections.emptyList(), module1.getDependsOn());
-        assertEquals(Collections.emptyList(), module1.getSources());
+        assertEquals(2, configurations.size());
 
-        final ConfigurationGroup group2 = groups.get(1);
-        assertEquals("group2", group2.getName());
-        assertEquals(null, group2.getDependsOn());
-        assertEquals(1, group2.getModules().size());
-        final ConfigurationModule module2 = group2.getModules().get(0);
-        assertEquals("module2", module2.getName());
-        assertEquals(group2, module2.getGroup());
-        final List<ConfigurationModule> dependency = new ArrayList<>();
-        dependency.add(module1);
-        assertEquals(dependency, module2.getDependsOn());
-        assertEquals(Collections.emptyList(), module2.getSources());
+        final Configuration base = configurations.get("base");
+        assertEquals("base", base.getName());
+        assertEquals(0, base.getDependsOn().size());
+        assertEquals(1, base.getProjects().size());
+        final Project project1 = base.getProjects().get("project1");
+        assertEquals("project1", project1.getName());
+        assertEquals(1, project1.getModules().size());
+        final Module module1 = project1.getModules().get("module1");
+        assertEquals("module1", project1.getName());
+
+        final Configuration myhippoproject = configurations.get("myhippoproject");
+        assertEquals("myhippoproject", myhippoproject.getName());
+        assertEquals(1, myhippoproject.getDependsOn().size());
+        assertEquals("base/myhippoproject", myhippoproject.getDependsOn().get(0));
+        assertEquals(1, myhippoproject.getProjects().size());
+        final Project project2 = myhippoproject.getProjects().get("project2");
+        assertEquals("project2", project1.getName());
+        assertEquals(1, project2.getModules().size());
+        final Module module2 = project2.getModules().get("module2");
+        assertEquals("module2", project1.getName());
     }
 
-    /** TODO:
-     * create tests for:
-     * - validation that groups do not create circular dependency
-     * - module with multiple dependencies
-     * discuss & create tests for:
-     * - must the module name be unique across groups?
-     */
 }

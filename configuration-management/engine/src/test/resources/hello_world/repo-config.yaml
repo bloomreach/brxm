@@ -1,0 +1,12 @@
+configurations:
+  - base:
+      projects:
+        - project1
+            modules:
+              - module1
+  - myhippoproject:
+      projects:
+        - project2
+            depends: base/project1
+            modules:
+              - module2
