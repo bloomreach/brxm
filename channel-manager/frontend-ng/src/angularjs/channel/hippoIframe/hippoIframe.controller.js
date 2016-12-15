@@ -32,6 +32,7 @@ class HippoIframeCtrl {
     OverlaySyncService,
     PageMetaDataService,
     PageStructureService,
+    ScrollService,
     hstCommentsProcessorService,
     linkProcessorService
   ) {
@@ -51,6 +52,7 @@ class HippoIframeCtrl {
     this.OverlaySyncService = OverlaySyncService;
     this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
+    this.ScrollService = ScrollService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
     this.linkProcessorService = linkProcessorService;
 
@@ -68,7 +70,10 @@ class HippoIframeCtrl {
       this.iframeJQueryElement,
       $element.find('.overlay')
     );
+
     DragDropService.init(this.iframeJQueryElement, baseJQueryElement);
+
+    this.ScrollService.init(this.iframeJQueryElement, baseJQueryElement);
 
     const deleteComponentHandler = componentId => this.deleteComponent(componentId);
     CmsService.subscribe('delete-component', deleteComponentHandler);
