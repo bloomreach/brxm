@@ -30,6 +30,11 @@ const ERROR_MAP = {
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
     disableContentButtons: true,
   },
+  NO_CONTENT: {
+    title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
+    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
+    linkToFullEditor: true,
+  },
   UNKNOWN_VALIDATOR: {
     title: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_TITLE',
     linkToFullEditor: true,
@@ -119,9 +124,19 @@ class RightSidePanelCtrl {
     this.ContentService.createDraft(id)
       .then(doc =>
         this.ContentService.getDocumentType(doc.info.type.id).then((docType) => {
-          this.editing = true;
-          this.docType = docType;
-          this._onLoadResponse({ data: doc });
+          if (!docType.fields || !docType.fields.length || !Object.keys(doc.fields).length) {
+            const noContent = {
+              reason: 'NO_CONTENT',
+              params: {
+                displayName: doc.displayName,
+              },
+            };
+            this._onLoadResponse({ data: noContent });
+          } else {
+            this.editing = true;
+            this.docType = docType;
+            this._onLoadResponse({ data: doc });
+          }
         })
       )
       .catch(response => this._onLoadResponse(response));

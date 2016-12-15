@@ -257,6 +257,33 @@ describe('ChannelRightSidePanel', () => {
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
   });
 
+  it('opens a document with no content', () => {
+    const emptyDocument = {
+      id: 'test',
+      displayName: 'Display Name',
+      info: {
+        type: { id: 'ns:testdocument' },
+      },
+      fields: { },
+    };
+    const emptyType = { id: 'ns:testdocument' };
+    ContentService.createDraft.and.returnValue($q.resolve(emptyDocument));
+    ContentService.getDocumentType.and.returnValue($q.resolve(emptyType));
+    spyOn($translate, 'instant');
+
+    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+    $rootScope.$digest();
+
+    expect(ContentService.createDraft).toHaveBeenCalledWith('test');
+    expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
+
+    expect($ctrl.doc).toBeUndefined();
+    expect($ctrl.docType).toBeUndefined();
+    expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', { displayName: 'Display Name' });
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE', { });
+  });
+
   it('ignores a non-existing form when opening a document', () => {
     ContentService.createDraft.and.returnValue($q.resolve(testDocument));
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
@@ -300,9 +327,17 @@ describe('ChannelRightSidePanel', () => {
           id: 'ns:newdoctype',
         },
       },
+      fields: {
+        dummy: 'value',
+      },
     };
     const newDocumentType = {
       id: 'ns:newdoctype',
+      fields: [
+        {
+          id: 'dummy',
+        },
+      ],
     };
     let onOpenCallback;
 
