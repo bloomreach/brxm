@@ -25,6 +25,10 @@ class ScrollService {
 
     const browsersWithNativeSupport = [BROWSERS.CHROME, BROWSERS.MS_EDGE, BROWSERS.OPERA];
     this._hasNativeSupport = browsersWithNativeSupport.indexOf(deviceDetector.browser) > -1;
+    this.savedScrollPosition = {
+      top: 0,
+      left: 0,
+    };
   }
 
   init(el, container, easing = 'ease-in-out') {
@@ -103,6 +107,16 @@ class ScrollService {
     distance = Math.abs(distance);
     const duration = distance * 2;
     return Math.min(Math.max(DURATION_MIN, duration), DURATION_MAX);
+  }
+
+  saveScrollPosition() {
+    this.savedScrollPosition.top = this.container.scrollTop();
+    this.savedScrollPosition.left = this.container.scrollLeft();
+  }
+
+  restoreScrollPosition() {
+    this.container.scrollTop(this.savedScrollPosition.top);
+    this.container.scrollLeft(this.savedScrollPosition.left);
   }
 }
 
