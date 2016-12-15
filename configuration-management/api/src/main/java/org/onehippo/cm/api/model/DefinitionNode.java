@@ -17,7 +17,7 @@ package org.onehippo.cm.api.model;
 
 import java.util.Map;
 
-public interface DefinitionNode {
+public interface DefinitionNode extends DefinitionItem {
     Map<String, DefinitionNode> getNodes();
     Map<String, DefinitionProperty> getProperties();
 }
