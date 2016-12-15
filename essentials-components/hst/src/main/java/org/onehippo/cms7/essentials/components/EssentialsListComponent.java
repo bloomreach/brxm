@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -228,7 +228,9 @@ public class EssentialsListComponent extends CommonComponent {
         if (log.isDebugEnabled()) {
             log.debug("Searching for document types:  {}, and including subtypes: {}", documentTypes, paramInfo.getIncludeSubtypes());
         }
-        return HstQueryBuilder.create(scope).ofTypes(types).build();
+
+        HstQueryBuilder builder = HstQueryBuilder.create(scope);
+        return paramInfo.getIncludeSubtypes() ? builder.ofTypes(types).build() : builder.ofPrimaryTypes(types).build();
     }
 
     @Deprecated

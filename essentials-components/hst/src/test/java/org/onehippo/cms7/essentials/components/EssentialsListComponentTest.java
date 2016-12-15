@@ -37,6 +37,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.onehippo.cms7.essentials.components.ext.DoBeforeRenderExtension;
 import org.onehippo.cms7.essentials.components.info.EssentialsListComponentInfo;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -48,6 +50,8 @@ public class EssentialsListComponentTest extends AbstractHstQueryTest {
     private static final String NEWS_FOLDER_PATH = "/content/documents/myhippoproject/news";
     private static final String CONTENT_FOLDER_PATH = "/content/documents/myhippoproject/content";
     private static final int NR_NEWS_ITEMS = 3;
+    private static final int NR_MY_NEWS_ITEMS = 1;
+    private static final int TOTAL_NEWS_ITEMS = NR_NEWS_ITEMS + NR_MY_NEWS_ITEMS;
     private static final int NR_CONTENT_ITEMS = 2;
 
     private static final String MYHIPPOPROJECT_NEWSDOCUMENT = "myhippoproject:newsdocument";
@@ -68,7 +72,7 @@ public class EssentialsListComponentTest extends AbstractHstQueryTest {
         objectConverter = getObjectConverter();
         obm = new ObjectBeanManagerImpl(session, objectConverter);
 
-        when(essentialsListComponentInfo.getIncludeSubtypes()).thenReturn(Boolean.FALSE);
+        when(essentialsListComponentInfo.getIncludeSubtypes()).thenReturn(TRUE);
         when(componentManager.getComponent(DoBeforeRenderExtension.class.getName())).thenReturn(null);
         HstServices.setComponentManager(componentManager);
     }
@@ -86,7 +90,18 @@ public class EssentialsListComponentTest extends AbstractHstQueryTest {
 
         HstQueryResult hstQueryResult = executeHstQuery();
 
-        assertEquals(3, hstQueryResult.getSize());
+        assertEquals(TOTAL_NEWS_ITEMS, hstQueryResult.getSize());
+    }
+
+    @Test
+    public void testBuildHstQuery_News_NoSubtypes() throws ObjectBeanManagerException, QueryException {
+        when(essentialsListComponentInfo.getDocumentTypes()).thenReturn(MYHIPPOPROJECT_NEWSDOCUMENT);
+        when(essentialsListComponentInfo.getPath()).thenReturn(NEWS_FOLDER_PATH);
+        when(essentialsListComponentInfo.getIncludeSubtypes()).thenReturn(FALSE);
+
+        HstQueryResult hstQueryResult = executeHstQuery();
+
+        assertEquals(NR_NEWS_ITEMS, hstQueryResult.getSize());
     }
 
     @Test
@@ -96,7 +111,7 @@ public class EssentialsListComponentTest extends AbstractHstQueryTest {
 
         HstQueryResult hstQueryResult = executeHstQuery();
 
-        assertEquals(NR_NEWS_ITEMS, hstQueryResult.getSize());
+        assertEquals(TOTAL_NEWS_ITEMS, hstQueryResult.getSize());
     }
 
     @Test
@@ -109,7 +124,6 @@ public class EssentialsListComponentTest extends AbstractHstQueryTest {
         assertEquals(NR_CONTENT_ITEMS, hstQueryResult.getSize());
     }
 
-
     @Test
     public void testBuildHstQuery_ContentAndNewsFromRoot() throws ObjectBeanManagerException, QueryException {
         when(essentialsListComponentInfo.getDocumentTypes()).thenReturn(MYHIPPOPROJECT_NEWSDOCUMENT + "," + MYHIPPOPROJECT_CONTENTDOCUMENT);
@@ -117,7 +131,7 @@ public class EssentialsListComponentTest extends AbstractHstQueryTest {
 
         HstQueryResult hstQueryResult = executeHstQuery();
 
-        assertEquals(NR_CONTENT_ITEMS + NR_NEWS_ITEMS, hstQueryResult.getSize());
+        assertEquals(NR_CONTENT_ITEMS + TOTAL_NEWS_ITEMS, hstQueryResult.getSize());
     }
 
     private HstQueryResult executeHstQuery() throws ObjectBeanManagerException, QueryException {

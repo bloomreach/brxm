@@ -13,3 +13,5 @@
 [myhippoproject:newsdocument] > hippostd:relaxed, hippotranslation:translated, myhippoproject:basedocument
   orderable
 
+[myhippoproject:MyNews] > hippostd:relaxed, hippotranslation:translated, myhippoproject:newsdocument
+  orderable
