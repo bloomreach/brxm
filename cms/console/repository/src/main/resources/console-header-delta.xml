@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:esv="http://www.onehippo.org/jcr/xmlimport" sv:name="console" esv:merge="combine">
+  <sv:node sv:name="console" esv:merge="combine">
+    <!-- new plugin for the advanced menu -->
+    <sv:node sv:name="advancedmenu">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="extension.cnd.menu" sv:type="String">
+        <sv:value>service.menu.cnd</sv:value>
+      </sv:property>
+      <sv:property sv:name="extension.logout" sv:type="String">
+        <sv:value>service.logout</sv:value>
+      </sv:property>
+      <sv:property sv:name="extension.node.menu" sv:type="String">
+        <sv:value>service.menu.node</sv:value>
+      </sv:property>
+      <sv:property sv:name="extension.system.menu" sv:type="String">
+        <sv:value>service.menu.system</sv:value>
+      </sv:property>
+      <sv:property sv:name="extension.xml.menu" sv:type="String">
+        <sv:value>service.menu.xml</sv:value>
+      </sv:property>
+      <sv:property sv:name="item" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.AdvancedMenuPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.extensions" sv:type="String" sv:multiple="true">
+        <sv:value>extension.system.menu</sv:value>
+        <sv:value>extension.node.menu</sv:value>
+        <sv:value>extension.cnd.menu</sv:value>
+        <sv:value>extension.xml.menu</sv:value>
+        <sv:value>extension.logout</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.advancedmenu</sv:value>
+      </sv:property>
+    </sv:node>
+    <!-- 4 new plugins for the menu dropdowns -->
+    <sv:node sv:name="cnddropdown">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="item" sv:type="String">
+        <sv:value>service.menu.cnd.item</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.Submenu</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.cnd</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="nodedropdown">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="item" sv:type="String">
+        <sv:value>service.menu.node.item</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.Submenu</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.node</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="xmldropdown">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="item" sv:type="String">
+        <sv:value>service.menu.xml.item</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.Submenu</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.xml</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="systemdropdown">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="item" sv:type="String">
+        <sv:value>service.menu.system.item</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.Submenu</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.system</sv:value>
+      </sv:property>
+    </sv:node>
+    <!-- deltas for existing plugin configs -->
+    <sv:node sv:name="root" esv:merge="combine">
+      <sv:node sv:name="yui.config" esv:merge="combine">
+        <sv:property sv:name="header.height" sv:type="String" esv:merge="override">
+          <sv:value>75</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="top" esv:merge="combine">
+      <sv:property sv:name="extension.advancedmenu" sv:type="String">
+        <sv:value>service.advancedmenu</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.extensions" sv:type="String" esv:merge="override" sv:multiple="true">
+        <sv:value>extension.advancedmenu</sv:value>
+        <sv:value>extension.menu</sv:value>
+      </sv:property>
+    </sv:node>
+    <!-- new plugin -->
+    <sv:node sv:name="systeminfo" esv:merge="insert" esv:location="check">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.systeminfo.SystemInfoPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.system.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <!-- update plugins to be rendered by a different plugin -->
+    <sv:node sv:name="createpatch" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.node.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="workflow" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.node.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="permissions" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.node.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="references" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.node.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="cndimport" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.cnd.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="cndexport" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.cnd.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="applypatch" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.node.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="addnamespace" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.cnd.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="nodereset" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.node.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="xmlimport" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.xml.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="check" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.system.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="checkinout" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.node.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="xmlexport" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.xml.item</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="unlock" esv:merge="combine">
+      <sv:property sv:name="wicket.id" sv:type="String" esv:merge="override">
+        <sv:value>service.menu.node.item</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>

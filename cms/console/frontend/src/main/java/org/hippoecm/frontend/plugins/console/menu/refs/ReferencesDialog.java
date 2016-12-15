@@ -15,15 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.refs;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
@@ -39,6 +30,14 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
+import javax.jcr.RepositoryException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ReferencesDialog extends AbstractDialog<Node> {
 

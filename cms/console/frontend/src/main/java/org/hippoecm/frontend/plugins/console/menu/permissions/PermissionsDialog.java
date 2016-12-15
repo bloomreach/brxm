@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,28 +15,20 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.permissions;
 
-import java.security.AccessControlException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.jcr.query.Query;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.*;
+import javax.jcr.query.Query;
+import java.security.AccessControlException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class PermissionsDialog extends AbstractDialog<Node> {
 
@@ -92,12 +84,12 @@ public class PermissionsDialog extends AbstractDialog<Node> {
         add(allPrivilegesLabel);
         add(actionsLabel);
         add(privilegesLabel);
+        Session privSession = null;
         try {
             Node subject = nodeModel.getObject();
 
             // FIXME: hardcoded workflowuser
-            Session privSession = subject.getSession()
-                    .impersonate(new SimpleCredentials("workflowuser", new char[] {}));
+            privSession = subject.getSession().impersonate(new SimpleCredentials("workflowuser", new char[] {}));
 
             String userID = subject.getSession().getUserID();
             String[] memberships = getMemberships(privSession, userID);
@@ -113,6 +105,10 @@ public class PermissionsDialog extends AbstractDialog<Node> {
 
         } catch (RepositoryException ex) {
             actionsLabel.setDefaultModel(new Model(ex.getClass().getName() + ": " + ex.getMessage()));
+        } finally {
+            if(privSession != null) {
+                privSession.logout();
+            }
         }
         setOkVisible(false);
         setFocusOnOk();

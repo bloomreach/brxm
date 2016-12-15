@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class CndImportDialog extends AbstractDialog<Void> {
     private final FileUploadField fileUploadField;
     private final Model<String> msgText;
 
-    public CndImportDialog(CndImportPlugin menuPlugin) {
+    public CndImportDialog() {
         setMultiPart(true);
         setNonAjaxSubmit();
         add(fileUploadField = new FileUploadField("fileInput"));

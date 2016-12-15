@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,8 +21,10 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.console.NodeModelReference;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class PermissionsPlugin extends RenderPlugin<Node> {
@@ -34,10 +36,9 @@ public class PermissionsPlugin extends RenderPlugin<Node> {
         IDialogFactory factory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
             public Dialog createDialog() {
-                return new PermissionsDialog(PermissionsPlugin.this);
-            }
+                return new PermissionsDialog(PermissionsPlugin.this);            }
         };
-        add(new DialogLink("link", new Model<String>("View Permissions"), factory, getDialogService()));
+        add(new DialogLink("link", new Model<>("View Permissions"), factory, getDialogService()));
     }
 
 }

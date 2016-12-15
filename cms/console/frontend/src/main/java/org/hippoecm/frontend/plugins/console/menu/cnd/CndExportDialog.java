@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public class CndExportDialog extends AbstractDialog<Void> {
 
     private String selectedNs;
 
-    public CndExportDialog(CndExportPlugin menuPlugin) {
+    public CndExportDialog() {
         final PropertyModel<String> selectedNsModel = new PropertyModel<String>(this, "selectedNs");
 
         List<String> nsPrefixes = null;

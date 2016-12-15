@@ -15,28 +15,27 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.workflow;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.WorkflowDescriptor;
+import org.hippoecm.repository.api.WorkflowManager;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-
-import org.apache.wicket.markup.html.basic.MultiLineLabel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.WorkflowDescriptor;
-import org.hippoecm.repository.api.WorkflowManager;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 
 public class WorkflowDialog extends AbstractDialog<Node> {
 
     private static final long serialVersionUID = 1L;
 
-    private final WorkflowPlugin plugin;
+    private final RenderService plugin;
 
     public WorkflowDialog(WorkflowPlugin plugin) {
         this.plugin = plugin;
