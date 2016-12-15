@@ -65,6 +65,10 @@
       }.bind(this));
     },
 
+    killEditor: function(documentId) {
+      this.hostToIFrame.publish('kill-editor', documentId);
+    },
+
     _clearChannel: function() {
       this.selectedChannel = null;
       this.hostToIFrame.publish('clear-channel');

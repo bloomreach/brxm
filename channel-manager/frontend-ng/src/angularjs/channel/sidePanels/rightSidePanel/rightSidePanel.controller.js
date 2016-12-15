@@ -82,6 +82,12 @@ class RightSidePanelCtrl {
     ChannelSidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
       this.openDocument(documentId);
     });
+
+    CmsService.subscribe('kill-editor', (documentId) => {
+      if (this.documentId === documentId) {
+        this._closePanel();
+      }
+    });
   }
 
   openDocument(documentId) {
