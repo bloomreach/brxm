@@ -16,8 +16,17 @@
 package org.onehippo.cm.api.model;
 
 public interface DefinitionProperty extends DefinitionItem {
+
     PropertyType getType();
     ValueType getValueType();
-    Value getValue();
-    Value[] getValues();
+
+    /**
+     * @throws ValueFormatException if the property is multi-valued.
+     */
+    Value getValue() throws ValueFormatException;
+
+    /**
+     * @throws ValueFormatException if the property is single-valued.
+     */
+    Value[] getValues() throws ValueFormatException;
 }

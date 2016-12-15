@@ -15,18 +15,15 @@
  */
 package org.onehippo.cm.api.model;
 
-public interface ConfigurationProperty extends ConfigurationItem {
-    PropertyType getType();
+/**
+ * Exception thrown when an attempt is made to assign a value to a property that
+ * has an invalid format, given the type of the property. Also thrown if an
+ * attempt is made to read the value of a property using a type-specific read
+ * method of a type into which it is not convertible.
+ */
+public class ValueFormatException extends RuntimeException {
 
-    ValueType getValueType();
-
-    /**
-     * @throws ValueFormatException if the property is multi-valued.
-     */
-    Value getValue() throws ValueFormatException;
-
-    /**
-     * @throws ValueFormatException if the property is single-valued.
-     */
-    Value[] getValues() throws ValueFormatException;
+    public ValueFormatException(String message) {
+        super(message);
+    }
 }
