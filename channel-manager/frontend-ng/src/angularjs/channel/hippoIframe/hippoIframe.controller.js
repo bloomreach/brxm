@@ -16,44 +16,43 @@
 
 class HippoIframeCtrl {
   constructor(
-    $q,
-    $log,
     $element,
+    $log,
+    $q,
     $scope,
     $translate,
     ChannelService,
+    ChannelSidePanelService,
     CmsService,
     ConfigService,
     DialogService,
     DomService,
     DragDropService,
-    hstCommentsProcessorService,
-    linkProcessorService,
-    OverlaySyncService,
-    PageStructureService,
-    PageMetaDataService,
     HippoIframeService,
-    ChannelSidePanelService
+    OverlaySyncService,
+    PageMetaDataService,
+    PageStructureService,
+    hstCommentsProcessorService,
+    linkProcessorService
   ) {
     'ngInject';
 
-    this.$q = $q;
     this.$log = $log;
+    this.$q = $q;
     this.$translate = $translate;
-    this.linkProcessorService = linkProcessorService;
-    this.hstCommentsProcessorService = hstCommentsProcessorService;
+    this.ChannelService = ChannelService;
+    this.ChannelSidePanelService = ChannelSidePanelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
-    this.ChannelService = ChannelService;
     this.DialogService = DialogService;
     this.DomService = DomService;
-    this.PageStructureService = PageStructureService;
-    this.PageMetaDataService = PageMetaDataService;
-    this.OverlaySyncService = OverlaySyncService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
-
-    this.ChannelSidePanelService = ChannelSidePanelService;
+    this.OverlaySyncService = OverlaySyncService;
+    this.PageMetaDataService = PageMetaDataService;
+    this.PageStructureService = PageStructureService;
+    this.hstCommentsProcessorService = hstCommentsProcessorService;
+    this.linkProcessorService = linkProcessorService;
 
     this.PageStructureService.clearParsedElements();
 
