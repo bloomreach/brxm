@@ -16,10 +16,11 @@
 package org.onehippo.cm.api.model;
 
 import java.util.List;
+import java.util.Map;
 
-public interface ConfigurationModule {
-    String getName();
-    ConfigurationGroup getGroup();
-    List<ConfigurationModule> getDependsOn();
-    List<ConfigurationSource> getSources();
+public interface Source {
+    String getPath();
+    Module getModule();
+    List<String> getDependsOn();
+    Map<DefinitionItem, Definition> getDefinitions();
 }

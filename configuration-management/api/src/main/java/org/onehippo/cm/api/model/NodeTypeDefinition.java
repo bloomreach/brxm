@@ -15,10 +15,5 @@
  */
 package org.onehippo.cm.api.model;
 
-import java.util.List;
-
-public interface ConfigurationGroup {
-    String getName();
-    ConfigurationGroup getDependsOn();
-    List<ConfigurationModule> getModules();
+public interface NodeTypeDefinition extends Definition {
 }

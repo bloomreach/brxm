@@ -15,5 +15,5 @@
  */
 package org.onehippo.cm.api.model;
 
-public interface NamespaceInstruction extends Instruction {
+public interface ContentDefinition extends Definition {
 }

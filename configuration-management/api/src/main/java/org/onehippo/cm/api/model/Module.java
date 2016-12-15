@@ -15,10 +15,12 @@
  */
 package org.onehippo.cm.api.model;
 
-import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
-public interface Instruction {
-    URI getUri();
-    ConfigurationModule getModule();
-    ConfigurationItem getItem();
+public interface Module {
+    String getName();
+    Project getProject();
+    List<String> getDependsOn();
+    Map<String, Source> getSources();
 }

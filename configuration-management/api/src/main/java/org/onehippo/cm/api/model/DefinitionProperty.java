@@ -15,5 +15,9 @@
  */
 package org.onehippo.cm.api.model;
 
-public interface ConfigInstruction extends ContentInstruction {
+public interface DefinitionProperty extends DefinitionItem {
+    PropertyType getType();
+    ValueType getValueType();
+    Value getValue();
+    Value[] getValues();
 }

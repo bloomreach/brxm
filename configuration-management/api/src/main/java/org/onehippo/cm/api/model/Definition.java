@@ -15,8 +15,7 @@
  */
 package org.onehippo.cm.api.model;
 
-import java.net.URI;
-
-public interface ConfigurationResourcePackage {
-    URI getUri();
+public interface Definition {
+    Source getSource();
+    DefinitionItem getItem();
 }

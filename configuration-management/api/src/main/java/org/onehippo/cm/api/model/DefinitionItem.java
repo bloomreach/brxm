@@ -15,8 +15,10 @@
  */
 package org.onehippo.cm.api.model;
 
-import java.net.URI;
-
-public interface ConfigurationResource {
-    URI getUri();
+public interface DefinitionItem {
+    String getName();
+    String getPath();
+    DefinitionNode getParent();
+    Definition getDefinition();
+    boolean isDeleted();
 }

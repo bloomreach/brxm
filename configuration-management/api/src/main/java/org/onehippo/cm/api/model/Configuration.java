@@ -15,5 +15,11 @@
  */
 package org.onehippo.cm.api.model;
 
-public interface ContentNodeTypeInstruction extends Instruction {
+import java.util.List;
+import java.util.Map;
+
+public interface Configuration {
+    String getName();
+    List<String> getDependsOn();
+    Map<String, Project> getProjects();
 }

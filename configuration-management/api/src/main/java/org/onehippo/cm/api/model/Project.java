@@ -15,9 +15,12 @@
  */
 package org.onehippo.cm.api.model;
 
+import java.util.List;
 import java.util.Map;
 
-public interface ConfigurationNode extends ConfigurationItem {
-    Map<String, ConfigurationNode> getNodes();
-    Map<String, ConfigurationProperty> getProperties();
+public interface Project {
+    String getName();
+    Configuration getConfiguration();
+    List<String> getDependsOn();
+    Map<String, Module> getModules();
 }

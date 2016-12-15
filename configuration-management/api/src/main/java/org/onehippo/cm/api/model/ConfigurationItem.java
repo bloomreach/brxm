@@ -15,9 +15,12 @@
  */
 package org.onehippo.cm.api.model;
 
+import java.util.List;
+
 public interface ConfigurationItem {
     String getName();
-    ConfigurationNode getRoot();
+    String getPath();
     ConfigurationNode getParent();
-    ConfigurationItem getUpstream();
+    List<DefinitionItem> getDefinitions();
+    boolean isDeleted();
 }

@@ -16,4 +16,8 @@
 package org.onehippo.cm.api.model;
 
 public interface ConfigurationProperty extends ConfigurationItem {
+    PropertyType getType();
+    ValueType getValueType();
+    Value getValue();
+    Value[] getValues();
 }

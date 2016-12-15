@@ -15,9 +15,12 @@
  */
 package org.onehippo.cm.api.model;
 
-import java.util.Map;
+public enum PropertyType {
+    SINGLE,
+    LIST,
+    SET;
 
-public interface ConfigurationNode extends ConfigurationItem {
-    Map<String, ConfigurationNode> getNodes();
-    Map<String, ConfigurationProperty> getProperties();
+    public final String toString() {
+        return name().toLowerCase();
+    }
 }

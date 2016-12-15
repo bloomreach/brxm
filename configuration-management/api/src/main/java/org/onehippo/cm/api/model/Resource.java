@@ -15,5 +15,6 @@
  */
 package org.onehippo.cm.api.model;
 
-public interface ContentInstruction extends Instruction {
+public interface Resource {
+    String getPath();
 }
