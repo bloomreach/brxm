@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,7 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.IEditorOpenListener;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.IconSize;
@@ -196,6 +198,25 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         // close editor
         editor.close();
         assertEquals(new JcrNodeModel((Node) null), modelReference.getModel());
+    }
+
+    @Test
+    public void callEditorOpenListener() throws Exception {
+        final Map<String, Object> map = new HashMap<>();
+        final IEditorOpenListener listener = model -> map.put("model", model);
+        createDocument("document");
+        start(config);
+
+        JcrNodeModel model = new JcrNodeModel("/test/content/document");
+        IEditorManager editorMgr = context.getService("editor.manager", IEditorManager.class);
+        editorMgr.registerOpenListener(listener);
+        IEditor editor = editorMgr.openEditor(model);
+        editorMgr.unregisterOpenListener(listener);
+        assertEquals(model, modelReference.getModel());
+
+        editor.close();
+        assertEquals(new JcrNodeModel((Node) null), modelReference.getModel());
+        assertEquals(map.get("model"), model);
     }
 
     @Test
