@@ -19,6 +19,7 @@ import com.google.common.collect.ImmutableList;
 
 import org.junit.Test;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.builder.exceptions.CircularDependencyException;
 
 public class CircularDependencyTest extends AbstractBaseTest{
 

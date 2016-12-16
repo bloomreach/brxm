@@ -28,6 +28,8 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.DefinitionItem;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.impl.model.builder.exceptions.CircularDependencyException;
+import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 
 /**
  * Class that is capable of transforming a {@link Configuration} into its composite {@link ConfigurationNode} model
@@ -75,7 +77,8 @@ public class ConfigurationNodeBuilder {
                         current.getName(), dependsOn));
             }
             if (dependsOnConfig == investigate) {
-                throw new CircularDependencyException(String.format("Circular dependency : configuration '%s' depends on itself",
+                // TODO in the message add which configurations are part of the circular dependencies
+                throw new CircularDependencyException(String.format("Configuration '%s' has circular dependency",
                         investigate.getName()));
             }
             if (isEmptyDependsOn(dependsOnConfig)) {
