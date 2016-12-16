@@ -26,6 +26,7 @@ import javax.jcr.Session;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -166,29 +167,6 @@ public class ContentResourceTest extends CXFTest {
                 .statusCode(404);
     }
 
-    // TODO add tests for updating a draft.
-    /*
-    @Test
-    public void updateDraftDocument() throws Exception {
-        final String uuid = "returned-uuid";
-
-        documentsService.updateDraft(uuid, anyObject(), userSession);
-        expectLastCall();
-        replay(documentsService);
-
-        final String receivedBody = normalizeJsonResource("/empty-document.json");
-
-        given()
-                .contentType(JSON)
-                .body(receivedBody)
-        .when()
-                .put("/documents/" + uuid + "/draft")
-        .then()
-                .statusCode(200)
-                .body(equalTo(receivedBody));
-    }
-    */
-
     @Test
     public void deleteDraft() throws Exception {
         final String requestedUuid = "requested-uuid";
@@ -263,6 +241,7 @@ public class ContentResourceTest extends CXFTest {
                 .get("/documenttypes/" + requestedId)
         .then()
                 .statusCode(200)
+                .header("Cache-Control", Matchers.containsString("no-cache"))
                 .body(equalTo(expectedBody));
     }
 
