@@ -43,6 +43,37 @@ describe('ScrollService', () => {
     expect(ScrollService.easing).toEqual('custom-easing');
   });
 
+  it('should initiate scroll position', () => {
+    expect(ScrollService.savedScrollPosition).toEqual({
+      top: 0,
+      left: 0,
+    });
+  });
+
+  it('should save scroll position', () => {
+    baseJQueryElement.scrollTop(50);
+    baseJQueryElement.scrollLeft(60);
+
+    ScrollService.saveScrollPosition();
+
+    expect(ScrollService.savedScrollPosition).toEqual({
+      top: 50,
+      left: 60,
+    });
+  });
+
+  it('should restore scroll position', () => {
+    ScrollService.savedScrollPosition = {
+      top: 20,
+      left: 30,
+    };
+
+    ScrollService.restoreScrollPosition();
+
+    expect(baseJQueryElement.scrollTop()).toEqual(20);
+    expect(baseJQueryElement.scrollLeft()).toEqual(30);
+  });
+
   describe('in a browser with native drag&drop scroll support', () => {
     beforeEach(() => {
       ScrollService._hasNativeSupport = true;

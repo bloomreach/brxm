@@ -25,16 +25,17 @@ class ScrollService {
 
     const browsersWithNativeSupport = [BROWSERS.CHROME, BROWSERS.MS_EDGE, BROWSERS.OPERA];
     this._hasNativeSupport = browsersWithNativeSupport.indexOf(deviceDetector.browser) > -1;
-    this.savedScrollPosition = {
-      top: 0,
-      left: 0,
-    };
   }
 
   init(el, container, easing = 'ease-in-out') {
     this.el = el;
     this.container = container;
     this.easing = easing;
+
+    this.savedScrollPosition = {
+      top: 0,
+      left: 0,
+    };
   }
 
   enable(scrollAllowed = () => true) {
