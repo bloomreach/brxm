@@ -411,6 +411,14 @@ public class TabsPlugin extends RenderPlugin {
         this.avoidRefocusOnDestroyTab = avoidRefocusOnDestroyTab;
     }
 
+    /**
+     * @deprecated use {@link #focusRecentTab} or {@link #focusRecentTabUnlessHidden()} instead.
+     */
+    @Deprecated
+    public void show() {
+        focusRecentTab();
+    }
+
     public void focusRecentTabUnlessHidden() {
         if (!isHidden) {
             focusRecentTab();
