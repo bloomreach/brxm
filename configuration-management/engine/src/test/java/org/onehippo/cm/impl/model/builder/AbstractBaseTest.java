@@ -15,6 +15,8 @@
  */
 package org.onehippo.cm.impl.model.builder;
 
+import com.google.common.collect.ImmutableMap;
+
 import org.junit.Before;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
@@ -35,6 +37,9 @@ public abstract class AbstractBaseTest {
     protected ModuleImpl module1b;
     protected ModuleImpl module1c;
 
+
+    protected DependencyVerifier verifier = new DependencyVerifier();
+
     @Before
     public void setup() {
 
@@ -54,6 +59,8 @@ public abstract class AbstractBaseTest {
         project1b.setName("project1b");
         project1c.setName("project1c");
 
+        configuration1.setProjects(ImmutableMap.of(project1a.getName(), project1a, project1b.getName(), project1b, project1c.getName(), project1c));
+
         module1a = new ModuleImpl();
         module1b = new ModuleImpl();
         module1c = new ModuleImpl();
@@ -61,5 +68,7 @@ public abstract class AbstractBaseTest {
         module1a.setName("module1a");
         module1b.setName("module1b");
         module1c.setName("module1c");
+
+        project1a.setModules(ImmutableMap.of(module1a.getName(), module1a, module1b.getName(), module1b, module1c.getName(), module1c));
     }
 }
