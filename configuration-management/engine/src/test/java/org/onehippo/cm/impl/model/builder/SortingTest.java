@@ -23,29 +23,31 @@ import com.google.common.collect.ImmutableList;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Orderable;
+import org.onehippo.cm.api.model.Project;
 
 import static org.junit.Assert.assertEquals;
 
 public class SortingTest extends AbstractBaseTest {
 
     @Test
-    public void sort_two_configurations() throws Exception {
+    public void configuration_sort_two_configurations() throws Exception {
 
         // config 1 depends on config 2
         configuration1.setAfter(ImmutableList.of(configuration2.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        SortedSet<Configuration> sorted = builder.sort(ImmutableList.of(configuration1, configuration2));
+        SortedSet<Orderable> sorted = builder.sort(ImmutableList.of(configuration1, configuration2));
 
-        String sortedNames = sorted.stream().map((Function<Configuration, Object>)Configuration::getName).collect(Collectors.toList()).toString();
+        String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1]", sortedNames);
 
-        SortedSet<Configuration> sorted2 = builder.sort(ImmutableList.of(configuration2, configuration1));
+        SortedSet<Orderable> sorted2 = builder.sort(ImmutableList.of(configuration2, configuration1));
         assertEquals(sorted, sorted2);
     }
 
     @Test
-    public void sort_three_configurations() throws Exception {
+    public void configuration_sort_three_configurations() throws Exception {
 
         // config 1 depends on config 2
         configuration1.setAfter(ImmutableList.of(configuration2.getName()));
@@ -53,17 +55,17 @@ public class SortingTest extends AbstractBaseTest {
         configuration3.setAfter(ImmutableList.of(configuration1.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        SortedSet<Configuration> sorted = builder.sort(ImmutableList.of(configuration1, configuration2, configuration3));
+        SortedSet<Orderable> sorted = builder.sort(ImmutableList.of(configuration1, configuration2, configuration3));
 
-        String sortedNames = sorted.stream().map((Function<Configuration, Object>)Configuration::getName).collect(Collectors.toList()).toString();
+        String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1, configuration3]", sortedNames);
 
-        SortedSet<Configuration> sorted2 = builder.sort(ImmutableList.of(configuration2, configuration3, configuration1));
+        SortedSet<Orderable> sorted2 = builder.sort(ImmutableList.of(configuration2, configuration3, configuration1));
         assertEquals(sorted, sorted2);
     }
 
     @Test
-    public void sort_three_configurations_multiple_dependencies() throws Exception {
+    public void configuration_sort_three_configurations_multiple_dependencies() throws Exception {
 
         // config 1 depends on config 2
         configuration1.setAfter(ImmutableList.of(configuration2.getName()));
@@ -71,18 +73,18 @@ public class SortingTest extends AbstractBaseTest {
         configuration3.setAfter(ImmutableList.of(configuration1.getName(), configuration2.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        SortedSet<Configuration> sorted = builder.sort(ImmutableList.of(configuration1, configuration2, configuration3));
+        SortedSet<Orderable> sorted = builder.sort(ImmutableList.of(configuration1, configuration2, configuration3));
 
-        String sortedNames = sorted.stream().map((Function<Configuration, Object>)Configuration::getName).collect(Collectors.toList()).toString();
+        String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1, configuration3]", sortedNames);
 
-        SortedSet<Configuration> sorted2 = builder.sort(ImmutableList.of(configuration2, configuration3, configuration1));
+        SortedSet<Orderable> sorted2 = builder.sort(ImmutableList.of(configuration2, configuration3, configuration1));
         assertEquals(sorted, sorted2);
 
     }
 
     @Test
-    public void sort_three_undeterministic_depends_sorts_on_name() throws Exception {
+    public void configuration_sort_three_undeterministic_depends_sorts_on_name() throws Exception {
 
         // config 1 depends on config 2
         configuration1.setAfter(ImmutableList.of(configuration2.getName()));
@@ -90,13 +92,141 @@ public class SortingTest extends AbstractBaseTest {
         configuration3.setAfter(ImmutableList.of(configuration2.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        SortedSet<Configuration> sorted = builder.sort(ImmutableList.of(configuration1, configuration2, configuration3));
+        SortedSet<Orderable> sorted = builder.sort(ImmutableList.of(configuration1, configuration2, configuration3));
 
-        String sortedNames = sorted.stream().map((Function<Configuration, Object>)Configuration::getName).collect(Collectors.toList()).toString();
+        String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1, configuration3]", sortedNames);
 
-        SortedSet<Configuration> sorted2 = builder.sort(ImmutableList.of(configuration2, configuration3, configuration1));
+        SortedSet<Orderable> sorted2 = builder.sort(ImmutableList.of(configuration2, configuration3, configuration1));
         assertEquals(sorted, sorted2);
     }
 
+
+    @Test
+    public void project_sort_two_projects() throws Exception {
+
+        project1a.setAfter(ImmutableList.of(project1b.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        SortedSet<Orderable> sorted = builder.sort(ImmutableList.of(project1a, project1b));
+
+        String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
+        assertEquals("[project1b, project1a]", sortedNames);
+
+        SortedSet<Orderable> sorted2 = builder.sort(ImmutableList.of(project1a, project1b));
+        assertEquals(sorted, sorted2);
+    }
+
+    @Test
+    public void project_sort_three_projects() throws Exception {
+
+        project1a.setAfter(ImmutableList.of(project1b.getName()));
+        project1c.setAfter(ImmutableList.of(project1a.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        SortedSet<Orderable> sorted = builder.sort(ImmutableList.of(project1a, project1b, project1c));
+
+        String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
+        assertEquals("[project1b, project1a, project1c]", sortedNames);
+
+        SortedSet<Orderable> sorted2 = builder.sort(ImmutableList.of(project1b, project1c, project1a));
+        assertEquals(sorted, sorted2);
+    }
+
+    @Test
+    public void project_sort_three_projects_multiple_dependencies() throws Exception {
+
+        project1a.setAfter(ImmutableList.of(project1b.getName()));
+        project1c.setAfter(ImmutableList.of(project1a.getName(), project1b.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        SortedSet<Orderable> sorted = builder.sort(ImmutableList.of(project1a, project1b, project1c));
+
+        String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
+        assertEquals("[project1b, project1a, project1c]", sortedNames);
+
+        SortedSet<Orderable> sorted2 = builder.sort(ImmutableList.of(project1b, project1c, project1a));
+        assertEquals(sorted, sorted2);
+
+    }
+
+    @Test
+    public void project_sort_three_undeterministic_depends_sorts_on_name() throws Exception {
+
+        project1a.setAfter(ImmutableList.of(project1b.getName()));
+        project1c.setAfter(ImmutableList.of(project1b.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        SortedSet<Orderable> sorted = builder.sort(ImmutableList.of(project1a, project1b, project1c));
+
+        String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
+        assertEquals("[project1b, project1a, project1c]", sortedNames);
+
+        SortedSet<Orderable> sorted2 = builder.sort(ImmutableList.of(project1b, project1c, project1a));
+        assertEquals(sorted, sorted2);
+    }
+
+    @Test
+    public void module_sort_two_modules() throws Exception {
+
+        module1a.setAfter(ImmutableList.of(module1b.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        SortedSet<Orderable> sorted = builder.sort(ImmutableList.of(module1a, module1b));
+
+        String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
+        assertEquals("[module1b, module1a]", sortedNames);
+
+        SortedSet<Orderable> sorted2 = builder.sort(ImmutableList.of(module1a, module1b));
+        assertEquals(sorted, sorted2);
+    }
+
+    @Test
+    public void module_sort_three_modules() throws Exception {
+
+        module1a.setAfter(ImmutableList.of(module1b.getName()));
+        module1c.setAfter(ImmutableList.of(module1a.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        SortedSet<Orderable> sorted = builder.sort(ImmutableList.of(module1a, module1b, module1c));
+
+        String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
+        assertEquals("[module1b, module1a, module1c]", sortedNames);
+
+        SortedSet<Orderable> sorted2 = builder.sort(ImmutableList.of(module1b, module1c, module1a));
+        assertEquals(sorted, sorted2);
+    }
+
+    @Test
+    public void module_sort_three_modules_multiple_dependencies() throws Exception {
+
+        module1a.setAfter(ImmutableList.of(module1b.getName()));
+        module1c.setAfter(ImmutableList.of(module1a.getName(), module1b.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        SortedSet<Orderable> sorted = builder.sort(ImmutableList.of(module1a, module1b, module1c));
+
+        String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
+        assertEquals("[module1b, module1a, module1c]", sortedNames);
+
+        SortedSet<Orderable> sorted2 = builder.sort(ImmutableList.of(module1b, module1c, module1a));
+        assertEquals(sorted, sorted2);
+
+    }
+
+    @Test
+    public void module_sort_three_undeterministic_depends_sorts_on_name() throws Exception {
+
+        module1a.setAfter(ImmutableList.of(module1b.getName()));
+        module1c.setAfter(ImmutableList.of(module1b.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        SortedSet<Orderable> sorted = builder.sort(ImmutableList.of(module1a, module1b, module1c));
+
+        String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
+        assertEquals("[module1b, module1a, module1c]", sortedNames);
+
+        SortedSet<Orderable> sorted2 = builder.sort(ImmutableList.of(module1b, module1c, module1a));
+        assertEquals(sorted, sorted2);
+    }
 }

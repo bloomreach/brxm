@@ -42,7 +42,7 @@ public class ConfigurationNodeBuilder {
     public ConfigurationNode build(final Collection<Configuration> configurations) {
 
         verifyConfigurationDependencies(configurations);
-        SortedSet<Configuration> sortedConfigurations = sort(configurations);
+        SortedSet<Orderable> sortedConfigurations = sort(configurations);
 
         // TODO get the sorted list of ALL DefinitionItem PER Configuration
         // FROM this list we can build the ConfigurationNode model
@@ -117,34 +117,34 @@ public class ConfigurationNodeBuilder {
         }
     }
 
-    SortedSet<Configuration> sort(final Collection<Configuration> list) {
-        SortedSet<Configuration> sortedConfigurations = new TreeSet<>(new Comparator<Configuration>() {
+    SortedSet<Orderable> sort(final Collection<? extends Orderable> list) {
+        SortedSet<Orderable> sortedConfigurations = new TreeSet<>(new Comparator<Orderable>() {
             @Override
-            public int compare(final Configuration config1, final Configuration config2) {
-                if (config1.equals(config2)) {
+            public int compare(final Orderable orderable1, final Orderable orderable2) {
+                if (orderable1.equals(orderable2)) {
                     return 0;
                 }
-                if (isEmptyDependsOn(config1)) {
-                    if (isEmptyDependsOn(config2)) {
-                        return config1.getName().compareTo(config2.getName());
+                if (isEmptyDependsOn(orderable1)) {
+                    if (isEmptyDependsOn(orderable2)) {
+                        return orderable1.getName().compareTo(orderable2.getName());
                     } else {
                         return -1;
                     }
                 }
-                if (isEmptyDependsOn(config2)) {
+                if (isEmptyDependsOn(orderable2)) {
                     return 1;
                 }
                 boolean config1DependsOnConfig2 = false;
                 boolean config2DependsOnConfig1 = false;
-                for (String dependsOn : config1.getAfter()) {
-                    if (config2.getName().equals(dependsOn)) {
-                        // config1 depends on config2 : Now exclude circular dependency
+                for (String dependsOn : orderable1.getAfter()) {
+                    if (orderable2.getName().equals(dependsOn)) {
+                        // orderable1 depends on orderable2 : Now exclude circular dependency
                         config1DependsOnConfig2 = true;
                     }
                 }
-                for (String dependsOn : config2.getAfter()) {
-                    if (config1.getName().equals(dependsOn)) {
-                        // config2 depends on config1
+                for (String dependsOn : orderable2.getAfter()) {
+                    if (orderable1.getName().equals(dependsOn)) {
+                        // orderable2 depends on orderable1
                         config2DependsOnConfig1 = true;
                     }
                 }
@@ -154,7 +154,7 @@ public class ConfigurationNodeBuilder {
                 if (config1DependsOnConfig2) {
                     return 1;
                 }
-                return config1.getName().compareTo(config2.getName());
+                return orderable1.getName().compareTo(orderable2.getName());
             }
 
 

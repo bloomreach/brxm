@@ -109,4 +109,31 @@ public class CircularDependencyTest extends AbstractBaseTest {
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
         builder.verifyProjectDependencies(ImmutableList.of(project1a, project1b, project1c));
     }
+
+    @Test(expected = CircularDependencyException.class)
+    public void modules_self_circular_dependency() {
+        module1a.setAfter(ImmutableList.of(module1a.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        builder.verifyModuleDependencies(ImmutableList.of(module1a, module1b));
+    }
+
+    @Test(expected = CircularDependencyException.class)
+    public void modules_two_wise_circular_dependency() {
+        module1a.setAfter(ImmutableList.of(module1b.getName()));
+        module1b.setAfter(ImmutableList.of(module1a.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        builder.verifyModuleDependencies(ImmutableList.of(module1a, module1b));
+    }
+
+    @Test(expected = CircularDependencyException.class)
+    public void modules_three_wise_circular_dependency() {
+        module1a.setAfter(ImmutableList.of(module1b.getName()));
+        module1b.setAfter(ImmutableList.of(module1c.getName()));
+        module1c.setAfter(ImmutableList.of(module1a.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        builder.verifyModuleDependencies(ImmutableList.of(module1a, module1b, module1c));
+    }
 }

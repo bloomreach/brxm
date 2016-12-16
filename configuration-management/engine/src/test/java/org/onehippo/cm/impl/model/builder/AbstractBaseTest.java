@@ -17,6 +17,7 @@ package org.onehippo.cm.impl.model.builder;
 
 import org.junit.Before;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 
 public abstract class AbstractBaseTest {
@@ -28,6 +29,11 @@ public abstract class AbstractBaseTest {
     protected ProjectImpl project1a;
     protected ProjectImpl project1b;
     protected ProjectImpl project1c;
+
+
+    protected ModuleImpl module1a;
+    protected ModuleImpl module1b;
+    protected ModuleImpl module1c;
 
     @Before
     public void setup() {
@@ -45,7 +51,15 @@ public abstract class AbstractBaseTest {
         project1c = new ProjectImpl();
 
         project1a.setName("project1a");
-        project1b.setName("project2b");
-        project1c.setName("project3c");
+        project1b.setName("project1b");
+        project1c.setName("project1c");
+
+        module1a = new ModuleImpl();
+        module1b = new ModuleImpl();
+        module1c = new ModuleImpl();
+
+        module1a.setName("module1a");
+        module1b.setName("module1b");
+        module1c.setName("module1c");
     }
 }
