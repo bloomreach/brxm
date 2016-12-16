@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Orderable;
@@ -30,6 +31,7 @@ import static org.junit.Assert.assertEquals;
 
 public class HierarchicalSortingTest extends AbstractBaseTest {
 
+    @Ignore
     @Test
     public void assert_hierarchical_sorting() throws Exception {
 
