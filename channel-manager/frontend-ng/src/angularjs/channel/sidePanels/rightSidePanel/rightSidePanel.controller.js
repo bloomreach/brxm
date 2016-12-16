@@ -30,6 +30,11 @@ const ERROR_MAP = {
     messageKey: 'FEEDBACK_NOT_FOUND_MESSAGE',
     disableContentButtons: true,
   },
+  NO_CONTENT: {
+    title: 'FEEDBACK_NOT_EDITABLE_HERE_TITLE',
+    messageKey: 'FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE',
+    linkToFullEditor: true,
+  },
   UNKNOWN_VALIDATOR: {
     title: 'FEEDBACK_CUSTOM_VALIDATION_PRESENT_TITLE',
     linkToFullEditor: true,
@@ -117,45 +122,63 @@ class RightSidePanelCtrl {
     this.documentId = id;
     this.loading = true;
     this.ContentService.createDraft(id)
-      .then(doc =>
-        this.ContentService.getDocumentType(doc.info.type.id).then((docType) => {
-          this.editing = true;
-          this.docType = docType;
-          this._onLoadResponse({ data: doc });
-          this.CmsService.publish('close-content', this.documentId);
-        })
-      )
-      .catch(response => this._onLoadResponse(response));
+      .then((doc) => {
+        if (this._hasFields(doc)) {
+          return this.ContentService.getDocumentType(doc.info.type.id)
+            .then(docType => this._onLoadSuccess(doc, docType));
+        }
+        return this.$q.reject(this._noContentResponse(doc));
+      })
+      .catch(response => this._onLoadFailure(response))
+      .finally(() => delete this.loading);
   }
 
-  _onLoadResponse(response) {
-    delete this.loading;
+  _hasFields(doc) {
+    return doc.fields && Object.keys(doc.fields).length > 0;
+  }
 
-    if (this._isDocument(response.data)) {
-      this.doc = response.data;
-      if (this.doc.displayName) {
-        this.title = this.$translate.instant('EDIT_DOCUMENT', this.doc);
-      }
-      this._resizeTextareas();
-    } else {
-      let errorKey;
-      let params = {};
-      if (this._isErrorInfo(response.data)) {
-        const errorInfo = response.data;
-        errorKey = errorInfo.reason;
-        if (errorInfo.params) {
-          params = this._extractErrorParams(errorInfo);
-          if (errorInfo.params.displayName) {
-            this.title = this.$translate.instant('EDIT_DOCUMENT', errorInfo.params);
-          }
-        }
-      } else if (response.status === 404) {
-        errorKey = 'NOT_FOUND';
-      } else {
-        errorKey = 'UNAVAILABLE';
-      }
-      this._handleErrorResponse(errorKey, params);
+  _noContentResponse(doc) {
+    return {
+      data: {
+        reason: 'NO_CONTENT',
+        params: {
+          displayName: doc.displayName,
+        },
+      },
+    };
+  }
+  _onLoadSuccess(doc, docType) {
+    this.doc = doc;
+    this.docType = docType;
+    this.editing = true;
+
+    if (this.doc.displayName) {
+      this.title = this.$translate.instant('EDIT_DOCUMENT', this.doc);
     }
+    this._resizeTextareas();
+
+    this.CmsService.publish('close-content', this.documentId);
+  }
+
+  _onLoadFailure(response) {
+    let errorKey;
+    let params = {};
+
+    if (this._isErrorInfo(response.data)) {
+      const errorInfo = response.data;
+      errorKey = errorInfo.reason;
+      if (errorInfo.params) {
+        params = this._extractErrorParams(errorInfo);
+        if (errorInfo.params.displayName) {
+          this.title = this.$translate.instant('EDIT_DOCUMENT', errorInfo.params);
+        }
+      }
+    } else if (response.status === 404) {
+      errorKey = 'NOT_FOUND';
+    } else {
+      errorKey = 'UNAVAILABLE';
+    }
+    this._handleErrorResponse(errorKey, params);
   }
 
   _extractErrorParams(errorInfo) {
@@ -230,7 +253,7 @@ class RightSidePanelCtrl {
         this.docType = docType;
       })
       .catch((response) => {
-        this._onLoadResponse(response);
+        this._onLoadFailure(response);
       });
   }
 
