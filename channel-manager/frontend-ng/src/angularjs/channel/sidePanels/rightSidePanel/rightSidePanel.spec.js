@@ -270,16 +270,6 @@ describe('ChannelRightSidePanel', () => {
     }).not.toThrow();
   });
 
-  it('does nothing when the document has already been opened', () => {
-    $ctrl.documentId = 'test';
-
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
-    onOpenCallback('test');
-    $rootScope.$digest();
-
-    expect(ContentService.createDraft).not.toHaveBeenCalled();
-  });
-
   it('knows that a document is loading', () => {
     ContentService.createDraft.and.returnValue($q.resolve(testDocument));
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
@@ -335,12 +325,12 @@ describe('ChannelRightSidePanel', () => {
 
     it('can save pending changes before opening a new document', () => {
       $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
+      DialogService.show.and.returnValue($q.resolve('save'));
 
       onOpenCallback('newdoc');
       $rootScope.$digest();
 
-      expect(DialogService.show).toHaveBeenCalledWith(dialog);
+      expect(DialogService.show).toHaveBeenCalled();
       expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
       expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
       expectNewDocument();
@@ -348,13 +338,13 @@ describe('ChannelRightSidePanel', () => {
 
     it('does not open the new document when saving pending changes in the old document failed', () => {
       $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
+      DialogService.show.and.returnValue($q.resolve('save'));
       ContentService.saveDraft.and.returnValue($q.reject({}));
 
       onOpenCallback('newdoc');
       $rootScope.$digest();
 
-      expect(DialogService.show).toHaveBeenCalledWith(dialog);
+      expect(DialogService.show).toHaveBeenCalled();
       expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
       expect(ContentService.deleteDraft).not.toHaveBeenCalled();
       expect(ContentService.createDraft).not.toHaveBeenCalled();
@@ -365,15 +355,28 @@ describe('ChannelRightSidePanel', () => {
 
     it('can discard pending changes to an existing document before opening a new document', () => {
       $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.reject()); // Say 'Discard'
+      DialogService.show.and.returnValue($q.resolve('discard'));
 
       onOpenCallback('newdoc');
       $rootScope.$digest();
 
-      expect(DialogService.show).toHaveBeenCalledWith(dialog);
+      expect(DialogService.show).toHaveBeenCalled();
       expect(ContentService.saveDraft).not.toHaveBeenCalled();
       expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
       expectNewDocument();
+    });
+
+    it('does not change state when cancelling the reload of a document', () => {
+      $ctrl.form.$dirty = true;
+      DialogService.show.and.returnValue($q.reject()); // Say Cancel
+
+      onOpenCallback('newdoc');
+      $rootScope.$digest();
+
+      expect(DialogService.show).toHaveBeenCalled();
+      expect(ContentService.saveDraft).not.toHaveBeenCalled();
+      expect(ContentService.deleteDraft).not.toHaveBeenCalled();
+      expect(ContentService.createDraft).not.toHaveBeenCalled();
     });
 
     it('does not save pending changes when there are none', () => {
@@ -722,7 +725,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('can discard pending changes before opening the full content', () => {
-    DialogService.show.and.returnValue($q.reject()); // Say 'Discard'
+    DialogService.show.and.returnValue($q.resolve('discard'));
     ChannelSidePanelService.close.and.returnValue($q.resolve());
     $ctrl.documentId = 'test';
     $ctrl.doc = { displayName: 'Display Name' };
@@ -731,7 +734,7 @@ describe('ChannelRightSidePanel', () => {
     $ctrl.openFullContent('edit');
     $rootScope.$digest();
 
-    expect(DialogService.show).toHaveBeenCalledWith(dialog);
+    expect(DialogService.show).toHaveBeenCalled();
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
@@ -739,7 +742,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('saves pending changes before opening the full content', () => {
-    DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
+    DialogService.show.and.returnValue($q.resolve('save'));
     $ctrl.documentId = 'test';
     $ctrl.doc = testDocument;
     $ctrl.form.$dirty = true;
@@ -749,7 +752,7 @@ describe('ChannelRightSidePanel', () => {
     $ctrl.openFullContent('edit');
     $rootScope.$digest();
 
-    expect(DialogService.show).toHaveBeenCalledWith(dialog);
+    expect(DialogService.show).toHaveBeenCalled();
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
@@ -757,18 +760,19 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('releases holdership of the document when publishing it', () => {
-    DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
+    DialogService.show.and.returnValue($q.resolve('save'));
     $ctrl.documentId = 'documentId';
     $ctrl.doc = testDocument;
     $ctrl.form.$dirty = true;
     $ctrl.editing = true;
     ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
+    ContentService.deleteDraft.and.returnValue($q.resolve());
     ChannelSidePanelService.close.and.returnValue($q.resolve());
 
     $ctrl.openFullContent('view');
     $rootScope.$digest();
 
-    expect(DialogService.show).toHaveBeenCalledWith(dialog);
+    expect(DialogService.show).toHaveBeenCalled();
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
     expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
     expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
@@ -776,7 +780,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('does not open the full content if saving changes failed', () => {
-    DialogService.show.and.returnValue($q.resolve()); // Say 'Save'
+    DialogService.show.and.returnValue($q.resolve('save'));
     $ctrl.documentId = 'documentId';
     $ctrl.doc = testDocument;
     $ctrl.form.$dirty = true;
@@ -786,7 +790,7 @@ describe('ChannelRightSidePanel', () => {
     $ctrl.openFullContent('view');
     $rootScope.$digest();
 
-    expect(DialogService.show).toHaveBeenCalledWith(dialog);
+    expect(DialogService.show).toHaveBeenCalled();
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(ChannelSidePanelService.close).not.toHaveBeenCalled();

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import MultiActionDialogCtrl from './multiActionDialog.controller';
+import saveOrDiscardDialogTemplate from './saveOrDiscardDialog.html';
+
 const ERROR_MAP = {
   UNAVAILABLE: { // default catch-all
     title: 'FEEDBACK_DEFAULT_TITLE',
@@ -85,13 +88,12 @@ class RightSidePanelCtrl {
   }
 
   openDocument(documentId) {
-    if (documentId !== this.documentId) {
-      this._savePendingChanges(() => {
-        this._deleteDraft();
+    this._dealWithPendingChanges('SAVE_CHANGES_ON_BLUR_MESSAGE', () => {
+      this._deleteDraft().finally(() => {
         this._resetState();
         this._loadDocument(documentId);
       });
-    }
+    });
   }
 
   _resetState() {
@@ -234,36 +236,47 @@ class RightSidePanelCtrl {
   }
 
   openFullContent(mode) {
-    this._savePendingChanges(() => {
+    const messageKey = mode === 'view'
+      ? 'SAVE_CHANGES_ON_PUBLISH_MESSAGE'
+      : 'SAVE_CHANGES_ON_SWITCH_TO_FULL_EDITOR_MESSAGE';
+
+    this._dealWithPendingChanges(messageKey, () => {
       if (mode === 'view') {
-        this._deleteDraft();
+        this._deleteDraft().finally(() => this._closePanelAndOpenContent(mode));
+      } else {
+        this._closePanelAndOpenContent(mode);
       }
-      this._closePanelAndOpenContent(mode);
     });
   }
 
-  _savePendingChanges(done) {
-    this._confirmSaveChanges()
-      .then(() => {
-        // don't return the result of saveDocument so a failing save does not invoke the 'done' function
-        this.saveDocument().then(done);
-      })
-      .catch(done);
+  _dealWithPendingChanges(messageKey, done) {
+    this._confirmSaveOrDiscardChanges(messageKey)
+      .then((action) => {
+        if (action === 'save') {
+          // don't return the result of saveDocument so a failing save does not invoke the 'done' function
+          this.saveDocument().then(done);
+        } else {
+          done(); // discard
+        }
+      });
   }
 
-  _confirmSaveChanges() {
+  _confirmSaveOrDiscardChanges(messageKey) {
     if (!this._isFormDirty()) {
-      return this.$q.reject();
+      return this.$q.resolve('discard'); // No pending changes, no dialog, continue normally.
     }
-    const messageParams = {
-      documentName: this.doc.displayName,
-    };
-    const confirm = this.DialogService.confirm()
-      .textContent(this.$translate.instant('CONFIRM_SAVE_CHANGES_MESSAGE', messageParams))
-      .ok(this.$translate.instant('SAVE'))
-      .cancel(this.$translate.instant('DISCARD'));
 
-    return this.DialogService.show(confirm);
+    const message = this.$translate.instant(messageKey, { documentName: this.doc.displayName });
+
+    return this.DialogService.show({
+      template: saveOrDiscardDialogTemplate,
+      controller: MultiActionDialogCtrl,
+      controllerAs: '$ctrl',
+      locals: {
+        message,
+      },
+      bindToController: true,
+    });
   }
 
   _closePanelAndOpenContent(mode) {
@@ -314,8 +327,9 @@ class RightSidePanelCtrl {
 
   _deleteDraft() {
     if (this.editing) {
-      this.ContentService.deleteDraft(this.documentId);
+      return this.ContentService.deleteDraft(this.documentId);
     }
+    return this.$q.resolve();
   }
 
   _closePanel() {
