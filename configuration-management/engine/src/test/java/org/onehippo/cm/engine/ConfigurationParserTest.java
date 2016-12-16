@@ -74,7 +74,7 @@ public class ConfigurationParserTest {
 
         final Configuration base = configurations.get("base");
         assertEquals("base", base.getName());
-        assertEquals(0, base.getDependsOn().size());
+        assertEquals(0, base.getAfter().size());
         assertEquals(1, base.getProjects().size());
         final Project project1 = base.getProjects().get("project1");
         assertEquals("project1", project1.getName());
@@ -84,8 +84,8 @@ public class ConfigurationParserTest {
 
         final Configuration myhippoproject = configurations.get("myhippoproject");
         assertEquals("myhippoproject", myhippoproject.getName());
-        assertEquals(1, myhippoproject.getDependsOn().size());
-        assertEquals("base/myhippoproject", myhippoproject.getDependsOn().get(0));
+        assertEquals(1, myhippoproject.getAfter().size());
+        assertEquals("base/myhippoproject", myhippoproject.getAfter().get(0));
         assertEquals(1, myhippoproject.getProjects().size());
         final Project project2 = myhippoproject.getProjects().get("project2");
         assertEquals("project2", project1.getName());

@@ -99,7 +99,7 @@ public class ConfigurationNodeBuilder {
             return;
         }
         checked.add(current);
-        for (String dependsOn : current.getDependsOn()) {
+        for (String dependsOn : current.getAfter()) {
             Orderable dependsOnOrderable = configurationMap.get(dependsOn);
             if (dependsOnOrderable == null) {
                 throw new MissingDependencyException(String.format("Dependency '%s' has missing dependency '%s'",
@@ -136,13 +136,13 @@ public class ConfigurationNodeBuilder {
                 }
                 boolean config1DependsOnConfig2 = false;
                 boolean config2DependsOnConfig1 = false;
-                for (String dependsOn : config1.getDependsOn()) {
+                for (String dependsOn : config1.getAfter()) {
                     if (config2.getName().equals(dependsOn)) {
                         // config1 depends on config2 : Now exclude circular dependency
                         config1DependsOnConfig2 = true;
                     }
                 }
-                for (String dependsOn : config2.getDependsOn()) {
+                for (String dependsOn : config2.getAfter()) {
                     if (config1.getName().equals(dependsOn)) {
                         // config2 depends on config1
                         config2DependsOnConfig1 = true;
@@ -183,6 +183,6 @@ public class ConfigurationNodeBuilder {
     }
 
     private boolean isEmptyDependsOn(final Orderable orderable) {
-        return orderable.getDependsOn() == null || orderable.getDependsOn().size() == 0;
+        return orderable.getAfter() == null || orderable.getAfter().size() == 0;
     }
 }

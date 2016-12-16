@@ -32,7 +32,7 @@ public class SortingTest extends AbstractBaseTest {
     public void sort_two_configurations() throws Exception {
 
         // config 1 depends on config 2
-        configuration1.setDependsOn(ImmutableList.of(configuration2.getName()));
+        configuration1.setAfter(ImmutableList.of(configuration2.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
         SortedSet<Configuration> sorted = builder.sort(ImmutableList.of(configuration1, configuration2));
@@ -48,9 +48,9 @@ public class SortingTest extends AbstractBaseTest {
     public void sort_three_configurations() throws Exception {
 
         // config 1 depends on config 2
-        configuration1.setDependsOn(ImmutableList.of(configuration2.getName()));
+        configuration1.setAfter(ImmutableList.of(configuration2.getName()));
         // config 3 depends on config 1
-        configuration3.setDependsOn(ImmutableList.of(configuration1.getName()));
+        configuration3.setAfter(ImmutableList.of(configuration1.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
         SortedSet<Configuration> sorted = builder.sort(ImmutableList.of(configuration1, configuration2, configuration3));
@@ -66,9 +66,9 @@ public class SortingTest extends AbstractBaseTest {
     public void sort_three_configurations_multiple_dependencies() throws Exception {
 
         // config 1 depends on config 2
-        configuration1.setDependsOn(ImmutableList.of(configuration2.getName()));
+        configuration1.setAfter(ImmutableList.of(configuration2.getName()));
         // config 3 depends on config 1 and config 2
-        configuration3.setDependsOn(ImmutableList.of(configuration1.getName(), configuration2.getName()));
+        configuration3.setAfter(ImmutableList.of(configuration1.getName(), configuration2.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
         SortedSet<Configuration> sorted = builder.sort(ImmutableList.of(configuration1, configuration2, configuration3));
@@ -85,9 +85,9 @@ public class SortingTest extends AbstractBaseTest {
     public void sort_three_undeterministic_depends_sorts_on_name() throws Exception {
 
         // config 1 depends on config 2
-        configuration1.setDependsOn(ImmutableList.of(configuration2.getName()));
+        configuration1.setAfter(ImmutableList.of(configuration2.getName()));
         // config 3 depends on config 2
-        configuration3.setDependsOn(ImmutableList.of(configuration2.getName()));
+        configuration3.setAfter(ImmutableList.of(configuration2.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
         SortedSet<Configuration> sorted = builder.sort(ImmutableList.of(configuration1, configuration2, configuration3));

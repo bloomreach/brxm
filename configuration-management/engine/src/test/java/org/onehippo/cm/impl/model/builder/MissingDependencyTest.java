@@ -26,7 +26,7 @@ public class MissingDependencyTest extends AbstractBaseTest {
     @Test(expected = MissingDependencyException.class)
     public void configuration_missing_dependency() {
         // config 1 depends on non existing foo
-        configuration1.setDependsOn(ImmutableList.of("foo"));
+        configuration1.setAfter(ImmutableList.of("foo"));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
         builder.verifyConfigurationDependencies(ImmutableList.of(configuration1));
@@ -35,8 +35,8 @@ public class MissingDependencyTest extends AbstractBaseTest {
     @Test(expected = MissingDependencyException.class)
     public void configuration_missing_dependency_again() {
         // config 1 depends on non existing foo
-        configuration1.setDependsOn(ImmutableList.of(configuration2.getName()));
-        configuration2.setDependsOn(ImmutableList.of("foo"));
+        configuration1.setAfter(ImmutableList.of(configuration2.getName()));
+        configuration2.setAfter(ImmutableList.of("foo"));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
         builder.verifyConfigurationDependencies(ImmutableList.of(configuration1, configuration2));
@@ -45,7 +45,7 @@ public class MissingDependencyTest extends AbstractBaseTest {
     @Test(expected = MissingDependencyException.class)
     public void project_missing_dependency() {
         // config 1 depends on non existing foo
-        project1a.setDependsOn(ImmutableList.of("foo"));
+        project1a.setAfter(ImmutableList.of("foo"));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
         builder.verifyProjectDependencies(ImmutableList.of(project1a));
@@ -54,8 +54,8 @@ public class MissingDependencyTest extends AbstractBaseTest {
     @Test(expected = MissingDependencyException.class)
     public void project_missing_dependency_again() {
         // config 1 depends on non existing foo
-        project1a.setDependsOn(ImmutableList.of(project1b.getName()));
-        project1b.setDependsOn(ImmutableList.of("foo"));
+        project1a.setAfter(ImmutableList.of(project1b.getName()));
+        project1b.setAfter(ImmutableList.of("foo"));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
         builder.verifyProjectDependencies(ImmutableList.of(project1a, project1b));

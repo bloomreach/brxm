@@ -19,5 +19,5 @@ import java.util.List;
 
 public interface Orderable {
     String getName();
-    List<String> getDependsOn();
+    List<String> getAfter();
 }

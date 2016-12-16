@@ -24,7 +24,7 @@ import org.onehippo.cm.api.model.Project;
 public class ConfigurationImpl implements Configuration {
 
     private String name;
-    private List<String> dependsOn;
+    private List<String> after;
     private Map<String, Project> projects;
 
     @Override
@@ -37,12 +37,12 @@ public class ConfigurationImpl implements Configuration {
     }
 
     @Override
-    public List<String> getDependsOn() {
-        return dependsOn;
+    public List<String> getAfter() {
+        return after;
     }
 
-    public void setDependsOn(final List<String> dependsOn) {
-        this.dependsOn = dependsOn;
+    public void setAfter(final List<String> after) {
+        this.after = after;
     }
 
     @Override

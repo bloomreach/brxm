@@ -26,7 +26,7 @@ public class ModuleImpl implements Module {
 
     private String name;
     private Project project;
-    private List<String> dependsOn;
+    private List<String> after;
     private Map<String, Source> sources;
 
     @Override
@@ -48,12 +48,12 @@ public class ModuleImpl implements Module {
     }
 
     @Override
-    public List<String> getDependsOn() {
-        return dependsOn;
+    public List<String> getAfter() {
+        return after;
     }
 
-    public void setDependsOn(final List<String> dependsOn) {
-        this.dependsOn = dependsOn;
+    public void setAfter(final List<String> after) {
+        this.after = after;
     }
 
     @Override
