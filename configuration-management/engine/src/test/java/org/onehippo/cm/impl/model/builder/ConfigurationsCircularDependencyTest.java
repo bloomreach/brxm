@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.builder.exceptions.CircularDependencyException;
 
-public class CircularDependencyTest extends AbstractBaseTest{
+public class ConfigurationsCircularDependencyTest extends AbstractConfigurationsTest {
 
 
     @Test(expected = CircularDependencyException.class)
@@ -30,7 +30,7 @@ public class CircularDependencyTest extends AbstractBaseTest{
         configuration1.setDependsOn(ImmutableList.of(configuration1.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        builder.verifyDependencies(configuration1, configuration2);
+        builder.verifyConfigurationDependencies(ImmutableList.of(configuration1, configuration2));
     }
 
     @Test(expected = CircularDependencyException.class)
@@ -41,7 +41,7 @@ public class CircularDependencyTest extends AbstractBaseTest{
         configuration2.setDependsOn(ImmutableList.of(configuration1.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        builder.verifyDependencies(configuration1, configuration2);
+        builder.verifyConfigurationDependencies(ImmutableList.of(configuration1, configuration2));
     }
 
     @Test(expected = CircularDependencyException.class)
@@ -54,7 +54,7 @@ public class CircularDependencyTest extends AbstractBaseTest{
         configuration3.setDependsOn(ImmutableList.of(configuration1.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        builder.verifyDependencies(configuration1, configuration2, configuration3);
+        builder.verifyConfigurationDependencies(ImmutableList.of(configuration1, configuration2, configuration3));
     }
 
     @Test(expected = CircularDependencyException.class)
@@ -80,6 +80,6 @@ public class CircularDependencyTest extends AbstractBaseTest{
         configuration2b.setDependsOn(ImmutableList.of(configuration2.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        builder.verifyDependencies(configuration1, configuration2, configuration3, configuration2a, configuration2b);
+        builder.verifyConfigurationDependencies(ImmutableList.of(configuration1, configuration2, configuration3, configuration2a, configuration2b));
     }
 }

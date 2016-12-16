@@ -15,9 +15,9 @@
  */
 package org.onehippo.cm.api.model;
 
-import java.util.Map;
+import java.util.List;
 
-public interface Module extends Orderable {
-    Project getProject();
-    Map<String, Source> getSources();
+public interface Orderable {
+    String getName();
+    List<String> getDependsOn();
 }

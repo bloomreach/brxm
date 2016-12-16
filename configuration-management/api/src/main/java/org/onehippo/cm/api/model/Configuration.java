@@ -18,8 +18,6 @@ package org.onehippo.cm.api.model;
 import java.util.List;
 import java.util.Map;
 
-public interface Configuration {
-    String getName();
-    List<String> getDependsOn();
+public interface Configuration extends Orderable {
     Map<String, Project> getProjects();
 }

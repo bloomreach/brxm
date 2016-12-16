@@ -15,7 +15,7 @@
  */
 package org.onehippo.cm.impl.model.builder;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +27,8 @@ import java.util.TreeSet;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.DefinitionItem;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.impl.model.builder.exceptions.CircularDependencyException;
 import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
@@ -37,9 +39,9 @@ import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
  */
 public class ConfigurationNodeBuilder {
 
-    public ConfigurationNode build(final Configuration... configurations) {
+    public ConfigurationNode build(final Collection<Configuration> configurations) {
 
-        verifyDependencies(configurations);
+        verifyConfigurationDependencies(configurations);
         SortedSet<Configuration> sortedConfigurations = sort(configurations);
 
         // TODO get the sorted list of ALL DefinitionItem PER Configuration
@@ -48,47 +50,74 @@ public class ConfigurationNodeBuilder {
         return null;
     }
 
-    void verifyDependencies(final Configuration... configurations) {
-        Map<String, Configuration> configurationMap = new HashMap<>();
+    void verifyConfigurationDependencies(final Collection<Configuration> configurations) {
+        doVerifyDependencies(configurations);
         for (Configuration configuration : configurations) {
-            configurationMap.put(configuration.getName(), configuration);
-        }
-        for (Configuration configuration : configurations) {
-            if (isEmptyDependsOn(configuration)) {
+            if (configuration.getProjects() == null) {
                 continue;
             }
-            Set<Configuration> checked = new HashSet<>();
-            recurse(configurationMap, configuration, configuration, checked);
+            Collection<Project> projects = configuration.getProjects().values();
+            verifyProjectDependencies(projects);
         }
     }
 
-    private void recurse(final Map<String, Configuration> configurationMap,
-                         final Configuration investigate,
-                         final Configuration current,
-                         final Set<Configuration> checked) {
+    private void verifyProjectDependencies(final Collection<Project> projects) {
+        doVerifyDependencies(projects);
+        for (Project project : projects) {
+            if (project.getModules() == null) {
+                continue;
+            }
+            Collection<Module> modules = project.getModules().values();
+            verifyModuleDependencies(modules);
+        }
+    }
+
+    private void verifyModuleDependencies(final Collection<Module> modules) {
+        doVerifyDependencies(modules);
+    }
+
+    void doVerifyDependencies(final Collection<? extends Orderable> orderableList) {
+        Map<String, Orderable> objectMap = new HashMap<>();
+        for (Orderable orderable : orderableList) {
+            objectMap.put(orderable.getName(), orderable);
+        }
+        for (Orderable orderable : orderableList) {
+            if (isEmptyDependsOn(orderable)) {
+                continue;
+            }
+            Set<Orderable> checked = new HashSet<>();
+            recurse(objectMap, orderable, orderable, checked);
+        }
+
+    }
+
+    private void recurse(final Map<String, Orderable> configurationMap,
+                         final Orderable investigate,
+                         final Orderable current,
+                         final Set<Orderable> checked) {
         if (checked.contains(current)) {
             return;
         }
         checked.add(current);
         for (String dependsOn : current.getDependsOn()) {
-            Configuration dependsOnConfig = configurationMap.get(dependsOn);
-            if (dependsOnConfig == null) {
+            Orderable dependsOnOrderable = configurationMap.get(dependsOn);
+            if (dependsOnOrderable == null) {
                 throw new MissingDependencyException(String.format("Dependency '%s' has missing dependency '%s'",
                         current.getName(), dependsOn));
             }
-            if (dependsOnConfig == investigate) {
+            if (dependsOnOrderable == investigate) {
                 // TODO in the message add which configurations are part of the circular dependencies
-                throw new CircularDependencyException(String.format("Configuration '%s' has circular dependency",
-                        investigate.getName()));
+                throw new CircularDependencyException(String.format("'%s' '%s' has circular dependency",
+                        dependsOnOrderable.getClass().getName(), investigate.getName()));
             }
-            if (isEmptyDependsOn(dependsOnConfig)) {
+            if (isEmptyDependsOn(dependsOnOrderable)) {
                 continue;
             }
-            recurse(configurationMap, investigate, dependsOnConfig, checked);
+            recurse(configurationMap, investigate, dependsOnOrderable, checked);
         }
     }
 
-    SortedSet<Configuration> sort(final Configuration... configurations) {
+    SortedSet<Configuration> sort(final Collection<Configuration> list) {
         SortedSet<Configuration> sortedConfigurations = new TreeSet<>(new Comparator<Configuration>() {
             @Override
             public int compare(final Configuration config1, final Configuration config2) {
@@ -130,7 +159,7 @@ public class ConfigurationNodeBuilder {
 
 
         });
-        sortedConfigurations.addAll(Arrays.asList(configurations));
+        sortedConfigurations.addAll(list);
         return sortedConfigurations;
     }
 
@@ -153,7 +182,7 @@ public class ConfigurationNodeBuilder {
         return configurationNode;
     }
 
-    private boolean isEmptyDependsOn(final Configuration config) {
-        return config.getDependsOn() == null || config.getDependsOn().size() == 0;
+    private boolean isEmptyDependsOn(final Orderable orderable) {
+        return orderable.getDependsOn() == null || orderable.getDependsOn().size() == 0;
     }
 }

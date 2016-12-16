@@ -26,7 +26,7 @@ import org.onehippo.cm.api.model.Configuration;
 
 import static org.junit.Assert.assertEquals;
 
-public class SortingTest extends AbstractBaseTest{
+public class SortingTest extends AbstractConfigurationsTest {
 
     @Test
     public void sort_two_configurations() throws Exception {
@@ -35,12 +35,12 @@ public class SortingTest extends AbstractBaseTest{
         configuration1.setDependsOn(ImmutableList.of(configuration2.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        SortedSet<Configuration> sorted = builder.sort(configuration1, configuration2);
+        SortedSet<Configuration> sorted = builder.sort(ImmutableList.of(configuration1, configuration2));
 
         String sortedNames = sorted.stream().map((Function<Configuration, Object>)Configuration::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1]", sortedNames);
 
-        SortedSet<Configuration> sorted2 = builder.sort(configuration2, configuration1);
+        SortedSet<Configuration> sorted2 = builder.sort(ImmutableList.of(configuration2, configuration1));
         assertEquals(sorted, sorted2);
     }
 
@@ -53,12 +53,12 @@ public class SortingTest extends AbstractBaseTest{
         configuration3.setDependsOn(ImmutableList.of(configuration1.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        SortedSet<Configuration> sorted = builder.sort(configuration1, configuration2, configuration3);
+        SortedSet<Configuration> sorted = builder.sort(ImmutableList.of(configuration1, configuration2, configuration3));
 
         String sortedNames = sorted.stream().map((Function<Configuration, Object>)Configuration::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1, configuration3]", sortedNames);
 
-        SortedSet<Configuration> sorted2 = builder.sort(configuration2, configuration3, configuration1);
+        SortedSet<Configuration> sorted2 = builder.sort(ImmutableList.of(configuration2, configuration3, configuration1));
         assertEquals(sorted, sorted2);
     }
 
@@ -71,12 +71,12 @@ public class SortingTest extends AbstractBaseTest{
         configuration3.setDependsOn(ImmutableList.of(configuration1.getName(), configuration2.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        SortedSet<Configuration> sorted = builder.sort(configuration1, configuration2, configuration3);
+        SortedSet<Configuration> sorted = builder.sort(ImmutableList.of(configuration1, configuration2, configuration3));
 
         String sortedNames = sorted.stream().map((Function<Configuration, Object>)Configuration::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1, configuration3]", sortedNames);
 
-        SortedSet<Configuration> sorted2 = builder.sort(configuration2, configuration3, configuration1);
+        SortedSet<Configuration> sorted2 = builder.sort(ImmutableList.of(configuration2, configuration3, configuration1));
         assertEquals(sorted, sorted2);
 
     }
@@ -90,12 +90,12 @@ public class SortingTest extends AbstractBaseTest{
         configuration3.setDependsOn(ImmutableList.of(configuration2.getName()));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        SortedSet<Configuration> sorted = builder.sort(configuration1, configuration2, configuration3);
+        SortedSet<Configuration> sorted = builder.sort(ImmutableList.of(configuration1, configuration2, configuration3));
 
         String sortedNames = sorted.stream().map((Function<Configuration, Object>)Configuration::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1, configuration3]", sortedNames);
 
-        SortedSet<Configuration> sorted2 = builder.sort(configuration2, configuration3, configuration1);
+        SortedSet<Configuration> sorted2 = builder.sort(ImmutableList.of(configuration2, configuration3, configuration1));
         assertEquals(sorted, sorted2);
     }
 

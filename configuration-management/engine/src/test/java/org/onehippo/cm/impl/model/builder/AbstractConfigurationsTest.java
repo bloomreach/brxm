@@ -18,7 +18,7 @@ package org.onehippo.cm.impl.model.builder;
 import org.junit.Before;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 
-public abstract class AbstractBaseTest {
+public abstract class AbstractConfigurationsTest {
 
     protected ConfigurationImpl configuration1;
     protected ConfigurationImpl configuration2;

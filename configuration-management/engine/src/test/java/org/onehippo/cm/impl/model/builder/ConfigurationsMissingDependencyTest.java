@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 
-public class MissingDependencyTest extends AbstractBaseTest {
+public class ConfigurationsMissingDependencyTest extends AbstractConfigurationsTest {
 
     @Test(expected = MissingDependencyException.class)
     public void missing_dependency() {
@@ -29,7 +29,7 @@ public class MissingDependencyTest extends AbstractBaseTest {
         configuration1.setDependsOn(ImmutableList.of("foo"));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        builder.verifyDependencies(configuration1);
+        builder.verifyConfigurationDependencies(ImmutableList.of(configuration1));
     }
 
     @Test(expected = MissingDependencyException.class)
@@ -39,6 +39,6 @@ public class MissingDependencyTest extends AbstractBaseTest {
         configuration2.setDependsOn(ImmutableList.of("foo"));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
-        builder.verifyDependencies(configuration1, configuration2);
+        builder.verifyConfigurationDependencies(ImmutableList.of(configuration1, configuration2));
     }
 }
