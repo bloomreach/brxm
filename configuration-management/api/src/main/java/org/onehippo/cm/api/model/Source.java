@@ -21,6 +21,5 @@ import java.util.Map;
 public interface Source {
     String getPath();
     Module getModule();
-    List<String> getDependsOn();
     Map<DefinitionItem, Definition> getDefinitions();
 }

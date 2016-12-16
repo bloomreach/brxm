@@ -27,7 +27,6 @@ public class SourceImpl implements Source {
 
     private String path;
     private Module module;
-    private List<String> dependsOn;
     private Map<DefinitionItem, Definition> definitions;
 
     @Override
@@ -46,15 +45,6 @@ public class SourceImpl implements Source {
 
     public void setModule(final Module module) {
         this.module = module;
-    }
-
-    @Override
-    public List<String> getDependsOn() {
-        return dependsOn;
-    }
-
-    public void setDependsOn(final List<String> dependsOn) {
-        this.dependsOn = dependsOn;
     }
 
     @Override
