@@ -96,7 +96,7 @@ public class TabsPlugin extends RenderPlugin {
     private boolean openleft = false;
 
     private boolean isHidden = false;
-    private boolean avoidRefocusOnDestroyTab = false;
+    private boolean avoidTabRefocus = false;
 
     public TabsPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
@@ -397,10 +397,10 @@ public class TabsPlugin extends RenderPlugin {
 
     public void hide() {
         isHidden = true;
-        blurTabs(false);
+        blurTabs();
     }
 
-    public void blurTabs(final boolean avoidRefocusOnDestroyTab) {
+    public void blurTabs() {
         final int tabIndex = tabbedPanel.getSelectedTab();
         if (tabIndex > -1) {
             tabbedPanel.setSelectedTab(-1);
@@ -408,7 +408,10 @@ public class TabsPlugin extends RenderPlugin {
 
             onTabDeactivated(tabs.get(tabIndex));
         }
-        this.avoidRefocusOnDestroyTab = avoidRefocusOnDestroyTab;
+    }
+
+    public void disableTabRefocus() {
+        this.avoidTabRefocus = true;
     }
 
     /**
@@ -458,7 +461,7 @@ public class TabsPlugin extends RenderPlugin {
         // hook method for sub-classes to execute logic when a tab is activated
         tab.selectionStamp = ++selectionCount;
         isHidden = false;
-        avoidRefocusOnDestroyTab = false;
+        avoidTabRefocus = false;
     }
 
     protected void onTabDeactivated(final Tab tab) {
@@ -511,7 +514,7 @@ public class TabsPlugin extends RenderPlugin {
             context.unregisterTracker(decoratorTracker, serviceId);
 
             getTabbedPanel().setSelectedTab(-1);
-            if (!avoidRefocusOnDestroyTab) {
+            if (!avoidTabRefocus) {
                 focusRecentTabUnlessHidden();
             }
         }
