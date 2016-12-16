@@ -21,10 +21,10 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 
-public class ConfigurationsMissingDependencyTest extends AbstractConfigurationsTest {
+public class MissingDependencyTest extends AbstractBaseTest {
 
     @Test(expected = MissingDependencyException.class)
-    public void missing_dependency() {
+    public void configuration_missing_dependency() {
         // config 1 depends on non existing foo
         configuration1.setDependsOn(ImmutableList.of("foo"));
 
@@ -33,12 +33,31 @@ public class ConfigurationsMissingDependencyTest extends AbstractConfigurationsT
     }
 
     @Test(expected = MissingDependencyException.class)
-    public void missing_dependency_again() {
+    public void configuration_missing_dependency_again() {
         // config 1 depends on non existing foo
         configuration1.setDependsOn(ImmutableList.of(configuration2.getName()));
         configuration2.setDependsOn(ImmutableList.of("foo"));
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
         builder.verifyConfigurationDependencies(ImmutableList.of(configuration1, configuration2));
+    }
+
+    @Test(expected = MissingDependencyException.class)
+    public void project_missing_dependency() {
+        // config 1 depends on non existing foo
+        project1a.setDependsOn(ImmutableList.of("foo"));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        builder.verifyProjectDependencies(ImmutableList.of(project1a));
+    }
+
+    @Test(expected = MissingDependencyException.class)
+    public void project_missing_dependency_again() {
+        // config 1 depends on non existing foo
+        project1a.setDependsOn(ImmutableList.of(project1b.getName()));
+        project1b.setDependsOn(ImmutableList.of("foo"));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        builder.verifyProjectDependencies(ImmutableList.of(project1a, project1b));
     }
 }

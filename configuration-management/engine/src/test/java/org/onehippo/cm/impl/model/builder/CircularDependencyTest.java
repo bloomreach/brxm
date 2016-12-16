@@ -21,11 +21,11 @@ import org.junit.Test;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.builder.exceptions.CircularDependencyException;
 
-public class ConfigurationsCircularDependencyTest extends AbstractConfigurationsTest {
+public class CircularDependencyTest extends AbstractBaseTest {
 
 
     @Test(expected = CircularDependencyException.class)
-    public void self_circular_dependency() {
+    public void configurations_self_circular_dependency() {
         // config 1 depends on config 1
         configuration1.setDependsOn(ImmutableList.of(configuration1.getName()));
 
@@ -34,7 +34,7 @@ public class ConfigurationsCircularDependencyTest extends AbstractConfigurations
     }
 
     @Test(expected = CircularDependencyException.class)
-    public void two_wise_circular_dependency() {
+    public void configurations_two_wise_circular_dependency() {
         // config 1 depends on config 2
         configuration1.setDependsOn(ImmutableList.of(configuration2.getName()));
         // config 2 depends on config 1
@@ -45,7 +45,7 @@ public class ConfigurationsCircularDependencyTest extends AbstractConfigurations
     }
 
     @Test(expected = CircularDependencyException.class)
-    public void three_wise_circular_dependency() {
+    public void configurations_three_wise_circular_dependency() {
         // config 1 depends on config 2
         configuration1.setDependsOn(ImmutableList.of(configuration2.getName()));
         // config 2 depends on config 3
@@ -58,7 +58,7 @@ public class ConfigurationsCircularDependencyTest extends AbstractConfigurations
     }
 
     @Test(expected = CircularDependencyException.class)
-    public void complex_multiple_circular_dependencies() {
+    public void configurations_complex_multiple_circular_dependencies() {
         // this test is to assure the verifyDependencies does not by accident loops forever
 
         // config 2 depends on config 1
@@ -81,5 +81,32 @@ public class ConfigurationsCircularDependencyTest extends AbstractConfigurations
 
         ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
         builder.verifyConfigurationDependencies(ImmutableList.of(configuration1, configuration2, configuration3, configuration2a, configuration2b));
+    }
+
+    @Test(expected = CircularDependencyException.class)
+    public void projects_self_circular_dependency() {
+        project1a.setDependsOn(ImmutableList.of(project1a.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        builder.verifyProjectDependencies(ImmutableList.of(project1a, project1b));
+    }
+
+    @Test(expected = CircularDependencyException.class)
+    public void projects_two_wise_circular_dependency() {
+        project1a.setDependsOn(ImmutableList.of(project1b.getName()));
+        project1b.setDependsOn(ImmutableList.of(project1a.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        builder.verifyProjectDependencies(ImmutableList.of(project1a, project1b));
+    }
+
+    @Test(expected = CircularDependencyException.class)
+    public void projects_three_wise_circular_dependency() {
+        project1a.setDependsOn(ImmutableList.of(project1b.getName()));
+        project1b.setDependsOn(ImmutableList.of(project1c.getName()));
+        project1c.setDependsOn(ImmutableList.of(project1a.getName()));
+
+        ConfigurationNodeBuilder builder = new ConfigurationNodeBuilder();
+        builder.verifyProjectDependencies(ImmutableList.of(project1a, project1b, project1c));
     }
 }

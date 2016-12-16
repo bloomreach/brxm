@@ -17,22 +17,14 @@ package org.onehippo.cm.impl.model.builder;
 
 import org.junit.Before;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.ProjectImpl;
 
-public abstract class AbstractConfigurationsTest {
+public abstract class AbstractProjectsTest {
 
-    protected ConfigurationImpl configuration1;
-    protected ConfigurationImpl configuration2;
-    protected ConfigurationImpl configuration3;
 
     @Before
     public void setup() {
 
-        configuration1 = new ConfigurationImpl();
-        configuration2 = new ConfigurationImpl();
-        configuration3 = new ConfigurationImpl();
 
-        configuration1.setName("configuration1");
-        configuration2.setName("configuration2");
-        configuration3.setName("configuration3");
     }
 }

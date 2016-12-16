@@ -26,7 +26,7 @@ import org.onehippo.cm.api.model.Configuration;
 
 import static org.junit.Assert.assertEquals;
 
-public class ConfigurationsSortingTest extends AbstractConfigurationsTest {
+public class SortingTest extends AbstractBaseTest {
 
     @Test
     public void sort_two_configurations() throws Exception {

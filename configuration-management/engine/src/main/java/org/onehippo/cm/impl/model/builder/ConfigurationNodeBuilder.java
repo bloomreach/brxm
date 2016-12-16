@@ -61,7 +61,7 @@ public class ConfigurationNodeBuilder {
         }
     }
 
-    private void verifyProjectDependencies(final Collection<Project> projects) {
+    void verifyProjectDependencies(final Collection<Project> projects) {
         doVerifyDependencies(projects);
         for (Project project : projects) {
             if (project.getModules() == null) {
@@ -72,7 +72,7 @@ public class ConfigurationNodeBuilder {
         }
     }
 
-    private void verifyModuleDependencies(final Collection<Module> modules) {
+    void verifyModuleDependencies(final Collection<Module> modules) {
         doVerifyDependencies(modules);
     }
 
