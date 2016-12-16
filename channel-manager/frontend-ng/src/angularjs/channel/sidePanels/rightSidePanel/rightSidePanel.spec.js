@@ -257,7 +257,7 @@ describe('ChannelRightSidePanel', () => {
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
   });
 
-  it('opens a document with no content', () => {
+  it('opens a document without content', () => {
     const emptyDocument = {
       id: 'test',
       displayName: 'Display Name',
@@ -266,9 +266,7 @@ describe('ChannelRightSidePanel', () => {
       },
       fields: { },
     };
-    const emptyType = { id: 'ns:testdocument' };
     ContentService.createDraft.and.returnValue($q.resolve(emptyDocument));
-    ContentService.getDocumentType.and.returnValue($q.resolve(emptyType));
     spyOn($translate, 'instant');
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
@@ -276,7 +274,6 @@ describe('ChannelRightSidePanel', () => {
     $rootScope.$digest();
 
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
-    expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
 
     expect($ctrl.doc).toBeUndefined();
     expect($ctrl.docType).toBeUndefined();
@@ -568,16 +565,19 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('fails to open a document with no type', () => {
-    const response = {
+    const doc = {
       info: {
         type: {
           id: 'document:type',
         },
       },
+      fields: {
+        bla: 1,
+      },
       displayName: 'Document Display Name',
     };
     spyOn($translate, 'instant');
-    ContentService.createDraft.and.returnValue($q.resolve(response));
+    ContentService.createDraft.and.returnValue($q.resolve(doc));
     ContentService.getDocumentType.and.returnValue($q.reject({}));
 
     const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
