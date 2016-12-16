@@ -133,11 +133,11 @@ class RightSidePanelCtrl {
       .finally(() => delete this.loading);
   }
 
-  static _hasFields(doc) {
+  _hasFields(doc) {
     return doc.fields && Object.keys(doc.fields).length > 0;
   }
 
-  static _noContentResponse(doc) {
+  _noContentResponse(doc) {
     return {
       data: {
         reason: 'NO_CONTENT',
@@ -179,7 +179,7 @@ class RightSidePanelCtrl {
     this._handleErrorResponse(errorKey, params);
   }
 
-  static _extractErrorParams(errorInfo) {
+  _extractErrorParams(errorInfo) {
     const params = {};
     if (errorInfo.reason === 'OTHER_HOLDER') {
       params.user = errorInfo.params.userName || errorInfo.params.userId;
@@ -237,11 +237,11 @@ class RightSidePanelCtrl {
       });
   }
 
-  static _isDocument(obj) {
+  _isDocument(obj) {
     return obj && obj.id; // Document has an ID field, ErrorInfo doesn't.
   }
 
-  static _isErrorInfo(obj) {
+  _isErrorInfo(obj) {
     return obj && obj.reason; // ErrorInfo has a reason field, Document doesn't.
   }
 
