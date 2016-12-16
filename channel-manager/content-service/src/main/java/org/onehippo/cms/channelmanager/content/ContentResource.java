@@ -17,7 +17,6 @@
 package org.onehippo.cms.channelmanager.content;
 
 import java.util.Locale;
-import java.util.Optional;
 
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -28,17 +27,24 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
+import org.onehippo.cms.channelmanager.content.document.DocumentsService;
 import org.onehippo.cms.channelmanager.content.document.model.Document;
 import org.onehippo.cms.channelmanager.content.documenttype.DocumentTypesService;
-import org.onehippo.cms.channelmanager.content.document.DocumentsService;
+import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 
 @Produces("application/json")
 @Path("/")
 public class ContentResource {
+
+    private static final CacheControl NO_CACHE = new CacheControl();
+    static {
+        NO_CACHE.setNoCache(true);
+    }
+
     private final SessionDataProvider sessionDataProvider;
 
     public ContentResource(final SessionDataProvider userSessionProvider) {
@@ -82,29 +88,37 @@ public class ContentResource {
     @GET
     @Path("documenttypes/{id}")
     public Response getDocumentType(@PathParam("id") String id, @Context HttpServletRequest servletRequest) {
-        return executeTask(servletRequest, Response.Status.OK,
+        return executeTask(servletRequest, Response.Status.OK, NO_CACHE,
                 (session, locale) -> DocumentTypesService.get().getDocumentType(id, session, locale));
+    }
+
+    private Response executeTask(final HttpServletRequest servletRequest,
+                                 final Response.Status successResponse,
+                                 final EndPointTask task) {
+        return executeTask(servletRequest, successResponse, null, task);
     }
 
     /**
      * Shared logic for providing the EndPointTask with contextual input and handling the packaging of its response
      * (which may be an error, encapsulated in an Exception).
      *
-     * @param servletRequest current HTTP servlet request to derive contextual input
+     * @param servletRequest  current HTTP servlet request to derive contextual input
      * @param successResponse HTTP status code in case of success
-     * @param task           the EndPointTask to execute
-     * @return               a JAX-RS response towards the client
+     * @param cacheControl    HTTP Cache-Control response header
+     * @param task            the EndPointTask to execute
+     * @return                a JAX-RS response towards the client
      */
     private Response executeTask(final HttpServletRequest servletRequest,
                                  final Response.Status successResponse,
+                                 final CacheControl cacheControl,
                                  final EndPointTask task) {
         final Session session = sessionDataProvider.getJcrSession(servletRequest);
         final Locale locale = sessionDataProvider.getLocale(servletRequest);
         try {
             final Object result = task.execute(session, locale);
-            return Response.status(successResponse).entity(result).build();
+            return Response.status(successResponse).cacheControl(cacheControl).entity(result).build();
         } catch (ErrorWithPayloadException e) {
-            return Response.status(e.getStatus()).entity(e.getPayload()).build();
+            return Response.status(e.getStatus()).cacheControl(cacheControl).entity(e.getPayload()).build();
         }
     }
 
