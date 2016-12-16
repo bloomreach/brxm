@@ -63,7 +63,7 @@ public class CloseDocumentEditorEventListener extends ExtEventListener {
         try {
             final Node documentHandle = UserSession.get().getJcrSession().getNodeByIdentifier(documentHandleUuid);
             final JcrNodeModel documentHandleModel = new JcrNodeModel(documentHandle);
-            IEditor<?> editor = editorManager.getEditor(documentHandleModel);
+            final IEditor<?> editor = editorManager.getEditor(documentHandleModel);
             if (editor != null) {
                 editor.close();
             }
