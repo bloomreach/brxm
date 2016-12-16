@@ -39,6 +39,7 @@ public abstract class AbstractBaseTest {
 
 
     protected DependencyVerifier verifier = new DependencyVerifier();
+    protected DependencySorter sorter = new DependencySorter();
 
     @Before
     public void setup() {

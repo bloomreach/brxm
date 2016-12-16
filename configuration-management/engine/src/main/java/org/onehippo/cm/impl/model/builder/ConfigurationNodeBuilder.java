@@ -45,67 +45,12 @@ public class ConfigurationNodeBuilder {
 
         new DependencyVerifier().verifyConfigurationDependencies(configurations);
 
-        SortedSet<Orderable> sortedConfigurations = sort(configurations);
+        new DependencySorter().sortConfigurations(configurations);
 
         // TODO get the sorted list of ALL DefinitionItem PER Configuration
         // FROM this list we can build the ConfigurationNode model
 
         return null;
-    }
-
-
-    SortedSet<Orderable> sort(final Collection<? extends Orderable> list) {
-        SortedSet<Orderable> sortedConfigurations = new TreeSet<>(new Comparator<Orderable>() {
-            @Override
-            public int compare(final Orderable orderable1, final Orderable orderable2) {
-                if (orderable1.equals(orderable2)) {
-                    return 0;
-                }
-                if (isEmptyDependsOn(orderable1)) {
-                    if (isEmptyDependsOn(orderable2)) {
-                        return orderable1.getName().compareTo(orderable2.getName());
-                    } else {
-                        return -1;
-                    }
-                }
-                if (isEmptyDependsOn(orderable2)) {
-                    return 1;
-                }
-                boolean config1DependsOnConfig2 = false;
-                boolean config2DependsOnConfig1 = false;
-                for (String dependsOn : orderable1.getAfter()) {
-                    if (orderable2.getName().equals(dependsOn)) {
-                        // orderable1 depends on orderable2 : Now exclude circular dependency
-                        config1DependsOnConfig2 = true;
-                    }
-                }
-                for (String dependsOn : orderable2.getAfter()) {
-                    if (orderable1.getName().equals(dependsOn)) {
-                        // orderable2 depends on orderable1
-                        config2DependsOnConfig1 = true;
-                    }
-                }
-                if (config2DependsOnConfig1) {
-                    return -1;
-                }
-                if (config1DependsOnConfig2) {
-                    return 1;
-                }
-                return orderable1.getName().compareTo(orderable2.getName());
-            }
-
-
-        });
-        sortedConfigurations.addAll(list);
-        return sortedConfigurations;
-    }
-
-
-    private void sort(final Map<String, Project> projects) {
-        // sort the projects
-        for (Project project : projects.values()) {
-
-        }
     }
 
 
