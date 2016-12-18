@@ -3,3 +3,4 @@
 .settings/
 target/
 .classpath
+log4j.log
