@@ -210,13 +210,10 @@ public class EditorManagerTest extends PluginTest implements IClusterable {
         JcrNodeModel model = new JcrNodeModel("/test/content/document");
         IEditorManager editorMgr = context.getService("editor.manager", IEditorManager.class);
         editorMgr.registerOpenListener(listener);
-        IEditor editor = editorMgr.openEditor(model);
-        editorMgr.unregisterOpenListener(listener);
-        assertEquals(model, modelReference.getModel());
-
-        editor.close();
-        assertEquals(new JcrNodeModel((Node) null), modelReference.getModel());
+        editorMgr.openEditor(model);
         assertEquals(map.get("model"), model);
+
+        editorMgr.unregisterOpenListener(listener);
     }
 
     @Test
