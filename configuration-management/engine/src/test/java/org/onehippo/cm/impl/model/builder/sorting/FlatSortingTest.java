@@ -29,9 +29,9 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.impl.model.builder.AbstractBaseTest;
 
 import static org.junit.Assert.assertEquals;
-import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getConfigurationSorter;
-import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getModuleSorter;
-import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getProjectSorter;
+import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.getConfigurationSorter;
+import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.getModuleSorter;
+import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.getProjectSorter;
 
 public class FlatSortingTest extends AbstractBaseTest {
 

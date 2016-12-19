@@ -27,7 +27,7 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getModuleSorter;
+import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.getModuleSorter;
 
 public class SortedProject implements Project {
     

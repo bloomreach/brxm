@@ -36,7 +36,7 @@ import org.onehippo.cm.impl.model.builder.AbstractBaseTest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getConfigurationSorter;
+import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.getConfigurationSorter;
 
 public class DeepSortingTest extends AbstractBaseTest {
 

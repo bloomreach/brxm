@@ -28,9 +28,12 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
 
-import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getConfigurationSorter;
-
 public class DependencySorter {
+
+
+    static final Sorter<Configuration> configurationSorter = new Sorter<Configuration>();
+    static final Sorter<Project> projectSorter = new Sorter<Project>();
+    static final Sorter<Module> moduleSorter = new Sorter<Module>();
 
     /**
      * @return A {@link List} of {@link Configuration}s that is *deep* sorted wrt its {@link Configuration#getAfter()}
@@ -46,25 +49,19 @@ public class DependencySorter {
         return sorted;
     }
 
+    static Sorter<Configuration> getConfigurationSorter() {
+        return configurationSorter;
+    }
+
+    static Sorter<Project> getProjectSorter() {
+        return projectSorter;
+    }
+
+    static Sorter<Module> getModuleSorter() {
+        return moduleSorter;
+    }
 
     static class Sorter<T extends Orderable> {
-
-        private static final Sorter<Configuration> configurationSorter = new Sorter<Configuration>();
-        private static final Sorter<Project> projectSorter = new Sorter<Project>();
-        private static final Sorter<Module> moduleSorter = new Sorter<Module>();
-
-        static Sorter<Configuration> getConfigurationSorter() {
-            return configurationSorter;
-        }
-
-        static Sorter<Project> getProjectSorter() {
-            return projectSorter;
-        }
-
-        static Sorter<Module> getModuleSorter() {
-            return moduleSorter;
-        }
-
 
         public SortedSet<T> sort(final Map<String, T> map) {
             return sort(map.values());

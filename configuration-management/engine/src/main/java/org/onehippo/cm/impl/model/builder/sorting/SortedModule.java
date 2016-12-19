@@ -22,7 +22,6 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 
-
 public class SortedModule implements Module {
     private Module delegatee;
     private Project project;
@@ -30,6 +29,9 @@ public class SortedModule implements Module {
     public SortedModule(final Module delegatee, final Project project) {
         this.delegatee = delegatee;
         this.project = project;
+        for (Source source : delegatee.getSources().values()) {
+            // getSourceSorter();
+        }
     }
 
     @Override
