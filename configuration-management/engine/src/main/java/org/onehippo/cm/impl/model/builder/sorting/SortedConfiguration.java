@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.impl.model.builder.sorting;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import java.util.SortedSet;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Project;
 
+import static java.util.Collections.unmodifiableMap;
 import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getProjectSorter;
 
 public class SortedConfiguration implements Configuration {
@@ -43,7 +45,7 @@ public class SortedConfiguration implements Configuration {
 
     @Override
     public Map<String, Project> getProjects() {
-        return sortedProjects;
+        return unmodifiableMap(sortedProjects);
     }
 
     @Override

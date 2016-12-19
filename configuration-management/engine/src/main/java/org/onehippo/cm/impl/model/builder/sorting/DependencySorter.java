@@ -67,9 +67,6 @@ public class DependencySorter {
 
 
         public SortedSet<T> sort(final Map<String, T> map) {
-            if (map == null) {
-                return null;
-            }
             return sort(map.values());
         }
 
@@ -115,9 +112,6 @@ public class DependencySorter {
 
 
             });
-            if (list == null || list.isEmpty()) {
-                return sortedOrderables;
-            }
             sortedOrderables.addAll(list);
             return sortedOrderables;
         }

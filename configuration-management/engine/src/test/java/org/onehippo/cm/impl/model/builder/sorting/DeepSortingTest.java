@@ -61,9 +61,6 @@ public class DeepSortingTest extends AbstractBaseTest {
 
         Map<String, Project> sortedProjects = sortedConfiguration1.getProjects();
 
-        assertTrue(sortedProjects instanceof LinkedHashMap);
-        assertTrue("Sorted Map should not be recreated on the fly", sortedProjects == sortedConfiguration1.getProjects());
-
         final String sortedProjectNames = sortedProjects.values().stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
 
         assertEquals("[project1c, project1b, project1a]", sortedProjectNames);
@@ -74,8 +71,6 @@ public class DeepSortingTest extends AbstractBaseTest {
         assertTrue(sortedProject1a.getConfiguration() == sortedConfiguration1);
 
         Map<String, Module> sortedModules = sortedProject1a.getModules();
-
-        assertTrue(sortedModules instanceof LinkedHashMap);
 
         final String sortedModuleNames = sortedModules.values().stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
 

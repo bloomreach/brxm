@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.impl.model.builder.sorting;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 
+import static java.util.Collections.unmodifiableMap;
 import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getModuleSorter;
 
 public class SortedProject implements Project {
@@ -52,7 +54,7 @@ public class SortedProject implements Project {
 
     @Override
     public Map<String, Module> getModules() {
-        return sortedModules;
+        return unmodifiableMap(sortedModules);
     }
 
     @Override
