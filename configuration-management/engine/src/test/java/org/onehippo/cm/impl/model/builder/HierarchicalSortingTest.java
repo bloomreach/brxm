@@ -43,7 +43,7 @@ public class HierarchicalSortingTest extends AbstractBaseTest {
         module1a.setAfter(ImmutableList.of(module1b.getName()));
         module1b.setAfter(ImmutableList.of(module1c.getName()));
 
-        List<Configuration> sorted = sorter.sortConfigurations(ImmutableList.of(configuration1, configuration2, configuration3));
+//        List<Configuration> sorted = sorter.sortConfigurations(ImmutableList.of(configuration1, configuration2, configuration3));
 
         // TODO
 //        String sortedConfigurationNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();

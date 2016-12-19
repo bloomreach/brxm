@@ -16,24 +16,10 @@
 package org.onehippo.cm.impl.model.builder;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.DefinitionItem;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Orderable;
-import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.impl.model.builder.exceptions.CircularDependencyException;
-import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
-
-import static org.onehippo.cm.impl.model.builder.Utils.isEmptyDependsOn;
 
 /**
  * Class that is capable of transforming a {@link Configuration} into its composite {@link ConfigurationNode} model
