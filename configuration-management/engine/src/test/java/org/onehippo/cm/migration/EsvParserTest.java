@@ -32,7 +32,7 @@ public class EsvParserTest {
 
     @Test
     public void test_esv_kitchen_sink() throws IOException {
-        File file = new File("src/test/resources/migration/hippoecm-extension.xml");
+        File file = new File("src/test/resources/migration/esv-kitchen-sink.xml");
         File baseDir = file.getParentFile();
         EsvParser esvParser = new EsvParser(baseDir);
         EsvNode rootNode = esvParser.parse(Esv2Yaml.createReader(file), file.getCanonicalPath());
