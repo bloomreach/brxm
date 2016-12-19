@@ -93,7 +93,7 @@ describe('ChannelRightSidePanel', () => {
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
 
-    CmsService = jasmine.createSpyObj('CmsService', ['publish']);
+    CmsService = jasmine.createSpyObj('CmsService', ['publish', 'subscribe']);
     DialogService = jasmine.createSpyObj('DialogService', ['confirm', 'show']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
@@ -827,6 +827,20 @@ describe('ChannelRightSidePanel', () => {
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
     expect(ChannelSidePanelService.close).not.toHaveBeenCalled();
     expect(CmsService.publish).not.toHaveBeenCalled();
+  });
+
+  it('subscribes to the kill-editor event', () => {
+    expect(CmsService.subscribe).toHaveBeenCalled();
+    const onKillEditor = CmsService.subscribe.calls.mostRecent().args[1];
+
+    ChannelSidePanelService.close.and.returnValue($q.resolve());
+    $ctrl.documentId = 'documentId';
+
+    onKillEditor('differentId');
+    expect(ChannelSidePanelService.close).not.toHaveBeenCalled();
+
+    onKillEditor('documentId');
+    expect(ChannelSidePanelService.close).toHaveBeenCalled();
   });
 });
 
