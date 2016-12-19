@@ -31,6 +31,7 @@ import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 import static org.onehippo.cm.impl.model.builder.Utils.isEmptyDependsOn;
 
 public class DependencyVerifier {
+
     void verifyConfigurationDependencies(final Collection<Configuration> configurations) {
         doVerifyDependencies(configurations);
         for (Configuration configuration : configurations) {

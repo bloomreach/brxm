@@ -37,9 +37,7 @@ public abstract class AbstractBaseTest {
     protected ModuleImpl module1b;
     protected ModuleImpl module1c;
 
-
     protected DependencyVerifier verifier = new DependencyVerifier();
-    protected DependencySorter sorter = new DependencySorter();
 
     @Before
     public void setup() {

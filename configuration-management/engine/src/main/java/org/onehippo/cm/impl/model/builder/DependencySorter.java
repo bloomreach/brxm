@@ -40,21 +40,21 @@ public class DependencySorter {
     }
 
 
-    public static class Sorter<T extends Orderable> {
+    static class Sorter<T extends Orderable> {
 
         private static final Sorter<Configuration> configurationSorter = new Sorter<Configuration>();
         private static final Sorter<Project> projectSorter = new Sorter<Project>();
         private static final Sorter<Module> moduleSorter = new Sorter<Module>();
 
-        public static Sorter<Configuration> getConfigurationSorter() {
+        static Sorter<Configuration> getConfigurationSorter() {
             return configurationSorter;
         }
 
-        public static Sorter<Project> getProjectSorter() {
+        static Sorter<Project> getProjectSorter() {
             return projectSorter;
         }
 
-        public static Sorter<Module> getModuleSorter() {
+        static Sorter<Module> getModuleSorter() {
             return moduleSorter;
         }
 
