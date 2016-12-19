@@ -19,5 +19,6 @@ public interface Value {
     Object getObject();
     String getString();
     ValueType getType();
+    boolean isResource();
     boolean isDeleted();
 }

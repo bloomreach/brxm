@@ -18,37 +18,23 @@ package org.onehippo.cm.api.model;
 public enum ValueType {
 
     STRING,
-    URI(STRING),
+    URI,
     BOOLEAN,
     LONG,
     DOUBLE,
     DECIMAL,
     BINARY,
     DATE,
-    NAME(STRING),
-    PATH(STRING),
-    WEAKREFERENCE(STRING),
-    REFERENCE(STRING),
-    ENCRYPTED(STRING),
-    CLASSNAME(STRING),
-    RESOURCE(STRING),
-    BINARYRESOURCE(BINARY),
-    RESOURCEFOLDER(STRING);
-
-    private final ValueType baseType;
-
-    private ValueType() {
-        this.baseType = this;
-    }
-    private ValueType(ValueType baseType) {
-        this.baseType = baseType;
-    }
+    NAME,
+    PATH,
+    WEAKREFERENCE,
+    REFERENCE,
+    ENCRYPTED,
+    CLASSNAME,
+    RESOURCE,
+    FOLDER;
 
     public final String toString() {
         return name().toLowerCase();
-    }
-
-    public final ValueType getBaseType() {
-        return baseType;
     }
 }
