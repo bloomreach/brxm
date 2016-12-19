@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.channelmanager.channeleditor;
 
+import java.io.Serializable;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -220,7 +222,7 @@ public class ChannelEditor extends ExtPanel {
         }, editorManagerServiceId);
     }
 
-    private class EditorOpenListener implements IEditorOpenListener {
+    private class EditorOpenListener implements IEditorOpenListener, Serializable {
         @Override
         public void onOpen(final IModel<Node> model) {
             AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
