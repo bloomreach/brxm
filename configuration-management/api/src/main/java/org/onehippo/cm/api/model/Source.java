@@ -16,10 +16,9 @@
 package org.onehippo.cm.api.model;
 
 import java.util.List;
-import java.util.Map;
 
 public interface Source {
     String getPath();
     Module getModule();
-    Map<DefinitionItem, Definition> getDefinitions();
+    List<Definition> getDefinitions();
 }

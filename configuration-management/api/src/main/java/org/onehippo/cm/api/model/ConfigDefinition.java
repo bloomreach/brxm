@@ -15,5 +15,5 @@
  */
 package org.onehippo.cm.api.model;
 
-public interface ConfigurationDefinition extends ContentDefinition {
+public interface ConfigDefinition extends ContentDefinition {
 }
