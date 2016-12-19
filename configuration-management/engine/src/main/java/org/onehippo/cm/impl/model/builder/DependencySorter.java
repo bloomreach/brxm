@@ -59,7 +59,7 @@ public class DependencySorter {
         }
 
         SortedSet<T> sort(final Collection<T> list) {
-            SortedSet<T> sortedConfigurations = new TreeSet<>(new Comparator<T>() {
+            SortedSet<T> sortedOrderables = new TreeSet<>(new Comparator<T>() {
                 @Override
                 public int compare(final T orderable1, final T orderable2) {
                     if (orderable1.equals(orderable2)) {
@@ -100,8 +100,8 @@ public class DependencySorter {
 
 
             });
-            sortedConfigurations.addAll(list);
-            return sortedConfigurations;
+            sortedOrderables.addAll(list);
+            return sortedOrderables;
         }
 
     }
