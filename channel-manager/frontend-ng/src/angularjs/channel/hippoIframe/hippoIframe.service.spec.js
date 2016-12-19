@@ -84,8 +84,13 @@ describe('HippoIframeService', () => {
       spyOn($log, 'warn');
 
       iframe.one('load', () => { // catch the reload event to signal page load completion
+        expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
+        expect(ScrollService.restoreScrollPosition).not.toHaveBeenCalled();
         expect(HippoIframeService.deferredReload).toBeTruthy();
+
         HippoIframeService.signalPageLoadCompleted();
+
+        expect(ScrollService.restoreScrollPosition).toHaveBeenCalled();
 
         $rootScope.$digest();
       });
