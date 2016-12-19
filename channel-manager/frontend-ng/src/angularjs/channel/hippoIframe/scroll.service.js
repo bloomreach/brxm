@@ -31,6 +31,11 @@ class ScrollService {
     this.el = el;
     this.container = container;
     this.easing = easing;
+
+    this.savedScrollPosition = {
+      top: 0,
+      left: 0,
+    };
   }
 
   enable(scrollAllowed = () => true) {
@@ -103,6 +108,16 @@ class ScrollService {
     distance = Math.abs(distance);
     const duration = distance * 2;
     return Math.min(Math.max(DURATION_MIN, duration), DURATION_MAX);
+  }
+
+  saveScrollPosition() {
+    this.savedScrollPosition.top = this.container.scrollTop();
+    this.savedScrollPosition.left = this.container.scrollLeft();
+  }
+
+  restoreScrollPosition() {
+    this.container.scrollTop(this.savedScrollPosition.top);
+    this.container.scrollLeft(this.savedScrollPosition.left);
   }
 }
 

@@ -23,20 +23,24 @@ describe('HippoIframeService', () => {
   let iframe;
   let HippoIframeService;
   let ChannelService;
+  let ScrollService;
   const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$log_, _$rootScope_, _HippoIframeService_, _ChannelService_) => {
+    inject((_$log_, _$rootScope_, _HippoIframeService_, _ChannelService_, _ScrollService_) => {
       $log = _$log_;
       $rootScope = _$rootScope_;
       HippoIframeService = _HippoIframeService_;
       ChannelService = _ChannelService_;
+      ScrollService = _ScrollService_;
     });
 
     spyOn(ChannelService, 'makePath').and.returnValue('/test/url');
     spyOn(ChannelService, 'extractRenderPathInfo');
+    spyOn(ScrollService, 'saveScrollPosition');
+    spyOn(ScrollService, 'restoreScrollPosition');
 
     jasmine.getFixtures().load('channel/hippoIframe/hippoIframe.service.fixture.html');
 
@@ -80,8 +84,13 @@ describe('HippoIframeService', () => {
       spyOn($log, 'warn');
 
       iframe.one('load', () => { // catch the reload event to signal page load completion
+        expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
+        expect(ScrollService.restoreScrollPosition).not.toHaveBeenCalled();
         expect(HippoIframeService.deferredReload).toBeTruthy();
+
         HippoIframeService.signalPageLoadCompleted();
+
+        expect(ScrollService.restoreScrollPosition).toHaveBeenCalled();
 
         $rootScope.$digest();
       });
