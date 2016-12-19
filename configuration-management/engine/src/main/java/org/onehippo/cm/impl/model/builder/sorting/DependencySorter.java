@@ -13,11 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model.builder;
+package org.onehippo.cm.impl.model.builder.sorting;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -26,17 +28,23 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
 
-import static org.onehippo.cm.impl.model.builder.DependencySorter.Sorter.getConfigurationSorter;
 import static org.onehippo.cm.impl.model.builder.Utils.isEmptyDependsOn;
+import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getConfigurationSorter;
 
 public class DependencySorter {
 
-    public List<Configuration> sortConfigurations(final Collection<Configuration> configurations) {
-        SortedSet<Configuration> sort = getConfigurationSorter().sort(configurations);
-
-
-        // TODO returns sorted configuration
-        return null;
+    /**
+     * @return A {@link List} of {@link Configuration}s that is *deep* sorted wrt its {@link Configuration#getAfter()}
+     * configurations and has sorted Map of {@link Configuration#getProjects()}, where in turn the {@link Project}
+     * instances have sorted {@link Module}s
+     */
+    public List<Configuration> sort(final Collection<Configuration> configurations) {
+        SortedSet<Configuration> sortedConfigurations = getConfigurationSorter().sort(configurations);
+        List<Configuration> sorted = new ArrayList<>();
+        for (Configuration configuration : sortedConfigurations) {
+            sorted.add(new SortedConfiguration(configuration));
+        }
+        return sorted;
     }
 
 
@@ -56,6 +64,14 @@ public class DependencySorter {
 
         static Sorter<Module> getModuleSorter() {
             return moduleSorter;
+        }
+
+
+        public SortedSet<T> sort(final Map<String, T> map) {
+            if (map == null) {
+                return null;
+            }
+            return sort(map.values());
         }
 
         SortedSet<T> sort(final Collection<T> list) {
@@ -100,6 +116,9 @@ public class DependencySorter {
 
 
             });
+            if (list == null || list.isEmpty()) {
+                return sortedOrderables;
+            }
             sortedOrderables.addAll(list);
             return sortedOrderables;
         }

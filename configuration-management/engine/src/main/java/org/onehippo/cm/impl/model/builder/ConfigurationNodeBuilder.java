@@ -16,10 +16,12 @@
 package org.onehippo.cm.impl.model.builder;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.DefinitionItem;
+import org.onehippo.cm.impl.model.builder.sorting.DependencySorter;
 
 /**
  * Class that is capable of transforming a {@link Configuration} into its composite {@link ConfigurationNode} model
@@ -31,7 +33,7 @@ public class ConfigurationNodeBuilder {
 
         new DependencyVerifier().verifyConfigurationDependencies(configurations);
 
-        new DependencySorter().sortConfigurations(configurations);
+        List<Configuration> sort = new DependencySorter().sort(configurations);
 
         // TODO get the sorted list of ALL DefinitionItem PER Configuration
         // FROM this list we can build the ConfigurationNode model

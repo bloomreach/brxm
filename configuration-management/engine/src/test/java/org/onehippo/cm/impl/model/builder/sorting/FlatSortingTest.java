@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model.builder;
+package org.onehippo.cm.impl.model.builder.sorting;
 
 import java.util.SortedSet;
 import java.util.function.Function;
@@ -26,11 +26,12 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.impl.model.builder.AbstractBaseTest;
 
 import static org.junit.Assert.assertEquals;
-import static org.onehippo.cm.impl.model.builder.DependencySorter.Sorter.getConfigurationSorter;
-import static org.onehippo.cm.impl.model.builder.DependencySorter.Sorter.getModuleSorter;
-import static org.onehippo.cm.impl.model.builder.DependencySorter.Sorter.getProjectSorter;
+import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getConfigurationSorter;
+import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getModuleSorter;
+import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getProjectSorter;
 
 public class FlatSortingTest extends AbstractBaseTest {
 

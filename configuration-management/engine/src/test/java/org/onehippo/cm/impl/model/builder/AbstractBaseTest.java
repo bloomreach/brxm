@@ -58,7 +58,9 @@ public abstract class AbstractBaseTest {
         project1b.setName("project1b");
         project1c.setName("project1c");
 
-        configuration1.setProjects(ImmutableMap.of(project1a.getName(), project1a, project1b.getName(), project1b, project1c.getName(), project1c));
+        configuration1.setProjects(ImmutableMap.of(project1a.getName(), project1a,
+                project1b.getName(), project1b,
+                project1c.getName(), project1c));
 
         module1a = new ModuleImpl();
         module1b = new ModuleImpl();
@@ -68,6 +70,8 @@ public abstract class AbstractBaseTest {
         module1b.setName("module1b");
         module1c.setName("module1c");
 
-        project1a.setModules(ImmutableMap.of(module1a.getName(), module1a, module1b.getName(), module1b, module1c.getName(), module1c));
+        project1a.setModules(ImmutableMap.of(module1a.getName(), module1a,
+                module1b.getName(), module1b,
+                module1c.getName(), module1c));
     }
 }
