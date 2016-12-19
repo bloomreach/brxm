@@ -71,14 +71,19 @@ public class HierarchicalSortingTest extends AbstractBaseTest {
 
         Project sortedProject1a = sortedProjects.get("project1a");
 
+        assertFalse(sortedProject1a.getConfiguration() == configuration1);
+        assertTrue(sortedProject1a.getConfiguration() == sortedConfiguration1);
+
         Map<String, Module> sortedModules = sortedProject1a.getModules();
 
         assertTrue(sortedModules instanceof LinkedHashMap);
 
-
         final String sortedModuleNames = sortedModules.values().stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
 
         assertEquals("[module1c, module1b, module1a]", sortedModuleNames);
+
+        assertFalse(sortedModules.get("module1a").getProject() == project1a);
+        assertTrue(sortedModules.get("module1a").getProject() == sortedProject1a);
     }
 
 

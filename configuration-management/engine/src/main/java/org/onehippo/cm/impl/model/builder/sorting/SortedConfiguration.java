@@ -37,7 +37,7 @@ public class SortedConfiguration implements Configuration {
             return;
         }
         for (Project project : sorted) {
-            sortedProjects.put(project.getName(), new SortedProject(project, delegatee));
+            sortedProjects.put(project.getName(), new SortedProject(project, this));
         }
     }
 

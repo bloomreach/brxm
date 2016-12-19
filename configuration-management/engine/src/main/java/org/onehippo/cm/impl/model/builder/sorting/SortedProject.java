@@ -41,7 +41,7 @@ public class SortedProject implements Project {
             return;
         }
         for (Module module : sorted) {
-            sortedModules.put(module.getName(), new SortedModule(module, delegatee));
+            sortedModules.put(module.getName(), new SortedModule(module, this));
         }
     }
 
