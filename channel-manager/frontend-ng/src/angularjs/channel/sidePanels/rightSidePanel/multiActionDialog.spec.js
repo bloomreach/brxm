@@ -14,33 +14,24 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
-import 'angular-mocks';
+import MultiActionDialogCtrl from './multiActionDialog.controller';
 
 describe('hippoIframeCtrl', () => {
-  let $mdDialog;
-  let MultiActionDialogCtrl;
-  
+  const $mdDialog = jasmine.createSpyObj('$mdDialog', ['hide', 'cancel']);
+  let $ctrl;
+
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
-
-    inject(($controller, _$mdDialog_) => {
-      $mdDialog = _$mdDialog_;
-      MultiActionDialogCtrl = $controller('MultiActionDialogCtrl');
-    });
-
-    spyOn($mdDialog, 'hide');
-    spyOn($mdDialog, 'cancel');
+    $ctrl = new MultiActionDialogCtrl($mdDialog);
   });
 
   it('hides the dialog with the given action', () => {
-    MultiActionDialogCtrl.action('transparent');
+    $ctrl.action('transparent');
 
     expect($mdDialog.hide).toHaveBeenCalledWith('transparent');
   });
 
   it('cancels the dialog', () => {
-    MultiActionDialogCtrl.cancel();
+    $ctrl.cancel();
 
     expect($mdDialog.cancel).toHaveBeenCalled();
   });

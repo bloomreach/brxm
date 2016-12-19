@@ -19,7 +19,6 @@ import primitiveFieldComponent from './primitiveField.component';
 import choiceFieldComponent from './choiceField.component';
 import compoundFieldComponent from './compoundField.component';
 import collapse from './collapse.directive';
-import MultiActionDialogCtrl from './multiActionDialog.controller';
 
 const rightSidePanelModule = angular
   .module('hippo-cm.channel.rightSidePanelModule', [])
@@ -28,8 +27,7 @@ const rightSidePanelModule = angular
   .component('primitiveField', primitiveFieldComponent)
   .component('choiceField', choiceFieldComponent)
   .component('compoundField', compoundFieldComponent)
-  .directive('collapse', collapse)
-  .controller('MultiActionDialogCtrl', MultiActionDialogCtrl);
+  .directive('collapse', collapse);
 
 export default rightSidePanelModule.name;
 

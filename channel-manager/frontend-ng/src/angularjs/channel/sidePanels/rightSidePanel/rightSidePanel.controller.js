@@ -15,7 +15,7 @@
  */
 
 import MultiActionDialogCtrl from './multiActionDialog.controller';
-import saveOrDiscardDialogTemplate from './saveOrDiscardDialog.html';
+import multiActionDialogTemplate from './multiActionDialog.html';
 
 const ERROR_MAP = {
   UNAVAILABLE: { // default catch-all
@@ -252,7 +252,7 @@ class RightSidePanelCtrl {
   _dealWithPendingChanges(messageKey, done) {
     this._confirmSaveOrDiscardChanges(messageKey)
       .then((action) => {
-        if (action === 'save') {
+        if (action === 'SAVE') {
           // don't return the result of saveDocument so a failing save does not invoke the 'done' function
           this.saveDocument().then(done);
         } else {
@@ -263,17 +263,18 @@ class RightSidePanelCtrl {
 
   _confirmSaveOrDiscardChanges(messageKey) {
     if (!this._isFormDirty()) {
-      return this.$q.resolve('discard'); // No pending changes, no dialog, continue normally.
+      return this.$q.resolve('DISCARD'); // No pending changes, no dialog, continue normally.
     }
 
     const message = this.$translate.instant(messageKey, { documentName: this.doc.displayName });
 
     return this.DialogService.show({
-      template: saveOrDiscardDialogTemplate,
+      template: multiActionDialogTemplate,
       controller: MultiActionDialogCtrl,
       controllerAs: '$ctrl',
       locals: {
         message,
+        actions: ['DISCARD', 'SAVE'],
       },
       bindToController: true,
     });

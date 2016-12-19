@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<md-dialog>
+<md-dialog flex="50">
   <md-dialog-content>
     <div class="md-dialog-content">
       <h3>{{ "SAVE_CHANGES_TITLE" | translate}}</h3>
@@ -25,11 +25,8 @@
     <md-button ng-click="$ctrl.cancel()">
       {{ "CANCEL" | translate }}
     </md-button>
-    <md-button ng-click="$ctrl.action('discard')">
-      {{ "DISCARD" | translate }}
-    </md-button>
-    <md-button ng-click="$ctrl.action('save')">
-      {{ "SAVE" | translate }}
+    <md-button ng-repeat="action in $ctrl.actions" ng-click="$ctrl.action(action)">
+      {{ action | translate }}
     </md-button>
   </md-dialog-actions>
 </md-dialog>

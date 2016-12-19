@@ -325,7 +325,7 @@ describe('ChannelRightSidePanel', () => {
 
     it('can save pending changes before opening a new document', () => {
       $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.resolve('save'));
+      DialogService.show.and.returnValue($q.resolve('SAVE'));
 
       onOpenCallback('newdoc');
       $rootScope.$digest();
@@ -338,7 +338,7 @@ describe('ChannelRightSidePanel', () => {
 
     it('does not open the new document when saving pending changes in the old document failed', () => {
       $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.resolve('save'));
+      DialogService.show.and.returnValue($q.resolve('SAVE'));
       ContentService.saveDraft.and.returnValue($q.reject({}));
 
       onOpenCallback('newdoc');
@@ -355,7 +355,7 @@ describe('ChannelRightSidePanel', () => {
 
     it('can discard pending changes to an existing document before opening a new document', () => {
       $ctrl.form.$dirty = true;
-      DialogService.show.and.returnValue($q.resolve('discard'));
+      DialogService.show.and.returnValue($q.resolve('DISCARD'));
 
       onOpenCallback('newdoc');
       $rootScope.$digest();
@@ -725,7 +725,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('can discard pending changes before opening the full content', () => {
-    DialogService.show.and.returnValue($q.resolve('discard'));
+    DialogService.show.and.returnValue($q.resolve('DISCARD'));
     ChannelSidePanelService.close.and.returnValue($q.resolve());
     $ctrl.documentId = 'test';
     $ctrl.doc = { displayName: 'Display Name' };
@@ -742,7 +742,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('saves pending changes before opening the full content', () => {
-    DialogService.show.and.returnValue($q.resolve('save'));
+    DialogService.show.and.returnValue($q.resolve('SAVE'));
     $ctrl.documentId = 'test';
     $ctrl.doc = testDocument;
     $ctrl.form.$dirty = true;
@@ -760,7 +760,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('releases holdership of the document when publishing it', () => {
-    DialogService.show.and.returnValue($q.resolve('save'));
+    DialogService.show.and.returnValue($q.resolve('SAVE'));
     $ctrl.documentId = 'documentId';
     $ctrl.doc = testDocument;
     $ctrl.form.$dirty = true;
@@ -780,7 +780,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('does not open the full content if saving changes failed', () => {
-    DialogService.show.and.returnValue($q.resolve('save'));
+    DialogService.show.and.returnValue($q.resolve('SAVE'));
     $ctrl.documentId = 'documentId';
     $ctrl.doc = testDocument;
     $ctrl.form.$dirty = true;
