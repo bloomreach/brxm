@@ -15,11 +15,12 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
@@ -54,7 +55,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
     private BrowserObserver browser;
 
     private List<IEditor<Node>> editors;
-    private List<IEditorOpenListener> openListeners;
+    private final Set<IEditorOpenListener> openListeners;
     private transient boolean active = false;
 
     public EditorManagerPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -63,8 +64,8 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         editorFactory = createEditorFactory(context, config);
         browser = new BrowserObserver(this, context, config);
 
-        editors = new LinkedList<IEditor<Node>>();
-        openListeners = new ArrayList<>();
+        editors = new LinkedList<>();
+        openListeners = new LinkedHashSet<>();
         context.registerService(this, IRefreshable.class.getName());
 
         // register editor
