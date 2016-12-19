@@ -15,11 +15,15 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.onehippo.cm.api.model.ConfigurationItem;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.DefinitionItem;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.unmodifiableList;
 
 public abstract class ConfigurationItemImpl implements ConfigurationItem {
 
@@ -58,7 +62,10 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
 
     @Override
     public List<DefinitionItem> getDefinitions() {
-        return definitions;
+        if (definitions == null) {
+            return emptyList();
+        }
+        return unmodifiableList(definitions);
     }
 
     public void setDefinitions(final List<DefinitionItem> definitions) {

@@ -21,6 +21,12 @@ public interface ConfigurationItem {
     String getName();
     String getPath();
     ConfigurationNode getParent();
+
+    /**
+     * @return The <strong>ordered</strong> immutable {@link List} of {@link DefinitionItem}s and empty immutable List
+     * if no definitions present. Note the ordering is according to serialized yaml format and not in
+     * model processing order.
+     */
     List<DefinitionItem> getDefinitions();
     boolean isDeleted();
 }

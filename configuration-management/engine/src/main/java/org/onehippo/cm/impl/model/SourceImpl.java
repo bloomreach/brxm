@@ -15,11 +15,14 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Source;
+
+import static java.util.Collections.emptyList;
 
 public class SourceImpl implements Source {
 
@@ -47,7 +50,10 @@ public class SourceImpl implements Source {
 
     @Override
     public List<Definition> getDefinitions() {
-        return definitions;
+        if (definitions == null) {
+            return emptyList();
+        }
+        return Collections.unmodifiableList(definitions);
     }
 
     public void setDefinitions(final List<Definition> definitions) {

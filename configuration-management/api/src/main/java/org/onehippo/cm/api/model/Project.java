@@ -19,5 +19,10 @@ import java.util.Map;
 
 public interface Project extends Orderable {
     Configuration getConfiguration();
+    /**
+     * @return The <strong>ordered</strong> map of {@link Module}s by name for this {@link Project} as an immutable map
+     * and empty immutable map if none present. Note the ordering is according to serialized yaml format and not in
+     * model processing order.
+     */
     Map<String, Module> getModules();
 }

@@ -15,12 +15,18 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
 
 public class ModuleImpl implements Module {
 
@@ -49,7 +55,10 @@ public class ModuleImpl implements Module {
 
     @Override
     public List<String> getAfter() {
-        return after;
+        if (after == null) {
+            return emptyList();
+        }
+        return unmodifiableList(after);
     }
 
     public void setAfter(final List<String> after) {
@@ -58,7 +67,10 @@ public class ModuleImpl implements Module {
 
     @Override
     public Map<String, Source> getSources() {
-        return sources;
+        if (sources == null) {
+            return emptyMap();
+        }
+        return unmodifiableMap(sources);
     }
 
     public void setSources(final Map<String, Source> sources) {

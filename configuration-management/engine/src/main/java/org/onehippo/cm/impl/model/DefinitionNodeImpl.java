@@ -15,10 +15,14 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
+
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
 
@@ -27,7 +31,10 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
 
     @Override
     public Map<String, DefinitionNode> getNodes() {
-        return nodes;
+        if (nodes == null) {
+            return emptyMap();
+        }
+        return unmodifiableMap(nodes);
     }
 
     public void setNodes(final Map<String, DefinitionNode> nodes) {
@@ -36,7 +43,10 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
 
     @Override
     public Map<String, DefinitionProperty> getProperties() {
-        return properties;
+        if (properties == null) {
+            return emptyMap();
+        }
+        return unmodifiableMap(properties);
     }
 
     public void setProperties(final Map<String, DefinitionProperty> properties) {

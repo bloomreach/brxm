@@ -19,5 +19,10 @@ import java.util.List;
 
 public interface Orderable {
     String getName();
+    /**
+     * @return The <strong>ordered</strong> immutable list of {@link String}s after which
+     * this {@link Orderable} instance should be loaded.
+     * Note the ordering is according to serialized yaml format and not in model processing order.
+     */
     List<String> getAfter();
 }

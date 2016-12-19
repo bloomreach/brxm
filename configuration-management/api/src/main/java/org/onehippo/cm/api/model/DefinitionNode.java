@@ -18,6 +18,16 @@ package org.onehippo.cm.api.model;
 import java.util.Map;
 
 public interface DefinitionNode extends DefinitionItem {
+    /**
+     * @return The <strong>ordered</strong> map of {@link DefinitionNode}s by name for this {@link DefinitionNode} as an immutable map
+     * and empty immutable map if none present. Note the ordering is according to serialized yaml format and not in
+     * model processing order.
+     */
     Map<String, DefinitionNode> getNodes();
+    /**
+     * @return The <strong>ordered</strong> map of {@link DefinitionProperty}s by name for this {@link DefinitionNode} as an immutable map
+     * and empty immutable map if none present. Note the ordering is according to serialized yaml format and not in
+     * model processing order.
+     */
     Map<String, DefinitionProperty> getProperties();
 }

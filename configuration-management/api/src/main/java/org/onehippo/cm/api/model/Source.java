@@ -20,5 +20,10 @@ import java.util.List;
 public interface Source {
     String getPath();
     Module getModule();
+    /**
+     * @return The <strong>ordered</strong> List of {@link Definition}s for this {@link Source} as an immutable list
+     * and empty immutable list if none present. Note the ordering is according to serialized yaml format and not in
+     * model processing order.
+     */
     List<Definition> getDefinitions();
 }

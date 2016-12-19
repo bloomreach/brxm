@@ -18,6 +18,13 @@ package org.onehippo.cm.api.model;
 import java.util.Map;
 
 public interface Module extends Orderable {
+
     Project getProject();
+
+    /**
+     * @return The <strong>ordered</strong> map of {@link Source}s by name for this {@link Module} as an immutable map
+     * and empty immutable map if none present. Note the ordering is according to serialized yaml format and not in
+     * model processing order.
+     */
     Map<String, Source> getSources();
 }
