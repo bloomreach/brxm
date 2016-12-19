@@ -38,9 +38,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getConfigurationSorter;
 
-public class HierarchicalSortingTest extends AbstractBaseTest {
+public class DeepSortingTest extends AbstractBaseTest {
 
-    @Ignore
     @Test
     public void assert_deep_sorting() throws Exception {
 
