@@ -28,7 +28,6 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.impl.model.builder.exceptions.CircularDependencyException;
 import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 
-import static org.onehippo.cm.impl.model.builder.Utils.isEmptyDependsOn;
 
 public class DependencyVerifier {
 
@@ -64,7 +63,7 @@ public class DependencyVerifier {
             objectMap.put(orderable.getName(), orderable);
         }
         for (Orderable orderable : orderableList) {
-            if (isEmptyDependsOn(orderable)) {
+            if (orderable.getAfter().isEmpty()) {
                 continue;
             }
             Set<Orderable> checked = new HashSet<>();
@@ -92,7 +91,7 @@ public class DependencyVerifier {
                 throw new CircularDependencyException(String.format("'%s' '%s' has circular dependency",
                         dependsOnOrderable.getClass().getName(), investigate.getName()));
             }
-            if (isEmptyDependsOn(dependsOnOrderable)) {
+            if (dependsOnOrderable.getAfter().isEmpty()) {
                 continue;
             }
             recurse(configurationMap, investigate, dependsOnOrderable, checked);

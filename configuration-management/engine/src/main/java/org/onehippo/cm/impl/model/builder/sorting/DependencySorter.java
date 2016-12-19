@@ -28,7 +28,6 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
 
-import static org.onehippo.cm.impl.model.builder.Utils.isEmptyDependsOn;
 import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.Sorter.getConfigurationSorter;
 
 public class DependencySorter {
@@ -81,14 +80,14 @@ public class DependencySorter {
                     if (orderable1.equals(orderable2)) {
                         return 0;
                     }
-                    if (isEmptyDependsOn(orderable1)) {
-                        if (isEmptyDependsOn(orderable2)) {
+                    if (orderable1.getAfter().isEmpty()) {
+                        if (orderable2.getAfter().isEmpty()) {
                             return orderable1.getName().compareTo(orderable2.getName());
                         } else {
                             return -1;
                         }
                     }
-                    if (isEmptyDependsOn(orderable2)) {
+                    if (orderable2.getAfter().isEmpty()) {
                         return 1;
                     }
                     boolean config1DependsOnConfig2 = false;
