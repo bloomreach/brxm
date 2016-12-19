@@ -20,7 +20,7 @@ import javax.jcr.Node;
 import org.apache.wicket.model.IModel;
 
 /**
- * IEditorOpeListener can be registered with an IEditorManager in order to be called back when IEditorManager opens
+ * IEditorOpenListener can be registered with an IEditorManager in order to be called back when IEditorManager opens
  * an editor.
  */
 public interface IEditorOpenListener {
