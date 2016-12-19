@@ -39,9 +39,6 @@ public class SortedProject implements Project {
         this.delegatee = delegatee;
         this.configuration = configuration;
         SortedSet<Module> sorted = getModuleSorter().sort(delegatee.getModules());
-        if (sorted == null) {
-            return;
-        }
         for (Module module : sorted) {
             sortedModules.put(module.getName(), new SortedModule(module, this));
         }

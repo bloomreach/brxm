@@ -35,9 +35,6 @@ public class SortedConfiguration implements Configuration {
     public SortedConfiguration(final Configuration delegatee) {
         this.delegatee = delegatee;
         SortedSet<Project> sorted = getProjectSorter().sort(delegatee.getProjects());
-        if (sorted == null) {
-            return;
-        }
         for (Project project : sorted) {
             sortedProjects.put(project.getName(), new SortedProject(project, this));
         }
