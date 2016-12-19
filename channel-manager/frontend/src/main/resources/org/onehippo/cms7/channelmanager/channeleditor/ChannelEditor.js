@@ -65,6 +65,9 @@
       }.bind(this));
     },
 
+    /**
+     * Called by ChannelEditor.java
+     */
     killEditor: function(documentId) {
       this.hostToIFrame.publish('kill-editor', documentId);
     },
