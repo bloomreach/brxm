@@ -15,17 +15,13 @@
  */
 package org.onehippo.cm.impl.model.builder.sorting;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
@@ -36,7 +32,6 @@ import org.onehippo.cm.impl.model.builder.AbstractBaseTest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.getConfigurationSorter;
 
 public class DeepSortingTest extends AbstractBaseTest {
 
