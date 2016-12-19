@@ -16,10 +16,8 @@
 package org.onehippo.cm.impl.model;
 
 import java.util.List;
-import java.util.Map;
 
 import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionItem;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Source;
 
@@ -27,7 +25,7 @@ public class SourceImpl implements Source {
 
     private String path;
     private Module module;
-    private Map<DefinitionItem, Definition> definitions;
+    private List<Definition> definitions;
 
     @Override
     public String getPath() {
@@ -48,11 +46,11 @@ public class SourceImpl implements Source {
     }
 
     @Override
-    public Map<DefinitionItem, Definition> getDefinitions() {
+    public List<Definition> getDefinitions() {
         return definitions;
     }
 
-    public void setDefinitions(final Map<DefinitionItem, Definition> definitions) {
+    public void setDefinitions(final List<Definition> definitions) {
         this.definitions = definitions;
     }
 }
