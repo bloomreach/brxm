@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 package org.hippoecm.frontend.plugins.cms.edit;
 
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
@@ -37,6 +39,7 @@ import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.IEditorOpenListener;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -52,6 +55,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
     private BrowserObserver browser;
 
     private List<IEditor<Node>> editors;
+    private final Set<IEditorOpenListener> openListeners;
     private transient boolean active = false;
 
     public EditorManagerPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -60,11 +64,22 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
         editorFactory = createEditorFactory(context, config);
         browser = new BrowserObserver(this, context, config);
 
-        editors = new LinkedList<IEditor<Node>>();
+        editors = new LinkedList<>();
+        openListeners = new LinkedHashSet<>();
         context.registerService(this, IRefreshable.class.getName());
 
         // register editor
         context.registerService(this, config.getString("editor.id"));
+    }
+
+    @Override
+    public void registerOpenListener(final IEditorOpenListener listener) {
+        openListeners.add(listener);
+    }
+
+    @Override
+    public void unregisterOpenListener(final IEditorOpenListener listener) {
+        openListeners.remove(listener);
     }
 
     /**
@@ -169,6 +184,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
 
             }, model, mode, getPluginConfig().getPluginConfig("cluster.options"));
 
+            openListeners.forEach(listener -> listener.onOpen(model));
             editors.add(editor);
             editor.focus();
 
