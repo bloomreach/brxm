@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * QueryBuilder implementation for easier construction of HstQuery objects.
  *
- * @deprecated Deprecated since version since 3.2.0 in favor of the HST fluent API's HstQueryBuilder
+ * @deprecated Deprecated since version since 3.1.1 in favor of the HST fluent API's HstQueryBuilder
  * @see org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder
  */
 @Deprecated
