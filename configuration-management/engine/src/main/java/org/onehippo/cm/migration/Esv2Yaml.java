@@ -15,12 +15,9 @@
  */
 package org.onehippo.cm.migration;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,13 +53,9 @@ public class Esv2Yaml {
     }
 
     public void convert() throws IOException {
-        EsvNode rootNode = esvParser.parse(createReader(extensionFile), extensionFile.getCanonicalPath());
+        EsvNode rootNode = esvParser.parse(new FileInputStream(extensionFile), extensionFile.getCanonicalPath());
         if (rootNode != null) {
             return;
         }
-    }
-
-    public static Reader createReader(File file) throws IOException {
-        return new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
     }
 }

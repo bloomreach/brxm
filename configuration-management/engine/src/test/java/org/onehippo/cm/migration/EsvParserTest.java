@@ -16,6 +16,7 @@
 package org.onehippo.cm.migration;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
@@ -35,7 +36,7 @@ public class EsvParserTest {
         File file = new File("src/test/resources/migration/esv-kitchen-sink.xml");
         File baseDir = file.getParentFile();
         EsvParser esvParser = new EsvParser(baseDir);
-        EsvNode rootNode = esvParser.parse(Esv2Yaml.createReader(file), file.getCanonicalPath());
+        EsvNode rootNode = esvParser.parse(new FileInputStream(file), file.getCanonicalPath());
         assertNotNull(rootNode);
         EsvNode treeImagesNode = rootNode.getChildren().get(9);
         EsvNode assetNode = treeImagesNode.getChildren().get(0);

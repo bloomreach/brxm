@@ -17,7 +17,7 @@ package org.onehippo.cm.migration;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,7 +87,7 @@ public class EsvParser extends DefaultHandler {
         this.locator = locator;
     }
 
-    public EsvNode parse(Reader reader, String resourcePath) throws IOException {
+    public EsvNode parse(InputStream is, String resourcePath) throws IOException {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -101,7 +101,7 @@ public class EsvParser extends DefaultHandler {
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
             SAXParser parser = factory.newSAXParser();
             this.resourcePath = resourcePath;
-            parser.parse(new InputSource(reader), this);
+            parser.parse(new InputSource(is), this);
             return rootNode;
         } catch (FactoryConfigurationError e) {
             throw new RuntimeException(

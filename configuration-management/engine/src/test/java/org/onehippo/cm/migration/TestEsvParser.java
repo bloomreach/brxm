@@ -16,6 +16,7 @@
 package org.onehippo.cm.migration;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class TestEsvParser {
             File file = new File(filename);
             File baseDir = file.getParentFile();
             EsvParser esvParser = new EsvParser(baseDir);
-            EsvNode rootNode = esvParser.parse(Esv2Yaml.createReader(file), file.getCanonicalPath());
+            EsvNode rootNode = esvParser.parse(new FileInputStream(file), file.getCanonicalPath());
             assertNotNull(rootNode);
         }
     }
