@@ -18,7 +18,12 @@ package org.onehippo.cm.api.model;
 import java.util.List;
 
 public interface Source {
+
+    /**
+     * @return the relative path of this source to the {@link Module} base path
+     */
     String getPath();
+
     Module getModule();
     /**
      * @return The <strong>ordered</strong> List of {@link Definition}s for this {@link Source} as an immutable list

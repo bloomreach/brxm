@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
+import org.onehippo.cm.impl.model.SourceImpl;
 
 public abstract class AbstractBaseTest {
 
@@ -32,10 +33,13 @@ public abstract class AbstractBaseTest {
     protected ProjectImpl project1b;
     protected ProjectImpl project1c;
 
-
     protected ModuleImpl module1a;
     protected ModuleImpl module1b;
     protected ModuleImpl module1c;
+
+    protected SourceImpl source1a;
+    protected SourceImpl source1b;
+    protected SourceImpl source1c;
 
     protected DependencyVerifier verifier = new DependencyVerifier();
 
@@ -73,5 +77,17 @@ public abstract class AbstractBaseTest {
         project1a.setModules(ImmutableMap.of(module1a.getName(), module1a,
                 module1b.getName(), module1b,
                 module1c.getName(), module1c));
+
+        source1a = new SourceImpl();
+        source1b = new SourceImpl();
+        source1c = new SourceImpl();
+
+        source1a.setPath("/foo/bar/lux");
+        source1b.setPath("/bar/foo/lux");
+        source1c.setPath("/lux/bar");
+
+        module1a.setSources(ImmutableMap.of(source1a.getPath(),source1a,
+                source1b.getPath(), source1b,
+                source1c.getPath(), source1c));
     }
 }

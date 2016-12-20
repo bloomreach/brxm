@@ -27,6 +27,7 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.impl.model.builder.AbstractBaseTest;
 
 import static org.junit.Assert.assertEquals;
@@ -73,6 +74,11 @@ public class DeepSortingTest extends AbstractBaseTest {
 
         assertFalse(sortedModules.get("module1a").getProject() == project1a);
         assertTrue(sortedModules.get("module1a").getProject() == sortedProject1a);
+
+        Map<String, Source> sources = sortedModules.get("module1a").getSources();
+        final String sortedSourcesNames = sources.values().stream().map((Function<Source, Object>)Source::getPath).collect(Collectors.toList()).toString();
+        assertEquals("[/lux/bar, /bar/foo/lux, /foo/bar/lux]", sortedSourcesNames);
+
     }
 
 

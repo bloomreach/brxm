@@ -31,9 +31,9 @@ import org.onehippo.cm.api.model.Project;
 public class DependencySorter {
 
 
-    static final Sorter<Configuration> configurationSorter = new Sorter<Configuration>();
-    static final Sorter<Project> projectSorter = new Sorter<Project>();
-    static final Sorter<Module> moduleSorter = new Sorter<Module>();
+    static final Sorter<Configuration> configurationSorter = new Sorter<>();
+    static final Sorter<Project> projectSorter = new Sorter<>();
+    static final Sorter<Module> moduleSorter = new Sorter<>();
 
     /**
      * @return A {@link List} of {@link Configuration}s that is *deep* sorted wrt its {@link Configuration#getAfter()}
