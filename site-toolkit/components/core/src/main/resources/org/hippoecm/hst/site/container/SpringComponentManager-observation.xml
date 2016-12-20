@@ -171,6 +171,7 @@
             <bean parent="baseEventListener" class="org.hippoecm.hst.cache.webfiles.WebFilesEventListener">
               <property name="pageCache" ref="pageCache"/>
               <property name="webFileValve" ref="webFileValve"/>
+              <property name="requestInfoCacheKeyFragmentCreator" ref="requestInfoCacheKeyFragmentCreator"/>
             </bean>
           </property>
         </bean>
