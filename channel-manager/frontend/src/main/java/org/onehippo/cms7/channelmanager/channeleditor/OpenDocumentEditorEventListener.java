@@ -74,12 +74,8 @@ class OpenDocumentEditorEventListener extends ExtEventListener {
             if (editor == null) {
                 editor = editorManager.openEditor(documentHandleModel);
             }
-            if (!mode.equals(editor.getMode())) {
-                if (mode.equals(IEditor.Mode.VIEW)) {
-                    editor.done();
-                } else {
-                    editor.setMode(mode);
-                }
+            if (mode == IEditor.Mode.EDIT && editor.getMode() != IEditor.Mode.EDIT) {
+                editor.setMode(mode);
             }
             editor.focus();
         } catch (ItemNotFoundException e) {
