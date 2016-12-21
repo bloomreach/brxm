@@ -24,6 +24,7 @@ import { LinkProcessorService } from './linkProcessor.service';
 import { ScalingService } from './scaling.service';
 import { ScrollService } from './scroll.service';
 import { DragDropService } from './dragDrop.service';
+import { ViewportService } from './viewport.service';
 
 export const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
@@ -38,4 +39,5 @@ export const channelHippoIframeModule = angular
   .service('linkProcessorService', LinkProcessorService)
   .service('ScalingService', ScalingService)
   .service('ScrollService', ScrollService)
-  .service('DragDropService', DragDropService);
+  .service('DragDropService', DragDropService)
+  .service('ViewportService', ViewportService);

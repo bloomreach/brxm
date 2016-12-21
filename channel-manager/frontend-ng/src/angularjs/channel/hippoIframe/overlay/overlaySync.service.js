@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import debounce from 'lodash.debounce';
 import MutationSummary from 'mutation-summary';
 
 export class OverlaySyncService {
@@ -28,14 +27,6 @@ export class OverlaySyncService {
     this.DomService = DomService;
 
     this.overlayElements = [];
-
-    this.syncIframeDebounced = debounce(() => this.syncIframe(), 250, {
-      maxWait: 1000,
-      leading: true,
-      trailing: true,
-    });
-
-    this.viewPortWidth = 0;
   }
 
   init($base, $sheet, $iframe, $overlay) {
@@ -60,7 +51,7 @@ export class OverlaySyncService {
   }
 
   _onLoad() {
-    this.syncIframe();
+    this.sync();
 
     const document = this._getIframeDocument();
     if (!document) {
@@ -68,14 +59,14 @@ export class OverlaySyncService {
       return;
     }
     this.observer = new MutationSummary({
-      callback: () => this.onDOMChanged(),
+      callback: () => this.sync(),
       rootNode: document,
       observeOwnChanges: true,
       queries: [{ all: true }],
     });
 
     $(this._getIframeWindow()).on('unload', () => this._onUnLoad());
-    $(this.$window).on('resize.overlaysync', () => this.syncIframe());
+    $(this.$window).on('resize.overlaysync', () => this.sync());
   }
 
   _onUnLoad() {
@@ -86,55 +77,7 @@ export class OverlaySyncService {
     });
   }
 
-  onDOMChanged() {
-    this.syncIframeDebounced();
-  }
-
-  syncIframe() {
-    this._syncDimensions();
-    this._syncOverlayElements();
-  }
-
-  setViewPortWidth(viewPortWidth) {
-    this.viewPortWidth = viewPortWidth;
-  }
-
-  getViewPortWidth() {
-    return this.viewPortWidth;
-  }
-
-  _syncDimensions() {
-    if (this.$iframe && this.$overlay) {
-      this._syncWidth();
-    }
-  }
-
-  /**
-   * Sync the width of the iframe and overlay. The width can be constrained by the viewPortWidth.
-   *
-   * @param iframeDocument The document object of the rendered channel in the iframe.
-   * @returns {boolean} true when the site in the iframe is wider than the viewport
-   * @private
-   */
-  _syncWidth() {
-    // reset min-width on iframe
-    this.$iframe.css('min-width', '0');
-
-    if (this.viewPortWidth === 0) {
-      // Desktop mode - no width constraints
-      this.$sheet.css('max-width', 'none');
-      this.$iframe.width('');
-      this.$overlay.width('');
-    } else {
-      // viewport is constrained
-      const width = `${this.viewPortWidth}px`;
-      this.$sheet.css('max-width', width);
-      this.$iframe.width(width);
-      this.$overlay.width(width);
-    }
-  }
-
-  _syncOverlayElements() {
+  sync() {
     this.overlayElements.forEach((element) => this._syncElement(element));
   }
 
