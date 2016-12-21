@@ -22,10 +22,13 @@
     </div>
   </md-dialog-content>
   <md-dialog-actions>
-    <md-button ng-click="$ctrl.cancel()">
+    <md-button ng-click="$ctrl.cancel()"
+               class="qa-cancel">
       {{ "CANCEL" | translate }}
     </md-button>
-    <md-button ng-repeat="action in $ctrl.actions" ng-click="$ctrl.action(action)">
+    <md-button ng-repeat="action in $ctrl.actions"
+               class="qa-{{action | lowercase}}"
+               ng-click="$ctrl.action(action)">
       {{ action | translate }}
     </md-button>
   </md-dialog-actions>
