@@ -21,7 +21,6 @@ describe('OverlaySyncService', () => {
   let $iframe;
   let $base;
   let $sheet;
-  let $scrollX;
   let $overlay;
   let $window;
 
@@ -39,13 +38,12 @@ describe('OverlaySyncService', () => {
 
     $base = $j('.channel-iframe-base');
     $sheet = $j('.channel-iframe-sheet');
-    $scrollX = $j('.channel-iframe-scroll-x');
     $iframe = $j('.iframe');
     $overlay = $j('.overlay');
   });
 
   function loadIframeFixture(callback) {
-    OverlaySyncService.init($base, $sheet, $scrollX, $iframe, $overlay);
+    OverlaySyncService.init($base, $sheet, $iframe, $overlay);
     $iframe.one('load', () => {
       const iframeWindow = $iframe[0].contentWindow;
       try {
@@ -135,23 +133,10 @@ describe('OverlaySyncService', () => {
     });
   });
 
-  it('should not allow the iframe to show inner scroll bars', (done) => {
-    loadIframeFixture((iframeWindow) => {
-      const $html = $(iframeWindow.document.documentElement);
-      expect($html).toHaveCss({
-        overflow: 'hidden',
-      });
-      done();
-    });
-  });
-
   it('should not constrain the viewport by default', (done) => {
     spyOn(OverlaySyncService, 'onDOMChanged');
 
-    loadIframeFixture((iframeWindow) => {
-      const $doc = $(iframeWindow.document.body);
-      $doc.width(1200);
-      $doc.height(600);
+    loadIframeFixture(() => {
       OverlaySyncService.syncIframe();
 
       expect($sheet).toHaveCss({
@@ -160,10 +145,6 @@ describe('OverlaySyncService', () => {
       expect($iframe).toHaveCss({
         'min-width': '0px',
       });
-
-      expect($iframe.height()).toEqual(600);
-      expect($overlay.height()).toEqual(600);
-      expect($scrollX.height()).toEqual(600);
 
       done();
     });
@@ -176,27 +157,6 @@ describe('OverlaySyncService', () => {
       expect($sheet.width()).toEqual(720);
       expect($iframe.width()).toEqual(720);
       expect($overlay.width()).toEqual(720);
-      done();
-    });
-  });
-
-  it('should show a horizontal scrollbar when viewport is constrained and site is not responsive', (done) => {
-    spyOn(OverlaySyncService, 'onDOMChanged');
-
-    loadIframeFixture((iframeWindow) => {
-      const $doc = $(iframeWindow.document.body);
-      $doc.width(1200);
-      $doc.height(600);
-
-      OverlaySyncService.setViewPortWidth(720);
-      OverlaySyncService.syncIframe();
-
-      expect($iframe.width()).toEqual(1200);
-      expect($overlay.width()).toEqual(1200);
-
-      expect($iframe.height()).toEqual(600);
-      expect($overlay.height()).toEqual(600);
-      expect($scrollX.height()).toEqual(615);
       done();
     });
   });
