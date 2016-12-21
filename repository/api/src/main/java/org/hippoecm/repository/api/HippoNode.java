@@ -31,7 +31,10 @@ public interface HippoNode extends Node {
      * Obtain a display name for this node. If not available falls back on {@link #getName()}.
      * If display name is available the result is the same as calling {@code getProperty("hippo:name").getString()}.
      *
-     * @return the display name of this node if available, otherwise the JCR name of this node.
+     * If this node does not have a display name but is a child node of a hippo:handle node having a display name,
+     * the display name of the parent handle node will be returned.
+     *
+     * @return the display name for this node if available, otherwise the JCR name of this node.
      * @throws RepositoryException
      */
     String getDisplayName() throws RepositoryException;
