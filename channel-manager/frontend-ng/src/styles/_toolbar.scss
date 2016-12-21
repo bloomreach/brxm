@@ -36,8 +36,8 @@ md-toolbar.hippo-toolbar {
 
   channel-actions .md-button,
   page-actions .md-button {
-    min-width: 0;
     margin: 0;
+    min-width: 0;
     padding-left: 8px;
     padding-right: 8px;
   }
@@ -49,8 +49,8 @@ md-toolbar.hippo-toolbar {
   .md-icon-button {
     color: $text-dark;
     height: $toolbar-height;
-    padding: 0;
     margin: 0;
+    padding: 0;
     width: 26px;
   }
 
@@ -103,11 +103,12 @@ md-toolbar.hippo-toolbar {
     margin-left: 0;
     margin-right: 4px;
     padding-right: 20px;
+
     md-icon {
-      color: $orange-a400;
-      position: relative;
-      left: 6px;
       bottom: 1px;
+      color: $orange-a400;
+      left: 6px;
+      position: relative;
     }
   }
 }
