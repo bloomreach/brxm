@@ -18,7 +18,6 @@ describe('ScalingService', () => {
   'use strict';
 
   let ScalingService;
-  let ViewportService;
   let iframeJQueryElement;
   let baseJQueryElement;
   let canvasJQueryElement;
@@ -27,9 +26,8 @@ describe('ScalingService', () => {
   beforeEach(() => {
     module('hippo-cm.channel.hippoIframe');
 
-    inject((_ScalingService_, _ViewportService_) => {
+    inject((_ScalingService_) => {
       ScalingService = _ScalingService_;
-      ViewportService = _ViewportService_;
     });
 
     jasmine.getFixtures().load('channel/hippoIframe/scaling.service.fixture.html');
@@ -155,8 +153,8 @@ describe('ScalingService', () => {
     expect(ScalingService.getScaleFactor()).toEqual(0.75);
   });
 
-  it('should do nothing when an uninitialized service is synced', () => {
-    ScalingService.sync();
+  it('should do nothing when the viewport width of an uninitialized service is changed', () => {
+    ScalingService.setViewPortWidth(720);
 
     expect(iframeJQueryElement.css).not.toHaveBeenCalled();
     expect(elementsToScale.css).not.toHaveBeenCalled();
@@ -165,10 +163,8 @@ describe('ScalingService', () => {
 
   it('should keep the scale factor unchanged when not constraining the viewport width', () => {
     canvasJQueryElement.width(800);
-    spyOn(ViewportService, 'getWidth').and.returnValue(0);
-
     ScalingService.init(iframeJQueryElement);
-    ScalingService.sync();
+    ScalingService.setViewPortWidth(0);
 
     expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left']);
     expect(elementsToScale.velocity).not.toHaveBeenCalled();
@@ -178,10 +174,8 @@ describe('ScalingService', () => {
 
   it('should keep the scale factor unchanged when constraining the viewport width smaller than the canvas', () => {
     canvasJQueryElement.width(800);
-    spyOn(ViewportService, 'getWidth').and.returnValue(720);
-
     ScalingService.init(iframeJQueryElement);
-    ScalingService.sync();
+    ScalingService.setViewPortWidth(720);
 
     expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left']);
     expect(elementsToScale.velocity).not.toHaveBeenCalled();
@@ -191,10 +185,8 @@ describe('ScalingService', () => {
 
   it('should start scaling when constraining the viewport width larger than the canvas', () => {
     canvasJQueryElement.width(400);
-    spyOn(ViewportService, 'getWidth').and.returnValue(800);
-
     ScalingService.init(iframeJQueryElement);
-    ScalingService.sync();
+    ScalingService.setViewPortWidth(800);
 
     expect(elementsToScale.css.calls.mostRecent().args).toEqual(['transform', 'scale(0.5)']);
     expect(elementsToScale.velocity.calls.mostRecent().args).toEqual(['finish']);
@@ -205,10 +197,8 @@ describe('ScalingService', () => {
 
   it('should start shifting and scaling when pushing the visible canvas width below the viewport width', () => {
     canvasJQueryElement.width(800);
-    spyOn(ViewportService, 'getWidth').and.returnValue(720);
-
     ScalingService.init(iframeJQueryElement);
-    ScalingService.sync();
+    ScalingService.setViewPortWidth(720);
 
     // reset all relevant spies
     elementsToScale.css.calls.reset();
@@ -245,9 +235,8 @@ describe('ScalingService', () => {
 
   it('should stop scaling the pushed iframe when the viewport width drops below the visible canvas width', () => {
     canvasJQueryElement.width(800);
-    spyOn(ViewportService, 'getWidth').and.returnValue(720);
-
     ScalingService.init(iframeJQueryElement);
+    ScalingService.setViewPortWidth(720);
     ScalingService.setPushWidth(260);
 
     // reset all relevant spies
@@ -259,8 +248,7 @@ describe('ScalingService', () => {
     iframeJQueryElement.css.and.returnValue(80); // current shift
     canvasJQueryElement.width(720); // current canvas width
 
-    ViewportService.getWidth.and.returnValue(360);
-    ScalingService.sync();
+    ScalingService.setViewPortWidth(360);
 
     // validate shifting
     expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left', 260]);

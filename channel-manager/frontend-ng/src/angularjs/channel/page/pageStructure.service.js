@@ -32,6 +32,7 @@ export class PageStructureService {
               HstConstants,
               HstService,
               MaskService,
+              OverlaySyncService,
               PageMetaDataService,
               RenderingService) {
     'ngInject';
@@ -47,6 +48,7 @@ export class PageStructureService {
     this.HST = HstConstants;
     this.HstService = HstService;
     this.MaskService = MaskService;
+    this.OverlaySyncService = OverlaySyncService;
     this.PageMetaDataService = PageMetaDataService;
     this.RenderingService = RenderingService;
 
@@ -266,6 +268,8 @@ export class PageStructureService {
         if ($.isEmptyObject(propertiesMap) && this.containsNewHeadContributions(updatedComponent)) {
           this.$log.info(`Updated '${updatedComponent.getLabel()}' component needs additional head contributions, reloading page`);
           this.HippoIframeService.reload();
+        } else {
+          this.OverlaySyncService.syncIframe();
         }
       });
       // TODO handle error

@@ -33,7 +33,6 @@ export class HippoIframeCtrl {
     PageStructureService,
     PageMetaDataService,
     ScalingService,
-    ViewportService,
     HippoIframeService
   ) {
     'ngInject';
@@ -62,15 +61,12 @@ export class HippoIframeCtrl {
     HippoIframeService.initialize(this.iframeJQueryElement);
 
     const baseJQueryElement = $element.find('.channel-iframe-base');
-    const sheetJQueryElement = $element.find('.channel-iframe-sheet');
-
     OverlaySyncService.init(
       baseJQueryElement,
-      sheetJQueryElement,
+      $element.find('.channel-iframe-sheet'),
       this.iframeJQueryElement,
       $element.find('.overlay')
     );
-    ViewportService.init(sheetJQueryElement, this.iframeJQueryElement);
     ScalingService.init($element);
     DragDropService.init(this.iframeJQueryElement, baseJQueryElement);
 
