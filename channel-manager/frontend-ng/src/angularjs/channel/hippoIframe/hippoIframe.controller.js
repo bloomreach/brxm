@@ -138,18 +138,6 @@ export class HippoIframeCtrl {
     }
   }
 
-  startDragOrClick($event, component) {
-    this.DragDropService.startDragOrClick($event, component);
-  }
-
-  isDraggingOrClicking() {
-    return this.DragDropService.isDraggingOrClicking();
-  }
-
-  isDragging() {
-    return this.DragDropService.isDragging();
-  }
-
   _insertCss() {
     try {
       const iframeDom = this._getIframeDom();
@@ -200,22 +188,6 @@ export class HippoIframeCtrl {
 
   getContainers() {
     return this.editMode ? this.PageStructureService.getContainers() : [];
-  }
-
-  getContentLinks() {
-    return !this.editMode ? this.PageStructureService.getContentLinks() : [];
-  }
-
-  openContent(contentLink) {
-    this.CmsService.publish('open-content', contentLink.getUuid());
-  }
-
-  getEditMenuLinks() {
-    return this.editMode ? this.PageStructureService.getEditMenuLinks() : [];
-  }
-
-  openMenuEditor(editMenuLink) {
-    this.onEditMenu({ menuUuid: editMenuLink.getUuid() });
   }
 
   getSrc() {

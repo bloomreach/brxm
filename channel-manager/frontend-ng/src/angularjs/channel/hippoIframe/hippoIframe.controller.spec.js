@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { EmbeddedLink } from '../page/element/embeddedLink';
-
 describe('hippoIframeCtrl', () => {
   'use strict';
 
@@ -175,23 +173,5 @@ describe('hippoIframeCtrl', () => {
     expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
     expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
-  });
-
-  it('sends an "open-content" event to the CMS to open content', () => {
-    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
-    const contentLink = new EmbeddedLink(contentLinkComment, {
-      uuid: '1234',
-    });
-    spyOn(CmsService, 'publish');
-
-    hippoIframeCtrl.openContent(contentLink);
-
-    expect(CmsService.publish).toHaveBeenCalledWith('open-content', '1234');
-  });
-
-  it('calls the registered callback for editing a menu', () => {
-    const editMenuLink = { getUuid: () => 'testUuid' };
-    hippoIframeCtrl.openMenuEditor(editMenuLink);
-    expect(scope.onEditMenu).toHaveBeenCalledWith('testUuid');
   });
 });
