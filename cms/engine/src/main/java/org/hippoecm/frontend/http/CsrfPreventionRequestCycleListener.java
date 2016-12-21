@@ -560,18 +560,18 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
     private String getLocationHeaderOrigin(HttpServletRequest request)
     {
 
-        String host = request.getHeader("Host");
-        if (host != null && !"".equals(host)) {
-            final String location = getFarthestRequestScheme(request) + "://" + host;
-            log.debug("Host header found. Return location '{}'", location);
-            return location;
-        }
-
-        host = request.getHeader("X-Forwarded-Host");
+        String host = request.getHeader("X-Forwarded-Host");
         if (host != null) {
             String[] hosts = host.split(",");
             final String location = getFarthestRequestScheme(request) + "://" + hosts[0];
             log.debug("X-Forwarded-Host header found. Return location '{}'", location);
+            return location;
+        }
+
+        host = request.getHeader("Host");
+        if (host != null && !"".equals(host)) {
+            final String location = getFarthestRequestScheme(request) + "://" + host;
+            log.debug("Host header found. Return location '{}'", location);
             return location;
         }
 
