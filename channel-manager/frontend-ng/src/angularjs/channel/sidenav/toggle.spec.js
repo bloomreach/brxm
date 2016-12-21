@@ -20,8 +20,6 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ChannelSidenavToggle', () => {
-  'use strict';
-
   let $rootScope;
   let $compile;
   let ChannelSidenavService;
