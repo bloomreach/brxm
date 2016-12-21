@@ -30,3 +30,9 @@
   margin-right: auto;
   box-shadow: 0 0 20px $black-shadow;
 }
+
+.channel-iframe-scroll-x {
+  position: relative;
+  overflow-x: visible;
+  overflow-y: hidden;
+}

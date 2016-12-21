@@ -137,9 +137,8 @@ export class ScalingService {
           });
         }
 
-        // TODO remove
-        // const iframeScrollXJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-scroll-x');
-        // const widthBeforeScaling = iframeScrollXJQueryElement.width();
+        const iframeScrollXJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-scroll-x');
+        const widthBeforeScaling = iframeScrollXJQueryElement.width();
 
         // zoom in/out to new scale factor
         elementsToScale.velocity({
@@ -148,14 +147,12 @@ export class ScalingService {
           duration: this.scaleDuration,
           easing: this.scaleEasing,
           complete: () => {
-            console.log('TODO: tweak overlay when scaling caused scrollbar to appear/disappear');
-            // TODO when scaling causes a scrollbar to appear/disappear, we have to tweak it
-            //
-            // if (newScale !== 1 && widthBeforeScaling !== iframeScrollXJQueryElement.width()) {
-            //   this._updateScaling(animate);
-            // } else {
-            //   this.OverlaySyncService.syncIframe();
-            // }
+            // when scaling causes a scrollbar to appear/disappear, we have to tweak it
+            if (newScale !== 1 && widthBeforeScaling !== iframeScrollXJQueryElement.width()) {
+              this._updateScaling(animate);
+            } else {
+              this.OverlaySyncService.syncIframe();
+            }
           },
         });
       } else {
