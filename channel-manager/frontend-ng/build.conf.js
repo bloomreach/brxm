@@ -41,6 +41,7 @@ const customConfig = {
     'window.jQuery': 'jquery',
     'window.dragula': 'dragula',
   },
+  hmr: true,
   serverPort: 9090,
   karma: {
     files: [
