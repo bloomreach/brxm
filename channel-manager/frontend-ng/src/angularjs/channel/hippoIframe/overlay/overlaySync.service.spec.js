@@ -65,7 +65,7 @@ describe('OverlaySyncService', () => {
   });
 
   it('should not throw errors when sync is called before init', () => {
-    expect(() => OverlaySyncService.syncIframe()).not.toThrow();
+    expect(() => OverlaySyncService.sync()).not.toThrow();
   });
 
   it('should attach an unload handler to the iframe', (done) => {
@@ -80,9 +80,9 @@ describe('OverlaySyncService', () => {
   });
 
   it('should sync on first load', (done) => {
-    spyOn(OverlaySyncService, 'syncIframe');
+    spyOn(OverlaySyncService, 'sync');
     loadIframeFixture(() => {
-      expect(OverlaySyncService.syncIframe).toHaveBeenCalled();
+      expect(OverlaySyncService.sync).toHaveBeenCalled();
       done();
     });
   });
@@ -115,20 +115,20 @@ describe('OverlaySyncService', () => {
   });
 
   it('should sync when the iframe DOM is changed', (done) => {
-    spyOn(OverlaySyncService, 'syncIframe');
+    spyOn(OverlaySyncService, 'sync');
     loadIframeFixture(iframeWindow => {
-      OverlaySyncService.syncIframe.calls.reset();
-      OverlaySyncService.syncIframe.and.callFake(done);
+      OverlaySyncService.sync.calls.reset();
+      OverlaySyncService.sync.and.callFake(done);
       $(iframeWindow.document.body).css('color', 'green');
     });
   });
 
   it('should sync when the browser is resized', (done) => {
-    spyOn(OverlaySyncService, 'syncIframe');
+    spyOn(OverlaySyncService, 'sync');
     loadIframeFixture(() => {
-      OverlaySyncService.syncIframe.calls.reset();
+      OverlaySyncService.sync.calls.reset();
       $($window).trigger('resize');
-      expect(OverlaySyncService.syncIframe).toHaveBeenCalled();
+      expect(OverlaySyncService.sync).toHaveBeenCalled();
       done();
     });
   });
@@ -137,7 +137,7 @@ describe('OverlaySyncService', () => {
     spyOn(OverlaySyncService, 'onDOMChanged');
 
     loadIframeFixture(() => {
-      OverlaySyncService.syncIframe();
+      OverlaySyncService.sync();
 
       expect($sheet).toHaveCss({
         'max-width': 'none',
@@ -153,7 +153,7 @@ describe('OverlaySyncService', () => {
   it('should constrain the maximum width to the viewport', (done) => {
     loadIframeFixture(() => {
       OverlaySyncService.setViewPortWidth(720);
-      OverlaySyncService.syncIframe();
+      OverlaySyncService.sync();
       expect($sheet.width()).toEqual(720);
       expect($iframe.width()).toEqual(720);
       expect($overlay.width()).toEqual(720);

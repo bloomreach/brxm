@@ -15,13 +15,14 @@
  */
 
 export class ViewportToggleCtrl {
-  constructor($translate, ScalingService) {
+  constructor($translate, ScalingService, ViewportService) {
     'ngInject';
 
     this.$translate = $translate;
     this.ScalingService = ScalingService;
+    this.ViewportService = ViewportService;
 
-    this.viewPorts = [
+    this.viewports = [
       {
         id: 'DESKTOP',
         icon: 'images/desktop.svg',
@@ -39,19 +40,15 @@ export class ViewportToggleCtrl {
       },
     ];
 
-    this.activate();
-  }
-
-  activate() {
-    this.selectedViewPort = this.viewPorts[0];
-    this.viewPortChanged();
+    this.selectedViewport = this.viewports[0];
   }
 
   getDisplayName(viewport) {
     return this.$translate.instant(`VIEWPORT_${viewport.id}`);
   }
 
-  viewPortChanged() {
-    this.ScalingService.setViewPortWidth(this.selectedViewPort.width);
+  viewportChanged() {
+    this.ViewportService.setWidth(this.selectedViewport.width);
+    this.ScalingService.sync();
   }
 }
