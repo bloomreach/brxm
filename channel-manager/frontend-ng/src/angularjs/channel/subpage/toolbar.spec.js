@@ -66,13 +66,13 @@ describe('SubpageToolbar', () => {
     mode = undefined;
     const SubpageToolbarCtrl = compileDirectiveAndGetController();
     expect(SubpageToolbarCtrl.ariaLabel).toBe('TOOLBAR_BUTTON_BACK');
-    expect(SubpageToolbarCtrl.icon).toBe('/cms/angular/hippo-cm/images/back.svg');
+    expect(SubpageToolbarCtrl.icon).toBe('images/back.svg');
   });
 
   it('should show the close icon if the mode is set to cancel', () => {
     mode = 'cancel';
     const SubpageToolbarCtrl = compileDirectiveAndGetController();
     expect(SubpageToolbarCtrl.ariaLabel).toBe('TOOLBAR_BUTTON_CLOSE');
-    expect(SubpageToolbarCtrl.icon).toBe('/cms/angular/hippo-cm/images/close.svg');
+    expect(SubpageToolbarCtrl.icon).toBe('images/close.svg');
   });
 });
