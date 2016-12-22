@@ -15,6 +15,8 @@
         <div class="col-md-6 col-md-offset-3">
           <hst:include ref="top"/>
         </div>
+      </div>
+      <div class="row">
         <div class="col-md-6 col-md-offset-3">
           <hst:include ref="menu"/>
         </div>
