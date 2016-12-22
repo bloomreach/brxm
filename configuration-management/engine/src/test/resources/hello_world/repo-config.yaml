@@ -1,12 +1,12 @@
 configurations:
-  - base:
-      projects:
-        - project1
-            modules:
-              - module1
-  - myhippoproject:
-      projects:
-        - project2
-            depends: base/project1
-            modules:
-              - module2
+  - name: base
+    projects:
+      - name: project1
+        modules:
+          - name: module1
+  - name: myhippoproject
+    after: base
+    projects:
+      - name: project2
+        modules:
+          - name: module2

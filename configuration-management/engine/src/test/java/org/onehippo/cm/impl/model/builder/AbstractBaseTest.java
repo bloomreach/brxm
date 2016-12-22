@@ -46,37 +46,17 @@ public abstract class AbstractBaseTest {
     @Before
     public void setup() {
 
-        configuration1 = new ConfigurationImpl();
-        configuration2 = new ConfigurationImpl();
-        configuration3 = new ConfigurationImpl();
+        configuration1 = new ConfigurationImpl("configuration1");
+        configuration2 = new ConfigurationImpl("configuration2");
+        configuration3 = new ConfigurationImpl("configuration3");
 
-        configuration1.setName("configuration1");
-        configuration2.setName("configuration2");
-        configuration3.setName("configuration3");
+        project1a = new ProjectImpl("project1a", configuration1);
+        project1b = new ProjectImpl("project1b", configuration1);
+        project1c = new ProjectImpl("project1c", configuration1);
 
-        project1a = new ProjectImpl();
-        project1b = new ProjectImpl();
-        project1c = new ProjectImpl();
-
-        project1a.setName("project1a");
-        project1b.setName("project1b");
-        project1c.setName("project1c");
-
-        configuration1.setProjects(ImmutableMap.of(project1a.getName(), project1a,
-                project1b.getName(), project1b,
-                project1c.getName(), project1c));
-
-        module1a = new ModuleImpl();
-        module1b = new ModuleImpl();
-        module1c = new ModuleImpl();
-
-        module1a.setName("module1a");
-        module1b.setName("module1b");
-        module1c.setName("module1c");
-
-        project1a.setModules(ImmutableMap.of(module1a.getName(), module1a,
-                module1b.getName(), module1b,
-                module1c.getName(), module1c));
+        module1a = new ModuleImpl("module1a", project1a);
+        module1b = new ModuleImpl("module1b", project1a);
+        module1c = new ModuleImpl("module1c", project1a);
 
         source1a = new SourceImpl();
         source1b = new SourceImpl();

@@ -15,7 +15,9 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,24 +25,32 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
 
 public class ProjectImpl implements Project {
 
     private String name;
-    private Configuration configuration;
-    private List<String> after;
-    private Map<String, Module> modules;
+    private ConfigurationImpl configuration;
+    private List<String> after = new ArrayList<>();
+    private Map<String, Module> modules = new LinkedHashMap<>();
+
+    public ProjectImpl(final String name, final ConfigurationImpl configuration) {
+        if (name == null) {
+            throw new IllegalArgumentException("Parameter 'name' cannot be null");
+        }
+        this.name = name;
+
+        if (configuration == null) {
+            throw new IllegalArgumentException("Parameter 'configuration' cannot be null");
+        }
+        this.configuration = configuration;
+
+        this.configuration.addProject(this);
+    }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     @Override
@@ -48,32 +58,28 @@ public class ProjectImpl implements Project {
         return configuration;
     }
 
-    public void setConfiguration(final Configuration configuration) {
-        this.configuration = configuration;
-    }
-
     @Override
     public List<String> getAfter() {
-        if (after == null) {
-            return emptyList();
-        }
         return unmodifiableList(after);
     }
 
     public void setAfter(final List<String> after) {
-        this.after = after;
+        this.after = new ArrayList<>(after);
     }
 
     @Override
     public Map<String, Module> getModules() {
-        if (modules ==null) {
-            return emptyMap();
-        }
         return Collections.unmodifiableMap(modules);
     }
 
-    public void setModules(final Map<String, Module> modules) {
-        this.modules = modules;
+    public ModuleImpl addModule(final String name) {
+        final ModuleImpl module = new ModuleImpl(name, this);
+        modules.put(name, module);
+        return module;
+    }
+
+    void addModule(final Module module) {
+        modules.put(module.getName(), module);
     }
 
 }

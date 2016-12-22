@@ -1,5 +1,6 @@
-- config:
-  - /:
-      /node:
-        property1: value1
-        property2: value2
+instructions:
+  - config:
+      - /:
+          - /node:
+              - property1: value1
+              - property2: value2

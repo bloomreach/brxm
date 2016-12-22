@@ -66,11 +66,8 @@ public class CircularDependencyTest extends AbstractBaseTest {
         configuration1.setAfter(ImmutableList.of(configuration3.getName()));
 
         // extra circle
-        ConfigurationImpl configuration2a = new ConfigurationImpl();
-        ConfigurationImpl configuration2b = new ConfigurationImpl();
-
-        configuration2a.setName("configuration2a");
-        configuration2b.setName("configuration2b");
+        ConfigurationImpl configuration2a = new ConfigurationImpl("configuration2a");
+        ConfigurationImpl configuration2b = new ConfigurationImpl("configuration2b");
 
         configuration2.setAfter(ImmutableList.of(configuration2a.getName()));
         configuration2a.setAfter(ImmutableList.of(configuration2b.getName()));

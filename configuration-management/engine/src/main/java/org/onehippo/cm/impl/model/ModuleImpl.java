@@ -15,7 +15,8 @@
  */
 package org.onehippo.cm.impl.model;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +24,6 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
@@ -32,16 +31,26 @@ public class ModuleImpl implements Module {
 
     private String name;
     private Project project;
-    private List<String> after;
-    private Map<String, Source> sources;
+    private List<String> after = new ArrayList<>();
+    private Map<String, Source> sources = new LinkedHashMap<>();
+
+    public ModuleImpl(final String name, final ProjectImpl project) {
+        if (name == null) {
+            throw new IllegalArgumentException("Parameter 'name' cannot be null");
+        }
+        this.name = name;
+
+        if (project == null) {
+            throw new IllegalArgumentException("Parameter 'project' cannot be null");
+        }
+        this.project = project;
+
+        project.addModule(this);
+    }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     @Override
@@ -49,32 +58,22 @@ public class ModuleImpl implements Module {
         return project;
     }
 
-    public void setProject(final Project project) {
-        this.project = project;
-    }
-
     @Override
     public List<String> getAfter() {
-        if (after == null) {
-            return emptyList();
-        }
         return unmodifiableList(after);
     }
 
     public void setAfter(final List<String> after) {
-        this.after = after;
+        this.after = new ArrayList<>(after);
     }
 
     @Override
     public Map<String, Source> getSources() {
-        if (sources == null) {
-            return emptyMap();
-        }
         return unmodifiableMap(sources);
     }
 
     public void setSources(final Map<String, Source> sources) {
-        this.sources = sources;
+        this.sources = new LinkedHashMap<>(sources);
     }
 
 }

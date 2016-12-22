@@ -15,23 +15,29 @@
  */
 package org.onehippo.cm.impl.model;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Project;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
 public class ConfigurationImpl implements Configuration {
 
     private String name;
-    private List<String> after;
-    private Map<String, Project> projects;
+    private List<String> after = new ArrayList<>();
+    private Map<String, Project> projects = new LinkedHashMap<>();
+
+    public ConfigurationImpl(final String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Parameter 'name' cannot be null");
+        }
+        this.name = name;
+    }
 
     @Override
     public String getName() {
@@ -44,25 +50,30 @@ public class ConfigurationImpl implements Configuration {
 
     @Override
     public List<String> getAfter() {
-        if (after == null) {
-            return emptyList();
-        }
         return unmodifiableList(after);
     }
 
     public void setAfter(final List<String> after) {
-        this.after = after;
+        this.after = new ArrayList<>(after);
     }
 
     @Override
     public Map<String, Project> getProjects() {
-        if (projects == null) {
-            return emptyMap();
-        }
         return unmodifiableMap(projects);
     }
 
     public void setProjects(final Map<String, Project> projects) {
-        this.projects = projects;
+        this.projects = new LinkedHashMap<>(projects);
     }
+
+    public ProjectImpl addProject(final String name) {
+        final ProjectImpl project = new ProjectImpl(name, this);
+        projects.put(name, project);
+        return project;
+    }
+
+    void addProject(final Project project) {
+        projects.put(project.getName(), project);
+    }
+
 }
