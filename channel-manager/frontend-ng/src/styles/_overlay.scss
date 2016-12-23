@@ -158,7 +158,7 @@ overlay-element {
   pointer-events: all;
 }
 
-.overlay-lock-tooltip ._md-content {
+.overlay-lock-tooltip .md-content {
   // make 'lock' tooltips black without transparency so the channel does not shine through
   background-color: $grey-900 !important;
 }
