@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class ChoiceFieldCtrl {
+class CompoundFieldCtrl {
 
   focusCompound() {
     this.hasFocus = true;
@@ -27,4 +27,4 @@ class ChoiceFieldCtrl {
   }
 }
 
-export default ChoiceFieldCtrl;
+export default CompoundFieldCtrl;
