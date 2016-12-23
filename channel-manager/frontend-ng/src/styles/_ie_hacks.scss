@@ -12,9 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// The following rules are IE11 specific workarounds using a CSS selector hack to target IE11 and above.
-// See http://browserhacks.com/#hack-d19e53a0fdfba5ec0f283ae86175a3af for more info
-
 .ie11 {
   // CHANNELMGR-705 If an action on the page causes a scrollbar to appear/disappear, a flex element with a max-width
   // other than 100% (like 50%) will be rendered at 100% width. A browser-resize event fixes this and renders the
