@@ -13,12 +13,12 @@
 // limitations under the License.
 
 .md-button.md-icon-button.md-icon-button-sidenav {
-  padding-left: 0;
   margin-left: 0;
+  padding-left: 0;
 }
 
 .channel-sidenav {
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  border-right: 1px solid $grey-200;
 }
 
 .list-item-active {
@@ -31,10 +31,14 @@
 }
 
 .catalog-dd-container-item {
-  cursor: move; // IE 11&edge
   cursor: grab;
 
-  &:active, &.gu-mirror {
+  .ie11 & {
+    cursor: move;
+  }
+
+  &:active,
+  &.gu-mirror {
     cursor: grabbing;
   }
 }

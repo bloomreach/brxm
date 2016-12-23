@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-describe('DomService', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('DomService', () => {
   let DomService;
   const fixturesPath = `/${jasmine.getFixtures().fixturesPath}`;
 
   beforeEach(() => {
-    module('hippo-cm.utils');
+    angular.mock.module('hippo-cm.utils');
 
-    module(($provide) => {
+    angular.mock.module(($provide) => {
       $provide.value('$document', [{
         location: {
           pathname: '/app/root/index.html',
@@ -84,7 +85,7 @@ describe('DomService', () => {
   function expectEqualComputedStyle(elements1, elements2) {
     expect(elements1.length).toEqual(elements2.length);
 
-    for (let i = 0; i < elements1.length; i++) {
+    for (let i = 0; i < elements1.length; i += 1) {
       const computedStyle1 = window.getComputedStyle(elements1[i]);
       const computedStyle2 = window.getComputedStyle(elements2[i]);
       expect(computedStyle1.cssText).toEqual(computedStyle2.cssText);

@@ -16,16 +16,17 @@
 
 /* eslint-disable prefer-const */
 
-describe('ChannelSidenavToggle', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('ChannelSidenavToggle', () => {
   let $rootScope;
   let $compile;
   let ChannelSidenavService;
   let ChannelService;
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$rootScope_, _$compile_, _ChannelSidenavService_, _ChannelService_) => {
       $rootScope = _$rootScope_;

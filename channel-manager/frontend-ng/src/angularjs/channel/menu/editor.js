@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { menuEditorDirective } from './editor.directive';
-import { selectAllOnFocusDirective } from './selectAllOnFocus.directive';
-import { MenuEditorCtrl } from './editor.controller';
-import { uiTreeModule } from './tree/tree.js';
-import { pickerModule } from './picker/picker';
+import menuEditorDirective from './editor.directive';
+import selectAllOnFocusDirective from './selectAllOnFocus.directive';
+import MenuEditorCtrl from './editor.controller';
+import uiTreeModule from './tree/tree';
+import pickerModule from './picker/picker';
 
-export const channelMenuModule = angular
+const channelMenuModule = angular
   .module('hippo-cm.channel.menu', [
     uiTreeModule.name,
     pickerModule.name,
@@ -29,3 +29,5 @@ export const channelMenuModule = angular
   .directive('menuEditor', menuEditorDirective)
   .directive('selectAllOnFocus', selectAllOnFocusDirective)
   .controller('MenuEditorCtrl', MenuEditorCtrl);
+
+export default channelMenuModule;

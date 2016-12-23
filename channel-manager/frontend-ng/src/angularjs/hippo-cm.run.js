@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-function stopPropagationDirective() {
+import detectIe from 'detectie';
+
+function run() {
   'ngInject';
 
-  return {
-    restrict: 'A',
-    link: (scope, element) => {
-      element.bind('click', e => e.stopPropagation());
-    },
-  };
+  // add ie11 class for ie11 specific hacks
+  if (detectIe() === 11) {
+    $('body').addClass('ie11');
+  }
 }
 
-export default stopPropagationDirective;
+export default run;

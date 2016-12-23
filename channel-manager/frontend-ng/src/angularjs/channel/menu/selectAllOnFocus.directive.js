@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export function selectAllOnFocusDirective() {
+function selectAllOnFocusDirective() {
   'ngInject';
 
   return {
@@ -30,3 +30,5 @@ export function selectAllOnFocusDirective() {
     },
   };
 }
+
+export default selectAllOnFocusDirective;

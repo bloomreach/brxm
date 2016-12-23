@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('ChannelSidenav', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('ChannelSidenav', () => {
   let $rootScope;
   let $compile;
   let ChannelSidenavService;
@@ -29,7 +30,7 @@ describe('ChannelSidenav', () => {
   ];
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$rootScope_, _$compile_, _ChannelSidenavService_, _ChannelService_, _SiteMapService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;

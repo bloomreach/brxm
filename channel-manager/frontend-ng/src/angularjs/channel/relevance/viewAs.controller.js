@@ -16,7 +16,7 @@
 
 const ALTER_EGO_ID = 'hippo-alter-ego';
 
-export class ViewAsCtrl {
+class ViewAsCtrl {
   constructor($scope, $element, $translate, CmsService, ConfigService, SessionService, HstService, HippoIframeService, PageMetaDataService, FeedbackService) {
     'ngInject';
 
@@ -64,7 +64,7 @@ export class ViewAsCtrl {
 
   _updateSelectedVariant() {
     if (this.renderVariant && this.globalVariants.length > 0) {
-      const newVariant = this.globalVariants.find((variant) => (variant.id === this.renderVariant));
+      const newVariant = this.globalVariants.find(variant => (variant.id === this.renderVariant));
       this.selectedVariant = newVariant || this.globalVariants[0];
     }
   }
@@ -101,3 +101,5 @@ export class ViewAsCtrl {
     }
   }
 }
+
+export default ViewAsCtrl;

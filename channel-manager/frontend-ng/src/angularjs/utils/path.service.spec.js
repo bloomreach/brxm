@@ -15,8 +15,6 @@
  */
 
 describe('PathService', () => {
-  'use strict';
-
   let PathService;
 
   beforeEach(() => {

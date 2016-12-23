@@ -18,7 +18,7 @@ const EVENT_NAMESPACE = '.scroll-events';
 const DURATION_MIN = 500;
 const DURATION_MAX = 1500;
 
-export class ScrollService {
+class ScrollService {
 
   constructor(ScalingService, deviceDetector, BROWSERS) {
     'ngInject';
@@ -106,3 +106,5 @@ export class ScrollService {
     return Math.min(Math.max(DURATION_MIN, duration), DURATION_MAX);
   }
 }
+
+export default ScrollService;

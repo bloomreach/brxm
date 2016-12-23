@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-export function incrementPropertyFilter() {
+function incrementPropertyFilter() {
   return (collection, propertyName, propertyValue, subCollection) => {
     const itemsWithProperty = [];
 
     function findPropertiesAndSubProperties(newCollection) {
-      for (let i = 0; i < newCollection.length; i++) {
+      for (let i = 0; i < newCollection.length; i += 1) {
         const propName = newCollection[i][propertyName];
         const match = propName.match(/\((\d+)\)/);
         if (match) {
@@ -45,3 +45,5 @@ export function incrementPropertyFilter() {
     return propertyValue.replace(/\((\d+)\)/, () => `(${maxNum + 1})`);
   };
 }
+
+export default incrementPropertyFilter;

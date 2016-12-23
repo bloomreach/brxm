@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ViewportToggleCtrl {
+class ViewportToggleCtrl {
   constructor($translate, ScalingService) {
     'ngInject';
 
@@ -55,3 +55,5 @@ export class ViewportToggleCtrl {
     this.ScalingService.setViewPortWidth(this.selectedViewPort.width);
   }
 }
+
+export default ViewportToggleCtrl;

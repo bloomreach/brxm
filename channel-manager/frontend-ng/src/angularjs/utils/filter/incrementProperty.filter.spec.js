@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-describe('incrementProperty filter', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('incrementProperty filter', () => {
   let incrementPropertyFilter;
 
-  beforeEach(module('hippo-cm.utils'));
+  beforeEach(angular.mock.module('hippo-cm.utils'));
   beforeEach(inject((_incrementPropertyFilter_) => {
     incrementPropertyFilter = _incrementPropertyFilter_;
   }));
