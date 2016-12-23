@@ -13,7 +13,7 @@
     "email": "angular-core+npm@google.com",
     "licenseFile": "node_modules/angular-aria/LICENSE.md"
   },
-  "angular-material@1.1.0-rc4-master-06e7e99": {
+  "angular-material@1.1.1": {
     "licenses": "MIT",
     "repository": "https://github.com/angular/material",
     "licenseFile": "node_modules/angular-material/LICENSE"
