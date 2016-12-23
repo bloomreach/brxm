@@ -297,12 +297,14 @@ class RightSidePanelCtrl {
     }
 
     const message = this.$translate.instant(messageKey, { documentName: this.doc.displayName });
+    const title = this.$translate.instant('SAVE_CHANGES_TITLE');
 
     return this.DialogService.show({
       template: multiActionDialogTemplate,
       controller: MultiActionDialogCtrl,
       controllerAs: '$ctrl',
       locals: {
+        title,
         message,
         actions: ['DISCARD', 'SAVE'],
       },

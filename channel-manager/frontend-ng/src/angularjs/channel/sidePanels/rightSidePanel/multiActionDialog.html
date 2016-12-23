@@ -17,7 +17,7 @@
 <md-dialog flex="50">
   <md-dialog-content>
     <div class="md-dialog-content">
-      <h3>{{ "SAVE_CHANGES_TITLE" | translate}}</h3>
+      <h3 ng-if="$ctrl.title">{{ $ctrl.title }}</h3>
       <p>{{ $ctrl.message }}</p>
     </div>
   </md-dialog-content>
