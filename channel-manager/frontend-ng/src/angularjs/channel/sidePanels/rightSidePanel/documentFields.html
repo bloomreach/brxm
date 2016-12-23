@@ -17,42 +17,32 @@
      ng-repeat="fieldType in $ctrl.fieldTypes"
      ng-switch="fieldType.type">
 
-  <div class="field-complex"
-       ng-switch-when="COMPOUND"
-       ng-if="$ctrl.hasValue(fieldType)"
-       ng-class="{'has-focused-field': $ctrl.hasFocusedFieldType(fieldType)}">
-    <compound-field ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
-                    name="$ctrl.getFieldName(fieldType, $index)"
-                    field-type="::fieldType"
-                    field-values="fieldValue.fields"
-                    on-field-focus="$ctrl.focusFieldType(fieldType)"
-                    on-field-blur="$ctrl.blurFieldType()">
-    </compound-field>
-  </div>
+  <compound-field ng-switch-when="COMPOUND"
+                  ng-if="$ctrl.hasValue(fieldType)"
+                  ng-repeat="fieldValue in $ctrl.fieldValues[fieldType.id]"
+                  name="$ctrl.getFieldName(fieldType, $index)"
+                  field-type="fieldType"
+                  field-values="fieldValue.fields"
+                  on-field-focus="$ctrl.onFieldFocus()"
+                  on-field-blur="$ctrl.onFieldBlur()">
+  </compound-field>
 
-  <div class="field-complex"
-       ng-switch-when="CHOICE"
-       ng-if="$ctrl.hasValue(fieldType)"
-       ng-class="{'has-focused-field': $ctrl.hasFocusedFieldType(fieldType)}">
-    <choice-field name="$ctrl.getFieldName(fieldType)"
-                  field-type="::fieldType"
-                  field-values="$ctrl.fieldValues[fieldType.id]"
-                  on-field-focus="$ctrl.focusFieldType(fieldType)"
-                  on-field-blur="$ctrl.blurFieldType()">
-    </choice-field>
-  </div>
+  <choice-field ng-switch-when="CHOICE"
+                ng-if="$ctrl.hasValue(fieldType)"
+                name="$ctrl.getFieldName(fieldType)"
+                field-type="fieldType"
+                field-values="$ctrl.fieldValues[fieldType.id]"
+                on-field-focus="$ctrl.onFieldFocus()"
+                on-field-blur="$ctrl.onFieldBlur()">
+  </choice-field>
 
   <primitive-field ng-switch-default
-                   ng-if="::$ctrl.hasValue(fieldType)"
-                   ng-class="{
-                     'has-focused-field': $ctrl.hasFocusedFieldType(fieldType),
-                     'has-invalid-field': !$ctrl.isValid(fieldType)
-                   }"
-                   class="field"
+                   ng-if="$ctrl.hasValue(fieldType)"
                    name="$ctrl.name"
-                   field-type="::fieldType"
+                   ng-class="{'has-invalid-field': !$ctrl.isValid(fieldType)}"
+                   field-type="fieldType"
                    field-values="$ctrl.fieldValues[fieldType.id]"
-                   on-field-focus="$ctrl.focusFieldType(fieldType)"
-                   on-field-blur="$ctrl.blurFieldType()">
+                   on-field-focus="$ctrl.onFieldFocus()"
+                   on-field-blur="$ctrl.onFieldBlur()">
   </primitive-field>
 </div>

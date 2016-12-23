@@ -128,7 +128,7 @@ $select-invalid-color: #f70029;
 $toolbar-height: 40px;
 
 // Forms
-$form-padding: 0 16px;
+$form-dense-distance: 12px;
 
 // Layout breakpoints
 $layout-breakpoint-xs: 600px !default;
@@ -139,4 +139,5 @@ $layout-breakpoint-lg: 1920px !default;
 // Transitions, based on angular material variables
 $swift-ease-in: .3s cubic-bezier(.55, 0, .55, .2);
 $swift-ease-out: .2s cubic-bezier(.25, .8, .25, 1);
+
 

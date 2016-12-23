@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<div class="qa-choice"
+<div class="field field-bordered qa-choice"
      ng-class="{'has-focused-field': $ctrl.hasFocus}"
      collapse>
 
@@ -41,7 +41,7 @@
     </md-icon>
   </h5>
 
-  <div class="collapse-element field-indented">
+  <div class="collapse-element">
     <compound-field ng-repeat="fieldValue in $ctrl.fieldValues"
                     name="$ctrl.getFieldName($index)"
                     field-type="::$ctrl.fieldType.choices[fieldValue.chosenId]"
