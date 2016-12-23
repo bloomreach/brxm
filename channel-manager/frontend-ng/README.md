@@ -12,13 +12,13 @@ gulp tasks via `npm run` or simply stick with the predefined `npm start` and
 
 1. Build the frontend and start a Webpack dev server.
 
-    npm start
+        npm start
 
 2. Start up your project with Wicket development mode enabled. Make the resource servlet forward all calls for
    localhost:8080/cms/angular/hippo-cm/... to the Webpack dev server.
 
-    cd <your project>
-    mvn -Pcargo.run -Dcargo.jvm.args='-Dwicket.configuration=development -Dresource.proxies=angular/hippo-cm@http://localhost:9090/cms'
+        cd <your project>
+        mvn -Pcargo.run -Dcargo.jvm.args='-Dwicket.configuration=development -Dresource.proxies=angular/hippo-cm@http://localhost:9090/cms'
 
 # Installation
 ### Install project dependencies
