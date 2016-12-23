@@ -62,7 +62,7 @@
   </md-toolbar>
 
   <md-content layout="row" flex>
-    <left-side-panel edit-mode="channelCtrl.isEditMode"></left-side-panel>
+    <left-side-panel layout="row" edit-mode="channelCtrl.isEditMode"></left-side-panel>
 
     <hippo-iframe
       flex
@@ -72,7 +72,7 @@
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
 
-    <right-side-panel edit-mode="channelCtrl.isEditMode"></right-side-panel>
+    <right-side-panel layout="row" edit-mode="channelCtrl.isEditMode"></right-side-panel>
   </md-content>
 </div>
 
