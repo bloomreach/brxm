@@ -13,6 +13,12 @@
 // limitations under the License.
 
 .collapse-toggle {
+  transition: margin-bottom $swift-ease-out;
+
+  &.closed {
+    margin-bottom: 0;
+  }
+
   &:hover {
     cursor: pointer;
   }
