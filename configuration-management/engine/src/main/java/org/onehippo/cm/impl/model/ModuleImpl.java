@@ -72,8 +72,10 @@ public class ModuleImpl implements Module {
         return unmodifiableMap(sources);
     }
 
-    public void setSources(final Map<String, Source> sources) {
-        this.sources = new LinkedHashMap<>(sources);
+    public SourceImpl addSource(final String path) {
+        final SourceImpl source = new SourceImpl(path, this);
+        sources.put(path, source);
+        return source;
     }
 
 }

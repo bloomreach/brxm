@@ -16,81 +16,56 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.Source;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
-public class ConfigurationParserTest {
-
-    private URL pathToUrl(final Path path) {
-        try {
-            return path.toUri().toURL();
-        } catch (MalformedURLException e) {
-            fail("Cannot convert path to URL" + e);
-            return null;
-        }
-    }
-
-    private static class TestFiles {
-        URL repoConfig;
-        List<URL> sources;
-    }
-
-    private TestFiles collectFiles(final String repoConfig) throws IOException {
-        TestFiles testFiles = new TestFiles();
-        testFiles.repoConfig = ConfigurationParserTest.class.getResource(repoConfig);
-        if (testFiles.repoConfig == null) {
-            fail("cannot find resource " + repoConfig);
-        }
-        final String fileName = testFiles.repoConfig.getFile();
-        testFiles.sources = new ArrayList<>();
-        final Path testRootDirectory = Paths.get(fileName.substring(0, fileName.lastIndexOf(".")));
-        Files.find(testRootDirectory, Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
-                .forEachOrdered(path -> testFiles.sources.add(pathToUrl(path)));
-        return testFiles;
-    }
+public class ConfigurationParserTest extends AbstractBaseTest {
 
     @Test
-    public void expect_group_is_loaded() throws IOException {
+    public void expect_hello_world_loads() throws IOException {
         final TestFiles files = collectFiles("/hello_world/repo-config.yaml");
         final ConfigurationParser parser = new ConfigurationParser();
-        final Map<String, Configuration> configurations = parser.parse(files.repoConfig, files.sources);
 
+        final Map<String, Configuration> configurations = parser.parse(files.repoConfig, files.sources);
         assertEquals(2, configurations.size());
 
-        final Configuration base = configurations.get("base");
-        assertEquals("base", base.getName());
-        assertEquals(0, base.getAfter().size());
-        assertEquals(1, base.getProjects().size());
-        final Project project1 = base.getProjects().get("project1");
-        assertEquals("project1", project1.getName());
-        assertEquals(1, project1.getModules().size());
-        final Module module1 = project1.getModules().get("module1");
-        assertEquals("module1", module1.getName());
+        final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
+        final Project project1 = assertProject(base, "project1", new String[0], 1);
+        final Module module1 = assertModule(project1, "module1", new String[0], 1);
+        final Source source1 = assertSource(module1, "hello_world/repo-config/base/project1/module1/config.yaml", 1);
+        final ConfigDefinition definition1 = assertDefinition(source1, 0, ConfigDefinition.class);
 
-        final Configuration myhippoproject = configurations.get("myhippoproject");
-        assertEquals("myhippoproject", myhippoproject.getName());
-        assertEquals(1, myhippoproject.getAfter().size());
-        assertEquals("base", myhippoproject.getAfter().get(0));
-        assertEquals(1, myhippoproject.getProjects().size());
-        final Project project2 = myhippoproject.getProjects().get("project2");
-        assertEquals("project2", project2.getName());
-        assertEquals(1, project2.getModules().size());
-        final Module module2 = project2.getModules().get("module2");
-        assertEquals("module2", module2.getName());
+        final DefinitionNode rootDefinition1 =
+                assertNode(definition1, "/", "/", definition1, false, 1, 0);
+        final DefinitionNode nodeDefinition1 =
+                assertNode(rootDefinition1, "node", "/node", false, definition1, false, 0, 2);
+        final DefinitionProperty property1 =
+                assertProperty(nodeDefinition1, "property1", "/node/property1", definition1, false, "value1");
+        final DefinitionProperty property2 =
+                assertProperty(nodeDefinition1, "property2", "/node/property2", definition1, false, new String[]{"value2","value3"});
+
+        final Configuration myhippoproject = assertConfiguration(configurations, "myhippoproject", new String[]{"base"}, 1);
+        final Project project2 = assertProject(myhippoproject, "project2", new String[0], 1);
+        final Module module2 = assertModule(project2, "module2", new String[0], 1);
+        final Source source2 = assertSource(module2, "hello_world/repo-config/myhippoproject/project2/module2/config.yaml", 1);
+        final ConfigDefinition definition2 = assertDefinition(source2, 0, ConfigDefinition.class);
+
+        final DefinitionNode rootDefinition2 =
+                assertNode(definition2, "/node", "/node", definition2, false, 0, 2);
+        final DefinitionProperty property2bis =
+                assertProperty(rootDefinition2, "property2", "/node/property2", definition2, false, "override");
+        final DefinitionProperty property3 =
+                assertProperty(rootDefinition2, "property3", "/node/property3", definition2, false, "value3");
     }
 
 }

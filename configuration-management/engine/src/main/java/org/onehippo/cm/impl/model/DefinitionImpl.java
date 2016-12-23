@@ -16,29 +16,30 @@
 package org.onehippo.cm.impl.model;
 
 import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionItem;
+import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.Source;
 
 public class DefinitionImpl implements Definition {
 
     private Source source;
-    private DefinitionItem item;
+    private DefinitionNode node;
+
+    public DefinitionImpl(final SourceImpl source) {
+        this.source = source;
+    }
 
     @Override
     public Source getSource() {
         return source;
     }
 
-    public void setSource(final Source source) {
-        this.source = source;
-    }
-
     @Override
-    public DefinitionItem getItem() {
-        return item;
+    public DefinitionNode getNode() {
+        return node;
     }
 
-    public void setItem(final DefinitionItem item) {
-        this.item = item;
+    public void setNode(final DefinitionNode node) {
+        this.node = node;
     }
+
 }

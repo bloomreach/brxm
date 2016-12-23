@@ -44,8 +44,6 @@ public class ProjectImpl implements Project {
             throw new IllegalArgumentException("Parameter 'configuration' cannot be null");
         }
         this.configuration = configuration;
-
-        this.configuration.addProject(this);
     }
 
     @Override

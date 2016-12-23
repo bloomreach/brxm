@@ -13,13 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.api.model;
+package org.onehippo.cm.impl.model;
 
-public interface DefinitionItem {
-    String getName();
-    String getPath();
-    DefinitionNode getParent();
-    boolean isRoot();
-    Definition getDefinition();
-    boolean isDeleted();
+import org.onehippo.cm.api.model.ConfigDefinition;
+
+public class ConfigDefinitionImpl extends DefinitionImpl implements ConfigDefinition {
+
+    public ConfigDefinitionImpl(final SourceImpl source) {
+        super(source);
+    }
+
 }

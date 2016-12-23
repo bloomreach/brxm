@@ -15,8 +15,6 @@
  */
 package org.onehippo.cm.impl.model.builder;
 
-import com.google.common.collect.ImmutableMap;
-
 import org.junit.Before;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
@@ -45,29 +43,21 @@ public abstract class AbstractBaseTest {
 
     @Before
     public void setup() {
-
         configuration1 = new ConfigurationImpl("configuration1");
         configuration2 = new ConfigurationImpl("configuration2");
         configuration3 = new ConfigurationImpl("configuration3");
 
-        project1a = new ProjectImpl("project1a", configuration1);
-        project1b = new ProjectImpl("project1b", configuration1);
-        project1c = new ProjectImpl("project1c", configuration1);
+        project1a = configuration1.addProject("project1a");
+        project1b = configuration1.addProject("project1b");
+        project1c = configuration1.addProject("project1c");
 
-        module1a = new ModuleImpl("module1a", project1a);
-        module1b = new ModuleImpl("module1b", project1a);
-        module1c = new ModuleImpl("module1c", project1a);
+        module1a = project1a.addModule("module1a");
+        module1b = project1a.addModule("module1b");
+        module1c = project1a.addModule("module1c");
 
-        source1a = new SourceImpl();
-        source1b = new SourceImpl();
-        source1c = new SourceImpl();
-
-        source1a.setPath("/foo/bar/lux");
-        source1b.setPath("/bar/foo/lux");
-        source1c.setPath("/lux/bar");
-
-        module1a.setSources(ImmutableMap.of(source1a.getPath(),source1a,
-                source1b.getPath(), source1b,
-                source1c.getPath(), source1c));
+        source1a = module1a.addSource("/foo/bar/lux");
+        source1b = module1a.addSource("/bar/foo/lux");
+        source1c = module1a.addSource("/lux/bar");
     }
+
 }

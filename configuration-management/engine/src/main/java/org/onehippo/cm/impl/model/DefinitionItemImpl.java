@@ -27,13 +27,27 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
     private Definition definition;
     private boolean deleted;
 
+    public DefinitionItemImpl(final String name, final String path, final Definition definition) {
+        this.name = name;
+        this.path = path;
+        this.parent = null;
+        this.definition = definition;
+        this.deleted = false;
+    }
+
+    public DefinitionItemImpl(final String name, final DefinitionNodeImpl parent) {
+        this.name = name;
+        this.parent = parent;
+        this.definition = parent.getDefinition();
+        this.deleted = false;
+
+        final String parentPath = parent.getPath();
+        path = parentPath + (parentPath.endsWith("/") ? "" : "/") + name;
+    }
+
     @Override
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     @Override
@@ -41,17 +55,17 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
         return path;
     }
 
-    public void setPath(final String path) {
-        this.path = path;
-    }
-
     @Override
     public DefinitionNode getParent() {
+        if (parent == null) {
+            throw new IllegalStateException("Root node does not have a parent");
+        }
         return parent;
     }
 
-    public void setParent(final DefinitionNode parent) {
-        this.parent = parent;
+    @Override
+    public boolean isRoot() {
+        return parent == null;
     }
 
     @Override
@@ -59,16 +73,9 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
         return definition;
     }
 
-    public void setDefinition(final Definition definition) {
-        this.definition = definition;
-    }
-
     @Override
     public boolean isDeleted() {
         return deleted;
     }
 
-    public void setDeleted(final boolean deleted) {
-        this.deleted = deleted;
-    }
 }

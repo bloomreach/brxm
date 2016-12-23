@@ -15,6 +15,8 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.text.MessageFormat;
+
 import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
@@ -28,13 +30,40 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     private Value value;
     private Value[] values;
 
+    public DefinitionPropertyImpl(final String name, final Value value, final DefinitionNodeImpl parent) {
+        super(name, parent);
+        this.propertyType = PropertyType.SINGLE;
+        this.valueType = value.getType();
+        this.value = value;
+        this.values = null;
+    }
+
+    public DefinitionPropertyImpl(final String name, final Value[] values, final DefinitionNodeImpl parent) {
+        super(name, parent);
+        if (values.length == 0) {
+            throw new IllegalArgumentException("Argument 'values' must contain at least 1 element");
+        }
+        this.propertyType = PropertyType.LIST;
+
+        final ValueType valueType = values[0].getType();
+        for (int i = 1; i < values.length; i++) {
+            // todo create unit test and parser test
+            if (!valueType.equals(values[i].getType())) {
+                throw new IllegalArgumentException(MessageFormat.format(
+                        "Argument 'values' must contain values of the same type, found value type '{}' as well as '{}'",
+                        valueType,
+                        values[i].getType()));
+            }
+        }
+        this.valueType = valueType;
+
+        this.value = null;
+        this.values = values;
+    }
+
     @Override
     public PropertyType getType() {
         return propertyType;
-    }
-
-    public void setPropertyType(final PropertyType propertyType) {
-        this.propertyType = propertyType;
     }
 
     @Override
@@ -42,25 +71,20 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
         return valueType;
     }
 
-    public void setValueType(final ValueType valueType) {
-        this.valueType = valueType;
-    }
-
     @Override
     public Value getValue() throws ValueFormatException {
+        if (value == null) {
+            throw new ValueFormatException("Property contains multiple values");
+        }
         return value;
-    }
-
-    public void setValue(final Value value) {
-        this.value = value;
     }
 
     @Override
     public Value[] getValues() throws ValueFormatException {
+        if (values == null) {
+            throw new ValueFormatException("Property contains single value");
+        }
         return values;
     }
 
-    public void setValues(final Value[] values) {
-        this.values = values;
-    }
 }

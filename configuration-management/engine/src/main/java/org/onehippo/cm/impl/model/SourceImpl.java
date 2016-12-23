@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,21 +23,27 @@ import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Source;
 
-import static java.util.Collections.emptyList;
-
 public class SourceImpl implements Source {
 
     private String path;
     private Module module;
-    private List<Definition> definitions;
+    private List<Definition> definitions = new ArrayList<>();
+
+    public SourceImpl(final String path, final ModuleImpl module) {
+        if (path == null) {
+            throw new IllegalArgumentException("Parameter 'path' cannot be null");
+        }
+        this.path = path;
+
+        if (module == null) {
+            throw new IllegalArgumentException("Parameter 'module' cannot be null");
+        }
+        this.module = module;
+    }
 
     @Override
     public String getPath() {
         return path;
-    }
-
-    public void setPath(final String path) {
-        this.path = path;
     }
 
     @Override
@@ -44,19 +51,15 @@ public class SourceImpl implements Source {
         return module;
     }
 
-    public void setModule(final Module module) {
-        this.module = module;
-    }
-
     @Override
     public List<Definition> getDefinitions() {
-        if (definitions == null) {
-            return emptyList();
-        }
         return Collections.unmodifiableList(definitions);
     }
 
-    public void setDefinitions(final List<Definition> definitions) {
-        this.definitions = definitions;
+    public ConfigDefinitionImpl addConfigDefinition(final String path) {
+        final ConfigDefinitionImpl definition = new ConfigDefinitionImpl(this);
+        definitions.add(definition);
+        return definition;
     }
+
 }

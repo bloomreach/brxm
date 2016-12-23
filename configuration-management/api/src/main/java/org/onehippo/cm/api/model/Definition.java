@@ -17,5 +17,5 @@ package org.onehippo.cm.api.model;
 
 public interface Definition {
     Source getSource();
-    DefinitionItem getItem();
+    DefinitionNode getNode();
 }

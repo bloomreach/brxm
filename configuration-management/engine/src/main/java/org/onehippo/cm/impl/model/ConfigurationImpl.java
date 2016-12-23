@@ -62,18 +62,10 @@ public class ConfigurationImpl implements Configuration {
         return unmodifiableMap(projects);
     }
 
-    public void setProjects(final Map<String, Project> projects) {
-        this.projects = new LinkedHashMap<>(projects);
-    }
-
     public ProjectImpl addProject(final String name) {
         final ProjectImpl project = new ProjectImpl(name, this);
         projects.put(name, project);
         return project;
-    }
-
-    void addProject(final Project project) {
-        projects.put(project.getName(), project);
     }
 
 }

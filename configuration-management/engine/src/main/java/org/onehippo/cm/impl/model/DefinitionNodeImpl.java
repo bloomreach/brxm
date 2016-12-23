@@ -15,41 +15,55 @@
  */
 package org.onehippo.cm.impl.model;
 
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
+import org.onehippo.cm.api.model.Value;
 
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.unmodifiableMap;
 
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
 
-    private Map<String, DefinitionNode> nodes;
-    private Map<String, DefinitionProperty> properties;
+    private Map<String, DefinitionNode> nodes = new LinkedHashMap<>();
+    private Map<String, DefinitionProperty> properties = new LinkedHashMap<>();
+
+    public DefinitionNodeImpl(final String name, final String path, final Definition definition) {
+        super(name, path, definition);
+    }
+
+    public DefinitionNodeImpl(final String name, final DefinitionNodeImpl parent) {
+        super(name, parent);
+    }
 
     @Override
     public Map<String, DefinitionNode> getNodes() {
-        if (nodes == null) {
-            return emptyMap();
-        }
         return unmodifiableMap(nodes);
-    }
-
-    public void setNodes(final Map<String, DefinitionNode> nodes) {
-        this.nodes = nodes;
     }
 
     @Override
     public Map<String, DefinitionProperty> getProperties() {
-        if (properties == null) {
-            return emptyMap();
-        }
         return unmodifiableMap(properties);
     }
 
-    public void setProperties(final Map<String, DefinitionProperty> properties) {
-        this.properties = properties;
+    public DefinitionNodeImpl addNode(final String name) {
+        final DefinitionNodeImpl node = new DefinitionNodeImpl(name, this);
+        nodes.put(name, node);
+        return node;
     }
+
+    public DefinitionPropertyImpl addProperty(final String name, final Value value) {
+        final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, value, this);
+        properties.put(name, property);
+        return property;
+    }
+
+    public DefinitionPropertyImpl addProperty(final String name, final Value[] values) {
+        final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, values, this);
+        properties.put(name, property);
+        return property;
+    }
+
 }
