@@ -73,10 +73,15 @@ a.hst-cmseditlink {
 }
 
 .hippo-overlay-element-container > .hippo-overlay-label {
-  background: #000;
+  background-color: #000;
 }
 
-.hippo-overlay-label-visible > .hippo-overlay-label {
+.hippo-overlay-element-component > .hippo-overlay-label {
+  background-color: #0877d1;
+}
+
+.hippo-overlay-element-container-empty > .hippo-overlay-label,
+.hippo-overlay-element-component:hover > .hippo-overlay-label {
   display: flex;
 }
 

@@ -131,7 +131,7 @@ class OverlayService {
 
     if (this._isElementVisible(structureElement, boxElement)) {
       overlayElement.show();
-      overlayElement.toggleClass('hippo-overlay-label-visible', this._isLabelVisible(structureElement));
+      overlayElement.toggleClass('hippo-overlay-element-container-empty', this._isEmptyContainer(structureElement));
       this._syncPosition(overlayElement, boxElement);
     } else {
       overlayElement.hide();
@@ -151,7 +151,7 @@ class OverlayService {
     }
   }
 
-  _isLabelVisible(structureElement) {
+  _isEmptyContainer(structureElement) {
     return structureElement.getType() === 'container' && structureElement.isEmpty();
   }
 
