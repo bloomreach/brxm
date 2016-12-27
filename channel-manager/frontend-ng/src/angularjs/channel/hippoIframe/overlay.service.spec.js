@@ -15,8 +15,6 @@
  */
 
 describe('OverlayService', () => {
-  'use strict';
-
   let OverlayService;
   let PageStructureService;
   let $iframe;

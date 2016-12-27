@@ -15,8 +15,6 @@
  */
 
 describe('ViewportService', () => {
-  'use strict';
-
   let ViewportService;
   let $sheet;
   let $iframe;

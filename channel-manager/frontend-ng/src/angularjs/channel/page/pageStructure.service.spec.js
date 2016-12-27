@@ -577,7 +577,7 @@ describe('PageStructureService', () => {
     $rootScope.$digest();
 
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
-    let editMenuLinks = PageStructureService.getEmbeddedLinks();
+    const editMenuLinks = PageStructureService.getEmbeddedLinks();
     expect(editMenuLinks.length).toBe(2);
     expect(editMenuLinks[0].getEnclosingElement()).toBe(null);
     expect(editMenuLinks[1].getEnclosingElement()).toBe(updatedComponentA);
