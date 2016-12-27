@@ -12,41 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//TODO: This should be doable with just Material?
-md-list-item {
-  .component-icon {
-    padding-right: 4px;
-    width: 40px;
+// Open Sans font
+@import 'styles/variables';
 
-    img {
-      max-width: 100%;
-    }
-  }
-}
+@import '~open-sans-fontface/sass/variables';
+@import '~open-sans-fontface/sass/mixins';
+@import '~open-sans-fontface/sass/Regular';
 
-md-sidenav {
-  md-list {
-    padding: 0;
-  }
-}
-
-.hippo-listing {
-  border-left: 1px solid $picker-border-color;
-
-  .md-subheader {
-    line-height: 18px;
-
-    span {
-      padding-left: 56px;
-    }
-  }
-
-  .active {
-    background-color: $blue-500;
-
-    p,
-    md-icon {
-      color: $white;
-    }
-  }
-}
+// Angular Material framework
+@import '~angular-material/modules/scss/angular-material.scss';

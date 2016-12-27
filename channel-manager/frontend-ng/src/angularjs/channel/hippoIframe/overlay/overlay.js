@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { utilsModule } from '../../../utils/utils';
-import { overlayElementDirective } from './overlayElement.directive';
-import { OverlayElementCtrl } from './overlayElement.controller';
-import { OverlaySyncService } from './overlaySync.service';
+import utilsModule from '../../../utils/utils';
+import overlayElementDirective from './overlayElement.directive';
+import OverlayElementCtrl from './overlayElement.controller';
+import OverlaySyncService from './overlaySync.service';
 
-export const overlayModule = angular
+const overlayModule = angular
   .module('hippo-cm.channel.hippoIframe.overlay', [
     utilsModule.name,
   ])
   .directive('overlayElement', overlayElementDirective)
   .controller('OverlayElementCtrl', OverlayElementCtrl)
   .service('OverlaySyncService', OverlaySyncService);
+
+export default overlayModule;

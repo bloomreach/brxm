@@ -54,7 +54,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>run gulp buildDist -- --fail-on-gulp-error</commandlineArgs>
+              <commandlineArgs>run build</commandlineArgs>
             </configuration>
           </execution>
           <execution>
@@ -63,7 +63,7 @@
             <goals><goal>exec</goal></goals>
             <configuration>
               <executable>npm</executable>
-              <commandlineArgs>test -- --fail-on-gulp-error</commandlineArgs>
+              <commandlineArgs>run testOnce</commandlineArgs>
               <skip>${skipTests}</skip>
             </configuration>
           </execution>

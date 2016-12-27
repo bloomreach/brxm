@@ -42,7 +42,7 @@ const getParentOfScrollItem = (elem) => {
 };
 
 
-export function scrollToIfDirective($timeout) {
+function scrollToIfDirective($timeout) {
   'ngInject';
 
   return {
@@ -64,9 +64,9 @@ export function scrollToIfDirective($timeout) {
                 parent.scrollTop = elemOffsetTop + topPadding;
               } else if (elemOffsetTop + elemHeight > parent.scrollTop + parent.clientHeight) {
                 if (elemHeight > parent.clientHeight) {
-                  elemHeight = elemHeight - (elemHeight - parent.clientHeight);
+                  elemHeight -= (elemHeight - parent.clientHeight);
                 }
-                parent.scrollTop = elemOffsetTop + topPadding + elemHeight - parent.clientHeight;
+                parent.scrollTop = (elemOffsetTop + topPadding + elemHeight) - parent.clientHeight;
               }
               if (elemOffsetLeft + elemWidth > parent.scrollLeft + parent.clientWidth) {
                 parent.scrollLeft = elemOffsetLeft + leftPadding;
@@ -78,3 +78,5 @@ export function scrollToIfDirective($timeout) {
     },
   };
 }
+
+export default scrollToIfDirective;

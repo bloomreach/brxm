@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { HstConstants } from '../../../api/hst.constants';
+import HstConstants from '../../../api/hst.constants';
 
-export class PageStructureElement {
+class PageStructureElement {
   constructor(type, metaData, startCommentDomElement, endCommentDomElement, boxDomElement) {
     this.type = type;
     this.metaData = metaData;
@@ -166,3 +166,5 @@ export class PageStructureElement {
     return this.headContributions;
   }
 }
+
+export default PageStructureElement;
