@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('hippoIframeCtrl', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('hippoIframeCtrl', () => {
   let PageStructureService;
   let hippoIframeCtrl;
   let scope;
@@ -42,7 +43,7 @@ describe('hippoIframeCtrl', () => {
 
   beforeEach(() => {
     let $compile;
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlayService_,
             _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,

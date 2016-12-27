@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-export function run(ChannelService) {
+function run(ChannelService) {
   'ngInject';
+
   ChannelService.initialize();
 }
+
+export default run;

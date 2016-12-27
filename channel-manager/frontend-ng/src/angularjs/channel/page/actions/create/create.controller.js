@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class PageCreateCtrl {
+class PageCreateCtrl {
   constructor($element, $log, $scope, $translate, ChannelService, SiteMapService, HippoIframeService,
               FeedbackService, lowercaseFilter) {
     'ngInject';
@@ -52,7 +52,7 @@ export class PageCreateCtrl {
         this.locations = data.locations;
         this.location = (data.locations.length > 0) ? data.locations[0] : undefined;
       })
-      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
+      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
   }
 
   create() {
@@ -70,7 +70,7 @@ export class PageCreateCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_CREATION_FAILED', this.errorMap));
+      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_CREATION_FAILED', this.errorMap));
   }
 
   disableAutomaticLastPathInfoElementUpdate() {
@@ -89,3 +89,5 @@ export class PageCreateCtrl {
     return value;
   }
 }
+
+export default PageCreateCtrl;

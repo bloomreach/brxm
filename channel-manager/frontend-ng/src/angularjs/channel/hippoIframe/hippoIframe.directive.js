@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-export function hippoIframe() {
+import template from './hippoIframe.html';
+
+function hippoIframe() {
   'ngInject';
 
   return {
@@ -24,8 +26,10 @@ export function hippoIframe() {
       editMode: '=',
       onEditMenu: '&',
     },
-    templateUrl: 'channel/hippoIframe/hippoIframe.html',
+    template,
     controller: 'hippoIframeCtrl',
     controllerAs: 'iframe',
   };
 }
+
+export default hippoIframe;

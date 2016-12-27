@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class HippoIframeCtrl {
+class HippoIframeCtrl {
   constructor(
     $q,
     $log,
@@ -66,7 +66,7 @@ export class HippoIframeCtrl {
     ScalingService.init($element);
     DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-base'));
 
-    const deleteComponentHandler = (componentId) => this.deleteComponent(componentId);
+    const deleteComponentHandler = componentId => this.deleteComponent(componentId);
     CmsService.subscribe('delete-component', deleteComponentHandler);
     $scope.$on('$destroy', () => CmsService.unsubscribe('delete-component', deleteComponentHandler));
 
@@ -182,7 +182,7 @@ export class HippoIframeCtrl {
   _parseLinks() {
     const iframeDom = this._getIframeDom();
     const protocolAndHost = `${iframeDom.location.protocol}//${iframeDom.location.host}`;
-    const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map((path) => protocolAndHost + path);
+    const internalLinkPrefixes = this.ChannelService.getPreviewPaths().map(path => protocolAndHost + path);
 
     this.linkProcessorService.run(iframeDom, internalLinkPrefixes);
   }
@@ -195,3 +195,5 @@ export class HippoIframeCtrl {
     return this.HippoIframeService.getSrc();
   }
 }
+
+export default HippoIframeCtrl;

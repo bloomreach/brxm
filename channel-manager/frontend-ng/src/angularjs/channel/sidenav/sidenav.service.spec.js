@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
+import angular from 'angular';
+import 'angular-mocks';
+
 /* eslint-disable prefer-const */
 
 describe('ChannelSidenavService', () => {
-  'use strict';
-
   let ChannelSidenavService;
   let ScalingService;
   const sidenav = jasmine.createSpyObj('sidenav', ['isOpen', 'toggle', 'close']);
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.module('hippo-cm');
 
     const $mdSidenav = jasmine.createSpy('$mdSidenav').and.returnValue(sidenav);
 
-    module(($provide) => {
+    angular.mock.module(($provide) => {
       $provide.value('$mdSidenav', $mdSidenav);
     });
 

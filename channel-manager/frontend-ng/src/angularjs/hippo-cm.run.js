@@ -14,29 +14,15 @@
  * limitations under the License.
  */
 
-import PageStructureElement from './pageStructureElement';
+import detectIe from 'detectie';
 
-class EmbeddedLink extends PageStructureElement {
+function run() {
+  'ngInject';
 
-  constructor(type, commentElement, metaData) {
-    super(type, metaData, commentElement, commentElement, null);
-  }
-
-  getUuid() {
-    return this.metaData.uuid;
-  }
-
-  setEnclosingElement(element) {
-    this.enclosingElement = element;
-  }
-
-  getEnclosingElement() {
-    return this.enclosingElement;
-  }
-
-  generateBoxElement() {
-    return $('<a class="hst-cmseditlink"></a>');
+  // add ie11 class for ie11 specific hacks
+  if (detectIe() === 11) {
+    $('body').addClass('ie11');
   }
 }
 
-export default EmbeddedLink;
+export default run;

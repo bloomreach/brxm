@@ -17,7 +17,7 @@
 const ANGULAR_MATERIAL_SIDENAV_EASING = [0.25, 0.8, 0.25, 1];
 const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
 
-export class ScalingService {
+class ScalingService {
 
   constructor($rootScope, $window, OverlayService, ViewportService) {
     'ngInject';
@@ -162,3 +162,5 @@ export class ScalingService {
   }
 
 }
+
+export default ScalingService;

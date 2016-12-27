@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-export class ChannelActionsCtrl {
+import deleteProgressTemplate from './delete/delete-channel-progress.html';
+
+class ChannelActionsCtrl {
   constructor($translate, ChannelService, CmsService, DialogService, FeedbackService, SessionService) {
     'ngInject';
+
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -73,7 +76,7 @@ export class ChannelActionsCtrl {
 
   _showDeleteProgress() {
     this.DialogService.show({
-      templateUrl: 'channel/actions/delete/delete-channel-progress.html',
+      template: deleteProgressTemplate,
       locals: {
         translationData: {
           channel: this.ChannelService.getName(),
@@ -81,6 +84,7 @@ export class ChannelActionsCtrl {
       },
       controller: ($scope, translationData) => {
         'ngInject';
+
         $scope.translationData = translationData;
       },
     });
@@ -99,3 +103,5 @@ export class ChannelActionsCtrl {
     this.DialogService.show(alert);
   }
 }
+
+export default ChannelActionsCtrl;

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import { EmbeddedLink } from './embeddedLink';
+import EmbeddedLink from './embeddedLink';
 
-export class ContentLink extends EmbeddedLink {
+class ContentLink extends EmbeddedLink {
 
   constructor(commentElement, metaData) {
     super('content-link', commentElement, metaData);
   }
 }
+
+export default ContentLink;

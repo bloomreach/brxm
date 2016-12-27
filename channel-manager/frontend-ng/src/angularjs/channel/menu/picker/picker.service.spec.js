@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('PickerService', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('PickerService', () => {
   let $q;
   let $rootScope;
   let HstService;
@@ -32,7 +33,7 @@ describe('PickerService', () => {
   };
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$q_, _$rootScope_, _PickerService_, _DialogService_, _HstService_) => {
       $q = _$q_;

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { ComponentElement } from './element/componentElement';
-import { ContainerElement } from './element/containerElement';
-import { ContentLink } from './element/contentLink';
-import { MenuLink } from './element/menuLink';
+import ComponentElement from './element/componentElement';
+import ContainerElement from './element/containerElement';
+import ContentLink from './element/contentLink';
+import MenuLink from './element/menuLink';
 
-export class PageStructureService {
+const EMBEDDED_LINK_MARKUP = '<a class="hst-cmseditlink"></a>';
+
+class PageStructureService {
 
   constructor($log,
               $q,
@@ -226,7 +228,7 @@ export class PageStructureService {
   }
 
   getContainerByIframeElement(containerIFrameElement) {
-    return this.containers.find((container) => container.getBoxElement().is(containerIFrameElement));
+    return this.containers.find(container => container.getBoxElement().is(containerIFrameElement));
   }
 
   showComponentProperties(componentElement) {
@@ -308,7 +310,7 @@ export class PageStructureService {
    */
   renderContainer(container) {
     return this.RenderingService.fetchContainerMarkup(container)
-      .then((markup) => this._updateContainer(container, markup));
+      .then(markup => this._updateContainer(container, markup));
     // TODO: handle error
     // try reloading the entire page?
   }
@@ -328,11 +330,11 @@ export class PageStructureService {
       return false;
     }
     const elementHeadContributions = pageStructureElement.getHeadContributions();
-    return elementHeadContributions.some((contribution) => !this.headContributions.includes(contribution));
+    return elementHeadContributions.some(contribution => !this.headContributions.includes(contribution));
   }
 
   _removeEmbeddedLinksInContainer(container) {
-    container.getComponents().forEach((component) => this._removeEmbeddedLinksInComponent(component));
+    container.getComponents().forEach(component => this._removeEmbeddedLinksInComponent(component));
 
     this.embeddedLinks = this._getLinksNotEnclosedInElement(this.embeddedLinks, container);
   }
@@ -520,3 +522,5 @@ export class PageStructureService {
     this._showFeedbackAndReload(errorKey, errorResponse.parameterMap);
   }
 }
+
+export default PageStructureService;

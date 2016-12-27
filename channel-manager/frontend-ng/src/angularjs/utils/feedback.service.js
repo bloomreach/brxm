@@ -16,7 +16,7 @@
 
 const HIDE_DELAY_IN_MS = 3000;
 
-export class FeedbackService {
+class FeedbackService {
   constructor($interpolate, $log, $translate, $mdToast) {
     'ngInject';
 
@@ -92,3 +92,5 @@ export class FeedbackService {
   }
 }
 
+
+export default FeedbackService;

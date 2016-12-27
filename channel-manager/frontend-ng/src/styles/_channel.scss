@@ -22,8 +22,8 @@
   z-index: 100; // must be higher than sidenav (60)
 
   &.masked {
-    pointer-events: auto;
     cursor: not-allowed;
+    pointer-events: auto;
   }
 }
 
@@ -34,7 +34,7 @@ md-toolbar > md-progress-linear {
   position: absolute;
 }
 
-md-input-container.input-container-picker {
+.input-container-picker {
   img {
     max-width: 100%;
     &:not(.readonly) {
@@ -53,23 +53,27 @@ md-input-container.input-container-picker {
   }
 }
 
-// color required invalid select boxes red
-.md-input-invalid md-select.ng-invalid ._md-select-value._md-select-placeholder {
-  color: $select-invalid-color;
-}
+Style invalid select boxes
+.md-input-invalid md-select {
+  // color required invalid select boxes red
+  &.ng-invalid ._md-select-value {
+    border-bottom-color: $select-invalid-color;
+    color: $select-invalid-color;
+  }
 
-// mark required select boxes with an asterisk
-md-select.ng-invalid-required > md-select-value > span:after {
-  content: " *";
-  font-size: 13px;
-  vertical-align: top;
+  // mark required select boxes with an asterisk
+  .ng-invalid-required > ._md-select-value > ::after {
+    content: ' *';
+    font-size: 13px;
+    vertical-align: top;
+  }
 }
 
 .help-icon {
   cursor: default;
   position: absolute;
-  top: 10px;
   right: -24px;
+  top: 10px;
 }
 
 // avoid that help icon tooltips grow wider than the subpage; wrap text when necessary.

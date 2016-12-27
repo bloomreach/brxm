@@ -17,7 +17,7 @@
 const FIRST_CHILD = 'first';
 const NEXT_SIBLING = 'after';
 
-export class SiteMenuService {
+class SiteMenuService {
   constructor($filter, $translate, HstService) {
     'ngInject';
 
@@ -105,13 +105,13 @@ export class SiteMenuService {
         }
 
         return this.HstService.doPostWithParams(newItem, menuId, options, parentId)
-          .then((response) => response.data)
-          .then((newItemId) => this.loadMenu(menuId).then(() => this._makeEditableItem(newItemId)));
+          .then(response => response.data)
+          .then(newItemId => this.loadMenu(menuId).then(() => this._makeEditableItem(newItemId)));
       });
   }
 
   getPathToMenuItem(menuId, menuItemId) {
-    return this._loadMenu(menuId).then((menu) => this._findPathToMenuItem(menu, menuItemId));
+    return this._loadMenu(menuId).then(menu => this._findPathToMenuItem(menu, menuItemId));
   }
 
   _createBlankMenuItem() {
@@ -179,7 +179,7 @@ export class SiteMenuService {
   // lookup the existing menu item by ID and replace it with the updated item
   _replaceMenuItem(items, item) {
     if (angular.isArray(items)) {
-      for (let i = 0; i < items.length; i++) {
+      for (let i = 0; i < items.length; i += 1) {
         if (items[i].id === item.id) {
           items[i] = item;
           return true;
@@ -245,3 +245,5 @@ export class SiteMenuService {
   }
 }
 
+
+export default SiteMenuService;

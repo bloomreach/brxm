@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class PageEditCtrl {
+class PageEditCtrl {
   constructor($translate, $mdDialog, SiteMapService, SiteMapItemService, ChannelService, HippoIframeService,
               FeedbackService) {
     'ngInject';
@@ -43,7 +43,7 @@ export class PageEditCtrl {
     this.availableDocuments.unshift(documentNone);
     const currentPrimaryDocumentPath = this.item.primaryDocumentRepresentation
                                      ? this.item.primaryDocumentRepresentation.path : '';
-    this.primaryDocument = this.availableDocuments.find((dr) => dr.path === currentPrimaryDocumentPath) || documentNone;
+    this.primaryDocument = this.availableDocuments.find(dr => dr.path === currentPrimaryDocumentPath) || documentNone;
     this.prototypes = [];
     this.errorMap = {
       ITEM_ALREADY_LOCKED: 'ERROR_PAGE_LOCKED_BY',
@@ -53,7 +53,7 @@ export class PageEditCtrl {
       .then((data) => {
         this.prototypes = data.prototypes;
       })
-      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
+      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_MODEL_RETRIEVAL_FAILED'));
   }
 
   save() {
@@ -77,7 +77,7 @@ export class PageEditCtrl {
         this.ChannelService.recordOwnChange();
         this.onDone();
       })
-      .catch((response) => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_SAVE_FAILED', this.errorMap));
+      .catch(response => this.FeedbackService.showErrorResponseOnSubpage(response, 'ERROR_PAGE_SAVE_FAILED', this.errorMap));
   }
 
   hasPrototypes() {
@@ -102,3 +102,5 @@ export class PageEditCtrl {
   }
 }
 
+
+export default PageEditCtrl;

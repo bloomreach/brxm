@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('ScalingService', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('ScalingService', () => {
   let ScalingService;
   let ViewportService;
   let iframeJQueryElement;
@@ -25,7 +26,7 @@ describe('ScalingService', () => {
   let elementsToScale;
 
   beforeEach(() => {
-    module('hippo-cm.channel.hippoIframe');
+    angular.mock.module('hippo-cm.channel.hippoIframe');
 
     inject((_ScalingService_, _ViewportService_) => {
       ScalingService = _ScalingService_;

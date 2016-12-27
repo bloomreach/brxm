@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-import { componentAdderModule } from './componentAdder/componentAdder';
-import { hippoIframe } from './hippoIframe.directive';
-import { HippoIframeCtrl } from './hippoIframe.controller';
-import { HippoIframeService } from './hippoIframe.service';
-import { HstCommentsProcessorService } from './hstCommentsProcessor.service';
-import { LinkProcessorService } from './linkProcessor.service';
-import { ScalingService } from './scaling.service';
-import { ScrollService } from './scroll.service';
-import { DragDropService } from './dragDrop.service';
-import { ViewportService } from './viewport.service';
-import { OverlayService } from './overlay.service';
+import ngDeviceDetector from 'ng-device-detector';
 
-export const channelHippoIframeModule = angular
+import componentAdderModule from './componentAdder/componentAdder';
+import hippoIframe from './hippoIframe.directive';
+import HippoIframeCtrl from './hippoIframe.controller';
+import HippoIframeService from './hippoIframe.service';
+import HstCommentsProcessorService from './hstCommentsProcessor.service';
+import LinkProcessorService from './linkProcessor.service';
+import ScalingService from './scaling.service';
+import ScrollService from './scroll.service';
+import DragDropService from './dragDrop.service';
+import ViewportService from './viewport.service';
+import OverlayService from './overlay.service';
+
+const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
-    'ng.deviceDetector',
+    ngDeviceDetector,
     componentAdderModule.name,
   ])
   .directive('hippoIframe', hippoIframe)
@@ -41,3 +43,5 @@ export const channelHippoIframeModule = angular
   .service('DragDropService', DragDropService)
   .service('ViewportService', ViewportService)
   .service('OverlayService', OverlayService);
+
+export default channelHippoIframeModule;

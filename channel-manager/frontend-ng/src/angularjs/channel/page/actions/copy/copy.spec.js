@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-describe('PageActionCopy', () => {
-  'use strict';
+import angular from 'angular';
+import 'angular-mocks';
 
+describe('PageActionCopy', () => {
   let $element;
   let $q;
   let $log;
@@ -50,7 +51,7 @@ describe('PageActionCopy', () => {
   };
 
   beforeEach(() => {
-    module('hippo-cm');
+    angular.mock.module('hippo-cm');
 
     inject((_$q_, _$log_, _$rootScope_, _$compile_, _$translate_, _ChannelService_, _FeedbackService_,
             _HippoIframeService_, _SessionService_, _SiteMapService_, _SiteMapItemService_) => {
@@ -93,7 +94,7 @@ describe('PageActionCopy', () => {
       },
     ];
 
-    spyOn($translate, 'instant').and.callFake((key) => key);
+    spyOn($translate, 'instant').and.callFake(key => key);
     spyOn($log, 'info');
     spyOn(SessionService, 'isCrossChannelPageCopySupported').and.returnValue(true);
     spyOn(ChannelService, 'getPageModifiableChannels').and.returnValue(channels);
@@ -119,7 +120,7 @@ describe('PageActionCopy', () => {
     $compile($element)($scope);
     $scope.$digest();
 
-    return $element.controller('page-copy');
+    return $element.controller('pageCopy');
   }
 
   it('initializes correctly when cross channel copy is disabled', () => {
