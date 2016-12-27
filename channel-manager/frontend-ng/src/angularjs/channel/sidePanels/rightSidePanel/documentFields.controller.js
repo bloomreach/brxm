@@ -44,20 +44,6 @@ class DocumentFieldsCtrl {
     const values = this.fieldValues[field.id];
     return angular.isArray(values) && values.length > 0;
   }
-
-  focusFieldType(fieldType) {
-    this.fieldTypeWithFocus = fieldType;
-    this.onFieldFocus();
-  }
-
-  blurFieldType() {
-    delete this.fieldTypeWithFocus;
-    this.onFieldBlur();
-  }
-
-  hasFocusedFieldType(fieldType) {
-    return this.fieldTypeWithFocus === fieldType;
-  }
 }
 
 export default DocumentFieldsCtrl;

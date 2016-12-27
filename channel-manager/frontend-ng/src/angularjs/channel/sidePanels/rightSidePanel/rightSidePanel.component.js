@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './rightSidePanel.scss';
 import template from './rightSidePanel.html';
 import RightSidePanelCtrl from './rightSidePanel.controller';
 

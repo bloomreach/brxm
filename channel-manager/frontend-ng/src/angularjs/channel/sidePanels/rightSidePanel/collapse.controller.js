@@ -23,6 +23,7 @@ class CollapseCtrl {
     this.$element = $element;
     this.isCollapsed = false;
     this.toggledElement = $element.find('> .collapse-element');
+    this.toggleTrigger = $element.find('> .collapse-toggle');
   }
 
   toggle() {
@@ -39,14 +40,17 @@ class CollapseCtrl {
     this.toggledElementHeight = this.toggledElement.height();
     this.toggledElement.height(this.toggledElementHeight);
 
-    this.$animate.addClass(this.toggledElement, '.collapsed', {
+    this.$animate.addClass(this.toggledElement, 'collapsed', {
       from: { height: this.toggledElementHeight },
       to: { height: 0 },
+    }).then(() => {
+      this.toggleTrigger.addClass('closed');
     });
   }
 
   open() {
-    this.$animate.removeClass(this.toggledElement, '.collapsed', {
+    this.toggleTrigger.removeClass('closed');
+    this.$animate.removeClass(this.toggledElement, 'collapsed', {
       from: { height: 0 },
       to: { height: this.toggledElementHeight },
     }).then(() => {

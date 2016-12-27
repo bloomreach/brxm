@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './collapse.scss';
 import CollapseCtrl from './collapse.controller';
 
 function collapse() {

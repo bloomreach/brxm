@@ -45,10 +45,11 @@
         <md-icon md-svg-src="images/document.svg"></md-icon>
       </md-button>
     </div>
-    <md-progress-linear md-mode="indeterminate" ng-if="$ctrl.loading"></md-progress-linear>
+    <md-progress-linear md-mode="indeterminate"
+                        ng-if="$ctrl.loading"></md-progress-linear>
   </md-toolbar>
 
-  <md-content flex="grow">
+  <md-content flex="grow" layout="column">
     <div ng-if="$ctrl.feedback"
          class="md-padding qa-feedback"
          md-colors="{background: 'hippo-red-50'}">
@@ -68,10 +69,9 @@
     <form ng-if="$ctrl.editing"
           name="$ctrl.form"
           class="form-dense-layout">
-
       <document-fields class="top-level"
-                      field-types="$ctrl.docType.fields"
-                      field-values="$ctrl.doc.fields">
+                       field-types="$ctrl.docType.fields"
+                       field-values="$ctrl.doc.fields">
       </document-fields>
     </form>
   </md-content>

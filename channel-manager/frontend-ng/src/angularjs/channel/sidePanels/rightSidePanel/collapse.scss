@@ -12,7 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@import 'variables';
+
 .collapse-toggle {
+  transition: margin-bottom $swift-ease-out;
+
+  &.closed {
+    margin-bottom: 0;
+  }
+
   &:hover {
     cursor: pointer;
   }
