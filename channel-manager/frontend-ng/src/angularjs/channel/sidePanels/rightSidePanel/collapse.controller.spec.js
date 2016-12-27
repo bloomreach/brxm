@@ -30,6 +30,7 @@ describe('collapse controller', () => {
 
       const element = $compile(`
         <div collapse>
+          <div class="collapse-toggle"></div>
           <div class="collapse-element" style="height: 10px;">
             test
           </div>
@@ -72,13 +73,13 @@ describe('collapse controller', () => {
   });
 
   it('uses $animate to register an animation on addition of collapse class', () => {
-    spyOn($animate, 'addClass');
+    spyOn($animate, 'addClass').and.returnValue($q.resolve());
 
     collapseCtrl.collapse();
 
     expect($animate.addClass).toHaveBeenCalledWith(
       collapseCtrl.toggledElement,
-      '.collapsed',
+      'collapsed',
       {
         from: { height: collapseCtrl.toggledElementHeight },
         to: { height: 0 },
@@ -93,12 +94,22 @@ describe('collapse controller', () => {
 
     expect($animate.removeClass).toHaveBeenCalledWith(
       collapseCtrl.toggledElement,
-      '.collapsed',
+      'collapsed',
       {
         from: { height: 0 },
         to: { height: collapseCtrl.toggledElementHeight },
       }
     );
+  });
+
+  it('adds css class to toggle element so it can use css transitions where needed', () => {
+    spyOn($animate, 'addClass').and.returnValue($q.resolve());
+
+    collapseCtrl.collapse();
+
+    $rootScope.$apply();
+
+    expect(collapseCtrl.toggleTrigger.hasClass('closed')).toBe(true);
   });
 
   it('removes inline height style after open animation has completed', () => {
