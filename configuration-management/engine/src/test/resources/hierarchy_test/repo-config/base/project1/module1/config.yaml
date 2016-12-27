@@ -1,0 +1,13 @@
+instructions:
+  - config:
+      - /:
+          - root-level-property: root-level-property-value
+          - /node-with-single-property:
+              - property: node-with-single-property-value
+          - /node-with-multiple-properties:
+              - single: value1
+              - multiple: [value2, value3]
+              - empty-multiple: []
+          - /node-with-sub-node:
+              - /sub-node:
+                  - property: sub-node-value

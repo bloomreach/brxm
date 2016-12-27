@@ -40,22 +40,23 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
 
     public DefinitionPropertyImpl(final String name, final Value[] values, final DefinitionNodeImpl parent) {
         super(name, parent);
-        if (values.length == 0) {
-            throw new IllegalArgumentException("Argument 'values' must contain at least 1 element");
-        }
         this.propertyType = PropertyType.LIST;
 
-        final ValueType valueType = values[0].getType();
-        for (int i = 1; i < values.length; i++) {
-            // todo create unit test and parser test
-            if (!valueType.equals(values[i].getType())) {
-                throw new IllegalArgumentException(MessageFormat.format(
-                        "Argument 'values' must contain values of the same type, found value type '{}' as well as '{}'",
-                        valueType,
-                        values[i].getType()));
+        if (values.length > 0) {
+            final ValueType valueType = values[0].getType();
+            for (int i = 1; i < values.length; i++) {
+                // todo create unit test and parser test
+                if (!valueType.equals(values[i].getType())) {
+                    throw new IllegalArgumentException(MessageFormat.format(
+                            "Argument 'values' must contain values of the same type, found value type '{}' as well as '{}'",
+                            valueType,
+                            values[i].getType()));
+                }
             }
+            this.valueType = valueType;
+        } else {
+            this.valueType = ValueType.STRING;
         }
-        this.valueType = valueType;
 
         this.value = null;
         this.values = values;
