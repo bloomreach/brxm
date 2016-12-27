@@ -107,21 +107,6 @@ describe('DocumentFields', () => {
     expect($ctrl.hasValue({ id: 'invalid' })).toBe(false);
   });
 
-  it('keeps track of the field type with the focused field', () => {
-    const someFieldType = { test: 'bla' };
-    $ctrl.focusFieldType(someFieldType);
-
-    expect(onFieldFocus).toHaveBeenCalled();
-
-    expect($ctrl.hasFocusedFieldType(someFieldType)).toBe(true);
-    expect($ctrl.hasFocusedFieldType({ test: 'bla' })).toBe(false); // different object
-    expect($ctrl.hasFocusedFieldType()).toBe(false);
-
-    $ctrl.blurFieldType();
-    expect(onFieldBlur).toHaveBeenCalled();
-    expect($ctrl.hasFocusedFieldType(someFieldType)).toBe(false);
-  });
-
   it('ignores the onFieldFocus and onFieldBlur callbacks when they are not defined', () => {
     expect(() => {
       $ctrl = $componentController('documentFields', {}, {
