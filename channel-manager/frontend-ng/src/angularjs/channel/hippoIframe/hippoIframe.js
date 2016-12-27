@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { overlayModule } from './overlay/overlay';
 import { componentAdderModule } from './componentAdder/componentAdder';
 import { hippoIframe } from './hippoIframe.directive';
 import { HippoIframeCtrl } from './hippoIframe.controller';
@@ -25,11 +24,11 @@ import { ScalingService } from './scaling.service';
 import { ScrollService } from './scroll.service';
 import { DragDropService } from './dragDrop.service';
 import { ViewportService } from './viewport.service';
+import { OverlayService } from './overlay.service';
 
 export const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
     'ng.deviceDetector',
-    overlayModule.name,
     componentAdderModule.name,
   ])
   .directive('hippoIframe', hippoIframe)
@@ -40,4 +39,5 @@ export const channelHippoIframeModule = angular
   .service('ScalingService', ScalingService)
   .service('ScrollService', ScrollService)
   .service('DragDropService', DragDropService)
-  .service('ViewportService', ViewportService);
+  .service('ViewportService', ViewportService)
+  .service('OverlayService', OverlayService);

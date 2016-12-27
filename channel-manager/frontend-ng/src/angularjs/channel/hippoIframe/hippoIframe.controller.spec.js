@@ -24,7 +24,7 @@ describe('hippoIframeCtrl', () => {
   let $rootScope;
   let ScalingService;
   let DragDropService;
-  let OverlaySyncService;
+  let OverlayService;
   let hstCommentsProcessorService;
   let PageMetaDataService;
   let ChannelService;
@@ -44,14 +44,14 @@ describe('hippoIframeCtrl', () => {
     let $compile;
     module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlaySyncService_,
+    inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlayService_,
             _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,
             _ChannelService_, _CmsService_, _HippoIframeService_, _DialogService_, _DomService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $q = _$q_;
       DragDropService = _DragDropService_;
-      OverlaySyncService = _OverlaySyncService_;
+      OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       ScalingService = _ScalingService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
@@ -66,7 +66,7 @@ describe('hippoIframeCtrl', () => {
 
     spyOn(ScalingService, 'init');
     spyOn(DragDropService, 'init');
-    spyOn(OverlaySyncService, 'init');
+    spyOn(OverlayService, 'init');
     spyOn(DomService, 'getAppRootUrl').and.returnValue('http://cms.example.com/app/root/');
     spyOn(DomService, 'addCss').and.returnValue($q.resolve());
 

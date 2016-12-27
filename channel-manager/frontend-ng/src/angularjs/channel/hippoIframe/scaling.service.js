@@ -19,11 +19,11 @@ const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
 
 export class ScalingService {
 
-  constructor($rootScope, $window, OverlaySyncService, ViewportService) {
+  constructor($rootScope, $window, OverlayService, ViewportService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
-    this.OverlaySyncService = OverlaySyncService;
+    this.OverlayService = OverlayService;
     this.ViewportService = ViewportService;
 
     this.pushWidth = 0; // all sidenavs are initially closed
@@ -148,8 +148,9 @@ export class ScalingService {
             // if (newScale !== 1 && widthBeforeScaling !== iframeScrollXJQueryElement.width()) {
             //   this._updateScaling(animate);
             // } else {
-            //   this.OverlaySyncService.syncIframe();
+            //   this.OverlayService.syncIframe();
             // }
+            this.OverlayService.sync();
           },
         });
       } else {

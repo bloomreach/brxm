@@ -22,3 +22,52 @@ a.hst-cmseditlink {
   top: 0;
   width: 56px;
 }
+
+#hippo-overlay {
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.hippo-overlay-element {
+  box-sizing: border-box;
+  pointer-events: auto;
+  position: absolute;
+}
+
+.hippo-overlay-element-container {
+  border: 1px solid #000;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.50);
+  z-index: 10;
+}
+
+.hippo-overlay-element-component {
+  border: 1px solid #0877d1;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.50);
+  cursor: pointer;
+}
+
+.hippo-overlay-element-component:hover {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.50), inset 0 0 160px 1px rgba(0, 94, 171, 0.25);
+}
+
+.hippo-overlay-element-content-link,
+.hippo-overlay-element-menu-link {
+  /* TODO: style links */
+  border: 1px solid #f00;
+}
+
+.hippo-overlay-box-empty {
+  display: none;
+}
+
+.hippo-overlay-visible .hippo-overlay-box-empty {
+  display: block;
+}
+
+.hippo-overlay-visible .hippo-overlay-box {
+  min-height: 40px;
+}

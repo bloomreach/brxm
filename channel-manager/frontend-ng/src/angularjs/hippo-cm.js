@@ -17,6 +17,7 @@
 import { channelManagerApi } from './api/api.js';
 import { channelModule } from './channel/channel.js';
 import { config } from './hippo-cm.config.js';
+import { utilsModule } from './utils/utils';
 
 export const hippoCmng = angular
   .module('hippo-cm', [
@@ -26,5 +27,6 @@ export const hippoCmng = angular
     'templates',
     channelManagerApi.name,
     channelModule.name,
+    utilsModule.name,
   ])
   .config(config);

@@ -18,8 +18,8 @@ import { PageStructureElement } from './pageStructureElement';
 
 export class EmbeddedLink extends PageStructureElement {
 
-  constructor(commentElement, metaData) {
-    super('embeddedLink', metaData, commentElement, commentElement, null);
+  constructor(type, commentElement, metaData) {
+    super(type, metaData, commentElement, commentElement, null);
   }
 
   getUuid() {
@@ -32,5 +32,9 @@ export class EmbeddedLink extends PageStructureElement {
 
   getEnclosingElement() {
     return this.enclosingElement;
+  }
+
+  generateBoxElement() {
+    return $('<a class="hst-cmseditlink"></a>');
   }
 }

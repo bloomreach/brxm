@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-import { utilsModule } from '../../../utils/utils';
-import { overlayElementDirective } from './overlayElement.directive';
-import { OverlayElementCtrl } from './overlayElement.controller';
-import { OverlaySyncService } from './overlaySync.service';
+import { EmbeddedLink } from './embeddedLink';
 
-export const overlayModule = angular
-  .module('hippo-cm.channel.hippoIframe.overlay', [
-    utilsModule.name,
-  ])
-  .directive('overlayElement', overlayElementDirective)
-  .controller('OverlayElementCtrl', OverlayElementCtrl)
-  .service('OverlaySyncService', OverlaySyncService);
+export class MenuLink extends EmbeddedLink {
+
+  constructor(commentElement, metaData) {
+    super('menu-link', commentElement, metaData);
+  }
+}

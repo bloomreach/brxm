@@ -20,14 +20,6 @@
       <iframe class="qa-view"
               flex="noshrink"
               ng-src="{{ iframe.getSrc() }}"></iframe>
-
-      <div class="overlay qa-overlay" component-adder>
-        <div ng-repeat="container in iframe.getContainers()" class="qa-container">
-          <overlay-element class="overlay-element-container"
-                           structure-element="container">
-          </overlay-element>
-        </div>
-      </div>
     </div>
     <div class="channel-dragula-mirror cm-scale"></div>
   </div>

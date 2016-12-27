@@ -29,7 +29,7 @@ export class HippoIframeCtrl {
     DragDropService,
     hstCommentsProcessorService,
     linkProcessorService,
-    OverlaySyncService,
+    OverlayService,
     PageStructureService,
     PageMetaDataService,
     ScalingService,
@@ -48,9 +48,9 @@ export class HippoIframeCtrl {
     this.ChannelService = ChannelService;
     this.DialogService = DialogService;
     this.DomService = DomService;
+    this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
     this.PageMetaDataService = PageMetaDataService;
-    this.OverlaySyncService = OverlaySyncService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
 
@@ -61,28 +61,22 @@ export class HippoIframeCtrl {
 
     HippoIframeService.initialize(this.iframeJQueryElement);
 
-    const baseJQueryElement = $element.find('.channel-iframe-base');
-    const sheetJQueryElement = $element.find('.channel-iframe-sheet');
-
-    OverlaySyncService.init(
-      baseJQueryElement,
-      sheetJQueryElement,
-      this.iframeJQueryElement,
-      $element.find('.overlay')
-    );
-    ViewportService.init(sheetJQueryElement, this.iframeJQueryElement);
+    OverlayService.init(this.iframeJQueryElement);
+    ViewportService.init($element.find('.channel-iframe-sheet'), this.iframeJQueryElement);
     ScalingService.init($element);
-    DragDropService.init(this.iframeJQueryElement, baseJQueryElement);
+    DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-base'));
 
     const deleteComponentHandler = (componentId) => this.deleteComponent(componentId);
     CmsService.subscribe('delete-component', deleteComponentHandler);
     $scope.$on('$destroy', () => CmsService.unsubscribe('delete-component', deleteComponentHandler));
 
-    $scope.$watch('iframe.editMode', () => this._updateDragDrop());
+    $scope.$watch('iframe.editMode', () => {
+      this._toggleOverlay();
+      this._updateDragDrop();
+    });
   }
 
   onLoad() {
-    // we insert the CSS for every page, because embedded links can come and go without reloading the page
     this.PageStructureService.clearParsedElements();
     this._insertCss().then(() => {
       if (this._isIframeDomPresent()) {
@@ -131,6 +125,10 @@ export class HippoIframeCtrl {
       .cancel(this.$translate.instant('CANCEL'));
 
     return this.DialogService.show(confirm);
+  }
+
+  _toggleOverlay() {
+    this.OverlayService.toggle(this.editMode);
   }
 
   _updateDragDrop() {
