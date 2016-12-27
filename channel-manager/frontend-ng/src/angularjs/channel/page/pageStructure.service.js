@@ -19,8 +19,6 @@ import ContainerElement from './element/containerElement';
 import ContentLink from './element/contentLink';
 import MenuLink from './element/menuLink';
 
-const EMBEDDED_LINK_MARKUP = '<a class="hst-cmseditlink"></a>';
-
 class PageStructureService {
 
   constructor($log,
@@ -141,7 +139,7 @@ class PageStructureService {
   // done as a final step of processing an entire page or markup fragment, because it requires an
   // up-to-date and complete page structure (containers, components).
   attachEmbeddedLinks() {
-    this.embeddedLinks.forEach((link) => this._attachEmbeddedLink(link));
+    this.embeddedLinks.forEach(link => this._attachEmbeddedLink(link));
     this._notifyChangeListeners();
   }
 
@@ -464,7 +462,8 @@ class PageStructureService {
     let component = null;
 
     this.hstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
-      switch (metaData[this.HST.TYPE]) {
+      const type = metaData[this.HST.TYPE];
+      switch (type) {
         case this.HST.TYPE_COMPONENT:
           try {
             component = new ComponentElement(commentDomElement, metaData, container, this.hstCommentsProcessorService);

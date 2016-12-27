@@ -16,7 +16,7 @@
 
 import MutationSummary from 'mutation-summary';
 
-export class OverlayService {
+class OverlayService {
 
   constructor($rootScope, $log, DomService, PageStructureService) {
     'ngInject';
@@ -165,3 +165,5 @@ export class OverlayService {
     }
   }
 }
+
+export default OverlayService;

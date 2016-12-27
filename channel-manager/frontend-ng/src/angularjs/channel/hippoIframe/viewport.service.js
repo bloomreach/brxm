@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export class ViewportService {
+class ViewportService {
 
   constructor() {
     'ngInject';
@@ -46,3 +46,5 @@ export class ViewportService {
     return this.width;
   }
 }
+
+export default ViewportService;
