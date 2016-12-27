@@ -108,14 +108,20 @@ class OverlayService {
   }
 
   _addOverlayElement(structureElement) {
-    const overlayElement = $(`<div class="hippo-overlay-element hippo-overlay-element-${structureElement.getType()}"></div>`);
-    overlayElement.toggle(this.visible);
+    const escapedLabel = this.DomService.escapeHtml(structureElement.getLabel());
+    const overlayElement = $(`
+      <div class="hippo-overlay-element hippo-overlay-element-${structureElement.getType()}">
+        <span class="hippo-overlay-label">
+          <span class="hippo-overlay-label-text">${escapedLabel}</span>        
+        </span>
+      </div>`);
+
     structureElement.setOverlayElement(overlayElement);
 
     const boxElement = structureElement.prepareBoxElement();
     boxElement.addClass('hippo-overlay-box');
 
-    this._syncPosition(overlayElement, boxElement);
+    this._syncElements(structureElement, overlayElement);
 
     this.overlay.append(overlayElement);
   }
@@ -125,6 +131,7 @@ class OverlayService {
 
     if (this._isElementVisible(structureElement, boxElement)) {
       overlayElement.show();
+      overlayElement.toggleClass('hippo-overlay-label-visible', this._isLabelVisible(structureElement));
       this._syncPosition(overlayElement, boxElement);
     } else {
       overlayElement.hide();
@@ -142,6 +149,10 @@ class OverlayService {
       default:
         return this.visible;
     }
+  }
+
+  _isLabelVisible(structureElement) {
+    return structureElement.getType() === 'container' && structureElement.isEmpty();
   }
 
   _syncPosition(overlayElement, boxElement) {

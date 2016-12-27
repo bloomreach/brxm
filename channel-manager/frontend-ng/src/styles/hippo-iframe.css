@@ -60,6 +60,31 @@ a.hst-cmseditlink {
   border: 1px solid #f00;
 }
 
+.hippo-overlay-label {
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.50);
+  color: #ffffff;
+  display: none;
+  font-size: 12px;
+  height: 26px;
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+.hippo-overlay-element-container > .hippo-overlay-label {
+  background: #000;
+}
+
+.hippo-overlay-label-visible > .hippo-overlay-label {
+  display: flex;
+}
+
+.hippo-overlay-label-text {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
 .hippo-overlay-box-empty {
   display: none;
 }

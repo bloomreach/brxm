@@ -185,5 +185,10 @@ describe('DomService', () => {
   it('can check whether the body is visible', () => {
     expect(DomService.isVisible($j(document.body))).toBe(true);
   });
+
+  it('escapes HTML characters in strings', () => {
+    expect(DomService.escapeHtml('&<>"\'/')).toEqual('&amp;&lt;&gt;&quot;&#x27;&#x2F;');
+    expect(DomService.escapeHtml('<script>alert("xss")</script>')).toEqual('&lt;script&gt;alert(&quot;xss&quot;)&lt;&#x2F;script&gt;');
+  });
 });
 
