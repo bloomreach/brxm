@@ -20,7 +20,7 @@ describe('ViewportService', () => {
   let $iframe;
 
   beforeEach(() => {
-    module('hippo-cm.channel.hippoIframe');
+    angular.mock.module('hippo-cm.channel.hippoIframe');
 
     inject((_ViewportService_) => {
       ViewportService = _ViewportService_;

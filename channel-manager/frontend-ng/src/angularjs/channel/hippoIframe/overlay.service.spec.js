@@ -21,7 +21,7 @@ describe('OverlayService', () => {
   let iframeWindow;
 
   beforeEach(() => {
-    module('hippo-cm.channel.hippoIframe');
+    angular.mock.module('hippo-cm.channel.hippoIframe');
 
     inject((_OverlayService_, _PageStructureService_) => {
       OverlayService = _OverlayService_;
