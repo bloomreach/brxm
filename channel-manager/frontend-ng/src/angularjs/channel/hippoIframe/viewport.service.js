@@ -14,17 +14,37 @@
  * limitations under the License.
  */
 
-import utilsModule from '../../../utils/utils';
-import overlayElementDirective from './overlayElement.directive';
-import OverlayElementCtrl from './overlayElement.controller';
-import OverlaySyncService from './overlaySync.service';
+class ViewportService {
 
-const overlayModule = angular
-  .module('hippo-cm.channel.hippoIframe.overlay', [
-    utilsModule.name,
-  ])
-  .directive('overlayElement', overlayElementDirective)
-  .controller('OverlayElementCtrl', OverlayElementCtrl)
-  .service('OverlaySyncService', OverlaySyncService);
+  constructor() {
+    'ngInject';
 
-export default overlayModule;
+    this.width = 0;
+  }
+
+  init($sheet, $iframe) {
+    this.$sheet = $sheet;
+    this.$iframe = $iframe;
+  }
+
+  setWidth(width) {
+    this.width = width;
+
+    if (width === 0) {
+      // Desktop mode - no width constraints
+      this.$sheet.css('max-width', 'none');
+      this.$iframe.width('');
+    } else {
+      // viewport is constrained
+      const widthPx = `${width}px`;
+      this.$sheet.css('max-width', widthPx);
+      this.$iframe.width(widthPx);
+    }
+  }
+
+  getWidth() {
+    return this.width;
+  }
+}
+
+export default ViewportService;

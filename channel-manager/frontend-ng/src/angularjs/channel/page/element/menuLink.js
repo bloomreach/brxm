@@ -14,29 +14,13 @@
  * limitations under the License.
  */
 
-import PageStructureElement from './pageStructureElement';
+import EmbeddedLink from './embeddedLink';
 
-class EmbeddedLink extends PageStructureElement {
+class MenuLink extends EmbeddedLink {
 
-  constructor(type, commentElement, metaData) {
-    super(type, metaData, commentElement, commentElement, null);
-  }
-
-  getUuid() {
-    return this.metaData.uuid;
-  }
-
-  setEnclosingElement(element) {
-    this.enclosingElement = element;
-  }
-
-  getEnclosingElement() {
-    return this.enclosingElement;
-  }
-
-  generateBoxElement() {
-    return $('<a class="hst-cmseditlink"></a>');
+  constructor(commentElement, metaData) {
+    super('menu-link', commentElement, metaData);
   }
 }
 
-export default EmbeddedLink;
+export default MenuLink;

@@ -19,14 +19,14 @@ const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
 
 class ScalingService {
 
-  constructor($rootScope, $window, OverlaySyncService) {
+  constructor($rootScope, $window, OverlayService, ViewportService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
-    this.OverlaySyncService = OverlaySyncService;
+    this.OverlayService = OverlayService;
+    this.ViewportService = ViewportService;
 
     this.pushWidth = 0; // all sidenavs are initially closed
-    this.viewPortWidth = 0; // unconstrained
     this.scaleFactor = 1.0;
     this.scaleDuration = ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS;
     this.scaleEasing = ANGULAR_MATERIAL_SIDENAV_EASING;
@@ -48,14 +48,8 @@ class ScalingService {
     this._updateScaling(true);
   }
 
-  setViewPortWidth(viewPortWidth) {
-    this.OverlaySyncService.setViewPortWidth(viewPortWidth);
-    this.sync();
-  }
-
   sync() {
     this._updateScaling(false);
-    this.OverlaySyncService.syncIframe();
   }
 
   getScaleFactor() {
@@ -75,8 +69,8 @@ class ScalingService {
   _updateIframeShift(animate) {
     const currentShift = parseInt(this.hippoIframeJQueryElement.css('margin-left'), 10);
     const canvasWidth = this.hippoIframeJQueryElement.find('.channel-iframe-canvas').width() + currentShift;
-    const viewPortWidth = this.OverlaySyncService.getViewPortWidth() === 0 ? canvasWidth : this.OverlaySyncService.getViewPortWidth();
-    const canvasBorderWidth = canvasWidth - viewPortWidth;
+    const viewportWidth = this.ViewportService.getWidth() === 0 ? canvasWidth : this.ViewportService.getWidth();
+    const canvasBorderWidth = canvasWidth - viewportWidth;
     const targetShift = Math.min(canvasBorderWidth, this.pushWidth);
 
     if (targetShift !== currentShift) {
@@ -93,7 +87,7 @@ class ScalingService {
       }
     }
 
-    return [canvasWidth, viewPortWidth];
+    return [canvasWidth, viewportWidth];
   }
 
   /**
@@ -112,10 +106,10 @@ class ScalingService {
       return;
     }
 
-    const [canvasWidth, viewPortWidth] = this._updateIframeShift(animate);
+    const [canvasWidth, viewportWidth] = this._updateIframeShift(animate);
     const visibleCanvasWidth = canvasWidth - this.pushWidth;
     const oldScale = this.scaleFactor;
-    const newScale = (visibleCanvasWidth < viewPortWidth) ? visibleCanvasWidth / viewPortWidth : 1;
+    const newScale = (visibleCanvasWidth < viewportWidth) ? visibleCanvasWidth / viewportWidth : 1;
 
     if (newScale !== oldScale) {
       const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
@@ -137,8 +131,9 @@ class ScalingService {
           });
         }
 
-        const iframeScrollXJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-scroll-x');
-        const widthBeforeScaling = iframeScrollXJQueryElement.width();
+        // TODO remove
+        // const iframeScrollXJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-scroll-x');
+        // const widthBeforeScaling = iframeScrollXJQueryElement.width();
 
         // zoom in/out to new scale factor
         elementsToScale.velocity({
@@ -147,12 +142,14 @@ class ScalingService {
           duration: this.scaleDuration,
           easing: this.scaleEasing,
           complete: () => {
-            // when scaling causes a scrollbar to appear/disappear, we have to tweak it
-            if (newScale !== 1 && widthBeforeScaling !== iframeScrollXJQueryElement.width()) {
-              this._updateScaling(animate);
-            } else {
-              this.OverlaySyncService.syncIframe();
-            }
+            // TODO when scaling causes a scrollbar to appear/disappear, we have to tweak it
+            //
+            // if (newScale !== 1 && widthBeforeScaling !== iframeScrollXJQueryElement.width()) {
+            //   this._updateScaling(animate);
+            // } else {
+            //   this.OverlayService.syncIframe();
+            // }
+            this.OverlayService.sync();
           },
         });
       } else {

@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-import template from './overlayElement.html';
+import EmbeddedLink from './embeddedLink';
 
-function overlayElementDirective() {
-  'ngInject';
+class ContentLink extends EmbeddedLink {
 
-  return {
-    restrict: 'E',
-    bindToController: {
-      structureElement: '=',
-    },
-    template,
-    transclude: true,
-    controller: 'OverlayElementCtrl',
-    controllerAs: 'overlayElement',
-  };
+  constructor(commentElement, metaData) {
+    super('content-link', commentElement, metaData);
+  }
 }
 
-export default overlayElementDirective;
+export default ContentLink;

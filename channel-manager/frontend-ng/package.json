@@ -29,7 +29,6 @@
     "dragula": "3.7.1",
     "es6-shim": "0.35.1",
     "jquery": "3.1.0",
-    "lodash.debounce": "4.0.8",
     "mutation-summary": "0.0.0",
     "ng-device-detector": "3.0.1",
     "ng-focus-if": "1.0.7",

@@ -73,6 +73,10 @@ class PageStructureElement {
     return this.metaData[HstConstants.RENDER_URL];
   }
 
+  getType() {
+    return this.type;
+  }
+
   /**
    * Replace container DOM elements with the given markup
    * @return the jQuery element referring to the inserted markup in the DOM document
@@ -135,6 +139,39 @@ class PageStructureElement {
 
   setBoxElement(newJQueryBoxElement) {
     this.setJQueryElement('iframeBoxElement', newJQueryBoxElement);
+  }
+
+  prepareBoxElement() {
+    let boxElement = this.getBoxElement();
+    if (!boxElement || boxElement.length === 0) {
+      boxElement = this._insertGeneratedBoxElement();
+      this.setBoxElement(boxElement);
+      this.isBoxElementGenerated = true;
+    }
+    return boxElement;
+  }
+
+  _insertGeneratedBoxElement() {
+    // sub-classes can override this method to generate a custom placeholder box element
+    const startComment = this.getStartComment();
+    const generatedBox = this.generateBoxElement();
+
+    if (startComment.next().length > 0) {
+      // this should always be the case due to the presence of the end comment
+      generatedBox.insertAfter(startComment);
+    } else {
+      generatedBox.appendTo(startComment.parent());
+    }
+
+    return generatedBox;
+  }
+
+  generateBoxElement() {
+    return $('<div class="hippo-overlay-box-empty"></div>');
+  }
+
+  isBoxElementGenerated() {
+    return this.isBoxElementGenerated;
   }
 
   getOverlayElement() {

@@ -22,3 +22,83 @@ a.hst-cmseditlink {
   top: 0;
   width: 56px;
 }
+
+#hippo-overlay {
+  bottom: 0;
+  font-family: sans-serif;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.hippo-overlay-element {
+  box-sizing: border-box;
+  pointer-events: auto;
+  position: absolute;
+}
+
+.hippo-overlay-element-container {
+  border: 1px solid #000;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.50);
+  z-index: 10;
+}
+
+.hippo-overlay-element-component {
+  border: 1px solid #0877d1;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.50);
+  cursor: pointer;
+}
+
+.hippo-overlay-element-component:hover {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.50), inset 0 0 160px 1px rgba(0, 94, 171, 0.25);
+}
+
+.hippo-overlay-element-content-link,
+.hippo-overlay-element-menu-link {
+  /* TODO: style links */
+  border: 1px solid #f00;
+}
+
+.hippo-overlay-label {
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.50);
+  color: #ffffff;
+  display: none;
+  font-size: 12px;
+  height: 26px;
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+.hippo-overlay-element-container > .hippo-overlay-label {
+  background-color: #000;
+}
+
+.hippo-overlay-element-component > .hippo-overlay-label {
+  background-color: #0877d1;
+}
+
+.hippo-overlay-element-container-empty > .hippo-overlay-label,
+.hippo-overlay-element-component:hover > .hippo-overlay-label {
+  display: flex;
+}
+
+.hippo-overlay-label-text {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.hippo-overlay-box-empty {
+  display: none;
+}
+
+.hippo-overlay-visible .hippo-overlay-box-empty {
+  display: block;
+}
+
+.hippo-overlay-visible .hippo-overlay-box {
+  min-height: 40px;
+}

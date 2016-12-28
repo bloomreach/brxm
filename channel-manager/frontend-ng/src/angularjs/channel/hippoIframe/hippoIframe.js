@@ -16,7 +16,6 @@
 
 import ngDeviceDetector from 'ng-device-detector';
 
-import overlayModule from './overlay/overlay';
 import componentAdderModule from './componentAdder/componentAdder';
 import hippoIframe from './hippoIframe.directive';
 import HippoIframeCtrl from './hippoIframe.controller';
@@ -26,11 +25,12 @@ import LinkProcessorService from './linkProcessor.service';
 import ScalingService from './scaling.service';
 import ScrollService from './scroll.service';
 import DragDropService from './dragDrop.service';
+import ViewportService from './viewport.service';
+import OverlayService from './overlay.service';
 
 const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
     ngDeviceDetector,
-    overlayModule.name,
     componentAdderModule.name,
   ])
   .directive('hippoIframe', hippoIframe)
@@ -40,6 +40,8 @@ const channelHippoIframeModule = angular
   .service('linkProcessorService', LinkProcessorService)
   .service('ScalingService', ScalingService)
   .service('ScrollService', ScrollService)
-  .service('DragDropService', DragDropService);
+  .service('DragDropService', DragDropService)
+  .service('ViewportService', ViewportService)
+  .service('OverlayService', OverlayService);
 
 export default channelHippoIframeModule;
