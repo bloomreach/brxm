@@ -46,7 +46,6 @@ class OverlayService {
     this.observer = new MutationSummary({
       callback: () => this.sync(),
       rootNode: document,
-      observeOwnChanges: true,
       queries: [{ all: true }],
     });
 
