@@ -70,12 +70,16 @@ class OverlayService {
     const document = this._getIframeDocument();
     if (document) {
       $(document.body).append(this.overlay);
-      $(document.documentElement).toggleClass('hippo-overlay-visible', this.visible);
+      $(document.documentElement).toggleClass('hippo-mode-edit', this._isEditMode());
     }
   }
 
-  toggle(visible) {
-    this.visible = visible;
+  _isEditMode() {
+    return this.mode === 'edit';
+  }
+
+  setMode(mode) {
+    this.mode = mode;
     this.sync();
   }
 
@@ -140,13 +144,13 @@ class OverlayService {
   _isElementVisible(structureElement, boxElement) {
     switch (structureElement.getType()) {
       case 'container':
-        return this.visible && structureElement.isEmpty();
+        return this._isEditMode() && structureElement.isEmpty();
       case 'content-link':
-        return !this.visible && this.DomService.isVisible(boxElement);
+        return !this._isEditMode() && this.DomService.isVisible(boxElement);
       case 'menu-link':
-        return this.visible && this.DomService.isVisible(boxElement);
+        return this._isEditMode() && this.DomService.isVisible(boxElement);
       default:
-        return this.visible;
+        return this._isEditMode();
     }
   }
 

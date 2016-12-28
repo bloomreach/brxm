@@ -118,29 +118,28 @@ describe('OverlayService', () => {
     spyOn(PageStructureService, 'getContainers').and.returnValue([]);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
     loadIframeFixture(() => {
-      OverlayService.toggle(true);
       expect(iframe('#hippo-overlay')).toBeEmpty();
       done();
     });
   });
 
-  it('should set the class hippo-overlay-visible on the HTML element when the overlay is visible', (done) => {
+  it('should set the class hippo-edit-mode on the HTML element when edit mode is active', (done) => {
     spyOn(PageStructureService, 'getContainers').and.returnValue([]);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
     loadIframeFixture(() => {
-      OverlayService.toggle(false);
-      expect(iframe('html')).not.toHaveClass('hippo-overlay-visible');
+      OverlayService.setMode('view');
+      expect(iframe('html')).not.toHaveClass('hippo-mode-edit');
 
-      OverlayService.toggle(true);
-      expect(iframe('html')).toHaveClass('hippo-overlay-visible');
+      OverlayService.setMode('edit');
+      expect(iframe('html')).toHaveClass('hippo-mode-edit');
 
-      // repeat same toggle
-      OverlayService.toggle(true);
-      expect(iframe('html')).toHaveClass('hippo-overlay-visible');
+      // repeat same mode
+      OverlayService.setMode('edit');
+      expect(iframe('html')).toHaveClass('hippo-mode-edit');
 
-      // hide overlay again
-      OverlayService.toggle(false);
-      expect(iframe('html')).not.toHaveClass('hippo-overlay-visible');
+      // change mode again
+      OverlayService.setMode('view');
+      expect(iframe('html')).not.toHaveClass('hippo-mode-edit');
       done();
     });
   });

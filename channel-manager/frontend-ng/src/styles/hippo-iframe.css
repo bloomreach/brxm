@@ -95,10 +95,10 @@ a.hst-cmseditlink {
   display: none;
 }
 
-.hippo-overlay-visible .hippo-overlay-box-empty {
+.hippo-mode-edit .hippo-overlay-box-empty {
   display: block;
 }
 
-.hippo-overlay-visible .hippo-overlay-box {
+.hippo-mode-edit .hippo-overlay-box {
   min-height: 40px;
 }

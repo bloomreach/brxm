@@ -128,7 +128,8 @@ class HippoIframeCtrl {
   }
 
   _toggleOverlay() {
-    this.OverlayService.toggle(this.editMode);
+    const mode = this.editMode ? 'edit' : 'view';
+    this.OverlayService.setMode(mode);
   }
 
   _updateDragDrop() {
