@@ -25,13 +25,13 @@ class OverlayService {
     this.$log = $log;
     this.DomService = DomService;
     this.PageStructureService = PageStructureService;
+
+    PageStructureService.registerChangeListener(() => this.sync());
   }
 
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
     this.iframeJQueryElement.on('load', () => this._onLoad());
-
-    this.PageStructureService.registerChangeListener(() => this.sync());
   }
 
   _onLoad() {

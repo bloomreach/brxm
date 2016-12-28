@@ -15,6 +15,7 @@
  */
 
 describe('OverlayService', () => {
+  let hstCommentsProcessorService;
   let OverlayService;
   let PageStructureService;
   let $iframe;
@@ -23,7 +24,8 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_OverlayService_, _PageStructureService_) => {
+    inject((_hstCommentsProcessorService_, _OverlayService_, _PageStructureService_) => {
+      hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
     });
@@ -37,6 +39,11 @@ describe('OverlayService', () => {
     $iframe.one('load', () => {
       iframeWindow = $iframe[0].contentWindow;
       try {
+        hstCommentsProcessorService.run(
+          iframeWindow.document,
+          PageStructureService.registerParsedElement.bind(PageStructureService)
+        );
+        PageStructureService.attachEmbeddedLinks();
         callback();
       } catch (e) {
         // Karma silently swallows stack traces for synchronous tests, so log them in an explicit fail
@@ -140,6 +147,80 @@ describe('OverlayService', () => {
       // change mode again
       OverlayService.setMode('view');
       expect(iframe('html')).not.toHaveClass('hippo-mode-edit');
+      done();
+    });
+  });
+
+  it('should generate overlay elements', (done) => {
+    loadIframeFixture(() => {
+      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(6);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-component').length).toBe(2);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-container').length).toBe(2);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
+      done();
+    });
+  });
+
+  it('should sync the position of overlay elements in view mode', (done) => {
+    OverlayService.setMode('view');
+    loadIframeFixture(() => {
+      const components = iframe('#hippo-overlay > .hippo-overlay-element-component');
+
+      const componentA = $(components[0]);
+      expect(componentA).not.toBeVisible();
+
+      const menuLink = iframe('#hippo-overlay > .hippo-overlay-element-menu-link');
+      expect(menuLink).not.toBeVisible();
+
+      const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
+      expect(contentLink.css('top')).toBe(`${4 + 100}px`);
+      expect(contentLink.css('left')).toBe(`${200 - 56}px`);
+      expect(contentLink.css('width')).toBe('56px');
+      expect(contentLink.css('height')).toBe('56px');
+
+      const componentB = $(components[1]);
+      expect(componentB).not.toBeVisible();
+
+      const emptyContainer = $(iframe('#hippo-overlay > .hippo-overlay-element-container')[1]);
+      expect(emptyContainer).not.toBeVisible();
+
+      done();
+    });
+  });
+
+  it('should sync the position of overlay elements in edit mode', (done) => {
+    OverlayService.setMode('edit');
+    loadIframeFixture(() => {
+      const components = iframe('#hippo-overlay > .hippo-overlay-element-component');
+
+      const componentA = $(components[0]);
+      expect(componentA.css('top')).toBe('4px');
+      expect(componentA.css('left')).toBe('2px');
+      expect(componentA.css('width')).toBe(`${200 - 2}px`);
+      expect(componentA.css('height')).toBe('100px');
+
+      const menuLink = iframe('#hippo-overlay > .hippo-overlay-element-menu-link');
+      expect(menuLink.css('top')).toBe(`${4 + 30}px`);
+      expect(menuLink.css('left')).toBe(`${200 - 56}px`);
+      expect(menuLink.css('width')).toBe('56px');
+      expect(menuLink.css('height')).toBe('56px');
+
+      const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
+      expect(contentLink).not.toBeVisible();
+
+      const componentB = $(components[1]);
+      expect(componentB.css('top')).toBe(`${4 + 100 + 60}px`);
+      expect(componentB.css('left')).toBe('2px');
+      expect(componentB.css('width')).toBe(`${200 - 2}px`);
+      expect(componentB.css('height')).toBe('200px');
+
+      const emptyContainer = $(iframe('#hippo-overlay > .hippo-overlay-element-container')[1]);
+      expect(emptyContainer.css('top')).toBe(`${400 + 4}px`);
+      expect(emptyContainer.css('left')).toBe('0px');
+      expect(emptyContainer.css('width')).toBe('200px');
+      expect(emptyContainer.css('height')).toBe('40px');  // minimum height of empty container
+
       done();
     });
   });
