@@ -123,7 +123,7 @@ describe('OverlayService', () => {
     });
   });
 
-  it('should set the class hippo-edit-mode on the HTML element when edit mode is active', (done) => {
+  it('should set the class hippo-mode-edit on the HTML element when edit mode is active', (done) => {
     spyOn(PageStructureService, 'getContainers').and.returnValue([]);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
     loadIframeFixture(() => {
