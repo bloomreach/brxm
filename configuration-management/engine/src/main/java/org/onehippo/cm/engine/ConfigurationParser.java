@@ -66,6 +66,15 @@ class ConfigurationParser {
         }
     }
 
+    static class MyConstructor extends Constructor {
+        Object constructScalarNode(final ScalarNode node) {
+            Construct constructor = getConstructor(node);
+            return constructor.construct(node);
+        }
+    }
+
+    private MyConstructor constructor = new MyConstructor();
+
     private boolean find(final String string, final String[] array) {
         for (String str : array) {
             if (str.equals(string)) {
@@ -251,16 +260,8 @@ class ConfigurationParser {
         }
     }
 
-    static class MyConstructor extends Constructor {
-        Object constructScalarNode(final ScalarNode node) {
-            Construct constructor = getConstructor(node);
-            return constructor.construct(node);
-        }
-    }
-
     private Value constructValue(final Node node) {
         final ScalarNode scalar = asScalar(node);
-        MyConstructor constructor = new MyConstructor();
         final Object object = constructor.constructScalarNode(scalar);
 
         if (Tag.BINARY.equals(scalar.getTag())) {
