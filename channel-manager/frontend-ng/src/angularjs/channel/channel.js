@@ -28,7 +28,6 @@ import config from './channel.config';
 import ChannelCtrl from './channel.controller';
 import ChannelService from './channel.service';
 import run from './channel.run';
-import CatalogComponentDirective from './catalog.component.directive';
 import channelViewportsModule from './viewports/viewports';
 
 const channelModule = angular
@@ -49,7 +48,6 @@ const channelModule = angular
   .config(config)
   .controller('ChannelCtrl', ChannelCtrl)
   .service('ChannelService', ChannelService)
-  .directive('catalogComponent', CatalogComponentDirective)
   .run(run);
 
 export default channelModule;
