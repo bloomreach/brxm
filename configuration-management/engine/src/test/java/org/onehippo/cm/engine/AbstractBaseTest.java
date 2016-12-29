@@ -61,7 +61,7 @@ public abstract class AbstractBaseTest {
 
     TestFiles collectFiles(final String repoConfig) throws IOException {
         TestFiles testFiles = new TestFiles();
-        testFiles.repoConfig = ConfigurationParserTest.class.getResource(repoConfig);
+        testFiles.repoConfig = AbstractBaseTest.class.getResource(repoConfig);
         if (testFiles.repoConfig == null) {
             fail("cannot find resource " + repoConfig);
         }

@@ -167,12 +167,23 @@ class ConfigurationParser {
     }
 
     private List<String> parseAfter(final Node node) {
-        // TODO support sequences
         if (node == null) {
             return Collections.emptyList();
         }
         final List<String> result = new ArrayList<>();
-        result.add(asStringScalar(node));
+        switch (node.getNodeId()) {
+            case scalar:
+                result.add(asStringScalar(node));
+                break;
+            case sequence:
+                final List<Node> values = asSequence(node);
+                for (Node value : values) {
+                    result.add(asStringScalar(value));
+                }
+                break;
+            default:
+                throw new ConfigurationException("'after' value must be scalar or sequence, found '" + node.getNodeId() + "'", node);
+        }
         return result;
     }
 

@@ -28,7 +28,7 @@ import org.onehippo.cm.api.model.Source;
 
 import static org.junit.Assert.assertEquals;
 
-public class ConfigurationParserTest extends AbstractBaseTest {
+public class HierarchyTest extends AbstractBaseTest {
 
     @Test
     public void expect_hierarchy_test_loads() throws IOException {
@@ -67,7 +67,7 @@ public class ConfigurationParserTest extends AbstractBaseTest {
                 definition1, false, "sub-node-value");
 
         final Configuration myhippoproject = assertConfiguration(configurations, "myhippoproject", new String[]{"base"}, 1);
-        final Project project2 = assertProject(myhippoproject, "project2", new String[0], 1);
+        final Project project2 = assertProject(myhippoproject, "project2", new String[]{"project1", "foo/bar"}, 1);
         final Module module2 = assertModule(project2, "module2", new String[0], 1);
         final Source source2 = assertSource(module2, "hierarchy_test/repo-config/myhippoproject/project2/module2/config.yaml", 1);
         final ConfigDefinition definition2 = assertDefinition(source2, 0, ConfigDefinition.class);

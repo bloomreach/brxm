@@ -8,5 +8,6 @@ configurations:
     after: base
     projects:
       - name: project2
+        after: [project1, foo/bar]
         modules:
           - name: module2
