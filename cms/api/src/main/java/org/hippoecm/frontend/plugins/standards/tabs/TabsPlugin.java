@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -92,10 +92,11 @@ public class TabsPlugin extends RenderPlugin {
     private final TabbedPanel tabbedPanel;
     private RenderService emptyPanel;
     private final List<Tab> tabs;
-    private int selectCount;
+    private int selectionCount;
     private boolean openleft = false;
 
-    private int previousSelectedTabIndex = -1;
+    private boolean isHidden = false;
+    private boolean avoidTabRefocus = false;
 
     public TabsPlugin(IPluginContext context, IPluginConfig properties) {
         super(context, properties);
@@ -130,7 +131,7 @@ public class TabsPlugin extends RenderPlugin {
             tabbedPanel.add(tabsContainer);
         }
 
-        selectCount = 0;
+        selectionCount = 0;
         ServiceTracker<IRenderService> tabsTracker = new ServiceTracker<IRenderService>(IRenderService.class) {
 
             @Override
@@ -138,32 +139,43 @@ public class TabsPlugin extends RenderPlugin {
                 // add the plugin
                 service.bind(TabsPlugin.this, TabbedPanel.TAB_PANEL_ID);
                 if (service != emptyPanel) {
-                    Tab tabbie = new Tab(service);
+                    final int selectedTabIndex = tabbedPanel.getSelectedTab();
+                    if (selectedTabIndex >= 0) {
+                        final Tab selectedTab = tabs.get(selectedTabIndex);
+                        onTabDeactivated(selectedTab);
+                    }
+
+                    final Tab tab = new Tab(service);
                     if (openleft) {
-                        tabs.add(0, tabbie);
+                        tabs.add(0, tab);
                         tabbedPanel.setSelectedTab(0);
                         tabbedPanel.addFirst();
                     } else {
-                        tabs.add(tabbie);
+                        tabs.add(tab);
                         if (tabs.size() == 1) {
                             tabbedPanel.setSelectedTab(0);
                         }
                         tabbedPanel.addLast();
                     }
+
+                    onTabActivated(tab);
                 }
             }
 
             @Override
             public void onRemoveService(IRenderService service, String name) {
-                Tab tabbie = findTabbie(service);
-                if (tabbie != null) {
-                    tabs.remove(tabbie);
-                    tabbie.destroy();
+                final Tab tab = findTab(service);
+                if (tab != null) {
+                    onTabDeactivated(tab);
+
+                    tabs.remove(tab);
+                    tab.destroy();
+
                     if (tabs.isEmpty()) {
                         tabbedPanel.setSelectedTab(-1);
                     }
                     service.unbind();
-                    tabbedPanel.removed(tabbie);
+                    tabbedPanel.removed(tab);
                 }
             }
         };
@@ -187,17 +199,17 @@ public class TabsPlugin extends RenderPlugin {
     public void render(PluginRequestTarget target) {
         super.render(target);
         tabbedPanel.render(target);
-        for (Tab tabbie : tabs) {
-            tabbie.renderer.render(target);
+        for (Tab tab : tabs) {
+            tab.renderer.render(target);
         }
     }
 
     @Override
     public void focus(IRenderService child) {
-        Tab tabbie = findTabbie(child);
-        if (tabbie != null) {
-            tabbie.select();
-            onSelectTab(tabs.indexOf(tabbie));
+        Tab tab = findTab(child);
+        if (tab != null) {
+            tab.select();
+            onSelectTab(tabs.indexOf(tab));
         }
         super.focus(child);
     }
@@ -223,10 +235,10 @@ public class TabsPlugin extends RenderPlugin {
         return !this.tabs.isEmpty();
     }
 
-    void onSelect(Tab tabbie, AjaxRequestTarget target) {
-        tabbie.renderer.focus(null);
-        onSelectTab(tabs.indexOf(tabbie));
-        fireTabSelectionEvent(tabbie, target);
+    void onSelect(Tab tab, AjaxRequestTarget target) {
+        tab.renderer.focus(null);
+        onSelectTab(tabs.indexOf(tab));
+        fireTabSelectionEvent(tab, target);
     }
 
     private void fireTabSelectionEvent(final Tab tab, final AjaxRequestTarget target) {
@@ -265,7 +277,7 @@ public class TabsPlugin extends RenderPlugin {
 
     /**
      * Template method for subclasses.  Called when a tab is selected, either
-     * explicitly (user clicks tab) or implicitly (tabbie requests focus).
+     * explicitly (user clicks tab) or implicitly (tab requests focus).
      *
      * @param index Index of the tab
      */
@@ -374,7 +386,7 @@ public class TabsPlugin extends RenderPlugin {
 
     }
 
-    private Tab findTabbie(IRenderService service) {
+    private Tab findTab(IRenderService service) {
         for (Tab tab : tabs) {
             if (tab.renderer == service) {
                 return tab;
@@ -384,23 +396,76 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     public void hide() {
-        if (tabbedPanel.getSelectedTab() > -1) {
-            previousSelectedTabIndex = tabbedPanel.getSelectedTab();
+        isHidden = true;
+        blurTabs();
+    }
+
+    public void blurTabs() {
+        final int tabIndex = tabbedPanel.getSelectedTab();
+        if (tabIndex > -1) {
             tabbedPanel.setSelectedTab(-1);
             tabbedPanel.redraw();
+
+            onTabDeactivated(tabs.get(tabIndex));
         }
     }
 
+    public void disableTabRefocus() {
+        this.avoidTabRefocus = true;
+    }
+
+    /**
+     * @deprecated use {@link #focusRecentTab} or {@link #focusRecentTabUnlessHidden()} instead.
+     */
+    @Deprecated
     public void show() {
-        if (previousSelectedTabIndex > -1) {
-            tabbedPanel.setSelectedTab(previousSelectedTabIndex);
-            tabbedPanel.redraw();
-            previousSelectedTabIndex = -1;
+        focusRecentTab();
+    }
+
+    public void focusRecentTabUnlessHidden() {
+        if (!isHidden) {
+            focusRecentTab();
         }
+    }
+
+    public void focusRecentTab() {
+        Tab tab = findMostRecentlySelectedTab();
+        if (tab != null) {
+            final int tabIndex = tabs.indexOf(tab);
+            tabbedPanel.setSelectedTab(tabIndex);
+            tabbedPanel.redraw();
+
+            onTabActivated(tab);
+
+            tab.renderer.focus(null);
+        }
+    }
+
+    private Tab findMostRecentlySelectedTab() {
+        int highestSelectionStamp = -1;
+        Tab selectedTab = null;
+        for (Tab tab : getTabbedPanel().getTabs()) {
+            if (tab.selectionStamp > highestSelectionStamp) {
+                highestSelectionStamp = tab.selectionStamp;
+                selectedTab = tab;
+            }
+        }
+        return selectedTab;
     }
 
     protected final TabbedPanel getTabbedPanel() {
         return tabbedPanel;
+    }
+
+    protected void onTabActivated(final Tab tab) {
+        // hook method for sub-classes to execute logic when a tab is activated
+        tab.selectionStamp = ++selectionCount;
+        isHidden = false;
+        avoidTabRefocus = false;
+    }
+
+    protected void onTabDeactivated(final Tab tab) {
+        // hook method for sub-classes to execute logic when a tab is deactivated
     }
 
     protected class Tab implements ITab, IObserver<IObservable> {
@@ -409,7 +474,7 @@ public class TabsPlugin extends RenderPlugin {
         ITitleDecorator decorator;
         IModel<String> titleModel;
         IRenderService renderer;
-        int lastSelected;
+        int selectionStamp;
 
         Tab(IRenderService renderer) {
             this.renderer = renderer;
@@ -448,22 +513,9 @@ public class TabsPlugin extends RenderPlugin {
             String serviceId = context.getReference(renderer).getServiceId();
             context.unregisterTracker(decoratorTracker, serviceId);
 
-            if (!tabs.isEmpty()) {
-                // look for previously selected tab
-                int lastCount = 0;
-                Tab lastTab = tabs.get(0);
-                for (Tab tab : getTabbedPanel().getTabs()) {
-                    if (tab.lastSelected > lastCount) {
-                        lastCount = tab.lastSelected;
-                        lastTab = tab;
-                    }
-                }
-                getTabbedPanel().setSelectedTab(tabs.indexOf(lastTab));
-                lastTab.lastSelected = ++TabsPlugin.this.selectCount;
-                lastTab.renderer.focus(null);
-                getTabbedPanel().redraw();
-            } else {
-                getTabbedPanel().setSelectedTab(-1);
+            getTabbedPanel().setSelectedTab(-1);
+            if (!avoidTabRefocus) {
+                focusRecentTabUnlessHidden();
             }
         }
 
@@ -531,6 +583,13 @@ public class TabsPlugin extends RenderPlugin {
             return (Panel) renderer;
         }
 
+        public void discard() throws EditorException {
+            final IEditor editor = getEditor();
+            if (editor != null) {
+                editor.discard();
+            }
+        }
+
         // package internals
 
         IEditor getEditor() {
@@ -555,10 +614,20 @@ public class TabsPlugin extends RenderPlugin {
         }
 
         void select() {
-            if (tabs.indexOf(this) != getTabbedPanel().getSelectedTab()) {
-                getTabbedPanel().setSelectedTab(tabs.indexOf(this));
-                lastSelected = ++TabsPlugin.this.selectCount;
-                getTabbedPanel().redraw();
+            final TabbedPanel panel = getTabbedPanel();
+            final int selectedTabIndex = panel.getSelectedTab();
+            final int myIndex = tabs.indexOf(this);
+
+            if (myIndex != selectedTabIndex) {
+                if (selectedTabIndex >= 0) {
+                    final Tab selectedTab = tabs.get(selectedTabIndex);
+                    onTabDeactivated(selectedTab);
+                }
+
+                panel.setSelectedTab(myIndex);
+                onTabActivated(this);
+
+                panel.redraw();
             }
         }
 
@@ -739,7 +808,7 @@ public class TabsPlugin extends RenderPlugin {
         @Override
         public IModel<String> getTitle() {
             return new StringResourceModel("close-document", this, null, "Close {0}",
-                        new PropertyModel(getModel(), "name"));
+                        new PropertyModel(getModel(), "displayName"));
         }
     }
 }

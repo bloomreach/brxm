@@ -574,7 +574,7 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
             log.debug("Host header found. Return location '{}'", location);
             return location;
         }
-        
+
         // Build scheme://host:port from request
         StringBuilder target = new StringBuilder();
         String scheme = request.getScheme();

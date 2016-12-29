@@ -22,7 +22,7 @@
   border-bottom: 1px solid #666666;
 }
 
-/* TODO: this will probably break after the work on the CMS root plugin, replace #layout-doc with .layout-doc should be enough */
+  /* TODO: this will probably break after the work on the CMS root plugin, replace #layout-doc with .layout-doc should be enough */
 #layout-doc > div.yui-layout-unit-center > div.yui-layout-wrap {
   border-right: 1px solid #666666;
   border-bottom: 1px solid #666666;
@@ -42,32 +42,25 @@
   height: 298px;
 }
 
-.hippo-console-menu-advanced {
-  position: absolute;
-  top: 0;
-  right: 150px;
-}
-
 .hippo-console-save {
-  position: absolute;
-  top: 37px;
-  right: 5px;
+  float:right;
+  padding: 7px;
 }
 
-.hippo-console-breadcrumbs {
-  font-weight: normal;
+.hippo-console-menubuttons-background {
   background: #32629b;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 563px;
-  margin-top: 10px;
-  height: 21px;
+}
+
+.hippo-console-menubuttons-background::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 0;
 }
 
 .hippo-console-tree-add {
-  position: absolute;
-  top: 38px;
-  left: 5px;
+  padding: 8px;
+  float:left;
 }
 
 .hippo-console-tree-add a {
@@ -83,10 +76,6 @@
   left: 21px;
   border-bottom: 1px solid #666666;
   padding: 3px;
-}
-
-.hippo-console-breadcrumbs {
-  margin-top: 30px;
 }
 
 .hippo-console-tree .hippo-tree {
@@ -207,6 +196,20 @@
 
 .hippo-console-menu-advanced {
   padding: 10px;
+  float: right;
+}
+
+.hippo-console-menu-logout {
+  float: right;
+  margin-left: 35px;
+}
+
+.hippo-console-menu-logout .logout-link {
+  margin-left: 7px;
+}
+
+.hippo-console-menu-logout a:hover {
+  text-decoration: underline;
 }
 
 .hippo-console-menu-advanced li {
@@ -263,13 +266,13 @@ li.hippo-console-menu-actions-save.session-changes a {
   background: #f2f2f2
 }
 
-.hippo-console-tree-sorter a:hover, .hippo-console-save a:hover, .hippo-console-tree-add a:hover {
+.hippo-console-tree-sorter a:hover,
+.hippo-console-save a:hover,
+.hippo-console-tree-add a:hover,
+.hippo-console-tree-sorter a:focus,
+.hippo-console-tree-add a:focus{
   color: white;
   background: #1f3f63;
-}
-
-.hippo-console-tree-add {
-  clear: left;
 }
 
 .hippo-console-tree-add li span {
@@ -418,31 +421,43 @@ li.hippo-console-menu-actions-save.session-changes a {
   vertical-align: bottom
 }
 
-.hippo-console-menu button {
+.hippo-console-menu-top::after {
+  clear: both;
+  content: "";
+  display: block;
+  height: 0;
+}
+
+.hippo-console-menu-logo {
+  float: left;
+  padding: 6px 2px 8px;
+  height: 20px;
+  width: 42px;
+  background: white url('hippo-logo.svg') no-repeat scroll 0 0/50px 46px;
+}
+
+.hippo-console-menu-buttons button {
   text-align: center;
   font-size: 12px;
   font-weight: bold;
 }
 
-.hippo-console-logout {
-  position: absolute;
-  right: 20px;
-  top: 10px;
+.hippo-console-menu-top {
   font-size: 11px
 }
 
-.hippo-console-logout span.name {
+.hippo-console-menu-top span.name {
   font-weight: bold;
   text-transform: capitalize
 }
 
-.hippo-console-logout li {
+.hippo-console-menu-top li {
   display: inline
 }
 
 .hippo-console-check {
   position: absolute;
-  left: 20px;
+  left: 100px;
   top: 10px;
   font-size: 11px
 }
@@ -460,7 +475,7 @@ li.hippo-console-menu-actions-save.session-changes a {
   border: 1px solid #666666;
 }
 
-.hippo-console-breadcrumbs strong span {
+.hippo-console-menubuttons-background strong span {
   font-weight: normal;
   color: white;
   font-size: 15px;
@@ -504,7 +519,8 @@ li.hippo-console-menu-actions-save.session-changes a {
   margin-right: 10px
 }
 
-.hippo-console-save li.hippo-console-menu-actions-save a:hover {
+.hippo-console-save li.hippo-console-menu-actions-save a:hover,
+.hippo-console-save li.hippo-console-menu-actions-save a:focus {
   background: green;
 }
 
@@ -512,7 +528,8 @@ li.hippo-console-menu-actions-save.session-changes a {
   padding: 5px
 }
 
-.hippo-console-save li.hippo-console-menu-actions-reset a:hover {
+.hippo-console-save li.hippo-console-menu-actions-reset a:hover,
+.hippo-console-save li.hippo-console-menu-actions-reset a:focus {
   background: red;
 }
 
@@ -828,6 +845,7 @@ body.hippo-root div.yui-log-container {
 /* ================= */
 .auto-export-state-enabled span {
   color: red;
+  padding: 8px;
 }
 
 /* Node & Property dialog */
@@ -932,4 +950,90 @@ body.hippo-root div.yui-log-container {
 .node-dialog input[type="text"],
 .property-dialog input[type="text"] {
   padding: 2px;
+}
+
+.infotable {
+  width: 100%;
+}
+
+.infotable td {
+  padding: 2px;
+}
+
+.infotable tr.odd td {
+  background-color: #e2e2e2;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  cursor: pointer;
+  padding: 8px;
+}
+
+.dropdown-content {
+  display: none;
+  position: fixed;
+  background-color: #f9f9f9;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4);
+  margin-top: 8px;
+}
+
+.dropdown-content li {
+  float: none;
+  margin: 0;
+}
+.dropdown-content a {
+  padding: 7px 12px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content li.highlight a,
+.dropdown-content a:focus,
+.dropdown-content a:hover {
+  background-color: #e2e2e2;
+}
+
+.dropdown:focus .dropdown-content,
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown:focus .dropbtn,
+.dropdown:hover .dropbtn {
+  background-color:#4587d6;
+  color: white;
+ }
+
+.dropdown-link-green {
+  color:green;
+}
+
+em .dropdown-link-green {
+  padding: 7px 12px;
+  display: block;
+  font-weight: normal;
+  font-style: normal;
+}
+
+.dropdown-link-red {
+  color: red;
+}
+em .dropdown-link-red {
+  padding: 7px 12px;
+  display: block;
+  font-weight: normal;
+  font-style: normal;
+}
+
+.dropdown-link-disabled {
+  color: grey;
+  font-weight: normal;
+  font-style: normal;
+  padding: 7px 12px;
+  display: block;
 }

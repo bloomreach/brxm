@@ -68,6 +68,7 @@ public class EditPerspective extends Perspective {
         super(context, config);
 
         add(CssClass.append("hippo-editor"));
+        add(CssClass.append("qa-editor"));
 
         feedback = new FeedbackPanel("feedback", message -> {
             final String serviceId = config.getString(RenderService.FEEDBACK);
