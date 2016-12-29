@@ -107,7 +107,7 @@ public abstract class AbstractBaseTest {
         for (String name : parent.getSources().keySet()) {
             if (name.endsWith(nameSuffix)) {
                 if (source == null) {
-                    source = parent.getSources().get(name);
+                    source = parent.getSources().get(name); // don't break but keep looking to ensure suffix is unique
                 } else {
                     fail("Multiple sources found with suffix '" + nameSuffix + "'");
                 }
@@ -198,7 +198,7 @@ public abstract class AbstractBaseTest {
                                       final String path,
                                       final Definition definition,
                                       final boolean isDeleted,
-                                      final String value)
+                                      final Object value)
     {
         final DefinitionProperty property = parent.getProperties().get(name);
         validateItem(property, name, path, parent, false, definition, isDeleted);
@@ -208,7 +208,11 @@ public abstract class AbstractBaseTest {
         } catch (ValueFormatException e) {
             // ignore
         }
-        assertEquals(value, property.getValue().getString());
+        if (value instanceof byte[]) {
+            assertArrayEquals((byte[]) value, (byte[]) property.getValue().getObject());
+        } else {
+            assertEquals(value, property.getValue().getObject());
+        }
         return property;
     }
 
@@ -217,7 +221,7 @@ public abstract class AbstractBaseTest {
                                       final String path,
                                       final Definition definition,
                                       final boolean isDeleted,
-                                      final String[] values)
+                                      final Object[] values)
     {
         final DefinitionProperty property = parent.getProperties().get(name);
         validateItem(property, name, path, parent, false, definition, isDeleted);

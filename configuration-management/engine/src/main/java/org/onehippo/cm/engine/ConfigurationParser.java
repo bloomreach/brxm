@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,6 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.DefinitionImpl;
@@ -38,7 +38,10 @@ import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
+import org.onehippo.cm.impl.model.ValueImpl;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Construct;
+import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeId;
@@ -121,10 +124,14 @@ class ConfigurationParser {
         return map;
     }
 
-    private Map<String,Node> asSequenceOfSingleItemMaps(final Node src) {
+    private Map<String,Node> asSequenceOfSingleItemMaps(final Node node) {
         final Map<String, Node> result = new LinkedHashMap<>();
-        for (Node node : asSequence(src)) {
-            final Map<String, Node> map = asSingleItemMap(node);
+        for (Node child : asSequence(node)) {
+            final Map<String, Node> map = asSingleItemMap(child);
+            final String key = map.keySet().iterator().next();
+            if (result.containsKey(key)) {
+                throw new ConfigurationException("Map contains key '" + key + "' multiple times", node);
+            }
             result.putAll(map);
         }
         return result;
@@ -233,34 +240,38 @@ class ConfigurationParser {
         }
     }
 
+    static class MyConstructor extends Constructor {
+        Object constructScalarNode(final ScalarNode node) {
+            Construct constructor = getConstructor(node);
+            return constructor.construct(node);
+        }
+    }
+
     private Value constructValue(final Node node) {
-        final String str = asStringScalar(node);
-        return new Value() {
-            @Override
-            public Object getObject() {
-                return str;
-            }
+        final ScalarNode scalar = asScalar(node);
+        MyConstructor constructor = new MyConstructor();
+        final Object object = constructor.constructScalarNode(scalar);
 
-            @Override
-            public String getString() {
-                return str;
-            }
+        if (Tag.BINARY.equals(scalar.getTag())) {
+            return new ValueImpl((byte[]) object);
+        }
+        if (Tag.BOOL.equals(scalar.getTag())) {
+            return new ValueImpl((Boolean) object);
+        }
+        if (Tag.FLOAT.equals(scalar.getTag())) {
+            return new ValueImpl((Double) object);
+        }
+        if (Tag.INT.equals(scalar.getTag())) {
+            return new ValueImpl((Integer) object);
+        }
+        if (Tag.STR.equals(scalar.getTag())) {
+            return new ValueImpl((String) object);
+        }
+        if (Tag.TIMESTAMP.equals(scalar.getTag())) {
+            return new ValueImpl((Date) object);
+        }
 
-            @Override
-            public ValueType getType() {
-                return ValueType.STRING;
-            }
-
-            @Override
-            public boolean isResource() {
-                return false;
-            }
-
-            @Override
-            public boolean isDeleted() {
-                return false;
-            }
-        };
+        throw new ConfigurationException("Tag not recognized: " + scalar.getTag(), node);
     }
 
     private void constructDefinitionProperty(final String name, final Node value, final DefinitionNodeImpl parent) {

@@ -32,7 +32,7 @@ public class ConfigurationParserTest extends AbstractBaseTest {
 
     @Test
     public void expect_hierarchy_test_loads() throws IOException {
-        final TestFiles files = collectFiles("/hierarchy_test/repo-config.yaml");
+        final TestFiles files = collectFiles("/parser/hierarchy_test/repo-config.yaml");
         final ConfigurationParser parser = new ConfigurationParser();
 
         final Map<String, Configuration> configurations = parser.parse(files.repoConfig, files.sources);
