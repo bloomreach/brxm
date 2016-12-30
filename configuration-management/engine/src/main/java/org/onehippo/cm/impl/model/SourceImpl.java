@@ -56,7 +56,7 @@ public class SourceImpl implements Source {
         return Collections.unmodifiableList(definitions);
     }
 
-    public ConfigDefinitionImpl addConfigDefinition(final String path) {
+    public ConfigDefinitionImpl addConfigDefinition() {
         final ConfigDefinitionImpl definition = new ConfigDefinitionImpl(this);
         definitions.add(definition);
         return definition;

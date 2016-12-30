@@ -22,7 +22,7 @@ import org.onehippo.cm.api.model.Source;
 public class DefinitionImpl implements Definition {
 
     private Source source;
-    private DefinitionNode node;
+    private DefinitionNode node = new DefinitionNodeImpl("/", "/", this);
 
     public DefinitionImpl(final SourceImpl source) {
         this.source = source;

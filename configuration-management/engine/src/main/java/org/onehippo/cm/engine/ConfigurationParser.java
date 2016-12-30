@@ -190,7 +190,7 @@ class ConfigurationParser {
             final Map<String, Node> map = asSingleItemMap(node);
             final String path = map.keySet().iterator().next();
             final Node value = map.get(path);
-            final ConfigDefinitionImpl definition = parent.addConfigDefinition(path);
+            final ConfigDefinitionImpl definition = parent.addConfigDefinition();
             constructDefinitionNode(path, value, definition);
         }
     }
