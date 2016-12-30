@@ -19,6 +19,14 @@
 
 .channel-sidenav {
   border-right: 1px solid $grey-200;
+
+  md-list {
+    padding: 0;
+  }
+
+  .md-avatar {
+    border-radius: 0 !important;
+  }
 }
 
 .list-item-active {

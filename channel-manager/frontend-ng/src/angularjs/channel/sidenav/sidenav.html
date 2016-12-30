@@ -31,19 +31,16 @@
         </md-list-item>
       </md-list>
     </md-tab>
+
     <md-tab label="{{ 'SIDENAV_TAB_COMPONENTS' | translate }}"
             ng-if="sidenav.showComponentsTab()">
       <md-list md-no-ink class="qa-catalog">
-        <md-list-item class="md-1-line catalog-dd-container"
-                      ng-repeat="component in sidenav.getCatalog()">
-          <div layout="row"
-                layout-align="start center">
-            <div class="component-icon">
-              <img ng-src="{{component.iconURL}}"/>
-            </div>
-            <span class="md-list-item-text qa-name">
-              {{ component.label }}
-            </span>
+        <md-list-item class="md-1-line"
+                      ng-repeat="component in sidenav.getCatalog()"
+                      ng-click="null">
+          <img class="md-avatar" ng-src="{{component.iconURL}}"/>
+          <div class="md-list-item-text">
+            <p class="qa-name">{{ component.label }}</p>
           </div>
           <md-divider ng-if="!$last"></md-divider>
         </md-list-item>
