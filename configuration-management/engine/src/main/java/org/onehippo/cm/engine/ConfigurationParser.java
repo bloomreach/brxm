@@ -75,17 +75,188 @@ class ConfigurationParser {
 
     private MyConstructor constructor = new MyConstructor();
 
-    private boolean find(final String string, final String[] array) {
-        for (String str : array) {
-            if (str.equals(string)) {
-                return true;
+    Map<String, Configuration> parse(final URL repoConfigUrl, final List<URL> sourceUrls) throws IOException {
+        final Yaml yamlParser = new Yaml();
+        final Node repoConfigNode = yamlParser.compose(new InputStreamReader(repoConfigUrl.openStream(), StandardCharsets.UTF_8));
+
+        final Map<String, Configuration> configurations = parseRepoConfig(repoConfigNode);
+        final List<Module> modules = collectModules(configurations);
+
+        for (URL url : sourceUrls) {
+            final ModuleImpl module;
+            if (modules.size() == 1) {
+                module = (ModuleImpl) modules.get(0);
+            } else {
+                module = getModuleForSource(configurations, url);
             }
+            final Node sourceNode = yamlParser.compose(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
+            constructSource(calculateRelativePath(repoConfigUrl, url), sourceNode, module);
         }
-        return false;
+
+        return configurations;
     }
 
-    private boolean find(final String string, final String[] array1, final String[] array2) {
-        return find(string, array1) || find(string, array2);
+    private Map<String, Configuration> parseRepoConfig(final Node src) {
+        final Map<String, Configuration> result = new LinkedHashMap<>();
+        final Map<String, Node> sourceMap = asMapping(src, new String[]{"configurations"}, null);
+
+        for (Node configurationNode : asSequence(sourceMap.get("configurations"))) {
+            constructConfiguration(configurationNode, result);
+        }
+
+        return result;
+    }
+
+    private void constructConfiguration(final Node src, final Map<String, Configuration> parent) {
+        final Map<String, Node> configurationMap = asMapping(src, new String[]{"name", "projects"}, new String[]{"after"});
+        final String name = asStringScalar(configurationMap.get("name"));
+        final ConfigurationImpl configuration = new ConfigurationImpl(name);
+        configuration.setAfter(parseAfter(configurationMap.get("after")));
+        parent.put(name, configuration);
+
+        for (Node projectNode : asSequence(configurationMap.get("projects"))) {
+            constructProject(projectNode, configuration);
+        }
+    }
+
+    private void constructProject(final Node src, final ConfigurationImpl parent) {
+        final Map<String, Node> sourceMap = asMapping(src, new String[]{"name", "modules"}, new String[]{"after"});
+        final String name = asStringScalar(sourceMap.get("name"));
+        final ProjectImpl project = parent.addProject(name);
+        project.setAfter(parseAfter(sourceMap.get("after")));
+
+        for (Node moduleNode : asSequence(sourceMap.get("modules"))) {
+            constructModule(moduleNode, project);
+        }
+    }
+
+    private void constructModule(final Node src, final ProjectImpl parent) {
+        final Map<String, Node> map = asMapping(src, new String[]{"name"}, new String[]{"after"});
+        final String name = asStringScalar(map.get("name"));
+        final ModuleImpl module = parent.addModule(name);
+        module.setAfter(parseAfter(map.get("after")));
+    }
+
+    private List<String> parseAfter(final Node node) {
+        if (node == null) {
+            return Collections.emptyList();
+        }
+        final List<String> result = new ArrayList<>();
+        switch (node.getNodeId()) {
+            case scalar:
+                result.add(asStringScalar(node));
+                break;
+            case sequence:
+                final List<Node> values = asSequence(node);
+                for (Node value : values) {
+                    result.add(asStringScalar(value));
+                }
+                break;
+            default:
+                throw new ConfigurationException("'after' value must be scalar or sequence, found '" + node.getNodeId() + "'", node);
+        }
+        return result;
+    }
+
+    private void constructSource(final String path, final Node src, final ModuleImpl parent) {
+        final Map<String, Node> sourceMap = asMapping(src, new String[]{"instructions"}, null);
+        final SourceImpl source = parent.addSource(path);
+
+        for (Node instructionNode : asSequence(sourceMap.get("instructions"))) {
+            constructInstruction(instructionNode, source);
+        }
+    }
+
+    private void constructInstruction(final Node src, final SourceImpl parent) {
+        final Map<String, Node> sourceMap = asMapping(src);
+
+        if (sourceMap.size() != 1) {
+            throw new ConfigurationException("Instruction map must contain single element defining the instruction type", src);
+        }
+
+        final String instructionName = sourceMap.keySet().iterator().next();
+        final Node instructionNode = sourceMap.get(instructionName);
+        switch (instructionName) {
+            case "config":
+                constructConfigDefinitions(instructionNode, parent);
+                break;
+            default:
+                throw new ConfigurationException("Unknown instruction type '" + instructionName + "'", src);
+        }
+    }
+
+    private void constructConfigDefinitions(final Node src, final SourceImpl parent) {
+        for (Node node : asSequence(src)) {
+            final Map<String, Node> map = asSingleItemMap(node);
+            final String path = map.keySet().iterator().next();
+            final Node value = map.get(path);
+            final ConfigDefinitionImpl definition = parent.addConfigDefinition(path);
+            constructDefinitionNode(path, value, definition);
+        }
+    }
+
+    private void constructDefinitionNode(final String name, final Node value, final DefinitionImpl definition) {
+        final DefinitionNodeImpl node = new DefinitionNodeImpl(name, name, definition);
+        definition.setNode(node);
+        populateDefinitionNode(node, value);
+    }
+
+    private void populateDefinitionNode(final DefinitionNodeImpl node, final Node value) {
+        final Map<String, Node> children = asSequenceOfSingleItemMaps(value);
+        for (String key : children.keySet()) {
+            if (key.startsWith("/")) {
+                final String name = key.substring(1);
+                constructDefinitionNode(name, children.get(key), node);
+            } else {
+                constructDefinitionProperty(key, children.get(key), node);
+            }
+        }
+    }
+
+    private void constructDefinitionNode(final String name, final Node value, final DefinitionNodeImpl parent) {
+        final DefinitionNodeImpl node = parent.addNode(name);
+        populateDefinitionNode(node, value);
+    }
+
+    private void constructDefinitionProperty(final String name, final Node value, final DefinitionNodeImpl parent) {
+        if (value.getNodeId() == NodeId.scalar) {
+            parent.addProperty(name, constructValue(value));
+        } else if (value.getNodeId() == NodeId.sequence) {
+            final List<Node> valueNodes = asSequence(value);
+            final List<Value> values = new ArrayList<>(valueNodes.size());
+            for (Node valueNode : valueNodes) {
+                values.add(constructValue(valueNode));
+            }
+            parent.addProperty(name, values.toArray(new Value[values.size()]));
+        } else {
+            throw new ConfigurationException("Property value must be scalar or sequence", value);
+        }
+    }
+
+    private Value constructValue(final Node node) {
+        final ScalarNode scalar = asScalar(node);
+        final Object object = constructor.constructScalarNode(scalar);
+
+        if (Tag.BINARY.equals(scalar.getTag())) {
+            return new ValueImpl((byte[]) object);
+        }
+        if (Tag.BOOL.equals(scalar.getTag())) {
+            return new ValueImpl((Boolean) object);
+        }
+        if (Tag.FLOAT.equals(scalar.getTag())) {
+            return new ValueImpl((Double) object);
+        }
+        if (Tag.INT.equals(scalar.getTag())) {
+            return new ValueImpl((Integer) object);
+        }
+        if (Tag.STR.equals(scalar.getTag())) {
+            return new ValueImpl((String) object);
+        }
+        if (Tag.TIMESTAMP.equals(scalar.getTag())) {
+            return new ValueImpl((Date) object);
+        }
+
+        throw new ConfigurationException("Tag not recognized: " + scalar.getTag(), node);
     }
 
     private Map<String, Node> asMapping(final Node node) {
@@ -123,6 +294,19 @@ class ConfigurationParser {
             }
         }
         return result;
+    }
+
+    private boolean find(final String string, final String[] array1, final String[] array2) {
+        return find(string, array1) || find(string, array2);
+    }
+
+    private boolean find(final String string, final String[] array) {
+        for (String str : array) {
+            if (str.equals(string)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Map<String, Node> asSingleItemMap(final Node node) {
@@ -175,167 +359,16 @@ class ConfigurationParser {
         return scalarNode.getValue();
     }
 
-    private List<String> parseAfter(final Node node) {
-        if (node == null) {
-            return Collections.emptyList();
-        }
-        final List<String> result = new ArrayList<>();
-        switch (node.getNodeId()) {
-            case scalar:
-                result.add(asStringScalar(node));
-                break;
-            case sequence:
-                final List<Node> values = asSequence(node);
-                for (Node value : values) {
-                    result.add(asStringScalar(value));
+    private List<Module> collectModules(Map<String, Configuration> configurations) {
+        final List<Module> modules = new ArrayList<>();
+        for (Configuration configuration : configurations.values()) {
+            for (Project project : configuration.getProjects().values()) {
+                for (Module module : project.getModules().values()) {
+                    modules.add(module);
                 }
-                break;
-            default:
-                throw new ConfigurationException("'after' value must be scalar or sequence, found '" + node.getNodeId() + "'", node);
-        }
-        return result;
-    }
-
-    private void constructModule(final Node src, final ProjectImpl parent) {
-        final Map<String, Node> map = asMapping(src, new String[]{"name"}, new String[]{"after"});
-        final String name = asStringScalar(map.get("name"));
-        final ModuleImpl module = parent.addModule(name);
-        module.setAfter(parseAfter(map.get("after")));
-    }
-
-    private void constructProject(final Node src, final ConfigurationImpl parent) {
-        final Map<String, Node> sourceMap = asMapping(src, new String[]{"name", "modules"}, new String[]{"after"});
-        final String name = asStringScalar(sourceMap.get("name"));
-        final ProjectImpl project = parent.addProject(name);
-        project.setAfter(parseAfter(sourceMap.get("after")));
-
-        for (Node moduleNode : asSequence(sourceMap.get("modules"))) {
-            constructModule(moduleNode, project);
-        }
-    }
-
-    private void constructConfiguration(final Node src, final Map<String, Configuration> parent) {
-        final Map<String, Node> configurationMap = asMapping(src, new String[]{"name", "projects"}, new String[]{"after"});
-        final String name = asStringScalar(configurationMap.get("name"));
-        final ConfigurationImpl configuration = new ConfigurationImpl(name);
-        configuration.setAfter(parseAfter(configurationMap.get("after")));
-        parent.put(name, configuration);
-
-        for (Node projectNode : asSequence(configurationMap.get("projects"))) {
-            constructProject(projectNode, configuration);
-        }
-    }
-
-    private Map<String, Configuration> parseRepoConfig(final Node src) {
-        final Map<String, Configuration> result = new LinkedHashMap<>();
-        final Map<String, Node> sourceMap = asMapping(src, new String[]{"configurations"}, null);
-
-        for (Node configurationNode : asSequence(sourceMap.get("configurations"))) {
-            constructConfiguration(configurationNode, result);
-        }
-
-        return result;
-    }
-
-    private void constructDefinitionNode(final String name, final Node value, final DefinitionNodeImpl parent) {
-        final DefinitionNodeImpl node = parent.addNode(name);
-        populateDefinitionNode(node, value);
-    }
-
-    private void constructDefinitionNode(final String name, final Node value, final DefinitionImpl definition) {
-        final DefinitionNodeImpl node = new DefinitionNodeImpl(name, name, definition);
-        definition.setNode(node);
-        populateDefinitionNode(node, value);
-    }
-
-    private void populateDefinitionNode(final DefinitionNodeImpl node, final Node value) {
-        final Map<String, Node> children = asSequenceOfSingleItemMaps(value);
-        for (String key : children.keySet()) {
-            if (key.startsWith("/")) {
-                final String name = key.substring(1);
-                constructDefinitionNode(name, children.get(key), node);
-            } else {
-                constructDefinitionProperty(key, children.get(key), node);
             }
         }
-    }
-
-    private Value constructValue(final Node node) {
-        final ScalarNode scalar = asScalar(node);
-        final Object object = constructor.constructScalarNode(scalar);
-
-        if (Tag.BINARY.equals(scalar.getTag())) {
-            return new ValueImpl((byte[]) object);
-        }
-        if (Tag.BOOL.equals(scalar.getTag())) {
-            return new ValueImpl((Boolean) object);
-        }
-        if (Tag.FLOAT.equals(scalar.getTag())) {
-            return new ValueImpl((Double) object);
-        }
-        if (Tag.INT.equals(scalar.getTag())) {
-            return new ValueImpl((Integer) object);
-        }
-        if (Tag.STR.equals(scalar.getTag())) {
-            return new ValueImpl((String) object);
-        }
-        if (Tag.TIMESTAMP.equals(scalar.getTag())) {
-            return new ValueImpl((Date) object);
-        }
-
-        throw new ConfigurationException("Tag not recognized: " + scalar.getTag(), node);
-    }
-
-    private void constructDefinitionProperty(final String name, final Node value, final DefinitionNodeImpl parent) {
-        if (value.getNodeId() == NodeId.scalar) {
-            parent.addProperty(name, constructValue(value));
-        } else if (value.getNodeId() == NodeId.sequence) {
-            final List<Node> valueNodes = asSequence(value);
-            final List<Value> values = new ArrayList<>(valueNodes.size());
-            for (Node valueNode : valueNodes) {
-                values.add(constructValue(valueNode));
-            }
-            parent.addProperty(name, values.toArray(new Value[values.size()]));
-        } else {
-            throw new ConfigurationException("Property value must be scalar or sequence", value);
-        }
-    }
-
-    private void constructConfigDefinitions(final Node src, final SourceImpl parent) {
-        for (Node node : asSequence(src)) {
-            final Map<String, Node> map = asSingleItemMap(node);
-            final String path = map.keySet().iterator().next();
-            final Node value = map.get(path);
-            final ConfigDefinitionImpl definition = parent.addConfigDefinition(path);
-            constructDefinitionNode(path, value, definition);
-        }
-    }
-
-    private void constructInstruction(final Node src, final SourceImpl parent) {
-        final Map<String, Node> sourceMap = asMapping(src);
-
-        if (sourceMap.size() != 1) {
-            throw new ConfigurationException("Instruction map must contain single element defining the instruction type", src);
-        }
-
-        final String instructionName = sourceMap.keySet().iterator().next();
-        final Node instructionNode = sourceMap.get(instructionName);
-        switch (instructionName) {
-            case "config":
-                constructConfigDefinitions(instructionNode, parent);
-                break;
-            default:
-                throw new ConfigurationException("Unknown instruction type '" + instructionName + "'", src);
-        }
-    }
-
-    private void constructSource(final String path, final Node src, final ModuleImpl parent) {
-        final Map<String, Node> sourceMap = asMapping(src, new String[]{"instructions"}, null);
-        final SourceImpl source = parent.addSource(path);
-
-        for (Node instructionNode : asSequence(sourceMap.get("instructions"))) {
-            constructInstruction(instructionNode, source);
-        }
+        return modules;
     }
 
     private ModuleImpl getModuleForSource(final Map<String, Configuration> configurations, final URL url) {
@@ -364,18 +397,6 @@ class ConfigurationParser {
         return (ModuleImpl) module;
     }
 
-    private List<Module> collectModules(Map<String, Configuration> configurations) {
-        final List<Module> modules = new ArrayList<>();
-        for (Configuration configuration : configurations.values()) {
-            for (Project project : configuration.getProjects().values()) {
-                for (Module module : project.getModules().values()) {
-                    modules.add(module);
-                }
-            }
-        }
-        return modules;
-    }
-
     private String calculateRelativePath(final URL repoConfigURL, final URL sourceURL) throws IOException {
         final int position = repoConfigURL.getPath().lastIndexOf("repo-config.yaml");
         if (position == -1) {
@@ -386,27 +407,6 @@ class ConfigurationParser {
             throw new IOException("URLs do not start with expected prefix: " + sourceURL.getPath() + "; expected prefix " + prefix);
         }
         return sourceURL.getPath().substring(prefix.length());
-    }
-
-    Map<String, Configuration> parse(final URL repoConfigUrl, final List<URL> sourceUrls) throws IOException {
-        final Yaml yamlParser = new Yaml();
-        final Node repoConfigNode = yamlParser.compose(new InputStreamReader(repoConfigUrl.openStream(), StandardCharsets.UTF_8));
-
-        final Map<String, Configuration> configurations = parseRepoConfig(repoConfigNode);
-        final List<Module> modules = collectModules(configurations);
-
-        for (URL url : sourceUrls) {
-            final ModuleImpl module;
-            if (modules.size() == 1) {
-                module = (ModuleImpl) modules.get(0);
-            } else {
-                module = getModuleForSource(configurations, url);
-            }
-            final Node sourceNode = yamlParser.compose(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
-            constructSource(calculateRelativePath(repoConfigUrl, url), sourceNode, module);
-        }
-
-        return configurations;
     }
 
 }
