@@ -23,7 +23,6 @@ class ChannelCtrl {
       $stateParams,
       $timeout,
       ChannelService,
-      ComponentAdderService,
       CmsService,
       FeedbackService,
       HippoIframeService,
@@ -48,9 +47,6 @@ class ChannelCtrl {
 
     // reset service state to avoid weird scaling when controller is reloaded due to state change
     ScalingService.setPushWidth(0);
-
-    ComponentAdderService.setCatalogContainerClass('catalog-dd-container');
-    ComponentAdderService.setCatalogContainerItemClass('catalog-dd-container-item');
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
 

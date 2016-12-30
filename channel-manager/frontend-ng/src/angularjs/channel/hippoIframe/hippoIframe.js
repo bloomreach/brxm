@@ -16,7 +16,6 @@
 
 import ngDeviceDetector from 'ng-device-detector';
 
-import componentAdderModule from './componentAdder/componentAdder';
 import hippoIframe from './hippoIframe.directive';
 import HippoIframeCtrl from './hippoIframe.controller';
 import HippoIframeService from './hippoIframe.service';
@@ -31,7 +30,6 @@ import OverlayService from './overlay/overlay.service';
 const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
     ngDeviceDetector,
-    componentAdderModule.name,
   ])
   .directive('hippoIframe', hippoIframe)
   .controller('hippoIframeCtrl', HippoIframeCtrl)
