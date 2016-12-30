@@ -30,15 +30,3 @@
   line-height: 1.3em !important;
 }
 
-.catalog-dd-container-item {
-  cursor: grab;
-
-  .ie11 & {
-    cursor: move;
-  }
-
-  &:active,
-  &.gu-mirror {
-    cursor: grabbing;
-  }
-}
