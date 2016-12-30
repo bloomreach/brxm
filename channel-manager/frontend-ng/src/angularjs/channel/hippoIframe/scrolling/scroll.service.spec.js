@@ -25,7 +25,7 @@ describe('ScrollService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    jasmine.getFixtures().load('channel/hippoIframe/scroll.service.fixture.html');
+    jasmine.getFixtures().load('channel/hippoIframe/scrolling/scroll.service.fixture.html');
 
     baseJQueryElement = $j('.channel-iframe-base');
     const iframeJQueryElement = $j('.channel-iframe-element');

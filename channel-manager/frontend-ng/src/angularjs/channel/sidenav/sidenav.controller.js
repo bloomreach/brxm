@@ -15,15 +15,17 @@
  */
 
 class ChannelSidenavCtrl {
-  constructor($scope, $element, ChannelSidenavService, ChannelService, SiteMapService, HippoIframeService) {
+  constructor($scope, $element, ChannelSidenavService, ChannelService, CatalogService, SiteMapService, HippoIframeService) {
     'ngInject';
 
     this.ChannelService = ChannelService;
     this.ChannelSidenavService = ChannelSidenavService;
+    this.CatalogService = CatalogService;
     this.SiteMapService = SiteMapService;
     this.HippoIframeService = HippoIframeService;
 
     ChannelSidenavService.initialize($element.find('md-sidenav'));
+    CatalogService.load(this.ChannelService.getMountId());
 
     $scope.$watch('sidenav.editMode', () => {
       if (!this.editMode) {
@@ -38,7 +40,7 @@ class ChannelSidenavCtrl {
   }
 
   getCatalog() {
-    return this.ChannelService.getCatalog();
+    return this.CatalogService.getComponents();
   }
 
   getSiteMap() {

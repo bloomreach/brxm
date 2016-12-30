@@ -55,7 +55,7 @@ describe('DragDropService', () => {
     });
 
     spyOn(ChannelService, 'recordOwnChange');
-    jasmine.getFixtures().load('channel/hippoIframe/dragDrop.service.fixture.html');
+    jasmine.getFixtures().load('channel/hippoIframe/dragDrop/dragDrop.service.fixture.html');
 
     iframe = $j('#testIframe');
     base = $j('#testBase');
@@ -115,7 +115,7 @@ describe('DragDropService', () => {
         }
       });
     });
-    iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/dragDrop.service.iframe.fixture.html`);
+    iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/dragDrop/dragDrop.service.iframe.fixture.html`);
   }
 
   function boundEventHandlerCount(jqueryElement, event) {

@@ -30,7 +30,7 @@ describe('OverlayService', () => {
       PageStructureService = _PageStructureService_;
     });
 
-    jasmine.getFixtures().load('channel/hippoIframe/overlay.service.fixture.html');
+    jasmine.getFixtures().load('channel/hippoIframe/overlay/overlay.service.fixture.html');
     $iframe = $j('.iframe');
   });
 
@@ -50,7 +50,7 @@ describe('OverlayService', () => {
         fail(e);
       }
     });
-    $iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/overlay.service.iframe.fixture.html`);
+    $iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/overlay/overlay.service.iframe.fixture.html`);
   }
 
   function iframe(selector) {

@@ -32,7 +32,7 @@ describe('LinkProcessorService', () => {
   });
 
   beforeEach(() => {
-    jasmine.getFixtures().load('channel/hippoIframe/linkProcessor.service.fixture.html');
+    jasmine.getFixtures().load('channel/hippoIframe/processing/linkProcessor.service.fixture.html');
   });
 
   function expectTargetAttrToBeBlank(selector) {

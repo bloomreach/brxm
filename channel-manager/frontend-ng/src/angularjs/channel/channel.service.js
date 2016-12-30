@@ -21,7 +21,6 @@ class ChannelService {
       $http,
       $state,
       SessionService,
-      CatalogService,
       FeedbackService,
       HstService,
       ConfigService,
@@ -35,7 +34,6 @@ class ChannelService {
     this.$http = $http;
     this.$state = $state;
     this.SessionService = SessionService;
-    this.CatalogService = CatalogService;
     this.FeedbackService = FeedbackService;
     this.HstService = HstService;
     this.ConfigService = ConfigService;
@@ -112,7 +110,6 @@ class ChannelService {
     // precompute channel prefix to be more efficient
     this.channelPrefix = this._makeContextPrefix(channel.contextPath);
 
-    this.CatalogService.load(this.getMountId());
     this.SiteMapService.load(channel.siteMapId);
 
     if (this.SessionService.hasWriteAccess()) {
@@ -182,10 +179,6 @@ class ChannelService {
         this.reload(`${this.channel.id}-preview`);
         this.channel.previewHstConfigExists = true;
       });
-  }
-
-  getCatalog() {
-    return this.CatalogService.getComponents();
   }
 
   recordOwnChange() {

@@ -33,7 +33,7 @@ describe('ScalingService', () => {
       ViewportService = _ViewportService_;
     });
 
-    jasmine.getFixtures().load('channel/hippoIframe/scaling.service.fixture.html');
+    jasmine.getFixtures().load('channel/hippoIframe/scaling/scaling.service.fixture.html');
 
     baseJQueryElement = $j('.channel-iframe-base');
     canvasJQueryElement = $j('.channel-iframe-canvas');
