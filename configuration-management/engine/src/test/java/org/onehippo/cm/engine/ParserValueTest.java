@@ -35,7 +35,7 @@ public class ParserValueTest extends AbstractBaseTest {
 
     @Test
     public void expect_value_test_loads() throws IOException {
-        final TestFiles files = collectFiles("/parser/value_test/repo-config.yaml");
+        final TestFiles files = collectFilesFromResource("/parser/value_test/repo-config.yaml");
         final ConfigurationParser parser = new ConfigurationParser();
 
         final Map<String, Configuration> configurations = parser.parse(files.repoConfig, files.sources);
@@ -44,7 +44,7 @@ public class ParserValueTest extends AbstractBaseTest {
         final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
         final Project project = assertProject(base, "project1", new String[0], 1);
         final Module module = assertModule(project, "module1", new String[0], 1);
-        final Source source = assertSource(module, "value_test/repo-config/base.yaml", 2);
+        final Source source = assertSource(module, "base.yaml", 2);
 
         final ConfigDefinition explicitDefinition = assertDefinition(source, 0, ConfigDefinition.class);
         final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "/explicit", explicitDefinition, false, 0, 6);

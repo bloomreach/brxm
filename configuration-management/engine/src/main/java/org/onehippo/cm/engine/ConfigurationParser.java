@@ -343,7 +343,7 @@ class ConfigurationParser {
         if (parts.length < 4) {
             throw new IllegalArgumentException(
                     MessageFormat.format(
-                            "URL {} must consist of at least 4 elements, found only {}",
+                            "URL ''{0}'' must consist of at least 4 elements, found {1} element(s)",
                             url.getPath(), parts.length));
         }
         final String configurationName = parts[parts.length - 4];
@@ -351,15 +351,15 @@ class ConfigurationParser {
         final String moduleName = parts[parts.length - 2];
         final Configuration configuration = configurations.get(configurationName);
         if (configuration == null) {
-            throw new IllegalArgumentException(MessageFormat.format("Configuration '{}' not found", configurationName));
+            throw new IllegalArgumentException(MessageFormat.format("Configuration ''{0}'' not found", configurationName));
         }
         final Project project = configuration.getProjects().get(projectName);
         if (project == null) {
-            throw new IllegalArgumentException(MessageFormat.format("Project '{}' not found in configuration '{}'", projectName, configurationName));
+            throw new IllegalArgumentException(MessageFormat.format("Project ''{0}'' not found in configuration ''{1}''", projectName, configurationName));
         }
         final Module module = project.getModules().get(moduleName);
         if (module == null) {
-            throw new IllegalArgumentException(MessageFormat.format("Module '{}' not found in project '{}'", moduleName, projectName));
+            throw new IllegalArgumentException(MessageFormat.format("Module ''{0}'' not found in project ''{1}''", moduleName, projectName));
         }
         return (ModuleImpl) module;
     }
@@ -374,6 +374,18 @@ class ConfigurationParser {
             }
         }
         return modules;
+    }
+
+    private String calculateRelativePath(final URL repoConfigURL, final URL sourceURL) throws IOException {
+        final int position = repoConfigURL.getPath().lastIndexOf("repo-config.yaml");
+        if (position == -1) {
+            throw new IOException("URL does not end with 'repo-config.yaml': " + repoConfigURL.getPath());
+        }
+        final String prefix = repoConfigURL.getPath().substring(0, position) + "repo-config/";
+        if (!sourceURL.getPath().startsWith(prefix)) {
+            throw new IOException("URLs do not start with expected prefix: " + sourceURL.getPath() + "; expected prefix " + prefix);
+        }
+        return sourceURL.getPath().substring(prefix.length());
     }
 
     Map<String, Configuration> parse(final URL repoConfigUrl, final List<URL> sourceUrls) throws IOException {
@@ -391,7 +403,7 @@ class ConfigurationParser {
                 module = getModuleForSource(configurations, url);
             }
             final Node sourceNode = yamlParser.compose(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
-            constructSource(url.getPath(), sourceNode, module);
+            constructSource(calculateRelativePath(repoConfigUrl, url), sourceNode, module);
         }
 
         return configurations;

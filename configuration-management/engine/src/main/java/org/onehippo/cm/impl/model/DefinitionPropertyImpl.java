@@ -48,7 +48,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
                 // todo create unit test and parser test
                 if (!valueType.equals(values[i].getType())) {
                     throw new IllegalArgumentException(MessageFormat.format(
-                            "Argument 'values' must contain values of the same type, found value type '{}' as well as '{}'",
+                            "Argument 'values' must contain values of the same type, found value type ''{0}'' as well as ''{1}''",
                             valueType,
                             values[i].getType()));
                 }

@@ -17,6 +17,7 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,28 +50,52 @@ public abstract class AbstractBaseTest {
         try {
             return path.toUri().toURL();
         } catch (MalformedURLException e) {
-            fail("Cannot convert path to URL" + e);
+            fail("Cannot convert path to URL " + e);
+            return null;
+        }
+    }
+
+    Path urlToPath(final URL url) {
+        try {
+            return Paths.get(url.toURI());
+        } catch (URISyntaxException e) {
+            fail("Cannot convert URL to path " + e);
             return null;
         }
     }
 
     static class TestFiles {
         URL repoConfig;
-        List<URL> sources;
+        List<URL> sources = new ArrayList<>();
     }
 
-    TestFiles collectFiles(final String repoConfig) throws IOException {
-        TestFiles testFiles = new TestFiles();
-        testFiles.repoConfig = AbstractBaseTest.class.getResource(repoConfig);
-        if (testFiles.repoConfig == null) {
-            fail("cannot find resource " + repoConfig);
+    Path findBase(final String repoConfigResourceName) throws IOException {
+        final URL url = AbstractBaseTest.class.getResource(repoConfigResourceName);
+        if (url == null) {
+            fail("cannot find resource " + repoConfigResourceName);
         }
-        final String fileName = testFiles.repoConfig.getFile();
-        testFiles.sources = new ArrayList<>();
-        final Path testRootDirectory = Paths.get(fileName.substring(0, fileName.lastIndexOf(".")));
-        Files.find(testRootDirectory, Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
-                .forEachOrdered(path -> testFiles.sources.add(pathToUrl(path)));
-        return testFiles;
+        return Paths.get(url.getFile()).getParent();
+    }
+
+    TestFiles collectFiles(final Path baseDirectory) throws IOException {
+        final Path repoConfig = baseDirectory.resolve("repo-config.yaml");
+        if (!Files.isRegularFile(repoConfig)) {
+            throw new IOException("Could not find repo-config.yaml file in " + baseDirectory.toString());
+        }
+        final Path sourceDirectory = baseDirectory.resolve("repo-config");
+        if (!Files.isDirectory(sourceDirectory)) {
+            throw new IOException("Could not find directory repo-config in " + baseDirectory.toString());
+        }
+
+        final TestFiles result = new TestFiles();
+        result.repoConfig = pathToUrl(repoConfig);
+        Files.find(sourceDirectory, Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
+                .forEachOrdered(path -> result.sources.add(pathToUrl(path)));
+        return result;
+    }
+
+    TestFiles collectFilesFromResource(final String repoConfigResourceName) throws IOException {
+        return collectFiles(findBase(repoConfigResourceName));
     }
 
     Configuration assertConfiguration(final Map<String, Configuration> parent, final String name, final String[] after, final int projectCount) {

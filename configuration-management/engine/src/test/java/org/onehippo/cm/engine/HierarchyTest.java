@@ -32,7 +32,7 @@ public class HierarchyTest extends AbstractBaseTest {
 
     @Test
     public void expect_hierarchy_test_loads() throws IOException {
-        final TestFiles files = collectFiles("/parser/hierarchy_test/repo-config.yaml");
+        final TestFiles files = collectFilesFromResource("/parser/hierarchy_test/repo-config.yaml");
         final ConfigurationParser parser = new ConfigurationParser();
 
         final Map<String, Configuration> configurations = parser.parse(files.repoConfig, files.sources);
@@ -41,7 +41,7 @@ public class HierarchyTest extends AbstractBaseTest {
         final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
         final Project project1 = assertProject(base, "project1", new String[0], 1);
         final Module module1 = assertModule(project1, "module1", new String[0], 1);
-        final Source source1 = assertSource(module1, "hierarchy_test/repo-config/base/project1/module1/config.yaml", 1);
+        final Source source1 = assertSource(module1, "base/project1/module1/config.yaml", 1);
         final ConfigDefinition definition1 = assertDefinition(source1, 0, ConfigDefinition.class);
 
         final DefinitionNode rootDefinition1 = assertNode(definition1, "/", "/", definition1, false, 3, 1);
@@ -69,7 +69,7 @@ public class HierarchyTest extends AbstractBaseTest {
         final Configuration myhippoproject = assertConfiguration(configurations, "myhippoproject", new String[]{"base"}, 1);
         final Project project2 = assertProject(myhippoproject, "project2", new String[]{"project1", "foo/bar"}, 1);
         final Module module2 = assertModule(project2, "module2", new String[0], 1);
-        final Source source2 = assertSource(module2, "hierarchy_test/repo-config/myhippoproject/project2/module2/config.yaml", 1);
+        final Source source2 = assertSource(module2, "myhippoproject/project2/module2/config.yaml", 1);
         final ConfigDefinition definition2 = assertDefinition(source2, 0, ConfigDefinition.class);
 
         final DefinitionNode rootDefinition2 =
