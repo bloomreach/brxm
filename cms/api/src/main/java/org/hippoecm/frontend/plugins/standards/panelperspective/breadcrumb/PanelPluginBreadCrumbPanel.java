@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,9 +29,8 @@ import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.widgets.UpdateFeedbackInfo;
 
 public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel implements IPanelPluginParticipant {
-    private static final long serialVersionUID = 1L;
 
-    private FeedbackPanel feedback;
+    private final FeedbackPanel feedback;
 
     public PanelPluginBreadCrumbPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
@@ -46,6 +45,7 @@ public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel impleme
         add(feedback);
     }
 
+    @Override
     public IModel<String> getTitle() {
         return getTitle(this);
     }
@@ -58,6 +58,7 @@ public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel impleme
         return feedback;
     }
 
+    @Override
     public void render(PluginRequestTarget target) {
     }
 
@@ -66,7 +67,7 @@ public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel impleme
         // handle notified validation events from wicket fields
         if(event.getPayload() instanceof UpdateFeedbackInfo) {
             final UpdateFeedbackInfo ufi = (UpdateFeedbackInfo) event.getPayload();
-            FeedbackPanel feedbackPanel = getFeedbackPanel();
+            final FeedbackPanel feedbackPanel = getFeedbackPanel();
             if (feedbackPanel.anyMessage()) {
                 // refresh feedbackpanel
                 ufi.getTarget().add(feedbackPanel);
@@ -80,6 +81,11 @@ public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel impleme
         final IBreadCrumbParticipant parentBreadCrumb = allBreadCrumbs.get(allBreadCrumbs.size() - 2);
         breadCrumbModel.setActive(parentBreadCrumb);
         return parentBreadCrumb;
+    }
+
+    protected void activateParentAndDisplayInfo(final String infoMsg) {
+        final IBreadCrumbParticipant parentBreadcrumb = activateParent();
+        parentBreadcrumb.getComponent().info(infoMsg);
     }
 
 }

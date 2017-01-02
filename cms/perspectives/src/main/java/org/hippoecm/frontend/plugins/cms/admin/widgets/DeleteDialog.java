@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,11 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 
 public class DeleteDialog<T extends Serializable> extends Dialog<T> {
 
+    @FunctionalInterface
+    public interface OkHandler extends Serializable {
+        void ok();
+    }
+
     private Component component;
 
     @SuppressWarnings({"unused"})
@@ -45,12 +50,38 @@ public class DeleteDialog<T extends Serializable> extends Dialog<T> {
         this(Model.of(object), component);
     }
 
+    public static <T extends Serializable> DeleteDialog<T> create(final T object, final Component component,
+                                          final String titleKey, final String textKey, final OkHandler handler) {
+        return create(Model.of(object), component, titleKey, textKey, handler);
+    }
+
+    public static <T extends Serializable> DeleteDialog<T> create(final IModel<T> model, final Component component,
+                                          final String titleKey, final String textKey, final OkHandler handler) {
+
+        return new DeleteDialog<T>(model, component) {
+            @Override
+            protected String getTitleKey() {
+                return titleKey;
+            }
+
+            @Override
+            protected String getTextKey() {
+                return textKey;
+            }
+
+            @Override
+            protected void onOk() {
+                handler.ok();
+            }
+        };
+    }
+
+    @Override
     public IModel<String> getTitle() {
         if (component == null) {
             return new ResourceModel(getTitleKey());
-        } else {
-            return new StringResourceModel(getTitleKey(), component, getModel());
         }
+        return new StringResourceModel(getTitleKey(), component, getModel());
     }
 
     protected String getTitleKey() {
@@ -71,9 +102,8 @@ public class DeleteDialog<T extends Serializable> extends Dialog<T> {
     private IModel<String> getLabelModel() {
         if (component == null) {
             return new ResourceModel(getTextKey());
-        } else {
-            return new StringResourceModel(getTextKey(), component, getModel());
         }
+        return new StringResourceModel(getTextKey(), component, getModel());
     }
 
 }
