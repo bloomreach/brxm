@@ -120,7 +120,10 @@ class OverlayService {
       </div>`);
 
     if (structureElement.getType() === 'component') {
-      overlayElement.click(() => this.PageStructureService.showComponentProperties(structureElement));
+      overlayElement.click((event) => {
+        event.stopPropagation();
+        this.PageStructureService.showComponentProperties(structureElement);
+      });
     }
 
     structureElement.setOverlayElement(overlayElement);
