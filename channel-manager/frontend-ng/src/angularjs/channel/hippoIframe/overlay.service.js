@@ -119,6 +119,13 @@ class OverlayService {
         </span>
       </div>`);
 
+    if (structureElement.getType() === 'component') {
+      overlayElement.click((event) => {
+        event.stopPropagation();
+        this.PageStructureService.showComponentProperties(structureElement);
+      });
+    }
+
     structureElement.setOverlayElement(overlayElement);
 
     const boxElement = structureElement.prepareBoxElement();

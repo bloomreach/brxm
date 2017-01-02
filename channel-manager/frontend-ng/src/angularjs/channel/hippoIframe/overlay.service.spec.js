@@ -224,4 +224,24 @@ describe('OverlayService', () => {
       done();
     });
   });
+
+  it('should show the properties of a component when its overlay element is clicked', (done) => {
+    spyOn(PageStructureService, 'showComponentProperties');
+
+    loadIframeFixture(() => {
+      const body = iframe('body')[0];
+      body.addEventListener('click', () => {
+        fail('click event on overlay should not propagate to the page');
+      });
+
+      const component = PageStructureService.getComponentById('aaaa');
+      const overlayElement = iframe('#hippo-overlay > .hippo-overlay-element-component').first();
+
+      overlayElement.click();
+
+      expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(component);
+
+      done();
+    });
+  });
 });
