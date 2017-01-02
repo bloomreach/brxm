@@ -33,7 +33,8 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
-import org.onehippo.cm.impl.model.DefinitionImpl;
+import org.onehippo.cm.impl.model.ContentDefinitionImpl;
+import org.onehippo.cm.impl.model.AbstractDefinitionImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
@@ -180,6 +181,9 @@ class ConfigurationParser {
             case "config":
                 constructConfigDefinitions(instructionNode, parent);
                 break;
+            case "content":
+                constructContentDefinitions(instructionNode, parent);
+                break;
             default:
                 throw new ConfigurationException("Unknown instruction type '" + instructionName + "'", src);
         }
@@ -195,7 +199,17 @@ class ConfigurationParser {
         }
     }
 
-    private void constructDefinitionNode(final String name, final Node value, final DefinitionImpl definition) {
+    private void constructContentDefinitions(final Node src, final SourceImpl parent) {
+        for (Node node : asSequence(src)) {
+            final Map<String, Node> map = asSingleItemMap(node);
+            final String path = map.keySet().iterator().next();
+            final Node value = map.get(path);
+            final ContentDefinitionImpl definition = parent.addContentDefinition();
+            constructDefinitionNode(path, value, definition);
+        }
+    }
+
+    private void constructDefinitionNode(final String name, final Node value, final AbstractDefinitionImpl definition) {
         final DefinitionNodeImpl node = new DefinitionNodeImpl(name, name, definition);
         definition.setNode(node);
         populateDefinitionNode(node, value);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,20 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.impl.model;
+package org.onehippo.cm.api.model;
 
-import org.onehippo.cm.api.model.ConfigDefinition;
-import org.onehippo.cm.api.model.DefinitionType;
+public enum DefinitionType {
 
-public class ConfigDefinitionImpl extends AbstractDefinitionImpl implements ConfigDefinition {
+    CONFIG,
+    CONTENT,
+    NAMESPACE,
+    NODETYPE;
 
-    public ConfigDefinitionImpl(final SourceImpl source) {
-        super(source);
-    }
-
-    @Override
-    public DefinitionType getType() {
-        return DefinitionType.CONFIG;
+    public final String toString() {
+        return name().toLowerCase();
     }
 
 }

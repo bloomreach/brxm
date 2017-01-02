@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
@@ -162,18 +163,34 @@ public class ConfigurationSerializer {
 
     private Node representSource(final Source source) {
         final List<Node> configDefinitionNodes = new ArrayList<>();
+        final List<Node> contentDefinitionNodes = new ArrayList<>();
 
         for (Definition definition : source.getDefinitions()) {
-            if (definition instanceof ConfigDefinition) {
-                configDefinitionNodes.add(representConfigDefinition((ConfigDefinition) definition));
+            switch (definition.getType()) {
+                case CONFIG:
+                    configDefinitionNodes.add(representConfigDefinition((ConfigDefinition) definition));
+                    break;
+                case CONTENT:
+                    contentDefinitionNodes.add(representContentDefinition((ContentDefinition) definition));
+                    break;
+                case NODETYPE:
+                case NAMESPACE:
+                default:
+                    throw new IllegalArgumentException("Cannot serialize definition, unknown type: " + definition.getType());
             }
         }
 
-        final List<NodeTuple> tuples = new ArrayList<>();
-        tuples.add(createStrSeqTuple("config", configDefinitionNodes));
-
         final List<Node> definitionNodes = new ArrayList<>();
-        definitionNodes.add(new MappingNode(Tag.MAP, tuples, false));
+        if (configDefinitionNodes.size() > 0) {
+            final List<NodeTuple> configTuples = new ArrayList<>();
+            configTuples.add(createStrSeqTuple("config", configDefinitionNodes));
+            definitionNodes.add(new MappingNode(Tag.MAP, configTuples, false));
+        }
+        if (contentDefinitionNodes.size() > 0) {
+            final List<NodeTuple> contentTuples = new ArrayList<>();
+            contentTuples.add(createStrSeqTuple("content", contentDefinitionNodes));
+            definitionNodes.add(new MappingNode(Tag.MAP, contentTuples, false));
+        }
 
         final List<NodeTuple> sourceTuples = new ArrayList<>();
         sourceTuples.add(createStrSeqTuple("instructions", definitionNodes));
@@ -181,6 +198,10 @@ public class ConfigurationSerializer {
     }
 
     private Node representConfigDefinition(final ConfigDefinition definition) {
+        return representDefinitionNode(definition.getNode());
+    }
+
+    private Node representContentDefinition(final ContentDefinition definition) {
         return representDefinitionNode(definition.getNode());
     }
 

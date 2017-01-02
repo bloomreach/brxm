@@ -19,12 +19,12 @@ import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.Source;
 
-public class DefinitionImpl implements Definition {
+public abstract class AbstractDefinitionImpl implements Definition {
 
     private Source source;
     private DefinitionNode node = new DefinitionNodeImpl("/", "/", this);
 
-    public DefinitionImpl(final SourceImpl source) {
+    public AbstractDefinitionImpl(final SourceImpl source) {
         this.source = source;
     }
 

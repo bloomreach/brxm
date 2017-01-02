@@ -11,3 +11,6 @@ instructions:
           - /node-with-sub-node:
               - /sub-node:
                   - property: sub-node-value
+  - content:
+      - /content/documents/myhippoproject:
+          - property: document

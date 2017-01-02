@@ -15,18 +15,18 @@
  */
 package org.onehippo.cm.impl.model;
 
-import org.onehippo.cm.api.model.ConfigDefinition;
+import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.DefinitionType;
 
-public class ConfigDefinitionImpl extends AbstractDefinitionImpl implements ConfigDefinition {
+public class ContentDefinitionImpl extends AbstractDefinitionImpl implements ContentDefinition {
 
-    public ConfigDefinitionImpl(final SourceImpl source) {
+    public ContentDefinitionImpl(final SourceImpl source) {
         super(source);
     }
 
     @Override
     public DefinitionType getType() {
-        return DefinitionType.CONFIG;
+        return DefinitionType.CONTENT;
     }
 
 }

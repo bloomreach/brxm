@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionItem;
 import org.onehippo.cm.api.model.DefinitionNode;
@@ -164,7 +164,7 @@ public abstract class AbstractBaseTest {
         return node;
     }
 
-    DefinitionNode assertNode(final ConfigDefinition parent,
+    DefinitionNode assertNode(final ContentDefinition parent,
                               final String name,
                               final String path,
                               final Definition definition,

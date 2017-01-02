@@ -62,4 +62,10 @@ public class SourceImpl implements Source {
         return definition;
     }
 
+    public ContentDefinitionImpl addContentDefinition() {
+        final ContentDefinitionImpl definition = new ContentDefinitionImpl(this);
+        definitions.add(definition);
+        return definition;
+    }
+
 }
