@@ -224,4 +224,17 @@ describe('OverlayService', () => {
       done();
     });
   });
+
+  it('should show the properties of a component when its overlay element is clicked', (done) => {
+    spyOn(PageStructureService, 'showComponentProperties');
+
+    loadIframeFixture(() => {
+      const component = PageStructureService.getComponentById('aaaa');
+      component.getOverlayElement().click();
+
+      expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(component);
+
+      done();
+    });
+  });
 });
