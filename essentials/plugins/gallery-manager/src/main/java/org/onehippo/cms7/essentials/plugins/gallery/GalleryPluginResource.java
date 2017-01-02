@@ -73,7 +73,6 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLES;
 @Path("/galleryplugin")
 public class GalleryPluginResource extends BaseResource {
 
-
     private static final Pattern NS_PATTERN = Pattern.compile(":");
     public static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype";
     public static final String HIPPOSYSEDIT_PROTOTYPE = "hipposysedit:prototype";
@@ -83,6 +82,7 @@ public class GalleryPluginResource extends BaseResource {
 
     @Inject
     private EventBus eventBus;
+
 
     /**
      * Updates an image model
@@ -235,22 +235,19 @@ public class GalleryPluginResource extends BaseResource {
                     final String absPath = "/content/gallery/" + context.getProjectNamespacePrefix();
                     if (session.nodeExists(absPath)) {
                         final Node galleryRoot = session.getNode(absPath);
-                        final Node imageFolderNode = galleryRoot.addNode(imageSetName,"hippogallery:stdImageGallery");
+                        final Node imageFolderNode = galleryRoot.addNode(imageSetName, "hippogallery:stdImageGallery");
                         imageFolderNode.setProperty("hippostd:foldertype", new String[]{folderName});
                         imageFolderNode.setProperty("hippostd:gallerytype", new String[]{newImageNamespace});
-                        messages.add(new MessageRestful("Successfully created image folder: " +  absPath +'/' + imageSetName));
+                        messages.add(new MessageRestful("Successfully created image folder: " + absPath + '/' + imageSetName));
                     }
                     // update HST beans, create new ones and *do not* update image sets:
                     final ContentBeansService beansService = new ContentBeansService(context, eventBus);
                     beansService.createBeans();
                     // add beanwriter messages
                     BeanWriterUtils.populateBeanwriterMessages(context, messages);
-
-
                 }
 
                 session.save();
-
 
             }
 
@@ -262,6 +259,7 @@ public class GalleryPluginResource extends BaseResource {
         messages.add(imageSet);
         return messages;
     }
+
 
     /**
      * Adds image variant to the existing image set
@@ -287,7 +285,6 @@ public class GalleryPluginResource extends BaseResource {
             return createErrorMessage("Couldn't load imageset model for: " + selectedImageSet, response);
         }
 
-
         final ImageModel imageModel = extractBestModel(ourModel);
         final PluginContext context = PluginContextFactory.getContext();
         final boolean created = GalleryUtils.createImagesetVariant(context, ourModel.getPrefix(), ourModel.getNameAfterPrefix(), imageVariantName, imageModel.getName());
@@ -305,15 +302,15 @@ public class GalleryPluginResource extends BaseResource {
             }
             scheduleImageScript(context);
 
-
             return new MessageRestful("Image variant:  " + imageVariantName + " successfully created");
         }
         return createErrorMessage("Failed to create image variant: " + imageVariantName, response);
 
     }
 
+
     public void scheduleImageScript(final PluginContext context) {
-        // schedule updater script  so new variants are created:
+        // schedule updater script so new variants are created:
         final XmlInstruction instruction = new XmlInstruction();
         instruction.setAction(PluginInstruction.COPY);
         instruction.setSource("image_set_updater.xml");
@@ -325,6 +322,7 @@ public class GalleryPluginResource extends BaseResource {
         getInjector().autowireBean(executor);
         executor.execute(instructionSet, context);
     }
+
 
     public ImageModel extractBestModel(final GalleryModel ourModel) {
         final List<ImageModel> models = ourModel.getModels();
@@ -339,10 +337,10 @@ public class GalleryPluginResource extends BaseResource {
             if (bestModel == null) {
                 bestModel = model;
             }
-
         }
         return null;
     }
+
 
     /**
      * Fetch existing gallery namespaces
@@ -395,6 +393,7 @@ public class GalleryPluginResource extends BaseResource {
         processingNode.setProperty("compression", payload.getCompression());
     }
 
+
     private void updateTranslations(final ImageModel payload, final String variant, final Node nodeTypeNode) throws RepositoryException {
         removeTranslations(nodeTypeNode, variant);
         final Node bundles = getOrCreateBundles(nodeTypeNode);
@@ -415,6 +414,7 @@ public class GalleryPluginResource extends BaseResource {
         }
     }
 
+
     private void copyTemplateTranslations(final Session session, final String sourceKey, final String destinationKey) throws RepositoryException {
         final Node bundles = session.getNode("/hippo:configuration/hippo:translations/hippo:templates");
         for (Node bundle : new NodeIterable(bundles.getNodes())) {
@@ -426,6 +426,7 @@ public class GalleryPluginResource extends BaseResource {
         }
     }
 
+
     private void removeTranslations(final Node nodeTypeNode, final String variant) throws RepositoryException {
         final Node bundles = getOrCreateBundles(nodeTypeNode);
         for (Node bundle : new NodeIterable(bundles.getNodes())) {
@@ -434,6 +435,7 @@ public class GalleryPluginResource extends BaseResource {
             }
         }
     }
+
 
     private Node getOrCreateBundles(final Node nodeTypeNode) throws RepositoryException {
         final String nodeTypeName = nodeTypeNode.getParent().getName() + ":" + nodeTypeNode.getName();
@@ -446,6 +448,7 @@ public class GalleryPluginResource extends BaseResource {
         }
         return bundles;
     }
+
 
     private List<ImageModel> populateTypes(final Session session, final Node imagesetTemplate, final String parentNs) throws RepositoryException {
         final List<ImageModel> images = new ArrayList<>();
@@ -479,11 +482,12 @@ public class GalleryPluginResource extends BaseResource {
         return images;
     }
 
+
     /**
      * @param imagesetTemplate the imageset template node
      * @param variant          the name of the variant (including prefix e.g. prefix:name)
-     * @return
-     * @throws javax.jcr.RepositoryException
+     * @return list of existing variant translations
+     * @throws javax.jcr.RepositoryException for unexpected Repository exceptions
      */
     private static List<TranslationModel> retrieveTranslationsForVariant(final Node imagesetTemplate, final String variant) throws RepositoryException {
         final List<TranslationModel> translations = new ArrayList<>();
@@ -529,12 +533,11 @@ public class GalleryPluginResource extends BaseResource {
     private MessageRestful createImageSet(final PluginContext context, final String prefix, final String name, final HttpServletResponse response) {
         if (Strings.isNullOrEmpty(prefix) || Strings.isNullOrEmpty(name)) {
             return createErrorMessage("Error message", response);
-
         }
         final Session session = context.createSession();
         final String nodeType = prefix + ':' + name;
-        try {
 
+        try {
             final String uri = GalleryUtils.getGalleryURI(context, prefix);
             // Check whether node type already exists
             if (CndUtils.nodeTypeExists(context, nodeType)) {
@@ -576,6 +579,7 @@ public class GalleryPluginResource extends BaseResource {
         }
         return new MessageRestful("Successfully created imageset: " + nodeType);
     }
+
 
     private Node createProcessingNode(final Session session, final String nodeType) throws RepositoryException {
         final Node processorNode = session.getNode(PROCESSOR_PATH);
