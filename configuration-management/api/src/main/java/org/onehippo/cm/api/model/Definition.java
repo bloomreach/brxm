@@ -18,5 +18,4 @@ package org.onehippo.cm.api.model;
 public interface Definition {
     DefinitionType getType();
     Source getSource();
-    DefinitionNode getNode();
 }

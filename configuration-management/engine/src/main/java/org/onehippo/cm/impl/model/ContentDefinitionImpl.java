@@ -16,9 +16,12 @@
 package org.onehippo.cm.impl.model;
 
 import org.onehippo.cm.api.model.ContentDefinition;
+import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionType;
 
 public class ContentDefinitionImpl extends AbstractDefinitionImpl implements ContentDefinition {
+
+    private DefinitionNode node = new DefinitionNodeImpl("/", "/", this);
 
     public ContentDefinitionImpl(final SourceImpl source) {
         super(source);
@@ -27,6 +30,15 @@ public class ContentDefinitionImpl extends AbstractDefinitionImpl implements Con
     @Override
     public DefinitionType getType() {
         return DefinitionType.CONTENT;
+    }
+
+    @Override
+    public DefinitionNode getNode() {
+        return node;
+    }
+
+    public void setNode(final DefinitionNode node) {
+        this.node = node;
     }
 
 }

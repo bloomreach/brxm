@@ -16,13 +16,11 @@
 package org.onehippo.cm.impl.model;
 
 import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.Source;
 
 public abstract class AbstractDefinitionImpl implements Definition {
 
     private Source source;
-    private DefinitionNode node = new DefinitionNodeImpl("/", "/", this);
 
     public AbstractDefinitionImpl(final SourceImpl source) {
         this.source = source;
@@ -31,15 +29,6 @@ public abstract class AbstractDefinitionImpl implements Definition {
     @Override
     public Source getSource() {
         return source;
-    }
-
-    @Override
-    public DefinitionNode getNode() {
-        return node;
-    }
-
-    public void setNode(final DefinitionNode node) {
-        this.node = node;
     }
 
 }

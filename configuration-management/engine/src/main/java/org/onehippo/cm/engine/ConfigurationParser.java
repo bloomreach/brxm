@@ -34,7 +34,6 @@ import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
-import org.onehippo.cm.impl.model.AbstractDefinitionImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
@@ -209,7 +208,7 @@ class ConfigurationParser {
         }
     }
 
-    private void constructDefinitionNode(final String name, final Node value, final AbstractDefinitionImpl definition) {
+    private void constructDefinitionNode(final String name, final Node value, final ContentDefinitionImpl definition) {
         final DefinitionNodeImpl node = new DefinitionNodeImpl(name, name, definition);
         definition.setNode(node);
         populateDefinitionNode(node, value);

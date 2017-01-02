@@ -16,4 +16,5 @@
 package org.onehippo.cm.api.model;
 
 public interface ContentDefinition extends Definition {
+    DefinitionNode getNode();
 }
