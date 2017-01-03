@@ -33,7 +33,9 @@
     </md-tab>
     <md-tab label="{{ 'SIDENAV_TAB_COMPONENTS' | translate }}"
             ng-if="sidenav.showComponentsTab()">
-      <component-catalog components="sidenav.getCatalog()"></component-catalog>
+      <component-catalog components="sidenav.getCatalog()"
+                         on-component-select="sidenav.onComponentSelect()">
+      </component-catalog>
     </md-tab>
   </md-tabs>
 </md-sidenav>

@@ -15,14 +15,24 @@
  */
 
 class ChannelSidenavCtrl {
-  constructor($scope, $element, ChannelSidenavService, ChannelService, CatalogService, SiteMapService, HippoIframeService) {
+  constructor(
+      $element,
+      $scope,
+      CatalogService,
+      ChannelService,
+      ChannelSidenavService,
+      HippoIframeService,
+      MaskService,
+      SiteMapService
+    ) {
     'ngInject';
 
+    this.CatalogService = CatalogService;
     this.ChannelService = ChannelService;
     this.ChannelSidenavService = ChannelSidenavService;
-    this.CatalogService = CatalogService;
-    this.SiteMapService = SiteMapService;
     this.HippoIframeService = HippoIframeService;
+    this.MaskService = MaskService;
+    this.SiteMapService = SiteMapService;
 
     ChannelSidenavService.initialize($element.find('md-sidenav'));
     CatalogService.load(this.ChannelService.getMountId());
@@ -53,6 +63,10 @@ class ChannelSidenavCtrl {
 
   isActiveSiteMapItem(siteMapItem) {
     return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
+  }
+
+  onComponentSelect() {
+    this.MaskService.mask();
   }
 }
 

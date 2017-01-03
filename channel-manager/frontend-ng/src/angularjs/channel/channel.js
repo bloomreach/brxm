@@ -25,7 +25,6 @@ import channelMenuModule from './menu/editor';
 import MaskService from './mask/mask.service';
 import channelRelevanceModule from './relevance/relevance';
 import channelViewportsModule from './viewports/viewports';
-import componentCatalogComponent from './componentCatalog/componentCatalog.component';
 import config from './channel.config';
 import ChannelCtrl from './channel.controller';
 import ChannelService from './channel.service';
@@ -49,7 +48,6 @@ const channelModule = angular
   .controller('ChannelCtrl', ChannelCtrl)
   .service('ChannelService', ChannelService)
   .service('MaskService', MaskService)
-  .component('componentCatalog', componentCatalogComponent)
   .run(run);
 
 export default channelModule;

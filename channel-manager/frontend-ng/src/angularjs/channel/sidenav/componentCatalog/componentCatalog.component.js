@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-class ComponentCatalogController {
-  constructor(MaskService) {
-    'ngInject';
+import template from './componentCatalog.html';
 
-    this.MaskService = MaskService;
-  }
+const componentCatalogComponent = {
+  bindings: {
+    components: '<',
+    onComponentSelect: '&',
+  },
+  template,
+};
 
-  onSelect() {
-    this.MaskService.mask();
-  }
-
-  deactivateMask() {
-    this.MaskService.unmask();
-  }
-}
-
-export default ComponentCatalogController;
+export default componentCatalogComponent;
