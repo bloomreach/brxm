@@ -56,6 +56,12 @@ public class SourceImpl implements Source {
         return Collections.unmodifiableList(definitions);
     }
 
+    public NodeTypeDefinitionImpl addNodeTypeDefition(final String cndString) {
+        final NodeTypeDefinitionImpl definition = new NodeTypeDefinitionImpl(this, cndString);
+        definitions.add(definition);
+        return definition;
+    }
+
     public ConfigDefinitionImpl addConfigDefinition() {
         final ConfigDefinitionImpl definition = new ConfigDefinitionImpl(this);
         definitions.add(definition);

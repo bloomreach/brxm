@@ -33,6 +33,7 @@ import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.PropertyType;
@@ -164,6 +165,7 @@ public class ConfigurationSerializer {
     private Node representSource(final Source source) {
         final List<Node> configDefinitionNodes = new ArrayList<>();
         final List<Node> contentDefinitionNodes = new ArrayList<>();
+        final List<Node> nodeTypeDefinitionNodes = new ArrayList<>();
 
         for (Definition definition : source.getDefinitions()) {
             switch (definition.getType()) {
@@ -174,6 +176,8 @@ public class ConfigurationSerializer {
                     contentDefinitionNodes.add(representContentDefinition((ContentDefinition) definition));
                     break;
                 case NODETYPE:
+                    nodeTypeDefinitionNodes.add(representNodetypeDefinition((NodeTypeDefinition) definition));
+                    break;
                 case NAMESPACE:
                 default:
                     throw new IllegalArgumentException("Cannot serialize definition, unknown type: " + definition.getType());
@@ -181,6 +185,11 @@ public class ConfigurationSerializer {
         }
 
         final List<Node> definitionNodes = new ArrayList<>();
+        if (nodeTypeDefinitionNodes.size() > 0) {
+            final List<NodeTuple> nodeTypeTuples = new ArrayList<>();
+            nodeTypeTuples.add(createStrSeqTuple("cnd", nodeTypeDefinitionNodes));
+            definitionNodes.add(new MappingNode(Tag.MAP, nodeTypeTuples, false));
+        }
         if (configDefinitionNodes.size() > 0) {
             final List<NodeTuple> configTuples = new ArrayList<>();
             configTuples.add(createStrSeqTuple("config", configDefinitionNodes));
@@ -242,6 +251,10 @@ public class ConfigurationSerializer {
         return representer.represent(value.getObject());
     }
 
+    private Node representNodetypeDefinition(final NodeTypeDefinition definition) {
+        return createStrScalar(definition.getCndString(), '|');
+    }
+
     private static NodeTuple createStrStrTuple(final String key, final String value) {
         return new NodeTuple(createStrScalar(key), createStrScalar(value));
     }
@@ -256,6 +269,10 @@ public class ConfigurationSerializer {
 
     private static ScalarNode createStrScalar(final String str) {
         return new ScalarNode(Tag.STR, str, null, null, null);
+    }
+
+    private static ScalarNode createStrScalar(final String str, final Character style) {
+        return new ScalarNode(Tag.STR, str, null, null, style);
     }
 
 }

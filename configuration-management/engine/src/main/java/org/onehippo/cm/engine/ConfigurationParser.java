@@ -177,6 +177,9 @@ class ConfigurationParser {
         final String instructionName = sourceMap.keySet().iterator().next();
         final Node instructionNode = sourceMap.get(instructionName);
         switch (instructionName) {
+            case "cnd":
+                constructNodeTypeDefinitions(instructionNode, parent);
+                break;
             case "config":
                 constructConfigDefinitions(instructionNode, parent);
                 break;
@@ -185,6 +188,13 @@ class ConfigurationParser {
                 break;
             default:
                 throw new ConfigurationException("Unknown instruction type '" + instructionName + "'", src);
+        }
+    }
+
+    private void constructNodeTypeDefinitions(final Node src, final SourceImpl parent) {
+        for (Node node : asSequence(src)) {
+            final String cndString = asStringScalar(node);
+            parent.addNodeTypeDefition(cndString);
         }
     }
 
