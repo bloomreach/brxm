@@ -35,7 +35,7 @@
 
     <@hst.headContribution keyHint="google-maps-api" category="htmlBodyEnd">
         <#if cparam.apiKey?has_content>
-            <#assign mapsUrl = "https://maps.googleapis.com/maps/api/js?key=${cparam.apiKey?html}&callback=HippoEssentials.GoogleMaps.init"/>
+            <#assign mapsUrl = "https://maps.googleapis.com/maps/api/js?key=${cparam.apiKey?html}&amp;callback=HippoEssentials.GoogleMaps.init"/>
         <#else>
             <#assign mapsUrl = "https://maps.googleapis.com/maps/api/js?callback=HippoEssentials.GoogleMaps.init"/>
         </#if>
