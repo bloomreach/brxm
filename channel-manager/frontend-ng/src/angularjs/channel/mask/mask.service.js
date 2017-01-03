@@ -16,7 +16,7 @@
 
 class MaskService {
   constructor() {
-    this.clickHandlers = [];
+    this.clickHandler = angular.noop;
   }
 
   isMasked() {
@@ -29,10 +29,6 @@ class MaskService {
 
   unmask() {
     this.masked = false;
-  }
-
-  runClickHandlers() {
-    this.clickHandlers.forEach(handler => handler());
   }
 }
 

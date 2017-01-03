@@ -26,7 +26,7 @@ class MaskCtrl {
   }
 
   onClick() {
-    this.MaskService.runClickHandlers();
+    this.MaskService.clickHandler();
   }
 }
 
