@@ -14,26 +14,12 @@
  * limitations under the License.
  */
 
-class MaskService {
-  constructor() {
-    this.clickHandlers = [];
-  }
+import template from './mask.html';
+import MaskCtrl from './mask.controller';
 
-  isMasked() {
-    return this.masked;
-  }
+const maskComponent = {
+  template,
+  controller: MaskCtrl,
+};
 
-  mask() {
-    this.masked = true;
-  }
-
-  unmask() {
-    this.masked = false;
-  }
-
-  runClickHandlers() {
-    this.clickHandlers.forEach(handler => handler());
-  }
-}
-
-export default MaskService;
+export default maskComponent;

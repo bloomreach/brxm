@@ -22,7 +22,7 @@ import channelActionsModule from './actions/actions';
 import channelSidenavModule from './sidenav/sidenav';
 import channelHippoIframeModule from './hippoIframe/hippoIframe';
 import channelMenuModule from './menu/editor';
-import MaskService from './mask/mask.service';
+import maskModule from './mask/mask';
 import channelRelevanceModule from './relevance/relevance';
 import channelViewportsModule from './viewports/viewports';
 import config from './channel.config';
@@ -43,11 +43,11 @@ const channelModule = angular
     channelMenuModule.name,
     channelRelevanceModule.name,
     channelViewportsModule.name,
+    maskModule.name,
   ])
   .config(config)
   .controller('ChannelCtrl', ChannelCtrl)
   .service('ChannelService', ChannelService)
-  .service('MaskService', MaskService)
   .run(run);
 
 export default channelModule;

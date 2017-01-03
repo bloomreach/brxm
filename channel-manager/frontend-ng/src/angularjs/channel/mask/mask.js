@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-class MaskService {
-  constructor() {
-    this.clickHandlers = [];
-  }
+import MaskService from './mask.service';
+import maskComponent from './mask.component';
 
-  isMasked() {
-    return this.masked;
-  }
+const maskModule = angular
+  .module('hippo-cm.channel.mask', [])
+  .service('MaskService', MaskService)
+  .component('mask', maskComponent);
 
-  mask() {
-    this.masked = true;
-  }
+export default maskModule;
 
-  unmask() {
-    this.masked = false;
-  }
-
-  runClickHandlers() {
-    this.clickHandlers.forEach(handler => handler());
-  }
-}
-
-export default MaskService;

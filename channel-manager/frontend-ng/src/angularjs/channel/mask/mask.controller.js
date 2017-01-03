@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-class MaskService {
-  constructor() {
-    this.clickHandlers = [];
+class MaskCtrl {
+  constructor(MaskService) {
+    'ngInject';
+
+    this.MaskService = MaskService;
   }
 
   isMasked() {
-    return this.masked;
+    return this.MaskService.isMasked();
   }
 
-  mask() {
-    this.masked = true;
-  }
-
-  unmask() {
-    this.masked = false;
-  }
-
-  runClickHandlers() {
-    this.clickHandlers.forEach(handler => handler());
+  onClick() {
+    this.MaskService.runClickHandlers();
   }
 }
 
-export default MaskService;
+export default MaskCtrl;
+
