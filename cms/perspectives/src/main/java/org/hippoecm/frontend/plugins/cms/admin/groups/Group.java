@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -80,7 +79,7 @@ public class Group implements Comparable<Group>, IClusterable {
     }
 
     @FunctionalInterface
-    private interface QueryResultMapper<T> extends Serializable {
+    private interface QueryResultMapper<T> {
         T map(final Node node) throws RepositoryException;
     }
 
