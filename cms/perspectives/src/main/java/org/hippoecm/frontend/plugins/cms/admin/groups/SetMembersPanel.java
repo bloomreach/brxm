@@ -175,7 +175,7 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
                         showInfo(getString("group-member-removed"));
                         localList.removeAll();
                     } catch (RepositoryException e) {
-                        showError(getString("group-member-remove-failed", null));
+                        showError(getString("group-member-remove-failed"));
                         log.error("Failed to remove memberships", e);
                     }
                     target.add(SetMembersPanel.this);
