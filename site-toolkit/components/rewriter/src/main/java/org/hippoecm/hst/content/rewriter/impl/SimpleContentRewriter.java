@@ -61,7 +61,8 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
         "tel:", 
         "sms:",
         "/",
-        "$" };
+        "$",
+        "sip:" };
 
     protected static final String LINK_TAG = "<a";
     protected static final String IMG_TAG = "<img";
