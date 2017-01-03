@@ -22,7 +22,7 @@ import channelActionsModule from './actions/actions';
 import channelSidenavModule from './sidenav/sidenav';
 import channelHippoIframeModule from './hippoIframe/hippoIframe';
 import channelMenuModule from './menu/editor';
-import maskModule from './mask/mask';
+import maskModule from './mask/mask.module';
 import channelRelevanceModule from './relevance/relevance';
 import channelViewportsModule from './viewports/viewports';
 import config from './channel.config';
