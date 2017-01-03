@@ -23,15 +23,17 @@ class ComponentCatalogController {
   }
 
   onSelect(component) {
+    const catalogHandler = () => {
+      this.MaskService.unmask();
+      this.HippoIframeService.lowerIframeBeneathMask();
+      this._deselectComponent();
+      this.MaskService.clickHandler = angular.noop;
+    };
+
+    this.MaskService.clickHandler = catalogHandler;
     this.MaskService.mask();
     this.HippoIframeService.liftIframeAboveMask();
-
     this._selectComponent(component);
-
-    this.MaskService.clickHandlers.push(() => {
-      this.MaskService.unmask();
-      this._deselectComponent();
-    });
   }
 
   _selectComponent(component) {
