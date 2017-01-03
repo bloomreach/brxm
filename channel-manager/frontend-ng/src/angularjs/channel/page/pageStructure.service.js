@@ -49,6 +49,7 @@ class PageStructureService {
     this.PageMetaDataService = PageMetaDataService;
     this.RenderingService = RenderingService;
 
+    this.CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
     this.clearParsedElements();
   }
 
@@ -247,7 +248,7 @@ class PageStructureService {
       },
       page: this.PageMetaDataService.get(),
     });
-    this.MaskService.add();
+    this.MaskService.mask();
   }
 
   printParsedElements() {

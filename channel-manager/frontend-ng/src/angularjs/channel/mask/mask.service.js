@@ -15,24 +15,16 @@
  */
 
 class MaskService {
-  constructor() {
-    'ngInject';
+  isMasked() {
+    return this.masked;
   }
 
-  initialize(maskJQueryElement) {
-    this.maskJQueryElement = maskJQueryElement;
+  mask() {
+    this.masked = true;
   }
 
-  add() {
-    if (this.maskJQueryElement) {
-      this.maskJQueryElement.addClass('masked');
-    }
-  }
-
-  remove() {
-    if (this.maskJQueryElement) {
-      this.maskJQueryElement.removeClass('masked');
-    }
+  unmask() {
+    this.masked = false;
   }
 }
 

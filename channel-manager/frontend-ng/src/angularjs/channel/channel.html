@@ -115,4 +115,4 @@
              on-error="channelCtrl.onSubpageError(key, params)">
 </menu-editor>
 
-<div class="mask qa-mask" mask></div>
+<div class="mask qa-mask" ng-class="{'masked': channelCtrl.isMasked()}"></div>

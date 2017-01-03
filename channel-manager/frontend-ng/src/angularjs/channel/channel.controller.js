@@ -19,13 +19,14 @@ class ChannelCtrl {
   constructor(
       $log,
       $rootScope,
-      $translate,
       $stateParams,
       $timeout,
+      $translate,
       ChannelService,
       CmsService,
       FeedbackService,
       HippoIframeService,
+      MaskService,
       PageMetaDataService,
       ScalingService,
       SessionService
@@ -39,9 +40,11 @@ class ChannelCtrl {
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.MaskService = MaskService;
     this.PageMetaDataService = PageMetaDataService;
     this.ScalingService = ScalingService;
     this.SessionService = SessionService;
+
     this.isEditMode = false;
     this.isCreatingPreview = false;
 
@@ -145,6 +148,10 @@ class ChannelCtrl {
     if (key) {
       this.FeedbackService.showError(key, params);
     }
+  }
+
+  isMasked() {
+    return this.MaskService.isMasked();
   }
 }
 
