@@ -15,5 +15,9 @@
  */
 package org.onehippo.cm.api.model;
 
+import java.net.URI;
+
 public interface NamespaceDefinition extends Definition {
+    String getPrefix();
+    URI getURI();
 }

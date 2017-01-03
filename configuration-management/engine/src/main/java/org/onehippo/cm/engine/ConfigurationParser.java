@@ -17,6 +17,8 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
@@ -177,6 +179,9 @@ class ConfigurationParser {
         final String instructionName = sourceMap.keySet().iterator().next();
         final Node instructionNode = sourceMap.get(instructionName);
         switch (instructionName) {
+            case "namespace":
+                constructNamespaceDefinitions(instructionNode, parent);
+                break;
             case "cnd":
                 constructNodeTypeDefinitions(instructionNode, parent);
                 break;
@@ -191,10 +196,19 @@ class ConfigurationParser {
         }
     }
 
+    private void constructNamespaceDefinitions(final Node src, final SourceImpl parent) {
+        for (Node node : asSequence(src)) {
+            final Map<String, Node> namespaceMap = asMapping(node, new String[]{"prefix", "uri"}, null);
+            final String prefix = asStringScalar(namespaceMap.get("prefix"));
+            final URI uri = asURIScalar(namespaceMap.get("uri"));
+            parent.addNamespaceDefinition(prefix, uri);
+        }
+    }
+
     private void constructNodeTypeDefinitions(final Node src, final SourceImpl parent) {
         for (Node node : asSequence(src)) {
             final String cndString = asStringScalar(node);
-            parent.addNodeTypeDefition(cndString);
+            parent.addNodeTypeDefinition(cndString);
         }
     }
 
@@ -380,6 +394,18 @@ class ConfigurationParser {
             throw new ConfigurationException("Scalar must be a string", node);
         }
         return scalarNode.getValue();
+    }
+
+    private URI asURIScalar(final Node node) {
+        final ScalarNode scalarNode = asScalar(node);
+        if (!scalarNode.getTag().equals(Tag.STR)) {
+            throw new ConfigurationException("Scalar must be a string", node);
+        }
+        try {
+            return new URI(scalarNode.getValue());
+        } catch (final URISyntaxException e) {
+            throw new ConfigurationException("Scalar must be formatted as an URI", node);
+        }
     }
 
     private List<Module> collectModules(Map<String, Configuration> configurations) {

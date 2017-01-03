@@ -33,6 +33,7 @@ import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
@@ -165,6 +166,7 @@ public class ConfigurationSerializer {
     private Node representSource(final Source source) {
         final List<Node> configDefinitionNodes = new ArrayList<>();
         final List<Node> contentDefinitionNodes = new ArrayList<>();
+        final List<Node> namespaceDefinitionNodes = new ArrayList<>();
         final List<Node> nodeTypeDefinitionNodes = new ArrayList<>();
 
         for (Definition definition : source.getDefinitions()) {
@@ -175,16 +177,23 @@ public class ConfigurationSerializer {
                 case CONTENT:
                     contentDefinitionNodes.add(representContentDefinition((ContentDefinition) definition));
                     break;
+                case NAMESPACE:
+                    namespaceDefinitionNodes.add(representNamespaceDefinition((NamespaceDefinition) definition));
+                    break;
                 case NODETYPE:
                     nodeTypeDefinitionNodes.add(representNodetypeDefinition((NodeTypeDefinition) definition));
                     break;
-                case NAMESPACE:
                 default:
                     throw new IllegalArgumentException("Cannot serialize definition, unknown type: " + definition.getType());
             }
         }
 
         final List<Node> definitionNodes = new ArrayList<>();
+        if (namespaceDefinitionNodes.size() > 0) {
+            final List<NodeTuple> nodeTypeTuples = new ArrayList<>();
+            nodeTypeTuples.add(createStrSeqTuple("namespace", namespaceDefinitionNodes));
+            definitionNodes.add(new MappingNode(Tag.MAP, nodeTypeTuples, false));
+        }
         if (nodeTypeDefinitionNodes.size() > 0) {
             final List<NodeTuple> nodeTypeTuples = new ArrayList<>();
             nodeTypeTuples.add(createStrSeqTuple("cnd", nodeTypeDefinitionNodes));
@@ -249,6 +258,13 @@ public class ConfigurationSerializer {
     private Node representValue(final Value value) {
         final Representer representer = new Representer();
         return representer.represent(value.getObject());
+    }
+
+    private Node representNamespaceDefinition(final NamespaceDefinition definition) {
+        final List<NodeTuple> tuples = new ArrayList<>(1);
+        tuples.add(createStrStrTuple("prefix", definition.getPrefix()));
+        tuples.add(createStrStrTuple("uri", definition.getURI().toString()));
+        return new MappingNode(Tag.MAP, tuples, false);
     }
 
     private Node representNodetypeDefinition(final NodeTypeDefinition definition) {

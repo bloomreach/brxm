@@ -24,6 +24,7 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
@@ -43,16 +44,20 @@ public class HierarchyTest extends AbstractBaseTest {
         final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
         final Project project1 = assertProject(base, "project1", new String[0], 1);
         final Module module1 = assertModule(project1, "module1", new String[0], 1);
-        final Source source1 = assertSource(module1, "base/project1/module1/config.yaml", 3);
+        final Source source1 = assertSource(module1, "base/project1/module1/config.yaml", 4);
 
-        final NodeTypeDefinition nodeType = assertDefinition(source1, 0, NodeTypeDefinition.class);
+        final NamespaceDefinition namespace = assertDefinition(source1, 0, NamespaceDefinition.class);
+        assertEquals("myhippoproject", namespace.getPrefix());
+        assertEquals("http://www.onehippo.org/myhippoproject/nt/1.0", namespace.getURI().toString());
+
+        final NodeTypeDefinition nodeType = assertDefinition(source1, 1, NodeTypeDefinition.class);
         assertEquals(
                 "<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>\n" +
                         "<'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>\n" +
                         "[myhippoproject:basedocument] > hippo:document orderable\n",
                 nodeType.getCndString());
 
-        final ConfigDefinition definition1 = assertDefinition(source1, 1, ConfigDefinition.class);
+        final ConfigDefinition definition1 = assertDefinition(source1, 2, ConfigDefinition.class);
         final DefinitionNode rootDefinition1 = assertNode(definition1, "/", "/", definition1, false, 3, 1);
         assertProperty(rootDefinition1, "root-level-property", "/root-level-property",
                 definition1, false, "root-level-property-value");
@@ -75,7 +80,7 @@ public class HierarchyTest extends AbstractBaseTest {
         assertProperty(subNode, "property", "/node-with-sub-node/sub-node/property",
                 definition1, false, "sub-node-value");
 
-        final ContentDefinition contentDefinition = assertDefinition(source1, 2, ContentDefinition.class);
+        final ContentDefinition contentDefinition = assertDefinition(source1, 3, ContentDefinition.class);
         assertNode(contentDefinition, "/content/documents/myhippoproject", "/content/documents/myhippoproject", contentDefinition, false, 0, 1);
 
         final Configuration myhippoproject = assertConfiguration(configurations, "myhippoproject", new String[]{"base"}, 1);

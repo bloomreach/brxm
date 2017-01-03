@@ -1,4 +1,7 @@
 instructions:
+  - namespace:
+      - prefix: myhippoproject
+        uri: http://www.onehippo.org/myhippoproject/nt/1.0
   - cnd:
       - |
         <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
