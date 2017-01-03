@@ -67,6 +67,7 @@ class ChannelSidenavCtrl {
 
   onComponentSelect() {
     this.MaskService.mask();
+    this.HippoIframeService.liftIframeAboveMask();
   }
 }
 

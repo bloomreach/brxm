@@ -19,7 +19,7 @@
   position: absolute;
   top: 0;
   width: 100%;
-  z-index: 100; // must be higher than sidenav (60)
+  z-index: $z-index-mask; // must be higher than sidenav (60)
 
   &.masked {
     cursor: not-allowed;
@@ -53,7 +53,7 @@ md-toolbar > md-progress-linear {
   }
 }
 
-Style invalid select boxes
+// Style invalid select boxes
 .md-input-invalid md-select {
   // color required invalid select boxes red
   &.ng-invalid ._md-select-value {

@@ -30,3 +30,8 @@
   margin-left: auto;
   margin-right: auto;
 }
+
+.iframe-lifted {
+  position: relative;
+  z-index: $z-index-iframe-lifted;
+}

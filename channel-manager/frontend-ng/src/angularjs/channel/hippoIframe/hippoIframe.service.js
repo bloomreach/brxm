@@ -98,6 +98,14 @@ class HippoIframeService {
       return undefined;
     }
   }
+
+  liftIframeAboveMask() {
+    this.isIframeLifted = true;
+  }
+
+  lowerIframeBeneathMask() {
+    this.isIframeLifted = false;
+  }
 }
 
 export default HippoIframeService;

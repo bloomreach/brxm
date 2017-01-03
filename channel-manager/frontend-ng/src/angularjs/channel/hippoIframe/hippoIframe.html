@@ -14,13 +14,22 @@
   limitations under the License.
   -->
 
-<md-content class="channel-iframe-base" flex layout="row">
-  <div class="channel-iframe-canvas" flex layout="row">
-    <div class="channel-iframe-sheet cm-scale" flex layout="row">
+<md-content class="channel-iframe-base"
+            flex
+            layout="row">
+  <div class="channel-iframe-canvas"
+       flex
+       layout="row">
+    <div class="channel-iframe-sheet cm-scale"
+         ng-class="{'iframe-lifted': iframe.isIframeLifted()}"
+         flex
+         layout="row">
       <iframe class="qa-view"
               flex="noshrink"
-              ng-src="{{ iframe.getSrc() }}"></iframe>
+              ng-src="{{ iframe.getSrc() }}">
+      </iframe>
     </div>
+
     <div class="channel-dragula-mirror cm-scale"></div>
   </div>
 </md-content>

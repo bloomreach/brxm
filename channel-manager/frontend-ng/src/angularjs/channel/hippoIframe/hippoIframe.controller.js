@@ -195,6 +195,10 @@ class HippoIframeCtrl {
   getSrc() {
     return this.HippoIframeService.getSrc();
   }
+
+  isIframeLifted() {
+    return this.HippoIframeService.isIframeLifted;
+  }
 }
 
 export default HippoIframeCtrl;

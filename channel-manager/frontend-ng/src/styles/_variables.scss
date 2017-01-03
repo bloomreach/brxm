@@ -132,3 +132,9 @@ $layout-breakpoint-xs: 600px !default;
 $layout-breakpoint-sm: 960px !default;
 $layout-breakpoint-md: 1280px !default;
 $layout-breakpoint-lg: 1920px !default;
+
+// Z-indexes
+$z-index-sidenav: 60;
+$z-index-mask: $z-index-sidenav + 1;
+$z-index-iframe-lifted: $z-index-mask + 1;
+$z-index-tree: 999;
