@@ -24,11 +24,12 @@ import channelHippoIframeModule from './hippoIframe/hippoIframe';
 import channelMenuModule from './menu/editor';
 import channelMaskModule from './mask/mask';
 import channelRelevanceModule from './relevance/relevance';
+import channelViewportsModule from './viewports/viewports';
+import componentCatalogComponent from './componentCatalog/componentCatalog.component';
 import config from './channel.config';
 import ChannelCtrl from './channel.controller';
 import ChannelService from './channel.service';
 import run from './channel.run';
-import channelViewportsModule from './viewports/viewports';
 
 const channelModule = angular
   .module('hippo-cm.channel', [
@@ -48,6 +49,7 @@ const channelModule = angular
   .config(config)
   .controller('ChannelCtrl', ChannelCtrl)
   .service('ChannelService', ChannelService)
+  .component('componentCatalog', componentCatalogComponent)
   .run(run);
 
 export default channelModule;

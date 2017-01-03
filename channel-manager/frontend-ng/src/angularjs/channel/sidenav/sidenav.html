@@ -14,12 +14,8 @@
   limitations under the License.
   -->
 
-<md-sidenav layout="row"
-            class="channel-sidenav"
-            md-component-id="channel-sidenav"
-            md-disable-backdrop>
-  <md-tabs flex
-           class="qa-sidenav-tabs">
+<md-sidenav layout="row" class="channel-sidenav" md-component-id="channel-sidenav" md-disable-backdrop>
+  <md-tabs flex class="qa-sidenav-tabs">
     <md-tab label="{{ 'SIDENAV_TAB_SITEMAP' | translate }}">
       <md-list class="qa-sitemap">
         <md-list-item class="md-2-line qa-sitemap-item"
@@ -29,31 +25,15 @@
                       ng-click="sidenav.showPage(item)">
           <div class="md-list-item-text">
             <h4 class="qa-pathinfo">{{ item.pathInfo | startWithSlash }}</h4>
-
             <p class="qa-name">{{ item.pageTitle || item.name }}</p>
           </div>
-
           <md-divider ng-if="!$last"></md-divider>
         </md-list-item>
       </md-list>
     </md-tab>
-
     <md-tab label="{{ 'SIDENAV_TAB_COMPONENTS' | translate }}"
             ng-if="sidenav.showComponentsTab()">
-      <md-list class="qa-catalog">
-        <md-list-item class="md-1-line"
-                      ng-repeat="component in sidenav.getCatalog()"
-                      ng-click="null">
-          <img class="md-avatar"
-               ng-src="{{component.iconURL}}" />
-
-          <div class="md-list-item-text">
-            <p class="qa-name">{{ component.label }}</p>
-          </div>
-
-          <md-divider ng-if="!$last"></md-divider>
-        </md-list-item>
-      </md-list>
+      <component-catalog components="sidenav.getCatalog()"></component-catalog>
     </md-tab>
   </md-tabs>
 </md-sidenav>
