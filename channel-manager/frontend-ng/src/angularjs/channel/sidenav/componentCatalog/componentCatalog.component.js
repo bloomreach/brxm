@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
+import ComponentCatalogController from './componentCatalog.controller';
 import template from './componentCatalog.html';
 
 const componentCatalogComponent = {
   bindings: {
     components: '<',
-    onComponentSelect: '&',
   },
   template,
+  controller: ComponentCatalogController,
 };
 
 export default componentCatalogComponent;

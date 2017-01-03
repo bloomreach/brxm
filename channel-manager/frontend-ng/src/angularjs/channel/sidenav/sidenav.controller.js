@@ -22,7 +22,6 @@ class ChannelSidenavCtrl {
       ChannelService,
       ChannelSidenavService,
       HippoIframeService,
-      MaskService,
       SiteMapService
     ) {
     'ngInject';
@@ -31,7 +30,6 @@ class ChannelSidenavCtrl {
     this.ChannelService = ChannelService;
     this.ChannelSidenavService = ChannelSidenavService;
     this.HippoIframeService = HippoIframeService;
-    this.MaskService = MaskService;
     this.SiteMapService = SiteMapService;
 
     ChannelSidenavService.initialize($element.find('md-sidenav'));
@@ -63,12 +61,6 @@ class ChannelSidenavCtrl {
 
   isActiveSiteMapItem(siteMapItem) {
     return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
-  }
-
-  onComponentSelect() {
-    this.MaskService.mask();
-    this.HippoIframeService.liftIframeAboveMask();
-    this.MaskService.clickHandler = this.MaskService.unmask;
   }
 }
 
