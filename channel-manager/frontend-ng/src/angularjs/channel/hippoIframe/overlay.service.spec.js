@@ -15,19 +15,26 @@
  */
 
 describe('OverlayService', () => {
+  let $q;
+  let $rootScope;
   let hstCommentsProcessorService;
   let OverlayService;
   let PageStructureService;
+  let RenderingService;
   let $iframe;
   let iframeWindow;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_hstCommentsProcessorService_, _OverlayService_, _PageStructureService_) => {
+    inject((_$q_, _$rootScope_, _hstCommentsProcessorService_, _OverlayService_,
+            _PageStructureService_, _RenderingService_) => {
+      $q = _$q_;
+      $rootScope = _$rootScope_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
+      RenderingService = _RenderingService_;
     });
 
     jasmine.getFixtures().load('channel/hippoIframe/overlay.service.fixture.html');
@@ -240,6 +247,30 @@ describe('OverlayService', () => {
       overlayElement.click();
 
       expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(component);
+
+      done();
+    });
+  });
+
+  it('removes overlay elements when they are no longer part of the page structure', (done) => {
+    OverlayService.setMode('edit');
+
+    loadIframeFixture(() => {
+      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(6);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
+
+      const componentMarkupWithoutMenuLink = `
+        <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          <p id="markup-in-component-a">Markup in component A without menu link</p>
+        <!-- { "HST-End": "true", "uuid": "aaaa" } -->      
+      `;
+      spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithoutMenuLink }));
+
+      PageStructureService.renderComponent('aaaa');
+      $rootScope.$digest();
+
+      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(5);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
     });

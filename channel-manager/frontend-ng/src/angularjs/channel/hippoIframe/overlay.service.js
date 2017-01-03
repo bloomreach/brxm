@@ -86,7 +86,17 @@ class OverlayService {
   sync() {
     if (this.overlay) {
       this.overlay.detach();
-      this._forAllStructureElements(structureElement => this._syncElement(structureElement));
+
+      const currentOverlayElements = new Set();
+
+      this._forAllStructureElements((structureElement) => {
+        this._syncElement(structureElement);
+
+        const overlayElement = structureElement.getOverlayElement()[0];
+        currentOverlayElements.add(overlayElement);
+      });
+
+      this._tidyOverlay(currentOverlayElements);
       this._attachOverlay();
     }
   }
@@ -171,6 +181,19 @@ class OverlayService {
     overlayElement.css('left', `${rect.left}px`);
     overlayElement.css('height', `${rect.height}px`);
     overlayElement.css('width', `${rect.width}px`);
+  }
+
+  _tidyOverlay(elementsToKeep) {
+    const overlayElements = this.overlay.children();
+
+    // to improve performance, only iterate when there are elements to remove
+    if (overlayElements.length > elementsToKeep.size) {
+      overlayElements.each((index, element) => {
+        if (!elementsToKeep.has(element)) {
+          $(element).remove();
+        }
+      });
+    }
   }
 
   _getIframeWindow() {
