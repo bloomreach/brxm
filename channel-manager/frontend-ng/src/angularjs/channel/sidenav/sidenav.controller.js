@@ -68,6 +68,7 @@ class ChannelSidenavCtrl {
   onComponentSelect() {
     this.MaskService.mask();
     this.HippoIframeService.liftIframeAboveMask();
+    this.MaskService.clickHandler = this.MaskService.unmask;
   }
 }
 
