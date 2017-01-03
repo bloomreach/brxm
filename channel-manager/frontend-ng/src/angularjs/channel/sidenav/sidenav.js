@@ -19,12 +19,9 @@ import ChannelSidenavToggleCtrl from './toggle.controller';
 import channelSidenavToggleDirective from './toggle.directive';
 import ChannelSidenavCtrl from './sidenav.controller';
 import channelSidenavDirective from './sidenav.directive';
-import componentCatalogModule from './componentCatalog/componentCatalog.module';
 
 const channelSidenavModule = angular
-  .module('hippo-cm.channel.sidenav', [
-    componentCatalogModule.name,
-  ])
+  .module('hippo-cm.channel.sidenav', [])
   .service('ChannelSidenavService', ChannelSidenavService)
   .controller('ChannelSidenavToggleCtrl', ChannelSidenavToggleCtrl)
   .directive('channelSidenavToggle', channelSidenavToggleDirective)
