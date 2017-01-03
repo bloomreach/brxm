@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-class ComponentCatalogController {
-  constructor(ComponentCatalogService) {
-    this.ComponentCatalogService = ComponentCatalogService;
-  }
+import ComponentCatalogService from './componentCatalog.service';
+import componentCatalogComponent from './componentCatalog.component';
 
-  onSelect(component) {
-    this.ComponentCatalogService.select(component);
-  }
-}
+const componentCatalogModule = angular
+  .module('hippo-cm.channel.componentCatalog', [])
+  .service('ComponentCatalogService', ComponentCatalogService)
+  .component('componentCatalog', componentCatalogComponent);
 
-export default ComponentCatalogController;
+export default componentCatalogModule;
+
