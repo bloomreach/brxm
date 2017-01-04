@@ -118,14 +118,16 @@ class OverlayService {
     const overlayElement = $(`
       <div class="hippo-overlay-element hippo-overlay-element-${structureElement.getType()}">
         <span class="hippo-overlay-label">
-          <span class="hippo-overlay-label-text">${escapedLabel}</span>        
+          <span class="hippo-overlay-label-text">${escapedLabel}</span>
         </span>
       </div>`);
 
     if (structureElement.getType() === 'component') {
       overlayElement.click((event) => {
         event.stopPropagation();
-        this.PageStructureService.showComponentProperties(structureElement);
+        this.$rootScope.$apply(() => {
+          this.PageStructureService.showComponentProperties(structureElement);
+        });
       });
     }
 
