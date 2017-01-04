@@ -177,8 +177,10 @@ class OverlayService {
 
   _syncPosition(overlayElement, boxElement) {
     const rect = boxElement[0].getBoundingClientRect();
-    overlayElement.css('top', `${rect.top}px`);
-    overlayElement.css('left', `${rect.left}px`);
+    const window = this._getIframeWindow();
+
+    overlayElement.css('top', `${rect.top + window.scrollY}px`);
+    overlayElement.css('left', `${rect.left + window.scrollX}px`);
     overlayElement.css('height', `${rect.height}px`);
     overlayElement.css('width', `${rect.width}px`);
   }
