@@ -15,19 +15,26 @@
  */
 
 describe('OverlayService', () => {
+  let $q;
+  let $rootScope;
   let hstCommentsProcessorService;
   let OverlayService;
   let PageStructureService;
+  let RenderingService;
   let $iframe;
   let iframeWindow;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_hstCommentsProcessorService_, _OverlayService_, _PageStructureService_) => {
+    inject((_$q_, _$rootScope_, _hstCommentsProcessorService_, _OverlayService_,
+            _PageStructureService_, _RenderingService_) => {
+      $q = _$q_;
+      $rootScope = _$rootScope_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
+      RenderingService = _RenderingService_;
     });
 
     jasmine.getFixtures().load('channel/hippoIframe/overlay/overlay.service.fixture.html');
@@ -57,7 +64,7 @@ describe('OverlayService', () => {
     return $j(selector, iframeWindow.document);
   }
 
-  it('should initialize when the iframe is loaded', (done) => {
+  it('initializes when the iframe is loaded', (done) => {
     spyOn(OverlayService, '_onLoad');
     loadIframeFixture(() => {
       expect(OverlayService._onLoad).toHaveBeenCalled();
@@ -65,15 +72,11 @@ describe('OverlayService', () => {
     });
   });
 
-  it('should not throw errors when the iframe is loaded but does not have a document (e.g. loaded a PDF)', () => {
-    expect(() => OverlayService._onLoad()).not.toThrow();
-  });
-
-  it('should not throw errors when synced before init', () => {
+  it('does not throw errors when synced before init', () => {
     expect(() => OverlayService.sync()).not.toThrow();
   });
 
-  it('should attach an unload handler to the iframe', (done) => {
+  it('attaches an unload handler to the iframe', (done) => {
     spyOn(OverlayService, '_onUnload');
     loadIframeFixture(() => {
       // load URL again to cause unload
@@ -84,14 +87,14 @@ describe('OverlayService', () => {
     });
   });
 
-  it('should attach a MutationObserver on the iframe document on first load', (done) => {
+  it('attaches a MutationObserver on the iframe document on first load', (done) => {
     loadIframeFixture(() => {
       expect(OverlayService.observer).not.toBeNull();
       done();
     });
   });
 
-  it('should disconnect the MutationObserver on iframe unload', (done) => {
+  it('disconnects the MutationObserver on iframe unload', (done) => {
     loadIframeFixture(() => {
       const disconnect = spyOn(OverlayService.observer, 'disconnect').and.callThrough();
       // load URL again to cause unload
@@ -102,7 +105,7 @@ describe('OverlayService', () => {
     });
   });
 
-  it('should sync when the iframe DOM is changed', (done) => {
+  it('syncs when the iframe DOM is changed', (done) => {
     spyOn(OverlayService, 'sync');
     loadIframeFixture(() => {
       OverlayService.sync.calls.reset();
@@ -111,7 +114,7 @@ describe('OverlayService', () => {
     });
   });
 
-  it('should sync when the iframe is resized', (done) => {
+  it('syncs when the iframe is resized', (done) => {
     spyOn(OverlayService, 'sync');
     loadIframeFixture(() => {
       OverlayService.sync.calls.reset();
@@ -121,7 +124,7 @@ describe('OverlayService', () => {
     });
   });
 
-  it('should generate an empty overlay when there are no page structure elements', (done) => {
+  it('generates an empty overlay when there are no page structure elements', (done) => {
     spyOn(PageStructureService, 'getContainers').and.returnValue([]);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
     loadIframeFixture(() => {
@@ -130,7 +133,7 @@ describe('OverlayService', () => {
     });
   });
 
-  it('should set the class hippo-mode-edit on the HTML element when edit mode is active', (done) => {
+  it('sets the class hippo-mode-edit on the HTML element when edit mode is active', (done) => {
     spyOn(PageStructureService, 'getContainers').and.returnValue([]);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
     loadIframeFixture(() => {
@@ -151,7 +154,7 @@ describe('OverlayService', () => {
     });
   });
 
-  it('should generate overlay elements', (done) => {
+  it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
       expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(6);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-component').length).toBe(2);
@@ -162,7 +165,7 @@ describe('OverlayService', () => {
     });
   });
 
-  it('should sync the position of overlay elements in view mode', (done) => {
+  it('syncs the position of overlay elements in view mode', (done) => {
     OverlayService.setMode('view');
     loadIframeFixture(() => {
       const components = iframe('#hippo-overlay > .hippo-overlay-element-component');
@@ -189,7 +192,7 @@ describe('OverlayService', () => {
     });
   });
 
-  it('should sync the position of overlay elements in edit mode', (done) => {
+  it('syncs the position of overlay elements in edit mode', (done) => {
     OverlayService.setMode('edit');
     loadIframeFixture(() => {
       const components = iframe('#hippo-overlay > .hippo-overlay-element-component');
@@ -220,6 +223,71 @@ describe('OverlayService', () => {
       expect(emptyContainer.css('left')).toBe('0px');
       expect(emptyContainer.css('width')).toBe('200px');
       expect(emptyContainer.css('height')).toBe('40px');  // minimum height of empty container
+
+      done();
+    });
+  });
+
+  it('takes the scroll position of the iframe into account when positioning overlay elements', (done) => {
+    OverlayService.setMode('view');
+    loadIframeFixture(() => {
+      // enlarge body so the iframe can scroll
+      const body = iframe('body');
+      body.width('200%');
+      body.height('200%');
+
+      iframeWindow.scrollTo(1, 2);
+      OverlayService.sync();
+
+      const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
+      expect(contentLink.css('top')).toBe(`${4 + 100}px`);
+      expect(contentLink.css('left')).toBe(`${200 - 56}px`);
+      expect(contentLink.css('width')).toBe('56px');
+      expect(contentLink.css('height')).toBe('56px');
+
+      done();
+    });
+  });
+
+  it('shows the properties of a component when its overlay element is clicked', (done) => {
+    spyOn(PageStructureService, 'showComponentProperties');
+
+    loadIframeFixture(() => {
+      const body = iframe('body')[0];
+      body.addEventListener('click', () => {
+        fail('click event on overlay should not propagate to the page');
+      });
+
+      const component = PageStructureService.getComponentById('aaaa');
+      const overlayElement = iframe('#hippo-overlay > .hippo-overlay-element-component').first();
+
+      overlayElement.click();
+
+      expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(component);
+
+      done();
+    });
+  });
+
+  it('removes overlay elements when they are no longer part of the page structure', (done) => {
+    OverlayService.setMode('edit');
+
+    loadIframeFixture(() => {
+      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(6);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
+
+      const componentMarkupWithoutMenuLink = `
+        <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          <p id="markup-in-component-a">Markup in component A without menu link</p>
+        <!-- { "HST-End": "true", "uuid": "aaaa" } -->      
+      `;
+      spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithoutMenuLink }));
+
+      PageStructureService.renderComponent('aaaa');
+      $rootScope.$digest();
+
+      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(5);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
     });

@@ -293,6 +293,8 @@ class PageStructureService {
 
     if (newComponent) {
       container.replaceComponent(oldComponent, newComponent);
+      // reuse the overlay element to reduce DOM manipulation and improve performance
+      newComponent.setOverlayElement(oldComponent.getOverlayElement());
     } else {
       container.removeComponent(oldComponent);
     }
@@ -383,6 +385,8 @@ class PageStructureService {
     }
     if (newContainer) {
       this.containers[index] = newContainer;
+      // reuse the overlay element to reduce DOM manipulation and improve performance
+      newContainer.setOverlayElement(oldContainer.getOverlayElement());
     } else {
       this.containers.splice(index, 1);
     }

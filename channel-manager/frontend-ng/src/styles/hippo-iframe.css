@@ -31,6 +31,7 @@ a.hst-cmseditlink {
   position: absolute;
   right: 0;
   top: 0;
+  z-index: 10000;
 }
 
 .hippo-overlay-element {
@@ -42,7 +43,6 @@ a.hst-cmseditlink {
 .hippo-overlay-element-container {
   border: 1px solid #000;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.50);
-  z-index: 10;
 }
 
 .hippo-overlay-element-component {
