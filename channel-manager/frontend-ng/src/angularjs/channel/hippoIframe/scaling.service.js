@@ -116,7 +116,7 @@ class ScalingService {
       elementsToScale.velocity('finish');
 
       if (animate) {
-        const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-base');
+        const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-canvas');
         const currentOffset = iframeBaseJQueryElement.scrollTop();
         const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
 

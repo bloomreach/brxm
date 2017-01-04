@@ -21,7 +21,6 @@ describe('ScalingService', () => {
   let ScalingService;
   let ViewportService;
   let iframeJQueryElement;
-  let baseJQueryElement;
   let canvasJQueryElement;
   let elementsToScale;
 
@@ -35,7 +34,6 @@ describe('ScalingService', () => {
 
     jasmine.getFixtures().load('channel/hippoIframe/scaling.service.fixture.html');
 
-    baseJQueryElement = $j('.channel-iframe-base');
     canvasJQueryElement = $j('.channel-iframe-canvas');
     elementsToScale = jasmine.createSpyObj('elementsToScale', ['velocity', 'css', 'scrollTop']);
 
@@ -120,40 +118,6 @@ describe('ScalingService', () => {
     expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
     expect(elementsToScale.css).toHaveBeenCalledWith('transform', 'scale(0.5)');
     expect(ScalingService.getScaleFactor()).toEqual(0.5);
-  });
-
-  it('should update the scroll position instantly while scaling', () => {
-    canvasJQueryElement.width(400);
-
-    // make the canvas scroll within the base element
-    baseJQueryElement.height(10);
-    canvasJQueryElement.height(500);
-
-    baseJQueryElement.scrollTop(100);
-
-    ScalingService.init(iframeJQueryElement);
-    elementsToScale.velocity.calls.reset();
-
-    ScalingService.setPushWidth(100);
-
-    expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
-    expect(elementsToScale.velocity).toHaveBeenCalledWith('scroll', {
-      container: baseJQueryElement,
-      offset: -25,
-      duration: ScalingService.scaleDuration,
-      easing: ScalingService.scaleEasing,
-      queue: false,
-    });
-    expect(elementsToScale.velocity).toHaveBeenCalledWith(
-      {
-        scale: 0.75,
-      },
-      jasmine.objectContaining({
-        duration: ScalingService.scaleDuration,
-        easing: ScalingService.scaleEasing,
-      })
-    );
-    expect(ScalingService.getScaleFactor()).toEqual(0.75);
   });
 
   it('should do nothing when an uninitialized service is synced', () => {

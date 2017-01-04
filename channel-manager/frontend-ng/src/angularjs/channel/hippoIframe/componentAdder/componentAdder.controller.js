@@ -95,7 +95,7 @@ class ComponentAdderCtrl {
       }
     });
 
-    const autoScroll = autoScrollerFactory($('.channel-iframe-base'), {
+    const autoScroll = autoScrollerFactory($('.channel-iframe-canvas'), {
       margin: 20,
       pixels: 15,
       scrollWhenOutside: true,
