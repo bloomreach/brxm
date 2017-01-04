@@ -107,7 +107,6 @@ class OverlayService {
     const overlayElement = structureElement.getOverlayElement();
 
     if (overlayElement) {
-      // TODO: handle removal of overlay elements and removal of generated box elements
       this._syncElements(structureElement, overlayElement);
     } else {
       this._addOverlayElement(structureElement);
