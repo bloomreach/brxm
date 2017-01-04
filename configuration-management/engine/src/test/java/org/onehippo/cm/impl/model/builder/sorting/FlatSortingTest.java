@@ -29,9 +29,6 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.impl.model.builder.AbstractBaseTest;
 
 import static org.junit.Assert.assertEquals;
-import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.getConfigurationSorter;
-import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.getModuleSorter;
-import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.getProjectSorter;
 
 public class FlatSortingTest extends AbstractBaseTest {
 
@@ -41,12 +38,12 @@ public class FlatSortingTest extends AbstractBaseTest {
         // config 1 depends on config 2
         configuration1.setAfter(ImmutableList.of(configuration2.getName()));
 
-        SortedSet<Configuration> sorted = getConfigurationSorter().sort(ImmutableList.of(configuration1, configuration2));
+        SortedSet<Configuration> sorted = new Sorter<Configuration>().sort(ImmutableList.of(configuration1, configuration2));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1]", sortedNames);
 
-        SortedSet<Configuration> sorted2 = getConfigurationSorter().sort(ImmutableList.of(configuration2, configuration1));
+        SortedSet<Configuration> sorted2 = new Sorter<Configuration>().sort(ImmutableList.of(configuration2, configuration1));
         assertEquals(sorted, sorted2);
     }
 
@@ -58,12 +55,12 @@ public class FlatSortingTest extends AbstractBaseTest {
         // config 3 depends on config 1
         configuration3.setAfter(ImmutableList.of(configuration1.getName()));
 
-        SortedSet<Configuration> sorted = getConfigurationSorter().sort(ImmutableList.of(configuration1, configuration2, configuration3));
+        SortedSet<Configuration> sorted = new Sorter<Configuration>().sort(ImmutableList.of(configuration1, configuration2, configuration3));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1, configuration3]", sortedNames);
 
-        SortedSet<Configuration> sorted2 = getConfigurationSorter().sort(ImmutableList.of(configuration2, configuration3, configuration1));
+        SortedSet<Configuration> sorted2 = new Sorter<Configuration>().sort(ImmutableList.of(configuration2, configuration3, configuration1));
         assertEquals(sorted, sorted2);
     }
 
@@ -75,12 +72,12 @@ public class FlatSortingTest extends AbstractBaseTest {
         // config 3 depends on config 1 and config 2
         configuration3.setAfter(ImmutableList.of(configuration1.getName(), configuration2.getName()));
 
-        SortedSet<Configuration> sorted = getConfigurationSorter().sort(ImmutableList.of(configuration1, configuration2, configuration3));
+        SortedSet<Configuration> sorted = new Sorter<Configuration>().sort(ImmutableList.of(configuration1, configuration2, configuration3));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1, configuration3]", sortedNames);
 
-        SortedSet<Configuration> sorted2 = getConfigurationSorter().sort(ImmutableList.of(configuration2, configuration3, configuration1));
+        SortedSet<Configuration> sorted2 = new Sorter<Configuration>().sort(ImmutableList.of(configuration2, configuration3, configuration1));
         assertEquals(sorted, sorted2);
 
     }
@@ -93,12 +90,12 @@ public class FlatSortingTest extends AbstractBaseTest {
         // config 3 depends on config 2
         configuration3.setAfter(ImmutableList.of(configuration2.getName()));
 
-        SortedSet<Configuration> sorted = getConfigurationSorter().sort(ImmutableList.of(configuration1, configuration2, configuration3));
+        SortedSet<Configuration> sorted = new Sorter<Configuration>().sort(ImmutableList.of(configuration1, configuration2, configuration3));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1, configuration3]", sortedNames);
 
-        SortedSet<Configuration> sorted2 = getConfigurationSorter().sort(ImmutableList.of(configuration2, configuration3, configuration1));
+        SortedSet<Configuration> sorted2 = new Sorter<Configuration>().sort(ImmutableList.of(configuration2, configuration3, configuration1));
         assertEquals(sorted, sorted2);
     }
 
@@ -108,12 +105,12 @@ public class FlatSortingTest extends AbstractBaseTest {
 
         project1a.setAfter(ImmutableList.of(project1b.getName()));
 
-        SortedSet<Project> sorted = getProjectSorter().sort(ImmutableList.of(project1a, project1b));
+        SortedSet<Project> sorted = new Sorter().sort(ImmutableList.of(project1a, project1b));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[project1b, project1a]", sortedNames);
 
-        SortedSet<Project> sorted2 = getProjectSorter().sort(ImmutableList.of(project1a, project1b));
+        SortedSet<Project> sorted2 = new Sorter<Project>().sort(ImmutableList.of(project1a, project1b));
         assertEquals(sorted, sorted2);
     }
 
@@ -123,12 +120,12 @@ public class FlatSortingTest extends AbstractBaseTest {
         project1a.setAfter(ImmutableList.of(project1b.getName()));
         project1c.setAfter(ImmutableList.of(project1a.getName()));
 
-        SortedSet<Project> sorted = getProjectSorter().sort(ImmutableList.of(project1a, project1b, project1c));
+        SortedSet<Project> sorted = new Sorter<Project>().sort(ImmutableList.of(project1a, project1b, project1c));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[project1b, project1a, project1c]", sortedNames);
 
-        SortedSet<Project> sorted2 = getProjectSorter().sort(ImmutableList.of(project1b, project1c, project1a));
+        SortedSet<Project> sorted2 = new Sorter<Project>().sort(ImmutableList.of(project1b, project1c, project1a));
         assertEquals(sorted, sorted2);
     }
 
@@ -138,12 +135,12 @@ public class FlatSortingTest extends AbstractBaseTest {
         project1a.setAfter(ImmutableList.of(project1b.getName()));
         project1c.setAfter(ImmutableList.of(project1a.getName(), project1b.getName()));
 
-        SortedSet<Project> sorted = getProjectSorter().sort(ImmutableList.of(project1a, project1b, project1c));
+        SortedSet<Project> sorted = new Sorter<Project>().sort(ImmutableList.of(project1a, project1b, project1c));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[project1b, project1a, project1c]", sortedNames);
 
-        SortedSet<Project> sorted2 = getProjectSorter().sort(ImmutableList.of(project1b, project1c, project1a));
+        SortedSet<Project> sorted2 = new Sorter<Project>().sort(ImmutableList.of(project1b, project1c, project1a));
         assertEquals(sorted, sorted2);
 
     }
@@ -154,12 +151,12 @@ public class FlatSortingTest extends AbstractBaseTest {
         project1a.setAfter(ImmutableList.of(project1b.getName()));
         project1c.setAfter(ImmutableList.of(project1b.getName()));
 
-        SortedSet<Project> sorted = getProjectSorter().sort(ImmutableList.of(project1a, project1b, project1c));
+        SortedSet<Project> sorted = new Sorter<Project>().sort(ImmutableList.of(project1a, project1b, project1c));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[project1b, project1a, project1c]", sortedNames);
 
-        SortedSet<Project> sorted2 = getProjectSorter().sort(ImmutableList.of(project1b, project1c, project1a));
+        SortedSet<Project> sorted2 = new Sorter<Project>().sort(ImmutableList.of(project1b, project1c, project1a));
         assertEquals(sorted, sorted2);
     }
 
@@ -168,12 +165,12 @@ public class FlatSortingTest extends AbstractBaseTest {
 
         module1a.setAfter(ImmutableList.of(module1b.getName()));
 
-        SortedSet<Module> sorted = getModuleSorter().sort(ImmutableList.of(module1a, module1b));
+        SortedSet<Module> sorted = new Sorter<Module>().sort(ImmutableList.of(module1a, module1b));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[module1b, module1a]", sortedNames);
 
-        SortedSet<Module> sorted2 = getModuleSorter().sort(ImmutableList.of(module1a, module1b));
+        SortedSet<Module> sorted2 = new Sorter<Module>().sort(ImmutableList.of(module1a, module1b));
         assertEquals(sorted, sorted2);
     }
 
@@ -183,12 +180,12 @@ public class FlatSortingTest extends AbstractBaseTest {
         module1a.setAfter(ImmutableList.of(module1b.getName()));
         module1c.setAfter(ImmutableList.of(module1a.getName()));
 
-        SortedSet<Module> sorted = getModuleSorter().sort(ImmutableList.of(module1a, module1b, module1c));
+        SortedSet<Module> sorted = new Sorter<Module>().sort(ImmutableList.of(module1a, module1b, module1c));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[module1b, module1a, module1c]", sortedNames);
 
-        SortedSet<Module> sorted2 = getModuleSorter().sort(ImmutableList.of(module1b, module1c, module1a));
+        SortedSet<Module> sorted2 = new Sorter<Module>().sort(ImmutableList.of(module1b, module1c, module1a));
         assertEquals(sorted, sorted2);
     }
 
@@ -198,12 +195,12 @@ public class FlatSortingTest extends AbstractBaseTest {
         module1a.setAfter(ImmutableList.of(module1b.getName()));
         module1c.setAfter(ImmutableList.of(module1a.getName(), module1b.getName()));
 
-        SortedSet<Module> sorted = getModuleSorter().sort(ImmutableList.of(module1a, module1b, module1c));
+        SortedSet<Module> sorted = new Sorter<Module>().sort(ImmutableList.of(module1a, module1b, module1c));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[module1b, module1a, module1c]", sortedNames);
 
-        SortedSet<Module> sorted2 = getModuleSorter().sort(ImmutableList.of(module1b, module1c, module1a));
+        SortedSet<Module> sorted2 = new Sorter<Module>().sort(ImmutableList.of(module1b, module1c, module1a));
         assertEquals(sorted, sorted2);
 
     }
@@ -214,12 +211,12 @@ public class FlatSortingTest extends AbstractBaseTest {
         module1a.setAfter(ImmutableList.of(module1b.getName()));
         module1c.setAfter(ImmutableList.of(module1b.getName()));
 
-        SortedSet<Module> sorted = getModuleSorter().sort(ImmutableList.of(module1a, module1b, module1c));
+        SortedSet<Module> sorted = new Sorter<Module>().sort(ImmutableList.of(module1a, module1b, module1c));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[module1b, module1a, module1c]", sortedNames);
 
-        SortedSet<Module> sorted2 = getModuleSorter().sort(ImmutableList.of(module1b, module1c, module1a));
+        SortedSet<Module> sorted2 = new Sorter<Module>().sort(ImmutableList.of(module1b, module1c, module1a));
         assertEquals(sorted, sorted2);
     }
 }

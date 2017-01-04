@@ -25,10 +25,9 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.onehippo.cm.impl.model.builder.sorting.DependencySorter.getModuleSorter;
 
 public class SortedProject implements Project {
-    
+
     private Project delegatee;
     private Configuration configuration;
     private final Map<String, Module> sortedModules = new LinkedHashMap<>();
@@ -36,7 +35,8 @@ public class SortedProject implements Project {
     public SortedProject(final Project delegatee, final Configuration configuration) {
         this.delegatee = delegatee;
         this.configuration = configuration;
-        SortedSet<Module> sorted = getModuleSorter().sort(delegatee.getModules());
+
+        SortedSet<Module> sorted = new Sorter<Module>().sort(delegatee.getModules());
         for (Module module : sorted) {
             sortedModules.put(module.getName(), new SortedModule(module, this));
         }

@@ -15,8 +15,10 @@
  */
 package org.onehippo.cm.impl.model.builder.sorting;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -46,7 +48,11 @@ public class DeepSortingTest extends AbstractBaseTest {
         module1a.setAfter(ImmutableList.of(module1b.getName()));
         module1b.setAfter(ImmutableList.of(module1c.getName()));
 
-        List<Configuration> sorted = new DependencySorter().sort(ImmutableList.of(configuration1, configuration2, configuration3));
+        SortedSet<Configuration> sortedConfigurations = new Sorter<Configuration>().sort(ImmutableList.of(configuration1, configuration2, configuration3));
+        List<Configuration> sorted = new ArrayList<>();
+        for (Configuration configuration : sortedConfigurations) {
+            sorted.add(new SortedConfiguration(configuration));
+        }
 
         final String sortedConfigurationNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
         assertEquals("[configuration2, configuration1, configuration3]", sortedConfigurationNames);

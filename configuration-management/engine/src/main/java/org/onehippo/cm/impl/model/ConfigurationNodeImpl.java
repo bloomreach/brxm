@@ -15,7 +15,6 @@
  */
 package org.onehippo.cm.impl.model;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.onehippo.cm.api.model.ConfigurationNode;
