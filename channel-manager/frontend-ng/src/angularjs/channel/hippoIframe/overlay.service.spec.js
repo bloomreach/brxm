@@ -72,10 +72,6 @@ describe('OverlayService', () => {
     });
   });
 
-  it('does not throw errors when the iframe is loaded but does not have a document (e.g. loaded a PDF)', () => {
-    expect(() => OverlayService._onLoad()).not.toThrow();
-  });
-
   it('does not throw errors when synced before init', () => {
     expect(() => OverlayService.sync()).not.toThrow();
   });

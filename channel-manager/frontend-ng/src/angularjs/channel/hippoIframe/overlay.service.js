@@ -35,23 +35,19 @@ class OverlayService {
   }
 
   _onLoad() {
-    const document = this._getIframeDocument();
-    if (!document) {
-      this.$log.warn('Cannot find document inside iframe');
-      return;
-    }
+    this.iframeWindow = this.iframeJQueryElement[0].contentWindow;
 
     this._initOverlay();
 
     this.observer = new MutationSummary({
       callback: () => this.sync(),
-      rootNode: document,
+      rootNode: this.iframeWindow.document,
       queries: [{ all: true }],
     });
 
-    const iframeWindow = $(this._getIframeWindow());
-    iframeWindow.on('unload', () => this._onUnload());
-    iframeWindow.on('resize', () => this.sync());
+    const win = $(this.iframeWindow);
+    win.on('unload', () => this._onUnload());
+    win.on('resize', () => this.sync());
   }
 
   _onUnload() {
@@ -63,14 +59,20 @@ class OverlayService {
 
   _initOverlay() {
     this.overlay = $('<div id="hippo-overlay"></div>');
-    this._attachOverlay();
+    $(this.iframeWindow.document.body).append(this.overlay);
+    this._updateModeClass();
   }
 
-  _attachOverlay() {
-    const document = this._getIframeDocument();
-    if (document) {
-      $(document.body).append(this.overlay);
-      $(document.documentElement).toggleClass('hippo-mode-edit', this._isEditMode());
+  setMode(mode) {
+    this.mode = mode;
+    this._updateModeClass();
+  }
+
+  _updateModeClass() {
+    if (this.iframeWindow) {
+      const html = $(this.iframeWindow.document.documentElement);
+      html.toggleClass('hippo-mode-edit', this._isEditMode());
+      // don't call sync() explicitly: the DOM mutation will trigger it automatically
     }
   }
 
@@ -78,15 +80,8 @@ class OverlayService {
     return this.mode === 'edit';
   }
 
-  setMode(mode) {
-    this.mode = mode;
-    this.sync();
-  }
-
   sync() {
     if (this.overlay) {
-      this.overlay.detach();
-
       const currentOverlayElements = new Set();
 
       this._forAllStructureElements((structureElement) => {
@@ -97,7 +92,6 @@ class OverlayService {
       });
 
       this._tidyOverlay(currentOverlayElements);
-      this._attachOverlay();
     }
   }
 
@@ -177,10 +171,8 @@ class OverlayService {
 
   _syncPosition(overlayElement, boxElement) {
     const rect = boxElement[0].getBoundingClientRect();
-    const window = this._getIframeWindow();
-
-    overlayElement.css('top', `${rect.top + window.scrollY}px`);
-    overlayElement.css('left', `${rect.left + window.scrollX}px`);
+    overlayElement.css('top', `${rect.top + this.iframeWindow.scrollY}px`);
+    overlayElement.css('left', `${rect.left + this.iframeWindow.scrollX}px`);
     overlayElement.css('height', `${rect.height}px`);
     overlayElement.css('width', `${rect.width}px`);
   }
@@ -195,19 +187,6 @@ class OverlayService {
           $(element).remove();
         }
       });
-    }
-  }
-
-  _getIframeWindow() {
-    return this.iframeJQueryElement[0].contentWindow;
-  }
-
-  _getIframeDocument() {
-    try {
-      return this._getIframeWindow().document;
-    } catch (e) {
-      // ignore if cannot get document in the iframe
-      return undefined;
     }
   }
 }
