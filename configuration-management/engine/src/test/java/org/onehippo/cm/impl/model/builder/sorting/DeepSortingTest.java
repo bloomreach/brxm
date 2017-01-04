@@ -85,6 +85,10 @@ public class DeepSortingTest extends AbstractBaseTest {
         final String sortedSourcesNames = sources.values().stream().map((Function<Source, Object>)Source::getPath).collect(Collectors.toList()).toString();
         assertEquals("[/lux/bar, /bar/foo/lux, /foo/bar/lux]", sortedSourcesNames);
 
+        Source source = sources.get("/lux/bar");
+        assertTrue(source instanceof SortedSource);
+        assertTrue(source.getModule() instanceof SortedModule);
+
     }
 
 

@@ -37,8 +37,8 @@ public class SortedModule implements Module {
         this.delegatee = delegatee;
         this.project = project;
         SortedSet<Source> sorted = new SourceSorter().sort(delegatee.getSources());
-        for (Source sortedSource : sorted) {
-            sortedSources.put(sortedSource.getPath(), sortedSource);
+        for (Source source : sorted) {
+            sortedSources.put(source.getPath(), new SortedSource(source, this));
         }
     }
 
