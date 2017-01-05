@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -61,14 +61,6 @@
         <configuration combine.children="append">
           <excludes>
             <exclude>wicket.properties</exclude>
-            <!-- TODO: deviceskins localizations are excluded as they are scheduled to be removed with the NG feature.
-                 After merging the NG feature the below exclusions should be removed again
-            -->
-            <exclude>org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/desktop.properties</exclude>
-            <exclude>org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/ipad_landscape.properties</exclude>
-            <exclude>org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/ipad_portrait.properties</exclude>
-            <exclude>org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/iphone_landscape.properties</exclude>
-            <exclude>org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/devices/iphone_portrait.properties</exclude>
           </excludes>
         </configuration>
       </plugin>
