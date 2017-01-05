@@ -31,6 +31,8 @@
       var ENTER = 13;
       var SPACE = 32;
 
+      var pinnedOpen = null;
+
       function ConsoleMenuPlugin() {
         this.focusItems = [
           '.hippo-console-menu-advanced > li:not(.dropdown) a',
@@ -84,6 +86,30 @@
               return false;
             }
 
+            $el.hover(function() {
+              if (pinnedOpen) {
+                pinnedOpen.blur();
+              }
+              $el.addClass('focus');
+            }, function() {
+              if (!pinnedOpen) {
+                $el.removeClass('focus');
+              }
+            });
+            $el.focus(function() {
+              if (pinnedOpen) {
+                pinnedOpen.blur();
+              }
+              pinnedOpen = $(this);
+              $el.addClass('focus');
+            });
+            $el.blur(function() {
+              pinnedOpen = null;
+              $el.removeClass('focus');
+              deselect();
+              selected = -1;
+            });
+
             $el.on('keydown', function (event) {
 
               switch (event.keyCode) {
@@ -117,11 +143,6 @@
                 default:
                   break;
               }
-            });
-
-            $el.blur(function () {
-              deselect();
-              selected = -1;
             });
           });
         },
