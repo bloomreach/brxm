@@ -44,10 +44,6 @@ public class ConfigurationImpl implements Configuration {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     @Override
     public List<String> getAfter() {
         return unmodifiableList(after);

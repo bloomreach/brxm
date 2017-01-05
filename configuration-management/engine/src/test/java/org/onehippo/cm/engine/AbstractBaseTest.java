@@ -37,11 +37,9 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.ValueFormatException;
 
-import static org.hamcrest.CoreMatchers.endsWith;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public abstract class AbstractBaseTest {
@@ -127,19 +125,10 @@ public abstract class AbstractBaseTest {
         return module;
     }
 
-    Source assertSource(final Module parent, final String nameSuffix, final int definitionCount) {
-        Source source = null;
-        for (String name : parent.getSources().keySet()) {
-            if (name.endsWith(nameSuffix)) {
-                if (source == null) {
-                    source = parent.getSources().get(name); // don't break but keep looking to ensure suffix is unique
-                } else {
-                    fail("Multiple sources found with suffix '" + nameSuffix + "'");
-                }
-            }
-        }
+    Source assertSource(final Module parent, final String path, final int definitionCount) {
+        Source source = parent.getSources().get(path);
         assertNotNull(source);
-        assertThat(source.getPath(), endsWith(nameSuffix));
+        assertEquals(path, source.getPath().toString(), path);
         assertEquals(parent, source.getModule());
         assertEquals(definitionCount, source.getDefinitions().size());
         return source;

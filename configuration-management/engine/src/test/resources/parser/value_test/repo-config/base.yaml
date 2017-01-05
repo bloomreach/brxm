@@ -1,15 +1,21 @@
 instructions:
   - config:
-      - /explicit:
-          - binary: !!binary aGVsbG8gd29ybGQ=
-          - bool: !!bool true
-          - float: !!float 3.1415
-          - int: !!int 42
-          - str: !!str hello world
-          - timestamp: !!timestamp 2015-10-21T07:28:00+08
-      - /implicit:
-          - boolsy: true
-          - floatsy: 3.1415
-          - intsy: 42
-          - strsy: hello world
-          - timestampsy: 2015-10-21T07:28:00+08
+      - /base:
+          - binary: !!binary |-
+                aGVsbG8gd29ybGQ=
+          - bool: true
+          - float: 3.1415
+          - int: 42
+          - str: hello world
+          - timestamp: 2015-10-21T07:28:00+8:00
+      - /string:
+          - strBool: 'true'
+          - strFloat: '3.1415'
+          - strInt: '42'
+          - strTimestamp: '2015-10-21T07:28:00+8:00'
+          - strWithQuotes: string ' "
+          - strWithLeadingSingleQuote: ''' " string'
+          - strWithLeadingDoubleQuote: '" '' string'
+          - strWithLineBreaks: |
+                line one
+                line two

@@ -39,6 +39,7 @@
     <!-- Test dependencies  -->
     <junit.version>4.12</junit.version>
     <snakeyaml.version>1.17</snakeyaml.version>
+    <commons-lang3.version>3.5</commons-lang3.version>
   </properties>
   
   <modules>
@@ -72,6 +73,11 @@
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
         <version>${snakeyaml.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
       </dependency>
     </dependencies>
 

@@ -76,8 +76,4 @@ public class ProjectImpl implements Project {
         return module;
     }
 
-    void addModule(final Module module) {
-        modules.put(module.getName(), module);
-    }
-
 }

@@ -23,12 +23,14 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
@@ -52,9 +54,9 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
-class ConfigurationParser {
+public class ConfigurationParser {
 
-    class ConfigurationException extends RuntimeException {
+    static class ConfigurationException extends RuntimeException {
         private final Node node;
         ConfigurationException(final String message) {
             this(message, null);
@@ -68,16 +70,24 @@ class ConfigurationParser {
         }
     }
 
-    static class MyConstructor extends Constructor {
+    // After the compose step, SnakeYaml does not yet provide parsed scalar values. An extension of the Constructor
+    // class is needed to access the protected Constructor#construct method which uses the built-in parsers for the
+    // known basic scalar types. The additional check for the ConstructYamlTimestamp is done as the constructor for
+    // timestamp returns a Date by internally constructing a Calendar.
+    private static final class ScalarConstructor extends Constructor {
         Object constructScalarNode(final ScalarNode node) {
-            Construct constructor = getConstructor(node);
-            return constructor.construct(node);
+            final Construct constructor = getConstructor(node);
+            final Object object = constructor.construct(node);
+            if (constructor instanceof ConstructYamlTimestamp) {
+                return ((ConstructYamlTimestamp)constructor).getCalendar().clone();
+            }
+            return object;
         }
     }
 
-    private MyConstructor constructor = new MyConstructor();
+    private static final ScalarConstructor scalarConstructor = new ScalarConstructor();
 
-    Map<String, Configuration> parse(final URL repoConfigUrl, final List<URL> sourceUrls) throws IOException {
+    public Map<String, Configuration> parse(final URL repoConfigUrl, final List<URL> sourceUrls) throws IOException {
         final Yaml yamlParser = new Yaml();
         final Node repoConfigNode = yamlParser.compose(new InputStreamReader(repoConfigUrl.openStream(), StandardCharsets.UTF_8));
 
@@ -164,35 +174,25 @@ class ConfigurationParser {
         final Map<String, Node> sourceMap = asMapping(src, new String[]{"instructions"}, null);
         final SourceImpl source = parent.addSource(path);
 
-        for (Node instructionNode : asSequence(sourceMap.get("instructions"))) {
-            constructInstruction(instructionNode, source);
-        }
-    }
-
-    private void constructInstruction(final Node src, final SourceImpl parent) {
-        final Map<String, Node> sourceMap = asMapping(src);
-
-        if (sourceMap.size() != 1) {
-            throw new ConfigurationException("Instruction map must contain single element defining the instruction type", src);
-        }
-
-        final String instructionName = sourceMap.keySet().iterator().next();
-        final Node instructionNode = sourceMap.get(instructionName);
-        switch (instructionName) {
-            case "namespace":
-                constructNamespaceDefinitions(instructionNode, parent);
-                break;
-            case "cnd":
-                constructNodeTypeDefinitions(instructionNode, parent);
-                break;
-            case "config":
-                constructConfigDefinitions(instructionNode, parent);
-                break;
-            case "content":
-                constructContentDefinitions(instructionNode, parent);
-                break;
-            default:
-                throw new ConfigurationException("Unknown instruction type '" + instructionName + "'", src);
+        final Map<String, Node> definitions = asOrderedMap(sourceMap.get("instructions"));
+        for (String definitionName : definitions.keySet()) {
+            final Node definitionNode = definitions.get(definitionName);
+            switch (definitionName) {
+                case "namespace":
+                    constructNamespaceDefinitions(definitionNode, source);
+                    break;
+                case "cnd":
+                    constructNodeTypeDefinitions(definitionNode, source);
+                    break;
+                case "config":
+                    constructConfigDefinitions(definitionNode, source);
+                    break;
+                case "content":
+                    constructContentDefinitions(definitionNode, source);
+                    break;
+                default:
+                    throw new ConfigurationException("Unknown instruction type '" + definitionName + "'", src);
+            }
         }
     }
 
@@ -213,22 +213,18 @@ class ConfigurationParser {
     }
 
     private void constructConfigDefinitions(final Node src, final SourceImpl parent) {
-        for (Node node : asSequence(src)) {
-            final Map<String, Node> map = asSingleItemMap(node);
-            final String path = map.keySet().iterator().next();
-            final Node value = map.get(path);
+        final Map<String, Node> definitions = asOrderedMap(src);
+        for (String key : definitions.keySet()) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
-            constructDefinitionNode(path, value, definition);
+            constructDefinitionNode(key, definitions.get(key), definition);
         }
     }
 
     private void constructContentDefinitions(final Node src, final SourceImpl parent) {
-        for (Node node : asSequence(src)) {
-            final Map<String, Node> map = asSingleItemMap(node);
-            final String path = map.keySet().iterator().next();
-            final Node value = map.get(path);
+        final Map<String, Node> definitions = asOrderedMap(src);
+        for (String key : definitions.keySet()) {
             final ContentDefinitionImpl definition = parent.addContentDefinition();
-            constructDefinitionNode(path, value, definition);
+            constructDefinitionNode(key, definitions.get(key), definition);
         }
     }
 
@@ -239,7 +235,7 @@ class ConfigurationParser {
     }
 
     private void populateDefinitionNode(final DefinitionNodeImpl node, final Node value) {
-        final Map<String, Node> children = asSequenceOfSingleItemMaps(value);
+        final Map<String, Node> children = asOrderedMap(value);
         for (String key : children.keySet()) {
             if (key.startsWith("/")) {
                 final String name = key.substring(1);
@@ -260,11 +256,11 @@ class ConfigurationParser {
             parent.addProperty(name, constructValue(value));
         } else if (value.getNodeId() == NodeId.sequence) {
             final List<Node> valueNodes = asSequence(value);
-            final List<Value> values = new ArrayList<>(valueNodes.size());
-            for (Node valueNode : valueNodes) {
-                values.add(constructValue(valueNode));
+            final Value[] values = new Value[valueNodes.size()];
+            for (int i = 0; i < valueNodes.size(); i++) {
+                values[i] = constructValue(valueNodes.get(i));
             }
-            parent.addProperty(name, values.toArray(new Value[values.size()]));
+            parent.addProperty(name, values);
         } else {
             throw new ConfigurationException("Property value must be scalar or sequence", value);
         }
@@ -272,7 +268,7 @@ class ConfigurationParser {
 
     private Value constructValue(final Node node) {
         final ScalarNode scalar = asScalar(node);
-        final Object object = constructor.constructScalarNode(scalar);
+        final Object object = scalarConstructor.constructScalarNode(scalar);
 
         if (Tag.BINARY.equals(scalar.getTag())) {
             return new ValueImpl((byte[]) object);
@@ -290,7 +286,7 @@ class ConfigurationParser {
             return new ValueImpl((String) object);
         }
         if (Tag.TIMESTAMP.equals(scalar.getTag())) {
-            return new ValueImpl((Date) object);
+            return new ValueImpl((Calendar) object);
         }
 
         throw new ConfigurationException("Tag not recognized: " + scalar.getTag(), node);
@@ -300,69 +296,72 @@ class ConfigurationParser {
         return asMapping(node, null, null);
     }
 
-    private Map<String, Node> asMapping(final Node node, String[] requiredNames, String[] optionalNames) {
-        if (requiredNames == null) requiredNames = new String[0];
-        if (optionalNames == null) optionalNames = new String[0];
-        final boolean checkSchema = requiredNames.length > 0 || optionalNames.length > 0;
+    /**
+     * Returns the given <code>node</code> as a mapping, if and only if the given node is a mapping that contains all
+     * keys in <code>requiredKeys</code>, and does not contain any keys other than those in <code>requiredKeys</code>
+     * or <code>optionalKeys</code>. When called with empty or null for both arrays, all string keys are allowed.
+     * The use case of a specific set of required keys and "any" optional keys is not yet supported.
+     * @param node
+     * @param requiredKeys
+     * @param optionalKeys
+     * @return
+     */
+    private Map<String, Node> asMapping(final Node node, String[] requiredKeys, String[] optionalKeys) {
+        if (requiredKeys == null) requiredKeys = new String[0];
+        if (optionalKeys == null) optionalKeys = new String[0];
+        final boolean checkSchema = requiredKeys.length > 0 || optionalKeys.length > 0;
 
         if (node == null) {
-            if (checkSchema && requiredNames.length > 0) {
-                throw new ConfigurationException("Node is null but requires element '" + requiredNames[0] + "'");
+            if (requiredKeys.length > 0) {
+                throw new ConfigurationException("Node is null but requires pair with key '" + requiredKeys[0] + "'");
             }
             return Collections.emptyMap();
         }
         if (node.getNodeId() != NodeId.mapping) {
             throw new ConfigurationException("Node must be a mapping", node);
         }
+
         final MappingNode mappingNode = (MappingNode) node;
         final Map<String, Node> result = new LinkedHashMap<>(mappingNode.getValue().size());
         for (NodeTuple tuple : mappingNode.getValue()) {
             final String key = asStringScalar(tuple.getKeyNode());
-            if (checkSchema && !find(key, requiredNames, optionalNames)) {
-                throw new ConfigurationException("Element '" + key + "' is not allowed", node);
+            if (checkSchema && !find(key, requiredKeys, optionalKeys)) {
+                throw new ConfigurationException("Key '" + key + "' is not allowed", node);
             }
             result.put(key, tuple.getValueNode());
         }
-        if (checkSchema) {
-            for (String requiredName : requiredNames) {
-                if (!result.containsKey(requiredName)) {
-                    throw new ConfigurationException("Node must contain element '" + requiredName + "'", node);
-                }
+
+        for (String requiredKey : requiredKeys) {
+            if (!result.containsKey(requiredKey)) {
+                throw new ConfigurationException("Node must contain pair with key '" + requiredKey + "'", node);
             }
         }
+
         return result;
     }
 
     private boolean find(final String string, final String[] array1, final String[] array2) {
-        return find(string, array1) || find(string, array2);
+        return ArrayUtils.contains(array1, string) || ArrayUtils.contains(array2, string);
     }
 
-    private boolean find(final String string, final String[] array) {
-        for (String str : array) {
-            if (str.equals(string)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Map<String, Node> asSingleItemMap(final Node node) {
+    private Pair<String, Node> asMappingWithSingleKey(final Node node) {
         final Map<String, Node> map = asMapping(node);
         if (map.size() != 1) {
             throw new ConfigurationException("Map must contain single element", node);
         }
-        return map;
+        final String key = map.keySet().iterator().next();
+        return Pair.of(key, map.get(key));
     }
 
-    private Map<String,Node> asSequenceOfSingleItemMaps(final Node node) {
+    // See http://yaml.org/type/omap.html
+    private Map<String, Node> asOrderedMap(final Node node) {
         final Map<String, Node> result = new LinkedHashMap<>();
         for (Node child : asSequence(node)) {
-            final Map<String, Node> map = asSingleItemMap(child);
-            final String key = map.keySet().iterator().next();
-            if (result.containsKey(key)) {
-                throw new ConfigurationException("Map contains key '" + key + "' multiple times", node);
+            final Pair<String, Node> pair = asMappingWithSingleKey(child);
+            if (result.containsKey(pair.getKey())) {
+                throw new ConfigurationException("Ordered map contains key '" + pair.getKey() + "' multiple times", node);
             }
-            result.putAll(map);
+            result.put(pair.getKey(), pair.getValue());
         }
         return result;
     }

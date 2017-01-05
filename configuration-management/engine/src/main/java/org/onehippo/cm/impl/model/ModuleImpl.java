@@ -44,8 +44,6 @@ public class ModuleImpl implements Module {
             throw new IllegalArgumentException("Parameter 'project' cannot be null");
         }
         this.project = project;
-
-        project.addModule(this);
     }
 
     @Override

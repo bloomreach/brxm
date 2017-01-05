@@ -16,10 +16,9 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigDefinition;
@@ -46,24 +45,29 @@ public class ParserValueTest extends AbstractBaseTest {
         final Module module = assertModule(project, "module1", new String[0], 1);
         final Source source = assertSource(module, "base.yaml", 2);
 
-        final ConfigDefinition explicitDefinition = assertDefinition(source, 0, ConfigDefinition.class);
-        final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "/explicit", explicitDefinition, false, 0, 6);
-        assertProperty(explicitNode, "binary", "/explicit/binary", explicitDefinition, false, "hello world".getBytes());
-        assertProperty(explicitNode, "bool", "/explicit/bool", explicitDefinition, false, true);
-        assertProperty(explicitNode, "float", "/explicit/float", explicitDefinition, false, 3.1415);
-        assertProperty(explicitNode, "int", "/explicit/int", explicitDefinition, false, 42);
-        assertProperty(explicitNode, "str", "/explicit/str", explicitDefinition, false, "hello world");
-        assertProperty(explicitNode, "timestamp", "/explicit/timestamp", explicitDefinition, false,
-                Date.from(ZonedDateTime.of(2015, 10, 21, 7, 28, 0, 0, ZoneId.of("GMT+8")).toInstant()));
+        final ConfigDefinition baseDefinition = assertDefinition(source, 0, ConfigDefinition.class);
+        final DefinitionNode baseNode = assertNode(baseDefinition, "/base", "/base", baseDefinition, false, 0, 6);
+        assertProperty(baseNode, "binary", "/base/binary", baseDefinition, false, "hello world".getBytes());
+        assertProperty(baseNode, "bool", "/base/bool", baseDefinition, false, true);
+        assertProperty(baseNode, "float", "/base/float", baseDefinition, false, 3.1415);
+        assertProperty(baseNode, "int", "/base/int", baseDefinition, false, 42);
+        assertProperty(baseNode, "str", "/base/str", baseDefinition, false, "hello world");
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(0);
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        calendar.set(2015, 9, 21, 7, 28, 0);
+        assertProperty(baseNode, "timestamp", "/base/timestamp", baseDefinition, false, calendar);
 
-        final ConfigDefinition implicitDefinition = assertDefinition(source, 1, ConfigDefinition.class);
-        final DefinitionNode implicitNode = assertNode(implicitDefinition, "/implicit", "/implicit", implicitDefinition, false, 0, 5);
-        assertProperty(implicitNode, "boolsy", "/implicit/boolsy", implicitDefinition, false, true);
-        assertProperty(implicitNode, "floatsy", "/implicit/floatsy", implicitDefinition, false, 3.1415);
-        assertProperty(implicitNode, "intsy", "/implicit/intsy", implicitDefinition, false, 42);
-        assertProperty(implicitNode, "strsy", "/implicit/strsy", implicitDefinition, false, "hello world");
-        assertProperty(implicitNode, "timestampsy", "/implicit/timestampsy", implicitDefinition, false,
-                Date.from(ZonedDateTime.of(2015, 10, 21, 7, 28, 0, 0, ZoneId.of("GMT+8")).toInstant()));
+        final ConfigDefinition stringDefinition = assertDefinition(source, 1, ConfigDefinition.class);
+        final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "/string", stringDefinition, false, 0, 8);
+        assertProperty(stringNode, "strBool", "/string/strBool", stringDefinition, false, "true");
+        assertProperty(stringNode, "strFloat", "/string/strFloat", stringDefinition, false, "3.1415");
+        assertProperty(stringNode, "strInt", "/string/strInt", stringDefinition, false, "42");
+        assertProperty(stringNode, "strTimestamp", "/string/strTimestamp", stringDefinition, false, "2015-10-21T07:28:00+8:00");
+        assertProperty(stringNode, "strWithQuotes", "/string/strWithQuotes", stringDefinition, false, "string ' \"");
+        assertProperty(stringNode, "strWithLeadingSingleQuote", "/string/strWithLeadingSingleQuote", stringDefinition, false, "' \" string");
+        assertProperty(stringNode, "strWithLeadingDoubleQuote", "/string/strWithLeadingDoubleQuote", stringDefinition, false, "\" ' string");
+        assertProperty(stringNode, "strWithLineBreaks", "/string/strWithLineBreaks", stringDefinition, false, "line one\nline two\n");
     }
 
 }

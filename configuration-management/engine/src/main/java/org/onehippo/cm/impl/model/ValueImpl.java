@@ -15,7 +15,7 @@
  */
 package org.onehippo.cm.impl.model;
 
-import java.util.Date;
+import java.util.Calendar;
 
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
@@ -50,7 +50,7 @@ public class ValueImpl implements Value {
         this.valueType = ValueType.STRING;
     }
 
-    public ValueImpl(final Date value) {
+    public ValueImpl(final Calendar value) {
         this.value = value;
         this.valueType = ValueType.DATE;
     }
