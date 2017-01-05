@@ -104,6 +104,11 @@ a.hst-cmseditlink {
 }
 
 #hippo-overlay.hippo-overlay-mask-active {
+  cursor: not-allowed;
   pointer-events: auto;
+}
+
+.hippo-overlay-mask-active .hippo-overlay-element-container {
+  cursor: auto;
 }
 
