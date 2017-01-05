@@ -28,6 +28,10 @@
   border-bottom: 1px solid #666666;
 }
 
+#layout-doc > div.yui-layout-unit-top {
+  z-index: 1;
+}
+
 .hippo-root {
   font-size: 12px;
   background: white;
