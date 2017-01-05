@@ -61,7 +61,7 @@ public class SerializerTest extends AbstractBaseTest {
         final ModuleImpl module = project.addModule("module");
         final SourceImpl source = module.addSource("test.yaml");
         final ConfigDefinitionImpl config = source.addConfigDefinition();
-        final DefinitionNodeImpl node = new DefinitionNodeImpl("/foo", "/foo", config);
+        final DefinitionNodeImpl node = new DefinitionNodeImpl("/foo", "foo", config);
         config.setNode(node);
 
         final StringBuilder builder = new StringBuilder();

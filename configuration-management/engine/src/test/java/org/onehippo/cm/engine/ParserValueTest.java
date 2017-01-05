@@ -46,28 +46,28 @@ public class ParserValueTest extends AbstractBaseTest {
         final Source source = assertSource(module, "base.yaml", 2);
 
         final ConfigDefinition baseDefinition = assertDefinition(source, 0, ConfigDefinition.class);
-        final DefinitionNode baseNode = assertNode(baseDefinition, "/base", "/base", baseDefinition, false, 0, 6);
-        assertProperty(baseNode, "binary", "/base/binary", baseDefinition, false, "hello world".getBytes());
-        assertProperty(baseNode, "bool", "/base/bool", baseDefinition, false, true);
-        assertProperty(baseNode, "float", "/base/float", baseDefinition, false, 3.1415);
-        assertProperty(baseNode, "int", "/base/int", baseDefinition, false, 42);
-        assertProperty(baseNode, "str", "/base/str", baseDefinition, false, "hello world");
+        final DefinitionNode baseNode = assertNode(baseDefinition, "/base", "base", baseDefinition, false, 0, 6);
+        assertProperty(baseNode, "/base/binary", "binary", baseDefinition, false, "hello world".getBytes());
+        assertProperty(baseNode, "/base/bool", "bool", baseDefinition, false, true);
+        assertProperty(baseNode, "/base/float", "float", baseDefinition, false, 3.1415);
+        assertProperty(baseNode, "/base/int", "int", baseDefinition, false, 42);
+        assertProperty(baseNode, "/base/str", "str", baseDefinition, false, "hello world");
         final Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(0);
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         calendar.set(2015, 9, 21, 7, 28, 0);
-        assertProperty(baseNode, "timestamp", "/base/timestamp", baseDefinition, false, calendar);
+        assertProperty(baseNode, "/base/timestamp", "timestamp", baseDefinition, false, calendar);
 
         final ConfigDefinition stringDefinition = assertDefinition(source, 1, ConfigDefinition.class);
-        final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "/string", stringDefinition, false, 0, 8);
-        assertProperty(stringNode, "strBool", "/string/strBool", stringDefinition, false, "true");
-        assertProperty(stringNode, "strFloat", "/string/strFloat", stringDefinition, false, "3.1415");
-        assertProperty(stringNode, "strInt", "/string/strInt", stringDefinition, false, "42");
-        assertProperty(stringNode, "strTimestamp", "/string/strTimestamp", stringDefinition, false, "2015-10-21T07:28:00+8:00");
-        assertProperty(stringNode, "strWithQuotes", "/string/strWithQuotes", stringDefinition, false, "string ' \"");
-        assertProperty(stringNode, "strWithLeadingSingleQuote", "/string/strWithLeadingSingleQuote", stringDefinition, false, "' \" string");
-        assertProperty(stringNode, "strWithLeadingDoubleQuote", "/string/strWithLeadingDoubleQuote", stringDefinition, false, "\" ' string");
-        assertProperty(stringNode, "strWithLineBreaks", "/string/strWithLineBreaks", stringDefinition, false, "line one\nline two\n");
+        final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "string", stringDefinition, false, 0, 8);
+        assertProperty(stringNode, "/string/strBool", "strBool", stringDefinition, false, "true");
+        assertProperty(stringNode, "/string/strFloat", "strFloat", stringDefinition, false, "3.1415");
+        assertProperty(stringNode, "/string/strInt", "strInt", stringDefinition, false, "42");
+        assertProperty(stringNode, "/string/strTimestamp", "strTimestamp", stringDefinition, false, "2015-10-21T07:28:00+8:00");
+        assertProperty(stringNode, "/string/strWithQuotes", "strWithQuotes", stringDefinition, false, "string ' \"");
+        assertProperty(stringNode, "/string/strWithLeadingSingleQuote", "strWithLeadingSingleQuote", stringDefinition, false, "' \" string");
+        assertProperty(stringNode, "/string/strWithLeadingDoubleQuote", "strWithLeadingDoubleQuote", stringDefinition, false, "\" ' string");
+        assertProperty(stringNode, "/string/strWithLineBreaks", "strWithLineBreaks", stringDefinition, false, "line one\nline two\n");
     }
 
 }

@@ -234,7 +234,7 @@ public class ConfigurationSerializer {
         }
 
         final List<NodeTuple> tuples = new ArrayList<>(1);
-        final String name = (node.getName().startsWith("/") ? "" : "/") + node.getName();
+        final String name = node.isRoot() ? node.getPath() : "/" + node.getName();
         tuples.add(createStrSeqTuple(name, children));
         return new MappingNode(Tag.MAP, tuples, false);
     }

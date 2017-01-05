@@ -140,8 +140,8 @@ public abstract class AbstractBaseTest {
     }
 
     DefinitionNode assertNode(final DefinitionNode parent,
-                              final String name,
                               final String path,
+                              final String name,
                               final boolean isRoot,
                               final Definition definition,
                               final boolean isDeleted,
@@ -149,26 +149,26 @@ public abstract class AbstractBaseTest {
                               final int propertyCount)
     {
         final DefinitionNode node = parent.getNodes().get(name);
-        validateNode(node, name, path, parent, isRoot, definition, isDeleted, nodeCount, propertyCount);
+        validateNode(node, path, name, parent, isRoot, definition, isDeleted, nodeCount, propertyCount);
         return node;
     }
 
     DefinitionNode assertNode(final ContentDefinition parent,
-                              final String name,
                               final String path,
+                              final String name,
                               final Definition definition,
                               final boolean isDeleted,
                               final int nodeCount,
                               final int propertyCount)
     {
         final DefinitionNode node = parent.getNode();
-        validateNode(node, name, path, null, true, definition, isDeleted, nodeCount, propertyCount);
+        validateNode(node, path, name, null, true, definition, isDeleted, nodeCount, propertyCount);
         return node;
     }
 
     private void validateNode(final DefinitionNode node,
-                              final String name,
                               final String path,
+                              final String name,
                               final DefinitionNode parent,
                               final boolean isRoot,
                               final Definition definition,
@@ -176,22 +176,22 @@ public abstract class AbstractBaseTest {
                               final int nodeCount,
                               final int propertyCount)
     {
-        validateItem(node, name, path, parent, isRoot, definition, isDeleted);
+        validateItem(node, path, name, parent, isRoot, definition, isDeleted);
         assertEquals(nodeCount, node.getNodes().size());
         assertEquals(propertyCount, node.getProperties().size());
     }
 
     private void validateItem(final DefinitionItem item,
-                              final String name,
                               final String path,
+                              final String name,
                               final DefinitionNode parent,
                               final boolean isRoot,
                               final Definition definition,
                               final boolean isDeleted)
     {
         assertNotNull(item);
-        assertEquals(name, item.getName());
         assertEquals(path, item.getPath());
+        assertEquals(name, item.getName());
         if (isRoot) {
             try {
                 item.getParent();
@@ -208,14 +208,14 @@ public abstract class AbstractBaseTest {
     }
 
     DefinitionProperty assertProperty(final DefinitionNode parent,
-                                      final String name,
                                       final String path,
+                                      final String name,
                                       final Definition definition,
                                       final boolean isDeleted,
                                       final Object value)
     {
         final DefinitionProperty property = parent.getProperties().get(name);
-        validateItem(property, name, path, parent, false, definition, isDeleted);
+        validateItem(property, path, name, parent, false, definition, isDeleted);
         try {
             property.getValues();
             fail("Expected ValueFormatException");
@@ -231,14 +231,14 @@ public abstract class AbstractBaseTest {
     }
 
     DefinitionProperty assertProperty(final DefinitionNode parent,
-                                      final String name,
                                       final String path,
+                                      final String name,
                                       final Definition definition,
                                       final boolean isDeleted,
                                       final Object[] values)
     {
         final DefinitionProperty property = parent.getProperties().get(name);
-        validateItem(property, name, path, parent, false, definition, isDeleted);
+        validateItem(property, path, name, parent, false, definition, isDeleted);
         try {
             property.getValue();
             fail("Expected ValueFormatException");

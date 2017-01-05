@@ -30,8 +30,8 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     private Map<String, DefinitionNode> nodes = new LinkedHashMap<>();
     private Map<String, DefinitionProperty> properties = new LinkedHashMap<>();
 
-    public DefinitionNodeImpl(final String name, final String path, final Definition definition) {
-        super(name, path, definition);
+    public DefinitionNodeImpl(final String path, final String name, final Definition definition) {
+        super(path, name, definition);
     }
 
     public DefinitionNodeImpl(final String name, final DefinitionNodeImpl parent) {

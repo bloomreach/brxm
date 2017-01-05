@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
@@ -228,8 +229,9 @@ public class ConfigurationParser {
         }
     }
 
-    private void constructDefinitionNode(final String name, final Node value, final ContentDefinitionImpl definition) {
-        final DefinitionNodeImpl node = new DefinitionNodeImpl(name, name, definition);
+    private void constructDefinitionNode(final String path, final Node value, final ContentDefinitionImpl definition) {
+        final String name = StringUtils.substringAfterLast(path, "/");
+        final DefinitionNodeImpl node = new DefinitionNodeImpl(path, name, definition);
         definition.setNode(node);
         populateDefinitionNode(node, value);
     }

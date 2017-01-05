@@ -21,15 +21,15 @@ import org.onehippo.cm.api.model.DefinitionNode;
 
 public abstract class DefinitionItemImpl implements DefinitionItem {
 
-    private String name;
     private String path;
+    private String name;
     private DefinitionNode parent;
     private Definition definition;
     private boolean deleted;
 
-    public DefinitionItemImpl(final String name, final String path, final Definition definition) {
-        this.name = name;
+    public DefinitionItemImpl(final String path, final String name, final Definition definition) {
         this.path = path;
+        this.name = name;
         this.parent = null;
         this.definition = definition;
         this.deleted = false;
