@@ -174,6 +174,8 @@ class OverlayService {
 
   _isElementVisible(structureElement, boxElement) {
     switch (structureElement.getType()) {
+      case 'component':
+        return this._isEditMode() && !this.MaskService.isMasked();
       case 'container':
         return this._isEditMode() && structureElement.isEmpty();
       case 'content-link':
