@@ -23,8 +23,9 @@ class MaskService {
     return this.masked;
   }
 
-  mask() {
+  mask(clickHandler) {
     this.masked = true;
+    this.clickHandler = clickHandler || angular.noop;
   }
 
   unmask() {

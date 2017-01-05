@@ -15,12 +15,31 @@
  */
 
 class ComponentCatalogController {
-  constructor(ComponentCatalogService) {
-    this.ComponentCatalogService = ComponentCatalogService;
+  constructor(MaskService, HippoIframeService, OverlayService) {
+    'ngInject';
+
+    this.MaskService = MaskService;
+    this.HippoIframeService = HippoIframeService;
+    this.OverlayService = OverlayService;
   }
 
-  onSelect(component) {
-    this.ComponentCatalogService.select(component);
+  onSelect(index) {
+    this.HippoIframeService.liftIframeAboveMask();
+    this.OverlayService.mask();
+
+    this.MaskService.mask(() => {
+      this.HippoIframeService.lowerIframeBeneathMask();
+      this.OverlayService.unmask();
+      this.MaskService.unmask();
+    });
+
+    this.selectedComponentIndex = index;
+  }
+
+  isComponentSelected(index) {
+    const isMasked = this.MaskService.isMasked();
+    const selected = this.selectedComponentIndex === index;
+    return selected && isMasked;
   }
 }
 

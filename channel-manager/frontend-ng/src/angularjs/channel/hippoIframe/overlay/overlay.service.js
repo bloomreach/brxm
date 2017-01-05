@@ -18,12 +18,13 @@ import MutationSummary from 'mutation-summary';
 
 class OverlayService {
 
-  constructor($rootScope, $log, DomService, PageStructureService) {
+  constructor($rootScope, $log, DomService, MaskService, PageStructureService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.$log = $log;
     this.DomService = DomService;
+    this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
 
     PageStructureService.registerChangeListener(() => this.sync());
@@ -60,7 +61,25 @@ class OverlayService {
   _initOverlay() {
     this.overlay = $('<div id="hippo-overlay"></div>');
     $(this.iframeWindow.document.body).append(this.overlay);
+    this._addMaskClickHandler();
     this._updateModeClass();
+  }
+
+  _addMaskClickHandler() {
+    this.overlay.on('click', () => {
+      this.$rootScope.$apply(() => {
+        this.unmask();
+        this.MaskService.unmask();
+      });
+    });
+  }
+
+  mask() {
+    this.overlay.addClass('hippo-overlay-mask-active');
+  }
+
+  unmask() {
+    this.overlay.removeClass('hippo-overlay-mask-active');
   }
 
   setMode(mode) {
