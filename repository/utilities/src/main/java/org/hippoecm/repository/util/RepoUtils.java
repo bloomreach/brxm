@@ -67,7 +67,12 @@ public class RepoUtils {
     /**
      * @param clazz the class object for which to obtain a reference to the manifest
      * @return the URL of the manifest found, or {@code null} if it could not be obtained
+     * @deprecated Please use {@link java.lang.Package#getImplementationVersion()} if you intended to read the
+     *             version information from the MANIFEST.MF.
+     *             Please note that the implementation in this method to find out MANIFEST.MF from relative paths
+     *             calculation using '../../../..' might not work in every servlet container environment.
      */
+    @Deprecated
     public static URL getManifestURL(Class clazz) {
         try {
             final StringBuilder sb = new StringBuilder();
@@ -90,7 +95,12 @@ public class RepoUtils {
      * @param clazz  the class object for which to obtain the manifest
      * @return  the manifest object, or {@code null} if it could not be obtained
      * @throws IOException  if something went wrong while reading the manifest
+     * @deprecated Please use {@link java.lang.Package#getImplementationVersion()} if you intended to read the
+     *             version information from the MANIFEST.MF.
+     *             Please note that the implementation in this method to find out MANIFEST.MF from relative paths
+     *             calculation using '../../../..' might not work in every servlet container environment.
      */
+    @Deprecated
     public static Manifest getManifest(Class clazz) throws IOException {
         final URL url = getManifestURL(clazz);
         if (url != null) {
