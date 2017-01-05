@@ -182,4 +182,22 @@
 
     }
   });
+
+  // In some cases a window resize event draws an expanded dropdown menu in the wrong position.
+  // To fix this we force a browser redraw on the expanded dropdown while resizing.
+  var focusAfterResize;
+  var focusAfterResizeTimer;
+
+  $(win).resize(function() {
+    focusAfterResize = $('.hippo-console-menu-advanced li:focus').get(0);
+
+    if (focusAfterResizeTimer) {
+      win.clearTimeout(focusAfterResizeTimer);
+    }
+
+    focusAfterResizeTimer = win.setTimeout(function() {
+      $(focusAfterResize).focus();
+      focusAfterResize = null;
+    }, 200);
+  });
 })(window, document);
