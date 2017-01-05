@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,4 +30,11 @@ public interface IEditorManager extends IClusterable {
 
     IEditor<Node> openPreview(IModel<Node> model) throws ServiceException;
 
+    default void registerOpenListener(IEditorOpenListener listener) {
+        throw new UnsupportedOperationException("registerOpenListener not implemented in this IEditorManager");
+    }
+
+    default void unregisterOpenListener(IEditorOpenListener listener) {
+        throw new UnsupportedOperationException("unregisterOpenListener not implemented in this IEditorManager");
+    }
 }

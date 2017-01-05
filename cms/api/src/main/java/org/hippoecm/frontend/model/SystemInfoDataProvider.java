@@ -20,8 +20,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -33,7 +31,6 @@ import java.util.jar.Manifest;
 import javax.jcr.Repository;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
@@ -155,18 +152,10 @@ public class SystemInfoDataProvider implements IDataProvider {
     }
 
     public String getCMSVersion() {
-        try {
-            Manifest manifest = getManifest(Home.class);
-            if (manifest == null) {
-                manifest = getWebAppManifest();
-            }
-            if (manifest != null) {
-                return buildVersionString(manifest, "Implementation-Version", "Implementation-Build");
-            }
-        } catch (IOException iOException) {
-            log.debug("Error occurred getting the cms version from the manifest.", iOException);
+        final String implVersion = Home.class.getPackage().getImplementationVersion();
+        if (implVersion != null) {
+            return implVersion;
         }
-
         return "unknown";
     }
 
@@ -218,46 +207,5 @@ public class SystemInfoDataProvider implements IDataProvider {
         } else {
             return "unknown";
         }
-    }
-
-
-    /**
-     * @param clazz the class object for which to obtain a reference to the manifest
-     * @return the URL of the manifest found, or {@code null} if it could not be obtained
-     */
-    private static URL getManifestURL(Class clazz) {
-        try {
-            final StringBuilder sb = new StringBuilder();
-            final String[] classElements = clazz.getName().split("\\.");
-            for (int i=0; i<classElements.length-1; i++) {
-                sb.append("../");
-            }
-            sb.append("META-INF/MANIFEST.MF");
-            final URL classResource = clazz.getResource(classElements[classElements.length-1]+".class");
-            if (classResource != null) {
-                return new URL(classResource, new String(sb));
-            }
-        } catch (MalformedURLException ignore) {
-        }
-        return null;
-    }
-
-    /**
-     *
-     * @param clazz  the class object for which to obtain the manifest
-     * @return  the manifest object, or {@code null} if it could not be obtained
-     * @throws IOException  if something went wrong while reading the manifest
-     */
-    private static Manifest getManifest(Class clazz) throws IOException {
-        final URL url = getManifestURL(clazz);
-        if (url != null) {
-            final InputStream is = url.openStream();
-            try {
-                return new Manifest(is);
-            } finally {
-                IOUtils.closeQuietly(is);
-            }
-        }
-        return null;
     }
 }
