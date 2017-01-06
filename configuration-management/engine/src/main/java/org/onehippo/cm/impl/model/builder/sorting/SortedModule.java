@@ -36,6 +36,8 @@ public class SortedModule implements Module {
     public SortedModule(final Module delegatee, final Project project) {
         this.delegatee = delegatee;
         this.project = project;
+        // note we *only* sort Sources to get consistent error/warning messages in case
+        // there are incorrect / conflicting yaml configurations
         SortedSet<Source> sorted = new SourceSorter().sort(delegatee.getSources());
         for (Source source : sorted) {
             sortedSources.put(source.getPath(), new SortedSource(source, this));

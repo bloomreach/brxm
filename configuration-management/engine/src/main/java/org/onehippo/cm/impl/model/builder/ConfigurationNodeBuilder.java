@@ -17,12 +17,20 @@ package org.onehippo.cm.impl.model.builder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.SortedSet;
 
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ConfigurationNode;
+import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionItem;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.NamespaceDefinition;
+import org.onehippo.cm.api.model.NodeTypeDefinition;
+import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.impl.model.builder.sorting.SortedConfiguration;
 import org.onehippo.cm.impl.model.builder.sorting.Sorter;
 
@@ -42,10 +50,86 @@ public class ConfigurationNodeBuilder {
             sorted.add(new SortedConfiguration(configuration));
         }
 
-        // TODO get the sorted list of ALL DefinitionItem PER Configuration
-        // FROM this list we can build the ConfigurationNode model
+        // ordered PER module first by namespace, then cnd, then per repository path (node/prop)
+        List<Definition> orderedDefinitions = getOrderedDefinitions(sortedConfigurations);
 
         return null;
+    }
+
+    private List<Definition> getOrderedDefinitions(final SortedSet<Configuration> sortedConfigurations) {
+        List<Definition> definitions = new ArrayList<>();
+
+        for (Configuration sortedConfiguration : sortedConfigurations) {
+            for (Project project : sortedConfiguration.getProjects().values()) {
+                for (Module module : project.getModules().values()) {
+                    List<Definition> orderedModuleDefinitions = getOrderedModuleDefinitions(module);
+                    definitions.addAll(orderedModuleDefinitions);
+                }
+            }
+        }
+
+        return definitions;
+    }
+
+    private List<Definition> getOrderedModuleDefinitions(final Module module) {
+        List<Definition> definitions = new ArrayList<>();
+        for (Source source : module.getSources().values()) {
+            definitions.addAll(source.getDefinitions());
+        }
+
+        Collections.sort(definitions, new Comparator<Definition>() {
+            @Override
+            public int compare(final Definition def1, final Definition def2) {
+                int nsComparison = compareNameSpaceDefs(def1, def2);
+                if (nsComparison != 0) {
+                    return nsComparison;
+                }
+
+                int ntComparison = compareNodeTypeDefs(def1, def2);
+                if (ntComparison != 0) {
+                    return ntComparison;
+                }
+
+                // TODO
+                // return compareContentDefs(def1, def2);
+                return 0;
+            }
+
+            private int compareNameSpaceDefs(final Definition def1, final Definition def2) {
+                if (def1 instanceof NamespaceDefinition) {
+                    if (def2 instanceof NamespaceDefinition) {
+                        return ((NamespaceDefinition)def1).getPrefix().compareTo(((NamespaceDefinition)def2).getPrefix());
+                    }
+                    // def 1 should be first
+                    return -1;
+                }
+                if (def2 instanceof NamespaceDefinition) {
+                    return 1;
+                }
+                return 0;
+            }
+
+
+            private int compareNodeTypeDefs(final Definition def1, final Definition def2) {
+                if (def1 instanceof NodeTypeDefinition) {
+                    if (def2 instanceof NodeTypeDefinition) {
+                        // TODO both def1 and def2 are of type NodeTypeDefinition : It might be that cnd of def2
+                        // TODO depends on the cnd of def1 : Hence we need to parse the actual cnd value to find out
+                        // TODO whether def1 or def2 should be loaded first. For now. just compare the cnd string
+                        return ((NodeTypeDefinition)def1).getCndString().compareTo(((NodeTypeDefinition)def2).getCndString());
+                    }
+                    // def1 should be first
+                    return -1;
+                }
+                if (def2 instanceof NamespaceDefinition) {
+                    return 1;
+                }
+                return 0;
+            }
+
+        });
+
+        return definitions;
     }
 
 
