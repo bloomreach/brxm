@@ -53,6 +53,7 @@ class HippoIframeCtrl {
     this.PageMetaDataService = PageMetaDataService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
+    this.ScalingService = ScalingService;
 
     this.PageStructureService.clearParsedElements();
 
@@ -63,8 +64,10 @@ class HippoIframeCtrl {
 
     OverlayService.init(this.iframeJQueryElement);
     ViewportService.init(this.iframeJQueryElement);
-    ScalingService.init($element);
-    DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-canvas'));
+
+    const canvasJQueryElement = $element.find('.channel-iframe-canvas');
+    ScalingService.init($element, canvasJQueryElement, this.iframeJQueryElement);
+    DragDropService.init(this.iframeJQueryElement, canvasJQueryElement);
 
     const deleteComponentHandler = componentId => this.deleteComponent(componentId);
     CmsService.subscribe('delete-component', deleteComponentHandler);
@@ -80,6 +83,7 @@ class HippoIframeCtrl {
     this.PageStructureService.clearParsedElements();
     this._insertCss().then(() => {
       if (this._isIframeDomPresent()) {
+        this.ScalingService.syncIframe();
         this._parseHstComments();
         this._updateDragDrop();
         this._updateChannelIfSwitched().then(() => {
