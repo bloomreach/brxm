@@ -69,6 +69,7 @@ public abstract class FieldType {
     public enum Type {
         STRING,
         MULTILINE_STRING,
+        RICH_TEXT,
         CHOICE, // "content blocks"
         COMPOUND
     }

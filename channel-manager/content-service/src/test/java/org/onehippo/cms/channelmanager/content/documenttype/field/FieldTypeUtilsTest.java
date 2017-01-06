@@ -32,13 +32,8 @@ import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.*;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.powermock.api.easymock.PowerMock;
@@ -351,24 +346,27 @@ public class FieldTypeUtilsTest {
     }
 
     @Test
-    public void populateFieldsStringAndMultilineString() {
+    public void populateFieldsStringAndMultilineStringAndFormattedText() {
         final List<FieldType> fields = new ArrayList<>();
         final FieldSorter sorter = createMock(FieldSorter.class);
         final ContentTypeContext context = createMock(ContentTypeContext.class);
         final FieldTypeContext fieldContext1 = createMock(FieldTypeContext.class);
         final FieldTypeContext fieldContext2 = createMock(FieldTypeContext.class);
         final FieldTypeContext fieldContext3 = createMock(FieldTypeContext.class);
+        final FieldTypeContext fieldContext4 = createMock(FieldTypeContext.class);
         final ContentTypeItem item1 = createMock(ContentTypeItem.class);
         final ContentTypeItem item2 = createMock(ContentTypeItem.class);
         final ContentTypeItem item3 = createMock(ContentTypeItem.class);
+        final ContentTypeItem item4 = createMock(ContentTypeItem.class);
         final Node node = createMock(Node.class);
         final StringFieldType stringField1 = createMock(StringFieldType.class);
         final StringFieldType stringField2 = createMock(StringFieldType.class);
         final MultilineStringFieldType multilineStringField = createMock(MultilineStringFieldType.class);
+        final FormattedTextFieldType formattedTextField = createMock(FormattedTextFieldType.class);
 
         expect(context.getContentTypeRoot()).andReturn(null);
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
-        expect(sorter.sortFields(context)).andReturn(Arrays.asList(fieldContext1, fieldContext2, fieldContext3));
+        expect(sorter.sortFields(context)).andReturn(Arrays.asList(fieldContext1, fieldContext2, fieldContext3, fieldContext4));
         expect(fieldContext1.getContentTypeItem()).andReturn(item1);
         expect(item1.isProperty()).andReturn(true);
         expect(item1.getItemType()).andReturn("String");
@@ -378,13 +376,18 @@ public class FieldTypeUtilsTest {
         expect(fieldContext3.getContentTypeItem()).andReturn(item3);
         expect(item3.isProperty()).andReturn(true);
         expect(item3.getItemType()).andReturn("Label");
+        expect(fieldContext4.getContentTypeItem()).andReturn(item4);
+        expect(item4.isProperty()).andReturn(true);
+        expect(item4.getItemType()).andReturn("Html");
         expect(fieldContext1.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(fieldContext2.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(fieldContext3.getEditorConfigNode()).andReturn(Optional.of(node));
+        expect(fieldContext4.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN)).anyTimes();
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(stringField1));
         expect(FieldTypeFactory.createFieldType(MultilineStringFieldType.class)).andReturn(Optional.of(multilineStringField));
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(stringField2));
+        expect(FieldTypeFactory.createFieldType(FormattedTextFieldType.class)).andReturn(Optional.of(formattedTextField));
         stringField1.init(fieldContext1);
         expectLastCall();
         expect(stringField1.isValid()).andReturn(true);
@@ -394,20 +397,25 @@ public class FieldTypeUtilsTest {
         stringField2.init(fieldContext3);
         expectLastCall();
         expect(stringField2.isValid()).andReturn(true);
+        expectLastCall();
+        formattedTextField.init(fieldContext4);
+        expectLastCall();
+        expect(formattedTextField.isValid()).andReturn(true);
 
         PowerMock.replayAll();
-        replay(sorter, context, fieldContext1, fieldContext2, fieldContext3, item1, item2, item3,
-                stringField1, multilineStringField, stringField2);
+        replay(sorter, context, fieldContext1, fieldContext2, fieldContext3, fieldContext4, item1, item2, item3, item4,
+                stringField1, multilineStringField, stringField2, formattedTextField);
 
         FieldTypeUtils.populateFields(fields, context);
 
-        assertThat(fields.size(), equalTo(3));
+        assertThat(fields.size(), equalTo(4));
         assertThat(fields.get(0), equalTo(stringField1));
         assertThat(fields.get(1), equalTo(multilineStringField));
         assertThat(fields.get(2), equalTo(stringField2));
+        assertThat(fields.get(3), equalTo(formattedTextField));
 
-        verify(sorter, context, fieldContext1, fieldContext2, fieldContext3, item1, item2, item3,
-                stringField1, multilineStringField, stringField2);
+        verify(sorter, context, fieldContext1, fieldContext2, fieldContext3, fieldContext4, item1, item2, item3, item4,
+                stringField1, multilineStringField, stringField2, formattedTextField);
         PowerMock.verifyAll();
     }
 
