@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
+import ComponentCatalogService from './componentCatalog.service';
 import componentCatalogComponent from './componentCatalog.component';
 
 const componentCatalogModule = angular
   .module('hippo-cm.channel.componentCatalog', [])
+  .service('ComponentCatalogService', ComponentCatalogService)
   .component('componentCatalog', componentCatalogComponent);
 
 export default componentCatalogModule;

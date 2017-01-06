@@ -18,12 +18,13 @@ import MutationSummary from 'mutation-summary';
 
 class OverlayService {
 
-  constructor($rootScope, $log, DomService, MaskService, PageStructureService) {
+  constructor($rootScope, $log, DomService, HippoIframeService, MaskService, PageStructureService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.$log = $log;
     this.DomService = DomService;
+    this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
 
@@ -68,10 +69,17 @@ class OverlayService {
   _addMaskClickHandler() {
     this.overlay.on('click', () => {
       this.$rootScope.$apply(() => {
-        this.unmask();
-        this.MaskService.unmask();
+        this._resetMask();
       });
     });
+  }
+
+  _resetMask() {
+    this.unmask();
+    this.offContainerClick();
+    this.MaskService.unmask();
+    this.MaskService.removeClickHandler();
+    this.HippoIframeService.lowerIframeBeneathMask();
   }
 
   mask() {
@@ -158,6 +166,20 @@ class OverlayService {
     this._syncElements(structureElement, overlayElement);
 
     this.overlay.append(overlayElement);
+  }
+
+  onContainerClick(clickHandler) {
+    this.PageStructureService.getContainers().forEach((container) => {
+      const element = container.getOverlayElement();
+      element.on('click', clickHandler);
+    });
+  }
+
+  offContainerClick() {
+    this.PageStructureService.getContainers().forEach((container) => {
+      const element = container.getOverlayElement();
+      element.off('click');
+    });
   }
 
   _syncElements(structureElement, overlayElement) {

@@ -18,7 +18,7 @@
   <md-list-item class="md-1-line"
                 ng-repeat="component in $ctrl.components track by $index"
                 ng-class="{'list-item-active': $ctrl.isComponentSelected($index)}"
-                ng-click="$ctrl.onSelect($index)">
+                ng-click="$ctrl.onSelect(component, $index)">
     <img class="md-avatar"
          ng-src="{{component.iconURL}}" />
 

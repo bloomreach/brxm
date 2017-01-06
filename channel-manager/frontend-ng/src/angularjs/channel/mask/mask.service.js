@@ -15,7 +15,15 @@
  */
 
 class MaskService {
-  constructor() {
+  initialize() {
+    this.onClick();
+  }
+
+  onClick(clickHandler = angular.noop) {
+    this.clickHandler = clickHandler;
+  }
+
+  removeClickHandler() {
     this.clickHandler = angular.noop;
   }
 
@@ -23,9 +31,8 @@ class MaskService {
     return this.masked;
   }
 
-  mask(clickHandler) {
+  mask() {
     this.masked = true;
-    this.clickHandler = clickHandler || angular.noop;
   }
 
   unmask() {
