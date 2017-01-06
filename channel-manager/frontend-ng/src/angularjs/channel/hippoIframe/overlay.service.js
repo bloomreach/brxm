@@ -18,13 +18,14 @@ import MutationSummary from 'mutation-summary';
 
 class OverlayService {
 
-  constructor($rootScope, $log, DomService, PageStructureService) {
+  constructor($rootScope, $log, DomService, PageStructureService, ScalingService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.$log = $log;
     this.DomService = DomService;
     this.PageStructureService = PageStructureService;
+    this.ScalingService = ScalingService;
 
     PageStructureService.registerChangeListener(() => this.sync());
   }
@@ -81,7 +82,7 @@ class OverlayService {
   }
 
   sync() {
-    if (this.overlay) {
+    if (this.overlay && !this.ScalingService.isAnimating()) {
       const currentOverlayElements = new Set();
 
       this._forAllStructureElements((structureElement) => {
@@ -170,11 +171,37 @@ class OverlayService {
 
   _syncPosition(overlayElement, boxElement) {
     const rect = boxElement[0].getBoundingClientRect();
+
+    let top = rect.top;
+    let left = rect.left;
+    let width = rect.width;
+    let height = rect.height;
+
+    // Include scroll position since coordinates are relative to page but rect is relative to viewport.
     // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
-    overlayElement.css('top', `${rect.top + this.iframeWindow.pageYOffset}px`);
-    overlayElement.css('left', `${rect.left + this.iframeWindow.pageXOffset}px`);
-    overlayElement.css('height', `${rect.height}px`);
-    overlayElement.css('width', `${rect.width}px`);
+    left += this.iframeWindow.pageXOffset;
+    top += this.iframeWindow.pageYOffset;
+
+    // Compensate for the scale factor. The page elements are scaled, but their position and size is relative to the
+    // viewport, which does not scale. Yet the position of the overlay elements is relative to the overlay root, which
+    // is already scaled. The scaling of the page element rectangles therefore has to be reverted in their overlay
+    // counterparts to avoid scaling the overlay twice.
+    // In addition, the scaling transforms to the top-right corner. Hence the page shifts to the right when scaled, so
+    // this shift has to be subtracted from the left of each overlay rectangle.
+    const scale = this.ScalingService.getScaleFactor();
+    if (scale < 1) {
+      const windowWidth = this.iframeWindow.document.documentElement.clientWidth;
+      const shiftX = windowWidth - (windowWidth * scale);
+      left = (left - shiftX) / scale;
+      top /= scale;
+      width /= scale;
+      height /= scale;
+    }
+
+    overlayElement.css('top', `${top}px`);
+    overlayElement.css('left', `${left}px`);
+    overlayElement.css('width', `${width}px`);
+    overlayElement.css('height', `${height}px`);
   }
 
   _tidyOverlay(elementsToKeep) {

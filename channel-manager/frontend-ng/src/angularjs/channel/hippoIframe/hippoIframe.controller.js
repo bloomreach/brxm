@@ -62,7 +62,7 @@ class HippoIframeCtrl {
     HippoIframeService.initialize(this.iframeJQueryElement);
 
     OverlayService.init(this.iframeJQueryElement);
-    ViewportService.init($element.find('.channel-iframe-sheet'), this.iframeJQueryElement);
+    ViewportService.init(this.iframeJQueryElement);
     ScalingService.init($element);
     DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-canvas'));
 

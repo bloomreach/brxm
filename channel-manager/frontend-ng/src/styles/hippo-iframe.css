@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+html {
+  transform-origin: top right;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
 a.hst-cmseditlink {
   display: block;
   height: 56px;

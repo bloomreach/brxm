@@ -18,16 +18,13 @@
   user-select: none;
 
   iframe {
+    background-color: $grey-50;
     border: 0;
+    box-shadow: 0 0 20px $black-shadow;
+    display: block;
     height: 100%;
+    margin-left: auto;
+    margin-right: auto;
     width: 100%;
   }
-}
-
-.channel-iframe-sheet {
-  background-color: $sheet-bgcolor;
-  box-shadow: 0 0 20px $black-shadow;
-  height: 100%;
-  margin-left: auto;
-  margin-right: auto;
 }

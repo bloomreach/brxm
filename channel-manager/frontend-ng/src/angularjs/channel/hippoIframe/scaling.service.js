@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-const ANGULAR_MATERIAL_SIDENAV_EASING = [0.25, 0.8, 0.25, 1];
 const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
+const SCALE_DURATION_MS = ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS;
 
 class ScalingService {
 
-  constructor($rootScope, $window, OverlayService, ViewportService) {
+  constructor($rootScope, $timeout, $window, ViewportService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
-    this.OverlayService = OverlayService;
+    this.$timeout = $timeout;
     this.ViewportService = ViewportService;
 
     this.pushWidth = 0; // all sidenavs are initially closed
     this.scaleFactor = 1.0;
-    this.scaleDuration = ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS;
-    this.scaleEasing = ANGULAR_MATERIAL_SIDENAV_EASING;
+    this.animating = false;
 
     angular.element($window).bind('resize', () => {
       if (this.hippoIframeJQueryElement) {
@@ -50,6 +49,10 @@ class ScalingService {
 
   sync() {
     this._updateScaling(false);
+  }
+
+  isAnimating() {
+    return this.animating;
   }
 
   getScaleFactor() {
@@ -112,54 +115,74 @@ class ScalingService {
     const newScale = (visibleCanvasWidth < viewportWidth) ? visibleCanvasWidth / viewportWidth : 1;
 
     if (newScale !== oldScale) {
-      const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
-      elementsToScale.velocity('finish');
+      const iframe = this.hippoIframeJQueryElement.find('iframe');
+      const iframeWindow = iframe[0].contentWindow;
+      const iframeHtml = $('html', iframeWindow.document);
 
-      if (animate) {
-        const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-canvas');
-        const currentOffset = iframeBaseJQueryElement.scrollTop();
-        const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
+      const appElementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
+      const elementsToScale = $.merge(iframeHtml, appElementsToScale);
 
-        if (targetOffset !== currentOffset) {
-          // keep scroll-position constant during animation
-          elementsToScale.velocity('scroll', {
-            container: iframeBaseJQueryElement,
-            offset: targetOffset - currentOffset,
-            duration: this.scaleDuration,
-            easing: this.scaleEasing,
-            queue: false,
-          });
-        }
-
-        // TODO remove
-        // const iframeScrollXJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-scroll-x');
-        // const widthBeforeScaling = iframeScrollXJQueryElement.width();
-
-        // zoom in/out to new scale factor
-        elementsToScale.velocity({
-          scale: newScale,
-        }, {
-          duration: this.scaleDuration,
-          easing: this.scaleEasing,
-          complete: () => {
-            // TODO when scaling causes a scrollbar to appear/disappear, we have to tweak it
-            //
-            // if (newScale !== 1 && widthBeforeScaling !== iframeScrollXJQueryElement.width()) {
-            //   this._updateScaling(animate);
-            // } else {
-            //   this.OverlayService.syncIframe();
-            // }
-            this.OverlayService.sync();
-          },
-        });
-      } else {
-        elementsToScale.css('transform', `scale(${newScale})`);
+      if (this.onAnimationEnd) {
+        this.$timeout.cancel(this.onAnimationEnd);
       }
+
+      this.animating = animate;
+      elementsToScale.css('transform', `scale(${newScale})`);
+
+      this.onAnimationEnd = this.$timeout(() => {
+        this.animating = false;
+      }, SCALE_DURATION_MS);
+
+//       if (false) {
+//         const currentOffset = iframeWindow.pageYOffset;
+//         const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
+//
+//         console.log(`scroll from ${currentOffset} to ${targetOffset}`);
+//
+//         if (targetOffset !== currentOffset) {
+// /*
+//           const iframeHtml = $('html', iframeWindow.document);
+//           console.log('scroll #elements', iframeHtml.length);
+//
+//           elementsToScale.velocity('scroll', {
+//             container: $('body', iframeWindow.document),
+//             offset: targetOffset - currentOffset,
+//             duration: this.scaleDuration,
+//             easing: this.scaleEasing,
+//             queue: false,
+//           });
+// */
+//           iframeWindow.scrollTo(0, targetOffset);
+//
+//         }
+//
+//         // TODO remove
+//         // const iframeScrollXJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-scroll-x');
+//         // const widthBeforeScaling = iframeScrollXJQueryElement.width();
+//
+//         // zoom in/out to new scale factor
+//         elementsToScale.velocity({
+//           scale: newScale,
+//         }, {
+//           duration: this.scaleDuration,
+//           easing: this.scaleEasing,
+//           complete: () => {
+//             // TODO when scaling causes a scrollbar to appear/disappear, we have to tweak it
+//             //
+//             // if (newScale !== 1 && widthBeforeScaling !== iframeScrollXJQueryElement.width()) {
+//             //   this._updateScaling(animate);
+//             // } else {
+//             //   this.OverlayService.syncIframe();
+//             // }
+//             this.OverlayService.sync();
+//           },
+//         });
+//       } else {
+//       }
     }
 
     this.scaleFactor = newScale;
   }
-
 }
 
 export default ScalingService;
