@@ -5,13 +5,13 @@ instructions:
                 aGVsbG8gd29ybGQ=
           - bool: true
           - float: 3.1415
-          - int: 42
+          - long: 42
           - str: hello world
           - timestamp: 2015-10-21T07:28:00+8:00
       - /string:
           - strBool: 'true'
           - strFloat: '3.1415'
-          - strInt: '42'
+          - strLong: '42'
           - strTimestamp: '2015-10-21T07:28:00+8:00'
           - strWithQuotes: string ' "
           - strWithLeadingSingleQuote: ''' " string'

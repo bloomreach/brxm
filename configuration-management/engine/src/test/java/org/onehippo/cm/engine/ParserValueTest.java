@@ -50,7 +50,7 @@ public class ParserValueTest extends AbstractBaseTest {
         assertProperty(baseNode, "/base/binary", "binary", baseDefinition, false, "hello world".getBytes());
         assertProperty(baseNode, "/base/bool", "bool", baseDefinition, false, true);
         assertProperty(baseNode, "/base/float", "float", baseDefinition, false, 3.1415);
-        assertProperty(baseNode, "/base/int", "int", baseDefinition, false, 42);
+        assertProperty(baseNode, "/base/long", "long", baseDefinition, false, (long) 42);
         assertProperty(baseNode, "/base/str", "str", baseDefinition, false, "hello world");
         final Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(0);
@@ -62,7 +62,7 @@ public class ParserValueTest extends AbstractBaseTest {
         final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "string", stringDefinition, false, 0, 8);
         assertProperty(stringNode, "/string/strBool", "strBool", stringDefinition, false, "true");
         assertProperty(stringNode, "/string/strFloat", "strFloat", stringDefinition, false, "3.1415");
-        assertProperty(stringNode, "/string/strInt", "strInt", stringDefinition, false, "42");
+        assertProperty(stringNode, "/string/strLong", "strLong", stringDefinition, false, "42");
         assertProperty(stringNode, "/string/strTimestamp", "strTimestamp", stringDefinition, false, "2015-10-21T07:28:00+8:00");
         assertProperty(stringNode, "/string/strWithQuotes", "strWithQuotes", stringDefinition, false, "string ' \"");
         assertProperty(stringNode, "/string/strWithLeadingSingleQuote", "strWithLeadingSingleQuote", stringDefinition, false, "' \" string");

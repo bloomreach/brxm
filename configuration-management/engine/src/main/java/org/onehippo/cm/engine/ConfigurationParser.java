@@ -282,7 +282,7 @@ public class ConfigurationParser {
             return new ValueImpl((Double) object);
         }
         if (Tag.INT.equals(scalar.getTag())) {
-            return new ValueImpl((Integer) object);
+            return new ValueImpl(((Integer) object).longValue());
         }
         if (Tag.STR.equals(scalar.getTag())) {
             return new ValueImpl((String) object);

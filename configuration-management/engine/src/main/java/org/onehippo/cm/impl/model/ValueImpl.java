@@ -40,7 +40,7 @@ public class ValueImpl implements Value {
         this.valueType = ValueType.DOUBLE;
     }
 
-    public ValueImpl(final Integer value) {
+    public ValueImpl(final Long value) {
         this.value = value;
         this.valueType = ValueType.LONG;
     }
