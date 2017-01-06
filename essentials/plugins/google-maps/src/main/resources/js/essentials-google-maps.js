@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@
     }
 
     if (!gm.render) {
-        gm.render = function (elementId, address, longitude, latitude, zoomFactor, mapType) {
+        gm.render = function (elementId, address, longitude, latitude, zoomFactor, mapType, apiKey) {
             if (!google) {
                 if (window.console) {
                     console.warn('Could not find Google Maps API, please make sure it is loaded correctly before creating a ' +
@@ -79,6 +79,10 @@
                       '<script src="https://maps.googleapis.com/maps/api/js"></script> into the page.');
                 }
                 return;
+            }
+
+            if (!apiKey) {
+                console.warn('Hippo Essentials warning: Without a Google Maps API key the map may not show on some pages.');
             }
 
             var latlng;

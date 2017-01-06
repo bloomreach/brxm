@@ -22,7 +22,7 @@
                 gm = he.GoogleMaps;
 
                 gm.queue.push(function() {
-                    gm.render('map-canvas-${componentId}', '${cparam.address?html}', ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, '${cparam.mapType}');
+                    gm.render('map-canvas-${componentId}', '${cparam.address?html}', ${cparam.longitude}, ${cparam.latitude}, ${cparam.zoomFactor}, '${cparam.mapType}', '${cparam.apiKey}');
                 });
             })(window);
         </script>
