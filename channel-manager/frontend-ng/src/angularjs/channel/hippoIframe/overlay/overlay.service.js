@@ -217,8 +217,9 @@ class OverlayService {
 
   _syncPosition(overlayElement, boxElement) {
     const rect = boxElement[0].getBoundingClientRect();
-    overlayElement.css('top', `${rect.top + this.iframeWindow.scrollY}px`);
-    overlayElement.css('left', `${rect.left + this.iframeWindow.scrollX}px`);
+    // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
+    overlayElement.css('top', `${rect.top + this.iframeWindow.pageYOffset}px`);
+    overlayElement.css('left', `${rect.left + this.iframeWindow.pageXOffset}px`);
     overlayElement.css('height', `${rect.height}px`);
     overlayElement.css('width', `${rect.width}px`);
   }
