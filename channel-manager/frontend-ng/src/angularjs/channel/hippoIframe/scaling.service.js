@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
-const SCALE_DURATION_MS = ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS;
 const IFRAME_FADE_IN_DURATION_MS = 150;
 
 class ScalingService {
 
-  constructor($rootScope, $timeout, $window, ViewportService) {
+  constructor($rootScope, $window, ViewportService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
-    this.$timeout = $timeout;
     this.ViewportService = ViewportService;
 
     this.pushWidth = 0; // all sidenavs are initially closed
@@ -143,22 +140,18 @@ class ScalingService {
     const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
     const scaledScrollOffset = targetOffset - currentOffset;
 
-    if (this.onAnimationEnd) {
-      this.$timeout.cancel(this.onAnimationEnd);
-    }
-
     this.animating = animate;
 
-    if (animate) {
-      elementsToScale.addClass('hippo-animated');
-      elementsToScale.css('transform', `scale(${newScale}) translateY(${-scaledScrollOffset}px)`);
+    elementsToScale.toggleClass('hippo-animated', animate);
 
-      this.onAnimationEnd = this.$timeout(() => {
+    if (animate) {
+      elementsToScale.one('transitionend', () => {
         this.animating = false;
         elementsToScale.removeClass('hippo-animated');
         elementsToScale.css('transform', `scale(${newScale})`);
         iframeWindow.scrollBy(0, scaledScrollOffset);
-      }, SCALE_DURATION_MS);
+      });
+      elementsToScale.css('transform', `scale(${newScale}) translateY(${-scaledScrollOffset}px)`);
     } else {
       elementsToScale.css('transform', `scale(${newScale})`);
       iframeWindow.scrollBy(0, scaledScrollOffset);
