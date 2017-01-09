@@ -133,7 +133,7 @@ public class TestFormField {
     }
 
     @Test
-    public void testDeprectatedSetValues() throws Exception {
+    public void testDeprecatedSetValues() throws Exception {
         FormField formField = new FormField("t");
 
         formField.setValues(null);
