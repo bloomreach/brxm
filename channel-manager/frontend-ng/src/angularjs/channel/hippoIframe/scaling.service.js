@@ -50,7 +50,7 @@ class ScalingService {
   }
 
   sync() {
-    this._updateScaling(false);
+    this._updateScaling(true);
   }
 
   onIframeUnload() {
@@ -94,25 +94,13 @@ class ScalingService {
    *                 viewPortWidth indicates how many pixels wide the iframe content should be rendered.
    */
   _updateIframeShift(animate) {
-    const currentShift = parseInt(this.hippoIframeJQueryElement.css('margin-left'), 10);
-    const canvasWidth = this.canvasJQueryElement.width() + currentShift;
+    const canvasWidth = this.canvasJQueryElement.width();
     const viewportWidth = this.ViewportService.getWidth() === 0 ? canvasWidth : this.ViewportService.getWidth();
     const canvasBorderWidth = canvasWidth - viewportWidth;
-    const targetShift = Math.min(canvasBorderWidth, this.pushWidth);
+    const targetShift = Math.min(canvasBorderWidth, this.pushWidth) / 2;
 
-    if (targetShift !== currentShift) {
-      this.hippoIframeJQueryElement.velocity('finish');
-      if (animate) {
-        this.hippoIframeJQueryElement.velocity({
-          'margin-left': targetShift,
-        }, {
-          duration: this.scaleDuration,
-          easing: this.scaleEasing,
-        });
-      } else {
-        this.hippoIframeJQueryElement.css('margin-left', targetShift);
-      }
-    }
+    this.iframeJQueryElement.toggleClass('translate-animated', animate);
+    this.iframeJQueryElement.css('transform', `translateX(${targetShift}px)`);
 
     return [canvasWidth, viewportWidth];
   }

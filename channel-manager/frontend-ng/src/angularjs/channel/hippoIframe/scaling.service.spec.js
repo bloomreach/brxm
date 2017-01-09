@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('ScalingService', () => {
+fdescribe('ScalingService', () => {
   let ScalingService;
   let ViewportService;
   let iframeJQueryElement;

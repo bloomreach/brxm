@@ -31,7 +31,7 @@ class ViewportService {
 
     if (width === 0) {
       // Desktop mode - no width constraints
-      this.$iframe.css('max-width', 'none');
+      this.$iframe.css('max-width', '100%');
     } else {
       // viewport is constrained
       this.$iframe.css('max-width', `${width}px`);
