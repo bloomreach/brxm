@@ -15,10 +15,7 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 
@@ -27,7 +24,7 @@ public class Confirm extends Dialog<Void> {
     private static final String DEFAULT_TITLE_KEY = "confirm-title";
     private static final String DEFAULT_TEXT_KEY = "confirm-text";
 
-    private IModel<String> text;
+    private String text;
     private DialogCallback okCallback;
     private DialogCallback cancelCallback;
 
@@ -36,42 +33,16 @@ public class Confirm extends Dialog<Void> {
         setFocusOnCancel();
         setTitleKey(DEFAULT_TITLE_KEY);
 
-        add(new Label("text", ReadOnlyModel.of(() -> getText().getObject())));
+        add(new Label("text", ReadOnlyModel.of(this::getText)));
     }
 
-    public Confirm title(final IModel<String> title) {
-        setTitle(title);
+    public Confirm title(final String title) {
+        setTitle(Model.of(title));
         return this;
     }
 
-    public Confirm title(final String titleKey) {
-        return title(titleKey, null);
-    }
-
-    public Confirm title(final String titleKey, final IModel<?> titleModel) {
-        return title(titleKey, titleModel, null);
-    }
-
-    public Confirm title(final String titleKey, final IModel<?> titleModel, final Component component) {
-        setTitle(getString(titleKey, titleModel, component));
-        return this;
-    }
-
-    public Confirm text(final IModel<String> text) {
+    public Confirm text(final String text) {
         this.text = text;
-        return this;
-    }
-
-    public Confirm text(final String textKey) {
-        return text(textKey, null);
-    }
-
-    public Confirm text(final String textKey, final IModel<?> textModel) {
-        return text(textKey, textModel, null);
-    }
-
-    public Confirm text(final String textKey, final IModel<?> textModel, final Component resolver) {
-        text = getString(textKey, textModel, resolver);
         return this;
     }
 
@@ -83,14 +54,6 @@ public class Confirm extends Dialog<Void> {
     public Confirm cancel(final DialogCallback cancelCallback) {
         this.cancelCallback = cancelCallback;
         return this;
-    }
-
-    @Override
-    protected void onDetach() {
-        if (text != null) {
-            text.detach();
-        }
-        super.onDetach();
     }
 
     @Override
@@ -107,15 +70,7 @@ public class Confirm extends Dialog<Void> {
         }
     }
 
-    private IModel<String> getString(final String key, final IModel<?> model, final Component component) {
-        final Component resolver = component == null ? this : component;
-        return Model.of(resolver.getString(key, model, StringUtils.EMPTY));
-    }
-
-    private IModel<String> getText() {
-        if (text == null) {
-            text(DEFAULT_TEXT_KEY);
-        }
-        return text;
+    private String getText() {
+        return text == null ? getString(DEFAULT_TEXT_KEY) : text;
     }
 }
