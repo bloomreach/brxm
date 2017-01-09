@@ -36,7 +36,7 @@
     <hst:headContribution keyHint="google-maps-api" category="htmlBodyEnd">
         <c:choose>
             <c:when test="${not empty requestScope.cparam.apiKey}">
-                <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js?key=${fn:escapeXml(requestScope.cparam.apiKey)}&callback=HippoEssentials.GoogleMaps.init</c:set>
+                <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js?key=${fn:escapeXml(requestScope.cparam.apiKey)}&amp;callback=HippoEssentials.GoogleMaps.init</c:set>
             </c:when>
             <c:otherwise>
                 <c:set var="mapsUrl">https://maps.googleapis.com/maps/api/js?callback=HippoEssentials.GoogleMaps.init</c:set>
