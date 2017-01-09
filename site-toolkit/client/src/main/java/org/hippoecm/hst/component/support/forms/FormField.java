@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@
 package org.hippoecm.hst.component.support.forms;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Simple value wrapper for form fields (name, label, data where the data can be submitted form field values and
@@ -75,7 +74,11 @@ public class FormField {
     }
 
     public void setValueList(final List<String> valueList) {
-        this.valueList = valueList;
+        if(valueList == null) {
+            this.valueList = new ArrayList<>();
+        } else {
+            this.valueList = valueList;
+        }
     }
 
     /**
@@ -97,7 +100,11 @@ public class FormField {
     @Deprecated
     @JsonIgnore
     public void setValues(final Map<String,String> values) {
-        this.valueList = new ArrayList<>(values.values());
+        if(values == null) {
+            this.valueList = new ArrayList<>();
+        } else {
+            this.valueList = new ArrayList<>(values.values());
+        }
     }
 
     public void addValue(final String value) {
@@ -125,7 +132,11 @@ public class FormField {
     }
 
     public void setMessages(final List<String> messages) {
-        this.messages = messages;
+        if(messages == null) {
+            this.messages = new ArrayList<>();
+        } else {
+            this.messages = messages;
+        }
     }
 
     public void addMessage(final String value) {

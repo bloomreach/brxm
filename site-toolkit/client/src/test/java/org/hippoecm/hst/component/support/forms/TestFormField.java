@@ -17,6 +17,7 @@ package org.hippoecm.hst.component.support.forms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -140,7 +141,7 @@ public class TestFormField {
         assertEquals("Size of value list must be 0", 0, formField.getValueList().size());
         assertEquals("Get value must return empty String", "", formField.getValue());
 
-        Map<String, String> valuesMap = new HashMap<>();
+        Map<String, String> valuesMap = new LinkedHashMap<>();
         valuesMap.put("w 1", "w 1");
         valuesMap.put("w 2", "w 2");
         valuesMap.put(null, null);
