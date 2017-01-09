@@ -52,6 +52,7 @@ class OverlayService {
   }
 
   _onUnload() {
+    this.ScalingService.onIframeUnload();
     this.$rootScope.$apply(() => {
       this.observer.disconnect();
       delete this.overlay;

@@ -83,7 +83,7 @@ class HippoIframeCtrl {
     this.PageStructureService.clearParsedElements();
     this._insertCss().then(() => {
       if (this._isIframeDomPresent()) {
-        this.ScalingService.syncIframe();
+        this.ScalingService.onIframeReady();
         this._parseHstComments();
         this._updateDragDrop();
         this._updateChannelIfSwitched().then(() => {

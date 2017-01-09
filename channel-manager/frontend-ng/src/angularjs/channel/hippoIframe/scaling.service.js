@@ -16,6 +16,7 @@
 
 const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
 const SCALE_DURATION_MS = ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS;
+const IFRAME_FADE_IN_DURATION_MS = 150;
 
 class ScalingService {
 
@@ -52,8 +53,22 @@ class ScalingService {
     this._updateScaling(false);
   }
 
-  syncIframe() {
+  onIframeUnload() {
+    if (this._isScaled()) {
+      // Hide the iframe when scaled to avoid visual flicker. The contents inside the iframe is scaled because scaling
+      // the iframe element itself results in ugly scrollbars. But the contents can only be scaled once loaded. Showing
+      // unscaled contents first before scaling it down results in visual flicker, so we hide the whole iframe and show
+      // it again when the new contents in the iframe is ready.
+      this.iframeJQueryElement.hide();
+    }
+  }
+
+  onIframeReady() {
     this._scaleIframe(1.0, this.scaleFactor, false, []);
+    if (this._isScaled()) {
+      // use fadeIn() instead of show() to smoothen the transition from seeing the canvas to seeing the site
+      this.iframeJQueryElement.fadeIn(IFRAME_FADE_IN_DURATION_MS);
+    }
   }
 
   isAnimating() {
@@ -62,6 +77,10 @@ class ScalingService {
 
   getScaleFactor() {
     return this.scaleFactor;
+  }
+
+  _isScaled() {
+    return this.scaleFactor !== 1.0;
   }
 
   /**
