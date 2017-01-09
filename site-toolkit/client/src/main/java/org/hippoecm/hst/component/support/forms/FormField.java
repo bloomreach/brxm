@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Simple value wrapper for form fields (name, label, data where the data can be submitted form field values and
- * possible messages). Supports multiple value fields
+ * possible messages). Supports multiple value fields.
  *
  * @version $Id$
  */
@@ -39,15 +39,16 @@ public class FormField {
     // field name
     private String name;
 
-    // label if present and otherwise {@code null
+    // label if present and otherwise null
     private String label;
 
     private List<String> valueList = new ArrayList<>();
+
     // error messages
     private List<String> messages = new ArrayList<>();
 
     public FormField(@JsonProperty("name") final String name) {
-        if(name==null || name.trim().length()==0){
+        if (name == null || name.trim().length() == 0) {
             throw new IllegalArgumentException("FormField name was null or empty");
         }
         this.name = name;
@@ -61,20 +62,40 @@ public class FormField {
         this.name = name;
     }
 
+    /**
+     * Returns the field label.
+     *
+     * @return label value or null.
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * Set the field label.
+     *
+     * @param label the label value.
+     */
     public void setLabel(final String label) {
         this.label = label;
     }
 
+    /**
+     * Returns the list of values of this field.
+     *
+     * @return values list, may be empty.
+     */
     public List<String> getValueList() {
         return valueList;
     }
 
+    /**
+     * Set all values for this field. Replaces existing values. Resets values if called with null.
+     *
+     * @param valueList the list of values for this field. May be null to clear existing values.
+     */
     public void setValueList(final List<String> valueList) {
-        if(valueList == null) {
+        if (valueList == null) {
             this.valueList = new ArrayList<>();
         } else {
             this.valueList = valueList;
@@ -86,10 +107,10 @@ public class FormField {
      */
     @Deprecated
     @JsonIgnore
-    public Map<String,String> getValues() {
+    public Map<String, String> getValues() {
         Map<String, String> map = new LinkedHashMap<>(valueList.size());
         for (String s : valueList) {
-            map.put(s,s);
+            map.put(s, s);
         }
         return map;
     }
@@ -99,14 +120,19 @@ public class FormField {
      */
     @Deprecated
     @JsonIgnore
-    public void setValues(final Map<String,String> values) {
-        if(values == null) {
+    public void setValues(final Map<String, String> values) {
+        if (values == null) {
             this.valueList = new ArrayList<>();
         } else {
             this.valueList = new ArrayList<>(values.values());
         }
     }
 
+    /**
+     * Adds a new value to the list of values for this field.
+     *
+     * @param value the new value. Null values are not added to the list.
+     */
     public void addValue(final String value) {
         if (value == null) {
             return;
@@ -115,9 +141,9 @@ public class FormField {
     }
 
     /**
-     * Most of the fields have single valueList, we'll return first element (if there), null otherwise
+     * Most of the fields have a single value, we'll return first element or an empty string if there are no values available.
      *
-     * @return first value or empty string if no valueList present
+     * @return first value or empty string if no values are present.
      */
     @JsonIgnore
     public String getValue() {
@@ -127,22 +153,42 @@ public class FormField {
         return valueList.get(0);
     }
 
+    /**
+     * Set messages for this field. May contain null values.
+     *
+     * @return list of messages, may be empty if no messages have been set.
+     */
     public List<String> getMessages() {
         return messages;
     }
 
+    /**
+     * Set messages for this field. Null values in the list are allowed. Resets messages if called with null.
+     *
+     * @param messages list of messages for this field. May be null to clear existing messages.
+     */
     public void setMessages(final List<String> messages) {
-        if(messages == null) {
+        if (messages == null) {
             this.messages = new ArrayList<>();
         } else {
             this.messages = messages;
         }
     }
 
+    /**
+     * Add a message for this field. Can be called in sequence to add multiple messages.
+     *
+     * @param value the message. Has no effect when null.
+     */
     public void addMessage(final String value) {
         messages.add(value);
     }
 
+    /**
+     * FormFields with the same name are considered equal.
+     *
+     * @see java.lang.Object#equals(Object)
+     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -159,14 +205,13 @@ public class FormField {
     }
 
     /**
-     * Fields should be equal for same names
+     * Fields should be equal for same names.
      *
-     * @return hash code of the field name
+     * @return hash code of the field name.
      */
     @Override
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
     }
-
 
 }
