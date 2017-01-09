@@ -151,7 +151,7 @@ class ScalingService {
         elementsToScale.css('transform', `scale(${newScale})`);
         iframeWindow.scrollBy(0, scaledScrollOffset);
       });
-      elementsToScale.css('transform', `scale(${newScale}) translateY(${-scaledScrollOffset}px)`);
+      elementsToScale.css('transform', `scale(${newScale}) translateY(${-scaledScrollOffset / newScale}px)`);
     } else {
       elementsToScale.css('transform', `scale(${newScale})`);
       iframeWindow.scrollBy(0, scaledScrollOffset);
