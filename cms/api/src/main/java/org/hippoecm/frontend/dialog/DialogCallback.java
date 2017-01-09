@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,19 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.hippoecm.frontend.dialog;
 
-// IE10 needs a width in pixels on the .hippo-dialog.bottom-left panel in order to render
-// items that have overflow:hidden correctly.
-(function() {
+import org.apache.wicket.util.io.IClusterable;
 
-    "use strict";
-
-    var left = $('.hippo-dialog-bottom-left'),
-        bottom, right;
-
-    if (left.length) {
-        bottom = $('.hippo-dialog-bottom');
-        right = $('.hippo-dialog-bottom-right');
-        left.width(bottom.width() - right.width());
-    }
-}());
+@FunctionalInterface
+public interface DialogCallback extends IClusterable {
+    void call();
+}

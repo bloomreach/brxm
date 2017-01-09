@@ -16,28 +16,19 @@
 package org.hippoecm.frontend.dialog;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -381,67 +372,11 @@ public class ErrorDownloadRequestTarget implements IRequestHandler {
     }
 
     private String getCMSVersion() {
-        StringBuilder sb = new StringBuilder();
-        InputStream istream = null;
-        try {
-            try {
-                // try to get the version from the frontend-engine manifest
-                URL url = getManifestURL(Home.class);
-                if (url != null) {
-                    istream = url.openStream();
-                }
-            } catch (IOException ignore) {
-            }
-            if (istream == null) {
-                ServletContext servletContext = ((WebApplication) Application.get()).getServletContext();
-                istream = servletContext.getResourceAsStream("META-INF/MANIFEST.MF");
-                if (istream == null) {
-                    File manifestFile = new File(servletContext.getRealPath("/"), "META-INF/MANIFEST.MF");
-                    if (manifestFile.exists()) {
-                        istream = new FileInputStream(manifestFile);
-                    }
-                }
-            }
-            if (istream != null) {
-                Manifest manifest = new Manifest(istream);
-                Attributes atts = manifest.getMainAttributes();
-                if (atts.getValue("Implementation-Version") != null) {
-                    sb.append(atts.getValue("Implementation-Version"));
-                }
-                if (atts.getValue("Implementation-Build") != null) {
-                    sb.append(" build ");
-                    sb.append(atts.getValue("Implementation-Build"));
-                }
-            }
-        } catch (IOException ex) {
-            // deliberate ignore
+        final String implVersion = Home.class.getPackage().getImplementationVersion();
+        if (implVersion != null) {
+            return implVersion;
         }
-        if (sb.length() == 0) {
-            return "unknown";
-        } else {
-            return sb.toString();
-        }
-    }
-
-    /**
-     * @param clazz the class object for which to obtain a reference to the manifest
-     * @return the URL of the manifest found, or {@code null} if it could not be obtained
-     */
-    private static URL getManifestURL(Class clazz) {
-        try {
-            final StringBuilder sb = new StringBuilder();
-            final String[] classElements = clazz.getName().split("\\.");
-            for (int i=0; i<classElements.length-1; i++) {
-                sb.append("../");
-            }
-            sb.append("META-INF/MANIFEST.MF");
-            final URL classResource = clazz.getResource(classElements[classElements.length-1]+".class");
-            if (classResource != null) {
-                return new URL(classResource, new String(sb));
-            }
-        } catch (MalformedURLException ignore) {
-        }
-        return null;
+        return "unknown";
     }
 
     public static class NodePath implements Comparable<NodePath> {
