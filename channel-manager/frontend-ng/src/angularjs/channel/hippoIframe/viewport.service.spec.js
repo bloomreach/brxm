@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 describe('ViewportService', () => {
   let ViewportService;
-  let $sheet;
-  let $iframe;
+  let canvas;
+  let iframe;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
@@ -28,20 +28,14 @@ describe('ViewportService', () => {
 
     jasmine.getFixtures().load('channel/hippoIframe/viewport.service.fixture.html');
 
-    $sheet = $j('.sheet');
-    $iframe = $j('.iframe');
-
-    ViewportService.init($sheet, $iframe);
+    canvas = $j('#canvas');
+    iframe = $j('#iframe');
+    ViewportService.init(iframe);
   });
 
   function expectUnconstrained() {
     expect(ViewportService.getWidth()).toBe(0);
-    expect($sheet).toHaveCss({
-      'max-width': 'none',
-    });
-    expect($iframe).toHaveCss({
-      'min-width': '0px',
-    });
+    expect(iframe.width()).toBe(canvas.width());
   }
 
   it('should not constrain the viewport by default', () => {
@@ -57,7 +51,6 @@ describe('ViewportService', () => {
     ViewportService.setWidth(720);
 
     expect(ViewportService.getWidth()).toBe(720);
-    expect($sheet.width()).toBe(720);
-    expect($iframe.width()).toBe(720);
+    expect(iframe.width()).toBe(720);
   });
 });

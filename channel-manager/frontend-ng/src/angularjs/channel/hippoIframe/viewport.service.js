@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,7 @@ class ViewportService {
     this.width = 0;
   }
 
-  init($sheet, $iframe) {
-    this.$sheet = $sheet;
+  init($iframe) {
     this.$iframe = $iframe;
   }
 
@@ -32,13 +31,10 @@ class ViewportService {
 
     if (width === 0) {
       // Desktop mode - no width constraints
-      this.$sheet.css('max-width', 'none');
-      this.$iframe.width('');
+      this.$iframe.css('max-width', '100%');
     } else {
       // viewport is constrained
-      const widthPx = `${width}px`;
-      this.$sheet.css('max-width', widthPx);
-      this.$iframe.width(widthPx);
+      this.$iframe.css('max-width', `${width}px`);
     }
   }
 
