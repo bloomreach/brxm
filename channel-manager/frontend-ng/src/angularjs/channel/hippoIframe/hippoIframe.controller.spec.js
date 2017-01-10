@@ -129,6 +129,7 @@ describe('hippoIframeCtrl', () => {
     const deferred = $q.defer();
 
     spyOn(PageStructureService, 'clearParsedElements');
+    spyOn(ScalingService, 'onIframeReady');
     spyOn(hstCommentsProcessorService, 'run');
     spyOn(PageMetaDataService, 'getChannelId').and.returnValue('channelX');
     spyOn(ChannelService, 'getId').and.returnValue('channelY');
@@ -141,6 +142,7 @@ describe('hippoIframeCtrl', () => {
     $rootScope.$digest();
 
     expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
+    expect(ScalingService.onIframeReady).toHaveBeenCalled();
     expect(hstCommentsProcessorService.run).toHaveBeenCalled();
 
     $rootScope.$digest();
@@ -161,6 +163,7 @@ describe('hippoIframeCtrl', () => {
   it('handles the loading of a new page', () => {
     spyOn(PageStructureService, 'clearParsedElements');
     spyOn(PageStructureService, 'attachEmbeddedLinks');
+    spyOn(ScalingService, 'onIframeReady');
     spyOn(hstCommentsProcessorService, 'run');
     spyOn(ChannelService, 'getPreviewPaths').and.callThrough();
     spyOn(HippoIframeService, 'signalPageLoadCompleted');
@@ -170,6 +173,7 @@ describe('hippoIframeCtrl', () => {
 
     expect(DomService.addCss).toHaveBeenCalledWith(window, 'http://cms.example.com/app/root/styles/hippo-iframe.css?antiCache=123');
     expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
+    expect(ScalingService.onIframeReady).toHaveBeenCalled();
     expect(hstCommentsProcessorService.run).toHaveBeenCalled();
     expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
     expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
