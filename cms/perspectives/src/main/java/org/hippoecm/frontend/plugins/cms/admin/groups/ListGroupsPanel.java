@@ -39,6 +39,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -47,7 +48,6 @@ import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.DeleteDialog;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,9 +183,12 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         @Override
         public void onClick(final AjaxRequestTarget target) {
             final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-            final DeleteDialog<Group> dialog = DeleteDialog.create(groupModel, this,
-                    "group-delete-title", "group-delete-text", () -> deleteGroup(groupModel));
-            dialogService.show(dialog);
+            final Confirm confirm = new Confirm()
+                    .title(getString("group-delete-title", groupModel))
+                    .text(getString("group-delete-text", groupModel))
+                    .ok(() -> deleteGroup(groupModel));
+
+            dialogService.show(confirm);
         }
 
         private void deleteGroup(final IModel<Group> model) {

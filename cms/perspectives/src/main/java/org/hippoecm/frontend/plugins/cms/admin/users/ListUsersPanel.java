@@ -41,6 +41,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -51,7 +52,6 @@ import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.DeleteDialog;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.hippoecm.frontend.util.EventBusUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
@@ -196,11 +196,12 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         @Override
         public void onClick(final AjaxRequestTarget target) {
             final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-            final DeleteDialog<User> deleteDialog = DeleteDialog.create(userModel, this,
-                    "user-delete-title", "user-delete-text",
-                    () -> deleteUser(userModel.getObject())
-            );
-            dialogService.show(deleteDialog);
+            final Confirm confirm = new Confirm()
+                    .title(getString("user-delete-title", userModel))
+                    .text(getString("user-delete-text", userModel))
+                    .ok(() -> deleteUser(userModel.getObject()));
+
+            dialogService.show(confirm);
         }
     }
 

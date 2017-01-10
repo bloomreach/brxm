@@ -28,6 +28,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -41,7 +42,6 @@ import org.hippoecm.frontend.plugins.cms.admin.users.DetachableUser;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.users.ViewUserLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.DeleteDialog;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.hippoecm.frontend.util.EventBusUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
@@ -98,14 +98,15 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         add(new AjaxLinkLabel("delete-group", new ResourceModel("group-delete")) {
             @Override
             public void onClick(final AjaxRequestTarget target) {
-                final DeleteDialog<Group> dialog = DeleteDialog.create(group, this,
-                        "group-delete-title", "group-delete-text",
-                        () -> {
+                final Confirm confirm = new Confirm()
+                        .title(getString("group-delete-title", groupModel))
+                        .text(getString("group-delete-text", groupModel))
+                        .ok(() -> {
                             deleteGroup(group);
                             DomainDataProvider.setDirty();
-                        }
-                );
-                dialogService.show(dialog);
+                        });
+
+                dialogService.show(confirm);
             }
         });
 
@@ -219,13 +220,15 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             item.add(new AjaxLinkLabel("remove", new ResourceModel("group-delete-role-domain-combination")) {
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
-                    dialogService.show(DeleteDialog.create(permissionBean, this,
-                            "group-delete-role-domain-title",
-                            "group-delete-role-domain-text",
-                            () ->  {
+                    final Confirm confirm = new Confirm()
+                            .title(getString("group-delete-role-domain-title", item.getModel()))
+                            .text(getString("group-delete-role-domain-text", item.getModel()))
+                            .ok(() -> {
                                 deleteRoleDomainCombination(permissionBean);
                                 setModelObject(group.getPermissions());
-                            }));
+                            });
+
+                    dialogService.show(confirm);
                     target.add(ViewGroupPanel.this);
                 }
             });
@@ -268,15 +271,17 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
 
             @Override
             public void onClick(final AjaxRequestTarget target) {
-                final DeleteDialog<User> dialog = DeleteDialog.create(user, this,
-                        "group-delete-member-title", "group-delete-member-text",
-                        () -> {
+                final Model<User> userModel = Model.of(user);
+                final Confirm confirm = new Confirm()
+                        .title(getString("group-delete-member-title", userModel))
+                        .text(getString("group-delete-member-text", userModel))
+                        .ok(() -> {
                             final String userName = user.getUsername();
                             deleteGroupMemberShip(userName);
                             updateMembers();
                         }
                 );
-                dialogService.show(dialog);
+                dialogService.show(confirm);
                 target.add(ViewGroupPanel.this);
             }
         }

@@ -31,12 +31,12 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.DeleteDialog;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.hippoecm.frontend.util.EventBusUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
@@ -111,9 +111,12 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                final DeleteDialog<User> dialog = DeleteDialog.create(user, this,
-                        "user-delete-title", "user-delete-text", () -> deleteUser(user));
-                dialogService.show(dialog);
+                final Confirm confirm = new Confirm()
+                        .title(getString("user-delete-title", userModel))
+                        .text(getString("user-delete-text", userModel))
+                        .ok(() -> deleteUser(userModel.getObject()));
+
+                dialogService.show(confirm);
             }
         });
         add(new SetMembershipsPanel("set-member-ship-panel", context, breadCrumbModel, userModel));
