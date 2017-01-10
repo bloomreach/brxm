@@ -114,16 +114,16 @@ describe('ScalingService', () => {
       ScalingService.setPushWidth(100);
 
       expect(ScalingService.getScaleFactor()).toEqual(0.75);
-      expect(iframeElement).toHaveClass('translate-animated');
+      expect(iframeElement).toHaveClass('shift-animated');
       expectTranslateX(iframeElement, 0);
-      expect(elementsToScale).toHaveClass('hippo-animated');
+      expect(elementsToScale).toHaveClass('hippo-scale-animated');
       expectScaleAndTranslateY(elementsToScale, 0.75, 0);
       expect(ScalingService.isAnimating()).toBe(true);
 
       elementsToScale.trigger('transitionend');
 
       expect(ScalingService.isAnimating()).toBe(false);
-      expect(elementsToScale).not.toHaveClass('hippo-animated');
+      expect(elementsToScale).not.toHaveClass('hippo-scale-animated');
       expectScale(elementsToScale, 0.75);
     });
 
@@ -135,7 +135,7 @@ describe('ScalingService', () => {
       $(window).resize();
 
       expect(ScalingService.getScaleFactor()).toEqual(0.5);
-      expect(elementsToScale).not.toHaveClass('hippo-animated');
+      expect(elementsToScale).not.toHaveClass('hippo-scale-animated');
       expectScale(elementsToScale, 0.5);
     });
 
@@ -146,16 +146,16 @@ describe('ScalingService', () => {
       ScalingService.setPushWidth(0);
 
       expect(ScalingService.getScaleFactor()).toEqual(1.0);
-      expect(iframeElement).toHaveClass('translate-animated');
+      expect(iframeElement).toHaveClass('shift-animated');
       expectTranslateX(iframeElement, 0);
-      expect(elementsToScale).toHaveClass('hippo-animated');
+      expect(elementsToScale).toHaveClass('hippo-scale-animated');
       expectScaleAndTranslateY(elementsToScale, 1.0, 0);
       expect(ScalingService.isAnimating()).toBe(true);
 
       elementsToScale.trigger('transitionend');
 
       expect(ScalingService.isAnimating()).toBe(false);
-      expect(elementsToScale).not.toHaveClass('hippo-animated');
+      expect(elementsToScale).not.toHaveClass('hippo-scale-animated');
       expectScale(elementsToScale, 1.0);
     });
 
@@ -166,9 +166,9 @@ describe('ScalingService', () => {
       ScalingService.setPushWidth(100);
 
       expect(ScalingService.getScaleFactor()).toEqual(1.0);
-      expect(iframeElement).toHaveClass('translate-animated');
+      expect(iframeElement).toHaveClass('shift-animated');
       expectTranslateX(iframeElement, 100 / 2);
-      expect(elementsToScale).not.toHaveClass('hippo-animated');
+      expect(elementsToScale).not.toHaveClass('hippo-scale-animated');
       expect(ScalingService.isAnimating()).toBe(false);
     });
 
@@ -230,9 +230,9 @@ describe('ScalingService', () => {
       ScalingService.setPushWidth(100);
 
       expect(ScalingService.getScaleFactor()).toEqual(0.75);
-      expect(iframeElement).toHaveClass('translate-animated');
+      expect(iframeElement).toHaveClass('shift-animated');
       expectTranslateX(iframeElement, 0);
-      expect(elementsToScale).toHaveClass('hippo-animated');
+      expect(elementsToScale).toHaveClass('hippo-scale-animated');
       expectScaleAndTranslateY(elementsToScale, 0.75, 80 - (0.75 * 80));
       expect(ScalingService.isAnimating()).toBe(true);
       expect(iframeWindow.pageYOffset).toBe(80); // real scroll position is unchanged since we animate via translateY
@@ -240,7 +240,7 @@ describe('ScalingService', () => {
       elementsToScale.trigger('transitionend');
 
       expect(ScalingService.isAnimating()).toBe(false);
-      expect(elementsToScale).not.toHaveClass('hippo-animated');
+      expect(elementsToScale).not.toHaveClass('hippo-scale-animated');
       expectScale(elementsToScale, 0.75);
       expect(iframeWindow.pageYOffset).toBe(0.75 * 80);
     });

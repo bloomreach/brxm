@@ -29,7 +29,7 @@
     transition: max-width $viewport-animation-transition;
     width: 100%;
 
-    &.translate-animated {
+    &.shift-animated {
       transition: max-width $scale-animation-transition, transform $scale-animation-transition;
     }
   }

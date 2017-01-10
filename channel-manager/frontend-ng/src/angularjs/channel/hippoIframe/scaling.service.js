@@ -96,7 +96,7 @@ class ScalingService {
     const canvasBorderWidth = canvasWidth - viewportWidth;
     const targetShift = Math.min(canvasBorderWidth, this.pushWidth) / 2;
 
-    this.iframeJQueryElement.toggleClass('translate-animated', animate);
+    this.iframeJQueryElement.toggleClass('shift-animated', animate);
     this.iframeJQueryElement.css('transform', `translateX(${targetShift}px)`);
 
     return [canvasWidth, viewportWidth];
@@ -142,7 +142,7 @@ class ScalingService {
 
     this.animating = animate;
 
-    elementsToScale.toggleClass('hippo-animated', animate);
+    elementsToScale.toggleClass('hippo-scale-animated', animate);
 
     if (animate) {
       elementsToScale.one('transitionend', () => {
@@ -152,7 +152,7 @@ class ScalingService {
         // inside the transitionend callback
         elementsToScale.off('transitionend');
 
-        elementsToScale.removeClass('hippo-animated');
+        elementsToScale.removeClass('hippo-scale-animated');
         elementsToScale.css('transform', `scale(${newScale})`);
         iframeWindow.scrollBy(0, scaledScrollOffset);
       });

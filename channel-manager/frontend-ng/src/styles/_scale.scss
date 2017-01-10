@@ -18,5 +18,7 @@
 
 .cm-scale {
   transform-origin: top right;
-  transition: transform $scale-animation-transition;
+  &.hippo-scale-animated {
+    transition: transform $scale-animation-transition;
+  }
 }
