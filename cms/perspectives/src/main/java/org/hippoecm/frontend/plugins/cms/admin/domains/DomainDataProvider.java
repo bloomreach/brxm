@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.cms.admin.domains;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,11 +37,9 @@ public class DomainDataProvider extends SortableDataProvider<Domain, String> {
 
     private static final Logger log = LoggerFactory.getLogger(DomainDataProvider.class);
 
-    private static final long serialVersionUID = 1L;
-
     private static final String QUERY_DOMAIN_LIST = "SELECT * FROM hipposys:domain";
 
-    private static transient List<Domain> domainList = new ArrayList<Domain>();
+    private static final transient List<Domain> domainList = new ArrayList<>();
     private static volatile boolean dirty = true;
 
     private static String sessionId = "none";
@@ -53,12 +50,10 @@ public class DomainDataProvider extends SortableDataProvider<Domain, String> {
 
     @Override
     public Iterator<Domain> iterator(long first, long count) {
-        List<Domain> domains = getDomainList();
-        Collections.sort(domains, new Comparator<Domain>() {
-            public int compare(Domain domain1, Domain domain2) {
-                int direction = getSort().isAscending() ? 1 : -1;
-                return direction * (domain1.compareTo(domain2));
-            }
+        final List<Domain> domains = getDomainList();
+        domains.sort((domain1, domain2) -> {
+            final int direction = getSort().isAscending() ? 1 : -1;
+            return direction * domain1.compareTo(domain2);
         });
 
         final int endIndex = (int) Math.min(first + count, domains.size());
