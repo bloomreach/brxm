@@ -145,9 +145,8 @@ class ScalingService {
     elementsToScale.toggleClass('hippo-animated', animate);
 
     if (animate) {
-      const self = this;
       elementsToScale.one('transitionend', () => {
-        self.animating = false;
+        this.animating = false;
 
         // prevent additional callbacks because we change the transform again
         // inside the transitionend callback
