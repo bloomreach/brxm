@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,46 +14,70 @@
  * limitations under the License.
  */
 
-const ANGULAR_MATERIAL_SIDENAV_EASING = [0.25, 0.8, 0.25, 1];
-const ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS = 400;
+const IFRAME_FADE_IN_DURATION_MS = 150;
 
 class ScalingService {
 
-  constructor($rootScope, $window, OverlayService, ViewportService) {
+  constructor($rootScope, $window, ViewportService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
-    this.OverlayService = OverlayService;
     this.ViewportService = ViewportService;
 
     this.pushWidth = 0; // all sidenavs are initially closed
     this.scaleFactor = 1.0;
-    this.scaleDuration = ANGULAR_MATERIAL_SIDENAV_ANIMATION_DURATION_MS;
-    this.scaleEasing = ANGULAR_MATERIAL_SIDENAV_EASING;
+    this.animating = false;
 
-    angular.element($window).bind('resize', () => {
-      if (this.hippoIframeJQueryElement) {
-        $rootScope.$apply(() => this._updateScaling(false));
-      }
+    $($window).on('resize', () => {
+      $rootScope.$apply(() => this._updateScaling(false));
     });
   }
 
-  init(hippoIframeJQueryElement) {
+  init(hippoIframeJQueryElement, canvasJQueryElement, iframeJQueryElement) {
     this.hippoIframeJQueryElement = hippoIframeJQueryElement;
-    this._updateScaling(false);
+    this.canvasJQueryElement = canvasJQueryElement;
+    this.iframeJQueryElement = iframeJQueryElement;
   }
 
-  setPushWidth(pushWidth) {
+  setPushWidth(pushWidth, animate = true) {
     this.pushWidth = pushWidth;
-    this._updateScaling(true);
+    this._updateScaling(animate);
   }
 
   sync() {
-    this._updateScaling(false);
+    this._updateScaling(true);
+  }
+
+  onIframeUnload() {
+    if (this.iframeJQueryElement && this._isScaled()) {
+      // Hide the iframe when scaled to avoid visual flicker. The contents inside the iframe is scaled because scaling
+      // the iframe element itself results in ugly scrollbars. But the contents can only be scaled once loaded. Showing
+      // unscaled contents first before scaling it down results in visual flicker, so we hide the whole iframe and show
+      // it again when the new contents in the iframe is ready.
+      this.iframeJQueryElement.hide();
+    }
+  }
+
+  onIframeReady() {
+    if (this.iframeJQueryElement) {
+      this._scaleIframe(1.0, this.scaleFactor, false, []);
+      if (this._isScaled()) {
+        // use fadeIn() instead of show() to smoothen the transition from seeing the canvas to seeing the site
+        this.iframeJQueryElement.fadeIn(IFRAME_FADE_IN_DURATION_MS);
+      }
+    }
+  }
+
+  isAnimating() {
+    return this.animating;
   }
 
   getScaleFactor() {
     return this.scaleFactor;
+  }
+
+  _isScaled() {
+    return this.scaleFactor !== 1.0;
   }
 
   /**
@@ -67,25 +91,13 @@ class ScalingService {
    *                 viewPortWidth indicates how many pixels wide the iframe content should be rendered.
    */
   _updateIframeShift(animate) {
-    const currentShift = parseInt(this.hippoIframeJQueryElement.css('margin-left'), 10);
-    const canvasWidth = this.hippoIframeJQueryElement.find('.channel-iframe-canvas').width() + currentShift;
+    const canvasWidth = this.canvasJQueryElement.width();
     const viewportWidth = this.ViewportService.getWidth() === 0 ? canvasWidth : this.ViewportService.getWidth();
     const canvasBorderWidth = canvasWidth - viewportWidth;
-    const targetShift = Math.min(canvasBorderWidth, this.pushWidth);
+    const targetShift = Math.min(canvasBorderWidth, this.pushWidth) / 2;
 
-    if (targetShift !== currentShift) {
-      this.hippoIframeJQueryElement.velocity('finish');
-      if (animate) {
-        this.hippoIframeJQueryElement.velocity({
-          'margin-left': targetShift,
-        }, {
-          duration: this.scaleDuration,
-          easing: this.scaleEasing,
-        });
-      } else {
-        this.hippoIframeJQueryElement.css('margin-left', targetShift);
-      }
-    }
+    this.iframeJQueryElement.toggleClass('shift-animated', animate);
+    this.iframeJQueryElement.css('transform', `translateX(${targetShift}px)`);
 
     return [canvasWidth, viewportWidth];
   }
@@ -112,54 +124,44 @@ class ScalingService {
     const newScale = (visibleCanvasWidth < viewportWidth) ? visibleCanvasWidth / viewportWidth : 1;
 
     if (newScale !== oldScale) {
-      const elementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
-      elementsToScale.velocity('finish');
-
-      if (animate) {
-        const iframeBaseJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-base');
-        const currentOffset = iframeBaseJQueryElement.scrollTop();
-        const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
-
-        if (targetOffset !== currentOffset) {
-          // keep scroll-position constant during animation
-          elementsToScale.velocity('scroll', {
-            container: iframeBaseJQueryElement,
-            offset: targetOffset - currentOffset,
-            duration: this.scaleDuration,
-            easing: this.scaleEasing,
-            queue: false,
-          });
-        }
-
-        // TODO remove
-        // const iframeScrollXJQueryElement = this.hippoIframeJQueryElement.find('.channel-iframe-scroll-x');
-        // const widthBeforeScaling = iframeScrollXJQueryElement.width();
-
-        // zoom in/out to new scale factor
-        elementsToScale.velocity({
-          scale: newScale,
-        }, {
-          duration: this.scaleDuration,
-          easing: this.scaleEasing,
-          complete: () => {
-            // TODO when scaling causes a scrollbar to appear/disappear, we have to tweak it
-            //
-            // if (newScale !== 1 && widthBeforeScaling !== iframeScrollXJQueryElement.width()) {
-            //   this._updateScaling(animate);
-            // } else {
-            //   this.OverlayService.syncIframe();
-            // }
-            this.OverlayService.sync();
-          },
-        });
-      } else {
-        elementsToScale.css('transform', `scale(${newScale})`);
-      }
+      const appElementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
+      this._scaleIframe(oldScale, newScale, animate, appElementsToScale);
+      this.scaleFactor = newScale;
     }
-
-    this.scaleFactor = newScale;
   }
 
+  _scaleIframe(oldScale, newScale, animate, appElementsToScale) {
+    const iframeWindow = this.iframeJQueryElement[0].contentWindow;
+    const iframeHtml = $('html', iframeWindow.document);
+
+    const elementsToScale = $.merge(iframeHtml, appElementsToScale);
+
+    const currentOffset = iframeWindow.pageYOffset;
+    const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
+    const scaledScrollOffset = targetOffset - currentOffset;
+
+    this.animating = animate;
+
+    elementsToScale.toggleClass('hippo-scale-animated', animate);
+
+    if (animate) {
+      elementsToScale.one('transitionend', () => {
+        this.animating = false;
+
+        // prevent additional callbacks because we change the transform again
+        // inside the transitionend callback
+        elementsToScale.off('transitionend');
+
+        elementsToScale.removeClass('hippo-scale-animated');
+        elementsToScale.css('transform', `scale(${newScale})`);
+        iframeWindow.scrollBy(0, scaledScrollOffset);
+      });
+      elementsToScale.css('transform', `scale(${newScale}) translateY(${-scaledScrollOffset / newScale}px)`);
+    } else {
+      elementsToScale.css('transform', `scale(${newScale})`);
+      iframeWindow.scrollBy(0, scaledScrollOffset);
+    }
+  }
 }
 
 export default ScalingService;

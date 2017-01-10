@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ class HippoIframeCtrl {
     this.PageMetaDataService = PageMetaDataService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
+    this.ScalingService = ScalingService;
 
     this.PageStructureService.clearParsedElements();
 
@@ -62,9 +63,11 @@ class HippoIframeCtrl {
     HippoIframeService.initialize(this.iframeJQueryElement);
 
     OverlayService.init(this.iframeJQueryElement);
-    ViewportService.init($element.find('.channel-iframe-sheet'), this.iframeJQueryElement);
-    ScalingService.init($element);
-    DragDropService.init(this.iframeJQueryElement, $element.find('.channel-iframe-base'));
+    ViewportService.init(this.iframeJQueryElement);
+
+    const canvasJQueryElement = $element.find('.channel-iframe-canvas');
+    ScalingService.init($element, canvasJQueryElement, this.iframeJQueryElement);
+    DragDropService.init(this.iframeJQueryElement, canvasJQueryElement);
 
     const deleteComponentHandler = componentId => this.deleteComponent(componentId);
     CmsService.subscribe('delete-component', deleteComponentHandler);
@@ -80,6 +83,7 @@ class HippoIframeCtrl {
     this.PageStructureService.clearParsedElements();
     this._insertCss().then(() => {
       if (this._isIframeDomPresent()) {
+        this.ScalingService.onIframeReady();
         this._parseHstComments();
         this._updateDragDrop();
         this._updateChannelIfSwitched().then(() => {

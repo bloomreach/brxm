@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,11 +40,11 @@ class DragDropService {
     this.dropping = false;
   }
 
-  init(iframeJQueryElement, baseJQueryElement) {
+  init(iframeJQueryElement, canvasJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
-    this.baseJQueryElement = baseJQueryElement;
+    this.canvasJQueryElement = canvasJQueryElement;
 
-    this.ScrollService.init(iframeJQueryElement, baseJQueryElement);
+    this.ScrollService.init(iframeJQueryElement, canvasJQueryElement);
     this.iframeJQueryElement.on('load', () => this._onLoad());
   }
 
@@ -291,12 +291,12 @@ class DragDropService {
 
   _shiftAndDescaleCoordinates($event) {
     const iframeOffset = this.iframeJQueryElement.offset();
-    const baseOffset = this.baseJQueryElement.offset();
+    const canvasOffset = this.canvasJQueryElement.offset();
     const scale = this.ScalingService.getScaleFactor();
 
     // Shift horizontal using the base offset since the iframe offset is also scaled
     // and hence to far to the right.
-    const shiftedX = $event.clientX - baseOffset.left;
+    const shiftedX = $event.clientX - canvasOffset.left;
     const shiftedY = $event.clientY - iframeOffset.top;
 
     // The user sees the scaled iframe, but the browser actually uses the unscaled coordinates,
