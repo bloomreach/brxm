@@ -28,10 +28,8 @@ class ScalingService {
     this.scaleFactor = 1.0;
     this.animating = false;
 
-    angular.element($window).bind('resize', () => {
-      if (this.hippoIframeJQueryElement) {
-        $rootScope.$apply(() => this._updateScaling(false));
-      }
+    $($window).on('resize', () => {
+      $rootScope.$apply(() => this._updateScaling(false));
     });
   }
 
