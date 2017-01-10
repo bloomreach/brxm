@@ -63,6 +63,13 @@ describe('ScalingService', () => {
       ScalingService.sync();
       expect(ScalingService.getScaleFactor()).toBe(1.0);
     });
+
+    it('does nothing on iframe load or unload', () => {
+      expect(() => {
+        ScalingService.onIframeUnload();
+        ScalingService.onIframeReady();
+      }).not.toThrow();
+    });
   });
 
   describe('when initialized', () => {

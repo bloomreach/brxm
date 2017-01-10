@@ -49,7 +49,7 @@ class ScalingService {
   }
 
   onIframeUnload() {
-    if (this._isScaled()) {
+    if (this.iframeJQueryElement && this._isScaled()) {
       // Hide the iframe when scaled to avoid visual flicker. The contents inside the iframe is scaled because scaling
       // the iframe element itself results in ugly scrollbars. But the contents can only be scaled once loaded. Showing
       // unscaled contents first before scaling it down results in visual flicker, so we hide the whole iframe and show
@@ -59,10 +59,12 @@ class ScalingService {
   }
 
   onIframeReady() {
-    this._scaleIframe(1.0, this.scaleFactor, false, []);
-    if (this._isScaled()) {
-      // use fadeIn() instead of show() to smoothen the transition from seeing the canvas to seeing the site
-      this.iframeJQueryElement.fadeIn(IFRAME_FADE_IN_DURATION_MS);
+    if (this.iframeJQueryElement) {
+      this._scaleIframe(1.0, this.scaleFactor, false, []);
+      if (this._isScaled()) {
+        // use fadeIn() instead of show() to smoothen the transition from seeing the canvas to seeing the site
+        this.iframeJQueryElement.fadeIn(IFRAME_FADE_IN_DURATION_MS);
+      }
     }
   }
 
