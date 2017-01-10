@@ -80,7 +80,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Text", new TypeDescriptor(MultilineStringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Html", new TypeDescriptor(FormattedTextFieldType.class, PROPERTY_FIELD_PLUGIN));
-        FIELD_TYPE_MAP.put("hippost:html", new TypeDescriptor(RichTextFieldType.class, PROPERTY_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put("hippostd:html", new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
     }
@@ -152,8 +152,15 @@ public class FieldTypeUtils {
 
     private static String determineFieldType(final FieldTypeContext context) {
         final ContentTypeItem item = context.getContentTypeItem();
+        final String itemType = item.getItemType();
+
+        if(FIELD_TYPE_MAP.containsKey(itemType)) {
+            return itemType;
+        }
+
         if (item.isProperty()) {
-            return item.getItemType();
+            // Unsupported type
+            return "";
         }
 
         return ChoiceFieldUtils.isChoiceField(context) ? FIELD_TYPE_CHOICE : FIELD_TYPE_COMPOUND;

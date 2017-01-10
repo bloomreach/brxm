@@ -16,16 +16,6 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.jcr.Node;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,11 +30,10 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import javax.jcr.Node;
+import java.util.*;
+
+import static org.easymock.EasyMock.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
@@ -54,6 +43,7 @@ import static org.junit.Assert.assertTrue;
 @PrepareForTest({NamespaceUtils.class, FieldTypeFactory.class, ChoiceFieldUtils.class})
 public class FieldTypeUtilsTest {
     private static final String PROPERTY_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.PropertyFieldPlugin";
+    private static final String NODE_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
     private static final String COMPOUND_FIELD_PLUGIN = "org.hippoecm.frontend.editor.plugins.field.NodeFieldPlugin";
     private static final String CHOICE_FIELD_PLUGIN = "org.onehippo.forge.contentblocks.ContentBlocksFieldPlugin";
 
@@ -185,7 +175,6 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
         expect(fieldContext.getContentTypeItem()).andReturn(item);
-        expect(item.isProperty()).andReturn(true);
         expect(item.getItemType()).andReturn("String");
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.empty());
         replay(sorter, context, fieldContext, item);
@@ -211,7 +200,6 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
         expect(fieldContext.getContentTypeItem()).andReturn(item);
-        expect(item.isProperty()).andReturn(true);
         expect(item.getItemType()).andReturn("String");
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.empty());
@@ -238,7 +226,6 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
         expect(fieldContext.getContentTypeItem()).andReturn(item);
-        expect(item.isProperty()).andReturn(true);
         expect(item.getItemType()).andReturn("String");
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of("Custom plugin"));
@@ -265,7 +252,6 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
         expect(fieldContext.getContentTypeItem()).andReturn(item);
-        expect(item.isProperty()).andReturn(true);
         expect(item.getItemType()).andReturn("String");
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
@@ -294,7 +280,6 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
         expect(fieldContext.getContentTypeItem()).andReturn(item);
-        expect(item.isProperty()).andReturn(true);
         expect(item.getItemType()).andReturn("String");
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
@@ -326,7 +311,6 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
         expect(fieldContext.getContentTypeItem()).andReturn(item);
-        expect(item.isProperty()).andReturn(true);
         expect(item.getItemType()).andReturn("String");
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN));
@@ -371,45 +355,44 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Arrays.asList(fieldContext1, fieldContext2, fieldContext3, fieldContext4, fieldContext5));
         expect(fieldContext1.getContentTypeItem()).andReturn(item1);
-        expect(item1.isProperty()).andReturn(true);
         expect(item1.getItemType()).andReturn("String");
         expect(fieldContext2.getContentTypeItem()).andReturn(item2);
-        expect(item2.isProperty()).andReturn(true);
         expect(item2.getItemType()).andReturn("Text");
         expect(fieldContext3.getContentTypeItem()).andReturn(item3);
-        expect(item3.isProperty()).andReturn(true);
         expect(item3.getItemType()).andReturn("Label");
         expect(fieldContext4.getContentTypeItem()).andReturn(item4);
-        expect(item4.isProperty()).andReturn(true);
         expect(item4.getItemType()).andReturn("Html");
         expect(fieldContext5.getContentTypeItem()).andReturn(item5);
-        expect(item5.isProperty()).andReturn(true);
-        expect(item5.getItemType()).andReturn("hippost:html");
+        expect(item5.getItemType()).andReturn("hippostd:html");
         expect(fieldContext1.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(fieldContext2.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(fieldContext3.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(fieldContext4.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(fieldContext5.getEditorConfigNode()).andReturn(Optional.of(node));
-        expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN)).anyTimes();
+        expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(PROPERTY_FIELD_PLUGIN)).times(4);
+        expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(NODE_FIELD_PLUGIN)); // Specifically for rich text field
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(stringField1));
         expect(FieldTypeFactory.createFieldType(MultilineStringFieldType.class)).andReturn(Optional.of(multilineStringField));
         expect(FieldTypeFactory.createFieldType(StringFieldType.class)).andReturn(Optional.of(stringField2));
         expect(FieldTypeFactory.createFieldType(FormattedTextFieldType.class)).andReturn(Optional.of(formattedTextField));
         expect(FieldTypeFactory.createFieldType(RichTextFieldType.class)).andReturn(Optional.of(richTextField));
+
         stringField1.init(fieldContext1);
         expectLastCall();
         expect(stringField1.isValid()).andReturn(true);
+
         multilineStringField.init(fieldContext2);
         expectLastCall();
         expect(multilineStringField.isValid()).andReturn(true);
+
         stringField2.init(fieldContext3);
         expectLastCall();
         expect(stringField2.isValid()).andReturn(true);
-        expectLastCall();
+
         formattedTextField.init(fieldContext4);
         expectLastCall();
         expect(formattedTextField.isValid()).andReturn(true);
-        expectLastCall();
+
         richTextField.init(fieldContext5);
         expectLastCall();
         expect(richTextField.isValid()).andReturn(true);
@@ -446,8 +429,7 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
         expect(fieldContext.getContentTypeItem()).andReturn(item);
-        expect(item.isProperty()).andReturn(false);
-        expect(ChoiceFieldUtils.isChoiceField(fieldContext)).andReturn(false);
+        expect(item.getItemType()).andReturn("Compound");
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(COMPOUND_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(CompoundFieldType.class)).andReturn(Optional.of(fieldType));
@@ -479,8 +461,7 @@ public class FieldTypeUtilsTest {
         expect(NamespaceUtils.retrieveFieldSorter(null)).andReturn(Optional.of(sorter));
         expect(sorter.sortFields(context)).andReturn(Collections.singletonList(fieldContext));
         expect(fieldContext.getContentTypeItem()).andReturn(item);
-        expect(item.isProperty()).andReturn(false);
-        expect(ChoiceFieldUtils.isChoiceField(fieldContext)).andReturn(true);
+        expect(item.getItemType()).andReturn("Choice");
         expect(fieldContext.getEditorConfigNode()).andReturn(Optional.of(node));
         expect(NamespaceUtils.getPluginClassForField(node)).andReturn(Optional.of(CHOICE_FIELD_PLUGIN));
         expect(FieldTypeFactory.createFieldType(ChoiceFieldType.class)).andReturn(Optional.of(fieldType));

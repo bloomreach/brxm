@@ -17,9 +17,9 @@
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 public class RichTextFieldType extends StringFieldType {
+
     public RichTextFieldType() {
         setType(Type.RICH_TEXT);
     }
-
 
 }
