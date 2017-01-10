@@ -89,7 +89,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         this.context = context;
         this.userDataProvider = userDataProvider;
 
-        PanelPluginBreadCrumbLink createUserLink = new PanelPluginBreadCrumbLink("create-user-link", breadCrumbModel) {
+        final PanelPluginBreadCrumbLink createUserLink = new PanelPluginBreadCrumbLink("create-user-link", breadCrumbModel) {
 
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
@@ -102,7 +102,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
             }
         };
 
-        WebMarkupContainer createButtonContainer = new WebMarkupContainer("create-user-button-container") {
+        final WebMarkupContainer createButtonContainer = new WebMarkupContainer("create-user-button-container") {
             @Override
             public boolean isVisible() {
                 return isUserCreationEnabled();
@@ -196,10 +196,10 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         @Override
         public void onClick(final AjaxRequestTarget target) {
             final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-            final Confirm confirm = new Confirm()
-                    .title(getString("user-delete-title", userModel))
-                    .text(getString("user-delete-text", userModel))
-                    .ok(() -> deleteUser(userModel.getObject()));
+            final Confirm confirm = new Confirm(
+                    getString("user-delete-title", userModel),
+                    getString("user-delete-text", userModel)
+            ).ok(() -> deleteUser(userModel.getObject()));
 
             dialogService.show(confirm);
         }

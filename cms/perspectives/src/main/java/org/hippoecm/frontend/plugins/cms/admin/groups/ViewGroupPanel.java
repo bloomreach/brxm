@@ -98,13 +98,13 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         add(new AjaxLinkLabel("delete-group", new ResourceModel("group-delete")) {
             @Override
             public void onClick(final AjaxRequestTarget target) {
-                final Confirm confirm = new Confirm()
-                        .title(getString("group-delete-title", groupModel))
-                        .text(getString("group-delete-text", groupModel))
-                        .ok(() -> {
-                            deleteGroup(group);
-                            DomainDataProvider.setDirty();
-                        });
+                final Confirm confirm = new Confirm(
+                        getString("group-delete-title", groupModel),
+                        getString("group-delete-text", groupModel)
+                ).ok(() -> {
+                    deleteGroup(group);
+                    DomainDataProvider.setDirty();
+                });
 
                 dialogService.show(confirm);
             }
@@ -216,13 +216,13 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             item.add(new AjaxLinkLabel("remove", new ResourceModel("group-delete-role-domain-combination")) {
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
-                    final Confirm confirm = new Confirm()
-                            .title(getString("group-delete-role-domain-title", item.getModel()))
-                            .text(getString("group-delete-role-domain-text", item.getModel()))
-                            .ok(() -> {
-                                deleteRoleDomainCombination(permissionBean);
-                                setModelObject(group.getPermissions());
-                            });
+                    final Confirm confirm = new Confirm(
+                            getString("group-delete-role-domain-title", item.getModel()),
+                            getString("group-delete-role-domain-text", item.getModel())
+                    ).ok(() -> {
+                        deleteRoleDomainCombination(permissionBean);
+                        setModelObject(group.getPermissions());
+                    });
 
                     dialogService.show(confirm);
                     target.add(ViewGroupPanel.this);
@@ -244,6 +244,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             setReuseItems(false);
         }
 
+        @Override
         protected void populateItem(final ListItem<DetachableUser> item) {
             final DetachableUser detachableUser = item.getModelObject();
             final User user = detachableUser.getUser();
@@ -268,15 +269,13 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 final Model<User> userModel = Model.of(user);
-                final Confirm confirm = new Confirm()
-                        .title(getString("group-delete-member-title", userModel))
-                        .text(getString("group-delete-member-text", userModel))
-                        .ok(() -> {
-                            final String userName = user.getUsername();
-                            deleteGroupMembership(userName);
-                            updateMembers();
-                        }
-                );
+                final Confirm confirm = new Confirm(
+                        getString("group-delete-member-title", userModel),
+                        getString("group-delete-member-text", userModel)
+                ).ok(() -> {
+                    deleteGroupMembership(user.getUsername());
+                    updateMembers();
+                });
                 dialogService.show(confirm);
                 target.add(ViewGroupPanel.this);
             }

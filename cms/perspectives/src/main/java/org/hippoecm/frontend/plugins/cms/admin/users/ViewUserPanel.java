@@ -111,10 +111,10 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                final Confirm confirm = new Confirm()
-                        .title(getString("user-delete-title", userModel))
-                        .text(getString("user-delete-text", userModel))
-                        .ok(() -> deleteUser(userModel.getObject()));
+                final Confirm confirm = new Confirm(
+                        getString("user-delete-title", userModel),
+                        getString("user-delete-text", userModel)
+                ).ok(() -> deleteUser(userModel.getObject()));
 
                 dialogService.show(confirm);
             }

@@ -183,10 +183,10 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         @Override
         public void onClick(final AjaxRequestTarget target) {
             final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-            final Confirm confirm = new Confirm()
-                    .title(getString("group-delete-title", groupModel))
-                    .text(getString("group-delete-text", groupModel))
-                    .ok(() -> deleteGroup(groupModel));
+            final Confirm confirm = new Confirm(
+                    getString("group-delete-title", groupModel),
+                    getString("group-delete-text", groupModel)
+            ).ok(() -> deleteGroup(groupModel));
 
             dialogService.show(confirm);
         }
