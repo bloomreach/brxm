@@ -17,33 +17,18 @@ package org.hippoecm.frontend.dialog;
 
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 
 public class Confirm extends Dialog<Void> {
 
-    private static final String DEFAULT_TITLE_KEY = "confirm-title";
-    private static final String DEFAULT_TEXT_KEY = "confirm-text";
-
-    private String text;
     private DialogCallback okCallback;
     private DialogCallback cancelCallback;
 
-    public Confirm() {
+    public Confirm(final String title, final String text) {
         setSize(DialogConstants.SMALL);
         setFocusOnCancel();
-        setTitleKey(DEFAULT_TITLE_KEY);
-
-        add(new Label("text", ReadOnlyModel.of(this::getText)));
-    }
-
-    public Confirm title(final String title) {
         setTitle(Model.of(title));
-        return this;
-    }
 
-    public Confirm text(final String text) {
-        this.text = text;
-        return this;
+        add(new Label("text", Model.of(text)));
     }
 
     public Confirm ok(final DialogCallback okCallback) {
@@ -68,9 +53,5 @@ public class Confirm extends Dialog<Void> {
         if (cancelCallback != null) {
             cancelCallback.call();
         }
-    }
-
-    private String getText() {
-        return text == null ? getString(DEFAULT_TEXT_KEY) : text;
     }
 }
