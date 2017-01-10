@@ -39,9 +39,9 @@ class ScalingService {
     this.iframeJQueryElement = iframeJQueryElement;
   }
 
-  setPushWidth(pushWidth) {
+  setPushWidth(pushWidth, animate = true) {
     this.pushWidth = pushWidth;
-    this._updateScaling(true);
+    this._updateScaling(animate);
   }
 
   sync() {
@@ -145,8 +145,14 @@ class ScalingService {
     elementsToScale.toggleClass('hippo-animated', animate);
 
     if (animate) {
+      const self = this;
       elementsToScale.one('transitionend', () => {
-        this.animating = false;
+        self.animating = false;
+
+        // prevent additional callbacks because we change the transform again
+        // inside the transitionend callback
+        elementsToScale.off('transitionend');
+
         elementsToScale.removeClass('hippo-animated');
         elementsToScale.css('transform', `scale(${newScale})`);
         iframeWindow.scrollBy(0, scaledScrollOffset);

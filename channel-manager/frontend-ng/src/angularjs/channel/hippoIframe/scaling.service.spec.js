@@ -142,7 +142,7 @@ describe('ScalingService', () => {
     it('resets the scaling factor animated to 1.0 when setting pushWidth to 0', () => {
       canvasElement.width(400);
 
-      ScalingService.setPushWidth(100);
+      ScalingService.setPushWidth(100, false);
       ScalingService.setPushWidth(0);
 
       expect(ScalingService.getScaleFactor()).toEqual(1.0);
