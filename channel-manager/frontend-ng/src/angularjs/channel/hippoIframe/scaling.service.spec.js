@@ -210,6 +210,34 @@ describe('ScalingService', () => {
       expect(ScalingService.getScaleFactor()).toBe(1.0);
     });
 
+    it('adjusts the vertical scroll position in a scaled iframe', () => {
+      const iframeWindow = iframeElement[0].contentWindow;
+
+      // scroll the iframe 80px down
+      iframeElement.height(200);
+      iframeHtml.height(800);
+      iframeWindow.scrollTo(0, 80);
+
+      // scale the iframe
+      canvasElement.width(400);
+      ScalingService.setPushWidth(100);
+
+      expect(ScalingService.getScaleFactor()).toEqual(0.75);
+      expect(iframeElement).toHaveClass('translate-animated');
+      expectTranslateX(iframeElement, 0);
+      expect(elementsToScale).toHaveClass('hippo-animated');
+      expectScaleAndTranslateY(elementsToScale, 0.75, 80 - (0.75 * 80));
+      expect(ScalingService.isAnimating()).toBe(true);
+      expect(iframeWindow.pageYOffset).toBe(80); // real scroll position is unchanged since we animate via translateY
+
+      elementsToScale.trigger('transitionend');
+
+      expect(ScalingService.isAnimating()).toBe(false);
+      expect(elementsToScale).not.toHaveClass('hippo-animated');
+      expectScale(elementsToScale, 0.75);
+      expect(iframeWindow.pageYOffset).toBe(0.75 * 80);
+    });
+
     describe('when the iframe unloads', () => {
       it('does not hide an unscaled iframe', () => {
         ScalingService.onIframeUnload();
