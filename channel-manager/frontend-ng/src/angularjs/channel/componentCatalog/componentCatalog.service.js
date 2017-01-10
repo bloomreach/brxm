@@ -27,8 +27,8 @@ class ComponentCatalogService {
   }
 
   selectComponent(component) {
-    this.MaskService.mask();
-    this.OverlayService.mask();
+    this.MaskService.mask('mask-add-component');
+    this.OverlayService.enableAddMode();
     this.HippoIframeService.liftIframeAboveMask();
 
     this.OverlayService.onContainerClick((target) => {
@@ -38,7 +38,7 @@ class ComponentCatalogService {
     this.MaskService.onClick(() => {
       this.MaskService.unmask();
       this.MaskService.removeClickHandler();
-      this.OverlayService.unmask();
+      this.OverlayService.disableAddMode();
       this.OverlayService.offContainerClick();
       this.HippoIframeService.lowerIframeBeneathMask();
     });

@@ -23,7 +23,10 @@
          ng-src="{{component.iconURL}}" />
 
     <div class="md-list-item-text">
-      <p class="qa-name">{{ component.label }}</p>
+      <p>
+        <span ng-if="$ctrl.isComponentSelected($index)">{{ 'ADDING_COMPONENT' | translate }}</span>
+        <span class="qa-name">{{ component.label }}</span>
+      </p>
     </div>
 
     <md-divider ng-if="!$last"></md-divider>

@@ -75,19 +75,21 @@ class OverlayService {
   }
 
   _resetMask() {
-    this.unmask();
+    this.disableAddMode();
     this.offContainerClick();
     this.MaskService.unmask();
     this.MaskService.removeClickHandler();
     this.HippoIframeService.lowerIframeBeneathMask();
   }
 
-  mask() {
-    this.overlay.addClass('hippo-overlay-mask-active');
+  enableAddMode() {
+    this.isInAddMode = true;
+    this.overlay.addClass('hippo-overlay-add-mode');
   }
 
-  unmask() {
-    this.overlay.removeClass('hippo-overlay-mask-active');
+  disableAddMode() {
+    this.isInAddMode = false;
+    this.overlay.removeClass('hippo-overlay-add-mode');
   }
 
   setMode(mode) {
@@ -199,9 +201,9 @@ class OverlayService {
   _isElementVisible(structureElement, boxElement) {
     switch (structureElement.getType()) {
       case 'component':
-        return this._isEditMode() && !this.MaskService.isMasked();
+        return this._isEditMode() && !this.MaskService.isMasked;
       case 'container':
-        return this._isEditMode() && structureElement.isEmpty();
+        return this._isEditMode() && (structureElement.isEmpty() || this.isInAddMode);
       case 'content-link':
         return !this._isEditMode() && this.DomService.isVisible(boxElement);
       case 'menu-link':

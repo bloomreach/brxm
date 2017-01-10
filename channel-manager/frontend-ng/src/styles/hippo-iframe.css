@@ -81,7 +81,6 @@ a.hst-cmseditlink {
   background-color: #0877d1;
 }
 
-.hippo-overlay-element-container-empty > .hippo-overlay-label,
 .hippo-overlay-element-component:hover > .hippo-overlay-label {
   display: flex;
 }
@@ -103,12 +102,16 @@ a.hst-cmseditlink {
   min-height: 40px;
 }
 
-#hippo-overlay.hippo-overlay-mask-active {
-  cursor: not-allowed;
+#hippo-overlay.hippo-overlay-add-mode {
+  cursor: copy;
   pointer-events: auto;
 }
 
-.hippo-overlay-mask-active .hippo-overlay-element-container {
-  cursor: auto;
+.hippo-overlay-add-mode .hippo-overlay-element-container:hover {
+  background: rgba(0, 0, 0, .25);
+}
+
+.hippo-overlay-add-mode .hippo-overlay-element-container .hippo-overlay-label {
+  display: flex;
 }
 

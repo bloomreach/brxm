@@ -28,7 +28,7 @@ class ComponentCatalogController {
   }
 
   isComponentSelected(index) {
-    const isMasked = this.MaskService.isMasked();
+    const isMasked = this.MaskService.isMasked;
     const selected = this.selectedComponentIndex === index;
     return selected && isMasked;
   }

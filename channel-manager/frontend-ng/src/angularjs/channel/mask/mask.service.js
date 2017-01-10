@@ -17,6 +17,7 @@
 class MaskService {
   initialize() {
     this.onClick();
+    this.defaultMaskClass = 'masked';
   }
 
   onClick(clickHandler = angular.noop) {
@@ -27,16 +28,13 @@ class MaskService {
     this.clickHandler = angular.noop;
   }
 
-  isMasked() {
-    return this.masked;
-  }
-
-  mask() {
-    this.masked = true;
+  mask(optionalMaskClass = '') {
+    this.isMasked = true;
+    this.maskClass = `${this.defaultMaskClass} ${optionalMaskClass}`;
   }
 
   unmask() {
-    this.masked = false;
+    this.isMasked = false;
   }
 }
 

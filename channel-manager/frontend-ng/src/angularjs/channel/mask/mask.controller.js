@@ -26,7 +26,11 @@ class MaskCtrl {
   }
 
   isMasked() {
-    return this.MaskService.isMasked();
+    return this.MaskService.isMasked;
+  }
+
+  getMaskClass() {
+    return this.MaskService.isMasked ? this.MaskService.maskClass : '';
   }
 
   onClick() {

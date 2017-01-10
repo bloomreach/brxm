@@ -15,6 +15,6 @@
   -->
 
 <div class="mask qa-mask"
-  ng-class="{'masked': $ctrl.isMasked()}"
+  ng-class="$ctrl.getMaskClass()"
   ng-click="$ctrl.onClick()">
 </div>
