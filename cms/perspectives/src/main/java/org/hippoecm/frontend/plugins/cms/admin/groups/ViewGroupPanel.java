@@ -137,11 +137,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         } catch (RepositoryException e) {
             error(getString("group-remove-failed", Model.of(groupToDelete)));
             log.error("Unable to delete group '{}' : ", groupName, e);
-
-            final AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-            if (target != null) {
-                target.add(this);
-            }
+            redraw();
         }
     }
 
@@ -173,7 +169,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
      *
      * @param userName The userName of the user which is a member of the Group.
      */
-    private void deleteGroupMemberShip(final String userName) {
+    private void deleteGroupMembership(final String userName) {
         try {
             group.removeMembership(userName);
             EventBusUtils.post("remove-user-from-group", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT,
@@ -184,7 +180,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             error(getString("group-member-remove-failed"));
             log.error("Failed to remove memberships", e);
         }
-        getBreadCrumbModel().setActive(this);
+        redraw();
     }
 
     /**
@@ -277,7 +273,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                         .text(getString("group-delete-member-text", userModel))
                         .ok(() -> {
                             final String userName = user.getUsername();
-                            deleteGroupMemberShip(userName);
+                            deleteGroupMembership(userName);
                             updateMembers();
                         }
                 );

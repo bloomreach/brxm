@@ -1,5 +1,5 @@
-/**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public abstract class AdminBreadCrumbPanel extends PanelPluginBreadCrumbPanel {
             @Override
             public void breadCrumbAdded(final IBreadCrumbParticipant breadCrumbParticipant) {
                 if (breadCrumbParticipant == AdminBreadCrumbPanel.this) {
-                    AdminBreadCrumbPanel.this.onAddedToBreadCrumbsBar();
+                    onAddedToBreadCrumbsBar();
                 }
             }
 
@@ -49,14 +49,14 @@ public abstract class AdminBreadCrumbPanel extends PanelPluginBreadCrumbPanel {
             public void breadCrumbRemoved(final IBreadCrumbParticipant breadCrumbParticipant) {
                 if (breadCrumbParticipant == AdminBreadCrumbPanel.this) {
                     breadCrumbModel.removeListener(this);
-                    AdminBreadCrumbPanel.this.onRemovedFromBreadCrumbsBar();
+                    onRemovedFromBreadCrumbsBar();
                 }
             }
         });
     }
 
     protected void redraw() {
-        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+        final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
         if (target != null) {
             target.add(this);
         }

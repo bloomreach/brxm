@@ -202,10 +202,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
                 log.error("Unable to delete group '{}' : ", groupname, e);
             }
 
-            final AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-            if (target !=  null) {
-                target.add(ListGroupsPanel.this);
-            }
+            redraw();
         }
     }
 }

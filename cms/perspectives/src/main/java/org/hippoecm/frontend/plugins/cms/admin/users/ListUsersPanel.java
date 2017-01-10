@@ -222,10 +222,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
             log.error("Unable to delete user '{}' : ", username, e);
         }
 
-        final AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-        if (target !=  null) {
-            target.add(this);
-        }
+        redraw();
     }
 
     protected boolean isUserCreationEnabled() {

@@ -149,11 +149,8 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
 
         } catch (final RepositoryException e) {
             error(getString("user-remove-failed", Model.of(user)));
-            final AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
-            if (target !=  null) {
-                target.add(this);
-            }
             log.error("Unable to delete user '{}' : ", username, e);
+            redraw();
         }
     }
 
