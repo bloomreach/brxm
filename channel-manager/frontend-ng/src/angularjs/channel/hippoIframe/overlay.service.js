@@ -20,11 +20,12 @@ import menuLinkSvg from '../../../images/html/edit-menu.svg';
 
 class OverlayService {
 
-  constructor($rootScope, $log, DomService, PageStructureService, ScalingService) {
+  constructor($rootScope, $log, CmsService, DomService, PageStructureService, ScalingService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.$log = $log;
+    this.CmsService = CmsService;
     this.DomService = DomService;
     this.PageStructureService = PageStructureService;
     this.ScalingService = ScalingService;
@@ -153,6 +154,7 @@ class OverlayService {
         break;
       case 'content-link':
         this._addLinkMarkup(contentLinkSvg, overlayElement);
+        this._addContentLinkClickHandler(structureElement, overlayElement);
         break;
       case 'menu-link':
         this._addLinkMarkup(menuLinkSvg, overlayElement);
@@ -172,6 +174,13 @@ class OverlayService {
   _addLinkMarkup(svg, overlayElement) {
     overlayElement.addClass('hippo-overlay-element-link');
     overlayElement.append(svg);
+  }
+
+  _addContentLinkClickHandler(structureElement, overlayElement) {
+    overlayElement.click((event) => {
+      event.stopPropagation();
+      this.CmsService.publish('open-content', structureElement.getUuid());
+    });
   }
 
   _syncElements(structureElement, overlayElement) {

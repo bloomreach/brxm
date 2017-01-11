@@ -17,6 +17,7 @@
 describe('OverlayService', () => {
   let $q;
   let $rootScope;
+  let CmsService;
   let hstCommentsProcessorService;
   let OverlayService;
   let PageStructureService;
@@ -27,10 +28,11 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_$q_, _$rootScope_, _hstCommentsProcessorService_, _OverlayService_,
+    inject((_$q_, _$rootScope_, _CmsService_, _hstCommentsProcessorService_, _OverlayService_,
             _PageStructureService_, _RenderingService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      CmsService = _CmsService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -265,21 +267,39 @@ describe('OverlayService', () => {
     });
   });
 
+  function expectNoPropagatedClicks() {
+    const body = iframe('body')[0];
+    body.addEventListener('click', () => {
+      fail('click event should not propagate to the page');
+    });
+  }
+
   it('shows the properties of a component when its overlay element is clicked', (done) => {
     spyOn(PageStructureService, 'showComponentProperties');
 
     loadIframeFixture(() => {
-      const body = iframe('body')[0];
-      body.addEventListener('click', () => {
-        fail('click event on overlay should not propagate to the page');
-      });
-
       const component = PageStructureService.getComponentById('aaaa');
       const overlayElement = iframe('#hippo-overlay > .hippo-overlay-element-component').first();
 
+      expectNoPropagatedClicks();
       overlayElement.click();
 
       expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(component);
+
+      done();
+    });
+  });
+
+  it('sends an "open-content" event to the CMS to open content', (done) => {
+    spyOn(CmsService, 'publish');
+    OverlayService.setMode('view');
+    loadIframeFixture(() => {
+      const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
+
+      expectNoPropagatedClicks();
+      contentLink.click();
+
+      expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'content-in-container-vbox');
 
       done();
     });
