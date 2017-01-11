@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-fdescribe('OverlayService', () => {
+describe('OverlayService', () => {
   let $q;
   let $rootScope;
+  let $translate;
   let CmsService;
   let hstCommentsProcessorService;
   let OverlayService;
@@ -28,10 +29,11 @@ fdescribe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_$q_, _$rootScope_, _CmsService_, _hstCommentsProcessorService_, _OverlayService_,
+    inject((_$q_, _$rootScope_, _$translate_, _CmsService_, _hstCommentsProcessorService_, _OverlayService_,
             _PageStructureService_, _RenderingService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
+      $translate = _$translate_;
       CmsService = _CmsService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
@@ -179,6 +181,16 @@ fdescribe('OverlayService', () => {
   it('renders icons for links', (done) => {
     loadIframeFixture(() => {
       expect(iframe('#hippo-overlay > .hippo-overlay-element-link > svg').length).toBe(2);
+      done();
+    });
+  });
+
+  it('renders a title for links', (done) => {
+    spyOn($translate, 'instant').and.returnValue('test-title');
+    loadIframeFixture(() => {
+      const links = iframe('#hippo-overlay > .hippo-overlay-element-link');
+      expect(links).toHaveAttr('title', 'test-title');
+      expect($translate.instant.calls.allArgs()).toEqual([['IFRAME_EDIT_MENU'], ['IFRAME_OPEN_DOCUMENT']]);
       done();
     });
   });
