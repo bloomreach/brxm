@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-describe('MaskController', () => {
-  let MaskController;
+describe('$ctrl', () => {
+  let $ctrl;
   let MaskService;
 
   beforeEach(() => {
@@ -24,14 +24,14 @@ describe('MaskController', () => {
     inject((_MaskService_, $componentController) => {
       MaskService = _MaskService_;
 
-      MaskController = $componentController('mask', { MaskService });
+      $ctrl = $componentController('mask', { MaskService });
     });
 
     spyOn(MaskService, 'initialize').and.callFake(() => {
       MaskService.clickHandler = () => 'clicked';
     });
 
-    MaskController.$onInit();
+    $ctrl.$onInit();
   });
 
   it('should initialize', () => {
@@ -41,24 +41,24 @@ describe('MaskController', () => {
   it('should get masked status', () => {
     MaskService.isMasked = true;
 
-    expect(MaskController.isMasked()).toBe(true);
+    expect($ctrl.isMasked()).toBe(true);
   });
 
   it('should get mask class', () => {
     MaskService.isMasked = false;
 
-    expect(MaskController.getMaskClass()).toEqual('');
+    expect($ctrl.getMaskClass()).toEqual('');
 
     MaskService.isMasked = true;
     MaskService.maskClass = 'masked';
 
-    expect(MaskController.getMaskClass()).toEqual('masked');
+    expect($ctrl.getMaskClass()).toEqual('masked');
   });
 
   it('should forward clickHandler', () => {
     spyOn(MaskService, 'clickHandler');
 
-    MaskController.onClick();
+    $ctrl.onClick();
 
     expect(MaskService.clickHandler).toHaveBeenCalled();
   });
