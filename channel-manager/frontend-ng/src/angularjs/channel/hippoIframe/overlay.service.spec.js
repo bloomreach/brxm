@@ -165,6 +165,16 @@ describe('OverlayService', () => {
     });
   });
 
+  it('only renders labels for structure elements that have a label', (done) => {
+    loadIframeFixture(() => {
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(2);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(2);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-content-link > .hippo-overlay-label').length).toBe(0);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link > .hippo-overlay-label').length).toBe(0);
+      done();
+    });
+  });
+
   it('syncs the position of overlay elements in view mode', (done) => {
     OverlayService.setMode('view');
     loadIframeFixture(() => {

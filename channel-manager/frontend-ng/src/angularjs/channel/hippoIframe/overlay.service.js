@@ -116,13 +116,18 @@ class OverlayService {
   }
 
   _addOverlayElement(structureElement) {
-    const escapedLabel = this.DomService.escapeHtml(structureElement.getLabel());
     const overlayElement = $(`
       <div class="hippo-overlay-element hippo-overlay-element-${structureElement.getType()}">
-        <span class="hippo-overlay-label">
-          <span class="hippo-overlay-label-text">${escapedLabel}</span>        
-        </span>
       </div>`);
+
+    const escapedLabel = this.DomService.escapeHtml(structureElement.getLabel());
+    if (escapedLabel.length > 0) {
+      overlayElement.append(`
+        <span class="hippo-overlay-label">
+          <span class="hippo-overlay-label-text">${escapedLabel}</span>
+        </span>
+      `);
+    }
 
     if (structureElement.getType() === 'component') {
       overlayElement.click((event) => {
