@@ -184,18 +184,23 @@ class OverlayService {
   }
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
-    overlayElement.click((event) => {
-      event.stopPropagation();
+    this._addClickHandler(overlayElement, () => {
       this.CmsService.publish('open-content', structureElement.getUuid());
     });
   }
 
   _addMenuLinkClickHandler(structureElement, overlayElement) {
-    overlayElement.click((event) => {
-      event.stopPropagation();
+    this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
         this.editMenuHandler(structureElement.getUuid());
       });
+    });
+  }
+
+  _addClickHandler(overlayElement, handler) {
+    overlayElement.click((event) => {
+      event.stopPropagation();
+      handler();
     });
   }
 
