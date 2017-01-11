@@ -175,6 +175,14 @@ describe('OverlayService', () => {
     });
   });
 
+  it('renders icons for links', (done) => {
+    loadIframeFixture(() => {
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-content-link > svg').length).toBe(1);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link > svg').length).toBe(1);
+      done();
+    });
+  });
+
   it('syncs the position of overlay elements in view mode', (done) => {
     OverlayService.setMode('view');
     loadIframeFixture(() => {
@@ -188,9 +196,9 @@ describe('OverlayService', () => {
 
       const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
       expect(contentLink.css('top')).toBe(`${4 + 100}px`);
-      expect(contentLink.css('left')).toBe(`${200 - 56}px`);
-      expect(contentLink.css('width')).toBe('56px');
-      expect(contentLink.css('height')).toBe('56px');
+      expect(contentLink.css('left')).toBe(`${200 - 40}px`);
+      expect(contentLink.css('width')).toBe('40px');
+      expect(contentLink.css('height')).toBe('40px');
 
       const componentB = $(components[1]);
       expect(componentB).not.toBeVisible();
@@ -215,9 +223,9 @@ describe('OverlayService', () => {
 
       const menuLink = iframe('#hippo-overlay > .hippo-overlay-element-menu-link');
       expect(menuLink.css('top')).toBe(`${4 + 30}px`);
-      expect(menuLink.css('left')).toBe(`${200 - 56}px`);
-      expect(menuLink.css('width')).toBe('56px');
-      expect(menuLink.css('height')).toBe('56px');
+      expect(menuLink.css('left')).toBe(`${200 - 40}px`);
+      expect(menuLink.css('width')).toBe('40px');
+      expect(menuLink.css('height')).toBe('40px');
 
       const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
       expect(contentLink).not.toBeVisible();
@@ -251,9 +259,9 @@ describe('OverlayService', () => {
 
       const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
       expect(contentLink.css('top')).toBe(`${4 + 100}px`);
-      expect(contentLink.css('left')).toBe(`${200 - 56}px`);
-      expect(contentLink.css('width')).toBe('56px');
-      expect(contentLink.css('height')).toBe('56px');
+      expect(contentLink.css('left')).toBe(`${200 - 40}px`);
+      expect(contentLink.css('width')).toBe('40px');
+      expect(contentLink.css('height')).toBe('40px');
 
       done();
     });

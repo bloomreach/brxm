@@ -23,12 +23,12 @@ html {
 
 a.hst-cmseditlink {
   display: block;
-  height: 56px;
+  height: 40px;
   pointer-events: none;
   position: absolute;
   right: 0;
   top: 0;
-  width: 56px;
+  width: 40px;
 }
 
 #hippo-overlay {
@@ -65,8 +65,19 @@ a.hst-cmseditlink {
 
 .hippo-overlay-element-content-link,
 .hippo-overlay-element-menu-link {
-  /* TODO: style links */
-  border: 1px solid #f00;
+  align-items: center;
+  background-color: #ff741a;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .26);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  fill: white;
+  justify-content: center;
+  padding-top: 1px;
+}
+
+.hippo-overlay-element-content-link {
+  padding-left: 5px;
 }
 
 .hippo-overlay-label {

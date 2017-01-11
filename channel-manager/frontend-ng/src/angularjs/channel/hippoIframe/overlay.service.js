@@ -15,6 +15,8 @@
  */
 
 import MutationSummary from 'mutation-summary';
+import contentLinkSvg from '../../../images/html/edit-document.svg';
+import menuLinkSvg from '../../../images/html/edit-menu.svg';
 
 class OverlayService {
 
@@ -120,21 +122,8 @@ class OverlayService {
       <div class="hippo-overlay-element hippo-overlay-element-${structureElement.getType()}">
       </div>`);
 
-    const escapedLabel = this.DomService.escapeHtml(structureElement.getLabel());
-    if (escapedLabel.length > 0) {
-      overlayElement.append(`
-        <span class="hippo-overlay-label">
-          <span class="hippo-overlay-label-text">${escapedLabel}</span>
-        </span>
-      `);
-    }
-
-    if (structureElement.getType() === 'component') {
-      overlayElement.click((event) => {
-        event.stopPropagation();
-        this.PageStructureService.showComponentProperties(structureElement);
-      });
-    }
+    this._addLabel(structureElement, overlayElement);
+    this._addMarkupAndBehavior(structureElement, overlayElement);
 
     structureElement.setOverlayElement(overlayElement);
 
@@ -144,6 +133,44 @@ class OverlayService {
     this._syncElements(structureElement, overlayElement);
 
     this.overlay.append(overlayElement);
+  }
+
+  _addLabel(structureElement, overlayElement) {
+    const escapedLabel = this.DomService.escapeHtml(structureElement.getLabel());
+    if (escapedLabel.length > 0) {
+      overlayElement.append(`
+        <span class="hippo-overlay-label">
+          <span class="hippo-overlay-label-text">${escapedLabel}</span>
+        </span>
+      `);
+    }
+  }
+
+  _addMarkupAndBehavior(structureElement, overlayElement) {
+    switch (structureElement.getType()) {
+      case 'component':
+        this._addComponentClickHandler(structureElement, overlayElement);
+        break;
+      case 'content-link':
+        this._addIcon(contentLinkSvg, overlayElement);
+        break;
+      case 'menu-link':
+        this._addIcon(menuLinkSvg, overlayElement);
+        break;
+      default:
+        break;
+    }
+  }
+
+  _addComponentClickHandler(structureElement, overlayElement) {
+    overlayElement.click((event) => {
+      event.stopPropagation();
+      this.PageStructureService.showComponentProperties(structureElement);
+    });
+  }
+
+  _addIcon(svg, overlayElement) {
+    overlayElement.append(svg);
   }
 
   _syncElements(structureElement, overlayElement) {
