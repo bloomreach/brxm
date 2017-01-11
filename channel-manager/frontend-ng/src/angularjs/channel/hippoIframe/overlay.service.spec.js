@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('OverlayService', () => {
+fdescribe('OverlayService', () => {
   let $q;
   let $rootScope;
   let CmsService;
@@ -300,6 +300,23 @@ describe('OverlayService', () => {
       contentLink.click();
 
       expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'content-in-container-vbox');
+
+      done();
+    });
+  });
+
+  it('calls the edit menu handler to edit a menu', (done) => {
+    const editMenuHandler = jasmine.createSpy('editMenuHandler');
+
+    OverlayService.onEditMenu(editMenuHandler);
+    OverlayService.setMode('edit');
+    loadIframeFixture(() => {
+      const menuLink = iframe('#hippo-overlay > .hippo-overlay-element-menu-link');
+
+      expectNoPropagatedClicks();
+      menuLink.click();
+
+      expect(editMenuHandler).toHaveBeenCalledWith('menu-in-component-a');
 
       done();
     });

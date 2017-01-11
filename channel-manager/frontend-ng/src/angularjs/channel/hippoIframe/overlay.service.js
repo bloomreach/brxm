@@ -38,6 +38,10 @@ class OverlayService {
     this.iframeJQueryElement.on('load', () => this._onLoad());
   }
 
+  onEditMenu(callback) {
+    this.editMenuHandler = callback;
+  }
+
   _onLoad() {
     this.iframeWindow = this.iframeJQueryElement[0].contentWindow;
 
@@ -158,6 +162,7 @@ class OverlayService {
         break;
       case 'menu-link':
         this._addLinkMarkup(menuLinkSvg, overlayElement);
+        this._addMenuLinkClickHandler(structureElement, overlayElement);
         break;
       default:
         break;
@@ -180,6 +185,15 @@ class OverlayService {
     overlayElement.click((event) => {
       event.stopPropagation();
       this.CmsService.publish('open-content', structureElement.getUuid());
+    });
+  }
+
+  _addMenuLinkClickHandler(structureElement, overlayElement) {
+    overlayElement.click((event) => {
+      event.stopPropagation();
+      this.$rootScope.$apply(() => {
+        this.editMenuHandler(structureElement.getUuid());
+      });
     });
   }
 
