@@ -30,7 +30,12 @@ class MaskService {
 
   mask(optionalMaskClass = '') {
     this.isMasked = true;
-    this.maskClass = `${this.defaultMaskClass} ${optionalMaskClass}`;
+
+    if (optionalMaskClass) {
+      this.maskClass = `${this.defaultMaskClass} ${optionalMaskClass}`;
+    } else {
+      this.maskClass = this.defaultMaskClass;
+    }
   }
 
   unmask() {

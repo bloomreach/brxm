@@ -23,13 +23,53 @@ describe('MaskService', () => {
     inject((_MaskService_) => {
       MaskService = _MaskService_;
     });
+
+    MaskService.initialize();
   });
 
-  it('should control the mask status', () => {
-    MaskService.mask();
-    expect(MaskService.isMasked()).toBe(true);
+  it('should initialize mask class', () => {
+    expect(MaskService.defaultMaskClass).toBe('masked');
+  });
 
-    MaskService.unmask();
-    expect(MaskService.isMasked()).toBe(false);
+  it('should set default click handler', () => {
+    expect(MaskService.clickHandler).toBeDefined();
+  });
+
+  describe('setting and resetting the click handler', () => {
+    beforeEach(() => {
+      function test() {
+        return 'clickHandler';
+      }
+
+      MaskService.onClick(test);
+    });
+
+    it('should be able to change the click handler', () => {
+      expect(MaskService.clickHandler()).toEqual('clickHandler');
+    });
+
+    it('should be able to reset the click handler', () => {
+      MaskService.removeClickHandler();
+      expect(MaskService.clickHandler).toBeDefined();
+      expect(MaskService.clickHandler()).toEqual(undefined);
+    });
+  });
+
+  describe('toggling the mask', () => {
+    it('should enable the mask', () => {
+      MaskService.mask();
+      expect(MaskService.isMasked).toBe(true);
+      expect(MaskService.maskClass).toBe('masked');
+    });
+
+    it('should set the optional mask class if provided', () => {
+      MaskService.mask('myMaskClass');
+      expect(MaskService.maskClass).toBe('masked myMaskClass');
+    });
+
+    it('should disable the mask', () => {
+      MaskService.unmask();
+      expect(MaskService.isMasked).toBe(false);
+    });
   });
 });
