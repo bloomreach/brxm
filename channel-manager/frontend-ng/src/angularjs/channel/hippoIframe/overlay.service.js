@@ -152,10 +152,10 @@ class OverlayService {
         this._addComponentClickHandler(structureElement, overlayElement);
         break;
       case 'content-link':
-        this._addIcon(contentLinkSvg, overlayElement);
+        this._addLinkMarkup(contentLinkSvg, overlayElement);
         break;
       case 'menu-link':
-        this._addIcon(menuLinkSvg, overlayElement);
+        this._addLinkMarkup(menuLinkSvg, overlayElement);
         break;
       default:
         break;
@@ -169,7 +169,8 @@ class OverlayService {
     });
   }
 
-  _addIcon(svg, overlayElement) {
+  _addLinkMarkup(svg, overlayElement) {
+    overlayElement.addClass('hippo-overlay-element-link');
     overlayElement.append(svg);
   }
 

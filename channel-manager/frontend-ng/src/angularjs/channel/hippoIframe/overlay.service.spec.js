@@ -169,16 +169,14 @@ describe('OverlayService', () => {
     loadIframeFixture(() => {
       expect(iframe('#hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(2);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(2);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-content-link > .hippo-overlay-label').length).toBe(0);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link > .hippo-overlay-label').length).toBe(0);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
       done();
     });
   });
 
   it('renders icons for links', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-content-link > svg').length).toBe(1);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link > svg').length).toBe(1);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-link > svg').length).toBe(2);
       done();
     });
   });
