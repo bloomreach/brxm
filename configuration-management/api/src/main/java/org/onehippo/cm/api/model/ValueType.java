@@ -31,10 +31,10 @@ public enum ValueType {
     REFERENCE,
     ENCRYPTED,
     CLASSNAME,
-    RESOURCE,
     FOLDER;
 
     public final String toString() {
         return name().toLowerCase();
     }
+
 }

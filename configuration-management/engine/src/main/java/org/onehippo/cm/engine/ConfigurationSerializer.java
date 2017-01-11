@@ -240,6 +240,50 @@ public class ConfigurationSerializer {
     }
 
     private Node representProperty(final DefinitionProperty property) {
+        if (requiresValueMap(property)) {
+            return representPropertyUsingMap(property);
+        } else {
+            return representPropertyUsingScalarOrSequence(property);
+        }
+    }
+
+    private boolean requiresValueMap(final DefinitionProperty property) {
+        if (property.getType() == PropertyType.SINGLE) {
+            return property.getValue().isResource();
+        }
+
+        if (property.getValues().length == 0) {
+            return true;
+        }
+
+        return hasResourceValues(property);
+    }
+
+    private Node representPropertyUsingMap(final DefinitionProperty property) {
+        final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
+        valueMapTuples.add(createStrStrTuple("type", property.getValueType().name().toLowerCase()));
+
+        final String key = hasResourceValues(property) ? "resource" : "value";
+
+        if (property.getType() == PropertyType.SINGLE) {
+            final Value value = property.getValue();
+            valueMapTuples.add(new NodeTuple(createStrScalar(key), representValue(value)));
+        } else {
+            final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
+            for (Value value : property.getValues()) {
+                valueNodes.add(representValue(value));
+            }
+            valueMapTuples.add(createStrSeqTuple(key, valueNodes, true));
+        }
+
+        final List<NodeTuple> propertyTuples = new ArrayList<>(1);
+        propertyTuples.add(new NodeTuple(
+                createStrScalar(property.getName()),
+                new MappingNode(Tag.MAP, valueMapTuples, false)));
+        return new MappingNode(Tag.MAP, propertyTuples, false);
+    }
+
+    private Node representPropertyUsingScalarOrSequence(final DefinitionProperty property) {
         final List<NodeTuple> tuples = new ArrayList<>(1);
 
         if (property.getType() == PropertyType.SINGLE) {
@@ -253,6 +297,18 @@ public class ConfigurationSerializer {
         }
 
         return new MappingNode(Tag.MAP, tuples, false);
+    }
+
+    private boolean hasResourceValues(final DefinitionProperty property) {
+        if (property.getType() == PropertyType.SINGLE) {
+            return property.getValue().isResource();
+        }
+
+        for (Value value : property.getValues()) {
+            if (value.isResource()) return true;
+        }
+
+        return false;
     }
 
     private Node representValue(final Value value) {

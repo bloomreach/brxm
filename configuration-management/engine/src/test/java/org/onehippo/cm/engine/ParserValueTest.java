@@ -47,27 +47,27 @@ public class ParserValueTest extends AbstractBaseTest {
 
         final ConfigDefinition baseDefinition = assertDefinition(source, 0, ConfigDefinition.class);
         final DefinitionNode baseNode = assertNode(baseDefinition, "/base", "base", baseDefinition, false, 0, 6);
-        assertProperty(baseNode, "/base/binary", "binary", baseDefinition, false, "hello world".getBytes());
-        assertProperty(baseNode, "/base/bool", "bool", baseDefinition, false, true);
-        assertProperty(baseNode, "/base/float", "float", baseDefinition, false, 3.1415);
-        assertProperty(baseNode, "/base/long", "long", baseDefinition, false, (long) 42);
-        assertProperty(baseNode, "/base/str", "str", baseDefinition, false, "hello world");
+        assertProperty(baseNode, "/base/binary", "binary", baseDefinition, "hello world".getBytes());
+        assertProperty(baseNode, "/base/bool", "bool", baseDefinition, true);
+        assertProperty(baseNode, "/base/float", "float", baseDefinition, 3.1415);
+        assertProperty(baseNode, "/base/long", "long", baseDefinition, (long) 42);
+        assertProperty(baseNode, "/base/str", "str", baseDefinition, "hello world");
         final Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(0);
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         calendar.set(2015, 9, 21, 7, 28, 0);
-        assertProperty(baseNode, "/base/timestamp", "timestamp", baseDefinition, false, calendar);
+        assertProperty(baseNode, "/base/timestamp", "timestamp", baseDefinition, calendar);
 
         final ConfigDefinition stringDefinition = assertDefinition(source, 1, ConfigDefinition.class);
         final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "string", stringDefinition, false, 0, 8);
-        assertProperty(stringNode, "/string/strBool", "strBool", stringDefinition, false, "true");
-        assertProperty(stringNode, "/string/strFloat", "strFloat", stringDefinition, false, "3.1415");
-        assertProperty(stringNode, "/string/strLong", "strLong", stringDefinition, false, "42");
-        assertProperty(stringNode, "/string/strTimestamp", "strTimestamp", stringDefinition, false, "2015-10-21T07:28:00+8:00");
-        assertProperty(stringNode, "/string/strWithQuotes", "strWithQuotes", stringDefinition, false, "string ' \"");
-        assertProperty(stringNode, "/string/strWithLeadingSingleQuote", "strWithLeadingSingleQuote", stringDefinition, false, "' \" string");
-        assertProperty(stringNode, "/string/strWithLeadingDoubleQuote", "strWithLeadingDoubleQuote", stringDefinition, false, "\" ' string");
-        assertProperty(stringNode, "/string/strWithLineBreaks", "strWithLineBreaks", stringDefinition, false, "line one\nline two\n");
+        assertProperty(stringNode, "/string/strBool", "strBool", stringDefinition, "true");
+        assertProperty(stringNode, "/string/strFloat", "strFloat", stringDefinition, "3.1415");
+        assertProperty(stringNode, "/string/strLong", "strLong", stringDefinition, "42");
+        assertProperty(stringNode, "/string/strTimestamp", "strTimestamp", stringDefinition, "2015-10-21T07:28:00+8:00");
+        assertProperty(stringNode, "/string/strWithQuotes", "strWithQuotes", stringDefinition, "string ' \"");
+        assertProperty(stringNode, "/string/strWithLeadingSingleQuote", "strWithLeadingSingleQuote", stringDefinition, "' \" string");
+        assertProperty(stringNode, "/string/strWithLeadingDoubleQuote", "strWithLeadingDoubleQuote", stringDefinition, "\" ' string");
+        assertProperty(stringNode, "/string/strWithLineBreaks", "strWithLineBreaks", stringDefinition, "line one\nline two\n");
     }
 
 }

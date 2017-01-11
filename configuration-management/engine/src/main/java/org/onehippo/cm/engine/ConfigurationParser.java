@@ -36,6 +36,7 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
@@ -68,6 +69,14 @@ public class ConfigurationParser {
         }
         Node getNode() {
             return node;
+        }
+        @Override
+        public String toString() {
+            if (node == null) {
+                return getClass().getName() + ": " + getMessage();
+            } else {
+                return getClass().getName() + ": " + getMessage() + node.getStartMark().toString();
+            }
         }
     }
 
@@ -124,7 +133,7 @@ public class ConfigurationParser {
         final Map<String, Node> configurationMap = asMapping(src, new String[]{"name", "projects"}, new String[]{"after"});
         final String name = asStringScalar(configurationMap.get("name"));
         final ConfigurationImpl configuration = new ConfigurationImpl(name);
-        configuration.setAfter(parseAfter(configurationMap.get("after")));
+        configuration.setAfter(asSingleOrSequenceOfStrScalars(configurationMap.get("after")));
         parent.put(name, configuration);
 
         for (Node projectNode : asSequence(configurationMap.get("projects"))) {
@@ -136,7 +145,7 @@ public class ConfigurationParser {
         final Map<String, Node> sourceMap = asMapping(src, new String[]{"name", "modules"}, new String[]{"after"});
         final String name = asStringScalar(sourceMap.get("name"));
         final ProjectImpl project = parent.addProject(name);
-        project.setAfter(parseAfter(sourceMap.get("after")));
+        project.setAfter(asSingleOrSequenceOfStrScalars(sourceMap.get("after")));
 
         for (Node moduleNode : asSequence(sourceMap.get("modules"))) {
             constructModule(moduleNode, project);
@@ -147,28 +156,7 @@ public class ConfigurationParser {
         final Map<String, Node> map = asMapping(src, new String[]{"name"}, new String[]{"after"});
         final String name = asStringScalar(map.get("name"));
         final ModuleImpl module = parent.addModule(name);
-        module.setAfter(parseAfter(map.get("after")));
-    }
-
-    private List<String> parseAfter(final Node node) {
-        if (node == null) {
-            return Collections.emptyList();
-        }
-        final List<String> result = new ArrayList<>();
-        switch (node.getNodeId()) {
-            case scalar:
-                result.add(asStringScalar(node));
-                break;
-            case sequence:
-                final List<Node> values = asSequence(node);
-                for (Node value : values) {
-                    result.add(asStringScalar(value));
-                }
-                break;
-            default:
-                throw new ConfigurationException("'after' value must be scalar or sequence, found '" + node.getNodeId() + "'", node);
-        }
-        return result;
+        module.setAfter(asSingleOrSequenceOfStrScalars(map.get("after")));
     }
 
     private void constructSource(final String path, final Node src, final ModuleImpl parent) {
@@ -254,21 +242,77 @@ public class ConfigurationParser {
     }
 
     private void constructDefinitionProperty(final String name, final Node value, final DefinitionNodeImpl parent) {
-        if (value.getNodeId() == NodeId.scalar) {
-            parent.addProperty(name, constructValue(value));
-        } else if (value.getNodeId() == NodeId.sequence) {
-            final List<Node> valueNodes = asSequence(value);
-            final Value[] values = new Value[valueNodes.size()];
-            for (int i = 0; i < valueNodes.size(); i++) {
-                values[i] = constructValue(valueNodes.get(i));
-            }
-            parent.addProperty(name, values);
-        } else {
-            throw new ConfigurationException("Property value must be scalar or sequence", value);
+        switch (value.getNodeId()) {
+            case scalar:
+                constructDefinitionPropertyFromScalar(name, value, parent);
+                break;
+            case sequence:
+                constructDefinitionPropertyFromSequence(name, value, parent);
+                break;
+            case mapping:
+                constructDefinitionPropertyFromMap(name, value, parent);
+                break;
+            default:
+                throw new ConfigurationException("Property value must be scalar, sequence or map", value);
         }
     }
 
-    private Value constructValue(final Node node) {
+    private void constructDefinitionPropertyFromScalar(final String name, final Node value, final DefinitionNodeImpl parent) {
+        parent.addProperty(name, constructValueFromScalar(value));
+    }
+
+    private void constructDefinitionPropertyFromSequence(final String name, final Node value, final DefinitionNodeImpl parent) {
+        final Value[] values = constructValuesFromSequence(value);
+
+        if (values.length == 0) {
+            throw new ConfigurationException("Property values represented as sequence must have at least 1 value; to represent 0 values, use a map", value);
+        }
+
+        parent.addProperty(name, values[0].getType(), values);
+    }
+
+    private void constructDefinitionPropertyFromMap(final String name, final Node value, final DefinitionNodeImpl parent) {
+        final Map<String, Node> map = asMapping(value, new String[]{"type"}, new String[]{"value","resource"});
+        final ValueType valueType = constructValueType(map.get("type"));
+
+        if (map.keySet().contains("value")) {
+            final Node valueNode = map.get("value");
+            if (valueNode.getNodeId() == NodeId.scalar) {
+                final Value propertyValue = constructValueFromScalar(valueNode);
+                parent.addProperty(name, propertyValue);
+            } else if (valueNode.getNodeId() == NodeId.sequence) {
+                final Value[] propertyValues = constructValuesFromSequence(valueNode);
+                parent.addProperty(name, valueType, propertyValues);
+            } else {
+                throw new ConfigurationException("Property value in map must be scalar or sequence", valueNode);
+            }
+        } else if (map.keySet().contains("resource")) {
+            if (!(valueType == ValueType.STRING || valueType == ValueType.BINARY)) {
+                throw new ConfigurationException("Resource can only be used for value type 'binary' or 'string'", value);
+            }
+            final Node resourceNode = map.get("resource");
+            final List<String> resources = asSingleOrSequenceOfStrScalars(resourceNode);
+            final Value[] resourceValues = new Value[resources.size()];
+            for (int i = 0; i < resources.size(); i++) {
+                // add check resource exists
+                resourceValues[i] = new ValueImpl(valueType, resources.get(i));
+            }
+            switch (resourceNode.getNodeId()) {
+                case scalar:
+                    parent.addProperty(name, resourceValues[0]);
+                    break;
+                case sequence:
+                    parent.addProperty(name, valueType, resourceValues);
+                    break;
+                default:
+                    throw new ConfigurationException("Resource value must be scalar or sequence", resourceNode);
+            }
+        } else {
+            throw new ConfigurationException("Property values represented as map must have a 'value' or 'resource' key", value);
+        }
+    }
+
+    private Value constructValueFromScalar(final Node node) {
         final ScalarNode scalar = asScalar(node);
         final Object object = scalarConstructor.constructScalarNode(scalar);
 
@@ -292,6 +336,38 @@ public class ConfigurationParser {
         }
 
         throw new ConfigurationException("Tag not recognized: " + scalar.getTag(), node);
+    }
+
+    private Value[] constructValuesFromSequence(final Node value) {
+        final List<Node> valueNodes = asSequence(value);
+
+        ValueType valueType = null;
+        final Value[] values = new Value[valueNodes.size()];
+        for (int i = 0; i < valueNodes.size(); i++) {
+            values[i] = constructValueFromScalar(valueNodes.get(i));
+            if (valueType == null) {
+                valueType = values[i].getType();
+            } else if (valueType != values[i].getType()) {
+                // todo create unit test and parser test
+                throw new ConfigurationException(
+                        MessageFormat.format(
+                                "Property values must all be of the same type, found value type ''{0}'' as well as ''{1}''",
+                                valueType,
+                                values[i].getType()),
+                        value);
+            }
+        }
+
+        return values;
+    }
+
+    private ValueType constructValueType(final Node node) {
+        final String type = asStringScalar(node);
+        switch (type) {
+            case "binary": return ValueType.BINARY;
+            case "string": return ValueType.STRING;
+        }
+        throw new ConfigurationException("Unrecognized value type: '" + type + "'", node);
     }
 
     private Map<String, Node> asMapping(final Node node) {
@@ -395,6 +471,27 @@ public class ConfigurationParser {
             throw new ConfigurationException("Scalar must be a string", node);
         }
         return scalarNode.getValue();
+    }
+
+    private List<String> asSingleOrSequenceOfStrScalars(final Node node) {
+        if (node == null) {
+            return Collections.emptyList();
+        }
+        final List<String> result = new ArrayList<>();
+        switch (node.getNodeId()) {
+            case scalar:
+                result.add(asStringScalar(node));
+                break;
+            case sequence:
+                final List<Node> values = asSequence(node);
+                for (Node value : values) {
+                    result.add(asStringScalar(value));
+                }
+                break;
+            default:
+                throw new ConfigurationException("Node must be scalar or sequence, found '" + node.getNodeId() + "'", node);
+        }
+        return result;
     }
 
     private URI asURIScalar(final Node node) {

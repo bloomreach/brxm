@@ -22,9 +22,11 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiPredicate;
 
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ContentDefinition;
@@ -35,6 +37,7 @@ import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueFormatException;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -87,7 +90,9 @@ public abstract class AbstractBaseTest {
 
         final TestFiles result = new TestFiles();
         result.repoConfig = pathToUrl(repoConfig);
-        Files.find(sourceDirectory, Integer.MAX_VALUE, (filePath, fileAttr) -> fileAttr.isRegularFile())
+        final BiPredicate<Path, BasicFileAttributes> matcher =
+                (filePath, fileAttr) -> filePath.toString().toLowerCase().endsWith("yaml") && fileAttr.isRegularFile();
+        Files.find(sourceDirectory, Integer.MAX_VALUE, matcher)
                 .forEachOrdered(path -> result.sources.add(pathToUrl(path)));
         return result;
     }
@@ -128,7 +133,7 @@ public abstract class AbstractBaseTest {
     Source assertSource(final Module parent, final String path, final int definitionCount) {
         Source source = parent.getSources().get(path);
         assertNotNull(source);
-        assertEquals(path, source.getPath().toString(), path);
+        assertEquals(path, source.getPath());
         assertEquals(parent, source.getModule());
         assertEquals(definitionCount, source.getDefinitions().size());
         return source;
@@ -211,8 +216,18 @@ public abstract class AbstractBaseTest {
                                       final String path,
                                       final String name,
                                       final Definition definition,
-                                      final boolean isDeleted,
                                       final Object value)
+    {
+        return assertProperty(parent, path, name, definition, false, value, false);
+    }
+
+    DefinitionProperty assertProperty(final DefinitionNode parent,
+                                      final String path,
+                                      final String name,
+                                      final Definition definition,
+                                      final boolean isDeleted,
+                                      final Object value,
+                                      final boolean valueIsResource)
     {
         final DefinitionProperty property = parent.getProperties().get(name);
         validateItem(property, path, name, parent, false, definition, isDeleted);
@@ -222,11 +237,7 @@ public abstract class AbstractBaseTest {
         } catch (ValueFormatException e) {
             // ignore
         }
-        if (value instanceof byte[]) {
-            assertArrayEquals((byte[]) value, (byte[]) property.getValue().getObject());
-        } else {
-            assertEquals(value, property.getValue().getObject());
-        }
+        assertValue(value, valueIsResource, property.getValue());
         return property;
     }
 
@@ -234,8 +245,18 @@ public abstract class AbstractBaseTest {
                                       final String path,
                                       final String name,
                                       final Definition definition,
-                                      final boolean isDeleted,
                                       final Object[] values)
+    {
+        return assertProperty(parent, path, name, definition, false, values, false);
+    }
+
+    DefinitionProperty assertProperty(final DefinitionNode parent,
+                                      final String path,
+                                      final String name,
+                                      final Definition definition,
+                                      final boolean isDeleted,
+                                      final Object[] values,
+                                      final boolean valuesAreResource)
     {
         final DefinitionProperty property = parent.getProperties().get(name);
         validateItem(property, path, name, parent, false, definition, isDeleted);
@@ -247,9 +268,18 @@ public abstract class AbstractBaseTest {
         }
         assertEquals(values.length, property.getValues().length);
         for (int i = 0; i < values.length; i++) {
-            assertEquals(values[i], property.getValues()[i].getString());
+            assertValue(values[i], valuesAreResource, property.getValues()[i]);
         }
         return property;
+    }
+
+    void assertValue(final Object expected, final boolean expectedResource, final Value actual) {
+        if (expected instanceof byte[]) {
+            assertArrayEquals((byte[]) expected, (byte[]) actual.getObject());
+        } else {
+            assertEquals(expected, actual.getObject());
+        }
+        assertEquals(expectedResource, actual.isResource());
     }
 
 }

@@ -22,37 +22,50 @@ import org.onehippo.cm.api.model.ValueType;
 
 public class ValueImpl implements Value {
 
-    private Object value;
-    private ValueType valueType;
+    private final Object value;
+    private final ValueType valueType;
+    private final boolean isResource;
 
     public ValueImpl(final byte[] value) {
         this.value = value;
         this.valueType = ValueType.BINARY;
+        this.isResource = false;
     }
 
     public ValueImpl(final Boolean value) {
         this.value = value;
         this.valueType = ValueType.BOOLEAN;
+        this.isResource = false;
     }
 
     public ValueImpl(final Double value) {
         this.value = value;
         this.valueType = ValueType.DOUBLE;
+        this.isResource = false;
     }
 
     public ValueImpl(final Long value) {
         this.value = value;
         this.valueType = ValueType.LONG;
+        this.isResource = false;
     }
 
     public ValueImpl(final String value) {
         this.value = value;
         this.valueType = ValueType.STRING;
+        this.isResource = false;
     }
 
     public ValueImpl(final Calendar value) {
         this.value = value;
         this.valueType = ValueType.DATE;
+        this.isResource = false;
+    }
+
+    public ValueImpl(final ValueType type, final String path) {
+        this.value = path;
+        this.valueType = type;
+        this.isResource = true;
     }
 
     @Override
@@ -75,7 +88,7 @@ public class ValueImpl implements Value {
 
     @Override
     public boolean isResource() {
-        return false;
+        return isResource;
     }
 
     @Override

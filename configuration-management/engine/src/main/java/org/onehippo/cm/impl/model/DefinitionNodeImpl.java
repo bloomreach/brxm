@@ -22,6 +22,7 @@ import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.api.model.ValueType;
 
 import static java.util.Collections.unmodifiableMap;
 
@@ -60,8 +61,8 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         return property;
     }
 
-    public DefinitionPropertyImpl addProperty(final String name, final Value[] values) {
-        final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, values, this);
+    public DefinitionPropertyImpl addProperty(final String name, final ValueType type, final Value[] values) {
+        final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, type, values, this);
         properties.put(name, property);
         return property;
     }
