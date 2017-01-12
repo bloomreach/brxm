@@ -69,7 +69,7 @@ public class RichTextFieldType extends StringFieldType {
     private static void saveLinkedDocuments(final Map<String, List<FieldValue>> linkedDocuments, final Node subNode) throws RepositoryException {
         final List<FieldValue> properties = new ArrayList<>();
         for (final Property property : new PropertyIterable(subNode.getProperties())) {
-            properties.add(new FieldValue(property.getString()));
+            storeProperty(properties, property);
         }
         linkedDocuments.put(subNode.getName(), properties);
     }
