@@ -115,6 +115,13 @@ a.hst-cmseditlink {
     pointer-events: none;
 }
 
+.hippo-dragging {
+  cursor: move;
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+  cursor: grabbing;
+}
+
 .hippo-dragging .hippo-overlay-element-container {
   display: block;
 }
