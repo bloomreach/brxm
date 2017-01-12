@@ -171,9 +171,6 @@ class DragDropService {
     this._getIframeHtmlElement().addClass('hippo-dragging');
     this.baseJQueryElement.addClass('hippo-dragging');
     this._updateDragDirection(containerElement);
-
-    // make Angular evaluate isDragging() again
-    this._digestIfNeeded();
   }
 
   _onMirrorCreated(mirrorElement, originalElement) {
@@ -223,14 +220,6 @@ class DragDropService {
       .off(MOUSEUP_EVENT_NAME)
       .off(MOUSELEAVE_EVENT_NAME)
       .removeClass(COMPONENT_QA_CLASS);
-
-    this._digestIfNeeded();
-  }
-
-  _digestIfNeeded() {
-    if (!this.$rootScope.$$phase) {
-      this.$rootScope.$digest();
-    }
   }
 
   _onDrop(movedElement, targetContainerElement, sourceContainerElement, targetNextComponentElement) {
