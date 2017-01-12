@@ -109,6 +109,13 @@ a.hst-cmseditlink {
   min-height: 40px;
 }
 
+.hippo-overlay-permeable {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .hippo-overlay-permeable .hippo-overlay,
 .hippo-overlay-permeable .hippo-overlay-element-container,
 .hippo-overlay-permeable .hippo-overlay-element-component {
