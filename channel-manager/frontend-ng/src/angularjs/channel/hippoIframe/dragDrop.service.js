@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,6 +136,8 @@ class DragDropService {
 
   startDragOrClick($event, component) {
     this.draggingOrClicking = true;
+
+    this._getIframeHtmlElement().addClass('hippo-overlay-permeable');
     this._dispatchMouseDownInIframe($event, component);
 
     const componentBoxElement = component.getBoxElement();
@@ -166,6 +168,8 @@ class DragDropService {
   }
 
   _onStartDrag(containerElement) {
+    this._getIframeHtmlElement().addClass('hippo-dragging');
+    this.baseJQueryElement.addClass('hippo-dragging');
     this._updateDragDirection(containerElement);
 
     // make Angular evaluate isDragging() again
@@ -210,11 +214,16 @@ class DragDropService {
   }
 
   _onStopDragOrClick(element) {
+    this._getIframeHtmlElement().removeClass('hippo-dragging hippo-overlay-permeable');
+    this.baseJQueryElement.removeClass('hippo-dragging');
+
     this.draggingOrClicking = false;
+
     $(element)
       .off(MOUSEUP_EVENT_NAME)
       .off(MOUSELEAVE_EVENT_NAME)
       .removeClass(COMPONENT_QA_CLASS);
+
     this._digestIfNeeded();
   }
 
@@ -278,6 +287,10 @@ class DragDropService {
     const iframeMouseDownEvent = this.DomService.createMouseDownEvent(this.iframe, clientX, clientY);
     const iframeElement = component.getBoxElement();
     iframeElement[0].dispatchEvent(iframeMouseDownEvent);
+  }
+
+  _getIframeHtmlElement() {
+    return this.iframeJQueryElement.contents().find('html');
   }
 
   _shiftCoordinates($event) {

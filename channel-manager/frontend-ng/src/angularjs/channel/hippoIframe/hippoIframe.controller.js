@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,9 +134,13 @@ class HippoIframeCtrl {
 
   _updateDragDrop() {
     if (this.editMode) {
-      this.DragDropService.enable(this.PageStructureService.getContainers());
+      this.DragDropService.enable(this.PageStructureService.getContainers())
+      .then(() => {
+        this.OverlayService.attachComponentMouseDown((e, component) => this.DragDropService.startDragOrClick(e, component));
+      });
     } else {
       this.DragDropService.disable();
+      this.OverlayService.detachComponentMouseDown();
     }
   }
 

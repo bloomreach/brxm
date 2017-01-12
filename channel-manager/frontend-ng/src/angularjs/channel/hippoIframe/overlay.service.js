@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ class OverlayService {
   _initOverlay() {
     this.overlay = $('<div id="hippo-overlay"></div>');
     $(this.iframeWindow.document.body).append(this.overlay);
+    this.overlay.mousedown(e => this._onOverlayMouseDown(e));
     this._updateModeClass();
   }
 
@@ -95,6 +96,24 @@ class OverlayService {
     }
   }
 
+  attachComponentMouseDown(callback) {
+    this.componentMouseDownCallback = callback;
+  }
+
+  detachComponentMouseDown() {
+    this.componentMouseDownCallback = null;
+  }
+
+  _onOverlayMouseDown(e) {
+    const target = $(e.target);
+    if (target.hasClass('hippo-overlay-element-component') && this.componentMouseDownCallback) {
+      const component = this.PageStructureService.getComponentByOverlayElement(target);
+      if (component) {
+        this.componentMouseDownCallback(e, component);
+      }
+    }
+  }
+
   _forAllStructureElements(callback) {
     this.PageStructureService.getContainers().forEach((container) => {
       callback(container);
@@ -122,17 +141,8 @@ class OverlayService {
         </span>
       </div>`);
 
-    if (structureElement.getType() === 'component') {
-      overlayElement.click((event) => {
-        event.stopPropagation();
-        this.PageStructureService.showComponentProperties(structureElement);
-      });
-    }
-
     structureElement.setOverlayElement(overlayElement);
-
-    const boxElement = structureElement.prepareBoxElement();
-    boxElement.addClass('hippo-overlay-box');
+    structureElement.prepareBoxElement();
 
     this._syncElements(structureElement, overlayElement);
 
@@ -141,14 +151,11 @@ class OverlayService {
 
   _syncElements(structureElement, overlayElement) {
     const boxElement = structureElement.getBoxElement();
+    boxElement.addClass('hippo-overlay-box');
 
-    if (this._isElementVisible(structureElement, boxElement)) {
-      overlayElement.show();
-      overlayElement.toggleClass('hippo-overlay-element-container-empty', this._isEmptyContainer(structureElement));
-      this._syncPosition(overlayElement, boxElement);
-    } else {
-      overlayElement.hide();
-    }
+    overlayElement.toggleClass('hippo-overlay-element-visible', this._isElementVisible(structureElement, boxElement));
+    overlayElement.toggleClass('hippo-overlay-element-container-empty', this._isEmptyContainer(structureElement));
+    this._syncPosition(overlayElement, boxElement);
   }
 
   _isElementVisible(structureElement, boxElement) {

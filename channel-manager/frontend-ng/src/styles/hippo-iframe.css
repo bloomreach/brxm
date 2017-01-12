@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,11 @@ a.hst-cmseditlink {
   box-sizing: border-box;
   pointer-events: auto;
   position: absolute;
+  display: none;
+}
+
+.hippo-overlay-element-visible {
+  display: block;
 }
 
 .hippo-overlay-element-container {
@@ -81,6 +86,7 @@ a.hst-cmseditlink {
   background-color: #0877d1;
 }
 
+.hippo-dragging .hippo-overlay-element-container > .hippo-overlay-label,
 .hippo-overlay-element-container-empty > .hippo-overlay-label,
 .hippo-overlay-element-component:hover > .hippo-overlay-label {
   display: flex;
@@ -101,4 +107,18 @@ a.hst-cmseditlink {
 
 .hippo-mode-edit .hippo-overlay-box {
   min-height: 40px;
+}
+
+.hippo-overlay-permeable .hippo-overlay,
+.hippo-overlay-permeable .hippo-overlay-element-container,
+.hippo-overlay-permeable .hippo-overlay-element-component {
+    pointer-events: none;
+}
+
+.hippo-dragging .hippo-overlay-element-container {
+  display: block;
+}
+
+.hippo-dragging .hippo-overlay-element-component {
+  display: none;
 }
