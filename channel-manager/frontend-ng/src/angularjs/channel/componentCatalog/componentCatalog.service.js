@@ -15,21 +15,30 @@
  */
 
 class ComponentCatalogService {
-  constructor($log, MaskService, HippoIframeService, OverlayService, PageStructureService) {
+  constructor(
+      $log,
+      ChannelSidenavService,
+      HippoIframeService,
+      MaskService,
+      OverlayService,
+      PageStructureService
+    ) {
     'ngInject';
 
     this.$log = $log;
 
-    this.MaskService = MaskService;
+    this.ChannelSidenavService = ChannelSidenavService;
     this.HippoIframeService = HippoIframeService;
+    this.MaskService = MaskService;
     this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
   }
 
   selectComponent(component) {
     this.MaskService.mask('mask-add-component');
-    this.OverlayService.enableAddMode();
+    this.ChannelSidenavService.liftSidenavAboveMask();
     this.HippoIframeService.liftIframeAboveMask();
+    this.OverlayService.enableAddMode();
 
     this.OverlayService.onContainerClick((target) => {
       this.addComponentToContainer(component, target);
@@ -40,6 +49,7 @@ class ComponentCatalogService {
       this.MaskService.removeClickHandler();
       this.OverlayService.disableAddMode();
       this.OverlayService.offContainerClick();
+      this.ChannelSidenavService.lowerSidenavBeneathMask();
       this.HippoIframeService.lowerIframeBeneathMask();
     });
   }

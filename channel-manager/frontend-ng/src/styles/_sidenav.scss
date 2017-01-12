@@ -32,6 +32,8 @@
   .md-list-item-text h4 {
     line-height: 1.3em !important;
   }
+
+  &.sidenav-lifted {
+    z-index: $z-index-sidenav-lifted;
+  }
 }
-
-

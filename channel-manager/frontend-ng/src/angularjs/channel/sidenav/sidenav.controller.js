@@ -62,6 +62,10 @@ class ChannelSidenavCtrl {
   isActiveSiteMapItem(siteMapItem) {
     return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
   }
+
+  isSidenavLifted() {
+    return this.ChannelSidenavService.isSidenavLifted;
+  }
 }
 
 export default ChannelSidenavCtrl;
