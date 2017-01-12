@@ -61,7 +61,7 @@ describe('OverlayService', () => {
   }
 
   function iframe(selector) {
-    return $j(selector, iframeWindow.document);
+    return $(selector, iframeWindow.document);
   }
 
   it('initializes when the iframe is loaded', (done) => {
@@ -249,21 +249,35 @@ describe('OverlayService', () => {
     });
   });
 
-  it('shows the properties of a component when its overlay element is clicked', (done) => {
-    spyOn(PageStructureService, 'showComponentProperties');
-
+  it('click event on overlay should not propagate to the page', (done) => {
     loadIframeFixture(() => {
       const body = iframe('body')[0];
       body.addEventListener('click', () => {
-        fail('click event on overlay should not propagate to the page');
+        fail();
       });
 
-      const component = PageStructureService.getComponentById('aaaa');
       const overlayElement = iframe('#hippo-overlay > .hippo-overlay-element-component').first();
-
       overlayElement.click();
 
-      expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(component);
+      done();
+    });
+  });
+
+  it('mouseDown event on component calls attached callback with component reference', (done) => {
+    const mouseDownSpy = jasmine.createSpy('mouseDown');
+    OverlayService.attachComponentMouseDown(mouseDownSpy);
+
+    loadIframeFixture(() => {
+      const component = PageStructureService.getComponentById('aaaa');
+      const overlayComponentElement = iframe('#hippo-overlay > .hippo-overlay-element-component').first();
+
+      overlayComponentElement.mousedown();
+      expect(mouseDownSpy).toHaveBeenCalledWith(jasmine.anything(), component);
+      mouseDownSpy.calls.reset();
+
+      OverlayService.detachComponentMouseDown();
+      overlayComponentElement.mousedown();
+      expect(mouseDownSpy).not.toHaveBeenCalled();
 
       done();
     });
