@@ -32,12 +32,12 @@ import javax.jcr.query.QueryResult
 
 /**
  * Groovy script to update instances of image sets, reapplying the configuration from the gallery processor.
- * Per default, existing variants are overwritten and thumbnails are skipped. This behavior is configurable.
+ * Per default, existing variants are overwritten and default thumbnails are skipped. This behavior is configurable.
  *
  * XPath query: content/gallery//element(*, hippogallery:imageset)
  *
  * Parameters: { "overwrite": true,
- *               "skipThumbnails" : true }
+ *               "skipDefaultThumbnail" : true }
  */
 class ImageSetUpdater extends BaseNodeUpdateVisitor {
 
@@ -69,15 +69,15 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
     private final Map<String, List<String>> imageSetVariants = new HashMap<String, List<String>>();
 
     private boolean overwrite = true;
-    private boolean skipThumbnails = true;
+    private boolean skipDefaultThumbnail = true;
 
     public void initialize(Session session) throws RepositoryException {
         try {
             if (this.parametersMap["overwrite"] != null) {
                 overwrite = parametersMap["overwrite"]
             }
-            if (parametersMap["skipThumbnails"] != null) {
-                skipThumbnails = parametersMap["skipThumbnails"]
+            if (parametersMap["skipDefaultThumbnail"] != null) {
+                skipDefaultThumbnail = parametersMap["skipDefaultThumbnail"]
             }
 
             Node configNode = session.getRootNode().getNode(HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE);
@@ -87,7 +87,7 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
             log.error("Exception while retrieving image set variants configuration", e);
         }
 
-        log.info "Initialized script ${this.getClass().getName()} with parameters: overwrite=${overwrite}, skipThumbnails=${skipThumbnails}"
+        log.info "Initialized script ${this.getClass().getName()} with parameters: overwrite=${overwrite}, skipDefaultThumbnail=${skipDefaultThumbnail}"
     }
 
 
@@ -141,8 +141,8 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
         }
 
         // thumbnail can be reconfigured, then only regenerate by parameter
-        if (HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName) && skipThumbnails) {
-           log.debug "Parameter skipThumbnails=true: skipping processing thumbnail variant"
+        if (HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName) && skipDefaultThumbnail) {
+           log.debug "Parameter skipDefaultThumbnail=true: skipping processing the default thumbnail variant"
            return
         }
 
@@ -238,8 +238,8 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
                     }
 
                     // thumbnail can be reconfigured, then only regenerate by parameter
-                    if (HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName) && skipThumbnails) {
-                        log.debug "Parameter skipThumbnails=true: skipping reading thumbnail variant from '${prototype.getPrimaryNodeType().getName()}' namespace"
+                    if (HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName) && skipDefaultThumbnail) {
+                        log.debug "Parameter skipDefaultThumbnail=true: skipping reading default thumbnail variant from '${prototype.getPrimaryNodeType().getName()}' namespace"
                         continue
                     }
 
@@ -265,8 +265,8 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
             }
 
             // thumbnail can be reconfigured, then only regenerate by parameter
-            if (HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName) && skipThumbnails) {
-                log.debug "Parameter skipThumbnails=true: skipping reading thumbnail variant configuration"
+            if (HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName) && skipDefaultThumbnail) {
+                log.debug "Parameter skipDefaultThumbnail=true: skipping reading default thumbnail variant configuration"
                 continue
             }
 
