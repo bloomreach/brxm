@@ -60,8 +60,8 @@ class OverlayService {
   _initOverlay() {
     this.overlay = $('<div id="hippo-overlay"></div>');
     $(this.iframeWindow.document.body).append(this.overlay);
-    this.overlay.mousedown(e => this._onOverlayMouseDown(e));
     this._updateModeClass();
+    this._attachOverlayEvents();
   }
 
   setMode(mode) {
@@ -75,6 +75,19 @@ class OverlayService {
       html.toggleClass('hippo-mode-edit', this._isEditMode());
       // don't call sync() explicitly: the DOM mutation will trigger it automatically
     }
+  }
+
+  _attachOverlayEvents() {
+    this.overlay.click((event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
+    this.overlay.mousedown((event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      this._onOverlayMouseDown(event);
+    });
   }
 
   _isEditMode() {
@@ -104,12 +117,12 @@ class OverlayService {
     this.componentMouseDownCallback = null;
   }
 
-  _onOverlayMouseDown(e) {
-    const target = $(e.target);
+  _onOverlayMouseDown(event) {
+    const target = $(event.target);
     if (target.hasClass('hippo-overlay-element-component') && this.componentMouseDownCallback) {
       const component = this.PageStructureService.getComponentByOverlayElement(target);
       if (component) {
-        this.componentMouseDownCallback(e, component);
+        this.componentMouseDownCallback(event, component);
       }
     }
   }
