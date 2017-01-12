@@ -26,16 +26,6 @@ describe('$ctrl', () => {
 
       $ctrl = $componentController('mask', { MaskService });
     });
-
-    spyOn(MaskService, 'initialize').and.callFake(() => {
-      MaskService.clickHandler = () => 'clicked';
-    });
-
-    $ctrl.$onInit();
-  });
-
-  it('should initialize', () => {
-    expect(MaskService.initialize).toHaveBeenCalled();
   });
 
   it('should get masked status', () => {

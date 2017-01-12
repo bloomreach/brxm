@@ -23,8 +23,6 @@ describe('MaskService', () => {
     inject((_MaskService_) => {
       MaskService = _MaskService_;
     });
-
-    MaskService.initialize();
   });
 
   it('should initialize mask class', () => {

@@ -21,10 +21,6 @@ class MaskCtrl {
     this.MaskService = MaskService;
   }
 
-  $onInit() {
-    this.MaskService.initialize();
-  }
-
   isMasked() {
     return this.MaskService.isMasked;
   }
