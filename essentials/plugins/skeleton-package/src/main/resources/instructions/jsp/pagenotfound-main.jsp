@@ -5,4 +5,6 @@
   <h1><fmt:message key="pagenotfound.title" var="title"/><c:out value="${title}"/></h1>
   <p><fmt:message key="pagenotfound.text"/><%--Skip XML escaping--%></p>
 </div>
-<hst:include ref="container"/>
+<div>
+  <hst:include ref="container"/>
+</div>
