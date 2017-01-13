@@ -195,6 +195,22 @@ describe('OverlayService', () => {
     });
   });
 
+  it('renders lock icons for disabled containers', (done) => {
+    loadIframeFixture(() => {
+      const containers = iframe('#hippo-overlay > .hippo-overlay-element-container');
+
+      const disabledContainer = containers.first();
+      const lock = disabledContainer.find('.hippo-overlay-lock');
+      expect(lock.length).toBe(1);
+      expect(lock.find('svg').length).toBe(1);
+
+      const enabledContainer = containers.last();
+      expect(enabledContainer.find('.hippo-overlay-lock').length).toBe(0);
+
+      done();
+    });
+  });
+
   it('syncs the position of overlay elements in view mode', (done) => {
     OverlayService.setMode('view');
     loadIframeFixture(() => {

@@ -16,6 +16,7 @@
 
 import MutationSummary from 'mutation-summary';
 import contentLinkSvg from '../../../../images/html/edit-document.svg';
+import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 
 class OverlayService {
@@ -235,6 +236,9 @@ class OverlayService {
       case 'component':
         this._addComponentClickHandler(structureElement, overlayElement);
         break;
+      case 'container':
+        this._addLockIcon(structureElement, overlayElement);
+        break;
       case 'content-link':
         this._addLinkMarkup(overlayElement, contentLinkSvg, 'IFRAME_OPEN_DOCUMENT');
         this._addContentLinkClickHandler(structureElement, overlayElement);
@@ -253,6 +257,14 @@ class OverlayService {
       event.stopPropagation();
       this.PageStructureService.showComponentProperties(structureElement);
     });
+  }
+
+  _addLockIcon(container, overlayElement) {
+    if (container.isDisabled()) {
+      const lockMarkup = $('<div class="hippo-overlay-lock"></div>');
+      lockMarkup.append(lockSvg);
+      lockMarkup.appendTo(overlayElement);
+    }
   }
 
   _addLinkMarkup(overlayElement, svg, titleKey) {
@@ -296,7 +308,7 @@ class OverlayService {
       case 'component':
         return this._isEditMode() && !this.isInAddMode;
       case 'container':
-        return this._isEditMode() && (structureElement.isEmpty() || this.isInAddMode);
+        return this._isEditMode() && (this.isInAddMode || structureElement.isEmpty() || structureElement.isDisabled());
       case 'content-link':
         return !this._isEditMode() && this.DomService.isVisible(boxElement);
       case 'menu-link':
