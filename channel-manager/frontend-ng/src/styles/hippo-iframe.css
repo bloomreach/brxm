@@ -175,7 +175,7 @@ html {
 }
 
 .hippo-dragging .hippo-overlay-element-container {
-  display: block;
+  display: flex;
 }
 
 .hippo-dragging .hippo-overlay-element-component {
