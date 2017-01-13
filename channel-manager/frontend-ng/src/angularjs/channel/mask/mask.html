@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,11 +14,7 @@
   limitations under the License.
   -->
 
-<div class="channel-iframe-canvas"
-     flex
-     ng-class="{'iframe-lifted': iframe.isIframeLifted()}">
-  <iframe class="qa-view"
-          ng-src="{{ iframe.getSrc() }}">
-  </iframe>
-  <div class="channel-dragula-mirror cm-scale"></div>
+<div class="mask qa-mask"
+  ng-class="$ctrl.getMaskClass()"
+  ng-click="$ctrl.onClick()">
 </div>

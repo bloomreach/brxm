@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-// TODO: Look at this construct, feels weird
+import ComponentCatalogController from './componentCatalog.controller';
+import template from './componentCatalog.html';
 
-function CatalogComponentDirective(CatalogService) {
-  'ngInject';
+const componentCatalogComponent = {
+  bindings: {
+    components: '<',
+  },
+  template,
+  controller: ComponentCatalogController,
+};
 
-  return {
-    restrict: 'A',
-    scope: {
-      catalogComponent: '=',
-    },
-    link(scope, element) {
-      CatalogService.setCatalogElement(scope.catalogComponent, element);
-    },
-  };
-}
-
-export default CatalogComponentDirective;
+export default componentCatalogComponent;

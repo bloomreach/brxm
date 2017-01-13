@@ -15,19 +15,30 @@
  */
 
 import MutationSummary from 'mutation-summary';
-import contentLinkSvg from '../../../images/html/edit-document.svg';
-import menuLinkSvg from '../../../images/html/edit-menu.svg';
+import contentLinkSvg from '../../../../images/html/edit-document.svg';
+import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 
 class OverlayService {
-
-  constructor($rootScope, $log, $translate, CmsService, DomService, PageStructureService, ScalingService) {
+  constructor(
+      $log,
+      $rootScope,
+      $translate,
+      CmsService,
+      DomService,
+      HippoIframeService,
+      MaskService,
+      PageStructureService,
+      ScalingService
+    ) {
     'ngInject';
 
-    this.$rootScope = $rootScope;
     this.$log = $log;
+    this.$rootScope = $rootScope;
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DomService = DomService;
+    this.HippoIframeService = HippoIframeService;
+    this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
     this.ScalingService = ScalingService;
 
@@ -82,6 +93,30 @@ class OverlayService {
 
       this._onOverlayMouseDown(event);
     });
+  }
+
+  enableAddMode() {
+    this.isInAddMode = true;
+    this.overlay.addClass('hippo-overlay-add-mode');
+    this.overlay.on('click', () => {
+      this.$rootScope.$apply(() => {
+        this._resetMask();
+      });
+    });
+  }
+
+  _resetMask() {
+    this.disableAddMode();
+    this.offContainerClick();
+    this.MaskService.unmask();
+    this.MaskService.removeClickHandler();
+    this.HippoIframeService.lowerIframeBeneathMask();
+  }
+
+  disableAddMode() {
+    this.isInAddMode = false;
+    this.overlay.removeClass('hippo-overlay-add-mode');
+    this.overlay.off('click');
   }
 
   setMode(mode) {
@@ -168,6 +203,22 @@ class OverlayService {
     this.overlay.append(overlayElement);
   }
 
+  onContainerClick(clickHandler) {
+    this.PageStructureService.getContainers().forEach((container) => {
+      const element = container.getOverlayElement();
+      element.on('click', (event) => {
+        clickHandler(event.target);
+      });
+    });
+  }
+
+  offContainerClick() {
+    this.PageStructureService.getContainers().forEach((container) => {
+      const element = container.getOverlayElement();
+      element.off('click');
+    });
+  }
+
   _addLabel(structureElement, overlayElement) {
     const escapedLabel = this.DomService.escapeHtml(structureElement.getLabel());
     if (escapedLabel.length > 0) {
@@ -242,14 +293,16 @@ class OverlayService {
 
   _isElementVisible(structureElement, boxElement) {
     switch (structureElement.getType()) {
+      case 'component':
+        return this._isEditMode() && !this.isInAddMode;
       case 'container':
-        return this._isEditMode() && structureElement.isEmpty();
+        return this._isEditMode() && (structureElement.isEmpty() || this.isInAddMode);
       case 'content-link':
         return !this._isEditMode() && this.DomService.isVisible(boxElement);
       case 'menu-link':
-        return this._isEditMode() && this.DomService.isVisible(boxElement);
+        return this._isEditMode() && !this.isInAddMode && this.DomService.isVisible(boxElement);
       default:
-        return this._isEditMode();
+        return this._isEditMode() && !this.isInAddMode;
     }
   }
 

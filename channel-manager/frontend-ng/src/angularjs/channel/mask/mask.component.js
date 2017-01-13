@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import maskDirective from './mask.directive';
-import MaskService from './mask.service';
+import template from './mask.html';
+import MaskCtrl from './mask.controller';
 
-const channelMaskModule = angular
-  .module('hippo-cm.channel.mask', [])
-  .directive('mask', maskDirective)
-  .service('MaskService', MaskService);
+const maskComponent = {
+  template,
+  controller: MaskCtrl,
+};
 
-export default channelMaskModule;
+export default maskComponent;

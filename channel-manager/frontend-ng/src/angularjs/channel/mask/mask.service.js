@@ -16,23 +16,30 @@
 
 class MaskService {
   constructor() {
-    'ngInject';
+    this.defaultMaskClass = 'masked';
+    this.clickHandler = angular.noop;
   }
 
-  initialize(maskJQueryElement) {
-    this.maskJQueryElement = maskJQueryElement;
+  onClick(clickHandler) {
+    this.clickHandler = clickHandler;
   }
 
-  add() {
-    if (this.maskJQueryElement) {
-      this.maskJQueryElement.addClass('masked');
+  removeClickHandler() {
+    this.clickHandler = angular.noop;
+  }
+
+  mask(optionalMaskClass = '') {
+    this.isMasked = true;
+
+    if (optionalMaskClass) {
+      this.maskClass = `${this.defaultMaskClass} ${optionalMaskClass}`;
+    } else {
+      this.maskClass = this.defaultMaskClass;
     }
   }
 
-  remove() {
-    if (this.maskJQueryElement) {
-      this.maskJQueryElement.removeClass('masked');
-    }
+  unmask() {
+    this.isMasked = false;
   }
 }
 

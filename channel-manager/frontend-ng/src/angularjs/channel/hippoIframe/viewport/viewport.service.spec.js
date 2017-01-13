@@ -26,7 +26,7 @@ describe('ViewportService', () => {
       ViewportService = _ViewportService_;
     });
 
-    jasmine.getFixtures().load('channel/hippoIframe/viewport.service.fixture.html');
+    jasmine.getFixtures().load('channel/hippoIframe/viewport/viewport.service.fixture.html');
 
     canvas = $j('#canvas');
     iframe = $j('#iframe');

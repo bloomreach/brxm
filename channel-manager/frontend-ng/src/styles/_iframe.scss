@@ -40,3 +40,8 @@
     }
   }
 }
+
+.iframe-lifted {
+  position: relative;
+  z-index: $z-index-iframe-lifted;
+}

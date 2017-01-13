@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.hippo-listing {
-  border-left: 1px solid $picker-border-color;
+.mask {
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: $z-index-mask; // must be higher than sidenav (60)
 
-  .md-subheader {
-    line-height: 18px;
-
-    span {
-      padding-left: 56px;
-    }
+  &.masked {
+    cursor: not-allowed;
+    pointer-events: auto;
   }
 
-  .active {
-    background-color: $blue-500;
-
-    p,
-    md-icon {
-      color: $white;
-    }
+  &.mask-add-component {
+    cursor: copy;
   }
 }
+
+

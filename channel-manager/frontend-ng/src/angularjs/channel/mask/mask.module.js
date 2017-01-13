@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-// TODO: Remove directive and use ng-class in channel.html
+import MaskService from './mask.service';
+import maskComponent from './mask.component';
 
-function maskDirective(MaskService, CmsService) {
-  'ngInject';
+const maskModule = angular
+  .module('hippo-cm.channel.mask', [])
+  .service('MaskService', MaskService)
+  .component('mask', maskComponent);
 
-  return {
-    restrict: 'A',
-    link: (scope, element) => {
-      MaskService.initialize(element);
+export default maskModule;
 
-      CmsService.subscribe('hide-component-properties', () => MaskService.remove());
-    },
-  };
-}
-
-export default maskDirective;

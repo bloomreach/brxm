@@ -19,11 +19,10 @@ class ChannelCtrl {
   constructor(
       $log,
       $rootScope,
-      $translate,
       $stateParams,
       $timeout,
+      $translate,
       ChannelService,
-      ComponentAdderService,
       CmsService,
       FeedbackService,
       HippoIframeService,
@@ -43,14 +42,12 @@ class ChannelCtrl {
     this.PageMetaDataService = PageMetaDataService;
     this.ScalingService = ScalingService;
     this.SessionService = SessionService;
+
     this.isEditMode = false;
     this.isCreatingPreview = false;
 
     // reset service state to avoid weird scaling when controller is reloaded due to state change
     ScalingService.setPushWidth(0);
-
-    ComponentAdderService.setCatalogContainerClass('catalog-dd-container');
-    ComponentAdderService.setCatalogContainerItemClass('catalog-dd-container-item');
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
 

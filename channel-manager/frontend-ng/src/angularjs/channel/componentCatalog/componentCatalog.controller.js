@@ -14,13 +14,22 @@
  * limitations under the License.
  */
 
-function componentAdderDirective() {
-  'ngInject';
+class ComponentCatalogController {
+  constructor(ComponentCatalogService, MaskService) {
+    'ngInject';
 
-  return {
-    restrict: 'A',
-    controller: 'ComponentAdderCtrl',
-  };
+    this.MaskService = MaskService;
+    this.ComponentCatalogService = ComponentCatalogService;
+  }
+
+  onSelect(component) {
+    this.ComponentCatalogService.selectComponent(component);
+    this.selectedComponent = component;
+  }
+
+  isComponentSelected(component) {
+    return this.MaskService.isMasked && this.selectedComponent === component;
+  }
 }
 
-export default componentAdderDirective;
+export default ComponentCatalogController;

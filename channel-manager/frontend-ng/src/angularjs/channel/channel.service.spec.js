@@ -264,15 +264,6 @@ describe('ChannelService', () => {
     expect(CatalogService.load).toHaveBeenCalledWith('1234');
   });
 
-  it('should relay the request for catalog components to the CatalogService', () => {
-    const mockCatalog = [
-      { label: 'componentA' },
-      { label: 'componentB' },
-    ];
-    CatalogService.getComponents.and.returnValue(mockCatalog);
-    expect(ChannelService.getCatalog()).toEqual(mockCatalog);
-  });
-
   it('should publish own changes', () => {
     channelMock.changedBySet = ['testUser'];
     loadChannel();

@@ -28,7 +28,7 @@ describe('HstCommentsProcessorService', () => {
       hstCommentsProcessorService = _hstCommentsProcessorService_;
     });
 
-    jasmine.getFixtures().load('channel/hippoIframe/hstCommentsProcessor.service.fixture.html');
+    jasmine.getFixtures().load('channel/hippoIframe/processing/hstCommentsProcessor.service.fixture.html');
   });
 
   // PhantomJS does not support XPath querying through document.evaluate (https://github.com/ariya/phantomjs/issues/10161)

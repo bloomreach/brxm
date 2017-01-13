@@ -16,22 +16,20 @@
 
 import ngDeviceDetector from 'ng-device-detector';
 
-import componentAdderModule from './componentAdder/componentAdder';
 import hippoIframe from './hippoIframe.directive';
 import HippoIframeCtrl from './hippoIframe.controller';
 import HippoIframeService from './hippoIframe.service';
-import HstCommentsProcessorService from './hstCommentsProcessor.service';
-import LinkProcessorService from './linkProcessor.service';
-import ScalingService from './scaling.service';
-import ScrollService from './scroll.service';
-import DragDropService from './dragDrop.service';
-import ViewportService from './viewport.service';
-import OverlayService from './overlay.service';
+import HstCommentsProcessorService from './processing/hstCommentsProcessor.service';
+import LinkProcessorService from './processing/linkProcessor.service';
+import ScalingService from './scaling/scaling.service';
+import ScrollService from './scrolling/scroll.service';
+import DragDropService from './dragDrop/dragDrop.service';
+import ViewportService from './viewport/viewport.service';
+import OverlayService from './overlay/overlay.service';
 
 const channelHippoIframeModule = angular
   .module('hippo-cm.channel.hippoIframe', [
     ngDeviceDetector,
-    componentAdderModule.name,
   ])
   .directive('hippoIframe', hippoIframe)
   .controller('hippoIframeCtrl', HippoIframeCtrl)
