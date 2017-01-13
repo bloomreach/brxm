@@ -28,12 +28,6 @@ describe('$ctrl', () => {
     });
   });
 
-  it('should get masked status', () => {
-    MaskService.isMasked = true;
-
-    expect($ctrl.isMasked()).toBe(true);
-  });
-
   it('should get mask class', () => {
     MaskService.isMasked = false;
 
