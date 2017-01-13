@@ -21,14 +21,14 @@ html {
   transition: transform 400ms cubic-bezier(.25, .8, .25, 1), translateY 400ms cubic-bezier(.25, .8, .25, 1);
 }
 
-a.hst-cmseditlink {
+.hst-cmseditlink {
   display: block;
-  height: 56px;
+  height: 40px;
   pointer-events: none;
   position: absolute;
   right: 0;
   top: 0;
-  width: 56px;
+  width: 40px;
 }
 
 #hippo-overlay {
@@ -63,10 +63,32 @@ a.hst-cmseditlink {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.50), inset 0 0 160px 1px rgba(0, 94, 171, 0.25);
 }
 
-.hippo-overlay-element-content-link,
-.hippo-overlay-element-menu-link {
-  /* TODO: style links */
-  border: 1px solid #f00;
+.hippo-overlay-element-link {
+  align-items: center;
+  background-color: #ff741a;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .26);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  fill: white;
+  justify-content: center;
+  padding-top: 1px;  /* visually move the icons to the middle of the circle */
+  transition-property: background-color, box-shadow;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(.55, 0, .55, .2);
+}
+
+.hippo-overlay-element-link:hover {
+  background-color: #ff5203;
+}
+
+.hippo-overlay-element-link:active {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .4);
+}
+
+.hippo-overlay-element-content-link {
+  /* visually move the icon to the middle of the circle */
+  padding-left: 5px;
 }
 
 .hippo-overlay-label {

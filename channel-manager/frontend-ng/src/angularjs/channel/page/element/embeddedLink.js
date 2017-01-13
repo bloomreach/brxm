@@ -26,6 +26,10 @@ class EmbeddedLink extends PageStructureElement {
     return this.metaData.uuid;
   }
 
+  getLabel() {
+    return '';
+  }
+
   setEnclosingElement(element) {
     this.enclosingElement = element;
   }
