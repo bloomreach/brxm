@@ -68,9 +68,9 @@ describe('hippoIframeCtrl', () => {
     spyOn(ScalingService, 'init');
     spyOn(DragDropService, 'init');
     spyOn(OverlayService, 'init');
+    spyOn(OverlayService, 'onEditMenu');
     spyOn(DomService, 'getAppRootUrl').and.returnValue('http://cms.example.com/app/root/');
     spyOn(DomService, 'addCss').and.returnValue($q.resolve());
-
 
     scope.testEditMode = false;
     scope.onEditMenu = jasmine.createSpy('onEditMenu');
@@ -216,5 +216,11 @@ describe('hippoIframeCtrl', () => {
 
     expect(attachSpy).not.toHaveBeenCalled();
     expect(detachSpy).toHaveBeenCalled();
+  });
+
+  it('calls its edit menu function when the overlay service wants to edit a menu', () => {
+    const callback = OverlayService.onEditMenu.calls.mostRecent().args[0];
+    callback('menu-uuid');
+    expect(scope.onEditMenu).toHaveBeenCalledWith('menu-uuid');
   });
 });
