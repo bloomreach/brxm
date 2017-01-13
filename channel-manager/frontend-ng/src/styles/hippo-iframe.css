@@ -46,6 +46,11 @@ html {
   box-sizing: border-box;
   pointer-events: auto;
   position: absolute;
+  display: none;
+}
+
+.hippo-overlay-element-visible {
+  display: block;
 }
 
 .hippo-overlay-element-container {
@@ -69,13 +74,16 @@ html {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .26);
   border-radius: 50%;
   cursor: pointer;
-  display: flex;
   fill: white;
   justify-content: center;
   padding-top: 1px;  /* visually move the icons to the middle of the circle */
   transition-property: background-color, box-shadow;
   transition-duration: 300ms;
   transition-timing-function: cubic-bezier(.55, 0, .55, .2);
+}
+
+.hippo-overlay-element-link.hippo-overlay-element-visible {
+  display: flex;
 }
 
 .hippo-overlay-element-link:hover {
@@ -111,6 +119,7 @@ html {
   background-color: #0877d1;
 }
 
+.hippo-dragging .hippo-overlay-element-container > .hippo-overlay-label,
 .hippo-overlay-element-component:hover > .hippo-overlay-label {
   display: flex;
 }
@@ -145,3 +154,31 @@ html {
   display: flex;
 }
 
+.hippo-overlay-permeable {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.hippo-overlay-permeable .hippo-overlay,
+.hippo-overlay-permeable .hippo-overlay-element-container,
+.hippo-overlay-permeable .hippo-overlay-element-component {
+  pointer-events: none;
+}
+
+.hippo-dragging {
+  /* IE does not support the grabbing cursor so we show 'move' instead */
+  cursor: move;
+  cursor: -webkit-grabbing;
+  cursor: -moz-grabbing;
+  cursor: grabbing;
+}
+
+.hippo-dragging .hippo-overlay-element-container {
+  display: block;
+}
+
+.hippo-dragging .hippo-overlay-element-component {
+  display: none;
+}

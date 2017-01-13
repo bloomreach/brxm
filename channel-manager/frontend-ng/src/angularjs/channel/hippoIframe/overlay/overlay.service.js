@@ -83,6 +83,17 @@ class OverlayService {
     $(this.iframeWindow.document.body).append(this.overlay);
     this._addMaskClickHandler();
     this._updateModeClass();
+
+    this.overlay.mousedown((event) => {
+      // let right-click trigger context-menu instead of starting dragging
+      event.preventDefault();
+
+      // we already dispatch a mousedown event on the same location, so don't propagate this one to avoid that
+      // dragula receives one mousedown event too many
+      event.stopPropagation();
+
+      this._onOverlayMouseDown(event);
+    });
   }
 
   _addMaskClickHandler() {
@@ -143,6 +154,24 @@ class OverlayService {
     }
   }
 
+  attachComponentMouseDown(callback) {
+    this.componentMouseDownCallback = callback;
+  }
+
+  detachComponentMouseDown() {
+    this.componentMouseDownCallback = null;
+  }
+
+  _onOverlayMouseDown(event) {
+    const target = $(event.target);
+    if (target.hasClass('hippo-overlay-element-component') && this.componentMouseDownCallback) {
+      const component = this.PageStructureService.getComponentByOverlayElement(target);
+      if (component) {
+        this.componentMouseDownCallback(event, component);
+      }
+    }
+  }
+
   _forAllStructureElements(callback) {
     this.PageStructureService.getContainers().forEach((container) => {
       callback(container);
@@ -170,9 +199,7 @@ class OverlayService {
     this._addMarkupAndBehavior(structureElement, overlayElement);
 
     structureElement.setOverlayElement(overlayElement);
-
-    const boxElement = structureElement.prepareBoxElement();
-    boxElement.addClass('hippo-overlay-box');
+    structureElement.prepareBoxElement();
 
     this._syncElements(structureElement, overlayElement);
 
@@ -260,14 +287,11 @@ class OverlayService {
 
   _syncElements(structureElement, overlayElement) {
     const boxElement = structureElement.getBoxElement();
+    boxElement.addClass('hippo-overlay-box');
 
-    if (this._isElementVisible(structureElement, boxElement)) {
-      overlayElement.show();
-      overlayElement.toggleClass('hippo-overlay-element-container-empty', this._isEmptyContainer(structureElement));
-      this._syncPosition(overlayElement, boxElement);
-    } else {
-      overlayElement.hide();
-    }
+    overlayElement.toggleClass('hippo-overlay-element-visible', this._isElementVisible(structureElement, boxElement));
+    overlayElement.toggleClass('hippo-overlay-element-container-empty', this._isEmptyContainer(structureElement));
+    this._syncPosition(overlayElement, boxElement);
   }
 
   _isElementVisible(structureElement, boxElement) {

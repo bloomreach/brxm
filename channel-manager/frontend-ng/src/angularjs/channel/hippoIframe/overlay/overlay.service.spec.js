@@ -42,7 +42,7 @@ describe('OverlayService', () => {
     });
 
     jasmine.getFixtures().load('channel/hippoIframe/overlay/overlay.service.fixture.html');
-    $iframe = $j('.iframe');
+    $iframe = $('.iframe');
   });
 
   function loadIframeFixture(callback) {
@@ -65,7 +65,7 @@ describe('OverlayService', () => {
   }
 
   function iframe(selector) {
-    return $j(selector, iframeWindow.document);
+    return $(selector, iframeWindow.document);
   }
 
   it('initializes when the iframe is loaded', (done) => {
@@ -280,23 +280,43 @@ describe('OverlayService', () => {
   });
 
   function expectNoPropagatedClicks() {
-    const body = iframe('body')[0];
-    body.addEventListener('click', () => {
+    const body = iframe('body');
+    body.click(() => {
       fail('click event should not propagate to the page');
     });
   }
 
-  it('shows the properties of a component when its overlay element is clicked', (done) => {
-    spyOn(PageStructureService, 'showComponentProperties');
+  it('mousedown event on component-overlay calls attached callback with component reference', (done) => {
+    const mousedownSpy = jasmine.createSpy('mousedown');
+    OverlayService.attachComponentMouseDown(mousedownSpy);
 
     loadIframeFixture(() => {
       const component = PageStructureService.getComponentById('aaaa');
-      const overlayElement = iframe('#hippo-overlay > .hippo-overlay-element-component').first();
+      const overlayComponentElement = iframe('#hippo-overlay > .hippo-overlay-element-component').first();
 
-      expectNoPropagatedClicks();
-      overlayElement.click();
+      overlayComponentElement.mousedown();
+      expect(mousedownSpy).toHaveBeenCalledWith(jasmine.anything(), component);
+      mousedownSpy.calls.reset();
 
-      expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(component);
+      OverlayService.detachComponentMouseDown();
+      overlayComponentElement.mousedown();
+      expect(mousedownSpy).not.toHaveBeenCalled();
+
+      done();
+    });
+  });
+
+  it('mousedown event on component-overlay only calls attached callback if related component is found', (done) => {
+    const mousedownSpy = jasmine.createSpy('mousedown');
+    OverlayService.attachComponentMouseDown(mousedownSpy);
+
+    spyOn(PageStructureService, 'getComponentByOverlayElement').and.returnValue(false);
+
+    loadIframeFixture(() => {
+      const overlayComponentElement = iframe('#hippo-overlay > .hippo-overlay-element-component').first();
+
+      overlayComponentElement.mousedown();
+      expect(mousedownSpy).not.toHaveBeenCalled();
 
       done();
     });
@@ -344,7 +364,7 @@ describe('OverlayService', () => {
       const componentMarkupWithoutMenuLink = `
         <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
           <p id="markup-in-component-a">Markup in component A without menu link</p>
-        <!-- { "HST-End": "true", "uuid": "aaaa" } -->      
+        <!-- { "HST-End": "true", "uuid": "aaaa" } -->
       `;
       spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithoutMenuLink }));
 
