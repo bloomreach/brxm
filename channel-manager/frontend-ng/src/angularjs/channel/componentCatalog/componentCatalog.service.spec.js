@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-fdescribe('ComponentCatalogService', () => {
+describe('ComponentCatalogService', () => {
   let $q;
   let $log;
   let $rootScope;
