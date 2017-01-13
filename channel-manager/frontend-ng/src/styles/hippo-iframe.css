@@ -74,13 +74,16 @@ html {
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .26);
   border-radius: 50%;
   cursor: pointer;
-  display: flex;
   fill: white;
   justify-content: center;
   padding-top: 1px;  /* visually move the icons to the middle of the circle */
   transition-property: background-color, box-shadow;
   transition-duration: 300ms;
   transition-timing-function: cubic-bezier(.55, 0, .55, .2);
+}
+
+.hippo-overlay-element-link.hippo-overlay-element-visible {
+  display: flex;
 }
 
 .hippo-overlay-element-link:hover {
