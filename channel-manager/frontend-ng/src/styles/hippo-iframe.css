@@ -127,7 +127,7 @@ a.hst-cmseditlink {
 .hippo-overlay-permeable .hippo-overlay,
 .hippo-overlay-permeable .hippo-overlay-element-container,
 .hippo-overlay-permeable .hippo-overlay-element-component {
-    pointer-events: none;
+  pointer-events: none;
 }
 
 .hippo-dragging {
