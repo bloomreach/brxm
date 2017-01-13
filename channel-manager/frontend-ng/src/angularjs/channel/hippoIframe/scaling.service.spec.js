@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,269 +18,276 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ScalingService', () => {
+  let $window;
   let ScalingService;
   let ViewportService;
-  let iframeJQueryElement;
-  let baseJQueryElement;
-  let canvasJQueryElement;
+  let hippoIframeElement;
+  let canvasElement;
+  let iframeElement;
+  let iframeHtml;
   let elementsToScale;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_ScalingService_, _ViewportService_) => {
+    inject((_$window_, _ScalingService_, _ViewportService_) => {
+      $window = _$window_;
       ScalingService = _ScalingService_;
       ViewportService = _ViewportService_;
     });
 
     jasmine.getFixtures().load('channel/hippoIframe/scaling.service.fixture.html');
 
-    baseJQueryElement = $j('.channel-iframe-base');
-    canvasJQueryElement = $j('.channel-iframe-canvas');
-    elementsToScale = jasmine.createSpyObj('elementsToScale', ['velocity', 'css', 'scrollTop']);
-
-    iframeJQueryElement = jasmine.createSpyObj('iframeJQueryElement', ['find', 'css', 'velocity', 'is']);
-    iframeJQueryElement.find.and.callFake((selector) => {
-      if (selector === '.cm-scale') {
-        return elementsToScale;
-      }
-      return $j(`#test-hippo-iframe ${selector}`);
-    });
-    iframeJQueryElement.css.and.callFake(() => '0');
-    iframeJQueryElement.is.and.returnValue(true);
+    hippoIframeElement = $('#hippo-iframe');
+    canvasElement = $('#channel-iframe-canvas');
+    iframeElement = $('#iframe');
   });
 
   afterEach(() => {
     // prevent subsequent window.resize events by Karma from triggering the scaling service
-    ScalingService.init(null);
+    $($window).off('resize');
   });
 
   it('should initialize using the default values', () => {
-    ScalingService.init(iframeJQueryElement);
-
-    expect(elementsToScale.velocity).not.toHaveBeenCalled();
-    expect(elementsToScale.css).not.toHaveBeenCalled();
-    expect(ScalingService.getScaleFactor()).toEqual(1.0);
+    expect(ScalingService.getScaleFactor()).toBe(1.0);
+    expect(ScalingService.isAnimating()).toBe(false);
   });
 
-  it('should change the scaling factor animated when setting pushWidth', () => {
-    canvasJQueryElement.width(400);
-
-    ScalingService.init(iframeJQueryElement);
-    ScalingService.setPushWidth(100);
-
-    expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
-    expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
-    expect(elementsToScale.velocity).toHaveBeenCalledWith(
-      {
-        scale: 0.75,
-      },
-      jasmine.objectContaining({
-        duration: ScalingService.scaleDuration,
-        easing: ScalingService.scaleEasing,
-      })
-    );
-    expect(elementsToScale.css).not.toHaveBeenCalled();
-    expect(ScalingService.getScaleFactor()).toEqual(0.75);
-  });
-
-  it('should reset the scaling factor animated to 1.0 when setting pushWidth to 0', () => {
-    canvasJQueryElement.width(400);
-
-    ScalingService.init(iframeJQueryElement);
-    ScalingService.setPushWidth(100);
-    elementsToScale.velocity.calls.reset();
-
-    ScalingService.setPushWidth(0);
-
-    expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
-    expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
-    expect(elementsToScale.velocity).toHaveBeenCalledWith(
-      {
-        scale: 1.0,
-      },
-      jasmine.objectContaining({
-        duration: ScalingService.scaleDuration,
-        easing: ScalingService.scaleEasing,
-      })
-    );
-    expect(elementsToScale.css).not.toHaveBeenCalled();
-    expect(ScalingService.getScaleFactor()).toEqual(1.0);
-  });
-
-  it('should change the scaling factor instantly when the window is resized', () => {
-    canvasJQueryElement.width(200);
-    ScalingService.init(iframeJQueryElement);
-    ScalingService.setPushWidth(100);
-    elementsToScale.velocity.calls.reset();
-    ScalingService.scaleFactor = 0.75; // fake different scaling factor so the effect of the window resize is testable
-
-    $j(window).resize();
-
-    expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
-    expect(elementsToScale.css).toHaveBeenCalledWith('transform', 'scale(0.5)');
-    expect(ScalingService.getScaleFactor()).toEqual(0.5);
-  });
-
-  it('should update the scroll position instantly while scaling', () => {
-    canvasJQueryElement.width(400);
-
-    // make the canvas scroll within the base element
-    baseJQueryElement.height(10);
-    canvasJQueryElement.height(500);
-
-    baseJQueryElement.scrollTop(100);
-
-    ScalingService.init(iframeJQueryElement);
-    elementsToScale.velocity.calls.reset();
-
-    ScalingService.setPushWidth(100);
-
-    expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
-    expect(elementsToScale.velocity).toHaveBeenCalledWith('scroll', {
-      container: baseJQueryElement,
-      offset: -25,
-      duration: ScalingService.scaleDuration,
-      easing: ScalingService.scaleEasing,
-      queue: false,
+  describe('before initialized', () => {
+    it('does nothing when setting pushWidth', () => {
+      ScalingService.setPushWidth(100);
+      expect(ScalingService.getScaleFactor()).toBe(1.0);
     });
-    expect(elementsToScale.velocity).toHaveBeenCalledWith(
-      {
-        scale: 0.75,
-      },
-      jasmine.objectContaining({
-        duration: ScalingService.scaleDuration,
-        easing: ScalingService.scaleEasing,
-      })
-    );
-    expect(ScalingService.getScaleFactor()).toEqual(0.75);
+
+    it('does nothing when synced', () => {
+      ScalingService.sync();
+      expect(ScalingService.getScaleFactor()).toBe(1.0);
+    });
+
+    it('does nothing on iframe load or unload', () => {
+      expect(() => {
+        ScalingService.onIframeUnload();
+        ScalingService.onIframeReady();
+      }).not.toThrow();
+    });
   });
 
-  it('should do nothing when an uninitialized service is synced', () => {
-    ScalingService.sync();
+  describe('when initialized', () => {
+    beforeEach((done) => {
+      ScalingService.init(hippoIframeElement, canvasElement, iframeElement);
+      iframeElement.one('load', () => {
+        iframeHtml = $('html', iframeElement.contents());
+        const appElementToScale = $('.cm-scale');
+        elementsToScale = $.merge(iframeHtml, appElementToScale);
+        done();
+      });
+      iframeElement.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/scaling.service.iframe.fixture.html`);
+    });
 
-    expect(iframeJQueryElement.css).not.toHaveBeenCalled();
-    expect(elementsToScale.css).not.toHaveBeenCalled();
-    expect(ScalingService.getScaleFactor()).toEqual(1.0);
-  });
+    it('does not do anything when the hippoIframe is not visible', () => {
+      hippoIframeElement.hide();
+      ScalingService.setPushWidth(100);
+      expect(ScalingService.getScaleFactor()).toBe(1.0);
+    });
 
-  it('should keep the scale factor unchanged when not constraining the viewport width', () => {
-    canvasJQueryElement.width(800);
-    spyOn(ViewportService, 'getWidth').and.returnValue(0);
+    function expectTranslateX(elements, px) {
+      elements.each(function check() {
+        expect($(this).css('transform')).toBe(`matrix(1, 0, 0, 1, ${px}, 0)`);
+      });
+    }
 
-    ScalingService.init(iframeJQueryElement);
-    ScalingService.sync();
+    function expectScale(elements, factor) {
+      elements.each(function check() {
+        expect($(this).css('transform')).toBe(`matrix(${factor}, 0, 0, ${factor}, 0, 0)`);
+      });
+    }
 
-    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left']);
-    expect(elementsToScale.velocity).not.toHaveBeenCalled();
-    expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
-    expect(ScalingService.getScaleFactor()).toEqual(1.0);
-  });
+    function expectScaleAndTranslateY(elements, factor, px) {
+      elements.each(function check() {
+        expect($(this).css('transform')).toBe(`matrix(${factor}, 0, 0, ${factor}, 0, ${px})`);
+      });
+    }
 
-  it('should keep the scale factor unchanged when constraining the viewport width smaller than the canvas', () => {
-    canvasJQueryElement.width(800);
-    spyOn(ViewportService, 'getWidth').and.returnValue(720);
+    it('changes the scaling factor animated when setting pushWidth', () => {
+      canvasElement.width(400);
 
-    ScalingService.init(iframeJQueryElement);
-    ScalingService.sync();
+      ScalingService.setPushWidth(100);
 
-    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left']);
-    expect(elementsToScale.velocity).not.toHaveBeenCalled();
-    expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
-    expect(ScalingService.getScaleFactor()).toEqual(1.0);
-  });
+      expect(ScalingService.getScaleFactor()).toEqual(0.75);
+      expect(iframeElement).toHaveClass('shift-animated');
+      expectTranslateX(iframeElement, 0);
+      expect(elementsToScale).toHaveClass('hippo-scale-animated');
+      expectScaleAndTranslateY(elementsToScale, 0.75, 0);
+      expect(ScalingService.isAnimating()).toBe(true);
 
-  it('should start scaling when constraining the viewport width larger than the canvas', () => {
-    canvasJQueryElement.width(400);
-    spyOn(ViewportService, 'getWidth').and.returnValue(800);
+      elementsToScale.trigger('transitionend');
 
-    ScalingService.init(iframeJQueryElement);
-    ScalingService.sync();
+      expect(ScalingService.isAnimating()).toBe(false);
+      expect(elementsToScale).not.toHaveClass('hippo-scale-animated');
+      expectScale(elementsToScale, 0.75);
+    });
 
-    expect(elementsToScale.css.calls.mostRecent().args).toEqual(['transform', 'scale(0.5)']);
-    expect(elementsToScale.velocity.calls.mostRecent().args).toEqual(['finish']);
-    expect(iframeJQueryElement.velocity.calls.mostRecent().args).toEqual(['finish']);
-    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left', -400]);
-    expect(ScalingService.getScaleFactor()).toEqual(0.5);
-  });
+    it('changes the scaling factor instantly when the window is resized', () => {
+      canvasElement.width(200);
+      ScalingService.setPushWidth(100);
+      ScalingService.scaleFactor = 0.75; // fake different scaling factor so the effect of the window resize is testable
 
-  it('should start shifting and scaling when pushing the visible canvas width below the viewport width', () => {
-    canvasJQueryElement.width(800);
-    spyOn(ViewportService, 'getWidth').and.returnValue(720);
+      $(window).resize();
 
-    ScalingService.init(iframeJQueryElement);
-    ScalingService.sync();
+      expect(ScalingService.getScaleFactor()).toEqual(0.5);
+      expect(elementsToScale).not.toHaveClass('hippo-scale-animated');
+      expectScale(elementsToScale, 0.5);
+    });
 
-    // reset all relevant spies
-    elementsToScale.css.calls.reset();
-    elementsToScale.velocity.calls.reset();
-    iframeJQueryElement.css.calls.reset();
-    iframeJQueryElement.velocity.calls.reset();
+    it('resets the scaling factor animated to 1.0 when setting pushWidth to 0', () => {
+      canvasElement.width(400);
 
-    ScalingService.setPushWidth(260);
+      ScalingService.setPushWidth(100, false);
+      ScalingService.setPushWidth(0);
 
-    // validate shifting
-    expect(iframeJQueryElement.velocity).toHaveBeenCalledWith('finish');
-    expect(iframeJQueryElement.velocity.calls.mostRecent().args).toEqual([{
-      'margin-left': 80,
-    }, {
-      duration: ScalingService.scaleDuration,
-      easing: ScalingService.scaleEasing,
-    }]);
-    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left']);
+      expect(ScalingService.getScaleFactor()).toEqual(1.0);
+      expect(iframeElement).toHaveClass('shift-animated');
+      expectTranslateX(iframeElement, 0);
+      expect(elementsToScale).toHaveClass('hippo-scale-animated');
+      expectScaleAndTranslateY(elementsToScale, 1.0, 0);
+      expect(ScalingService.isAnimating()).toBe(true);
 
-    // validate scaling
-    expect(elementsToScale.velocity).toHaveBeenCalledWith('finish');
-    expect(elementsToScale.velocity.calls.mostRecent().args).toEqual([
-      {
-        scale: 0.75,
-      },
-      jasmine.objectContaining({
-        duration: ScalingService.scaleDuration,
-        easing: ScalingService.scaleEasing,
-      }),
-    ]);
-    expect(elementsToScale.css).not.toHaveBeenCalled();
-    expect(ScalingService.getScaleFactor()).toBe(0.75);
-  });
+      elementsToScale.trigger('transitionend');
 
-  it('should stop scaling the pushed iframe when the viewport width drops below the visible canvas width', () => {
-    canvasJQueryElement.width(800);
-    spyOn(ViewportService, 'getWidth').and.returnValue(720);
+      expect(ScalingService.isAnimating()).toBe(false);
+      expect(elementsToScale).not.toHaveClass('hippo-scale-animated');
+      expectScale(elementsToScale, 1.0);
+    });
 
-    ScalingService.init(iframeJQueryElement);
-    ScalingService.setPushWidth(260);
+    it('shifts the iframe, unscaled, based on the push width, when the viewport width is smaller than the canvas width', () => {
+      canvasElement.width(1280);
+      spyOn(ViewportService, 'getWidth').and.returnValue(720);
 
-    // reset all relevant spies
-    elementsToScale.css.calls.reset();
-    elementsToScale.velocity.calls.reset();
-    iframeJQueryElement.css.calls.reset();
-    iframeJQueryElement.velocity.calls.reset();
+      ScalingService.setPushWidth(100);
 
-    iframeJQueryElement.css.and.returnValue(80); // current shift
-    canvasJQueryElement.width(720); // current canvas width
+      expect(ScalingService.getScaleFactor()).toEqual(1.0);
+      expect(iframeElement).toHaveClass('shift-animated');
+      expectTranslateX(iframeElement, 100 / 2);
+      expect(elementsToScale).not.toHaveClass('hippo-scale-animated');
+      expect(ScalingService.isAnimating()).toBe(false);
+    });
 
-    ViewportService.getWidth.and.returnValue(360);
-    ScalingService.sync();
+    it('scales the iframe when the viewport width is larger than the canvas width', () => {
+      canvasElement.width(400);
+      spyOn(ViewportService, 'getWidth').and.returnValue(800);
 
-    // validate shifting
-    expect(iframeJQueryElement.css.calls.mostRecent().args).toEqual(['margin-left', 260]);
+      ScalingService.sync();
 
-    // validate scaling
-    expect(elementsToScale.velocity.calls.mostRecent().args).toEqual(['finish']);
-    expect(elementsToScale.css.calls.mostRecent().args).toEqual(['transform', 'scale(1)']);
-    expect(ScalingService.getScaleFactor()).toBe(1);
-  });
+      expect(ScalingService.getScaleFactor()).toEqual(0.5);
+      expectScale(elementsToScale, 0.5);
+      expectTranslateX(iframeElement, -200);
+    });
 
-  it('should skip scaling if the iframe element is not visible', () => {
-    iframeJQueryElement.is.and.returnValue(false);
-    canvasJQueryElement.width(400);
+    it('shifts and scales the iframe when the visible canvas gets pushed below the viewport width', () => {
+      canvasElement.width(800);
+      spyOn(ViewportService, 'getWidth').and.returnValue(720);
 
-    ScalingService.init(iframeJQueryElement);
-    ScalingService.setPushWidth(100);
+      ScalingService.sync();
+      ScalingService.setPushWidth(260);
 
-    expect(iframeJQueryElement.velocity).not.toHaveBeenCalled();
-    expect(elementsToScale.velocity).not.toHaveBeenCalled();
-    expect(ScalingService.getScaleFactor()).toEqual(1.0);
+      const expectedShift = (800 - 720) / 2;
+      const expectedScaleFactor = (800 - 260) / 720;
+
+      expectTranslateX(iframeElement, expectedShift);
+      expectScale(elementsToScale, expectedScaleFactor);
+      expect(ScalingService.getScaleFactor()).toEqual(expectedScaleFactor);
+    });
+
+    it('unscales a pushed iframe when the viewport width drops below the visible canvas width', () => {
+      canvasElement.width(800);
+
+      spyOn(ViewportService, 'getWidth').and.returnValue(720);
+      ScalingService.setPushWidth(260);
+
+      // 'resize' the window so the canvas gets a little smaller
+      canvasElement.width(720);
+
+      // decrease the viewport size so the viewport now fits in the available canvas
+      ViewportService.getWidth.and.returnValue(360);
+      ScalingService.sync();
+
+      // validate shifting
+      expectTranslateX(iframeElement, 260 / 2);
+      expectScale(elementsToScale, 1.0);
+      expect(ScalingService.getScaleFactor()).toBe(1.0);
+    });
+
+    it('adjusts the vertical scroll position in a scaled iframe', () => {
+      const iframeWindow = iframeElement[0].contentWindow;
+
+      // scroll the iframe 80px down
+      iframeElement.height(200);
+      iframeHtml.height(800);
+      iframeWindow.scrollTo(0, 80);
+
+      // scale the iframe
+      canvasElement.width(400);
+      ScalingService.setPushWidth(100);
+
+      expect(ScalingService.getScaleFactor()).toEqual(0.75);
+      expect(iframeElement).toHaveClass('shift-animated');
+      expectTranslateX(iframeElement, 0);
+      expect(elementsToScale).toHaveClass('hippo-scale-animated');
+      expectScaleAndTranslateY(elementsToScale, 0.75, 80 - (0.75 * 80));
+      expect(ScalingService.isAnimating()).toBe(true);
+      expect(iframeWindow.pageYOffset).toBe(80); // real scroll position is unchanged since we animate via translateY
+
+      elementsToScale.trigger('transitionend');
+
+      expect(ScalingService.isAnimating()).toBe(false);
+      expect(elementsToScale).not.toHaveClass('hippo-scale-animated');
+      expectScale(elementsToScale, 0.75);
+      expect(iframeWindow.pageYOffset).toBe(0.75 * 80);
+    });
+
+    describe('when the iframe unloads', () => {
+      it('does not hide an unscaled iframe', () => {
+        ScalingService.onIframeUnload();
+        expect(iframeElement).not.toBeHidden();
+      });
+
+      it('hides a scaled iframe', () => {
+        // scale the iframe
+        canvasElement.width(400);
+        spyOn(ViewportService, 'getWidth').and.returnValue(720);
+        ScalingService.sync();
+
+        ScalingService.onIframeUnload();
+
+        expect(iframeElement).toBeHidden();
+      });
+    });
+
+    describe('when the iframe is ready once loaded', () => {
+      it('re-applies the current scaling', () => {
+        spyOn(iframeElement, 'fadeIn');
+
+        // scale the iframe
+        canvasElement.width(400);
+        spyOn(ViewportService, 'getWidth').and.returnValue(800);
+        ScalingService.sync();
+        const scaleFactor = ScalingService.getScaleFactor();
+
+        ScalingService.onIframeReady();
+
+        expect(ScalingService.getScaleFactor()).toEqual(scaleFactor);
+        expectScale(elementsToScale, scaleFactor);
+        expect(iframeElement.fadeIn).toHaveBeenCalledWith(150);
+      });
+
+      it('does not fade in the iframe when it was not scaled', () => {
+        spyOn(iframeElement, 'fadeIn');
+
+        ScalingService.onIframeReady();
+
+        expect(ScalingService.getScaleFactor()).toEqual(1.0);
+        expect(iframeElement.fadeIn).not.toHaveBeenCalled();
+      });
+    });
   });
 });

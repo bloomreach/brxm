@@ -13,6 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+html {
+  transform-origin: top right;
+}
+
+.hippo-scale-animated {
+  transition: transform 400ms cubic-bezier(.25, .8, .25, 1), translateY 400ms cubic-bezier(.25, .8, .25, 1);
+}
+
 a.hst-cmseditlink {
   display: block;
   height: 56px;
