@@ -249,20 +249,6 @@ describe('OverlayService', () => {
     });
   });
 
-  it('click event on overlay should not propagate to the page', (done) => {
-    loadIframeFixture(() => {
-      const body = iframe('body')[0];
-      body.addEventListener('click', () => {
-        fail();
-      });
-
-      const overlayElement = iframe('#hippo-overlay > .hippo-overlay-element-component').first();
-      overlayElement.click();
-
-      done();
-    });
-  });
-
   it('mouseDown event on component calls attached callback with component reference', (done) => {
     const mouseDownSpy = jasmine.createSpy('mouseDown');
     OverlayService.attachComponentMouseDown(mouseDownSpy);

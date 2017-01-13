@@ -63,7 +63,17 @@ class OverlayService {
     this.overlay = $('<div id="hippo-overlay"></div>');
     $(this.iframeWindow.document.body).append(this.overlay);
     this._updateModeClass();
-    this._attachOverlayEvents();
+
+    this.overlay.mousedown((event) => {
+      // let right-click trigger context-menu instead of starting dragging
+      event.preventDefault();
+
+      // we already dispatch a mousedown event on the same location, so don't propagate this one to avoid that
+      // dragula receives one mousedown event too many
+      event.stopPropagation();
+
+      this._onOverlayMouseDown(event);
+    });
   }
 
   setMode(mode) {
@@ -77,19 +87,6 @@ class OverlayService {
       html.toggleClass('hippo-mode-edit', this._isEditMode());
       // don't call sync() explicitly: the DOM mutation will trigger it automatically
     }
-  }
-
-  _attachOverlayEvents() {
-    this.overlay.click((event) => {
-      event.preventDefault();
-      event.stopPropagation();
-    });
-
-    this.overlay.mousedown((event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      this._onOverlayMouseDown(event);
-    });
   }
 
   _isEditMode() {
