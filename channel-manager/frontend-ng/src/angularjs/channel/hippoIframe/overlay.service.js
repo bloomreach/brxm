@@ -15,14 +15,18 @@
  */
 
 import MutationSummary from 'mutation-summary';
+import contentLinkSvg from '../../../images/html/edit-document.svg';
+import menuLinkSvg from '../../../images/html/edit-menu.svg';
 
 class OverlayService {
 
-  constructor($rootScope, $log, DomService, PageStructureService, ScalingService) {
+  constructor($rootScope, $log, $translate, CmsService, DomService, PageStructureService, ScalingService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.$log = $log;
+    this.$translate = $translate;
+    this.CmsService = CmsService;
     this.DomService = DomService;
     this.PageStructureService = PageStructureService;
     this.ScalingService = ScalingService;
@@ -33,6 +37,10 @@ class OverlayService {
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
     this.iframeJQueryElement.on('load', () => this._onLoad());
+  }
+
+  onEditMenu(callback) {
+    this.editMenuHandler = callback;
   }
 
   _onLoad() {
@@ -116,20 +124,12 @@ class OverlayService {
   }
 
   _addOverlayElement(structureElement) {
-    const escapedLabel = this.DomService.escapeHtml(structureElement.getLabel());
     const overlayElement = $(`
       <div class="hippo-overlay-element hippo-overlay-element-${structureElement.getType()}">
-        <span class="hippo-overlay-label">
-          <span class="hippo-overlay-label-text">${escapedLabel}</span>        
-        </span>
       </div>`);
 
-    if (structureElement.getType() === 'component') {
-      overlayElement.click((event) => {
-        event.stopPropagation();
-        this.PageStructureService.showComponentProperties(structureElement);
-      });
-    }
+    this._addLabel(structureElement, overlayElement);
+    this._addMarkupAndBehavior(structureElement, overlayElement);
 
     structureElement.setOverlayElement(overlayElement);
 
@@ -139,6 +139,69 @@ class OverlayService {
     this._syncElements(structureElement, overlayElement);
 
     this.overlay.append(overlayElement);
+  }
+
+  _addLabel(structureElement, overlayElement) {
+    const escapedLabel = this.DomService.escapeHtml(structureElement.getLabel());
+    if (escapedLabel.length > 0) {
+      overlayElement.append(`
+        <span class="hippo-overlay-label">
+          <span class="hippo-overlay-label-text">${escapedLabel}</span>
+        </span>
+      `);
+    }
+  }
+
+  _addMarkupAndBehavior(structureElement, overlayElement) {
+    switch (structureElement.getType()) {
+      case 'component':
+        this._addComponentClickHandler(structureElement, overlayElement);
+        break;
+      case 'content-link':
+        this._addLinkMarkup(overlayElement, contentLinkSvg, 'IFRAME_OPEN_DOCUMENT');
+        this._addContentLinkClickHandler(structureElement, overlayElement);
+        break;
+      case 'menu-link':
+        this._addLinkMarkup(overlayElement, menuLinkSvg, 'IFRAME_EDIT_MENU');
+        this._addMenuLinkClickHandler(structureElement, overlayElement);
+        break;
+      default:
+        break;
+    }
+  }
+
+  _addComponentClickHandler(structureElement, overlayElement) {
+    overlayElement.click((event) => {
+      event.stopPropagation();
+      this.PageStructureService.showComponentProperties(structureElement);
+    });
+  }
+
+  _addLinkMarkup(overlayElement, svg, titleKey) {
+    overlayElement.addClass('hippo-overlay-element-link');
+    overlayElement.attr('title', this.$translate.instant(titleKey));
+    overlayElement.append(svg);
+  }
+
+  _addContentLinkClickHandler(structureElement, overlayElement) {
+    this._addClickHandler(overlayElement, () => {
+      this.CmsService.publish('open-content', structureElement.getUuid());
+    });
+  }
+
+  _addMenuLinkClickHandler(structureElement, overlayElement) {
+    this._addClickHandler(overlayElement, () => {
+      this.$rootScope.$apply(() => {
+        this.editMenuHandler(structureElement.getUuid());
+      });
+    });
+  }
+
+  _addClickHandler(overlayElement, handler) {
+    overlayElement.click((event) => {
+      event.stopPropagation();
+      handler();
+    });
   }
 
   _syncElements(structureElement, overlayElement) {
