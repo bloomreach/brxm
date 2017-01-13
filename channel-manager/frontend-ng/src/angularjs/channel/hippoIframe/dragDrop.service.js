@@ -169,7 +169,6 @@ class DragDropService {
 
   _onStartDrag(containerElement) {
     this._getIframeHtmlElement().addClass('hippo-dragging');
-    this.baseJQueryElement.addClass('hippo-dragging');
     this._updateDragDirection(containerElement);
   }
 
@@ -212,7 +211,6 @@ class DragDropService {
 
   _onStopDragOrClick(element) {
     this._getIframeHtmlElement().removeClass('hippo-dragging hippo-overlay-permeable');
-    this.baseJQueryElement.removeClass('hippo-dragging');
 
     this.draggingOrClicking = false;
 

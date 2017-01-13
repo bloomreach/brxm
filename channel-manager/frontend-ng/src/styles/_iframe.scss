@@ -17,10 +17,6 @@
   overflow: hidden;
   user-select: none;
 
-  &.hippo-dragging {
-    overflow: hidden;
-  }
-
   iframe {
     background-color: $grey-50;
     border: 0;
