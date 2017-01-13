@@ -56,23 +56,17 @@ class ComponentCatalogService {
 
   addComponentToContainer(component, target) {
     const container = this.PageStructureService.getContainerByOverlayElement(target);
-    if (container) {
-      this.PageStructureService.addComponentToContainer(component, container).then((newComponent) => {
-        if (this.PageStructureService.containsNewHeadContributions(newComponent.getContainer())) {
-          this.$log.info(`New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`);
-          this.HippoIframeService.reload().then(() => {
-            this.PageStructureService.showComponentProperties(newComponent);
-          });
-        } else {
+
+    this.PageStructureService.addComponentToContainer(component, container).then((newComponent) => {
+      if (this.PageStructureService.containsNewHeadContributions(newComponent.getContainer())) {
+        this.$log.info(`New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`);
+        this.HippoIframeService.reload().then(() => {
           this.PageStructureService.showComponentProperties(newComponent);
-        }
-      });
-    } else {
-      this.$log.debug(`
-          Cannot add catalog item ${component.id} because container cannot be found for the overlay element
-          or has been locked by a different user
-          `, target);
-    }
+        });
+      } else {
+        this.PageStructureService.showComponentProperties(newComponent);
+      }
+    });
   }
 }
 
