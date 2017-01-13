@@ -131,6 +131,7 @@ a.hst-cmseditlink {
 }
 
 .hippo-dragging {
+  /* IE does not support the grabbing cursor so we show 'move' instead */
   cursor: move;
   cursor: -webkit-grabbing;
   cursor: -moz-grabbing;
