@@ -40,8 +40,8 @@ class ComponentCatalogService {
     this.HippoIframeService.liftIframeAboveMask();
     this.OverlayService.enableAddMode();
 
-    this.OverlayService.onContainerClick((target) => {
-      this.addComponentToContainer(component, target);
+    this.OverlayService.onContainerClick((containerOverlayElement) => {
+      this.addComponentToContainer(component, containerOverlayElement);
     });
 
     this.MaskService.onClick(() => {
@@ -54,8 +54,8 @@ class ComponentCatalogService {
     });
   }
 
-  addComponentToContainer(component, target) {
-    const container = this.PageStructureService.getContainerByOverlayElement(target);
+  addComponentToContainer(component, containerOverlayElement) {
+    const container = this.PageStructureService.getContainerByOverlayElement(containerOverlayElement);
 
     this.PageStructureService.addComponentToContainer(component, container).then((newComponent) => {
       if (this.PageStructureService.containsNewHeadContributions(newComponent.getContainer())) {
