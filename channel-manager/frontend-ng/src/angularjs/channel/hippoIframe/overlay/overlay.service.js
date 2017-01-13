@@ -15,11 +15,10 @@
  */
 
 import MutationSummary from 'mutation-summary';
-import contentLinkSvg from '../../../images/html/edit-document.svg';
-import menuLinkSvg from '../../../images/html/edit-menu.svg';
+import contentLinkSvg from '../../../../images/html/edit-document.svg';
+import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 
 class OverlayService {
-
   constructor(
       $log,
       $rootScope,
