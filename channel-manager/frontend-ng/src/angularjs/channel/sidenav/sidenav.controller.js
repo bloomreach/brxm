@@ -33,7 +33,6 @@ class ChannelSidenavCtrl {
     this.SiteMapService = SiteMapService;
 
     ChannelSidenavService.initialize($element.find('md-sidenav'));
-    CatalogService.load(this.ChannelService.getMountId());
 
     $scope.$watch('sidenav.editMode', () => {
       if (!this.editMode) {

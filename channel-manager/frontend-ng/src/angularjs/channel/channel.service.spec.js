@@ -24,6 +24,7 @@ describe('ChannelService', () => {
   let ChannelService;
   let FeedbackService;
   let SiteMapService;
+  let CatalogService;
   let SessionService;
   let HstService;
   let channelMock;
@@ -56,12 +57,13 @@ describe('ChannelService', () => {
       $provide.value('ConfigService', ConfigServiceMock);
     });
 
-    inject((_$q_, _$log_, _$state_, _$rootScope_, _ChannelService_, _CmsService_, _FeedbackService_,
+    inject((_$q_, _$log_, _$state_, _$rootScope_, _ChannelService_, _CatalogService_, _CmsService_, _FeedbackService_,
             _HstService_, _SessionService_, _SiteMapService_) => {
       $q = _$q_;
       $log = _$log_;
       $state = _$state_;
       $rootScope = _$rootScope_;
+      CatalogService = _CatalogService_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
       HstService = _HstService_;
@@ -70,6 +72,8 @@ describe('ChannelService', () => {
       FeedbackService = _FeedbackService_;
     });
 
+    spyOn(CatalogService, 'load');
+    spyOn(CatalogService, 'getComponents');
     spyOn(CmsService, 'publish');
     spyOn(FeedbackService, 'showError');
     spyOn(HstService, 'doPost');
@@ -253,6 +257,12 @@ describe('ChannelService', () => {
   });
 
   // TODO: add a test where the server returns an error upon the ChannelService's request for channel details.
+
+  it('should trigger loading of the channel\'s catalog', () => {
+    channelMock.mountId = '1234';
+    loadChannel();
+    expect(CatalogService.load).toHaveBeenCalledWith('1234');
+  });
 
   it('should publish own changes', () => {
     channelMock.changedBySet = ['testUser'];
