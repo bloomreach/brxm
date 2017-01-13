@@ -226,14 +226,12 @@ class PageStructureService {
   }
 
   getComponentByOverlayElement(componentOverlayElement) {
-    for (let i = 0; i < this.containers.length; i += 1) {
-      const components = this.containers[i].getComponents();
-      const found = components.find(component => component.getOverlayElement().is(componentOverlayElement));
-      if (found) {
-        return found;
-      }
-    }
-    return false;
+    let component;
+    this.containers.some((container) => {
+      component = container.getComponents().find(c => c.getOverlayElement().is(componentOverlayElement));
+      return !!component;
+    });
+    return component;
   }
 
   getContainerByIframeElement(containerIFrameElement) {
