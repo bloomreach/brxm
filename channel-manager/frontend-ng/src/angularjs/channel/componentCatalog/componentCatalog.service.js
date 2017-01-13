@@ -46,11 +46,11 @@ class ComponentCatalogService {
 
     this.MaskService.onClick(() => {
       this.MaskService.unmask();
-      this.MaskService.removeClickHandler();
-      this.OverlayService.disableAddMode();
-      this.OverlayService.offContainerClick();
       this.ChannelSidenavService.lowerSidenavBeneathMask();
       this.HippoIframeService.lowerIframeBeneathMask();
+      this.OverlayService.disableAddMode();
+      this.OverlayService.offContainerClick();
+      this.MaskService.removeClickHandler();
     });
   }
 
