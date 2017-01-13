@@ -81,7 +81,6 @@ class OverlayService {
   _initOverlay() {
     this.overlay = $('<div id="hippo-overlay"></div>');
     $(this.iframeWindow.document.body).append(this.overlay);
-    this._addMaskClickHandler();
     this._updateModeClass();
 
     this.overlay.mousedown((event) => {
@@ -96,7 +95,9 @@ class OverlayService {
     });
   }
 
-  _addMaskClickHandler() {
+  enableAddMode() {
+    this.isInAddMode = true;
+    this.overlay.addClass('hippo-overlay-add-mode');
     this.overlay.on('click', () => {
       this.$rootScope.$apply(() => {
         this._resetMask();
@@ -112,14 +113,10 @@ class OverlayService {
     this.HippoIframeService.lowerIframeBeneathMask();
   }
 
-  enableAddMode() {
-    this.isInAddMode = true;
-    this.overlay.addClass('hippo-overlay-add-mode');
-  }
-
   disableAddMode() {
     this.isInAddMode = false;
     this.overlay.removeClass('hippo-overlay-add-mode');
+    this.overlay.off('click');
   }
 
   setMode(mode) {
