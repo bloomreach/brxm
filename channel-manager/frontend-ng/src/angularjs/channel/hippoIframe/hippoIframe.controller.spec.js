@@ -180,6 +180,44 @@ describe('hippoIframeCtrl', () => {
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
+  it('enables/disables drag-drop when edit-mode is toggled', () => {
+    const enableSpy = spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
+    const disableSpy = spyOn(DragDropService, 'disable');
+
+    hippoIframeCtrl.editMode = true;
+    $rootScope.$digest();
+
+    expect(enableSpy).toHaveBeenCalled();
+    expect(disableSpy).not.toHaveBeenCalled();
+
+    enableSpy.calls.reset();
+    hippoIframeCtrl.editMode = false;
+    $rootScope.$digest();
+
+    expect(enableSpy).not.toHaveBeenCalled();
+    expect(disableSpy).toHaveBeenCalled();
+  });
+
+  it('attaches/detaches component mousedown handler when edit-mode is toggled', () => {
+    spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
+    spyOn(DragDropService, 'disable');
+    const attachSpy = spyOn(OverlayService, 'attachComponentMouseDown');
+    const detachSpy = spyOn(OverlayService, 'detachComponentMouseDown');
+
+    hippoIframeCtrl.editMode = true;
+    $rootScope.$digest();
+
+    expect(attachSpy).toHaveBeenCalled();
+    expect(detachSpy).not.toHaveBeenCalled();
+
+    attachSpy.calls.reset();
+    hippoIframeCtrl.editMode = false;
+    $rootScope.$digest();
+
+    expect(attachSpy).not.toHaveBeenCalled();
+    expect(detachSpy).toHaveBeenCalled();
+  });
+
   it('calls its edit menu function when the overlay service wants to edit a menu', () => {
     const callback = OverlayService.onEditMenu.calls.mostRecent().args[0];
     callback('menu-uuid');

@@ -136,6 +136,8 @@ class DragDropService {
 
   startDragOrClick($event, component) {
     this.draggingOrClicking = true;
+
+    this._getIframeHtmlElement().addClass('hippo-overlay-permeable');
     this._dispatchMouseDownInIframe($event, component);
 
     const componentBoxElement = component.getBoxElement();
@@ -166,10 +168,9 @@ class DragDropService {
   }
 
   _onStartDrag(containerElement) {
+    this._getIframeHtmlElement().addClass('hippo-dragging');
+    this.canvasJQueryElement.addClass('hippo-dragging');
     this._updateDragDirection(containerElement);
-
-    // make Angular evaluate isDragging() again
-    this._digestIfNeeded();
   }
 
   _onMirrorCreated(mirrorElement, originalElement) {
@@ -210,18 +211,15 @@ class DragDropService {
   }
 
   _onStopDragOrClick(element) {
+    this._getIframeHtmlElement().removeClass('hippo-dragging hippo-overlay-permeable');
+    this.canvasJQueryElement.removeClass('hippo-dragging');
+
     this.draggingOrClicking = false;
+
     $(element)
       .off(MOUSEUP_EVENT_NAME)
       .off(MOUSELEAVE_EVENT_NAME)
       .removeClass(COMPONENT_QA_CLASS);
-    this._digestIfNeeded();
-  }
-
-  _digestIfNeeded() {
-    if (!this.$rootScope.$$phase) {
-      this.$rootScope.$digest();
-    }
   }
 
   _onDrop(movedElement, targetContainerElement, sourceContainerElement, targetNextComponentElement) {
@@ -278,6 +276,10 @@ class DragDropService {
     const iframeMouseDownEvent = this.DomService.createMouseDownEvent(this.iframe, clientX, clientY);
     const iframeElement = component.getBoxElement();
     iframeElement[0].dispatchEvent(iframeMouseDownEvent);
+  }
+
+  _getIframeHtmlElement() {
+    return this.iframeJQueryElement.contents().find('html');
   }
 
   _shiftCoordinates($event) {

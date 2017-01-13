@@ -143,9 +143,13 @@ class HippoIframeCtrl {
 
   _updateDragDrop() {
     if (this.editMode) {
-      this.DragDropService.enable(this.PageStructureService.getContainers());
+      this.DragDropService.enable(this.PageStructureService.getContainers())
+      .then(() => {
+        this.OverlayService.attachComponentMouseDown((e, component) => this.DragDropService.startDragOrClick(e, component));
+      });
     } else {
       this.DragDropService.disable();
+      this.OverlayService.detachComponentMouseDown();
     }
   }
 

@@ -53,7 +53,7 @@ md-toolbar > md-progress-linear {
   }
 }
 
-Style invalid select boxes
+// Style invalid select boxes
 .md-input-invalid md-select {
   // color required invalid select boxes red
   &.ng-invalid ._md-select-value {
@@ -98,4 +98,8 @@ Style invalid select boxes
       background-color: $grey-400;
     }
   }
+}
+
+.hide-scrollbar {
+  overflow: hidden;
 }
