@@ -201,10 +201,10 @@ describe('OverlayService', () => {
       const components = iframe('#hippo-overlay > .hippo-overlay-element-component');
 
       const componentA = $(components[0]);
-      expect(componentA).not.toBeVisible();
+      expect(componentA).not.toHaveClass('hippo-overlay-element-visible');
 
       const menuLink = iframe('#hippo-overlay > .hippo-overlay-element-menu-link');
-      expect(menuLink).not.toBeVisible();
+      expect(menuLink).not.toHaveClass('hippo-overlay-element-visible');
 
       const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
       expect(contentLink.css('top')).toBe(`${4 + 100}px`);
@@ -213,10 +213,10 @@ describe('OverlayService', () => {
       expect(contentLink.css('height')).toBe('40px');
 
       const componentB = $(components[1]);
-      expect(componentB).not.toBeVisible();
+      expect(componentB).not.toHaveClass('hippo-overlay-element-visible');
 
       const emptyContainer = $(iframe('#hippo-overlay > .hippo-overlay-element-container')[1]);
-      expect(emptyContainer).not.toBeVisible();
+      expect(emptyContainer).not.toHaveClass('hippo-overlay-element-visible');
 
       done();
     });
@@ -240,7 +240,7 @@ describe('OverlayService', () => {
       expect(menuLink.css('height')).toBe('40px');
 
       const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
-      expect(contentLink).not.toBeVisible();
+      expect(contentLink).not.toHaveClass('hippo-overlay-element-visible');
 
       const componentB = $(components[1]);
       expect(componentB.css('top')).toBe(`${4 + 100 + 60}px`);
