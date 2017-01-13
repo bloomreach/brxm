@@ -42,7 +42,7 @@ describe('OverlayService', () => {
     });
 
     jasmine.getFixtures().load('channel/hippoIframe/overlay.service.fixture.html');
-    $iframe = $j('.iframe');
+    $iframe = $('.iframe');
   });
 
   function loadIframeFixture(callback) {
@@ -278,6 +278,13 @@ describe('OverlayService', () => {
       done();
     });
   });
+
+  function expectNoPropagatedClicks() {
+    const body = iframe('body');
+    body.click(() => {
+      fail('click event should not propagate to the page');
+    });
+  }
 
   it('mousedown event on component-overlay calls attached callback with component reference', (done) => {
     const mousedownSpy = jasmine.createSpy('mousedown');
