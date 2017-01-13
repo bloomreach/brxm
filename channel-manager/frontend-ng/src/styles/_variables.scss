@@ -141,5 +141,5 @@ $layout-breakpoint-lg: 1920px !default;
 $z-index-sidenav: 60;
 $z-index-mask: $z-index-sidenav + 1;
 $z-index-iframe-lifted: $z-index-mask + 1;
-$z-index-sidenav-lifted: $z-index-mask + 2;
+$z-index-sidenav-lifted: $z-index-iframe-lifted + 1;
 $z-index-tree: 999;
