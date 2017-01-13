@@ -19,6 +19,8 @@ describe('componentCatalogController', () => {
   let ComponentCatalogService;
   let $ctrl;
 
+  const component = { id: 'component' };
+
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
@@ -33,36 +35,35 @@ describe('componentCatalogController', () => {
     });
   });
 
-  it('should set the index of the selected component', () => {
-    const component = { id: 'component' };
+  it('should set the selected component', () => {
     spyOn(ComponentCatalogService, 'selectComponent');
 
-    $ctrl.onSelect(component, 3);
+    $ctrl.onSelect(component);
 
-    expect($ctrl.selectedComponentIndex).toEqual(3);
+    expect($ctrl.selectedComponent).toBe(component);
     expect(ComponentCatalogService.selectComponent).toHaveBeenCalledWith(component);
   });
 
   describe('when component is selected', () => {
-    it('should return true when selected component index matches and mask is on', () => {
+    it('should return true when selected component matches and mask is on', () => {
       MaskService.isMasked = true;
-      $ctrl.selectedComponentIndex = 3;
+      $ctrl.selectedComponent = component;
 
-      expect($ctrl.isComponentSelected(3)).toEqual(true);
+      expect($ctrl.isComponentSelected(component)).toEqual(true);
     });
 
     it('should return false when mask is off', () => {
       MaskService.isMasked = false;
-      $ctrl.selectedComponentIndex = 3;
+      $ctrl.selectedComponent = component;
 
-      expect($ctrl.isComponentSelected(3)).toEqual(false);
+      expect($ctrl.isComponentSelected(component)).toEqual(false);
     });
 
-    it('should return false when selected component index does not match', () => {
+    it('should return false when selected component does not match', () => {
       MaskService.isMasked = true;
-      $ctrl.selectedComponentIndex = 1;
+      $ctrl.selectedComponent = component;
 
-      expect($ctrl.isComponentSelected(3)).toEqual(false);
+      expect($ctrl.isComponentSelected({ other: 1 })).toEqual(false);
     });
   });
 });

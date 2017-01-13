@@ -16,15 +16,15 @@
 
 <md-list class="qa-catalog">
   <md-list-item class="md-1-line"
-                ng-repeat="component in $ctrl.components track by $index"
-                ng-class="{'list-item-active': $ctrl.isComponentSelected($index)}"
-                ng-click="$ctrl.onSelect(component, $index)">
+                ng-repeat="component in $ctrl.components"
+                ng-class="{'list-item-active': $ctrl.isComponentSelected(component)}"
+                ng-click="$ctrl.onSelect(component)">
     <img class="md-avatar"
          ng-src="{{component.iconURL}}" />
 
     <div class="md-list-item-text">
       <p>
-        <span ng-if="$ctrl.isComponentSelected($index)">{{ 'ADDING_COMPONENT' | translate }}</span>
+        <span ng-if="$ctrl.isComponentSelected(component)">{{ 'ADDING_COMPONENT' | translate }}</span>
         <span class="qa-name">{{ component.label }}</span>
       </p>
     </div>

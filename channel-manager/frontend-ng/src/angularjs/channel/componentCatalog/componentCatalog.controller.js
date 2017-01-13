@@ -22,15 +22,13 @@ class ComponentCatalogController {
     this.ComponentCatalogService = ComponentCatalogService;
   }
 
-  onSelect(component, index) {
+  onSelect(component) {
     this.ComponentCatalogService.selectComponent(component);
-    this.selectedComponentIndex = index;
+    this.selectedComponent = component;
   }
 
-  isComponentSelected(index) {
-    const isMasked = this.MaskService.isMasked;
-    const selected = this.selectedComponentIndex === index;
-    return selected && isMasked;
+  isComponentSelected(component) {
+    return this.MaskService.isMasked && this.selectedComponent === component;
   }
 }
 
