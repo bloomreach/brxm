@@ -303,9 +303,9 @@ class OverlayService {
       case 'content-link':
         return !this._isEditMode() && this.DomService.isVisible(boxElement);
       case 'menu-link':
-        return this._isEditMode() && this.DomService.isVisible(boxElement);
+        return this._isEditMode() && !this.isInAddMode && this.DomService.isVisible(boxElement);
       default:
-        return this._isEditMode();
+        return this._isEditMode() && !this.isInAddMode;
     }
   }
 
