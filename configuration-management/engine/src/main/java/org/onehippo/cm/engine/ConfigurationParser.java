@@ -208,7 +208,7 @@ public class ConfigurationParser {
         final Map<Node, Node> definitions = asOrderedMap(src);
         for (Node keyNode : definitions.keySet()) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
-            final String key = asPathScalar(keyNode);
+            final String key = asDefinitionKeyScalar(keyNode);
             constructDefinitionNode(key, definitions.get(keyNode), definition);
         }
     }
@@ -217,7 +217,7 @@ public class ConfigurationParser {
         final Map<Node, Node> definitions = asOrderedMap(src);
         for (Node keyNode : definitions.keySet()) {
             final ContentDefinitionImpl definition = parent.addContentDefinition();
-            final String key = asPathScalar(keyNode);
+            final String key = asDefinitionKeyScalar(keyNode);
             constructDefinitionNode(key, definitions.get(keyNode), definition);
         }
     }
@@ -232,7 +232,7 @@ public class ConfigurationParser {
     private void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node value) {
         final Map<Node, Node> children = asOrderedMap(value);
         for (Node keyNode : children.keySet()) {
-            final String key = asPathScalar(keyNode);
+            final String key = asDefinitionKeyScalar(keyNode);
             if (key.startsWith("/")) {
                 final String name = key.substring(1);
                 constructDefinitionNode(name, children.get(keyNode), definitionNode);
@@ -483,35 +483,45 @@ public class ConfigurationParser {
         return scalarNode.getValue();
     }
 
-    private String asPathScalar(final Node node) {
-        final String stringValue = asStringScalar(node);
+    private String asDefinitionKeyScalar(final Node node) {
+        final String definitionKey = asStringScalar(node);
 
-        boolean escape = false;
-        boolean slash = false;
-        for (int i = 0; i < stringValue.length(); i++) {
-            char c = stringValue.charAt(i);
-            if (c == '\\') {
-                escape = !escape;
-                slash = false;
-            } else if (c == '/') {
-                if (slash) {
-                    throw new ConfigurationException("Path must not contain (unescaped) double slashes", node);
+        if (definitionKey.startsWith("/")) {
+            // definitionKey represents a node-path, where slashes express the root node or node name borders.
+            // we validate that slashes *inside* node names are \-escaped correctly:
+            int slash = 0; // count consecutive slashes
+            boolean escaped = false;
+            for (int i = 0; i < definitionKey.length(); i++) {
+                switch (definitionKey.charAt(i)) {
+                    case '/':
+                        if (slash > 0) {
+                            throw new ConfigurationException("Path must not contain (unescaped) double slashes", node);
+                        }
+                        if (!escaped) {
+                            slash++;
+                        }
+                        escaped = false;
+                        break;
+                    case '\\':
+                        slash = 0;
+                        escaped = !escaped;
+                        break;
+                    default:
+                        slash = 0;
+                        escaped = false;
+                        break;
                 }
-                if (!escape) {
-                    slash = true;
-                }
-                escape = false;
-            } else {
-                slash = false;
-                escape = false;
+            }
+            if (slash > 0 && !isRootNodePath(definitionKey)) {
+                throw new ConfigurationException("Path must not end with (unescaped) slash", node);
             }
         }
-        // TODO: or do we want to ignore trailing single slashes (be lenient)
-        if (slash && stringValue.length() > 1) {
-            throw new ConfigurationException("Path must not end with (unescaped) slash", node);
-        }
 
-        return stringValue;
+        return definitionKey;
+    }
+
+    private boolean isRootNodePath(final String nodePath) {
+        return "/".equals(nodePath);
     }
 
     private List<String> asSingleOrSequenceOfStrScalars(final Node node) {
