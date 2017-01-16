@@ -312,7 +312,7 @@ class OverlayService {
       case 'component':
         return this._isEditMode() && !this.isInAddMode;
       case 'container':
-        return this._isEditMode() && (this.isInAddMode || structureElement.isEmpty() || structureElement.isDisabled());
+        return this._isEditMode();
       case 'content-link':
         return !this._isEditMode() && this.DomService.isVisible(boxElement);
       case 'menu-link':
