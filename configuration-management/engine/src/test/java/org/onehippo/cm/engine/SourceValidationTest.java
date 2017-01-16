@@ -285,12 +285,11 @@ public class SourceValidationTest extends AbstractBaseTest {
         assertConfigurationException(root, firstTuple(config0).getKeyNode(), "Scalar must be a string");
     }
 
-    // TODO: understand/document why we don't support this
     @Test
     public void configWithScalarDefinition() {
         final String yaml = "instructions:\n"
                 + "- config:\n"
-                + "  - /path/to/property: scalar property value";
+                + "  - /path/to/node: scalar property value";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node config0 = firstInstructionFirstTupleFirstValue(root);
