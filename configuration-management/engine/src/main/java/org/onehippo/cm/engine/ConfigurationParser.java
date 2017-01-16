@@ -485,24 +485,32 @@ public class ConfigurationParser {
 
     private String asPathScalar(final Node node) {
         final String stringValue = asStringScalar(node);
-        int offset = stringValue.indexOf('/');
-        while (offset != -1) {
-            if (offset > 0) {
-                if (stringValue.charAt(offset - 1) == '/') {
-                    // double slash, only valid if the first one is escaped
-                    if (offset == 1 || stringValue.charAt(offset - 2) != '\\') {
-                        throw new ConfigurationException("Path must not contain (unescaped) double slashes", node);
-                    }
-                } else if (offset == stringValue.length() - 1) {
-                    // trailing slash, only valid if escaped
-                    // TODO: or do we want to ignore trailing single slashes (be lenient)
-                    if (stringValue.charAt(offset - 1) != '\\') {
-                        throw new ConfigurationException("Path must not end with (unescaped) slash", node);
-                    }
+
+        boolean escape = false;
+        boolean slash = false;
+        for (int i = 0; i < stringValue.length(); i++) {
+            char c = stringValue.charAt(i);
+            if (c == '\\') {
+                escape = !escape;
+                slash = false;
+            } else if (c == '/') {
+                if (slash) {
+                    throw new ConfigurationException("Path must not contain (unescaped) double slashes", node);
                 }
+                if (!escape) {
+                    slash = true;
+                }
+                escape = false;
+            } else {
+                slash = false;
+                escape = false;
             }
-            offset = stringValue.indexOf('/', offset + 1);
         }
+        // TODO: or do we want to ignore trailing single slashes (be lenient)
+        if (slash) {
+            throw new ConfigurationException("Path must not end with (unescaped) slash", node);
+        }
+
         return stringValue;
     }
 

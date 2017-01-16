@@ -386,6 +386,21 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void configWithDefinitionWithPathKeyIncludingDoubleSlashesAndEscapes() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - /path/to\\\\//node: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+
+        assertConfigurationException(root, firstTuple(propertyMap).getKeyNode(),
+                "Path must not contain (unescaped) double slashes");
+    }
+
+    @Test
     public void configWithDefinitionWithTrailingSlashPathKey() {
         final String yaml = "instructions:\n"
                 + "- config:\n"
