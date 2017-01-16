@@ -16,6 +16,7 @@
 
 <div class="channel-iframe-canvas"
      flex
+     layout="column" layout-align="start center"
      ng-class="{'iframe-lifted': iframe.isIframeLifted()}">
   <iframe class="qa-view"
           ng-src="{{ iframe.getSrc() }}">
