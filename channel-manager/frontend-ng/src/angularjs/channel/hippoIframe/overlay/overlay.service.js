@@ -261,10 +261,18 @@ class OverlayService {
 
   _addLockIcon(container, overlayElement) {
     if (container.isDisabled()) {
-      const lockMarkup = $('<div class="hippo-overlay-lock"></div>');
+      const tooltip = this._getLockedByText(container);
+      const lockMarkup = $(`<div class="hippo-overlay-lock" title="${tooltip}"></div>`);
       lockMarkup.append(lockSvg);
       lockMarkup.appendTo(overlayElement);
     }
+  }
+
+  _getLockedByText(container) {
+    if (container.isInherited()) {
+      return this.$translate.instant('CONTAINER_INHERITED');
+    }
+    return this.$translate.instant('CONTAINER_LOCKED_BY', { user: container.getLockedBy() });
   }
 
   _addLinkMarkup(overlayElement, svg, titleKey) {
