@@ -507,7 +507,7 @@ public class ConfigurationParser {
             }
         }
         // TODO: or do we want to ignore trailing single slashes (be lenient)
-        if (slash) {
+        if (slash && stringValue.length() > 1) {
             throw new ConfigurationException("Path must not end with (unescaped) slash", node);
         }
 
