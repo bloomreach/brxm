@@ -262,7 +262,8 @@ class OverlayService {
     if (container.isInherited()) {
       return this.$translate.instant('CONTAINER_INHERITED');
     }
-    return this.$translate.instant('CONTAINER_LOCKED_BY', { user: container.getLockedBy() });
+    const escapedLockedBy = this.DomService.escapeHtml(container.getLockedBy());
+    return this.$translate.instant('CONTAINER_LOCKED_BY', { user: escapedLockedBy });
   }
 
   _addLinkMarkup(overlayElement, svg, titleKey) {
