@@ -29,6 +29,11 @@
       </p>
     </div>
 
+    <md-button ng-if="$ctrl.isComponentSelected(component)"
+               class="md-secondary md-icon-button">
+      <md-icon>close</md-icon>
+    </md-button>
+
     <md-divider ng-if="!$last"></md-divider>
   </md-list-item>
 </md-list>
