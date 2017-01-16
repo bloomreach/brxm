@@ -177,7 +177,7 @@ html {
 }
 
 .hippo-overlay-add-mode .hippo-overlay-element-container:not(.hippo-overlay-element-container-disabled):hover {
-  background: rgba(105, 114, 121, 0.3);
+  background: rgba(184, 188, 191, 0.9);
 }
 
 .hippo-overlay-add-mode .hippo-overlay-element-container:not(.hippo-overlay-element-container-disabled) {
