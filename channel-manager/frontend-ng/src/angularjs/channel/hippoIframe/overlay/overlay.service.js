@@ -233,9 +233,6 @@ class OverlayService {
 
   _addMarkupAndBehavior(structureElement, overlayElement) {
     switch (structureElement.getType()) {
-      case 'component':
-        this._addComponentClickHandler(structureElement, overlayElement);
-        break;
       case 'container':
         this._addLockIcon(structureElement, overlayElement);
         break;
@@ -250,13 +247,6 @@ class OverlayService {
       default:
         break;
     }
-  }
-
-  _addComponentClickHandler(structureElement, overlayElement) {
-    overlayElement.click((event) => {
-      event.stopPropagation();
-      this.PageStructureService.showComponentProperties(structureElement);
-    });
   }
 
   _addLockIcon(container, overlayElement) {
