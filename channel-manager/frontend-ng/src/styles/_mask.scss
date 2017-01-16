@@ -27,7 +27,9 @@
   }
 
   &.mask-add-component {
+    // IE only knows 'copy', but 'grabbing' looks nicer
     cursor: copy;
+    cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
   }
 }
 

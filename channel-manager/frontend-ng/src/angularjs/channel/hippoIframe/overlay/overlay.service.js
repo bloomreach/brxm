@@ -16,6 +16,7 @@
 
 import MutationSummary from 'mutation-summary';
 import contentLinkSvg from '../../../../images/html/edit-document.svg';
+import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 
 class OverlayService {
@@ -232,8 +233,8 @@ class OverlayService {
 
   _addMarkupAndBehavior(structureElement, overlayElement) {
     switch (structureElement.getType()) {
-      case 'component':
-        this._addComponentClickHandler(structureElement, overlayElement);
+      case 'container':
+        this._addLockIcon(structureElement, overlayElement);
         break;
       case 'content-link':
         this._addLinkMarkup(overlayElement, contentLinkSvg, 'IFRAME_OPEN_DOCUMENT');
@@ -248,11 +249,21 @@ class OverlayService {
     }
   }
 
-  _addComponentClickHandler(structureElement, overlayElement) {
-    overlayElement.click((event) => {
-      event.stopPropagation();
-      this.PageStructureService.showComponentProperties(structureElement);
-    });
+  _addLockIcon(container, overlayElement) {
+    if (container.isDisabled()) {
+      const tooltip = this._getLockedByText(container);
+      const lockMarkup = $(`<div class="hippo-overlay-lock" title="${tooltip}"></div>`);
+      lockMarkup.append(lockSvg);
+      lockMarkup.appendTo(overlayElement);
+    }
+  }
+
+  _getLockedByText(container) {
+    if (container.isInherited()) {
+      return this.$translate.instant('CONTAINER_INHERITED');
+    }
+    const escapedLockedBy = this.DomService.escapeHtml(container.getLockedBy());
+    return this.$translate.instant('CONTAINER_LOCKED_BY', { user: escapedLockedBy });
   }
 
   _addLinkMarkup(overlayElement, svg, titleKey) {
@@ -287,7 +298,12 @@ class OverlayService {
     boxElement.addClass('hippo-overlay-box');
 
     overlayElement.toggleClass('hippo-overlay-element-visible', this._isElementVisible(structureElement, boxElement));
-    overlayElement.toggleClass('hippo-overlay-element-container-empty', this._isEmptyContainer(structureElement));
+
+    if (structureElement.getType() === 'container') {
+      overlayElement.toggleClass('hippo-overlay-element-container-empty', structureElement.isEmpty());
+      overlayElement.toggleClass('hippo-overlay-element-container-disabled', structureElement.isDisabled());
+    }
+
     this._syncPosition(overlayElement, boxElement);
   }
 
@@ -296,7 +312,7 @@ class OverlayService {
       case 'component':
         return this._isEditMode() && !this.isInAddMode;
       case 'container':
-        return this._isEditMode() && (structureElement.isEmpty() || this.isInAddMode);
+        return this._isEditMode() && (this.isInAddMode || structureElement.isEmpty() || structureElement.isDisabled());
       case 'content-link':
         return !this._isEditMode() && this.DomService.isVisible(boxElement);
       case 'menu-link':
@@ -304,10 +320,6 @@ class OverlayService {
       default:
         return this._isEditMode() && !this.isInAddMode;
     }
-  }
-
-  _isEmptyContainer(structureElement) {
-    return structureElement.getType() === 'container' && structureElement.isEmpty();
   }
 
   _syncPosition(overlayElement, boxElement) {
