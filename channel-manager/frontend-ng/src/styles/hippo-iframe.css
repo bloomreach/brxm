@@ -78,6 +78,7 @@ html {
 
 .hippo-overlay-label {
   color: #ffffff;
+  display: flex;
   font-size: 12px;
   visibility: hidden;
 }
@@ -107,6 +108,7 @@ html {
   align-items: center;
   background: #000;
   cursor: default;
+  display: flex;
   fill: white;
   float: right;
   height: 26px;
@@ -116,10 +118,6 @@ html {
   margin-top: -1px;
   pointer-events: all;
   width: 26px;
-}
-
-.hippo-overlay-element-visible .hippo-overlay-lock {
-  display: flex;
 }
 
 .hippo-overlay-element-link {
