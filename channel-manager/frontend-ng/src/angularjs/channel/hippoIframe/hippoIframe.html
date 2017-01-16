@@ -16,8 +16,9 @@
 
 <div class="channel-iframe-canvas"
      flex
+     layout="column" layout-align="start center"
      ng-class="{'iframe-lifted': iframe.isIframeLifted()}">
-  <iframe class="qa-view"
+  <iframe class="qa-view flex-grow"
           ng-src="{{ iframe.getSrc() }}">
   </iframe>
   <div class="channel-dragula-mirror cm-scale"></div>
