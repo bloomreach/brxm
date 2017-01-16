@@ -25,9 +25,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -159,13 +161,14 @@ public class ConfigurationParser {
         module.setAfter(asSingleOrSequenceOfStrScalars(map.get("after")));
     }
 
-    private void constructSource(final String path, final Node src, final ModuleImpl parent) {
+    protected void constructSource(final String path, final Node src, final ModuleImpl parent) {
         final Map<String, Node> sourceMap = asMapping(src, new String[]{"instructions"}, null);
         final SourceImpl source = parent.addSource(path);
 
-        final Map<String, Node> definitions = asOrderedMap(sourceMap.get("instructions"));
-        for (String definitionName : definitions.keySet()) {
-            final Node definitionNode = definitions.get(definitionName);
+        final Map<Node, Node> definitions = asOrderedMap(sourceMap.get("instructions"));
+        for (Node definitionKeyNode : definitions.keySet()) {
+            final String definitionName = asStringScalar(definitionKeyNode);
+            final Node definitionNode = definitions.get(definitionKeyNode);
             switch (definitionName) {
                 case "namespace":
                     constructNamespaceDefinitions(definitionNode, source);
@@ -180,7 +183,7 @@ public class ConfigurationParser {
                     constructContentDefinitions(definitionNode, source);
                     break;
                 default:
-                    throw new ConfigurationException("Unknown instruction type '" + definitionName + "'", src);
+                    throw new ConfigurationException("Unknown instruction type '" + definitionName + "'", definitionKeyNode);
             }
         }
     }
@@ -202,36 +205,39 @@ public class ConfigurationParser {
     }
 
     private void constructConfigDefinitions(final Node src, final SourceImpl parent) {
-        final Map<String, Node> definitions = asOrderedMap(src);
-        for (String key : definitions.keySet()) {
+        final Map<Node, Node> definitions = asOrderedMap(src);
+        for (Node keyNode : definitions.keySet()) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
-            constructDefinitionNode(key, definitions.get(key), definition);
+            final String key = asDefinitionKeyScalar(keyNode);
+            constructDefinitionNode(key, definitions.get(keyNode), definition);
         }
     }
 
     private void constructContentDefinitions(final Node src, final SourceImpl parent) {
-        final Map<String, Node> definitions = asOrderedMap(src);
-        for (String key : definitions.keySet()) {
+        final Map<Node, Node> definitions = asOrderedMap(src);
+        for (Node keyNode : definitions.keySet()) {
             final ContentDefinitionImpl definition = parent.addContentDefinition();
-            constructDefinitionNode(key, definitions.get(key), definition);
+            final String key = asDefinitionKeyScalar(keyNode);
+            constructDefinitionNode(key, definitions.get(keyNode), definition);
         }
     }
 
     private void constructDefinitionNode(final String path, final Node value, final ContentDefinitionImpl definition) {
         final String name = StringUtils.substringAfterLast(path, "/");
-        final DefinitionNodeImpl node = new DefinitionNodeImpl(path, name, definition);
-        definition.setNode(node);
-        populateDefinitionNode(node, value);
+        final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(path, name, definition);
+        definition.setNode(definitionNode);
+        populateDefinitionNode(definitionNode, value);
     }
 
-    private void populateDefinitionNode(final DefinitionNodeImpl node, final Node value) {
-        final Map<String, Node> children = asOrderedMap(value);
-        for (String key : children.keySet()) {
+    private void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node value) {
+        final Map<Node, Node> children = asOrderedMap(value);
+        for (Node keyNode : children.keySet()) {
+            final String key = asDefinitionKeyScalar(keyNode);
             if (key.startsWith("/")) {
                 final String name = key.substring(1);
-                constructDefinitionNode(name, children.get(key), node);
+                constructDefinitionNode(name, children.get(keyNode), definitionNode);
             } else {
-                constructDefinitionProperty(key, children.get(key), node);
+                constructDefinitionProperty(key, children.get(keyNode), definitionNode);
             }
         }
     }
@@ -264,6 +270,8 @@ public class ConfigurationParser {
     private void constructDefinitionPropertyFromSequence(final String name, final Node value, final DefinitionNodeImpl parent) {
         final Value[] values = constructValuesFromSequence(value);
 
+        // TODO: "use a map" should be more instructive, maybe including an example.
+        // TODO:   Once the parsing has stabilized, if this error is still here, improve the wording.
         if (values.length == 0) {
             throw new ConfigurationException("Property values represented as sequence must have at least 1 value; to represent 0 values, use a map", value);
         }
@@ -287,6 +295,7 @@ public class ConfigurationParser {
                 throw new ConfigurationException("Property value in map must be scalar or sequence", valueNode);
             }
         } else if (map.keySet().contains("resource")) {
+            // TODO: due to the logic of constructValueType, the following check is never true. Keep it?
             if (!(valueType == ValueType.STRING || valueType == ValueType.BINARY)) {
                 throw new ConfigurationException("Resource can only be used for value type 'binary' or 'string'", value);
             }
@@ -304,6 +313,7 @@ public class ConfigurationParser {
                 case sequence:
                     parent.addProperty(name, valueType, resourceValues);
                     break;
+                // TODO: due to the logic in asSingleOrSequenceOfStrScalars, the default case is never reached. Keep it?
                 default:
                     throw new ConfigurationException("Resource value must be scalar or sequence", resourceNode);
             }
@@ -348,7 +358,6 @@ public class ConfigurationParser {
             if (valueType == null) {
                 valueType = values[i].getType();
             } else if (valueType != values[i].getType()) {
-                // todo create unit test and parser test
                 throw new ConfigurationException(
                         MessageFormat.format(
                                 "Property values must all be of the same type, found value type ''{0}'' as well as ''{1}''",
@@ -368,10 +377,6 @@ public class ConfigurationParser {
             case "string": return ValueType.STRING;
         }
         throw new ConfigurationException("Unrecognized value type: '" + type + "'", node);
-    }
-
-    private Map<String, Node> asMapping(final Node node) {
-        return asMapping(node, null, null);
     }
 
     /**
@@ -422,22 +427,27 @@ public class ConfigurationParser {
         return ArrayUtils.contains(array1, string) || ArrayUtils.contains(array2, string);
     }
 
-    private Pair<String, Node> asMappingWithSingleKey(final Node node) {
-        final Map<String, Node> map = asMapping(node);
-        if (map.size() != 1) {
+    private Pair<Node, Node> asMappingWithSingleKey(final Node node) {
+        if (node.getNodeId() != NodeId.mapping) {
+            throw new ConfigurationException("Node must be a mapping", node);
+        }
+        final List<NodeTuple> tuples = ((MappingNode) node).getValue();
+        if (tuples.size() != 1) {
             throw new ConfigurationException("Map must contain single element", node);
         }
-        final String key = map.keySet().iterator().next();
-        return Pair.of(key, map.get(key));
+        final NodeTuple tuple = tuples.get(0);
+        return Pair.of(tuple.getKeyNode(), tuple.getValueNode());
     }
 
     // See http://yaml.org/type/omap.html
-    private Map<String, Node> asOrderedMap(final Node node) {
-        final Map<String, Node> result = new LinkedHashMap<>();
+    private Map<Node, Node> asOrderedMap(final Node node) {
+        final Set<String> keys = new HashSet<>();
+        final Map<Node, Node> result = new LinkedHashMap<>();
         for (Node child : asSequence(node)) {
-            final Pair<String, Node> pair = asMappingWithSingleKey(child);
-            if (result.containsKey(pair.getKey())) {
-                throw new ConfigurationException("Ordered map contains key '" + pair.getKey() + "' multiple times", node);
+            final Pair<Node, Node> pair = asMappingWithSingleKey(child);
+            final String key = asStringScalar(pair.getKey());
+            if (!keys.add(key)) {
+                throw new ConfigurationException("Ordered map contains key '" + key + "' multiple times", node);
             }
             result.put(pair.getKey(), pair.getValue());
         }
@@ -471,6 +481,47 @@ public class ConfigurationParser {
             throw new ConfigurationException("Scalar must be a string", node);
         }
         return scalarNode.getValue();
+    }
+
+    private String asDefinitionKeyScalar(final Node node) {
+        final String definitionKey = asStringScalar(node);
+
+        if (definitionKey.startsWith("/")) {
+            // definitionKey represents a node-path, where slashes express the root node or node name borders.
+            // we validate that slashes *inside* node names are \-escaped correctly:
+            int slash = 0; // count consecutive slashes
+            boolean escaped = false;
+            for (int i = 0; i < definitionKey.length(); i++) {
+                switch (definitionKey.charAt(i)) {
+                    case '/':
+                        if (slash > 0) {
+                            throw new ConfigurationException("Path must not contain (unescaped) double slashes", node);
+                        }
+                        if (!escaped) {
+                            slash++;
+                        }
+                        escaped = false;
+                        break;
+                    case '\\':
+                        slash = 0;
+                        escaped = !escaped;
+                        break;
+                    default:
+                        slash = 0;
+                        escaped = false;
+                        break;
+                }
+            }
+            if (slash > 0 && !isRootNodePath(definitionKey)) {
+                throw new ConfigurationException("Path must not end with (unescaped) slash", node);
+            }
+        }
+
+        return definitionKey;
+    }
+
+    private boolean isRootNodePath(final String nodePath) {
+        return "/".equals(nodePath);
     }
 
     private List<String> asSingleOrSequenceOfStrScalars(final Node node) {
