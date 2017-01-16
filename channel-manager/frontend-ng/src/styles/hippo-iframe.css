@@ -169,15 +169,22 @@ html {
 /* Adding a component */
 #hippo-overlay.hippo-overlay-add-mode {
   cursor: copy;
+  cursor: grabbing;
+  cursor: -webkit-grabbing;
   pointer-events: auto;
 }
 
-.hippo-overlay-add-mode .hippo-overlay-element-container:hover {
+.hippo-overlay-add-mode .hippo-overlay-element-container:not(.hippo-overlay-element-container-disabled):hover {
   background: rgba(105, 114, 121, 0.3);
 }
 
-.hippo-overlay-add-mode .hippo-overlay-element-container {
+.hippo-overlay-add-mode .hippo-overlay-element-container:not(.hippo-overlay-element-container-disabled) {
+  cursor: copy;
   pointer-events: auto;
+}
+
+.hippo-overlay-add-mode .hippo-overlay-element-container-disabled {
+  cursor: not-allowed;
 }
 
 .hippo-overlay-add-mode .hippo-overlay-element-container .hippo-overlay-label {

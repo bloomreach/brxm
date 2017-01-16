@@ -297,7 +297,12 @@ class OverlayService {
     boxElement.addClass('hippo-overlay-box');
 
     overlayElement.toggleClass('hippo-overlay-element-visible', this._isElementVisible(structureElement, boxElement));
-    overlayElement.toggleClass('hippo-overlay-element-container-empty', this._isEmptyContainer(structureElement));
+
+    if (structureElement.getType() === 'container') {
+      overlayElement.toggleClass('hippo-overlay-element-container-empty', structureElement.isEmpty());
+      overlayElement.toggleClass('hippo-overlay-element-container-disabled', structureElement.isDisabled());
+    }
+
     this._syncPosition(overlayElement, boxElement);
   }
 
@@ -314,10 +319,6 @@ class OverlayService {
       default:
         return this._isEditMode() && !this.isInAddMode;
     }
-  }
-
-  _isEmptyContainer(structureElement) {
-    return structureElement.getType() === 'container' && structureElement.isEmpty();
   }
 
   _syncPosition(overlayElement, boxElement) {
