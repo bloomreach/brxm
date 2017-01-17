@@ -73,7 +73,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
     private String currentPassword;
     private String newPassword;
     private String checkPassword;
-    private long passwordMaxAge = -1l;
+    private long passwordMaxAge = -1L;
 
     public ChangePasswordShortcutPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
