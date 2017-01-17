@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -200,6 +200,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
     private class ChangePasswordDialog extends Dialog {
 
         private final PasswordWidget currentWidget;
+        private final PasswordWidget newWidget;
+        private final PasswordWidget checkWidget;
         private final IPasswordValidationService passwordValidationService;
 
         public ChangePasswordDialog() {
@@ -217,21 +219,22 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             currentWidget = new PasswordWidget("current-password",
                     PropertyModel.of(ChangePasswordShortcutPlugin.this, "currentPassword"),
                     Model.of(translate("old-password-label")));
-            currentWidget.setResetPassword(true);
             currentWidget.setOutputMarkupId(true);
             add(currentWidget);
             setFocus(currentWidget);
 
-            final PasswordWidget newWidget = new PasswordWidget("new-password",
+            newWidget = new PasswordWidget("new-password",
                     PropertyModel.of(ChangePasswordShortcutPlugin.this, "newPassword"),
                     Model.of(translate("new-password-label")));
             newWidget.setResetPassword(false);
+            newWidget.setOutputMarkupId(true);
             add(newWidget);
 
-            final PasswordWidget checkWidget = new PasswordWidget("check-password",
+            checkWidget = new PasswordWidget("check-password",
                     PropertyModel.of(ChangePasswordShortcutPlugin.this, "checkPassword"),
                     Model.of(translate("new-password-label-again")));
             checkWidget.setResetPassword(false);
+            checkWidget.setOutputMarkupId(true);
             add(checkWidget);
 
             passwordValidationService = getPluginContext().getService(IPasswordValidationService.class.getName(),
@@ -252,6 +255,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                 ok = false;
             }
 
+            newWidget.setResetPassword(false);
+            checkWidget.setResetPassword(false);
             if (newPassword == null) {
                 error(translate("new-password-missing"));
                 ok = false;
@@ -263,6 +268,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                             if (!status.accepted()) {
                                 error(status.getMessage());
                                 ok = false;
+                                newWidget.setResetPassword(true); // will clear the field
+                                checkWidget.setResetPassword(true);
                             }
                         }
                     }
@@ -286,6 +293,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             if (newPassword != null && !newPassword.equals(checkPassword)) {
                 error(translate("passwords-do-not-match"));
                 ok = false;
+                newWidget.setResetPassword(true);
+                checkWidget.setResetPassword(true);
             }
 
             if (ok) {
@@ -305,12 +314,12 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                 }
             }
 
-            // empty the current password
-            currentPassword = "";
             setFocus(currentWidget);
             AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
             if (target != null) {
                 target.add(currentWidget);
+                target.add(newWidget);
+                target.add(checkWidget);
                 target.add(label);
             }
         }
