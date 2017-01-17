@@ -86,7 +86,7 @@ public class ParserValueTest extends AbstractBaseTest {
 
     @Test
     public void expect_property_value_map_without_type_to_yield_string() {
-        final ConfigurationParser configurationParser = new ConfigurationParser();
+        final SourceParser sourceParser = new SourceParser();
         final ConfigurationImpl configuration = new ConfigurationImpl("configuration");
         final ProjectImpl project = new ProjectImpl("project", configuration);
         final ModuleImpl module = new ModuleImpl("module", project);
@@ -99,7 +99,7 @@ public class ParserValueTest extends AbstractBaseTest {
                 "              value: []";
         final InputStream inputStream = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
 
-        configurationParser.constructSource("dummy.yaml", inputStream, module);
+        sourceParser.parse("dummy.yaml", inputStream, module);
 
         final Source source = assertSource(module, "dummy.yaml", 1);
         final ConfigDefinition definition = assertDefinition(source, 0, ConfigDefinition.class);

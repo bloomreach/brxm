@@ -34,7 +34,7 @@ import static org.junit.Assert.fail;
 public class SourceValidationTest extends AbstractBaseTest {
 
     final Yaml yamlParser = new Yaml();
-    final ConfigurationParser configurationParser = new ConfigurationParser();
+    final SourceParser sourceParser = new SourceParser();
     final ConfigurationImpl configuration = new ConfigurationImpl("configuration");
     final ProjectImpl project = new ProjectImpl("project", configuration);
     final ModuleImpl module = new ModuleImpl("module", project);
@@ -669,9 +669,9 @@ public class SourceValidationTest extends AbstractBaseTest {
     private void assertConfigurationException(final Node inputNode, final Node exceptionNode,
                                               final String exceptionMessage) {
         try {
-            configurationParser.constructSource("sourcePath", inputNode, module);
+            sourceParser.constructSource("sourcePath", inputNode, module);
             fail("An exception should have occurred");
-        } catch (ConfigurationParser.ConfigurationException e) {
+        } catch (ConfigurationException e) {
             assertEquals(exceptionMessage, e.getMessage());
             assertEquals(exceptionNode, e.getNode());
         }

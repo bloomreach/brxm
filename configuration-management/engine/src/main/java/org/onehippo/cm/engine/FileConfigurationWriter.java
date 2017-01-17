@@ -51,11 +51,12 @@ public class FileConfigurationWriter {
     public void write(final Path destination,
                       final Map<String, Configuration> configurations,
                       final Map<Module, ResourceInputProvider> resourceInputProviders) throws IOException {
-        final ConfigurationSerializer serializer = new ConfigurationSerializer();
+        final RepoConfigSerializer repoConfigSerializer = new RepoConfigSerializer();
+        final SourceSerializer sourceSerializer = new SourceSerializer();
         final Path repoConfigPath = destination.resolve("repo-config.yaml");
 
         try (final OutputStream repoConfigOutputStream = new FileOutputStream(repoConfigPath.toFile())) {
-            serializer.serializeRepoConfig(repoConfigOutputStream, configurations);
+            repoConfigSerializer.serialize(repoConfigOutputStream, configurations);
         }
 
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
@@ -71,7 +72,7 @@ public class FileConfigurationWriter {
                     for (Source source : module.getSources().values()) {
                         final List<Value> resources = new ArrayList<>();
                         try (final OutputStream sourceOutputStream = getSourceOutputStream(modulePath, source)) {
-                            serializer.serializeSource(sourceOutputStream, source, resources::add);
+                            sourceSerializer.serialize(sourceOutputStream, source, resources::add);
                         }
 
                         for (Value resource : resources) {
