@@ -624,6 +624,42 @@ public class SourceValidationTest extends AbstractBaseTest {
                 "Resource value must define at least one value");
     }
 
+    @Test
+    public void configWithDefinitionWithAbsolutePathResource() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: binary\n"
+                + "        resource: /etc/passwd";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertConfigurationException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Resource path is not valid: '/etc/passwd'; a resource path must be relative and must not contain ..");
+    }
+
+    @Test
+    public void configWithDefinitionWithParentPathElementResource() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: binary\n"
+                + "        resource: ../etc/passwd";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertConfigurationException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Resource path is not valid: '../etc/passwd'; a resource path must be relative and must not contain ..");
+    }
+
     private void assertConfigurationException(final String input, final String exceptionMessage) {
         final Node node = yamlParser.compose(new StringReader(input));
 

@@ -21,6 +21,7 @@ import java.util.Map;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.Source;
 
 public class FileConfigurationUtils {
 
@@ -32,6 +33,10 @@ public class FileConfigurationUtils {
         } else {
             return repoConfigPath.getParent().resolve("repo-config");
         }
+    }
+
+    public static Path getResourcePath(final Path modulePath, final Source source, final String resourceRelPath) {
+        return modulePath.resolve(source.getPath()).getParent().resolve(resourceRelPath);
     }
 
     public static boolean hasMultipleModules(Map<String, Configuration> configurations) {

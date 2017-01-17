@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.Configuration;
@@ -53,20 +54,14 @@ import org.yaml.snakeyaml.serializer.Serializer;
 
 public class ConfigurationSerializer {
 
-    private List<String> resources = new ArrayList<>();
-
     public void serializeRepoConfig(final OutputStream outputStream, final Map<String, Configuration> configurations) throws IOException {
         final Node node = representRepoConfig(configurations);
         serializeNode(outputStream, node);
     }
 
-    public List<String> serializeSource(final OutputStream outputStream, final Source source) throws IOException {
-        // TODO: not passing in 'resources' as parameter but using an instance variable makes this serializer instance
-        // not thread-safe. I believe we should try to avoid that.
-        resources = new ArrayList<>();
-        final Node node = representSource(source);
+    public void serializeSource(final OutputStream outputStream, final Source source, final Consumer<Value> resourceConsumer) throws IOException {
+        final Node node = representSource(source, resourceConsumer);
         serializeNode(outputStream, node);
-        return resources;
     }
 
     private void serializeNode(final OutputStream outputStream, final Node node) throws IOException {
@@ -148,7 +143,7 @@ public class ConfigurationSerializer {
         return tuples;
     }
 
-    private Node representSource(final Source source) {
+    private Node representSource(final Source source, final Consumer<Value> resourceConsumer) {
         final List<Node> configDefinitionNodes = new ArrayList<>();
         final List<Node> contentDefinitionNodes = new ArrayList<>();
         final List<Node> namespaceDefinitionNodes = new ArrayList<>();
@@ -157,10 +152,10 @@ public class ConfigurationSerializer {
         for (Definition definition : source.getDefinitions()) {
             switch (definition.getType()) {
                 case CONFIG:
-                    configDefinitionNodes.add(representConfigDefinition((ConfigDefinition) definition));
+                    configDefinitionNodes.add(representConfigDefinition((ConfigDefinition) definition, resourceConsumer));
                     break;
                 case CONTENT:
-                    contentDefinitionNodes.add(representContentDefinition((ContentDefinition) definition));
+                    contentDefinitionNodes.add(representContentDefinition((ContentDefinition) definition, resourceConsumer));
                     break;
                 case NAMESPACE:
                     namespaceDefinitionNodes.add(representNamespaceDefinition((NamespaceDefinition) definition));
@@ -200,22 +195,22 @@ public class ConfigurationSerializer {
         return new MappingNode(Tag.MAP, sourceTuples, false);
     }
 
-    private Node representConfigDefinition(final ConfigDefinition definition) {
-        return representDefinitionNode(definition.getNode());
+    private Node representConfigDefinition(final ConfigDefinition definition, final Consumer<Value> resourceConsumer) {
+        return representDefinitionNode(definition.getNode(), resourceConsumer);
     }
 
-    private Node representContentDefinition(final ContentDefinition definition) {
-        return representDefinitionNode(definition.getNode());
+    private Node representContentDefinition(final ContentDefinition definition, final Consumer<Value> resourceConsumer) {
+        return representDefinitionNode(definition.getNode(), resourceConsumer);
     }
 
-    private Node representDefinitionNode(final DefinitionNode node) {
+    private Node representDefinitionNode(final DefinitionNode node, final Consumer<Value> resourceConsumer) {
         final List<Node> children = new ArrayList<>(node.getProperties().size() + node.getNodes().size());
 
         for (DefinitionProperty childProperty : node.getProperties().values()) {
-            children.add(representProperty(childProperty));
+            children.add(representProperty(childProperty, resourceConsumer));
         }
         for (DefinitionNode childNode : node.getNodes().values()) {
-            children.add(representDefinitionNode(childNode));
+            children.add(representDefinitionNode(childNode, resourceConsumer));
         }
 
         final List<NodeTuple> tuples = new ArrayList<>(1);
@@ -224,9 +219,9 @@ public class ConfigurationSerializer {
         return new MappingNode(Tag.MAP, tuples, false);
     }
 
-    private Node representProperty(final DefinitionProperty property) {
+    private Node representProperty(final DefinitionProperty property, final Consumer<Value> resourceConsumer) {
         if (requiresValueMap(property)) {
-            return representPropertyUsingMap(property);
+            return representPropertyUsingMap(property, resourceConsumer);
         } else {
             return representPropertyUsingScalarOrSequence(property);
         }
@@ -244,7 +239,7 @@ public class ConfigurationSerializer {
         return hasResourceValues(property);
     }
 
-    private Node representPropertyUsingMap(final DefinitionProperty property) {
+    private Node representPropertyUsingMap(final DefinitionProperty property, final Consumer<Value> resourceConsumer) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
         valueMapTuples.add(createStrStrTuple("type", property.getValueType().name().toLowerCase()));
         final boolean hasResourceValues = hasResourceValues(property);
@@ -254,14 +249,14 @@ public class ConfigurationSerializer {
             final Value value = property.getValue();
             valueMapTuples.add(new NodeTuple(createStrScalar(key), representValue(value)));
             if (hasResourceValues) {
-                resources.add(value.getString());
+                resourceConsumer.accept(value);
             }
         } else {
             final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
             for (Value value : property.getValues()) {
                 valueNodes.add(representValue(value));
                 if (hasResourceValues) {
-                    resources.add(value.getString());
+                    resourceConsumer.accept(value);
                 }
             }
             valueMapTuples.add(createStrSeqTuple(key, valueNodes, true));

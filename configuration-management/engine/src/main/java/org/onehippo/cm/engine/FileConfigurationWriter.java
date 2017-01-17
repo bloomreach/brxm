@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +30,7 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.api.model.Value;
 
 public class FileConfigurationWriter {
 
@@ -42,12 +43,8 @@ public class FileConfigurationWriter {
 
         @Override
         public OutputStream getResourceOutputStream(final Source source, final String resourcePath) throws IOException {
-            return new FileOutputStream(getResourcePath(source, resourcePath).toFile());
-        }
-
-        // TODO share duplicated logic (see FileConfigurationReader) through FileConfigurationUtils?
-        private Path getResourcePath(final Source source, final String resourceRelPath) {
-            return modulePath.resolve(source.getPath()).getParent().resolve(resourceRelPath);
+            return new FileOutputStream(
+                    FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath).toFile());
         }
     }
 
@@ -72,17 +69,17 @@ public class FileConfigurationWriter {
                     final ResourceOutputProvider resourceOutputProvider = new FileResourceOutputProvider(modulePath);
 
                     for (Source source : module.getSources().values()) {
-                        final List<String> resources;
+                        final List<Value> resources = new ArrayList<>();
                         try (final OutputStream sourceOutputStream = getSourceOutputStream(modulePath, source)) {
-                            resources = serializer.serializeSource(sourceOutputStream, source);
+                            serializer.serializeSource(sourceOutputStream, source, resources::add);
                         }
 
-                        for (String resource : resources) {
+                        for (Value resource : resources) {
                             try (
                                     final InputStream resourceInputStream =
-                                            resourceInputProvider.getResourceInputStream(source, resource);
+                                            resourceInputProvider.getResourceInputStream(source, resource.getString());
                                     final OutputStream resourceOutputStream =
-                                            resourceOutputProvider.getResourceOutputStream(source, resource)
+                                            resourceOutputProvider.getResourceOutputStream(source, resource.getString())
                             ) {
                                 IOUtils.copy(resourceInputStream, resourceOutputStream);
                             }
@@ -94,12 +91,7 @@ public class FileConfigurationWriter {
     }
 
     private OutputStream getSourceOutputStream(final Path modulePath, final Source source) throws IOException {
-        final Path sourceRelPath = Paths.get(source.getPath());
-        // TODO should this not be caught when reading the configuration?
-        if (sourceRelPath.isAbsolute()) {
-            throw new IOException("Source must not specify an absolute path: " + source.getPath());
-        }
-        final Path sourceDestPath = modulePath.resolve(sourceRelPath);
+        final Path sourceDestPath = modulePath.resolve(source.getPath());
         Files.createDirectories(sourceDestPath.getParent());
         return new FileOutputStream(sourceDestPath.toFile());
     }

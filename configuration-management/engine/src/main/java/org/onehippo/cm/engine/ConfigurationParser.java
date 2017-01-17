@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -303,15 +304,21 @@ public class ConfigurationParser {
             if (resources.size() == 0) {
                 throw new ConfigurationException("Resource value must define at least one value", resourceNode);
             }
+
             final Value[] resourceValues = new Value[resources.size()];
             for (int i = 0; i < resources.size(); i++) {
-                // TODO: assert that resource is specified using a *relative* path
-                final Source source = parent.getDefinition().getSource();
-                if (resourceInputProvider != null && !resourceInputProvider.hasResource(source, resources.get(i))) {
-                    throw new ConfigurationException("Cannot find resource '" + resources.get(i) + "'", resourceNode);
+                final String resourcePath = resources.get(i);
+                if (isInvalidResourcePath(resourcePath)) {
+                    throw new ConfigurationException("Resource path is not valid: '" + resourcePath
+                            + "'; a resource path must be relative and must not contain ..", resourceNode);
                 }
-                resourceValues[i] = new ValueImpl(valueType, resources.get(i));
+                final Source source = parent.getDefinition().getSource();
+                if (resourceInputProvider != null && !resourceInputProvider.hasResource(source, resourcePath)) {
+                    throw new ConfigurationException("Cannot find resource '" + resourcePath + "'", resourceNode);
+                }
+                resourceValues[i] = new ValueImpl(valueType, resourcePath);
             }
+
             switch (resourceNode.getNodeId()) {
                 case scalar:
                     parent.addProperty(name, resourceValues[0]);
@@ -319,13 +326,17 @@ public class ConfigurationParser {
                 case sequence:
                     parent.addProperty(name, valueType, resourceValues);
                     break;
-                // TODO: due to the logic in asSingleOrSequenceOfStrScalars, the default case is never reached. Keep it?
                 default:
+                    // should never happen ...
                     throw new ConfigurationException("Resource value must be scalar or sequence", resourceNode);
             }
         } else {
             throw new ConfigurationException("Property values represented as map must have a 'value' or 'resource' key", value);
         }
+    }
+
+    private boolean isInvalidResourcePath(final String resourcePath) {
+        return resourcePath.contains("..") || Paths.get(resourcePath).isAbsolute();
     }
 
     private Value constructValueFromScalar(final Node node) {

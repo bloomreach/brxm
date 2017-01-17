@@ -45,16 +45,13 @@ public class FileConfigurationReader {
 
         @Override
         public boolean hasResource(final Source source, final String resourcePath) {
-            return Files.isRegularFile(getResourcePath(source, resourcePath));
+            return Files.isRegularFile(FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath));
         }
 
         @Override
         public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
-            return new FileInputStream(getResourcePath(source, resourcePath).toFile());
-        }
-
-        private Path getResourcePath(final Source source, final String resourceRelPath) {
-            return modulePath.resolve(source.getPath()).getParent().resolve(resourceRelPath);
+            return new FileInputStream(
+                    FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath).toFile());
         }
     }
 
