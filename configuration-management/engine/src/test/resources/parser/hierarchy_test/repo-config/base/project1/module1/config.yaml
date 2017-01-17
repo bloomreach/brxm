@@ -15,9 +15,7 @@ instructions:
           - /node-with-multiple-properties:
               - single: value1
               - multiple: [value2, value3]
-              - empty-multiple:
-                    type: string
-                    value: []
+              - empty-multiple: []
           - /node-with-sub-node:
               - /sub-node:
                   - property: sub-node-value

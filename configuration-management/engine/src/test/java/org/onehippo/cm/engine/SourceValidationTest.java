@@ -446,21 +446,6 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithDefinitionWithEmptySequence() {
-        final String yaml = "instructions:\n"
-                + "- config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property: [ ]";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstTupleFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertConfigurationException(root, firstTuple(propertyMap).getValueNode(),
-                "Property values represented as sequence must have at least 1 value; to represent 0 values, use a map");
-    }
-
-    @Test
     public void configWithDefinitionWithMissingKey() {
         final String yaml = "instructions:\n"
                 + "- config:\n"
@@ -472,7 +457,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
 
         assertConfigurationException(root, firstTuple(propertyMap).getValueNode(),
-                "Node must contain pair with key 'type'");
+                "Property values represented as map must have a 'value' or 'resource' key");
     }
 
     @Test
@@ -481,7 +466,6 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "- config:\n"
                 + "  - /path/to/node:\n"
                 + "    - property:\n"
-                + "        type: string\n"
                 + "        unsupported: value";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
@@ -595,6 +579,41 @@ public class SourceValidationTest extends AbstractBaseTest {
                 "Node must be scalar or sequence, found 'mapping'");
     }
 
+    @Test
+    public void configWithDefinitionWithInvalidResourcePropertyTypeCombination() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: boolean\n"
+                + "        resource: boolean.bin";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertConfigurationException(root, firstTuple(propertyValueMap).getValueNode(),
+                "Resource can only be used for value type 'binary' or 'string'");
+    }
+
+    @Test
+    public void configWithDefinitionWithEmptyResourceSequence() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: binary\n"
+                + "        resource: []";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertConfigurationException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Resource value must define at least one value");
+    }
 
     private void assertConfigurationException(final String input, final String exceptionMessage) {
         final Node node = yamlParser.compose(new StringReader(input));

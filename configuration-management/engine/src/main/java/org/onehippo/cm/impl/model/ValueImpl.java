@@ -75,6 +75,9 @@ public class ValueImpl implements Value {
 
     @Override
     public String getString() {
+        if (isResource) {
+            return value.toString();
+        }
         if (valueType == ValueType.BINARY) {
             return new String((byte[]) value);
         }

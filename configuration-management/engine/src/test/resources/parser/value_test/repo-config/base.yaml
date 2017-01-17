@@ -3,19 +3,36 @@ instructions:
       - /base:
           - binary: !!binary |-
                 aGVsbG8gd29ybGQ=
-          - bool: true
-          - float: 3.1415
+          - boolean: true
+          - date: 2015-10-21T07:28:00+8:00
+          - double: 3.1415
           - long: 42
-          - str: hello world
-          - timestamp: 2015-10-21T07:28:00+8:00
+          - string: hello world
       - /string:
-          - strBool: 'true'
-          - strFloat: '3.1415'
+          - strBoolean: 'true'
+          - strDate: '2015-10-21T07:28:00+8:00'
+          - strDouble: '3.1415'
           - strLong: '42'
-          - strTimestamp: '2015-10-21T07:28:00+8:00'
           - strWithQuotes: string ' "
           - strWithLeadingSingleQuote: ''' " string'
           - strWithLeadingDoubleQuote: '" '' string'
           - strWithLineBreaks: |
                 line one
                 line two
+      - /empty:
+          - emptyBinary:
+                type: binary
+                value: []
+          - emptyBoolean:
+                type: boolean
+                value: []
+          - emptyDate:
+                type: date
+                value: []
+          - emptyDouble:
+                type: double
+                value: []
+          - emptyLong:
+                type: long
+                value: []
+          - emptyString: []

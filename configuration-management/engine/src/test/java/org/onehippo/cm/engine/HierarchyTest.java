@@ -35,16 +35,14 @@ public class HierarchyTest extends AbstractBaseTest {
 
     @Test
     public void expect_hierarchy_test_loads() throws IOException {
-        final TestFiles files = collectFilesFromResource("/parser/hierarchy_test/repo-config.yaml");
-        final ConfigurationParser parser = new ConfigurationParser();
-
-        final Map<String, Configuration> configurations = parser.parse(files.repoConfig, files.sources);
+        final FileConfigurationReader.ReadResult result = readFromResource("/parser/hierarchy_test/repo-config.yaml");
+        final Map<String, Configuration> configurations = result.getConfigurations();
         assertEquals(2, configurations.size());
 
         final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
         final Project project1 = assertProject(base, "project1", new String[0], 1);
         final Module module1 = assertModule(project1, "module1", new String[0], 1);
-        final Source source1 = assertSource(module1, "base/project1/module1/config.yaml", 4);
+        final Source source1 = assertSource(module1, "config.yaml", 4);
 
         final NamespaceDefinition namespace = assertDefinition(source1, 0, NamespaceDefinition.class);
         assertEquals("myhippoproject", namespace.getPrefix());
@@ -95,7 +93,7 @@ public class HierarchyTest extends AbstractBaseTest {
         final Configuration myhippoproject = assertConfiguration(configurations, "myhippoproject", new String[]{"base"}, 1);
         final Project project2 = assertProject(myhippoproject, "project2", new String[]{"project1", "foo/bar"}, 1);
         final Module module2 = assertModule(project2, "module2", new String[0], 1);
-        final Source source2 = assertSource(module2, "myhippoproject/project2/module2/config.yaml", 1);
+        final Source source2 = assertSource(module2, "config.yaml", 1);
         final ConfigDefinition definition2 = assertDefinition(source2, 0, ConfigDefinition.class);
 
         final DefinitionNode rootDefinition2 =

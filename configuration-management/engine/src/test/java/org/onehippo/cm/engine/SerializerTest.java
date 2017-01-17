@@ -16,17 +16,25 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiPredicate;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
@@ -74,8 +82,8 @@ public class SerializerTest extends AbstractBaseTest {
         final Map<String, Configuration> configurations = new LinkedHashMap<>();
         configurations.put(configuration.getName(), configuration);
 
-        final ConfigurationSerializer serializer = new ConfigurationSerializer();
-        serializer.serializeNode(folder.getRoot().toPath(), configurations);
+        final FileConfigurationWriter writer = new FileConfigurationWriter();
+        writer.write(folder.getRoot().toPath(), configurations, getFailingResourceInputProviders(configurations));
         final Path path = folder.getRoot().toPath().resolve("repo-config").resolve("test.yaml");
 
         assertEquals(
@@ -88,46 +96,55 @@ public class SerializerTest extends AbstractBaseTest {
                 new String(Files.readAllBytes(path)));
     }
 
-    private void readAndWrite(final String repoConfig) throws IOException {
-        final TestFiles files = collectFilesFromResource(repoConfig);
-        final ConfigurationParser parser = new ConfigurationParser();
-        final Map<String, Configuration> configurations = parser.parse(files.repoConfig, files.sources);
+    private Map<Module, ResourceInputProvider> getFailingResourceInputProviders(final Map<String, Configuration> configurations) {
+        final Map<Module, ResourceInputProvider> result = new HashMap<>();
+        for (Configuration configuration : configurations.values()) {
+            for (Project project : configuration.getProjects().values()) {
+                for (Module module : project.getModules().values()) {
+                    result.put(module, new ResourceInputProvider() {
+                        @Override
+                        public boolean hasResource(final Source source, final String resourcePath) {
+                            fail();
+                            return false;
+                        }
 
-        final ConfigurationSerializer serializer = new ConfigurationSerializer();
-        serializer.serializeNode(folder.getRoot().toPath(), configurations);
-
-        final TestFiles serializedFiles = collectFiles(folder.getRoot().toPath());
-
-        assertURLContentIdentical(files.repoConfig, serializedFiles.repoConfig);
-        assertEquals(files.sources.size(), serializedFiles.sources.size());
-        for (URL url : files.sources) {
-            final URL match = findMatch(url, serializedFiles.sources);
-            assertURLContentIdentical(url, match);
-        }
-    }
-
-    private void assertURLContentIdentical(final URL expected, final URL actual) throws IOException {
-        assertEquals(new String(Files.readAllBytes(urlToPath(expected))), new String(Files.readAllBytes(urlToPath(actual))));
-    }
-
-    private URL findMatch(final URL url, final List<URL> sources) {
-        final String suffix = getUrlSuffix(url);
-        for (URL source : sources) {
-            if (suffix.equals(getUrlSuffix(source))) {
-                return source;
+                        @Override
+                        public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
+                            fail();
+                            return null;
+                        }
+                    });
+                }
             }
         }
-        fail("Cannot find matching file for " + url.toString());
-        return null;
+        return result;
     }
 
-    private String getUrlSuffix(final URL url) {
-        final String str = url.toString();
-        final int position = str.lastIndexOf("repo-config");
-        if (position == -1) {
-            fail("Cannot find string 'repo-config' in " + str);
+    private void readAndWrite(final String repoConfig) throws IOException {
+        final FileConfigurationReader.ReadResult result = readFromResource(repoConfig);
+
+        final FileConfigurationWriter writer = new FileConfigurationWriter();
+        writer.write(folder.getRoot().toPath(), result.getConfigurations(), result.getResourceInputProviders());
+
+        final Path expectedRoot = findBase(repoConfig);
+        final Path actualRoot = folder.getRoot().toPath();
+        final List<Path> expected = findFiles(expectedRoot);
+        final List<Path> actual = findFiles(actualRoot);
+
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertEquals(
+                    new String(Files.readAllBytes(expectedRoot.resolve(expected.get(i)))),
+                    new String(Files.readAllBytes(actualRoot.resolve(actual.get(i)))));
         }
-        return str.substring(position);
+    }
+
+    private List<Path> findFiles(final Path root) throws IOException {
+        final List<Path> paths = new ArrayList<>();
+        final BiPredicate<Path, BasicFileAttributes> matcher = (filePath, fileAttr) -> fileAttr.isRegularFile();
+        Files.find(root, Integer.MAX_VALUE, matcher).forEachOrdered((path) -> paths.add(root.relativize(path)));
+        Collections.sort(paths);
+        return paths;
     }
 
 }

@@ -15,11 +15,10 @@
  */
 package org.onehippo.cm.engine;
 
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -35,8 +34,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.model.Configuration;
-import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
@@ -99,30 +97,22 @@ public class ConfigurationParser {
 
     private static final ScalarConstructor scalarConstructor = new ScalarConstructor();
 
-    public Map<String, Configuration> parse(final URL repoConfigUrl, final List<URL> sourceUrls) throws IOException {
-        final Yaml yamlParser = new Yaml();
-        final Node repoConfigNode = yamlParser.compose(new InputStreamReader(repoConfigUrl.openStream(), StandardCharsets.UTF_8));
+    private final ResourceInputProvider resourceInputProvider;
 
-        final Map<String, Configuration> configurations = parseRepoConfig(repoConfigNode);
-        final List<Module> modules = collectModules(configurations);
-
-        for (URL url : sourceUrls) {
-            final ModuleImpl module;
-            if (modules.size() == 1) {
-                module = (ModuleImpl) modules.get(0);
-            } else {
-                module = getModuleForSource(configurations, url);
-            }
-            final Node sourceNode = yamlParser.compose(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
-            constructSource(calculateRelativePath(repoConfigUrl, url), sourceNode, module);
-        }
-
-        return configurations;
+    public ConfigurationParser() {
+        resourceInputProvider = null;
     }
 
-    private Map<String, Configuration> parseRepoConfig(final Node src) {
+    public ConfigurationParser(final ResourceInputProvider resourceInputProvider) {
+        this.resourceInputProvider = resourceInputProvider;
+    }
+
+    public Map<String, Configuration> parseRepoConfig(final InputStream inputStream) {
+        final Yaml yamlParser = new Yaml();
+        final Node node = yamlParser.compose(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+
         final Map<String, Configuration> result = new LinkedHashMap<>();
-        final Map<String, Node> sourceMap = asMapping(src, new String[]{"configurations"}, null);
+        final Map<String, Node> sourceMap = asMapping(node, new String[]{"configurations"}, null);
 
         for (Node configurationNode : asSequence(sourceMap.get("configurations"))) {
             constructConfiguration(configurationNode, result);
@@ -159,6 +149,12 @@ public class ConfigurationParser {
         final String name = asStringScalar(map.get("name"));
         final ModuleImpl module = parent.addModule(name);
         module.setAfter(asSingleOrSequenceOfStrScalars(map.get("after")));
+    }
+
+    public void constructSource(final String path, final InputStream inputStream, final ModuleImpl parent) {
+        final Yaml yamlParser = new Yaml();
+        final Node node = yamlParser.compose(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        constructSource(path, node, parent);
     }
 
     protected void constructSource(final String path, final Node src, final ModuleImpl parent) {
@@ -270,18 +266,22 @@ public class ConfigurationParser {
     private void constructDefinitionPropertyFromSequence(final String name, final Node value, final DefinitionNodeImpl parent) {
         final Value[] values = constructValuesFromSequence(value);
 
-        // TODO: "use a map" should be more instructive, maybe including an example.
-        // TODO:   Once the parsing has stabilized, if this error is still here, improve the wording.
         if (values.length == 0) {
-            throw new ConfigurationException("Property values represented as sequence must have at least 1 value; to represent 0 values, use a map", value);
+            parent.addProperty(name, ValueType.STRING, values);
+        } else {
+            parent.addProperty(name, values[0].getType(), values);
         }
-
-        parent.addProperty(name, values[0].getType(), values);
     }
 
     private void constructDefinitionPropertyFromMap(final String name, final Node value, final DefinitionNodeImpl parent) {
-        final Map<String, Node> map = asMapping(value, new String[]{"type"}, new String[]{"value","resource"});
-        final ValueType valueType = constructValueType(map.get("type"));
+        final Map<String, Node> map = asMapping(value, new String[0], new String[]{"type","value","resource"});
+
+        final ValueType valueType;
+        if (map.keySet().contains("type")) {
+            valueType = constructValueType(map.get("type"));
+        } else {
+            valueType = ValueType.STRING;
+        }
 
         if (map.keySet().contains("value")) {
             final Node valueNode = map.get("value");
@@ -295,15 +295,20 @@ public class ConfigurationParser {
                 throw new ConfigurationException("Property value in map must be scalar or sequence", valueNode);
             }
         } else if (map.keySet().contains("resource")) {
-            // TODO: due to the logic of constructValueType, the following check is never true. Keep it?
             if (!(valueType == ValueType.STRING || valueType == ValueType.BINARY)) {
-                throw new ConfigurationException("Resource can only be used for value type 'binary' or 'string'", value);
+                throw new ConfigurationException("Resource can only be used for value type 'binary' or 'string'", map.get("type"));
             }
             final Node resourceNode = map.get("resource");
             final List<String> resources = asSingleOrSequenceOfStrScalars(resourceNode);
+            if (resources.size() == 0) {
+                throw new ConfigurationException("Resource value must define at least one value", resourceNode);
+            }
             final Value[] resourceValues = new Value[resources.size()];
             for (int i = 0; i < resources.size(); i++) {
-                // add check resource exists
+                final Source source = parent.getDefinition().getSource();
+                if (resourceInputProvider != null && !resourceInputProvider.hasResource(source, resources.get(i))) {
+                    throw new ConfigurationException("Cannot find resource '" + resources.get(i) + "'", resourceNode);
+                }
                 resourceValues[i] = new ValueImpl(valueType, resources.get(i));
             }
             switch (resourceNode.getNodeId()) {
@@ -374,6 +379,10 @@ public class ConfigurationParser {
         final String type = asStringScalar(node);
         switch (type) {
             case "binary": return ValueType.BINARY;
+            case "boolean": return ValueType.BOOLEAN;
+            case "date": return ValueType.DATE;
+            case "double": return ValueType.DOUBLE;
+            case "long": return ValueType.LONG;
             case "string": return ValueType.STRING;
         }
         throw new ConfigurationException("Unrecognized value type: '" + type + "'", node);
@@ -555,56 +564,6 @@ public class ConfigurationParser {
         } catch (final URISyntaxException e) {
             throw new ConfigurationException("Scalar must be formatted as an URI", node);
         }
-    }
-
-    private List<Module> collectModules(Map<String, Configuration> configurations) {
-        final List<Module> modules = new ArrayList<>();
-        for (Configuration configuration : configurations.values()) {
-            for (Project project : configuration.getProjects().values()) {
-                for (Module module : project.getModules().values()) {
-                    modules.add(module);
-                }
-            }
-        }
-        return modules;
-    }
-
-    private ModuleImpl getModuleForSource(final Map<String, Configuration> configurations, final URL url) {
-        final String[] parts = url.getPath().split("/");
-        if (parts.length < 4) {
-            throw new IllegalArgumentException(
-                    MessageFormat.format(
-                            "URL ''{0}'' must consist of at least 4 elements, found {1} element(s)",
-                            url.getPath(), parts.length));
-        }
-        final String configurationName = parts[parts.length - 4];
-        final String projectName = parts[parts.length - 3];
-        final String moduleName = parts[parts.length - 2];
-        final Configuration configuration = configurations.get(configurationName);
-        if (configuration == null) {
-            throw new IllegalArgumentException(MessageFormat.format("Configuration ''{0}'' not found", configurationName));
-        }
-        final Project project = configuration.getProjects().get(projectName);
-        if (project == null) {
-            throw new IllegalArgumentException(MessageFormat.format("Project ''{0}'' not found in configuration ''{1}''", projectName, configurationName));
-        }
-        final Module module = project.getModules().get(moduleName);
-        if (module == null) {
-            throw new IllegalArgumentException(MessageFormat.format("Module ''{0}'' not found in project ''{1}''", moduleName, projectName));
-        }
-        return (ModuleImpl) module;
-    }
-
-    private String calculateRelativePath(final URL repoConfigURL, final URL sourceURL) throws IOException {
-        final int position = repoConfigURL.getPath().lastIndexOf("repo-config.yaml");
-        if (position == -1) {
-            throw new IOException("URL does not end with 'repo-config.yaml': " + repoConfigURL.getPath());
-        }
-        final String prefix = repoConfigURL.getPath().substring(0, position) + "repo-config/";
-        if (!sourceURL.getPath().startsWith(prefix)) {
-            throw new IOException("URLs do not start with expected prefix: " + sourceURL.getPath() + "; expected prefix " + prefix);
-        }
-        return sourceURL.getPath().substring(prefix.length());
     }
 
 }

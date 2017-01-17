@@ -16,12 +16,10 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +38,7 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.api.model.ValueType;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.emitter.Emitter;
 import org.yaml.snakeyaml.nodes.MappingNode;
@@ -54,38 +53,22 @@ import org.yaml.snakeyaml.serializer.Serializer;
 
 public class ConfigurationSerializer {
 
-    public void serializeNode(final Path destination, final Map<String, Configuration> configurations) throws IOException {
-        serializeRepoConfig(destination, configurations);
+    private List<String> resources = new ArrayList<>();
 
-        for (Configuration configuration : configurations.values()) {
-            for (Project project: configuration.getProjects().values()) {
-                for (Module module : project.getModules().values()) {
-                    for (Source source : module.getSources().values()) {
-                        serializeSource(destination, source);
-                    }
-                }
-            }
-        }
-    }
-
-    private void serializeRepoConfig(final Path destination, final Map<String, Configuration> configurations) throws IOException {
+    public void serializeRepoConfig(final OutputStream outputStream, final Map<String, Configuration> configurations) throws IOException {
         final Node node = representRepoConfig(configurations);
-        serializeNode(destination.resolve("repo-config.yaml"), node);
+        serializeNode(outputStream, node);
     }
 
-    private void serializeSource(final Path destination, final Source source) throws IOException {
-        final Path sourcePath = Paths.get(source.getPath());
-        if (sourcePath.isAbsolute()) {
-            throw new IOException("Source must not specify an absolute path: " + source.getPath());
-        }
-
+    public List<String> serializeSource(final OutputStream outputStream, final Source source) throws IOException {
+        resources = new ArrayList<>();
         final Node node = representSource(source);
-        serializeNode(destination.resolve("repo-config").resolve(sourcePath), node);
+        serializeNode(outputStream, node);
+        return resources;
     }
 
-    private void serializeNode(final Path path, final Node node) throws IOException {
-        Files.createDirectories(path.getParent());
-        final Writer writer = new PrintWriter(path.toFile(), StandardCharsets.UTF_8.toString());
+    private void serializeNode(final OutputStream outputStream, final Node node) throws IOException {
+        final Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
         final DumperOptions dumperOptions = new DumperOptions();
         dumperOptions.setIndicatorIndent(2);
         dumperOptions.setIndent(4);
@@ -252,7 +235,7 @@ public class ConfigurationSerializer {
             return property.getValue().isResource();
         }
 
-        if (property.getValues().length == 0) {
+        if (property.getValues().length == 0 && property.getValueType() != ValueType.STRING) {
             return true;
         }
 
@@ -262,16 +245,22 @@ public class ConfigurationSerializer {
     private Node representPropertyUsingMap(final DefinitionProperty property) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
         valueMapTuples.add(createStrStrTuple("type", property.getValueType().name().toLowerCase()));
-
-        final String key = hasResourceValues(property) ? "resource" : "value";
+        final boolean hasResourceValues = hasResourceValues(property);
+        final String key = hasResourceValues ? "resource" : "value";
 
         if (property.getType() == PropertyType.SINGLE) {
             final Value value = property.getValue();
             valueMapTuples.add(new NodeTuple(createStrScalar(key), representValue(value)));
+            if (hasResourceValues) {
+                resources.add(value.getString());
+            }
         } else {
             final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
             for (Value value : property.getValues()) {
                 valueNodes.add(representValue(value));
+                if (hasResourceValues) {
+                    resources.add(value.getString());
+                }
             }
             valueMapTuples.add(createStrSeqTuple(key, valueNodes, true));
         }
