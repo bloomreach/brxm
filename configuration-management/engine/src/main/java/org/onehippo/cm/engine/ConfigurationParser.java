@@ -305,6 +305,7 @@ public class ConfigurationParser {
             }
             final Value[] resourceValues = new Value[resources.size()];
             for (int i = 0; i < resources.size(); i++) {
+                // TODO: assert that resource is specified using a *relative* path
                 final Source source = parent.getDefinition().getSource();
                 if (resourceInputProvider != null && !resourceInputProvider.hasResource(source, resources.get(i))) {
                     throw new ConfigurationException("Cannot find resource '" + resources.get(i) + "'", resourceNode);

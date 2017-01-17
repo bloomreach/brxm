@@ -45,6 +45,7 @@ public class FileConfigurationWriter {
             return new FileOutputStream(getResourcePath(source, resourcePath).toFile());
         }
 
+        // TODO share duplicated logic (see FileConfigurationReader) through FileConfigurationUtils?
         private Path getResourcePath(final Source source, final String resourceRelPath) {
             return modulePath.resolve(source.getPath()).getParent().resolve(resourceRelPath);
         }
@@ -94,6 +95,7 @@ public class FileConfigurationWriter {
 
     private OutputStream getSourceOutputStream(final Path modulePath, final Source source) throws IOException {
         final Path sourceRelPath = Paths.get(source.getPath());
+        // TODO should this not be caught when reading the configuration?
         if (sourceRelPath.isAbsolute()) {
             throw new IOException("Source must not specify an absolute path: " + source.getPath());
         }

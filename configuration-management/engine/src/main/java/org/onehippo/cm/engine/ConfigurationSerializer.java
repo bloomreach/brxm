@@ -61,6 +61,8 @@ public class ConfigurationSerializer {
     }
 
     public List<String> serializeSource(final OutputStream outputStream, final Source source) throws IOException {
+        // TODO: not passing in 'resources' as parameter but using an instance variable makes this serializer instance
+        // not thread-safe. I believe we should try to avoid that.
         resources = new ArrayList<>();
         final Node node = representSource(source);
         serializeNode(outputStream, node);
