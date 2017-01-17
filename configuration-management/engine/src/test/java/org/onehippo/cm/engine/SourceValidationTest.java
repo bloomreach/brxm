@@ -286,6 +286,75 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void configWithRelativePathKey() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - path/to/node: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+
+        assertConfigurationException(root, firstTuple(config0).getKeyNode(), "Path must start with a slash");
+    }
+
+    @Test
+    public void configWithDoubleSlashPathKey() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - //:\n"
+                + "    - property: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+
+        assertConfigurationException(root, firstTuple(config0).getKeyNode(),
+                "Path must not contain (unescaped) double slashes");
+    }
+
+    @Test
+    public void configWithPathKeyIncludingDoubleSlashes() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to//node:\n"
+                + "    - property: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+
+        assertConfigurationException(root, firstTuple(config0).getKeyNode(),
+                "Path must not contain (unescaped) double slashes");
+    }
+
+    @Test
+    public void configWithPathKeyIncludingDoubleSlashesAndEscapes() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to\\\\//node:\n"
+                + "    - property: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+
+        assertConfigurationException(root, firstTuple(config0).getKeyNode(),
+                "Path must not contain (unescaped) double slashes");
+    }
+
+    @Test
+    public void configWithPathKeyWithTrailingSlash() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node/:\n"
+                + "    - property: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+
+        assertConfigurationException(root, firstTuple(config0).getKeyNode(),
+                "Path must not end with (unescaped) slash");
+    }
+
+
+    @Test
     public void configWithScalarDefinition() {
         final String yaml = "instructions:\n"
                 + "- config:\n"
@@ -353,66 +422,6 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
 
         assertConfigurationException(root, firstTuple(propertyMap).getKeyNode(), "Scalar must be a string");
-    }
-
-    @Test
-    public void configWithDefinitionWithDoubleSlashPathKey() {
-        final String yaml = "instructions:\n"
-                + "- config:\n"
-                + "  - /path/to/node:\n"
-                + "    - //: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstTupleFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertConfigurationException(root, firstTuple(propertyMap).getKeyNode(),
-                "Path must not contain (unescaped) double slashes");
-    }
-
-    @Test
-    public void configWithDefinitionWithPathKeyIncludingDoubleSlashes() {
-        final String yaml = "instructions:\n"
-                + "- config:\n"
-                + "  - /path/to/node:\n"
-                + "    - /path/to//node: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstTupleFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertConfigurationException(root, firstTuple(propertyMap).getKeyNode(),
-                "Path must not contain (unescaped) double slashes");
-    }
-
-    @Test
-    public void configWithDefinitionWithPathKeyIncludingDoubleSlashesAndEscapes() {
-        final String yaml = "instructions:\n"
-                + "- config:\n"
-                + "  - /path/to/node:\n"
-                + "    - /path/to\\\\//node: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstTupleFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertConfigurationException(root, firstTuple(propertyMap).getKeyNode(),
-                "Path must not contain (unescaped) double slashes");
-    }
-
-    @Test
-    public void configWithDefinitionWithTrailingSlashPathKey() {
-        final String yaml = "instructions:\n"
-                + "- config:\n"
-                + "  - /path/to/node:\n"
-                + "    - /path/to/node/: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstTupleFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertConfigurationException(root, firstTuple(propertyMap).getKeyNode(),
-                "Path must not end with (unescaped) slash");
     }
 
     @Test

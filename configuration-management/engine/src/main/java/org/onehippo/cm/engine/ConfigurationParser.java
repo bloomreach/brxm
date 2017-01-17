@@ -204,7 +204,7 @@ public class ConfigurationParser {
         final Map<Node, Node> definitions = asOrderedMap(src);
         for (Node keyNode : definitions.keySet()) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
-            final String key = asDefinitionKeyScalar(keyNode);
+            final String key = asPathScalar(keyNode);
             constructDefinitionNode(key, definitions.get(keyNode), definition);
         }
     }
@@ -213,7 +213,7 @@ public class ConfigurationParser {
         final Map<Node, Node> definitions = asOrderedMap(src);
         for (Node keyNode : definitions.keySet()) {
             final ContentDefinitionImpl definition = parent.addContentDefinition();
-            final String key = asDefinitionKeyScalar(keyNode);
+            final String key = asPathScalar(keyNode);
             constructDefinitionNode(key, definitions.get(keyNode), definition);
         }
     }
@@ -228,7 +228,7 @@ public class ConfigurationParser {
     private void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node value) {
         final Map<Node, Node> children = asOrderedMap(value);
         for (Node keyNode : children.keySet()) {
-            final String key = asDefinitionKeyScalar(keyNode);
+            final String key = asStringScalar(keyNode);
             if (key.startsWith("/")) {
                 final String name = key.substring(1);
                 constructDefinitionNode(name, children.get(keyNode), definitionNode);
@@ -492,41 +492,43 @@ public class ConfigurationParser {
         return scalarNode.getValue();
     }
 
-    private String asDefinitionKeyScalar(final Node node) {
-        final String definitionKey = asStringScalar(node);
+    private String asPathScalar(final Node node) {
+        final String path = asStringScalar(node);
 
-        if (definitionKey.startsWith("/")) {
-            // definitionKey represents a node-path, where slashes express the root node or node name borders.
-            // we validate that slashes *inside* node names are \-escaped correctly:
-            int slash = 0; // count consecutive slashes
-            boolean escaped = false;
-            for (int i = 0; i < definitionKey.length(); i++) {
-                switch (definitionKey.charAt(i)) {
-                    case '/':
-                        if (slash > 0) {
-                            throw new ConfigurationException("Path must not contain (unescaped) double slashes", node);
-                        }
-                        if (!escaped) {
-                            slash++;
-                        }
-                        escaped = false;
-                        break;
-                    case '\\':
-                        slash = 0;
-                        escaped = !escaped;
-                        break;
-                    default:
-                        slash = 0;
-                        escaped = false;
-                        break;
-                }
-            }
-            if (slash > 0 && !isRootNodePath(definitionKey)) {
-                throw new ConfigurationException("Path must not end with (unescaped) slash", node);
-            }
+        if (!path.startsWith("/")) {
+            throw new ConfigurationException("Path must start with a slash", node);
         }
 
-        return definitionKey;
+        // 'path' represents a node-path, where slashes indicate the root node or node name borders.
+        // we validate that slashes *inside* node names are \-escaped correctly:
+        int slash = 0; // count consecutive slashes
+        boolean escaped = false;
+        for (int i = 0; i < path.length(); i++) {
+            switch (path.charAt(i)) {
+                case '/':
+                    if (slash > 0) {
+                        throw new ConfigurationException("Path must not contain (unescaped) double slashes", node);
+                    }
+                    if (!escaped) {
+                        slash++;
+                    }
+                    escaped = false;
+                    break;
+                case '\\':
+                    slash = 0;
+                    escaped = !escaped;
+                    break;
+                default:
+                    slash = 0;
+                    escaped = false;
+                    break;
+            }
+        }
+        if (slash > 0 && !isRootNodePath(path)) {
+            throw new ConfigurationException("Path must not end with (unescaped) slash", node);
+        }
+
+        return path;
     }
 
     private boolean isRootNodePath(final String nodePath) {
