@@ -327,6 +327,7 @@ class OverlayService {
       overlayElement.toggleClass('hippo-overlay-element-container-disabled', structureElement.isDisabled());
     }
 
+    this._syncExperimentState(structureElement, overlayElement);
     this._syncPosition(overlayElement, boxElement);
   }
 
@@ -342,6 +343,13 @@ class OverlayService {
         return this._isEditMode() && !this.isInAddMode && this.DomService.isVisible(boxElement);
       default:
         return this._isEditMode() && !this.isInAddMode;
+    }
+  }
+
+  _syncExperimentState(structureElement, overlayElement) {
+    if (this._hasExperiment(structureElement)) {
+      const label = this.ExperimentStateService.getExperimentStateLabel(structureElement);
+      overlayElement.find('.hippo-overlay-experiment-state-text').text(label);
     }
   }
 

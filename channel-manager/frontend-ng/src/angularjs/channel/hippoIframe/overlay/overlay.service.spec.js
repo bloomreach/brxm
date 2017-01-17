@@ -18,6 +18,7 @@ describe('OverlayService', () => {
   let $q;
   let $rootScope;
   let CmsService;
+  let ExperimentStateService;
   let hstCommentsProcessorService;
   let OverlayService;
   let PageStructureService;
@@ -28,11 +29,12 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_$q_, _$rootScope_, _CmsService_, _hstCommentsProcessorService_, _OverlayService_,
+    inject((_$q_, _$rootScope_, _CmsService_, _ExperimentStateService_, _hstCommentsProcessorService_, _OverlayService_,
             _PageStructureService_, _RenderingService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       CmsService = _CmsService_;
+      ExperimentStateService = _ExperimentStateService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -233,6 +235,23 @@ describe('OverlayService', () => {
       const experimentStateText = experimentState.find('.hippo-overlay-experiment-state-text');
       expect(experimentStateText.length).toBe(1);
       expect(experimentStateText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
+
+      done();
+    });
+  });
+
+  it('updates the experiment state of components', (done) => {
+    loadIframeFixture(() => {
+      let componentWithExperiment = iframe('#hippo-overlay > .hippo-overlay-element-component').eq(2);
+      let experimentStateText = componentWithExperiment.find('.hippo-overlay-experiment-state-text');
+      expect(experimentStateText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
+
+      spyOn(ExperimentStateService, 'getExperimentStateLabel').and.returnValue('EXPERIMENT_LABEL_COMPLETED');
+      OverlayService.sync();
+
+      componentWithExperiment = iframe('#hippo-overlay > .hippo-overlay-element-component').eq(2);
+      experimentStateText = componentWithExperiment.find('.hippo-overlay-experiment-state-text');
+      expect(experimentStateText.html()).toBe('EXPERIMENT_LABEL_COMPLETED');
 
       done();
     });
