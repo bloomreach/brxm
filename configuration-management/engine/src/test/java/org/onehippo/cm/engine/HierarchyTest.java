@@ -34,7 +34,7 @@ import static org.junit.Assert.assertEquals;
 public class HierarchyTest extends AbstractBaseTest {
 
     @Test
-    public void expect_hierarchy_test_loads() throws IOException {
+    public void expect_hierarchy_test_loads() throws IOException, ParserException {
         final FileConfigurationReader.ReadResult result = readFromResource("/parser/hierarchy_test/repo-config.yaml");
         final Map<String, Configuration> configurations = result.getConfigurations();
         assertEquals(2, configurations.size());

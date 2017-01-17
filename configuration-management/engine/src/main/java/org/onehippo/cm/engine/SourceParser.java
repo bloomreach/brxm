@@ -69,12 +69,12 @@ public class SourceParser extends BaseParser {
         this.resourceInputProvider = resourceInputProvider;
     }
 
-    public void parse(final String path, final InputStream inputStream, final ModuleImpl parent) {
+    public void parse(final String path, final InputStream inputStream, final ModuleImpl parent) throws ParserException {
         final Node node = composeYamlNode(inputStream);
         constructSource(path, node, parent);
     }
 
-    protected void constructSource(final String path, final Node src, final ModuleImpl parent) {
+    protected void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException {
         final Map<String, Node> sourceMap = asMapping(src, new String[]{"instructions"}, null);
         final SourceImpl source = parent.addSource(path);
 
@@ -96,12 +96,12 @@ public class SourceParser extends BaseParser {
                     constructContentDefinitions(definitionNode, source);
                     break;
                 default:
-                    throw new ConfigurationException("Unknown instruction type '" + definitionName + "'", definitionKeyNode);
+                    throw new ParserException("Unknown instruction type '" + definitionName + "'", definitionKeyNode);
             }
         }
     }
 
-    private void constructNamespaceDefinitions(final Node src, final SourceImpl parent) {
+    private void constructNamespaceDefinitions(final Node src, final SourceImpl parent) throws ParserException {
         for (Node node : asSequence(src)) {
             final Map<String, Node> namespaceMap = asMapping(node, new String[]{"prefix", "uri"}, null);
             final String prefix = asStringScalar(namespaceMap.get("prefix"));
@@ -110,14 +110,14 @@ public class SourceParser extends BaseParser {
         }
     }
 
-    private void constructNodeTypeDefinitions(final Node src, final SourceImpl parent) {
+    private void constructNodeTypeDefinitions(final Node src, final SourceImpl parent) throws ParserException {
         for (Node node : asSequence(src)) {
             final String cndString = asStringScalar(node);
             parent.addNodeTypeDefinition(cndString);
         }
     }
 
-    private void constructConfigDefinitions(final Node src, final SourceImpl parent) {
+    private void constructConfigDefinitions(final Node src, final SourceImpl parent) throws ParserException {
         final Map<Node, Node> definitions = asOrderedMap(src);
         for (Node keyNode : definitions.keySet()) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
@@ -126,7 +126,7 @@ public class SourceParser extends BaseParser {
         }
     }
 
-    private void constructContentDefinitions(final Node src, final SourceImpl parent) {
+    private void constructContentDefinitions(final Node src, final SourceImpl parent) throws ParserException {
         final Map<Node, Node> definitions = asOrderedMap(src);
         for (Node keyNode : definitions.keySet()) {
             final ContentDefinitionImpl definition = parent.addContentDefinition();
@@ -135,14 +135,14 @@ public class SourceParser extends BaseParser {
         }
     }
 
-    private void constructDefinitionNode(final String path, final Node value, final ContentDefinitionImpl definition) {
+    private void constructDefinitionNode(final String path, final Node value, final ContentDefinitionImpl definition) throws ParserException {
         final String name = StringUtils.substringAfterLast(path, "/");
         final DefinitionNodeImpl definitionNode = new DefinitionNodeImpl(path, name, definition);
         definition.setNode(definitionNode);
         populateDefinitionNode(definitionNode, value);
     }
 
-    private void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node value) {
+    private void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node value) throws ParserException {
         final Map<Node, Node> children = asOrderedMap(value);
         for (Node keyNode : children.keySet()) {
             final String key = asStringScalar(keyNode);
@@ -155,12 +155,12 @@ public class SourceParser extends BaseParser {
         }
     }
 
-    private void constructDefinitionNode(final String name, final Node value, final DefinitionNodeImpl parent) {
+    private void constructDefinitionNode(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
         final DefinitionNodeImpl node = parent.addNode(name);
         populateDefinitionNode(node, value);
     }
 
-    private void constructDefinitionProperty(final String name, final Node value, final DefinitionNodeImpl parent) {
+    private void constructDefinitionProperty(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
         switch (value.getNodeId()) {
             case scalar:
                 constructDefinitionPropertyFromScalar(name, value, parent);
@@ -172,15 +172,15 @@ public class SourceParser extends BaseParser {
                 constructDefinitionPropertyFromMap(name, value, parent);
                 break;
             default:
-                throw new ConfigurationException("Property value must be scalar, sequence or map", value);
+                throw new ParserException("Property value must be scalar, sequence or map", value);
         }
     }
 
-    private void constructDefinitionPropertyFromScalar(final String name, final Node value, final DefinitionNodeImpl parent) {
+    private void constructDefinitionPropertyFromScalar(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
         parent.addProperty(name, constructValueFromScalar(value));
     }
 
-    private void constructDefinitionPropertyFromSequence(final String name, final Node value, final DefinitionNodeImpl parent) {
+    private void constructDefinitionPropertyFromSequence(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
         final Value[] values = constructValuesFromSequence(value);
 
         if (values.length == 0) {
@@ -190,7 +190,7 @@ public class SourceParser extends BaseParser {
         }
     }
 
-    private void constructDefinitionPropertyFromMap(final String name, final Node value, final DefinitionNodeImpl parent) {
+    private void constructDefinitionPropertyFromMap(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
         final Map<String, Node> map = asMapping(value, new String[0], new String[]{"type","value","resource"});
 
         final ValueType valueType;
@@ -209,28 +209,28 @@ public class SourceParser extends BaseParser {
                 final Value[] propertyValues = constructValuesFromSequence(valueNode);
                 parent.addProperty(name, valueType, propertyValues);
             } else {
-                throw new ConfigurationException("Property value in map must be scalar or sequence", valueNode);
+                throw new ParserException("Property value in map must be scalar or sequence", valueNode);
             }
         } else if (map.keySet().contains("resource")) {
             if (!(valueType == ValueType.STRING || valueType == ValueType.BINARY)) {
-                throw new ConfigurationException("Resource can only be used for value type 'binary' or 'string'", map.get("type"));
+                throw new ParserException("Resource can only be used for value type 'binary' or 'string'", map.get("type"));
             }
             final Node resourceNode = map.get("resource");
             final List<String> resources = asSingleOrSequenceOfStrScalars(resourceNode);
             if (resources.size() == 0) {
-                throw new ConfigurationException("Resource value must define at least one value", resourceNode);
+                throw new ParserException("Resource value must define at least one value", resourceNode);
             }
 
             final Value[] resourceValues = new Value[resources.size()];
             for (int i = 0; i < resources.size(); i++) {
                 final String resourcePath = resources.get(i);
                 if (isInvalidResourcePath(resourcePath)) {
-                    throw new ConfigurationException("Resource path is not valid: '" + resourcePath
+                    throw new ParserException("Resource path is not valid: '" + resourcePath
                             + "'; a resource path must be relative and must not contain ..", resourceNode);
                 }
                 final Source source = parent.getDefinition().getSource();
                 if (resourceInputProvider != null && !resourceInputProvider.hasResource(source, resourcePath)) {
-                    throw new ConfigurationException("Cannot find resource '" + resourcePath + "'", resourceNode);
+                    throw new ParserException("Cannot find resource '" + resourcePath + "'", resourceNode);
                 }
                 resourceValues[i] = new ValueImpl(valueType, resourcePath);
             }
@@ -244,10 +244,10 @@ public class SourceParser extends BaseParser {
                     break;
                 default:
                     // should never happen ...
-                    throw new ConfigurationException("Resource value must be scalar or sequence", resourceNode);
+                    throw new ParserException("Resource value must be scalar or sequence", resourceNode);
             }
         } else {
-            throw new ConfigurationException("Property values represented as map must have a 'value' or 'resource' key", value);
+            throw new ParserException("Property values represented as map must have a 'value' or 'resource' key", value);
         }
     }
 
@@ -255,7 +255,7 @@ public class SourceParser extends BaseParser {
         return resourcePath.contains("..") || Paths.get(resourcePath).isAbsolute();
     }
 
-    private Value constructValueFromScalar(final Node node) {
+    private Value constructValueFromScalar(final Node node) throws ParserException {
         final ScalarNode scalar = asScalar(node);
         final Object object = scalarConstructor.constructScalarNode(scalar);
 
@@ -278,10 +278,10 @@ public class SourceParser extends BaseParser {
             return new ValueImpl((Calendar) object);
         }
 
-        throw new ConfigurationException("Tag not recognized: " + scalar.getTag(), node);
+        throw new ParserException("Tag not recognized: " + scalar.getTag(), node);
     }
 
-    private Value[] constructValuesFromSequence(final Node value) {
+    private Value[] constructValuesFromSequence(final Node value) throws ParserException {
         final List<Node> valueNodes = asSequence(value);
 
         ValueType valueType = null;
@@ -291,7 +291,7 @@ public class SourceParser extends BaseParser {
             if (valueType == null) {
                 valueType = values[i].getType();
             } else if (valueType != values[i].getType()) {
-                throw new ConfigurationException(
+                throw new ParserException(
                         MessageFormat.format(
                                 "Property values must all be of the same type, found value type ''{0}'' as well as ''{1}''",
                                 valueType,
@@ -303,7 +303,7 @@ public class SourceParser extends BaseParser {
         return values;
     }
 
-    private ValueType constructValueType(final Node node) {
+    private ValueType constructValueType(final Node node) throws ParserException {
         final String type = asStringScalar(node);
         switch (type) {
             case "binary": return ValueType.BINARY;
@@ -313,7 +313,7 @@ public class SourceParser extends BaseParser {
             case "long": return ValueType.LONG;
             case "string": return ValueType.STRING;
         }
-        throw new ConfigurationException("Unrecognized value type: '" + type + "'", node);
+        throw new ParserException("Unrecognized value type: '" + type + "'", node);
     }
 
 }

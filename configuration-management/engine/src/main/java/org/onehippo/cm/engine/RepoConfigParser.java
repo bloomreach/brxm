@@ -27,7 +27,7 @@ import org.yaml.snakeyaml.nodes.Node;
 
 public class RepoConfigParser extends BaseParser {
 
-    public Map<String, Configuration> parse(final InputStream inputStream) {
+    public Map<String, Configuration> parse(final InputStream inputStream) throws ParserException {
         final Node node = composeYamlNode(inputStream);
 
         final Map<String, Configuration> result = new LinkedHashMap<>();
@@ -40,7 +40,7 @@ public class RepoConfigParser extends BaseParser {
         return result;
     }
 
-    private void constructConfiguration(final Node src, final Map<String, Configuration> parent) {
+    private void constructConfiguration(final Node src, final Map<String, Configuration> parent) throws ParserException {
         final Map<String, Node> configurationMap = asMapping(src, new String[]{"name", "projects"}, new String[]{"after"});
         final String name = asStringScalar(configurationMap.get("name"));
         final ConfigurationImpl configuration = new ConfigurationImpl(name);
@@ -52,7 +52,7 @@ public class RepoConfigParser extends BaseParser {
         }
     }
 
-    private void constructProject(final Node src, final ConfigurationImpl parent) {
+    private void constructProject(final Node src, final ConfigurationImpl parent) throws ParserException {
         final Map<String, Node> sourceMap = asMapping(src, new String[]{"name", "modules"}, new String[]{"after"});
         final String name = asStringScalar(sourceMap.get("name"));
         final ProjectImpl project = parent.addProject(name);
@@ -63,7 +63,7 @@ public class RepoConfigParser extends BaseParser {
         }
     }
 
-    private void constructModule(final Node src, final ProjectImpl parent) {
+    private void constructModule(final Node src, final ProjectImpl parent) throws ParserException {
         final Map<String, Node> map = asMapping(src, new String[]{"name"}, new String[]{"after"});
         final String name = asStringScalar(map.get("name"));
         final ModuleImpl module = parent.addModule(name);

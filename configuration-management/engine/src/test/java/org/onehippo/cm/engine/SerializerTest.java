@@ -52,12 +52,12 @@ public class SerializerTest extends AbstractBaseTest {
     public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
-    public void read_write_hierarchy_test() throws IOException {
+    public void read_write_hierarchy_test() throws IOException, ParserException {
         readAndWrite("/parser/hierarchy_test/repo-config.yaml");
     }
 
     @Test
-    public void read_write_value_test() throws IOException {
+    public void read_write_value_test() throws IOException, ParserException {
         readAndWrite("/parser/value_test/repo-config.yaml");
     }
 
@@ -120,7 +120,7 @@ public class SerializerTest extends AbstractBaseTest {
         return result;
     }
 
-    private void readAndWrite(final String repoConfig) throws IOException {
+    private void readAndWrite(final String repoConfig) throws IOException, ParserException {
         final FileConfigurationReader.ReadResult result = readFromResource(repoConfig);
 
         final FileConfigurationWriter writer = new FileConfigurationWriter();

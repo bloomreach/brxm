@@ -70,7 +70,7 @@ public class FileConfigurationReader {
         }
     }
 
-    public ReadResult read(final Path repoConfigPath) throws IOException {
+    public ReadResult read(final Path repoConfigPath) throws IOException, ParserException {
         final RepoConfigParser parser = new RepoConfigParser();
         final Map<String, Configuration> configurations =
                 parser.parse(new FileInputStream(repoConfigPath.toFile()));

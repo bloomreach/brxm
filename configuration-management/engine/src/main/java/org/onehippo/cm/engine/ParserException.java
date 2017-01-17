@@ -17,15 +17,15 @@ package org.onehippo.cm.engine;
 
 import org.yaml.snakeyaml.nodes.Node;
 
-class ConfigurationException extends RuntimeException {
+class ParserException extends Exception {
 
     private final Node node;
 
-    ConfigurationException(final String message) {
+    ParserException(final String message) {
         this(message, null);
     }
 
-    ConfigurationException(final String message, final Node node) {
+    ParserException(final String message, final Node node) {
         super(message);
         this.node = node;
     }

@@ -40,7 +40,7 @@ import static org.junit.Assert.fail;
 
 public abstract class AbstractBaseTest {
 
-    protected FileConfigurationReader.ReadResult readFromResource(final String resourceName) throws IOException {
+    protected FileConfigurationReader.ReadResult readFromResource(final String resourceName) throws IOException, ParserException {
         final Path repoConfig = find(resourceName);
         return new FileConfigurationReader().read(repoConfig);
     }

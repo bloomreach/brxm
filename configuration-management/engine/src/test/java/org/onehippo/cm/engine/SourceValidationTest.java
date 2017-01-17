@@ -671,7 +671,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         try {
             sourceParser.constructSource("sourcePath", inputNode, module);
             fail("An exception should have occurred");
-        } catch (ConfigurationException e) {
+        } catch (ParserException e) {
             assertEquals(exceptionMessage, e.getMessage());
             assertEquals(exceptionNode, e.getNode());
         }
