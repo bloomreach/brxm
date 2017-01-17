@@ -76,6 +76,26 @@ html {
   box-shadow: inset 0 0 160px 0 rgba(8, 120, 212, 0.25);
 }
 
+.hippo-overlay-experiment-state {
+  align-items: center;
+  border: 1px solid #0877d1;
+  background-color: #0877d1;
+  color: #ffffff;
+  fill: #ffffff;
+  display: flex;
+  font-size: 12px;
+}
+
+.hippo-overlay-experiment-state-text {
+  display: none;
+  padding-left: 2px;
+  padding-right: 6px;
+}
+
+.hippo-overlay-element-component:hover .hippo-overlay-experiment-state-text {
+  display: block;
+}
+
 .hippo-overlay-label {
   color: #ffffff;
   display: flex;

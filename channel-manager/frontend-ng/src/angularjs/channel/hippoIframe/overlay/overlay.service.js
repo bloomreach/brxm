@@ -16,6 +16,7 @@
 
 import MutationSummary from 'mutation-summary';
 import contentLinkSvg from '../../../../images/html/edit-document.svg';
+import flaskSvg from '../../../../images/html/flask.svg';
 import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 
@@ -26,6 +27,7 @@ class OverlayService {
       $translate,
       CmsService,
       DomService,
+      ExperimentStateService,
       HippoIframeService,
       MaskService,
       PageStructureService,
@@ -38,6 +40,7 @@ class OverlayService {
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DomService = DomService;
+    this.ExperimentStateService = ExperimentStateService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
@@ -193,7 +196,11 @@ class OverlayService {
       <div class="hippo-overlay-element hippo-overlay-element-${structureElement.getType()}">
       </div>`);
 
-    this._addLabel(structureElement, overlayElement);
+    if (this._hasExperiment(structureElement)) {
+      this._addExperimentState(structureElement, overlayElement);
+    } else {
+      this._addLabel(structureElement, overlayElement);
+    }
     this._addMarkupAndBehavior(structureElement, overlayElement);
 
     structureElement.setOverlayElement(overlayElement);
@@ -218,6 +225,22 @@ class OverlayService {
       const element = container.getOverlayElement();
       element.off('click');
     });
+  }
+
+  _hasExperiment(structureElement) {
+    return structureElement.getType() === 'component' && this.ExperimentStateService.hasExperiment(structureElement);
+  }
+
+  _addExperimentState(component, overlayElement) {
+    const label = this.ExperimentStateService.getExperimentStateLabel(component);
+    const escapedText = this.DomService.escapeHtml(label);
+    const stateMarkup = $(`
+        <span class="hippo-overlay-experiment-state">
+          <span class="hippo-overlay-experiment-state-text">${escapedText}</span>
+        </span>
+    `);
+    stateMarkup.prepend(flaskSvg);
+    overlayElement.append(stateMarkup);
   }
 
   _addLabel(structureElement, overlayElement) {

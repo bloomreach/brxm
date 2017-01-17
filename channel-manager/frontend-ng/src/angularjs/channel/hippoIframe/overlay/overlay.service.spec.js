@@ -158,8 +158,8 @@ describe('OverlayService', () => {
 
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(7);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-component').length).toBe(2);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(8);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-component').length).toBe(3);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-container').length).toBe(3);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
@@ -218,6 +218,21 @@ describe('OverlayService', () => {
       expect(lock.length).toBe(1);
       expect(lock.find('svg').length).toBe(1);
       expect(lock.attr('title')).toBe('CONTAINER_INHERITED');
+
+      done();
+    });
+  });
+
+  it('renders the experiment state of components', (done) => {
+    loadIframeFixture(() => {
+      const componentWithExperiment = iframe('#hippo-overlay > .hippo-overlay-element-component').eq(2);
+      const experimentState = componentWithExperiment.find('.hippo-overlay-experiment-state');
+      expect(experimentState.length).toBe(1);
+      expect(experimentState.find('svg').length).toBe(1);
+
+      const experimentStateText = experimentState.find('.hippo-overlay-experiment-state-text');
+      expect(experimentStateText.length).toBe(1);
+      expect(experimentStateText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
 
       done();
     });
@@ -386,7 +401,7 @@ describe('OverlayService', () => {
     OverlayService.setMode('edit');
 
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(7);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(8);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
@@ -399,7 +414,7 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
-      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(6);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(7);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
