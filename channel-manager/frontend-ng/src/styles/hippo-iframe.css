@@ -146,11 +146,16 @@ html {
 }
 
 .hippo-overlay-element-link:hover {
-  background-color: #ff5203;
+  background-color: #e06717;
 }
 
 .hippo-overlay-element-link:active {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .4);
+}
+
+.hippo-overlay-element-link.hippo-overlay-element-link-clicked {
+  transition-duration: 100ms;
+  background-color: #ff741a;
 }
 
 .hippo-overlay-element-content-link {

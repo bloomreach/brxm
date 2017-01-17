@@ -19,11 +19,15 @@ import contentLinkSvg from '../../../../images/html/edit-document.svg';
 import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 
+// This duration is the same as in the styling is determined for the transition duration
+const LINK_BUTTON_TRANSITION_DURATION = 300;
+
 class OverlayService {
   constructor(
       $log,
       $rootScope,
       $translate,
+      $timeout,
       CmsService,
       DomService,
       HippoIframeService,
@@ -36,6 +40,7 @@ class OverlayService {
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.$translate = $translate;
+    this.$timeout = $timeout;
     this.CmsService = CmsService;
     this.DomService = DomService;
     this.HippoIframeService = HippoIframeService;
@@ -274,6 +279,7 @@ class OverlayService {
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
     this._addClickHandler(overlayElement, () => {
+      this._linkButtonTransition(overlayElement);
       this.CmsService.publish('open-content', structureElement.getUuid());
     });
   }
@@ -281,6 +287,7 @@ class OverlayService {
   _addMenuLinkClickHandler(structureElement, overlayElement) {
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
+        this._linkButtonTransition(overlayElement);
         this.editMenuHandler(structureElement.getUuid());
       });
     });
@@ -291,6 +298,13 @@ class OverlayService {
       event.stopPropagation();
       handler();
     });
+  }
+
+  _linkButtonTransition(element) {
+    element.addClass('hippo-overlay-element-link-clicked');
+    this.$timeout(() => {
+      element.removeClass('hippo-overlay-element-link-clicked');
+    }, LINK_BUTTON_TRANSITION_DURATION);
   }
 
   _syncElements(structureElement, overlayElement) {
