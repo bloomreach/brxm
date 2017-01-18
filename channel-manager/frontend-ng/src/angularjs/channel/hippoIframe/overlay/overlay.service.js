@@ -20,7 +20,7 @@ import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 
 // This duration is the same as in the styling is determined for the transition duration
-const LINK_BUTTON_TRANSITION_DURATION = 300;
+const LINK_BUTTON_TRANSITION_DURATION = 100;
 
 class OverlayService {
   constructor(
@@ -278,8 +278,9 @@ class OverlayService {
   }
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
+    this._linkButtonTransition(overlayElement);
+
     this._addClickHandler(overlayElement, () => {
-      this._linkButtonTransition(overlayElement);
       this.CmsService.publish('open-content', structureElement.getUuid());
     });
   }
@@ -301,10 +302,13 @@ class OverlayService {
   }
 
   _linkButtonTransition(element) {
-    element.addClass('hippo-overlay-element-link-clicked');
-    this.$timeout(() => {
+    element.on('mousedown', () => {
+      element.addClass('hippo-overlay-element-link-clicked');
+    });
+
+    element.on('mouseup', () => {
       element.removeClass('hippo-overlay-element-link-clicked');
-    }, LINK_BUTTON_TRANSITION_DURATION);
+    });
   }
 
   _syncElements(structureElement, overlayElement) {
