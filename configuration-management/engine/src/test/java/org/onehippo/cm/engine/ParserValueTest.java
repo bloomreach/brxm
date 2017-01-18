@@ -51,7 +51,7 @@ public class ParserValueTest extends AbstractBaseTest {
         final Source source = assertSource(module, "base.yaml", 3);
 
         final ConfigDefinition baseDefinition = assertDefinition(source, 0, ConfigDefinition.class);
-        final DefinitionNode baseNode = assertNode(baseDefinition, "/base", "base", baseDefinition, false, 0, 6);
+        final DefinitionNode baseNode = assertNode(baseDefinition, "/base", "base", baseDefinition, false, 0, 7);
         assertProperty(baseNode, "/base/binary", "binary", baseDefinition, "hello world".getBytes());
         assertProperty(baseNode, "/base/boolean", "boolean", baseDefinition, true);
         final Calendar calendar = Calendar.getInstance();
@@ -60,7 +60,8 @@ public class ParserValueTest extends AbstractBaseTest {
         calendar.set(2015, 9, 21, 7, 28, 0);
         assertProperty(baseNode, "/base/date", "date", baseDefinition, calendar);
         assertProperty(baseNode, "/base/double", "double", baseDefinition, 3.1415);
-        assertProperty(baseNode, "/base/long", "long", baseDefinition, (long) 42);
+        assertProperty(baseNode, "/base/longAsInt", "longAsInt", baseDefinition, (long) 42);
+        assertProperty(baseNode, "/base/longAsLong", "longAsLong", baseDefinition, 4200000000L);
         assertProperty(baseNode, "/base/string", "string", baseDefinition, "hello world");
 
         final ConfigDefinition stringDefinition = assertDefinition(source, 1, ConfigDefinition.class);

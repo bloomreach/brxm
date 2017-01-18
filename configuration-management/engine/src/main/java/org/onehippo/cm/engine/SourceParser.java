@@ -274,7 +274,13 @@ public class SourceParser extends AbstractBaseParser {
             return new ValueImpl((Double) object);
         }
         if (Tag.INT.equals(scalar.getTag())) {
-            return new ValueImpl(((Integer) object).longValue());
+            if (object instanceof Integer) {
+                return new ValueImpl(((Integer)object).longValue());
+            } else if (object instanceof Long) {
+                return new ValueImpl((Long)object);
+            } else {
+                throw new ParserException("Value is too big to fit into a long, use a property of type decimal", node);
+            }
         }
         if (Tag.STR.equals(scalar.getTag())) {
             return new ValueImpl((String) object);

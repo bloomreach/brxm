@@ -440,6 +440,21 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void configWithDefinitionWithBigInteger() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property: 31415926535897932384626433832795028841971";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+
+        assertParserException(root, firstTuple(propertyMap).getValueNode(),
+                "Value is too big to fit into a long, use a property of type decimal");
+    }
+
+    @Test
     public void configWithDefinitionWithMixedSequenceTypes() {
         final String yaml = "instructions:\n"
                 + "- config:\n"
