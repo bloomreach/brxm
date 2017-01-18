@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -176,8 +176,13 @@ public class ContentBeansService {
                             }
                         }
                         final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoEssentialsAnnotation(path, method.getMethodDeclaration());
-                        final boolean allowUpdate = annotation != null && annotation.isAllowModifications();
-                        if(allowUpdate) {
+                        final boolean allowMethodUpdate = annotation != null && annotation.isAllowModifications();
+                        final HippoEssentialsGeneratedObject classAnnotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
+                        final boolean allowClassUpdate = classAnnotation != null && classAnnotation.isAllowModifications();
+                        if(!allowClassUpdate) {
+                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method should be deleted, but modifications are disabled on the Bean class level: "
+                                    + internalName + " for class at " + path.toString()));
+                        } else if(allowMethodUpdate) {
                             log.info("@Missing declaration for: {}. Method will be deleted", internalName);
                             final boolean deleted = JavaSourceUtils.deleteMethod(method, path);
                             final String methodName = method.getMethodName();
@@ -632,8 +637,10 @@ public class ContentBeansService {
             }
             final ExistingMethodsVisitor methods = JavaSourceUtils.getMethodCollection(path);
             final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
-            final boolean allowUpdate = annotation != null && annotation.isAllowModifications();
+            final boolean allowMethodUpdate = annotation != null && annotation.isAllowModifications();
             final List<EssentialsGeneratedMethod> generatedMethods = methods.getGeneratedMethods();
+            final HippoEssentialsGeneratedObject classAnnotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
+            final boolean allowClassUpdate = classAnnotation != null && classAnnotation.isAllowModifications();
             for (EssentialsGeneratedMethod m : generatedMethods) {
                 final Type type = m.getMethodDeclaration().getReturnType2();
                 if (type.isSimpleType()) {
@@ -642,7 +649,10 @@ public class ContentBeansService {
                     // check if image type and different than new return type
                     if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
                         log.info("Found image type: {}", returnType);
-                        if (allowUpdate) {
+                        if(!allowClassUpdate) {
+                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method return type should be changed, but modifications are disabled at the Bean class level: "
+                                    + m.getInternalName() + " in the class at " + path.toString()));
+                        } else if (allowMethodUpdate) {
                             updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType));
                         } else{
                             context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method return type should be changed, but modifications are disabled: "
@@ -653,7 +663,10 @@ public class ContentBeansService {
                     final String returnType = JavaSourceUtils.getParameterizedType(type);
                     if (imageTypes.containsKey(returnType) && !returnType.equals(newReturnType)) {
                         log.info("Found image type: {}", returnType);
-                        if (allowUpdate) {
+                        if(!allowClassUpdate) {
+                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method return type should be changed, but modifications are disabled at the Bean class level: "
+                                    + m.getInternalName() + " in the class at " + path.toString()));
+                        } else if (allowMethodUpdate) {
                             updateImageMethod(path, returnType, newReturnType, imageTypes.get(newReturnType));
                         }
                     }
@@ -755,17 +768,25 @@ public class ContentBeansService {
         if (existing.contains(name)) {
             log.debug("Property already exists {}. Checking if method signature has changed e.g. single value to multiple", name);
             final ExistingMethodsVisitor methodCollection = JavaSourceUtils.getMethodCollection(beanPath);
-
+            final HippoEssentialsGeneratedObject classAnnotation = JavaSourceUtils.getHippoGeneratedAnnotation(beanPath);
+            final boolean allowClassUpdate = classAnnotation != null && classAnnotation.isAllowModifications();
 
             final List<EssentialsGeneratedMethod> generatedMethods = methodCollection.getGeneratedMethods();
             for (EssentialsGeneratedMethod generatedMethod : generatedMethods) {
                 final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoEssentialsAnnotation(beanPath, generatedMethod.getMethodDeclaration());
-                final boolean allowUpdate = annotation != null && annotation.isAllowModifications();
+                final boolean allowMethodUpdate = annotation != null && annotation.isAllowModifications();
                 final String internalName = generatedMethod.getInternalName();
                 if (name.equals(internalName)) {
                     // check if single/multiple  changed:
                     if (generatedMethod.isMultiType() != multiple) {
-                        if (allowUpdate) {
+                        if(!allowClassUpdate) {
+                            // there was a change, however, class is marked as read only
+                            log.warn("Property changed (single/multiple): {}, but bean class changes not allowed", internalName);
+                            context.addPluginContextData(CONTEXT_BEAN_DATA, new BeanWriterLogEntry("Method return type should be changed, but modifications are disabled on the Bean class level: "
+                                    + generatedMethod.getMethodName() + " for class at " + beanPath.toString()));
+                            return false;
+                        }
+                        if (allowMethodUpdate) {
                             log.info("Property changed (single/multiple): {}", internalName);
                             return JavaSourceUtils.deleteMethod(generatedMethod, beanPath);
                         }else{
