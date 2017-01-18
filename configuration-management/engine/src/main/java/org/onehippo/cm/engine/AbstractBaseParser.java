@@ -39,11 +39,15 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
-public class BaseParser {
+public abstract class AbstractBaseParser {
 
-    protected Node composeYamlNode(final InputStream inputStream) {
+    protected Node composeYamlNode(final InputStream inputStream) throws ParserException {
         final Yaml yamlParser = new Yaml();
-        return yamlParser.compose(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        try {
+            return yamlParser.compose(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        } catch (RuntimeException e) {
+            throw new ParserException("Failed to parse YAML input", e);
+        }
     }
 
     /**

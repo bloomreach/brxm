@@ -32,7 +32,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.resolver.Resolver;
 import org.yaml.snakeyaml.serializer.Serializer;
 
-public class BaseSerializer {
+public abstract class AbstractBaseSerializer {
 
     protected void serializeNode(final OutputStream outputStream, final Node node) throws IOException {
         final Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);

@@ -31,7 +31,7 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
-public class RepoConfigSerializer extends BaseSerializer {
+public class RepoConfigSerializer extends AbstractBaseSerializer {
 
     public void serialize(final OutputStream outputStream, final Map<String, Configuration> configurations) throws IOException {
         final Node node = representRepoConfig(configurations);

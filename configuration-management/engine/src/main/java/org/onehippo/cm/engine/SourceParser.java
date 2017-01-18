@@ -17,6 +17,7 @@ package org.onehippo.cm.engine;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Calendar;
@@ -40,7 +41,7 @@ import org.yaml.snakeyaml.nodes.NodeId;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
-public class SourceParser extends BaseParser {
+public class SourceParser extends AbstractBaseParser {
 
     // After the composeYamlNode step, SnakeYaml does not yet provide parsed scalar values. An extension of the Constructor
     // class is needed to access the protected Constructor#construct method which uses the built-in parsers for the
@@ -60,10 +61,6 @@ public class SourceParser extends BaseParser {
     private static final ScalarConstructor scalarConstructor = new ScalarConstructor();
 
     private final ResourceInputProvider resourceInputProvider;
-
-    public SourceParser() {
-        resourceInputProvider = null;
-    }
 
     public SourceParser(final ResourceInputProvider resourceInputProvider) {
         this.resourceInputProvider = resourceInputProvider;
@@ -229,7 +226,7 @@ public class SourceParser extends BaseParser {
                             + "'; a resource path must be relative and must not contain ..", resourceNode);
                 }
                 final Source source = parent.getDefinition().getSource();
-                if (resourceInputProvider != null && !resourceInputProvider.hasResource(source, resourcePath)) {
+                if (!resourceInputProvider.hasResource(source, resourcePath)) {
                     throw new ParserException("Cannot find resource '" + resourcePath + "'", resourceNode);
                 }
                 resourceValues[i] = new ValueImpl(valueType, resourcePath);
@@ -251,8 +248,16 @@ public class SourceParser extends BaseParser {
         }
     }
 
-    private boolean isInvalidResourcePath(final String resourcePath) {
-        return resourcePath.contains("..") || Paths.get(resourcePath).isAbsolute();
+    private boolean isInvalidResourcePath(final String resourceString) {
+        final Path resourcePath = Paths.get(resourceString);
+
+        for (final Path pathElement : resourcePath) {
+            if (pathElement.toString().equals("..")) {
+                return true;
+            }
+        }
+
+        return resourcePath.isAbsolute();
     }
 
     private Value constructValueFromScalar(final Node node) throws ParserException {

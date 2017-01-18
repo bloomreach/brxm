@@ -38,7 +38,7 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 
-public class SourceSerializer extends BaseSerializer {
+public class SourceSerializer extends AbstractBaseSerializer {
 
     public void serialize(final OutputStream outputStream, final Source source, final Consumer<Value> resourceConsumer) throws IOException {
         final Node node = representSource(source, resourceConsumer);

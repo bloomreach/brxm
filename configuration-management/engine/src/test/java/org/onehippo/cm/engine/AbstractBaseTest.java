@@ -16,6 +16,7 @@
 package org.onehippo.cm.engine;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,6 +40,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 public abstract class AbstractBaseTest {
+
+    protected static final ResourceInputProvider DUMMY_RESOURCE_INPUT_PROVIDER = new ResourceInputProvider() {
+        @Override
+        public boolean hasResource(final Source source, final String resourcePath) {
+            return true;
+        }
+
+        @Override
+        public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+    };
 
     protected FileConfigurationReader.ReadResult readFromResource(final String resourceName) throws IOException, ParserException {
         final Path repoConfig = find(resourceName);

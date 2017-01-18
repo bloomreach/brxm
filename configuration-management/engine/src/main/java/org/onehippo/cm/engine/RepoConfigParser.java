@@ -25,7 +25,7 @@ import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 import org.yaml.snakeyaml.nodes.Node;
 
-public class RepoConfigParser extends BaseParser {
+public class RepoConfigParser extends AbstractBaseParser {
 
     public Map<String, Configuration> parse(final InputStream inputStream) throws ParserException {
         final Node node = composeYamlNode(inputStream);

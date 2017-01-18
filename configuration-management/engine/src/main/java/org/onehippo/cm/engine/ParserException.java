@@ -22,11 +22,19 @@ class ParserException extends Exception {
     private final Node node;
 
     ParserException(final String message) {
-        this(message, null);
+        this(message, null, null);
     }
 
     ParserException(final String message, final Node node) {
-        super(message);
+        this(message, node, null);
+    }
+
+    ParserException(final String message, final Throwable cause) {
+        this(message, null, cause);
+    }
+
+    ParserException(final String message, final Node node, final Throwable cause) {
+        super(message, cause);
         this.node = node;
     }
 
