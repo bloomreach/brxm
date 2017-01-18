@@ -48,6 +48,13 @@ class DragDropService {
     this.iframeJQueryElement.on('load', () => this._onLoad());
   }
 
+  _sync() {
+    if (this.drake) {
+      const containerBoxElements = this._getContainerBoxElements();
+      this.drake.containers.splice(0, this.drake.containers.length, ...containerBoxElements);
+    }
+  }
+
   _onLoad() {
     this.iframe = this.iframeJQueryElement[0].contentWindow;
     if (!this.iframe) {
@@ -60,6 +67,8 @@ class DragDropService {
       // "friendly HTTP error message" page instead (can be configured in IE and is enabled by default).
       // We cannot access anything on such custom pages.
     }
+
+    this.PageStructureService.registerChangeListener(() => this._sync());
   }
 
   _destroyDragula() {
@@ -77,15 +86,13 @@ class DragDropService {
     }
   }
 
-  enable(containers) {
+  enable() {
     if (!this.dragulaPromise) {
       this.dragulaPromise = this._injectDragula(this.iframe);
     }
 
     return this.dragulaPromise.then(() => {
-      const iframeContainerElements = containers
-        .filter(container => !container.isDisabled())
-        .map(container => container.getBoxElement()[0]);
+      const containerBoxElements = this._getContainerBoxElements();
 
       this.dragulaOptions = {
         ignoreInputTextSelection: false,
@@ -94,7 +101,7 @@ class DragDropService {
         accepts: (el, target) => this._isContainerEnabled(target),
       };
 
-      this.drake = this.iframe.dragula(iframeContainerElements, this.dragulaOptions);
+      this.drake = this.iframe.dragula(containerBoxElements, this.dragulaOptions);
       this.drake.on('drag', (el, source) => this._onStartDrag(source));
       this.drake.on('cloned', (clone, original) => this._onMirrorCreated(clone, original));
       this.drake.on('over', (el, container) => this._updateDragDirection(container));
@@ -123,6 +130,12 @@ class DragDropService {
   _isContainerEnabled(containerElement) {
     const container = this.PageStructureService.getContainerByIframeElement(containerElement);
     return container && !container.isDisabled();
+  }
+
+  _getContainerBoxElements() {
+    return this.PageStructureService.getContainers()
+        .filter(container => !container.isDisabled())
+        .map(container => container.getBoxElement()[0]);
   }
 
   replaceContainer(oldContainer, newContainer) {
