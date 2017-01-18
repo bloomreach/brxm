@@ -83,6 +83,10 @@ html {
   visibility: hidden;
 }
 
+.hippo-overlay-add-mode .hippo-overlay-label {
+  pointer-events: none;
+}
+
 .hippo-overlay-element-container > .hippo-overlay-label {
   border: 1px solid #697279;
   background-color: #697279;
