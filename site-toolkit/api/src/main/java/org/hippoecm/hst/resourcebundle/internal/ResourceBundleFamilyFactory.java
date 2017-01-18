@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,12 @@ import org.hippoecm.hst.resourcebundle.ResourceBundleFamily;
  * For example, implementations may load resource bundles to construct
  * a resource bundle family from JCR Repository, database, web resources, etc.
  * </P>
+ * <P>
+ * @deprecated the resource bundle family and its factory are internal to HST
+ * and should be neither implemented nor used by projects.
+ * </P>
  */
+@Deprecated
 public interface ResourceBundleFamilyFactory {
 
     /**
@@ -36,4 +41,12 @@ public interface ResourceBundleFamilyFactory {
      */
     ResourceBundleFamily createBundleFamily(String basename);
 
+    /**
+     * Creates and returns a resource bundle family based on the specified basename, with live or preview scope.
+     *
+     * @param basename basename of the resource bundle
+     * @param preview  if true, creates the bundle family for the preview user. If false, does the same for live user.
+     * @return
+     */
+    ResourceBundleFamily createBundleFamily(String basename, boolean preview);
 }

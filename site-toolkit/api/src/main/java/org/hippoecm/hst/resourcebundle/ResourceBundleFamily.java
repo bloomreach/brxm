@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,14 @@ import java.util.ResourceBundle;
  * default resource bundle or localized resource bundle, and each of which
  * shares the same basename.
  * </P>
+ * <P>
+ * @deprecated This interface is supposed to be used internally only, by the implementation
+ * of the {@link org.hippoecm.hst.resourcebundle.internal.ResourceBundleFamilyFactory}
+ * and the {@link org.hippoecm.hst.resourcebundle.internal.MutableResourceBundleRegistry}.
+ * From project code, you should limit yourself to *using* the registry only.
+ * </P>
  */
+@Deprecated
 public interface ResourceBundleFamily {
 
     /**
