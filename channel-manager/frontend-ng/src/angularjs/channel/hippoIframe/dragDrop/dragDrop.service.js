@@ -141,7 +141,7 @@ class DragDropService {
     this._dispatchMouseDownInIframe($event, component);
 
     const componentBoxElement = component.getBoxElement();
-    componentBoxElement.on(MOUSEUP_EVENT_NAME, this.$rootScope.$apply(() => this._onComponentClick(component)));
+    componentBoxElement.on(MOUSEUP_EVENT_NAME, () => this._onComponentClick(component));
     componentBoxElement.on(MOUSELEAVE_EVENT_NAME, () => this._onComponentLeave(component));
     componentBoxElement.addClass(COMPONENT_QA_CLASS);
   }
@@ -149,7 +149,10 @@ class DragDropService {
   _onComponentClick(component) {
     if (!this.isDragging()) {
       this._onStopDragOrClick(component.getBoxElement());
-      this.PageStructureService.showComponentProperties(component);
+
+      this.$rootScope.$apply(() => {
+        this.PageStructureService.showComponentProperties(component);
+      });
     }
   }
 

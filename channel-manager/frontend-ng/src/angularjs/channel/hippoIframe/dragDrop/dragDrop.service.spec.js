@@ -97,6 +97,7 @@ describe('DragDropService', () => {
 
   function loadIframeFixture(callback) {
     DragDropService.init(iframe, base);
+
     iframe.one('load', () => {
       const iframeWindow = iframe[0].contentWindow;
 
@@ -115,6 +116,7 @@ describe('DragDropService', () => {
         }
       });
     });
+
     iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/dragDrop/dragDrop.service.iframe.fixture.html`);
   }
 
@@ -229,7 +231,7 @@ describe('DragDropService', () => {
     });
   });
 
-  it('shows a component\'s properties when a component receives a mouseup event', (done) => {
+  it('shows a component\'s properties when a component receives a mouseup event', () => {
     loadIframeFixture(() => {
       const mockedMouseDownEvent = {
         clientX: 100,
@@ -243,7 +245,6 @@ describe('DragDropService', () => {
       const componentElement1 = component1.getBoxElement();
       componentElement1.on('mouseup', () => {
         expect(PageStructureService.showComponentProperties).toHaveBeenCalledWith(component1);
-        done();
       });
       componentElement1.trigger('mouseup');
     });
