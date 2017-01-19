@@ -208,7 +208,7 @@ html {
 }
 
 .hippo-overlay-permeable .hippo-overlay,
-.hippo-overlay-permeable .hippo-overlay-element-component {
+.hippo-overlay-permeable .hippo-overlay-element {
   pointer-events: none;
 }
 
