@@ -24,11 +24,11 @@ class ComponentCatalogController {
 
   onSelect(component) {
     this.ComponentCatalogService.selectComponent(component);
-    this.selectedComponent = component;
   }
 
   isComponentSelected(component) {
-    return this.MaskService.isMasked && this.selectedComponent === component;
+    const selectedComponent = this.ComponentCatalogService.getSelectedComponent();
+    return this.MaskService.isMasked && selectedComponent === component;
   }
 }
 
