@@ -19,9 +19,6 @@ import contentLinkSvg from '../../../../images/html/edit-document.svg';
 import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 
-// This duration is the same as in the styling is determined for the transition duration
-const LINK_BUTTON_TRANSITION_DURATION = 100;
-
 class OverlayService {
   constructor(
       $log,
@@ -286,9 +283,10 @@ class OverlayService {
   }
 
   _addMenuLinkClickHandler(structureElement, overlayElement) {
+    this._linkButtonTransition(overlayElement);
+
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
-        this._linkButtonTransition(overlayElement);
         this.editMenuHandler(structureElement.getUuid());
       });
     });
