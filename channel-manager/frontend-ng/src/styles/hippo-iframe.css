@@ -99,6 +99,7 @@ html {
   background-color: #0877d1;
 }
 
+.hippo-overlay-add-mode .hippo-overlay-label,
 .hippo-dragging .hippo-overlay-element-container > .hippo-overlay-label,
 .hippo-overlay-element-component:hover > .hippo-overlay-label,
 .hippo-overlay-element-container-empty:hover > .hippo-overlay-label {
