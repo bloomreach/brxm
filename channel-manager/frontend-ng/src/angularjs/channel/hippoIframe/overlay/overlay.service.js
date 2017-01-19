@@ -24,7 +24,6 @@ class OverlayService {
       $log,
       $rootScope,
       $translate,
-      $timeout,
       CmsService,
       DomService,
       HippoIframeService,
@@ -37,7 +36,6 @@ class OverlayService {
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.$translate = $translate;
-    this.$timeout = $timeout;
     this.CmsService = CmsService;
     this.DomService = DomService;
     this.HippoIframeService = HippoIframeService;
