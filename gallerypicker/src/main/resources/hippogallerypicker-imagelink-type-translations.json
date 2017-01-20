@@ -1,0 +1,9 @@
+{
+  "hippo:types": {
+    "hippogallerypicker:imagelink": {
+      "en": {
+        "jcr:name": "Image Link"
+      }
+    }
+  }
+}

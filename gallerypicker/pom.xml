@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 <!--
-    Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
 
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -149,6 +149,7 @@
           <include>**/*.css</include>
           <include>**/*.cnd</include>
           <include>**/*.xml</include>
+          <include>**/*.json</include>
         </includes>
       </resource>
     </resources>
