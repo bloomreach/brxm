@@ -357,20 +357,21 @@ public class SourceParser extends AbstractBaseParser {
      */
     private Value[] constructValuesFromSequence(final Node node) throws ParserException {
         final List<Node> valueNodes = asSequence(node);
-
-        ValueType valueType = null;
         final Value[] values = new Value[valueNodes.size()];
         for (int i = 0; i < valueNodes.size(); i++) {
             values[i] = constructValueFromScalar(valueNodes.get(i));
-            if (valueType == null) {
-                valueType = values[i].getType();
-            } else if (valueType != values[i].getType()) {
-                throw new ParserException(
-                        MessageFormat.format(
-                                "Property values must all be of the same type, found value type ''{0}'' as well as ''{1}''",
-                                valueType,
-                                values[i].getType()),
-                        node);
+        }
+
+        if (values.length > 1) {
+            for (int i = 1; i < values.length; i++) {
+                if (values[0].getType() != values[i].getType()) {
+                    throw new ParserException(
+                            MessageFormat.format(
+                                    "Property values must all be of the same type, found value type ''{0}'' as well as ''{1}''",
+                                    values[0].getType(),
+                                    values[i].getType()),
+                            node);
+                }
             }
         }
 
@@ -385,33 +386,12 @@ public class SourceParser extends AbstractBaseParser {
      * @throws ParserException in case a value cannot be parsed or it is not of the expected type
      */
     private Value[] constructValuesFromSequence(final Node node, final ValueType expectedValueType) throws ParserException {
-        final Value[] values;
-
-        switch (expectedValueType) {
-            case DECIMAL:
-            case URI:
-                final List<Node> sequence = asSequence(node);
-                values = new Value[sequence.size()];
-                for (int i = 0; i < sequence.size(); i++) {
-                    values[i] = constructValueFromScalar(sequence.get(i), expectedValueType);
-                }
-                return values;
-            default:
-                values = constructValuesFromSequence(node);
-                if (values.length == 0) {
-                    return values;
-                }
-                // constructValuesFromSequence(Node) checks all values are the same value type
-                if (values[0].getType() != expectedValueType) {
-                    throw new ParserException(
-                            MessageFormat.format(
-                                    "Property values are not of the correct type, expected type ''{0}'', but also found ''{1}''",
-                                    expectedValueType,
-                                    values[0].getType()),
-                            node);
-                }
-                return values;
+        final List<Node> valueNodes = asSequence(node);
+        final Value[] values = new Value[valueNodes.size()];
+        for (int i = 0; i < valueNodes.size(); i++) {
+            values[i] = constructValueFromScalar(valueNodes.get(i), expectedValueType);
         }
+        return values;
     }
 
     private ValueType constructValueType(final Node node) throws ParserException {
