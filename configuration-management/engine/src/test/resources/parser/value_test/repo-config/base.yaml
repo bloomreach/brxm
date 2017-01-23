@@ -16,6 +16,9 @@ instructions:
           - decimal-multi-value:
                 type: decimal
                 value: ['42', '31415926535897932384626433832795028841971', '4.2E+314159265']
+          - name:
+                type: name
+                value: prefix:local-name
           - uri:
                 type: uri
                 value: http://onehippo.org

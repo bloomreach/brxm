@@ -70,16 +70,16 @@ public class ValueImpl implements Value {
         this.isResource = false;
     }
 
-    public ValueImpl(final ValueType type, final String path) {
-        this.value = path;
-        this.valueType = type;
-        this.isResource = true;
-    }
-
     public ValueImpl(final URI value) {
         this.value = value;
         this.valueType = ValueType.URI;
         this.isResource = false;
+    }
+
+    public ValueImpl(final Object value, final ValueType type, final boolean isResource) {
+        this.value = value;
+        this.valueType = type;
+        this.isResource = isResource;
     }
 
     @Override

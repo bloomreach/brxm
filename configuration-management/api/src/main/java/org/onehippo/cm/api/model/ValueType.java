@@ -24,8 +24,8 @@ public enum ValueType {
     DOUBLE,
     DECIMAL,
     BINARY,
-    DATE;
-    // todo: NAME
+    DATE,
+    NAME;
     // todo: PATH
     // todo: WEAKREFERENCE
     // todo: REFERENCE

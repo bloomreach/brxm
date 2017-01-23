@@ -231,7 +231,7 @@ public class SourceParser extends AbstractBaseParser {
                 if (!resourceInputProvider.hasResource(source, resourcePath)) {
                     throw new ParserException("Cannot find resource '" + resourcePath + "'", resourceNode);
                 }
-                resourceValues[i] = new ValueImpl(valueType, resourcePath);
+                resourceValues[i] = new ValueImpl(resourcePath, valueType, true);
             }
 
             switch (resourceNode.getNodeId()) {
@@ -319,6 +319,12 @@ public class SourceParser extends AbstractBaseParser {
                 } catch (NumberFormatException e) {
                     throw new ParserException("Could not parse scalar value as BigDecimal: " + scalar.getValue(), node);
                 }
+            case NAME:
+                if (scalar.getTag() != Tag.STR) {
+                    throw new ParserException("Expected a Name value represented as a string scalar, found a scalar with tag: " + scalar.getTag(), node);
+                }
+                final String name = asNameScalar(node);
+                return new ValueImpl(name, ValueType.NAME, false);
             case URI:
                 if (scalar.getTag() != Tag.STR) {
                     throw new ParserException("Expected an URI value represented as a string scalar, found a scalar with tag: " + scalar.getTag(), node);
@@ -417,6 +423,7 @@ public class SourceParser extends AbstractBaseParser {
             case "decimal": return ValueType.DECIMAL;
             case "double": return ValueType.DOUBLE;
             case "long": return ValueType.LONG;
+            case "name": return ValueType.NAME;
             case "string": return ValueType.STRING;
             case "uri": return ValueType.URI;
         }
