@@ -18,20 +18,22 @@ package org.onehippo.cm.api.model;
 public enum ValueType {
 
     STRING,
-    URI,
+    // todo: URI
     BOOLEAN,
     LONG,
     DOUBLE,
     DECIMAL,
     BINARY,
-    DATE,
-    NAME,
-    PATH,
-    WEAKREFERENCE,
-    REFERENCE,
-    ENCRYPTED,
-    CLASSNAME,
-    FOLDER;
+    DATE;
+    // todo: NAME
+    // todo: PATH
+    // todo: WEAKREFERENCE
+    // todo: REFERENCE
+
+    // todo: decide whether to support (or remove) these
+    // ENCRYPTED
+    // CLASSNAME
+    // FOLDER
 
     public final String toString() {
         return name().toLowerCase();

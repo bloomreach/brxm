@@ -16,6 +16,7 @@
 package org.onehippo.cm.engine;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,7 +44,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 
 public class SourceParser extends AbstractBaseParser {
 
-    // After the composeYamlNode step, SnakeYaml does not yet provide parsed scalar values. An extension of the Constructor
+    // After the compose step, SnakeYaml does not yet provide parsed scalar values. An extension of the Constructor
     // class is needed to access the protected Constructor#construct method which uses the built-in parsers for the
     // known basic scalar types. The additional check for the ConstructYamlTimestamp is done as the constructor for
     // timestamp returns a Date by internally constructing a Calendar.
@@ -200,10 +201,10 @@ public class SourceParser extends AbstractBaseParser {
         if (map.keySet().contains("value")) {
             final Node valueNode = map.get("value");
             if (valueNode.getNodeId() == NodeId.scalar) {
-                final Value propertyValue = constructValueFromScalar(valueNode);
+                final Value propertyValue = constructValueFromScalar(valueNode, valueType);
                 parent.addProperty(name, propertyValue);
             } else if (valueNode.getNodeId() == NodeId.sequence) {
-                final Value[] propertyValues = constructValuesFromSequence(valueNode);
+                final Value[] propertyValues = constructValuesFromSequence(valueNode, valueType);
                 parent.addProperty(name, valueType, propertyValues);
             } else {
                 throw new ParserException("Property value in map must be scalar or sequence", valueNode);
@@ -260,6 +261,12 @@ public class SourceParser extends AbstractBaseParser {
         return resourcePath.isAbsolute();
     }
 
+    /**
+     * Auto detects {@link ValueType} and parses {@link Value} from scalar <code>node</code>
+     * @param node scalar node
+     * @return parsed {@link Value}
+     * @throws ParserException in case the value cannot be parsed
+     */
     private Value constructValueFromScalar(final Node node) throws ParserException {
         final ScalarNode scalar = asScalar(node);
         final Object object = scalarConstructor.constructScalarNode(scalar);
@@ -292,8 +299,48 @@ public class SourceParser extends AbstractBaseParser {
         throw new ParserException("Tag not recognized: " + scalar.getTag(), node);
     }
 
-    private Value[] constructValuesFromSequence(final Node value) throws ParserException {
-        final List<Node> valueNodes = asSequence(value);
+    /**
+     * Parses {@link Value} from scalar <code>node</code> and validates it is of the expected type
+     * @param node scalar node
+     * @param expectedValueType expected {@link ValueType}
+     * @return parsed {@link Value}
+     * @throws ParserException in case the value cannot be parsed or it is not of the expected type
+     */
+    private Value constructValueFromScalar(final Node node, final ValueType expectedValueType) throws ParserException {
+        final ScalarNode scalar = asScalar(node);
+        switch (expectedValueType) {
+            case DECIMAL:
+                if (scalar.getTag() != Tag.STR) {
+                    throw new ParserException("Expected a BigDecimal value represented as a string scalar, found a scalar with tag: " + scalar.getTag(), node);
+                }
+                try {
+                    return new ValueImpl(new BigDecimal(scalar.getValue()));
+                } catch (NumberFormatException e) {
+                    throw new ParserException("Could not parse scalar value as BigDecimal: " + scalar.getValue(), node);
+                }
+            default:
+                final Value value = constructValueFromScalar(node);
+                if (value.getType() != expectedValueType) {
+                    throw new ParserException(
+                            MessageFormat.format(
+                                    "Property value is not of the correct type, expected ''{0}'', found ''{1}''",
+                                    expectedValueType,
+                                    value.getType()),
+                            node);
+                }
+                return value;
+        }
+    }
+
+    /**
+     * Auto detects {@link ValueType}, parses {@link Value} from each element in sequence <code>node</code>
+     * and validates all values are of the same {@link ValueType}
+     * @param node sequence node
+     * @return parsed {@link Value} array
+     * @throws ParserException in case a value cannot be parsed or not all values are of the same {@link ValueType}
+     */
+    private Value[] constructValuesFromSequence(final Node node) throws ParserException {
+        final List<Node> valueNodes = asSequence(node);
 
         ValueType valueType = null;
         final Value[] values = new Value[valueNodes.size()];
@@ -307,11 +354,47 @@ public class SourceParser extends AbstractBaseParser {
                                 "Property values must all be of the same type, found value type ''{0}'' as well as ''{1}''",
                                 valueType,
                                 values[i].getType()),
-                        value);
+                        node);
             }
         }
 
         return values;
+    }
+
+    /**
+     * Parses {@link Value} from each element in sequence <code>node</code> and validates they are of the expected type
+     * @param node sequence node
+     * @param expectedValueType expected {@link ValueType}
+     * @return parsed {@link Value} array
+     * @throws ParserException in case a value cannot be parsed or it is not of the expected type
+     */
+    private Value[] constructValuesFromSequence(final Node node, final ValueType expectedValueType) throws ParserException {
+        final Value[] values;
+
+        switch (expectedValueType) {
+            case DECIMAL:
+                final List<Node> sequence = asSequence(node);
+                values = new Value[sequence.size()];
+                for (int i = 0; i < sequence.size(); i++) {
+                    values[i] = constructValueFromScalar(sequence.get(i), expectedValueType);
+                }
+                return values;
+            default:
+                values = constructValuesFromSequence(node);
+                if (values.length == 0) {
+                    return values;
+                }
+                // constructValuesFromSequence(Node) checks all values are the same value type
+                if (values[0].getType() != expectedValueType) {
+                    throw new ParserException(
+                            MessageFormat.format(
+                                    "Property values are not of the correct type, expected type ''{0}'', but also found ''{1}''",
+                                    expectedValueType,
+                                    values[0].getType()),
+                            node);
+                }
+                return values;
+        }
     }
 
     private ValueType constructValueType(final Node node) throws ParserException {
@@ -320,6 +403,7 @@ public class SourceParser extends AbstractBaseParser {
             case "binary": return ValueType.BINARY;
             case "boolean": return ValueType.BOOLEAN;
             case "date": return ValueType.DATE;
+            case "decimal": return ValueType.DECIMAL;
             case "double": return ValueType.DOUBLE;
             case "long": return ValueType.LONG;
             case "string": return ValueType.STRING;

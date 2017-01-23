@@ -18,6 +18,7 @@ package org.onehippo.cm.engine;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Map;
@@ -48,23 +49,33 @@ public class ParserValueTest extends AbstractBaseTest {
         final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
         final Project project = assertProject(base, "project1", new String[0], 1);
         final Module module = assertModule(project, "module1", new String[0], 1);
-        final Source source = assertSource(module, "base.yaml", 3);
+        final Source source = assertSource(module, "base.yaml", 4);
 
-        final ConfigDefinition baseDefinition = assertDefinition(source, 0, ConfigDefinition.class);
-        final DefinitionNode baseNode = assertNode(baseDefinition, "/base", "base", baseDefinition, false, 0, 7);
-        assertProperty(baseNode, "/base/binary", "binary", baseDefinition, "hello world".getBytes());
-        assertProperty(baseNode, "/base/boolean", "boolean", baseDefinition, true);
+        final ConfigDefinition autoDetectedDefinition = assertDefinition(source, 0, ConfigDefinition.class);
+        final DefinitionNode autoDetectedNode = assertNode(autoDetectedDefinition, "/autodetected", "autodetected", autoDetectedDefinition, false, 0, 7);
+        assertProperty(autoDetectedNode, "/autodetected/binary", "binary", autoDetectedDefinition, "hello world".getBytes());
+        assertProperty(autoDetectedNode, "/autodetected/boolean", "boolean", autoDetectedDefinition, true);
         final Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(0);
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         calendar.set(2015, 9, 21, 7, 28, 0);
-        assertProperty(baseNode, "/base/date", "date", baseDefinition, calendar);
-        assertProperty(baseNode, "/base/double", "double", baseDefinition, 3.1415);
-        assertProperty(baseNode, "/base/longAsInt", "longAsInt", baseDefinition, (long) 42);
-        assertProperty(baseNode, "/base/longAsLong", "longAsLong", baseDefinition, 4200000000L);
-        assertProperty(baseNode, "/base/string", "string", baseDefinition, "hello world");
+        assertProperty(autoDetectedNode, "/autodetected/date", "date", autoDetectedDefinition, calendar);
+        assertProperty(autoDetectedNode, "/autodetected/double", "double", autoDetectedDefinition, 3.1415);
+        assertProperty(autoDetectedNode, "/autodetected/longAsInt", "longAsInt", autoDetectedDefinition, (long) 42);
+        assertProperty(autoDetectedNode, "/autodetected/longAsLong", "longAsLong", autoDetectedDefinition, 4200000000L);
+        assertProperty(autoDetectedNode, "/autodetected/string", "string", autoDetectedDefinition, "hello world");
 
-        final ConfigDefinition stringDefinition = assertDefinition(source, 1, ConfigDefinition.class);
+        final ConfigDefinition explicitDefinition = assertDefinition(source, 1, ConfigDefinition.class);
+        final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "explicit", explicitDefinition, false, 0, 2);
+        assertProperty(explicitNode, "/explicit/decimal", "decimal", explicitDefinition, new BigDecimal("31415926535897932384626433832795028841971"));
+        assertProperty(explicitNode, "/explicit/decimal-multi-value", "decimal-multi-value", explicitDefinition,
+                new BigDecimal[] {
+                        new BigDecimal("42"),
+                        new BigDecimal("31415926535897932384626433832795028841971"),
+                        new BigDecimal("4.2E+314159265")
+                });
+
+        final ConfigDefinition stringDefinition = assertDefinition(source, 2, ConfigDefinition.class);
         final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "string", stringDefinition, false, 0, 8);
         assertProperty(stringNode, "/string/strBoolean", "strBoolean", stringDefinition, "true");
         assertProperty(stringNode, "/string/strDate", "strDate", stringDefinition, "2015-10-21T07:28:00+8:00");
@@ -75,7 +86,7 @@ public class ParserValueTest extends AbstractBaseTest {
         assertProperty(stringNode, "/string/strWithLeadingDoubleQuote", "strWithLeadingDoubleQuote", stringDefinition, "\" ' string");
         assertProperty(stringNode, "/string/strWithLineBreaks", "strWithLineBreaks", stringDefinition, "line one\nline two\n");
 
-        final ConfigDefinition emptyDefinition = assertDefinition(source, 2, ConfigDefinition.class);
+        final ConfigDefinition emptyDefinition = assertDefinition(source, 3, ConfigDefinition.class);
         final DefinitionNode emptyNode = assertNode(emptyDefinition, "/empty", "empty", emptyDefinition, false, 0, 6);
         assertProperty(emptyNode, "/empty/emptyBinary", "emptyBinary", emptyDefinition, new Object[0]);
         assertProperty(emptyNode, "/empty/emptyBoolean", "emptyBoolean", emptyDefinition, new Object[0]);

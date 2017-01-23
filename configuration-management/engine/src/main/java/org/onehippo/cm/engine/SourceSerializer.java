@@ -17,6 +17,7 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -39,6 +40,8 @@ import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 
 public class SourceSerializer extends AbstractBaseSerializer {
+
+    final static Representer representer = new Representer();
 
     public void serialize(final OutputStream outputStream, final Source source, final Consumer<Value> resourceConsumer) throws IOException {
         final Node node = representSource(source, resourceConsumer);
@@ -129,18 +132,6 @@ public class SourceSerializer extends AbstractBaseSerializer {
         }
     }
 
-    private boolean requiresValueMap(final DefinitionProperty property) {
-        if (property.getType() == PropertyType.SINGLE) {
-            return property.getValue().isResource();
-        }
-
-        if (property.getValues().length == 0 && property.getValueType() != ValueType.STRING) {
-            return true;
-        }
-
-        return hasResourceValues(property);
-    }
-
     private Node representPropertyUsingMap(final DefinitionProperty property, final Consumer<Value> resourceConsumer) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
         valueMapTuples.add(createStrStrTuple("type", property.getValueType().name().toLowerCase()));
@@ -187,6 +178,32 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return new MappingNode(Tag.MAP, tuples, false);
     }
 
+    private boolean requiresValueMap(final DefinitionProperty property) {
+        if (needsExplicitTyping(property.getValueType())) {
+            return true;
+        }
+
+        if (property.getType() != PropertyType.SINGLE && property.getValues().length == 0) {
+            return property.getValueType() != ValueType.STRING;
+        }
+
+        return hasResourceValues(property);
+    }
+
+    private boolean needsExplicitTyping(final ValueType valueType) {
+        switch (valueType) {
+            case BINARY:
+            case BOOLEAN:
+            case DOUBLE:
+            case DATE:
+            case LONG:
+            case STRING:
+                return false;
+            default:
+                return true;
+        }
+    }
+
     private boolean hasResourceValues(final DefinitionProperty property) {
         if (property.getType() == PropertyType.SINGLE) {
             return property.getValue().isResource();
@@ -200,8 +217,14 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     private Node representValue(final Value value) {
-        final Representer representer = new Representer();
-        return representer.represent(value.getObject());
+        switch (value.getType()) {
+            case DECIMAL:
+                // Explicitly represent BigDecimal as string; SnakeYaml does not represent BigDecimal nicely
+                final BigDecimal bigDecimal = (BigDecimal) value.getObject();
+                return representer.represent(bigDecimal.toString());
+            default:
+                return representer.represent(value.getObject());
+        }
     }
 
     private Node representNamespaceDefinition(final NamespaceDefinition definition) {

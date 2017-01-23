@@ -568,6 +568,60 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void configWithDefinitionWithTypeValueMismatch() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: string\n"
+                + "        value: 42";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Property value is not of the correct type, expected 'string', found 'long'");
+    }
+
+    @Test
+    public void configWithDefinitionWithNonNumericDecimalValue() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: decimal\n"
+                + "        value: '42a'";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Could not parse scalar value as BigDecimal: 42a");
+    }
+
+    @Test
+    public void configWithDefinitionWithNonStringDecimalValue() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: decimal\n"
+                + "        value: 42";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Expected a BigDecimal value represented as a string scalar, found a scalar with tag: tag:yaml.org,2002:int");
+    }
+
+    @Test
     public void configWithDefinitionWithInvalidResourceType() {
         final String yaml = "instructions:\n"
                 + "- config:\n"

@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 
 import org.onehippo.cm.api.model.Value;
@@ -26,15 +27,27 @@ public class ValueImpl implements Value {
     private final ValueType valueType;
     private final boolean isResource;
 
-    public ValueImpl(final byte[] value) {
+    public ValueImpl(final BigDecimal value) {
         this.value = value;
-        this.valueType = ValueType.BINARY;
+        this.valueType = ValueType.DECIMAL;
         this.isResource = false;
     }
 
     public ValueImpl(final Boolean value) {
         this.value = value;
         this.valueType = ValueType.BOOLEAN;
+        this.isResource = false;
+    }
+
+    public ValueImpl(final byte[] value) {
+        this.value = value;
+        this.valueType = ValueType.BINARY;
+        this.isResource = false;
+    }
+
+    public ValueImpl(final Calendar value) {
+        this.value = value;
+        this.valueType = ValueType.DATE;
         this.isResource = false;
     }
 
@@ -53,12 +66,6 @@ public class ValueImpl implements Value {
     public ValueImpl(final String value) {
         this.value = value;
         this.valueType = ValueType.STRING;
-        this.isResource = false;
-    }
-
-    public ValueImpl(final Calendar value) {
-        this.value = value;
-        this.valueType = ValueType.DATE;
         this.isResource = false;
     }
 

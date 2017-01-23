@@ -1,6 +1,6 @@
 instructions:
   - config:
-      - /base:
+      - /autodetected:
           - binary: !!binary |-
                 aGVsbG8gd29ybGQ=
           - boolean: true
@@ -9,6 +9,13 @@ instructions:
           - longAsInt: 42
           - longAsLong: 4200000000
           - string: hello world
+      - /explicit:
+          - decimal:
+                type: decimal
+                value: '31415926535897932384626433832795028841971'
+          - decimal-multi-value:
+                type: decimal
+                value: ['42', '31415926535897932384626433832795028841971', '4.2E+314159265']
       - /string:
           - strBoolean: 'true'
           - strDate: '2015-10-21T07:28:00+8:00'
