@@ -136,14 +136,6 @@ public abstract class AbstractBaseParser {
         return sequenceNode.getValue();
     }
 
-    protected String asNameScalar(final Node node) throws ParserException {
-        final String name = asStringScalar(node);
-
-        // todo: decide on validation
-
-        return name;
-    }
-
     protected String asPathScalar(final Node node) throws ParserException {
         final String path = asStringScalar(node);
 

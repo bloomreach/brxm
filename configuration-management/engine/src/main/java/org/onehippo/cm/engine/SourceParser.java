@@ -18,7 +18,6 @@ package org.onehippo.cm.engine;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -308,32 +307,13 @@ public class SourceParser extends AbstractBaseParser {
      * @throws ParserException in case the value cannot be parsed or it is not of the expected type
      */
     private Value constructValueFromScalar(final Node node, final ValueType expectedValueType) throws ParserException {
-        final ScalarNode scalar = asScalar(node);
         switch (expectedValueType) {
             case DECIMAL:
-                if (scalar.getTag() != Tag.STR) {
-                    throw new ParserException("Expected a BigDecimal value represented as a string scalar, found a scalar with tag: " + scalar.getTag(), node);
-                }
-                try {
-                    return new ValueImpl(new BigDecimal(scalar.getValue()));
-                } catch (NumberFormatException e) {
-                    throw new ParserException("Could not parse scalar value as BigDecimal: " + scalar.getValue(), node);
-                }
+                return constructDecimalValue(node);
             case NAME:
-                if (scalar.getTag() != Tag.STR) {
-                    throw new ParserException("Expected a Name value represented as a string scalar, found a scalar with tag: " + scalar.getTag(), node);
-                }
-                final String name = asNameScalar(node);
-                return new ValueImpl(name, ValueType.NAME, false);
+                return constructNameValue(node);
             case URI:
-                if (scalar.getTag() != Tag.STR) {
-                    throw new ParserException("Expected an URI value represented as a string scalar, found a scalar with tag: " + scalar.getTag(), node);
-                }
-                try {
-                    return new ValueImpl(new URI(scalar.getValue()));
-                } catch (URISyntaxException e) {
-                    throw new ParserException("Could not parse scalar value as URI: " + scalar.getValue(), node);
-                }
+                return constructUriValue(node);
             default:
                 final Value value = constructValueFromScalar(node);
                 if (value.getType() != expectedValueType) {
@@ -346,6 +326,26 @@ public class SourceParser extends AbstractBaseParser {
                 }
                 return value;
         }
+    }
+
+    private Value constructDecimalValue(final Node node) throws ParserException {
+        final String string = asStringScalar(node);
+        try {
+            return new ValueImpl(new BigDecimal(string));
+        } catch (NumberFormatException e) {
+            throw new ParserException("Could not parse scalar value as BigDecimal: " + string, node);
+        }
+    }
+
+    private Value constructNameValue(final Node node) throws ParserException {
+        final String name = asStringScalar(node);
+        // todo: decide on validation
+        return new ValueImpl(name, ValueType.NAME, false);
+    }
+
+    private Value constructUriValue(final Node node) throws ParserException {
+        final URI uri = asURIScalar(node);
+        return new ValueImpl(uri);
     }
 
     /**

@@ -618,7 +618,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
 
         assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Expected a BigDecimal value represented as a string scalar, found a scalar with tag: tag:yaml.org,2002:int");
+                "Scalar must be a string");
     }
 
     @Test
@@ -636,7 +636,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
 
         assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Could not parse scalar value as URI: :");
+                "Scalar must be formatted as an URI");
     }
 
     @Test
