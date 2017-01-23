@@ -104,7 +104,11 @@ public class DefaultRequestInfoCacheKeyFragmentCreator implements RequestInfoCac
             webFilesAntiCacheValue = antiCacheValue;
             return antiCacheValue;
         } catch (RepositoryException e) {
-            log.warn("Cannot get anti-cache value. Use cache key without it.");
+            if (log.isDebugEnabled()) {
+                log.warn("Cannot get anti-cache value. Use cache key without it.", e);
+            } else {
+                log.warn("Cannot get anti-cache value. Use cache key without it : {}", e.toString());
+            }
             antiCacheValue = Optional.empty();
             webFilesAntiCacheValue = antiCacheValue;
             return antiCacheValue;
