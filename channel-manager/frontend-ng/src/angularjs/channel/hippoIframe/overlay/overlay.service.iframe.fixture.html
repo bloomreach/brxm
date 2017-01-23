@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  ~ Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@
   </head>
   <body>
     <main>
-      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox", "HST-LockedBy": "other user" } -->
       <div id="container-vbox">
         <div id="componentA">
           <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
@@ -82,6 +82,11 @@
       <div id="container-empty">
       </div>
       <!-- { "HST-End": "true", "uuid": "container-empty" } -->
+
+      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Inherited container", "HST-XType": "HST.vBox", "uuid": "container-inherited", "HST-Inherited": "true" } -->
+      <div id="container-inherited">
+      </div>
+      <!-- { "HST-End": "true", "uuid": "container-inherited" } -->
     </main>
   </body>
 </html>

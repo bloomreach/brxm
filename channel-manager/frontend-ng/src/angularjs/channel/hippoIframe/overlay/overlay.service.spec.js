@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 describe('OverlayService', () => {
   let $q;
   let $rootScope;
-  let $translate;
   let CmsService;
   let hstCommentsProcessorService;
   let OverlayService;
@@ -29,11 +28,10 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_$q_, _$rootScope_, _$translate_, _CmsService_, _hstCommentsProcessorService_, _OverlayService_,
+    inject((_$q_, _$rootScope_, _CmsService_, _hstCommentsProcessorService_, _OverlayService_,
             _PageStructureService_, _RenderingService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      $translate = _$translate_;
       CmsService = _CmsService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
@@ -160,9 +158,9 @@ describe('OverlayService', () => {
 
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(6);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(7);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-component').length).toBe(2);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-container').length).toBe(2);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-container').length).toBe(3);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
       done();
@@ -172,7 +170,7 @@ describe('OverlayService', () => {
   it('only renders labels for structure elements that have a label', (done) => {
     loadIframeFixture(() => {
       expect(iframe('#hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(2);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(2);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(3);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
       done();
     });
@@ -186,11 +184,41 @@ describe('OverlayService', () => {
   });
 
   it('renders a title for links', (done) => {
-    spyOn($translate, 'instant').and.returnValue('test-title');
     loadIframeFixture(() => {
-      const links = iframe('#hippo-overlay > .hippo-overlay-element-link');
-      expect(links).toHaveAttr('title', 'test-title');
-      expect($translate.instant.calls.allArgs()).toEqual([['IFRAME_EDIT_MENU'], ['IFRAME_OPEN_DOCUMENT']]);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-content-link').attr('title')).toBe('IFRAME_OPEN_DOCUMENT');
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').attr('title')).toBe('IFRAME_EDIT_MENU');
+      done();
+    });
+  });
+
+  it('renders lock icons for disabled containers', (done) => {
+    loadIframeFixture(() => {
+      const disabledContainer = iframe('#hippo-overlay > .hippo-overlay-element-container').eq(0);
+      const lock = disabledContainer.find('.hippo-overlay-lock');
+      expect(lock.length).toBe(1);
+      expect(lock.find('svg').length).toBe(1);
+      expect(lock.attr('title')).toBe('CONTAINER_LOCKED_BY');
+
+      done();
+    });
+  });
+
+  it('does not render lock icons for enabled containers', (done) => {
+    loadIframeFixture(() => {
+      const enabledContainer = iframe('#hippo-overlay > .hippo-overlay-element-container').eq(1);
+      expect(enabledContainer.find('.hippo-overlay-lock').length).toBe(0);
+      done();
+    });
+  });
+
+  it('renders lock icons for inherited containers', (done) => {
+    loadIframeFixture(() => {
+      const inheritedContainer = iframe('#hippo-overlay > .hippo-overlay-element-container').eq(2);
+      const lock = inheritedContainer.find('.hippo-overlay-lock');
+      expect(lock.length).toBe(1);
+      expect(lock.find('svg').length).toBe(1);
+      expect(lock.attr('title')).toBe('CONTAINER_INHERITED');
+
       done();
     });
   });
@@ -358,7 +386,7 @@ describe('OverlayService', () => {
     OverlayService.setMode('edit');
 
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(6);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(7);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
@@ -371,7 +399,7 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
-      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(5);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(6);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
