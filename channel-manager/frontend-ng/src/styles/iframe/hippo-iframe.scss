@@ -72,10 +72,10 @@ html {
   box-shadow: inset 0 0 1px 0 $overlay-component-shadow1-color, inset 0 0 8px 0 $overlay-component-shadow2-color;
   cursor: pointer;
   z-index: $z-index-overlay-component;
-}
 
-.hippo-overlay-element-component:hover {
-  box-shadow: inset 0 0 160px 0 $overlay-component-hover-shadow-color;
+  &:hover {
+    box-shadow: inset 0 0 160px 0 $overlay-component-hover-shadow-color;
+  }
 }
 
 .hippo-overlay-label {
@@ -134,23 +134,24 @@ html {
   padding-top: 1px;  // visually move the icons to the middle of the circle
   transition: background-color $overlay-link-transition, box-shadow $overlay-link-transition;
   z-index: $z-index-overlay-link;
-}
 
-.hippo-overlay-element-link.hippo-overlay-element-visible {
-  display: flex;
-}
 
-.hippo-overlay-element-link:hover {
-  background-color: $overlay-link-hover-bgcolor;
-}
+  &:hover {
+    background-color: $overlay-link-hover-bgcolor;
+  }
 
-.hippo-overlay-element-link:active {
-  box-shadow: 0 4px 8px 0 $overlay-link-active-shadow-color;
-}
+  &:active {
+    box-shadow: 0 4px 8px 0 $overlay-link-active-shadow-color;
+  }
 
-.hippo-overlay-element-link.hippo-overlay-element-link-clicked {
-  background-color: $overlay-link-clicked-bgcolor;
-  transition-duration: 100ms;
+  &.hippo-overlay-element-visible {
+    display: flex;
+  }
+
+  &.hippo-overlay-element-link-clicked {
+    background-color: $overlay-link-clicked-bgcolor;
+    transition-duration: 100ms;
+  }
 }
 
 .hippo-overlay-element-content-link {
@@ -177,42 +178,45 @@ html {
   pointer-events: auto;
 }
 
-.hippo-overlay-add-mode .hippo-overlay-element-container:not(.hippo-overlay-element-container-disabled):hover {
-  background: $overlay-container-add-mode-hover-bgcolor;
-}
+.hippo-overlay-add-mode .hippo-overlay-element-container {
 
-.hippo-overlay-add-mode .hippo-overlay-element-container:not(.hippo-overlay-element-container-disabled) {
-  cursor: copy;
-  pointer-events: auto;
+  &:not(.hippo-overlay-element-container-disabled) {
+    cursor: copy;
+    pointer-events: auto;
+
+    &:hover {
+      background: $overlay-container-add-mode-hover-bgcolor;
+    }
+  }
+
+  .hippo-overlay-label {
+    display: flex;
+  }
 }
 
 .hippo-overlay-add-mode .hippo-overlay-element-container-disabled {
   cursor: not-allowed;
 }
 
-.hippo-overlay-add-mode .hippo-overlay-element-container .hippo-overlay-label {
-  display: flex;
-}
-
 .hippo-overlay-permeable {
   user-select: none;
-}
 
-.hippo-overlay-permeable .hippo-overlay,
-.hippo-overlay-permeable .hippo-overlay-element {
-  pointer-events: none;
+  .hippo-overlay,
+  .hippo-overlay-element {
+    pointer-events: none;
+  }
 }
 
 .hippo-dragging {
   // IE does not support the grabbing cursor so we show 'move' instead
   cursor: move;
   cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
-}
 
-.hippo-dragging .hippo-overlay-element-container {
-  display: flex;
-}
+  .hippo-overlay-element-container {
+    display: flex;
+  }
 
-.hippo-dragging .hippo-overlay-element-component {
-  display: none;
+  .hippo-overlay-element-component {
+    display: none;
+  }
 }
