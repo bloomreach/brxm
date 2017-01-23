@@ -1,6 +1,5 @@
-package org.onehippo.cms7.essentials.rest.model
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +15,10 @@ package org.onehippo.cms7.essentials.rest.model
  */
 import org.apache.commons.io.IOUtils
 import org.apache.jackrabbit.JcrConstants
-import org.hippoecm.frontend.plugins.gallery.processor.ScalingGalleryProcessor
+import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters
+import org.hippoecm.frontend.plugins.gallery.processor.ScalingGalleryProcessor
+import org.hippoecm.repository.api.HippoNodeType
 import org.hippoecm.repository.gallery.HippoGalleryNodeType
 import org.onehippo.repository.update.BaseNodeUpdateVisitor
 
@@ -30,59 +31,73 @@ import javax.jcr.query.QueryManager
 import javax.jcr.query.QueryResult
 
 /**
- * Groovy script to update image sets
+ * Groovy script to update instances of image sets, reapplying the configuration from the gallery processor.
+ * Per default, existing variants are overwritten and default thumbnails are skipped. This behavior is configurable.
  *
- * Query: content/gallery//element(*, hippogallery:stdImageGallery)
+ * XPath query: content/gallery//element(*, hippogallery:imageset)
  *
+ * Parameters: { "overwrite": true,
+ *               "skipDefaultThumbnail" : true }
  */
 class ImageSetUpdater extends BaseNodeUpdateVisitor {
 
-    public static
-    final String HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE = "hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
+    private static final String HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE = "hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService"
 
-    private static final int IMAGE_PROPERTIES_HEIGHT_INDEX = 1;
-    private static final int IMAGE_PROPERTIES_WIDTH_INDEX = 0;
+    protected static final String CONFIG_PARAM_WIDTH = "width"
+    protected static final String CONFIG_PARAM_HEIGHT = "height"
+    protected static final String CONFIG_PARAM_UPSCALING = "upscaling"
+    protected static final String CONFIG_PARAM_OPTIMIZE = "optimize"
+    protected static final String CONFIG_PARAM_COMPRESSION = "compression"
 
-    protected static final String CONFIG_PARAM_WIDTH = "width";
-    protected static final String CONFIG_PARAM_HEIGHT = "height";
-    protected static final Long DEFAULT_WIDTH = 0L;
-    protected static final Long DEFAULT_HEIGHT = 0L;
+    protected static final Long DEFAULT_WIDTH = 0L
+    protected static final Long DEFAULT_HEIGHT = 0L
+    protected static final boolean DEFAULT_UPSCALING = false
+    protected static final String DEFAULT_OPTIMIZE = "quality"
+    protected static final double DEFAULT_COMPRESSION = 1.0
 
-    public final Map<String, List<String>> imageSets = new HashMap<String, List<String>>();
-    public final Map<String, List<Long>> imageVariants = new HashMap<String, List<Long>>();
-
-    private boolean overwrite = true;
-    private boolean upscaling = true;
-    private final String[] names = ["overwrite", "upscaling"];
-    private final Object[] objects = [overwrite, upscaling];
-
-    public void initialize(Session session) throws RepositoryException {
-        try {
-            Node configNode = session.getRootNode().getNode(HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE);
-            getImageVariants(configNode);
-            getImageSets(session);
-
-        } catch (RepositoryException e) {
-            log.error("Exception while retrieving image set variants configuration", e);
-        }
-
-        printInit(names, objects);
+    // SCALING_STRATEGY_MAP copied from org.hippoecm.frontend.plugins.gallery.processor.ScalingGalleryProcessorPlugin
+    private static final Map<String, ImageUtils.ScalingStrategy> SCALING_STRATEGY_MAP = new LinkedHashMap<>()
+    static {
+        SCALING_STRATEGY_MAP.put("auto", ImageUtils.ScalingStrategy.AUTO)
+        SCALING_STRATEGY_MAP.put("speed", ImageUtils.ScalingStrategy.SPEED)
+        SCALING_STRATEGY_MAP.put("speed.and.quality", ImageUtils.ScalingStrategy.SPEED_AND_QUALITY)
+        SCALING_STRATEGY_MAP.put("quality", ImageUtils.ScalingStrategy.QUALITY)
+        SCALING_STRATEGY_MAP.put("best.quality", ImageUtils.ScalingStrategy.BEST_QUALITY)
     }
 
+    private final Map<String, ScalingParameters> imageVariantParameters = new HashMap<String, ScalingParameters>()
+    private final Map<String, List<String>> imageSetVariants = new HashMap<String, List<String>>()
+
+    private boolean overwrite = true
+    private boolean skipDefaultThumbnail = true
+
+    void initialize(Session session) throws RepositoryException {
+        try {
+            if (this.parametersMap["overwrite"] != null) {
+                overwrite = parametersMap["overwrite"]
+            }
+            if (parametersMap["skipDefaultThumbnail"] != null) {
+                skipDefaultThumbnail = parametersMap["skipDefaultThumbnail"]
+            }
+
+            Node configNode = session.getRootNode().getNode(HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE)
+            getImageVariantParametersFromProcessor(configNode)
+            getImageSetVariantsFromNamespace(session)
+        } catch (RepositoryException e) {
+            log.error("Exception while retrieving image set variants configuration", e)
+        }
+
+        log.info "Initialized script ${this.getClass().getName()} with parameters: overwrite=${overwrite}, skipDefaultThumbnail=${skipDefaultThumbnail}"
+    }
 
     boolean doUpdate(Node node) {
         try {
-            /* hippogallery:thumbnail is the only required image variant, not hippogalley:original according to the hippogallery cnd */
-            List<String> imageSet = imageSets.get(node.getPrimaryNodeType().getName());
-            if (imageSet == null || imageSet.isEmpty()) {
-                log.warn("Could not find image set {} for node {}", node.getPrimaryNodeType().getName(), node.getName());
-            }
-            processImageSet(node);
-            return true;
+            return processImageSet(node)
         } catch (RepositoryException e) {
-            log.error("Failed in generating image variants", e);
+            log.error("Failed in generating image variants", e)
+            node.getSession().refresh(false/*keepChanges*/)
         }
-        return false;
+        return false
     }
 
     @Override
@@ -90,156 +105,203 @@ class ImageSetUpdater extends BaseNodeUpdateVisitor {
         return false
     }
 
-    private void processImageSet(Node node) throws RepositoryException {
-        Node data;
+    private boolean processImageSet(Node node) throws RepositoryException {
+
+        final List<String> imageSetVariants = imageSetVariants.get(node.getPrimaryNodeType().getName())
+        if (imageSetVariants == null) {
+            log.warn("Could not find image set {}, skipping processing node {}", node.getPrimaryNodeType().getName(), node.getPath())
+            return false
+        }
+
+        Node data
         if (node.hasNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL)) {
-            data = node.getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
+            data = node.getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL)
         } else {
-            data = node.getNode(HippoGalleryNodeType.IMAGE_SET_THUMBNAIL);
+            // hippogallery:thumbnail is the only mandatory image variant in hippogallery.cnd (not hippogalley:original!)
+            data = node.getNode(HippoGalleryNodeType.IMAGE_SET_THUMBNAIL)
         }
 
-        for (String variantName : imageVariants.keySet()) {
-            processVariant(node, data, variantName);
+        boolean processed = false
+        for (String variantName : imageSetVariants) {
+            processed = processed | processImageVariant(node, data, variantName)
         }
+
+        return processed
     }
 
-    private void processVariant(Node node, Node data, String variantName) throws RepositoryException {
+    private boolean processImageVariant(Node node, Node data, String variantName) throws RepositoryException {
 
-        // same exception for thumbnails as when building the imageVariants
-        if (!HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName)) {
-
-            final List<Long> dimensions = imageVariants.get(variantName);
-            if (dimensions == null) {
-                log.warn("No width and height available for image variant {}. Skipping node {}", variantName, node.getPath());
-                return;
-            }
-
-            Node variant;
-            if (node.hasNode(variantName)) {
-                if (!overwrite) {
-                    log.info("Skipping existing variant {} of node {}", variantName, node.getPath());
-                    return;
-                }
-                variant = node.getNode(variantName);
-            } else {
-                variant = node.addNode(variantName, HippoGalleryNodeType.IMAGE);
-            }
-
-            Long width = dimensions.get(IMAGE_PROPERTIES_WIDTH_INDEX);
-            Long height = dimensions.get(IMAGE_PROPERTIES_HEIGHT_INDEX);
-
-            createImageVariant(node, data, variant, width, height);
-
-            node.getSession().save();
+        // original not to be reconfigured/regenerated so skip it
+        if (HippoGalleryNodeType.IMAGE_SET_ORIGINAL == variantName) {
+            log.debug "Skipping processing the original"
+            return false
         }
+
+        // thumbnail can be reconfigured, then only regenerate by parameter
+        if ((HippoGalleryNodeType.IMAGE_SET_THUMBNAIL == variantName) && skipDefaultThumbnail) {
+           log.debug "Parameter skipDefaultThumbnail=true: skipping processing the default thumbnail variant"
+           return false
+        }
+
+        final ScalingParameters parameters = imageVariantParameters.get(variantName)
+        if (parameters == null) {
+            log.warn("No parameters found for image variant {}. Skipping variant for node {}", variantName, node.path)
+            return false
+        }
+
+        Node variant
+        if (node.hasNode(variantName)) {
+            if (!overwrite) {
+                log.info("Parameter overwrite=false: skipping existing variant {} of node {}", variantName, node.path)
+                return false
+            }
+            variant = node.getNode(variantName)
+        } else {
+            variant = node.addNode(variantName, HippoGalleryNodeType.IMAGE)
+        }
+
+        return createImageVariant(node, data, variant, parameters)
     }
 
-    private void createImageVariant(Node node, Node data, Node variant, Long width, Long height) throws RepositoryException {
+    private boolean createImageVariant(Node node, Node data, Node variant, ScalingParameters parameters) throws RepositoryException {
 
-        InputStream dataInputStream = null;
+        InputStream dataInputStream = null
 
         try {
-            dataInputStream = data.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
-            String mimeType = data.getProperty(JcrConstants.JCR_MIMETYPE).getString();
+            if (!data.hasProperty(JcrConstants.JCR_DATA)) {
+                log.warn("Image variant {} for node {} does not have {} property. Variant not updated.",
+                        variant.getName(), node.getPath(), JcrConstants.JCR_DATA)
+                return false
+            }
 
-            ScalingParameters scalingParameters = new ScalingParameters(width.intValue(), height.intValue(), upscaling);
-            ScalingGalleryProcessor scalingGalleryProcessor = new ScalingGalleryProcessor();
+            dataInputStream = data.getProperty(JcrConstants.JCR_DATA).getBinary().getStream()
+            String mimeType = data.getProperty(JcrConstants.JCR_MIMETYPE).getString()
 
-            scalingGalleryProcessor.addScalingParameters(variant.getName(), scalingParameters);
-            scalingGalleryProcessor.initGalleryResource(variant, dataInputStream, mimeType, "", Calendar.getInstance());
+            ScalingGalleryProcessor scalingGalleryProcessor = new ScalingGalleryProcessor()
 
-            log.info("Image variant {} generated for node {}", variant.getName(), node.getPath());
+            scalingGalleryProcessor.addScalingParameters(variant.getName(), parameters)
+            scalingGalleryProcessor.initGalleryResource(variant, dataInputStream, mimeType, "", Calendar.getInstance())
+
+            log.info("Image variant {} (re)generated for node {}", variant.getName(), node.getPath())
         } finally {
-            IOUtils.closeQuietly(dataInputStream);
+            IOUtils.closeQuietly(dataInputStream)
         }
+
+        return true
     }
 
-    private void getImageInformation(Node node) {
-        try {
-            Session session = node.getSession();
-            Node configNode = session.getRootNode().getNode(HIPPO_CONFIGURATION_GALLERY_PROCESSOR_SERVICE);
+    private void getImageSetVariantsFromNamespace(Session session) throws RepositoryException {
+        QueryManager queryManager = session.getWorkspace().getQueryManager()
+        Query query = queryManager.createQuery("hippo:namespaces//element(*, hippogallery:imageset)", "xpath")
+        QueryResult queryResult = query.execute()
+        NodeIterator nodeIterator = queryResult.getNodes()
 
-            getImageVariants(configNode);
-
-            getImageSets(session);
-
-
-        } catch (RepositoryException e) {
-            log.error("Exception while retrieving image set variants configuration", e);
-        }
-    }
-
-    private void getImageSets(Session session) throws RepositoryException {
-        QueryManager queryManager = session.getWorkspace().getQueryManager();
-        Query query = queryManager.createQuery("hippo:namespaces//element(*,hippogallery:imageset)", "xpath");
-        QueryResult queryResult = query.execute();
-        NodeIterator nodeIterator = queryResult.getNodes();
-
-        // looking up nodes of type hippogallery:image (or derived) in the prototype of a namespace definition
+        // looking up fields of type hippogallery:image in the nodetype of a definition
         while (nodeIterator.hasNext()) {
-            Node next = nodeIterator.nextNode();
-            NodeIterator children = next.getNodes();
+            Node prototype = nodeIterator.nextNode()
 
-            List<String> imageVariants = new ArrayList<String>();
+            log.debug "Reading namespace configuration from prototype ${prototype.path}"
 
-            while (children.hasNext()) {
-                Node child = children.nextNode();
+            Node doctype = prototype.getParent().getParent()
+            Node nodetype
+            String relNodeTypePath = HippoNodeType.HIPPOSYSEDIT_NODETYPE + "/" + HippoNodeType.HIPPOSYSEDIT_NODETYPE
+            if (doctype.hasNode(relNodeTypePath)) {
+                nodetype = doctype.getNode(relNodeTypePath)
+            }
+            else {
+                log.warn "- No node ${relNodeTypePath} found below node ${prototype.path}: will not process this image set"
+                continue
+            }
 
-                if (child.isNodeType(HippoGalleryNodeType.IMAGE)) {
-                    imageVariants.add(child.getName());
+            NodeIterator fields = nodetype.getNodes()
+
+            List<String> imageVariants = new ArrayList<String>()
+
+            while (fields.hasNext()) {
+                Node field = fields.nextNode()
+
+                // check image fields only (hipposysedit:type=hippogallery:image)
+                if (field.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE) &&
+                        (HippoGalleryNodeType.IMAGE == field.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString())) {
+
+                    // read variant name from configuration, or construct namespace:field
+                    String variantName = (field.hasProperty(HippoNodeType.HIPPO_PATH)) ?
+                                            field.getProperty(HippoNodeType.HIPPO_PATH).getString() :
+                                            doctype.getParent().getName() + ":" + field.getName()
+
+                    // original not to be reconfigured/regenerated so skip it
+                    if (HippoGalleryNodeType.IMAGE_SET_ORIGINAL == variantName) {
+                        log.debug "- Skipping reading original variant from '${prototype.getPrimaryNodeType().getName()}' namespace"
+                        continue
+                    }
+
+                    // thumbnail can be reconfigured, then only regenerate by parameter
+                    if ((HippoGalleryNodeType.IMAGE_SET_THUMBNAIL == variantName) && skipDefaultThumbnail) {
+                        log.debug "- Parameter skipDefaultThumbnail=true: skipping reading default thumbnail variant from '${prototype.getPrimaryNodeType().getName()}' namespace"
+                        continue
+                    }
+
+                    imageVariants.add(variantName)
                 }
             }
-            imageSets.put(next.getPrimaryNodeType().getName(), imageVariants);
+
+            if (imageVariants.isEmpty()) {
+                log.info "- Will not process image set '${prototype.getPrimaryNodeType().getName()}': no fields/variants found"
+                continue
+            }
+
+            log.info "- Read image set '${prototype.getPrimaryNodeType().getName()}' from namespace with fields/variants '${imageVariants}'"
+            imageSetVariants.put(prototype.getPrimaryNodeType().getName(), imageVariants)
         }
     }
 
-    private void getImageVariants(Node configNode) throws RepositoryException {
-        NodeIterator variantNodes = configNode.getNodes();
+    private void getImageVariantParametersFromProcessor(Node configNode) throws RepositoryException {
+        log.debug "Reading processor configuration from ${configNode.path}"
+        NodeIterator variantNodes = configNode.getNodes()
 
         while (variantNodes.hasNext()) {
-            Node variantNode = variantNodes.nextNode();
-            String variantName = variantNode.getName();
+            Node variantNode = variantNodes.nextNode()
+            String variantName = variantNode.getName()
 
-            // hippogallery:thumbnail is the only required image variant according to the hippogallery.cnd
-            // so no regeneration for that one
-            if (!HippoGalleryNodeType.IMAGE_SET_THUMBNAIL.equals(variantName)) {
-
-                Long width = variantNode.hasProperty(CONFIG_PARAM_WIDTH) ? variantNode.getProperty(CONFIG_PARAM_WIDTH).getLong() : DEFAULT_WIDTH;
-                Long height = variantNode.hasProperty(CONFIG_PARAM_HEIGHT) ? variantNode.getProperty(CONFIG_PARAM_HEIGHT).getLong() : DEFAULT_HEIGHT;
-
-                Object[] objects = [variantName, width, height];
-
-
-                log.info("Registered image set variant '{}' with width {} and height {}",
-                        objects);
-
-                final List<Long> dimensions = new ArrayList<Long>(2);
-                dimensions.add(width);
-                dimensions.add(height);
-
-                imageVariants.put(variantName, dimensions);
+            // original not to be reconfigured/regenerated so skip it
+            if (HippoGalleryNodeType.IMAGE_SET_ORIGINAL == variantName) {
+                log.debug "- Skipping reading original variant configuration '${variantName}'"
+                continue
             }
+
+            // thumbnail can be reconfigured, then only regenerate by parameter
+            if ((HippoGalleryNodeType.IMAGE_SET_THUMBNAIL == variantName) && skipDefaultThumbnail) {
+                log.debug "- Parameter skipDefaultThumbnail=true: skipping reading default thumbnail variant configuration '${variantName}'"
+                continue
+            }
+
+            int width = variantNode.hasProperty(CONFIG_PARAM_WIDTH) ? variantNode.getProperty(CONFIG_PARAM_WIDTH).getLong() : DEFAULT_WIDTH
+            int height = variantNode.hasProperty(CONFIG_PARAM_HEIGHT) ? variantNode.getProperty(CONFIG_PARAM_HEIGHT).getLong() : DEFAULT_HEIGHT
+
+            if (width == 0 && height == 0) {
+                log.warn "- Stopping reading image set variant '${variantName}' from processor because width and height are both 0"
+                continue
+            }
+
+            boolean upscaling = variantNode.hasProperty(CONFIG_PARAM_UPSCALING) ?
+                    variantNode.getProperty(CONFIG_PARAM_UPSCALING).boolean : DEFAULT_UPSCALING
+            String optimize = variantNode.hasProperty(CONFIG_PARAM_OPTIMIZE) ?
+                    variantNode.getProperty(CONFIG_PARAM_OPTIMIZE).string : DEFAULT_OPTIMIZE
+            float compression = variantNode.hasProperty(CONFIG_PARAM_COMPRESSION) ?
+                    variantNode.getProperty(CONFIG_PARAM_COMPRESSION).double : DEFAULT_COMPRESSION
+
+            ImageUtils.ScalingStrategy strategy = SCALING_STRATEGY_MAP.get(optimize)
+            if (strategy == null) {
+                log.warn "- Image variant '${variantName}' specifies an unknown scaling optimization strategy " +
+                        "'${optimize}'. Possible values are ${SCALING_STRATEGY_MAP.keySet()}. Falling back to" +
+                        " '${DEFAULT_OPTIMIZE}' instead."
+                strategy = SCALING_STRATEGY_MAP.get(DEFAULT_OPTIMIZE)
+            }
+
+            ScalingParameters parameters = new ScalingParameters(width.intValue(), height.intValue(), upscaling, strategy, compression)
+            log.info "- Read image set variant '${variantName}' from processor with scalingParameters '${parameters}'"
+
+            imageVariantParameters.put(variantName, parameters)
         }
     }
-
-    protected void printInit(final String[] configNames, final Object[] configObjects) {
-
-        StringBuilder sb = new StringBuilder("### Initialized runner plugin ").append(this.getClass().getName()).append("\n");
-
-        if ((configNames != null) && configObjects != null) {
-            if (configNames.length != configObjects.length) {
-                throw new IllegalArgumentException("Lengths of configNames and configObjects do not match: " + configNames.length + " and " + configObjects.length);
-            }
-
-            if (configNames.length > 0) {
-                sb.append("Initialization parameters:\n");
-                for (int i = 0; i < configNames.length; i++) {
-                    sb.append("  ").append(configNames[i]).append(" = ").append(configObjects[i]).append("\n");
-                }
-            }
-        }
-
-        log.info(sb.toString());
-    }
-
 }
