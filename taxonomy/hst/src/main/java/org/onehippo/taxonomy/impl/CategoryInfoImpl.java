@@ -41,8 +41,8 @@ public class CategoryInfoImpl extends AbstractJCRService implements CategoryInfo
     public CategoryInfoImpl(Node jcrNode) throws ServiceException {
         super(jcrNode);
 
-        this.language = getValueProvider().getString("hippo:language");
-        this.name = getValueProvider().getString("hippo:message");
+        this.language = getValueProvider().getName();
+        this.name = getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_NAME);
         this.description = getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION);
 
         this.synonyms = getValueProvider().getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS);
