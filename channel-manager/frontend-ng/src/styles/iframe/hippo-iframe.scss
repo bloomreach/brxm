@@ -13,3 +13,206 @@
 // limitations under the License.
 
 @import '../variables';
+
+html {
+  transform-origin: top right;
+}
+
+.hippo-scale-animated {
+  transition: transform $scale-animation-transition, translateY $scale-animation-transition;
+}
+
+.hst-cmseditlink {
+  display: block;
+  height: $edit-link-height;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: $edit-link-width;
+}
+
+#hippo-overlay { // sass-lint:disable-line no-ids
+  bottom: 0;
+  font-family: $font-family;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: $z-index-overlay;
+}
+
+.hippo-overlay-element {
+  align-items: flex-start;
+  box-sizing: border-box;
+  display: none;
+  justify-content: space-between;
+  pointer-events: auto;
+  position: absolute;
+}
+
+.hippo-overlay-element-visible {
+  display: flex;
+}
+
+.hippo-overlay-element-container {
+  border: 1px solid $overlay-container-border-color;
+  pointer-events: none;
+  z-index: $z-index-overlay-container;
+}
+
+.hippo-overlay-element-container-empty {
+  box-shadow: inset 0 0 1px 0 $overlay-container-shadow1-color, inset 0 0 8px 0 $overlay-container-shadow2-color;
+  pointer-events: auto;
+}
+
+.hippo-overlay-element-component {
+  border: 1px solid $overlay-component-border-color;
+  box-shadow: inset 0 0 1px 0 $overlay-component-shadow1-color, inset 0 0 8px 0 $overlay-component-shadow2-color;
+  cursor: pointer;
+  z-index: $z-index-overlay-component;
+}
+
+.hippo-overlay-element-component:hover {
+  box-shadow: inset 0 0 160px 0 $overlay-component-hover-shadow-color;
+}
+
+.hippo-overlay-label {
+  color: $overlay-label-color;
+  display: flex;
+  font-size: $overlay-label-font-size;
+  visibility: hidden;
+}
+
+.hippo-overlay-element-container > .hippo-overlay-label {
+  background-color: $overlay-container-label-bgcolor;
+  border: 1px solid $overlay-container-label-border-color;
+}
+
+.hippo-overlay-element-component > .hippo-overlay-label {
+  background-color: $overlay-component-label-bgcolor;
+  border: 1px solid $overlay-component-label-border-color;
+}
+
+.hippo-overlay-add-mode .hippo-overlay-label,
+.hippo-dragging .hippo-overlay-element-container > .hippo-overlay-label,
+.hippo-overlay-element-component:hover > .hippo-overlay-label,
+.hippo-overlay-element-container-empty:hover > .hippo-overlay-label {
+  visibility: visible;
+}
+
+.hippo-overlay-label-text {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.hippo-overlay-lock {
+  align-items: center;
+  background-color: $overlay-lock-bgcolor;
+  cursor: default;
+  display: flex;
+  fill: $overlay-lock-fill-color;
+  float: right;
+  height: $overlay-lock-height;
+  justify-content: center;
+  // prevent the on-hover effect of a component against a container's edge by shifting the lock icon 1px up and right
+  margin-right: -1px;
+  margin-top: -1px;
+  pointer-events: all;
+  width: $overlay-lock-width;
+}
+
+.hippo-overlay-element-link {
+  align-items: center;
+  background-color: $overlay-link-bgcolor;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px 0 $overlay-link-shadow-color;
+  cursor: pointer;
+  fill: $overlay-link-fill-color;
+  justify-content: center;
+  padding-top: 1px;  // visually move the icons to the middle of the circle
+  transition: background-color $overlay-link-transition, box-shadow $overlay-link-transition;
+  z-index: $z-index-overlay-link;
+}
+
+.hippo-overlay-element-link.hippo-overlay-element-visible {
+  display: flex;
+}
+
+.hippo-overlay-element-link:hover {
+  background-color: $overlay-link-hover-bgcolor;
+}
+
+.hippo-overlay-element-link:active {
+  box-shadow: 0 4px 8px 0 $overlay-link-active-shadow-color;
+}
+
+.hippo-overlay-element-link.hippo-overlay-element-link-clicked {
+  background-color: $overlay-link-clicked-bgcolor;
+  transition-duration: 100ms;
+}
+
+.hippo-overlay-element-content-link {
+  // visually move the icon to the middle of the circle
+  padding-left: 5px;
+}
+
+.hippo-overlay-box-empty {
+  display: none;
+}
+
+.hippo-mode-edit .hippo-overlay-box-empty {
+  display: block;
+}
+
+.hippo-mode-edit .hippo-overlay-box {
+  min-height: $overlay-box-minheight;
+}
+
+// Adding a component
+#hippo-overlay.hippo-overlay-add-mode { // sass-lint:disable-line no-ids
+  cursor: copy;
+  cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
+  pointer-events: auto;
+}
+
+.hippo-overlay-add-mode .hippo-overlay-element-container:not(.hippo-overlay-element-container-disabled):hover {
+  background: $overlay-container-add-mode-hover-bgcolor;
+}
+
+.hippo-overlay-add-mode .hippo-overlay-element-container:not(.hippo-overlay-element-container-disabled) {
+  cursor: copy;
+  pointer-events: auto;
+}
+
+.hippo-overlay-add-mode .hippo-overlay-element-container-disabled {
+  cursor: not-allowed;
+}
+
+.hippo-overlay-add-mode .hippo-overlay-element-container .hippo-overlay-label {
+  display: flex;
+}
+
+.hippo-overlay-permeable {
+  user-select: none;
+}
+
+.hippo-overlay-permeable .hippo-overlay,
+.hippo-overlay-permeable .hippo-overlay-element {
+  pointer-events: none;
+}
+
+.hippo-dragging {
+  // IE does not support the grabbing cursor so we show 'move' instead
+  cursor: move;
+  cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
+}
+
+.hippo-dragging .hippo-overlay-element-container {
+  display: flex;
+}
+
+.hippo-dragging .hippo-overlay-element-component {
+  display: none;
+}
