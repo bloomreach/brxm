@@ -68,7 +68,7 @@ public class ParserValueTest extends AbstractBaseTest {
         assertProperty(autoDetectedNode, "/autodetected/string", "string", autoDetectedDefinition, "hello world");
 
         final ConfigDefinition explicitDefinition = assertDefinition(source, 1, ConfigDefinition.class);
-        final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "explicit", explicitDefinition, false, 0, 4);
+        final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "explicit", explicitDefinition, false, 0, 5);
         assertProperty(explicitNode, "/explicit/decimal", "decimal", explicitDefinition, new BigDecimal("31415926535897932384626433832795028841971"));
         assertProperty(explicitNode, "/explicit/decimal-multi-value", "decimal-multi-value", explicitDefinition,
                 new BigDecimal[] {
@@ -77,6 +77,7 @@ public class ParserValueTest extends AbstractBaseTest {
                         new BigDecimal("4.2E+314159265")
                 });
         assertProperty(explicitNode, "/explicit/name", "name", explicitDefinition, "prefix:local-name");
+        assertProperty(explicitNode, "/explicit/path", "path", explicitDefinition, "/path/to/something");
         assertProperty(explicitNode, "/explicit/uri", "uri", explicitDefinition, new URI("http://onehippo.org"));
 
         final ConfigDefinition stringDefinition = assertDefinition(source, 2, ConfigDefinition.class);

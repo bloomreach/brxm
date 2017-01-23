@@ -312,6 +312,8 @@ public class SourceParser extends AbstractBaseParser {
                 return constructDecimalValue(node);
             case NAME:
                 return constructNameValue(node);
+            case PATH:
+                return constructPathValue(node);
             case URI:
                 return constructUriValue(node);
             default:
@@ -341,6 +343,12 @@ public class SourceParser extends AbstractBaseParser {
         final String name = asStringScalar(node);
         // todo: decide on validation
         return new ValueImpl(name, ValueType.NAME, false);
+    }
+
+    private Value constructPathValue(final Node node) throws ParserException {
+        final String path = asStringScalar(node);
+        // todo: decide on validation
+        return new ValueImpl(path, ValueType.PATH, false);
     }
 
     private Value constructUriValue(final Node node) throws ParserException {
@@ -396,18 +404,11 @@ public class SourceParser extends AbstractBaseParser {
 
     private ValueType constructValueType(final Node node) throws ParserException {
         final String type = asStringScalar(node);
-        switch (type) {
-            case "binary": return ValueType.BINARY;
-            case "boolean": return ValueType.BOOLEAN;
-            case "date": return ValueType.DATE;
-            case "decimal": return ValueType.DECIMAL;
-            case "double": return ValueType.DOUBLE;
-            case "long": return ValueType.LONG;
-            case "name": return ValueType.NAME;
-            case "string": return ValueType.STRING;
-            case "uri": return ValueType.URI;
+        try {
+            return ValueType.valueOf(type.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ParserException("Unrecognized value type: '" + type + "'", node);
         }
-        throw new ParserException("Unrecognized value type: '" + type + "'", node);
     }
 
 }

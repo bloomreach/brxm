@@ -19,6 +19,9 @@ instructions:
           - name:
                 type: name
                 value: prefix:local-name
+          - path:
+                type: path
+                value: /path/to/something
           - uri:
                 type: uri
                 value: http://onehippo.org
