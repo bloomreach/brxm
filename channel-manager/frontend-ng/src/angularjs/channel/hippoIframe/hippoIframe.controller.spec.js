@@ -69,7 +69,6 @@ describe('hippoIframeCtrl', () => {
     spyOn(DragDropService, 'init');
     spyOn(OverlayService, 'init');
     spyOn(OverlayService, 'onEditMenu');
-    spyOn(DomService, 'getAppRootUrl').and.returnValue('http://cms.example.com/app/root/');
     spyOn(DomService, 'addCss').and.returnValue($q.resolve());
 
     scope.testEditMode = false;
@@ -171,7 +170,7 @@ describe('hippoIframeCtrl', () => {
     hippoIframeCtrl.onLoad();
     $rootScope.$digest();
 
-    expect(DomService.addCss).toHaveBeenCalledWith(window, 'http://cms.example.com/app/root/styles/hippo-iframe.css?antiCache=123');
+    expect(DomService.addCss).toHaveBeenCalledWith(window, '[object Object]');
     expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
     expect(ScalingService.onIframeReady).toHaveBeenCalled();
     expect(hstCommentsProcessorService.run).toHaveBeenCalled();

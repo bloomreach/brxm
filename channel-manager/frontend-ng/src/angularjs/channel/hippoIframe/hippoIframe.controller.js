@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import hippoIframeCss from '../../../styles/iframe/hippo-iframe.scss';
+
 class HippoIframeCtrl {
   constructor(
     $q,
@@ -160,9 +162,8 @@ class HippoIframeCtrl {
         return this.$q.reject();
       }
       const iframeWindow = iframeDom.defaultView;
-      const appRootUrl = this.DomService.getAppRootUrl();
-      const hippoIframeCss = `${appRootUrl}styles/hippo-iframe.css?antiCache=${this.ConfigService.antiCache}`;
-      return this.DomService.addCss(iframeWindow, hippoIframeCss);
+      this.DomService.addCss(iframeWindow, hippoIframeCss.toString());
+      return this.$q.resolve();
     } catch (e) {
       return this.$q.reject();
     }
