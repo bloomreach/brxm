@@ -622,6 +622,24 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void configWithDefinitionWithIncorrectUriValue() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: uri\n"
+                + "        value: ':'";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Could not parse scalar value as URI: :");
+    }
+
+    @Test
     public void configWithDefinitionWithInvalidResourceType() {
         final String yaml = "instructions:\n"
                 + "- config:\n"

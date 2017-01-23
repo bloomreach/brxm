@@ -19,6 +19,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Map;
@@ -40,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 public class ParserValueTest extends AbstractBaseTest {
 
     @Test
-    public void expect_value_test_loads() throws IOException, ParserException {
+    public void expect_value_test_loads() throws IOException, ParserException, URISyntaxException {
         final FileConfigurationReader.ReadResult result = readFromResource("/parser/value_test/repo-config.yaml");
         final Map<String, Configuration> configurations = result.getConfigurations();
 
@@ -66,7 +68,7 @@ public class ParserValueTest extends AbstractBaseTest {
         assertProperty(autoDetectedNode, "/autodetected/string", "string", autoDetectedDefinition, "hello world");
 
         final ConfigDefinition explicitDefinition = assertDefinition(source, 1, ConfigDefinition.class);
-        final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "explicit", explicitDefinition, false, 0, 2);
+        final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "explicit", explicitDefinition, false, 0, 3);
         assertProperty(explicitNode, "/explicit/decimal", "decimal", explicitDefinition, new BigDecimal("31415926535897932384626433832795028841971"));
         assertProperty(explicitNode, "/explicit/decimal-multi-value", "decimal-multi-value", explicitDefinition,
                 new BigDecimal[] {
@@ -74,6 +76,7 @@ public class ParserValueTest extends AbstractBaseTest {
                         new BigDecimal("31415926535897932384626433832795028841971"),
                         new BigDecimal("4.2E+314159265")
                 });
+        assertProperty(explicitNode, "/explicit/uri", "uri", explicitDefinition, new URI("http://onehippo.org"));
 
         final ConfigDefinition stringDefinition = assertDefinition(source, 2, ConfigDefinition.class);
         final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "string", stringDefinition, false, 0, 8);

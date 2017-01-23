@@ -18,7 +18,7 @@ package org.onehippo.cm.api.model;
 public enum ValueType {
 
     STRING,
-    // todo: URI
+    URI,
     BOOLEAN,
     LONG,
     DOUBLE,

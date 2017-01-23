@@ -16,6 +16,7 @@
 package org.onehippo.cm.impl.model;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.Calendar;
 
 import org.onehippo.cm.api.model.Value;
@@ -73,6 +74,12 @@ public class ValueImpl implements Value {
         this.value = path;
         this.valueType = type;
         this.isResource = true;
+    }
+
+    public ValueImpl(final URI value) {
+        this.value = value;
+        this.valueType = ValueType.URI;
+        this.isResource = false;
     }
 
     @Override

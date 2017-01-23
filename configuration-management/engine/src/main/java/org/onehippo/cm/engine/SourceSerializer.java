@@ -18,6 +18,7 @@ package org.onehippo.cm.engine;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -222,6 +223,9 @@ public class SourceSerializer extends AbstractBaseSerializer {
                 // Explicitly represent BigDecimal as string; SnakeYaml does not represent BigDecimal nicely
                 final BigDecimal bigDecimal = (BigDecimal) value.getObject();
                 return representer.represent(bigDecimal.toString());
+            case URI:
+                final URI uri = (URI) value.getObject();
+                return representer.represent(uri.toString());
             default:
                 return representer.represent(value.getObject());
         }

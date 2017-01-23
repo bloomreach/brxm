@@ -18,6 +18,7 @@ package org.onehippo.cm.engine;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -318,6 +319,15 @@ public class SourceParser extends AbstractBaseParser {
                 } catch (NumberFormatException e) {
                     throw new ParserException("Could not parse scalar value as BigDecimal: " + scalar.getValue(), node);
                 }
+            case URI:
+                if (scalar.getTag() != Tag.STR) {
+                    throw new ParserException("Expected an URI value represented as a string scalar, found a scalar with tag: " + scalar.getTag(), node);
+                }
+                try {
+                    return new ValueImpl(new URI(scalar.getValue()));
+                } catch (URISyntaxException e) {
+                    throw new ParserException("Could not parse scalar value as URI: " + scalar.getValue(), node);
+                }
             default:
                 final Value value = constructValueFromScalar(node);
                 if (value.getType() != expectedValueType) {
@@ -373,6 +383,7 @@ public class SourceParser extends AbstractBaseParser {
 
         switch (expectedValueType) {
             case DECIMAL:
+            case URI:
                 final List<Node> sequence = asSequence(node);
                 values = new Value[sequence.size()];
                 for (int i = 0; i < sequence.size(); i++) {
@@ -407,6 +418,7 @@ public class SourceParser extends AbstractBaseParser {
             case "double": return ValueType.DOUBLE;
             case "long": return ValueType.LONG;
             case "string": return ValueType.STRING;
+            case "uri": return ValueType.URI;
         }
         throw new ParserException("Unrecognized value type: '" + type + "'", node);
     }
