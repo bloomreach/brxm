@@ -29,8 +29,6 @@ import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 
 public class CategoryInfoImpl extends AbstractJCRService implements CategoryInfo {
 
-    private static final long serialVersionUID = 1L;
-
     private String name;
     private String language;
     private String[] synonyms;
