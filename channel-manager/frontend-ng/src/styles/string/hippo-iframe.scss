@@ -24,12 +24,12 @@ html {
 
 .hst-cmseditlink {
   display: block;
-  height: $edit-link-height;
+  height: $embedded-link-height;
   pointer-events: none;
   position: absolute;
   right: 0;
   top: 0;
-  width: $edit-link-width;
+  width: $embedded-link-width;
 }
 
 #hippo-overlay { // sass-lint:disable-line no-ids
@@ -57,19 +57,19 @@ html {
 }
 
 .hippo-overlay-element-container {
-  border: 1px solid $overlay-container-border-color;
+  border: 1px solid $overlay-container-outline-color;
   pointer-events: none;
   z-index: $z-index-overlay-container;
 }
 
 .hippo-overlay-element-container-empty {
-  box-shadow: inset 0 0 1px 0 $overlay-container-shadow1-color, inset 0 0 8px 0 $overlay-container-shadow2-color;
+  box-shadow: inset 0 0 1px 0 $overlay-container-inline-color, inset 0 0 8px 0 $overlay-container-glow-color;
   pointer-events: auto;
 }
 
 .hippo-overlay-element-component {
-  border: 1px solid $overlay-component-border-color;
-  box-shadow: inset 0 0 1px 0 $overlay-component-shadow1-color, inset 0 0 8px 0 $overlay-component-shadow2-color;
+  border: 1px solid $overlay-component-outline-color;
+  box-shadow: inset 0 0 1px 0 $overlay-component-inline-color, inset 0 0 8px 0 $overlay-component-glow-color;
   cursor: pointer;
   z-index: $z-index-overlay-component;
 
@@ -83,23 +83,23 @@ html {
   display: flex;
   font-size: $overlay-label-font-size;
   visibility: hidden;
-}
 
-.hippo-overlay-element-container > .hippo-overlay-label {
-  background-color: $overlay-container-label-bgcolor;
-  border: 1px solid $overlay-container-label-border-color;
-}
+  .hippo-overlay-element-container > & {
+    background-color: $overlay-container-label-bgcolor;
+    border: 1px solid $overlay-container-label-border-color;
+  }
 
-.hippo-overlay-element-component > .hippo-overlay-label {
-  background-color: $overlay-component-label-bgcolor;
-  border: 1px solid $overlay-component-label-border-color;
-}
+  .hippo-overlay-element-component > & {
+    background-color: $overlay-component-label-bgcolor;
+    border: 1px solid $overlay-component-label-border-color;
+  }
 
-.hippo-overlay-add-mode .hippo-overlay-label,
-.hippo-dragging .hippo-overlay-element-container > .hippo-overlay-label,
-.hippo-overlay-element-component:hover > .hippo-overlay-label,
-.hippo-overlay-element-container-empty:hover > .hippo-overlay-label {
-  visibility: visible;
+  .hippo-overlay-add-mode &,
+  .hippo-dragging .hippo-overlay-element-container > &,
+  .hippo-overlay-element-component:hover > &,
+  .hippo-overlay-element-container-empty:hover > & {
+    visibility: visible;
+  }
 }
 
 .hippo-overlay-label-text {
@@ -135,7 +135,6 @@ html {
   transition: background-color $overlay-link-transition, box-shadow $overlay-link-transition;
   z-index: $z-index-overlay-link;
 
-
   &:hover {
     background-color: $overlay-link-hover-bgcolor;
   }
@@ -161,10 +160,10 @@ html {
 
 .hippo-overlay-box-empty {
   display: none;
-}
 
-.hippo-mode-edit .hippo-overlay-box-empty {
-  display: block;
+  .hippo-mode-edit & {
+    display: block;
+  }
 }
 
 .hippo-mode-edit .hippo-overlay-box {
@@ -172,30 +171,30 @@ html {
 }
 
 // Adding a component
-#hippo-overlay.hippo-overlay-add-mode { // sass-lint:disable-line no-ids
+.hippo-overlay-add-mode {
   cursor: copy;
   cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
   pointer-events: auto;
-}
 
-.hippo-overlay-add-mode .hippo-overlay-element-container {
+  .hippo-overlay-element-container {
 
-  &:not(.hippo-overlay-element-container-disabled) {
-    cursor: copy;
-    pointer-events: auto;
+    &:not(.hippo-overlay-element-container-disabled) {
+      cursor: copy;
+      pointer-events: auto;
 
-    &:hover {
-      background: $overlay-container-add-mode-hover-bgcolor;
+      &:hover {
+        background: $overlay-container-add-mode-hover-bgcolor;
+      }
+    }
+
+    .hippo-overlay-label {
+      display: flex;
     }
   }
 
-  .hippo-overlay-label {
-    display: flex;
+  .hippo-overlay-element-container-disabled {
+    cursor: not-allowed;
   }
-}
-
-.hippo-overlay-add-mode .hippo-overlay-element-container-disabled {
-  cursor: not-allowed;
 }
 
 .hippo-overlay-permeable {

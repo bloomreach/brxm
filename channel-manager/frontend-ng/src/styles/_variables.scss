@@ -132,23 +132,23 @@ $select-invalid-color: #f70029;
 // Toolbar
 $toolbar-height: 40px;
 
-// Edit links
-$edit-link-height: 40px;
-$edit-link-width: 40px;
+// Embedded links
+$embedded-link-height: 40px;
+$embedded-link-width: 40px;
 
 // Overlay
 $overlay-box-minheight: 40px;
 
-$overlay-container-border-color: #697279;
-$overlay-container-shadow1-color: $white;
-$overlay-container-shadow2-color: rgba(105, 114, 121, .75);
+$overlay-container-outline-color: #697279;
+$overlay-container-inline-color: $white;
+$overlay-container-glow-color: rgba(105, 114, 121, .75);
 $overlay-container-label-bgcolor: #697279;
 $overlay-container-label-border-color: #697279;
 $overlay-container-add-mode-hover-bgcolor: rgba(184, 188, 191, .9);
 
-$overlay-component-border-color: #0877d1;
-$overlay-component-shadow1-color: $white;
-$overlay-component-shadow2-color: rgba(8, 120, 212, .75);
+$overlay-component-outline-color: #0877d1;
+$overlay-component-inline-color: $white;
+$overlay-component-glow-color: rgba(8, 120, 212, .75);
 $overlay-component-hover-shadow-color: rgba(8, 120, 212, .25);
 $overlay-component-label-bgcolor: #0877d1;
 $overlay-component-label-border-color: #0877d1;
