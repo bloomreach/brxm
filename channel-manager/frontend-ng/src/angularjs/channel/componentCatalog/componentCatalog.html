@@ -24,8 +24,7 @@
 
     <div class="md-list-item-text">
       <p>
-        <span ng-if="$ctrl.isComponentSelected(component)">{{ 'ADDING_COMPONENT' | translate }}</span>
-        <span class="qa-name">{{ component.label }}</span>
+        <span class="qa-name">{{ $ctrl.getComponentLabel(component) }}</span>
       </p>
     </div>
 
