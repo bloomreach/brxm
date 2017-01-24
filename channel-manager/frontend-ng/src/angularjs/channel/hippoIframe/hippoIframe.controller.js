@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import hippoIframeCss from '../../../styles/iframe/hippo-iframe.scss';
+import hippoIframeCss from '../../../styles/string/hippo-iframe.scss';
 
 class HippoIframeCtrl {
   constructor(
@@ -162,7 +162,7 @@ class HippoIframeCtrl {
         return this.$q.reject();
       }
       const iframeWindow = iframeDom.defaultView;
-      this.DomService.addCss(iframeWindow, hippoIframeCss.toString());
+      this.DomService.addCss(iframeWindow, hippoIframeCss);
       return this.$q.resolve();
     } catch (e) {
       return this.$q.reject();

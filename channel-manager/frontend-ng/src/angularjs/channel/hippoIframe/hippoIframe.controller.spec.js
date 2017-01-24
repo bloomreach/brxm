@@ -170,7 +170,7 @@ describe('hippoIframeCtrl', () => {
     hippoIframeCtrl.onLoad();
     $rootScope.$digest();
 
-    expect(DomService.addCss).toHaveBeenCalledWith(window, '[object Object]');
+    expect(DomService.addCss).toHaveBeenCalledWith(window, jasmine.any(String));
     expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
     expect(ScalingService.onIframeReady).toHaveBeenCalled();
     expect(hstCommentsProcessorService.run).toHaveBeenCalled();
