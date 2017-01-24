@@ -17,17 +17,21 @@
 <md-list class="qa-catalog">
   <md-list-item class="md-1-line"
                 ng-repeat="component in $ctrl.components"
-                ng-class="{'list-item-active': $ctrl.isComponentSelected(component)}"
+                ng-class="{'list-item-active catalog-list-item-active': $ctrl.isComponentSelected(component)}"
                 ng-click="$ctrl.onSelect(component)">
     <img class="md-avatar"
          ng-src="{{component.iconURL}}" />
 
     <div class="md-list-item-text">
       <p>
-        <span ng-if="$ctrl.isComponentSelected(component)">{{ 'ADDING_COMPONENT' | translate }}</span>
-        <span class="qa-name">{{ component.label }}</span>
+        <span class="qa-name">{{ $ctrl.getComponentLabel(component) }}</span>
       </p>
     </div>
+
+    <md-button ng-if="$ctrl.isComponentSelected(component)"
+               class="md-secondary md-icon-button">
+      <md-icon>close</md-icon>
+    </md-button>
 
     <md-divider ng-if="!$last"></md-divider>
   </md-list-item>

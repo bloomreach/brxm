@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,28 @@
  */
 
 class ComponentCatalogController {
-  constructor(ComponentCatalogService, MaskService) {
+  constructor($translate, ComponentCatalogService, MaskService) {
     'ngInject';
 
+    this.$translate = $translate;
     this.MaskService = MaskService;
     this.ComponentCatalogService = ComponentCatalogService;
   }
 
   onSelect(component) {
     this.ComponentCatalogService.selectComponent(component);
-    this.selectedComponent = component;
   }
 
   isComponentSelected(component) {
-    return this.MaskService.isMasked && this.selectedComponent === component;
+    const selectedComponent = this.ComponentCatalogService.getSelectedComponent();
+    return this.MaskService.isMasked && selectedComponent === component;
+  }
+
+  getComponentLabel(component) {
+    if (this.isComponentSelected(component)) {
+      return this.$translate.instant('ADDING_COMPONENT', { component: component.label });
+    }
+    return component.label;
   }
 }
 

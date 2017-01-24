@@ -81,7 +81,7 @@ describe('ScalingService', () => {
         elementsToScale = $.merge(iframeHtml, appElementToScale);
         done();
       });
-      iframeElement.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/scaling.service.iframe.fixture.html`);
+      iframeElement.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/scaling/scaling.service.iframe.fixture.html`);
     });
 
     it('does not do anything when the hippoIframe is not visible', () => {

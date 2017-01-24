@@ -1,5 +1,5 @@
 {
-  "ADDING_COMPONENT": "Adding",
+  "ADDING_COMPONENT": "Adding {{component}}",
   "ADVANCED_SETTINGS": "Advanced settings",
   "CANCEL": "Cancel",
   "CHANNEL_PROPERTIES_SAVE_SUCCESS": "Channel settings saved successfully",
