@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ public class CategoryImpl extends AbstractJCRService implements Category {
                 }
             }
 
-            // populate childs:
+            // populate children
             for (Node childItem : new NodeIterable(item.getNodes())) {
                 if (childItem.isNodeType(NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
                     try {
@@ -89,10 +89,9 @@ public class CategoryImpl extends AbstractJCRService implements Category {
                     } catch (ServiceException e) {
                         log.warn("Skipping category because '{}', {}", e.getMessage(), e);
                     }
-                } else {
+                } else if (!childItem.isNodeType(HIPPOTAXONOMY_CATEGORYINFOS)) {
                     log.warn("Skipping child nodes that are not of type '{}'. Primary node type is '{}'.", 
                             NODETYPE_HIPPOTAXONOMY_CATEGORY, childItem.getPrimaryNodeType().getName());
-                    
                 }
             }
         } catch (RepositoryException e) {
