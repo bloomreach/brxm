@@ -50,8 +50,7 @@ class DragDropService {
 
   _sync() {
     if (this.drake) {
-      const containerBoxElements = this._getContainerBoxElements();
-      this.drake.containers.splice(0, this.drake.containers.length, ...containerBoxElements);
+      this.drake.containers = this._getContainerBoxElements();
     }
   }
 
