@@ -34,6 +34,7 @@ import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
@@ -55,57 +56,73 @@ public class ParserValueTest extends AbstractBaseTest {
         final Source source = assertSource(module, "base.yaml", 4);
 
         final ConfigDefinition autoDetectedDefinition = assertDefinition(source, 0, ConfigDefinition.class);
-        final DefinitionNode autoDetectedNode = assertNode(autoDetectedDefinition, "/autodetected", "autodetected", autoDetectedDefinition, false, 0, 7);
-        assertProperty(autoDetectedNode, "/autodetected/binary", "binary", autoDetectedDefinition, "hello world".getBytes());
-        assertProperty(autoDetectedNode, "/autodetected/boolean", "boolean", autoDetectedDefinition, true);
+        final DefinitionNode autoDetectedNode = assertNode(autoDetectedDefinition, "/autodetected", "autodetected", autoDetectedDefinition, false, 2, 7);
+        assertProperty(autoDetectedNode, "/autodetected/binary", "binary", autoDetectedDefinition, ValueType.BINARY, "hello world".getBytes());
+        assertProperty(autoDetectedNode, "/autodetected/boolean", "boolean", autoDetectedDefinition, ValueType.BOOLEAN, true);
         final Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(0);
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         calendar.set(2015, 9, 21, 7, 28, 0);
-        assertProperty(autoDetectedNode, "/autodetected/date", "date", autoDetectedDefinition, calendar);
-        assertProperty(autoDetectedNode, "/autodetected/double", "double", autoDetectedDefinition, 3.1415);
-        assertProperty(autoDetectedNode, "/autodetected/longAsInt", "longAsInt", autoDetectedDefinition, (long) 42);
-        assertProperty(autoDetectedNode, "/autodetected/longAsLong", "longAsLong", autoDetectedDefinition, 4200000000L);
-        assertProperty(autoDetectedNode, "/autodetected/string", "string", autoDetectedDefinition, "hello world");
+        assertProperty(autoDetectedNode, "/autodetected/date", "date", autoDetectedDefinition, ValueType.DATE, calendar);
+        assertProperty(autoDetectedNode, "/autodetected/double", "double", autoDetectedDefinition, ValueType.DOUBLE, 3.1415);
+        assertProperty(autoDetectedNode, "/autodetected/longAsInt", "longAsInt", autoDetectedDefinition, ValueType.LONG, (long) 42);
+        assertProperty(autoDetectedNode, "/autodetected/longAsLong", "longAsLong", autoDetectedDefinition, ValueType.LONG, 4200000000L);
+        assertProperty(autoDetectedNode, "/autodetected/string", "string", autoDetectedDefinition, ValueType.STRING, "hello world");
+        final DefinitionNode nodeWithMixins = assertNode(autoDetectedNode, "/autodetected/node-with-mixins",
+                "node-with-mixins", false, autoDetectedDefinition, false, 0, 2);
+        assertProperty(nodeWithMixins, "/autodetected/node-with-mixins/jcr:primaryType", "jcr:primaryType", autoDetectedDefinition,
+                ValueType.NAME, "some:type");
+        assertProperty(nodeWithMixins, "/autodetected/node-with-mixins/jcr:mixinTypes", "jcr:mixinTypes", autoDetectedDefinition,
+                ValueType.NAME, new String[]{"some:mixin", "some:otherMixin"});
+        final DefinitionNode nodeWithEmptyMixins = assertNode(autoDetectedNode, "/autodetected/node-with-empty-mixins",
+                "node-with-empty-mixins", false, autoDetectedDefinition, false, 0, 2);
+        assertProperty(nodeWithEmptyMixins, "/autodetected/node-with-empty-mixins/jcr:primaryType", "jcr:primaryType", autoDetectedDefinition,
+                ValueType.NAME, "some:type");
+        assertProperty(nodeWithEmptyMixins, "/autodetected/node-with-empty-mixins/jcr:mixinTypes", "jcr:mixinTypes", autoDetectedDefinition,
+                ValueType.NAME, new String[0]);
 
         final ConfigDefinition explicitDefinition = assertDefinition(source, 1, ConfigDefinition.class);
         final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "explicit", explicitDefinition, false, 0, 9);
-        assertProperty(explicitNode, "/explicit/decimal", "decimal", explicitDefinition, new BigDecimal("31415926535897932384626433832795028841971"));
+        assertProperty(explicitNode, "/explicit/decimal", "decimal", explicitDefinition, ValueType.DECIMAL,
+                new BigDecimal("31415926535897932384626433832795028841971"));
         assertProperty(explicitNode, "/explicit/decimal-multi-value", "decimal-multi-value", explicitDefinition,
+                ValueType.DECIMAL,
                 new BigDecimal[] {
                         new BigDecimal("42"),
                         new BigDecimal("31415926535897932384626433832795028841971"),
                         new BigDecimal("4.2E+314159265")
                 });
-        assertProperty(explicitNode, "/explicit/name", "name", explicitDefinition, "prefix:local-name");
-        assertProperty(explicitNode, "/explicit/path", "path", explicitDefinition, "/path/to/something");
-        assertProperty(explicitNode, "/explicit/reference", "reference", explicitDefinition, UUID.fromString("cafebabe-cafe-babe-cafe-babecafebabe"));
+        assertProperty(explicitNode, "/explicit/name", "name", explicitDefinition, ValueType.NAME, "prefix:local-name");
+        assertProperty(explicitNode, "/explicit/path", "path", explicitDefinition, ValueType.PATH, "/path/to/something");
+        assertProperty(explicitNode, "/explicit/reference", "reference", explicitDefinition, ValueType.REFERENCE,
+                UUID.fromString("cafebabe-cafe-babe-cafe-babecafebabe"));
         assertProperty(explicitNode, "/explicit/reference-with-path", "reference-with-path",
-                explicitDefinition, false, "/path/to/something", false, true);
+                explicitDefinition, false, ValueType.REFERENCE, "/path/to/something", false, true);
         assertProperty(explicitNode, "/explicit/reference-with-multi-value-path", "reference-with-multi-value-path",
-                explicitDefinition, false, new String[]{"/path/to/something", "/path/to/something-else"}, false, true);
-        assertProperty(explicitNode, "/explicit/uri", "uri", explicitDefinition, new URI("http://onehippo.org"));
-        assertProperty(explicitNode, "/explicit/weakreference", "weakreference", explicitDefinition, UUID.fromString("cafebabe-cafe-babe-cafe-babecafebabe"));
+                explicitDefinition, false, ValueType.REFERENCE, new String[]{"/path/to/something", "/path/to/something-else"}, false, true);
+        assertProperty(explicitNode, "/explicit/uri", "uri", explicitDefinition, ValueType.URI, new URI("http://onehippo.org"));
+        assertProperty(explicitNode, "/explicit/weakreference", "weakreference", explicitDefinition, ValueType.WEAKREFERENCE,
+                UUID.fromString("cafebabe-cafe-babe-cafe-babecafebabe"));
 
         final ConfigDefinition stringDefinition = assertDefinition(source, 2, ConfigDefinition.class);
         final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "string", stringDefinition, false, 0, 8);
-        assertProperty(stringNode, "/string/strBoolean", "strBoolean", stringDefinition, "true");
-        assertProperty(stringNode, "/string/strDate", "strDate", stringDefinition, "2015-10-21T07:28:00+8:00");
-        assertProperty(stringNode, "/string/strDouble", "strDouble", stringDefinition, "3.1415");
-        assertProperty(stringNode, "/string/strLong", "strLong", stringDefinition, "42");
-        assertProperty(stringNode, "/string/strWithQuotes", "strWithQuotes", stringDefinition, "string ' \"");
-        assertProperty(stringNode, "/string/strWithLeadingSingleQuote", "strWithLeadingSingleQuote", stringDefinition, "' \" string");
-        assertProperty(stringNode, "/string/strWithLeadingDoubleQuote", "strWithLeadingDoubleQuote", stringDefinition, "\" ' string");
-        assertProperty(stringNode, "/string/strWithLineBreaks", "strWithLineBreaks", stringDefinition, "line one\nline two\n");
+        assertProperty(stringNode, "/string/strBoolean", "strBoolean", stringDefinition, ValueType.STRING, "true");
+        assertProperty(stringNode, "/string/strDate", "strDate", stringDefinition, ValueType.STRING, "2015-10-21T07:28:00+8:00");
+        assertProperty(stringNode, "/string/strDouble", "strDouble", stringDefinition, ValueType.STRING, "3.1415");
+        assertProperty(stringNode, "/string/strLong", "strLong", stringDefinition, ValueType.STRING, "42");
+        assertProperty(stringNode, "/string/strWithQuotes", "strWithQuotes", stringDefinition, ValueType.STRING, "string ' \"");
+        assertProperty(stringNode, "/string/strWithLeadingSingleQuote", "strWithLeadingSingleQuote", stringDefinition, ValueType.STRING, "' \" string");
+        assertProperty(stringNode, "/string/strWithLeadingDoubleQuote", "strWithLeadingDoubleQuote", stringDefinition, ValueType.STRING, "\" ' string");
+        assertProperty(stringNode, "/string/strWithLineBreaks", "strWithLineBreaks", stringDefinition, ValueType.STRING, "line one\nline two\n");
 
         final ConfigDefinition emptyDefinition = assertDefinition(source, 3, ConfigDefinition.class);
         final DefinitionNode emptyNode = assertNode(emptyDefinition, "/empty", "empty", emptyDefinition, false, 0, 6);
-        assertProperty(emptyNode, "/empty/emptyBinary", "emptyBinary", emptyDefinition, new Object[0]);
-        assertProperty(emptyNode, "/empty/emptyBoolean", "emptyBoolean", emptyDefinition, new Object[0]);
-        assertProperty(emptyNode, "/empty/emptyDate", "emptyDate", emptyDefinition, new Object[0]);
-        assertProperty(emptyNode, "/empty/emptyDouble", "emptyDouble", emptyDefinition, new Object[0]);
-        assertProperty(emptyNode, "/empty/emptyLong", "emptyLong", emptyDefinition, new Object[0]);
-        assertProperty(emptyNode, "/empty/emptyString", "emptyString", emptyDefinition, new Object[0]);
+        assertProperty(emptyNode, "/empty/emptyBinary", "emptyBinary", emptyDefinition, ValueType.BINARY, new Object[0]);
+        assertProperty(emptyNode, "/empty/emptyBoolean", "emptyBoolean", emptyDefinition, ValueType.BOOLEAN, new Object[0]);
+        assertProperty(emptyNode, "/empty/emptyDate", "emptyDate", emptyDefinition, ValueType.DATE, new Object[0]);
+        assertProperty(emptyNode, "/empty/emptyDouble", "emptyDouble", emptyDefinition, ValueType.DOUBLE, new Object[0]);
+        assertProperty(emptyNode, "/empty/emptyLong", "emptyLong", emptyDefinition, ValueType.LONG, new Object[0]);
+        assertProperty(emptyNode, "/empty/emptyString", "emptyString", emptyDefinition, ValueType.STRING, new Object[0]);
     }
 
     @Test
@@ -128,7 +145,7 @@ public class ParserValueTest extends AbstractBaseTest {
         final Source source = assertSource(module, "dummy.yaml", 1);
         final ConfigDefinition definition = assertDefinition(source, 0, ConfigDefinition.class);
         final DefinitionNode node = assertNode(definition, "/node", "node", definition, false, 0, 1);
-        assertProperty(node, "/node/property", "property", definition, new Object[0]);
+        assertProperty(node, "/node/property", "property", definition, ValueType.STRING, new Object[0]);
     }
 
 }

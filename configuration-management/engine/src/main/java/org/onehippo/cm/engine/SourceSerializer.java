@@ -124,11 +124,34 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     private Node representProperty(final DefinitionProperty property, final Consumer<Value> resourceConsumer) {
+        if (property.getName().equals("jcr:primaryType")) {
+            return representJcrPrimaryTypeProperty(property);
+        }
+        if (property.getName().equals("jcr:mixinTypes")) {
+            return representJcrMixinTypesProperty(property);
+        }
+
         if (requiresValueMap(property)) {
             return representPropertyUsingMap(property, resourceConsumer);
         } else {
             return representPropertyUsingScalarOrSequence(property);
         }
+    }
+
+    private Node representJcrPrimaryTypeProperty(final DefinitionProperty property) {
+        final List<NodeTuple> tuples = new ArrayList<>(1);
+        tuples.add(new NodeTuple(createStrScalar(property.getName()), representValue(property.getValue())));
+        return new MappingNode(Tag.MAP, tuples, false);
+    }
+
+    private Node representJcrMixinTypesProperty(final DefinitionProperty property) {
+        final List<NodeTuple> tuples = new ArrayList<>(1);
+        final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
+        for (Value value : property.getValues()) {
+            valueNodes.add(representValue(value));
+        }
+        tuples.add(createStrSeqTuple(property.getName(), valueNodes, true));
+        return new MappingNode(Tag.MAP, tuples, false);
     }
 
     private Node representPropertyUsingMap(final DefinitionProperty property, final Consumer<Value> resourceConsumer) {

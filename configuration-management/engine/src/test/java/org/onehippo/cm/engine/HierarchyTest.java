@@ -28,6 +28,7 @@ import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.api.model.ValueType;
 
 import static org.junit.Assert.assertEquals;
 
@@ -58,34 +59,34 @@ public class HierarchyTest extends AbstractBaseTest {
         final ConfigDefinition definition1 = assertDefinition(source1, 2, ConfigDefinition.class);
         final DefinitionNode rootDefinition1 = assertNode(definition1, "/", "", definition1, false, 4, 1);
         assertProperty(rootDefinition1, "/root-level-property", "root-level-property",
-                definition1, "root-level-property-value");
-        final DefinitionNode nodeWithSingleProperty =
-                assertNode(rootDefinition1, "/node-with-single-property", "node-with-single-property", false, definition1, false, 0, 1);
+                definition1, ValueType.STRING, "root-level-property-value");
+        final DefinitionNode nodeWithSingleProperty = assertNode(rootDefinition1, "/node-with-single-property",
+                "node-with-single-property", false, definition1, false, 0, 1);
         assertProperty(nodeWithSingleProperty, "/node-with-single-property/property", "property",
-                definition1, "node-with-single-property-value");
-        final DefinitionNode nodeWithMultipleProperties =
-                assertNode(rootDefinition1, "/node-with-multiple-properties", "node-with-multiple-properties", false, definition1, false, 0, 3);
+                definition1, ValueType.STRING, "node-with-single-property-value");
+        final DefinitionNode nodeWithMultipleProperties = assertNode(rootDefinition1, "/node-with-multiple-properties",
+                "node-with-multiple-properties", false, definition1, false, 0, 3);
         assertProperty(nodeWithMultipleProperties, "/node-with-multiple-properties/single", "single",
-                definition1, "value1");
+                definition1, ValueType.STRING, "value1");
         assertProperty(nodeWithMultipleProperties, "/node-with-multiple-properties/multiple", "multiple",
-                definition1, new String[]{"value2","value3"});
+                definition1, ValueType.STRING, new String[]{"value2","value3"});
         assertProperty(nodeWithMultipleProperties, "/node-with-multiple-properties/empty-multiple", "empty-multiple",
-                definition1, new String[0]);
+                definition1, ValueType.STRING, new String[0]);
         final DefinitionNode nodeWithSubNode =
                 assertNode(rootDefinition1, "/node-with-sub-node", "node-with-sub-node", false, definition1, false, 1, 0);
         final DefinitionNode subNode =
                 assertNode(nodeWithSubNode, "/node-with-sub-node/sub-node", "sub-node", false, definition1, false, 0, 1);
-        assertProperty(subNode, "/node-with-sub-node/sub-node/property", "property", definition1, "sub-node-value");
+        assertProperty(subNode, "/node-with-sub-node/sub-node/property", "property", definition1, ValueType.STRING, "sub-node-value");
         final DefinitionNode resourceNode =
                 assertNode(rootDefinition1, "/resources", "resources", false, definition1, false, 0, 4);
         assertProperty(resourceNode, "/resources/single-value-string-resource", "single-value-string-resource",
-                definition1, false, "string1.txt", true, false);
+                definition1, false, ValueType.STRING, "string1.txt", true, false);
         assertProperty(resourceNode, "/resources/single-value-binary-resource", "single-value-binary-resource",
-                definition1, false, "image1.png", true, false);
+                definition1, false, ValueType.BINARY, "image1.png", true, false);
         assertProperty(resourceNode, "/resources/multi-value-resource-1", "multi-value-resource-1", definition1, false,
-                new String[]{"string2.txt"}, true, false);
+                ValueType.STRING, new String[]{"string2.txt"}, true, false);
         assertProperty(resourceNode, "/resources/multi-value-resource-2", "multi-value-resource-2", definition1, false,
-                new String[]{"string3.txt","string4.txt"}, true, false);
+                ValueType.STRING, new String[]{"string3.txt","string4.txt"}, true, false);
 
         final ContentDefinition contentDefinition = assertDefinition(source1, 3, ContentDefinition.class);
         assertNode(contentDefinition, "/content/documents/myhippoproject", "myhippoproject", contentDefinition, false, 0, 1);
@@ -98,7 +99,7 @@ public class HierarchyTest extends AbstractBaseTest {
 
         final DefinitionNode rootDefinition2 =
                 assertNode(definition2, "/node-with-sub-node/sub-node", "sub-node", definition2, false, 0, 1);
-        assertProperty(rootDefinition2, "/node-with-sub-node/sub-node/property", "property", definition2, "override");
+        assertProperty(rootDefinition2, "/node-with-sub-node/sub-node/property", "property", definition2, ValueType.STRING, "override");
     }
 
 }

@@ -159,19 +159,33 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     private void constructDefinitionProperty(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
-        switch (value.getNodeId()) {
-            case scalar:
-                constructDefinitionPropertyFromScalar(name, value, parent);
-                break;
-            case sequence:
-                constructDefinitionPropertyFromSequence(name, value, parent);
-                break;
-            case mapping:
-                constructDefinitionPropertyFromMap(name, value, parent);
-                break;
-            default:
-                throw new ParserException("Property value must be scalar, sequence or map", value);
+        if (name.equals("jcr:primaryType")) {
+            constructJcrPrimaryTypeProperty(name, value, parent);
+        } else if (name.equals("jcr:mixinTypes")) {
+            constructJcrMixinTypesProperty(name, value, parent);
+        } else {
+            switch (value.getNodeId()) {
+                case scalar:
+                    constructDefinitionPropertyFromScalar(name, value, parent);
+                    break;
+                case sequence:
+                    constructDefinitionPropertyFromSequence(name, value, parent);
+                    break;
+                case mapping:
+                    constructDefinitionPropertyFromMap(name, value, parent);
+                    break;
+                default:
+                    throw new ParserException("Property value must be scalar, sequence or map", value);
+            }
         }
+    }
+
+    private void constructJcrPrimaryTypeProperty(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
+        parent.addProperty(name, constructValueFromScalar(value, ValueType.NAME));
+    }
+
+    private void constructJcrMixinTypesProperty(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
+        parent.addProperty(name, ValueType.NAME, constructValuesFromSequence(value, ValueType.NAME));
     }
 
     private void constructDefinitionPropertyFromScalar(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {

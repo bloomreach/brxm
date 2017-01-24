@@ -9,6 +9,12 @@ instructions:
           - longAsInt: 42
           - longAsLong: 4200000000
           - string: hello world
+          - /node-with-mixins:
+              - jcr:primaryType: some:type
+              - jcr:mixinTypes: ['some:mixin', 'some:otherMixin']
+          - /node-with-empty-mixins:
+              - jcr:primaryType: some:type
+              - jcr:mixinTypes: []
       - /explicit:
           - decimal:
                 type: decimal
