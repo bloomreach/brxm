@@ -162,7 +162,15 @@ class DragDropService {
   _onComponentClick(component) {
     if (!this.isDragging()) {
       this._onStopDragOrClick(component.getBoxElement());
+
       this.PageStructureService.showComponentProperties(component);
+      this._digestIfNeeded();
+    }
+  }
+
+  _digestIfNeeded() {
+    if (!this.$rootScope.$$phase) {
+      this.$rootScope.$digest();
     }
   }
 

@@ -273,12 +273,16 @@ class OverlayService {
   }
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
+    this._linkButtonTransition(overlayElement);
+
     this._addClickHandler(overlayElement, () => {
       this.CmsService.publish('open-content', structureElement.getUuid());
     });
   }
 
   _addMenuLinkClickHandler(structureElement, overlayElement) {
+    this._linkButtonTransition(overlayElement);
+
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$apply(() => {
         this.editMenuHandler(structureElement.getUuid());
@@ -290,6 +294,16 @@ class OverlayService {
     overlayElement.click((event) => {
       event.stopPropagation();
       handler();
+    });
+  }
+
+  _linkButtonTransition(element) {
+    element.on('mousedown', () => {
+      element.addClass('hippo-overlay-element-link-clicked');
+    });
+
+    element.on('mouseup', () => {
+      element.removeClass('hippo-overlay-element-link-clicked');
     });
   }
 
@@ -312,7 +326,7 @@ class OverlayService {
       case 'component':
         return this._isEditMode() && !this.isInAddMode;
       case 'container':
-        return this._isEditMode() && (this.isInAddMode || structureElement.isEmpty() || structureElement.isDisabled());
+        return this._isEditMode();
       case 'content-link':
         return !this._isEditMode() && this.DomService.isVisible(boxElement);
       case 'menu-link':

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ describe('componentCatalogController', () => {
         ComponentCatalogService,
       });
     });
+
+    spyOn(ComponentCatalogService, 'getSelectedComponent').and.returnValue(component);
   });
 
   it('should set the selected component', () => {
@@ -40,28 +42,24 @@ describe('componentCatalogController', () => {
 
     $ctrl.onSelect(component);
 
-    expect($ctrl.selectedComponent).toBe(component);
     expect(ComponentCatalogService.selectComponent).toHaveBeenCalledWith(component);
   });
 
   describe('when component is selected', () => {
     it('should return true when selected component matches and mask is on', () => {
       MaskService.isMasked = true;
-      $ctrl.selectedComponent = component;
 
       expect($ctrl.isComponentSelected(component)).toEqual(true);
     });
 
     it('should return false when mask is off', () => {
       MaskService.isMasked = false;
-      $ctrl.selectedComponent = component;
 
       expect($ctrl.isComponentSelected(component)).toEqual(false);
     });
 
     it('should return false when selected component does not match', () => {
       MaskService.isMasked = true;
-      $ctrl.selectedComponent = component;
 
       expect($ctrl.isComponentSelected({ other: 1 })).toEqual(false);
     });

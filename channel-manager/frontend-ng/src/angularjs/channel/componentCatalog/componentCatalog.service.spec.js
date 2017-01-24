@@ -118,5 +118,14 @@ describe('ComponentCatalogService', () => {
       expect(PageStructureService.showComponentProperties).toHaveBeenCalled();
     });
   });
+
+  describe('returning the selected component', () => {
+    it('should return the selected component', () => {
+      const component = { id: 'component' };
+      ComponentCatalogService.selectedComponent = component;
+
+      expect(ComponentCatalogService.getSelectedComponent()).toEqual(component);
+    });
+  });
 });
 
