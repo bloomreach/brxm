@@ -87,9 +87,6 @@ html {
   display: flex;
   font-size: 12px;
   visibility: hidden;
-}
-
-.hippo-overlay-add-mode .hippo-overlay-label {
   pointer-events: none;
 }
 
