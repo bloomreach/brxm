@@ -79,13 +79,13 @@ public class HierarchyTest extends AbstractBaseTest {
         final DefinitionNode resourceNode =
                 assertNode(rootDefinition1, "/resources", "resources", false, definition1, false, 0, 4);
         assertProperty(resourceNode, "/resources/single-value-string-resource", "single-value-string-resource",
-                definition1, false, "string1.txt", true);
+                definition1, false, "string1.txt", true, false);
         assertProperty(resourceNode, "/resources/single-value-binary-resource", "single-value-binary-resource",
-                definition1, false, "image1.png", true);
+                definition1, false, "image1.png", true, false);
         assertProperty(resourceNode, "/resources/multi-value-resource-1", "multi-value-resource-1", definition1, false,
-                new String[]{"string2.txt"}, true);
+                new String[]{"string2.txt"}, true, false);
         assertProperty(resourceNode, "/resources/multi-value-resource-2", "multi-value-resource-2", definition1, false,
-                new String[]{"string3.txt","string4.txt"}, true);
+                new String[]{"string3.txt","string4.txt"}, true, false);
 
         final ContentDefinition contentDefinition = assertDefinition(source1, 3, ContentDefinition.class);
         assertNode(contentDefinition, "/content/documents/myhippoproject", "myhippoproject", contentDefinition, false, 0, 1);

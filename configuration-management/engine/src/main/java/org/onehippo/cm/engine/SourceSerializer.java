@@ -17,8 +17,6 @@ package org.onehippo.cm.engine;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -136,8 +134,16 @@ public class SourceSerializer extends AbstractBaseSerializer {
     private Node representPropertyUsingMap(final DefinitionProperty property, final Consumer<Value> resourceConsumer) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
         valueMapTuples.add(createStrStrTuple("type", property.getValueType().name().toLowerCase()));
+
         final boolean hasResourceValues = hasResourceValues(property);
-        final String key = hasResourceValues ? "resource" : "value";
+        final String key;
+        if (hasResourceValues) {
+            key = "resource";
+        } else if (hasPathValues(property)) {
+            key = "path";
+        } else {
+            key = "value";
+        }
 
         if (property.getType() == PropertyType.SINGLE) {
             final Value value = property.getValue();
@@ -217,15 +223,26 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return false;
     }
 
+    private boolean hasPathValues(final DefinitionProperty property) {
+        if (property.getType() == PropertyType.SINGLE) {
+            return property.getValue().isPath();
+        }
+
+        for (Value value : property.getValues()) {
+            if (value.isPath()) return true;
+        }
+
+        return false;
+    }
+
     private Node representValue(final Value value) {
         switch (value.getType()) {
             case DECIMAL:
                 // Explicitly represent BigDecimal as string; SnakeYaml does not represent BigDecimal nicely
-                final BigDecimal bigDecimal = (BigDecimal) value.getObject();
-                return representer.represent(bigDecimal.toString());
+            case REFERENCE:
+            case WEAKREFERENCE:
             case URI:
-                final URI uri = (URI) value.getObject();
-                return representer.represent(uri.toString());
+                return representer.represent(value.getString());
             default:
                 return representer.represent(value.getObject());
         }

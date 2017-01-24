@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigDefinition;
@@ -68,7 +69,7 @@ public class ParserValueTest extends AbstractBaseTest {
         assertProperty(autoDetectedNode, "/autodetected/string", "string", autoDetectedDefinition, "hello world");
 
         final ConfigDefinition explicitDefinition = assertDefinition(source, 1, ConfigDefinition.class);
-        final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "explicit", explicitDefinition, false, 0, 5);
+        final DefinitionNode explicitNode = assertNode(explicitDefinition, "/explicit", "explicit", explicitDefinition, false, 0, 9);
         assertProperty(explicitNode, "/explicit/decimal", "decimal", explicitDefinition, new BigDecimal("31415926535897932384626433832795028841971"));
         assertProperty(explicitNode, "/explicit/decimal-multi-value", "decimal-multi-value", explicitDefinition,
                 new BigDecimal[] {
@@ -78,7 +79,13 @@ public class ParserValueTest extends AbstractBaseTest {
                 });
         assertProperty(explicitNode, "/explicit/name", "name", explicitDefinition, "prefix:local-name");
         assertProperty(explicitNode, "/explicit/path", "path", explicitDefinition, "/path/to/something");
+        assertProperty(explicitNode, "/explicit/reference", "reference", explicitDefinition, UUID.fromString("cafebabe-cafe-babe-cafe-babecafebabe"));
+        assertProperty(explicitNode, "/explicit/reference-with-path", "reference-with-path",
+                explicitDefinition, false, "/path/to/something", false, true);
+        assertProperty(explicitNode, "/explicit/reference-with-multi-value-path", "reference-with-multi-value-path",
+                explicitDefinition, false, new String[]{"/path/to/something", "/path/to/something-else"}, false, true);
         assertProperty(explicitNode, "/explicit/uri", "uri", explicitDefinition, new URI("http://onehippo.org"));
+        assertProperty(explicitNode, "/explicit/weakreference", "weakreference", explicitDefinition, UUID.fromString("cafebabe-cafe-babe-cafe-babecafebabe"));
 
         final ConfigDefinition stringDefinition = assertDefinition(source, 2, ConfigDefinition.class);
         final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "string", stringDefinition, false, 0, 8);

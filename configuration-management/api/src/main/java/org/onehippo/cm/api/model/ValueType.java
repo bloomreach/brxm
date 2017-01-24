@@ -26,9 +26,9 @@ public enum ValueType {
     BINARY,
     DATE,
     NAME,
-    PATH;
-    // todo: WEAKREFERENCE
-    // todo: REFERENCE
+    PATH,
+    WEAKREFERENCE,
+    REFERENCE;
 
     // todo: decide whether to support (or remove) these
     // ENCRYPTED

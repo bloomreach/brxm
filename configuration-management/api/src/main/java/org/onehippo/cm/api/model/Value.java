@@ -19,6 +19,20 @@ public interface Value {
     Object getObject();
     String getString();
     ValueType getType();
+
+    /**
+     * Returns whether this value represents a path to a resource rather than the actual value, only applicable for
+     * {@link ValueType#STRING} and {@link ValueType#BINARY}
+     * @return
+     */
     boolean isResource();
+
+    /**
+     * Returns whether this value represents a path to an item in the repository rather than its UUID, only applicable
+     * for {@link ValueType#REFERENCE} and {@link ValueType#WEAKREFERENCE}
+     * @return
+     */
+    boolean isPath();
+
     boolean isDeleted();
 }

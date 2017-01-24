@@ -27,59 +27,45 @@ public class ValueImpl implements Value {
     private final Object value;
     private final ValueType valueType;
     private final boolean isResource;
+    private final boolean isPath;
 
     public ValueImpl(final BigDecimal value) {
-        this.value = value;
-        this.valueType = ValueType.DECIMAL;
-        this.isResource = false;
+        this(value, ValueType.DECIMAL, false, false);
     }
 
     public ValueImpl(final Boolean value) {
-        this.value = value;
-        this.valueType = ValueType.BOOLEAN;
-        this.isResource = false;
+        this(value, ValueType.BOOLEAN, false, false);
     }
 
     public ValueImpl(final byte[] value) {
-        this.value = value;
-        this.valueType = ValueType.BINARY;
-        this.isResource = false;
+        this(value, ValueType.BINARY, false, false);
     }
 
     public ValueImpl(final Calendar value) {
-        this.value = value;
-        this.valueType = ValueType.DATE;
-        this.isResource = false;
+        this(value, ValueType.DATE, false, false);
     }
 
     public ValueImpl(final Double value) {
-        this.value = value;
-        this.valueType = ValueType.DOUBLE;
-        this.isResource = false;
+        this(value, ValueType.DOUBLE, false, false);
     }
 
     public ValueImpl(final Long value) {
-        this.value = value;
-        this.valueType = ValueType.LONG;
-        this.isResource = false;
+        this(value, ValueType.LONG, false, false);
     }
 
     public ValueImpl(final String value) {
-        this.value = value;
-        this.valueType = ValueType.STRING;
-        this.isResource = false;
+        this(value, ValueType.STRING, false, false);
     }
 
     public ValueImpl(final URI value) {
-        this.value = value;
-        this.valueType = ValueType.URI;
-        this.isResource = false;
+        this(value, ValueType.URI, false, false);
     }
 
-    public ValueImpl(final Object value, final ValueType type, final boolean isResource) {
+    public ValueImpl(final Object value, final ValueType type, final boolean isResource, final boolean isPath) {
         this.value = value;
         this.valueType = type;
         this.isResource = isResource;
+        this.isPath = isPath;
     }
 
     @Override
@@ -106,6 +92,11 @@ public class ValueImpl implements Value {
     @Override
     public boolean isResource() {
         return isResource;
+    }
+
+    @Override
+    public boolean isPath() {
+        return isPath;
     }
 
     @Override
