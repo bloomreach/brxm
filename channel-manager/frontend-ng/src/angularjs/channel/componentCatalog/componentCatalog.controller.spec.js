@@ -33,10 +33,7 @@ describe('componentCatalogController', () => {
       MaskService = _MaskService_;
       ComponentCatalogService = _ComponentCatalogService_;
 
-      $ctrl = $componentController('componentCatalog', {
-        MaskService,
-        ComponentCatalogService,
-      });
+      $ctrl = $componentController('componentCatalog');
     });
   });
 
