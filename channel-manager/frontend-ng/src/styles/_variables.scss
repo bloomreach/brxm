@@ -132,6 +132,43 @@ $select-invalid-color: #f70029;
 // Toolbar
 $toolbar-height: 40px;
 
+// Embedded links
+$embedded-link-height: 40px;
+$embedded-link-width: 40px;
+
+// Overlay
+$overlay-box-minheight: 40px;
+
+$overlay-container-outline-color: #697279;
+$overlay-container-inline-color: $white;
+$overlay-container-glow-color: rgba(105, 114, 121, .75);
+$overlay-container-label-bgcolor: #697279;
+$overlay-container-label-border-color: #697279;
+$overlay-container-add-mode-hover-bgcolor: rgba(184, 188, 191, .9);
+
+$overlay-component-outline-color: #0877d1;
+$overlay-component-inline-color: $white;
+$overlay-component-glow-color: rgba(8, 120, 212, .75);
+$overlay-component-hover-shadow-color: rgba(8, 120, 212, .25);
+$overlay-component-label-bgcolor: #0877d1;
+$overlay-component-label-border-color: #0877d1;
+
+$overlay-label-color: $white;
+$overlay-label-font-size: 12px;
+
+$overlay-lock-bgcolor: #697279;
+$overlay-lock-fill-color: $white;
+$overlay-lock-height: 26px;
+$overlay-lock-width: 26px;
+
+$overlay-link-bgcolor: #ff741a;
+$overlay-link-shadow-color: rgba(0, 0, 0, .26);
+$overlay-link-fill-color: $white;
+$overlay-link-transition: 300ms cubic-bezier(.55, 0, .55, .2);
+$overlay-link-hover-bgcolor: #e06717;
+$overlay-link-active-shadow-color: rgba(0, 0, 0, .4);
+$overlay-link-clicked-bgcolor: #ff9659;
+
 // Layout breakpoints
 $layout-breakpoint-xs: 600px !default;
 $layout-breakpoint-sm: 960px !default;
@@ -144,3 +181,8 @@ $z-index-mask: $z-index-sidenav + 1;
 $z-index-iframe-lifted: $z-index-mask + 1;
 $z-index-sidenav-lifted: $z-index-iframe-lifted + 1;
 $z-index-tree: 999;
+
+$z-index-overlay: 10000;
+$z-index-overlay-component: $z-index-overlay + 1;
+$z-index-overlay-container: $z-index-overlay-component + 1;
+$z-index-overlay-link: $z-index-overlay-container + 1;
