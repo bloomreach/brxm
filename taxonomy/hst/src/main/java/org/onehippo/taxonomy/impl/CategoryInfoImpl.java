@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.jcr.Node;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.service.AbstractJCRService;
 import org.hippoecm.hst.service.Service;
 import org.hippoecm.hst.service.ServiceException;
@@ -32,20 +33,22 @@ public class CategoryInfoImpl extends AbstractJCRService implements CategoryInfo
     private String language;
     private String[] synonyms;
     private String description;
-    
+
     private Map<String, Object> properties;
 
     public CategoryInfoImpl(Node jcrNode) throws ServiceException {
         super(jcrNode);
 
-        this.language = this.getValueProvider().getString("hippo:language");
-        this.name = this.getValueProvider().getString("hippo:message");
-        this.synonyms = this.getValueProvider().getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS);
-        this.description = this.getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION);
+        this.language = getValueProvider().getName();
+        this.name = getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_NAME);
+        this.description = getValueProvider().getString(TaxonomyNodeTypes.HIPPOTAXONOMY_DESCRIPTION);
+
+        this.synonyms = getValueProvider().getStrings(TaxonomyNodeTypes.HIPPOTAXONOMY_SYNONYMS);
+
         if (synonyms == null) {
-            synonyms = new String[0];
+            synonyms = ArrayUtils.EMPTY_STRING_ARRAY;
         }
-        
+
         this.properties = this.getValueProvider().getProperties();
     }
 
@@ -83,7 +86,6 @@ public class CategoryInfoImpl extends AbstractJCRService implements CategoryInfo
     }
 
     public String[] getStringArray(String property) {
-        return (String []) properties.get(property);
+        return (String[]) properties.get(property);
     }
-
 }
