@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,14 +48,9 @@ const customConfig = {
       'node_modules/dragula/dist/dragula.min.js',
       'node_modules/dragula/dist/dragula.min.css',
       'node_modules/jquery/dist/jquery.js',
-      {
-        pattern: 'src/styles/hippo-iframe.css',
-        included: false,
-      },
     ],
     proxies: {
       '/styles/dragula.min.css': '/base/node_modules/dragula/dist/dragula.min.css',
-      '/styles/hippo-iframe.css': '/base/src/styles/hippo-iframe.css',
       '/scripts/dragula.min.js': '/base/node_modules/dragula/dist/dragula.min.js',
     },
   },
