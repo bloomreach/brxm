@@ -107,7 +107,7 @@ describe('DragDropService', () => {
 
       container2 = createContainer(2);
 
-      DragDropService.enable([container1, container2]).then(() => {
+      DragDropService.enable().then(() => {
         try {
           callback(iframeWindow);
         } catch (e) {
