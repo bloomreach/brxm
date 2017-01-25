@@ -40,6 +40,16 @@
     "exception,type=org.hippoecm.repository.api.WorkflowException" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "exception,type=javax.jcr.InvalidItemStateException" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
