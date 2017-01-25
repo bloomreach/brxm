@@ -379,12 +379,13 @@ public class SourceParser extends AbstractBaseParser {
         }
 
         if (values.length > 1) {
+            final ValueType initialType = values[0].getType();
             for (int i = 1; i < values.length; i++) {
-                if (values[0].getType() != values[i].getType()) {
+                if (values[i].getType() != initialType) {
                     throw new ParserException(
                             MessageFormat.format(
                                     "Property values must all be of the same type, found value type ''{0}'' as well as ''{1}''",
-                                    values[0].getType(),
+                                    initialType,
                                     values[i].getType()),
                             node);
                 }

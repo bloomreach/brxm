@@ -676,6 +676,42 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void configWithDefinitionWithPathWithIncorrectType() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: string\n"
+                + "        path: /path/to/node";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Path can only be used for value type 'reference' or 'weakreference'");
+    }
+
+    @Test
+    public void configWithDefinitionWithPathMap() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: reference\n"
+                + "        path: { }";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Path value must be scalar or sequence, found 'mapping'");
+    }
+
+    @Test
     public void configWithDefinitionWithIncorrectWeakReferenceValue() {
         final String yaml = "instructions:\n"
                 + "- config:\n"
