@@ -16,7 +16,7 @@
 
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 
-describe('OverlayService', () => {
+fdescribe('OverlayService', () => {
   let $q;
   let $rootScope;
   let CmsService;
@@ -186,6 +186,9 @@ describe('OverlayService', () => {
       expect(iframe('#hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(3);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(3);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
+
+      const emptyContainer = iframe('.hippo-overlay-element-container').eq(1);
+      expect(emptyContainer.find('.hippo-overlay-label-text').html()).toBe('Empty container');
       done();
     });
   });

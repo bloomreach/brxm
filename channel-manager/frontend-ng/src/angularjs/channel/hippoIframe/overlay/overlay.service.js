@@ -225,12 +225,21 @@ class OverlayService {
 
   _addLabel(structureElement, overlayElement) {
     if (structureElement.hasLabel()) {
-      overlayElement.append(`
+      const labelElement = $(`
         <span class="hippo-overlay-label">
           <span class="hippo-overlay-label-text"></span>
         </span>
       `);
+      this._setLabelText(labelElement, structureElement.getLabel());
+      overlayElement.append(labelElement);
     }
+  }
+
+  _setLabelText(labelElement, text) {
+    const textElement = labelElement.children('.hippo-overlay-label-text');
+    const escapedText = this.DomService.escapeHtml(text);
+    // use html() with manual escaping instead of text() because the latter crashes Chrome during unit tests :-/
+    textElement.html(escapedText);
   }
 
   _addMarkupAndBehavior(structureElement, overlayElement) {
@@ -363,13 +372,6 @@ class OverlayService {
       iconElement.remove();
       this._setLabelText(labelElement, component.getLabel());
     }
-  }
-
-  _setLabelText(labelElement, text) {
-    const textElement = labelElement.children('.hippo-overlay-label-text');
-    const escapedText = this.DomService.escapeHtml(text);
-    // use html() with manual escaping instead of text() because the latter crashes Chrome during unit tests :-/
-    textElement.html(escapedText);
   }
 
   _syncPosition(overlayElement, boxElement) {
