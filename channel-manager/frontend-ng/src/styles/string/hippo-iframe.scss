@@ -79,8 +79,10 @@ html {
 }
 
 .hippo-overlay-label {
+  align-items: center;
   color: $overlay-label-color;
   display: flex;
+  fill: $overlay-label-color;
   font-size: $overlay-label-font-size;
   visibility: hidden;
 
@@ -94,6 +96,7 @@ html {
     border: 1px solid $overlay-component-label-border-color;
   }
 
+  &.hippo-overlay-label-experiment,
   .hippo-overlay-add-mode &,
   .hippo-dragging .hippo-overlay-element-container > &,
   .hippo-overlay-element-component:hover > &,
@@ -105,6 +108,16 @@ html {
 .hippo-overlay-label-text {
   padding-left: 6px;
   padding-right: 6px;
+
+  .hippo-overlay-label-experiment & {
+    display: none;
+    padding-left: 2px;
+    padding-right: 6px;
+
+    .hippo-overlay-element-component:hover & {
+      display: block;
+    }
+  }
 }
 
 .hippo-overlay-lock {
@@ -168,26 +181,6 @@ html {
 
 .hippo-mode-edit .hippo-overlay-box {
   min-height: $overlay-box-minheight;
-}
-
-.hippo-overlay-experiment-state {
-  align-items: center;
-  border: 1px solid #0877d1;
-  background-color: #0877d1;
-  color: #ffffff;
-  fill: #ffffff;
-  display: flex;
-  font-size: 12px;
-}
-
-.hippo-overlay-experiment-state-text {
-  display: none;
-  padding-left: 2px;
-  padding-right: 6px;
-
-  .hippo-overlay-element-component:hover & {
-    display: block;
-  }
 }
 
 // Adding a component

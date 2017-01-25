@@ -196,11 +196,7 @@ class OverlayService {
       <div class="hippo-overlay-element hippo-overlay-element-${structureElement.getType()}">
       </div>`);
 
-    if (this._hasExperiment(structureElement)) {
-      this._addExperimentState(structureElement, overlayElement);
-    } else {
-      this._addLabel(structureElement, overlayElement);
-    }
+    this._addLabel(structureElement, overlayElement);
     this._addMarkupAndBehavior(structureElement, overlayElement);
 
     structureElement.setOverlayElement(overlayElement);
@@ -227,28 +223,11 @@ class OverlayService {
     });
   }
 
-  _hasExperiment(structureElement) {
-    return structureElement.getType() === 'component' && this.ExperimentStateService.hasExperiment(structureElement);
-  }
-
-  _addExperimentState(component, overlayElement) {
-    const label = this.ExperimentStateService.getExperimentStateLabel(component);
-    const escapedText = this.DomService.escapeHtml(label);
-    const stateMarkup = $(`
-        <span class="hippo-overlay-experiment-state">
-          <span class="hippo-overlay-experiment-state-text">${escapedText}</span>
-        </span>
-    `);
-    stateMarkup.prepend(flaskSvg);
-    overlayElement.append(stateMarkup);
-  }
-
   _addLabel(structureElement, overlayElement) {
-    const escapedLabel = this.DomService.escapeHtml(structureElement.getLabel());
-    if (escapedLabel.length > 0) {
+    if (structureElement.hasLabel()) {
       overlayElement.append(`
         <span class="hippo-overlay-label">
-          <span class="hippo-overlay-label-text">${escapedLabel}</span>
+          <span class="hippo-overlay-label-text"></span>
         </span>
       `);
     }
@@ -336,12 +315,18 @@ class OverlayService {
 
     overlayElement.toggleClass('hippo-overlay-element-visible', this._isElementVisible(structureElement, boxElement));
 
-    if (structureElement.getType() === 'container') {
-      overlayElement.toggleClass('hippo-overlay-element-container-empty', structureElement.isEmpty());
-      overlayElement.toggleClass('hippo-overlay-element-container-disabled', structureElement.isDisabled());
+    switch (structureElement.getType()) {
+      case 'component':
+        this._syncLabel(structureElement, overlayElement);
+        break;
+      case 'container':
+        overlayElement.toggleClass('hippo-overlay-element-container-empty', structureElement.isEmpty());
+        overlayElement.toggleClass('hippo-overlay-element-container-disabled', structureElement.isDisabled());
+        break;
+      default:
+        break;
     }
 
-    this._syncExperimentState(structureElement, overlayElement);
     this._syncPosition(overlayElement, boxElement);
   }
 
@@ -360,11 +345,31 @@ class OverlayService {
     }
   }
 
-  _syncExperimentState(structureElement, overlayElement) {
-    if (this._hasExperiment(structureElement)) {
-      const label = this.ExperimentStateService.getExperimentStateLabel(structureElement);
-      overlayElement.find('.hippo-overlay-experiment-state-text').text(label);
+  _syncLabel(component, overlayElement) {
+    const labelElement = overlayElement.children('.hippo-overlay-label');
+    const iconElement = labelElement.children('svg');
+
+    if (this.ExperimentStateService.hasExperiment(component)) {
+      labelElement.addClass('hippo-overlay-label-experiment');
+
+      if (iconElement.length === 0) {
+        labelElement.prepend(flaskSvg);
+      }
+
+      const experimentState = this.ExperimentStateService.getExperimentStateLabel(component);
+      this._setLabelText(labelElement, experimentState);
+    } else {
+      labelElement.removeClass('hippo-overlay-label-experiment');
+      iconElement.remove();
+      this._setLabelText(labelElement, component.getLabel());
     }
+  }
+
+  _setLabelText(labelElement, text) {
+    const textElement = labelElement.children('.hippo-overlay-label-text');
+    const escapedText = this.DomService.escapeHtml(text);
+    // use html() with manual escaping instead of text() because the latter crashes Chrome during unit tests :-/
+    textElement.html(escapedText);
   }
 
   _syncPosition(overlayElement, boxElement) {

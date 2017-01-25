@@ -183,7 +183,7 @@ describe('OverlayService', () => {
 
   it('only renders labels for structure elements that have a label', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(2);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(3);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(3);
       expect(iframe('#hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
       done();
@@ -240,13 +240,13 @@ describe('OverlayService', () => {
   it('renders the experiment state of components', (done) => {
     loadIframeFixture(() => {
       const componentWithExperiment = iframe('#hippo-overlay > .hippo-overlay-element-component').eq(2);
-      const experimentState = componentWithExperiment.find('.hippo-overlay-experiment-state');
-      expect(experimentState.length).toBe(1);
-      expect(experimentState.find('svg').length).toBe(1);
+      const label = componentWithExperiment.find('.hippo-overlay-label');
+      expect(label.length).toBe(1);
+      expect(label.find('svg').length).toBe(1);
 
-      const experimentStateText = experimentState.find('.hippo-overlay-experiment-state-text');
-      expect(experimentStateText.length).toBe(1);
-      expect(experimentStateText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
+      const labelText = label.find('.hippo-overlay-label-text');
+      expect(labelText.length).toBe(1);
+      expect(labelText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
 
       done();
     });
@@ -254,16 +254,36 @@ describe('OverlayService', () => {
 
   it('updates the experiment state of components', (done) => {
     loadIframeFixture(() => {
-      let componentWithExperiment = iframe('#hippo-overlay > .hippo-overlay-element-component').eq(2);
-      let experimentStateText = componentWithExperiment.find('.hippo-overlay-experiment-state-text');
-      expect(experimentStateText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
+      const componentWithExperiment = iframe('#hippo-overlay > .hippo-overlay-element-component').eq(2);
+      const labelText = componentWithExperiment.find('.hippo-overlay-label-text');
+      expect(labelText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
 
       spyOn(ExperimentStateService, 'getExperimentStateLabel').and.returnValue('EXPERIMENT_LABEL_COMPLETED');
       OverlayService.sync();
 
-      componentWithExperiment = iframe('#hippo-overlay > .hippo-overlay-element-component').eq(2);
-      experimentStateText = componentWithExperiment.find('.hippo-overlay-experiment-state-text');
-      expect(experimentStateText.html()).toBe('EXPERIMENT_LABEL_COMPLETED');
+      expect(labelText.html()).toBe('EXPERIMENT_LABEL_COMPLETED');
+
+      done();
+    });
+  });
+
+  it('starts showing the experiment state of a component for which an experiment was just created', (done) => {
+    loadIframeFixture(() => {
+      const componentA = iframe('#hippo-overlay > .hippo-overlay-element-component').eq(0);
+      const labelText = componentA.find('.hippo-overlay-label-text');
+      expect(labelText.html()).toBe('component A');
+
+      const componentMarkupWithExperiment = `
+        <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa", "Targeting-experiment-id": "567", "Targeting-experiment-state": "CREATED" } -->
+          <p id="markup-in-component-a">Markup in component A that just got an experiment</p>
+        <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+      `;
+      spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithExperiment }));
+
+      PageStructureService.renderComponent('aaaa');
+      $rootScope.$digest();
+
+      expect(labelText.html()).toBe('EXPERIMENT_LABEL_CREATED');
 
       done();
     });
