@@ -125,7 +125,7 @@ html {
   background-color: $overlay-lock-bgcolor;
   cursor: default;
   display: flex;
-  fill: $overlay-lock-fill-color;
+  fill: $overlay-lock-color;
   float: right;
   height: $overlay-lock-height;
   justify-content: center;
@@ -133,7 +133,20 @@ html {
   margin-right: -1px;
   margin-top: -1px;
   pointer-events: all;
-  width: $overlay-lock-width;
+
+  &:hover::before {
+    // the locked-by text is centered vertically, but wraps when there is not enough horizontal space
+    align-self: flex-start;
+    background-color: $overlay-lock-bgcolor;
+    color: $overlay-lock-color;
+    content: attr(data-locked-by);
+    flex: 0 1 auto;
+    font-size: $overlay-lock-font-size;
+    line-height: $overlay-lock-height;
+    min-height: $overlay-lock-height;
+    padding-left: 6px;
+    padding-right: 2px;
+  }
 }
 
 .hippo-overlay-element-link {

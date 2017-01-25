@@ -262,8 +262,8 @@ class OverlayService {
 
   _addLockIcon(container, overlayElement) {
     if (container.isDisabled()) {
-      const tooltip = this._getLockedByText(container);
-      const lockMarkup = $(`<div class="hippo-overlay-lock" title="${tooltip}"></div>`);
+      const lockedBy = this._getLockedByText(container);
+      const lockMarkup = $(`<div class="hippo-overlay-lock" data-locked-by="${lockedBy}"></div>`);
       lockMarkup.append(lockSvg);
       lockMarkup.appendTo(overlayElement);
     }
