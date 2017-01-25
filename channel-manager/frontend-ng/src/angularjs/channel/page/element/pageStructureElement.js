@@ -81,7 +81,7 @@ class PageStructureElement {
    * Replace container DOM elements with the given markup
    * @return the jQuery element referring to the inserted markup in the DOM document
    */
-  replaceDOM(htmlFragment) {
+  replaceDOM($htmlFragment) {
     const endCommentNode = this.getEndComment()[0];
     const node = this._removeSiblingsUntil(this.getStartComment()[0], endCommentNode);
 
@@ -96,9 +96,7 @@ class PageStructureElement {
       this._removeSiblingsUntil(endCommentNode.nextSibling); // Don't remove the end marker
     }
 
-    const jQueryNodeCollection = $(htmlFragment);
-    this.getEndComment().replaceWith(jQueryNodeCollection);
-    return jQueryNodeCollection;
+    this.getEndComment().replaceWith($htmlFragment);
   }
 
   _removeSiblingsUntil(startNode, endNode) {

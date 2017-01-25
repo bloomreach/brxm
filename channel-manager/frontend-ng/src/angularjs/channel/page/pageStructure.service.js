@@ -293,12 +293,13 @@ class PageStructureService {
    * Update the component with the new markup
    */
   _updateComponent(componentId, newMarkup) {
+    const $newMarkup = $(newMarkup);
     const oldComponent = this.getComponentById(componentId);
     const container = oldComponent.getContainer();
 
     this._removeEmbeddedLinksInComponent(oldComponent);
-    const jQueryNodeCollection = oldComponent.replaceDOM(newMarkup);
-    const newComponent = this._createComponent(jQueryNodeCollection, container);
+    oldComponent.replaceDOM($newMarkup);
+    const newComponent = this._createComponent($newMarkup, container);
 
     if (newComponent) {
       container.replaceComponent(oldComponent, newComponent);
@@ -312,24 +313,17 @@ class PageStructureService {
     return newComponent;
   }
 
-  /**
-   * Lets the back-end re-render a container.
-   * @param container
-   * @returns {*} a promise with the new container object
-   * @private
-   */
   renderContainer(container) {
     return this.RenderingService.fetchContainerMarkup(container)
       .then(markup => this._updateContainer(container, markup));
-    // TODO: handle error
-    // try reloading the entire page?
   }
 
   _updateContainer(oldContainer, newMarkup) {
     this._removeEmbeddedLinksInContainer(oldContainer);
-
-    // consider following three actions to be an atomic operation
-    const newContainer = this._replaceContainer(oldContainer, this._createContainer(oldContainer.replaceDOM(newMarkup)));
+    const $newMarkup = $(newMarkup);
+    oldContainer.replaceDOM($newMarkup);
+    const container = this._createContainer($newMarkup);
+    const newContainer = this._replaceContainer(oldContainer, container);
 
     this.attachEmbeddedLinks();
     return newContainer;
