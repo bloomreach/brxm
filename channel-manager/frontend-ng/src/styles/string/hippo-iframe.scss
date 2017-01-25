@@ -194,6 +194,7 @@ html {
 
   .hippo-overlay-element-container-disabled {
     cursor: not-allowed;
+    pointer-events: none;
   }
 
   .hippo-overlay-label {
