@@ -755,6 +755,30 @@ describe('PageStructureService', () => {
     expect(HippoIframeService.reload).not.toHaveBeenCalled();
   });
 
+  it('notifies change listeners when updating a component', () => {
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+        <p id="updated-component-with-new-head-contribution">
+        </p>
+      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+    `;
+    const container = {
+      removeComponent() {},
+    };
+    const component = jasmine.createSpyObj('component', ['replaceDOM', 'getContainer']);
+    component.replaceDOM.and.callFake((markup, callback) => {
+      callback();
+    });
+    component.getContainer.and.returnValue(container);
+    spyOn(PageStructureService, '_createComponent');
+    spyOn(PageStructureService, '_notifyChangeListeners').and.callThrough();
+
+    PageStructureService._updateComponent(component, updatedMarkup);
+    expect(PageStructureService._notifyChangeListeners).toHaveBeenCalled();
+  });
+
   it('retrieves a container by overlay element', () => {
     registerVBoxContainer();
     const container = PageStructureService.getContainers()[0];
@@ -855,6 +879,39 @@ describe('PageStructureService', () => {
       expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(true);
       done();
     });
+    $rootScope.$digest();
+  });
+
+  it('notifies change listeners when updating a container', (done) => {
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+
+    const container = PageStructureService.getContainers()[0];
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+      <div id="container-vbox">
+        <div id="componentA">
+          <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          <p id="test">Some markup in component A</p>
+          <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+        </div>
+      </div>
+      <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
+      `;
+
+    spyOn(PageStructureService, '_notifyChangeListeners').and.callThrough();
+
+    spyOn(container, 'replaceDOM').and.callFake(($newMarkup, callback) => {
+      callback();
+    });
+
+    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+
+    PageStructureService.renderContainer(container).then(() => {
+      expect(PageStructureService._notifyChangeListeners).toHaveBeenCalled();
+      done();
+    });
+
     $rootScope.$digest();
   });
 
