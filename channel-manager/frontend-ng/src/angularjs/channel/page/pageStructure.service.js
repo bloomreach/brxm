@@ -240,6 +240,8 @@ class PageStructureService {
   }
 
   showComponentProperties(componentElement) {
+    this.MaskService.mask();
+
     if (!componentElement) {
       this.$log.warn('Problem opening the component properties dialog: no component provided.');
       return;
@@ -257,7 +259,6 @@ class PageStructureService {
       },
       page: this.PageMetaDataService.get(),
     });
-    this.MaskService.mask();
   }
 
   printParsedElements() {

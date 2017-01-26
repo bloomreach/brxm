@@ -38,26 +38,37 @@ class ComponentCatalogService {
     return this.selectedComponent;
   }
 
-  selectComponent(component) {
-    this.selectedComponent = component;
+  _enableAddModeMask() {
     this.MaskService.mask('mask-add-component');
     this.ChannelSidenavService.liftSidenavAboveMask();
     this.HippoIframeService.liftIframeAboveMask();
     this.OverlayService.enableAddMode();
+  }
+
+  _disableAddModeMask() {
+    this.MaskService.resetMaskClass();
+
+    this.ChannelSidenavService.lowerSidenavBeneathMask();
+    this.HippoIframeService.lowerIframeBeneathMask();
+    this.OverlayService.disableAddMode();
+    this.OverlayService.offContainerClick();
+    this.MaskService.removeClickHandler();
+  }
+
+  selectComponent(component) {
+    this.selectedComponent = component;
+    this._enableAddModeMask();
 
     this.OverlayService.onContainerClick((containerOverlayElement) => {
       delete this.selectedComponent;
+      this._disableAddModeMask();
       this.addComponentToContainer(component, containerOverlayElement);
     });
 
     this.MaskService.onClick(() => {
       delete this.selectedComponent;
       this.MaskService.unmask();
-      this.ChannelSidenavService.lowerSidenavBeneathMask();
-      this.HippoIframeService.lowerIframeBeneathMask();
-      this.OverlayService.disableAddMode();
-      this.OverlayService.offContainerClick();
-      this.MaskService.removeClickHandler();
+      this._disableAddModeMask();
     });
   }
 

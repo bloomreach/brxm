@@ -20,6 +20,10 @@ class MaskService {
     this.clickHandler = angular.noop;
   }
 
+  resetMaskClass() {
+    this.maskClass = this.defaultMaskClass;
+  }
+
   onClick(clickHandler) {
     this.clickHandler = clickHandler;
   }
@@ -34,12 +38,13 @@ class MaskService {
     if (optionalMaskClass) {
       this.maskClass = `${this.defaultMaskClass} ${optionalMaskClass}`;
     } else {
-      this.maskClass = this.defaultMaskClass;
+      this.resetMaskClass();
     }
   }
 
   unmask() {
     this.isMasked = false;
+    this.resetMaskClass();
   }
 }
 
