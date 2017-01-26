@@ -82,6 +82,7 @@ html {
   color: $overlay-label-color;
   display: flex;
   font-size: $overlay-label-font-size;
+  pointer-events: none;
   visibility: hidden;
 
   .hippo-overlay-element-container > & {
@@ -177,14 +178,13 @@ html {
   pointer-events: auto;
 
   .hippo-overlay-element-container {
-
     &:not(.hippo-overlay-element-container-disabled) {
       cursor: copy;
       pointer-events: auto;
+    }
 
-      &:hover {
-        background: $overlay-container-add-mode-hover-bgcolor;
-      }
+    &:not(.hippo-overlay-element-container-disabled):hover {
+      background: $overlay-container-add-mode-hover-bgcolor;
     }
 
     .hippo-overlay-label {
@@ -194,10 +194,6 @@ html {
 
   .hippo-overlay-element-container-disabled {
     cursor: not-allowed;
-    pointer-events: none;
-  }
-
-  .hippo-overlay-label {
     pointer-events: none;
   }
 }
