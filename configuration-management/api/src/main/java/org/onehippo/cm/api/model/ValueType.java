@@ -28,10 +28,12 @@ public enum ValueType {
     NAME,
     PATH,
     WEAKREFERENCE,
-    REFERENCE,
-    ENCRYPTED,
-    CLASSNAME,
-    FOLDER;
+    REFERENCE;
+
+    // todo: decide whether to support (or remove) these
+    // ENCRYPTED
+    // CLASSNAME
+    // FOLDER
 
     public final String toString() {
         return name().toLowerCase();

@@ -440,6 +440,21 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void configWithDefinitionWithBigInteger() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property: 31415926535897932384626433832795028841971";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+
+        assertParserException(root, firstTuple(propertyMap).getValueNode(),
+                "Value is too big to fit into a long, use a property of type decimal");
+    }
+
+    @Test
     public void configWithDefinitionWithMixedSequenceTypes() {
         final String yaml = "instructions:\n"
                 + "- config:\n"
@@ -466,7 +481,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
 
         assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property values represented as map must have a 'value' or 'resource' key");
+                "Property values represented as map must have a 'value', 'resource' or 'path' key");
     }
 
     @Test
@@ -513,7 +528,25 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
 
         assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property values represented as map must have a 'value' or 'resource' key");
+                "Property values represented as map must have a 'value', 'resource' or 'path' key");
+    }
+
+    @Test
+    public void configWithDefinitionWithMultipleValueKeys() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: string\n"
+                + "        resource: []\n"
+                + "        value: []";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+
+        assertParserException(root, firstTuple(propertyMap).getValueNode(),
+                "Property values represented as map must have a single 'value', 'resource' or 'path' key");
     }
 
     @Test
@@ -531,7 +564,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
 
         assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Property value in map must be scalar or sequence");
+                "Property value in map must be scalar or sequence, found 'mapping'");
     }
 
     @Test
@@ -550,6 +583,150 @@ public class SourceValidationTest extends AbstractBaseTest {
 
         assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
                 "Tag not recognized: tag:yaml.org,2002:null");
+    }
+
+    @Test
+    public void configWithDefinitionWithTypeValueMismatch() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: string\n"
+                + "        value: 42";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Property value is not of the correct type, expected 'string', found 'long'");
+    }
+
+    @Test
+    public void configWithDefinitionWithNonNumericDecimalValue() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: decimal\n"
+                + "        value: '42a'";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Could not parse scalar value as BigDecimal: 42a");
+    }
+
+    @Test
+    public void configWithDefinitionWithNonStringDecimalValue() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: decimal\n"
+                + "        value: 42";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Scalar must be a string");
+    }
+
+    @Test
+    public void configWithDefinitionWithIncorrectUriValue() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: uri\n"
+                + "        value: ':'";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Scalar must be formatted as an URI");
+    }
+
+    @Test
+    public void configWithDefinitionWithIncorrectReferenceValue() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: reference\n"
+                + "        value: abc";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Could not parse scalar value as Reference (UUID): abc");
+    }
+
+    @Test
+    public void configWithDefinitionWithPathWithIncorrectType() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: string\n"
+                + "        path: /path/to/node";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Path can only be used for value type 'reference' or 'weakreference'");
+    }
+
+    @Test
+    public void configWithDefinitionWithPathMap() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: reference\n"
+                + "        path: { }";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Path value must be scalar or sequence, found 'mapping'");
+    }
+
+    @Test
+    public void configWithDefinitionWithIncorrectWeakReferenceValue() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: weakreference\n"
+                + "        value: abc";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Could not parse scalar value as WeakReference (UUID): abc");
     }
 
     @Test
@@ -585,7 +762,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
 
         assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Node must be scalar or sequence, found 'mapping'");
+                "Resource value must be scalar or sequence, found 'mapping'");
     }
 
     @Test
@@ -602,8 +779,8 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
         final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
 
-        assertParserException(root, firstTuple(propertyValueMap).getValueNode(),
-                "Resource can only be used for value type 'binary' or 'string'");
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Resource values can only be used for value type 'binary' or 'string'");
     }
 
     @Test

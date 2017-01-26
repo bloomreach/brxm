@@ -33,6 +33,7 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueFormatException;
+import org.onehippo.cm.api.model.ValueType;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -185,9 +186,10 @@ public abstract class AbstractBaseTest {
                                       final String path,
                                       final String name,
                                       final Definition definition,
+                                      final ValueType valueType,
                                       final Object value)
     {
-        return assertProperty(parent, path, name, definition, false, value, false);
+        return assertProperty(parent, path, name, definition, false, valueType, value, false, false);
     }
 
     DefinitionProperty assertProperty(final DefinitionNode parent,
@@ -195,8 +197,10 @@ public abstract class AbstractBaseTest {
                                       final String name,
                                       final Definition definition,
                                       final boolean isDeleted,
+                                      final ValueType valueType,
                                       final Object value,
-                                      final boolean valueIsResource)
+                                      final boolean valueIsResource,
+                                      final boolean valueIsPath)
     {
         final DefinitionProperty property = parent.getProperties().get(name);
         validateItem(property, path, name, parent, false, definition, isDeleted);
@@ -206,7 +210,7 @@ public abstract class AbstractBaseTest {
         } catch (ValueFormatException e) {
             // ignore
         }
-        assertValue(value, valueIsResource, property.getValue());
+        assertValue(valueType, value, valueIsResource, valueIsPath, property.getValue());
         return property;
     }
 
@@ -214,9 +218,10 @@ public abstract class AbstractBaseTest {
                                       final String path,
                                       final String name,
                                       final Definition definition,
+                                      final ValueType valueType,
                                       final Object[] values)
     {
-        return assertProperty(parent, path, name, definition, false, values, false);
+        return assertProperty(parent, path, name, definition, false, valueType, values, false, false);
     }
 
     DefinitionProperty assertProperty(final DefinitionNode parent,
@@ -224,11 +229,14 @@ public abstract class AbstractBaseTest {
                                       final String name,
                                       final Definition definition,
                                       final boolean isDeleted,
+                                      final ValueType valueType,
                                       final Object[] values,
-                                      final boolean valuesAreResource)
+                                      final boolean valuesAreResource,
+                                      final boolean valuesArePath)
     {
         final DefinitionProperty property = parent.getProperties().get(name);
         validateItem(property, path, name, parent, false, definition, isDeleted);
+        assertEquals(valueType, property.getValueType());
         try {
             property.getValue();
             fail("Expected ValueFormatException");
@@ -237,18 +245,20 @@ public abstract class AbstractBaseTest {
         }
         assertEquals(values.length, property.getValues().length);
         for (int i = 0; i < values.length; i++) {
-            assertValue(values[i], valuesAreResource, property.getValues()[i]);
+            assertValue(valueType, values[i], valuesAreResource, valuesArePath, property.getValues()[i]);
         }
         return property;
     }
 
-    void assertValue(final Object expected, final boolean expectedResource, final Value actual) {
+    void assertValue(final ValueType valueType, final Object expected, final boolean isResource, final boolean isPath, final Value actual) {
         if (expected instanceof byte[]) {
             assertArrayEquals((byte[]) expected, (byte[]) actual.getObject());
         } else {
             assertEquals(expected, actual.getObject());
         }
-        assertEquals(expectedResource, actual.isResource());
+        assertEquals(valueType, actual.getType());
+        assertEquals(isResource, actual.isResource());
+        assertEquals(isPath, actual.isPath());
     }
 
 }

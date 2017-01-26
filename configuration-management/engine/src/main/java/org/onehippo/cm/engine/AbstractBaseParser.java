@@ -136,28 +136,10 @@ public abstract class AbstractBaseParser {
         return sequenceNode.getValue();
     }
 
-    protected ScalarNode asScalar(final Node node) throws ParserException {
-        if (node == null) {
-            return null;
-        }
-        if (node.getNodeId() != NodeId.scalar) {
-            throw new ParserException("Node must be scalar", node);
-        }
-        return (ScalarNode) node;
-    }
-
-    protected String asStringScalar(final Node node) throws ParserException {
-        final ScalarNode scalarNode = asScalar(node);
-        if (!scalarNode.getTag().equals(Tag.STR)) {
-            throw new ParserException("Scalar must be a string", node);
-        }
-        return scalarNode.getValue();
-    }
-
-    protected String asPathScalar(final Node node) throws ParserException {
+    protected String asPathScalar(final Node node, final boolean requireAbsolutePath) throws ParserException {
         final String path = asStringScalar(node);
 
-        if (!path.startsWith("/")) {
+        if (requireAbsolutePath && !path.startsWith("/")) {
             throw new ParserException("Path must start with a slash", node);
         }
 
@@ -197,6 +179,36 @@ public abstract class AbstractBaseParser {
         return "/".equals(nodePath);
     }
 
+    protected URI asURIScalar(final Node node) throws ParserException {
+        final ScalarNode scalarNode = asScalar(node);
+        if (!scalarNode.getTag().equals(Tag.STR)) {
+            throw new ParserException("Scalar must be a string", node);
+        }
+        try {
+            return new URI(scalarNode.getValue());
+        } catch (final URISyntaxException e) {
+            throw new ParserException("Scalar must be formatted as an URI", node);
+        }
+    }
+
+    protected ScalarNode asScalar(final Node node) throws ParserException {
+        if (node == null) {
+            return null;
+        }
+        if (node.getNodeId() != NodeId.scalar) {
+            throw new ParserException("Node must be scalar", node);
+        }
+        return (ScalarNode) node;
+    }
+
+    protected String asStringScalar(final Node node) throws ParserException {
+        final ScalarNode scalarNode = asScalar(node);
+        if (!scalarNode.getTag().equals(Tag.STR)) {
+            throw new ParserException("Scalar must be a string", node);
+        }
+        return scalarNode.getValue();
+    }
+
     protected List<String> asSingleOrSequenceOfStrScalars(final Node node) throws ParserException {
         if (node == null) {
             return Collections.emptyList();
@@ -216,18 +228,6 @@ public abstract class AbstractBaseParser {
                 throw new ParserException("Node must be scalar or sequence, found '" + node.getNodeId() + "'", node);
         }
         return result;
-    }
-
-    protected URI asURIScalar(final Node node) throws ParserException {
-        final ScalarNode scalarNode = asScalar(node);
-        if (!scalarNode.getTag().equals(Tag.STR)) {
-            throw new ParserException("Scalar must be a string", node);
-        }
-        try {
-            return new URI(scalarNode.getValue());
-        } catch (final URISyntaxException e) {
-            throw new ParserException("Scalar must be formatted as an URI", node);
-        }
     }
 
 }

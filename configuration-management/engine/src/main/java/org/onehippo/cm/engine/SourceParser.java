@@ -16,6 +16,7 @@
 package org.onehippo.cm.engine;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,6 +24,7 @@ import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.model.Source;
@@ -37,13 +39,12 @@ import org.onehippo.cm.impl.model.ValueImpl;
 import org.yaml.snakeyaml.constructor.Construct;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.NodeId;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
 public class SourceParser extends AbstractBaseParser {
 
-    // After the composeYamlNode step, SnakeYaml does not yet provide parsed scalar values. An extension of the Constructor
+    // After the compose step, SnakeYaml does not yet provide parsed scalar values. An extension of the Constructor
     // class is needed to access the protected Constructor#construct method which uses the built-in parsers for the
     // known basic scalar types. The additional check for the ConstructYamlTimestamp is done as the constructor for
     // timestamp returns a Date by internally constructing a Calendar.
@@ -118,7 +119,7 @@ public class SourceParser extends AbstractBaseParser {
         final Map<Node, Node> definitions = asOrderedMap(src);
         for (Node keyNode : definitions.keySet()) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
-            final String key = asPathScalar(keyNode);
+            final String key = asPathScalar(keyNode, true);
             constructDefinitionNode(key, definitions.get(keyNode), definition);
         }
     }
@@ -127,7 +128,7 @@ public class SourceParser extends AbstractBaseParser {
         final Map<Node, Node> definitions = asOrderedMap(src);
         for (Node keyNode : definitions.keySet()) {
             final ContentDefinitionImpl definition = parent.addContentDefinition();
-            final String key = asPathScalar(keyNode);
+            final String key = asPathScalar(keyNode, true);
             constructDefinitionNode(key, definitions.get(keyNode), definition);
         }
     }
@@ -158,19 +159,33 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     private void constructDefinitionProperty(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
-        switch (value.getNodeId()) {
-            case scalar:
-                constructDefinitionPropertyFromScalar(name, value, parent);
-                break;
-            case sequence:
-                constructDefinitionPropertyFromSequence(name, value, parent);
-                break;
-            case mapping:
-                constructDefinitionPropertyFromMap(name, value, parent);
-                break;
-            default:
-                throw new ParserException("Property value must be scalar, sequence or map", value);
+        if (name.equals("jcr:primaryType")) {
+            constructJcrPrimaryTypeProperty(name, value, parent);
+        } else if (name.equals("jcr:mixinTypes")) {
+            constructJcrMixinTypesProperty(name, value, parent);
+        } else {
+            switch (value.getNodeId()) {
+                case scalar:
+                    constructDefinitionPropertyFromScalar(name, value, parent);
+                    break;
+                case sequence:
+                    constructDefinitionPropertyFromSequence(name, value, parent);
+                    break;
+                case mapping:
+                    constructDefinitionPropertyFromMap(name, value, parent);
+                    break;
+                default:
+                    throw new ParserException("Property value must be scalar, sequence or map", value);
+            }
         }
+    }
+
+    private void constructJcrPrimaryTypeProperty(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
+        parent.addProperty(name, constructValueFromScalar(value, ValueType.NAME));
+    }
+
+    private void constructJcrMixinTypesProperty(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
+        parent.addProperty(name, ValueType.NAME, constructValuesFromSequence(value, ValueType.NAME));
     }
 
     private void constructDefinitionPropertyFromScalar(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
@@ -188,78 +203,58 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     private void constructDefinitionPropertyFromMap(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
-        final Map<String, Node> map = asMapping(value, new String[0], new String[]{"type","value","resource"});
+        final Map<String, Node> map = asMapping(value, new String[0], new String[]{"type","value","resource","path"});
 
         final ValueType valueType;
+        final int maxKeyCount;
         if (map.keySet().contains("type")) {
             valueType = constructValueType(map.get("type"));
+            maxKeyCount = 2;
         } else {
             valueType = ValueType.STRING;
+            maxKeyCount = 1;
+        }
+
+        if (map.size() > maxKeyCount) {
+            throw new ParserException(
+                    "Property values represented as map must have a single 'value', 'resource' or 'path' key",
+                    value);
         }
 
         if (map.keySet().contains("value")) {
-            final Node valueNode = map.get("value");
-            if (valueNode.getNodeId() == NodeId.scalar) {
-                final Value propertyValue = constructValueFromScalar(valueNode);
-                parent.addProperty(name, propertyValue);
-            } else if (valueNode.getNodeId() == NodeId.sequence) {
-                final Value[] propertyValues = constructValuesFromSequence(valueNode);
-                parent.addProperty(name, valueType, propertyValues);
-            } else {
-                throw new ParserException("Property value in map must be scalar or sequence", valueNode);
-            }
+            constructDefinitionPropertyFromValueMap(name, map.get("value"), parent, valueType);
         } else if (map.keySet().contains("resource")) {
-            if (!(valueType == ValueType.STRING || valueType == ValueType.BINARY)) {
-                throw new ParserException("Resource can only be used for value type 'binary' or 'string'", map.get("type"));
-            }
-            final Node resourceNode = map.get("resource");
-            final List<String> resources = asSingleOrSequenceOfStrScalars(resourceNode);
-            if (resources.size() == 0) {
-                throw new ParserException("Resource value must define at least one value", resourceNode);
-            }
-
-            final Value[] resourceValues = new Value[resources.size()];
-            for (int i = 0; i < resources.size(); i++) {
-                final String resourcePath = resources.get(i);
-                if (isInvalidResourcePath(resourcePath)) {
-                    throw new ParserException("Resource path is not valid: '" + resourcePath
-                            + "'; a resource path must be relative and must not contain ..", resourceNode);
-                }
-                final Source source = parent.getDefinition().getSource();
-                if (!resourceInputProvider.hasResource(source, resourcePath)) {
-                    throw new ParserException("Cannot find resource '" + resourcePath + "'", resourceNode);
-                }
-                resourceValues[i] = new ValueImpl(valueType, resourcePath);
-            }
-
-            switch (resourceNode.getNodeId()) {
-                case scalar:
-                    parent.addProperty(name, resourceValues[0]);
-                    break;
-                case sequence:
-                    parent.addProperty(name, valueType, resourceValues);
-                    break;
-                default:
-                    // should never happen ...
-                    throw new ParserException("Resource value must be scalar or sequence", resourceNode);
-            }
+            constructDefinitionPropertyFromResourceMap(name, map.get("resource"), parent, valueType);
+        } else if (map.keySet().contains("path")) {
+            constructDefinitionPropertyFromPathMap(name, map.get("path"), parent, valueType);
         } else {
-            throw new ParserException("Property values represented as map must have a 'value' or 'resource' key", value);
+            throw new ParserException(
+                    "Property values represented as map must have a 'value', 'resource' or 'path' key", value);
         }
     }
 
-    private boolean isInvalidResourcePath(final String resourceString) {
-        final Path resourcePath = Paths.get(resourceString);
-
-        for (final Path pathElement : resourcePath) {
-            if (pathElement.toString().equals("..")) {
-                return true;
-            }
+    private void constructDefinitionPropertyFromValueMap(final String name, final Node node, final DefinitionNodeImpl parent, final ValueType valueType) throws ParserException {
+        switch (node.getNodeId()) {
+            case scalar:
+                final Value propertyValue = constructValueFromScalar(node, valueType);
+                parent.addProperty(name, propertyValue);
+                break;
+            case sequence:
+                final Value[] propertyValues = constructValuesFromSequence(node, valueType);
+                parent.addProperty(name, valueType, propertyValues);
+                break;
+            default:
+                throw new ParserException(
+                        "Property value in map must be scalar or sequence, found '" + node.getNodeId() + "'", node);
         }
-
-        return resourcePath.isAbsolute();
     }
 
+    /**
+     * Auto detects {@link ValueType} and parses {@link Value} from scalar <code>node</code>
+     * @param node scalar node
+     * @return parsed {@link Value}
+     * @throws ParserException in case the value cannot be parsed
+     */
     private Value constructValueFromScalar(final Node node) throws ParserException {
         final ScalarNode scalar = asScalar(node);
         final Object object = scalarConstructor.constructScalarNode(scalar);
@@ -274,7 +269,13 @@ public class SourceParser extends AbstractBaseParser {
             return new ValueImpl((Double) object);
         }
         if (Tag.INT.equals(scalar.getTag())) {
-            return new ValueImpl(((Integer) object).longValue());
+            if (object instanceof Integer) {
+                return new ValueImpl(((Integer)object).longValue());
+            } else if (object instanceof Long) {
+                return new ValueImpl((Long)object);
+            } else {
+                throw new ParserException("Value is too big to fit into a long, use a property of type decimal", node);
+            }
         }
         if (Tag.STR.equals(scalar.getTag())) {
             return new ValueImpl((String) object);
@@ -286,39 +287,229 @@ public class SourceParser extends AbstractBaseParser {
         throw new ParserException("Tag not recognized: " + scalar.getTag(), node);
     }
 
-    private Value[] constructValuesFromSequence(final Node value) throws ParserException {
-        final List<Node> valueNodes = asSequence(value);
+    /**
+     * Parses {@link Value} from scalar <code>node</code> and validates it is of the expected type
+     * @param node scalar node
+     * @param expectedValueType expected {@link ValueType}
+     * @return parsed {@link Value}
+     * @throws ParserException in case the value cannot be parsed or it is not of the expected type
+     */
+    private Value constructValueFromScalar(final Node node, final ValueType expectedValueType) throws ParserException {
+        switch (expectedValueType) {
+            case DECIMAL:
+                return constructDecimalValue(node);
+            case NAME:
+                return constructNameValue(node);
+            case PATH:
+                return constructPathValue(node);
+            case REFERENCE:
+                return constructReferenceValue(node);
+            case URI:
+                return constructUriValue(node);
+            case WEAKREFERENCE:
+                return constructWeakReferenceValue(node);
+            default:
+                final Value value = constructValueFromScalar(node);
+                if (value.getType() != expectedValueType) {
+                    throw new ParserException(
+                            MessageFormat.format(
+                                    "Property value is not of the correct type, expected ''{0}'', found ''{1}''",
+                                    expectedValueType,
+                                    value.getType()),
+                            node);
+                }
+                return value;
+        }
+    }
 
-        ValueType valueType = null;
+    private Value constructDecimalValue(final Node node) throws ParserException {
+        final String string = asStringScalar(node);
+        try {
+            return new ValueImpl(new BigDecimal(string));
+        } catch (NumberFormatException e) {
+            throw new ParserException("Could not parse scalar value as BigDecimal: " + string, node);
+        }
+    }
+
+    private Value constructNameValue(final Node node) throws ParserException {
+        final String name = asStringScalar(node);
+        return new ValueImpl(name, ValueType.NAME, false, false);
+    }
+
+    private Value constructPathValue(final Node node) throws ParserException {
+        final String path = asStringScalar(node);
+        return new ValueImpl(path, ValueType.PATH, false, false);
+    }
+
+    private Value constructReferenceValue(final Node node) throws ParserException {
+        final String string = asStringScalar(node);
+        try {
+            return new ValueImpl(UUID.fromString(string), ValueType.REFERENCE, false, false);
+        } catch (IllegalArgumentException e) {
+            throw new ParserException("Could not parse scalar value as Reference (UUID): " + string, node);
+        }
+    }
+
+    private Value constructUriValue(final Node node) throws ParserException {
+        final URI uri = asURIScalar(node);
+        return new ValueImpl(uri);
+    }
+
+    private Value constructWeakReferenceValue(final Node node) throws ParserException {
+        final String string = asStringScalar(node);
+        try {
+            return new ValueImpl(UUID.fromString(string), ValueType.WEAKREFERENCE, false, false);
+        } catch (IllegalArgumentException e) {
+            throw new ParserException("Could not parse scalar value as WeakReference (UUID): " + string, node);
+        }
+    }
+
+    /**
+     * Auto detects {@link ValueType}, parses {@link Value} from each element in sequence <code>node</code>
+     * and validates all values are of the same {@link ValueType}
+     * @param node sequence node
+     * @return parsed {@link Value} array
+     * @throws ParserException in case a value cannot be parsed or not all values are of the same {@link ValueType}
+     */
+    private Value[] constructValuesFromSequence(final Node node) throws ParserException {
+        final List<Node> valueNodes = asSequence(node);
         final Value[] values = new Value[valueNodes.size()];
         for (int i = 0; i < valueNodes.size(); i++) {
             values[i] = constructValueFromScalar(valueNodes.get(i));
-            if (valueType == null) {
-                valueType = values[i].getType();
-            } else if (valueType != values[i].getType()) {
-                throw new ParserException(
-                        MessageFormat.format(
-                                "Property values must all be of the same type, found value type ''{0}'' as well as ''{1}''",
-                                valueType,
-                                values[i].getType()),
-                        value);
+        }
+
+        if (values.length > 1) {
+            final ValueType initialType = values[0].getType();
+            for (int i = 1; i < values.length; i++) {
+                if (values[i].getType() != initialType) {
+                    throw new ParserException(
+                            MessageFormat.format(
+                                    "Property values must all be of the same type, found value type ''{0}'' as well as ''{1}''",
+                                    initialType,
+                                    values[i].getType()),
+                            node);
+                }
             }
         }
 
         return values;
     }
 
+    /**
+     * Parses {@link Value} from each element in sequence <code>node</code> and validates they are of the expected type
+     * @param node sequence node
+     * @param expectedValueType expected {@link ValueType}
+     * @return parsed {@link Value} array
+     * @throws ParserException in case a value cannot be parsed or it is not of the expected type
+     */
+    private Value[] constructValuesFromSequence(final Node node, final ValueType expectedValueType) throws ParserException {
+        final List<Node> valueNodes = asSequence(node);
+        final Value[] values = new Value[valueNodes.size()];
+        for (int i = 0; i < valueNodes.size(); i++) {
+            values[i] = constructValueFromScalar(valueNodes.get(i), expectedValueType);
+        }
+        return values;
+    }
+
+    private void constructDefinitionPropertyFromPathMap(final String name, final Node node, final DefinitionNodeImpl parent, final ValueType valueType) throws ParserException {
+        if (!(valueType == ValueType.REFERENCE || valueType == ValueType.WEAKREFERENCE)) {
+            throw new ParserException("Path can only be used for value type 'reference' or 'weakreference'", node);
+        }
+        switch (node.getNodeId()) {
+            case scalar:
+                final Value propertyValue = constructPathValueFromScalar(node, valueType);
+                parent.addProperty(name, propertyValue);
+                break;
+            case sequence:
+                final Value[] propertyValues = constructPathValuesFromSequence(node, valueType);
+                parent.addProperty(name, valueType, propertyValues);
+                break;
+            default:
+                throw new ParserException(
+                        "Path value must be scalar or sequence, found '" + node.getNodeId() + "'", node);
+        }
+    }
+
+    private Value constructPathValueFromScalar(final Node node, final ValueType valueType) throws ParserException {
+        final String path = asPathScalar(node, false);
+        return new ValueImpl(path, valueType, false, true);
+    }
+
+    private Value[] constructPathValuesFromSequence(final Node node, final ValueType valueType) throws ParserException {
+        final List<Node> pathNodes = asSequence(node);
+        if (pathNodes.size() == 0) {
+            throw new ParserException("Path value must define at least one value", node);
+        }
+        final Value[] values = new Value[pathNodes.size()];
+        for (int i = 0; i < pathNodes.size(); i++) {
+            values[i] = constructPathValueFromScalar(pathNodes.get(i), valueType);
+        }
+        return values;
+    }
+
+    private void constructDefinitionPropertyFromResourceMap(final String name, final Node node, final DefinitionNodeImpl parent, final ValueType valueType) throws ParserException {
+        if (!(valueType == ValueType.STRING || valueType == ValueType.BINARY)) {
+            throw new ParserException("Resource values can only be used for value type 'binary' or 'string'", node);
+        }
+        switch (node.getNodeId()) {
+            case scalar:
+                final Value propertyValue = constructResourceValueFromScalar(node, valueType, parent);
+                parent.addProperty(name, propertyValue);
+                break;
+            case sequence:
+                final Value[] propertyValues = constructResourceValuesFromSequence(node, valueType, parent);
+                parent.addProperty(name, valueType, propertyValues);
+                break;
+            default:
+                throw new ParserException(
+                        "Resource value must be scalar or sequence, found '" + node.getNodeId() + "'", node);
+        }
+    }
+
+    private Value constructResourceValueFromScalar(final Node node, final ValueType valueType, final DefinitionNodeImpl parent) throws ParserException {
+        final String resourcePath = asStringScalar(node);
+        if (isInvalidResourcePath(resourcePath)) {
+            throw new ParserException("Resource path is not valid: '" + resourcePath
+                    + "'; a resource path must be relative and must not contain ..", node);
+        }
+        final Source source = parent.getDefinition().getSource();
+        if (!resourceInputProvider.hasResource(source, resourcePath)) {
+            throw new ParserException("Cannot find resource '" + resourcePath + "'", node);
+        }
+        return new ValueImpl(resourcePath, valueType, true, false);
+    }
+
+    private boolean isInvalidResourcePath(final String resourceString) {
+        final Path resourcePath = Paths.get(resourceString);
+
+        for (final Path pathElement : resourcePath) {
+            if (pathElement.toString().equals("..")) {
+                return true;
+            }
+        }
+
+        return resourcePath.isAbsolute();
+    }
+
+    private Value[] constructResourceValuesFromSequence(final Node node, final ValueType valueType, final DefinitionNodeImpl parent) throws ParserException {
+        final List<Node> valueNodes = asSequence(node);
+        if (valueNodes.size() == 0) {
+            throw new ParserException("Resource value must define at least one value", node);
+        }
+        final Value[] values = new Value[valueNodes.size()];
+        for (int i = 0; i < valueNodes.size(); i++) {
+            values[i] = constructResourceValueFromScalar(valueNodes.get(i), valueType, parent);
+        }
+        return values;
+    }
+
     private ValueType constructValueType(final Node node) throws ParserException {
         final String type = asStringScalar(node);
-        switch (type) {
-            case "binary": return ValueType.BINARY;
-            case "boolean": return ValueType.BOOLEAN;
-            case "date": return ValueType.DATE;
-            case "double": return ValueType.DOUBLE;
-            case "long": return ValueType.LONG;
-            case "string": return ValueType.STRING;
+        try {
+            return ValueType.valueOf(type.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ParserException("Unrecognized value type: '" + type + "'", node);
         }
-        throw new ParserException("Unrecognized value type: '" + type + "'", node);
     }
 
 }

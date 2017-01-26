@@ -40,6 +40,8 @@ import org.yaml.snakeyaml.representer.Representer;
 
 public class SourceSerializer extends AbstractBaseSerializer {
 
+    final static Representer representer = new Representer();
+
     public void serialize(final OutputStream outputStream, final Source source, final Consumer<Value> resourceConsumer) throws IOException {
         final Node node = representSource(source, resourceConsumer);
         serializeNode(outputStream, node);
@@ -122,6 +124,13 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     private Node representProperty(final DefinitionProperty property, final Consumer<Value> resourceConsumer) {
+        if (property.getName().equals("jcr:primaryType")) {
+            return representJcrPrimaryTypeProperty(property);
+        }
+        if (property.getName().equals("jcr:mixinTypes")) {
+            return representJcrMixinTypesProperty(property);
+        }
+
         if (requiresValueMap(property)) {
             return representPropertyUsingMap(property, resourceConsumer);
         } else {
@@ -129,23 +138,35 @@ public class SourceSerializer extends AbstractBaseSerializer {
         }
     }
 
-    private boolean requiresValueMap(final DefinitionProperty property) {
-        if (property.getType() == PropertyType.SINGLE) {
-            return property.getValue().isResource();
-        }
+    private Node representJcrPrimaryTypeProperty(final DefinitionProperty property) {
+        final List<NodeTuple> tuples = new ArrayList<>(1);
+        tuples.add(new NodeTuple(createStrScalar(property.getName()), representValue(property.getValue())));
+        return new MappingNode(Tag.MAP, tuples, false);
+    }
 
-        if (property.getValues().length == 0 && property.getValueType() != ValueType.STRING) {
-            return true;
+    private Node representJcrMixinTypesProperty(final DefinitionProperty property) {
+        final List<NodeTuple> tuples = new ArrayList<>(1);
+        final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
+        for (Value value : property.getValues()) {
+            valueNodes.add(representValue(value));
         }
-
-        return hasResourceValues(property);
+        tuples.add(createStrSeqTuple(property.getName(), valueNodes, true));
+        return new MappingNode(Tag.MAP, tuples, false);
     }
 
     private Node representPropertyUsingMap(final DefinitionProperty property, final Consumer<Value> resourceConsumer) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
         valueMapTuples.add(createStrStrTuple("type", property.getValueType().name().toLowerCase()));
+
         final boolean hasResourceValues = hasResourceValues(property);
-        final String key = hasResourceValues ? "resource" : "value";
+        final String key;
+        if (hasResourceValues) {
+            key = "resource";
+        } else if (hasPathValues(property)) {
+            key = "path";
+        } else {
+            key = "value";
+        }
 
         if (property.getType() == PropertyType.SINGLE) {
             final Value value = property.getValue();
@@ -187,6 +208,32 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return new MappingNode(Tag.MAP, tuples, false);
     }
 
+    private boolean requiresValueMap(final DefinitionProperty property) {
+        if (needsExplicitTyping(property.getValueType())) {
+            return true;
+        }
+
+        if (property.getType() != PropertyType.SINGLE && property.getValues().length == 0) {
+            return property.getValueType() != ValueType.STRING;
+        }
+
+        return hasResourceValues(property);
+    }
+
+    private boolean needsExplicitTyping(final ValueType valueType) {
+        switch (valueType) {
+            case BINARY:
+            case BOOLEAN:
+            case DOUBLE:
+            case DATE:
+            case LONG:
+            case STRING:
+                return false;
+            default:
+                return true;
+        }
+    }
+
     private boolean hasResourceValues(final DefinitionProperty property) {
         if (property.getType() == PropertyType.SINGLE) {
             return property.getValue().isResource();
@@ -199,9 +246,29 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return false;
     }
 
+    private boolean hasPathValues(final DefinitionProperty property) {
+        if (property.getType() == PropertyType.SINGLE) {
+            return property.getValue().isPath();
+        }
+
+        for (Value value : property.getValues()) {
+            if (value.isPath()) return true;
+        }
+
+        return false;
+    }
+
     private Node representValue(final Value value) {
-        final Representer representer = new Representer();
-        return representer.represent(value.getObject());
+        switch (value.getType()) {
+            case DECIMAL:
+                // Explicitly represent BigDecimal as string; SnakeYaml does not represent BigDecimal nicely
+            case REFERENCE:
+            case WEAKREFERENCE:
+            case URI:
+                return representer.represent(value.getString());
+            default:
+                return representer.represent(value.getObject());
+        }
     }
 
     private Node representNamespaceDefinition(final NamespaceDefinition definition) {
