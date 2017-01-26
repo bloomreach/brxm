@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -307,6 +307,18 @@ public class ResourceServlet extends HttpServlet {
         proxies = initProxies(jarPathPrefix);
     }
 
+    /**
+     * Examples configurations and mapping
+     *  - jarPath=/angular
+     *  - from=angular/hippo-cm
+     *  - to=http://localhost:9090
+     * Results in mapping "/hippo-cm/" -> "http://localhost:9090/"
+     *
+     *  - jarPath=/angular
+     *  - from=angular/hippo-cm
+     *  - to=http://localhost:9090/cms/angular/hippo-cm
+     * Results in mapping "/hippo-cm/" -> "http://localhost:9090/cms/angular/hippo-cm/"
+     */
     private static HashMap<String, String> initProxies(final String jarPathPrefix) {
         final HashMap<String, String> proxies = new HashMap<>();
         final String proxiesAsString = System.getProperty(PROXIES_SYSTEM_PROPERTY);
@@ -317,12 +329,12 @@ public class ResourceServlet extends HttpServlet {
                     .map(proxyLine -> StringUtils.split(proxyLine, PROXY_FROM_TO_SEPARATOR))
                     .forEach(fromTo -> {
                         if (fromTo.length > 1) {
-                            // Example config: from=angular/hippo-cm, to=http://localhost:9090/cms, jarPath=/angular
-                            // Results in mapping "/hippo-cm/" -> "http://localhost:9090/cms/angular/hippo-cm/"
-                            String from = "/" + StringUtils.trim(fromTo[0]) + "/";
+                            String from = StringUtils.trim(fromTo[0]);
+                            from = PrependIfMissing(from, "/");
+                            from = AppendIfMissing(from, "/");
                             String to = StringUtils.trim(fromTo[1]);
+                            to = AppendIfMissing(to, "/");
                             if (from.startsWith(jarPathPrefix + "/")) {
-                                to = to + from;
                                 from = StringUtils.removeStart(from, jarPathPrefix);
                                 proxies.put(from, to);
                             }
@@ -344,26 +356,27 @@ public class ResourceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String resourcePath = StringUtils.substringBefore(request.getPathInfo(), ";");
+        final String resourcePath = StringUtils.substringBefore(request.getPathInfo(), ";");
         String queryParams = request.getQueryString();
         queryParams = StringUtils.isEmpty(queryParams) ? "" :  "?" + queryParams;
 
-        if (log.isDebugEnabled()) {
-            log.debug("Processing request for resource {}{}.", resourcePath, queryParams);
-        }
+        log.debug("Processing request for resource {}{}.", resourcePath, queryParams);
 
-        URL resource = getResourceURL(resourcePath, queryParams);
-
+        final URL resource = getResourceURL(resourcePath, queryParams);
         if (resource == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Resource not found: {}", resourcePath);
-            }
+            log.debug("Resource not found: {}", resourcePath);
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        long modifiedSince = request.getDateHeader(HTTP_IF_MODIFIED_SINCE_HEADER);
         final URLConnection conn = resource.openConnection();
+        if (conn == null) {
+            log.debug("Resource not found: {}", resourcePath);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        final long modifiedSince = request.getDateHeader(HTTP_IF_MODIFIED_SINCE_HEADER);
 
         if (!proxies.isEmpty() && conn instanceof HttpURLConnection) {
 
@@ -371,7 +384,7 @@ public class ResourceServlet extends HttpServlet {
                 conn.setIfModifiedSince(modifiedSince);
             }
 
-            HttpURLConnection httpConn = (HttpURLConnection) conn;
+            final HttpURLConnection httpConn = (HttpURLConnection) conn;
             try {
                 if (httpConn.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
                     log.debug("Resource not found: {}", resourcePath);
@@ -384,17 +397,15 @@ public class ResourceServlet extends HttpServlet {
             }
         }
 
-        long lastModified = conn.getLastModified();
+        final long lastModified = conn.getLastModified();
 
         if (modifiedSince >= lastModified) {
-            if (log.isDebugEnabled()) {
-                log.debug("Resource: {} Not Modified.", resourcePath);
-            }
+            log.debug("Resource: {} Not Modified.", resourcePath);
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;
         }
 
-        int contentLength = conn.getContentLength();
+        final int contentLength = conn.getContentLength();
 
         prepareResponse(response, resource, lastModified, contentLength);
 
@@ -589,6 +600,20 @@ public class ResourceServlet extends HttpServlet {
             });
             log.info(border);
         });
+    }
+
+    private static String PrependIfMissing(final String str, final String prefix) {
+        if (str == null || StringUtils.isEmpty(prefix) || StringUtils.startsWith(str, prefix)) {
+            return str;
+        }
+        return prefix + str;
+    }
+
+    private static String AppendIfMissing(final String str, final String suffix) {
+        if (str == null || StringUtils.isEmpty(suffix) || StringUtils.endsWith(str, suffix)) {
+            return str;
+        }
+        return str + suffix;
     }
 
     private class GZIPResponseStream extends ServletOutputStream {
