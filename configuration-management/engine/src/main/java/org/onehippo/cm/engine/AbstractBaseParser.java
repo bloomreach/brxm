@@ -136,10 +136,10 @@ public abstract class AbstractBaseParser {
         return sequenceNode.getValue();
     }
 
-    protected String asPathScalar(final Node node) throws ParserException {
+    protected String asPathScalar(final Node node, final boolean requireAbsolutePath) throws ParserException {
         final String path = asStringScalar(node);
 
-        if (!path.startsWith("/")) {
+        if (requireAbsolutePath && !path.startsWith("/")) {
             throw new ParserException("Path must start with a slash", node);
         }
 

@@ -119,7 +119,7 @@ public class SourceParser extends AbstractBaseParser {
         final Map<Node, Node> definitions = asOrderedMap(src);
         for (Node keyNode : definitions.keySet()) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
-            final String key = asPathScalar(keyNode);
+            final String key = asPathScalar(keyNode, true);
             constructDefinitionNode(key, definitions.get(keyNode), definition);
         }
     }
@@ -128,7 +128,7 @@ public class SourceParser extends AbstractBaseParser {
         final Map<Node, Node> definitions = asOrderedMap(src);
         for (Node keyNode : definitions.keySet()) {
             final ContentDefinitionImpl definition = parent.addContentDefinition();
-            final String key = asPathScalar(keyNode);
+            final String key = asPathScalar(keyNode, true);
             constructDefinitionNode(key, definitions.get(keyNode), definition);
         }
     }
@@ -431,7 +431,7 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     private Value constructPathValueFromScalar(final Node node, final ValueType valueType) throws ParserException {
-        final String path = asStringScalar(node);
+        final String path = asPathScalar(node, false);
         return new ValueImpl(path, valueType, false, true);
     }
 
