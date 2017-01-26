@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,12 +51,12 @@ describe('DomService', () => {
   it('can add a css file to the head', (done) => {
     testInIframe((iframeWindow) => {
       const cssFile = `${fixturesPath}/utils/dom.service.fixture.css`;
-      DomService.addCss(iframeWindow, cssFile)
-        .then(() => {
-          const red = $j(iframeWindow.document).find('#red');
-          expect(red.css('color')).toEqual('rgb(255, 0, 0)');
-          done();
-        });
+      $j.get(cssFile).done((cssData) => {
+        DomService.addCss(iframeWindow, cssData);
+        const red = $j(iframeWindow.document).find('#red');
+        expect(red.css('color')).toEqual('rgb(255, 0, 0)');
+        done();
+      }).fail(fail);
     });
   });
 

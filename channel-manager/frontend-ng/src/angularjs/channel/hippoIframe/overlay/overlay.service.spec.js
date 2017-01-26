@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
+
 describe('OverlayService', () => {
   let $q;
   let $rootScope;
   let CmsService;
+  let DomService;
   let hstCommentsProcessorService;
   let OverlayService;
   let PageStructureService;
@@ -28,11 +31,12 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_$q_, _$rootScope_, _CmsService_, _hstCommentsProcessorService_, _OverlayService_,
+    inject((_$q_, _$rootScope_, _CmsService_, _DomService_, _hstCommentsProcessorService_, _OverlayService_,
             _PageStructureService_, _RenderingService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       CmsService = _CmsService_;
+      DomService = _DomService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -47,6 +51,7 @@ describe('OverlayService', () => {
     OverlayService.init($iframe);
     $iframe.one('load', () => {
       iframeWindow = $iframe[0].contentWindow;
+      DomService.addCss(iframeWindow, hippoIframeCss);
       try {
         hstCommentsProcessorService.run(
           iframeWindow.document,
