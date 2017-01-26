@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,9 @@ import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
@@ -180,7 +178,7 @@ public abstract class AbstractHelper {
         // same node as the source in preview. In case for some reason the next sibling does not
         // exist in live, we need to catch the exception and log an error (because it indicates a
         // live and preview that is out of sync)
-        Node nextSibling = nextSibling(source);
+        Node nextSibling = JcrUtils.getNextSiblingIfExists(source);
 
         if (nextSibling != null) {
             try {
@@ -195,56 +193,6 @@ public abstract class AbstractHelper {
                         "", copy.getPath(), nextSibling.getName(), nextSibling.getPath());
             }
         }
-    }
-
-    /**
-     * <p>
-     * Returns the next sibling {@link Node} of {@code current}. If there is no next sibling it returns {@code null}.
-     * If
-     * the
-     * parent {@link Node} of {@code current} is not an orderable {@link Node}, an {@link
-     * UnsupportedRepositoryOperationException}
-     * will be thrown. Checking whether the parent is orderable can be done easily as follows
-     * <pre>
-     *         Node parent = current.getParent();
-     *         parent.getPrimaryNodeType().hasOrderableChildNodes()
-     *     </pre>
-     * </p>
-     * <p>
-     * If the caller of this method uses this method to reorder nodes, then take into account whether the
-     * parent node allows same name siblings or not. If you do not know, use
-     * <pre>
-     *         Node parent = current.getParent();
-     *         if (parent.getDefinition().allowsSameNameSiblings()) {
-     *             Node next = nextSibling(current);
-     *             parent.orderBefore(current.getName() + "[" + current.getIndex() + "]",
-     *                                next.getName()+ "[" + next.getIndex() + "]");
-     *         } else {
-     *            parent.orderBefore(current.getName(), nextSibling(current).getName());
-     *         }
-     *     </pre>
-     * </p>
-     *
-     * @param current the {@link Node} for which to find the next sibling
-     * @return the next sibling of current if there is a next one and {@code null} in case there is no next sibling
-     * @throws UnsupportedRepositoryOperationException if the parent of {@code current} is not orderable
-     * @throws RepositoryException                     if some repository exception happens
-     */
-    private Node nextSibling(final Node current) throws RepositoryException {
-        Node parent = current.getParent();
-        if (!parent.getPrimaryNodeType().hasOrderableChildNodes()) {
-            throw new UnsupportedRepositoryOperationException(String.format("Node '%s' does not have an orderable parent " +
-                    "hence invoking #nextSibling does not make sense."));
-        }
-
-        NodeIterator nodeIterator = parent.getNodes();
-        while (nodeIterator.hasNext()) {
-            Node sibling = nodeIterator.nextNode();
-            if (sibling.isSame(current)) {
-                return nodeIterator.hasNext() ? nodeIterator.nextNode() : null;
-            }
-        }
-        throw new ItemNotFoundException("The 'current' item does not longer exist below its parent");
     }
 
     public void discardChanges(final List<String> userIds) throws RepositoryException {
