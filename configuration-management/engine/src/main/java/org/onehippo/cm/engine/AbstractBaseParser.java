@@ -180,12 +180,8 @@ public abstract class AbstractBaseParser {
     }
 
     protected URI asURIScalar(final Node node) throws ParserException {
-        final ScalarNode scalarNode = asScalar(node);
-        if (!scalarNode.getTag().equals(Tag.STR)) {
-            throw new ParserException("Scalar must be a string", node);
-        }
         try {
-            return new URI(scalarNode.getValue());
+            return new URI(asStringScalar(node));
         } catch (final URISyntaxException e) {
             throw new ParserException("Scalar must be formatted as an URI", node);
         }
