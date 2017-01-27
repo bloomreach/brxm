@@ -214,7 +214,7 @@ describe('OverlayService', () => {
       const lock = disabledContainer.find('.hippo-overlay-lock');
       expect(lock.length).toBe(1);
       expect(lock.find('svg').length).toBe(1);
-      expect(lock.attr('title')).toBe('CONTAINER_LOCKED_BY');
+      expect(lock.attr('data-locked-by')).toBe('CONTAINER_LOCKED_BY');
 
       done();
     });
@@ -234,7 +234,7 @@ describe('OverlayService', () => {
       const lock = inheritedContainer.find('.hippo-overlay-lock');
       expect(lock.length).toBe(1);
       expect(lock.find('svg').length).toBe(1);
-      expect(lock.attr('title')).toBe('CONTAINER_INHERITED');
+      expect(lock.attr('data-locked-by')).toBe('CONTAINER_INHERITED');
 
       done();
     });
