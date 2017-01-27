@@ -83,9 +83,8 @@ class PageStructureElement {
 
   /**
    * Replace container DOM elements with the given markup
-   * @return the jQuery element referring to the inserted markup in the DOM document
    */
-  replaceDOM(htmlFragment) {
+  replaceDOM($newMarkup, onLoadCallback) {
     const endCommentNode = this.getEndComment()[0];
     const node = this._removeSiblingsUntil(this.getStartComment()[0], endCommentNode);
 
@@ -100,9 +99,15 @@ class PageStructureElement {
       this._removeSiblingsUntil(endCommentNode.nextSibling); // Don't remove the end marker
     }
 
-    const jQueryNodeCollection = $(htmlFragment);
-    this.getEndComment().replaceWith(jQueryNodeCollection);
-    return jQueryNodeCollection;
+    // Delay the onLoad callback until all images are fully downloaded. Called once per image.
+    const images = $newMarkup.find('img, [type="image"]').one('load', onLoadCallback);
+
+    this.getEndComment().replaceWith($newMarkup);
+
+    // If no images are being loaded we can execute the onLoad callback right away.
+    if (images.length === 0) {
+      onLoadCallback();
+    }
   }
 
   _removeSiblingsUntil(startNode, endNode) {

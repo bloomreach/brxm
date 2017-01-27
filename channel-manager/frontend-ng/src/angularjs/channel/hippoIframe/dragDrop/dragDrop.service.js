@@ -38,6 +38,8 @@ class DragDropService {
 
     this.draggingOrClicking = false;
     this.dropping = false;
+
+    PageStructureService.registerChangeListener(() => this._sync());
   }
 
   init(iframeJQueryElement, canvasJQueryElement) {
@@ -66,8 +68,6 @@ class DragDropService {
       // "friendly HTTP error message" page instead (can be configured in IE and is enabled by default).
       // We cannot access anything on such custom pages.
     }
-
-    this.PageStructureService.registerChangeListener(() => this._sync());
   }
 
   _destroyDragula() {
