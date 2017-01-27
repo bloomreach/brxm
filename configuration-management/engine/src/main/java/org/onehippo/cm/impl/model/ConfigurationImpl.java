@@ -49,8 +49,9 @@ public class ConfigurationImpl implements Configuration {
         return unmodifiableList(after);
     }
 
-    public void setAfter(final List<String> after) {
+    public ConfigurationImpl setAfter(final List<String> after) {
         this.after = new ArrayList<>(after);
+        return this;
     }
 
     @Override

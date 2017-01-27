@@ -31,7 +31,7 @@ import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 
 public class DependencyVerifier {
 
-    void verifyConfigurationDependencies(final Collection<Configuration> configurations) {
+    public void verifyConfigurationDependencies(final Collection<Configuration> configurations) {
         doVerifyDependencies(configurations);
         for (Configuration configuration : configurations) {
             if (configuration.getProjects() == null) {
@@ -42,7 +42,7 @@ public class DependencyVerifier {
         }
     }
 
-    void verifyProjectDependencies(final Collection<Project> projects) {
+    private void verifyProjectDependencies(final Collection<Project> projects) {
         doVerifyDependencies(projects);
         for (Project project : projects) {
             if (project.getModules() == null) {
@@ -53,11 +53,11 @@ public class DependencyVerifier {
         }
     }
 
-    void verifyModuleDependencies(final Collection<Module> modules) {
+    private void verifyModuleDependencies(final Collection<Module> modules) {
         doVerifyDependencies(modules);
     }
 
-    void doVerifyDependencies(final Collection<? extends Orderable> orderableList) {
+    private void doVerifyDependencies(final Collection<? extends Orderable> orderableList) {
         Map<String, Orderable> objectMap = new HashMap<>();
         for (Orderable orderable : orderableList) {
             objectMap.put(orderable.getName(), orderable);
@@ -69,7 +69,6 @@ public class DependencyVerifier {
             Set<Orderable> checked = new HashSet<>();
             recurse(objectMap, orderable, orderable, checked);
         }
-
     }
 
     private void recurse(final Map<String, Orderable> configurationMap,

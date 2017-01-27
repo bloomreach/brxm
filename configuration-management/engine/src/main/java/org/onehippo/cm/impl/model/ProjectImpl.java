@@ -61,8 +61,9 @@ public class ProjectImpl implements Project {
         return unmodifiableList(after);
     }
 
-    public void setAfter(final List<String> after) {
+    public ProjectImpl setAfter(final List<String> after) {
         this.after = new ArrayList<>(after);
+        return this;
     }
 
     @Override

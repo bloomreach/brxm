@@ -61,8 +61,9 @@ public class ModuleImpl implements Module {
         return unmodifiableList(after);
     }
 
-    public void setAfter(final List<String> after) {
+    public ModuleImpl setAfter(final List<String> after) {
         this.after = new ArrayList<>(after);
+        return this;
     }
 
     @Override
