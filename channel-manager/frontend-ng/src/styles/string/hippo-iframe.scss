@@ -80,10 +80,9 @@ html {
 
 .hippo-overlay-label {
   color: $overlay-label-color;
-  display: flex;
+  display: none;
   font-size: $overlay-label-font-size;
   pointer-events: none;
-  visibility: hidden;
 
   .hippo-overlay-element-container > & {
     background-color: $overlay-container-label-bgcolor;
@@ -95,11 +94,10 @@ html {
     border: 1px solid $overlay-component-label-border-color;
   }
 
-  .hippo-overlay-add-mode &,
   .hippo-dragging .hippo-overlay-element-container > &,
   .hippo-overlay-element-component:hover > &,
   .hippo-overlay-element-container-empty:hover > & {
-    visibility: visible;
+    display: flex;
   }
 }
 
