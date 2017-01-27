@@ -23,6 +23,7 @@ describe('ScalingService', () => {
   let ViewportService;
   let hippoIframeElement;
   let canvasElement;
+  let sheetElement;
   let iframeElement;
   let iframeHtml;
 
@@ -39,6 +40,7 @@ describe('ScalingService', () => {
 
     hippoIframeElement = $('#hippo-iframe');
     canvasElement = $('#channel-iframe-canvas');
+    sheetElement = $('#channel-iframe-sheet');
     iframeElement = $('#iframe');
   });
 
@@ -73,7 +75,7 @@ describe('ScalingService', () => {
 
   describe('when initialized', () => {
     beforeEach((done) => {
-      ScalingService.init(hippoIframeElement, canvasElement, iframeElement);
+      ScalingService.init(hippoIframeElement, canvasElement, sheetElement, iframeElement);
       iframeElement.one('load', () => {
         iframeHtml = $('html', iframeElement.contents());
         done();
@@ -109,8 +111,8 @@ describe('ScalingService', () => {
       ScalingService.setPushWidth(100);
 
       expect(ScalingService.getScaleFactor()).toEqual(0.75);
-      expect(iframeElement).toHaveClass('shift-animated');
-      expectTranslateX(iframeElement, 0);
+      expect(sheetElement).toHaveClass('shift-animated');
+      expectTranslateX(sheetElement, 0);
       expect(iframeHtml).toHaveClass('hippo-scale');
       expect(iframeHtml).toHaveClass('hippo-scale-animated');
       expectScaleAndTranslateY(iframeHtml, 0.75, 0);
@@ -144,8 +146,8 @@ describe('ScalingService', () => {
       ScalingService.setPushWidth(0);
 
       expect(ScalingService.getScaleFactor()).toEqual(1.0);
-      expect(iframeElement).toHaveClass('shift-animated');
-      expectTranslateX(iframeElement, 0);
+      expect(sheetElement).toHaveClass('shift-animated');
+      expectTranslateX(sheetElement, 0);
       expect(iframeHtml).toHaveClass('hippo-scale');
       expect(iframeHtml).toHaveClass('hippo-scale-animated');
       expectScaleAndTranslateY(iframeHtml, 1.0, 0);
@@ -166,8 +168,8 @@ describe('ScalingService', () => {
       ScalingService.setPushWidth(100);
 
       expect(ScalingService.getScaleFactor()).toEqual(1.0);
-      expect(iframeElement).toHaveClass('shift-animated');
-      expectTranslateX(iframeElement, 100 / 2);
+      expect(sheetElement).toHaveClass('shift-animated');
+      expectTranslateX(sheetElement, 100 / 2);
       expect(iframeHtml).not.toHaveClass('hippo-scale');
       expect(iframeHtml).not.toHaveClass('hippo-scale-animated');
       expect(ScalingService.isAnimating()).toBe(false);
@@ -181,7 +183,7 @@ describe('ScalingService', () => {
 
       expect(ScalingService.getScaleFactor()).toEqual(0.5);
       expectScale(iframeHtml, 0.5);
-      expectTranslateX(iframeElement, -200);
+      expectTranslateX(sheetElement, -200);
     });
 
     it('shifts and scales the iframe when the visible canvas gets pushed below the viewport width', () => {
@@ -194,7 +196,7 @@ describe('ScalingService', () => {
       const expectedShift = (800 - 720) / 2;
       const expectedScaleFactor = (800 - 260) / 720;
 
-      expectTranslateX(iframeElement, expectedShift);
+      expectTranslateX(sheetElement, expectedShift);
       expectScale(iframeHtml, expectedScaleFactor);
       expect(ScalingService.getScaleFactor()).toEqual(expectedScaleFactor);
     });
@@ -213,7 +215,7 @@ describe('ScalingService', () => {
       ScalingService.sync();
 
       // validate shifting
-      expectTranslateX(iframeElement, 260 / 2);
+      expectTranslateX(sheetElement, 260 / 2);
       expectScale(iframeHtml, 1.0);
       expect(ScalingService.getScaleFactor()).toBe(1.0);
     });
@@ -231,8 +233,8 @@ describe('ScalingService', () => {
       ScalingService.setPushWidth(100);
 
       expect(ScalingService.getScaleFactor()).toEqual(0.75);
-      expect(iframeElement).toHaveClass('shift-animated');
-      expectTranslateX(iframeElement, 0);
+      expect(sheetElement).toHaveClass('shift-animated');
+      expectTranslateX(sheetElement, 0);
       expect(iframeHtml).toHaveClass('hippo-scale');
       expect(iframeHtml).toHaveClass('hippo-scale-animated');
       expectScaleAndTranslateY(iframeHtml, 0.75, 80 - (0.75 * 80));

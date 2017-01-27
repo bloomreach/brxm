@@ -18,8 +18,10 @@
      flex
      layout="column" layout-align="start center"
      ng-class="{'iframe-lifted': iframe.isIframeLifted()}">
-  <iframe class="qa-view flex-grow"
-          ng-src="{{ iframe.getSrc() }}">
-  </iframe>
-  <div class="channel-dragula-mirror"></div>
+  <div class="channel-iframe-sheet flex-grow">
+    <iframe class="qa-view"
+            ng-src="{{ iframe.getSrc() }}">
+    </iframe>
+    <div class="channel-dragula-mirror"></div>
+  </div>
 </div>
