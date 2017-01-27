@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,8 +40,8 @@ public class ResourceServletProxyTest {
     @Test
     public void testProxy() throws Exception {
         final ProxyServlet proxyServlet = new ProxyServlet("/servlet",
-                "servlet/test@classpath:org/onehippo/cms7/utilities");
-        final HttpServletResponse response = proxyServlet.get("/test/index.js");
+                "servlet/path@classpath:org/onehippo/cms7/utilities/servlet/test");
+        final HttpServletResponse response = proxyServlet.get("/path/index.js");
 
         assertEquals(200, response.getStatus());
         assertEquals("text/javascript", response.getContentType());
@@ -50,16 +50,25 @@ public class ResourceServletProxyTest {
     @Test
     public void testProxies() throws Exception {
         final ProxyServlet proxyServlet = new ProxyServlet("/servlet",
-                "servlet/test@classpath:org/onehippo/cms7/utilities," +
-                "servlet/test2@classpath:META-INF");
+                "servlet/path@classpath:org/onehippo/cms7/utilities/servlet/test," +
+                "servlet/path2@classpath:org/onehippo/cms7/utilities/servlet/test2");
 
-        final HttpServletResponse response1 = proxyServlet.get("/test/index.js");
+        final HttpServletResponse response1 = proxyServlet.get("/path/index.js");
         assertEquals(200, response1.getStatus());
         assertEquals("text/javascript", response1.getContentType());
 
-        final HttpServletResponse response2 = proxyServlet.get("/test2/onehippo.gif");
+        final HttpServletResponse response2 = proxyServlet.get("/path2/onehippo.gif");
         assertEquals(200, response2.getStatus());
         assertEquals("image/gif", response2.getContentType());
+    }
+
+    @Test
+    public void testProxyFileNotFound() throws Exception {
+        final ProxyServlet proxyServlet = new ProxyServlet("/servlet",
+                "servlet/path@classpath:org/onehippo/cms7/utilities/servlet/test");
+        final HttpServletResponse response = proxyServlet.get("/path/non-existing.js");
+
+        assertEquals(404, response.getStatus());
     }
 
     @Test
