@@ -364,15 +364,13 @@ public class ResourceServlet extends HttpServlet {
 
         final URL resource = getResourceURL(resourcePath, queryParams);
         if (resource == null) {
-            log.debug("Resource not found: {}", resourcePath);
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            notFound(response, resourcePath);
             return;
         }
 
         final URLConnection conn = resource.openConnection();
         if (conn == null) {
-            log.debug("Resource not found: {}", resourcePath);
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            notFound(response, resourcePath);
             return;
         }
 
@@ -387,8 +385,7 @@ public class ResourceServlet extends HttpServlet {
             final HttpURLConnection httpConn = (HttpURLConnection) conn;
             try {
                 if (httpConn.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                    log.debug("Resource not found: {}", resourcePath);
-                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    notFound(response, resourcePath);
                     return;
                 }
             } catch (ConnectException e) {
@@ -418,6 +415,11 @@ public class ResourceServlet extends HttpServlet {
                 }
             }
         }
+    }
+
+    private void notFound(final HttpServletResponse response, final String resourcePath) throws IOException {
+        log.debug("Resource not found: {}", resourcePath);
+        response.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     private Set<Pattern> initPatterns(final String paramName, Set<Pattern> defaultPatterns) {
