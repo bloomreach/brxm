@@ -206,6 +206,7 @@ class DragDropService {
         'opacity',
         'pointer-events',
         'position',
+        'transform-origin',
         '[a-z\\-]*user-select',
         'width',
       ]
@@ -221,8 +222,20 @@ class DragDropService {
       ]
     );
 
-    const iframeOffset = this.iframeJQueryElement.offset();
-    $(MIRROR_WRAPPER_SELECTOR).offset(iframeOffset);
+    if (this.ScalingService.isScaled()) {
+      this._scaleMirror($(mirrorElement));
+    }
+  }
+
+  _scaleMirror(mirror) {
+    const scaleFactor = this.ScalingService.getScaleFactor();
+
+    // first ensure that the scaled mirror will be as big as the original by enlarging it
+    mirror.width(mirror.width() / scaleFactor);
+    mirror.height(mirror.height() / scaleFactor);
+
+    // then scale the mirror down
+    mirror.css('transform', `scale(${scaleFactor})`);
   }
 
   _updateDragDirection(containerElement) {
