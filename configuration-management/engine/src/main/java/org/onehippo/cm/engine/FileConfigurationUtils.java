@@ -44,9 +44,12 @@ public class FileConfigurationUtils {
         for (Configuration configuration : configurations.values()) {
             for (Project project : configuration.getProjects().values()) {
                 count += project.getModules().size();
+                if (count > 1) {
+                    return true;
+                }
             }
         }
-        return count > 1;
+        return false;
     }
 
 }
