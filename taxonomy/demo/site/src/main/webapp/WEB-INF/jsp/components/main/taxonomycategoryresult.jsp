@@ -1,5 +1,5 @@
 <%--
-  Copyright 2009-2014 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,32 +19,35 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<c:set var="categoryInfo" value="${category.infos[request.locale.language]}" />
+<hst:defineObjects/>
+
+<c:set var="categoryInfo" value="${category.infos[hstRequest.locale.language]}" />
 
 <div>
-  <h2>Taxonomy Category: ${category.name}</h1>
-  <c:if test="${not empty categoryInfo}">
+  <h2>Taxonomy Category: ${category.name} '${hstRequest.locale.language}'</h2>
+    <c:if test="${not empty categoryInfo}">
     <ul>
       <li>Name: <c:out value="${categoryInfo.name}"/></li>
       <li>Description: <pre><c:out value="${categoryInfo.description}"/></pre></li>
       <li>Full Description: <pre><c:out value="${categoryInfo.properties['hippotaxonomy:fulldescription']}"/></pre></li>
       <li>Synonyms: <c:out value="${fn:join(categoryInfo.synonyms, ', ')}"/></li>
     </ul>
-  </c:if>
+    </c:if>
 
-  <hr/>
+    <hr/>
 
-  <h2>Documents in this taxonomy category:</h2>
+    <h2>Documents in this taxonomy category:</h2>
 
-  <ul>
-    <c:forEach var="bean" items="${documents}">
-      <li>
-        <hst:link var="link" hippobean="${bean}" />
-        <a href="${link}"><c:out value="${bean.title}"/></a>
-      </li>
-    </c:forEach>
-  </ul>
+    <ul>
+      <c:forEach var="bean" items="${documents}">
+        <li>
+          <hst:link var="link" hippobean="${bean}" />
+          <a href="${link}"><c:out value="${bean.title}"/></a>
+        </li>
+      </c:forEach>
+    </ul>
 
 </div>
 
