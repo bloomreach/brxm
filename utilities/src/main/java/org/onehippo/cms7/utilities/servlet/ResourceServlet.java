@@ -330,10 +330,10 @@ public class ResourceServlet extends HttpServlet {
                     .forEach(fromTo -> {
                         if (fromTo.length > 1) {
                             String from = StringUtils.trim(fromTo[0]);
-                            from = PrependIfMissing(from, "/");
-                            from = AppendIfMissing(from, "/");
+                            from = prependIfMissing(from, "/");
+                            from = appendIfMissing(from, "/");
                             String to = StringUtils.trim(fromTo[1]);
-                            to = AppendIfMissing(to, "/");
+                            to = appendIfMissing(to, "/");
                             if (from.startsWith(jarPathPrefix + "/")) {
                                 from = StringUtils.removeStart(from, jarPathPrefix);
                                 proxies.put(from, to);
@@ -602,14 +602,14 @@ public class ResourceServlet extends HttpServlet {
         });
     }
 
-    private static String PrependIfMissing(final String str, final String prefix) {
+    private static String prependIfMissing(final String str, final String prefix) {
         if (str == null || StringUtils.isEmpty(prefix) || StringUtils.startsWith(str, prefix)) {
             return str;
         }
         return prefix + str;
     }
 
-    private static String AppendIfMissing(final String str, final String suffix) {
+    private static String appendIfMissing(final String str, final String suffix) {
         if (str == null || StringUtils.isEmpty(suffix) || StringUtils.endsWith(str, suffix)) {
             return str;
         }
