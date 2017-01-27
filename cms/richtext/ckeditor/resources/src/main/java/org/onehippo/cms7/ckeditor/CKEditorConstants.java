@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 package org.onehippo.cms7.ckeditor;
 
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Arrays;
 
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.resource.UrlResourceReference;
@@ -37,8 +35,8 @@ public class CKEditorConstants {
      * {@code org.onehippo.cms7.utilities.servlet.ResourceServlet} should be configured that serves files from jars
      * that start with /ckeditor.
      */
-    public static final UrlResourceReference CKEDITOR_OPTIMIZED_JS = WebApplicationHelper.createUniqueUrlResourceReference(new Url(Arrays.asList("ckeditor", "optimized", "ckeditor.js"), Charset.forName("UTF-8")));
-    public static final UrlResourceReference CKEDITOR_SRC_JS = WebApplicationHelper.createUniqueUrlResourceReference(new Url(Arrays.asList("ckeditor", "ckeditor.js"), Charset.forName("UTF-8")));
+    public static final UrlResourceReference CKEDITOR_OPTIMIZED_JS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("ckeditor/optimized/ckeditor.js")).setContextRelative(true);
+    public static final UrlResourceReference CKEDITOR_SRC_JS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("ckeditor/ckeditor.js")).setContextRelative(true);
 
     /**
      * CKEDITOR constants for keyboard shortcuts

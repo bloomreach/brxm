@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.onehippo.cms7.ckeditor;
 import org.apache.wicket.request.resource.UrlResourceReference;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Tests {@link CKEditorConstants}
@@ -32,8 +32,7 @@ public class CKEditorConstantsTest {
     }
 
     private static void assertConstantRefersToFileOnClassPath(final UrlResourceReference ref) {
-        final String path = ref.getUrl().getPath();
-        assertNotNull("The file '" + path + "' does not exist on the classpath", CKEditorConstants.existsOnClassPath(ref));
+        final String path = ref.setContextRelative(false).getUrl().getPath();
+        assertTrue("The file '" + path + "' does not exist on the classpath", CKEditorConstants.existsOnClassPath(ref));
     }
-
 }
