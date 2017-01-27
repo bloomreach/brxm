@@ -28,25 +28,12 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class DefaultMutableResourceBundleRegistryTest {
-
-    private static final ResourceBundleFamilyFactory FORBIDDEN_FACTORY = new ResourceBundleFamilyFactory() {
-        @Override
-        public ResourceBundleFamily createBundleFamily(final String basename) {
-            fail("I mustn't be called");
-            return null;
-        }
-
-        @Override
-        public ResourceBundleFamily createBundleFamily(final String basename, final boolean preview) {
-            fail("I mustn't be called");
-            return null;
-        }
-    };
 
     private final Locale locale = new Locale("en");
     private final DefaultMutableResourceBundleRegistry registry = new DefaultMutableResourceBundleRegistry();
@@ -237,8 +224,9 @@ public class DefaultMutableResourceBundleRegistryTest {
         assertTrue(factoryCalled);
 
         // second load should not go onto factory
-        registry.setResourceBundleFamilyFactory(FORBIDDEN_FACTORY);
+        factoryCalled = false;
         loadBundle(family, preview);
+        assertFalse(factoryCalled);
     }
 
     private void loadBundle(final ResourceBundleFamily family, final boolean preview) {
