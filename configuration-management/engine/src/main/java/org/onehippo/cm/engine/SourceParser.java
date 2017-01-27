@@ -18,8 +18,6 @@ package org.onehippo.cm.engine;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -27,7 +25,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
-import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
@@ -117,7 +114,7 @@ public class SourceParser extends AbstractBaseParser {
                     break;
                 case mapping:
                     final Map<String, Node> map = asMapping(node, new String[]{"resource"}, new String[0]);
-                    final String resource = asStringScalar(map.get("resource"));
+                    final String resource = asResourcePathScalar(map.get("resource"), resourceInputProvider);
                     parent.addNodeTypeDefinition(resource, true);
                     break;
                 default:
@@ -478,28 +475,8 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     private Value constructResourceValueFromScalar(final Node node, final ValueType valueType, final DefinitionNodeImpl parent) throws ParserException {
-        final String resourcePath = asStringScalar(node);
-        if (isInvalidResourcePath(resourcePath)) {
-            throw new ParserException("Resource path is not valid: '" + resourcePath
-                    + "'; a resource path must be relative and must not contain ..", node);
-        }
-        final Source source = parent.getDefinition().getSource();
-        if (!resourceInputProvider.hasResource(source, resourcePath)) {
-            throw new ParserException("Cannot find resource '" + resourcePath + "'", node);
-        }
+        final String resourcePath = asResourcePathScalar(node, resourceInputProvider);
         return new ValueImpl(resourcePath, valueType, true, false);
-    }
-
-    private boolean isInvalidResourcePath(final String resourceString) {
-        final Path resourcePath = Paths.get(resourceString);
-
-        for (final Path pathElement : resourcePath) {
-            if (pathElement.toString().equals("..")) {
-                return true;
-            }
-        }
-
-        return resourcePath.isAbsolute();
     }
 
     private Value[] constructResourceValuesFromSequence(final Node node, final ValueType valueType, final DefinitionNodeImpl parent) throws ParserException {

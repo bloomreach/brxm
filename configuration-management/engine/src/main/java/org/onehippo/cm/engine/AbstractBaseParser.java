@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -177,6 +179,33 @@ public abstract class AbstractBaseParser {
 
     private boolean isRootNodePath(final String nodePath) {
         return "/".equals(nodePath);
+    }
+
+    protected String asResourcePathScalar(final Node node, final ResourceInputProvider resourceInputProvider) throws ParserException {
+        final String resourcePath = asStringScalar(node);
+
+        if (!isValidResourcePath(resourcePath)) {
+            throw new ParserException("Resource path is not valid: '" + resourcePath
+                    + "'; a resource path must be relative and must not contain ..", node);
+        }
+
+        if (!resourceInputProvider.hasResource(resourcePath)) {
+            throw new ParserException("Cannot find resource '" + resourcePath + "'", node);
+        }
+
+        return resourcePath;
+    }
+
+    private boolean isValidResourcePath(final String resourceString) {
+        final Path resourcePath = Paths.get(resourceString);
+
+        for (final Path pathElement : resourcePath) {
+            if (pathElement.toString().equals("..")) {
+                return false;
+            }
+        }
+
+        return !resourcePath.isAbsolute();
     }
 
     protected URI asURIScalar(final Node node) throws ParserException {

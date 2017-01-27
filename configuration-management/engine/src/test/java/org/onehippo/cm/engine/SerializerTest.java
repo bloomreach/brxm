@@ -34,7 +34,6 @@ import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
@@ -103,13 +102,13 @@ public class SerializerTest extends AbstractBaseTest {
                 for (Module module : project.getModules().values()) {
                     result.put(module, new ResourceInputProvider() {
                         @Override
-                        public boolean hasResource(final Source source, final String resourcePath) {
+                        public boolean hasResource(final String resourcePath) {
                             fail();
                             return false;
                         }
 
                         @Override
-                        public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
+                        public InputStream getResourceInputStream(final String resourcePath) throws IOException {
                             fail();
                             return null;
                         }

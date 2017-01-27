@@ -1,0 +1,15 @@
+instructions:
+  - config:
+      - /resources:
+          - single-value-string-resource:
+                type: string
+                resource: string1.txt
+          - single-value-binary-resource:
+                type: binary
+                resource: image1.png
+          - multi-value-resource-1:
+                type: string
+                resource: [string2.txt]
+          - multi-value-resource-2:
+                type: string
+                resource: [folder/string.txt, folder/folder/string.txt]

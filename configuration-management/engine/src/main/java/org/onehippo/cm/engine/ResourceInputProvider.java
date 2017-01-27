@@ -18,9 +18,7 @@ package org.onehippo.cm.engine;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.onehippo.cm.api.model.Source;
-
 public interface ResourceInputProvider {
-    boolean hasResource(final Source source, final String resourcePath);
-    InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException;
+    boolean hasResource(final String resourcePath);
+    InputStream getResourceInputStream(final String resourcePath) throws IOException;
 }
