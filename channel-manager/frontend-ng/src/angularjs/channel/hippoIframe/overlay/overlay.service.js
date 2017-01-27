@@ -208,7 +208,7 @@ class OverlayService {
     this.PageStructureService.getContainers().forEach((container) => {
       const element = container.getOverlayElement();
       element.on('click', (event) => {
-        clickHandler(event.target);
+        clickHandler(event, container);
       });
     });
   }

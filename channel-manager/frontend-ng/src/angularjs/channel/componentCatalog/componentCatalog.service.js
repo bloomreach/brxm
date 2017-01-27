@@ -45,9 +45,16 @@ class ComponentCatalogService {
     this.HippoIframeService.liftIframeAboveMask();
     this.OverlayService.enableAddMode();
 
-    this.OverlayService.onContainerClick((containerOverlayElement) => {
-      delete this.selectedComponent;
-      this.addComponentToContainer(component, containerOverlayElement);
+    this.OverlayService.onContainerClick((event, container) => {
+      const containerOverlayElement = event.target;
+
+      if (!container.isDisabled()) {
+        delete this.selectedComponent;
+        this.addComponentToContainer(component, containerOverlayElement);
+      } else {
+        // If container is disabled dont do anything
+        event.stopPropagation();
+      }
     });
 
     this.MaskService.onClick(() => {
