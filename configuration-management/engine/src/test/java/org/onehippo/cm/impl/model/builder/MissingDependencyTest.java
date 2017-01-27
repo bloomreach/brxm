@@ -60,17 +60,17 @@ public class MissingDependencyTest extends AbstractBaseTest {
     @Test(expected = MissingDependencyException.class)
     public void module_missing_dependency() {
         // config 1 depends on non existing foo
-        module1a.setAfter(ImmutableList.of("foo"));
+        module1a1.setAfter(ImmutableList.of("foo"));
 
-        verifier.verifyModuleDependencies(ImmutableList.of(module1a));
+        verifier.verifyModuleDependencies(ImmutableList.of(module1a1));
     }
 
     @Test(expected = MissingDependencyException.class)
     public void module_missing_dependency_again() {
         // config 1 depends on non existing foo
-        module1a.setAfter(ImmutableList.of(module1b.getName()));
-        module1b.setAfter(ImmutableList.of("foo"));
+        module1a1.setAfter(ImmutableList.of(module1a2.getName()));
+        module1a2.setAfter(ImmutableList.of("foo"));
 
-        verifier.verifyModuleDependencies(ImmutableList.of(module1a, module1b));
+        verifier.verifyModuleDependencies(ImmutableList.of(module1a1, module1a2));
     }
 }

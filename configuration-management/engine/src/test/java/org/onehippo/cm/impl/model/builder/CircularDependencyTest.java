@@ -103,25 +103,25 @@ public class CircularDependencyTest extends AbstractBaseTest {
 
     @Test(expected = CircularDependencyException.class)
     public void modules_self_circular_dependency() {
-        module1a.setAfter(ImmutableList.of(module1a.getName()));
+        module1a1.setAfter(ImmutableList.of(module1a1.getName()));
 
-        verifier.verifyModuleDependencies(ImmutableList.of(module1a, module1b));
+        verifier.verifyModuleDependencies(ImmutableList.of(module1a1, module1a2));
     }
 
     @Test(expected = CircularDependencyException.class)
     public void modules_two_wise_circular_dependency() {
-        module1a.setAfter(ImmutableList.of(module1b.getName()));
-        module1b.setAfter(ImmutableList.of(module1a.getName()));
+        module1a1.setAfter(ImmutableList.of(module1a2.getName()));
+        module1a2.setAfter(ImmutableList.of(module1a1.getName()));
 
-        verifier.verifyModuleDependencies(ImmutableList.of(module1a, module1b));
+        verifier.verifyModuleDependencies(ImmutableList.of(module1a1, module1a2));
     }
 
     @Test(expected = CircularDependencyException.class)
     public void modules_three_wise_circular_dependency() {
-        module1a.setAfter(ImmutableList.of(module1b.getName()));
-        module1b.setAfter(ImmutableList.of(module1c.getName()));
-        module1c.setAfter(ImmutableList.of(module1a.getName()));
+        module1a1.setAfter(ImmutableList.of(module1a2.getName()));
+        module1a2.setAfter(ImmutableList.of(module1a3.getName()));
+        module1a3.setAfter(ImmutableList.of(module1a1.getName()));
 
-        verifier.verifyModuleDependencies(ImmutableList.of(module1a, module1b, module1c));
+        verifier.verifyModuleDependencies(ImmutableList.of(module1a1, module1a2, module1a3));
     }
 }

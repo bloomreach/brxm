@@ -163,44 +163,44 @@ public class FlatSortingTest extends AbstractBaseTest {
     @Test
     public void module_sort_two_modules() throws Exception {
 
-        module1a.setAfter(ImmutableList.of(module1b.getName()));
+        module1a1.setAfter(ImmutableList.of(module1a2.getName()));
 
-        SortedSet<Module> sorted = new Sorter<Module>().sort(ImmutableList.of(module1a, module1b));
+        SortedSet<Module> sorted = new Sorter<Module>().sort(ImmutableList.of(module1a1, module1a2));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
-        assertEquals("[module1b, module1a]", sortedNames);
+        assertEquals("[module1a2, module1a1]", sortedNames);
 
-        SortedSet<Module> sorted2 = new Sorter<Module>().sort(ImmutableList.of(module1a, module1b));
+        SortedSet<Module> sorted2 = new Sorter<Module>().sort(ImmutableList.of(module1a1, module1a2));
         assertEquals(sorted, sorted2);
     }
 
     @Test
     public void module_sort_three_modules() throws Exception {
 
-        module1a.setAfter(ImmutableList.of(module1b.getName()));
-        module1c.setAfter(ImmutableList.of(module1a.getName()));
+        module1a1.setAfter(ImmutableList.of(module1a2.getName()));
+        module1a3.setAfter(ImmutableList.of(module1a1.getName()));
 
-        SortedSet<Module> sorted = new Sorter<Module>().sort(ImmutableList.of(module1a, module1b, module1c));
+        SortedSet<Module> sorted = new Sorter<Module>().sort(ImmutableList.of(module1a1, module1a2, module1a3));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
-        assertEquals("[module1b, module1a, module1c]", sortedNames);
+        assertEquals("[module1a2, module1a1, module1a3]", sortedNames);
 
-        SortedSet<Module> sorted2 = new Sorter<Module>().sort(ImmutableList.of(module1b, module1c, module1a));
+        SortedSet<Module> sorted2 = new Sorter<Module>().sort(ImmutableList.of(module1a2, module1a3, module1a1));
         assertEquals(sorted, sorted2);
     }
 
     @Test
     public void module_sort_three_modules_multiple_dependencies() throws Exception {
 
-        module1a.setAfter(ImmutableList.of(module1b.getName()));
-        module1c.setAfter(ImmutableList.of(module1a.getName(), module1b.getName()));
+        module1a1.setAfter(ImmutableList.of(module1a2.getName()));
+        module1a3.setAfter(ImmutableList.of(module1a1.getName(), module1a2.getName()));
 
-        SortedSet<Module> sorted = new Sorter<Module>().sort(ImmutableList.of(module1a, module1b, module1c));
+        SortedSet<Module> sorted = new Sorter<Module>().sort(ImmutableList.of(module1a1, module1a2, module1a3));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
-        assertEquals("[module1b, module1a, module1c]", sortedNames);
+        assertEquals("[module1a2, module1a1, module1a3]", sortedNames);
 
-        SortedSet<Module> sorted2 = new Sorter<Module>().sort(ImmutableList.of(module1b, module1c, module1a));
+        SortedSet<Module> sorted2 = new Sorter<Module>().sort(ImmutableList.of(module1a2, module1a3, module1a1));
         assertEquals(sorted, sorted2);
 
     }
@@ -208,15 +208,15 @@ public class FlatSortingTest extends AbstractBaseTest {
     @Test
     public void module_sort_three_undeterministic_depends_sorts_on_name() throws Exception {
 
-        module1a.setAfter(ImmutableList.of(module1b.getName()));
-        module1c.setAfter(ImmutableList.of(module1b.getName()));
+        module1a1.setAfter(ImmutableList.of(module1a2.getName()));
+        module1a3.setAfter(ImmutableList.of(module1a2.getName()));
 
-        SortedSet<Module> sorted = new Sorter<Module>().sort(ImmutableList.of(module1a, module1b, module1c));
+        SortedSet<Module> sorted = new Sorter<Module>().sort(ImmutableList.of(module1a1, module1a2, module1a3));
 
         String sortedNames = sorted.stream().map((Function<Orderable, Object>)Orderable::getName).collect(Collectors.toList()).toString();
-        assertEquals("[module1b, module1a, module1c]", sortedNames);
+        assertEquals("[module1a2, module1a1, module1a3]", sortedNames);
 
-        SortedSet<Module> sorted2 = new Sorter<Module>().sort(ImmutableList.of(module1b, module1c, module1a));
+        SortedSet<Module> sorted2 = new Sorter<Module>().sort(ImmutableList.of(module1a2, module1a3, module1a1));
         assertEquals(sorted, sorted2);
     }
 }
