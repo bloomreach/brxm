@@ -134,6 +134,10 @@ html {
   margin-top: -1px;
   pointer-events: all;
 
+  > svg {
+    flex: 0 0 auto;
+  }
+
   &:hover::before {
     // the locked-by text is centered vertically, but wraps when there is not enough horizontal space
     align-self: flex-start;
