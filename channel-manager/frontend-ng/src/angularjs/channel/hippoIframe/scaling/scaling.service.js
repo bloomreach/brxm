@@ -33,9 +33,10 @@ class ScalingService {
     });
   }
 
-  init(hippoIframeJQueryElement, canvasJQueryElement, iframeJQueryElement) {
+  init(hippoIframeJQueryElement, canvasJQueryElement, sheetJQueryElement, iframeJQueryElement) {
     this.hippoIframeJQueryElement = hippoIframeJQueryElement;
     this.canvasJQueryElement = canvasJQueryElement;
+    this.sheetJQueryElement = sheetJQueryElement;
     this.iframeJQueryElement = iframeJQueryElement;
   }
 
@@ -96,8 +97,8 @@ class ScalingService {
     const canvasBorderWidth = canvasWidth - viewportWidth;
     const targetShift = Math.min(canvasBorderWidth, this.pushWidth) / 2;
 
-    this.iframeJQueryElement.toggleClass('shift-animated', animate);
-    this.iframeJQueryElement.css('transform', `translateX(${targetShift}px)`);
+    this.sheetJQueryElement.toggleClass('shift-animated', animate);
+    this.sheetJQueryElement.css('transform', `translateX(${targetShift}px)`);
 
     return [canvasWidth, viewportWidth];
   }

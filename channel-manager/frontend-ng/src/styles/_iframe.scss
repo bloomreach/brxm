@@ -22,20 +22,33 @@
     cursor: move;
     cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
   }
+}
+
+.channel-iframe-sheet {
+  background-color: $grey-50;
+  box-shadow: 0 0 20px $black-shadow;
+  height: 100%;
+  max-width: 100%;  // use explicit max-width so its transition can be animated
+  transition: max-width $viewport-animation-transition;
+  width: 100%;
+
+  &.shift-animated {
+    transition: max-width $scale-animation-transition, transform $scale-animation-transition;
+  }
 
   iframe {
-    background-color: $grey-50;
     border: 0;
-    box-shadow: 0 0 20px $black-shadow;
-    display: block;
     height: 100%;
-    max-width: 100%;  // use explicit max-width so its transition can be animated
-    transition: max-width $viewport-animation-transition;
     width: 100%;
+  }
 
-    &.shift-animated {
-      transition: max-width $scale-animation-transition, transform $scale-animation-transition;
-    }
+  iframe,
+  .channel-dragula-mirror {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
   }
 }
 

@@ -22,8 +22,8 @@ class ViewportService {
     this.width = 0;
   }
 
-  init($iframe) {
-    this.$iframe = $iframe;
+  init($sheet) {
+    this.$sheet = $sheet;
   }
 
   setWidth(width) {
@@ -31,10 +31,10 @@ class ViewportService {
 
     if (width === 0) {
       // Desktop mode - no width constraints
-      this.$iframe.css('max-width', '100%');
+      this.$sheet.css('max-width', '100%');
     } else {
       // viewport is constrained
-      this.$iframe.css('max-width', `${width}px`);
+      this.$sheet.css('max-width', `${width}px`);
     }
   }
 
