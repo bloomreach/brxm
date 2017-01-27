@@ -25,6 +25,7 @@ describe('PageStructureService', () => {
   let RenderingService;
   let HippoIframeService;
   let FeedbackService;
+  let MaskService;
   let $document;
   let $q;
   let $log;
@@ -35,7 +36,7 @@ describe('PageStructureService', () => {
     angular.mock.module('hippo-cm.channel.page');
 
     inject((_$q_, _$rootScope_, _$log_, _$document_, _$window_, _PageStructureService_, _PageMetaDataService_,
-            _ChannelService_, _HstService_, _RenderingService_, _HippoIframeService_, _FeedbackService_) => {
+            _ChannelService_, _HstService_, _RenderingService_, _HippoIframeService_, _FeedbackService_, _MaskService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $log = _$log_;
@@ -48,6 +49,7 @@ describe('PageStructureService', () => {
       RenderingService = _RenderingService_;
       HippoIframeService = _HippoIframeService_;
       FeedbackService = _FeedbackService_;
+      MaskService = _MaskService_;
     });
 
     spyOn(ChannelService, 'recordOwnChange');
@@ -423,10 +425,12 @@ describe('PageStructureService', () => {
       testMetaData: 'foo',
     });
 
+    spyOn(MaskService, 'mask');
     spyOn($window.APP_TO_CMS, 'publish');
 
     PageStructureService.showComponentProperties(componentElement);
 
+    expect(MaskService.mask).toHaveBeenCalled();
     expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-component-properties', {
       component: {
         id: 'testId',
@@ -445,12 +449,22 @@ describe('PageStructureService', () => {
 
   it('ignores erroneous calls to showComponentProperties', () => {
     spyOn($log, 'warn');
+    spyOn(MaskService, 'mask');
     spyOn($window.APP_TO_CMS, 'publish');
 
     PageStructureService.showComponentProperties(undefined);
 
     expect($log.warn).toHaveBeenCalled();
+    expect(MaskService.mask).not.toHaveBeenCalled();
     expect($window.APP_TO_CMS.publish).not.toHaveBeenCalled();
+  });
+
+  it('removes the mask when the component properties dialog is closed', () => {
+    spyOn(MaskService, 'unmask');
+
+    $window.CMS_TO_APP.publish('hide-component-properties');
+
+    expect(MaskService.unmask).toHaveBeenCalled();
   });
 
   it('shows the default error message when failed to add a new component from catalog', () => {

@@ -240,12 +240,12 @@ class PageStructureService {
   }
 
   showComponentProperties(componentElement) {
-    this.MaskService.mask();
-
     if (!componentElement) {
       this.$log.warn('Problem opening the component properties dialog: no component provided.');
       return;
     }
+
+    this.MaskService.mask();
 
     this.CmsService.publish('show-component-properties', {
       component: {
