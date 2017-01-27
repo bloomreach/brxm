@@ -80,7 +80,7 @@ class OverlayService {
   }
 
   _initOverlay() {
-    this.overlay = $('<div id="hippo-overlay"></div>');
+    this.overlay = $('<div class="hippo-overlay"></div>');
     $(this.iframeWindow.document.body).append(this.overlay);
     this._updateModeClass();
 

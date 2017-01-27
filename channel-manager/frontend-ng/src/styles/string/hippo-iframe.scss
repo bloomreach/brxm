@@ -32,7 +32,7 @@ html {
   width: $embedded-link-width;
 }
 
-#hippo-overlay { // sass-lint:disable-line no-ids
+.hippo-overlay {
   bottom: 0;
   font-family: $font-family;
   left: 0;
