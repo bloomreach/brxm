@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,46 @@
 package org.hippoecm.hst.resourcebundle.internal;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
 
 import org.apache.commons.lang.LocaleUtils;
-import org.hippoecm.hst.resourcebundle.PlaceHolderEmptyResourceBundleFamily;
 import org.hippoecm.hst.resourcebundle.ResourceBundleFamily;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DefaultMutableResourceBundleRegistry
+ *
+ * The "get" logic inside this class corresponds to the "put" logic of the {@link HippoRepositoryResourceBundleFamilyFactory}
+ * in the sense that both do no longer use the #*ForPreview methods of a ResourceBundleFamily. Instead, a separate
+ * instance of a ResourceBundleFamily is kept in a separate data structure in order to retrieve, cache and evict
+ * resource bundles.
  */
 public class DefaultMutableResourceBundleRegistry implements MutableResourceBundleRegistry {
 
-    private Map<String, ResourceBundleFamily> bundleFamiliesMap = new ConcurrentHashMap(new HashMap<String, ResourceBundleFamily>());
+    private static final Logger logger = LoggerFactory.getLogger(DefaultMutableResourceBundleRegistry.class);
+
+    private final Map<String, ResourceBundleFamily> liveBundleFamilyByBasename = new HashMap<>();
+    private final Map<String, ResourceBundleFamily> previewBundleFamilyByBasename = new HashMap<>();
+    private final Map<String, ResourceBundleFamily> liveBundleFamilyByIdentifier = new HashMap<>();
+    private final Map<String, ResourceBundleFamily> previewBundleFamilyByIdentifier = new HashMap<>();
+
+    // As an optimization, whenever a look-up for a specific basename fails, we remember that negative result
+    // by adding the basename to the appropriate "unfound" set in order to avoid doing the lookup again.
+    // Since these basenames can not be correlated with resource bundle identifiers, whenever an identifier
+    // is "unregistered" which wasn't cached, we wipe the unfound set.
+    // A use case where this matters is a resource bundle that is being referenced by name, but which doesn't
+    // exist yet. Once it gets created (or the basename of the bundle gets "fixed"), a next retrieval of that
+    // basename should trigger a new look-up in the repository.
+    private final Set<String> liveUnfoundBasenames = new HashSet<>();
+    private final Set<String> previewUnfoundBasenames = new HashSet<>();
 
     private ResourceBundleFamilyFactory resourceBundleFamilyFactory;
 
@@ -62,6 +85,71 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
     }
 
     @Override
+    @Deprecated
+    public void registerBundleFamily(String basename, ResourceBundleFamily bundleFamily) {
+        registerBundleFamily(basename, false, bundleFamily);
+    }
+
+    @Override
+    public synchronized void registerBundleFamily(String basename, boolean preview, ResourceBundleFamily bundleFamily) {
+        if (bundleFamily == null) {
+            unfoundBasenames(preview).add(basename);
+            logger.info("Failed to load resource bundle {} for {} scope", basename, preview ? "preview" : "live");
+        } else {
+            logger.info("Registering resource bundle {} for {} scope", basename, preview ? "preview" : "live");
+            byBasename(preview).put(basename, bundleFamily);
+            if (bundleFamily instanceof DefaultMutableResourceBundleFamily) {
+                final String identifier = ((DefaultMutableResourceBundleFamily)bundleFamily).getIdentifier();
+                if (identifier != null) {
+                    byIdentifier(preview).put(identifier, bundleFamily);
+                }
+            }
+        }
+    }
+
+    @Override
+    @Deprecated
+    public void unregisterBundleFamily(String basename) {
+        logger.info("Unregistering resource bundle {}", basename);
+        unregisterBundleFamilyByBasename(basename, true);
+        unregisterBundleFamilyByBasename(basename, false);
+    }
+
+    private synchronized void unregisterBundleFamilyByBasename(final String basename, final boolean preview) {
+        final ResourceBundleFamily bundleFamily = byBasename(preview).remove(basename);
+        if (bundleFamily instanceof DefaultMutableResourceBundleFamily) {
+            final String identifier = ((DefaultMutableResourceBundleFamily) bundleFamily).getIdentifier();
+            if (identifier != null) {
+                byIdentifier(preview).remove(identifier);
+            }
+        }
+        unfoundBasenames(preview).remove(basename);
+    }
+
+    @Override
+    public synchronized void unregisterBundleFamily(final String identifier, boolean preview) {
+        final ResourceBundleFamily bundleFamily = byIdentifier(preview).remove(identifier);
+        if (bundleFamily != null) {
+            final String basename = bundleFamily.getBasename();
+            logger.info("Unregistering resource bundle {} for {} scope", basename, preview ? "preview" : "live");
+            byBasename(preview).remove(basename);
+        } else {
+            unfoundBasenames(preview).clear();
+        }
+    }
+
+    @Override
+    @Deprecated
+    public synchronized void unregisterAllBundleFamilies() {
+        byBasename(true).clear();
+        byBasename(false).clear();
+        byIdentifier(true).clear();
+        byIdentifier(false).clear();
+        unfoundBasenames(true).clear();
+        unfoundBasenames(false).clear();
+    }
+
+    @Override
     public ResourceBundle getBundle(String basename) {
         return getBundle(basename, null);
     }
@@ -81,58 +169,11 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
         return getBundle(basename, locale, true);
     }
 
-    @Override
-    public void registerBundleFamily(String basename, ResourceBundleFamily bundleFamily) {
-        bundleFamiliesMap.put(basename, bundleFamily);
-    }
-
-    @Override
-    public void unregisterBundleFamily(String basename) {
-        bundleFamiliesMap.remove(basename);
-    }
-
-    @Override
-    public void unregisterAllBundleFamilies() {
-        bundleFamiliesMap.clear();
-    }
-
-    protected ResourceBundle getBundle(String basename, Locale locale, boolean preview) {
-
-        ResourceBundleFamily bundleFamily = bundleFamiliesMap.get(basename);
-
-        if (bundleFamily == null && resourceBundleFamilyFactory != null) {
-            bundleFamily = bundleFamiliesMap.get(basename);
-
-            if (bundleFamily == null) {
-                bundleFamily = resourceBundleFamilyFactory.createBundleFamily(basename);
-
-                if (bundleFamily != null) {
-                    bundleFamiliesMap.put(basename, bundleFamily);
-                }
-            }
-        }
-
-        if (bundleFamily != null && !(bundleFamily instanceof PlaceHolderEmptyResourceBundleFamily)) {
-
-            if (locale != null) {
-                //
-                // Let's try to find the best mapped resource bundle.
-                // For example, if the locale is 'en_US', then it tries to find bundle by 'en_US'.
-                // Next, it tries to find bundle by 'en' if not found.
-                //
-                @SuppressWarnings("unchecked")
-                List<Locale> lookupLocales = (List<Locale>) LocaleUtils.localeLookupList(locale);
-
-                for (Locale loc : lookupLocales) {
-                    ResourceBundle localizedBundle = (preview ? bundleFamily.getLocalizedBundleForPreview(loc) : bundleFamily.getLocalizedBundle(loc));
-
-                    if (localizedBundle != null) {
-                        return localizedBundle;
-                    }
-                }
-            }
-
-            ResourceBundle bundle = (preview ? bundleFamily.getDefaultBundleForPreview() : bundleFamily.getDefaultBundle());
+    protected ResourceBundle getBundle(final String basename, final Locale locale, final boolean preview) {
+        final ResourceBundleFamily bundleFamily = getBundleFamilyUnlessUnfound(basename, preview);
+        if (bundleFamily != null) {
+            final ResourceBundle bundle = extractLocalizedBundle(bundleFamily, locale)
+                    .orElseGet(bundleFamily::getDefaultBundle);
             if (bundle != null) {
                 return bundle;
             }
@@ -148,4 +189,55 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
         throw new MissingResourceException("Cannot find resource bundle.", basename, "");
     }
 
+    private ResourceBundleFamily getBundleFamilyUnlessUnfound(final String basename, final boolean preview) {
+        boolean unfound;
+        synchronized (this) {
+            unfound = unfoundBasenames(preview).contains(basename);
+        }
+
+        return unfound ? null : getOrFindBundleFamily(basename, preview);
+    }
+
+    private ResourceBundleFamily getOrFindBundleFamily(final String basename, final boolean preview) {
+        ResourceBundleFamily bundleFamily;
+
+        // get from cache
+        synchronized (this) {
+            bundleFamily = byBasename(preview).get(basename);
+        }
+
+        if (bundleFamily == null && resourceBundleFamilyFactory != null) {
+            // try to load
+            bundleFamily = resourceBundleFamilyFactory.createBundleFamily(basename, preview);
+            registerBundleFamily(basename, preview, bundleFamily);
+        }
+
+        return bundleFamily;
+    }
+
+    private Optional<ResourceBundle> extractLocalizedBundle(final ResourceBundleFamily bundleFamily, final Locale locale) {
+        if (locale != null) {
+            @SuppressWarnings("unchecked")
+            List<Locale> lookupLocales = (List<Locale>) LocaleUtils.localeLookupList(locale);
+            for (Locale loc : lookupLocales) {
+                ResourceBundle bundle = bundleFamily.getLocalizedBundle(loc);
+                if (bundle != null) {
+                    return Optional.of(bundle);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    private Map<String, ResourceBundleFamily> byBasename(final boolean preview) {
+        return preview ? previewBundleFamilyByBasename : liveBundleFamilyByBasename;
+    }
+
+    private Map<String, ResourceBundleFamily> byIdentifier(final boolean preview) {
+        return preview ? previewBundleFamilyByIdentifier : liveBundleFamilyByIdentifier;
+    }
+
+    private Set<String> unfoundBasenames(final boolean preview) {
+        return preview ? previewUnfoundBasenames : liveUnfoundBasenames;
+    }
 }
