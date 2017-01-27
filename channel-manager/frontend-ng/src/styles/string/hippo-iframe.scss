@@ -169,6 +169,18 @@ html {
   min-height: $overlay-box-minheight;
 }
 
+.hippo-overlay-icon {
+  display: none;
+  fill: $overlay-icon-fill;
+  height: $overlay-icon-size;
+  left: 50%;
+  margin-left: -($overlay-icon-size / 2);
+  margin-top: -($overlay-icon-size / 2);
+  position: absolute;
+  top: 50%;
+  width: $overlay-icon-size;
+}
+
 // Adding a component
 .hippo-overlay-add-mode {
   cursor: copy;
@@ -176,12 +188,14 @@ html {
   pointer-events: auto;
 
   .hippo-overlay-element-container {
-    &:not(.hippo-overlay-element-container-disabled) {
-      cursor: copy;
-      pointer-events: auto;
+    cursor: copy;
+    pointer-events: auto;
+
+    &:hover .hippo-overlay-icon {
+      display: block;
     }
 
-    &:not(.hippo-overlay-element-container-disabled):hover {
+    &:hover {
       background: $overlay-container-add-mode-hover-bgcolor;
     }
 
@@ -192,7 +206,6 @@ html {
 
   .hippo-overlay-element-container-disabled {
     cursor: not-allowed;
-    pointer-events: none;
   }
 }
 

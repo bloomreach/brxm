@@ -18,6 +18,8 @@ import MutationSummary from 'mutation-summary';
 import contentLinkSvg from '../../../../images/html/edit-document.svg';
 import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
+import dropSvg from '../../../../images/html/add.svg';
+import disabledSvg from '../../../../images/html/not-allowed.svg';
 
 class OverlayService {
   constructor(
@@ -234,6 +236,7 @@ class OverlayService {
   _addMarkupAndBehavior(structureElement, overlayElement) {
     switch (structureElement.getType()) {
       case 'container':
+        this._addDropIcon(structureElement, overlayElement);
         this._addLockIcon(structureElement, overlayElement);
         break;
       case 'content-link':
@@ -247,6 +250,18 @@ class OverlayService {
       default:
         break;
     }
+  }
+
+  _addDropIcon(container, overlayElement) {
+    const iconMarkup = $('<div class="hippo-overlay-icon"></div>');
+
+    if (container.isDisabled()) {
+      iconMarkup.append(disabledSvg);
+    } else {
+      iconMarkup.append(dropSvg);
+    }
+
+    iconMarkup.appendTo(overlayElement);
   }
 
   _addLockIcon(container, overlayElement) {
