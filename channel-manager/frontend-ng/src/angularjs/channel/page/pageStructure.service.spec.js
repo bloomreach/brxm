@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -758,21 +758,16 @@ describe('PageStructureService', () => {
   it('notifies change listeners when updating a component', () => {
     registerVBoxContainer();
     registerVBoxComponent('componentA');
+
+    const container = PageStructureService.getContainers()[0];
+    const component = container.getComponents()[0];
     const updatedMarkup = `
       <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
         <p id="updated-component-with-new-head-contribution">
         </p>
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
     `;
-    const container = {
-      removeComponent() {},
-    };
-    const component = jasmine.createSpyObj('component', ['replaceDOM', 'getContainer']);
-    component.replaceDOM.and.callFake((markup, callback) => {
-      callback();
-    });
-    component.getContainer.and.returnValue(container);
-    spyOn(PageStructureService, '_createComponent');
+
     spyOn(PageStructureService, '_notifyChangeListeners').and.callThrough();
 
     PageStructureService._updateComponent(component, updatedMarkup);
@@ -900,11 +895,6 @@ describe('PageStructureService', () => {
       `;
 
     spyOn(PageStructureService, '_notifyChangeListeners').and.callThrough();
-
-    spyOn(container, 'replaceDOM').and.callFake(($newMarkup, callback) => {
-      callback();
-    });
-
     spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
 
     PageStructureService.renderContainer(container).then(() => {

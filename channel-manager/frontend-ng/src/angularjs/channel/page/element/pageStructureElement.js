@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,9 +79,8 @@ class PageStructureElement {
 
   /**
    * Replace container DOM elements with the given markup
-   * @return the jQuery element referring to the inserted markup in the DOM document
    */
-  replaceDOM($newMarkup, callback) {
+  replaceDOM($newMarkup, onLoadCallback) {
     const endCommentNode = this.getEndComment()[0];
     const node = this._removeSiblingsUntil(this.getStartComment()[0], endCommentNode);
 
@@ -96,9 +95,15 @@ class PageStructureElement {
       this._removeSiblingsUntil(endCommentNode.nextSibling); // Don't remove the end marker
     }
 
-    $newMarkup.find('img').one('load', callback);
+    // Delay the onLoad callback until all images are fully downloaded. Called once per image.
+    const images = $newMarkup.find('img, [type="image"]').one('load', onLoadCallback);
 
     this.getEndComment().replaceWith($newMarkup);
+
+    // If no images are being loaded we can execute the onLoad callback right away.
+    if (images.length === 0) {
+      onLoadCallback();
+    }
   }
 
   _removeSiblingsUntil(startNode, endNode) {
