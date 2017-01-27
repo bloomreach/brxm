@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,10 @@ class MaskService {
     this.clickHandler = angular.noop;
   }
 
+  resetMaskClass() {
+    this.maskClass = this.defaultMaskClass;
+  }
+
   onClick(clickHandler) {
     this.clickHandler = clickHandler;
   }
@@ -34,12 +38,13 @@ class MaskService {
     if (optionalMaskClass) {
       this.maskClass = `${this.defaultMaskClass} ${optionalMaskClass}`;
     } else {
-      this.maskClass = this.defaultMaskClass;
+      this.resetMaskClass();
     }
   }
 
   unmask() {
     this.isMasked = false;
+    this.resetMaskClass();
   }
 }
 

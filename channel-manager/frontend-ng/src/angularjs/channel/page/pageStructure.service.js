@@ -245,6 +245,8 @@ class PageStructureService {
       return;
     }
 
+    this.MaskService.mask();
+
     this.CmsService.publish('show-component-properties', {
       component: {
         id: componentElement.getId(),
@@ -257,7 +259,6 @@ class PageStructureService {
       },
       page: this.PageMetaDataService.get(),
     });
-    this.MaskService.mask();
   }
 
   printParsedElements() {
