@@ -79,8 +79,10 @@
 }
 
 .hippo-overlay-label {
+  align-items: center;
   color: $overlay-label-color;
   display: flex;
+  fill: $overlay-label-color;
   font-size: $overlay-label-font-size;
   pointer-events: none;
   visibility: hidden;
@@ -95,6 +97,7 @@
     border: 1px solid $overlay-component-label-border-color;
   }
 
+  &.hippo-overlay-label-experiment,
   .hippo-overlay-add-mode &,
   .hippo-dragging .hippo-overlay-element-container > &,
   .hippo-overlay-element-component:hover > &,
@@ -106,6 +109,16 @@
 .hippo-overlay-label-text {
   padding-left: 6px;
   padding-right: 6px;
+
+  .hippo-overlay-label-experiment & {
+    display: none;
+    padding-left: 2px;
+    padding-right: 6px;
+
+    .hippo-overlay-element-component:hover & {
+      display: block;
+    }
+  }
 }
 
 .hippo-overlay-lock {
@@ -113,7 +126,7 @@
   background-color: $overlay-lock-bgcolor;
   cursor: default;
   display: flex;
-  fill: $overlay-lock-fill-color;
+  fill: $overlay-lock-color;
   float: right;
   height: $overlay-lock-height;
   justify-content: center;
@@ -121,7 +134,24 @@
   margin-right: -1px;
   margin-top: -1px;
   pointer-events: all;
-  width: $overlay-lock-width;
+
+  > svg {
+    flex: 0 0 auto;
+  }
+
+  &:hover::before {
+    // the locked-by text is centered vertically, but wraps when there is not enough horizontal space
+    align-self: flex-start;
+    background-color: $overlay-lock-bgcolor;
+    color: $overlay-lock-color;
+    content: attr(data-locked-by);
+    flex: 0 1 auto;
+    font-size: $overlay-lock-font-size;
+    line-height: $overlay-lock-height;
+    min-height: $overlay-lock-height;
+    padding-left: 6px;
+    padding-right: 2px;
+  }
 }
 
 .hippo-overlay-element-link {

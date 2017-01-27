@@ -157,7 +157,8 @@ $overlay-label-color: $white;
 $overlay-label-font-size: 12px;
 
 $overlay-lock-bgcolor: #697279;
-$overlay-lock-fill-color: $white;
+$overlay-lock-color: $white;
+$overlay-lock-font-size: $overlay-label-font-size;
 $overlay-lock-height: 26px;
 $overlay-lock-width: 26px;
 

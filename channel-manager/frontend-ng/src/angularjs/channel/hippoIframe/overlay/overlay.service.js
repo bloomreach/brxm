@@ -16,6 +16,7 @@
 
 import MutationSummary from 'mutation-summary';
 import contentLinkSvg from '../../../../images/html/edit-document.svg';
+import flaskSvg from '../../../../images/html/flask.svg';
 import lockSvg from '../../../../images/html/lock.svg';
 import menuLinkSvg from '../../../../images/html/edit-menu.svg';
 
@@ -26,6 +27,7 @@ class OverlayService {
       $translate,
       CmsService,
       DomService,
+      ExperimentStateService,
       HippoIframeService,
       MaskService,
       PageStructureService,
@@ -38,6 +40,7 @@ class OverlayService {
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DomService = DomService;
+    this.ExperimentStateService = ExperimentStateService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
@@ -221,14 +224,22 @@ class OverlayService {
   }
 
   _addLabel(structureElement, overlayElement) {
-    const escapedLabel = this.DomService.escapeHtml(structureElement.getLabel());
-    if (escapedLabel.length > 0) {
-      overlayElement.append(`
+    if (structureElement.hasLabel()) {
+      const labelElement = $(`
         <span class="hippo-overlay-label">
-          <span class="hippo-overlay-label-text">${escapedLabel}</span>
+          <span class="hippo-overlay-label-text"></span>
         </span>
       `);
+      this._setLabelText(labelElement, structureElement.getLabel());
+      overlayElement.append(labelElement);
     }
+  }
+
+  _setLabelText(labelElement, text) {
+    const textElement = labelElement.children('.hippo-overlay-label-text');
+    const escapedText = this.DomService.escapeHtml(text);
+    // use html() with manual escaping instead of text() because the latter crashes Chrome during unit tests :-/
+    textElement.html(escapedText);
   }
 
   _addMarkupAndBehavior(structureElement, overlayElement) {
@@ -251,8 +262,8 @@ class OverlayService {
 
   _addLockIcon(container, overlayElement) {
     if (container.isDisabled()) {
-      const tooltip = this._getLockedByText(container);
-      const lockMarkup = $(`<div class="hippo-overlay-lock" title="${tooltip}"></div>`);
+      const lockedBy = this._getLockedByText(container);
+      const lockMarkup = $(`<div class="hippo-overlay-lock" data-locked-by="${lockedBy}"></div>`);
       lockMarkup.append(lockSvg);
       lockMarkup.appendTo(overlayElement);
     }
@@ -313,9 +324,16 @@ class OverlayService {
 
     overlayElement.toggleClass('hippo-overlay-element-visible', this._isElementVisible(structureElement, boxElement));
 
-    if (structureElement.getType() === 'container') {
-      overlayElement.toggleClass('hippo-overlay-element-container-empty', structureElement.isEmpty());
-      overlayElement.toggleClass('hippo-overlay-element-container-disabled', structureElement.isDisabled());
+    switch (structureElement.getType()) {
+      case 'component':
+        this._syncLabel(structureElement, overlayElement);
+        break;
+      case 'container':
+        overlayElement.toggleClass('hippo-overlay-element-container-empty', structureElement.isEmpty());
+        overlayElement.toggleClass('hippo-overlay-element-container-disabled', structureElement.isDisabled());
+        break;
+      default:
+        break;
     }
 
     this._syncPosition(overlayElement, boxElement);
@@ -333,6 +351,26 @@ class OverlayService {
         return this._isEditMode() && !this.isInAddMode && this.DomService.isVisible(boxElement);
       default:
         return this._isEditMode() && !this.isInAddMode;
+    }
+  }
+
+  _syncLabel(component, overlayElement) {
+    const labelElement = overlayElement.children('.hippo-overlay-label');
+    const iconElement = labelElement.children('svg');
+
+    if (this.ExperimentStateService.hasExperiment(component)) {
+      labelElement.addClass('hippo-overlay-label-experiment');
+
+      if (iconElement.length === 0) {
+        labelElement.prepend(flaskSvg);
+      }
+
+      const experimentState = this.ExperimentStateService.getExperimentStateLabel(component);
+      this._setLabelText(labelElement, experimentState);
+    } else {
+      labelElement.removeClass('hippo-overlay-label-experiment');
+      iconElement.remove();
+      this._setLabelText(labelElement, component.getLabel());
     }
   }
 
