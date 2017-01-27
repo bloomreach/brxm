@@ -122,7 +122,7 @@ public class ConfigurationNodeBuilder {
                     // def1 should be first
                     return -1;
                 }
-                if (def2 instanceof NamespaceDefinition) {
+                if (def2 instanceof NodeTypeDefinition) {
                     return 1;
                 }
                 return 0;
