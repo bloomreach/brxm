@@ -124,8 +124,8 @@ class ScalingService {
     const newScale = (visibleCanvasWidth < viewportWidth) ? visibleCanvasWidth / viewportWidth : 1;
 
     if (newScale !== oldScale) {
-      this._scaleIframe(oldScale, newScale, animate);
       this.scaleFactor = newScale;
+      this._scaleIframe(oldScale, newScale, animate);
     }
   }
 
@@ -141,6 +141,12 @@ class ScalingService {
 
     iframeHtml.toggleClass('hippo-scale-animated', animate);
 
+    function setScale(isScaled) {
+      iframeHtml.toggleClass('hippo-scale', isScaled);
+      iframeHtml.css('transform', isScaled ? `scale(${newScale})` : '');
+      iframeWindow.scrollBy(0, scaledScrollOffset);
+    }
+
     if (animate) {
       iframeHtml.one('transitionend', () => {
         this.animating = false;
@@ -150,13 +156,12 @@ class ScalingService {
         iframeHtml.off('transitionend');
 
         iframeHtml.removeClass('hippo-scale-animated');
-        iframeHtml.css('transform', `scale(${newScale})`);
-        iframeWindow.scrollBy(0, scaledScrollOffset);
+        setScale(this.isScaled());
       });
+      iframeHtml.addClass('hippo-scale');
       iframeHtml.css('transform', `scale(${newScale}) translateY(${-scaledScrollOffset / newScale}px)`);
     } else {
-      iframeHtml.css('transform', `scale(${newScale})`);
-      iframeWindow.scrollBy(0, scaledScrollOffset);
+      setScale(this.isScaled());
     }
   }
 }
