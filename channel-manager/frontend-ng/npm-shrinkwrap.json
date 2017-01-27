@@ -925,9 +925,9 @@
       "dev": true
     },
     "caniuse-db": {
-      "version": "1.0.30000613",
+      "version": "1.0.30000617",
       "from": "caniuse-db@>=1.0.30000540 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/caniuse-db/-/caniuse-db-1.0.30000613.tgz",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/caniuse-db/-/caniuse-db-1.0.30000617.tgz",
       "dev": true
     },
     "caseless": {
@@ -987,24 +987,10 @@
       "dev": true
     },
     "clean-css": {
-      "version": "3.4.24",
-      "from": "clean-css@>=3.4.0 <3.5.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/clean-css/-/clean-css-3.4.24.tgz",
-      "dev": true,
-      "dependencies": {
-        "commander": {
-          "version": "2.8.1",
-          "from": "commander@>=2.8.0 <2.9.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/commander/-/commander-2.8.1.tgz",
-          "dev": true
-        },
-        "source-map": {
-          "version": "0.4.4",
-          "from": "source-map@>=0.4.0 <0.5.0",
-          "resolved": "https://maven.onehippo.com/content/groups/npm-all/source-map/-/source-map-0.4.4.tgz",
-          "dev": true
-        }
-      }
+      "version": "4.0.2",
+      "from": "clean-css@>=4.0.0 <4.1.0",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/clean-css/-/clean-css-4.0.2.tgz",
+      "dev": true
     },
     "clean-webpack-plugin": {
       "version": "0.1.14",
@@ -1721,9 +1707,9 @@
       "dev": true
     },
     "electron-to-chromium": {
-      "version": "1.2.0",
+      "version": "1.2.1",
       "from": "electron-to-chromium@>=1.2.0 <2.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/electron-to-chromium/-/electron-to-chromium-1.2.0.tgz",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/electron-to-chromium/-/electron-to-chromium-1.2.1.tgz",
       "dev": true
     },
     "elliptic": {
@@ -2389,9 +2375,9 @@
       "dev": true
     },
     "frontend-build": {
-      "version": "4.2.0",
-      "from": "frontend-build@4.2.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/frontend-build/-/frontend-build-4.2.0.tgz",
+      "version": "4.2.1",
+      "from": "frontend-build@4.2.1",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/frontend-build/-/frontend-build-4.2.1.tgz",
       "dev": true
     },
     "fs-access": {
@@ -2839,9 +2825,9 @@
       "dev": true
     },
     "html-minifier": {
-      "version": "3.2.3",
+      "version": "3.3.0",
       "from": "html-minifier@>=3.0.1 <4.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/html-minifier/-/html-minifier-3.2.3.tgz",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/html-minifier/-/html-minifier-3.3.0.tgz",
       "dev": true
     },
     "html-webpack-plugin": {
@@ -2868,6 +2854,20 @@
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/camelcase/-/camelcase-1.2.1.tgz",
           "dev": true
         },
+        "clean-css": {
+          "version": "3.4.24",
+          "from": "clean-css@>=3.4.0 <3.5.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/clean-css/-/clean-css-3.4.24.tgz",
+          "dev": true,
+          "dependencies": {
+            "commander": {
+              "version": "2.8.1",
+              "from": "commander@>=2.8.0 <2.9.0",
+              "resolved": "https://maven.onehippo.com/content/groups/npm-all/commander/-/commander-2.8.1.tgz",
+              "dev": true
+            }
+          }
+        },
         "cliui": {
           "version": "2.1.0",
           "from": "cliui@>=2.1.0 <3.0.0",
@@ -2880,11 +2880,25 @@
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/html-minifier/-/html-minifier-2.1.7.tgz",
           "dev": true
         },
+        "source-map": {
+          "version": "0.4.4",
+          "from": "source-map@>=0.4.0 <0.5.0",
+          "resolved": "https://maven.onehippo.com/content/groups/npm-all/source-map/-/source-map-0.4.4.tgz",
+          "dev": true
+        },
         "uglify-js": {
           "version": "2.6.4",
           "from": "uglify-js@>=2.6.0 <2.7.0",
           "resolved": "https://maven.onehippo.com/content/groups/npm-all/uglify-js/-/uglify-js-2.6.4.tgz",
-          "dev": true
+          "dev": true,
+          "dependencies": {
+            "source-map": {
+              "version": "0.5.6",
+              "from": "source-map@~0.5.1",
+              "resolved": "https://maven.onehippo.com/content/groups/npm-all/source-map/-/source-map-0.5.6.tgz",
+              "dev": true
+            }
+          }
         },
         "window-size": {
           "version": "0.1.0",
@@ -3610,9 +3624,9 @@
       "dev": true
     },
     "loader-runner": {
-      "version": "2.2.0",
+      "version": "2.3.0",
       "from": "loader-runner@>=2.2.0 <3.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/loader-runner/-/loader-runner-2.2.0.tgz",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/loader-runner/-/loader-runner-2.3.0.tgz",
       "dev": true
     },
     "loader-utils": {
@@ -3751,9 +3765,8 @@
     },
     "lodash.debounce": {
       "version": "4.0.8",
-      "from": "lodash.debounce@>=4.0.6 <5.0.0",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.debounce/-/lodash.debounce-4.0.8.tgz",
-      "dev": true
+      "from": "lodash.debounce@4.0.8",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.debounce/-/lodash.debounce-4.0.8.tgz"
     },
     "lodash.deburr": {
       "version": "3.2.0",
@@ -3859,7 +3872,7 @@
     },
     "lodash.isstring": {
       "version": "4.0.1",
-      "from": "lodash.isstring@>=4.0.1 <5.0.0",
+      "from": "lodash.isstring@4.0.1",
       "resolved": "https://maven.onehippo.com/content/groups/npm-all/lodash.isstring/-/lodash.isstring-4.0.1.tgz",
       "dev": true
     },
