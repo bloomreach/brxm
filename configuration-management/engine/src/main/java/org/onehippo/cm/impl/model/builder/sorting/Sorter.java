@@ -16,7 +16,6 @@
 package org.onehippo.cm.impl.model.builder.sorting;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -30,49 +29,40 @@ public class Sorter<T extends Orderable> {
     }
 
     public SortedSet<T> sort(final Collection<T> list) {
-        SortedSet<T> sortedOrderables = new TreeSet<>(new Comparator<T>() {
-            @Override
-            public int compare(final T orderable1, final T orderable2) {
-                if (orderable1.equals(orderable2)) {
-                    return 0;
-                }
-                if (orderable1.getAfter().isEmpty()) {
-                    if (orderable2.getAfter().isEmpty()) {
-                        return orderable1.getName().compareTo(orderable2.getName());
-                    } else {
-                        return -1;
-                    }
-                }
+        SortedSet<T> sortedOrderables = new TreeSet<>((orderable1, orderable2) -> {
+            if (orderable1.equals(orderable2)) {
+                return 0;
+            }
+            if (orderable1.getAfter().isEmpty()) {
                 if (orderable2.getAfter().isEmpty()) {
-                    return 1;
-                }
-                boolean orderable1DependsOnConfig2 = false;
-                boolean orderable2DependsOnConfig1 = false;
-                for (String dependsOn : orderable1.getAfter()) {
-                    if (orderable2.getName().equals(dependsOn)) {
-                        // orderable1 depends on orderable2 : Now exclude circular dependency
-                        orderable1DependsOnConfig2 = true;
-                    }
-                }
-                for (String dependsOn : orderable2.getAfter()) {
-                    if (orderable1.getName().equals(dependsOn)) {
-                        // orderable2 depends on orderable1
-                        orderable2DependsOnConfig1 = true;
-                    }
-                }
-                if (orderable2DependsOnConfig1) {
+                    return orderable1.getName().compareTo(orderable2.getName());
+                } else {
                     return -1;
                 }
-                if (orderable1DependsOnConfig2) {
-                    return 1;
-                }
-                return orderable1.getName().compareTo(orderable2.getName());
             }
-
-
+            if (orderable2.getAfter().isEmpty()) {
+                return 1;
+            }
+            if (dependsOn(orderable1, orderable2)) {
+                // if orderable1 depends on orderable2, orderable1 should go past orderable2 and be considered "greater"
+                return 1;
+            }
+            if (dependsOn(orderable2, orderable1)) {
+                // if orderable2 depends on orderable1, orderable1 should go before orderable2 and be considered "smaller"
+                return -1;
+            }
+            return orderable1.getName().compareTo(orderable2.getName());
         });
         sortedOrderables.addAll(list);
         return sortedOrderables;
     }
 
+    private boolean dependsOn(Orderable orderable1, Orderable orderable2) {
+        for (String dependsOn : orderable1.getAfter()) {
+            if (orderable2.getName().equals(dependsOn)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
