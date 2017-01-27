@@ -110,8 +110,19 @@ public class SourceParser extends AbstractBaseParser {
 
     private void constructNodeTypeDefinitions(final Node src, final SourceImpl parent) throws ParserException {
         for (Node node : asSequence(src)) {
-            final String cndString = asStringScalar(node);
-            parent.addNodeTypeDefinition(cndString);
+            switch (node.getNodeId()) {
+                case scalar:
+                    final String cndString = asStringScalar(node);
+                    parent.addNodeTypeDefinition(cndString, false);
+                    break;
+                case mapping:
+                    final Map<String, Node> map = asMapping(node, new String[]{"resource"}, new String[0]);
+                    final String resource = asStringScalar(map.get("resource"));
+                    parent.addNodeTypeDefinition(resource, true);
+                    break;
+                default:
+                    throw new ParserException("CND instruction item must be a string or a map with key 'resource'", node);
+            }
         }
     }
 

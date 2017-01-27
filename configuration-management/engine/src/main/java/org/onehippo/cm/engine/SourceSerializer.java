@@ -42,12 +42,12 @@ public class SourceSerializer extends AbstractBaseSerializer {
 
     final static Representer representer = new Representer();
 
-    public void serialize(final OutputStream outputStream, final Source source, final Consumer<Value> resourceConsumer) throws IOException {
+    public void serialize(final OutputStream outputStream, final Source source, final Consumer<String> resourceConsumer) throws IOException {
         final Node node = representSource(source, resourceConsumer);
         serializeNode(outputStream, node);
     }
 
-    private Node representSource(final Source source, final Consumer<Value> resourceConsumer) {
+    private Node representSource(final Source source, final Consumer<String> resourceConsumer) {
         final List<Node> configDefinitionNodes = new ArrayList<>();
         final List<Node> contentDefinitionNodes = new ArrayList<>();
         final List<Node> namespaceDefinitionNodes = new ArrayList<>();
@@ -65,7 +65,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
                     namespaceDefinitionNodes.add(representNamespaceDefinition((NamespaceDefinition) definition));
                     break;
                 case NODETYPE:
-                    nodeTypeDefinitionNodes.add(representNodetypeDefinition((NodeTypeDefinition) definition));
+                    nodeTypeDefinitionNodes.add(representNodetypeDefinition((NodeTypeDefinition) definition, resourceConsumer));
                     break;
                 default:
                     throw new IllegalArgumentException("Cannot serialize definition, unknown type: " + definition.getType());
@@ -99,15 +99,15 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return new MappingNode(Tag.MAP, sourceTuples, false);
     }
 
-    private Node representConfigDefinition(final ConfigDefinition definition, final Consumer<Value> resourceConsumer) {
+    private Node representConfigDefinition(final ConfigDefinition definition, final Consumer<String> resourceConsumer) {
         return representDefinitionNode(definition.getNode(), resourceConsumer);
     }
 
-    private Node representContentDefinition(final ContentDefinition definition, final Consumer<Value> resourceConsumer) {
+    private Node representContentDefinition(final ContentDefinition definition, final Consumer<String> resourceConsumer) {
         return representDefinitionNode(definition.getNode(), resourceConsumer);
     }
 
-    private Node representDefinitionNode(final DefinitionNode node, final Consumer<Value> resourceConsumer) {
+    private Node representDefinitionNode(final DefinitionNode node, final Consumer<String> resourceConsumer) {
         final List<Node> children = new ArrayList<>(node.getProperties().size() + node.getNodes().size());
 
         for (DefinitionProperty childProperty : node.getProperties().values()) {
@@ -123,7 +123,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return new MappingNode(Tag.MAP, tuples, false);
     }
 
-    private Node representProperty(final DefinitionProperty property, final Consumer<Value> resourceConsumer) {
+    private Node representProperty(final DefinitionProperty property, final Consumer<String> resourceConsumer) {
         if (property.getName().equals("jcr:primaryType")) {
             return representJcrPrimaryTypeProperty(property);
         }
@@ -154,7 +154,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return new MappingNode(Tag.MAP, tuples, false);
     }
 
-    private Node representPropertyUsingMap(final DefinitionProperty property, final Consumer<Value> resourceConsumer) {
+    private Node representPropertyUsingMap(final DefinitionProperty property, final Consumer<String> resourceConsumer) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
         valueMapTuples.add(createStrStrTuple("type", property.getValueType().name().toLowerCase()));
 
@@ -172,14 +172,14 @@ public class SourceSerializer extends AbstractBaseSerializer {
             final Value value = property.getValue();
             valueMapTuples.add(new NodeTuple(createStrScalar(key), representValue(value)));
             if (hasResourceValues) {
-                resourceConsumer.accept(value);
+                resourceConsumer.accept(value.getString());
             }
         } else {
             final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
             for (Value value : property.getValues()) {
                 valueNodes.add(representValue(value));
                 if (hasResourceValues) {
-                    resourceConsumer.accept(value);
+                    resourceConsumer.accept(value.getString());
                 }
             }
             valueMapTuples.add(createStrSeqTuple(key, valueNodes, true));
@@ -278,8 +278,15 @@ public class SourceSerializer extends AbstractBaseSerializer {
         return new MappingNode(Tag.MAP, tuples, false);
     }
 
-    private Node representNodetypeDefinition(final NodeTypeDefinition definition) {
-        return createStrScalar(definition.getCndString(), '|');
+    private Node representNodetypeDefinition(final NodeTypeDefinition definition, final Consumer<String> resourceConsumer) {
+        if (definition.isResource()) {
+            resourceConsumer.accept(definition.getValue());
+            final List<NodeTuple> tuples = new ArrayList<>(1);
+            tuples.add(createStrStrTuple("resource", definition.getValue()));
+            return new MappingNode(Tag.MAP, tuples, false);
+        } else {
+            return createStrScalar(definition.getValue(), '|');
+        }
     }
 
 }

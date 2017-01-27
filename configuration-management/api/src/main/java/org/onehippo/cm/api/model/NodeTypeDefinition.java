@@ -16,5 +16,6 @@
 package org.onehippo.cm.api.model;
 
 public interface NodeTypeDefinition extends Definition {
-    String getCndString();
+    String getValue();
+    boolean isResource();
 }

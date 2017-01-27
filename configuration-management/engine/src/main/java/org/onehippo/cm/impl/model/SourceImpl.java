@@ -63,8 +63,8 @@ public class SourceImpl implements Source {
         return definition;
     }
 
-    public NodeTypeDefinitionImpl addNodeTypeDefinition(final String cndString) {
-        final NodeTypeDefinitionImpl definition = new NodeTypeDefinitionImpl(this, cndString);
+    public NodeTypeDefinitionImpl addNodeTypeDefinition(final String value, final boolean isResource) {
+        final NodeTypeDefinitionImpl definition = new NodeTypeDefinitionImpl(this, value, isResource);
         definitions.add(definition);
         return definition;
     }

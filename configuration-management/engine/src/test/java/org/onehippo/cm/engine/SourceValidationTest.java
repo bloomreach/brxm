@@ -222,6 +222,27 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void cndWithNonStringResourceValue() {
+        final Node root = yamlParser.compose(new StringReader("instructions: [ cnd: [ resource: 24 ] ]"));
+
+        final Node cnd = firstInstructionFirstTupleFirstValue(root);
+
+        assertParserException(root, firstTuple(cnd).getValueNode(), "Scalar must be a string");
+    }
+
+    @Test
+    public void cndWithNeitherScalarNorMap() {
+        final String yaml = "instructions:\n"
+                + "- cnd:\n"
+                + "  - [ sequence ]\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+
+        assertParserException(root, firstInstructionFirstTupleFirstValue(root),
+                "CND instruction item must be a string or a map with key 'resource'");
+    }
+
+    @Test
     public void configWithScalarValue() {
         final Node root = yamlParser.compose(new StringReader("instructions: [ config: scalar value ]"));
 

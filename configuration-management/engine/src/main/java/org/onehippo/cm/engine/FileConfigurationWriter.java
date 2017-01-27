@@ -30,7 +30,6 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.api.model.Value;
 
 public class FileConfigurationWriter {
 
@@ -70,17 +69,17 @@ public class FileConfigurationWriter {
                     final ResourceOutputProvider resourceOutputProvider = new FileResourceOutputProvider(modulePath);
 
                     for (Source source : module.getSources().values()) {
-                        final List<Value> resources = new ArrayList<>();
+                        final List<String> resources = new ArrayList<>();
                         try (final OutputStream sourceOutputStream = getSourceOutputStream(modulePath, source)) {
                             sourceSerializer.serialize(sourceOutputStream, source, resources::add);
                         }
 
-                        for (Value resource : resources) {
+                        for (String resource : resources) {
                             try (
                                     final InputStream resourceInputStream =
-                                            resourceInputProvider.getResourceInputStream(source, resource.getString());
+                                            resourceInputProvider.getResourceInputStream(source, resource);
                                     final OutputStream resourceOutputStream =
-                                            resourceOutputProvider.getResourceOutputStream(source, resource.getString())
+                                            resourceOutputProvider.getResourceOutputStream(source, resource)
                             ) {
                                 IOUtils.copy(resourceInputStream, resourceOutputStream);
                             }

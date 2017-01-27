@@ -43,7 +43,7 @@ public class HierarchyTest extends AbstractBaseTest {
         final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
         final Project project1 = assertProject(base, "project1", new String[0], 1);
         final Module module1 = assertModule(project1, "module1", new String[0], 1);
-        final Source source1 = assertSource(module1, "config.yaml", 4);
+        final Source source1 = assertSource(module1, "config.yaml", 5);
 
         final NamespaceDefinition namespace = assertDefinition(source1, 0, NamespaceDefinition.class);
         assertEquals("myhippoproject", namespace.getPrefix());
@@ -54,9 +54,14 @@ public class HierarchyTest extends AbstractBaseTest {
                 "<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>\n" +
                         "<'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>\n" +
                         "[myhippoproject:basedocument] > hippo:document orderable\n",
-                nodeType.getCndString());
+                nodeType.getValue());
+        assertEquals(false, nodeType.isResource());
 
-        final ConfigDefinition definition1 = assertDefinition(source1, 2, ConfigDefinition.class);
+        final NodeTypeDefinition nodeTypeFromResource = assertDefinition(source1, 2, NodeTypeDefinition.class);
+        assertEquals("cnd.txt", nodeTypeFromResource.getValue());
+        assertEquals(true, nodeTypeFromResource.isResource());
+
+        final ConfigDefinition definition1 = assertDefinition(source1, 3, ConfigDefinition.class);
         final DefinitionNode rootDefinition1 = assertNode(definition1, "/", "", definition1, false, 4, 1);
         assertProperty(rootDefinition1, "/root-level-property", "root-level-property",
                 definition1, ValueType.STRING, "root-level-property-value");
@@ -88,7 +93,7 @@ public class HierarchyTest extends AbstractBaseTest {
         assertProperty(resourceNode, "/resources/multi-value-resource-2", "multi-value-resource-2", definition1, false,
                 ValueType.STRING, new String[]{"string3.txt","string4.txt"}, true, false);
 
-        final ContentDefinition contentDefinition = assertDefinition(source1, 3, ContentDefinition.class);
+        final ContentDefinition contentDefinition = assertDefinition(source1, 4, ContentDefinition.class);
         assertNode(contentDefinition, "/content/documents/myhippoproject", "myhippoproject", contentDefinition, false, 0, 1);
 
         final Configuration myhippoproject = assertConfiguration(configurations, "myhippoproject", new String[]{"base"}, 1);
