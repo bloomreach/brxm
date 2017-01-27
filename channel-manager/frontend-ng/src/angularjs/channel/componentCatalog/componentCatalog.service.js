@@ -44,28 +44,30 @@ class ComponentCatalogService {
     this.ChannelSidenavService.liftSidenavAboveMask();
     this.HippoIframeService.liftIframeAboveMask();
     this.OverlayService.enableAddMode();
+    this.OverlayService.onContainerClick(this._handleContainerClick.bind(this));
+    this.MaskService.onClick(this._handleMaskClick.bind(this));
+  }
 
-    this.OverlayService.onContainerClick((event, container) => {
-      const containerOverlayElement = event.target;
+  _handleMaskClick() {
+    delete this.selectedComponent;
+    this.MaskService.unmask();
+    this.ChannelSidenavService.lowerSidenavBeneathMask();
+    this.HippoIframeService.lowerIframeBeneathMask();
+    this.OverlayService.disableAddMode();
+    this.OverlayService.offContainerClick();
+    this.MaskService.removeClickHandler();
+  }
 
-      if (!container.isDisabled()) {
-        delete this.selectedComponent;
-        this.addComponentToContainer(component, containerOverlayElement);
-      } else {
-        // If container is disabled dont do anything
-        event.stopPropagation();
-      }
-    });
+  _handleContainerClick(event, container) {
+    const containerOverlayElement = event.target;
 
-    this.MaskService.onClick(() => {
+    if (!container.isDisabled()) {
+      this.addComponentToContainer(this.selectedComponent, containerOverlayElement);
       delete this.selectedComponent;
-      this.MaskService.unmask();
-      this.ChannelSidenavService.lowerSidenavBeneathMask();
-      this.HippoIframeService.lowerIframeBeneathMask();
-      this.OverlayService.disableAddMode();
-      this.OverlayService.offContainerClick();
-      this.MaskService.removeClickHandler();
-    });
+    } else {
+      // If container is disabled dont do anything
+      event.stopPropagation();
+    }
   }
 
   addComponentToContainer(component, containerOverlayElement) {
