@@ -15,7 +15,6 @@
  */
 package org.onehippo.cm.impl.model.builder.sorting;
 
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,21 +66,7 @@ public class SortedModule implements Module {
     static class SourceSorter {
 
         public SortedSet<Source> sort(final Map<String, Source> sources) {
-            SortedSet<Source> sortedSources = new TreeSet<>(new Comparator<Source>() {
-                @Override
-                public int compare(final Source source1, final Source source2) {
-                    String[] source1Segments = source1.getPath().split("/");
-                    String[] source2Segments = source2.getPath().split("/");
-                    if (source1Segments.length == source2Segments.length) {
-                        return source1.getPath().compareTo(source2.getPath());
-                    }
-
-                    if (source1Segments.length < source2Segments.length) {
-                        return -1;
-                    }
-                    return 1;
-                }
-            });
+            SortedSet<Source> sortedSources = new TreeSet<>((s1, s2) -> s1.getPath().compareTo(s2.getPath()));
             sortedSources.addAll(sources.values());
             return sortedSources;
         }
