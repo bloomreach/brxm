@@ -52,7 +52,6 @@ public class ConfigurationNodeBuilder {
         final DefinitionTriple orderedDefinitions =  new DefinitionTriple();
         new Sorter<Configuration>()
                 .sort(configurations)
-                .stream()
                 .forEach(configuration -> addDefinitionsForConfiguration(configuration, orderedDefinitions));
         return orderedDefinitions;
     }
@@ -61,7 +60,6 @@ public class ConfigurationNodeBuilder {
                                                 final DefinitionTriple orderedDefinitions) {
         new Sorter<Project>()
                 .sort(configuration.getProjects())
-                .stream()
                 .forEach(project -> addDefinitionsForProject(project, orderedDefinitions));
     }
 
@@ -69,7 +67,6 @@ public class ConfigurationNodeBuilder {
                                           final DefinitionTriple orderedDefinitions) {
         new Sorter<Module>()
                 .sort(project.getModules())
-                .stream()
                 .forEach(module -> addDefinitionsForModule(module, orderedDefinitions));
     }
 

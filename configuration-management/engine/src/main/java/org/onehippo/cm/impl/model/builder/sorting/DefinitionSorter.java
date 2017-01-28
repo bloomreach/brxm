@@ -16,7 +16,6 @@
 
 package org.onehippo.cm.impl.model.builder.sorting;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -35,8 +34,8 @@ public class DefinitionSorter {
     }
 
     public void sort(final List<Definition> list, final DefinitionTriple sorted) {
-        Collections.sort(list, new DefinitionComparator());
-        list.stream().forEachOrdered(sorted::addDefinition);
+        list.sort(new DefinitionComparator());
+        list.forEach(sorted::addDefinition);
     }
 
     private class DefinitionComparator implements Comparator<Definition> {
