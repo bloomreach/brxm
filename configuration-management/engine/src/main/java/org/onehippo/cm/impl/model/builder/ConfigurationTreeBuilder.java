@@ -154,7 +154,7 @@ public class ConfigurationTreeBuilder {
         return segments.toArray(new String[segments.size()]);
     }
 
-    // TODO: collocate below logic with path validation from AbstractBaseParser
+    // TODO: collocate below logic with path validation from AbstractBaseParser - encoding/escaping is TBD.
     private int nextUnescapedSlash(final String path, final int offset) {
         boolean escaped = false;
         for (int i = offset + 1; i < path.length(); i++) {
