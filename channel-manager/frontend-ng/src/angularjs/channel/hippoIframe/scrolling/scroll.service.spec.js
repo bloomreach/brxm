@@ -53,7 +53,7 @@ describe('ScrollService', () => {
     loadIframeFixture(() => {
       spyOn(ScrollService, 'startScrolling').and.callThrough();
       spyOn(ScrollService, 'stopScrolling').and.callThrough();
-      ScrollService.enable();
+      ScrollService.enable(() => true);
 
       $iframe.trigger('mouseleave');
       expect(ScrollService.startScrolling).toHaveBeenCalled();

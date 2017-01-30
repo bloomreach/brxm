@@ -32,7 +32,7 @@ class ScrollService {
     this.enabled = false;
   }
 
-  enable(scrollAllowed = () => true) {
+  enable(scrollAllowed) {
     if (!this.enabled && this.iframe) {
       this.iframeDocument = this.iframe.contents();
       this.scrollable = this.iframeDocument.find('html, body');
