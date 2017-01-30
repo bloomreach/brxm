@@ -20,7 +20,7 @@ const npmDir = path.resolve('./node_modules');
 
 const customConfig = {
   dist: targetDir,
-  publicPath: '/cms/angular/hippo-cm/',
+  publicPath: '',
   htmlExcludes: /items.renderer.html/,
   vendorExcludes: [
     'open-sans-fontface',

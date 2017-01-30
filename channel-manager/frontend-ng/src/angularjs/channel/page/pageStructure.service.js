@@ -21,18 +21,19 @@ import MenuLink from './element/menuLink';
 
 class PageStructureService {
 
-  constructor($log,
-              $q,
-              ChannelService,
-              CmsService,
-              FeedbackService,
-              HippoIframeService,
-              hstCommentsProcessorService,
-              HstConstants,
-              HstService,
-              MaskService,
-              PageMetaDataService,
-              RenderingService) {
+  constructor(
+    $log,
+    $q,
+    ChannelService,
+    CmsService,
+    FeedbackService,
+    HippoIframeService,
+    hstCommentsProcessorService,
+    HstConstants,
+    HstService,
+    MaskService,
+    PageMetaDataService,
+    RenderingService) {
     'ngInject';
 
     // Injected
@@ -49,6 +50,7 @@ class PageStructureService {
     this.PageMetaDataService = PageMetaDataService;
     this.RenderingService = RenderingService;
 
+    this.changeListeners = [];
     this.CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
     this.clearParsedElements();
   }
@@ -57,7 +59,6 @@ class PageStructureService {
     this.containers = [];
     this.embeddedLinks = [];
     this.headContributions = [];
-    this.changeListeners = [];
     this.PageMetaDataService.clear();
     this._notifyChangeListeners();
   }
@@ -245,6 +246,8 @@ class PageStructureService {
       return;
     }
 
+    this.MaskService.mask();
+
     this.CmsService.publish('show-component-properties', {
       component: {
         id: componentElement.getId(),
@@ -257,7 +260,6 @@ class PageStructureService {
       },
       page: this.PageMetaDataService.get(),
     });
-    this.MaskService.mask();
   }
 
   printParsedElements() {
@@ -273,12 +275,12 @@ class PageStructureService {
     const component = this.getComponentById(componentId);
     if (component) {
       this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
-        const updatedComponent = this._updateComponent(componentId, response.data);
+        const newMarkup = response.data;
+        const updatedComponent = this._updateComponent(component, newMarkup);
+
         if ($.isEmptyObject(propertiesMap) && this.containsNewHeadContributions(updatedComponent)) {
           this.$log.info(`Updated '${updatedComponent.getLabel()}' component needs additional head contributions, reloading page`);
           this.HippoIframeService.reload();
-        } else {
-          this._notifyChangeListeners();
         }
       });
       // TODO handle error
@@ -292,13 +294,17 @@ class PageStructureService {
   /**
    * Update the component with the new markup
    */
-  _updateComponent(componentId, newMarkup) {
-    const oldComponent = this.getComponentById(componentId);
+  _updateComponent(oldComponent, newMarkup) {
+    const $newMarkup = $(newMarkup);
     const container = oldComponent.getContainer();
 
     this._removeEmbeddedLinksInComponent(oldComponent);
-    const jQueryNodeCollection = oldComponent.replaceDOM(newMarkup);
-    const newComponent = this._createComponent(jQueryNodeCollection, container);
+
+    oldComponent.replaceDOM($newMarkup, () => {
+      this._notifyChangeListeners();
+    });
+
+    const newComponent = this._createComponent($newMarkup, container);
 
     if (newComponent) {
       container.replaceComponent(oldComponent, newComponent);
@@ -312,24 +318,21 @@ class PageStructureService {
     return newComponent;
   }
 
-  /**
-   * Lets the back-end re-render a container.
-   * @param container
-   * @returns {*} a promise with the new container object
-   * @private
-   */
   renderContainer(container) {
     return this.RenderingService.fetchContainerMarkup(container)
       .then(markup => this._updateContainer(container, markup));
-    // TODO: handle error
-    // try reloading the entire page?
   }
 
   _updateContainer(oldContainer, newMarkup) {
     this._removeEmbeddedLinksInContainer(oldContainer);
+    const $newMarkup = $(newMarkup);
 
-    // consider following three actions to be an atomic operation
-    const newContainer = this._replaceContainer(oldContainer, this._createContainer(oldContainer.replaceDOM(newMarkup)));
+    oldContainer.replaceDOM($newMarkup, () => {
+      this._notifyChangeListeners();
+    });
+
+    const container = this._createContainer($newMarkup);
+    const newContainer = this._replaceContainer(oldContainer, container);
 
     this.attachEmbeddedLinks();
     return newContainer;

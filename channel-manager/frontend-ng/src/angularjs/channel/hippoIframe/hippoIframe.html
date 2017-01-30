@@ -14,12 +14,21 @@
   limitations under the License.
   -->
 
+<!-- The gray background behind the channel. Visible when the viewport is constrained. -->
 <div class="channel-iframe-canvas"
      flex
      layout="column" layout-align="start center"
      ng-class="{'iframe-lifted': iframe.isIframeLifted()}">
-  <iframe class="qa-view flex-grow"
-          ng-src="{{ iframe.getSrc() }}">
-  </iframe>
-  <div class="channel-dragula-mirror cm-scale"></div>
+
+  <!-- Glues the iframe and Dragula mirror container on top of each other. Needed to position the mirror correctly. -->
+  <div class="channel-iframe-sheet flex-grow">
+
+    <!-- Renders the channel -->
+    <iframe class="qa-view"
+            ng-src="{{ iframe.getSrc() }}">
+    </iframe>
+
+    <!-- Contains the Dragula mirror rendered in the app so the mirror is also visible outside the iframe borders. -->
+    <div class="channel-dragula-mirror"></div>
+  </div>
 </div>

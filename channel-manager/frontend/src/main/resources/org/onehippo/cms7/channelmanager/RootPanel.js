@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 (function () {
   "use strict";
-
-  var BREADCRUMB_ANIMATION_SECONDS = 0.35;
 
   Ext.namespace('Hippo.ChannelManager');
 
@@ -153,31 +151,22 @@
       toolbar = this.toolbar;
       toolbarEl = toolbar.getEl();
 
+      this.hideBreadcrumbOptions = {
+      };
       this.hideBreadcrumbTask = new Ext.util.DelayedTask(function () {
         toolbarWidth = toolbarEl.getWidth();
-        toolbarEl.animate(
-          {
-            width: {to: 0}
-          },
-          BREADCRUMB_ANIMATION_SECONDS,
-          function () {
-            toolbar.hide();
-          }
-        );
+        toolbarEl.setWidth(0, this.hideBreadcrumbOptions);
       }, this);
 
+      this.showBreadcrumbOptions = {
+        callback: function () {
+          toolbarEl.setWidth('auto');
+        }
+      };
       this.showBreadcrumbTask = new Ext.util.DelayedTask(function () {
         toolbar.show();
         if (toolbarWidth) {
-          toolbarEl.animate(
-            {
-              width: {to: toolbarWidth}
-            },
-            BREADCRUMB_ANIMATION_SECONDS,
-            function () {
-              toolbarEl.setWidth('auto');
-            }
-          );
+          toolbarEl.setWidth(toolbarWidth, this.showBreadcrumbOptions);
         } else {
           toolbarEl.setWidth('auto');
         }
@@ -186,16 +175,23 @@
 
     _hideBreadcrumb: function () {
       this._initBreadcrumbAnimation();
-      this.showBreadcrumbTask.cancel();
+      this._cancelBreadcrumbAction(this.showBreadcrumbTask, this.showBreadcrumbOptions);
       this.toolbar.getEl().removeClass('hippo-breadcrumb-active');
       this.hideBreadcrumbTask.delay(500);
     },
 
     _showBreadcrumb: function () {
       this._initBreadcrumbAnimation();
-      this.hideBreadcrumbTask.cancel();
+      this._cancelBreadcrumbAction(this.hideBreadcrumbTask, this.hideBreadcrumbOptions);
       this.toolbar.getEl().addClass('hippo-breadcrumb-active');
       this.showBreadcrumbTask.delay(0);
+    },
+
+    _cancelBreadcrumbAction: function(task, options) {
+      task.cancel();
+      if (options.anim) {
+        options.anim.stop();
+      }
     },
 
     selectCard: function (itemId) {

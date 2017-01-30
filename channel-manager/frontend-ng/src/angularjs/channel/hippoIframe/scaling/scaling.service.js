@@ -33,9 +33,10 @@ class ScalingService {
     });
   }
 
-  init(hippoIframeJQueryElement, canvasJQueryElement, iframeJQueryElement) {
+  init(hippoIframeJQueryElement, canvasJQueryElement, sheetJQueryElement, iframeJQueryElement) {
     this.hippoIframeJQueryElement = hippoIframeJQueryElement;
     this.canvasJQueryElement = canvasJQueryElement;
+    this.sheetJQueryElement = sheetJQueryElement;
     this.iframeJQueryElement = iframeJQueryElement;
   }
 
@@ -49,7 +50,7 @@ class ScalingService {
   }
 
   onIframeUnload() {
-    if (this.iframeJQueryElement && this._isScaled()) {
+    if (this.iframeJQueryElement && this.isScaled()) {
       // Hide the iframe when scaled to avoid visual flicker. The contents inside the iframe is scaled because scaling
       // the iframe element itself results in ugly scrollbars. But the contents can only be scaled once loaded. Showing
       // unscaled contents first before scaling it down results in visual flicker, so we hide the whole iframe and show
@@ -60,8 +61,8 @@ class ScalingService {
 
   onIframeReady() {
     if (this.iframeJQueryElement) {
-      this._scaleIframe(1.0, this.scaleFactor, false, []);
-      if (this._isScaled()) {
+      this._scaleIframe(1.0, this.scaleFactor, false);
+      if (this.isScaled()) {
         // use fadeIn() instead of show() to smoothen the transition from seeing the canvas to seeing the site
         this.iframeJQueryElement.fadeIn(IFRAME_FADE_IN_DURATION_MS);
       }
@@ -76,7 +77,7 @@ class ScalingService {
     return this.scaleFactor;
   }
 
-  _isScaled() {
+  isScaled() {
     return this.scaleFactor !== 1.0;
   }
 
@@ -96,8 +97,8 @@ class ScalingService {
     const canvasBorderWidth = canvasWidth - viewportWidth;
     const targetShift = Math.min(canvasBorderWidth, this.pushWidth) / 2;
 
-    this.iframeJQueryElement.toggleClass('shift-animated', animate);
-    this.iframeJQueryElement.css('transform', `translateX(${targetShift}px)`);
+    this.sheetJQueryElement.toggleClass('shift-animated', animate);
+    this.sheetJQueryElement.css('transform', `translateX(${targetShift}px)`);
 
     return [canvasWidth, viewportWidth];
   }
@@ -124,17 +125,14 @@ class ScalingService {
     const newScale = (visibleCanvasWidth < viewportWidth) ? visibleCanvasWidth / viewportWidth : 1;
 
     if (newScale !== oldScale) {
-      const appElementsToScale = this.hippoIframeJQueryElement.find('.cm-scale');
-      this._scaleIframe(oldScale, newScale, animate, appElementsToScale);
       this.scaleFactor = newScale;
+      this._scaleIframe(oldScale, newScale, animate);
     }
   }
 
-  _scaleIframe(oldScale, newScale, animate, appElementsToScale) {
+  _scaleIframe(oldScale, newScale, animate) {
     const iframeWindow = this.iframeJQueryElement[0].contentWindow;
     const iframeHtml = $('html', iframeWindow.document);
-
-    const elementsToScale = $.merge(iframeHtml, appElementsToScale);
 
     const currentOffset = iframeWindow.pageYOffset;
     const targetOffset = oldScale === 1.0 ? newScale * currentOffset : currentOffset / oldScale;
@@ -142,24 +140,29 @@ class ScalingService {
 
     this.animating = animate;
 
-    elementsToScale.toggleClass('hippo-scale-animated', animate);
+    iframeHtml.toggleClass('hippo-scale-animated', animate);
+
+    function setScale(isScaled) {
+      iframeHtml.toggleClass('hippo-scale', isScaled);
+      iframeHtml.css('transform', isScaled ? `scale(${newScale})` : '');
+      iframeWindow.scrollBy(0, scaledScrollOffset);
+    }
 
     if (animate) {
-      elementsToScale.one('transitionend', () => {
+      iframeHtml.one('transitionend', () => {
         this.animating = false;
 
         // prevent additional callbacks because we change the transform again
         // inside the transitionend callback
-        elementsToScale.off('transitionend');
+        iframeHtml.off('transitionend');
 
-        elementsToScale.removeClass('hippo-scale-animated');
-        elementsToScale.css('transform', `scale(${newScale})`);
-        iframeWindow.scrollBy(0, scaledScrollOffset);
+        iframeHtml.removeClass('hippo-scale-animated');
+        setScale(this.isScaled());
       });
-      elementsToScale.css('transform', `scale(${newScale}) translateY(${-scaledScrollOffset / newScale}px)`);
+      iframeHtml.addClass('hippo-scale');
+      iframeHtml.css('transform', `scale(${newScale}) translateY(${-scaledScrollOffset / newScale}px)`);
     } else {
-      elementsToScale.css('transform', `scale(${newScale})`);
-      iframeWindow.scrollBy(0, scaledScrollOffset);
+      setScale(this.isScaled());
     }
   }
 }

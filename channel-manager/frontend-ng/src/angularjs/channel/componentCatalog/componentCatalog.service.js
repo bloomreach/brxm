@@ -38,6 +38,23 @@ class ComponentCatalogService {
     return this.selectedComponent;
   }
 
+  _enableAddModeMask() {
+    this.MaskService.mask('mask-add-component');
+    this.ChannelSidenavService.liftSidenavAboveMask();
+    this.HippoIframeService.liftIframeAboveMask();
+    this.OverlayService.enableAddMode();
+  }
+
+  _disableAddModeMask() {
+    this.MaskService.resetMaskClass();
+
+    this.ChannelSidenavService.lowerSidenavBeneathMask();
+    this.HippoIframeService.lowerIframeBeneathMask();
+    this.OverlayService.disableAddMode();
+    this.OverlayService.offContainerClick();
+    this.MaskService.removeClickHandler();
+  }
+
   selectComponent(component) {
     this.selectedComponent = component;
     this.MaskService.mask('mask-add-component');

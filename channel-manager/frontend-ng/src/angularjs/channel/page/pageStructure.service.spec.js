@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ describe('PageStructureService', () => {
   let RenderingService;
   let HippoIframeService;
   let FeedbackService;
+  let MaskService;
   let $document;
   let $q;
   let $log;
@@ -35,7 +36,7 @@ describe('PageStructureService', () => {
     angular.mock.module('hippo-cm.channel.page');
 
     inject((_$q_, _$rootScope_, _$log_, _$document_, _$window_, _PageStructureService_, _PageMetaDataService_,
-            _ChannelService_, _HstService_, _RenderingService_, _HippoIframeService_, _FeedbackService_) => {
+            _ChannelService_, _HstService_, _RenderingService_, _HippoIframeService_, _FeedbackService_, _MaskService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $log = _$log_;
@@ -48,6 +49,7 @@ describe('PageStructureService', () => {
       RenderingService = _RenderingService_;
       HippoIframeService = _HippoIframeService_;
       FeedbackService = _FeedbackService_;
+      MaskService = _MaskService_;
     });
 
     spyOn(ChannelService, 'recordOwnChange');
@@ -423,10 +425,12 @@ describe('PageStructureService', () => {
       testMetaData: 'foo',
     });
 
+    spyOn(MaskService, 'mask');
     spyOn($window.APP_TO_CMS, 'publish');
 
     PageStructureService.showComponentProperties(componentElement);
 
+    expect(MaskService.mask).toHaveBeenCalled();
     expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-component-properties', {
       component: {
         id: 'testId',
@@ -445,12 +449,22 @@ describe('PageStructureService', () => {
 
   it('ignores erroneous calls to showComponentProperties', () => {
     spyOn($log, 'warn');
+    spyOn(MaskService, 'mask');
     spyOn($window.APP_TO_CMS, 'publish');
 
     PageStructureService.showComponentProperties(undefined);
 
     expect($log.warn).toHaveBeenCalled();
+    expect(MaskService.mask).not.toHaveBeenCalled();
     expect($window.APP_TO_CMS.publish).not.toHaveBeenCalled();
+  });
+
+  it('removes the mask when the component properties dialog is closed', () => {
+    spyOn(MaskService, 'unmask');
+
+    $window.CMS_TO_APP.publish('hide-component-properties');
+
+    expect(MaskService.unmask).toHaveBeenCalled();
   });
 
   it('shows the default error message when failed to add a new component from catalog', () => {
@@ -755,6 +769,25 @@ describe('PageStructureService', () => {
     expect(HippoIframeService.reload).not.toHaveBeenCalled();
   });
 
+  it('notifies change listeners when updating a component', () => {
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+
+    const container = PageStructureService.getContainers()[0];
+    const component = container.getComponents()[0];
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+        <p id="updated-component-with-new-head-contribution">
+        </p>
+      <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+    `;
+
+    spyOn(PageStructureService, '_notifyChangeListeners').and.callThrough();
+
+    PageStructureService._updateComponent(component, updatedMarkup);
+    expect(PageStructureService._notifyChangeListeners).toHaveBeenCalled();
+  });
+
   it('retrieves a container by overlay element', () => {
     registerVBoxContainer();
     const container = PageStructureService.getContainers()[0];
@@ -855,6 +888,34 @@ describe('PageStructureService', () => {
       expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(true);
       done();
     });
+    $rootScope.$digest();
+  });
+
+  it('notifies change listeners when updating a container', (done) => {
+    registerVBoxContainer();
+    registerVBoxComponent('componentA');
+
+    const container = PageStructureService.getContainers()[0];
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
+      <div id="container-vbox">
+        <div id="componentA">
+          <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          <p id="test">Some markup in component A</p>
+          <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+        </div>
+      </div>
+      <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
+      `;
+
+    spyOn(PageStructureService, '_notifyChangeListeners').and.callThrough();
+    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+
+    PageStructureService.renderContainer(container).then(() => {
+      expect(PageStructureService._notifyChangeListeners).toHaveBeenCalled();
+      done();
+    });
+
     $rootScope.$digest();
   });
 

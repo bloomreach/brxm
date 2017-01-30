@@ -21,6 +21,7 @@ describe('OverlayService', () => {
   let $rootScope;
   let CmsService;
   let DomService;
+  let ExperimentStateService;
   let hstCommentsProcessorService;
   let OverlayService;
   let PageStructureService;
@@ -31,12 +32,20 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
-    inject((_$q_, _$rootScope_, _CmsService_, _DomService_, _hstCommentsProcessorService_, _OverlayService_,
-            _PageStructureService_, _RenderingService_) => {
+    inject((_$q_,
+            _$rootScope_,
+            _CmsService_,
+            _DomService_,
+            _ExperimentStateService_,
+            _hstCommentsProcessorService_,
+            _OverlayService_,
+            _PageStructureService_,
+            _RenderingService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       CmsService = _CmsService_;
       DomService = _DomService_;
+      ExperimentStateService = _ExperimentStateService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -163,8 +172,8 @@ describe('OverlayService', () => {
 
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(7);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(2);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(8);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(3);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(3);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
@@ -174,9 +183,23 @@ describe('OverlayService', () => {
 
   it('only renders labels for structure elements that have a label', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(2);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(3);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(3);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
+
+      const emptyContainer = iframe('.hippo-overlay-element-container').eq(1);
+      expect(emptyContainer.find('.hippo-overlay-label-text').html()).toBe('Empty container');
+      done();
+    });
+  });
+
+  it('renders the name structure elements in a data-qa-name attribute', (done) => {
+    loadIframeFixture(() => {
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length).toBe(3);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(3);
+
+      const emptyContainer = iframe('.hippo-overlay-element-container').eq(1);
+      expect(emptyContainer.find('.hippo-overlay-label').attr('data-qa-name')).toBe('Empty container');
       done();
     });
   });
@@ -202,7 +225,7 @@ describe('OverlayService', () => {
       const lock = disabledContainer.find('.hippo-overlay-lock');
       expect(lock.length).toBe(1);
       expect(lock.find('svg').length).toBe(1);
-      expect(lock.attr('title')).toBe('CONTAINER_LOCKED_BY');
+      expect(lock.attr('data-locked-by')).toBe('CONTAINER_LOCKED_BY');
 
       done();
     });
@@ -222,7 +245,59 @@ describe('OverlayService', () => {
       const lock = inheritedContainer.find('.hippo-overlay-lock');
       expect(lock.length).toBe(1);
       expect(lock.find('svg').length).toBe(1);
-      expect(lock.attr('title')).toBe('CONTAINER_INHERITED');
+      expect(lock.attr('data-locked-by')).toBe('CONTAINER_INHERITED');
+
+      done();
+    });
+  });
+
+  it('renders the experiment state of components', (done) => {
+    loadIframeFixture(() => {
+      const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(2);
+      const label = componentWithExperiment.find('.hippo-overlay-label');
+      expect(label.length).toBe(1);
+      expect(label.find('svg').length).toBe(1);
+
+      const labelText = label.find('.hippo-overlay-label-text');
+      expect(labelText.length).toBe(1);
+      expect(labelText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
+
+      done();
+    });
+  });
+
+  it('updates the experiment state of components', (done) => {
+    loadIframeFixture(() => {
+      const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(2);
+      const labelText = componentWithExperiment.find('.hippo-overlay-label-text');
+      expect(labelText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
+
+      spyOn(ExperimentStateService, 'getExperimentStateLabel').and.returnValue('EXPERIMENT_LABEL_COMPLETED');
+      OverlayService.sync();
+
+      expect(labelText.html()).toBe('EXPERIMENT_LABEL_COMPLETED');
+
+      done();
+    });
+  });
+
+  it('starts showing the experiment state of a component for which an experiment was just created', (done) => {
+    loadIframeFixture(() => {
+      const componentA = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(0);
+      const labelText = componentA.find('.hippo-overlay-label-text');
+      expect(labelText.html()).toBe('component A');
+
+      const componentMarkupWithExperiment = `
+        <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa", "Targeting-experiment-id": "567", "Targeting-experiment-state": "CREATED" } -->
+          <p id="markup-in-component-a">Markup in component A that just got an experiment</p>
+        <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+      `;
+      spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithExperiment }));
+
+      PageStructureService.renderComponent('aaaa');
+      $rootScope.$digest();
+
+      expect(labelText.html()).toBe('EXPERIMENT_LABEL_CREATED');
 
       done();
     });
@@ -391,7 +466,7 @@ describe('OverlayService', () => {
     OverlayService.setMode('edit');
 
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(7);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(8);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
@@ -404,7 +479,7 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(6);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(7);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();

@@ -69,11 +69,11 @@ class HippoIframeCtrl {
       this.onEditMenu({ menuUuid });
     });
 
-    ViewportService.init(this.iframeJQueryElement);
+    const sheetJQueryElement = $element.find('.channel-iframe-sheet');
+    ViewportService.init(sheetJQueryElement);
 
     const canvasJQueryElement = $element.find('.channel-iframe-canvas');
-
-    ScalingService.init($element, canvasJQueryElement, this.iframeJQueryElement);
+    ScalingService.init($element, canvasJQueryElement, sheetJQueryElement, this.iframeJQueryElement);
     DragDropService.init(this.iframeJQueryElement, canvasJQueryElement);
 
     const deleteComponentHandler = componentId => this.deleteComponent(componentId);

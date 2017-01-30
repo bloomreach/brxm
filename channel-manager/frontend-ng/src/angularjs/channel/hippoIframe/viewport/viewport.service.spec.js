@@ -17,7 +17,7 @@
 describe('ViewportService', () => {
   let ViewportService;
   let canvas;
-  let iframe;
+  let sheet;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
@@ -29,13 +29,13 @@ describe('ViewportService', () => {
     jasmine.getFixtures().load('channel/hippoIframe/viewport/viewport.service.fixture.html');
 
     canvas = $j('#canvas');
-    iframe = $j('#iframe');
-    ViewportService.init(iframe);
+    sheet = $j('#sheet');
+    ViewportService.init(sheet);
   });
 
   function expectUnconstrained() {
     expect(ViewportService.getWidth()).toBe(0);
-    expect(iframe.width()).toBe(canvas.width());
+    expect(sheet.width()).toBe(canvas.width());
   }
 
   it('should not constrain the viewport by default', () => {
@@ -51,6 +51,6 @@ describe('ViewportService', () => {
     ViewportService.setWidth(720);
 
     expect(ViewportService.getWidth()).toBe(720);
-    expect(iframe.width()).toBe(720);
+    expect(sheet.width()).toBe(720);
   });
 });
