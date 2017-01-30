@@ -15,40 +15,43 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableMap;
-
 public class ConfigurationNodeImpl extends ConfigurationItemImpl implements ConfigurationNode {
 
-    private Map<String, ConfigurationNode> nodes;
-    private Map<String, ConfigurationProperty> properties;
+    private final Map<String, ConfigurationNodeImpl> modifiableNodes = new TreeMap<>();
+    private final Map<String, ConfigurationNode> nodes = Collections.unmodifiableMap(modifiableNodes);
+    private final Map<String, ConfigurationPropertyImpl> modifiableProperties = new TreeMap<>();
+    private final Map<String, ConfigurationProperty> properties = Collections.unmodifiableMap(modifiableProperties);
 
     @Override
     public Map<String, ConfigurationNode> getNodes() {
-        if (nodes == null) {
-            return emptyMap();
-        }
-        return unmodifiableMap(nodes);
+        return nodes;
     }
 
-    public void setNodes(final Map<String, ConfigurationNode> nodes) {
-        this.nodes = nodes;
+    public Map<String, ConfigurationNodeImpl> getModifiableNodes() {
+        return modifiableNodes;
+    }
+
+    public void addNode(final String name, final ConfigurationNodeImpl node) {
+        modifiableNodes.put(name, node);
     }
 
     @Override
     public Map<String, ConfigurationProperty> getProperties() {
-        if (properties == null) {
-            return emptyMap();
-        }
-        return unmodifiableMap(properties);
+        return properties;
     }
 
-    public void setProperties(final Map<String, ConfigurationProperty> properties) {
-        this.properties = properties;
+    public Map<String, ConfigurationPropertyImpl> getModifiableProperties() {
+        return modifiableProperties;
+    }
+
+    public void addProperty(final String name, final ConfigurationPropertyImpl property) {
+        modifiableProperties.put(name, property);
     }
 }

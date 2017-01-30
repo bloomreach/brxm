@@ -16,6 +16,7 @@
 package org.onehippo.cm.impl.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,14 +24,12 @@ import java.util.Map;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Project;
 
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableMap;
-
 public class ConfigurationImpl implements Configuration {
 
     private String name;
     private List<String> after = new ArrayList<>();
-    private Map<String, Project> projects = new LinkedHashMap<>();
+    private Map<String, ProjectImpl> modifiableProjects = new LinkedHashMap<>();
+    private Map<String, Project> projects = Collections.unmodifiableMap(modifiableProjects);
 
     public ConfigurationImpl(final String name) {
         if (name == null) {
@@ -46,7 +45,7 @@ public class ConfigurationImpl implements Configuration {
 
     @Override
     public List<String> getAfter() {
-        return unmodifiableList(after);
+        return Collections.unmodifiableList(after);
     }
 
     public ConfigurationImpl setAfter(final List<String> after) {
@@ -56,12 +55,16 @@ public class ConfigurationImpl implements Configuration {
 
     @Override
     public Map<String, Project> getProjects() {
-        return unmodifiableMap(projects);
+        return projects;
+    }
+
+    public Map<String, ProjectImpl> getModifiableProjects() {
+        return modifiableProjects;
     }
 
     public ProjectImpl addProject(final String name) {
         final ProjectImpl project = new ProjectImpl(name, this);
-        projects.put(name, project);
+        modifiableProjects.put(name, project);
         return project;
     }
 

@@ -19,35 +19,37 @@ package org.onehippo.cm.impl.model.builder;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.onehippo.cm.api.model.ContentDefinition;
-import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
+import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 
-public class DefinitionTriple {
+public class MergedModel {
     private final List<NamespaceDefinition> namespaceDefinitions = new LinkedList<>();
     private final List<NodeTypeDefinition> nodeTypeDefinitions = new LinkedList<>();
-    private final List<ContentDefinition> contentDefinitions = new LinkedList<>();
+    private final ConfigurationNodeImpl configurationNode = new ConfigurationNodeImpl();
+
+    public MergedModel() {
+        configurationNode.setName("");
+        configurationNode.setPath("/");
+    }
+
+    public void addNamespaceDefinition(final NamespaceDefinition definition) {
+        namespaceDefinitions.add(definition);
+    }
 
     public List<NamespaceDefinition> getNamespaceDefinitions() {
         return namespaceDefinitions;
+    }
+
+    public void addNodeTypeDefinition(final NodeTypeDefinition definition) {
+        nodeTypeDefinitions.add(definition);
     }
 
     public List<NodeTypeDefinition> getNodeTypeDefinitions() {
         return nodeTypeDefinitions;
     }
 
-    public List<ContentDefinition> getContentDefinitions() {
-        return contentDefinitions;
-    }
-
-    public void addDefinition(final Definition definition) {
-        if (definition instanceof NamespaceDefinition) {
-            namespaceDefinitions.add((NamespaceDefinition) definition);
-        } else if (definition instanceof NodeTypeDefinition) {
-            nodeTypeDefinitions.add((NodeTypeDefinition)definition);
-        } else {
-            contentDefinitions.add((ContentDefinition)definition);
-        }
+    public ConfigurationNodeImpl getConfigurationNode() {
+        return configurationNode;
     }
 }

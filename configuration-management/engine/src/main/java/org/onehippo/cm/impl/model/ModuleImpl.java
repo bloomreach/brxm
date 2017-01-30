@@ -16,7 +16,9 @@
 package org.onehippo.cm.impl.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +34,9 @@ public class ModuleImpl implements Module {
     private String name;
     private Project project;
     private List<String> after = new ArrayList<>();
-    private Map<String, Source> sources = new LinkedHashMap<>();
+    private Map<String, SourceImpl> modifiableSources = new LinkedHashMap<>();
+    private Map<String, Source> sources = Collections.unmodifiableMap(modifiableSources);
+    private List<ContentDefinitionImpl> sortedContentDefinitions = new LinkedList<>();
 
     public ModuleImpl(final String name, final ProjectImpl project) {
         if (name == null) {
@@ -68,13 +72,24 @@ public class ModuleImpl implements Module {
 
     @Override
     public Map<String, Source> getSources() {
-        return unmodifiableMap(sources);
+        return sources;
+    }
+
+    public Map<String, SourceImpl> getModifiableSources() {
+        return modifiableSources;
     }
 
     public SourceImpl addSource(final String path) {
         final SourceImpl source = new SourceImpl(path, this);
-        sources.put(path, source);
+        modifiableSources.put(path, source);
         return source;
     }
 
+    public List<ContentDefinitionImpl> getSortedContentDefinitions() {
+        return sortedContentDefinitions;
+    }
+
+    public void setSortedContentDefinitions(final List<ContentDefinitionImpl> sortedContentDefinitions) {
+        this.sortedContentDefinitions = sortedContentDefinitions;
+    }
 }

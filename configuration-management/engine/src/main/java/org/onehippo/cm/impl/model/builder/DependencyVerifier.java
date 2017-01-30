@@ -29,9 +29,9 @@ import org.onehippo.cm.impl.model.builder.exceptions.CircularDependencyException
 import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 
 
-public class DependencyVerifier {
+public class DependencyVerifier<T extends Configuration> {
 
-    public void verifyConfigurationDependencies(final Collection<Configuration> configurations) {
+    public void verifyConfigurationDependencies(final Collection<T> configurations) {
         doVerifyDependencies(configurations);
         for (Configuration configuration : configurations) {
             if (configuration.getProjects() == null) {

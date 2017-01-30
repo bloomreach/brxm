@@ -32,7 +32,8 @@ public class ProjectImpl implements Project {
     private String name;
     private ConfigurationImpl configuration;
     private List<String> after = new ArrayList<>();
-    private Map<String, Module> modules = new LinkedHashMap<>();
+    private Map<String, ModuleImpl> modifiableModules = new LinkedHashMap<>();
+    private Map<String, Module> modules = Collections.unmodifiableMap(modifiableModules);
 
     public ProjectImpl(final String name, final ConfigurationImpl configuration) {
         if (name == null) {
@@ -68,12 +69,16 @@ public class ProjectImpl implements Project {
 
     @Override
     public Map<String, Module> getModules() {
-        return Collections.unmodifiableMap(modules);
+        return modules;
+    }
+
+    public Map<String, ModuleImpl> getModifiableModules() {
+        return modifiableModules;
     }
 
     public ModuleImpl addModule(final String name) {
         final ModuleImpl module = new ModuleImpl(name, this);
-        modules.put(name, module);
+        modifiableModules.put(name, module);
         return module;
     }
 

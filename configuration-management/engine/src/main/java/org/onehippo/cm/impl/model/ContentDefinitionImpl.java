@@ -21,7 +21,7 @@ import org.onehippo.cm.api.model.DefinitionType;
 
 public class ContentDefinitionImpl extends AbstractDefinitionImpl implements ContentDefinition {
 
-    private DefinitionNode node = new DefinitionNodeImpl("/", "/", this);
+    private DefinitionNodeImpl node = new DefinitionNodeImpl("/", "/", this);
 
     public ContentDefinitionImpl(final SourceImpl source) {
         super(source);
@@ -37,7 +37,11 @@ public class ContentDefinitionImpl extends AbstractDefinitionImpl implements Con
         return node;
     }
 
-    public void setNode(final DefinitionNode node) {
+    public DefinitionNodeImpl getModifiableNode() {
+        return node;
+    }
+
+    public void setNode(final DefinitionNodeImpl node) {
         this.node = node;
     }
 

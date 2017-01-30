@@ -17,16 +17,19 @@ package org.onehippo.cm.impl.model.builder;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
@@ -37,6 +40,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class DeepSortingTest {
+
+    private static final DependencyVerifier<ConfigurationImpl> VERIFIER = new DependencyVerifier<ConfigurationImpl>() {
+        public void verifyConfigurationDependencies(final Collection<ConfigurationImpl> configurations) { }
+    };
+    private static final ConfigurationTreeBuilder CONF_BUILDER = new ConfigurationTreeBuilder() {
+        public void addDefinition(final ContentDefinitionImpl definition, ConfigurationNodeImpl root) { }
+    };
+
+    private final ModelBuilder modelBuilder = new ModelBuilder();
+
+    @Before
+    public void setup() {
+        modelBuilder.setDependencyVerifier(VERIFIER);
+        modelBuilder.setConfigurationTreeBuilder(CONF_BUILDER);
+    }
 
     @Test
     public void assert_deep_sorting() throws Exception {
@@ -49,26 +67,14 @@ public class DeepSortingTest {
         ProjectImpl project1a = configuration1.addProject("p1a").setAfter(ImmutableList.of("p1b"));
         ProjectImpl project1b = configuration1.addProject("p1b").setAfter(ImmutableList.of("p1c"));
         ProjectImpl project1c = configuration1.addProject("p1c");
-        ProjectImpl project2a = configuration2.addProject("project2a");
-        ProjectImpl project3a = configuration3.addProject("project3a");
 
         ModuleImpl module1a1 = project1a.addModule("m1a1").setAfter(ImmutableList.of("m1a2"));
         ModuleImpl module1a2 = project1a.addModule("m1a2").setAfter(ImmutableList.of("m1a3"));
         ModuleImpl module1a3 = project1a.addModule("m1a3");
-        ModuleImpl module1b1 = project1b.addModule("module1b1");
-        ModuleImpl module1c1 = project1c.addModule("module1c1");
-        ModuleImpl module2a1 = project2a.addModule("module2a1");
-        ModuleImpl module3a1 = project3a.addModule("module3a1");
 
         SourceImpl source1a1a = module1a1.addSource("/foo/bar/lux");
         SourceImpl source1a1b = module1a1.addSource("/bar/foo/lux");
         SourceImpl source1a1c = module1a1.addSource("/lux/bar");
-        SourceImpl source1a2a = module1a2.addSource("/1/a/2/a");
-        SourceImpl source1a3a = module1a3.addSource("/1/a/3/a");
-        SourceImpl source1b1a = module1b1.addSource("/1/b/1/a");
-        SourceImpl source1c1a = module1c1.addSource("/1/c/1/a");
-        SourceImpl source2a1a = module2a1.addSource("/2/a/1/a");
-        SourceImpl source3a1a = module3a1.addSource("/3/a/1/a");
 
         // add definitions to sources
         addConfigDefinition(source1a1a, "/path/to/nodeX");
@@ -84,17 +90,8 @@ public class DeepSortingTest {
         addConfigDefinition(source1a1c, "/path/to/nodeY");
         addNodeTypeDefinition(source1a1c, "a-source1a1c-nodetype1");
 
-        addConfigDefinition(source1a2a, "source1a2a");
-        addConfigDefinition(source1a3a, "source1a3a");
-        addConfigDefinition(source1b1a, "source1b1a");
-        addConfigDefinition(source1c1a, "source1c1a");
-        addConfigDefinition(source2a1a, "source2a1a");
-        addConfigDefinition(source3a1a, "source3a1a");
-
-
-        final DefinitionTriple result = new ConfigurationNodeBuilder()
-                .extractOrderedDefinitions(ImmutableList.of(configuration1, configuration2, configuration3));
-
+        final List<ContentDefinitionImpl> content = new LinkedList<>();
+        final MergedModel result = modelBuilder.build(ImmutableList.of(configuration1, configuration2, configuration3));
 
         final List<NamespaceDefinition> nd = result.getNamespaceDefinitions();
         final String sortedNamespaces = nd.stream().map(NamespaceDefinition::getPrefix).collect(Collectors.toList()).toString();
@@ -104,9 +101,12 @@ public class DeepSortingTest {
         final String sortedNodeTypes = nt.stream().map(NodeTypeDefinition::getValue).collect(Collectors.toList()).toString();
         assertEquals("[cnd-a-source1a1c-nodetype1, cnd-a-source1a1c-nodetype2, cnd-source1a1a-nodetype]", sortedNodeTypes);
 
-        final List<ContentDefinition> cd = result.getContentDefinitions();
-        final String sortedContentDefinitions = cd.stream().map(e -> e.getNode().getPath()).collect(Collectors.toList()).toString();
-        assertEquals("[source2a1a, source1c1a, source1b1a, source1a3a, source1a2a, /path, /path/to, /path/to/nodeX, /path/to/nodeY, /path/to/nodeZ, source3a1a]", sortedContentDefinitions);
+        final String sortedContentDefinitions = module1a1.getSortedContentDefinitions()
+                .stream()
+                .map(e -> e.getNode().getPath())
+                .collect(Collectors.toList())
+                .toString();
+        assertEquals("[/path, /path/to, /path/to/nodeX, /path/to/nodeY, /path/to/nodeZ]", sortedContentDefinitions);
     }
 
     protected void addNamespaceDefinition(final SourceImpl source, final String id) {

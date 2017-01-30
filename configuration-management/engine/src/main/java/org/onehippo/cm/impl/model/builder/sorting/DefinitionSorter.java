@@ -17,25 +17,39 @@
 package org.onehippo.cm.impl.model.builder.sorting;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.impl.model.builder.DefinitionTriple;
+import org.onehippo.cm.impl.model.ContentDefinitionImpl;
+import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.impl.model.builder.MergedModel;
 
 public class DefinitionSorter {
-    private final Module module;
+    private final ModuleImpl module;
 
-    public DefinitionSorter(final Module module) {
+    public DefinitionSorter(final ModuleImpl module) {
         this.module = module;
     }
 
-    public void sort(final List<Definition> list, final DefinitionTriple sorted) {
+    public void sort(final List<Definition> list, final MergedModel mergedModel) {
+        final List<ContentDefinitionImpl> sortedContentDefinitions = new LinkedList<>();
         list.sort(new DefinitionComparator());
-        list.forEach(sorted::addDefinition);
+        list.forEach(definition -> {
+            if (definition instanceof ContentDefinitionImpl) {
+                sortedContentDefinitions.add((ContentDefinitionImpl) definition);
+            } else if (definition instanceof NodeTypeDefinition) {
+                mergedModel.addNodeTypeDefinition((NodeTypeDefinition) definition);
+            } else if (definition instanceof NamespaceDefinition) {
+                mergedModel.addNamespaceDefinition((NamespaceDefinition) definition);
+            } else {
+                throw new IllegalStateException("DefinitionSorter doesn't support sorting '"
+                        + definition.getClass().getName() + "'.");
+            }
+        });
+        module.setSortedContentDefinitions(sortedContentDefinitions);
     }
 
     private class DefinitionComparator implements Comparator<Definition> {
@@ -86,8 +100,8 @@ public class DefinitionSorter {
         }
 
         private int compareContentDefs(final Definition def1, final Definition def2) {
-            final String rootPath1 = ((ContentDefinition) def1).getNode().getPath();
-            final String rootPath2 = ((ContentDefinition) def2).getNode().getPath();
+            final String rootPath1 = ((ContentDefinitionImpl) def1).getNode().getPath();
+            final String rootPath2 = ((ContentDefinitionImpl) def2).getNode().getPath();
 
             if (def1 != def2 && rootPath1.equals(rootPath2)) {
                 throw new IllegalStateException("Duplicate content root paths '" + rootPath1 + "' in module '"
