@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ describe('DragDropService', () => {
   let FeedbackService;
 
   let iframe;
-  let base;
+  let canvas;
 
   let mockCommentData;
   let container1;
@@ -58,7 +58,7 @@ describe('DragDropService', () => {
     jasmine.getFixtures().load('channel/hippoIframe/dragDrop/dragDrop.service.fixture.html');
 
     iframe = $('#testIframe');
-    base = $('#testBase');
+    canvas = $('#testCanvas');
     mockCommentData = {};
   });
 
@@ -96,7 +96,7 @@ describe('DragDropService', () => {
   }
 
   function loadIframeFixture(callback) {
-    DragDropService.init(iframe, base);
+    DragDropService.init(iframe, canvas);
 
     iframe.one('load', () => {
       const iframeWindow = iframe[0].contentWindow;
@@ -187,7 +187,7 @@ describe('DragDropService', () => {
       };
       const iframeComponentElement1 = component1.getBoxElement()[0];
 
-      base.offset({
+      canvas.offset({
         left: 10,
         top: 10,
       });
@@ -228,6 +228,45 @@ describe('DragDropService', () => {
       expect(DragDropService.isDragging()).toBeFalsy();
 
       done();
+    });
+  });
+
+  describe('the mirror', () => {
+    let BrowserService;
+    let mirror;
+
+    beforeEach(() => {
+      inject((_BrowserService_) => {
+        BrowserService = _BrowserService_;
+      });
+
+      mirror = $('<div></div>');
+      mirror.width(300);
+      mirror.height(75);
+
+      spyOn(ScalingService, 'getScaleFactor').and.returnValue(0.75);
+    });
+
+    it('scales when the iframe is scaled', () => {
+      DragDropService._scaleMirror(mirror);
+
+      expect(mirror.width()).toBe(400);
+      expect(mirror.height()).toBe(100);
+      expect(mirror.css('transform')).toBe('scale(0.75)');
+    });
+
+    it('unshifts and descales its x-coordinate in IE', (done) => {
+      spyOn(BrowserService, 'isIE').and.returnValue(true);
+
+      loadIframeFixture(() => {
+        DragDropService._scaleMirror(mirror);
+
+        expect(mirror.width()).toBe(400);
+        expect(mirror.height()).toBe(100);
+        expect(mirror.css('transform')).toBe('scale(0.75) translateX(-144px)');
+
+        done();
+      });
     });
   });
 

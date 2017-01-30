@@ -21,20 +21,30 @@ const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 
 class DragDropService {
 
-  constructor($rootScope, $q, ConfigService, DomService, HstService, PageStructureService, ScalingService,
-              ChannelService, ScrollService, FeedbackService) {
+  constructor($rootScope,
+              $q,
+              BrowserService,
+              ChannelService,
+              ConfigService,
+              DomService,
+              FeedbackService,
+              HstService,
+              PageStructureService,
+              ScalingService,
+              ScrollService) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.$q = $q;
+    this.BrowserService = BrowserService;
+    this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
+    this.FeedbackService = FeedbackService;
     this.HstService = HstService;
     this.PageStructureService = PageStructureService;
     this.ScalingService = ScalingService;
-    this.ChannelService = ChannelService;
     this.ScrollService = ScrollService;
-    this.FeedbackService = FeedbackService;
 
     this.draggingOrClicking = false;
     this.dropping = false;
@@ -235,7 +245,17 @@ class DragDropService {
     mirror.height(mirror.height() / scaleFactor);
 
     // then scale the mirror down
-    mirror.css('transform', `scale(${scaleFactor})`);
+    let transform = `scale(${scaleFactor})`;
+    if (this.BrowserService.isIE()) {
+      // Only IE shifts the mirror to the right by the scaled width of the left side-panel.
+      // Neutralize this effect by translating the mirror to the left again.
+      const [translatedX] = this._shiftAndDescaleCoordinates({
+        clientX: 0,
+        clientY: 0,
+      });
+      transform += `translateX(${translatedX}px)`;
+    }
+    mirror.css('transform', transform);
   }
 
   _updateDragDirection(containerElement) {
