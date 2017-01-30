@@ -15,7 +15,7 @@
  */
 package org.hippoecm.hst.cache.ehcache;
 
-import org.hippoecm.hst.cache.CompositeHstCacheImpl;
+import org.hippoecm.hst.cache.CompositeHstCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,10 +23,10 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.PersistenceConfiguration;
 
 /**
- * @deprecated since HST 4.2.0 (CMS 11.2.0). Use {@link CompositeHstCacheImpl} instead.
+ * @deprecated since HST 4.2.0 (CMS 11.2.0). Use {@link CompositeHstCache} instead.
  */
 @Deprecated
-public class HstCacheEhCacheImpl extends CompositeHstCacheImpl {
+public class HstCacheEhCacheImpl extends CompositeHstCache {
 
     private static final Logger log = LoggerFactory.getLogger(HstCacheEhCacheImpl.class);
 
@@ -37,7 +37,7 @@ public class HstCacheEhCacheImpl extends CompositeHstCacheImpl {
     public HstCacheEhCacheImpl(final Ehcache ehcache, final PersistenceConfiguration persistenceConfiguration) {
         super(ehcache, persistenceConfiguration);
         log.warn(String.format("This class '%s' has been deprecated, use '%s' instead.", HstCacheEhCacheImpl.class.getName(),
-                CompositeHstCacheImpl.class.getName()));
+                CompositeHstCache.class.getName()));
     }
 
 

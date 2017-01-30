@@ -52,7 +52,7 @@
   <bean id="org.hippoecm.hst.cache.jmx.PageCacheStats" class="org.hippoecm.hst.cache.jmx.CacheStats"/>
   <bean id="org.hippoecm.hst.cache.jmx.WebFilesCacheStats" class="org.hippoecm.hst.cache.jmx.CacheStats"/>
 
-  <bean id="defaultBinariesCache" class="org.hippoecm.hst.cache.CompositeHstCacheImpl">
+  <bean id="defaultBinariesCache" class="org.hippoecm.hst.cache.CompositeHstCache">
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
         <property name="cacheName" value="binariesCache" />
@@ -62,7 +62,7 @@
     <property name="cacheStats" ref="org.hippoecm.hst.cache.jmx.BinariesCacheStats"/>
   </bean>
 
-  <bean id="pageCache" class="org.hippoecm.hst.cache.CompositeHstCacheImpl">
+  <bean id="pageCache" class="org.hippoecm.hst.cache.CompositeHstCache">
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
         <property name="cacheName" value="hstPageBlockingCache" />
@@ -73,7 +73,7 @@
     <property name="cacheStats" ref="org.hippoecm.hst.cache.jmx.PageCacheStats"/>
   </bean>
 
-  <bean id="webFileCache" class="org.hippoecm.hst.cache.CompositeHstCacheImpl">
+  <bean id="webFileCache" class="org.hippoecm.hst.cache.CompositeHstCache">
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
         <property name="cacheName" value="hstWebFileCache" />

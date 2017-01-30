@@ -19,7 +19,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
-import org.hippoecm.hst.cache.CompositeHstCacheImpl;
+import org.hippoecm.hst.cache.CompositeHstCache;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.PageCacheEventListener;
 import org.hippoecm.hst.core.container.RequestInfoCacheKeyFragmentCreator;
@@ -40,7 +40,7 @@ public class WebFilesEventListener extends GenericEventListener {
     private WebFileValve webFileValve;
     private RequestInfoCacheKeyFragmentCreator requestInfoCacheKeyFragmentCreator;
 
-    public void setPageCache(CompositeHstCacheImpl pageCache) {
+    public void setPageCache(CompositeHstCache pageCache) {
         this.pageCache = pageCache;
     }
 

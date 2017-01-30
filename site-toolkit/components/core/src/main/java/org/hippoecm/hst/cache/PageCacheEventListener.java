@@ -29,7 +29,7 @@ public class PageCacheEventListener extends GenericEventListener implements Even
 
     private HstCache pageCache;
 
-    public void setPageCache(CompositeHstCacheImpl pageCache) {
+    public void setPageCache(CompositeHstCache pageCache) {
         this.pageCache = pageCache;
     }
 

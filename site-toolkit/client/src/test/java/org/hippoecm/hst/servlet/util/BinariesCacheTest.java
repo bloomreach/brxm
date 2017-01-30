@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.hippoecm.hst.cache.CompositeHstCacheImpl;
+import org.hippoecm.hst.cache.CompositeHstCache;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.servlet.utils.BinariesCache;
 import org.hippoecm.hst.servlet.utils.BinaryPage;
@@ -56,7 +56,7 @@ public class BinariesCacheTest {
         BlockingCache cache = new BlockingCache(ehBinariesCache);
         // after 10 ms a LockTimeoutException is thrown when a lock cannot be acquired
        // cache.setTimeoutMillis(10);
-        hstBinariesCache = new CompositeHstCacheImpl(cache);
+        hstBinariesCache = new CompositeHstCache(cache);
         bc = new BinariesCache(hstBinariesCache);
     }
     
@@ -229,7 +229,7 @@ public class BinariesCacheTest {
         // lock is held for 100 ms if item for get returns null
         final int TIME_OUT_MILLIS = 100;
         cache.setTimeoutMillis(TIME_OUT_MILLIS);
-        hstBinariesCache = new CompositeHstCacheImpl(cache);
+        hstBinariesCache = new CompositeHstCache(cache);
         bc = new BinariesCache(hstBinariesCache);
 
         // NO put so page.getResourcePath() is not available in cache

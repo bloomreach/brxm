@@ -30,9 +30,9 @@ import net.sf.ehcache.Element;
 import net.sf.ehcache.config.InvalidConfigurationException;
 import net.sf.ehcache.config.PersistenceConfiguration;
 
-public class CompositeHstCacheImpl implements HstCache {
+public class CompositeHstCache implements HstCache {
 
-    private static final Logger log = LoggerFactory.getLogger(CompositeHstCacheImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(CompositeHstCache.class);
 
     private final Ehcache ehcache;
 
@@ -51,11 +51,11 @@ public class CompositeHstCacheImpl implements HstCache {
     private volatile int invalidationCounter;
     private CacheStats cacheStats;
 
-    public CompositeHstCacheImpl(final Ehcache ehcache) {
+    public CompositeHstCache(final Ehcache ehcache) {
         this(ehcache, new PersistenceConfiguration().strategy(PersistenceConfiguration.Strategy.NONE));
     }
 
-    public CompositeHstCacheImpl(final Ehcache ehcache, final PersistenceConfiguration persistenceConfiguration) {
+    public CompositeHstCache(final Ehcache ehcache, final PersistenceConfiguration persistenceConfiguration) {
         this.ehcache = ehcache;
         try {
             ehcache.getCacheConfiguration().addPersistence(persistenceConfiguration);
