@@ -256,6 +256,7 @@ describe('OverlayService', () => {
       const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(2);
       const label = componentWithExperiment.find('.hippo-overlay-label');
       expect(label.length).toBe(1);
+      expect(label.attr('data-qa-experiment-id')).toBe('1234');
       expect(label.find('svg').length).toBe(1);
 
       const labelText = label.find('.hippo-overlay-label-text');
@@ -297,6 +298,8 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
+      const label = componentA.find('.hippo-overlay-label');
+      expect(label.attr('data-qa-experiment-id')).toBe('567');
       expect(labelText.html()).toBe('EXPERIMENT_LABEL_CREATED');
 
       done();

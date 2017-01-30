@@ -381,6 +381,9 @@ class OverlayService {
     if (this.ExperimentStateService.hasExperiment(component)) {
       labelElement.addClass('hippo-overlay-label-experiment');
 
+      const experimentId = this.ExperimentStateService.getExperimentId(component);
+      labelElement.attr('data-qa-experiment-id', experimentId);
+
       if (iconElement.length === 0) {
         labelElement.prepend(flaskSvg);
       }
@@ -389,6 +392,7 @@ class OverlayService {
       this._setLabelText(labelElement, experimentState);
     } else {
       labelElement.removeClass('hippo-overlay-label-experiment');
+      labelElement.removeAttr('data-qa-experiment-id');
       iconElement.remove();
       this._setLabelText(labelElement, component.getLabel());
     }
