@@ -193,6 +193,17 @@ describe('OverlayService', () => {
     });
   });
 
+  it('renders the name structure elements in a data-qa-name attribute', (done) => {
+    loadIframeFixture(() => {
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length).toBe(3);
+      expect(iframe('#hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(3);
+
+      const emptyContainer = iframe('.hippo-overlay-element-container').eq(1);
+      expect(emptyContainer.find('.hippo-overlay-label').attr('data-qa-name')).toBe('Empty container');
+      done();
+    });
+  });
+
   it('renders icons for links', (done) => {
     loadIframeFixture(() => {
       expect(iframe('#hippo-overlay > .hippo-overlay-element-link > svg').length).toBe(2);

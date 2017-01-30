@@ -230,7 +230,11 @@ class OverlayService {
           <span class="hippo-overlay-label-text"></span>
         </span>
       `);
-      this._setLabelText(labelElement, structureElement.getLabel());
+
+      const label = structureElement.getLabel();
+      const escapedLabel = this._setLabelText(labelElement, label);
+      labelElement.attr('data-qa-name', escapedLabel);
+
       overlayElement.append(labelElement);
     }
   }
@@ -240,6 +244,7 @@ class OverlayService {
     const escapedText = this.DomService.escapeHtml(text);
     // use html() with manual escaping instead of text() because the latter crashes Chrome during unit tests :-/
     textElement.html(escapedText);
+    return escapedText;
   }
 
   _addMarkupAndBehavior(structureElement, overlayElement) {
