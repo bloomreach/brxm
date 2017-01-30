@@ -72,18 +72,18 @@ describe('ScrollService', () => {
 
   it('should only attach mouse-enter/mouse-leave once', (done) => {
     loadIframeFixture(() => {
-      spyOn($iframe, 'on').and.callThrough();
+      spyOn(ScrollService, 'bindMouseEnterMouseLeave');
       ScrollService.enable();
-      expect($iframe.on.calls.count()).toEqual(2);
-      $iframe.on.calls.reset();
+      expect(ScrollService.bindMouseEnterMouseLeave).toHaveBeenCalled();
+      ScrollService.bindMouseEnterMouseLeave.calls.reset();
 
       ScrollService.enable();
-      expect($iframe.on).not.toHaveBeenCalled();
+      expect(ScrollService.bindMouseEnterMouseLeave).not.toHaveBeenCalled();
       done();
     });
   });
 
-  it('should not start scrolling when the shouldScroll argument returns false', (done) => {
+  it('should not start scrolling when the scrollAllowed argument returns false', (done) => {
     loadIframeFixture(() => {
       spyOn(ScrollService, 'startScrolling');
       ScrollService.enable(() => false);
@@ -94,28 +94,28 @@ describe('ScrollService', () => {
     });
   });
 
-  it('should stop scrolling and remove event listeners when disabled', (done) => {
+  it('should stop scrolling and unbind event listeners when disabled', (done) => {
     loadIframeFixture(() => {
-      spyOn($iframe, 'off').and.callThrough();
+      spyOn(ScrollService, 'unbindMouseEnterMouseLeave').and.callThrough();
       spyOn(ScrollService, 'stopScrolling');
 
       ScrollService.enable();
       ScrollService.disable();
 
-      expect($iframe.off).toHaveBeenCalled();
+      expect(ScrollService.unbindMouseEnterMouseLeave).toHaveBeenCalled();
       expect(ScrollService.stopScrolling).toHaveBeenCalled();
       done();
     });
   });
 
-  it('should only stop scrolling and remove event listeners when disabled if previously enabled', (done) => {
+  it('should only stop scrolling and unbind event listeners if previously enabled', (done) => {
     loadIframeFixture(() => {
-      spyOn($iframe, 'off').and.callThrough();
+      spyOn(ScrollService, 'unbindMouseEnterMouseLeave');
       spyOn(ScrollService, 'stopScrolling');
 
       ScrollService.disable();
 
-      expect($iframe.off).not.toHaveBeenCalled();
+      expect(ScrollService.unbindMouseEnterMouseLeave).not.toHaveBeenCalled();
       expect(ScrollService.stopScrolling).not.toHaveBeenCalled();
       done();
     });
@@ -226,5 +226,109 @@ describe('ScrollService', () => {
     expect(ScrollService._calculateDuration(300, 500, 1500)).toBe(600);
     expect(ScrollService._calculateDuration(750, 500, 1500)).toBe(1500);
     expect(ScrollService._calculateDuration(800, 500, 1500)).toBe(1500);
+  });
+
+  describe('the workaround for Firefox', () => {
+    let BrowserService;
+
+    beforeEach(() => {
+      inject((_BrowserService_) => {
+        BrowserService = _BrowserService_;
+        spyOn(BrowserService, 'isFF').and.returnValue(true);
+      });
+    });
+
+    it('should bind the mousemove event handler when the service is enabled', (done) => {
+      loadIframeFixture(() => {
+        spyOn(ScrollService, 'bindMouseMove');
+
+        ScrollService.enable();
+        expect(ScrollService.bindMouseMove).toHaveBeenCalled();
+
+        done();
+      });
+    });
+
+    it('should unbind the mousemove event handler when the service is disabled', (done) => {
+      loadIframeFixture(() => {
+        spyOn(ScrollService, 'unbindMouseMove').and.callThrough();
+
+        ScrollService.enable();
+        ScrollService.disable();
+
+        expect(ScrollService.unbindMouseMove).toHaveBeenCalled();
+        done();
+      });
+    });
+
+    it('should call start scrolling once when mouse moves over the upper bound', (done) => {
+      loadIframeFixture(() => {
+        let moveHandler;
+        ScrollService.iframeDocument = {
+          on: (name, handler) => {
+            moveHandler = handler;
+          },
+        };
+        spyOn(ScrollService, '_getBodyScrollTop').and.returnValue(0);
+        spyOn(ScrollService, 'startScrolling');
+        ScrollService.bindMouseMove(() => true);
+
+        moveHandler({ pageY: 0 });
+        expect(ScrollService.startScrolling).toHaveBeenCalled();
+        ScrollService.startScrolling.calls.reset();
+
+        moveHandler({ pageY: 0 });
+        expect(ScrollService.startScrolling).not.toHaveBeenCalled();
+
+        done();
+      });
+    });
+
+    it('should call start scrolling once when mouse moves over the lower bound', (done) => {
+      loadIframeFixture(() => {
+        let moveHandler;
+        ScrollService.iframeDocument = {
+          on: (name, handler) => {
+            moveHandler = handler;
+          },
+        };
+        spyOn(ScrollService, '_getBodyScrollTop').and.returnValue(0);
+        spyOn(ScrollService, 'startScrolling');
+        ScrollService.bindMouseMove(() => true);
+
+        moveHandler({ pageY: 200 });
+        expect(ScrollService.startScrolling).toHaveBeenCalled();
+        ScrollService.startScrolling.calls.reset();
+
+        moveHandler({ pageY: 200 });
+        expect(ScrollService.startScrolling).not.toHaveBeenCalled();
+
+        done();
+      });
+    });
+
+    it('should call stop scrolling once when mouse re-enters the page', (done) => {
+      loadIframeFixture(() => {
+        let moveHandler;
+        ScrollService.iframeDocument = {
+          on: (name, handler) => {
+            moveHandler = handler;
+          },
+        };
+        spyOn(ScrollService, '_getBodyScrollTop').and.returnValue(0);
+        spyOn(ScrollService, 'stopScrolling');
+        ScrollService.bindMouseMove(() => true);
+
+        moveHandler({ pageY: 0 });
+        moveHandler({ pageY: 10 });
+        expect(ScrollService.stopScrolling).toHaveBeenCalled();
+        ScrollService.stopScrolling.calls.reset();
+
+        moveHandler({ pageY: 11 });
+        expect(ScrollService.stopScrolling).not.toHaveBeenCalled();
+
+        done();
+      });
+    });
   });
 });
