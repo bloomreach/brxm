@@ -24,7 +24,7 @@
   <bean id="simpleEhCache" parent="abstractEhCache">
   </bean>
 
-  <bean id="simpleCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
+  <bean id="simpleCache" class="org.hippoecm.hst.cache.CompositeHstCacheImpl">
     <constructor-arg ref="simpleEhCache" />
   </bean>
   
