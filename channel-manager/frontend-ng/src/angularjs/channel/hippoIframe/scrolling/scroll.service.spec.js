@@ -49,11 +49,6 @@ describe('ScrollService', () => {
     ScrollService.init($iframe);
   }
 
-  it('should be possible to configure the type of easing', () => {
-    ScrollService.init(null, 'custom-easing');
-    expect(ScrollService.easing).toEqual('custom-easing');
-  });
-
   it('should start/stop scrolling on mouse enter/leave events', (done) => {
     loadIframeFixture(() => {
       spyOn(ScrollService, 'startScrolling').and.callThrough();
@@ -214,7 +209,7 @@ describe('ScrollService', () => {
 
       ScrollService._scroll(0, 0);
       expect(scrollable.stop).toHaveBeenCalled();
-      expect(scrollable.animate).toHaveBeenCalledWith({ scrollTop: 0 }, { duration: 0, easing: 'swing' });
+      expect(scrollable.animate).toHaveBeenCalledWith({ scrollTop: 0 }, { duration: 0 });
       done();
     });
   });

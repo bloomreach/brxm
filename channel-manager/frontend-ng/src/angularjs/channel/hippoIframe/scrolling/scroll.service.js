@@ -27,9 +27,8 @@ class ScrollService {
     this.BrowserService = BrowserService;
   }
 
-  init(iframe, easing = 'swing') {
+  init(iframe) {
     this.iframe = iframe;
-    this.easing = easing;
     this.enabled = false;
   }
 
@@ -134,7 +133,6 @@ class ScrollService {
   _scroll(scrollTop, duration) {
     this.scrollable.stop().animate({ scrollTop }, {
       duration,
-      easing: this.easing,
     });
   }
 
