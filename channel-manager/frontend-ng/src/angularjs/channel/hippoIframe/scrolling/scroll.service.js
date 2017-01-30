@@ -76,7 +76,7 @@ class ScrollService {
   bindMouseMove(scrollAllowed) {
     const { iframeTop, iframeBottom } = this._getIframeCoords();
     const upperBound = 0;
-    const bottomBound = (iframeBottom - iframeTop);
+    const bottomBound = iframeBottom - iframeTop;
     let mouseHasLeft = false;
 
     this.iframeDocument.on(`mousemove${EVENT_NAMESPACE}`, (event) => {
@@ -141,11 +141,11 @@ class ScrollService {
       return 0;
     }
 
-    distance = Math.abs(distance);
     const duration = distance * 2;
     return Math.min(Math.max(min, duration), max);
   }
 
+  // IE and FireFox with mousemove always return zero for body.scrollTop(), so check html as well
   _getBodyScrollTop() {
     return (this.iframeDocument[0].documentElement && this.iframeDocument[0].documentElement.scrollTop) ||
             this.iframeBody.scrollTop();
