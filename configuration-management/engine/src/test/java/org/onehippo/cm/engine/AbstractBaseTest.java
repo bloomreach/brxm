@@ -45,7 +45,7 @@ public abstract class AbstractBaseTest {
     protected static final ResourceInputProvider DUMMY_RESOURCE_INPUT_PROVIDER = new ResourceInputProvider() {
         @Override
         public boolean hasResource(final Source source, final String resourcePath) {
-            return true;
+            return resourcePath.equals("resource.txt");
         }
 
         @Override

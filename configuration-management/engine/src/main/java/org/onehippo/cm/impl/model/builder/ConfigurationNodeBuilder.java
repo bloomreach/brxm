@@ -115,8 +115,9 @@ public class ConfigurationNodeBuilder {
                     if (def2 instanceof NodeTypeDefinition) {
                         // TODO both def1 and def2 are of type NodeTypeDefinition : It might be that cnd of def2
                         // TODO depends on the cnd of def1 : Hence we need to parse the actual cnd value to find out
-                        // TODO whether def1 or def2 should be loaded first. For now. just compare the cnd string
-                        return ((NodeTypeDefinition)def1).getCndString().compareTo(((NodeTypeDefinition)def2).getCndString());
+                        // TODO whether def1 or def2 should be loaded first. For now, just compare the cnd/resource
+                        // TODO string
+                        return ((NodeTypeDefinition)def1).getValue().compareTo(((NodeTypeDefinition)def2).getValue());
                     }
                     // def1 should be first
                     return -1;

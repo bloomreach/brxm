@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,6 +32,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.onehippo.cm.api.model.Source;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
@@ -177,6 +180,33 @@ public abstract class AbstractBaseParser {
 
     private boolean isRootNodePath(final String nodePath) {
         return "/".equals(nodePath);
+    }
+
+    protected String asResourcePathScalar(final Node node, final Source source, final ResourceInputProvider resourceInputProvider) throws ParserException {
+        final String resourcePath = asStringScalar(node);
+
+        if (containsParentSegment(resourcePath)) {
+            throw new ParserException("Resource path is not valid: '" + resourcePath
+                    + "'; a resource path must not contain ..", node);
+        }
+
+        if (!resourceInputProvider.hasResource(source, resourcePath)) {
+            throw new ParserException("Cannot find resource '" + resourcePath + "'", node);
+        }
+
+        return resourcePath;
+    }
+
+    private boolean containsParentSegment(final String resourceString) {
+        final Path resourcePath = Paths.get(resourceString);
+
+        for (final Path pathElement : resourcePath) {
+            if (pathElement.toString().equals("..")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected URI asURIScalar(final Node node) throws ParserException {

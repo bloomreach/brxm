@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,9 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.api.model;
+package org.onehippo.cm.engine;
 
-public interface NodeTypeDefinition extends Definition {
-    String getValue();
-    boolean isResource();
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class FileConfigurationUtilsTest {
+
+    @Test
+    public void test_multiple_starting_slashes_are_removed() {
+        final Path base = Paths.get("base");
+        assertEquals("base/resource.txt", FileConfigurationUtils.getResourcePath(base, null, "//resource.txt").toString());
+    }
+
 }

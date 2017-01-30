@@ -7,6 +7,7 @@ instructions:
         <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
         <'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>
         [myhippoproject:basedocument] > hippo:document orderable
+      - resource: cnd.txt
   - config:
       - /:
           - root-level-property: root-level-property-value
@@ -19,19 +20,6 @@ instructions:
           - /node-with-sub-node:
               - /sub-node:
                   - property: sub-node-value
-          - /resources:
-              - single-value-string-resource:
-                    type: string
-                    resource: string1.txt
-              - single-value-binary-resource:
-                    type: binary
-                    resource: image1.png
-              - multi-value-resource-1:
-                    type: string
-                    resource: [string2.txt]
-              - multi-value-resource-2:
-                    type: string
-                    resource: [string3.txt, string4.txt]
   - content:
       - /content/documents/myhippoproject:
           - property: document

@@ -20,11 +20,13 @@ import org.onehippo.cm.api.model.NodeTypeDefinition;
 
 public class NodeTypeDefinitionImpl extends AbstractDefinitionImpl implements NodeTypeDefinition {
 
-    private String cndString;
+    private String value;
+    private boolean isResource;
 
-    public NodeTypeDefinitionImpl(final SourceImpl source, final String cndString) {
+    public NodeTypeDefinitionImpl(final SourceImpl source, final String value, final boolean isResource) {
         super(source);
-        this.cndString = cndString;
+        this.value = value;
+        this.isResource = isResource;
     }
 
     @Override
@@ -33,8 +35,13 @@ public class NodeTypeDefinitionImpl extends AbstractDefinitionImpl implements No
     }
 
     @Override
-    public String getCndString() {
-        return cndString;
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public boolean isResource() {
+        return isResource;
     }
 
 }

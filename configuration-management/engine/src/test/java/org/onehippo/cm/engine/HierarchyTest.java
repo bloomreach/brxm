@@ -42,8 +42,8 @@ public class HierarchyTest extends AbstractBaseTest {
 
         final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
         final Project project1 = assertProject(base, "project1", new String[0], 1);
-        final Module module1 = assertModule(project1, "module1", new String[0], 1);
-        final Source source1 = assertSource(module1, "config.yaml", 4);
+        final Module module1 = assertModule(project1, "module1", new String[0], 2);
+        final Source source1 = assertSource(module1, "config.yaml", 5);
 
         final NamespaceDefinition namespace = assertDefinition(source1, 0, NamespaceDefinition.class);
         assertEquals("myhippoproject", namespace.getPrefix());
@@ -54,10 +54,15 @@ public class HierarchyTest extends AbstractBaseTest {
                 "<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>\n" +
                         "<'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>\n" +
                         "[myhippoproject:basedocument] > hippo:document orderable\n",
-                nodeType.getCndString());
+                nodeType.getValue());
+        assertEquals(false, nodeType.isResource());
 
-        final ConfigDefinition definition1 = assertDefinition(source1, 2, ConfigDefinition.class);
-        final DefinitionNode rootDefinition1 = assertNode(definition1, "/", "", definition1, false, 4, 1);
+        final NodeTypeDefinition nodeTypeFromResource = assertDefinition(source1, 2, NodeTypeDefinition.class);
+        assertEquals("cnd.txt", nodeTypeFromResource.getValue());
+        assertEquals(true, nodeTypeFromResource.isResource());
+
+        final ConfigDefinition definition1 = assertDefinition(source1, 3, ConfigDefinition.class);
+        final DefinitionNode rootDefinition1 = assertNode(definition1, "/", "", definition1, false, 3, 1);
         assertProperty(rootDefinition1, "/root-level-property", "root-level-property",
                 definition1, ValueType.STRING, "root-level-property-value");
         final DefinitionNode nodeWithSingleProperty = assertNode(rootDefinition1, "/node-with-single-property",
@@ -77,29 +82,29 @@ public class HierarchyTest extends AbstractBaseTest {
         final DefinitionNode subNode =
                 assertNode(nodeWithSubNode, "/node-with-sub-node/sub-node", "sub-node", false, definition1, false, 0, 1);
         assertProperty(subNode, "/node-with-sub-node/sub-node/property", "property", definition1, ValueType.STRING, "sub-node-value");
-        final DefinitionNode resourceNode =
-                assertNode(rootDefinition1, "/resources", "resources", false, definition1, false, 0, 4);
-        assertProperty(resourceNode, "/resources/single-value-string-resource", "single-value-string-resource",
-                definition1, false, ValueType.STRING, "string1.txt", true, false);
-        assertProperty(resourceNode, "/resources/single-value-binary-resource", "single-value-binary-resource",
-                definition1, false, ValueType.BINARY, "image1.png", true, false);
-        assertProperty(resourceNode, "/resources/multi-value-resource-1", "multi-value-resource-1", definition1, false,
-                ValueType.STRING, new String[]{"string2.txt"}, true, false);
-        assertProperty(resourceNode, "/resources/multi-value-resource-2", "multi-value-resource-2", definition1, false,
-                ValueType.STRING, new String[]{"string3.txt","string4.txt"}, true, false);
 
-        final ContentDefinition contentDefinition = assertDefinition(source1, 3, ContentDefinition.class);
+        final ContentDefinition contentDefinition = assertDefinition(source1, 4, ContentDefinition.class);
         assertNode(contentDefinition, "/content/documents/myhippoproject", "myhippoproject", contentDefinition, false, 0, 1);
+
+        final Source source2 = assertSource(module1, "folder/resources.yaml", 1);
+        final ConfigDefinition definition2 = assertDefinition(source2, 0, ConfigDefinition.class);
+        final DefinitionNode resourceNode = assertNode(definition2, "/resources", "resources", definition2, false, 0, 3);
+        assertProperty(resourceNode, "/resources/single-value-string-resource", "single-value-string-resource",
+                definition2, false, ValueType.STRING, "string.txt", true, false);
+        assertProperty(resourceNode, "/resources/single-value-binary-resource", "single-value-binary-resource",
+                definition2, false, ValueType.BINARY, "image.png", true, false);
+        assertProperty(resourceNode, "/resources/multi-value-resource", "multi-value-resource", definition2, false,
+                ValueType.STRING, new String[]{"/root.txt","folder/relative.txt"}, true, false);
 
         final Configuration myhippoproject = assertConfiguration(configurations, "myhippoproject", new String[]{"base"}, 1);
         final Project project2 = assertProject(myhippoproject, "project2", new String[]{"project1", "foo/bar"}, 1);
         final Module module2 = assertModule(project2, "module2", new String[0], 1);
-        final Source source2 = assertSource(module2, "config.yaml", 1);
-        final ConfigDefinition definition2 = assertDefinition(source2, 0, ConfigDefinition.class);
+        final Source baseSource = assertSource(module2, "config.yaml", 1);
+        final ConfigDefinition baseDefinition = assertDefinition(baseSource, 0, ConfigDefinition.class);
 
         final DefinitionNode rootDefinition2 =
-                assertNode(definition2, "/node-with-sub-node/sub-node", "sub-node", definition2, false, 0, 1);
-        assertProperty(rootDefinition2, "/node-with-sub-node/sub-node/property", "property", definition2, ValueType.STRING, "override");
+                assertNode(baseDefinition, "/node-with-sub-node/sub-node", "sub-node", baseDefinition, false, 0, 1);
+        assertProperty(rootDefinition2, "/node-with-sub-node/sub-node/property", "property", baseDefinition, ValueType.STRING, "override");
     }
 
 }

@@ -222,6 +222,36 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
+    public void cndWithNonStringResourceValue() {
+        final Node root = yamlParser.compose(new StringReader("instructions: [ cnd: [ resource: 24 ] ]"));
+
+        final Node cnd = firstInstructionFirstTupleFirstValue(root);
+
+        assertParserException(root, firstTuple(cnd).getValueNode(), "Scalar must be a string");
+    }
+
+    @Test
+    public void cndWithNotExistingResourceValue() {
+        final Node root = yamlParser.compose(new StringReader("instructions: [ cnd: [ resource: foo.txt ] ]"));
+
+        final Node cnd = firstInstructionFirstTupleFirstValue(root);
+
+        assertParserException(root, firstTuple(cnd).getValueNode(), "Cannot find resource 'foo.txt'");
+    }
+
+    @Test
+    public void cndWithNeitherScalarNorMap() {
+        final String yaml = "instructions:\n"
+                + "- cnd:\n"
+                + "  - [ sequence ]\n";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+
+        assertParserException(root, firstInstructionFirstTupleFirstValue(root),
+                "CND instruction item must be a string or a map with key 'resource'");
+    }
+
+    @Test
     public void configWithScalarValue() {
         final Node root = yamlParser.compose(new StringReader("instructions: [ config: scalar value ]"));
 
@@ -802,24 +832,6 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithDefinitionWithAbsolutePathResource() {
-        final String yaml = "instructions:\n"
-                + "- config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: binary\n"
-                + "        resource: /etc/passwd";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstTupleFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Resource path is not valid: '/etc/passwd'; a resource path must be relative and must not contain ..");
-    }
-
-    @Test
     public void configWithDefinitionWithParentPathElementResource() {
         final String yaml = "instructions:\n"
                 + "- config:\n"
@@ -834,7 +846,25 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
 
         assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Resource path is not valid: '../etc/passwd'; a resource path must be relative and must not contain ..");
+                "Resource path is not valid: '../etc/passwd'; a resource path must not contain ..");
+    }
+
+    @Test
+    public void configWithDefinitionWithNotExistingResource() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - property:\n"
+                + "        type: binary\n"
+                + "        resource: foo.txt";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
+                "Cannot find resource 'foo.txt'");
     }
 
     private void assertParserException(final String input, final String exceptionMessage) {
