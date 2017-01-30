@@ -114,7 +114,7 @@ public class SourceParser extends AbstractBaseParser {
                     break;
                 case mapping:
                     final Map<String, Node> map = asMapping(node, new String[]{"resource"}, new String[0]);
-                    final String resource = asResourcePathScalar(map.get("resource"), resourceInputProvider);
+                    final String resource = asResourcePathScalar(map.get("resource"), parent, resourceInputProvider);
                     parent.addNodeTypeDefinition(resource, true);
                     break;
                 default:
@@ -475,7 +475,7 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     private Value constructResourceValueFromScalar(final Node node, final ValueType valueType, final DefinitionNodeImpl parent) throws ParserException {
-        final String resourcePath = asResourcePathScalar(node, resourceInputProvider);
+        final String resourcePath = asResourcePathScalar(node, parent.getDefinition().getSource(), resourceInputProvider);
         return new ValueImpl(resourcePath, valueType, true, false);
     }
 

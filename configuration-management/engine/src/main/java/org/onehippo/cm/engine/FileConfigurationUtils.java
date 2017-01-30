@@ -18,9 +18,11 @@ package org.onehippo.cm.engine;
 import java.nio.file.Path;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.Source;
 
 public class FileConfigurationUtils {
 
@@ -34,8 +36,12 @@ public class FileConfigurationUtils {
         }
     }
 
-    public static Path getResourcePath(final Path modulePath, final String resourcePath) {
-        return modulePath.resolve(resourcePath);
+    public static Path getResourcePath(final Path modulePath, final Source source, final String resourcePath) {
+        if (resourcePath.startsWith("/")) {
+            return modulePath.resolve(StringUtils.stripStart(resourcePath, "/"));
+        } else {
+            return modulePath.resolve(source.getPath()).getParent().resolve(resourcePath);
+        }
     }
 
     public static boolean hasMultipleModules(Map<String, Configuration> configurations) {

@@ -44,12 +44,12 @@ public abstract class AbstractBaseTest {
 
     protected static final ResourceInputProvider DUMMY_RESOURCE_INPUT_PROVIDER = new ResourceInputProvider() {
         @Override
-        public boolean hasResource(final String resourcePath) {
+        public boolean hasResource(final Source source, final String resourcePath) {
             return resourcePath.equals("resource.txt");
         }
 
         @Override
-        public InputStream getResourceInputStream(final String resourcePath) throws IOException {
+        public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
             throw new UnsupportedOperationException();
         }
     };

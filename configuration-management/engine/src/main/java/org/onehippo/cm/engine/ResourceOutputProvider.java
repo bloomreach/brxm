@@ -18,6 +18,8 @@ package org.onehippo.cm.engine;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.onehippo.cm.api.model.Source;
+
 public interface ResourceOutputProvider {
-    OutputStream getResourceOutputStream(final String resourcePath) throws IOException;
+    OutputStream getResourceOutputStream(final Source source, final String resourcePath) throws IOException;
 }

@@ -832,24 +832,6 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithDefinitionWithAbsolutePathResource() {
-        final String yaml = "instructions:\n"
-                + "- config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: binary\n"
-                + "        resource: /etc/passwd";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstTupleFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Resource path is not valid: '/etc/passwd'; a resource path must be relative and must not contain ..");
-    }
-
-    @Test
     public void configWithDefinitionWithParentPathElementResource() {
         final String yaml = "instructions:\n"
                 + "- config:\n"
@@ -864,7 +846,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
 
         assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Resource path is not valid: '../etc/passwd'; a resource path must be relative and must not contain ..");
+                "Resource path is not valid: '../etc/passwd'; a resource path must not contain ..");
     }
 
     @Test

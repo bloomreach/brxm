@@ -41,8 +41,8 @@ public class FileConfigurationWriter {
         }
 
         @Override
-        public OutputStream getResourceOutputStream(final String resourcePath) throws IOException {
-            final Path path = FileConfigurationUtils.getResourcePath(modulePath, resourcePath);
+        public OutputStream getResourceOutputStream(final Source source, final String resourcePath) throws IOException {
+            final Path path = FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath);
             Files.createDirectories(path.getParent());
             return new FileOutputStream(path.toFile());
         }
@@ -78,9 +78,9 @@ public class FileConfigurationWriter {
                         for (String resource : resources) {
                             try (
                                     final InputStream resourceInputStream =
-                                            resourceInputProvider.getResourceInputStream(resource);
+                                            resourceInputProvider.getResourceInputStream(source, resource);
                                     final OutputStream resourceOutputStream =
-                                            resourceOutputProvider.getResourceOutputStream(resource)
+                                            resourceOutputProvider.getResourceOutputStream(source, resource)
                             ) {
                                 IOUtils.copy(resourceInputStream, resourceOutputStream);
                             }

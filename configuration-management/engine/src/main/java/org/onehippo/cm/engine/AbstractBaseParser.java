@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.onehippo.cm.api.model.Source;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
@@ -181,31 +182,31 @@ public abstract class AbstractBaseParser {
         return "/".equals(nodePath);
     }
 
-    protected String asResourcePathScalar(final Node node, final ResourceInputProvider resourceInputProvider) throws ParserException {
+    protected String asResourcePathScalar(final Node node, final Source source, final ResourceInputProvider resourceInputProvider) throws ParserException {
         final String resourcePath = asStringScalar(node);
 
-        if (!isValidResourcePath(resourcePath)) {
+        if (containsParentSegment(resourcePath)) {
             throw new ParserException("Resource path is not valid: '" + resourcePath
-                    + "'; a resource path must be relative and must not contain ..", node);
+                    + "'; a resource path must not contain ..", node);
         }
 
-        if (!resourceInputProvider.hasResource(resourcePath)) {
+        if (!resourceInputProvider.hasResource(source, resourcePath)) {
             throw new ParserException("Cannot find resource '" + resourcePath + "'", node);
         }
 
         return resourcePath;
     }
 
-    private boolean isValidResourcePath(final String resourceString) {
+    private boolean containsParentSegment(final String resourceString) {
         final Path resourcePath = Paths.get(resourceString);
 
         for (final Path pathElement : resourcePath) {
             if (pathElement.toString().equals("..")) {
-                return false;
+                return true;
             }
         }
 
-        return !resourcePath.isAbsolute();
+        return false;
     }
 
     protected URI asURIScalar(final Node node) throws ParserException {

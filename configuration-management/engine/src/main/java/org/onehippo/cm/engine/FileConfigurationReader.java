@@ -31,6 +31,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.impl.model.ModuleImpl;
 
 public class FileConfigurationReader {
@@ -43,14 +44,14 @@ public class FileConfigurationReader {
         }
 
         @Override
-        public boolean hasResource(final String resourcePath) {
-            return Files.isRegularFile(FileConfigurationUtils.getResourcePath(modulePath, resourcePath));
+        public boolean hasResource(final Source source, final String resourcePath) {
+            return Files.isRegularFile(FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath));
         }
 
         @Override
-        public InputStream getResourceInputStream(final String resourcePath) throws IOException {
+        public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
             return new FileInputStream(
-                    FileConfigurationUtils.getResourcePath(modulePath, resourcePath).toFile());
+                    FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath).toFile());
         }
     }
 

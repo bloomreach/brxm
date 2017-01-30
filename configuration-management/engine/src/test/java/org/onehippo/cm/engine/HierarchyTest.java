@@ -88,15 +88,13 @@ public class HierarchyTest extends AbstractBaseTest {
 
         final Source source2 = assertSource(module1, "folder/resources.yaml", 1);
         final ConfigDefinition definition2 = assertDefinition(source2, 0, ConfigDefinition.class);
-        final DefinitionNode resourceNode = assertNode(definition2, "/resources", "resources", definition2, false, 0, 4);
+        final DefinitionNode resourceNode = assertNode(definition2, "/resources", "resources", definition2, false, 0, 3);
         assertProperty(resourceNode, "/resources/single-value-string-resource", "single-value-string-resource",
-                definition2, false, ValueType.STRING, "string1.txt", true, false);
+                definition2, false, ValueType.STRING, "string.txt", true, false);
         assertProperty(resourceNode, "/resources/single-value-binary-resource", "single-value-binary-resource",
-                definition2, false, ValueType.BINARY, "image1.png", true, false);
-        assertProperty(resourceNode, "/resources/multi-value-resource-1", "multi-value-resource-1", definition2, false,
-                ValueType.STRING, new String[]{"string2.txt"}, true, false);
-        assertProperty(resourceNode, "/resources/multi-value-resource-2", "multi-value-resource-2", definition2, false,
-                ValueType.STRING, new String[]{"folder/string.txt","folder/folder/string.txt"}, true, false);
+                definition2, false, ValueType.BINARY, "image.png", true, false);
+        assertProperty(resourceNode, "/resources/multi-value-resource", "multi-value-resource", definition2, false,
+                ValueType.STRING, new String[]{"/root.txt","folder/relative.txt"}, true, false);
 
         final Configuration myhippoproject = assertConfiguration(configurations, "myhippoproject", new String[]{"base"}, 1);
         final Project project2 = assertProject(myhippoproject, "project2", new String[]{"project1", "foo/bar"}, 1);

@@ -15,12 +15,19 @@
  */
 package org.onehippo.cm.engine;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import org.onehippo.cm.api.model.Source;
+import org.junit.Test;
 
-public interface ResourceInputProvider {
-    boolean hasResource(final Source source, final String resourcePath);
-    InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException;
+import static org.junit.Assert.assertEquals;
+
+public class FileConfigurationUtilsTest {
+
+    @Test
+    public void test_multiple_starting_slashes_are_removed() {
+        final Path base = Paths.get("base");
+        assertEquals("base/resource.txt", FileConfigurationUtils.getResourcePath(base, null, "//resource.txt").toString());
+    }
+
 }
