@@ -144,7 +144,7 @@ describe('OverlayService', () => {
     spyOn(PageStructureService, 'getContainers').and.returnValue([]);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay')).toBeEmpty();
+      expect(iframe('.hippo-overlay')).toBeEmpty();
       done();
     });
   });
@@ -172,20 +172,20 @@ describe('OverlayService', () => {
 
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(8);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-component').length).toBe(3);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-container').length).toBe(3);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(8);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(3);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(3);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
       done();
     });
   });
 
   it('only renders labels for structure elements that have a label', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(3);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(3);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(3);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(3);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
 
       const emptyContainer = iframe('.hippo-overlay-element-container').eq(1);
       expect(emptyContainer.find('.hippo-overlay-label-text').html()).toBe('Empty container');
@@ -195,8 +195,8 @@ describe('OverlayService', () => {
 
   it('renders the name structure elements in a data-qa-name attribute', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length).toBe(3);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(3);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length).toBe(3);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(3);
 
       const emptyContainer = iframe('.hippo-overlay-element-container').eq(1);
       expect(emptyContainer.find('.hippo-overlay-label').attr('data-qa-name')).toBe('Empty container');
@@ -206,22 +206,22 @@ describe('OverlayService', () => {
 
   it('renders icons for links', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-link > svg').length).toBe(2);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-link > svg').length).toBe(2);
       done();
     });
   });
 
   it('renders a title for links', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-content-link').attr('title')).toBe('IFRAME_OPEN_DOCUMENT');
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').attr('title')).toBe('IFRAME_EDIT_MENU');
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').attr('title')).toBe('IFRAME_OPEN_DOCUMENT');
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').attr('title')).toBe('IFRAME_EDIT_MENU');
       done();
     });
   });
 
   it('renders lock icons for disabled containers', (done) => {
     loadIframeFixture(() => {
-      const disabledContainer = iframe('#hippo-overlay > .hippo-overlay-element-container').eq(0);
+      const disabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(0);
       const lock = disabledContainer.find('.hippo-overlay-lock');
       expect(lock.length).toBe(1);
       expect(lock.find('svg').length).toBe(1);
@@ -233,7 +233,7 @@ describe('OverlayService', () => {
 
   it('does not render lock icons for enabled containers', (done) => {
     loadIframeFixture(() => {
-      const enabledContainer = iframe('#hippo-overlay > .hippo-overlay-element-container').eq(1);
+      const enabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(1);
       expect(enabledContainer.find('.hippo-overlay-lock').length).toBe(0);
       done();
     });
@@ -241,7 +241,7 @@ describe('OverlayService', () => {
 
   it('renders lock icons for inherited containers', (done) => {
     loadIframeFixture(() => {
-      const inheritedContainer = iframe('#hippo-overlay > .hippo-overlay-element-container').eq(2);
+      const inheritedContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(2);
       const lock = inheritedContainer.find('.hippo-overlay-lock');
       expect(lock.length).toBe(1);
       expect(lock.find('svg').length).toBe(1);
@@ -253,7 +253,7 @@ describe('OverlayService', () => {
 
   it('renders the experiment state of components', (done) => {
     loadIframeFixture(() => {
-      const componentWithExperiment = iframe('#hippo-overlay > .hippo-overlay-element-component').eq(2);
+      const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(2);
       const label = componentWithExperiment.find('.hippo-overlay-label');
       expect(label.length).toBe(1);
       expect(label.find('svg').length).toBe(1);
@@ -268,7 +268,7 @@ describe('OverlayService', () => {
 
   it('updates the experiment state of components', (done) => {
     loadIframeFixture(() => {
-      const componentWithExperiment = iframe('#hippo-overlay > .hippo-overlay-element-component').eq(2);
+      const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(2);
       const labelText = componentWithExperiment.find('.hippo-overlay-label-text');
       expect(labelText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
 
@@ -283,7 +283,7 @@ describe('OverlayService', () => {
 
   it('starts showing the experiment state of a component for which an experiment was just created', (done) => {
     loadIframeFixture(() => {
-      const componentA = iframe('#hippo-overlay > .hippo-overlay-element-component').eq(0);
+      const componentA = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(0);
       const labelText = componentA.find('.hippo-overlay-label-text');
       expect(labelText.html()).toBe('component A');
 
@@ -306,15 +306,15 @@ describe('OverlayService', () => {
   it('syncs the position of overlay elements in view mode', (done) => {
     OverlayService.setMode('view');
     loadIframeFixture(() => {
-      const components = iframe('#hippo-overlay > .hippo-overlay-element-component');
+      const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
 
       const componentA = $(components[0]);
       expect(componentA).not.toHaveClass('hippo-overlay-element-visible');
 
-      const menuLink = iframe('#hippo-overlay > .hippo-overlay-element-menu-link');
+      const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
       expect(menuLink).not.toHaveClass('hippo-overlay-element-visible');
 
-      const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
+      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
       expect(contentLink.css('top')).toBe(`${4 + 100}px`);
       expect(contentLink.css('left')).toBe(`${200 - 40}px`);
       expect(contentLink.css('width')).toBe('40px');
@@ -323,7 +323,7 @@ describe('OverlayService', () => {
       const componentB = $(components[1]);
       expect(componentB).not.toHaveClass('hippo-overlay-element-visible');
 
-      const emptyContainer = $(iframe('#hippo-overlay > .hippo-overlay-element-container')[1]);
+      const emptyContainer = $(iframe('.hippo-overlay > .hippo-overlay-element-container')[1]);
       expect(emptyContainer).not.toHaveClass('hippo-overlay-element-visible');
 
       done();
@@ -333,7 +333,7 @@ describe('OverlayService', () => {
   it('syncs the position of overlay elements in edit mode', (done) => {
     OverlayService.setMode('edit');
     loadIframeFixture(() => {
-      const components = iframe('#hippo-overlay > .hippo-overlay-element-component');
+      const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
 
       const componentA = $(components[0]);
       expect(componentA.css('top')).toBe('4px');
@@ -341,13 +341,13 @@ describe('OverlayService', () => {
       expect(componentA.css('width')).toBe(`${200 - 2}px`);
       expect(componentA.css('height')).toBe('100px');
 
-      const menuLink = iframe('#hippo-overlay > .hippo-overlay-element-menu-link');
+      const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
       expect(menuLink.css('top')).toBe(`${4 + 30}px`);
       expect(menuLink.css('left')).toBe(`${200 - 40}px`);
       expect(menuLink.css('width')).toBe('40px');
       expect(menuLink.css('height')).toBe('40px');
 
-      const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
+      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
       expect(contentLink).not.toHaveClass('hippo-overlay-element-visible');
 
       const componentB = $(components[1]);
@@ -356,7 +356,7 @@ describe('OverlayService', () => {
       expect(componentB.css('width')).toBe(`${200 - 2}px`);
       expect(componentB.css('height')).toBe('200px');
 
-      const emptyContainer = $(iframe('#hippo-overlay > .hippo-overlay-element-container')[1]);
+      const emptyContainer = $(iframe('.hippo-overlay > .hippo-overlay-element-container')[1]);
       expect(emptyContainer.css('top')).toBe(`${400 + 4}px`);
       expect(emptyContainer.css('left')).toBe('0px');
       expect(emptyContainer.css('width')).toBe('200px');
@@ -377,7 +377,7 @@ describe('OverlayService', () => {
       iframeWindow.scrollTo(1, 2);
       OverlayService.sync();
 
-      const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
+      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
       expect(contentLink.css('top')).toBe(`${4 + 100}px`);
       expect(contentLink.css('left')).toBe(`${200 - 40}px`);
       expect(contentLink.css('width')).toBe('40px');
@@ -400,7 +400,7 @@ describe('OverlayService', () => {
 
     loadIframeFixture(() => {
       const component = PageStructureService.getComponentById('aaaa');
-      const overlayComponentElement = iframe('#hippo-overlay > .hippo-overlay-element-component').first();
+      const overlayComponentElement = iframe('.hippo-overlay > .hippo-overlay-element-component').first();
 
       overlayComponentElement.mousedown();
       expect(mousedownSpy).toHaveBeenCalledWith(jasmine.anything(), component);
@@ -421,7 +421,7 @@ describe('OverlayService', () => {
     spyOn(PageStructureService, 'getComponentByOverlayElement').and.returnValue(false);
 
     loadIframeFixture(() => {
-      const overlayComponentElement = iframe('#hippo-overlay > .hippo-overlay-element-component').first();
+      const overlayComponentElement = iframe('.hippo-overlay > .hippo-overlay-element-component').first();
 
       overlayComponentElement.mousedown();
       expect(mousedownSpy).not.toHaveBeenCalled();
@@ -434,7 +434,7 @@ describe('OverlayService', () => {
     spyOn(CmsService, 'publish');
     OverlayService.setMode('view');
     loadIframeFixture(() => {
-      const contentLink = iframe('#hippo-overlay > .hippo-overlay-element-content-link');
+      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
 
       expectNoPropagatedClicks();
       contentLink.click();
@@ -451,7 +451,7 @@ describe('OverlayService', () => {
     OverlayService.onEditMenu(editMenuHandler);
     OverlayService.setMode('edit');
     loadIframeFixture(() => {
-      const menuLink = iframe('#hippo-overlay > .hippo-overlay-element-menu-link');
+      const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
 
       expectNoPropagatedClicks();
       menuLink.click();
@@ -466,8 +466,8 @@ describe('OverlayService', () => {
     OverlayService.setMode('edit');
 
     loadIframeFixture(() => {
-      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(8);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(8);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
         <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
@@ -479,8 +479,8 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
-      expect(iframe('#hippo-overlay > .hippo-overlay-element').length).toBe(7);
-      expect(iframe('#hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(7);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
     });

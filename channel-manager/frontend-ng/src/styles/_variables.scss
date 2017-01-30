@@ -139,36 +139,39 @@ $embedded-link-width: 40px;
 // Overlay
 $overlay-box-minheight: 40px;
 
-$overlay-container-outline-color: #697279;
+$overlay-container-outline-color: $grey-600;
 $overlay-container-inline-color: $white;
 $overlay-container-glow-color: rgba(105, 114, 121, .75);
-$overlay-container-label-bgcolor: #697279;
-$overlay-container-label-border-color: #697279;
+$overlay-container-label-bgcolor: $grey-600;
+$overlay-container-label-border-color: $grey-600;
 $overlay-container-add-mode-hover-bgcolor: rgba(184, 188, 191, .9);
 
-$overlay-component-outline-color: #0877d1;
+$overlay-component-outline-color: $blue-500;
 $overlay-component-inline-color: $white;
 $overlay-component-glow-color: rgba(8, 120, 212, .75);
 $overlay-component-hover-shadow-color: rgba(8, 120, 212, .25);
-$overlay-component-label-bgcolor: #0877d1;
-$overlay-component-label-border-color: #0877d1;
+$overlay-component-label-bgcolor: $blue-500;
+$overlay-component-label-border-color: $blue-500;
 
 $overlay-label-color: $white;
 $overlay-label-font-size: 12px;
 
-$overlay-lock-bgcolor: #697279;
+$overlay-lock-bgcolor: $grey-600;
 $overlay-lock-color: $white;
 $overlay-lock-font-size: $overlay-label-font-size;
 $overlay-lock-height: 26px;
 $overlay-lock-width: 26px;
 
-$overlay-link-bgcolor: #ff741a;
+$overlay-link-bgcolor: $orange-a400;
 $overlay-link-shadow-color: rgba(0, 0, 0, .26);
 $overlay-link-fill-color: $white;
 $overlay-link-transition: 300ms cubic-bezier(.55, 0, .55, .2);
 $overlay-link-hover-bgcolor: #e06717;
 $overlay-link-active-shadow-color: rgba(0, 0, 0, .4);
-$overlay-link-clicked-bgcolor: #ff9659;
+$overlay-link-clicked-bgcolor: $orange-a200;
+
+$overlay-icon-fill: $grey-600;
+$overlay-icon-size: 36px;
 
 // Layout breakpoints
 $layout-breakpoint-xs: 600px !default;

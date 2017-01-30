@@ -57,19 +57,34 @@ class ComponentCatalogService {
 
   selectComponent(component) {
     this.selectedComponent = component;
-    this._enableAddModeMask();
+    this.MaskService.mask('mask-add-component');
+    this.ChannelSidenavService.liftSidenavAboveMask();
+    this.HippoIframeService.liftIframeAboveMask();
+    this.OverlayService.enableAddMode();
+    this.OverlayService.onContainerClick(this._handleContainerClick.bind(this));
+    this.MaskService.onClick(this._handleMaskClick.bind(this));
+  }
 
-    this.OverlayService.onContainerClick((containerOverlayElement) => {
-      delete this.selectedComponent;
-      this._disableAddModeMask();
-      this.addComponentToContainer(component, containerOverlayElement);
-    });
+  _handleMaskClick() {
+    delete this.selectedComponent;
+    this.MaskService.unmask();
+    this.ChannelSidenavService.lowerSidenavBeneathMask();
+    this.HippoIframeService.lowerIframeBeneathMask();
+    this.OverlayService.disableAddMode();
+    this.OverlayService.offContainerClick();
+    this.MaskService.removeClickHandler();
+  }
 
-    this.MaskService.onClick(() => {
+  _handleContainerClick(event, container) {
+    const containerOverlayElement = event.target;
+
+    if (!container.isDisabled()) {
+      this.addComponentToContainer(this.selectedComponent, containerOverlayElement);
       delete this.selectedComponent;
-      this.MaskService.unmask();
-      this._disableAddModeMask();
-    });
+    } else {
+      // If container is disabled dont do anything
+      event.stopPropagation();
+    }
   }
 
   addComponentToContainer(component, containerOverlayElement) {

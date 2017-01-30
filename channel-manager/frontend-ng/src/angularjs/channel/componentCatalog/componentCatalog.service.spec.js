@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,25 +51,21 @@ describe('ComponentCatalogService', () => {
     });
   });
 
-  describe('selecting a component', () => {
+  describe('component add mode', () => {
     beforeEach(() => {
       spyOn(MaskService, 'mask');
       spyOn(MaskService, 'unmask');
       spyOn(MaskService, 'removeClickHandler');
-      spyOn(MaskService, 'onClick').and.callFake((callback) => {
-        callback();
-      });
+      spyOn(MaskService, 'onClick');
       spyOn(ChannelSidenavService, 'liftSidenavAboveMask');
       spyOn(ChannelSidenavService, 'lowerSidenavBeneathMask');
       spyOn(HippoIframeService, 'liftIframeAboveMask');
       spyOn(HippoIframeService, 'lowerIframeBeneathMask');
+      spyOn(OverlayService, 'onContainerClick');
       spyOn(OverlayService, 'enableAddMode');
       spyOn(OverlayService, 'disableAddMode');
-      spyOn(ComponentCatalogService, 'addComponentToContainer');
-      spyOn(OverlayService, 'onContainerClick').and.callFake((callback) => {
-        callback();
-      });
       spyOn(OverlayService, 'offContainerClick');
+      spyOn(ComponentCatalogService, 'addComponentToContainer');
     });
 
     it('should forward mask and zindexes handling and setup clickhandlers', () => {
@@ -81,6 +77,18 @@ describe('ComponentCatalogService', () => {
       expect(OverlayService.enableAddMode).toHaveBeenCalled();
       expect(OverlayService.onContainerClick).toHaveBeenCalledWith(jasmine.any(Function));
       expect(MaskService.onClick).toHaveBeenCalledWith(jasmine.any(Function));
+    });
+
+    it('should disable on mask click', () => {
+      ComponentCatalogService._handleMaskClick();
+
+      expect(ComponentCatalogService.selectedComponent).toBe(undefined);
+      expect(MaskService.unmask).toHaveBeenCalled();
+      expect(ChannelSidenavService.lowerSidenavBeneathMask).toHaveBeenCalled();
+      expect(HippoIframeService.lowerIframeBeneathMask).toHaveBeenCalled();
+      expect(OverlayService.disableAddMode).toHaveBeenCalled();
+      expect(OverlayService.offContainerClick).toHaveBeenCalled();
+      expect(MaskService.removeClickHandler).toHaveBeenCalled();
     });
   });
 
@@ -94,6 +102,28 @@ describe('ComponentCatalogService', () => {
         getContainer() {},
         getLabel() {},
       }));
+    });
+
+    it('should handle container click', () => {
+      let isDisabled = false;
+      const mockContainer = {
+        isDisabled() {
+          return isDisabled;
+        },
+      };
+      const mockEvent = jasmine.createSpyObj('mockEvent', ['target', 'stopPropagation']);
+      spyOn(ComponentCatalogService, 'addComponentToContainer');
+
+      ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
+
+      expect(ComponentCatalogService.addComponentToContainer).toHaveBeenCalled();
+
+      isDisabled = true;
+
+      ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
+
+      expect(ComponentCatalogService.addComponentToContainer).toHaveBeenCalled();
+      expect(mockEvent.stopPropagation).toHaveBeenCalled();
     });
 
     it('should add component to container', () => {
