@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ describe('The hippo-cm module', () => {
 
   it('falls back to English translations for unknown locales', () => {
     configService.locale = 'no-such-locale';
-    $httpBackend.whenGET('/cms/angular/hippo-cm/i18n/no-such-locale.json?antiCache=123').respond(404);
+    $httpBackend.whenGET('i18n/no-such-locale.json?antiCache=123').respond(404);
 
     $state.go('hippo-cm.dummy-child-state');
     $httpBackend.flush();

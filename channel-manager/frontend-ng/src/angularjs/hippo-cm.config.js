@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $transla
     resolve: {
       translations: ($translate, ConfigService) => {
         $translateProvider.useStaticFilesLoader({
-          prefix: '/cms/angular/hippo-cm/i18n/',
+          prefix: 'i18n/',
           suffix: `.json?antiCache=${ConfigService.antiCache}`,
         });
         return $translate.use(ConfigService.locale)
