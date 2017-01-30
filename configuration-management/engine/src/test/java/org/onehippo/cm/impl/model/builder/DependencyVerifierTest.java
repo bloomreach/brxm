@@ -26,7 +26,7 @@ import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 
 public class DependencyVerifierTest {
 
-    private final DependencyVerifier verifier = new DependencyVerifier();
+    private final DependencyVerifier<Configuration> verifier = new DependencyVerifier<>();
 
     /*
      * test circular dependency detection

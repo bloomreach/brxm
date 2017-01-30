@@ -1,0 +1,14 @@
+instructions:
+  - content:
+    - /b:
+      - propertyB1: bli1
+    - /a/a:
+      - propertyB2: bli2
+  - config:
+    - /a/b/c/d/e:
+      - propertyB3: bli3
+    - /a/b/c/b:
+      - propertyB4: bli4
+  - namespace:
+    - prefix: myhippoproject2
+      uri: http://www.onehippo.org/myhippoproject2/nt/1.0

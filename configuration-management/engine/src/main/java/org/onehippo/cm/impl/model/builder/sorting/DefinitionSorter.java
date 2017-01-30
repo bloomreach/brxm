@@ -16,28 +16,31 @@
 
 package org.onehippo.cm.impl.model.builder.sorting;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
+import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.builder.MergedModel;
 
 public class DefinitionSorter {
-    private final ModuleImpl module;
+    public void sort(final ModuleImpl module, final MergedModel mergedModel) {
+        final List<Definition> definitions = new ArrayList<>();
+        final SortedSet<Source> sortedSources = new TreeSet<>(Comparator.comparing(Source::getPath));
+        sortedSources.addAll(module.getSources().values());
+        sortedSources.forEach(source -> definitions.addAll(source.getDefinitions()));
 
-    public DefinitionSorter(final ModuleImpl module) {
-        this.module = module;
-    }
-
-    public void sort(final List<Definition> list, final MergedModel mergedModel) {
         final List<ContentDefinitionImpl> sortedContentDefinitions = new LinkedList<>();
-        list.sort(new DefinitionComparator());
-        list.forEach(definition -> {
+        definitions.sort(new DefinitionComparator(module));
+        definitions.forEach(definition -> {
             if (definition instanceof ContentDefinitionImpl) {
                 sortedContentDefinitions.add((ContentDefinitionImpl) definition);
             } else if (definition instanceof NodeTypeDefinition) {
@@ -50,64 +53,5 @@ public class DefinitionSorter {
             }
         });
         module.setSortedContentDefinitions(sortedContentDefinitions);
-    }
-
-    private class DefinitionComparator implements Comparator<Definition> {
-        @Override
-        public int compare(final Definition def1, final Definition def2) {
-            int nsComparison = compareNameSpaceDefs(def1, def2);
-            if (nsComparison != 0) {
-                return nsComparison;
-            }
-
-            int ntComparison = compareNodeTypeDefs(def1, def2);
-            if (ntComparison != 0) {
-                return ntComparison;
-            }
-
-            return compareContentDefs(def1, def2);
-        }
-
-        private int compareNameSpaceDefs(final Definition def1, final Definition def2) {
-            if (def1 instanceof NamespaceDefinition) {
-                if (def2 instanceof NamespaceDefinition) {
-                    return ((NamespaceDefinition)def1).getPrefix().compareTo(((NamespaceDefinition)def2).getPrefix());
-                }
-                // def 1 should be first
-                return -1;
-            }
-            if (def2 instanceof NamespaceDefinition) {
-                return 1;
-            }
-            return 0;
-        }
-
-        private int compareNodeTypeDefs(final Definition def1, final Definition def2) {
-            if (def1 instanceof NodeTypeDefinition) {
-                if (def2 instanceof NodeTypeDefinition) {
-                    // TODO both def1 and def2 are of type NodeTypeDefinition : It might be that cnd of def2
-                    // TODO depends on the cnd of def1 : Hence we need to parse the actual cnd value to find out
-                    // TODO whether def1 or def2 should be loaded first. For now. just compare the cnd string
-                    return ((NodeTypeDefinition)def1).getValue().compareTo(((NodeTypeDefinition)def2).getValue());
-                }
-                // def1 should be first
-                return -1;
-            }
-            if (def2 instanceof NodeTypeDefinition) {
-                return 1;
-            }
-            return 0;
-        }
-
-        private int compareContentDefs(final Definition def1, final Definition def2) {
-            final String rootPath1 = ((ContentDefinitionImpl) def1).getNode().getPath();
-            final String rootPath2 = ((ContentDefinitionImpl) def2).getNode().getPath();
-
-            if (def1 != def2 && rootPath1.equals(rootPath2)) {
-                throw new IllegalStateException("Duplicate content root paths '" + rootPath1 + "' in module '"
-                        + module.getName() +"'.");
-            }
-            return rootPath1.compareTo(rootPath2);
-        }
     }
 }

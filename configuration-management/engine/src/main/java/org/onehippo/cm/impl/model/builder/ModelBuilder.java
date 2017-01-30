@@ -40,6 +40,7 @@ public class ModelBuilder {
 
     private DependencyVerifier<ConfigurationImpl> dependencyVerifier = new DependencyVerifier<>();
     private ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
+    private DefinitionSorter definitionSorter = new DefinitionSorter();
 
     public MergedModel build(final Collection<ConfigurationImpl> configurations) {
         dependencyVerifier.verifyConfigurationDependencies(configurations);
@@ -64,20 +65,8 @@ public class ModelBuilder {
     }
 
     private void augmentModelWithModule(final MergedModel mergedModel, final ModuleImpl module) {
-        prepareModuleDefinitions(module, mergedModel);
+        definitionSorter.sort(module, mergedModel);
         augmentModelWithContentDefinitions(mergedModel, module);
-    }
-
-    private void prepareModuleDefinitions(final ModuleImpl module, final MergedModel mergedModel) {
-        final List<Definition> definitions = new ArrayList<>();
-        final SortedSet<Source> sortedSources = new TreeSet<>(Comparator.comparing(Source::getPath));
-
-        sortedSources.addAll(module.getSources().values());
-        sortedSources.stream()
-                .map(Source::getDefinitions)
-                .forEachOrdered(definitions::addAll);
-
-        new DefinitionSorter(module).sort(definitions, mergedModel);
     }
 
     private void augmentModelWithContentDefinitions(final MergedModel mergedModel, final ModuleImpl module) {
@@ -95,5 +84,9 @@ public class ModelBuilder {
 
     void setConfigurationTreeBuilder(final ConfigurationTreeBuilder configurationTreeBuilder) {
         this.configurationTreeBuilder = configurationTreeBuilder;
+    }
+
+    void setDefinitionSorter(final DefinitionSorter definitionSorter) {
+        this.definitionSorter = definitionSorter;
     }
 }
