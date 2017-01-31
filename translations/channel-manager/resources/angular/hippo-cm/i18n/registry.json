@@ -580,6 +580,16 @@
     "CONFIRM_DELETE_CHANNEL_MESSAGE" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "ADDING_COMPONENT" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
