@@ -16,17 +16,17 @@
 package org.onehippo.cm.impl.model;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
 
 public class ConfigurationNodeImpl extends ConfigurationItemImpl implements ConfigurationNode {
 
-    private final Map<String, ConfigurationNodeImpl> modifiableNodes = new TreeMap<>();
+    private final Map<String, ConfigurationNodeImpl> modifiableNodes = new LinkedHashMap<>();
     private final Map<String, ConfigurationNode> nodes = Collections.unmodifiableMap(modifiableNodes);
-    private final Map<String, ConfigurationPropertyImpl> modifiableProperties = new TreeMap<>();
+    private final Map<String, ConfigurationPropertyImpl> modifiableProperties = new LinkedHashMap<>();
     private final Map<String, ConfigurationProperty> properties = Collections.unmodifiableMap(modifiableProperties);
 
     @Override

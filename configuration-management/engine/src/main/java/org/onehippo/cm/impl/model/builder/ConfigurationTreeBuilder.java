@@ -19,10 +19,17 @@ package org.onehippo.cm.impl.model.builder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ConfigurationProperty;
 import org.onehippo.cm.api.model.ContentDefinition;
+import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.DefinitionItem;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.PropertyType;
+import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ConfigurationPropertyImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
@@ -73,8 +80,9 @@ public class ConfigurationTreeBuilder {
         if (pathSegments.length > segmentsConsumed + 1) {
             // this definition is rooted more than 1 node level deeper than a current leaf node of the model.
             // that's unsupported, because it is likely to create models that cannot be persisted to JCR.
-            String msg = String.format("Source '%s' contains definition rooted at unreachable node '%s'. "
-                    + "Closest ancestor is at '%s'.", definition.getSource().getPath(), definitionRootPath,
+            final String culprit = getDefinitionOrigin(definition);
+            String msg = String.format("%s contains definition rooted at unreachable node '%s'. "
+                    + "Closest ancestor is at '%s'.", culprit, definitionRootPath,
                       definitionRoot.getPath());
             throw new IllegalStateException(msg);
         }
@@ -110,12 +118,23 @@ public class ConfigurationTreeBuilder {
                                                      final Map.Entry<String, DefinitionPropertyImpl> entry) {
         final Map<String, ConfigurationProperty> properties = parent.getProperties();
         final String name = entry.getKey();
+        final DefinitionPropertyImpl definitionProperty = entry.getValue();
+
         if (properties.containsKey(name)) {
-            final String msg = String.format("Node '%s' already has property '%s'.", parent.getPath(), name);
+            final String culprit = getDefinitionOrigin(definitionProperty.getDefinition());
+            final String baseline = properties.get(name)
+                    .getDefinitions()
+                    .stream()
+                    .map(DefinitionItem::getDefinition)
+                    .map(this::getDefinitionOrigin)
+                    .collect(Collectors.toList())
+                    .toString();
+
+            final String msg = String.format("%s: Node '%s' already has property '%s'. This property has been created by %s.",
+                    culprit, parent.getPath(), name, baseline);
             throw new IllegalStateException(msg);
         }
 
-        final DefinitionPropertyImpl definitionProperty = entry.getValue();
         final ConfigurationPropertyImpl property = new ConfigurationPropertyImpl();
 
         property.setName(name);
@@ -174,5 +193,18 @@ public class ConfigurationTreeBuilder {
             }
         }
         return path.length();
+    }
+
+    private String getDefinitionOrigin(final Definition definition) {
+        final Source source = definition.getSource();
+        final Module module = source.getModule();
+        final Project project = module.getProject();
+        final Configuration configuration = project.getConfiguration();
+
+        return String.format("%s/%s/%s [%s]",
+                configuration.getName(),
+                project.getName(),
+                module.getName(),
+                source.getPath());
     }
 }
