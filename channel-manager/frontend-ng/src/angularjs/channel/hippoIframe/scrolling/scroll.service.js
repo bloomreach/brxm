@@ -34,6 +34,7 @@ class ScrollService {
 
   enable(scrollAllowed) {
     if (!this.enabled && this.iframe) {
+      this.iframeWindow = $(this.iframe[0].contentWindow);
       this.iframeDocument = this.iframe.contents();
       this.scrollable = this.iframeDocument.find('html, body');
       this.iframeBody = this.iframeDocument.find('body');
@@ -74,23 +75,33 @@ class ScrollService {
   }
 
   bindMouseMove(scrollAllowed) {
-    const { iframeTop, iframeBottom } = this._getIframeCoords();
-    const upperBound = 0;
-    const bottomBound = iframeBottom - iframeTop;
+    const upperBoundary = 0;
+    let bottomBoundary;
+    let iframeTop;
     let mouseHasLeft = false;
 
+    const loadProperties = () => {
+      const coords = this._getIframeCoords();
+      iframeTop = coords.iframeTop;
+      bottomBoundary = coords.iframeBottom - coords.iframeTop;
+    };
+    loadProperties();
+
+    const mouseEnters = pageY => pageY > upperBoundary && pageY < bottomBoundary;
+    const mouseLeaves = pageY => pageY <= upperBoundary || pageY >= bottomBoundary;
+
+    this.iframeWindow.on(`resize${EVENT_NAMESPACE}`, loadProperties);
     this.iframeDocument.on(`mousemove${EVENT_NAMESPACE}`, (event) => {
       if (scrollAllowed()) {
         // event pageX&Y coordinates are relative to the iframe, but expected to be relative to the NG app.
-        const bodyScrollTop = this._getBodyScrollTop();
-        const pageY = event.pageY - bodyScrollTop;
+        const pageY = event.pageY - this._getBodyScrollTop();
 
         if (mouseHasLeft) {
-          if (pageY > upperBound && pageY < bottomBound) {
+          if (mouseEnters(pageY)) {
             this.stopScrolling();
             mouseHasLeft = false;
           }
-        } else if (pageY <= upperBound || pageY >= bottomBound) {
+        } else if (mouseLeaves(pageY)) {
           mouseHasLeft = true;
           this.startScrolling(event.pageX, pageY + iframeTop);
         }
@@ -99,6 +110,7 @@ class ScrollService {
   }
 
   unbindMouseMove() {
+    this.iframeWindow.off(EVENT_NAMESPACE);
     this.iframeDocument.off(EVENT_NAMESPACE);
   }
 
