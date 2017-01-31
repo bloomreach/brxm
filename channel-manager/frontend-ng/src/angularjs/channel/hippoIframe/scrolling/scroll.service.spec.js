@@ -121,7 +121,7 @@ describe('ScrollService', () => {
       spyOn(ScrollService, '_scroll');
 
       ScrollService.enable();
-      ScrollService.startScrolling(null, 10);
+      ScrollService.startScrolling(0, 10);
 
       expect(ScrollService._scroll).not.toHaveBeenCalled();
       done();
@@ -136,7 +136,7 @@ describe('ScrollService', () => {
       body.scrollTop(100);
 
       ScrollService.enable();
-      ScrollService.startScrolling(null, iframeTop);
+      ScrollService.startScrolling(0, iframeTop);
 
       expect(ScrollService._scroll).toHaveBeenCalledWith(0, jasmine.any(Number));
       done();
@@ -151,7 +151,7 @@ describe('ScrollService', () => {
       body.scrollTop(200);
 
       ScrollService.enable();
-      ScrollService.startScrolling(null, iframeTop);
+      ScrollService.startScrolling(0, iframeTop);
 
       expect(ScrollService._scroll).toHaveBeenCalledWith(0, jasmine.any(Number));
       done();
@@ -166,7 +166,7 @@ describe('ScrollService', () => {
       body.scrollTop(200);
 
       ScrollService.enable();
-      ScrollService.startScrolling(null, iframeBottom);
+      ScrollService.startScrolling(0, iframeBottom);
 
       expect(ScrollService._scroll).not.toHaveBeenCalled();
       done();
@@ -178,7 +178,7 @@ describe('ScrollService', () => {
       spyOn(ScrollService, '_scroll');
 
       ScrollService.enable();
-      ScrollService.startScrolling(null, iframeBottom);
+      ScrollService.startScrolling(0, iframeBottom);
 
       expect(ScrollService._scroll).toHaveBeenCalledWith(200, jasmine.any(Number));
       done();
@@ -193,7 +193,7 @@ describe('ScrollService', () => {
       body.scrollTop(50);
 
       ScrollService.enable();
-      ScrollService.startScrolling(null, iframeBottom);
+      ScrollService.startScrolling(0, iframeBottom);
 
       expect(ScrollService._scroll).toHaveBeenCalledWith(200, jasmine.any(Number));
       done();
