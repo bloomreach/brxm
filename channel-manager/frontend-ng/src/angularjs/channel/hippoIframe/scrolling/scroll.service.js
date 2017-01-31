@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,90 +20,164 @@ const DURATION_MAX = 1500;
 
 class ScrollService {
 
-  constructor(ScalingService, deviceDetector, BROWSERS) {
+  constructor(ScalingService, BrowserService) {
     'ngInject';
 
     this.ScalingService = ScalingService;
-    const browsersWithNativeSupport = [BROWSERS.CHROME, BROWSERS.MS_EDGE, BROWSERS.OPERA];
-    this._hasNativeSupport = browsersWithNativeSupport.indexOf(deviceDetector.browser) > -1;
+    this.BrowserService = BrowserService;
   }
 
-  init(el, container, easing = 'ease-in-out') {
-    this.el = el;
-    this.container = container;
-    this.easing = easing;
+  init(iframe) {
+    this.iframe = iframe;
+    this.enabled = false;
   }
 
-  enable(scrollAllowed = () => true) {
-    if (this._hasNativeSupport) {
-      return;
+  enable(scrollAllowed) {
+    if (!this.enabled && this.iframe) {
+      this.iframeWindow = $(this.iframe[0].contentWindow);
+      this.iframeDocument = this.iframe.contents();
+      this.scrollable = this.iframeDocument.find('html, body');
+      this.iframeBody = this.iframeDocument.find('body');
+
+      if (this.BrowserService.isFF()) {
+        this._bindMouseMove(scrollAllowed);
+      } else {
+        this._bindMouseEnterMouseLeave(scrollAllowed);
+      }
+      this.enabled = true;
     }
+  }
 
-    this.container
-      .on(`mouseenter${EVENT_NAMESPACE}`, () => this.stopScrolling())
-      .on(`mouseleave${EVENT_NAMESPACE}`, (data) => {
+  disable() {
+    if (this.enabled && this.iframe) {
+      this._stopScrolling();
+      if (this.BrowserService.isFF()) {
+        this._unbindMouseMove();
+      } else {
+        this._unbindMouseEnterMouseLeave();
+      }
+      this.enabled = false;
+    }
+  }
+
+  _bindMouseEnterMouseLeave(scrollAllowed) {
+    this.iframe
+      .on(`mouseenter${EVENT_NAMESPACE}`, () => this._stopScrolling())
+      .on(`mouseleave${EVENT_NAMESPACE}`, (event) => {
         if (scrollAllowed()) {
-          this.startScrolling(data.pageX, data.pageY);
+          this._startScrolling(event.pageX, event.pageY);
         }
       });
   }
 
-  disable() {
-    if (this._hasNativeSupport) {
-      return;
+  _unbindMouseEnterMouseLeave() {
+    this.iframe.off(EVENT_NAMESPACE);
+  }
+
+  _bindMouseMove(scrollAllowed) {
+    const upperBoundary = 0;
+    let bottomBoundary;
+    let iframeTop;
+    let mouseHasLeft = false;
+
+    const loadProperties = () => {
+      const coords = this._getIframeCoords();
+      iframeTop = coords.iframeTop;
+      bottomBoundary = coords.iframeBottom - coords.iframeTop;
+    };
+    loadProperties();
+
+    const mouseEnters = pageY => pageY > upperBoundary && pageY < bottomBoundary;
+    const mouseLeaves = pageY => pageY <= upperBoundary || pageY >= bottomBoundary;
+
+    this.iframeWindow.on(`resize${EVENT_NAMESPACE}`, loadProperties);
+    this.iframeDocument.on(`mousemove${EVENT_NAMESPACE}`, (event) => {
+      if (scrollAllowed()) {
+        // event pageX&Y coordinates are relative to the iframe, but expected to be relative to the NG app.
+        const pageY = event.pageY - this._getBodyScrollTop();
+
+        if (mouseHasLeft) {
+          if (mouseEnters(pageY)) {
+            this._stopScrolling();
+            mouseHasLeft = false;
+          }
+        } else if (mouseLeaves(pageY)) {
+          mouseHasLeft = true;
+          this._startScrolling(event.pageX, pageY + iframeTop, this.ScalingService.getScaleFactor());
+        }
+      }
+    });
+  }
+
+  _unbindMouseMove() {
+    this.iframeWindow.off(EVENT_NAMESPACE);
+    this.iframeDocument.off(EVENT_NAMESPACE);
+  }
+
+  _startScrolling(mouseX, mouseY, scaleFactor = 1) {
+    const { iframeHeight, iframeTop, iframeBottom } = this._getIframeCoords();
+    const bodyScrollTop = this._getBodyScrollTop() * scaleFactor;
+
+    let targetScrollTop;
+    let distance;
+
+    if (mouseY <= iframeTop) {
+      // scroll to top
+      targetScrollTop = 0;
+      distance = bodyScrollTop;
+    } else if (mouseY >= iframeBottom) {
+      // scroll to bottom
+      const pageHeight = this.iframeBody[0].scrollHeight * scaleFactor;
+      targetScrollTop = pageHeight - iframeHeight;
+      distance = targetScrollTop - bodyScrollTop;
     }
 
-    this.stopScrolling();
-    if (this.container) {
-      this.container.off(EVENT_NAMESPACE);
+    if (distance > 0) {
+      const duration = this._calculateDuration(distance, DURATION_MIN, DURATION_MAX);
+      this._scroll(targetScrollTop, duration);
     }
   }
 
-  startScrolling(mouseX, mouseY) {
-    const containerOffset = this.container.offset();
-    const containerHeight = this.container.outerHeight();
-    const containerScrollTop = this.container.scrollTop();
-    const containerTop = containerOffset.top;
-    const containerBottom = containerTop + containerHeight;
-
-    let offset = 0;
-    if (mouseY < containerTop) {
-      // scroll up to top position
-      offset = -containerScrollTop;
-    } else if (mouseY >= containerBottom) {
-      // scroll down to the bottom position
-      const contentHeight = this.el.outerHeight() * this.ScalingService.getScaleFactor();
-      offset = (contentHeight - containerHeight) - containerScrollTop;
-    }
-
-    if (offset) {
-      this._scroll(offset);
+  _stopScrolling() {
+    if (this.scrollable) {
+      this.scrollable.stop();
     }
   }
 
-  stopScrolling() {
-    if (this.el) {
-      this.el.velocity('stop', 'autoscroll');
+  _scroll(scrollTop, duration) {
+    this.scrollable.stop().animate({ scrollTop }, {
+      duration,
+    });
+  }
+
+  _calculateDuration(distance, min, max) {
+    if (distance === 0) {
+      return 0;
     }
-  }
 
-  _scroll(offset) {
-    this.el
-      .velocity('stop', 'autoscroll')
-      .velocity('scroll', {
-        container: this.container,
-        duration: this._calculateDuration(offset),
-        easing: this.easing,
-        offset,
-        queue: 'autoscroll',
-      }).dequeue('autoscroll');
-  }
-
-
-  _calculateDuration(distance) {
-    distance = Math.abs(distance);
     const duration = distance * 2;
-    return Math.min(Math.max(DURATION_MIN, duration), DURATION_MAX);
+    return Math.min(Math.max(min, duration), max);
+  }
+
+  // IE and FireFox with mousemove always return zero for body.scrollTop(), so check html as well
+  _getBodyScrollTop() {
+    return (this.iframeDocument[0].documentElement && this.iframeDocument[0].documentElement.scrollTop) ||
+            this.iframeBody.scrollTop();
+  }
+
+  _getIframeCoords() {
+    const iframeWidth = this.iframe.outerWidth();
+    const iframeHeight = this.iframe.outerHeight();
+    const iframeOffset = this.iframe.offset();
+
+    return {
+      iframeWidth,
+      iframeHeight,
+      iframeTop: iframeOffset.top,
+      iframeRight: iframeOffset.left + iframeWidth,
+      iframeBottom: iframeOffset.top + iframeHeight,
+      iframeLeft: iframeOffset.left,
+    };
   }
 }
 

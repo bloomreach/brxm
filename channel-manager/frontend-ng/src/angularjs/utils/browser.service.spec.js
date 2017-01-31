@@ -39,5 +39,10 @@ describe('BrowserService', () => {
     deviceDetector.browser = 'ie';
     expect(BrowserService.isIE()).toBe(true);
   });
+
+  it('detects Firefox', () => {
+    deviceDetector.browser = 'firefox';
+    expect(BrowserService.isFF()).toBe(true);
+  });
 });
 

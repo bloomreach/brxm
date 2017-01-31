@@ -26,6 +26,10 @@ class BrowserService {
   isIE() {
     return this.deviceDetector.browser === this.BROWSERS.IE;
   }
+
+  isFF() {
+    return this.deviceDetector.browser === this.BROWSERS.FIREFOX;
+  }
 }
 
 export default BrowserService;
