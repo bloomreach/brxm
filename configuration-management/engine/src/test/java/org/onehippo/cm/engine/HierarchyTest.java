@@ -58,7 +58,7 @@ public class HierarchyTest extends AbstractBaseTest {
         assertEquals(false, nodeType.isResource());
 
         final NodeTypeDefinition nodeTypeFromResource = assertDefinition(source1, 2, NodeTypeDefinition.class);
-        assertEquals("cnd.txt", nodeTypeFromResource.getValue());
+        assertEquals("example.cnd", nodeTypeFromResource.getValue());
         assertEquals(true, nodeTypeFromResource.isResource());
 
         final ConfigDefinition definition1 = assertDefinition(source1, 3, ConfigDefinition.class);
