@@ -305,6 +305,11 @@ public final class SearchInputParsingUtils {
                                 } // else skip it to provide old behavior
                             }
                         }
+                    } else if (c == '\\') {
+                        //a single backslash won't be accepted by lucene.
+                        if (input.length() != 1){
+                            sb.append(c);
+                        }
                     } else if (sb.length() > 0) {
                         // if one wildcard is allowed, it will be added but never as leading
                         // also if the wildcard is found after a special char (like '!', '-', '&', ' ' etc, it will be skipped as well)
@@ -358,7 +363,7 @@ public final class SearchInputParsingUtils {
     public static boolean isSpecialChar(final char c) {
         return c == '(' || c == ')' || c == '^' || c == '[' || c == ']' || c == '{'
                 || c == '}' || c == '~' || c == '*' || c == '?' || c == '|' || c == '&'
-                || c == '!' || c == '-' || c == '\"' || c == '\'' || c == ' ';
+                || c == '!' || c == '-' || c == '\"' || c == '\'' || c == ' ' || c == '\\';
     }
 
     /**
