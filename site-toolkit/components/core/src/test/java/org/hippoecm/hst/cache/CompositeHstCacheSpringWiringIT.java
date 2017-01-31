@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.cache;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
 
@@ -45,8 +48,9 @@ public class CompositeHstCacheSpringWiringIT extends AbstractSpringTestCase {
 
     @Test
     public void assert_caches_get_wired() throws Exception {
-        for (String beanId : new String[]{DEFAULT_BINARIES_CACHE_SPRING_BEAN_ID, DEFAULT_PAGE_CACHE_SPRING_BEAN_ID, DEFAULT_WEBFILE_CACHE_SPRING_BEAN_ID}) {
-            HstCache cache = getComponent(beanId);
+        for (String cacheBeanId : new String[]{DEFAULT_BINARIES_CACHE_SPRING_BEAN_ID,
+                DEFAULT_PAGE_CACHE_SPRING_BEAN_ID, DEFAULT_WEBFILE_CACHE_SPRING_BEAN_ID}) {
+            HstCache cache = getComponent(cacheBeanId);
             assertNotNull(cache);
             CacheElement element = cache.createElement("key1", "content1");
             assertNotNull(element);
@@ -61,4 +65,46 @@ public class CompositeHstCacheSpringWiringIT extends AbstractSpringTestCase {
 
     }
 
+    @Test
+    public void assert_caches_are_blocking() throws Exception {
+
+        for (String cacheBeanId : new String[]{DEFAULT_BINARIES_CACHE_SPRING_BEAN_ID,
+                DEFAULT_PAGE_CACHE_SPRING_BEAN_ID, DEFAULT_WEBFILE_CACHE_SPRING_BEAN_ID}) {
+
+            HstCache cache = getComponent(cacheBeanId);
+
+            cache.get("key1");
+
+            // cache should now be blocked on 'key1'
+
+            CountDownLatch doneSignal = new CountDownLatch(1);
+
+            new Thread(new Worker(cache, "key1", doneSignal)).start();
+
+            boolean countReachedZero = doneSignal.await(100, TimeUnit.MILLISECONDS);
+
+            assertFalse("Since a #get on blocking cache is blocking other threads, the" +
+                    " count down latch should not be able to reach 0.", countReachedZero);
+
+        }
+    }
+
+    class Worker implements Runnable {
+
+        private HstCache cache;
+        private String key;
+        private CountDownLatch doneSignal;
+
+        Worker(final HstCache cache, final String key, final CountDownLatch doneSignal) {
+            this.cache = cache;
+            this.key = key;
+            this.doneSignal = doneSignal;
+        }
+
+        @Override
+        public void run() {
+            cache.get(key);
+            doneSignal.countDown();
+        }
+    }
 }
