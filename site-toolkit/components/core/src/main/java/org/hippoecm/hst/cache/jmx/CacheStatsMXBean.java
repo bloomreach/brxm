@@ -39,6 +39,8 @@ public interface CacheStatsMXBean {
     // we can only know the cache size and max size of the first level cache and not of the second/stale
     int getFirstLevelCacheSize();
     int getFirstLevelCacheMaxSize();
+    long getFirstLevelCacheTimeToLiveSeconds();
+    long getFirstLevelCacheTimeToIdleSeconds();
     void resetFirstLevelCache();
 
     long getSecondLevelCachePuts();

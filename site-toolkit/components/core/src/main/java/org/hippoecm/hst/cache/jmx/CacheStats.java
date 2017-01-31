@@ -98,6 +98,16 @@ public class CacheStats implements CacheStatsMXBean {
     }
 
     @Override
+    public long getFirstLevelCacheTimeToLiveSeconds() {
+        return firstLevelCache.getCacheConfiguration().getTimeToLiveSeconds();
+    }
+
+    @Override
+    public long getFirstLevelCacheTimeToIdleSeconds() {
+        return firstLevelCache.getCacheConfiguration().getTimeToIdleSeconds();
+    }
+
+    @Override
     public void resetFirstLevelCache() {
         firstLevelCachePuts.set(0);
         firstLevelCacheHits.set(0);
