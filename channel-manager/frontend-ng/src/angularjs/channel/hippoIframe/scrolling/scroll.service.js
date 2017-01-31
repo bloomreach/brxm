@@ -103,7 +103,7 @@ class ScrollService {
           }
         } else if (mouseLeaves(pageY)) {
           mouseHasLeft = true;
-          this.startScrolling(event.pageX, pageY + iframeTop);
+          this.startScrolling(event.pageX, pageY + iframeTop, this.ScalingService.getScaleFactor());
         }
       }
     });
@@ -114,25 +114,27 @@ class ScrollService {
     this.iframeDocument.off(EVENT_NAMESPACE);
   }
 
-  startScrolling(mouseX, mouseY) {
+  startScrolling(mouseX, mouseY, scaleFactor = 1) {
     const { iframeHeight, iframeTop, iframeBottom } = this._getIframeCoords();
-    const bodyScrollTop = this._getBodyScrollTop();
+    const bodyScrollTop = this._getBodyScrollTop() * scaleFactor;
 
-    let scrollTop = 0;
-    let distance = 0;
+    let targetScrollTop;
+    let distance;
 
     if (mouseY <= iframeTop) {
       // scroll to top
+      targetScrollTop = 0;
       distance = bodyScrollTop;
     } else if (mouseY >= iframeBottom) {
       // scroll to bottom
-      scrollTop = this.iframeBody[0].scrollHeight - iframeHeight;
-      distance = scrollTop - bodyScrollTop;
+      const pageHeight = this.iframeBody[0].scrollHeight * scaleFactor;
+      targetScrollTop = pageHeight - iframeHeight;
+      distance = targetScrollTop - bodyScrollTop;
     }
 
     if (distance > 0) {
       const duration = this._calculateDuration(distance, DURATION_MIN, DURATION_MAX);
-      this._scroll(scrollTop, duration);
+      this._scroll(targetScrollTop, duration);
     }
   }
 

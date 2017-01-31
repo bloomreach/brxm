@@ -225,13 +225,21 @@ describe('ScrollService', () => {
 
   describe('the workaround for Firefox', () => {
     let BrowserService;
+    let ScalingService;
 
     beforeEach(() => {
-      inject((_BrowserService_) => {
+      inject((_BrowserService_, _ScalingService_) => {
         BrowserService = _BrowserService_;
+        ScalingService = _ScalingService_;
         spyOn(BrowserService, 'isFF').and.returnValue(true);
       });
     });
+
+    function triggerMouseMove(pageY) {
+      const event = $.Event('mousemove'); // eslint-disable-line new-cap
+      event.pageY = pageY;
+      $iframe.contents().trigger(event);
+    }
 
     it('should bind the mousemove event handler when the service is enabled', (done) => {
       loadIframeFixture(() => {
@@ -258,21 +266,14 @@ describe('ScrollService', () => {
 
     it('should call start scrolling once when mouse moves over the upper bound', (done) => {
       loadIframeFixture(() => {
-        let moveHandler;
-        ScrollService.iframeDocument = {
-          on: (name, handler) => {
-            moveHandler = handler;
-          },
-        };
-        spyOn(ScrollService, '_getBodyScrollTop').and.returnValue(0);
         spyOn(ScrollService, 'startScrolling');
-        ScrollService.bindMouseMove(() => true);
+        ScrollService.enable(() => true);
 
-        moveHandler({ pageY: 0 });
+        triggerMouseMove(0);
         expect(ScrollService.startScrolling).toHaveBeenCalled();
         ScrollService.startScrolling.calls.reset();
 
-        moveHandler({ pageY: 0 });
+        triggerMouseMove(0);
         expect(ScrollService.startScrolling).not.toHaveBeenCalled();
 
         done();
@@ -281,21 +282,14 @@ describe('ScrollService', () => {
 
     it('should call start scrolling once when mouse moves over the lower bound', (done) => {
       loadIframeFixture(() => {
-        let moveHandler;
-        ScrollService.iframeDocument = {
-          on: (name, handler) => {
-            moveHandler = handler;
-          },
-        };
-        spyOn(ScrollService, '_getBodyScrollTop').and.returnValue(0);
         spyOn(ScrollService, 'startScrolling');
-        ScrollService.bindMouseMove(() => true);
+        ScrollService.enable(() => true);
 
-        moveHandler({ pageY: 200 });
+        triggerMouseMove(200);
         expect(ScrollService.startScrolling).toHaveBeenCalled();
         ScrollService.startScrolling.calls.reset();
 
-        moveHandler({ pageY: 200 });
+        triggerMouseMove(200);
         expect(ScrollService.startScrolling).not.toHaveBeenCalled();
 
         done();
@@ -304,23 +298,29 @@ describe('ScrollService', () => {
 
     it('should call stop scrolling once when mouse re-enters the page', (done) => {
       loadIframeFixture(() => {
-        let moveHandler;
-        ScrollService.iframeDocument = {
-          on: (name, handler) => {
-            moveHandler = handler;
-          },
-        };
-        spyOn(ScrollService, '_getBodyScrollTop').and.returnValue(0);
         spyOn(ScrollService, 'stopScrolling');
-        ScrollService.bindMouseMove(() => true);
+        ScrollService.enable(() => true);
 
-        moveHandler({ pageY: 0 });
-        moveHandler({ pageY: 10 });
+        triggerMouseMove(0);
+        triggerMouseMove(10);
         expect(ScrollService.stopScrolling).toHaveBeenCalled();
         ScrollService.stopScrolling.calls.reset();
 
-        moveHandler({ pageY: 11 });
+        triggerMouseMove(11);
         expect(ScrollService.stopScrolling).not.toHaveBeenCalled();
+
+        done();
+      });
+    });
+
+    it('should take the scaleFactor into account', (done) => {
+      loadIframeFixture(() => {
+        spyOn(ScalingService, 'getScaleFactor').and.returnValue(0.75);
+        spyOn(ScrollService, '_scroll');
+        ScrollService.enable(() => true);
+
+        triggerMouseMove(200);
+        expect(ScrollService._scroll).toHaveBeenCalledWith(100, jasmine.any(Number));
 
         done();
       });
