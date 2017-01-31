@@ -66,45 +66,81 @@ public class CompositeHstCacheSpringWiringIT extends AbstractSpringTestCase {
     }
 
     @Test
-    public void assert_caches_are_blocking() throws Exception {
+    public void assert_get_on_missing_key_on_caches_is_blocking() throws Exception {
 
         for (String cacheBeanId : new String[]{DEFAULT_BINARIES_CACHE_SPRING_BEAN_ID,
                 DEFAULT_PAGE_CACHE_SPRING_BEAN_ID, DEFAULT_WEBFILE_CACHE_SPRING_BEAN_ID}) {
 
             HstCache cache = getComponent(cacheBeanId);
 
-            cache.get("key1");
-
-            // cache should now be blocked on 'key1'
+            String key = "key";
+            cache.get(key);
+            // cache should now be blocked for other thread on the same #get for 'key' because it is not yet present
 
             CountDownLatch doneSignal = new CountDownLatch(1);
 
-            new Thread(new Worker(cache, "key1", doneSignal)).start();
+            new Thread(() -> {
+                cache.get(key);
+                doneSignal.countDown();
+            }).start();
 
             boolean countReachedZero = doneSignal.await(100, TimeUnit.MILLISECONDS);
 
-            assertFalse("Since a #get on blocking cache is blocking other threads, the" +
+            assertFalse("Since a #get on blocking cache is blocking other threads when the key is not present, the" +
                     " count down latch should not be able to reach 0.", countReachedZero);
 
         }
     }
 
-    class Worker implements Runnable {
+    @Test
+    public void assert_get_on_present_key_on_caches_is_not_blocking() throws Exception {
 
-        private HstCache cache;
-        private String key;
-        private CountDownLatch doneSignal;
+        for (String cacheBeanId : new String[]{DEFAULT_BINARIES_CACHE_SPRING_BEAN_ID,
+                DEFAULT_PAGE_CACHE_SPRING_BEAN_ID, DEFAULT_WEBFILE_CACHE_SPRING_BEAN_ID}) {
 
-        Worker(final HstCache cache, final String key, final CountDownLatch doneSignal) {
-            this.cache = cache;
-            this.key = key;
-            this.doneSignal = doneSignal;
-        }
+            HstCache cache = getComponent(cacheBeanId);
 
-        @Override
-        public void run() {
+            String key = "key";
+            cache.put(cache.createElement(key, "value"));
+
             cache.get(key);
-            doneSignal.countDown();
+            // cache should now not be blocked on 'key' because it is present
+
+            CountDownLatch doneSignal = new CountDownLatch(1);
+
+            new Thread(() -> {
+                cache.get(key);
+                doneSignal.countDown();
+            }).start();
+
+            boolean countReachedZero = doneSignal.await(100, TimeUnit.MILLISECONDS);
+
+            assertTrue("Since a #get on blocking cache is not blocking other threads when the key is present, the" +
+                    " count down latch should not be able to reach 0.", countReachedZero);
+
+            cache.remove("key");
         }
     }
+
+    @Test
+    public void assert_is_key_in_cache_on_cache_is_not_blocking() throws Exception {
+        HstCache cache = getComponent(DEFAULT_PAGE_CACHE_SPRING_BEAN_ID);
+
+        String key = "key";
+        cache.get(key);
+
+        // cache should now be blocked on 'key'
+
+        CountDownLatch doneSignal = new CountDownLatch(1);
+
+        new Thread(() -> {
+            cache.isKeyInCache(key);
+            doneSignal.countDown();
+        }).start();
+
+        boolean countReachedZero = doneSignal.await(100, TimeUnit.MILLISECONDS);
+        assertTrue("#isKeyInCache should not be blocking ", countReachedZero);
+    }
+
+
 }
