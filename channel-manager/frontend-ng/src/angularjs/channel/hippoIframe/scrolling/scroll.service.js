@@ -40,9 +40,9 @@ class ScrollService {
       this.iframeBody = this.iframeDocument.find('body');
 
       if (this.BrowserService.isFF()) {
-        this.bindMouseMove(scrollAllowed);
+        this._bindMouseMove(scrollAllowed);
       } else {
-        this.bindMouseEnterMouseLeave(scrollAllowed);
+        this._bindMouseEnterMouseLeave(scrollAllowed);
       }
       this.enabled = true;
     }
@@ -50,31 +50,31 @@ class ScrollService {
 
   disable() {
     if (this.enabled && this.iframe) {
-      this.stopScrolling();
+      this._stopScrolling();
       if (this.BrowserService.isFF()) {
-        this.unbindMouseMove();
+        this._unbindMouseMove();
       } else {
-        this.unbindMouseEnterMouseLeave();
+        this._unbindMouseEnterMouseLeave();
       }
       this.enabled = false;
     }
   }
 
-  bindMouseEnterMouseLeave(scrollAllowed) {
+  _bindMouseEnterMouseLeave(scrollAllowed) {
     this.iframe
-      .on(`mouseenter${EVENT_NAMESPACE}`, () => this.stopScrolling())
+      .on(`mouseenter${EVENT_NAMESPACE}`, () => this._stopScrolling())
       .on(`mouseleave${EVENT_NAMESPACE}`, (event) => {
         if (scrollAllowed()) {
-          this.startScrolling(event.pageX, event.pageY);
+          this._startScrolling(event.pageX, event.pageY);
         }
       });
   }
 
-  unbindMouseEnterMouseLeave() {
+  _unbindMouseEnterMouseLeave() {
     this.iframe.off(EVENT_NAMESPACE);
   }
 
-  bindMouseMove(scrollAllowed) {
+  _bindMouseMove(scrollAllowed) {
     const upperBoundary = 0;
     let bottomBoundary;
     let iframeTop;
@@ -98,23 +98,23 @@ class ScrollService {
 
         if (mouseHasLeft) {
           if (mouseEnters(pageY)) {
-            this.stopScrolling();
+            this._stopScrolling();
             mouseHasLeft = false;
           }
         } else if (mouseLeaves(pageY)) {
           mouseHasLeft = true;
-          this.startScrolling(event.pageX, pageY + iframeTop, this.ScalingService.getScaleFactor());
+          this._startScrolling(event.pageX, pageY + iframeTop, this.ScalingService.getScaleFactor());
         }
       }
     });
   }
 
-  unbindMouseMove() {
+  _unbindMouseMove() {
     this.iframeWindow.off(EVENT_NAMESPACE);
     this.iframeDocument.off(EVENT_NAMESPACE);
   }
 
-  startScrolling(mouseX, mouseY, scaleFactor = 1) {
+  _startScrolling(mouseX, mouseY, scaleFactor = 1) {
     const { iframeHeight, iframeTop, iframeBottom } = this._getIframeCoords();
     const bodyScrollTop = this._getBodyScrollTop() * scaleFactor;
 
@@ -138,7 +138,7 @@ class ScrollService {
     }
   }
 
-  stopScrolling() {
+  _stopScrolling() {
     if (this.scrollable) {
       this.scrollable.stop();
     }
