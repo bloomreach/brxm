@@ -163,8 +163,9 @@ public final class EssentialConst {
     public static final String HIPPOSYSEDIT_PROTOTYPE = "hipposysedit:prototype";
     public static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype";
     public static final String HIPPO_COMPOUND = "hippo:compound";
-    public static final String HIPPO_COMPOUND_BASE_CLASS = "HippoDocument";
+    public static final String HIPPO_COMPOUND_BASE_CLASS = "HippoCompound";
     public static final String HIPPO_DOCUMENT_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoDocument";
+    public static final String HIPPO_COMPOUND_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoCompound";
     public static final String HIPPO_ITEM_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoItem";
     public static final String HIPPO_BEAN_IMPORT = "org.hippoecm.hst.content.beans.standard.HippoBean";
     public static final String HIPPO_RELATED_DOCS_IMPORT = "org.onehippo.forge.beans.RelatedDocsBean";
