@@ -202,14 +202,30 @@ describe('ScrollService', () => {
 
   it('should always start a new scroll animation', (done) => {
     loadIframeFixture(() => {
-      const scrollable = {};
-      scrollable.stop = jasmine.createSpy().and.returnValue(scrollable);
-      scrollable.animate = jasmine.createSpy().and.returnValue(scrollable);
-      ScrollService.scrollable = scrollable;
+      ScrollService.enable();
+      spyOn(ScrollService.scrollable, 'stop').and.callThrough();
+      spyOn(ScrollService.scrollable, 'animate').and.callThrough();
 
       ScrollService._scroll(0, 0);
-      expect(scrollable.stop).toHaveBeenCalled();
-      expect(scrollable.animate).toHaveBeenCalledWith({ scrollTop: 0 }, { duration: 0 });
+      expect(ScrollService.scrollable.stop).toHaveBeenCalled();
+      expect(ScrollService.scrollable.animate).toHaveBeenCalledWith({ scrollTop: 0 }, { duration: 0 });
+      done();
+    });
+  });
+
+  it('should stop the animation when stopscrolling is called', (done) => {
+    loadIframeFixture(() => {
+      ScrollService.enable();
+      const scrollable = spyOn(ScrollService.scrollable, 'stop');
+
+      ScrollService.stopScrolling();
+      expect(scrollable).toHaveBeenCalled();
+      scrollable.calls.reset();
+
+      ScrollService.scrollable = null;
+      ScrollService.stopScrolling();
+      expect(scrollable).not.toHaveBeenCalled();
+
       done();
     });
   });
@@ -260,6 +276,17 @@ describe('ScrollService', () => {
         ScrollService.disable();
 
         expect(ScrollService.unbindMouseMove).toHaveBeenCalled();
+        done();
+      });
+    });
+
+    it('should not start scrolling when the scrollAllowed argument returns false', (done) => {
+      loadIframeFixture(() => {
+        spyOn(ScrollService, 'startScrolling');
+        ScrollService.enable(() => false);
+
+        triggerMouseMove(0);
+        expect(ScrollService.startScrolling).not.toHaveBeenCalled();
         done();
       });
     });
