@@ -18,7 +18,9 @@ package org.onehippo.cm.impl.model;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.onehippo.cm.api.model.Orderable;
 
@@ -27,23 +29,23 @@ import org.onehippo.cm.api.model.Orderable;
  */
 public class OrderableImpl implements Orderable {
     private final String name;
-    private final List<String> after;
+    private final Set<String> after;
 
     public OrderableImpl(final String name) {
         this.name = name;
-        after = Collections.emptyList();
+        after = Collections.emptySet();
     }
 
     public OrderableImpl(final String name, final String afterCsv) {
         this.name = name;
-        after = Arrays.asList(afterCsv.split("\\s*,\\s*"));
+        after = new LinkedHashSet<>(Arrays.asList(afterCsv.split("\\s*,\\s*")));
     }
 
     public String getName() {
         return name;
     }
 
-    public List<String> getAfter() {
+    public Set<String> getAfter() {
         return after;
     }
 }

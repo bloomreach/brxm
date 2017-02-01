@@ -31,6 +31,16 @@ import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 
 public class DependencyVerifier<T extends Configuration> {
 
+    public void verifyDependencies(final Map<String, ? extends Orderable> orderables) {
+        for (Orderable orderable : orderables.values()) {
+            if (orderable.getAfter().isEmpty()) {
+                continue;
+            }
+            Set<Orderable> checked = new HashSet<>();
+            recurse(orderables, orderable, orderable, checked);
+        }
+    }
+
     public void verifyConfigurationDependencies(final Collection<T> configurations) {
         doVerifyDependencies(configurations);
         for (Configuration configuration : configurations) {
@@ -71,7 +81,7 @@ public class DependencyVerifier<T extends Configuration> {
         }
     }
 
-    private void recurse(final Map<String, Orderable> configurationMap,
+    private void recurse(final Map<String, ? extends Orderable> configurationMap,
                          final Orderable investigate,
                          final Orderable current,
                          final Set<Orderable> checked) {

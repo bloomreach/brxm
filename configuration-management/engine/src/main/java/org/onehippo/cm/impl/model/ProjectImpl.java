@@ -15,23 +15,23 @@
  */
 package org.onehippo.cm.impl.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 
-import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 
 public class ProjectImpl implements Project {
 
     private String name;
     private ConfigurationImpl configuration;
-    private List<String> after = new ArrayList<>();
+    private Set<String> after = new LinkedHashSet<>();
     private Map<String, ModuleImpl> modifiableModules = new LinkedHashMap<>();
     private Map<String, Module> modules = Collections.unmodifiableMap(modifiableModules);
 
@@ -58,12 +58,12 @@ public class ProjectImpl implements Project {
     }
 
     @Override
-    public List<String> getAfter() {
-        return unmodifiableList(after);
+    public Set<String> getAfter() {
+        return unmodifiableSet(after);
     }
 
-    public ProjectImpl setAfter(final List<String> after) {
-        this.after = new ArrayList<>(after);
+    public ProjectImpl setAfter(final Set<String> after) {
+        this.after = new LinkedHashSet<>(after);
         return this;
     }
 

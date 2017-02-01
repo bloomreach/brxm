@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
@@ -86,12 +87,12 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
         final List<NodeTuple> tuples = new ArrayList<>();
         tuples.add(createStrStrTuple("name", orderable.getName()));
 
-        final List<String> afters = orderable.getAfter();
+        final Set<String> afters = orderable.getAfter();
         switch (afters.size()) {
             case 0:
                 break;
             case 1:
-                tuples.add(createStrStrTuple("after", afters.get(0)));
+                tuples.add(createStrStrTuple("after", afters.iterator().next()));
                 break;
             default:
                 final List<Node> afterNodes = new ArrayList<>();

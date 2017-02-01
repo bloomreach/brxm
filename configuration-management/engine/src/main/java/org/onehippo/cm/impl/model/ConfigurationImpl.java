@@ -15,11 +15,11 @@
  */
 package org.onehippo.cm.impl.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Project;
@@ -27,7 +27,7 @@ import org.onehippo.cm.api.model.Project;
 public class ConfigurationImpl implements Configuration {
 
     private String name;
-    private List<String> after = new ArrayList<>();
+    private Set<String> after = new LinkedHashSet<>();
     private Map<String, ProjectImpl> modifiableProjects = new LinkedHashMap<>();
     private Map<String, Project> projects = Collections.unmodifiableMap(modifiableProjects);
 
@@ -44,12 +44,12 @@ public class ConfigurationImpl implements Configuration {
     }
 
     @Override
-    public List<String> getAfter() {
-        return Collections.unmodifiableList(after);
+    public Set<String> getAfter() {
+        return Collections.unmodifiableSet(after);
     }
 
-    public ConfigurationImpl setAfter(final List<String> after) {
-        this.after = new ArrayList<>(after);
+    public ConfigurationImpl setAfter(final Set<String> after) {
+        this.after = new LinkedHashSet<>(after);
         return this;
     }
 

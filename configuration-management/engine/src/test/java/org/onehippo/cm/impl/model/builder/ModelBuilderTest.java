@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -61,18 +62,18 @@ public class ModelBuilderTest {
     public void assert_deep_sorting() throws Exception {
         // TODO: change below data structure into one loaded from test resources
 
-        ConfigurationImpl configuration1 = new ConfigurationImpl("c1").setAfter(ImmutableList.of("c2"));
+        ConfigurationImpl configuration1 = new ConfigurationImpl("c1").setAfter(ImmutableSet.of("c2"));
         ConfigurationImpl configuration2 = new ConfigurationImpl("c2");
-        ConfigurationImpl configuration3 = new ConfigurationImpl("c3").setAfter(ImmutableList.of("c2", "c1"));
+        ConfigurationImpl configuration3 = new ConfigurationImpl("c3").setAfter(ImmutableSet.of("c2", "c1"));
 
-        ProjectImpl project1a = configuration1.addProject("p1a").setAfter(ImmutableList.of("p1b"));
-        ProjectImpl project1b = configuration1.addProject("p1b").setAfter(ImmutableList.of("p1c"));
+        ProjectImpl project1a = configuration1.addProject("p1a").setAfter(ImmutableSet.of("p1b"));
+        ProjectImpl project1b = configuration1.addProject("p1b").setAfter(ImmutableSet.of("p1c"));
         ProjectImpl project1c = configuration1.addProject("p1c");
         ProjectImpl project2a = configuration2.addProject("p2a");
         ProjectImpl project3a = configuration3.addProject("p3a");
 
-        project1a.addModule("m1a1").setAfter(ImmutableList.of("m1a2"));
-        project1a.addModule("m1a2").setAfter(ImmutableList.of("m1a3"));
+        project1a.addModule("m1a1").setAfter(ImmutableSet.of("m1a2"));
+        project1a.addModule("m1a2").setAfter(ImmutableSet.of("m1a3"));
         project1a.addModule("m1a3");
         project1b.addModule("m1b1");
         project1c.addModule("m1c1");

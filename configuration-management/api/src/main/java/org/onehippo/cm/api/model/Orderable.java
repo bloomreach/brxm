@@ -15,14 +15,13 @@
  */
 package org.onehippo.cm.api.model;
 
-import java.util.List;
+import java.util.Set;
 
 public interface Orderable {
     String getName();
     /**
-     * @return The <strong>ordered</strong> immutable list of {@link String}s after which
+     * @return The <strong>ordered</strong> immutable set of {@link String}s after which
      * this {@link Orderable} instance should be loaded.
-     * Note the ordering is according to serialized yaml format and not in model processing order.
      */
-    List<String> getAfter();
+    Set<String> getAfter();
 }
