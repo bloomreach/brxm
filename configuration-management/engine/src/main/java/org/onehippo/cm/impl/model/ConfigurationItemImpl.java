@@ -30,7 +30,7 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
     private ConfigurationNodeImpl parent;
     private final List<DefinitionItemImpl> modifiableDefinitions = new ArrayList<>();
     private final List<DefinitionItem> definitions = Collections.unmodifiableList(modifiableDefinitions);
-    private boolean delete;
+    private boolean deleted;
 
     @Override
     public String getName() {
@@ -70,10 +70,10 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
 
     @Override
     public boolean isDeleted() {
-        return delete;
+        return deleted;
     }
 
-    public void setDelete(final boolean delete) {
-        this.delete = delete;
+    public void setDeleted(final boolean deleted) {
+        this.deleted = deleted;
     }
 }
