@@ -15,7 +15,6 @@
  */
 package org.onehippo.cm.impl.model;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.onehippo.cm.api.model.ConfigurationItem;
@@ -31,7 +30,7 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
     private String path;
     private ConfigurationNode parent;
     private List<DefinitionItem> definitions;
-    private boolean delete;
+    private boolean deleted;
 
     @Override
     public String getName() {
@@ -74,10 +73,10 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
 
     @Override
     public boolean isDeleted() {
-        return delete;
+        return deleted;
     }
 
-    public void setDelete(final boolean delete) {
-        this.delete = delete;
+    public void setDeleted(final boolean deleted) {
+        this.deleted = deleted;
     }
 }

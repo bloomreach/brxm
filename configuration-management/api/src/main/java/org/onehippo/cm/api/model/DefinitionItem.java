@@ -21,5 +21,5 @@ public interface DefinitionItem {
     DefinitionNode getParent();
     boolean isRoot();
     Definition getDefinition();
-    boolean isDeleted();
+    boolean isDelete();
 }

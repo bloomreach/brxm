@@ -179,7 +179,7 @@ public abstract class AbstractBaseTest {
         }
         assertEquals(isRoot, item.isRoot());
         assertEquals(definition, item.getDefinition());
-        assertEquals(isDeleted, item.isDeleted());
+        assertEquals(isDeleted, item.isDelete());
     }
 
     DefinitionProperty assertProperty(final DefinitionNode parent,
