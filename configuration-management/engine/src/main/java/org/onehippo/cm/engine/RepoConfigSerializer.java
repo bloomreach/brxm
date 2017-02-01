@@ -56,7 +56,7 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
         tuples.addAll(representOrderable(configuration));
 
         final List<Node> projectNodes = new ArrayList<>();
-        for (Project project: configuration.getProjects().values()) {
+        for (Project project: configuration.getProjects()) {
             projectNodes.add(representProject(project));
         }
         tuples.add(createStrSeqTuple("projects", projectNodes));
@@ -69,7 +69,7 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
         tuples.addAll(representOrderable(project));
 
         final List<Node> moduleNodes = new ArrayList<>();
-        for (Module module : project.getModules().values()) {
+        for (Module module : project.getModules()) {
             moduleNodes.add(representModule(module));
         }
         tuples.add(createStrSeqTuple("modules", moduleNodes));

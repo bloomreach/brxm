@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Map;
 
 import org.onehippo.cm.api.model.Configuration;
@@ -29,6 +30,7 @@ import org.onehippo.cm.api.model.DefinitionItem;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
@@ -81,7 +83,7 @@ public abstract class AbstractBaseTest {
     }
 
     Project assertProject(final Configuration parent, final String name, final String[] after, final int moduleCount) {
-        final Project project = parent.getProjects().get(name);
+        final Project project = findByName(name, parent.getProjects());
         assertNotNull(project);
         assertEquals(name, project.getName());
         assertArrayEquals(after, project.getAfter().toArray());
@@ -91,7 +93,7 @@ public abstract class AbstractBaseTest {
     }
 
     Module assertModule(final Project parent, final String name, final String[] after, final int sourceCount) {
-        final Module module = parent.getModules().get(name);
+        final Module module = findByName(name, parent.getModules());
         assertNotNull(module);
         assertEquals(name, module.getName());
         assertArrayEquals(after, module.getAfter().toArray());
@@ -259,6 +261,10 @@ public abstract class AbstractBaseTest {
         assertEquals(valueType, actual.getType());
         assertEquals(isResource, actual.isResource());
         assertEquals(isPath, actual.isPath());
+    }
+
+    private <T extends Orderable> T findByName(final String name, final Collection<T> entries) {
+        return entries.stream().filter(e -> name.equals(e.getName())).findFirst().orElse(null);
     }
 
 }

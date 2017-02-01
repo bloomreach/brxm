@@ -15,13 +15,11 @@
  */
 package org.onehippo.cm.api.model;
 
-import java.util.Map;
+import java.util.List;
 
 public interface Configuration extends Orderable {
     /**
-     * @return The <strong>ordered</strong> project map by name for this {@link Configuration} as an
-     * immutable map and empty immutable map if none present. Note the ordering is according to serialized yaml format and not in
-     * model processing order.
+     * @return The immutable list of {@link Project}s currently in this Configuration.
      */
-    Map<String, Project> getProjects();
+    List<Project> getProjects();
 }

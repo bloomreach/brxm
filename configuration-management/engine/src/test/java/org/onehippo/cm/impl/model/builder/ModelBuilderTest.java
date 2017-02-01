@@ -36,12 +36,8 @@ import static org.junit.Assert.assertEquals;
 public class ModelBuilderTest {
 
     private final List<String> modules = new ArrayList<>();
-    private final DependencyVerifier<ConfigurationImpl> VERIFIER = new DependencyVerifier<ConfigurationImpl>() {
-        public void verifyConfigurationDependencies(final Collection<ConfigurationImpl> configurations) { }
-    };
-    private final ConfigurationTreeBuilder CONF_BUILDER = new ConfigurationTreeBuilder() {
-        public void addDefinition(final ContentDefinitionImpl definition, ConfigurationNodeImpl root) { }
-    };
+    private final DependencyVerifier VERIFIER = new DependencyVerifier();
+    private final ConfigurationTreeBuilder CONF_BUILDER = new ConfigurationTreeBuilder();
     private final DefinitionSorter DEFINITION_SORTER = new DefinitionSorter() {
         public void sort(final ModuleImpl module, final MergedModel mergedModel) {
             modules.add(module.getName());
@@ -62,18 +58,18 @@ public class ModelBuilderTest {
     public void assert_deep_sorting() throws Exception {
         // TODO: change below data structure into one loaded from test resources
 
-        ConfigurationImpl configuration1 = new ConfigurationImpl("c1").setAfter(ImmutableSet.of("c2"));
+        ConfigurationImpl configuration1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("c2"));
         ConfigurationImpl configuration2 = new ConfigurationImpl("c2");
-        ConfigurationImpl configuration3 = new ConfigurationImpl("c3").setAfter(ImmutableSet.of("c2", "c1"));
+        ConfigurationImpl configuration3 = new ConfigurationImpl("c3").addAfter(ImmutableSet.of("c2", "c1"));
 
-        ProjectImpl project1a = configuration1.addProject("p1a").setAfter(ImmutableSet.of("p1b"));
-        ProjectImpl project1b = configuration1.addProject("p1b").setAfter(ImmutableSet.of("p1c"));
+        ProjectImpl project1a = configuration1.addProject("p1a").addAfter(ImmutableSet.of("p1b"));
+        ProjectImpl project1b = configuration1.addProject("p1b").addAfter(ImmutableSet.of("p1c"));
         ProjectImpl project1c = configuration1.addProject("p1c");
         ProjectImpl project2a = configuration2.addProject("p2a");
         ProjectImpl project3a = configuration3.addProject("p3a");
 
-        project1a.addModule("m1a1").setAfter(ImmutableSet.of("m1a2"));
-        project1a.addModule("m1a2").setAfter(ImmutableSet.of("m1a3"));
+        project1a.addModule("m1a1").addAfter(ImmutableSet.of("m1a2"));
+        project1a.addModule("m1a2").addAfter(ImmutableSet.of("m1a3"));
         project1a.addModule("m1a3");
         project1b.addModule("m1b1");
         project1c.addModule("m1c1");

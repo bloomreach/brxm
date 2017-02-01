@@ -44,14 +44,14 @@ public class DefinitionSorter {
             if (definition instanceof ContentDefinitionImpl) {
                 sortedContentDefinitions.add((ContentDefinitionImpl) definition);
             } else if (definition instanceof NodeTypeDefinition) {
-                mergedModel.addNodeTypeDefinition((NodeTypeDefinition) definition);
+//                mergedModel.addNodeTypeDefinition((NodeTypeDefinition) definition);
             } else if (definition instanceof NamespaceDefinition) {
-                mergedModel.addNamespaceDefinition((NamespaceDefinition) definition);
+//                mergedModel.addNamespaceDefinition((NamespaceDefinition) definition);
             } else {
                 throw new IllegalStateException("DefinitionSorter doesn't support sorting '"
                         + definition.getClass().getName() + "'.");
             }
         });
-        module.setSortedContentDefinitions(sortedContentDefinitions);
+//        module.setSortedContentDefinitions(sortedContentDefinitions);
     }
 }

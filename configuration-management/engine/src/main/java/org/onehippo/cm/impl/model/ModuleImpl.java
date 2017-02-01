@@ -15,14 +15,17 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
+import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
@@ -31,10 +34,14 @@ public class ModuleImpl implements Module {
 
     private String name;
     private Project project;
-    private Set<String> after = new LinkedHashSet<>();
+    private Set<String> modifiableAfter = new LinkedHashSet<>();
+    private Set<String> after = Collections.unmodifiableSet(modifiableAfter);
     private Map<String, SourceImpl> modifiableSources = new LinkedHashMap<>();
     private Map<String, Source> sources = Collections.unmodifiableMap(modifiableSources);
-    private List<ContentDefinitionImpl> sortedContentDefinitions = new LinkedList<>();
+
+    private List<NamespaceDefinitionImpl> namespaces = new ArrayList<>();
+    private List<NodeTypeDefinitionImpl> nodeTypes = new ArrayList<>();
+    private List<ContentDefinitionImpl> contentDefinitions = new ArrayList<>();
 
     public ModuleImpl(final String name, final ProjectImpl project) {
         if (name == null) {
@@ -60,11 +67,15 @@ public class ModuleImpl implements Module {
 
     @Override
     public Set<String> getAfter() {
-        return Collections.unmodifiableSet(after);
+        return after;
     }
 
-    public ModuleImpl setAfter(final Set<String> after) {
-        this.after = new LinkedHashSet<>(after);
+    public Set<String> getModifiableAfter() {
+        return modifiableAfter;
+    }
+
+    public ModuleImpl addAfter(final Set<String> after) {
+        modifiableAfter.addAll(after);
         return this;
     }
 
@@ -83,11 +94,68 @@ public class ModuleImpl implements Module {
         return source;
     }
 
-    public List<ContentDefinitionImpl> getSortedContentDefinitions() {
-        return sortedContentDefinitions;
+    public List<NamespaceDefinitionImpl> getNamespaces() {
+        return namespaces;
     }
 
-    public void setSortedContentDefinitions(final List<ContentDefinitionImpl> sortedContentDefinitions) {
-        this.sortedContentDefinitions = sortedContentDefinitions;
+    public List<NodeTypeDefinitionImpl> getNodeTypes() {
+        return nodeTypes;
+    }
+
+    public List<ContentDefinitionImpl> getContentDefinitions() {
+        return contentDefinitions;
+    }
+
+    void pushDefinitions(final ModuleImpl module) {
+        // sort sources to provide consistent error reporting on conflicting definition paths.
+        final Set<Source> sortedSources = new TreeSet<>(Comparator.comparing(Source::getPath));
+        sortedSources.addAll(module.getSources().values());
+
+        // sort definitions into namespaces, node types and content
+        sortedSources.forEach(source ->
+                source.getDefinitions().forEach(definition -> {
+                    if (definition instanceof NamespaceDefinitionImpl) {
+                        namespaces.add((NamespaceDefinitionImpl) definition);
+                    } else if (definition instanceof NodeTypeDefinitionImpl) {
+                        ensureSingleSourceForNodeTypes(definition);
+                        nodeTypes.add((NodeTypeDefinitionImpl) definition);
+                    } else if (definition instanceof ContentDefinitionImpl) {
+                        contentDefinitions.add((ContentDefinitionImpl) definition);
+                    } else {
+                        throw new IllegalStateException("Failed to sort unsupported definition class '"
+                                + definition.getClass().getName() + "'.");
+                    }
+                })
+        );
+    }
+
+    public void sortDefinitions() {
+        namespaces.sort(Comparator.comparing(NamespaceDefinitionImpl::getPrefix));
+        // node types stay sorted in insertion order
+        contentDefinitions.sort(new ContentDefinitionComparator());
+    }
+
+    private void ensureSingleSourceForNodeTypes(final Definition nodeTypeDefinition) {
+        if (!nodeTypes.isEmpty()
+                && !nodeTypeDefinition.getSource().getPath().equals(nodeTypes.get(0).getSource().getPath())) {
+            final String msg = String.format("CNDs are specified in multiple sources of a module: %s and %s. "
+                    + "For proper ordering, they must be specified in a single source.",
+                    ModelUtils.formatDefinitionOrigin(nodeTypeDefinition),
+                    ModelUtils.formatDefinitionOrigin(nodeTypes.get(0)));
+            throw new IllegalStateException(msg);
+        }
+    }
+
+    private class ContentDefinitionComparator implements Comparator<ContentDefinitionImpl> {
+        public int compare(final ContentDefinitionImpl def1, final ContentDefinitionImpl def2) {
+            final String rootPath1 = def1.getNode().getPath();
+            final String rootPath2 = def2.getNode().getPath();
+
+            if (def1 != def2 && rootPath1.equals(rootPath2)) {
+                throw new IllegalStateException("Duplicate content root paths '" + rootPath1 + "' in module '"
+                        + getName() + "'.");
+            }
+            return rootPath1.compareTo(rootPath2);
+        }
     }
 }

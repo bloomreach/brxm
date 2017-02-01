@@ -31,12 +31,12 @@ import org.onehippo.cm.impl.model.builder.sorting.Sorter;
  */
 public class ModelBuilder {
 
-    private DependencyVerifier<ConfigurationImpl> dependencyVerifier = new DependencyVerifier<>();
+    private DependencyVerifier dependencyVerifier = new DependencyVerifier();
     private ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();
     private DefinitionSorter definitionSorter = new DefinitionSorter();
 
     public MergedModel build(final Collection<ConfigurationImpl> configurations) {
-        dependencyVerifier.verifyConfigurationDependencies(configurations);
+//        dependencyVerifier.verifyConfigurationDependencies(configurations);
 
         final MergedModel mergedModel =  new MergedModel();
         new Sorter<ConfigurationImpl>()
@@ -63,15 +63,15 @@ public class ModelBuilder {
     }
 
     private void augmentModelWithContentDefinitions(final MergedModel mergedModel, final ModuleImpl module) {
-        module.getSortedContentDefinitions()
-                .forEach(definition -> configurationTreeBuilder.addDefinition(definition, mergedModel.getConfigurationNode()));
+//        module.getSortedContentDefinitions()
+//                .forEach(definition -> configurationTreeBuilder.addDefinition(definition, mergedModel.getConfigurationRootNode()));
     }
 
     /**
      * Setters for unit testing purposes (dependency injection):
      */
 
-    void setDependencyVerifier(final DependencyVerifier<ConfigurationImpl> dependencyVerifier) {
+    void setDependencyVerifier(final DependencyVerifier dependencyVerifier) {
         this.dependencyVerifier = dependencyVerifier;
     }
 

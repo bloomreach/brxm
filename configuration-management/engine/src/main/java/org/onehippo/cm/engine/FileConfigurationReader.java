@@ -78,8 +78,8 @@ public class FileConfigurationReader {
         final Map<Module, ResourceInputProvider> resourceDataProviders = new HashMap<>();
 
         for (Configuration configuration : configurations.values()) {
-            for (Project project : configuration.getProjects().values()) {
-                for (Module module : project.getModules().values()) {
+            for (Project project : configuration.getProjects()) {
+                for (Module module : project.getModules()) {
                     final Path moduleRootPath =
                             FileConfigurationUtils.getModuleBasePath(repoConfigPath, module, hasMultipleModules);
                     final ResourceInputProvider provider = new FileResourceInputProvider(moduleRootPath);

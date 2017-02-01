@@ -21,13 +21,12 @@ import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
-import org.onehippo.cm.impl.model.ProjectImpl;
 import org.onehippo.cm.impl.model.builder.exceptions.CircularDependencyException;
 import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 
 public class DependencyVerifierTest {
 
-    private final DependencyVerifier<Configuration> verifier = new DependencyVerifier<>();
+    private final DependencyVerifier verifier = new DependencyVerifier();
 
     /*
      * test circular dependency detection
@@ -35,105 +34,40 @@ public class DependencyVerifierTest {
 
     @Test(expected = CircularDependencyException.class)
     public void configurations_self_circular_dependency() {
-        Configuration c1 = new ConfigurationImpl("c1").setAfter(ImmutableSet.of("c1"));
+        Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("c1"));
         Configuration c2 = new ConfigurationImpl("c2");
 
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1, c2));
+        verifier.verify(ImmutableList.of(c1, c2));
     }
 
     @Test(expected = CircularDependencyException.class)
     public void configurations_two_wise_circular_dependency() {
-        Configuration c1 = new ConfigurationImpl("c1").setAfter(ImmutableSet.of("c2"));
-        Configuration c2 = new ConfigurationImpl("c2").setAfter(ImmutableSet.of("c1"));
+        Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("c2"));
+        Configuration c2 = new ConfigurationImpl("c2").addAfter(ImmutableSet.of("c1"));
 
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1, c2));
+        verifier.verify(ImmutableList.of(c1, c2));
     }
 
     @Test(expected = CircularDependencyException.class)
     public void configurations_three_wise_circular_dependency() {
-        Configuration c1 = new ConfigurationImpl("c1").setAfter(ImmutableSet.of("c2"));
-        Configuration c2 = new ConfigurationImpl("c2").setAfter(ImmutableSet.of("c3"));
-        Configuration c3 = new ConfigurationImpl("c3").setAfter(ImmutableSet.of("c1"));
+        Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("c2"));
+        Configuration c2 = new ConfigurationImpl("c2").addAfter(ImmutableSet.of("c3"));
+        Configuration c3 = new ConfigurationImpl("c3").addAfter(ImmutableSet.of("c1"));
 
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1, c2, c3));
+        verifier.verify(ImmutableList.of(c1, c2, c3));
     }
 
     @Test(expected = CircularDependencyException.class)
     public void configurations_complex_multiple_circular_dependencies() {
         // c2 is part of 2 circular dependencies
-        Configuration c1 = new ConfigurationImpl("c1").setAfter(ImmutableSet.of("c3"));
-        Configuration c2 = new ConfigurationImpl("c2").setAfter(ImmutableSet.of("c1", "c2a"));
-        Configuration c3 = new ConfigurationImpl("c3").setAfter(ImmutableSet.of("c2"));
+        Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("c3"));
+        Configuration c2 = new ConfigurationImpl("c2").addAfter(ImmutableSet.of("c1", "c2a"));
+        Configuration c3 = new ConfigurationImpl("c3").addAfter(ImmutableSet.of("c2"));
 
-        Configuration c2a = new ConfigurationImpl("c2a").setAfter(ImmutableSet.of("c2b"));
-        Configuration c2b = new ConfigurationImpl("c2b").setAfter(ImmutableSet.of("c2"));
+        Configuration c2a = new ConfigurationImpl("c2a").addAfter(ImmutableSet.of("c2b"));
+        Configuration c2b = new ConfigurationImpl("c2b").addAfter(ImmutableSet.of("c2"));
 
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1, c2, c3, c2a, c2b));
-    }
-
-    @Test(expected = CircularDependencyException.class)
-    public void projects_self_circular_dependency() {
-        ConfigurationImpl c1 = new ConfigurationImpl("c1");
-
-        c1.addProject("p1").setAfter(ImmutableSet.of("p1"));
-        c1.addProject("p2");
-
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1));
-    }
-
-    @Test(expected = CircularDependencyException.class)
-    public void projects_two_wise_circular_dependency() {
-        ConfigurationImpl c1 = new ConfigurationImpl("c1");
-
-        c1.addProject("p1").setAfter(ImmutableSet.of("p2"));
-        c1.addProject("p2").setAfter(ImmutableSet.of("p1"));
-
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1));
-    }
-
-    @Test(expected = CircularDependencyException.class)
-    public void projects_three_wise_circular_dependency() {
-        ConfigurationImpl c1 = new ConfigurationImpl("c1");
-
-        c1.addProject("p1").setAfter(ImmutableSet.of("p2"));
-        c1.addProject("p2").setAfter(ImmutableSet.of("p3"));
-        c1.addProject("p3").setAfter(ImmutableSet.of("p1"));
-
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1));
-    }
-
-    @Test(expected = CircularDependencyException.class)
-    public void modules_self_circular_dependency() {
-        ConfigurationImpl c1 = new ConfigurationImpl("c1");
-        ProjectImpl p1 = c1.addProject("p1");
-
-        p1.addModule("m1").setAfter(ImmutableSet.of("m1"));
-        p1.addModule("m2");
-
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1));
-    }
-
-    @Test(expected = CircularDependencyException.class)
-    public void modules_two_wise_circular_dependency() {
-        ConfigurationImpl c1 = new ConfigurationImpl("c1");
-        ProjectImpl p1 = c1.addProject("p1");
-
-        p1.addModule("m1").setAfter(ImmutableSet.of("m2"));
-        p1.addModule("m2").setAfter(ImmutableSet.of("m1"));
-
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1));
-    }
-
-    @Test(expected = CircularDependencyException.class)
-    public void modules_three_wise_circular_dependency() {
-        ConfigurationImpl c1 = new ConfigurationImpl("c1");
-        ProjectImpl p1 = c1.addProject("p1");
-
-        p1.addModule("m1").setAfter(ImmutableSet.of("m2"));
-        p1.addModule("m2").setAfter(ImmutableSet.of("m3"));
-        p1.addModule("m3").setAfter(ImmutableSet.of("m1"));
-
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1));
+        verifier.verify(ImmutableList.of(c1, c2, c3, c2a, c2b));
     }
 
     /*
@@ -142,52 +76,16 @@ public class DependencyVerifierTest {
 
     @Test(expected = MissingDependencyException.class)
     public void configuration_missing_dependency() {
-        Configuration c1 = new ConfigurationImpl("c1").setAfter(ImmutableSet.of("foo"));
+        Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("foo"));
 
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1));
+        verifier.verify(ImmutableList.of(c1));
     }
 
     @Test(expected = MissingDependencyException.class)
     public void configuration_missing_dependency_again() {
-        Configuration c1 = new ConfigurationImpl("c1").setAfter(ImmutableSet.of("c1"));
-        Configuration c2 = new ConfigurationImpl("c1").setAfter(ImmutableSet.of("foo"));
+        Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("c1"));
+        Configuration c2 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("foo"));
 
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1, c2));
-    }
-
-    @Test(expected = MissingDependencyException.class)
-    public void project_missing_dependency() {
-        ConfigurationImpl c1 = new ConfigurationImpl("c1");
-        c1.addProject("p1").setAfter(ImmutableSet.of("foo"));
-
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1));
-    }
-
-    @Test(expected = MissingDependencyException.class)
-    public void project_missing_dependency_again() {
-        ConfigurationImpl c1 = new ConfigurationImpl("c1");
-        c1.addProject("p1").setAfter(ImmutableSet.of("p2"));
-        c1.addProject("p2").setAfter(ImmutableSet.of("foo"));
-
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1));
-    }
-
-    @Test(expected = MissingDependencyException.class)
-    public void module_missing_dependency() {
-        ConfigurationImpl c1 = new ConfigurationImpl("c1");
-        ProjectImpl p1 = c1.addProject("p1");
-        p1.addModule("m1").setAfter(ImmutableSet.of("foo"));
-
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1));
-    }
-
-    @Test(expected = MissingDependencyException.class)
-    public void module_missing_dependency_again() {
-        ConfigurationImpl c1 = new ConfigurationImpl("c1");
-        ProjectImpl p1 = c1.addProject("p1");
-        p1.addModule("m1").setAfter(ImmutableSet.of("m2"));
-        p1.addModule("m2").setAfter(ImmutableSet.of("foo"));
-
-        verifier.verifyConfigurationDependencies(ImmutableList.of(c1));
+        verifier.verify(ImmutableList.of(c1, c2));
     }
 }

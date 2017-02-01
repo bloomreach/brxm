@@ -21,53 +21,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.onehippo.cm.api.model.Configuration;
-import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Orderable;
-import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.impl.model.builder.exceptions.CircularDependencyException;
 import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 
 
-public class DependencyVerifier<T extends Configuration> {
+public class DependencyVerifier {
 
-    public void verifyDependencies(final Map<String, ? extends Orderable> orderables) {
-        for (Orderable orderable : orderables.values()) {
-            if (orderable.getAfter().isEmpty()) {
-                continue;
-            }
-            Set<Orderable> checked = new HashSet<>();
-            recurse(orderables, orderable, orderable, checked);
-        }
-    }
-
-    public void verifyConfigurationDependencies(final Collection<T> configurations) {
-        doVerifyDependencies(configurations);
-        for (Configuration configuration : configurations) {
-            if (configuration.getProjects() == null) {
-                continue;
-            }
-            Collection<Project> projects = configuration.getProjects().values();
-            verifyProjectDependencies(projects);
-        }
-    }
-
-    private void verifyProjectDependencies(final Collection<Project> projects) {
-        doVerifyDependencies(projects);
-        for (Project project : projects) {
-            if (project.getModules() == null) {
-                continue;
-            }
-            Collection<Module> modules = project.getModules().values();
-            verifyModuleDependencies(modules);
-        }
-    }
-
-    private void verifyModuleDependencies(final Collection<Module> modules) {
-        doVerifyDependencies(modules);
-    }
-
-    private void doVerifyDependencies(final Collection<? extends Orderable> orderableList) {
+    void verify(final Collection<? extends Orderable> orderableList) {
         Map<String, Orderable> objectMap = new HashMap<>();
         for (Orderable orderable : orderableList) {
             objectMap.put(orderable.getName(), orderable);

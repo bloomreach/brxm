@@ -19,13 +19,9 @@ package org.onehippo.cm.impl.model.builder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.onehippo.cm.api.model.Configuration;
-import org.onehippo.cm.api.model.ConfigurationProperty;
-import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.DefinitionItem;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.PropertyType;
@@ -36,18 +32,35 @@ import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.cm.impl.model.DefinitionItemImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
+import org.onehippo.cm.impl.model.ModelUtils;
 
-public class ConfigurationTreeBuilder {
+class ConfigurationTreeBuilder {
 
-    public void addDefinition(final ContentDefinitionImpl definition, ConfigurationNodeImpl root) {
-        final ConfigurationNodeImpl definitionRoot = getOrCreateDefinitionRoot(definition, root);
+    private final ConfigurationNodeImpl root = new ConfigurationNodeImpl();
 
-        augment(definitionRoot, definition.getModifiableNode());
+    ConfigurationTreeBuilder() {
+        root.setPath("/");
+        root.setName("");
     }
 
-    private void augment(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
+    ConfigurationNodeImpl build() {
+        // validation of the input and construction of the tree happens at "push time".
+        return root;
+    }
+
+    void push(final ContentDefinitionImpl definition) {
+        final ConfigurationNodeImpl definitionRoot = getOrCreateDefinitionRoot(definition);
+
+        merge(definitionRoot, definition.getModifiableNode());
+    }
+
+    /**
+     * Recursively merge a tree of {@link DefinitionNodeImpl}s and {@link DefinitionPropertyImpl}s
+     * onto the tree of {@link ConfigurationNodeImpl}s and {@link ConfigurationPropertyImpl}s.
+     */
+    private void merge(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
         for (Map.Entry<String, DefinitionPropertyImpl> propertyEntry : definitionNode.getModifiableProperties().entrySet()) {
-            createProperty(node, propertyEntry);
+            setProperty(node, propertyEntry);
         }
 
         final Map<String, ConfigurationNodeImpl> children = node.getModifiableNodes();
@@ -58,14 +71,13 @@ public class ConfigurationTreeBuilder {
             if (children.containsKey(name)) {
                 child = children.get(name);
             } else {
-                child = createChildNode(node, definitionChild);
+                child = createChildNode(node, definitionChild.getName(), definitionChild);
             }
-            augment(child, definitionChild);
+            merge(child, definitionChild);
         }
     }
 
-    private ConfigurationNodeImpl getOrCreateDefinitionRoot(final ContentDefinition definition,
-                                                            final ConfigurationNodeImpl root) {
+    private ConfigurationNodeImpl getOrCreateDefinitionRoot(final ContentDefinitionImpl definition) {
         final String definitionRootPath = definition.getNode().getPath();
         final String[] pathSegments = getPathSegments(definitionRootPath);
         int segmentsConsumed = 0;
@@ -78,9 +90,9 @@ public class ConfigurationTreeBuilder {
         }
 
         if (pathSegments.length > segmentsConsumed + 1) {
-            // this definition is rooted more than 1 node level deeper than a current leaf node of the model.
+            // this definition is rooted more than 1 node level deeper than a leaf node of the current tree.
             // that's unsupported, because it is likely to create models that cannot be persisted to JCR.
-            final String culprit = getDefinitionOrigin(definition);
+            final String culprit = ModelUtils.formatDefinitionOrigin(definition);
             String msg = String.format("%s contains definition rooted at unreachable node '%s'. "
                     + "Closest ancestor is at '%s'.", culprit, definitionRootPath,
                       definitionRoot.getPath());
@@ -88,61 +100,62 @@ public class ConfigurationTreeBuilder {
         }
 
         if (pathSegments.length > segmentsConsumed) {
-            definitionRoot = createChildNode(definitionRoot, pathSegments[segmentsConsumed]);
+            definitionRoot = createChildNode(definitionRoot, pathSegments[segmentsConsumed], definition.getModifiableNode());
         }
 
         return definitionRoot;
     }
 
-    private ConfigurationNodeImpl createChildNode(final ConfigurationNodeImpl parent,
-                                                  final DefinitionItemImpl definitionNode) {
-        final ConfigurationNodeImpl node = createChildNode(parent, definitionNode.getName());
-        node.addDefinitionItem(definitionNode);
-        return node;
-    }
-
-    private ConfigurationNodeImpl createChildNode(final ConfigurationNodeImpl parent, final String name) {
+    private ConfigurationNodeImpl createChildNode(final ConfigurationNodeImpl parent, final String name,
+                                                  final DefinitionItemImpl definitionItem) {
         final ConfigurationNodeImpl node = new ConfigurationNodeImpl();
         final boolean parentIsRoot = parent.getParent() == null;
 
         node.setName(name);
         node.setParent(parent);
         node.setPath((parentIsRoot ? "" : parent.getPath()) + "/" + name);
+        node.addDefinitionItem(definitionItem);
 
         parent.addNode(name, node);
 
         return node;
     }
 
-    private ConfigurationPropertyImpl createProperty(final ConfigurationNodeImpl parent,
-                                                     final Map.Entry<String, DefinitionPropertyImpl> entry) {
-        final Map<String, ConfigurationProperty> properties = parent.getProperties();
+    private ConfigurationPropertyImpl setProperty(final ConfigurationNodeImpl parent,
+                                                  final Map.Entry<String, DefinitionPropertyImpl> entry) {
+        final Map<String, ConfigurationPropertyImpl> properties = parent.getModifiableProperties();
         final String name = entry.getKey();
         final DefinitionPropertyImpl definitionProperty = entry.getValue();
 
+        ConfigurationPropertyImpl property;
         if (properties.containsKey(name)) {
-            final String culprit = getDefinitionOrigin(definitionProperty.getDefinition());
-            final String baseline = properties.get(name)
-                    .getDefinitions()
-                    .stream()
-                    .map(DefinitionItem::getDefinition)
-                    .map(this::getDefinitionOrigin)
-                    .collect(Collectors.toList())
-                    .toString();
+            // property already exists. By default, apply set/override behaviour
+            property = properties.get(name);
+            if (property.getType() != definitionProperty.getType()) {
+                final String culprit = ModelUtils.formatDefinitionOrigin(definitionProperty.getDefinition());
+                final String msg = String.format("Property %s already exists with type %s, but type %s is requested in %s.",
+                        property.getPath(), property.getType(), definitionProperty.getType(), culprit);
+                throw new IllegalStateException(msg);
+            }
 
-            final String msg = String.format("%s: Node '%s' already has property '%s'. This property has been created by %s.",
-                    culprit, parent.getPath(), name, baseline);
-            throw new IllegalStateException(msg);
+            if (property.getValueType() != definitionProperty.getValueType()) {
+                final String culprit = ModelUtils.formatDefinitionOrigin(definitionProperty.getDefinition());
+                final String msg = String.format("Property %s already exists with value type %s, but value type %s is requested in %s.",
+                        property.getPath(), property.getValueType(), definitionProperty.getValueType(), culprit);
+                throw new IllegalStateException(msg);
+            }
+        } else {
+            // create new property
+            property = new ConfigurationPropertyImpl();
+
+            property.setName(name);
+            property.setParent(parent);
+            property.setPath(parent.getPath() + "/" + name);
+            property.addDefinitionItem(definitionProperty);
+            property.setType(definitionProperty.getType());
+            property.setValueType(definitionProperty.getValueType());
         }
 
-        final ConfigurationPropertyImpl property = new ConfigurationPropertyImpl();
-
-        property.setName(name);
-        property.setParent(parent);
-        property.setPath(parent.getPath() + "/" + name);
-        property.addDefinitionItem(definitionProperty);
-        property.setType(definitionProperty.getType());
-        property.setValueType(definitionProperty.getValueType());
         if (PropertyType.SINGLE == definitionProperty.getType()) {
             property.setValue(definitionProperty.getValue());
         } else {
@@ -173,7 +186,7 @@ public class ConfigurationTreeBuilder {
         return segments.toArray(new String[segments.size()]);
     }
 
-    // TODO: collocate below logic with path validation from AbstractBaseParser - encoding/escaping is TBD.
+    // TODO: collocate below logic with path validation from AbstractBaseParser - encoding/escaping is pending HCM-14.
     private int nextUnescapedSlash(final String path, final int offset) {
         boolean escaped = false;
         for (int i = offset + 1; i < path.length(); i++) {
@@ -195,16 +208,4 @@ public class ConfigurationTreeBuilder {
         return path.length();
     }
 
-    private String getDefinitionOrigin(final Definition definition) {
-        final Source source = definition.getSource();
-        final Module module = source.getModule();
-        final Project project = module.getProject();
-        final Configuration configuration = project.getConfiguration();
-
-        return String.format("%s/%s/%s [%s]",
-                configuration.getName(),
-                project.getName(),
-                module.getName(),
-                source.getPath());
-    }
 }

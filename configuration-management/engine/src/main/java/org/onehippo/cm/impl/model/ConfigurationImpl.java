@@ -15,21 +15,28 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.impl.model.builder.sorting.OrderableComparator;
 
 public class ConfigurationImpl implements Configuration {
 
     private String name;
-    private Set<String> after = new LinkedHashSet<>();
-    private Map<String, ProjectImpl> modifiableProjects = new LinkedHashMap<>();
-    private Map<String, Project> projects = Collections.unmodifiableMap(modifiableProjects);
+
+    private Set<String> modifiableAfter = new LinkedHashSet<>();
+    private Set<String> after = Collections.unmodifiableSet(modifiableAfter);
+
+    private final List<ProjectImpl> modifiableProjects = new ArrayList<>();
+    private final List<Project> projects = Collections.unmodifiableList(modifiableProjects);
+    private final Map<String, ProjectImpl> projectMap = new HashMap<>();
 
     public ConfigurationImpl(final String name) {
         if (name == null) {
@@ -45,27 +52,39 @@ public class ConfigurationImpl implements Configuration {
 
     @Override
     public Set<String> getAfter() {
-        return Collections.unmodifiableSet(after);
+        return after;
     }
 
-    public ConfigurationImpl setAfter(final Set<String> after) {
-        this.after = new LinkedHashSet<>(after);
+    public ConfigurationImpl addAfter(final Set<String> after) {
+        modifiableAfter.addAll(after);
         return this;
     }
 
     @Override
-    public Map<String, Project> getProjects() {
+    public List<Project> getProjects() {
         return projects;
     }
 
-    public Map<String, ProjectImpl> getModifiableProjects() {
+    public List<ProjectImpl> getModifiableProjects() {
         return modifiableProjects;
     }
 
     public ProjectImpl addProject(final String name) {
         final ProjectImpl project = new ProjectImpl(name, this);
-        modifiableProjects.put(name, project);
+        projectMap.put(name, project);
+        modifiableProjects.add(project);
         return project;
     }
 
+    public void sortProjects() {
+        modifiableProjects.sort(new OrderableComparator<>());
+    }
+
+    public void pushProject(final ProjectImpl project) {
+        final String name = project.getName();
+        final ProjectImpl consolidated = projectMap.containsKey(name) ? projectMap.get(name) : addProject(name);
+
+        consolidated.addAfter(project.getAfter());
+        project.getModifiableModules().forEach(consolidated::pushModule);
+    }
 }

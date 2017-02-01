@@ -16,40 +16,49 @@
 
 package org.onehippo.cm.impl.model.builder;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.onehippo.cm.api.model.NamespaceDefinition;
-import org.onehippo.cm.api.model.NodeTypeDefinition;
+import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
+import org.onehippo.cm.impl.model.NamespaceDefinitionImpl;
+import org.onehippo.cm.impl.model.NodeTypeDefinitionImpl;
 
 public class MergedModel {
-    private final List<NamespaceDefinition> namespaceDefinitions = new LinkedList<>();
-    private final List<NodeTypeDefinition> nodeTypeDefinitions = new LinkedList<>();
-    private final ConfigurationNodeImpl configurationNode = new ConfigurationNodeImpl();
+    private final List<NamespaceDefinitionImpl> namespaceDefinitions = new ArrayList<>();
+    private final List<NodeTypeDefinitionImpl> nodeTypeDefinitions = new ArrayList<>();
+    private ConfigurationNodeImpl configurationRootNode;
+    private List<ConfigurationImpl> sortedConfigurations;
 
-    public MergedModel() {
-        configurationNode.setName("");
-        configurationNode.setPath("/");
+    public List<ConfigurationImpl> getSortedConfigurations() {
+        return sortedConfigurations;
     }
 
-    public void addNamespaceDefinition(final NamespaceDefinition definition) {
-        namespaceDefinitions.add(definition);
+    void setSortedConfigurations(final List<ConfigurationImpl> sortedConfigurations) {
+        this.sortedConfigurations = sortedConfigurations;
     }
 
-    public List<NamespaceDefinition> getNamespaceDefinitions() {
+    public void addNamespaceDefinitions(final List<NamespaceDefinitionImpl> definitions) {
+        namespaceDefinitions.addAll(definitions);
+    }
+
+    public List<NamespaceDefinitionImpl> getNamespaceDefinitions() {
         return namespaceDefinitions;
     }
 
-    public void addNodeTypeDefinition(final NodeTypeDefinition definition) {
-        nodeTypeDefinitions.add(definition);
+    public void addNodeTypeDefinitions(final List<NodeTypeDefinitionImpl> definitions) {
+        nodeTypeDefinitions.addAll(definitions);
     }
 
-    public List<NodeTypeDefinition> getNodeTypeDefinitions() {
+    public List<NodeTypeDefinitionImpl> getNodeTypeDefinitions() {
         return nodeTypeDefinitions;
     }
 
-    public ConfigurationNodeImpl getConfigurationNode() {
-        return configurationNode;
+    public ConfigurationNodeImpl getConfigurationRootNode() {
+        return configurationRootNode;
+    }
+
+    public void setConfigurationRootNode(final ConfigurationNodeImpl configurationRootNode) {
+        this.configurationRootNode = configurationRootNode;
     }
 }
