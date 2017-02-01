@@ -34,7 +34,7 @@ public class CompositeHstCache implements HstCache {
 
     private static final Logger log = LoggerFactory.getLogger(CompositeHstCache.class);
 
-    private final Ehcache ehcache;
+    final Ehcache ehcache;
 
     private Cache staleCache;
 
@@ -49,7 +49,7 @@ public class CompositeHstCache implements HstCache {
     private final static Boolean DUMMY_VALUE = Boolean.TRUE;
 
     private volatile int invalidationCounter;
-    private CacheStats cacheStats;
+    CacheStats cacheStats;
 
     public CompositeHstCache(final Ehcache ehcache) {
         this(ehcache, new PersistenceConfiguration().strategy(PersistenceConfiguration.Strategy.NONE));
@@ -143,9 +143,14 @@ public class CompositeHstCache implements HstCache {
                 if (secondLevelElement.getTimeToLive() == 0) {
                     // the element got a time to live of 0 (never happens normally) meaning eternal in primary ehcache. newTTL can also
                     // be eternal
+                    log.info("second level cache entry for '{}' has a TTL of '0' implying forever valid. Restoring it in " +
+                            "primary cache with TTL forever", secondLevelElement.getObjectKey());
                     newTTL = 0;
                 } else {
                     newTTL = secondLevelElement.getTimeToLive() - timeLived;
+                    log.info("second level cache entry for '{}' has a TTL of '{}' and has lived for '{}' hence restoring it  " +
+                            "in primary cache with TTL '{}'", secondLevelElement.getObjectKey(), secondLevelElement.getTimeToLive(),
+                            timeLived, newTTL);
                 }
 
                 if (newTTL < 0) {
@@ -165,7 +170,7 @@ public class CompositeHstCache implements HstCache {
                 }
 
                 elementBasedOnKeyInstance.setTimeToLive((int)newTTL);
-                cacheStats.incrementFirstLevelCacheHits();
+                cacheStats.incrementFirstLevelCachePuts();
                 ehcache.put(elementBasedOnKeyInstance);
                 return new CacheElementEhCacheImpl(elementBasedOnKeyInstance);
             }
@@ -184,7 +189,7 @@ public class CompositeHstCache implements HstCache {
                         " recreating the element to be cached which will later on replace the stale item in primary cache.", staleElement.getCreationTime());
                 // use key instance to clear the lock on the key instance
                 final Element elementBasedOnKeyInstance = new Element(key, staleElement.getObjectValue(), 1, staleElement.getCreationTime(), 0, 0, 0);
-                cacheStats.incrementFirstLevelCacheHits();
+                cacheStats.incrementFirstLevelCachePuts();
                 ehcache.put(elementBasedOnKeyInstance);
                 return null;
             }
@@ -265,6 +270,7 @@ public class CompositeHstCache implements HstCache {
                 // cached element
                 cacheStats.incrementSecondLevelCachePuts();
                 secondLevelCache.put(cacheElem.getKey(), cacheElem.getElement().clone());
+
             } catch (CloneNotSupportedException e) {
                 log.warn("Could not clone '{}' : {}", cacheElem.getElement().getObjectKey(), e.toString());
             }

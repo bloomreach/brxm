@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,11 @@ public class CacheStats implements CacheStatsMXBean {
     @Override
     public double getCacheMissRate() {
         return missRate(cacheHits, cacheMisses);
+    }
+
+    public void reset() {
+        cacheHits.set(0);
+        cacheMisses.set(0);
     }
 
     @Override
@@ -240,4 +245,11 @@ public class CacheStats implements CacheStatsMXBean {
         return 1 - hitRate(hits, misses);
     }
 
+    @Override
+    public void resetAll() {
+        reset();
+        resetFirstLevelCache();
+        resetSecondLevelCache();
+        resetStaleCache();
+    }
 }
