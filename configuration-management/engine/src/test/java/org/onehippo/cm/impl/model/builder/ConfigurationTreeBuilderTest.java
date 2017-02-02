@@ -18,11 +18,12 @@ package org.onehippo.cm.impl.model.builder;
 
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigurationNode;
+import org.onehippo.cm.api.model.ConfigurationProperty;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.PropertyType;
+import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 
@@ -214,9 +215,8 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         assertEquals("[]", sortedCollectionToString(f.getNodes()));
     }
 
-    @Ignore
     @Test
-    public void conflicting_property() throws Exception {
+    public void override_single_property() throws Exception {
         final String yaml = "instructions:\n"
                 + "- config:\n"
                 + "  - /a:\n"
@@ -229,14 +229,97 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final List<Definition> definitions = parseNoSort(yaml);
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ContentDefinitionImpl)definitions.get(1));
+        final ConfigurationNodeImpl root = builder.build();
+
+        assertEquals("[]", sortedCollectionToString(root.getProperties()));
+        assertEquals("[a]", sortedCollectionToString(root.getNodes()));
+        final ConfigurationNode a = root.getNodes().get("a");
+        assertEquals("[property1]", sortedCollectionToString(a.getProperties()));
+        assertEquals("[b]", sortedCollectionToString(a.getNodes()));
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[property2]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[]", sortedCollectionToString(b.getNodes()));
+        final ConfigurationProperty property2 = b.getProperties().get("property2");
+        assertEquals(PropertyType.SINGLE, property2.getType());
+        assertEquals(ValueType.STRING, property2.getValueType());
+        assertEquals("bla3", property2.getValue().getString());
+    }
+
+    @Test
+    public void override_list_property() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - property1: bla1\n"
+                + "    - /b:\n"
+                + "      - property2: [bla2]\n"
+                + "  - /a/b:\n"
+                + "    - property2: [bla3, bla4]";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ContentDefinitionImpl)definitions.get(1));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[property2]", sortedCollectionToString(b.getProperties()));
+        final ConfigurationProperty property2 = b.getProperties().get("property2");
+        assertEquals(PropertyType.LIST, property2.getType());
+        assertEquals(ValueType.STRING, property2.getValueType());
+        assertEquals("bla3", property2.getValues()[0].getString());
+        assertEquals("bla4", property2.getValues()[1].getString());
+    }
+
+    @Test
+    public void reject_property_if_different_multiplicity() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - property1: bla1\n"
+                + "    - /b:\n"
+                + "      - property2: bla2\n"
+                + "  - /a/b:\n"
+                + "    - property2: [bla3, bla4]";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl)definitions.get(0));
 
         try {
-            builder.push((ContentDefinitionImpl)definitions.get(1));
+            builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("test-configuration/test-project/test-module [string]: Node '/a/b' already has property 'property2'. This property has been created by [test-configuration/test-project/test-module [string]].", e.getMessage());
+            assertEquals("Property /a/b/property2 already exists with type single, but type list is requested in test-configuration/test-project/test-module [string].", e.getMessage());
         } catch (Exception e) {
-            fail("Unexpected exception type");
+            fail("Unexpected exception");
+        }
+    }
+
+    @Test
+    public void reject_property_if_different_value_type() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - property1: bla1\n"
+                + "    - /b:\n"
+                + "      - property2: [bla2]\n"
+                + "  - /a/b:\n"
+                + "    - property2: [34]";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl)definitions.get(0));
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            fail("Should have thrown exception");
+        } catch (IllegalStateException e) {
+            assertEquals("Property /a/b/property2 already exists with value type string, but value type long is requested in test-configuration/test-project/test-module [string].", e.getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception");
         }
     }
 }

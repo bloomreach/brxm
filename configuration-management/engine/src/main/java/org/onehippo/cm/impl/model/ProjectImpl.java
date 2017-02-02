@@ -94,6 +94,7 @@ public class ProjectImpl implements Project {
 
     void pushModule(final ModuleImpl module) {
         final String name = module.getName();
+        // TODO: do we want to support merging modules?
         final ModuleImpl consolidated = moduleMap.containsKey(name) ? moduleMap.get(name) : addModule(name);
 
         consolidated.addAfter(module.getAfter());

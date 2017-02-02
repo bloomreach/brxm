@@ -240,4 +240,61 @@ public class MergedModelBuilderTest {
         assertEquals("px3", projects.get(2).getName());
         assertEquals("pa1", projects.get(3).getName());
     }
+
+    @Test
+    public void merged_modules() {
+        // TODO: do we actually want to support merging modules, or should we reject that?
+    }
+
+    @Test
+    public void dependent_modules() {
+        final ConfigurationImpl c1a = new ConfigurationImpl("c1");
+        final ConfigurationImpl c1b = new ConfigurationImpl("c1");
+        c1a.addProject("p1").addModule("m1").addAfter(ImmutableSet.of("m2"));
+        c1b.addProject("p1").addModule("m2");
+
+        MergedModel model = new MergedModelBuilder().push(c1a).push(c1b).build();
+
+        List<ConfigurationImpl> configurations = model.getSortedConfigurations();
+        List<ProjectImpl> projects = configurations.get(0).getModifiableProjects();
+        List<ModuleImpl> modules = projects.get(0).getModifiableModules();
+        assertEquals(2, modules.size());
+        assertEquals("m2", modules.get(0).getName());
+        assertEquals("m1", modules.get(1).getName());
+
+        model = new MergedModelBuilder().push(c1b).push(c1a).build();
+
+        configurations = model.getSortedConfigurations();
+        projects = configurations.get(0).getModifiableProjects();
+        modules = projects.get(0).getModifiableModules();
+        assertEquals(2, modules.size());
+        assertEquals("m2", modules.get(0).getName());
+        assertEquals("m1", modules.get(1).getName());
+    }
+
+    @Test
+    public void merged_module_dependencies() {
+        final ConfigurationImpl c1a = new ConfigurationImpl("c1");
+        final ConfigurationImpl c1b = new ConfigurationImpl("c1");
+
+        final ProjectImpl p1a = c1a.addProject("p1");
+        final ProjectImpl p1b = c1b.addProject("p1");
+
+        p1a.addModule("ma1").addAfter(ImmutableSet.of("mx1", "mx2"));
+        p1a.addModule("mx1");
+        p1a.addModule("mx3").addAfter(ImmutableSet.of("mx2"));
+        p1b.addModule("ma1").addAfter(ImmutableSet.of("mx1", "mx3"));
+        p1b.addModule("mx2");
+
+        MergedModel model = new MergedModelBuilder().push(c1a).push(c1b).build();
+
+        List<ConfigurationImpl> configurations = model.getSortedConfigurations();
+        List<ProjectImpl> projects = configurations.get(0).getModifiableProjects();
+        List<ModuleImpl> modules = projects.get(0).getModifiableModules();
+
+        assertEquals("mx1", modules.get(0).getName());
+        assertEquals("mx2", modules.get(1).getName());
+        assertEquals("mx3", modules.get(2).getName());
+        assertEquals("ma1", modules.get(3).getName());
+    }
 }
