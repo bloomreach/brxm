@@ -15,11 +15,9 @@
  */
 package org.onehippo.cm.impl.model.builder.sorting;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.ImmutableList;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.Orderable;
@@ -27,7 +25,7 @@ import org.onehippo.cm.impl.model.OrderableImpl;
 
 import static org.junit.Assert.assertEquals;
 
-public class SorterTest {
+public class OrderableComparatorTest {
 
     @Test
     public void sort_two_orderables() {
@@ -35,8 +33,8 @@ public class SorterTest {
         Orderable o1 = new OrderableImpl("o1", "o2");
         Orderable o2 = new OrderableImpl("o2");
 
-        assertEquals("[o2, o1]", names(ordered(ImmutableList.of(o1, o2))));
-        assertEquals("[o2, o1]", names(ordered(ImmutableList.of(o2, o1))));
+        assertEquals("[o2, o1]", names(ordered(Arrays.asList(o1, o2))));
+        assertEquals("[o2, o1]", names(ordered(Arrays.asList(o2, o1))));
     }
 
     @Test
@@ -46,12 +44,12 @@ public class SorterTest {
         Orderable o2 = new OrderableImpl("o2", "o3");
         Orderable o3 = new OrderableImpl("o3");
 
-        assertEquals("[o3, o2, o1]", names(ordered(ImmutableList.of(o1, o2, o3))));
-        assertEquals("[o3, o2, o1]", names(ordered(ImmutableList.of(o1, o3, o2))));
-        assertEquals("[o3, o2, o1]", names(ordered(ImmutableList.of(o2, o1, o3))));
-        assertEquals("[o3, o2, o1]", names(ordered(ImmutableList.of(o2, o3, o1))));
-        assertEquals("[o3, o2, o1]", names(ordered(ImmutableList.of(o3, o1, o2))));
-        assertEquals("[o3, o2, o1]", names(ordered(ImmutableList.of(o3, o2, o1))));
+        assertEquals("[o3, o2, o1]", names(ordered(Arrays.asList(o1, o2, o3))));
+        assertEquals("[o3, o2, o1]", names(ordered(Arrays.asList(o1, o3, o2))));
+        assertEquals("[o3, o2, o1]", names(ordered(Arrays.asList(o2, o1, o3))));
+        assertEquals("[o3, o2, o1]", names(ordered(Arrays.asList(o2, o3, o1))));
+        assertEquals("[o3, o2, o1]", names(ordered(Arrays.asList(o3, o1, o2))));
+        assertEquals("[o3, o2, o1]", names(ordered(Arrays.asList(o3, o2, o1))));
     }
 
     @Test
@@ -61,12 +59,12 @@ public class SorterTest {
         Orderable o2 = new OrderableImpl("o2");
         Orderable o3 = new OrderableImpl("o3", "o1, o2");
 
-        assertEquals("[o2, o1, o3]", names(ordered(ImmutableList.of(o1, o2, o3))));
-        assertEquals("[o2, o1, o3]", names(ordered(ImmutableList.of(o1, o3, o2))));
-        assertEquals("[o2, o1, o3]", names(ordered(ImmutableList.of(o2, o1, o3))));
-        assertEquals("[o2, o1, o3]", names(ordered(ImmutableList.of(o2, o3, o1))));
-        assertEquals("[o2, o1, o3]", names(ordered(ImmutableList.of(o3, o1, o2))));
-        assertEquals("[o2, o1, o3]", names(ordered(ImmutableList.of(o3, o2, o1))));
+        assertEquals("[o2, o1, o3]", names(ordered(Arrays.asList(o1, o2, o3))));
+        assertEquals("[o2, o1, o3]", names(ordered(Arrays.asList(o1, o3, o2))));
+        assertEquals("[o2, o1, o3]", names(ordered(Arrays.asList(o2, o1, o3))));
+        assertEquals("[o2, o1, o3]", names(ordered(Arrays.asList(o2, o3, o1))));
+        assertEquals("[o2, o1, o3]", names(ordered(Arrays.asList(o3, o1, o2))));
+        assertEquals("[o2, o1, o3]", names(ordered(Arrays.asList(o3, o2, o1))));
     }
 
     @Test
@@ -76,19 +74,20 @@ public class SorterTest {
         Orderable o2 = new OrderableImpl("o2");
         Orderable o3 = new OrderableImpl("o3", "o2");
 
-        assertEquals("[o2, o1, o3]", names(ordered(ImmutableList.of(o1, o2, o3))));
-        assertEquals("[o2, o1, o3]", names(ordered(ImmutableList.of(o1, o3, o2))));
-        assertEquals("[o2, o1, o3]", names(ordered(ImmutableList.of(o2, o1, o3))));
-        assertEquals("[o2, o1, o3]", names(ordered(ImmutableList.of(o2, o3, o1))));
-        assertEquals("[o2, o1, o3]", names(ordered(ImmutableList.of(o3, o1, o2))));
-        assertEquals("[o2, o1, o3]", names(ordered(ImmutableList.of(o3, o2, o1))));
+        assertEquals("[o2, o1, o3]", names(ordered(Arrays.asList(o1, o2, o3))));
+        assertEquals("[o2, o1, o3]", names(ordered(Arrays.asList(o1, o3, o2))));
+        assertEquals("[o2, o1, o3]", names(ordered(Arrays.asList(o2, o1, o3))));
+        assertEquals("[o2, o1, o3]", names(ordered(Arrays.asList(o2, o3, o1))));
+        assertEquals("[o2, o1, o3]", names(ordered(Arrays.asList(o3, o1, o2))));
+        assertEquals("[o2, o1, o3]", names(ordered(Arrays.asList(o3, o2, o1))));
     }
 
-    private Set<Orderable> ordered(Collection<Orderable> orderables) {
-        return new Sorter<>().sort(orderables);
+    private List<Orderable> ordered(List<Orderable> orderables) {
+        orderables.sort(new OrderableComparator<>());
+        return orderables;
     }
 
-    private String names(Set<Orderable> ordered) {
+    private String names(List<Orderable> ordered) {
         return ordered.stream().map(Orderable::getName).collect(Collectors.toList()).toString();
     }
 }

@@ -29,19 +29,22 @@ import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.impl.model.builder.MergedModel;
 
 public class ModuleImpl implements Module {
 
-    private String name;
-    private Project project;
-    private Set<String> modifiableAfter = new LinkedHashSet<>();
-    private Set<String> after = Collections.unmodifiableSet(modifiableAfter);
-    private Map<String, SourceImpl> modifiableSources = new LinkedHashMap<>();
-    private Map<String, Source> sources = Collections.unmodifiableMap(modifiableSources);
+    private final String name;
+    private final Project project;
 
-    private List<NamespaceDefinitionImpl> namespaces = new ArrayList<>();
-    private List<NodeTypeDefinitionImpl> nodeTypes = new ArrayList<>();
-    private List<ContentDefinitionImpl> contentDefinitions = new ArrayList<>();
+    private final Set<String> modifiableAfter = new LinkedHashSet<>();
+    private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
+
+    private final Map<String, SourceImpl> modifiableSources = new LinkedHashMap<>();
+    private final Map<String, Source> sources = Collections.unmodifiableMap(modifiableSources);
+
+    private final List<NamespaceDefinitionImpl> namespaces = new ArrayList<>();
+    private final List<NodeTypeDefinitionImpl> nodeTypes = new ArrayList<>();
+    private final List<ContentDefinitionImpl> contentDefinitions = new ArrayList<>();
 
     public ModuleImpl(final String name, final ProjectImpl project) {
         if (name == null) {
@@ -70,10 +73,6 @@ public class ModuleImpl implements Module {
         return after;
     }
 
-    public Set<String> getModifiableAfter() {
-        return modifiableAfter;
-    }
-
     public ModuleImpl addAfter(final Set<String> after) {
         modifiableAfter.addAll(after);
         return this;
@@ -94,14 +93,26 @@ public class ModuleImpl implements Module {
         return source;
     }
 
+    /**
+     * @return a sorted list of namespace definitions.
+     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     */
     public List<NamespaceDefinitionImpl> getNamespaces() {
         return namespaces;
     }
 
+    /**
+     * @return a lost of node type definitions in insertion order.
+     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     */
     public List<NodeTypeDefinitionImpl> getNodeTypes() {
         return nodeTypes;
     }
 
+    /**
+     * @return a sorted list of content (or config) definitions.
+     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     */
     public List<ContentDefinitionImpl> getContentDefinitions() {
         return contentDefinitions;
     }

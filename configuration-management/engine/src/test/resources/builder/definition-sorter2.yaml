@@ -10,5 +10,5 @@ instructions:
     - /a/b/c/b:
       - propertyB4: bli4
   - namespace:
-    - prefix: myhippoproject2
-      uri: http://www.onehippo.org/myhippoproject2/nt/1.0
+    - prefix: hishippoproject
+      uri: http://www.onehippo.org/hishippoproject/nt/1.0

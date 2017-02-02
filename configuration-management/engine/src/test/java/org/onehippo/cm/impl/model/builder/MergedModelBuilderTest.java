@@ -17,19 +17,23 @@
 package org.onehippo.cm.impl.model.builder;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
+import org.onehippo.cm.impl.model.NamespaceDefinitionImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
-public class MergedModelBuilderTest {
+public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void empty_builder() {
@@ -296,5 +300,124 @@ public class MergedModelBuilderTest {
         assertEquals("mx2", modules.get(1).getName());
         assertEquals("mx3", modules.get(2).getName());
         assertEquals("ma1", modules.get(3).getName());
+    }
+
+    @Test
+    public void sort_definitions_of_single_source() throws Exception {
+        final ConfigurationImpl c1 = new ConfigurationImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        loadYAMLFile("builder/definition-sorter.yaml", m1);
+
+        MergedModel model = new MergedModelBuilder().push(c1).build();
+
+        assertEquals(1, model.getNamespaceDefinitions().size());
+        assertEquals(1, model.getNodeTypeDefinitions().size());
+
+        final List<ContentDefinitionImpl> definitions = model.getSortedConfigurations().get(0)
+                .getModifiableProjects().get(0)
+                .getModifiableModules().get(0)
+                .getContentDefinitions();
+
+        assertEquals(5, definitions.size());
+        String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
+        assertEquals("[/a, /a/b, /a/b/a, /a/b/c, /a/b/c/d]", roots);
+    }
+
+    @Test
+    public void sort_definitions_from_multiple_files() throws Exception {
+        final ConfigurationImpl c1 = new ConfigurationImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        loadYAMLFile("builder/definition-sorter.yaml", m1);
+        loadYAMLFile("builder/definition-sorter2.yaml", m1);
+
+        MergedModel model = new MergedModelBuilder().push(c1).build();
+
+        String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
+        assertEquals("[hishippoproject, myhippoproject]", namespaces);
+        assertEquals(1, model.getNodeTypeDefinitions().size());
+
+        final List<ContentDefinitionImpl> definitions = model.getSortedConfigurations().get(0)
+                .getModifiableProjects().get(0)
+                .getModifiableModules().get(0)
+                .getContentDefinitions();
+
+        assertEquals(9, definitions.size());
+        String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
+        assertEquals("[/a, /a/a, /a/b, /a/b/a, /a/b/c, /a/b/c/b, /a/b/c/d, /a/b/c/d/e, /b]", roots);
+    }
+
+    @Test
+    public void sort_definitions_from_multiple_files_reversed_load_order() throws Exception {
+        final ConfigurationImpl c1 = new ConfigurationImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        loadYAMLFile("builder/definition-sorter2.yaml", m1);
+        loadYAMLFile("builder/definition-sorter.yaml", m1);
+
+        MergedModel model = new MergedModelBuilder().push(c1).build();
+
+        String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
+        assertEquals("[hishippoproject, myhippoproject]", namespaces);
+        assertEquals(1, model.getNodeTypeDefinitions().size());
+
+        final List<ContentDefinitionImpl> definitions = model.getSortedConfigurations().get(0)
+                .getModifiableProjects().get(0)
+                .getModifiableModules().get(0)
+                .getContentDefinitions();
+
+        assertEquals(9, definitions.size());
+        String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
+        assertEquals("[/a, /a/a, /a/b, /a/b/a, /a/b/c, /a/b/c/b, /a/b/c/d, /a/b/c/d/e, /b]", roots);
+    }
+
+    @Test
+    public void sources_with_same_root() throws Exception {
+        final ConfigurationImpl c1 = new ConfigurationImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        final String yaml = "instructions:\n"
+                + "  - config:\n"
+                + "    - /a/b:\n"
+                + "      - propertyX: blaX";
+
+        loadYAMLFile("builder/definition-sorter.yaml", m1);
+        loadYAMLString(yaml, m1);
+
+        MergedModelBuilder builder = new MergedModelBuilder().push(c1);
+
+        try {
+            builder.build();
+            fail("Expect IllegalStateException");
+        } catch (IllegalStateException e) {
+            assertEquals("Duplicate content root paths '/a/b' in module 'm1'.", e.getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception");
+        }
+    }
+
+    @Test
+    public void reject_node_type_definitions_in_moltiple_sources_of_module() throws Exception {
+        final ConfigurationImpl c1 = new ConfigurationImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        final String yaml = "instructions:\n"
+                + "  - cnd:\n"
+                + "    - dummy CND content";
+
+        loadYAMLFile("builder/definition-sorter.yaml", m1);
+        loadYAMLString(yaml, m1);
+
+        MergedModelBuilder builder = new MergedModelBuilder();
+
+        try {
+            builder.push(c1);
+            fail("Expect IllegalStateException");
+        } catch (IllegalStateException e) {
+            assertEquals("CNDs are specified in multiple sources of a module: c1/p1/m1 [string] and c1/p1/m1 [builder/definition-sorter.yaml]. For proper ordering, they must be specified in a single source.", e.getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception");
+        }
     }
 }

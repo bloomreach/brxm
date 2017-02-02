@@ -29,10 +29,10 @@ import org.onehippo.cm.impl.model.builder.sorting.OrderableComparator;
 
 public class ConfigurationImpl implements Configuration {
 
-    private String name;
+    private final String name;
 
-    private Set<String> modifiableAfter = new LinkedHashSet<>();
-    private Set<String> after = Collections.unmodifiableSet(modifiableAfter);
+    private final Set<String> modifiableAfter = new LinkedHashSet<>();
+    private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
     private final List<ProjectImpl> modifiableProjects = new ArrayList<>();
     private final List<Project> projects = Collections.unmodifiableList(modifiableProjects);
