@@ -14,6 +14,10 @@
 
 @import '../variables';
 
+@import '~open-sans-fontface/sass/variables';
+@import '~open-sans-fontface/sass/mixins';
+@import '~open-sans-fontface/sass/Regular';
+
 .hippo-scale {
   transform-origin: top right;
 }
