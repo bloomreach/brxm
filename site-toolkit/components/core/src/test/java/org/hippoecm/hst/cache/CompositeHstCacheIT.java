@@ -269,9 +269,10 @@ public class CompositeHstCacheIT extends AbstractSpringTestCase {
                 "but should never return the result! The result will in general be recreated by the calling thread and " +
                 "later replace the restored stale result.", result);
 
+        assertNotNull("The state entry should be restored in primary cache",compositeHstCache.ehcache.get(key));
+
         CacheElement result2 = compositeHstCache.get(key);
         assertNotNull("The stale cached entry should be now returned", result2);
-        assertNotNull("The state entry should be restored in primary cache",compositeHstCache.ehcache.get(key));
 
     }
 
@@ -324,6 +325,125 @@ public class CompositeHstCacheIT extends AbstractSpringTestCase {
     }
 
 
-    // TODO MODIFY THE ELEMENT.CREATION TIME TO FORCE STALE CACHE POPULATION
+    @Test
+    public void stale_and_second_level_cache_tests() throws Exception {
+        compositeHstCache.setSecondLevelCache(secondLevelPageCache);
+        compositeHstCache.setStaleCache(stalePageCache);
+
+        final String key = "key";
+        compositeHstCache.put(compositeHstCache.createElement(key, "content"));
+
+        assertEquals(1, compositeHstCache.cacheStats.getFirstLevelCachePuts());
+        assertEquals(1, compositeHstCache.cacheStats.getSecondLevelCachePuts());
+        assertEquals(1, compositeHstCache.cacheStats.getStaleCachePuts());
+
+        assertTrue(compositeHstCache.isKeyInCache(key));
+        assertTrue(compositeHstCache.ehcache.isKeyInCache(key));
+        assertTrue(secondLevelEhCache.isKeyInCache(key));
+        assertTrue(stalePageEhCache.isKeyInCache(key));
+    }
+
+    @Test
+    public void second_level_cached_entry_has_precedence_over_stale() throws Exception {
+        compositeHstCache.setSecondLevelCache(secondLevelPageCache);
+        compositeHstCache.setStaleCache(stalePageCache);
+
+        final String key = "key";
+        compositeHstCache.put(compositeHstCache.createElement(key, "content"));
+
+        // remove from primary cache
+        compositeHstCache.remove(key);
+
+        // override the second level cached value (this does not impact compositeHstCache.cacheStats
+        final String SECOND_LEVEL_CONTENT = "second_level_content";
+        secondLevelPageCache.put(key, new Element(key, SECOND_LEVEL_CONTENT));
+
+        CacheElement cached = compositeHstCache.get(key);
+        assertEquals("second level cache entry should have been restored.", SECOND_LEVEL_CONTENT, cached.getContent());
+
+        assertEquals(2, compositeHstCache.cacheStats.getFirstLevelCachePuts());
+        assertEquals(1, compositeHstCache.cacheStats.getSecondLevelCachePuts());
+        assertEquals(1, compositeHstCache.cacheStats.getSecondLevelCacheHits());
+        assertEquals(1, compositeHstCache.cacheStats.getStaleCachePuts());
+        assertEquals(0, compositeHstCache.cacheStats.getStaleCacheHits());
+
+    }
+
+
+    @Test
+    public void stale_value_is_restored_if_second_level_entry_is_expired_from_second_level_cache_global_TTL() throws Exception {
+        compositeHstCache.setSecondLevelCache(secondLevelPageCache);
+        compositeHstCache.setStaleCache(stalePageCache);
+
+        final String key = "key";
+        String CONTENT = "content";
+        compositeHstCache.put(compositeHstCache.createElement(key, CONTENT));
+
+        // remove from primary cache
+        compositeHstCache.remove(key);
+
+        final String SECOND_LEVEL_CONTENT = "second_level_content";
+        int TIME_TO_LIVE_IDLE_SECONDS = 1;
+
+        secondLevelEhCache.put(new Element(key, SECOND_LEVEL_CONTENT, TIME_TO_LIVE_IDLE_SECONDS, TIME_TO_LIVE_IDLE_SECONDS));
+
+        // Note that above results in something else than
+        // secondLevelPageCache.put(key, new Element(key, SECOND_LEVEL_CONTENT, TIME_TO_LIVE_IDLE_SECONDS, TIME_TO_LIVE_IDLE_SECONDS));
+        // secondLevelEhCache.put adds a new cache entry that expires *after* 1 second, while the secondLevelPageCache.put
+        // adds a new cache entry that expires after 'second level cache TTL' and has an Element as cached value that is
+        // new Element(key, SECOND_LEVEL_CONTENT, TIME_TO_LIVE_IDLE_SECONDS, TIME_TO_LIVE_IDLE_SECONDS)
+        // Also see the next unit test method, which uses secondLevelPageCache.put instead of secondLevelEhCache.put
+
+        Thread.sleep(1010);
+
+        assertNull("should be expired from cache.", secondLevelEhCache.get(key));
+
+        CacheElement cached = compositeHstCache.get(key);
+        // since second level entry should be expired from the cache by the global TTL, stale entry is restored and after the first
+        // compositeHstCache.get("key"); which will return null, it should return the stale response again
+        assertNull("First get hitting stale cache should inject stale value in primary and return null.", cached);
+
+        CacheElement secondTime = compositeHstCache.get(key);
+        assertNotNull(secondTime);
+        // stale content
+        assertEquals(CONTENT, secondTime.getContent());
+    }
+
+    @Test
+    public void if_second_level_entry_is_present_but_has_expired_element_as_value_the_entry_is_treated_as_stale() throws Exception {
+        compositeHstCache.setSecondLevelCache(secondLevelPageCache);
+        compositeHstCache.setStaleCache(stalePageCache);
+
+        final String key = "key";
+        String CONTENT = "content";
+        compositeHstCache.put(compositeHstCache.createElement(key, CONTENT));
+
+        // remove from primary cache
+        compositeHstCache.remove(key);
+
+        final String SECOND_LEVEL_CONTENT = "second_level_content";
+        int TIME_TO_LIVE_IDLE_SECONDS = 1;
+
+        secondLevelPageCache.put(key, new Element(key, SECOND_LEVEL_CONTENT, TIME_TO_LIVE_IDLE_SECONDS, TIME_TO_LIVE_IDLE_SECONDS));
+
+        Thread.sleep(1010);
+
+        Element secondLevelElement = secondLevelEhCache.get(key);
+        assertNotNull("Second level element should have TTL of global secondLevelEhCache hence still present, *however*, the " +
+                "cached value that is returned does have a TTL of 1 second.", secondLevelElement);
+        assertEquals(180L, secondLevelElement.getTimeToLive());
+        assertEquals(1L, ((Element)secondLevelElement.getObjectValue()).getTimeToLive());
+
+        CacheElement cached = compositeHstCache.get(key);
+
+        assertNull("Although the second level cache still has the entry, the entry has an element indicating it is " +
+                "expired, hence should not be directly returned! Instead it should treat the element as stale, hence " +
+                "returning null on first request and returning the second level (stale) value on second get.", cached);
+
+        CacheElement secondTime = compositeHstCache.get(key);
+        // stale content
+        assertEquals(SECOND_LEVEL_CONTENT, secondTime.getContent());
+
+    }
 
 }

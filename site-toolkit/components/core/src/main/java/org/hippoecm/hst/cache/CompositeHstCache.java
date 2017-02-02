@@ -131,7 +131,8 @@ public class CompositeHstCache implements HstCache {
 
                 final Element elementBasedOnKeyInstance = new Element(key, secondLevelElement.getObjectValue());
 
-                final long timeLived = (System.currentTimeMillis() - secondLevelElement.getCreationTime()) / 1000;
+                // +999 to make sure time lived of say 1001 ms gets rounded of to 2 seconds
+                final long timeLived = ((System.currentTimeMillis() - secondLevelElement.getCreationTime()) + 999) / 1000;
 
                 // The page can be cached until it is evicted from the second level cache by the TTL of the second level
                 // cached entry: When the entry is evicted from the second level cache, it also needs to be evicted from the primary cache
@@ -153,7 +154,7 @@ public class CompositeHstCache implements HstCache {
                             timeLived, newTTL);
                 }
 
-                if (newTTL < 0) {
+                if (newTTL <= 0) {
                     // if newTTL < 0 : just expired from second level cache
                     if (staleCache != null) {
                         // since we do support stale cached responses, let's inject this stale element in the primary
@@ -168,7 +169,6 @@ public class CompositeHstCache implements HstCache {
                     }
                     return null;
                 }
-
                 elementBasedOnKeyInstance.setTimeToLive((int)newTTL);
                 cacheStats.incrementFirstLevelCachePuts();
                 ehcache.put(elementBasedOnKeyInstance);
