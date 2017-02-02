@@ -2366,9 +2366,9 @@
       "dev": true
     },
     "frontend-build": {
-      "version": "4.2.1",
-      "from": "frontend-build@4.2.1",
-      "resolved": "https://maven.onehippo.com/content/groups/npm-all/frontend-build/-/frontend-build-4.2.1.tgz",
+      "version": "4.2.2",
+      "from": "frontend-build@4.2.2",
+      "resolved": "https://maven.onehippo.com/content/groups/npm-all/frontend-build/-/frontend-build-4.2.2.tgz",
       "dev": true
     },
     "fs-access": {
