@@ -15,18 +15,21 @@
  */
 package org.onehippo.cm.impl.model.builder;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.impl.model.builder.exceptions.CircularDependencyException;
 import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 
 
-public class DependencyVerifier {
+class DependencyVerifier {
 
     void verify(final Collection<? extends Orderable> orderableList) {
         Map<String, Orderable> objectMap = new HashMap<>();
@@ -38,33 +41,37 @@ public class DependencyVerifier {
                 continue;
             }
             Set<Orderable> checked = new HashSet<>();
-            recurse(objectMap, orderable, orderable, checked);
+            List<Orderable> trail = new ArrayList<>();
+            trail.add(orderable);
+            recurse(objectMap, orderable, orderable, checked, trail);
         }
     }
 
     private void recurse(final Map<String, ? extends Orderable> configurationMap,
                          final Orderable investigate,
                          final Orderable current,
-                         final Set<Orderable> checked) {
+                         final Set<Orderable> checked,
+                         final List<Orderable> trail) {
         if (checked.contains(current)) {
             return;
         }
         checked.add(current);
         for (String dependsOn : current.getAfter()) {
             Orderable dependsOnOrderable = configurationMap.get(dependsOn);
+            trail.add(dependsOnOrderable);
             if (dependsOnOrderable == null) {
-                throw new MissingDependencyException(String.format("Dependency '%s' has missing dependency '%s'",
-                        current.getName(), dependsOn));
+                throw new MissingDependencyException(String.format("%s '%s' has missing dependency '%s'",
+                        current.getClass().getSimpleName(), current.getName(), dependsOn));
             }
             if (dependsOnOrderable == investigate) {
-                // TODO in the message add which configurations are part of the circular dependencies
-                throw new CircularDependencyException(String.format("'%s' '%s' has circular dependency",
-                        dependsOnOrderable.getClass().getName(), investigate.getName()));
+                final String circle = trail.stream().map(Orderable::getName).collect(Collectors.joining(" -> "));
+                throw new CircularDependencyException(String.format("%s '%s' has circular dependency: [%s].",
+                        dependsOnOrderable.getClass().getSimpleName(), investigate.getName(), circle));
             }
             if (dependsOnOrderable.getAfter().isEmpty()) {
                 continue;
             }
-            recurse(configurationMap, investigate, dependsOnOrderable, checked);
+            recurse(configurationMap, investigate, dependsOnOrderable, checked, trail);
         }
     }
 }

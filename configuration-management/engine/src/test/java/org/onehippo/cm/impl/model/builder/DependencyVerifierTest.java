@@ -24,6 +24,8 @@ import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.builder.exceptions.CircularDependencyException;
 import org.onehippo.cm.impl.model.builder.exceptions.MissingDependencyException;
 
+import static org.junit.Assert.assertEquals;
+
 public class DependencyVerifierTest {
 
     private final DependencyVerifier verifier = new DependencyVerifier();
@@ -32,32 +34,44 @@ public class DependencyVerifierTest {
      * test circular dependency detection
      */
 
-    @Test(expected = CircularDependencyException.class)
+    @Test
     public void configurations_self_circular_dependency() {
         Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("c1"));
         Configuration c2 = new ConfigurationImpl("c2");
 
-        verifier.verify(ImmutableList.of(c1, c2));
+        try {
+            verifier.verify(ImmutableList.of(c1, c2));
+        } catch (CircularDependencyException e) {
+            assertEquals("ConfigurationImpl 'c1' has circular dependency: [c1 -> c1].", e.getMessage());
+        }
     }
 
-    @Test(expected = CircularDependencyException.class)
+    @Test
     public void configurations_two_wise_circular_dependency() {
         Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("c2"));
         Configuration c2 = new ConfigurationImpl("c2").addAfter(ImmutableSet.of("c1"));
 
-        verifier.verify(ImmutableList.of(c1, c2));
+        try {
+            verifier.verify(ImmutableList.of(c1, c2));
+        } catch (CircularDependencyException e) {
+            assertEquals("ConfigurationImpl 'c1' has circular dependency: [c1 -> c2 -> c1].", e.getMessage());
+        }
     }
 
-    @Test(expected = CircularDependencyException.class)
+    @Test
     public void configurations_three_wise_circular_dependency() {
         Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("c2"));
         Configuration c2 = new ConfigurationImpl("c2").addAfter(ImmutableSet.of("c3"));
         Configuration c3 = new ConfigurationImpl("c3").addAfter(ImmutableSet.of("c1"));
 
-        verifier.verify(ImmutableList.of(c1, c2, c3));
+        try {
+            verifier.verify(ImmutableList.of(c1, c2, c3));
+        } catch (CircularDependencyException e) {
+            assertEquals("ConfigurationImpl 'c1' has circular dependency: [c1 -> c2 -> c3 -> c1].", e.getMessage());
+        }
     }
 
-    @Test(expected = CircularDependencyException.class)
+    @Test
     public void configurations_complex_multiple_circular_dependencies() {
         // c2 is part of 2 circular dependencies
         Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("c3"));
@@ -67,25 +81,37 @@ public class DependencyVerifierTest {
         Configuration c2a = new ConfigurationImpl("c2a").addAfter(ImmutableSet.of("c2b"));
         Configuration c2b = new ConfigurationImpl("c2b").addAfter(ImmutableSet.of("c2"));
 
-        verifier.verify(ImmutableList.of(c1, c2, c3, c2a, c2b));
+        try {
+            verifier.verify(ImmutableList.of(c1, c2, c3, c2a, c2b));
+        } catch (CircularDependencyException e) {
+            assertEquals("ConfigurationImpl 'c1' has circular dependency: [c1 -> c3 -> c2 -> c1].", e.getMessage());
+        }
     }
 
     /*
      * test missing dependency detection
      */
 
-    @Test(expected = MissingDependencyException.class)
+    @Test
     public void configuration_missing_dependency() {
         Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("foo"));
 
-        verifier.verify(ImmutableList.of(c1));
+        try {
+            verifier.verify(ImmutableList.of(c1));
+        } catch (MissingDependencyException e) {
+            assertEquals("ConfigurationImpl 'c1' has missing dependency 'foo'", e.getMessage());
+        }
     }
 
-    @Test(expected = MissingDependencyException.class)
+    @Test
     public void configuration_missing_dependency_again() {
-        Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("c1"));
-        Configuration c2 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("foo"));
+        Configuration c1 = new ConfigurationImpl("c1").addAfter(ImmutableSet.of("c2"));
+        Configuration c2 = new ConfigurationImpl("c2").addAfter(ImmutableSet.of("foo"));
 
-        verifier.verify(ImmutableList.of(c1, c2));
+        try {
+            verifier.verify(ImmutableList.of(c1, c2));
+        } catch (MissingDependencyException e) {
+            assertEquals("ConfigurationImpl 'c2' has missing dependency 'foo'", e.getMessage());
+        }
     }
 }
