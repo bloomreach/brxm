@@ -30,15 +30,12 @@ import org.onehippo.cm.engine.ResourceInputProvider;
 import org.onehippo.cm.engine.SourceParser;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.ProjectImpl;
 
 public abstract class AbstractBuilderBaseTest {
     private final String STRING_SOURCE = "string";
 
     protected ModuleImpl makeModule() {
-        final ConfigurationImpl configuration = new ConfigurationImpl("test-configuration");
-        final ProjectImpl project = new ProjectImpl("test-project", configuration);
-        return new ModuleImpl("test-module", project);
+        return new ConfigurationImpl("test-configuration").addProject("test-project").addModule("test-module");
     }
 
     protected String sortedCollectionToString(final Map<String, ? extends Object> map) {
