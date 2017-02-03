@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -612,9 +612,13 @@
         result.resolve();
       }, this);
 
-      this.store.on('exception', function () {
-        this._loadException.apply(this, arguments);
-        result.reject();
+      this.store.on('exception', function (proxy, type, actions, options, response) {
+        if (type === 'response') {
+          result.reject(response);
+        } else {
+          this._loadException(proxy, type, actions, options, response);
+          result.reject();
+        }
       }, this);
 
       this._initStoreListeners();

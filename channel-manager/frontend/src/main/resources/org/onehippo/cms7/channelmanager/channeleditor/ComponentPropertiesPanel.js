@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,16 +160,27 @@
       this.firePropertiesChangedEvents = false;
       this.beginUpdate();
       this.removeAll();
-      return this.componentVariants.get().when(function (variants) {
-        this._initTabs(variants, reusableTabs);
-        this.adjustBodyWidth(this.tabWidth);
 
-        this.firePropertiesChangedEvents = true;
+      return new Hippo.Future(function(success, fail) {
+        this.componentVariants.get().when(function (variants) {
+          this._initTabs(variants, reusableTabs);
+          this.adjustBodyWidth(this.tabWidth);
 
-        this._selectBestMatchingTab(activeVariantId, variants).then(function () {
-          this._loadTabs().always(this.endUpdate.bind(this));
+          this.firePropertiesChangedEvents = true;
+
+          this._selectBestMatchingTab(activeVariantId, variants).then(function () {
+            this._loadTabs().then(success).fail(function(response) {
+              if (response) {
+                fail(response);
+              } else {
+                success();
+              }
+            });
+          }.bind(this));
         }.bind(this));
-      }.bind(this)).otherwise(this.endUpdate.bind(this));
+      }.bind(this))
+      .when(this.endUpdate.bind(this))
+      .otherwise(this.endUpdate.bind(this));
     },
 
     _getTabs: function () {
