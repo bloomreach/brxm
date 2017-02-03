@@ -90,6 +90,9 @@ class DragDropService {
 
   _destroyDrake() {
     if (this.drake) {
+      if (this.isDragging()) {
+        this.drake.cancel(true);
+      }
       this.drake.destroy();
       this.drake = null;
       this.dragulaOptions = null;
