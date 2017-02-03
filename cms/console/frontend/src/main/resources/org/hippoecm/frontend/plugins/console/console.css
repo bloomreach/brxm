@@ -28,6 +28,10 @@
   border-bottom: 1px solid #666666;
 }
 
+#layout-doc > div.yui-layout-unit-top {
+  z-index: 1;
+}
+
 .hippo-root {
   font-size: 12px;
   background: white;
@@ -998,16 +1002,14 @@ body.hippo-root div.yui-log-container {
   background-color: #e2e2e2;
 }
 
-.dropdown:focus .dropdown-content,
-.dropdown:hover .dropdown-content {
+.dropdown.focus .dropdown-content {
   display: block;
 }
 
-.dropdown:focus .dropbtn,
-.dropdown:hover .dropbtn {
+.dropdown.focus .dropbtn {
   background-color:#4587d6;
   color: white;
- }
+}
 
 .dropdown-link-green {
   color:green;

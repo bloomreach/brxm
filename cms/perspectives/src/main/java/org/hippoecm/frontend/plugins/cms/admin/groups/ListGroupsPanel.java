@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,13 +22,10 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
-import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
-import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
@@ -42,6 +39,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -50,7 +48,6 @@ import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
-import org.hippoecm.frontend.plugins.cms.admin.widgets.DeleteDialog;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +56,6 @@ import org.slf4j.LoggerFactory;
  * This panel displays a pageable, searchable list of groups.
  */
 public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<GroupDataProvider> {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(ListGroupsPanel.class);
 
@@ -83,52 +78,47 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         setOutputMarkupId(true);
 
         this.context = context;
+        this.groupDataProvider = groupDataProvider;
 
         add(new PanelPluginBreadCrumbLink("create-group", breadCrumbModel) {
+
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
                 return new CreateGroupPanel(componentId, breadCrumbModel);
             }
         });
 
-        List<IColumn<Group, String>> columns = new ArrayList<IColumn<Group, String>>();
-
+        final List<IColumn<Group, String>> columns = new ArrayList<>();
         columns.add(new AbstractColumn<Group, String>(new ResourceModel("group-name"), "groupname") {
-            private static final long serialVersionUID = 1L;
+            @Override
+            public void populateItem(final Item<ICellPopulator<Group>> cellItem, final String componentId,
+                                     final IModel<Group> rowModel) {
 
-            public void populateItem(final Item<ICellPopulator<Group>> item, final String componentId, final IModel<Group> model) {
-
-                AjaxGroupViewActionLinkLabel action = new AjaxGroupViewActionLinkLabel(componentId, model.getObject());
-                item.add(action);
+                cellItem.add(new AjaxGroupViewActionLinkLabel(componentId, rowModel.getObject()));
             }
         });
 
-        columns.add(new PropertyColumn<Group, String>(new ResourceModel("group-description"), "description"));
-
+        columns.add(new PropertyColumn<>(new ResourceModel("group-description"), "description"));
         columns.add(new GroupDeleteLinkColumn(new ResourceModel("group-view-actions-title")));
 
         final Form form = new Form("search-form");
         form.setOutputMarkupId(true);
         add(form);
 
-        this.groupDataProvider = groupDataProvider;
-        TextField<String> search = new TextField<String>("search-query",
-                                                         new PropertyModel<String>(this.groupDataProvider, "searchTerm"));
+        final TextField<String> search = new TextField<>("search-query", PropertyModel.of(groupDataProvider, "searchTerm"));
         search.add(StringValidator.minimumLength(1));
         search.setRequired(false);
         search.add(new DefaultFocusBehavior());
         form.add(search);
 
         form.add(new AjaxButton("search-button", form) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form form) {
                 target.add(table);
             }
         });
 
-        table = new AdminDataTable<Group>("table", columns, groupDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
+        table = new AdminDataTable<>("table", columns, groupDataProvider, NUMBER_OF_ITEMS_PER_PAGE);
         add(table);
     }
 
@@ -154,89 +144,65 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
 
     private class AjaxGroupViewActionLinkLabel extends Panel {
 
-        private AjaxGroupViewActionLinkLabel(final String id, Group group) {
+        private AjaxGroupViewActionLinkLabel(final String id, final Group group) {
             super(id);
 
-            ViewGroupActionLink link = new ViewGroupActionLink("link", new Model<String>(group.getGroupname()), group,
+            final ViewGroupActionLink link = new ViewGroupActionLink("link", Model.of(group.getGroupname()), group,
                                                                context, ListGroupsPanel.this);
-
             add(link);
         }
     }
 
+    @Override
     public IModel<String> getTitle(final Component component) {
         return new ResourceModel("admin-groups-title");
     }
 
-    private class GroupDeleteLinkColumn extends AbstractColumn<Group, String> {
-        private static final long serialVersionUID = 1L;
+    private final class GroupDeleteLinkColumn extends AbstractColumn<Group, String> {
 
         private GroupDeleteLinkColumn(final IModel<String> displayModel) {
             super(displayModel);
         }
 
         @Override
-        public void populateItem(final Item<ICellPopulator<Group>> item, final String componentId, final IModel<Group> model) {
+        public void populateItem(final Item<ICellPopulator<Group>> cellItem, final String componentId,
+                                 final IModel<Group> rowModel) {
 
-            AjaxLinkLabel action = new DeleteGroupActionLink(componentId, new ResourceModel("group-remove-action"),
-                                                             model);
-            item.add(action);
+            cellItem.add(new DeleteGroupActionLink(componentId, new ResourceModel("group-remove-action"), rowModel));
         }
-
-
     }
 
     private class DeleteGroupActionLink extends AjaxLinkLabel {
-        private static final long serialVersionUID = 1L;
         private final IModel<Group> groupModel;
 
-        private DeleteGroupActionLink(String id, IModel model, IModel<Group> groupModel) {
+        private DeleteGroupActionLink(final String id, final IModel<String> model, final IModel<Group> groupModel) {
             super(id, model);
             this.groupModel = groupModel;
         }
 
         @Override
         public void onClick(final AjaxRequestTarget target) {
-            context.getService(IDialogService.class.getName(), IDialogService.class).show(
-                    new DeleteDialog<Group>(groupModel, this) {
-                        private static final long serialVersionUID = 1L;
+            final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+            final Confirm confirm = new Confirm(
+                    getString("group-delete-title", groupModel),
+                    getString("group-delete-text", groupModel)
+            ).ok(() -> deleteGroup(groupModel));
 
-                        @Override
-                        protected void onOk() {
-                            deleteGroup(getModel());
-                        }
-
-                        @Override
-                        protected String getTitleKey() {
-                            return "group-delete-title";
-                        }
-
-                        @Override
-                        protected String getTextKey() {
-                            return "group-delete-text";
-                        }
-                    });
+            dialogService.show(confirm);
         }
 
         private void deleteGroup(final IModel<Group> model) {
-            Group group = model.getObject();
-            String groupname = group.getGroupname();
+            final Group group = model.getObject();
+            final String groupname = group.getGroupname();
             try {
                 group.delete();
-                Session.get().info(getString("group-removed", model));
-
-                List<IBreadCrumbParticipant> l = getBreadCrumbModel().allBreadCrumbParticipants();
-                getBreadCrumbModel().setActive(l.get(l.size() - 2));
-                activate(new IBreadCrumbPanelFactory() {
-                    public BreadCrumbPanel create(final String componentId, final IBreadCrumbModel breadCrumbModel) {
-                        return new ListGroupsPanel(componentId, context, breadCrumbModel, new GroupDataProvider());
-                    }
-                });
+                ListGroupsPanel.this.info(getString("group-removed", model));
             } catch (RepositoryException e) {
-                Session.get().warn(getString("group-remove-failed", model));
-                log.error("Unable to delete group '" + groupname + "' : ", e);
+                ListGroupsPanel.this.error(getString("group-remove-failed", model));
+                log.error("Unable to delete group '{}' : ", groupname, e);
             }
+
+            redraw();
         }
     }
-
 }

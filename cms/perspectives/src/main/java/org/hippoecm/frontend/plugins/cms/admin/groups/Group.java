@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,8 +21,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -33,21 +35,19 @@ import javax.jcr.query.QueryResult;
 
 import org.apache.jackrabbit.util.ISO9075;
 import org.apache.jackrabbit.util.Text;
-import org.apache.wicket.Session;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
+import org.hippoecm.frontend.plugins.cms.admin.domains.Domain.AuthRole;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
 import org.hippoecm.frontend.plugins.cms.admin.users.DetachableUser;
 import org.hippoecm.frontend.plugins.cms.admin.users.SystemUserDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.users.UserDataProvider;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.EventBusUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.event.HippoEventConstants;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,17 +55,18 @@ public class Group implements Comparable<Group>, IClusterable {
 
     private static final Logger log = LoggerFactory.getLogger(Group.class);
 
-    private final static String PROP_DESCRIPTION = "hipposys:description";
-    private final static String QUERY_ALL_LOCAL = "select * from hipposys:group where hipposys:securityprovider='internal' and (hipposys:system <> 'true' or hipposys:system IS NULL)";
-    private final static String QUERY_ALL = "select * from hipposys:group";
-    private final static String QUERY_ALL_ROLES = "select * from hipposys:role";
-    private final static String QUERY_GROUP = "SELECT * FROM hipposys:group WHERE fn:name()='{}'";
+    private static final String PROP_DESCRIPTION = "hipposys:description";
+    private static final String QUERY_ALL_LOCAL = "select * from hipposys:group where hipposys:securityprovider='internal' and (hipposys:system <> 'true' or hipposys:system IS NULL)";
+    private static final String QUERY_ALL = "select * from hipposys:group";
+    private static final String QUERY_ALL_ROLES = "select * from hipposys:role";
+    private static final String QUERY_GROUP = "SELECT * FROM hipposys:group WHERE fn:name()='{}'";
+    private static final char SLASH = '/';
 
     private String path;
     private String groupname;
 
     private String description;
-    private boolean external = false;
+    private boolean external;
 
     private transient Node node;
 
@@ -73,61 +74,68 @@ public class Group implements Comparable<Group>, IClusterable {
         return UserSession.get().getQueryManager();
     }
 
-    public static boolean exists(String groupname) {
-        return getGroup(groupname) != null;
+    public static boolean exists(final String groupName) {
+        return getGroup(groupName) != null;
+    }
+
+    @FunctionalInterface
+    private interface QueryResultMapper<T> {
+        T map(final Node node) throws RepositoryException;
+    }
+
+    private static <T extends Comparable<T>> List<T> executeQuery(final String sql, final QueryResultMapper<T> mapper)
+            throws RepositoryException {
+        @SuppressWarnings("deprecation")
+        final Query query = getQueryManager().createQuery(sql, Query.SQL);
+        final NodeIterator iter = query.execute().getNodes();
+
+        final List<T> result = new ArrayList<>();
+        while (iter.hasNext()) {
+            final Node node = iter.nextNode();
+            if (node != null) {
+                try {
+                    result.add(mapper.map(node));
+                } catch(final RepositoryException e) {
+                    log.warn("Unable to map node to result list", e);
+                }
+            }
+        }
+        // TODO: remove when query can sort on node names
+        Collections.sort(result);
+        return result;
     }
 
     public static List<Group> getLocalGroups() {
-        List<Group> groups = new ArrayList<>();
-        NodeIterator iter;
         try {
-            @SuppressWarnings({"deprecation"})
-            final Query query = getQueryManager().createQuery(QUERY_ALL_LOCAL, Query.SQL);
-            iter = query.execute().getNodes();
-            while (iter.hasNext()) {
-                Node node = iter.nextNode();
-                if (node != null) {
-                    try {
-                        groups.add(new Group(node));
-                    } catch (RepositoryException e) {
-                        log.warn("Unable to add group to list", e);
-                    }
-                }
-            }
-        } catch (RepositoryException e) {
+            return executeQuery(QUERY_ALL_LOCAL, Group::new);
+        } catch (final RepositoryException e) {
             log.error("Error while querying for a list of local groups", e);
         }
-        // TODO: remove when query can sort on node names
-        Collections.sort(groups);
-        return groups;
+        return Collections.emptyList();
     }
-
 
     public static List<Group> getAllGroups() {
-        List<Group> groups = new ArrayList<>();
-        NodeIterator iter;
         try {
-            @SuppressWarnings({"deprecation"})
-            final Query query = getQueryManager().createQuery(QUERY_ALL, Query.SQL);
-            iter = query.execute().getNodes();
-            while (iter.hasNext()) {
-                Node node = iter.nextNode();
-                if (node != null) {
-                    try {
-                        groups.add(new Group(node));
-                    } catch (RepositoryException e) {
-                        log.warn("Unable to add group to list", e);
-                    }
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Error while querying for a list of local groups", e);
+            return executeQuery(QUERY_ALL, Group::new);
+        } catch (final RepositoryException e) {
+            log.error("Error while querying for a list of all groups", e);
         }
-        // TODO: remove when query can sort on node names
-        Collections.sort(groups);
-        return groups;
+        return Collections.emptyList();
     }
 
+    /*
+    * FIXME: should move to roles class or something the like when the admin perspective gets support for it
+    *
+    * @return A list of all roles defined in the system
+    */
+    public static List<String> getAllRoles() {
+        try {
+            return executeQuery(QUERY_ALL_ROLES, Item::getName);
+        } catch (final RepositoryException e) {
+            log.error("Error while querying for a list of all roles", e);
+        }
+        return Collections.emptyList();
+    }
 
     /**
      * Gets the Group with the specified name. If no Group with the specified name exists, null is returned.
@@ -151,36 +159,6 @@ public class Group implements Comparable<Group>, IClusterable {
             log.error("Unable to check if group '{}' exists, returning true", groupName, e);
             return null;
         }
-    }
-
-    /*
-    * FIXME: should move to roles class or something the like when the admin perspective gets support for it
-    *
-    * @return A list of all roles defined in the system
-    */
-    public static List<String> getAllRoles() {
-        List<String> roles = new ArrayList<>();
-        NodeIterator iter;
-        try {
-            @SuppressWarnings({"deprecation"})
-            final Query query = getQueryManager().createQuery(QUERY_ALL_ROLES, Query.SQL);
-            iter = query.execute().getNodes();
-            while (iter.hasNext()) {
-                Node node = iter.nextNode();
-                if (node != null) {
-                    try {
-                        roles.add(node.getName());
-                    } catch (RepositoryException e) {
-                        log.warn("Unable to add group to list", e);
-                    }
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Error while querying for a list of local groups", e);
-        }
-        // TODO: remove when query can sort on node names
-        Collections.sort(roles);
-        return roles;
     }
 
     public boolean isExternal() {
@@ -208,19 +186,15 @@ public class Group implements Comparable<Group>, IClusterable {
         this.description = description;
     }
 
-
     //----------------------- constructors ---------//
     public Group() {
     }
 
     public Group(final Node node) throws RepositoryException {
-        this.path = node.getPath().substring(1);
-        this.groupname = NodeNameCodec.decode(node.getName());
         this.node = node;
-
-        if (node.isNodeType(HippoNodeType.NT_EXTERNALGROUP)) {
-            external = true;
-        }
+        path = node.getPath().substring(1);
+        groupname = NodeNameCodec.decode(node.getName());
+        external = node.isNodeType(HippoNodeType.NT_EXTERNALGROUP);
 
         if (node.hasProperty(PROP_DESCRIPTION)) {
             description = node.getProperty(PROP_DESCRIPTION).getString();
@@ -235,22 +209,22 @@ public class Group implements Comparable<Group>, IClusterable {
      * @throws RepositoryException
      */
     public List<String> getMembers() throws RepositoryException {
-        return getMembers(true/**excludeSystemUsers*/);
+        return getMembers(true/* excludeSystemUsers */);
     }
 
     private List<String> getAllMembers() throws RepositoryException {
-        return getMembers(false/**excludeSystemUsers*/);
+        return getMembers(false/* excludeSystemUsers */);
     }
 
-    private List<String> getMembers(boolean excludeSystemUsers) throws RepositoryException {
+    private List<String> getMembers(final boolean excludeSystemUsers) throws RepositoryException {
         final List<String> members = new ArrayList<>();
         if (node.hasProperty(HippoNodeType.HIPPO_MEMBERS)) {
             final Value[] storedMembers = node.getProperty(HippoNodeType.HIPPO_MEMBERS).getValues();
 
             // do query for system users only when needed
-            final Set<String> systemUserNames = excludeSystemUsers ? getSystemUserNames() : Collections.<String>emptySet();
+            final Set<String> systemUserNames = excludeSystemUsers ? getSystemUserNames() : Collections.emptySet();
 
-            for (Value value : storedMembers) {
+            for (final Value value : storedMembers) {
                 final String userName = value.getString();
 
                 if (excludeSystemUsers && systemUserNames.contains(userName)) {
@@ -259,28 +233,26 @@ public class Group implements Comparable<Group>, IClusterable {
 
                 members.add(userName);
             }
-
         }
         Collections.sort(members);
         return members;
-
     }
 
     public List<DetachableUser> getMembersAsDetachableUsers() {
-        List<String> usernames;
+        final List<String> usernames;
         try {
             usernames = getMembers();
         } catch (RepositoryException e) {
             throw new IllegalStateException("Cannot get members for this group", e);
         }
 
-        List<DetachableUser> users = new ArrayList<>();
-        for (String username : usernames) {
+        final List<DetachableUser> users = new ArrayList<>();
+        for (final String username : usernames) {
             if (!User.userExists(username)) {
                 continue;
             }
-            User user = new User(username);
-            DetachableUser detachableUser = new DetachableUser(user);
+            final User user = new User(username);
+            final DetachableUser detachableUser = new DetachableUser(user);
             users.add(detachableUser);
         }
 
@@ -321,14 +293,15 @@ public class Group implements Comparable<Group>, IClusterable {
         }
 
         // FIXME: should be delegated to a groupmanager
-        StringBuilder relPath = new StringBuilder();
-        relPath.append(HippoNodeType.CONFIGURATION_PATH);
-        relPath.append("/");
-        relPath.append(HippoNodeType.GROUPS_PATH);
-        relPath.append("/");
-        relPath.append(NodeNameCodec.encode(getGroupname(), true));
+        final String relPath = new StringBuilder()
+                .append(HippoNodeType.CONFIGURATION_PATH)
+                .append(SLASH)
+                .append(HippoNodeType.GROUPS_PATH)
+                .append(SLASH)
+                .append(NodeNameCodec.encode(getGroupname(), true))
+                .toString();
 
-        node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), HippoNodeType.NT_GROUP);
+        node = UserSession.get().getRootNode().addNode(relPath, HippoNodeType.NT_GROUP);
         setOrRemoveStringProperty(node, PROP_DESCRIPTION, getDescription());
         // save parent when adding a node
         node.getParent().getSession().save();
@@ -356,20 +329,11 @@ public class Group implements Comparable<Group>, IClusterable {
     public void delete() throws RepositoryException {
         removeAllPermissions();
 
-        Node parent = node.getParent();
+        final Node parent = node.getParent();
         node.remove();
         parent.getSession().save();
 
-        HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
-        if (eventBus != null) {
-            final UserSession userSession = UserSession.get();
-            HippoEvent event = new HippoEvent(userSession.getApplicationName())
-                    .user(userSession.getJcrSession().getUserID())
-                    .action("delete-group")
-                    .category(HippoEventConstants.CATEGORY_GROUP_MANAGEMENT)
-                    .message("deleted group " + groupname);
-            eventBus.post(event);
-        }
+        EventBusUtils.post("delete-group", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT, "deleted group " + groupname);
     }
 
     /**
@@ -379,21 +343,21 @@ public class Group implements Comparable<Group>, IClusterable {
      *                             object
      */
     public void removeAllPermissions() throws RepositoryException {
-        List<PermissionBean> permissions = PermissionBean.forGroup(this);
-        for (PermissionBean permission : permissions) {
+        final List<PermissionBean> permissions = PermissionBean.forGroup(this);
+        for (final PermissionBean permission : permissions) {
             permission.getAuthRole().removeGroup(groupname);
         }
     }
 
     public void removeMembership(String user) throws RepositoryException {
-        List<String> members = getAllMembers();
+        final List<String> members = getAllMembers();
         members.remove(user);
         node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
         node.getSession().save();
     }
 
     public void addMembership(String user) throws RepositoryException {
-        List<String> members = getAllMembers();
+        final List<String> members = getAllMembers();
         members.add(user);
         node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
         node.getSession().save();
@@ -405,11 +369,11 @@ public class Group implements Comparable<Group>, IClusterable {
      * @param domain the {@link Domain} to get the roles for
      * @return the roles
      */
-    public List<Domain.AuthRole> getLinkedAuthenticatedRoles(final Domain domain) {
-        Map<String, Domain.AuthRole> authRoles = domain.getAuthRoles();
-        List<Domain.AuthRole> roles = new ArrayList<>();
-        for (Map.Entry<String, Domain.AuthRole> entry : authRoles.entrySet()) {
-            Domain.AuthRole authenticationRole = entry.getValue();
+    public List<AuthRole> getLinkedAuthenticatedRoles(final Domain domain) {
+        final Map<String, AuthRole> authRoles = domain.getAuthRoles();
+        final List<AuthRole> roles = new ArrayList<>();
+        for (Entry<String, AuthRole> entry : authRoles.entrySet()) {
+            final AuthRole authenticationRole = entry.getValue();
             final boolean groupHasRole = authenticationRole.getGroupnames().contains(getGroupname());
             if (groupHasRole) {
                 roles.add(authenticationRole);
@@ -436,15 +400,15 @@ public class Group implements Comparable<Group>, IClusterable {
         if (obj == this) {
             return true;
         }
-        if (obj == null || (obj.getClass() != this.getClass())) {
+        if (obj == null || obj.getClass() != getClass()) {
             return false;
         }
-        Group other = (Group) obj;
+        final Group other = (Group) obj;
         return other.getPath().equals(getPath());
     }
 
     public int hashCode() {
-        return (null == path ? 0 : path.hashCode());
+        return path == null ? 0 : path.hashCode();
     }
 
     public int compareTo(Group o) {

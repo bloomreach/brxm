@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.cms.admin.users;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -35,9 +37,11 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.validation.validator.StringValidator;
+import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -49,12 +53,16 @@ import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.DefaultFocusBehavior;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
+import org.hippoecm.frontend.util.EventBusUtils;
+import org.onehippo.cms7.event.HippoEventConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This panel displays a pageable, searchable list of users.
  */
 public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<UserDataProvider> {
-    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(ListUsersPanel.class);
 
     private static final int NUMBER_OF_ITEMS_PER_PAGE = 20;
 
@@ -71,7 +79,8 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
      * @param breadCrumbModel  the breadCrumbModel
      * @param userDataProvider the userDataProvider
      */
-    public ListUsersPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel, final UserDataProvider userDataProvider) {
+    public ListUsersPanel(final String id, final IPluginContext context, final IPluginConfig config,
+                          final IBreadCrumbModel breadCrumbModel, final UserDataProvider userDataProvider) {
         super(id, breadCrumbModel);
 
         setOutputMarkupId(true);
@@ -80,7 +89,8 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         this.context = context;
         this.userDataProvider = userDataProvider;
 
-        PanelPluginBreadCrumbLink createUserLink = new PanelPluginBreadCrumbLink("create-user-link", breadCrumbModel) {
+        final PanelPluginBreadCrumbLink createUserLink = new PanelPluginBreadCrumbLink("create-user-link", breadCrumbModel) {
+
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
                 return new CreateUserPanel(componentId, breadCrumbModel, context, config);
@@ -92,8 +102,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
             }
         };
 
-        WebMarkupContainer createButtonContainer = new WebMarkupContainer("create-user-button-container") {
-
+        final WebMarkupContainer createButtonContainer = new WebMarkupContainer("create-user-button-container") {
             @Override
             public boolean isVisible() {
                 return isUserCreationEnabled();
@@ -103,41 +112,40 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         createButtonContainer.add(createUserLink);
         add(createButtonContainer);
 
-        List<IColumn> columns = new ArrayList<>();
+        final List<IColumn> columns = new ArrayList<>();
 
         columns.add(new AbstractColumn<User, String>(new ResourceModel("user-username"), "username") {
-            private static final long serialVersionUID = 1L;
-
-            public void populateItem(final Item<ICellPopulator<User>> item, final String componentId, final IModel<User> model) {
-
-                ViewUserLinkLabel action = new ViewUserLinkLabel(componentId, model, ListUsersPanel.this, context);
-                item.add(action);
+            @Override
+            public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId,
+                                     final IModel<User> rowModel) {
+                cellItem.add(new ViewUserLinkLabel(componentId, rowModel, ListUsersPanel.this, context));
             }
         });
         columns.add(new PropertyColumn<>(new ResourceModel("user-firstname"), "frontend:firstname", "firstName"));
         columns.add(new PropertyColumn<>(new ResourceModel("user-lastname"), "frontend:lastname", "lastName"));
         columns.add(new AbstractColumn(new ResourceModel("user-email")) {
             @Override
-            public void populateItem(final Item cellItem, final String componentId, final IModel model) {
-                cellItem.add(new SmartLinkLabel(componentId, new PropertyModel<>(model, "email")));
+            public void populateItem(final Item cellItem, final String componentId, final IModel rowModel) {
+                cellItem.add(new SmartLinkLabel(componentId, new PropertyModel<>(rowModel, "email")));
             }
         });
         columns.add(new AbstractColumn<User, String>(new ResourceModel("user-group")) {
             @Override
-            public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId, final IModel<User> model) {
-                User user = model.getObject();
-                List<Group> groups = user.getLocalMembershipsAsListOfGroups(true);
-                GroupsLinkListPanel groupsLinkListPanel = new GroupsLinkListPanel(componentId, groups, context,
+            public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId,
+                                     final IModel<User> rowModel) {
+                final User user = rowModel.getObject();
+                final List<Group> groups = user.getLocalMembershipsAsListOfGroups(true);
+                final GroupsLinkListPanel groupsLinkListPanel = new GroupsLinkListPanel(componentId, groups, context,
                                                                                   ListUsersPanel.this);
 
                 cellItem.add(groupsLinkListPanel);
             }
         });
         columns.add(new AbstractColumn<User, String>(new ResourceModel("user-type")) {
-            private static final long serialVersionUID = 1L;
-
-            public void populateItem(Item<ICellPopulator<User>> cellItem, String componentId, IModel<User> model) {
-                User user = model.getObject();
+            @Override
+            public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId,
+                                     final IModel<User> rowModel) {
+                final User user = rowModel.getObject();
                 if (user.isExternal()) {
                     cellItem.add(new Label(componentId, new ResourceModel("user-type-external")));
                 } else {
@@ -147,18 +155,10 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         });
         columns.add(new AbstractColumn<User, String>(new ResourceModel("user-view-actions-title")) {
             @Override
-            public void populateItem(final Item<ICellPopulator<User>> item, final String componentId, final IModel<User> model) {
+            public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId,
+                                     final IModel<User> rowModel) {
 
-                AjaxLinkLabel action = new AjaxLinkLabel(componentId, new ResourceModel("user-remove-action")) {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void onClick(final AjaxRequestTarget target) {
-                        context.getService(IDialogService.class.getName(), IDialogService.class).show(
-                                new DeleteUserDialog(model, this, context, ListUsersPanel.this));
-                    }
-                };
-                item.add(action);
+                cellItem.add(new DeleteUserActionLink(componentId, new ResourceModel("user-remove-action"), rowModel));
             }
         });
 
@@ -174,8 +174,6 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         form.add(search);
 
         form.add(new AjaxButton("search-button", form) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form form) {
                 target.add(table);
@@ -187,10 +185,51 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         add(table);
     }
 
+    private class DeleteUserActionLink extends AjaxLinkLabel {
+        private final IModel<User> userModel;
+
+        private DeleteUserActionLink(final String id, final IModel<String> model, final IModel<User> userModel) {
+            super(id, model);
+            this.userModel = userModel;
+        }
+
+        @Override
+        public void onClick(final AjaxRequestTarget target) {
+            final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+            final Confirm confirm = new Confirm(
+                    getString("user-delete-title", userModel),
+                    getString("user-delete-text", userModel)
+            ).ok(() -> deleteUser(userModel.getObject()));
+
+            dialogService.show(confirm);
+        }
+    }
+
+    private void deleteUser(final User user) {
+        if (user == null) {
+            log.info("No user model found when trying to delete user. Probably the Ok button was double clicked.");
+            return;
+        }
+        final String username = user.getUsername();
+        try {
+            user.delete();
+
+            // Let the outside world know that this user got deleted
+            EventBusUtils.post("delete-user", HippoEventConstants.CATEGORY_USER_MANAGEMENT, "deleted user " + username);
+            info(getString("user-removed", new Model<>(user)));
+        } catch (final RepositoryException e) {
+            error(getString("user-remove-failed", new Model<>(user)));
+            log.error("Unable to delete user '{}' : ", username, e);
+        }
+
+        redraw();
+    }
+
     protected boolean isUserCreationEnabled() {
         return config.getAsBoolean(ListUsersPlugin.USER_CREATION_ENABLED_KEY, true);
     }
 
+    @Override
     public IModel<String> getTitle(final Component component) {
         return new ResourceModel("admin-users-title");
     }

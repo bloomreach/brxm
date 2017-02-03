@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,34 +38,30 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
+import org.hippoecm.frontend.plugins.cms.admin.domains.Domain.AuthRole;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
-import org.hippoecm.frontend.session.UserSession;
-import org.onehippo.cms7.event.HippoEvent;
+import org.hippoecm.frontend.util.EventBusUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SetPermissionsPanel extends AdminBreadCrumbPanel {
-    private static final String UNUSED = "unused";
-
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(SetPermissionsPanel.class);
-    private final HippoForm hippoForm;
 
-    private Group selectedGroup;
-    private String selectedRole;
+    private final HippoForm hippoForm;
     private final IModel<Domain> model;
     private final Domain domain;
 
-    @SuppressWarnings({UNUSED})
+    private Group selectedGroup;
+    private String selectedRole;
+
+    @SuppressWarnings("unused")
     public Group getSelectedGroup() {
         return selectedGroup;
     }
 
-    @SuppressWarnings({UNUSED})
+    @SuppressWarnings("unused")
     public String getSelectedRole() {
         return selectedRole;
     }
@@ -83,15 +79,12 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
         this.model = model;
         this.domain = model.getObject();
 
-        Label title = new Label("permissions-set-title", new StringResourceModel("permissions-set-title", this, model));
-        add(title);
+        add(new Label("permissions-set-title", new StringResourceModel("permissions-set-title", this, model)));
 
         // All local groups
         hippoForm = new HippoForm("form");
 
-        AjaxButton submit = new AjaxButton("submit", hippoForm) {
-            private static final long serialVersionUID = 1L;
-
+        final AjaxButton submit = new AjaxButton("submit", hippoForm) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 // clear old feedbacks prior showing new ones
@@ -100,43 +93,34 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
                 try {
                     domain.addGroupToRole(selectedRole, selectedGroup.getGroupname());
                     showInfo(getString("permissions-group-added", model));
-                    HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
-                    if (eventBus != null) {
-                        final UserSession userSession = UserSession.get();
-                        HippoEvent event = new HippoEvent(userSession.getApplicationName())
-                                .user(userSession.getJcrSession().getUserID())
-                                .action("grant-role")
-                                .category(HippoEventConstants.CATEGORY_PERMISSIONS_MANAGEMENT)
-                                .message(
-                                        "grant " + selectedRole + " role to group " + selectedGroup.getGroupname() +
-                                                " for domain " + domain.getName());
-                        eventBus.post(event);
-                    }
-                    this.removeAll();
+
+                    EventBusUtils.post("grant-role", HippoEventConstants.CATEGORY_PERMISSIONS_MANAGEMENT,
+                            String.format("grant %s role to group %s for domain %s",
+                                    selectedRole, selectedGroup.getGroupname(), domain.getName()));
+
+                    removeAll();
                     target.add(SetPermissionsPanel.this);
                 } catch (RepositoryException e) {
                     showError(getString("permissions-group-add-failed", model));
                     log.error("Failed to add permission", e);
                 }
             }
-
         };
         hippoForm.add(submit);
 
-        List<String> allRoles = Group.getAllRoles();
-        DropDownChoice<String> roleChoice = new DropDownChoice<String>("roles-select",
-                new PropertyModel<String>(this, "selectedRole"), allRoles);
+        final List<String> allRoles = Group.getAllRoles();
+        final DropDownChoice<String> roleChoice = new DropDownChoice<>("roles-select",
+                new PropertyModel<>(this, "selectedRole"), allRoles);
         roleChoice.setNullValid(false);
         roleChoice.setRequired(true);
         hippoForm.add(roleChoice);
 
-        List<Group> allGroups = Group.getAllGroups();
-        DropDownChoice<Group> groupChoice = new DropDownChoice<Group>("groups-select",
-                new PropertyModel<Group>(this, "selectedGroup"), allGroups, new ChoiceRenderer<Group>("groupname"));
+        final List<Group> allGroups = Group.getAllGroups();
+        final DropDownChoice<Group> groupChoice = new DropDownChoice<>("groups-select",
+                new PropertyModel<>(this, "selectedGroup"), allGroups, new ChoiceRenderer<>("groupname"));
         groupChoice.setNullValid(false);
         groupChoice.setRequired(true);
         hippoForm.add(groupChoice);
-
 
         add(hippoForm);
 
@@ -148,12 +132,12 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
         hippoForm.error(s);
     }
 
-    @SuppressWarnings({UNUSED})
+    @SuppressWarnings("unused")
     public void setSelectedGroup(final Group selectedGroup) {
         this.selectedGroup = selectedGroup;
     }
 
-    @SuppressWarnings({UNUSED})
+    @SuppressWarnings("unused")
     public void setSelectedRole(final String selectedRole) {
         this.selectedRole = selectedRole;
     }
@@ -162,7 +146,6 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
      * list view to be nested in the form.
      */
     private final class DomainRoleListView extends ListView<String> {
-        private static final long serialVersionUID = 1L;
         private final String role;
 
         public DomainRoleListView(final String id, final String role, final List<String> groups) {
@@ -172,34 +155,26 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
             this.role = role;
         }
 
+        @Override
         protected void populateItem(final ListItem<String> item) {
             item.setOutputMarkupId(true);
             final String groupName = item.getModelObject();
             item.add(new Label("group-label", groupName));
             item.add(new AjaxLinkLabel("group-remove", new ResourceModel("permissions-remove-action")) {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     // clear old feedbacks prior showing new ones
                     hippoForm.clearFeedbackMessages();
                     try {
                         domain.removeGroupFromRole(role, groupName);
-                        HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
-                        if (eventBus != null) {
-                            final UserSession userSession = UserSession.get();
-                            HippoEvent event = new HippoEvent(userSession.getApplicationName())
-                                    .user(userSession.getJcrSession().getUserID())
-                                    .action("revoke-role")
-                                    .category(HippoEventConstants.CATEGORY_PERMISSIONS_MANAGEMENT)
-                                    .message("revoke " + selectedRole + " role from group " + groupName + " for domain "
-                                            + domain.getName());
-                            eventBus.post(event);
-                        }
+
+                        final String message = String.format("revoke %s role from group %s for domain %s",
+                                selectedRole, groupName, domain.getName());
+
+                        EventBusUtils.post("revoke-role", HippoEventConstants.CATEGORY_PERMISSIONS_MANAGEMENT, message);
                         showInfo(getString("permissions-group-removed", model));
-                        log.info("Revoke " + selectedRole + " role from group " + groupName + " for domain " +
-                                domain.getName());
-                        this.removeAll();
+                        log.info(message);
+                        removeAll();
                         target.add(SetPermissionsPanel.this);
                     } catch (RepositoryException e) {
                         showError(getString("permissions-group-remove-failed", model));
@@ -218,29 +193,26 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
      * list view to be nested in the form.
      */
     private final class RoleListView extends ListView<String> {
-        private static final long serialVersionUID = 1L;
 
-        public RoleListView(final String id) {
+        RoleListView(final String id) {
             super(id, Group.getAllRoles());
             setReuseItems(false);
         }
 
+        @Override
         protected void populateItem(final ListItem<String> item) {
-            String role = item.getModelObject();
+            final String role = item.getModelObject();
             item.add(new Label("role", role));
 
-            Domain.AuthRole authRole = domain.getAuthRoles().get(role);
-            List<String> groups;
-            if (authRole != null) {
-                groups = new ArrayList<String>(authRole.getGroupnames());
-            } else {
-                groups = Collections.emptyList();
-            }
+            final AuthRole authRole = domain.getAuthRoles().get(role);
+            final List<String> groups = authRole != null ?
+                    new ArrayList<>(authRole.getGroupnames()) : Collections.emptyList();
 
             item.add(new DomainRoleListView("groups", role, groups));
         }
     }
 
+    @Override
     public IModel<String> getTitle(Component component) {
         return new StringResourceModel("permissions-set-title", component, model);
     }
