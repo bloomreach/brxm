@@ -23,16 +23,16 @@ import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 
 public class ModelUtils {
-    public static String formatDefinitionOrigin(final Definition definition) {
-        final Source source = definition.getSource();
-        final Module module = source.getModule();
+    public static String formatModule(final Module module) {
         final Project project = module.getProject();
         final Configuration configuration = project.getConfiguration();
 
-        return String.format("%s/%s/%s [%s]",
-                configuration.getName(),
-                project.getName(),
-                module.getName(),
-                source.getPath());
+        return String.format("%s/%s/%s", configuration.getName(), project.getName(), module.getName());
+    }
+
+    public static String formatDefinition(final Definition definition) {
+        final Source source = definition.getSource();
+
+        return String.format("%s [%s]", formatModule(source.getModule()), source.getPath());
     }
 }

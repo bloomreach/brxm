@@ -94,10 +94,13 @@ public class ProjectImpl implements Project {
 
     void pushModule(final ModuleImpl module) {
         final String name = module.getName();
-        // TODO: do we want to support merging modules?
-        final ModuleImpl consolidated = moduleMap.containsKey(name) ? moduleMap.get(name) : addModule(name);
 
-        consolidated.addAfter(module.getAfter());
-        consolidated.pushDefinitions(module);
+        if (moduleMap.containsKey(name)) {
+            final String msg = String.format("Module %s already exists while merged projects. Merging of modules is not supported.",
+                    ModelUtils.formatModule(module));
+            throw new IllegalStateException(msg);
+        }
+
+        addModule(name).addAfter(module.getAfter()).pushDefinitions(module);
     }
 }

@@ -247,8 +247,19 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
     }
 
     @Test
-    public void merged_modules() {
-        // TODO: do we actually want to support merging modules, or should we reject that?
+    public void modules_cannot_be_merged() {
+        final ConfigurationImpl c1a = new ConfigurationImpl("c1");
+        final ConfigurationImpl c1b = new ConfigurationImpl("c1");
+        c1a.addProject("p1").addModule("m1");
+        c1b.addProject("p1").addModule("m1");
+
+        MergedModelBuilder builder = new MergedModelBuilder().push(c1a);
+
+        try {
+            builder.push(c1b);
+        } catch (IllegalStateException e) {
+            assertEquals("Module c1/p1/m1 already exists while merged projects. Merging of modules is not supported.", e.getMessage());
+        }
     }
 
     @Test
@@ -285,10 +296,9 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         final ProjectImpl p1a = c1a.addProject("p1");
         final ProjectImpl p1b = c1b.addProject("p1");
 
-        p1a.addModule("ma1").addAfter(ImmutableSet.of("mx1", "mx2"));
+        p1a.addModule("ma1").addAfter(ImmutableSet.of("mx1", "mx3"));
         p1a.addModule("mx1");
         p1a.addModule("mx3").addAfter(ImmutableSet.of("mx2"));
-        p1b.addModule("ma1").addAfter(ImmutableSet.of("mx1", "mx3"));
         p1b.addModule("mx2");
 
         MergedModel model = new MergedModelBuilder().push(c1a).push(c1b).build();
@@ -393,8 +403,6 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
             assertEquals("Duplicate content root paths '/a/b' in module 'm1'.", e.getMessage());
-        } catch (Exception e) {
-            fail("Unexpected exception");
         }
     }
 
@@ -417,8 +425,6 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
             assertEquals("CNDs are specified in multiple sources of a module: c1/p1/m1 [string] and c1/p1/m1 [builder/definition-sorter.yaml]. For proper ordering, they must be specified in a single source.", e.getMessage());
-        } catch (Exception e) {
-            fail("Unexpected exception");
         }
     }
 

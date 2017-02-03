@@ -87,7 +87,7 @@ class ConfigurationTreeBuilder {
         if (pathSegments.length > segmentsConsumed + 1) {
             // this definition is rooted more than 1 node level deeper than a leaf node of the current tree.
             // that's unsupported, because it is likely to create models that cannot be persisted to JCR.
-            final String culprit = ModelUtils.formatDefinitionOrigin(definition);
+            final String culprit = ModelUtils.formatDefinition(definition);
             String msg = String.format("%s contains definition rooted at unreachable node '%s'. "
                     + "Closest ancestor is at '%s'.", culprit, definitionRootPath,
                       definitionRoot.getPath());
@@ -127,14 +127,14 @@ class ConfigurationTreeBuilder {
             // property already exists. By default, apply set/override behaviour
             property = properties.get(name);
             if (property.getType() != definitionProperty.getType()) {
-                final String culprit = ModelUtils.formatDefinitionOrigin(definitionProperty.getDefinition());
+                final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
                 final String msg = String.format("Property %s already exists with type %s, but type %s is requested in %s.",
                         property.getPath(), property.getType(), definitionProperty.getType(), culprit);
                 throw new IllegalStateException(msg);
             }
 
             if (property.getValueType() != definitionProperty.getValueType()) {
-                final String culprit = ModelUtils.formatDefinitionOrigin(definitionProperty.getDefinition());
+                final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
                 final String msg = String.format("Property %s already exists with value type %s, but value type %s is requested in %s.",
                         property.getPath(), property.getValueType(), definitionProperty.getValueType(), culprit);
                 throw new IllegalStateException(msg);

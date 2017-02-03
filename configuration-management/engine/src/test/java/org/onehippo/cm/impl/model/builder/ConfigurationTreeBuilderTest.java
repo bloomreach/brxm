@@ -104,8 +104,6 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("test-configuration/test-project/test-module [string] contains definition rooted at unreachable node '/a/b'. Closest ancestor is at '/'.", e.getMessage());
-        } catch (Exception e) {
-            fail("Unexpected exception type");
         }
     }
 
@@ -293,8 +291,6 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("Property /a/b/property2 already exists with type single, but type list is requested in test-configuration/test-project/test-module [string].", e.getMessage());
-        } catch (Exception e) {
-            fail("Unexpected exception");
         }
     }
 
@@ -318,8 +314,6 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
             assertEquals("Property /a/b/property2 already exists with value type string, but value type long is requested in test-configuration/test-project/test-module [string].", e.getMessage());
-        } catch (Exception e) {
-            fail("Unexpected exception");
         }
     }
 }

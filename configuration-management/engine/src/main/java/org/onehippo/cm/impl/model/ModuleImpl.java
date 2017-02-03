@@ -151,8 +151,8 @@ public class ModuleImpl implements Module {
                 && !nodeTypeDefinition.getSource().getPath().equals(nodeTypes.get(0).getSource().getPath())) {
             final String msg = String.format("CNDs are specified in multiple sources of a module: %s and %s. "
                     + "For proper ordering, they must be specified in a single source.",
-                    ModelUtils.formatDefinitionOrigin(nodeTypeDefinition),
-                    ModelUtils.formatDefinitionOrigin(nodeTypes.get(0)));
+                    ModelUtils.formatDefinition(nodeTypeDefinition),
+                    ModelUtils.formatDefinition(nodeTypes.get(0)));
             throw new IllegalStateException(msg);
         }
     }
