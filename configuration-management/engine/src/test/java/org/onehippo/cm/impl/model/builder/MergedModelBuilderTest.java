@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableSet;
 
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigurationNode;
+import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
@@ -419,5 +420,23 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         } catch (Exception e) {
             fail("Unexpected exception");
         }
+    }
+
+    @Test
+    public void assert_insertion_order_for_cnd() throws Exception {
+        final ConfigurationImpl c1 = new ConfigurationImpl("c1");
+        final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
+
+        final String yaml = "instructions:\n"
+                + "  - cnd:\n"
+                + "    - dummy CND content\n"
+                + "    - alphabetically earlier dummy CND";
+
+        loadYAMLString(yaml, m1);
+
+        MergedModel model = new MergedModelBuilder().push(c1).build();
+
+        String nodeTypes = model.getNodeTypeDefinitions().stream().map(NodeTypeDefinition::getValue).collect(Collectors.toList()).toString();
+        assertEquals("[dummy CND content, alphabetically earlier dummy CND]", nodeTypes);
     }
 }
