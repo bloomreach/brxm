@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Map;
 
 import org.onehippo.cm.api.model.Configuration;
@@ -30,7 +29,6 @@ import org.onehippo.cm.api.model.DefinitionItem;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
@@ -41,6 +39,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.onehippo.cm.impl.model.ModelTestUtils.findByName;
+import static org.onehippo.cm.impl.model.ModelTestUtils.findByPath;
 
 public abstract class AbstractBaseTest {
 
@@ -103,7 +103,7 @@ public abstract class AbstractBaseTest {
     }
 
     Source assertSource(final Module parent, final String path, final int definitionCount) {
-        Source source = parent.getSources().get(path);
+        Source source = findByPath(path, parent.getSources());
         assertNotNull(source);
         assertEquals(path, source.getPath());
         assertEquals(parent, source.getModule());
@@ -262,9 +262,4 @@ public abstract class AbstractBaseTest {
         assertEquals(isResource, actual.isResource());
         assertEquals(isPath, actual.isPath());
     }
-
-    private <T extends Orderable> T findByName(final String name, final Collection<T> entries) {
-        return entries.stream().filter(e -> name.equals(e.getName())).findFirst().orElse(null);
-    }
-
 }

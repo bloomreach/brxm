@@ -69,7 +69,7 @@ public class FileConfigurationWriter {
                     final ResourceInputProvider resourceInputProvider = resourceInputProviders.get(module);
                     final ResourceOutputProvider resourceOutputProvider = new FileResourceOutputProvider(modulePath);
 
-                    for (Source source : module.getSources().values()) {
+                    for (Source source : module.getSources()) {
                         final List<String> resources = new ArrayList<>();
                         try (final OutputStream sourceOutputStream = getSourceOutputStream(modulePath, source)) {
                             sourceSerializer.serialize(sourceOutputStream, source, resources::add);

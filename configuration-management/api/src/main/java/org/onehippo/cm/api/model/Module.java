@@ -15,17 +15,15 @@
  */
 package org.onehippo.cm.api.model;
 
-import java.util.Map;
+import java.util.Set;
 
 public interface Module extends Orderable {
 
     Project getProject();
 
     /**
-     * @return The <strong>ordered</strong> map of {@link Source}s by relative path (same as {@link Source#getPath()})
-     * to the module base resource path for
-     * this {@link Module} as an immutable map and empty immutable map if none present.
-     * Note the ordering is according to serialized yaml format and not in model processing order.
+     * @return The immutable set of {@link Source}s of this module, ordered by path ({@link Source#getPath()})
+     *         relative to the module's base resource path.
      */
-    Map<String, Source> getSources();
+    Set<Source> getSources();
 }

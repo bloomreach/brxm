@@ -18,10 +18,8 @@ package org.onehippo.cm.impl.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -39,11 +37,11 @@ public class ModuleImpl implements Module {
     private final Set<String> modifiableAfter = new LinkedHashSet<>();
     private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
 
-    private final Map<String, SourceImpl> modifiableSources = new LinkedHashMap<>();
-    private final Map<String, Source> sources = Collections.unmodifiableMap(modifiableSources);
+    private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator.comparing(Source::getPath));
+    private final Set<Source> sources = Collections.unmodifiableSet(sortedSources);
 
-    private final List<NamespaceDefinitionImpl> namespaces = new ArrayList<>();
-    private final List<NodeTypeDefinitionImpl> nodeTypes = new ArrayList<>();
+    private final List<NamespaceDefinitionImpl> namespaceDefinitions = new ArrayList<>();
+    private final List<NodeTypeDefinitionImpl> nodeTypeDefinitions = new ArrayList<>();
     private final List<ContentDefinitionImpl> contentDefinitions = new ArrayList<>();
 
     public ModuleImpl(final String name, final ProjectImpl project) {
@@ -79,17 +77,13 @@ public class ModuleImpl implements Module {
     }
 
     @Override
-    public Map<String, Source> getSources() {
+    public Set<Source> getSources() {
         return sources;
-    }
-
-    public Map<String, SourceImpl> getModifiableSources() {
-        return modifiableSources;
     }
 
     public SourceImpl addSource(final String path) {
         final SourceImpl source = new SourceImpl(path, this);
-        modifiableSources.put(path, source);
+        sortedSources.add(source);
         return source;
     }
 
@@ -97,16 +91,16 @@ public class ModuleImpl implements Module {
      * @return a sorted list of namespace definitions.
      * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
      */
-    public List<NamespaceDefinitionImpl> getNamespaces() {
-        return namespaces;
+    public List<NamespaceDefinitionImpl> getNamespaceDefinitions() {
+        return namespaceDefinitions;
     }
 
     /**
      * @return a lost of node type definitions in insertion order.
      * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
      */
-    public List<NodeTypeDefinitionImpl> getNodeTypes() {
-        return nodeTypes;
+    public List<NodeTypeDefinitionImpl> getNodeTypeDefinitions() {
+        return nodeTypeDefinitions;
     }
 
     /**
@@ -118,18 +112,14 @@ public class ModuleImpl implements Module {
     }
 
     void pushDefinitions(final ModuleImpl module) {
-        // sort sources to provide consistent error reporting on conflicting definition paths.
-        final Set<Source> sortedSources = new TreeSet<>(Comparator.comparing(Source::getPath));
-        sortedSources.addAll(module.getSources().values());
-
-        // sort definitions into namespaces, node types and content
-        sortedSources.forEach(source ->
+        // sort definitions into namespaceDefinitions, node types and content
+        module.getSources().forEach(source ->
                 source.getDefinitions().forEach(definition -> {
                     if (definition instanceof NamespaceDefinitionImpl) {
-                        namespaces.add((NamespaceDefinitionImpl) definition);
+                        namespaceDefinitions.add((NamespaceDefinitionImpl) definition);
                     } else if (definition instanceof NodeTypeDefinitionImpl) {
                         ensureSingleSourceForNodeTypes(definition);
-                        nodeTypes.add((NodeTypeDefinitionImpl) definition);
+                        nodeTypeDefinitions.add((NodeTypeDefinitionImpl) definition);
                     } else if (definition instanceof ContentDefinitionImpl) {
                         contentDefinitions.add((ContentDefinitionImpl) definition);
                     } else {
@@ -138,21 +128,19 @@ public class ModuleImpl implements Module {
                     }
                 })
         );
-    }
 
-    public void sortDefinitions() {
-        namespaces.sort(Comparator.comparing(NamespaceDefinitionImpl::getPrefix));
+        // the order of namespaceDefinitions doesn't matter, don't sort them
         // node types stay sorted in insertion order
         contentDefinitions.sort(new ContentDefinitionComparator());
     }
 
     private void ensureSingleSourceForNodeTypes(final Definition nodeTypeDefinition) {
-        if (!nodeTypes.isEmpty()
-                && !nodeTypeDefinition.getSource().getPath().equals(nodeTypes.get(0).getSource().getPath())) {
+        if (!nodeTypeDefinitions.isEmpty()
+                && !nodeTypeDefinition.getSource().getPath().equals(nodeTypeDefinitions.get(0).getSource().getPath())) {
             final String msg = String.format("CNDs are specified in multiple sources of a module: %s and %s. "
                     + "For proper ordering, they must be specified in a single source.",
                     ModelUtils.formatDefinition(nodeTypeDefinition),
-                    ModelUtils.formatDefinition(nodeTypes.get(0)));
+                    ModelUtils.formatDefinition(nodeTypeDefinitions.get(0)));
             throw new IllegalStateException(msg);
         }
     }

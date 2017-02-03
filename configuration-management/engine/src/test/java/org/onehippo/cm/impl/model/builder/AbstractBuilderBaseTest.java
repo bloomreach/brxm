@@ -31,6 +31,8 @@ import org.onehippo.cm.engine.SourceParser;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 
+import static org.onehippo.cm.impl.model.ModelTestUtils.findByPath;
+
 public abstract class AbstractBuilderBaseTest {
     private final String STRING_SOURCE = "string";
 
@@ -45,7 +47,7 @@ public abstract class AbstractBuilderBaseTest {
     protected List<Definition> parseNoSort(final String yaml) throws Exception {
         final ModuleImpl module = makeModule();
         loadYAMLString(yaml, module);
-        return module.getSources().get(STRING_SOURCE).getDefinitions();
+        return findByPath(STRING_SOURCE, module.getSources()).getDefinitions();
     }
 
     protected void loadYAMLFile(final String filePath, final ModuleImpl module) throws Exception {

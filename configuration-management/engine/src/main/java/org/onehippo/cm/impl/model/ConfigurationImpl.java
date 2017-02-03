@@ -78,6 +78,7 @@ public class ConfigurationImpl implements Configuration {
 
     public void sortProjects() {
         modifiableProjects.sort(new OrderableComparator<>());
+        modifiableProjects.forEach(ProjectImpl::sortModules);
     }
 
     public void pushProject(final ProjectImpl project) {

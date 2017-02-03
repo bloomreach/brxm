@@ -235,7 +235,7 @@ public abstract class AbstractBaseParser {
         return scalarNode.getValue();
     }
 
-    protected Set<String> asSingleOrSequenceOfStrScalars(final Node node) throws ParserException {
+    protected Set<String> asSingleOrSetOfStrScalars(final Node node) throws ParserException {
         if (node == null) {
             return Collections.emptySet();
         }

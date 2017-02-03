@@ -25,7 +25,6 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.builder.sorting.OrderableComparator;
 
 /**
@@ -51,8 +50,8 @@ public class MergedModelBuilder {
         configurations.forEach(configuration ->
                 configuration.getModifiableProjects().forEach(project ->
                         project.getModifiableModules().forEach(module -> {
-                            mergedModel.addNamespaceDefinitions(module.getNamespaces());
-                            mergedModel.addNodeTypeDefinitions(module.getNodeTypes());
+                            mergedModel.addNamespaceDefinitions(module.getNamespaceDefinitions());
+                            mergedModel.addNodeTypeDefinitions(module.getNodeTypeDefinitions());
                             module.getContentDefinitions().forEach(configurationTreeBuilder::push);
                         })
                 )
@@ -95,12 +94,6 @@ public class MergedModelBuilder {
 
     private void sort() {
         configurations.sort(new OrderableComparator<>());
-        configurations.forEach(configuration -> {
-            configuration.sortProjects();
-            configuration.getModifiableProjects().forEach(project -> {
-                project.sortModules();
-                project.getModifiableModules().forEach(ModuleImpl::sortDefinitions);
-            });
-        });
+        configurations.forEach(ConfigurationImpl::sortProjects);
     }
 }

@@ -346,7 +346,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         MergedModel model = new MergedModelBuilder().push(c1).build();
 
         String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
-        assertEquals("[hishippoproject, myhippoproject]", namespaces);
+        assertEquals("[myhippoproject, hishippoproject]", namespaces);
         assertEquals(1, model.getNodeTypeDefinitions().size());
 
         final List<ContentDefinitionImpl> definitions = model.getSortedConfigurations().get(0)
@@ -370,7 +370,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         MergedModel model = new MergedModelBuilder().push(c1).build();
 
         String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
-        assertEquals("[hishippoproject, myhippoproject]", namespaces);
+        assertEquals("[myhippoproject, hishippoproject]", namespaces);
         assertEquals(1, model.getNodeTypeDefinitions().size());
 
         final List<ContentDefinitionImpl> definitions = model.getSortedConfigurations().get(0)
@@ -396,10 +396,10 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         loadYAMLFile("builder/definition-sorter.yaml", m1);
         loadYAMLString(yaml, m1);
 
-        MergedModelBuilder builder = new MergedModelBuilder().push(c1);
+        MergedModelBuilder builder = new MergedModelBuilder();
 
         try {
-            builder.build();
+            builder.push(c1);
             fail("Expect IllegalStateException");
         } catch (IllegalStateException e) {
             assertEquals("Duplicate content root paths '/a/b' in module 'm1'.", e.getMessage());
