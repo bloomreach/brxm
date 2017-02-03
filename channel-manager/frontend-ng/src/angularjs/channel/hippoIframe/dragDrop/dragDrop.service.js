@@ -114,6 +114,7 @@ class DragDropService {
         mirrorContainer: $(MIRROR_WRAPPER_SELECTOR)[0],
         moves: (el, source) => !this.dropping && this._isContainerEnabled(source),
         accepts: (el, target) => this._isContainerEnabled(target),
+        invalid: () => !this.draggingOrClicking,
       };
 
       this.drake = this.iframe.dragula(containerBoxElements, this.dragulaOptions);
