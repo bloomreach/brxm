@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -267,7 +267,8 @@ public final class SearchInputParsingUtils {
             // Some of these characters break the jcr query and others like * and ? have a very negative impact
             // on performance.
             if (!ignoreChar(c, ignore) && isSpecialChar(c)) {
-                if (c == '\"') {
+                if (c == '\"' || c == '\\') {
+                    // escape it
                     sb.append('\\');
                     sb.append(c);
                 } else if (c == '\'') {
@@ -304,11 +305,6 @@ public final class SearchInputParsingUtils {
                                     sb.append(' ');
                                 } // else skip it to provide old behavior
                             }
-                        }
-                    } else if (c == '\\') {
-                        //a single backslash won't be accepted by lucene.
-                        if (input.length() != 1){
-                            sb.append(c);
                         }
                     } else if (sb.length() > 0) {
                         // if one wildcard is allowed, it will be added but never as leading
