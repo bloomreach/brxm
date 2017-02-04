@@ -35,9 +35,7 @@ import org.onehippo.cm.impl.model.builder.sorting.OrderableComparator;
 public class MergedModelBuilder {
     private final List<ConfigurationImpl> configurations = new ArrayList<>();
     private final Map<String, ConfigurationImpl> configurationMap = new HashMap<>();
-
-    // Add DI?
-    private DependencyVerifier dependencyVerifier = new DependencyVerifier();
+    private final DependencyVerifier dependencyVerifier = new DependencyVerifier();
 
     public MergedModel build() {
         verifyDependencies();

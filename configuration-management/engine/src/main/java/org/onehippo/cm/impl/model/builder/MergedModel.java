@@ -34,20 +34,8 @@ public class MergedModel {
         return sortedConfigurations;
     }
 
-    void setSortedConfigurations(final List<ConfigurationImpl> sortedConfigurations) {
-        this.sortedConfigurations = sortedConfigurations;
-    }
-
-    public void addNamespaceDefinitions(final List<NamespaceDefinitionImpl> definitions) {
-        namespaceDefinitions.addAll(definitions);
-    }
-
     public List<NamespaceDefinitionImpl> getNamespaceDefinitions() {
         return namespaceDefinitions;
-    }
-
-    public void addNodeTypeDefinitions(final List<NodeTypeDefinitionImpl> definitions) {
-        nodeTypeDefinitions.addAll(definitions);
     }
 
     public List<NodeTypeDefinitionImpl> getNodeTypeDefinitions() {
@@ -58,7 +46,19 @@ public class MergedModel {
         return configurationRootNode;
     }
 
-    public void setConfigurationRootNode(final ConfigurationNodeImpl configurationRootNode) {
+    void setSortedConfigurations(final List<ConfigurationImpl> sortedConfigurations) {
+        this.sortedConfigurations = sortedConfigurations;
+    }
+
+    void addNamespaceDefinitions(final List<NamespaceDefinitionImpl> definitions) {
+        namespaceDefinitions.addAll(definitions);
+    }
+
+    void addNodeTypeDefinitions(final List<NodeTypeDefinitionImpl> definitions) {
+        nodeTypeDefinitions.addAll(definitions);
+    }
+
+    void setConfigurationRootNode(final ConfigurationNodeImpl configurationRootNode) {
         this.configurationRootNode = configurationRootNode;
     }
 }
