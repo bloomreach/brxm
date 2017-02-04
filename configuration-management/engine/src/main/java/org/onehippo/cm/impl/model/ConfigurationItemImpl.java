@@ -15,21 +15,21 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.onehippo.cm.api.model.ConfigurationItem;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.DefinitionItem;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-
 public abstract class ConfigurationItemImpl implements ConfigurationItem {
 
     private String name;
     private String path;
-    private ConfigurationNode parent;
-    private List<DefinitionItem> definitions;
+    private ConfigurationNodeImpl parent;
+    private final List<DefinitionItemImpl> modifiableDefinitions = new ArrayList<>();
+    private final List<DefinitionItem> definitions = Collections.unmodifiableList(modifiableDefinitions);
     private boolean deleted;
 
     @Override
@@ -55,20 +55,17 @@ public abstract class ConfigurationItemImpl implements ConfigurationItem {
         return parent;
     }
 
-    public void setParent(final ConfigurationNode parent) {
+    public void setParent(final ConfigurationNodeImpl parent) {
         this.parent = parent;
     }
 
     @Override
     public List<DefinitionItem> getDefinitions() {
-        if (definitions == null) {
-            return emptyList();
-        }
-        return unmodifiableList(definitions);
+        return definitions;
     }
 
-    public void setDefinitions(final List<DefinitionItem> definitions) {
-        this.definitions = definitions;
+    public void addDefinitionItem(final DefinitionItemImpl definitionItem) {
+        modifiableDefinitions.add(definitionItem);
     }
 
     @Override

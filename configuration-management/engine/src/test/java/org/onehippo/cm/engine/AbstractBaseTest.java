@@ -39,6 +39,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.onehippo.cm.impl.model.ModelTestUtils.findByName;
+import static org.onehippo.cm.impl.model.ModelTestUtils.findByPath;
 
 public abstract class AbstractBaseTest {
 
@@ -81,7 +83,7 @@ public abstract class AbstractBaseTest {
     }
 
     Project assertProject(final Configuration parent, final String name, final String[] after, final int moduleCount) {
-        final Project project = parent.getProjects().get(name);
+        final Project project = findByName(name, parent.getProjects());
         assertNotNull(project);
         assertEquals(name, project.getName());
         assertArrayEquals(after, project.getAfter().toArray());
@@ -91,7 +93,7 @@ public abstract class AbstractBaseTest {
     }
 
     Module assertModule(final Project parent, final String name, final String[] after, final int sourceCount) {
-        final Module module = parent.getModules().get(name);
+        final Module module = findByName(name, parent.getModules());
         assertNotNull(module);
         assertEquals(name, module.getName());
         assertArrayEquals(after, module.getAfter().toArray());
@@ -101,7 +103,7 @@ public abstract class AbstractBaseTest {
     }
 
     Source assertSource(final Module parent, final String path, final int definitionCount) {
-        Source source = parent.getSources().get(path);
+        Source source = findByPath(path, parent.getSources());
         assertNotNull(source);
         assertEquals(path, source.getPath());
         assertEquals(parent, source.getModule());
@@ -260,5 +262,4 @@ public abstract class AbstractBaseTest {
         assertEquals(isResource, actual.isResource());
         assertEquals(isPath, actual.isPath());
     }
-
 }

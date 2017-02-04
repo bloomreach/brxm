@@ -15,6 +15,7 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,12 +25,12 @@ import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 
-import static java.util.Collections.unmodifiableMap;
-
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
 
-    private Map<String, DefinitionNode> nodes = new LinkedHashMap<>();
-    private Map<String, DefinitionProperty> properties = new LinkedHashMap<>();
+    private final Map<String, DefinitionNodeImpl> modifiableNodes = new LinkedHashMap<>();
+    private final Map<String, DefinitionNode> nodes = Collections.unmodifiableMap(modifiableNodes);
+    private final Map<String, DefinitionPropertyImpl> modifiableProperties = new LinkedHashMap<>();
+    private final Map<String, DefinitionProperty> properties = Collections.unmodifiableMap(modifiableProperties);
 
     public DefinitionNodeImpl(final String path, final String name, final Definition definition) {
         super(path, name, definition);
@@ -41,29 +42,37 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
 
     @Override
     public Map<String, DefinitionNode> getNodes() {
-        return unmodifiableMap(nodes);
+        return nodes;
+    }
+
+    public Map<String, DefinitionNodeImpl> getModifiableNodes() {
+        return modifiableNodes;
     }
 
     @Override
     public Map<String, DefinitionProperty> getProperties() {
-        return unmodifiableMap(properties);
+        return properties;
+    }
+
+    public Map<String, DefinitionPropertyImpl> getModifiableProperties() {
+        return modifiableProperties;
     }
 
     public DefinitionNodeImpl addNode(final String name) {
         final DefinitionNodeImpl node = new DefinitionNodeImpl(name, this);
-        nodes.put(name, node);
+        modifiableNodes.put(name, node);
         return node;
     }
 
     public DefinitionPropertyImpl addProperty(final String name, final Value value) {
         final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, value, this);
-        properties.put(name, property);
+        modifiableProperties.put(name, property);
         return property;
     }
 
     public DefinitionPropertyImpl addProperty(final String name, final ValueType type, final Value[] values) {
         final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, type, values, this);
-        properties.put(name, property);
+        modifiableProperties.put(name, property);
         return property;
     }
 

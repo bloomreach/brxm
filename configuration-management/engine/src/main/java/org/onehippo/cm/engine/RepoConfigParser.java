@@ -44,7 +44,7 @@ public class RepoConfigParser extends AbstractBaseParser {
         final Map<String, Node> configurationMap = asMapping(src, new String[]{"name", "projects"}, new String[]{"after"});
         final String name = asStringScalar(configurationMap.get("name"));
         final ConfigurationImpl configuration = new ConfigurationImpl(name);
-        configuration.setAfter(asSingleOrSequenceOfStrScalars(configurationMap.get("after")));
+        configuration.addAfter(asSingleOrSetOfStrScalars(configurationMap.get("after")));
         parent.put(name, configuration);
 
         for (Node projectNode : asSequence(configurationMap.get("projects"))) {
@@ -56,7 +56,7 @@ public class RepoConfigParser extends AbstractBaseParser {
         final Map<String, Node> sourceMap = asMapping(src, new String[]{"name", "modules"}, new String[]{"after"});
         final String name = asStringScalar(sourceMap.get("name"));
         final ProjectImpl project = parent.addProject(name);
-        project.setAfter(asSingleOrSequenceOfStrScalars(sourceMap.get("after")));
+        project.addAfter(asSingleOrSetOfStrScalars(sourceMap.get("after")));
 
         for (Node moduleNode : asSequence(sourceMap.get("modules"))) {
             constructModule(moduleNode, project);
@@ -67,7 +67,7 @@ public class RepoConfigParser extends AbstractBaseParser {
         final Map<String, Node> map = asMapping(src, new String[]{"name"}, new String[]{"after"});
         final String name = asStringScalar(map.get("name"));
         final ModuleImpl module = parent.addModule(name);
-        module.setAfter(asSingleOrSequenceOfStrScalars(map.get("after")));
+        module.addAfter(asSingleOrSetOfStrScalars(map.get("after")));
     }
 
 }

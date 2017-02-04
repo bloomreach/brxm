@@ -47,7 +47,7 @@ public class FileConfigurationUtils {
     public static boolean hasMultipleModules(Map<String, Configuration> configurations) {
         int count = 0;
         for (Configuration configuration : configurations.values()) {
-            for (Project project : configuration.getProjects().values()) {
+            for (Project project : configuration.getProjects()) {
                 count += project.getModules().size();
                 if (count > 1) {
                     return true;

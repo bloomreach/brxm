@@ -16,23 +16,33 @@
 package org.onehippo.cm.impl.model;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
-
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableMap;
+import org.onehippo.cm.impl.model.builder.MergedModel;
 
 public class ModuleImpl implements Module {
 
-    private String name;
-    private Project project;
-    private List<String> after = new ArrayList<>();
-    private Map<String, Source> sources = new LinkedHashMap<>();
+    private final String name;
+    private final Project project;
+
+    private final Set<String> modifiableAfter = new LinkedHashSet<>();
+    private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
+
+    private final Set<SourceImpl> sortedSources = new TreeSet<>(Comparator.comparing(Source::getPath));
+    private final Set<Source> sources = Collections.unmodifiableSet(sortedSources);
+
+    private final List<NamespaceDefinitionImpl> namespaceDefinitions = new ArrayList<>();
+    private final List<NodeTypeDefinitionImpl> nodeTypeDefinitions = new ArrayList<>();
+    private final List<ContentDefinitionImpl> contentDefinitions = new ArrayList<>();
 
     public ModuleImpl(final String name, final ProjectImpl project) {
         if (name == null) {
@@ -57,23 +67,94 @@ public class ModuleImpl implements Module {
     }
 
     @Override
-    public List<String> getAfter() {
-        return unmodifiableList(after);
+    public Set<String> getAfter() {
+        return after;
     }
 
-    public void setAfter(final List<String> after) {
-        this.after = new ArrayList<>(after);
+    public ModuleImpl addAfter(final Set<String> after) {
+        modifiableAfter.addAll(after);
+        return this;
     }
 
     @Override
-    public Map<String, Source> getSources() {
-        return unmodifiableMap(sources);
+    public Set<Source> getSources() {
+        return sources;
     }
 
     public SourceImpl addSource(final String path) {
         final SourceImpl source = new SourceImpl(path, this);
-        sources.put(path, source);
+        sortedSources.add(source);
         return source;
     }
 
+    /**
+     * @return a sorted list of namespace definitions.
+     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     */
+    public List<NamespaceDefinitionImpl> getNamespaceDefinitions() {
+        return namespaceDefinitions;
+    }
+
+    /**
+     * @return a lost of node type definitions in insertion order.
+     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     */
+    public List<NodeTypeDefinitionImpl> getNodeTypeDefinitions() {
+        return nodeTypeDefinitions;
+    }
+
+    /**
+     * @return a sorted list of content (or config) definitions.
+     * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.
+     */
+    public List<ContentDefinitionImpl> getContentDefinitions() {
+        return contentDefinitions;
+    }
+
+    void pushDefinitions(final ModuleImpl module) {
+        // sort definitions into namespaceDefinitions, node types and content
+        module.getSources().forEach(source ->
+                source.getDefinitions().forEach(definition -> {
+                    if (definition instanceof NamespaceDefinitionImpl) {
+                        namespaceDefinitions.add((NamespaceDefinitionImpl) definition);
+                    } else if (definition instanceof NodeTypeDefinitionImpl) {
+                        ensureSingleSourceForNodeTypes(definition);
+                        nodeTypeDefinitions.add((NodeTypeDefinitionImpl) definition);
+                    } else if (definition instanceof ContentDefinitionImpl) {
+                        contentDefinitions.add((ContentDefinitionImpl) definition);
+                    } else {
+                        throw new IllegalStateException("Failed to sort unsupported definition class '"
+                                + definition.getClass().getName() + "'.");
+                    }
+                })
+        );
+
+        // the order of namespaceDefinitions doesn't matter, don't sort them
+        // node types stay sorted in insertion order
+        contentDefinitions.sort(new ContentDefinitionComparator());
+    }
+
+    private void ensureSingleSourceForNodeTypes(final Definition nodeTypeDefinition) {
+        if (!nodeTypeDefinitions.isEmpty()
+                && !nodeTypeDefinition.getSource().getPath().equals(nodeTypeDefinitions.get(0).getSource().getPath())) {
+            final String msg = String.format("CNDs are specified in multiple sources of a module: %s and %s. "
+                    + "For proper ordering, they must be specified in a single source.",
+                    ModelUtils.formatDefinition(nodeTypeDefinition),
+                    ModelUtils.formatDefinition(nodeTypeDefinitions.get(0)));
+            throw new IllegalStateException(msg);
+        }
+    }
+
+    private class ContentDefinitionComparator implements Comparator<ContentDefinitionImpl> {
+        public int compare(final ContentDefinitionImpl def1, final ContentDefinitionImpl def2) {
+            final String rootPath1 = def1.getNode().getPath();
+            final String rootPath2 = def2.getNode().getPath();
+
+            if (def1 != def2 && rootPath1.equals(rootPath2)) {
+                throw new IllegalStateException("Duplicate content root paths '" + rootPath1 + "' in module '"
+                        + getName() + "'.");
+            }
+            return rootPath1.compareTo(rootPath2);
+        }
+    }
 }

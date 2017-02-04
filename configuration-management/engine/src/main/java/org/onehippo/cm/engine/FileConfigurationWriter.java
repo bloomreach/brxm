@@ -62,14 +62,14 @@ public class FileConfigurationWriter {
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
 
         for (Configuration configuration : configurations.values()) {
-            for (Project project : configuration.getProjects().values()) {
-                for (Module module : project.getModules().values()) {
+            for (Project project : configuration.getProjects()) {
+                for (Module module : project.getModules()) {
                     final Path modulePath =
                             FileConfigurationUtils.getModuleBasePath(repoConfigPath, module, hasMultipleModules);
                     final ResourceInputProvider resourceInputProvider = resourceInputProviders.get(module);
                     final ResourceOutputProvider resourceOutputProvider = new FileResourceOutputProvider(modulePath);
 
-                    for (Source source : module.getSources().values()) {
+                    for (Source source : module.getSources()) {
                         final List<String> resources = new ArrayList<>();
                         try (final OutputStream sourceOutputStream = getSourceOutputStream(modulePath, source)) {
                             sourceSerializer.serialize(sourceOutputStream, source, resources::add);

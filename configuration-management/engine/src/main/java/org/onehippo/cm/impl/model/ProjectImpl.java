@@ -17,22 +17,28 @@ package org.onehippo.cm.impl.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
-
-import static java.util.Collections.unmodifiableList;
+import org.onehippo.cm.impl.model.builder.sorting.OrderableComparator;
 
 public class ProjectImpl implements Project {
 
-    private String name;
-    private ConfigurationImpl configuration;
-    private List<String> after = new ArrayList<>();
-    private Map<String, Module> modules = new LinkedHashMap<>();
+    private final String name;
+    private final ConfigurationImpl configuration;
+
+    private final Set<String> modifiableAfter = new LinkedHashSet<>();
+    private final Set<String> after = Collections.unmodifiableSet(modifiableAfter);
+
+    private final List<ModuleImpl> modifiableModules = new ArrayList<>();
+    private final List<Module> modules = Collections.unmodifiableList(modifiableModules);
+    private final Map<String, ModuleImpl> moduleMap = new HashMap<>();
 
     public ProjectImpl(final String name, final ConfigurationImpl configuration) {
         if (name == null) {
@@ -57,23 +63,44 @@ public class ProjectImpl implements Project {
     }
 
     @Override
-    public List<String> getAfter() {
-        return unmodifiableList(after);
+    public Set<String> getAfter() {
+        return after;
     }
 
-    public void setAfter(final List<String> after) {
-        this.after = new ArrayList<>(after);
+    public ProjectImpl addAfter(final Set<String> after) {
+        modifiableAfter.addAll(after);
+        return this;
     }
 
     @Override
-    public Map<String, Module> getModules() {
-        return Collections.unmodifiableMap(modules);
+    public List<Module> getModules() {
+        return modules;
+    }
+
+    public List<ModuleImpl> getModifiableModules() {
+        return modifiableModules;
     }
 
     public ModuleImpl addModule(final String name) {
         final ModuleImpl module = new ModuleImpl(name, this);
-        modules.put(name, module);
+        moduleMap.put(name, module);
+        modifiableModules.add(module);
         return module;
     }
 
+    public void sortModules() {
+        modifiableModules.sort(new OrderableComparator<>());
+    }
+
+    void pushModule(final ModuleImpl module) {
+        final String name = module.getName();
+
+        if (moduleMap.containsKey(name)) {
+            final String msg = String.format("Module %s already exists while merged projects. Merging of modules is not supported.",
+                    ModelUtils.formatModule(module));
+            throw new IllegalStateException(msg);
+        }
+
+        addModule(name).addAfter(module.getAfter()).pushDefinitions(module);
+    }
 }

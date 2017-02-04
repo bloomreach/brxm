@@ -22,10 +22,10 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -235,11 +235,11 @@ public abstract class AbstractBaseParser {
         return scalarNode.getValue();
     }
 
-    protected List<String> asSingleOrSequenceOfStrScalars(final Node node) throws ParserException {
+    protected Set<String> asSingleOrSetOfStrScalars(final Node node) throws ParserException {
         if (node == null) {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
-        final List<String> result = new ArrayList<>();
+        final Set<String> result = new LinkedHashSet<>();
         switch (node.getNodeId()) {
             case scalar:
                 result.add(asStringScalar(node));
