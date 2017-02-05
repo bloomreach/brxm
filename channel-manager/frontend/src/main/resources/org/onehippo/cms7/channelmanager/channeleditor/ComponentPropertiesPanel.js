@@ -285,8 +285,12 @@
       }
     },
 
-    _onPropertiesChanged: function (propertiesMap) {
-      this.fireEvent('propertiesChanged', this.componentId, propertiesMap);
+    _onPropertiesChanged: function (form, propertiesMap) {
+      if (form === this.getActiveTab().componentPropertiesForm) {
+        // Only propagate the changed properties from the active tab. Sometimes tabs that have just been deactivated
+        // still fire a propertiesChanged event. That confuses the channel editor, so ignore those events.
+        this.fireEvent('propertiesChanged', this.componentId, propertiesMap);
+      }
     },
 
     renderInitialComponentState: function () {
