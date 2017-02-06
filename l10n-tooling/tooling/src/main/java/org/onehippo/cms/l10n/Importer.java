@@ -17,6 +17,8 @@ package org.onehippo.cms.l10n;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +47,7 @@ public class Importer {
             modules.put(module.getName(), module);
         }
 
-        final List<String[]> records = importFileReader.read(new File(baseDir, fileName));
+        final List<String[]> records = importFileReader.read(getFile(fileName));
 
         for (int i = 1; i < records.size(); i++) {
             final String[] record = records.get(i);
@@ -90,6 +92,15 @@ public class Importer {
                     registryInfo.save();
                 }
             }
+        }
+    }
+
+    private File getFile(final String fileName) {
+        final Path path = Paths.get(fileName);
+        if (path.isAbsolute()) {
+            return new File(fileName);
+        } else {
+            return new File(baseDir, fileName);
         }
     }
 
