@@ -90,6 +90,9 @@ class DragDropService {
 
   _destroyDrake() {
     if (this.drake) {
+      if (this.isDragging()) {
+        this.drake.cancel(true);
+      }
       this.drake.destroy();
       this.drake = null;
       this.dragulaOptions = null;
@@ -111,6 +114,7 @@ class DragDropService {
         mirrorContainer: $(MIRROR_WRAPPER_SELECTOR)[0],
         moves: (el, source) => !this.dropping && this._isContainerEnabled(source),
         accepts: (el, target) => this._isContainerEnabled(target),
+        invalid: () => !this.draggingOrClicking,
       };
 
       this.drake = this.iframe.dragula(containerBoxElements, this.dragulaOptions);
