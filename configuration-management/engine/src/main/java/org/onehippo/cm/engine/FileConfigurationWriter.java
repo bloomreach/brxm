@@ -33,21 +33,6 @@ import org.onehippo.cm.api.model.Source;
 
 public class FileConfigurationWriter {
 
-    private static class FileResourceOutputProvider implements ResourceOutputProvider {
-        private final Path modulePath;
-
-        private FileResourceOutputProvider(final Path modulePath) {
-            this.modulePath = modulePath;
-        }
-
-        @Override
-        public OutputStream getResourceOutputStream(final Source source, final String resourcePath) throws IOException {
-            final Path path = FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath);
-            Files.createDirectories(path.getParent());
-            return new FileOutputStream(path.toFile());
-        }
-    }
-
     public void write(final Path destination,
                       final Map<String, Configuration> configurations,
                       final Map<Module, ResourceInputProvider> resourceInputProviders) throws IOException {
@@ -69,23 +54,30 @@ public class FileConfigurationWriter {
                     final ResourceInputProvider resourceInputProvider = resourceInputProviders.get(module);
                     final ResourceOutputProvider resourceOutputProvider = new FileResourceOutputProvider(modulePath);
 
-                    for (Source source : module.getSources()) {
-                        final List<String> resources = new ArrayList<>();
-                        try (final OutputStream sourceOutputStream = getSourceOutputStream(modulePath, source)) {
-                            sourceSerializer.serialize(sourceOutputStream, source, resources::add);
-                        }
+                    writeModule(module, modulePath, sourceSerializer, resourceInputProvider, resourceOutputProvider);
+                }
+            }
+        }
+    }
 
-                        for (String resource : resources) {
-                            try (
-                                    final InputStream resourceInputStream =
-                                            resourceInputProvider.getResourceInputStream(source, resource);
-                                    final OutputStream resourceOutputStream =
-                                            resourceOutputProvider.getResourceOutputStream(source, resource)
-                            ) {
-                                IOUtils.copy(resourceInputStream, resourceOutputStream);
-                            }
-                        }
-                    }
+    public void writeModule(final Module module, final Path modulePath, final SourceSerializer sourceSerializer,
+                            final ResourceInputProvider resourceInputProvider,
+                            final ResourceOutputProvider resourceOutputProvider) throws IOException {
+
+        for (Source source : module.getSources()) {
+            final List<String> resources = new ArrayList<>();
+            try (final OutputStream sourceOutputStream = getSourceOutputStream(modulePath, source)) {
+                sourceSerializer.serialize(sourceOutputStream, source, resources::add);
+            }
+
+            for (String resource : resources) {
+                try (
+                        final InputStream resourceInputStream =
+                                resourceInputProvider.getResourceInputStream(source, resource);
+                        final OutputStream resourceOutputStream =
+                                resourceOutputProvider.getResourceOutputStream(source, resource)
+                ) {
+                    IOUtils.copy(resourceInputStream, resourceOutputStream);
                 }
             }
         }
@@ -96,5 +88,4 @@ public class FileConfigurationWriter {
         Files.createDirectories(sourceDestPath.getParent());
         return new FileOutputStream(sourceDestPath.toFile());
     }
-
 }

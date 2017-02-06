@@ -31,29 +31,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.impl.model.ModuleImpl;
 
 public class FileConfigurationReader {
-
-    private static class FileResourceInputProvider implements ResourceInputProvider {
-        private final Path modulePath;
-
-        private FileResourceInputProvider(final Path modulePath) {
-            this.modulePath = modulePath;
-        }
-
-        @Override
-        public boolean hasResource(final Source source, final String resourcePath) {
-            return Files.isRegularFile(FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath));
-        }
-
-        @Override
-        public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
-            return new FileInputStream(
-                    FileConfigurationUtils.getResourcePath(modulePath, source, resourcePath).toFile());
-        }
-    }
 
     public static class ReadResult {
         private final Map<String, Configuration> configurations;
