@@ -69,12 +69,6 @@
     "url": "http://bevacqua.io",
     "licenseFile": "node_modules/contra/LICENSE"
   },
-  "create-point-cb@1.2.0": {
-    "licenses": "MIT",
-    "publisher": "Quentin Engles",
-    "email": "hollowdoor99@gmail.com",
-    "licenseFile": "node_modules/create-point-cb/LICENSE"
-  },
   "crossvent@1.5.4": {
     "licenses": "MIT",
     "repository": "https://github.com/bevacqua/crossvent",
@@ -89,11 +83,6 @@
     "publisher": "Nathan Rajlich",
     "email": "nathan@tootallnate.net",
     "url": "http://n8.io/"
-  },
-  "detectie@1.0.0": {
-    "licenses": "MIT",
-    "repository": "https://github.com/StevenIseki/detectie",
-    "publisher": "Steven Iseki"
   },
   "dragula@3.7.1": {
     "licenses": "MIT",
@@ -120,14 +109,6 @@
     "publisher": "jQuery Foundation and other contributors",
     "url": "https://github.com/jquery/jquery/blob/3.1.0/AUTHORS.txt",
     "licenseFile": "node_modules/jquery/LICENSE.txt"
-  },
-  "lodash.debounce@4.0.8": {
-    "licenses": "MIT",
-    "repository": "https://github.com/lodash/lodash",
-    "publisher": "John-David Dalton",
-    "email": "john.david.dalton@gmail.com",
-    "url": "http://allyoucanleet.com/",
-    "licenseFile": "node_modules/lodash.debounce/LICENSE"
   },
   "mutation-summary@0.0.0": {
     "licenses": "Apache 2.0",
@@ -163,11 +144,5 @@
     "email": "nicolasbevacqua@gmail.com",
     "url": "http://bevacqua.io/",
     "licenseFile": "node_modules/ticky/license"
-  },
-  "type-func@1.0.3": {
-    "licenses": "MIT",
-    "publisher": "Quentin Engles",
-    "email": "hollowdoor99@gmail.com",
-    "licenseFile": "node_modules/type-func/LICENSE"
   }
 }
