@@ -46,7 +46,7 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
     http://angularjs.org
         The MIT License
 
-        Copyright (c) 2010-2015 Google, Inc. http://angularjs.org
+        Copyright (c) 2010-2016 Google, Inc. http://angularjs.org
 
         Permission is hereby granted, free of charge, to any person obtaining a copy
         of this software and associated documentation files (the "Software"), to deal
@@ -69,7 +69,7 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
     https://material.angularjs.org
         The MIT License
 
-        Copyright (c) 2014 Google, Inc. http://angularjs.org
+        Copyright (c) 2014-2016 Google, Inc. http://angularjs.org
 
         Permission is hereby granted, free of charge, to any person obtaining a copy
         of this software and associated documentation files (the "Software"), to deal
@@ -88,93 +88,6 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
         LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
         THE SOFTWARE.
-
-    https://github.com/paulmillr/es6-shim/
-        The project was initially based on [es6-shim by Axel Rauschmayer](https://github.com/rauschma/es6-shim).
-
-        Current maintainers are: [Paul Miller](http://paulmillr.com), [Jordan Harband](https://github.com/ljharb), and [C. Scott Ananian](http://cscott.net).
-
-        The MIT License (MIT)
-
-        Copyright (c) 2013-2016 Paul Miller (http://paulmillr.com) and contributors
-
-        Permission is hereby granted, free of charge, to any person obtaining a copy
-        of this software and associated documentation files (the "Software"), to deal
-        in the Software without restriction, including without limitation the rights
-        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-        copies of the Software, and to permit persons to whom the Software is
-        furnished to do so, subject to the following conditions:
-
-        The above copyright notice and this permission notice shall be included in
-        all copies or substantial portions of the Software.
-
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-        THE SOFTWARE.
-
-    https://github.com/jquery/jquery
-        Copyright jQuery Foundation and other contributors, https://jquery.org/
-
-        This software consists of voluntary contributions made by many
-        individuals. For exact contribution history, see the revision history
-        available at https://github.com/jquery/jquery
-
-        The following license applies to all parts of this software except as
-        documented below:
-
-        ====
-
-        Permission is hereby granted, free of charge, to any person obtaining
-        a copy of this software and associated documentation files (the
-        "Software"), to deal in the Software without restriction, including
-        without limitation the rights to use, copy, modify, merge, publish,
-        distribute, sublicense, and/or sell copies of the Software, and to
-        permit persons to whom the Software is furnished to do so, subject to
-        the following conditions:
-
-        The above copyright notice and this permission notice shall be
-        included in all copies or substantial portions of the Software.
-
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-        EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-        NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-        LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-        OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-        WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-        ====
-
-        All files located in the node_modules and external directories are
-        externally maintained libraries used by this software which have their
-        own licenses; we recommend you read them, as their terms may differ from
-        the terms above.
-
-    https://github.com/bevacqua/dragula
-        The MIT License (MIT)
-
-        Copyright © 2015-2016 Nicolas Bevacqua
-
-        Permission is hereby granted, free of charge, to any person obtaining a copy of
-        this software and associated documentation files (the "Software"), to deal in
-        the Software without restriction, including without limitation the rights to
-        use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-        the Software, and to permit persons to whom the Software is furnished to do so,
-        subject to the following conditions:
-
-        The above copyright notice and this permission notice shall be included in all
-        copies or substantial portions of the Software.
-
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-        FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-        COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-        IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-        CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     http://github.com/angular-translate/angular-translate
         The MIT License (MIT)
@@ -244,10 +157,37 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
         IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
         CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-    https://github.com/srfrnk/re-tree.git
+    https://github.com/bevacqua/dragula
         The MIT License (MIT)
 
-        Copyright (c) {{{year}}} {{{fullname}}}
+        Copyright © 2015-2016 Nicolas Bevacqua
+
+        Permission is hereby granted, free of charge, to any person obtaining a copy of
+        this software and associated documentation files (the "Software"), to deal in
+        the Software without restriction, including without limitation the rights to
+        use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+        the Software, and to permit persons to whom the Software is furnished to do so,
+        subject to the following conditions:
+
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+        FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+        COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+        IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+        CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+    https://github.com/paulmillr/es6-shim/
+        The project was initially based on [es6-shim by Axel Rauschmayer](https://github.com/rauschma/es6-shim).
+
+        Current maintainers are: [Paul Miller](http://paulmillr.com), [Jordan Harband](https://github.com/ljharb), and [C. Scott Ananian](http://cscott.net).
+
+        The MIT License (MIT)
+
+        Copyright (c) 2013-2016 Paul Miller (http://paulmillr.com) and contributors
 
         Permission is hereby granted, free of charge, to any person obtaining a copy
         of this software and associated documentation files (the "Software"), to deal
@@ -256,16 +196,57 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
         copies of the Software, and to permit persons to whom the Software is
         furnished to do so, subject to the following conditions:
 
-        The above copyright notice and this permission notice shall be included in all
-        copies or substantial portions of the Software.
+        The above copyright notice and this permission notice shall be included in
+        all copies or substantial portions of the Software.
 
         THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
         IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
         FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
         AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
         LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-        SOFTWARE.
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+        THE SOFTWARE.
+
+    https://github.com/jquery/jquery
+        Copyright jQuery Foundation and other contributors, https://jquery.org/
+
+        This software consists of voluntary contributions made by many
+        individuals. For exact contribution history, see the revision history
+        available at https://github.com/jquery/jquery
+
+        The following license applies to all parts of this software except as
+        documented below:
+
+        ====
+
+        Permission is hereby granted, free of charge, to any person obtaining
+        a copy of this software and associated documentation files (the
+        "Software"), to deal in the Software without restriction, including
+        without limitation the rights to use, copy, modify, merge, publish,
+        distribute, sublicense, and/or sell copies of the Software, and to
+        permit persons to whom the Software is furnished to do so, subject to
+        the following conditions:
+
+        The above copyright notice and this permission notice shall be
+        included in all copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+        EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+        NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+        LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+        OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+        WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+        ====
+
+        All files located in the node_modules and external directories are
+        externally maintained libraries used by this software which have their
+        own licenses; we recommend you read them, as their terms may differ from
+        the terms above.
+
+    https://github.com/rafaelw/mutation-summary
+        Apache License version 2.0
 
     https://github.com/srfrnk/ng-device-detector.git
         The MIT License (MIT)
@@ -286,7 +267,7 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
         IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
         FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
         AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-        LIABILITY, WHETHER IN AN ACTIONa OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         SOFTWARE.
 
@@ -313,14 +294,5 @@ angular/hippo-cm/styles/hippo-cm-*.min.css
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         SOFTWARE.
 
-    https://github.com/systemjs/systemjs
-        MIT License
-        -----------
-
-        Copyright (C) 2013-2016 Guy Bedford
-
-        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-        The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    https://github.com/FontFaceKit/open-sans.git
+        Apache License version 2.0
