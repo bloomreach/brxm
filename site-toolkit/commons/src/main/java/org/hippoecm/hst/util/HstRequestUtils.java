@@ -20,7 +20,9 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,6 +50,26 @@ public class HstRequestUtils {
 
     public static final String HTTP_METHOD_POST = "POST";
 
+    /**
+     * Default HTTP Forwarded-For header name. <code>X-Forwarded-For</code> by default.
+     */
+    public static final String DEFAULT_HTTP_FORWARDED_FOR_HEADER = "X-Forwarded-For";
+
+    /**
+     * Servlet context init parameter name for custom HTTP Forwarded-For header name(s).
+     * This parameter can be set to a comma separated string if there are multiple customer header names.
+     * If not set, {@link DEFAULT_HTTP_FORWARDED_FOR_HEADER} is used by default.
+     */
+    public static final String HTTP_FORWARDED_FOR_HEADER_PARAM = "http-forwarded-for-header";
+
+    private static final String [] DEFAULT_HTTP_FORWARDED_FOR_HEADER_NAMES = { DEFAULT_HTTP_FORWARDED_FOR_HEADER };
+
+    /*
+     * Package protected for unit tests.
+     */
+    static String [] httpForwardedForHeaders;
+
+    private static volatile Object httpForwardedForHeadersLock = new Object();
 
     private HstRequestUtils() {
 
@@ -380,19 +402,31 @@ public class HstRequestUtils {
      * @return
      */
     public static String [] getRemoteAddrs(HttpServletRequest request) {
-        String xff = request.getHeader("X-Forwarded-For");
+        Set<String> addressSet = new LinkedHashSet<>();
+        String headerValue;
+        String addrValue;
 
-        if (xff != null) {
-            String [] addrs = xff.split(",");
+        for (String headerName : getForwardedForHeaderNames(request)) {
+            headerValue = request.getHeader(headerName);
 
-            for (int i = 0; i < addrs.length; i++) {
-                addrs[i] = addrs[i].trim();
+            if (headerValue != null) {
+                String [] addrs = headerValue.split(",");
+
+                for (int i = 0; i < addrs.length; i++) {
+                    addrValue = addrs[i].trim();
+
+                    if (!addrValue.isEmpty()) {
+                        addressSet.add(addrValue);
+                    }
+                }
             }
+        }
 
-            return addrs;
-        } else {
+        if (addressSet == null || addressSet.isEmpty()) {
             return new String [] { request.getRemoteAddr() };
         }
+
+        return addressSet.toArray(new String[addressSet.size()]);
     }
 
     /**
@@ -644,4 +678,50 @@ public class HstRequestUtils {
         return url.toString();
     }
 
+    /**
+     * Return <code>X-Forwarded-For</code> HTTP header name in array by default or custom equivalent
+     * HTTP header names array if {@link HTTP_FORWARDED_FOR_HEADER} context parameter is defined to use any other
+     * custom HTTP headers instead.
+     * @param request servlet request
+     * @return <code>X-Forwarded-For</code> HTTP header name in array by default or custom equivalent HTTP header
+     *         names array
+     */
+    private static String [] getForwardedForHeaderNames(final HttpServletRequest request) {
+        String [] forwardedForHeaders = httpForwardedForHeaders;
+
+        if (forwardedForHeaders == null) {
+            synchronized (httpForwardedForHeadersLock) {
+                forwardedForHeaders = httpForwardedForHeaders;
+
+                if (forwardedForHeaders == null) {
+                    Set<String> headerSet = null;
+                    final String param = request.getServletContext().getInitParameter(HTTP_FORWARDED_FOR_HEADER_PARAM);
+
+                    if (param != null && !param.isEmpty()) {
+                        headerSet = new LinkedHashSet<>();
+                        String [] tokens = param.split(",");
+                        String token;
+
+                        for (int i = 0; i < tokens.length; i++) {
+                            token = tokens[i].trim();
+
+                            if (!token.isEmpty()) {
+                                headerSet.add(token);
+                            }
+                        }
+                    }
+
+                    if (headerSet == null || headerSet.isEmpty()) {
+                        forwardedForHeaders = DEFAULT_HTTP_FORWARDED_FOR_HEADER_NAMES;
+                    } else {
+                        forwardedForHeaders = headerSet.toArray(new String[headerSet.size()]);
+                    }
+
+                    httpForwardedForHeaders = forwardedForHeaders;
+                }
+            }
+        }
+
+        return forwardedForHeaders;
+    }
 }
