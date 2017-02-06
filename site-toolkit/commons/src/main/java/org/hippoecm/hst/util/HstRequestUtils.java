@@ -415,11 +415,11 @@ public class HstRequestUtils {
             }
         }
 
-        if (addressList == null || addressList.isEmpty()) {
+        if (addressList != null && !addressList.isEmpty()) {
+            return addressList.toArray(new String[addressList.size()]);
+        } else {
             return new String [] { request.getRemoteAddr() };
         }
-
-        return addressList.toArray(new String[addressList.size()]);
     }
 
     /**
