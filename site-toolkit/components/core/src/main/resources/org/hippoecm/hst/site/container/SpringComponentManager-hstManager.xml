@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -76,6 +76,7 @@
     <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
     <property name="siteMapItemHandlerRegistry" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />
     <property name="pageCache" ref="pageCache"/>
+    <property name="clearPageCacheAfterModelLoad" value="${pageCache.clearOnHstConfigChange}"/>
     <property name="staleConfigurationSupported" value="${stale.configuration.supported}"/>
     <property name="hstFilterPrefixExclusions">
       <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
