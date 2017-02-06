@@ -99,9 +99,4 @@ public class ValueImpl implements Value {
         return isPath;
     }
 
-    @Override
-    public boolean isDeleted() {
-        return false;
-    }
-
 }

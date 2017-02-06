@@ -33,6 +33,4 @@ public interface Value {
      * @return
      */
     boolean isPath();
-
-    boolean isDeleted();
 }
