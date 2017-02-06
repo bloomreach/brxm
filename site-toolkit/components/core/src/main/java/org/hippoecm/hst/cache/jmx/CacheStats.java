@@ -17,10 +17,14 @@ package org.hippoecm.hst.cache.jmx;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.ehcache.Ehcache;
 
 public class CacheStats implements CacheStatsMXBean {
 
+    private static final Logger log = LoggerFactory.getLogger(CacheStats.class);
 
     private AtomicLong cacheHits = new AtomicLong();
     private AtomicLong cacheMisses = new AtomicLong();
@@ -184,46 +188,57 @@ public class CacheStats implements CacheStatsMXBean {
     }
 
     public void incrementCacheHits() {
+        log.debug("Increment cache hit");
         cacheHits.incrementAndGet();
     }
 
     public void incrementCacheMisses() {
+        log.debug("Increment cache miss");
         cacheMisses.incrementAndGet();
     }
 
     public void incrementFirstLevelCachePuts() {
+        log.debug("Increment first level cache puts");
         firstLevelCachePuts.incrementAndGet();
     }
 
     public void incrementFirstLevelCacheHits() {
+        log.debug("Increment first level cache hits");
         firstLevelCacheHits.incrementAndGet();
     }
 
     public void incrementFirstLevelCacheMisses() {
+        log.debug("Increment first level cache misses");
         firstLevelCacheMisses.incrementAndGet();
     }
 
     public void incrementSecondLevelCachePuts() {
+        log.debug("Increment second level cache puts");
         secondLevelCachePuts.incrementAndGet();
     }
 
     public void incrementSecondLevelCacheHits() {
+        log.debug("Increment second level cache hits");
         secondLevelCacheHits.incrementAndGet();
     }
 
     public void incrementSecondLevelCacheMisses() {
+        log.debug("Increment second level cache misses");
         secondLevelCacheMisses.incrementAndGet();
     }
 
     public void incrementStaleCachePuts() {
+        log.debug("Increment stale cache puts");
         staleCachePuts.incrementAndGet();
     }
 
     public void incrementStaleCacheHits() {
+        log.debug("Increment stale cache hits");
         staleCacheHits.incrementAndGet();
     }
 
     public void incrementStaleCacheMisses() {
+        log.debug("Increment stale cache misses");
         staleCacheMisses.incrementAndGet();
     }
 

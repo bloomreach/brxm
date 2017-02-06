@@ -269,7 +269,10 @@ public class CompositeHstCache implements HstCache {
                 // clone the element to cache first because the second level cache might change the TTL of the
                 // cached element
                 cacheStats.incrementSecondLevelCachePuts();
-                secondLevelCache.put(cacheElem.getKey(), cacheElem.getElement().clone());
+                Element clone = (Element)cacheElem.getElement().clone();
+                // since #clone does not take over the TTL of the Element, we need to set it explicitly.
+                clone.setTimeToLive(cacheElem.getElement().getTimeToLive());
+                secondLevelCache.put(cacheElem.getKey(), clone);
 
             } catch (CloneNotSupportedException e) {
                 log.warn("Could not clone '{}' : {}", cacheElem.getElement().getObjectKey(), e.toString());
