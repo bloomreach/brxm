@@ -645,6 +645,27 @@ describe('PageStructureService', () => {
     expect(embeddedLinks[0].getEnclosingElement()).toBe(updatedComponentA);
   });
 
+  it('gracefully re-renders a component twice quickly after eachother', () => {
+    // set up page structure with component
+    registerVBoxContainer();
+    registerVBoxComponent('componentB');
+
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component B", "uuid": "bbbb" } -->
+        <p>Re-rendered component B</p>
+      <!-- { "HST-End": "true", "uuid": "bbbb" } -->
+      `;
+    spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
+    const propertiesMap = { };
+
+    PageStructureService.renderComponent('bbbb', propertiesMap);
+    PageStructureService.renderComponent('bbbb', propertiesMap);
+
+    expect(() => {
+      $rootScope.$digest();
+    }).not.toThrow();
+  });
+
   it('gracefully handles requests to re-render an unknown component', () => {
     spyOn($log, 'warn');
     spyOn(RenderingService, 'fetchComponentMarkup');

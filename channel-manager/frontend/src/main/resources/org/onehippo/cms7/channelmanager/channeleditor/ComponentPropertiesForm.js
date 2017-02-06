@@ -667,7 +667,7 @@
             value = record.get('value');
           propertiesMap[name] = value;
         });
-        this.fireEvent('propertiesChanged', propertiesMap);
+        this.fireEvent('propertiesChanged', this, propertiesMap);
       }
     },
 
