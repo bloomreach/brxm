@@ -37,7 +37,7 @@ public class RequestUtils {
 
     /**
      * Servlet context init parameter name for custom HTTP Forwarded-For header name(s).
-     * If not set, {@link DEFAULT_HTTP_FORWARDED_FOR_HEADER} is used by default.
+     * If not set, {@link #DEFAULT_HTTP_FORWARDED_FOR_HEADER} is used by default.
      */
     public static final String HTTP_FORWARDED_FOR_HEADER_PARAM = "http-forwarded-for-header";
 
@@ -77,26 +77,15 @@ public class RequestUtils {
         if (request instanceof WebRequest) {
             WebRequest webRequest = (WebRequest) request;
 
-            List<String> addressList = null;
             String headerName = getForwardedForHeaderName(webRequest);
             String headerValue = webRequest.getHeader(headerName);
 
-            if (headerValue != null) {
-                addressList = new ArrayList<>();
+            if (headerValue != null && headerValue.length() > 0) {
                 String [] addrs = headerValue.split(",");
-                String value;
-
                 for (int i = 0; i < addrs.length; i++) {
-                    value = addrs[i].trim();
-
-                    if (!value.isEmpty()) {
-                        addressList.add(value);
-                    }
+                    addrs[i] = addrs[i].trim();
                 }
-            }
-
-            if (addressList != null && !addressList.isEmpty()) {
-                return addressList.toArray(new String[addressList.size()]);
+                return addrs;
             } else {
                 if (webRequest.getContainerRequest() instanceof ServletRequest) {
                     final ServletRequest servletRequest = (ServletRequest) webRequest.getContainerRequest();
@@ -165,7 +154,7 @@ public class RequestUtils {
 
     /**
      * Return <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent HTTP header names
-     * if {@link HTTP_FORWARDED_FOR_HEADER} context parameter is defined to use any other custom HTTP header instead.
+     * if {@link #HTTP_FORWARDED_FOR_HEADER_PARAM} context parameter is defined to use any other custom HTTP header instead.
      * @param request request
      * @return <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent HTTP header name
      */
