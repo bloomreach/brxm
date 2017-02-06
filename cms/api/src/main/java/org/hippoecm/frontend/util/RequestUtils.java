@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,22 +26,6 @@ import org.apache.wicket.request.http.WebRequest;
  * Wicket {@link Request} related utilities.
  */
 public class RequestUtils {
-
-    /**
-     * Default HTTP Forwarded-For header name. <code>X-Forwarded-For</code> by default.
-     */
-    public static final String DEFAULT_HTTP_FORWARDED_FOR_HEADER = "X-Forwarded-For";
-
-    /**
-     * Servlet context init parameter name for custom HTTP Forwarded-For header name(s).
-     * If not set, {@link #DEFAULT_HTTP_FORWARDED_FOR_HEADER} is used by default.
-     */
-    public static final String HTTP_FORWARDED_FOR_HEADER_PARAM = "http-forwarded-for-header";
-
-    /*
-     * Package protected for unit tests.
-     */
-    static String httpForwardedForHeader;
 
     private RequestUtils() {
     }
@@ -77,20 +58,19 @@ public class RequestUtils {
         if (request instanceof WebRequest) {
             WebRequest webRequest = (WebRequest) request;
 
-            String headerName = getForwardedForHeaderName(webRequest);
-            String headerValue = webRequest.getHeader(headerName);
+            String xff = webRequest.getHeader("X-Forwarded-For");
 
-            if (headerValue != null && headerValue.length() > 0) {
-                String [] addrs = headerValue.split(",");
+            if (xff != null) {
+                String [] addrs = xff.split(",");
+
                 for (int i = 0; i < addrs.length; i++) {
                     addrs[i] = addrs[i].trim();
                 }
+
                 return addrs;
-            } else {
-                if (webRequest.getContainerRequest() instanceof ServletRequest) {
-                    final ServletRequest servletRequest = (ServletRequest) webRequest.getContainerRequest();
-                    return new String [] { servletRequest.getRemoteAddr() };
-                }
+            } else if (webRequest.getContainerRequest() instanceof ServletRequest) {
+                final ServletRequest servletRequest = (ServletRequest) webRequest.getContainerRequest();
+                return new String [] { servletRequest.getRemoteAddr() };
             }
         }
 
@@ -150,44 +130,5 @@ public class RequestUtils {
         }
 
         return tokens;
-    }
-
-    /**
-     * Return <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent HTTP header names
-     * if {@link #HTTP_FORWARDED_FOR_HEADER_PARAM} context parameter is defined to use any other custom HTTP header instead.
-     * @param request request
-     * @return <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent HTTP header name
-     */
-    private static String getForwardedForHeaderName(final WebRequest request) {
-        String forwardedForHeader = httpForwardedForHeader;
-
-        if (forwardedForHeader == null) {
-            synchronized (RequestUtils.class) {
-                forwardedForHeader = httpForwardedForHeader;
-
-                if (forwardedForHeader == null) {
-                    if (request.getContainerRequest() instanceof ServletRequest) {
-                        String param = ((ServletRequest) request.getContainerRequest()).getServletContext()
-                                .getInitParameter(HTTP_FORWARDED_FOR_HEADER_PARAM);
-
-                        if (param != null) {
-                            param = param.trim();
-
-                            if (!param.isEmpty()) {
-                                forwardedForHeader = param;
-                            }
-                        }
-                    }
-
-                    if (forwardedForHeader == null) {
-                        forwardedForHeader = DEFAULT_HTTP_FORWARDED_FOR_HEADER;
-                    }
-
-                    httpForwardedForHeader = forwardedForHeader;
-                }
-            }
-        }
-
-        return forwardedForHeader;
     }
 }
