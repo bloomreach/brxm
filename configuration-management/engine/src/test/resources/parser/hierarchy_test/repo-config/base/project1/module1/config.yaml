@@ -24,6 +24,12 @@ instructions:
               - .meta:delete: true
           - /node-order-before:
               - .meta:order-before: node
+              - property: value
+              - /empty-node: []
+      - /path/to/node-delete:
+          - .meta:delete: true
+      - /path/to/node-order-before:
+          - .meta:order-before: node
   - content:
       - /content/documents/myhippoproject:
           - property: document
