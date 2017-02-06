@@ -16,6 +16,7 @@
 package org.onehippo.cm.api.model;
 
 import java.util.Map;
+import java.util.Optional;
 
 public interface DefinitionNode extends DefinitionItem {
     /**
@@ -32,4 +33,6 @@ public interface DefinitionNode extends DefinitionItem {
     Map<String, DefinitionProperty> getProperties();
 
     boolean isDelete();
+
+    Optional<String> getOrderBefore();
 }

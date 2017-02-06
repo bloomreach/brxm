@@ -114,6 +114,9 @@ public class SourceSerializer extends AbstractBaseSerializer {
         if (node.isDelete()) {
             children.add(representNodeDelete());
         }
+        if (node.getOrderBefore().isPresent()) {
+            children.add(representNodeOrderBefore(node.getOrderBefore().get()));
+        }
         for (DefinitionProperty childProperty : node.getProperties().values()) {
             children.add(representProperty(childProperty, resourceConsumer));
         }
@@ -130,6 +133,12 @@ public class SourceSerializer extends AbstractBaseSerializer {
     private Node representNodeDelete() {
         final List<NodeTuple> tuples = new ArrayList<>(1);
         tuples.add(new NodeTuple(createStrScalar(".meta:delete"), new ScalarNode(Tag.BOOL, "true", null, null, null)));
+        return new MappingNode(Tag.MAP, tuples, false);
+    }
+
+    private Node representNodeOrderBefore(final String name) {
+        final List<NodeTuple> tuples = new ArrayList<>(1);
+        tuples.add(createStrStrTuple(".meta:order-before", name));
         return new MappingNode(Tag.MAP, tuples, false);
     }
 

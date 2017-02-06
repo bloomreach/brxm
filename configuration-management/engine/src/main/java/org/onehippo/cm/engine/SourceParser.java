@@ -158,6 +158,9 @@ public class SourceParser extends AbstractBaseParser {
                 }
                 final boolean delete = asNodeDeleteValue(children.get(keyNode));
                 definitionNode.setDelete(delete);
+            } else if (key.equals(".meta:order-before")) {
+                final String name = asNodeOrderBeforeValue(children.get(keyNode));
+                definitionNode.setOrderBefore(name);
             } else if (key.startsWith("/")) {
                 final String name = key.substring(1);
                 constructDefinitionNode(name, children.get(keyNode), definitionNode);
@@ -171,9 +174,17 @@ public class SourceParser extends AbstractBaseParser {
         final ScalarNode scalar = asScalar(node);
         final Object object = scalarConstructor.constructScalarNode(scalar);
         if (!object.equals(true)) {
-            throw new ParserException(".meta:delete value must be boolean value 'true'", node);
+            throw new ParserException("Value for .meta:delete must be boolean value 'true'", node);
         }
         return true;
+    }
+
+    private String asNodeOrderBeforeValue(final Node node) throws ParserException {
+        final String string = asStringScalar(node);
+        if (StringUtils.isEmpty(string)) {
+            throw new ParserException("Value for .meta:order-before must be non-empty string", node);
+        }
+        return string;
     }
 
     private void constructDefinitionNode(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {

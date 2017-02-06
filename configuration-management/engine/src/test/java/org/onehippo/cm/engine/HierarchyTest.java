@@ -62,15 +62,15 @@ public class HierarchyTest extends AbstractBaseTest {
         assertEquals(true, nodeTypeFromResource.isResource());
 
         final ConfigDefinition definition1 = assertDefinition(source1, 3, ConfigDefinition.class);
-        final DefinitionNode rootDefinition1 = assertNode(definition1, "/", "", definition1, false, 4, 1);
+        final DefinitionNode rootDefinition1 = assertNode(definition1, "/", "", definition1, 5, 1);
         assertProperty(rootDefinition1, "/root-level-property", "root-level-property",
                 definition1, ValueType.STRING, "root-level-property-value");
         final DefinitionNode nodeWithSingleProperty = assertNode(rootDefinition1, "/node-with-single-property",
-                "node-with-single-property", false, definition1, false, 0, 1);
+                "node-with-single-property", definition1, 0, 1);
         assertProperty(nodeWithSingleProperty, "/node-with-single-property/property", "property",
                 definition1, ValueType.STRING, "node-with-single-property-value");
         final DefinitionNode nodeWithMultipleProperties = assertNode(rootDefinition1, "/node-with-multiple-properties",
-                "node-with-multiple-properties", false, definition1, false, 0, 3);
+                "node-with-multiple-properties", definition1, 0, 3);
         assertProperty(nodeWithMultipleProperties, "/node-with-multiple-properties/single", "single",
                 definition1, ValueType.STRING, "value1");
         assertProperty(nodeWithMultipleProperties, "/node-with-multiple-properties/multiple", "multiple",
@@ -78,18 +78,19 @@ public class HierarchyTest extends AbstractBaseTest {
         assertProperty(nodeWithMultipleProperties, "/node-with-multiple-properties/empty-multiple", "empty-multiple",
                 definition1, ValueType.STRING, new String[0]);
         final DefinitionNode nodeWithSubNode =
-                assertNode(rootDefinition1, "/node-with-sub-node", "node-with-sub-node", false, definition1, false, 1, 0);
+                assertNode(rootDefinition1, "/node-with-sub-node", "node-with-sub-node", definition1, 1, 0);
         final DefinitionNode subNode =
-                assertNode(nodeWithSubNode, "/node-with-sub-node/sub-node", "sub-node", false, definition1, false, 0, 1);
+                assertNode(nodeWithSubNode, "/node-with-sub-node/sub-node", "sub-node", definition1, 0, 1);
         assertProperty(subNode, "/node-with-sub-node/sub-node/property", "property", definition1, ValueType.STRING, "sub-node-value");
-        assertNode(rootDefinition1, "/node-delete", "node-delete", false, definition1, true, 0, 0);
+        assertNode(rootDefinition1, "/node-delete", "node-delete", definition1, true, null, 0, 0);
+        assertNode(rootDefinition1, "/node-order-before", "node-order-before", definition1, false, "node", 0, 0);
 
         final ContentDefinition contentDefinition = assertDefinition(source1, 4, ContentDefinition.class);
-        assertNode(contentDefinition, "/content/documents/myhippoproject", "myhippoproject", contentDefinition, false, 0, 1);
+        assertNode(contentDefinition, "/content/documents/myhippoproject", "myhippoproject", contentDefinition, 0, 1);
 
         final Source source2 = assertSource(module1, "folder/resources.yaml", 1);
         final ConfigDefinition definition2 = assertDefinition(source2, 0, ConfigDefinition.class);
-        final DefinitionNode resourceNode = assertNode(definition2, "/resources", "resources", definition2, false, 0, 3);
+        final DefinitionNode resourceNode = assertNode(definition2, "/resources", "resources", definition2, 0, 3);
         assertProperty(resourceNode, "/resources/single-value-string-resource", "single-value-string-resource",
                 definition2, ValueType.STRING, "string.txt", true, false);
         assertProperty(resourceNode, "/resources/single-value-binary-resource", "single-value-binary-resource",
@@ -104,7 +105,7 @@ public class HierarchyTest extends AbstractBaseTest {
         final ConfigDefinition baseDefinition = assertDefinition(baseSource, 0, ConfigDefinition.class);
 
         final DefinitionNode rootDefinition2 =
-                assertNode(baseDefinition, "/node-with-sub-node/sub-node", "sub-node", baseDefinition, false, 0, 1);
+                assertNode(baseDefinition, "/node-with-sub-node/sub-node", "sub-node", baseDefinition, 0, 1);
         assertProperty(rootDefinition2, "/node-with-sub-node/sub-node/property", "property", baseDefinition, ValueType.STRING, "override");
     }
 

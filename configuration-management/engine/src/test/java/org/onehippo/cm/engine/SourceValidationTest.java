@@ -893,7 +893,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
 
         assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                ".meta:delete value must be boolean value 'true'");
+                "Value for .meta:delete must be boolean value 'true'");
     }
 
     @Test
@@ -908,7 +908,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
 
         assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                ".meta:delete value must be boolean value 'true'");
+                "Value for .meta:delete must be boolean value 'true'");
     }
 
     @Test
@@ -924,6 +924,49 @@ public class SourceValidationTest extends AbstractBaseTest {
 
         assertParserException(root, firstTuple(config0).getValueNode(),
                 "Node cannot contain '.meta:delete' and other keys");
+    }
+
+    @Test
+    public void configWithDefinitionWithOrderBeforeNonScalar() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - .meta:order-before: [node]";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+
+        assertParserException(root, firstTuple(propertyMap).getValueNode(), "Node must be scalar");
+    }
+
+    @Test
+    public void configWithDefinitionWithOrderBeforeNonString() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - .meta:order-before: 42";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+
+        assertParserException(root, firstTuple(propertyMap).getValueNode(), "Scalar must be a string");
+    }
+
+    @Test
+    public void configWithDefinitionWithEmptyOrderBefore() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - .meta:order-before: ''";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+
+        assertParserException(root, firstTuple(propertyMap).getValueNode(),
+                "Value for .meta:order-before must be non-empty string");
     }
 
     private void assertParserException(final String input, final String exceptionMessage) {

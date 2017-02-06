@@ -22,6 +22,8 @@ instructions:
                   - property: sub-node-value
           - /node-delete:
               - .meta:delete: true
+          - /node-order-before:
+              - .meta:order-before: node
   - content:
       - /content/documents/myhippoproject:
           - property: document
