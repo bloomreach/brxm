@@ -103,34 +103,35 @@ public class CompositeHstCacheIT extends AbstractSpringTestCase {
         String key = "key";
         compositeHstCache.put(compositeHstCache.createElement(key, "content"));
 
-        assertEquals(compositeHstCache.cacheStats.getCacheHits(), 0);
-        assertEquals(compositeHstCache.cacheStats.getFirstLevelCachePuts(), 1);
-        assertEquals(compositeHstCache.cacheStats.getFirstLevelCacheHits(), 0);
-        assertEquals(compositeHstCache.cacheStats.getSecondLevelCacheHits(), 0);
+        assertEquals(0, compositeHstCache.cacheStats.getCacheHits());
+        assertEquals(1,compositeHstCache.cacheStats.getFirstLevelCachePuts());
+        assertEquals(0, compositeHstCache.cacheStats.getFirstLevelCacheHits());
+        assertEquals(0, compositeHstCache.cacheStats.getSecondLevelCacheHits());
 
         compositeHstCache.get(key);
 
-        assertEquals(compositeHstCache.cacheStats.getCacheHits(), 1);
-        assertEquals(compositeHstCache.cacheStats.getFirstLevelCachePuts(), 1);
-        assertEquals(compositeHstCache.cacheStats.getFirstLevelCacheHits(), 1);
-        assertEquals(compositeHstCache.cacheStats.getSecondLevelCacheHits(), 0);
+        assertEquals(1, compositeHstCache.cacheStats.getCacheHits());
+        assertEquals(1, compositeHstCache.cacheStats.getFirstLevelCachePuts());
+        assertEquals(1, compositeHstCache.cacheStats.getFirstLevelCacheHits());
+        assertEquals(0, compositeHstCache.cacheStats.getSecondLevelCacheHits());
 
         compositeHstCache.get(key);
 
-        assertEquals(compositeHstCache.cacheStats.getCacheHits(), 2);
-        assertEquals(compositeHstCache.cacheStats.getFirstLevelCachePuts(), 1);
-        assertEquals(compositeHstCache.cacheStats.getFirstLevelCacheHits(), 2);
-        assertEquals(compositeHstCache.cacheStats.getSecondLevelCacheHits(), 0);
+        assertEquals(2, compositeHstCache.cacheStats.getCacheHits());
+        assertEquals(1, compositeHstCache.cacheStats.getFirstLevelCachePuts());
+        assertEquals(2, compositeHstCache.cacheStats.getFirstLevelCacheHits());
+        assertEquals(0, compositeHstCache.cacheStats.getSecondLevelCacheHits());
 
         compositeHstCache.ehcache.remove(key);
 
         // get results in hit in second level cache and restores first level cache (thus extra put)
-        compositeHstCache.get(key);
+        CacheElement cacheElement = compositeHstCache.get(key);
+        assertNotNull("Hit from second level cache should be returned. ",cacheElement);
 
-        assertEquals(compositeHstCache.cacheStats.getCacheHits(), 3);
-        assertEquals(compositeHstCache.cacheStats.getFirstLevelCachePuts(), 2);
-        assertEquals(compositeHstCache.cacheStats.getFirstLevelCacheHits(), 2);
-        assertEquals(compositeHstCache.cacheStats.getSecondLevelCacheHits(), 1);
+        assertEquals(3, compositeHstCache.cacheStats.getCacheHits());
+        assertEquals(2, compositeHstCache.cacheStats.getFirstLevelCachePuts());
+        assertEquals(2, compositeHstCache.cacheStats.getFirstLevelCacheHits());
+        assertEquals(1, compositeHstCache.cacheStats.getSecondLevelCacheHits());
     }
 
     @Test
@@ -188,7 +189,7 @@ public class CompositeHstCacheIT extends AbstractSpringTestCase {
         // get should result in fetch from second level cache
         CacheElement element = compositeHstCache.get(key);
 
-        assertEquals(element.getContent(), content);
+        assertEquals(content, element.getContent());
         // since the element has *originated* from second level cache, and that entry had a timeToLiveSeconds of 3 seconds,
         // the primary cache should get a timeToLiveSeconds of also at most 3 seconds MINUS the 1 second delay we built in
         // BETWEEN putting the entry in second level cache and retrieving it (which restores it in first level cache
@@ -356,7 +357,8 @@ public class CompositeHstCacheIT extends AbstractSpringTestCase {
 
         // override the second level cached value (this does not impact compositeHstCache.cacheStats
         final String SECOND_LEVEL_CONTENT = "second_level_content";
-        secondLevelPageCache.put(key, new Element(key, SECOND_LEVEL_CONTENT));
+        // valid for 180 seconds
+        secondLevelPageCache.put(key, new Element(key, SECOND_LEVEL_CONTENT, 180, 180));
 
         CacheElement cached = compositeHstCache.get(key);
         assertEquals("second level cache entry should have been restored.", SECOND_LEVEL_CONTENT, cached.getContent());
