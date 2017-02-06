@@ -41,17 +41,11 @@ public class RequestUtilsTest {
 
     private static final String CUSTOM_X_FORWARDED_FOR_HEADER_VALUE = "100.100.100.102, 100.100.100.11";
 
-    private static final String CUSTOM_X_FORWARDED_FOR_HEADER_NAME2 = "X-ACM2-Forwarded-For";
-
-    private static final String CUSTOM_X_FORWARDED_FOR_HEADER_VALUE2 = "100.100.100.103, 100.100.100.11";
-
     private ServletContext servletContext;
 
     private String httpForwardedForHeaderValue;
 
     private String customHttpForwardedForHeaderValue;
-
-    private String customHttpForwardedForHeaderValue2;
 
     @Before
     public void setUp() throws Exception {
@@ -90,7 +84,7 @@ public class RequestUtilsTest {
         expect(servletContext.getInitParameter(RequestUtils.HTTP_FORWARDED_FOR_HEADER_PARAM))
                 .andReturn(CUSTOM_X_FORWARDED_FOR_HEADER_NAME).anyTimes();
         replay(servletContext);
-        RequestUtils.httpForwardedForHeaders = null;
+        RequestUtils.httpForwardedForHeader = null;
         customHttpForwardedForHeaderValue = CUSTOM_X_FORWARDED_FOR_HEADER_VALUE;
         Request request = createRequest();
 
@@ -107,39 +101,8 @@ public class RequestUtilsTest {
                 .andReturn(CUSTOM_X_FORWARDED_FOR_HEADER_NAME).anyTimes();
         replay(servletContext);
         // Set httpForwardedForHeaders to null to clean the cache in HstRequestUtils.
-        RequestUtils.httpForwardedForHeaders = null;
+        RequestUtils.httpForwardedForHeader = null;
         customHttpForwardedForHeaderValue = "";
-        Request request = createRequest();
-        assertArrayEquals(new String[] { DEFAULT_REMOTE_ADDR }, RequestUtils.getRemoteAddrs(request));
-        assertEquals(DEFAULT_REMOTE_ADDR, RequestUtils.getFarthestRemoteAddr(request));
-    }
-
-    @Test
-    public void testGetRemoteAddrsWithMultipleCustomForwardedForHeaders() {
-        servletContext = createNiceMock(ServletContext.class);
-        expect(servletContext.getInitParameter(RequestUtils.HTTP_FORWARDED_FOR_HEADER_PARAM))
-                .andReturn(CUSTOM_X_FORWARDED_FOR_HEADER_NAME + ", " + CUSTOM_X_FORWARDED_FOR_HEADER_NAME2).anyTimes();
-        replay(servletContext);
-        // Set httpForwardedForHeaders to null to clean the cache in HstRequestUtils.
-        RequestUtils.httpForwardedForHeaders = null;
-        customHttpForwardedForHeaderValue2 = CUSTOM_X_FORWARDED_FOR_HEADER_VALUE2;
-        Request request = createRequest();
-
-        assertArrayEquals(StringUtils.split(CUSTOM_X_FORWARDED_FOR_HEADER_VALUE2, ", "),
-                RequestUtils.getRemoteAddrs(request));
-        assertEquals(StringUtils.split(CUSTOM_X_FORWARDED_FOR_HEADER_VALUE2, ", ")[0],
-                RequestUtils.getFarthestRemoteAddr(request));
-    }
-
-    @Test
-    public void testGetRemoteAddrsWithMultipleCustomForwardedForHeadersEmpty() {
-        servletContext = createNiceMock(ServletContext.class);
-        expect(servletContext.getInitParameter(RequestUtils.HTTP_FORWARDED_FOR_HEADER_PARAM))
-                .andReturn(CUSTOM_X_FORWARDED_FOR_HEADER_NAME + ", " + CUSTOM_X_FORWARDED_FOR_HEADER_NAME2).anyTimes();
-        replay(servletContext);
-        // Set httpForwardedForHeaders to null to clean the cache in HstRequestUtils.
-        RequestUtils.httpForwardedForHeaders = null;
-        customHttpForwardedForHeaderValue2 = "";
         Request request = createRequest();
         assertArrayEquals(new String[] { DEFAULT_REMOTE_ADDR }, RequestUtils.getRemoteAddrs(request));
         assertEquals(DEFAULT_REMOTE_ADDR, RequestUtils.getFarthestRemoteAddr(request));
@@ -155,8 +118,6 @@ public class RequestUtilsTest {
                 .andReturn(httpForwardedForHeaderValue).anyTimes();
         expect(servletRequest.getHeader(CUSTOM_X_FORWARDED_FOR_HEADER_NAME))
                 .andReturn(customHttpForwardedForHeaderValue).anyTimes();
-        expect(servletRequest.getHeader(CUSTOM_X_FORWARDED_FOR_HEADER_NAME2))
-                .andReturn(customHttpForwardedForHeaderValue2).anyTimes();
 
         replay(servletRequest);
 
