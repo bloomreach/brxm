@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,17 +15,12 @@
  */
 package org.hippoecm.hst.configuration.environment;
 
-import org.hippoecm.hst.core.jcr.EventListenerItem;
 import org.hippoecm.hst.core.jcr.EventListenerItemImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.environment.EnvironmentUtils.getActiveHostGroup;
 import static org.hippoecm.hst.configuration.environment.EnvironmentUtils.getActiveHostGroupPath;
 
 public class OptionalEnvironmentEventListenerItemImpl extends EventListenerItemImpl {
-
-    private static final Logger log = LoggerFactory.getLogger(OptionalEnvironmentEventListenerItemImpl.class);
 
     private String absolutePath = null;
 
