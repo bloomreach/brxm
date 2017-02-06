@@ -398,7 +398,7 @@ public class HstRequestUtils {
      */
     public static String [] getRemoteAddrs(HttpServletRequest request) {
         List<String> addressList = null;
-        String headerName = getForwardedForHeaderNames(request);
+        String headerName = getForwardedForHeaderName(request);
         String headerValue = request.getHeader(headerName);
 
         if (headerValue != null) {
@@ -677,7 +677,7 @@ public class HstRequestUtils {
      * @param request servlet request
      * @return <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent HTTP header name
      */
-    private static String getForwardedForHeaderNames(final HttpServletRequest request) {
+    private static String getForwardedForHeaderName(final HttpServletRequest request) {
         String forwardedForHeader = httpForwardedForHeader;
 
         if (forwardedForHeader == null) {
