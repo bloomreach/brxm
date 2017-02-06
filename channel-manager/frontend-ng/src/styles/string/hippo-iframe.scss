@@ -200,7 +200,7 @@
   }
 }
 
-.hippo-mode-edit .hippo-overlay-box {
+.hippo-mode-edit .hippo-overlay-box:not(.hippo-overlay-box-container-filled) {
   min-height: $overlay-box-minheight;
 }
 

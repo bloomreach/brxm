@@ -181,6 +181,27 @@ describe('OverlayService', () => {
     });
   });
 
+  it('sets specific CSS classes on the box- and overlay elements of containers', (done) => {
+    loadIframeFixture(() => {
+      const vboxContainerBox = iframe('#container-vbox');
+      expect(vboxContainerBox).toHaveClass('hippo-overlay-box-container-filled');
+
+      const vboxContainerOverlay = iframe('.hippo-overlay-element-container').eq(0);
+      expect(vboxContainerOverlay).not.toHaveClass('hippo-overlay-element-container-empty');
+
+      const emptyContainerBox = iframe('#container-empty');
+      expect(emptyContainerBox).not.toHaveClass('hippo-overlay-box-container-filled');
+
+      const emptyContainerOverlay = iframe('.hippo-overlay-element-container').eq(1);
+      expect(emptyContainerOverlay).toHaveClass('hippo-overlay-element-container-empty');
+
+      const inheritedContainerOverlay = iframe('.hippo-overlay-element-container').eq(2);
+      expect(inheritedContainerOverlay).toHaveClass('hippo-overlay-element-container-disabled');
+
+      done();
+    });
+  });
+
   it('only renders labels for structure elements that have a label', (done) => {
     loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(3);
