@@ -20,6 +20,8 @@ instructions:
           - /node-with-sub-node:
               - /sub-node:
                   - property: sub-node-value
+          - /node-delete:
+              - .meta:delete: true
   - content:
       - /content/documents/myhippoproject:
           - property: document

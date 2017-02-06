@@ -121,12 +121,12 @@ public abstract class AbstractBaseTest {
                               final String name,
                               final boolean isRoot,
                               final Definition definition,
-                              final boolean isDeleted,
+                              final boolean isDelete,
                               final int nodeCount,
                               final int propertyCount)
     {
         final DefinitionNode node = parent.getNodes().get(name);
-        validateNode(node, path, name, parent, isRoot, definition, isDeleted, nodeCount, propertyCount);
+        validateNode(node, path, name, parent, isRoot, definition, isDelete, nodeCount, propertyCount);
         return node;
     }
 
@@ -134,12 +134,12 @@ public abstract class AbstractBaseTest {
                               final String path,
                               final String name,
                               final Definition definition,
-                              final boolean isDeleted,
+                              final boolean isDelete,
                               final int nodeCount,
                               final int propertyCount)
     {
         final DefinitionNode node = parent.getNode();
-        validateNode(node, path, name, null, true, definition, isDeleted, nodeCount, propertyCount);
+        validateNode(node, path, name, null, true, definition, isDelete, nodeCount, propertyCount);
         return node;
     }
 
@@ -149,11 +149,12 @@ public abstract class AbstractBaseTest {
                               final DefinitionNode parent,
                               final boolean isRoot,
                               final Definition definition,
-                              final boolean isDeleted,
+                              final boolean isDelete,
                               final int nodeCount,
                               final int propertyCount)
     {
-        validateItem(node, path, name, parent, isRoot, definition, isDeleted);
+        validateItem(node, path, name, parent, isRoot, definition);
+        assertEquals(isDelete, node.isDelete());
         assertEquals(nodeCount, node.getNodes().size());
         assertEquals(propertyCount, node.getProperties().size());
     }
@@ -163,8 +164,7 @@ public abstract class AbstractBaseTest {
                               final String name,
                               final DefinitionNode parent,
                               final boolean isRoot,
-                              final Definition definition,
-                              final boolean isDeleted)
+                              final Definition definition)
     {
         assertNotNull(item);
         assertEquals(path, item.getPath());
@@ -181,7 +181,6 @@ public abstract class AbstractBaseTest {
         }
         assertEquals(isRoot, item.isRoot());
         assertEquals(definition, item.getDefinition());
-        assertEquals(isDeleted, item.isDelete());
     }
 
     DefinitionProperty assertProperty(final DefinitionNode parent,
@@ -191,21 +190,20 @@ public abstract class AbstractBaseTest {
                                       final ValueType valueType,
                                       final Object value)
     {
-        return assertProperty(parent, path, name, definition, false, valueType, value, false, false);
+        return assertProperty(parent, path, name, definition, valueType, value, false, false);
     }
 
     DefinitionProperty assertProperty(final DefinitionNode parent,
                                       final String path,
                                       final String name,
                                       final Definition definition,
-                                      final boolean isDeleted,
                                       final ValueType valueType,
                                       final Object value,
                                       final boolean valueIsResource,
                                       final boolean valueIsPath)
     {
         final DefinitionProperty property = parent.getProperties().get(name);
-        validateItem(property, path, name, parent, false, definition, isDeleted);
+        validateItem(property, path, name, parent, false, definition);
         try {
             property.getValues();
             fail("Expected ValueFormatException");
@@ -223,21 +221,20 @@ public abstract class AbstractBaseTest {
                                       final ValueType valueType,
                                       final Object[] values)
     {
-        return assertProperty(parent, path, name, definition, false, valueType, values, false, false);
+        return assertProperty(parent, path, name, definition, valueType, values, false, false);
     }
 
     DefinitionProperty assertProperty(final DefinitionNode parent,
                                       final String path,
                                       final String name,
                                       final Definition definition,
-                                      final boolean isDeleted,
                                       final ValueType valueType,
                                       final Object[] values,
                                       final boolean valuesAreResource,
                                       final boolean valuesArePath)
     {
         final DefinitionProperty property = parent.getProperties().get(name);
-        validateItem(property, path, name, parent, false, definition, isDeleted);
+        validateItem(property, path, name, parent, false, definition);
         assertEquals(valueType, property.getValueType());
         try {
             property.getValue();

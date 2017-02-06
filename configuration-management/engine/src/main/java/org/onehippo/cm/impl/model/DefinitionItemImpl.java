@@ -71,12 +71,4 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
         return definition;
     }
 
-    @Override
-    public boolean isDelete() {
-        return delete;
-    }
-
-    public void setDelete(final boolean delete) {
-        this.delete = delete;
-    }
 }

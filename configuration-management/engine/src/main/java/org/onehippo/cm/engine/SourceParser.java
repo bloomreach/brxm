@@ -152,13 +152,28 @@ public class SourceParser extends AbstractBaseParser {
         final Map<Node, Node> children = asOrderedMap(value);
         for (Node keyNode : children.keySet()) {
             final String key = asStringScalar(keyNode);
-            if (key.startsWith("/")) {
+            if (key.equals(".meta:delete")) {
+                if (children.size() > 1) {
+                    throw new ParserException("Node cannot contain '.meta:delete' and other keys", value);
+                }
+                final boolean delete = asNodeDeleteValue(children.get(keyNode));
+                definitionNode.setDelete(delete);
+            } else if (key.startsWith("/")) {
                 final String name = key.substring(1);
                 constructDefinitionNode(name, children.get(keyNode), definitionNode);
             } else {
                 constructDefinitionProperty(key, children.get(keyNode), definitionNode);
             }
         }
+    }
+
+    private boolean asNodeDeleteValue(final Node node) throws ParserException {
+        final ScalarNode scalar = asScalar(node);
+        final Object object = scalarConstructor.constructScalarNode(scalar);
+        if (!object.equals(true)) {
+            throw new ParserException(".meta:delete value must be boolean value 'true'", node);
+        }
+        return true;
     }
 
     private void constructDefinitionNode(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {

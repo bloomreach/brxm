@@ -31,6 +31,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     private final Map<String, DefinitionNode> nodes = Collections.unmodifiableMap(modifiableNodes);
     private final Map<String, DefinitionPropertyImpl> modifiableProperties = new LinkedHashMap<>();
     private final Map<String, DefinitionProperty> properties = Collections.unmodifiableMap(modifiableProperties);
+    private boolean delete = false;
 
     public DefinitionNodeImpl(final String path, final String name, final Definition definition) {
         super(path, name, definition);
@@ -56,6 +57,15 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
 
     public Map<String, DefinitionPropertyImpl> getModifiableProperties() {
         return modifiableProperties;
+    }
+
+    @Override
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void setDelete(final boolean delete) {
+        this.delete = delete;
     }
 
     public DefinitionNodeImpl addNode(final String name) {

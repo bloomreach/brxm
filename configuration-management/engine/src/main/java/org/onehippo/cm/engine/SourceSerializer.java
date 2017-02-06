@@ -35,6 +35,7 @@ import org.onehippo.cm.api.model.ValueType;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 
@@ -110,6 +111,9 @@ public class SourceSerializer extends AbstractBaseSerializer {
     private Node representDefinitionNode(final DefinitionNode node, final Consumer<String> resourceConsumer) {
         final List<Node> children = new ArrayList<>(node.getProperties().size() + node.getNodes().size());
 
+        if (node.isDelete()) {
+            children.add(representNodeDelete());
+        }
         for (DefinitionProperty childProperty : node.getProperties().values()) {
             children.add(representProperty(childProperty, resourceConsumer));
         }
@@ -120,6 +124,12 @@ public class SourceSerializer extends AbstractBaseSerializer {
         final List<NodeTuple> tuples = new ArrayList<>(1);
         final String name = node.isRoot() ? node.getPath() : "/" + node.getName();
         tuples.add(createStrSeqTuple(name, children));
+        return new MappingNode(Tag.MAP, tuples, false);
+    }
+
+    private Node representNodeDelete() {
+        final List<NodeTuple> tuples = new ArrayList<>(1);
+        tuples.add(new NodeTuple(createStrScalar(".meta:delete"), new ScalarNode(Tag.BOOL, "true", null, null, null)));
         return new MappingNode(Tag.MAP, tuples, false);
     }
 

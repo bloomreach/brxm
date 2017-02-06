@@ -97,9 +97,9 @@ public class ParserValueTest extends AbstractBaseTest {
         assertProperty(explicitNode, "/explicit/reference", "reference", explicitDefinition, ValueType.REFERENCE,
                 UUID.fromString("cafebabe-cafe-babe-cafe-babecafebabe"));
         assertProperty(explicitNode, "/explicit/reference-with-path", "reference-with-path",
-                explicitDefinition, false, ValueType.REFERENCE, "/path/to/something", false, true);
+                explicitDefinition, ValueType.REFERENCE, "/path/to/something", false, true);
         assertProperty(explicitNode, "/explicit/reference-with-multi-value-path", "reference-with-multi-value-path",
-                explicitDefinition, false, ValueType.REFERENCE, new String[]{"/path/to/something", "/path/to/something-else"}, false, true);
+                explicitDefinition, ValueType.REFERENCE, new String[]{"/path/to/something", "/path/to/something-else"}, false, true);
         assertProperty(explicitNode, "/explicit/uri", "uri", explicitDefinition, ValueType.URI, new URI("http://onehippo.org"));
         assertProperty(explicitNode, "/explicit/weakreference", "weakreference", explicitDefinition, ValueType.WEAKREFERENCE,
                 UUID.fromString("cafebabe-cafe-babe-cafe-babecafebabe"));

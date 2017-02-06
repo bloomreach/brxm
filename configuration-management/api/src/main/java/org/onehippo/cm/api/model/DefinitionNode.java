@@ -30,4 +30,6 @@ public interface DefinitionNode extends DefinitionItem {
      * model processing order.
      */
     Map<String, DefinitionProperty> getProperties();
+
+    boolean isDelete();
 }

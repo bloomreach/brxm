@@ -867,6 +867,65 @@ public class SourceValidationTest extends AbstractBaseTest {
                 "Cannot find resource 'foo.txt'");
     }
 
+    @Test
+    public void configWithDefinitionWithNodeDeleteNonScalar() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - .meta:delete: [true]";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+
+        assertParserException(root, firstTuple(propertyMap).getValueNode(), "Node must be scalar");
+    }
+
+    @Test
+    public void configWithDefinitionWithNodeDeleteNonBoolean() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - .meta:delete: 42";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+
+        assertParserException(root, firstTuple(propertyMap).getValueNode(),
+                ".meta:delete value must be boolean value 'true'");
+    }
+
+    @Test
+    public void configWithDefinitionWithNodeDeleteFalse() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - .meta:delete: false";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+
+        assertParserException(root, firstTuple(propertyMap).getValueNode(),
+                ".meta:delete value must be boolean value 'true'");
+    }
+
+    @Test
+    public void configWithDefinitionWithNodeDeleteAndMore() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - .meta:delete: true\n"
+                + "    - property: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+
+        assertParserException(root, firstTuple(config0).getValueNode(),
+                "Node cannot contain '.meta:delete' and other keys");
+    }
+
     private void assertParserException(final String input, final String exceptionMessage) {
         final Node node = yamlParser.compose(new StringReader(input));
 
