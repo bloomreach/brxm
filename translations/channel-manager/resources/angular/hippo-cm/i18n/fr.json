@@ -101,6 +101,7 @@
   "TOOLBAR_VIEW_AS_LABEL": "Affichage vu par:",
   "SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE": "Attribuer un nouveau modèle",
   "VIEWPORT_PHONE": "Téléphone",
+  "ADDING_COMPONENT": "Ajout d'un {{component}}",
   "SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM": "Ajouter un élément de menu",
   "SUBPAGE_PAGE_MOVE_TITLE": "Déplacer la page '{{pageName}}'",
   "SUBPAGE_PAGE_COPY_LABEL_URL_STEM": "URL de destination",

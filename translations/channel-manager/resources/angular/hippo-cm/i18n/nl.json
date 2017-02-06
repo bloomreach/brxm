@@ -102,6 +102,7 @@
   "TOOLBAR_VIEW_AS_LABEL": "Toon als:",
   "SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE": "Ken nieuw sjabloon toe",
   "VIEWPORT_PHONE": "Telefoon",
+  "ADDING_COMPONENT": "{{component}} wordt toegevoegd",
   "SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM": "Voeg menu-item toe",
   "SUBPAGE_PAGE_MOVE_TITLE": "Verplaats pagina '{{pageName}}'",
   "SUBPAGE_PAGE_COPY_LABEL_URL_STEM": "Doel-URL",

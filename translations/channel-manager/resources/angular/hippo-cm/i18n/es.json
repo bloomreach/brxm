@@ -102,6 +102,7 @@
   "TOOLBAR_VIEW_AS_LABEL": "Visto por:",
   "SUBPAGE_PAGE_EDIT_LABEL_ASSIGN_NEW_TEMPLATE": "Asignar una nueva plantilla",
   "VIEWPORT_PHONE": "Teléfono",
+  "ADDING_COMPONENT": "Añadir {{component}}",
   "SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM": "Añadir elemento de menú",
   "SUBPAGE_PAGE_MOVE_TITLE": "Mover página '{{pageName}}'",
   "SUBPAGE_PAGE_COPY_LABEL_URL_STEM": "URL de destino",
