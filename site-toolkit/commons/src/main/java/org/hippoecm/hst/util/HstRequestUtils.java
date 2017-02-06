@@ -18,10 +18,8 @@ package org.hippoecm.hst.util;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,7 +55,7 @@ public class HstRequestUtils {
 
     /**
      * Servlet context init parameter name for custom HTTP Forwarded-For header name.
-     * If not set, {@link DEFAULT_HTTP_FORWARDED_FOR_HEADER} is used by default.
+     * If not set, {@link #DEFAULT_HTTP_FORWARDED_FOR_HEADER} is used by default.
      */
     public static final String HTTP_FORWARDED_FOR_HEADER_PARAM = "http-forwarded-for-header";
 
@@ -397,29 +395,17 @@ public class HstRequestUtils {
      * @return
      */
     public static String [] getRemoteAddrs(HttpServletRequest request) {
-        List<String> addressList = null;
         String headerName = getForwardedForHeaderName(request);
         String headerValue = request.getHeader(headerName);
 
-        if (headerValue != null) {
-            addressList = new ArrayList<>();
+        if (headerValue != null && headerValue.length() > 0) {
             String [] addrs = headerValue.split(",");
-            String value;
-
             for (int i = 0; i < addrs.length; i++) {
-                value = addrs[i].trim();
-
-                if (!value.isEmpty()) {
-                    addressList.add(value);
-                }
+                addrs[i] = addrs[i].trim();
             }
+            return addrs;
         }
-
-        if (addressList != null && !addressList.isEmpty()) {
-            return addressList.toArray(new String[addressList.size()]);
-        } else {
-            return new String [] { request.getRemoteAddr() };
-        }
+        return new String [] { request.getRemoteAddr() };
     }
 
     /**
@@ -673,7 +659,7 @@ public class HstRequestUtils {
 
     /**
      * Return <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent HTTP header name
-     * if {@link HTTP_FORWARDED_FOR_HEADER} context parameter is defined to use any other custom HTTP header instead.
+     * if {@link #HTTP_FORWARDED_FOR_HEADER_PARAM} context parameter is defined to use any other custom HTTP header instead.
      * @param request servlet request
      * @return <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent HTTP header name
      */
