@@ -88,14 +88,17 @@ class PageStructureElement {
     const startComment = this.getStartComment();
     const endComment = this.getEndComment();
 
-    startComment.nextUntil(endComment).remove();
-    startComment.remove();
+    const node = this._removeSiblingsUntil(startComment[0], endComment[0]);
+
+    if (!node) {
+      throw new Error('Inconsistent PageStructureElement: startComment and endComment elements should be sibling');
+    }
 
     // For containers of type NoMarkup, D&D may have placed a moved component after the end comment.
     // This would lead to lingering, duplicate components in the DOM. To get rid of these "misplaced"
     // elements, we also remove all subsequent elements. See CHANNELMGR-1030.
     if (PageStructureElement.isXTypeNoMarkup(this.metaData)) {
-      endComment.nextUntil().remove();
+      this._removeSiblingsUntil(endComment[0].nextSibling); // Don't remove the end marker
     }
 
     // Delay the onLoad callback until all images are fully downloaded. Called once per image.
@@ -107,6 +110,19 @@ class PageStructureElement {
     if (images.length === 0) {
       onLoadCallback();
     }
+  }
+
+  _removeSiblingsUntil(startNode, endNode) {
+    const parentNode = startNode.parentNode;
+    let node = startNode;
+    while (node && node !== endNode) {
+      const toBeRemoved = node;
+      node = node.nextSibling;
+
+      // IE11 does not understand node.remove(), so use parentNode.removeChild() instead
+      parentNode.removeChild(toBeRemoved);
+    }
+    return node;
   }
 
   static isXTypeNoMarkup(metaData) {
