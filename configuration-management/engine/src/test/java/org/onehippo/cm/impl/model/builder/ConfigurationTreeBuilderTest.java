@@ -316,4 +316,133 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             assertEquals("Property /a/b/property2 already exists with value type string, but value type long is requested in test-configuration/test-project/test-module [string].", e.getMessage());
         }
     }
+
+    @Test
+    public void reorder_existing_node_to_first() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - property1: [bla1]\n"
+                + "    - /c:\n"
+                + "      - property2: [bla2]\n"
+                + "    - /d:\n"
+                + "      - property3: [bla3]\n"
+                + "  - /a/d:\n"
+                + "    - .meta:order-before: b";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        assertEquals("[d, b, c]", sortedCollectionToString(a.getNodes()));
+    }
+
+    @Test
+    public void reorder_existing_node_to_earlier() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - property1: [bla1]\n"
+                + "    - /c:\n"
+                + "      - property2: [bla2]\n"
+                + "    - /d:\n"
+                + "      - property3: [bla3]\n"
+                + "    - /e:\n"
+                + "      - property4: [bla4]\n"
+                + "    - /f:\n"
+                + "      - property5: [bla5]\n"
+                + "  - /a/e:\n"
+                + "    - .meta:order-before: c";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        assertEquals("[b, e, c, d, f]", sortedCollectionToString(a.getNodes()));
+    }
+
+    @Test
+    public void reorder_existing_node_to_later() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - property1: [bla1]\n"
+                + "    - /c:\n"
+                + "      - property2: [bla2]\n"
+                + "    - /d:\n"
+                + "      - property3: [bla3]\n"
+                + "    - /e:\n"
+                + "      - property4: [bla4]\n"
+                + "    - /f:\n"
+                + "      - property5: [bla5]\n"
+                + "  - /a/c:\n"
+                + "    - .meta:order-before: f";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        assertEquals("[b, d, e, c, f]", sortedCollectionToString(a.getNodes()));
+    }
+
+    @Test
+    public void reorder_new_root() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - /c:\n"
+                + "        - property1: [bla1]\n"
+                + "      - /d:\n"
+                + "        - property2: [bla2]\n"
+                + "  - /a/b/e:\n"
+                + "    - .meta:order-before: d";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[c, e, d]", sortedCollectionToString(b.getNodes()));
+    }
+
+    @Test
+    public void reorder_new_child() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - /c:\n"
+                + "        - property1: [bla1]\n"
+                + "      - /d:\n"
+                + "        - property2: [bla2]\n"
+                + "  - /a/b:\n"
+                + "    - /e:\n"
+                + "      - .meta:order-before: c";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[e, c, d]", sortedCollectionToString(b.getNodes()));
+    }
 }

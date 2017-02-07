@@ -24,7 +24,6 @@ import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ConfigurationPropertyImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
-import org.onehippo.cm.impl.model.DefinitionItemImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
@@ -64,6 +63,7 @@ class ConfigurationTreeBuilder {
             final DefinitionNodeImpl definitionChild = nodeEntry.getValue();
             ConfigurationNodeImpl child;
             if (children.containsKey(name)) {
+                // TODO: honour node-delete meta-instruction.
                 child = children.get(name);
             } else {
                 child = createChildNode(node, definitionChild.getName(), definitionChild);
@@ -96,22 +96,31 @@ class ConfigurationTreeBuilder {
 
         if (pathSegments.length > segmentsConsumed) {
             definitionRoot = createChildNode(definitionRoot, pathSegments[segmentsConsumed], definition.getModifiableNode());
+        } else {
+            if (pathSegments.length > 0) {
+                final ConfigurationNodeImpl parent = definitionRoot.getModifiableParent();
+                definition.getNode().getOrderBefore()
+                        .ifPresent(destChildName -> parent.orderBefore(pathSegments[pathSegments.length - 1], destChildName));
+            }
         }
 
         return definitionRoot;
     }
 
     private ConfigurationNodeImpl createChildNode(final ConfigurationNodeImpl parent, final String name,
-                                                  final DefinitionItemImpl definitionItem) {
+                                                  final DefinitionNodeImpl definitionNode) {
         final ConfigurationNodeImpl node = new ConfigurationNodeImpl();
         final boolean parentIsRoot = parent.getParent() == null;
 
         node.setName(name);
         node.setParent(parent);
         node.setPath((parentIsRoot ? "" : parent.getPath()) + "/" + name);
-        node.addDefinitionItem(definitionItem);
+        node.addDefinitionItem(definitionNode);
 
         parent.addNode(name, node);
+
+        definitionNode.getOrderBefore()
+                .ifPresent(destChildName -> parent.orderBefore(name, destChildName));
 
         return node;
     }
@@ -125,6 +134,7 @@ class ConfigurationTreeBuilder {
         ConfigurationPropertyImpl property;
         if (properties.containsKey(name)) {
             // property already exists. By default, apply set/override behaviour
+            // TODO: honour meta instructions to delete, override type (PropertyType or ValueType) and merge/append for multi-valued properties
             property = properties.get(name);
             if (property.getType() != definitionProperty.getType()) {
                 final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
