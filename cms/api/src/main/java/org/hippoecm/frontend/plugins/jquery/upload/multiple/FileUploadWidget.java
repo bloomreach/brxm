@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -168,5 +168,13 @@ public abstract class FileUploadWidget extends AbstractFileUploadWidget {
 
     public int getNumberOfSelectedFiles() {
         return numberOfSelectedFiles;
+    }
+
+    public FileUploadBar getFileUploadBar() {
+        return fileUploadBar;
+    }
+
+    public void setFileUploadBar(final FileUploadBar fileUploadBar) {
+        this.fileUploadBar = fileUploadBar;
     }
 }
