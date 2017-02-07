@@ -33,6 +33,7 @@ import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
@@ -97,9 +98,10 @@ public class ParserValueTest extends AbstractBaseTest {
         assertProperty(explicitNode, "/explicit/reference", "reference", explicitDefinition, ValueType.REFERENCE,
                 UUID.fromString("cafebabe-cafe-babe-cafe-babecafebabe"));
         assertProperty(explicitNode, "/explicit/reference-with-path", "reference-with-path",
-                explicitDefinition, ValueType.REFERENCE, "/path/to/something", false, true);
+                explicitDefinition, PropertyOperation.REPLACE, ValueType.REFERENCE, "/path/to/something", false, true);
         assertProperty(explicitNode, "/explicit/reference-with-multi-value-path", "reference-with-multi-value-path",
-                explicitDefinition, ValueType.REFERENCE, new String[]{"/path/to/something", "/path/to/something-else"}, false, true);
+                explicitDefinition, PropertyOperation.REPLACE, ValueType.REFERENCE,
+                new String[]{"/path/to/something", "/path/to/something-else"}, false, true);
         assertProperty(explicitNode, "/explicit/uri", "uri", explicitDefinition, ValueType.URI, new URI("http://onehippo.org"));
         assertProperty(explicitNode, "/explicit/weakreference", "weakreference", explicitDefinition, ValueType.WEAKREFERENCE,
                 UUID.fromString("cafebabe-cafe-babe-cafe-babecafebabe"));

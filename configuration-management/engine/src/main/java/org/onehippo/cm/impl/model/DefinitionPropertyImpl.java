@@ -16,6 +16,7 @@
 package org.onehippo.cm.impl.model;
 
 import org.onehippo.cm.api.model.DefinitionProperty;
+import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueFormatException;
@@ -27,6 +28,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     private ValueType valueType;
     private Value value;
     private Value[] values;
+    private PropertyOperation operation;
 
     public DefinitionPropertyImpl(final String name, final Value value, final DefinitionNodeImpl parent) {
         super(name, parent);
@@ -34,6 +36,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
         this.valueType = value.getType();
         this.value = value;
         this.values = null;
+        this.operation = PropertyOperation.REPLACE;
     }
 
     public DefinitionPropertyImpl(final String name, final ValueType valueType, final Value[] values, final DefinitionNodeImpl parent) {
@@ -42,6 +45,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
         this.valueType = valueType;
         this.value = null;
         this.values = values;
+        this.operation = PropertyOperation.REPLACE;
     }
 
     @Override
@@ -68,6 +72,15 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
             throw new ValueFormatException("Property contains single value");
         }
         return values;
+    }
+
+    @Override
+    public PropertyOperation getOperation() {
+        return operation;
+    }
+
+    public void setOperation(final PropertyOperation operation) {
+        this.operation = operation;
     }
 
 }

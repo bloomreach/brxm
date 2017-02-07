@@ -15,20 +15,13 @@
  */
 package org.onehippo.cm.api.model;
 
-public interface DefinitionProperty extends DefinitionItem {
+public enum PropertyOperation {
+    ADD,
+    DELETE,
+    OVERRIDE,
+    REPLACE;
 
-    PropertyType getType();
-    ValueType getValueType();
-
-    /**
-     * @throws ValueFormatException if the property is multi-valued.
-     */
-    Value getValue() throws ValueFormatException;
-
-    /**
-     * @throws ValueFormatException if the property is single-valued.
-     */
-    Value[] getValues() throws ValueFormatException;
-
-    PropertyOperation getOperation();
+    public final String toString() {
+        return name().toLowerCase();
+    }
 }

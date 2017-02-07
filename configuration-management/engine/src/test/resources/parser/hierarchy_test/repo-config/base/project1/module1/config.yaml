@@ -30,6 +30,35 @@ instructions:
           - .meta:delete: true
       - /path/to/node-order-before:
           - .meta:order-before: node
+      - /path/to/node:
+          - delete-property:
+                operation: delete
+          - add-property:
+                operation: add
+                type: string
+                value: [addme]
+          - replace-property-single-string: single
+          - replace-property-map:
+                type: binary
+                resource: [folder/image.png]
+          - override-property:
+                operation: override
+                type: string
+                value: single
+          - /node-with-new-type:
+              - jcr:primaryType:
+                    operation: override
+                    type: name
+                    value: some:type
+              - jcr:mixinTypes:
+                    operation: override
+                    type: name
+                    value: ['some:mixin']
+          - /node-with-mixin-add:
+              - jcr:mixinTypes:
+                    operation: add
+                    type: name
+                    value: ['some:mixin']
   - content:
       - /content/documents/myhippoproject:
           - property: document

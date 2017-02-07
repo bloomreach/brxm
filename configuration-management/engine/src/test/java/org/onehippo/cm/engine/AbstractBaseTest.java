@@ -30,6 +30,7 @@ import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueFormatException;
@@ -218,13 +219,25 @@ public abstract class AbstractBaseTest {
                                       final ValueType valueType,
                                       final Object value)
     {
-        return assertProperty(parent, path, name, definition, valueType, value, false, false);
+        return assertProperty(parent, path, name, definition, PropertyOperation.REPLACE, valueType, value, false, false);
     }
 
     DefinitionProperty assertProperty(final DefinitionNode parent,
                                       final String path,
                                       final String name,
                                       final Definition definition,
+                                      final PropertyOperation operation,
+                                      final ValueType valueType,
+                                      final Object value)
+    {
+        return assertProperty(parent, path, name, definition, operation, valueType, value, false, false);
+    }
+
+    DefinitionProperty assertProperty(final DefinitionNode parent,
+                                      final String path,
+                                      final String name,
+                                      final Definition definition,
+                                      final PropertyOperation operation,
                                       final ValueType valueType,
                                       final Object value,
                                       final boolean valueIsResource,
@@ -232,6 +245,7 @@ public abstract class AbstractBaseTest {
     {
         final DefinitionProperty property = parent.getProperties().get(name);
         validateItem(property, path, name, parent, false, definition);
+        assertEquals(operation, property.getOperation());
         try {
             property.getValues();
             fail("Expected ValueFormatException");
@@ -249,13 +263,25 @@ public abstract class AbstractBaseTest {
                                       final ValueType valueType,
                                       final Object[] values)
     {
-        return assertProperty(parent, path, name, definition, valueType, values, false, false);
+        return assertProperty(parent, path, name, definition, PropertyOperation.REPLACE, valueType, values, false, false);
     }
 
     DefinitionProperty assertProperty(final DefinitionNode parent,
                                       final String path,
                                       final String name,
                                       final Definition definition,
+                                      final PropertyOperation operation,
+                                      final ValueType valueType,
+                                      final Object[] values)
+    {
+        return assertProperty(parent, path, name, definition, operation, valueType, values, false, false);
+    }
+
+    DefinitionProperty assertProperty(final DefinitionNode parent,
+                                      final String path,
+                                      final String name,
+                                      final Definition definition,
+                                      final PropertyOperation operation,
                                       final ValueType valueType,
                                       final Object[] values,
                                       final boolean valuesAreResource,
@@ -263,6 +289,7 @@ public abstract class AbstractBaseTest {
     {
         final DefinitionProperty property = parent.getProperties().get(name);
         validateItem(property, path, name, parent, false, definition);
+        assertEquals(operation, property.getOperation());
         assertEquals(valueType, property.getValueType());
         try {
             property.getValue();

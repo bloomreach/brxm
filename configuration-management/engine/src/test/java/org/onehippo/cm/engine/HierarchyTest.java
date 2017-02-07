@@ -27,6 +27,7 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
 import org.onehippo.cm.api.model.Project;
+import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.ValueType;
 
@@ -43,7 +44,7 @@ public class HierarchyTest extends AbstractBaseTest {
         final Configuration base = assertConfiguration(configurations, "base", new String[0], 1);
         final Project project1 = assertProject(base, "project1", new String[0], 1);
         final Module module1 = assertModule(project1, "module1", new String[0], 2);
-        final Source source1 = assertSource(module1, "config.yaml", 7);
+        final Source source1 = assertSource(module1, "config.yaml", 8);
 
         final NamespaceDefinition namespace = assertDefinition(source1, 0, NamespaceDefinition.class);
         assertEquals("myhippoproject", namespace.getPrefix());
@@ -91,18 +92,41 @@ public class HierarchyTest extends AbstractBaseTest {
         final ConfigDefinition source1definition3 = assertDefinition(source1, 5, ConfigDefinition.class);
         assertNode(source1definition3, "/path/to/node-order-before", "node-order-before", source1definition3, false, "node", 0, 0);
 
-        final ContentDefinition contentDefinition = assertDefinition(source1, 6, ContentDefinition.class);
+        final ConfigDefinition source1definition4 = assertDefinition(source1, 6, ConfigDefinition.class);
+        final DefinitionNode node = assertNode(source1definition4, "/path/to/node", "node", source1definition4, 2, 5);
+        assertProperty(node, "/path/to/node/delete-property", "delete-property", source1definition4,
+                PropertyOperation.DELETE, ValueType.STRING, new String[0]);
+        assertProperty(node, "/path/to/node/add-property", "add-property", source1definition4, PropertyOperation.ADD,
+                ValueType.STRING, new String[]{"addme"});
+        assertProperty(node, "/path/to/node/replace-property-single-string", "replace-property-single-string",
+                source1definition4, PropertyOperation.REPLACE, ValueType.STRING, "single");
+        assertProperty(node, "/path/to/node/replace-property-map", "replace-property-map", source1definition4,
+                PropertyOperation.REPLACE, ValueType.BINARY, new String[]{"folder/image.png"}, true, false);
+        assertProperty(node, "/path/to/node/override-property", "override-property", source1definition4,
+                PropertyOperation.OVERRIDE, ValueType.STRING, "single");
+        final DefinitionNode nodeWithNewType =
+                assertNode(node, "/path/to/node/node-with-new-type", "node-with-new-type", source1definition4, 0, 2);
+        assertProperty(nodeWithNewType, "/path/to/node/node-with-new-type/jcr:primaryType", "jcr:primaryType",
+                source1definition4, PropertyOperation.OVERRIDE, ValueType.NAME, "some:type");
+        assertProperty(nodeWithNewType, "/path/to/node/node-with-new-type/jcr:mixinTypes", "jcr:mixinTypes",
+                source1definition4, PropertyOperation.OVERRIDE, ValueType.NAME, new String[]{"some:mixin"});
+        final DefinitionNode nodeWithMixinAdd = assertNode(node, "/path/to/node/node-with-mixin-add", "node-with-mixin-add",
+                source1definition4, 0, 1);
+        assertProperty(nodeWithMixinAdd, "/path/to/node/node-with-mixin-add/jcr:mixinTypes", "jcr:mixinTypes",
+                source1definition4, PropertyOperation.ADD, ValueType.NAME, new String[]{"some:mixin"});
+
+        final ContentDefinition contentDefinition = assertDefinition(source1, 7, ContentDefinition.class);
         assertNode(contentDefinition, "/content/documents/myhippoproject", "myhippoproject", contentDefinition, 0, 1);
 
         final Source source2 = assertSource(module1, "folder/resources.yaml", 1);
         final ConfigDefinition source2definition = assertDefinition(source2, 0, ConfigDefinition.class);
         final DefinitionNode resourceNode = assertNode(source2definition, "/resources", "resources", source2definition, 0, 3);
         assertProperty(resourceNode, "/resources/single-value-string-resource", "single-value-string-resource",
-                source2definition, ValueType.STRING, "string.txt", true, false);
+                source2definition, PropertyOperation.REPLACE, ValueType.STRING, "string.txt", true, false);
         assertProperty(resourceNode, "/resources/single-value-binary-resource", "single-value-binary-resource",
-                source2definition, ValueType.BINARY, "image.png", true, false);
+                source2definition, PropertyOperation.REPLACE, ValueType.BINARY, "image.png", true, false);
         assertProperty(resourceNode, "/resources/multi-value-resource", "multi-value-resource", source2definition,
-                ValueType.STRING, new String[]{"/root.txt","folder/relative.txt"}, true, false);
+                PropertyOperation.REPLACE, ValueType.STRING, new String[]{"/root.txt","folder/relative.txt"}, true, false);
 
         final Configuration myhippoproject = assertConfiguration(configurations, "myhippoproject", new String[]{"base"}, 1);
         final Project project2 = assertProject(myhippoproject, "project2", new String[]{"project1", "foo/bar"}, 1);

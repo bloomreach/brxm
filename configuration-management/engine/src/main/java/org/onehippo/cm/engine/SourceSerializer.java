@@ -28,10 +28,10 @@ import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
+import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.api.model.ValueType;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -143,13 +143,6 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     private Node representProperty(final DefinitionProperty property, final Consumer<String> resourceConsumer) {
-        if (property.getName().equals("jcr:primaryType")) {
-            return representJcrPrimaryTypeProperty(property);
-        }
-        if (property.getName().equals("jcr:mixinTypes")) {
-            return representJcrMixinTypesProperty(property);
-        }
-
         if (requiresValueMap(property)) {
             return representPropertyUsingMap(property, resourceConsumer);
         } else {
@@ -157,51 +150,43 @@ public class SourceSerializer extends AbstractBaseSerializer {
         }
     }
 
-    private Node representJcrPrimaryTypeProperty(final DefinitionProperty property) {
-        final List<NodeTuple> tuples = new ArrayList<>(1);
-        tuples.add(new NodeTuple(createStrScalar(property.getName()), representValue(property.getValue())));
-        return new MappingNode(Tag.MAP, tuples, false);
-    }
-
-    private Node representJcrMixinTypesProperty(final DefinitionProperty property) {
-        final List<NodeTuple> tuples = new ArrayList<>(1);
-        final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
-        for (Value value : property.getValues()) {
-            valueNodes.add(representValue(value));
-        }
-        tuples.add(createStrSeqTuple(property.getName(), valueNodes, true));
-        return new MappingNode(Tag.MAP, tuples, false);
-    }
-
     private Node representPropertyUsingMap(final DefinitionProperty property, final Consumer<String> resourceConsumer) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
-        valueMapTuples.add(createStrStrTuple("type", property.getValueType().name().toLowerCase()));
 
-        final boolean hasResourceValues = hasResourceValues(property);
-        final String key;
-        if (hasResourceValues) {
-            key = "resource";
-        } else if (hasPathValues(property)) {
-            key = "path";
+        if (property.getOperation() == PropertyOperation.DELETE) {
+            valueMapTuples.add(createStrStrTuple("operation", "delete"));
         } else {
-            key = "value";
-        }
-
-        if (property.getType() == PropertyType.SINGLE) {
-            final Value value = property.getValue();
-            valueMapTuples.add(new NodeTuple(createStrScalar(key), representValue(value)));
-            if (hasResourceValues) {
-                resourceConsumer.accept(value.getString());
+            if (property.getOperation() != PropertyOperation.REPLACE) {
+                valueMapTuples.add(createStrStrTuple("operation", property.getOperation().toString().toLowerCase()));
             }
-        } else {
-            final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
-            for (Value value : property.getValues()) {
-                valueNodes.add(representValue(value));
+            valueMapTuples.add(createStrStrTuple("type", property.getValueType().name().toLowerCase()));
+
+            final boolean hasResourceValues = hasResourceValues(property);
+            final String key;
+            if (hasResourceValues) {
+                key = "resource";
+            } else if (hasPathValues(property)) {
+                key = "path";
+            } else {
+                key = "value";
+            }
+
+            if (property.getType() == PropertyType.SINGLE) {
+                final Value value = property.getValue();
+                valueMapTuples.add(new NodeTuple(createStrScalar(key), representValue(value)));
                 if (hasResourceValues) {
                     resourceConsumer.accept(value.getString());
                 }
+            } else {
+                final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
+                for (Value value : property.getValues()) {
+                    valueNodes.add(representValue(value));
+                    if (hasResourceValues) {
+                        resourceConsumer.accept(value.getString());
+                    }
+                }
+                valueMapTuples.add(createStrSeqTuple(key, valueNodes, true));
             }
-            valueMapTuples.add(createStrSeqTuple(key, valueNodes, true));
         }
 
         final List<NodeTuple> propertyTuples = new ArrayList<>(1);
@@ -228,24 +213,26 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     private boolean requiresValueMap(final DefinitionProperty property) {
-        if (needsExplicitTyping(property.getValueType())) {
+        if (property.getOperation() != PropertyOperation.REPLACE) {
             return true;
         }
 
-        if (property.getType() != PropertyType.SINGLE && property.getValues().length == 0) {
-            return property.getValueType() != ValueType.STRING;
+        if (hasResourceValues(property)) {
+            return true;
         }
 
-        return hasResourceValues(property);
-    }
+        if (property.getName().equals("jcr:primaryType") || property.getName().equals("jcr:mixinTypes")) {
+            return false;
+        }
 
-    private boolean needsExplicitTyping(final ValueType valueType) {
-        switch (valueType) {
+        switch (property.getValueType()) {
             case BINARY:
             case BOOLEAN:
             case DOUBLE:
             case DATE:
             case LONG:
+                // these types are auto-detected by the parser, except when they are empty sequences
+                return property.getType() != PropertyType.SINGLE && property.getValues().length == 0;
             case STRING:
                 return false;
             default:
