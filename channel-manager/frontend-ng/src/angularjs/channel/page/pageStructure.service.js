@@ -272,9 +272,12 @@ class PageStructureService {
   }
 
   renderComponent(componentId, propertiesMap) {
-    const component = this.getComponentById(componentId);
+    let component = this.getComponentById(componentId);
     if (component) {
       this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
+        // re-fetch component because a parallel renderComponent call may have updated the component's markup
+        component = this.getComponentById(componentId);
+
         const newMarkup = response.data;
         const updatedComponent = this._updateComponent(component, newMarkup);
 
