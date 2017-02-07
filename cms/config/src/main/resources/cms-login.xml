@@ -46,10 +46,9 @@
         <sv:value>service.behavior.browser.check</sv:value>
       </sv:property>
       <sv:property sv:name="browsers.supported" sv:type="String">
-        <sv:value>ie 11 &gt;=</sv:value>
         <sv:value>firefox 45 &gt;=</sv:value>
         <sv:value>safari 9 &gt;=</sv:value>
-        <sv:value>chrome 52 &gt;=</sv:value>
+        <sv:value>chrome 56 &gt;=</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

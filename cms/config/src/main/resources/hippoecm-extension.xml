@@ -236,6 +236,22 @@
       <sv:value>900.6</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="cms-login-update-supported-browsers">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/login/login/loginPage/browsers.supported</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String" sv:multiple="true">
+      <sv:value>firefox 45 &gt;=</sv:value>
+      <sv:value>safari 9 &gt;=</sv:value>
+      <sv:value>chrome 56 &gt;=</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>900.7</sv:value>
+    </sv:property>
+  </sv:node>
   <!-- Global settings -->
   <sv:node sv:name="cms-settings">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
