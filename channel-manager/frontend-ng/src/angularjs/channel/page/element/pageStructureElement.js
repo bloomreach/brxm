@@ -85,8 +85,10 @@ class PageStructureElement {
    * Replace container DOM elements with the given markup
    */
   replaceDOM($newMarkup, onLoadCallback) {
-    const endCommentNode = this.getEndComment()[0];
-    const node = this._removeSiblingsUntil(this.getStartComment()[0], endCommentNode);
+    const startComment = this.getStartComment();
+    const endComment = this.getEndComment();
+
+    const node = this._removeSiblingsUntil(startComment[0], endComment[0]);
 
     if (!node) {
       throw new Error('Inconsistent PageStructureElement: startComment and endComment elements should be sibling');
@@ -96,13 +98,13 @@ class PageStructureElement {
     // This would lead to lingering, duplicate components in the DOM. To get rid of these "misplaced"
     // elements, we also remove all subsequent elements. See CHANNELMGR-1030.
     if (PageStructureElement.isXTypeNoMarkup(this.metaData)) {
-      this._removeSiblingsUntil(endCommentNode.nextSibling); // Don't remove the end marker
+      this._removeSiblingsUntil(endComment[0].nextSibling); // Don't remove the end marker
     }
 
     // Delay the onLoad callback until all images are fully downloaded. Called once per image.
     const images = $newMarkup.find('img, [type="image"]').one('load', onLoadCallback);
 
-    this.getEndComment().replaceWith($newMarkup);
+    endComment.replaceWith($newMarkup);
 
     // If no images are being loaded we can execute the onLoad callback right away.
     if (images.length === 0) {
@@ -111,11 +113,14 @@ class PageStructureElement {
   }
 
   _removeSiblingsUntil(startNode, endNode) {
+    const parentNode = startNode.parentNode;
     let node = startNode;
     while (node && node !== endNode) {
       const toBeRemoved = node;
       node = node.nextSibling;
-      toBeRemoved.parentNode.removeChild(toBeRemoved);
+
+      // IE11 does not understand node.remove(), so use parentNode.removeChild() instead
+      parentNode.removeChild(toBeRemoved);
     }
     return node;
   }
