@@ -16,9 +16,13 @@
 
 <md-menu ng-if="channelActions.hasMenuOptions()">
   <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}"
-             class="qa-button-channel"
+             class="qa-button-channel changes-button"
              ng-click="$mdOpenMenu($event)">
     {{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}
+
+    <md-icon ng-if="channelActions.hasOwnChanges()"
+             md-svg-src="images/attention.svg">
+    </md-icon>
   </md-button>
   <md-menu-content width="4" class="qa-channel-menu">
     <md-menu-item ng-if="channelActions.isChannelSettingsAvailable()">
@@ -31,7 +35,7 @@
     <md-menu-item ng-if="channelActions.isChannelDeletionAvailable()">
       <md-button class="qa-channel-action-delete"
                  aria-label="{{ 'TOOLBAR_MENU_CHANNEL_DELETE' | translate }}"
-                 ng-click="channelActions.deleteChannel()">
+                 ngclick="channelActions.deleteChannel()">
         {{ 'TOOLBAR_MENU_CHANNEL_DELETE' | translate }}
       </md-button>
     </md-menu-item>
