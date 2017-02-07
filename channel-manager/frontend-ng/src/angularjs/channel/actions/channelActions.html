@@ -35,6 +35,30 @@
         {{ 'TOOLBAR_MENU_CHANNEL_DELETE' | translate }}
       </md-button>
     </md-menu-item>
+
+    <md-divider ng-if="channelActions.hasOwnChanges() || channelActions.canManageChanges()"></md-divider>
+
+    <md-menu-item ng-if="channelActions.hasOwnChanges()">
+      <md-button aria-label="{{ 'TOOLBAR_MENU_CHANGES_PUBLISH' | translate }}"
+          ng-click="channelActions.publish()">
+        {{ 'TOOLBAR_MENU_CHANGES_PUBLISH' | translate }}
+      </md-button>
+    </md-menu-item>
+
+    <md-menu-item ng-if="channelActions.hasOwnChanges()">
+      <md-button aria-label="{{ 'TOOLBAR_MENU_CHANGES_DISCARD' | translate }}"
+          ng-click="channelActions.discard()">
+        {{ 'TOOLBAR_MENU_CHANGES_DISCARD' | translate }}
+      </md-button>
+    </md-menu-item>
+
+    <md-menu-item ng-if="channelActions.canManageChanges()">
+      <md-button aria-label="{{ 'TOOLBAR_MENU_MANAGE_CHANGES' | translate }}"
+                 ng-disabled="!channelActions.isManageChangesEnabled()"
+                 ng-click="channelActions.manageChanges()">
+        {{ 'TOOLBAR_MENU_MANAGE_CHANGES' | translate }}
+      </md-button>
+    </md-menu-item>
   </md-menu-content>
 </md-menu>
 

@@ -35,10 +35,6 @@
       </div>
 
       <div flex="30" layout layout-align="end center">
-        <changes-menu ng-show="channelCtrl.isChannelLoaded()"
-          on-manage-changes="channelCtrl.showSubpage('manage-changes')">
-        </changes-menu>
-
         <div class="button-toggle" layout>
           <md-button class="qa-button-view"
                      ng-class="{ 'button-active': !channelCtrl.isEditMode }"

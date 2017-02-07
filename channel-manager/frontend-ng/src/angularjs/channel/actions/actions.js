@@ -23,6 +23,8 @@ import ChannelSettingsCtrl from './settings/settings.controller';
 import channelPropertyDirective from './settings/property/property.directive';
 import ChannelPropertyCtrl from './settings/property/property.controller';
 import helpIconDirective from './settings/property/helpIcon/helpIcon.directive';
+import changeManagementDirective from './manageChanges/manageChanges.directive';
+import ChangeManagementCtrl from './manageChanges/manageChanges.controller';
 
 const channelActionsModule = angular
   .module('hippo-cm.channel.actions', [
@@ -34,6 +36,8 @@ const channelActionsModule = angular
   .directive('channelSettings', channelSettingsDirective)
   .controller('ChannelPropertyCtrl', ChannelPropertyCtrl)
   .directive('channelProperty', channelPropertyDirective)
-  .directive('helpIcon', helpIconDirective);
+  .directive('helpIcon', helpIconDirective)
+  .controller('ChangeManagementCtrl', ChangeManagementCtrl)
+  .directive('changeManagement', changeManagementDirective);
 
 export default channelActionsModule;
