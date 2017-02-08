@@ -511,7 +511,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Not yet created node '/a/b/c' has delete-flag set.", e.getMessage());
+            assertEquals("Not yet created node '/a/b/c' has delete-flag set in 'test-configuration/test-project/test-module [string]'.", e.getMessage());
         }
     }
 
@@ -534,7 +534,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Not yet created node '/a/b/c' has delete-flag set.", e.getMessage());
+            assertEquals("Not yet created node '/a/b/c' has delete-flag set in 'test-configuration/test-project/test-module [string]'.", e.getMessage());
         }
     }
 
@@ -965,5 +965,73 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final ConfigurationNode a = root.getNodes().get("a");
         final ConfigurationNode b = a.getNodes().get("b");
         assertEquals("[bla3, bla1]", valuesToString(b.getProperties().get("jcr:mixinTypes")));
+    }
+
+    @Test
+    public void delete_property() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - property1: bla1\n"
+                + "  - /a/b:\n"
+                + "    - property1:\n"
+                + "        operation: delete";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl)definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[]", sortedCollectionToString(b.getProperties()));
+    }
+
+    @Test
+    public void delete_non_existent_property() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - property1:\n"
+                + "        operation: delete";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Not yet created property '/a/property1' specifies delete operation in 'test-configuration/test-project/test-module [string]'.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void modify_deleted_property() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - /c:\n"
+                + "        - property1: bla1\n"
+                + "  - /a/b:\n"
+                + "    - /c:\n"
+                + "      - property1:\n"
+                + "          operation: delete\n"
+                + "  - /a/b/c:\n"
+                + "    - property1: bla2";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ContentDefinitionImpl) definitions.get(2));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        final ConfigurationNode c = b.getNodes().get("c");
+        assertEquals("[]", sortedCollectionToString(c.getProperties()));
     }
 }

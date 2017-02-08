@@ -36,6 +36,9 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.onehippo.cm.api.model.PropertyOperation.ADD;
+import static org.onehippo.cm.api.model.PropertyOperation.DELETE;
+import static org.onehippo.cm.api.model.PropertyOperation.OVERRIDE;
 
 class ConfigurationTreeBuilder {
 
@@ -50,7 +53,7 @@ class ConfigurationTreeBuilder {
     ConfigurationNodeImpl build() {
         // validation of the input and construction of the tree happens at "push time".
 
-        pruneDeletedNodes(root);
+        pruneDeletedItems(root);
         return root;
     }
 
@@ -153,7 +156,9 @@ class ConfigurationTreeBuilder {
         final boolean parentIsRoot = parent.getParent() == null;
 
         if (definitionNode.isDelete()) {
-            final String msg = String.format("Not yet created node '%s' has delete-flag set.", definitionNode.getPath());
+            final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+            final String msg = String.format("Not yet created node '%s' has delete-flag set in '%s'.",
+                    definitionNode.getPath(), culprit);
             throw new IllegalArgumentException(msg);
         }
 
@@ -170,20 +175,31 @@ class ConfigurationTreeBuilder {
         return node;
     }
 
-    private ConfigurationPropertyImpl setProperty(final ConfigurationNodeImpl parent,
-                                                  final Map.Entry<String, DefinitionPropertyImpl> entry) {
+    private void setProperty(final ConfigurationNodeImpl parent,
+                             final Map.Entry<String, DefinitionPropertyImpl> entry) {
         final Map<String, ConfigurationPropertyImpl> properties = parent.getModifiableProperties();
         final String name = entry.getKey();
         final DefinitionPropertyImpl definitionProperty = entry.getValue();
-        final boolean isAdd = PropertyOperation.ADD == definitionProperty.getOperation();
+        final PropertyOperation op = definitionProperty.getOperation();
 
         ConfigurationPropertyImpl property;
         if (properties.containsKey(name)) {
-            // TODO: honour meta instructions to delete properties
-            final boolean isOverride = PropertyOperation.OVERRIDE == definitionProperty.getOperation();
             property = properties.get(name);
+
+            if (property.isDeleted()) {
+                final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
+                logger.warn("Property '{}' defined in '{}' has already been deleted. This property is not re-created.",
+                        property.getPath(), culprit);
+            }
+
+            if (op == DELETE) {
+                property.setDeleted(true);
+                property.addDefinitionItem(definitionProperty);
+                return;
+            }
+
             if (property.getType() != definitionProperty.getType()) {
-                if (isOverride) {
+                if (op == OVERRIDE) {
                     property.setType(definitionProperty.getType());
                     property.setValue(null);
                     property.setValues(null);
@@ -196,7 +212,7 @@ class ConfigurationTreeBuilder {
             }
 
             if (property.getValueType() != definitionProperty.getValueType()) {
-                if (isOverride) {
+                if (op == OVERRIDE) {
                     property.setValueType(definitionProperty.getValueType());
                     property.setValue(null);
                     property.setValues(null);
@@ -208,15 +224,22 @@ class ConfigurationTreeBuilder {
                 }
             }
 
-            requireOverrideOperationForPrimaryType(definitionProperty, property, isOverride);
-            requireOverrideOperationForMixinTypes(definitionProperty, property, isOverride, isAdd);
+            requireOverrideOperationForPrimaryType(definitionProperty, property, op == OVERRIDE);
+            requireOverrideOperationForMixinTypes(definitionProperty, property, op);
         } else {
+            if (op == DELETE) {
+                final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
+                final String msg = String.format("Not yet created property '%s' specifies delete operation in '%s'.",
+                        definitionProperty.getPath(), culprit);
+                throw new IllegalArgumentException(msg);
+            }
+
             // create new property
             property = new ConfigurationPropertyImpl();
 
             property.setName(name);
             property.setParent(parent);
-            property.setPath(parent.getPath() + "/" + name);
+            property.setPath(definitionProperty.getPath());
             property.setType(definitionProperty.getType());
             property.setValueType(definitionProperty.getValueType());
         }
@@ -226,7 +249,7 @@ class ConfigurationTreeBuilder {
         if (PropertyType.SINGLE == definitionProperty.getType()) {
             property.setValue(definitionProperty.getValue());
         } else {
-            if (isAdd) {
+            if (op == ADD) {
                 addValues(definitionProperty, property);
             } else {
                 property.setValues(definitionProperty.getValues());
@@ -234,8 +257,6 @@ class ConfigurationTreeBuilder {
         }
 
         parent.addProperty(name, property);
-
-        return property;
     }
 
     private void requireOverrideOperationForPrimaryType(final DefinitionPropertyImpl definitionProperty,
@@ -254,8 +275,8 @@ class ConfigurationTreeBuilder {
 
     private void requireOverrideOperationForMixinTypes(final DefinitionPropertyImpl definitionProperty,
                                                        final ConfigurationPropertyImpl property,
-                                                       final boolean isOverride, final boolean isAdd) {
-        if (property.getName().equals(JCR_MIXINTYPES) && !isAdd) {
+                                                       final PropertyOperation op) {
+        if (property.getName().equals(JCR_MIXINTYPES) && op != ADD) {
             final List<String> replacedMixins = Arrays.stream(definitionProperty.getValues())
                     .map(Value::getString)
                     .collect(Collectors.toList());
@@ -264,7 +285,7 @@ class ConfigurationTreeBuilder {
                     .filter(mixin -> !replacedMixins.contains(mixin))
                     .collect(Collectors.toList());
 
-            if (missingMixins.size() > 0 && !isOverride) {
+            if (missingMixins.size() > 0 && op != OVERRIDE) {
                 final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
                 final String msg = String.format("Property %s is already defined on node %s, and replace operation of "
                                 + "%s would remove values %s. Use 'operation: override' if you really intend to remove "
@@ -361,15 +382,20 @@ class ConfigurationTreeBuilder {
         return path.length();
     }
 
-    private void pruneDeletedNodes(final ConfigurationNodeImpl node) {
+    private void pruneDeletedItems(final ConfigurationNodeImpl node) {
         if (node.isDeleted()) {
             node.getModifiableParent().removeNode(node.getName());
             return;
         }
 
+        final Map<String, ConfigurationPropertyImpl> propertyMap = node.getModifiableProperties();
+        final List<String> properties = propertyMap.keySet().stream().collect(Collectors.toList());
+        properties.stream()
+                .filter(propertyName -> propertyMap.get(propertyName).isDeleted())
+                .forEach(propertyMap::remove);
+
         final Map<String, ConfigurationNodeImpl> childMap = node.getModifiableNodes();
         final List<String> children = childMap.keySet().stream().collect(Collectors.toList());
-        children.forEach(name -> pruneDeletedNodes(childMap.get(name)));
+        children.forEach(name -> pruneDeletedItems(childMap.get(name)));
     }
-
 }
