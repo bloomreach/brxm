@@ -17,11 +17,14 @@
 package org.onehippo.cm.impl.model.builder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
+import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ConfigurationPropertyImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
@@ -30,6 +33,9 @@ import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
 class ConfigurationTreeBuilder {
 
@@ -169,25 +175,41 @@ class ConfigurationTreeBuilder {
         final Map<String, ConfigurationPropertyImpl> properties = parent.getModifiableProperties();
         final String name = entry.getKey();
         final DefinitionPropertyImpl definitionProperty = entry.getValue();
+        final boolean isAdd = PropertyOperation.ADD == definitionProperty.getOperation();
 
         ConfigurationPropertyImpl property;
         if (properties.containsKey(name)) {
-            // property already exists. By default, apply set/override behaviour
-            // TODO: honour meta instructions to delete, override type (PropertyType or ValueType) and merge/append for multi-valued properties
+            // TODO: honour meta instructions to delete properties
+            final boolean isOverride = PropertyOperation.OVERRIDE == definitionProperty.getOperation();
             property = properties.get(name);
             if (property.getType() != definitionProperty.getType()) {
-                final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
-                final String msg = String.format("Property %s already exists with type %s, but type %s is requested in %s.",
-                        property.getPath(), property.getType(), definitionProperty.getType(), culprit);
-                throw new IllegalStateException(msg);
+                if (isOverride) {
+                    property.setType(definitionProperty.getType());
+                    property.setValue(null);
+                    property.setValues(null);
+                } else {
+                    final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
+                    final String msg = String.format("Property %s already exists with type %s, but type %s is requested in %s.",
+                            property.getPath(), property.getType(), definitionProperty.getType(), culprit);
+                    throw new IllegalStateException(msg);
+                }
             }
 
             if (property.getValueType() != definitionProperty.getValueType()) {
-                final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
-                final String msg = String.format("Property %s already exists with value type %s, but value type %s is requested in %s.",
-                        property.getPath(), property.getValueType(), definitionProperty.getValueType(), culprit);
-                throw new IllegalStateException(msg);
+                if (isOverride) {
+                    property.setValueType(definitionProperty.getValueType());
+                    property.setValue(null);
+                    property.setValues(null);
+                } else {
+                    final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
+                    final String msg = String.format("Property %s already exists with value type %s, but value type %s is requested in %s.",
+                            property.getPath(), property.getValueType(), definitionProperty.getValueType(), culprit);
+                    throw new IllegalStateException(msg);
+                }
             }
+
+            requireOverrideOperationForPrimaryType(definitionProperty, property, isOverride);
+            requireOverrideOperationForMixinTypes(definitionProperty, property, isOverride, isAdd);
         } else {
             // create new property
             property = new ConfigurationPropertyImpl();
@@ -195,20 +217,107 @@ class ConfigurationTreeBuilder {
             property.setName(name);
             property.setParent(parent);
             property.setPath(parent.getPath() + "/" + name);
-            property.addDefinitionItem(definitionProperty);
             property.setType(definitionProperty.getType());
             property.setValueType(definitionProperty.getValueType());
         }
 
+        warnIfValuesAreEqual(definitionProperty, property);
+        property.addDefinitionItem(definitionProperty);
         if (PropertyType.SINGLE == definitionProperty.getType()) {
             property.setValue(definitionProperty.getValue());
         } else {
-            property.setValues(definitionProperty.getValues());
+            if (isAdd) {
+                addValues(definitionProperty, property);
+            } else {
+                property.setValues(definitionProperty.getValues());
+            }
         }
 
         parent.addProperty(name, property);
 
         return property;
+    }
+
+    private void requireOverrideOperationForPrimaryType(final DefinitionPropertyImpl definitionProperty,
+                                                        final ConfigurationPropertyImpl property,
+                                                        final boolean isOverride) {
+        if (property.getName().equals(JCR_PRIMARYTYPE)
+                && !property.getValue().getString().equals(definitionProperty.getValue().getString())
+                && !isOverride) {
+            final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
+            final String msg = String.format("Property %s is already defined on node %s, but change is requested in %s. "
+                            + "Use 'operation: override' if you really intend to change the value of this property.",
+                    JCR_PRIMARYTYPE, property.getParent().getPath(), culprit);
+            throw new IllegalStateException(msg);
+        }
+    }
+
+    private void requireOverrideOperationForMixinTypes(final DefinitionPropertyImpl definitionProperty,
+                                                       final ConfigurationPropertyImpl property,
+                                                       final boolean isOverride, final boolean isAdd) {
+        if (property.getName().equals(JCR_MIXINTYPES) && !isAdd) {
+            final List<String> replacedMixins = Arrays.stream(definitionProperty.getValues())
+                    .map(Value::getString)
+                    .collect(Collectors.toList());
+            final List<String> missingMixins = Arrays.stream(property.getValues())
+                    .map(Value::getString)
+                    .filter(mixin -> !replacedMixins.contains(mixin))
+                    .collect(Collectors.toList());
+
+            if (missingMixins.size() > 0 && !isOverride) {
+                final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
+                final String msg = String.format("Property %s is already defined on node %s, and replace operation of "
+                                + "%s would remove values %s. Use 'operation: override' if you really intend to remove "
+                                + "these values.",
+                        JCR_MIXINTYPES, property.getParent().getPath(), culprit, missingMixins.toString());
+                throw new IllegalStateException(msg);
+            }
+        }
+    }
+
+    private void addValues(final DefinitionPropertyImpl definitionProperty, final ConfigurationPropertyImpl property) {
+        // TODO: need to handle PropertyType.SET?
+
+        final Value[] existingValues = property.getValues();
+        if (existingValues == null) {
+            final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
+            logger.warn("Property '{}' defined in '{}' claims to ADD values, but no values are present. Applying default behaviour.",
+                    definitionProperty.getPath(), culprit);
+            property.setValues(definitionProperty.getValues());
+        } else {
+            List<Value> values = Arrays.stream(existingValues).collect(Collectors.toList());
+            values.addAll(Arrays.asList(definitionProperty.getValues()));
+            property.setValues(values.toArray(new Value[values.size()]));
+        }
+    }
+
+    private void warnIfValuesAreEqual(final DefinitionPropertyImpl definitionProperty,
+                                      final ConfigurationPropertyImpl property) {
+        if (PropertyType.SINGLE == property.getType()) {
+            final Value existingValue = property.getValue();
+            if (existingValue != null) {
+                if (definitionProperty.getValue().equals(property.getValue())) {
+                    final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
+                    logger.warn("Property '{}' defined in '{}' specifies value equivalent to existing property.",
+                            definitionProperty.getPath(), culprit);
+                }
+            }
+        } else {
+            final Value[] existingValues = property.getValues();
+            if (existingValues != null) {
+                final Value[] definitionValues = definitionProperty.getValues();
+                if (existingValues.length == definitionValues.length) {
+                    for (int i = 0; i < existingValues.length; i++) {
+                        if (!existingValues[i].equals(definitionValues[i])) {
+                            return;
+                        }
+                    }
+                    final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
+                    logger.warn("Property '{}' defined in '{}' specifies values equivalent to existing property.",
+                            definitionProperty.getPath(), culprit);
+                }
+            }
+        }
     }
 
     private String[] getPathSegments(final String path) {
