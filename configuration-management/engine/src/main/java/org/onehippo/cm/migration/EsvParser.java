@@ -18,9 +18,6 @@ package org.onehippo.cm.migration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 import javax.jcr.PropertyType;
@@ -41,9 +38,7 @@ import static org.onehippo.cm.migration.Esv2Yaml.log;
 public class EsvParser extends DefaultHandler {
 
     private static final String NS_SV_URI = "http://www.jcp.org/jcr/sv/1.0";
-    private static final String NS_SV_PREFIX = "sv";
     private static final String NS_ESV_URI = "http://www.onehippo.org/jcr/xmlimport";
-    private static final String NS_ESV_PREFIX = "esv";
 
     private static final String SV_NODE = "node";
     private static final String SV_PROPERTY = "property";
@@ -60,14 +55,6 @@ public class EsvParser extends DefaultHandler {
     private static final String JCR_MIXINTYPES = "jcr:mixinTypes";
     private static final String JCR_UUID = "jcr:uuid";
 
-    private static final Map<String, String> NS_MAP;
-    static {
-        HashMap<String, String> map = new HashMap<>();
-        map.put(NS_SV_URI, NS_SV_PREFIX);
-        map.put(NS_ESV_URI, NS_ESV_PREFIX);
-        NS_MAP = Collections.unmodifiableMap(map);
-    }
-
     private final File baseDir;
     private final Stack<EsvNode> stack = new Stack<>();
 
@@ -82,14 +69,18 @@ public class EsvParser extends DefaultHandler {
         this.baseDir = baseDir;
     }
 
+    public File getBaseDir() {
+        return baseDir;
+    }
+
     @Override
     public void setDocumentLocator(final Locator locator) {
         this.locator = locator;
     }
 
-    public EsvNode parse(InputStream is, String resourcePath) throws IOException {
+    public EsvNode parse(final InputStream is, final String resourcePath) throws IOException, EsvParseException {
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
+            final SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
             factory.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
             factory.setValidating(false);
@@ -99,21 +90,20 @@ public class EsvParser extends DefaultHandler {
             factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            SAXParser parser = factory.newSAXParser();
+            final SAXParser parser = factory.newSAXParser();
             this.resourcePath = resourcePath;
             parser.parse(new InputSource(is), this);
             return rootNode;
         } catch (FactoryConfigurationError e) {
-            throw new RuntimeException(
-                    "SAX parser implementation not available", e);
+            throw new EsvParseException("SAX parser implementation not available", e);
         } catch (ParserConfigurationException e) {
-            throw new RuntimeException("SAX parser configuration error", e);
+            throw new EsvParseException("SAX parser configuration error", e);
         } catch (SAXException e) {
             Exception exception = e.getException();
             if (exception instanceof IOException) {
                 throw (IOException) exception;
             } else {
-                throw new IOException("Error parsing XML import", e);
+                throw new EsvParseException("Error parsing XML import", e);
             }
         }
         finally {
@@ -125,19 +115,19 @@ public class EsvParser extends DefaultHandler {
         }
     }
 
-    public void warning(SAXParseException e) throws SAXException {
+    public void warning(final SAXParseException e) throws SAXException {
         log.warn("warning encountered at line: " + e.getLineNumber()
                 + ", column: " + e.getColumnNumber()
                 + " while parsing XML stream", e);
     }
 
-    public void error(SAXParseException e) throws SAXException {
+    public void error(final SAXParseException e) throws SAXException {
         log.error("error encountered at line: " + e.getLineNumber()
                 + ", column: " + e.getColumnNumber()
                 + " while parsing XML stream: " + e.toString());
     }
 
-    public void fatalError(SAXParseException e) throws SAXException {
+    public void fatalError(final SAXParseException e) throws SAXException {
         log.error("fatal error encountered at line: " + e.getLineNumber()
                 + ", column: " + e.getColumnNumber()
                 + " while parsing XML stream: " + e.toString());
@@ -145,12 +135,12 @@ public class EsvParser extends DefaultHandler {
     }
 
     @Override
-    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-        if (isName(namespaceURI, localName, NS_SV_PREFIX, SV_NODE)) {
+    public void startElement(final String namespaceURI, final String localName, final String qName, final Attributes atts) throws SAXException {
+        if (NS_SV_URI.equals(namespaceURI) && SV_NODE.equals(localName)) {
             startNode(atts);
-        } else if (isName(namespaceURI, localName, NS_SV_PREFIX, SV_PROPERTY)) {
+        } else if (NS_SV_URI.equals(namespaceURI) && SV_PROPERTY.equals(localName)) {
             startProperty(atts);
-        } else if (isName(namespaceURI, localName, NS_SV_PREFIX, SV_VALUE)) {
+        } else if (NS_SV_URI.equals(namespaceURI) && SV_VALUE.equals(localName)) {
             startValue(atts);
         } else {
             throw new SAXException("Unknown element: " + qName + getParseLocation());
@@ -158,22 +148,22 @@ public class EsvParser extends DefaultHandler {
     }
 
     @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
+    public void characters(final char[] ch, final int start, final int length) throws SAXException {
         appendValue(ch, start, length);
     }
 
     @Override
-    public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+    public void ignorableWhitespace(final char[] ch, final int start, final int length) throws SAXException {
         appendValue(ch, start, length);
     }
 
     @Override
-    public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-        if (isName(namespaceURI, localName, NS_SV_PREFIX, SV_NODE)) {
+    public void endElement(final String namespaceURI, final String localName, final String qName) throws SAXException {
+        if (NS_SV_URI.equals(namespaceURI) && SV_NODE.equals(localName)) {
             endNode();
-        } else if (isName(namespaceURI, localName, NS_SV_PREFIX, SV_PROPERTY)) {
+        } else if (NS_SV_URI.equals(namespaceURI) && SV_PROPERTY.equals(localName)) {
             endProperty();
-        } else if (isName(namespaceURI, localName, NS_SV_PREFIX, SV_VALUE)) {
+        } else if (NS_SV_URI.equals(namespaceURI) && SV_VALUE.equals(localName)) {
             endValue();
         } else {
             throw new SAXException("Unknown element: " + qName + getParseLocation());
@@ -197,19 +187,23 @@ public class EsvParser extends DefaultHandler {
             index = Integer.valueOf(svName.substring(offset+1, svName.length()-1));
             svName = svName.substring(0, offset);
         }
-        EsvNode newNode = new EsvNode(svName, index);
-        String strMerge = getAttribute(atts, NS_ESV_URI, ESV_MERGE);
+        final EsvNode newNode = new EsvNode(svName, index);
+        final String strMerge = getAttribute(atts, NS_ESV_URI, ESV_MERGE);
         if (strMerge != null) {
             if (isEmpty(strMerge)) {
-                throw new SAXException("Empty esv:merge value for sv:node element" + getParseLocation());
+                log.warn("Empty esv:merge value for sv:node element" + getParseLocation());
             }
-            EsvMerge esvMerge = EsvMerge.lookup(strMerge);
-            if (esvMerge == null || !esvMerge.isForNode()) {
-                throw new SAXException("Unknown or invalid esv:merge value: "+strMerge+" for sv:node element" + getParseLocation());
+            else {
+                EsvMerge esvMerge = EsvMerge.lookup(strMerge);
+                if (esvMerge == null || !esvMerge.isForNode()) {
+                    log.warn("Ignored unknown or invalid esv:merge value: "+strMerge+" for sv:node element" + getParseLocation());
+                }
+                else {
+                    newNode.setMerge(esvMerge);
+                    newNode.setMergeLocation(getAttribute(atts, NS_ESV_URI, ESV_LOCATION));
+                }
             }
-            newNode.setMerge(esvMerge);
         }
-        newNode.setMergeLocation(getAttribute(atts, NS_ESV_URI, ESV_LOCATION));
 
         if (rootNode == null) {
             rootNode = newNode;
@@ -231,37 +225,41 @@ public class EsvParser extends DefaultHandler {
         if (node == null) {
             throw new SAXException("Invalid sv:property element outside sv:node element" + getParseLocation());
         }
-        String svName = getAttribute(atts, NS_SV_URI, SV_NAME);
+        final String svName = getAttribute(atts, NS_SV_URI, SV_NAME);
         if (isEmpty(svName)) {
             throw new SAXException("Empty or missing mandatory sv:name attribute for sv:property element" + getParseLocation());
         }
-        String strType = getAttribute(atts, NS_SV_URI, SV_TYPE);
+        final String strType = getAttribute(atts, NS_SV_URI, SV_TYPE);
         if (isEmpty(strType)) {
             throw new SAXException("Empty or missing mandatory sv:type attribute for sv:property element" + getParseLocation());
         }
-        int jcrType;
+        final int jcrType;
         try {
             jcrType = PropertyType.valueFromName(strType);
         } catch (IllegalArgumentException e) {
             throw new SAXException("Unsupported property sv:type: " + strType + getParseLocation());
         }
         currentProperty = new EsvProperty(svName, jcrType);
-        String strMultiple = getAttribute(atts, NS_SV_URI, SV_MULTIPLE);
+        final String strMultiple = getAttribute(atts, NS_SV_URI, SV_MULTIPLE);
         if (!isEmpty(strMultiple)) {
             currentProperty.setMultiple(Boolean.valueOf(strMultiple));
         }
-        String strMerge = getAttribute(atts, NS_ESV_URI, ESV_MERGE);
+        final String strMerge = getAttribute(atts, NS_ESV_URI, ESV_MERGE);
         if (strMerge != null) {
             if (isEmpty(strMerge)) {
-                throw new SAXException("Empty esv:merge value for sv:property element" + getParseLocation());
+                log.warn("Empty esv:merge value for sv:property element" + getParseLocation());
             }
-            EsvMerge esvMerge = EsvMerge.lookup(strMerge);
-            if (esvMerge == null || !esvMerge.isForProperty()) {
-                throw new SAXException("Unknown or invalid esv:merge value: "+strMerge+" for sv:property element" + getParseLocation());
+            else {
+                EsvMerge esvMerge = EsvMerge.lookup(strMerge);
+                if (esvMerge == null || !esvMerge.isForProperty()) {
+                    log.warn("Ignored unknown or invalid esv:merge value: "+strMerge+" for sv:property element" + getParseLocation());
+                }
+                else {
+                    currentProperty.setMerge(esvMerge);
+                    currentProperty.setMergeLocation(getAttribute(atts, NS_ESV_URI, ESV_LOCATION));
+                }
             }
-            currentProperty.setMerge(esvMerge);
         }
-        currentProperty.setMergeLocation(getAttribute(atts, NS_ESV_URI, ESV_LOCATION));
     }
 
     private void startValue(final Attributes atts) throws SAXException {
@@ -271,7 +269,7 @@ public class EsvParser extends DefaultHandler {
         else if (currentProperty == null) {
             throw new SAXException("Invalid sv:value element outside sv:property element" + getParseLocation());
         }
-        String esvFile = getAttribute(atts, NS_ESV_URI, ESV_FILE);
+        final String esvFile = getAttribute(atts, NS_ESV_URI, ESV_FILE);
         if (esvFile != null) {
             currentValue = new EsvValue(getPath(esvFile));
         }
@@ -324,7 +322,7 @@ public class EsvParser extends DefaultHandler {
         return stack.isEmpty() ? null : stack.peek();
     }
 
-    private void setPrimaryType(EsvNode node, EsvProperty property) throws SAXException {
+    private void setPrimaryType(final EsvNode node, final EsvProperty property) throws SAXException {
         if(!property.getValues().isEmpty()) {
             node.setType(property.getValues().get(0).getValue());
         } else {
@@ -332,13 +330,13 @@ public class EsvParser extends DefaultHandler {
         }
     }
 
-    private void setMixinTypes(EsvNode node, EsvProperty property) throws SAXException {
+    private void setMixinTypes(final EsvNode node, final EsvProperty property) throws SAXException {
         for (EsvValue value : property.getValues()) {
             node.getMixins().add(value.getValue());
         }
     }
 
-    private void setUuid(EsvNode node, EsvProperty property) throws SAXException {
+    private void setUuid(final EsvNode node, final EsvProperty property) throws SAXException {
         if(!property.getValues().isEmpty()) {
             node.setUuid(property.getValues().get(0).getValue());
         } else {
@@ -346,7 +344,7 @@ public class EsvParser extends DefaultHandler {
         }
     }
 
-    private String getPath(String esvFile) throws SAXException {
+    private String getPath(final String esvFile) throws SAXException {
         if (isEmpty(esvFile)) {
             throw new SAXException("Empty esv:file property for sv:value element" + getParseLocation());
         }
@@ -369,12 +367,8 @@ public class EsvParser extends DefaultHandler {
                 .toString();
     }
 
-    private static boolean isEmpty(String str) {
+    private static boolean isEmpty(final String str) {
         return str == null || str.length() == 0;
-    }
-
-    private static boolean isName(final String uri, final String localName, final String prefix, final String name) {
-        return prefix.equals(NS_MAP.get(uri)) && name.equals(localName);
     }
 
     private static String getAttribute(final Attributes attr, final String uri, final String localName) {

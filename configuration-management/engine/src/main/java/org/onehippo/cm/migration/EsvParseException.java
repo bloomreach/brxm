@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,18 +15,17 @@
  */
 package org.onehippo.cm.migration;
 
-import java.io.IOException;
+public class EsvParseException extends Exception {
 
-import org.junit.Test;
+    public EsvParseException(final String message) {
+        super(message);
+    }
 
-public class TestEsv2Yaml {
+    public EsvParseException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 
-    @Test
-    public void main() throws IOException, EsvParseException {
-        String src = System.getProperty("src");
-        String target = System.getProperty("target");
-        if (src != null && target != null) {
-            Esv2Yaml.main(new String[]{src, target});
-        }
+    public EsvParseException(final Throwable cause) {
+        super(cause);
     }
 }
