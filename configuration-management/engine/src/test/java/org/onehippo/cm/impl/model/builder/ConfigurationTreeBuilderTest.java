@@ -798,7 +798,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
                 + "  - /a/b:\n"
                 + "    - property1:\n"
                 + "        operation: override\n"
-                + "        type: long\n" // TODO: it surprises me that the parser requires me to specify a type here.
+                + "        type: long\n"
                 + "        value: 42";
 
         final List<Definition> definitions = parseNoSort(yaml);

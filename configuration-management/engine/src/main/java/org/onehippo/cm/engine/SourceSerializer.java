@@ -39,6 +39,9 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+
 public class SourceSerializer extends AbstractBaseSerializer {
 
     final static Representer representer = new Representer();
@@ -221,7 +224,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
             return true;
         }
 
-        if (property.getName().equals("jcr:primaryType") || property.getName().equals("jcr:mixinTypes")) {
+        if (property.getName().equals(JCR_PRIMARYTYPE) || property.getName().equals(JCR_MIXINTYPES)) {
             return false;
         }
 

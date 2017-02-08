@@ -43,6 +43,9 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+
 public class SourceParser extends AbstractBaseParser {
 
     // After the compose step, SnakeYaml does not yet provide parsed scalar values. An extension of the Constructor
@@ -197,9 +200,9 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     private void constructDefinitionProperty(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
-        if (name.equals("jcr:primaryType")) {
+        if (name.equals(JCR_PRIMARYTYPE)) {
             constructJcrPrimaryTypeProperty(name, value, parent);
-        } else if (name.equals("jcr:mixinTypes")) {
+        } else if (name.equals(JCR_MIXINTYPES)) {
             constructJcrMixinTypesProperty(name, value, parent);
         } else {
             switch (value.getNodeId()) {
