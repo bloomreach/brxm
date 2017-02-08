@@ -19,6 +19,7 @@ package org.onehippo.cm.impl.model.builder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
@@ -27,9 +28,12 @@ import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ConfigurationTreeBuilder {
 
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationTreeBuilder.class);
     private final ConfigurationNodeImpl root = new ConfigurationNodeImpl();
 
     ConfigurationTreeBuilder() {
@@ -39,13 +43,17 @@ class ConfigurationTreeBuilder {
 
     ConfigurationNodeImpl build() {
         // validation of the input and construction of the tree happens at "push time".
+
+        pruneDeletedNodes(root);
         return root;
     }
 
     void push(final ContentDefinitionImpl definition) {
-        final ConfigurationNodeImpl definitionRoot = getOrCreateDefinitionRoot(definition);
+        final ConfigurationNodeImpl rootForDefinition = getOrCreateRootForDefinition(definition);
 
-        merge(definitionRoot, definition.getModifiableNode());
+        if (rootForDefinition != null) {
+            merge(rootForDefinition, definition.getModifiableNode());
+        }
     }
 
     /**
@@ -53,6 +61,11 @@ class ConfigurationTreeBuilder {
      * onto the tree of {@link ConfigurationNodeImpl}s and {@link ConfigurationPropertyImpl}s.
      */
     private void merge(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
+        if (definitionNode.isDelete()) {
+            markNodeAsDeletedBy(node, definitionNode);
+            return;
+        }
+
         for (Map.Entry<String, DefinitionPropertyImpl> propertyEntry : definitionNode.getModifiableProperties().entrySet()) {
             setProperty(node, propertyEntry);
         }
@@ -63,8 +76,11 @@ class ConfigurationTreeBuilder {
             final DefinitionNodeImpl definitionChild = nodeEntry.getValue();
             ConfigurationNodeImpl child;
             if (children.containsKey(name)) {
-                // TODO: honour node-delete meta-instruction.
                 child = children.get(name);
+                if (child.isDeleted()) {
+                    logger.warn("Trying to modify already deleted node '{}', skipping.", child.getPath());
+                    continue;
+                }
             } else {
                 child = createChildNode(node, definitionChild.getName(), definitionChild);
             }
@@ -72,16 +88,30 @@ class ConfigurationTreeBuilder {
         }
     }
 
-    private ConfigurationNodeImpl getOrCreateDefinitionRoot(final ContentDefinitionImpl definition) {
-        final String definitionRootPath = definition.getNode().getPath();
+    private void markNodeAsDeletedBy(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
+        node.setDeleted(true);
+        node.addDefinitionItem(definitionNode);
+        node.clearNodes();
+        node.clearProperties();
+    }
+
+    private ConfigurationNodeImpl getOrCreateRootForDefinition(final ContentDefinitionImpl definition) {
+        final DefinitionNodeImpl definitionNode = definition.getModifiableNode();
+        final String definitionRootPath = definitionNode.getPath();
         final String[] pathSegments = getPathSegments(definitionRootPath);
         int segmentsConsumed = 0;
 
-        ConfigurationNodeImpl definitionRoot = root;
+        ConfigurationNodeImpl rootForDefinition = root;
         while (segmentsConsumed < pathSegments.length
-                && definitionRoot.getNodes().containsKey(pathSegments[segmentsConsumed])) {
-            definitionRoot = definitionRoot.getModifiableNodes().get(pathSegments[segmentsConsumed]);
+                && rootForDefinition.getNodes().containsKey(pathSegments[segmentsConsumed])) {
+            rootForDefinition = rootForDefinition.getModifiableNodes().get(pathSegments[segmentsConsumed]);
             segmentsConsumed++;
+        }
+
+        if (rootForDefinition.isDeleted()) {
+            logger.warn("Content definition rooted at '{}' conflicts with deleted node at '{}', skipping.",
+                    definitionNode.getPath(), rootForDefinition.getPath());
+            return null;
         }
 
         if (pathSegments.length > segmentsConsumed + 1) {
@@ -90,27 +120,36 @@ class ConfigurationTreeBuilder {
             final String culprit = ModelUtils.formatDefinition(definition);
             String msg = String.format("%s contains definition rooted at unreachable node '%s'. "
                     + "Closest ancestor is at '%s'.", culprit, definitionRootPath,
-                      definitionRoot.getPath());
+                      rootForDefinition.getPath());
             throw new IllegalStateException(msg);
         }
 
         if (pathSegments.length > segmentsConsumed) {
-            definitionRoot = createChildNode(definitionRoot, pathSegments[segmentsConsumed], definition.getModifiableNode());
+            rootForDefinition = createChildNode(rootForDefinition, pathSegments[segmentsConsumed], definition.getModifiableNode());
         } else {
+            if (rootForDefinition == root && definitionNode.isDelete()) {
+                throw new IllegalArgumentException("Deleting the root node is not supported.");
+            }
+
             if (pathSegments.length > 0) {
-                final ConfigurationNodeImpl parent = definitionRoot.getModifiableParent();
-                definition.getNode().getOrderBefore()
+                final ConfigurationNodeImpl parent = rootForDefinition.getModifiableParent();
+                definitionNode.getOrderBefore()
                         .ifPresent(destChildName -> parent.orderBefore(pathSegments[pathSegments.length - 1], destChildName));
             }
         }
 
-        return definitionRoot;
+        return rootForDefinition;
     }
 
     private ConfigurationNodeImpl createChildNode(final ConfigurationNodeImpl parent, final String name,
                                                   final DefinitionNodeImpl definitionNode) {
         final ConfigurationNodeImpl node = new ConfigurationNodeImpl();
         final boolean parentIsRoot = parent.getParent() == null;
+
+        if (definitionNode.isDelete()) {
+            final String msg = String.format("Not yet created node '%s' has delete-flag set.", definitionNode.getPath());
+            throw new IllegalArgumentException(msg);
+        }
 
         node.setName(name);
         node.setParent(parent);
@@ -211,6 +250,17 @@ class ConfigurationTreeBuilder {
             }
         }
         return path.length();
+    }
+
+    private void pruneDeletedNodes(final ConfigurationNodeImpl node) {
+        if (node.isDeleted()) {
+            node.getModifiableParent().removeNode(node.getName());
+            return;
+        }
+
+        final Map<String, ConfigurationNodeImpl> childMap = node.getModifiableNodes();
+        final List<String> children = childMap.keySet().stream().collect(Collectors.toList());
+        children.forEach(name -> pruneDeletedNodes(childMap.get(name)));
     }
 
 }

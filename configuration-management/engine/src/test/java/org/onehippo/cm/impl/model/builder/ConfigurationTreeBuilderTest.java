@@ -445,4 +445,230 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final ConfigurationNode b = a.getNodes().get("b");
         assertEquals("[e, c, d]", sortedCollectionToString(b.getNodes()));
     }
+
+    @Test
+    public void delete_leaf_node() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - property1: bla1\n"
+                + "    - /c:\n"
+                + "      - property2: bla2\n"
+                + "    - /d:\n"
+                + "      - property3: bla3\n"
+                + "  - /a/c:\n"
+                + "    - .meta:delete: true";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        assertEquals("[b, d]", sortedCollectionToString(a.getNodes()));
+    }
+
+    @Test
+    public void delete_subtree() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - /c:\n"
+                + "        - property2: bla2\n"
+                + "      - /d:\n"
+                + "        - property3: bla3\n"
+                + "  - /a/b:\n"
+                + "    - .meta:delete: true";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        assertEquals("[]", sortedCollectionToString(a.getNodes()));
+    }
+
+    @Test
+    public void delete_embedded_in_definition_tree() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - /c:\n"
+                + "        - property2: bla2\n"
+                + "      - /d:\n"
+                + "        - property3: bla3\n"
+                + "  - /a/b:\n"
+                + "    - property1: bla1\n"
+                + "    - /c:\n"
+                + "      - property4: bla4\n"
+                + "    - /d:\n"
+                + "      - .meta:delete: true\n"
+                + "    - /e:\n"
+                + "      - property5: bla5";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        final ConfigurationNode c = b.getNodes().get("c");
+        final ConfigurationNode e = b.getNodes().get("e");
+        assertEquals("[c, e]", sortedCollectionToString(b.getNodes()));
+        assertEquals("[property1]", sortedCollectionToString(b.getProperties()));
+        assertEquals("[property2, property4]", sortedCollectionToString(c.getProperties()));
+        assertEquals("[property5]", sortedCollectionToString(e.getProperties()));
+    }
+
+    @Test
+    public void delete_at_root_level() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /:\n"
+                + "    - .meta:delete: true";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Deleting the root node is not supported.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void modify_deleted_node() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - /c:\n"
+                + "        - property1: bla1\n"
+                + "  - /a/b:\n"
+                + "    - /c:\n"
+                + "      - .meta:delete: true\n"
+                + "  - /a/b/c:\n"
+                + "    - property2: bla2";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ContentDefinitionImpl) definitions.get(2));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[]", sortedCollectionToString(b.getNodes()));
+    }
+
+    @Test
+    public void definition_root_below_deleted_node() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - /c:\n"
+                + "        - property1: bla1\n"
+                + "  - /a/b:\n"
+                + "    - /c:\n"
+                + "      - .meta:delete: true\n"
+                + "  - /a/b/c/d:\n"
+                + "    - property2: bla2";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ContentDefinitionImpl) definitions.get(2));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[]", sortedCollectionToString(b.getNodes()));
+    }
+
+    @Test
+    public void non_existent_definition_root_with_delete_flag() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - property1: bla1\n"
+                + "  - /a/b/c:\n"
+                + "    - .meta:delete: true";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Not yet created node '/a/b/c' has delete-flag set.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void non_existent_definition_node_with_delete_flag() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - property1: bla1\n"
+                + "  - /a/b:\n"
+                + "    - /c:\n"
+                + "      - .meta:delete: true";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        try {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            fail("Should have thrown an exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Not yet created node '/a/b/c' has delete-flag set.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void modify_deleted_non_root_definition_node() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - /c:\n"
+                + "        - /d:\n"
+                + "          - property1: bla1\n"
+                + "  - /a/b:\n"
+                + "    - /c:\n"
+                + "      - /d:\n"
+                + "        - .meta:delete: true\n"
+                + "  - /a/b/c:\n"
+                + "    - /d:\n"
+                + "      - property2: bla2";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ContentDefinitionImpl) definitions.get(2));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        final ConfigurationNode c = b.getNodes().get("c");
+        assertEquals("[]", sortedCollectionToString(c.getNodes()));
+    }
 }

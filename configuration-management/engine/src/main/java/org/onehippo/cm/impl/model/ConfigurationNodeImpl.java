@@ -44,6 +44,14 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
         modifiableNodes.put(name, node);
     }
 
+    public void removeNode(final String name) {
+        modifiableNodes.remove(name);
+    }
+
+    public void clearNodes() {
+        modifiableNodes.clear();
+    }
+
     @Override
     public Map<String, ConfigurationProperty> getProperties() {
         return properties;
@@ -55,6 +63,10 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
 
     public void addProperty(final String name, final ConfigurationPropertyImpl property) {
         modifiableProperties.put(name, property);
+    }
+
+    public void clearProperties() {
+        modifiableProperties.clear();
     }
 
     public void orderBefore(final String srcChildName, final String destChildName) {
