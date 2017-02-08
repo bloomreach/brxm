@@ -49,7 +49,8 @@ public class CompositeHstCache implements HstCache {
     private final static Boolean DUMMY_VALUE = Boolean.TRUE;
 
     private volatile int invalidationCounter;
-    CacheStats cacheStats;
+
+    CacheStats cacheStats = new CacheStats();
 
     public CompositeHstCache(final Ehcache ehcache) {
         this(ehcache, new PersistenceConfiguration().strategy(PersistenceConfiguration.Strategy.NONE));
