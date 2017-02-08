@@ -642,12 +642,14 @@ public class ContentBeansService {
                 continue;
             }
             final ExistingMethodsVisitor methods = JavaSourceUtils.getMethodCollection(path);
-            final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
-            final boolean allowMethodUpdate = annotation != null && annotation.isAllowModifications();
+
             final List<EssentialsGeneratedMethod> generatedMethods = methods.getGeneratedMethods();
             final HippoEssentialsGeneratedObject classAnnotation = JavaSourceUtils.getHippoGeneratedAnnotation(path);
             final boolean allowClassUpdate = classAnnotation != null && classAnnotation.isAllowModifications();
             for (EssentialsGeneratedMethod m : generatedMethods) {
+                final HippoEssentialsGeneratedObject annotation = JavaSourceUtils.getHippoEssentialsAnnotation(path, m.getMethodDeclaration());
+                final boolean allowMethodUpdate = annotation != null && annotation.isAllowModifications();
+
                 final Type type = m.getMethodDeclaration().getReturnType2();
                 if (type.isSimpleType()) {
                     final SimpleType simpleType = (SimpleType) type;
