@@ -71,6 +71,14 @@ public class EsvNode {
         this.merge = merge;
     }
 
+    public boolean isDeltaMerge() {
+        return merge != null && (EsvMerge.COMBINE == merge || EsvMerge.OVERLAY == merge);
+    }
+
+    public boolean isDeltaSkip() {
+        return merge != null && (EsvMerge.SKIP == merge);
+    }
+
     public String getMergeLocation() {
         return mergeLocation;
     }
@@ -81,6 +89,15 @@ public class EsvNode {
 
     public List<EsvProperty> getProperties() {
         return properties;
+    }
+
+    public EsvProperty getProperty(final String name) {
+        for (EsvProperty prop : properties) {
+            if (prop.getName().equals(name)) {
+                return prop;
+            }
+        }
+        return null;
     }
 
     public List<EsvNode> getChildren() {

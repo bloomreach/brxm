@@ -16,7 +16,6 @@
 
 package org.onehippo.cm.impl.model.builder;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -346,40 +345,7 @@ class ConfigurationTreeBuilder {
             return new String[0];
         }
 
-        List<String> segments = new ArrayList<>();
-        int segmentStart = 1;
-        int segmentEnd = nextUnescapedSlash(path, segmentStart);
-        while (segmentEnd > segmentStart) {
-            segments.add(path.substring(segmentStart, segmentEnd));
-            if (segmentEnd >= path.length()) {
-                break;
-            }
-            segmentStart = segmentEnd + 1;
-            segmentEnd = nextUnescapedSlash(path, segmentStart);
-        }
-        return segments.toArray(new String[segments.size()]);
-    }
-
-    // TODO: collocate below logic with path validation from AbstractBaseParser - encoding/escaping is pending HCM-14.
-    private int nextUnescapedSlash(final String path, final int offset) {
-        boolean escaped = false;
-        for (int i = offset + 1; i < path.length(); i++) {
-            switch (path.charAt(i)) {
-                case '/':
-                    if (!escaped) {
-                        return i;
-                    }
-                    escaped = false;
-                    break;
-                case '\\':
-                    escaped = !escaped;
-                    break;
-                default:
-                    escaped = false;
-                    break;
-            }
-        }
-        return path.length();
+        return path.substring(1).split("/");
     }
 
     private void pruneDeletedItems(final ConfigurationNodeImpl node) {

@@ -40,8 +40,12 @@ public class EsvProperty {
         return type;
     }
 
-    public Boolean isMultiple() {
+    public Boolean getMultiple() {
         return multiple;
+    }
+
+    public Boolean isMultiple() {
+        return multiple != null && multiple;
     }
 
     public void setMultiple(final Boolean multiple) {
