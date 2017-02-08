@@ -15,3 +15,27 @@
 md-tooltip ._md-content {
   background-color: $tooltip-bg !important;
 }
+
+// avoid that help icon tooltips grow wider than the subpage; wrap text when necessary.
+.tooltip-help-icon ._md-content {
+  height: auto;
+  max-width: 500px;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.dialog-transparent {
+  background-color: transparent;
+  box-shadow: none;
+  color: $grey-50;
+  overflow: visible;
+
+  md-progress-linear {
+    ._md-container {
+      background-color: $grey-200;
+    }
+    ._md-bar {
+      background-color: $grey-400;
+    }
+  }
+}

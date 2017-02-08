@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,10 @@ class PageStructureElement {
     return label;
   }
 
+  hasLabel() {
+    return true;
+  }
+
   getLastModified() {
     const lastModified = this.metaData[HstConstants.LAST_MODIFIED];
     return lastModified ? parseInt(lastModified, 10) : 0;
@@ -73,13 +77,18 @@ class PageStructureElement {
     return this.metaData[HstConstants.RENDER_URL];
   }
 
+  getType() {
+    return this.type;
+  }
+
   /**
    * Replace container DOM elements with the given markup
-   * @return the jQuery element referring to the inserted markup in the DOM document
    */
-  replaceDOM(htmlFragment) {
-    const endCommentNode = this.getEndComment()[0];
-    const node = this._removeSiblingsUntil(this.getStartComment()[0], endCommentNode);
+  replaceDOM($newMarkup, onLoadCallback) {
+    const startComment = this.getStartComment();
+    const endComment = this.getEndComment();
+
+    const node = this._removeSiblingsUntil(startComment[0], endComment[0]);
 
     if (!node) {
       throw new Error('Inconsistent PageStructureElement: startComment and endComment elements should be sibling');
@@ -89,20 +98,29 @@ class PageStructureElement {
     // This would lead to lingering, duplicate components in the DOM. To get rid of these "misplaced"
     // elements, we also remove all subsequent elements. See CHANNELMGR-1030.
     if (PageStructureElement.isXTypeNoMarkup(this.metaData)) {
-      this._removeSiblingsUntil(endCommentNode.nextSibling); // Don't remove the end marker
+      this._removeSiblingsUntil(endComment[0].nextSibling); // Don't remove the end marker
     }
 
-    const jQueryNodeCollection = $(htmlFragment);
-    this.getEndComment().replaceWith(jQueryNodeCollection);
-    return jQueryNodeCollection;
+    // Delay the onLoad callback until all images are fully downloaded. Called once per image.
+    const images = $newMarkup.find('img, [type="image"]').one('load', onLoadCallback);
+
+    endComment.replaceWith($newMarkup);
+
+    // If no images are being loaded we can execute the onLoad callback right away.
+    if (images.length === 0) {
+      onLoadCallback();
+    }
   }
 
   _removeSiblingsUntil(startNode, endNode) {
+    const parentNode = startNode.parentNode;
     let node = startNode;
     while (node && node !== endNode) {
       const toBeRemoved = node;
       node = node.nextSibling;
-      toBeRemoved.parentNode.removeChild(toBeRemoved);
+
+      // IE11 does not understand node.remove(), so use parentNode.removeChild() instead
+      parentNode.removeChild(toBeRemoved);
     }
     return node;
   }
@@ -135,6 +153,39 @@ class PageStructureElement {
 
   setBoxElement(newJQueryBoxElement) {
     this.setJQueryElement('iframeBoxElement', newJQueryBoxElement);
+  }
+
+  prepareBoxElement() {
+    let boxElement = this.getBoxElement();
+    if (!boxElement || boxElement.length === 0) {
+      boxElement = this._insertGeneratedBoxElement();
+      this.setBoxElement(boxElement);
+      this.isBoxElementGenerated = true;
+    }
+    return boxElement;
+  }
+
+  _insertGeneratedBoxElement() {
+    // sub-classes can override this method to generate a custom placeholder box element
+    const startComment = this.getStartComment();
+    const generatedBox = this.generateBoxElement();
+
+    if (startComment.next().length > 0) {
+      // this should always be the case due to the presence of the end comment
+      generatedBox.insertAfter(startComment);
+    } else {
+      generatedBox.appendTo(startComment.parent());
+    }
+
+    return generatedBox;
+  }
+
+  generateBoxElement() {
+    return $('<div class="hippo-overlay-box-empty"></div>');
+  }
+
+  isBoxElementGenerated() {
+    return this.isBoxElementGenerated;
   }
 
   getOverlayElement() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,20 @@ import PageStructureElement from './pageStructureElement';
 
 class EmbeddedLink extends PageStructureElement {
 
-  constructor(commentElement, metaData) {
-    super('embeddedLink', metaData, commentElement, commentElement, null);
+  constructor(type, commentElement, metaData) {
+    super(type, metaData, commentElement, commentElement, null);
   }
 
   getUuid() {
     return this.metaData.uuid;
+  }
+
+  hasLabel() {
+    return false;
+  }
+
+  getLabel() {
+    return '';
   }
 
   setEnclosingElement(element) {
@@ -32,6 +40,10 @@ class EmbeddedLink extends PageStructureElement {
 
   getEnclosingElement() {
     return this.enclosingElement;
+  }
+
+  generateBoxElement() {
+    return $('<a class="hst-cmseditlink"></a>');
   }
 }
 

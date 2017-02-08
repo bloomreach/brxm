@@ -43,6 +43,14 @@ class ChannelSidenavService {
       this.ScalingService.setPushWidth(0);
     }
   }
+
+  liftSidenavAboveMask() {
+    this.isSidenavLifted = true;
+  }
+
+  lowerSidenavBeneathMask() {
+    this.isSidenavLifted = false;
+  }
 }
 
 export default ChannelSidenavService;

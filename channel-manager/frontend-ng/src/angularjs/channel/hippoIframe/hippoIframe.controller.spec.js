@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 import angular from 'angular';
 import 'angular-mocks';
-import EmbeddedLink from '../page/element/embeddedLink';
 
 describe('hippoIframeCtrl', () => {
   let PageStructureService;
@@ -26,7 +25,7 @@ describe('hippoIframeCtrl', () => {
   let $rootScope;
   let ScalingService;
   let DragDropService;
-  let OverlaySyncService;
+  let OverlayService;
   let hstCommentsProcessorService;
   let PageMetaDataService;
   let ChannelService;
@@ -46,14 +45,14 @@ describe('hippoIframeCtrl', () => {
     let $compile;
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlaySyncService_,
+    inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlayService_,
             _PageStructureService_, _ScalingService_, _hstCommentsProcessorService_, _PageMetaDataService_,
             _ChannelService_, _CmsService_, _HippoIframeService_, _DialogService_, _DomService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       $q = _$q_;
       DragDropService = _DragDropService_;
-      OverlaySyncService = _OverlaySyncService_;
+      OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       ScalingService = _ScalingService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
@@ -68,10 +67,9 @@ describe('hippoIframeCtrl', () => {
 
     spyOn(ScalingService, 'init');
     spyOn(DragDropService, 'init');
-    spyOn(OverlaySyncService, 'init');
-    spyOn(DomService, 'getAppRootUrl').and.returnValue('http://cms.example.com/app/root/');
+    spyOn(OverlayService, 'init');
+    spyOn(OverlayService, 'onEditMenu');
     spyOn(DomService, 'addCss').and.returnValue($q.resolve());
-
 
     scope.testEditMode = false;
     scope.onEditMenu = jasmine.createSpy('onEditMenu');
@@ -130,6 +128,7 @@ describe('hippoIframeCtrl', () => {
     const deferred = $q.defer();
 
     spyOn(PageStructureService, 'clearParsedElements');
+    spyOn(ScalingService, 'onIframeReady');
     spyOn(hstCommentsProcessorService, 'run');
     spyOn(PageMetaDataService, 'getChannelId').and.returnValue('channelX');
     spyOn(ChannelService, 'getId').and.returnValue('channelY');
@@ -142,6 +141,7 @@ describe('hippoIframeCtrl', () => {
     $rootScope.$digest();
 
     expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
+    expect(ScalingService.onIframeReady).toHaveBeenCalled();
     expect(hstCommentsProcessorService.run).toHaveBeenCalled();
 
     $rootScope.$digest();
@@ -162,6 +162,7 @@ describe('hippoIframeCtrl', () => {
   it('handles the loading of a new page', () => {
     spyOn(PageStructureService, 'clearParsedElements');
     spyOn(PageStructureService, 'attachEmbeddedLinks');
+    spyOn(ScalingService, 'onIframeReady');
     spyOn(hstCommentsProcessorService, 'run');
     spyOn(ChannelService, 'getPreviewPaths').and.callThrough();
     spyOn(HippoIframeService, 'signalPageLoadCompleted');
@@ -169,29 +170,56 @@ describe('hippoIframeCtrl', () => {
     hippoIframeCtrl.onLoad();
     $rootScope.$digest();
 
-    expect(DomService.addCss).toHaveBeenCalledWith(window, 'http://cms.example.com/app/root/styles/hippo-iframe.css?antiCache=123');
+    expect(DomService.addCss).toHaveBeenCalledWith(window, jasmine.any(String));
     expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
+    expect(ScalingService.onIframeReady).toHaveBeenCalled();
     expect(hstCommentsProcessorService.run).toHaveBeenCalled();
     expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
     expect(ChannelService.getPreviewPaths).toHaveBeenCalled();
     expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
   });
 
-  it('sends an "open-content" event to the CMS to open content', () => {
-    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
-    const contentLink = new EmbeddedLink(contentLinkComment, {
-      uuid: '1234',
-    });
-    spyOn(CmsService, 'publish');
+  it('enables/disables drag-drop when edit-mode is toggled', () => {
+    const enableSpy = spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
+    const disableSpy = spyOn(DragDropService, 'disable');
 
-    hippoIframeCtrl.openContent(contentLink);
+    hippoIframeCtrl.editMode = true;
+    $rootScope.$digest();
 
-    expect(CmsService.publish).toHaveBeenCalledWith('open-content', '1234');
+    expect(enableSpy).toHaveBeenCalled();
+    expect(disableSpy).not.toHaveBeenCalled();
+
+    enableSpy.calls.reset();
+    hippoIframeCtrl.editMode = false;
+    $rootScope.$digest();
+
+    expect(enableSpy).not.toHaveBeenCalled();
+    expect(disableSpy).toHaveBeenCalled();
   });
 
-  it('calls the registered callback for editing a menu', () => {
-    const editMenuLink = { getUuid: () => 'testUuid' };
-    hippoIframeCtrl.openMenuEditor(editMenuLink);
-    expect(scope.onEditMenu).toHaveBeenCalledWith('testUuid');
+  it('attaches/detaches component mousedown handler when edit-mode is toggled', () => {
+    spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
+    spyOn(DragDropService, 'disable');
+    const attachSpy = spyOn(OverlayService, 'attachComponentMouseDown');
+    const detachSpy = spyOn(OverlayService, 'detachComponentMouseDown');
+
+    hippoIframeCtrl.editMode = true;
+    $rootScope.$digest();
+
+    expect(attachSpy).toHaveBeenCalled();
+    expect(detachSpy).not.toHaveBeenCalled();
+
+    attachSpy.calls.reset();
+    hippoIframeCtrl.editMode = false;
+    $rootScope.$digest();
+
+    expect(attachSpy).not.toHaveBeenCalled();
+    expect(detachSpy).toHaveBeenCalled();
+  });
+
+  it('calls its edit menu function when the overlay service wants to edit a menu', () => {
+    const callback = OverlayService.onEditMenu.calls.mostRecent().args[0];
+    callback('menu-uuid');
+    expect(scope.onEditMenu).toHaveBeenCalledWith('menu-uuid');
   });
 });

@@ -15,11 +15,10 @@
  */
 
 class ChannelSidenavToggleCtrl {
-  constructor(ChannelSidenavService, ChannelService) {
+  constructor(ChannelSidenavService) {
     'ngInject';
 
     this.ChannelSidenavService = ChannelSidenavService;
-    this.ChannelService = ChannelService;
   }
 
   toggleSidenav() {

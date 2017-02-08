@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,9 @@ class DomService {
     return `//${location.host}${appPath}`;
   }
 
-  addCss(window, url) {
-    return $.get(url, (response) => {
-      const link = $(`<style>${response}</style>`);
-      $(window.document).find('head').append(link);
-    });
+  addCss(window, css) {
+    const link = $(`<style>${css}</style>`);
+    $(window.document).find('head').append(link);
   }
 
   addScript(window, url) {
@@ -158,6 +156,17 @@ class DomService {
       isVisible = style.visibility !== 'hidden';
     }
     return isVisible;
+  }
+
+  escapeHtml(str) {
+    // escape all characters recommended by OWASP: https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet#RULE_.231_-_HTML_Escape_Before_Inserting_Untrusted_Data_into_HTML_Element_Content
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;')
+      .replace(/\//g, '&#x2F;');
   }
 }
 

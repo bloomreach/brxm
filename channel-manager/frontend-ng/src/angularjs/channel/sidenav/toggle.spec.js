@@ -23,19 +23,16 @@ describe('ChannelSidenavToggle', () => {
   let $rootScope;
   let $compile;
   let ChannelSidenavService;
-  let ChannelService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidenavService_, _ChannelService_) => {
+    inject((_$rootScope_, _$compile_, _ChannelSidenavService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       ChannelSidenavService = _ChannelSidenavService_;
-      ChannelService = _ChannelService_;
     });
 
-    spyOn(ChannelService, 'getCatalog').and.returnValue([]);
     spyOn(ChannelSidenavService, 'toggle');
     spyOn(ChannelSidenavService, 'isOpen');
   });

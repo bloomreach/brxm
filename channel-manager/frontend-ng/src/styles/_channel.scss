@@ -12,21 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.mask {
-  height: 100%;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 100; // must be higher than sidenav (60)
-
-  &.masked {
-    cursor: not-allowed;
-    pointer-events: auto;
-  }
-}
-
 // let a linear progress indicator float 'above' the bottom of a toolbar
 // instead of taking up extra space below the toolbar
 md-toolbar > md-progress-linear {
@@ -53,7 +38,7 @@ md-toolbar > md-progress-linear {
   }
 }
 
-Style invalid select boxes
+// Style invalid select boxes
 .md-input-invalid md-select {
   // color required invalid select boxes red
   &.ng-invalid ._md-select-value {
@@ -76,26 +61,6 @@ Style invalid select boxes
   top: 10px;
 }
 
-// avoid that help icon tooltips grow wider than the subpage; wrap text when necessary.
-.tooltip-help-icon ._md-content {
-  height: auto;
-  max-width: 500px;
-  text-overflow: clip;
-  white-space: normal;
-}
-
-.dialog-transparent {
-  background-color: transparent;
-  box-shadow: none;
-  color: $grey-50;
-  overflow: visible;
-
-  md-progress-linear {
-    ._md-container {
-      background-color: $grey-200;
-    }
-    ._md-bar {
-      background-color: $grey-400;
-    }
-  }
+.hide-scrollbar {
+  overflow: hidden;
 }

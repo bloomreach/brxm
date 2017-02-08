@@ -1,0 +1,103 @@
+<!--
+  ~ Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~  http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<html>
+  <head>
+    <title>Iframe title</title>
+    <style type="text/css">
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      main {
+        width: 200px;
+      }
+
+      #container-vbox {
+        padding-top: 4px;
+        padding-left: 2px;
+        height: 400px;
+      }
+
+      #componentA {
+        height: 100px;
+      }
+
+      #markup-in-component-a {
+        height: 30px;
+      }
+
+      #edit-menu-in-component-a {
+        position: relative;
+      }
+
+      #content-in-container-vbox {
+        height: 60px;
+        position: relative;
+      }
+
+      #componentB {
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox", "HST-LockedBy": "other user" } -->
+      <div id="container-vbox">
+        <div id="componentA">
+          <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
+          <p id="markup-in-component-a">Some markup in component A</p>
+          <p id="edit-menu-in-component-a">
+            <!-- { "HST-Type": "EDIT_MENU_LINK", "uuid": "menu-in-component-a" } -->
+          </p>
+          <!-- { "HST-End": "true", "uuid": "aaaa" } -->
+        </div>
+        <p id="content-in-container-vbox">
+          <!-- { "HST-Type": "CONTENT_LINK", "uuid": "content-in-container-vbox" } -->
+        </p>
+        <div id="componentB">
+          <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component B", "uuid": "bbbb" } -->
+          <p>Some markup in component B</p>
+          <!-- { "HST-End": "true", "uuid": "bbbb" } -->
+        </div>
+      </div>
+      <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
+
+      <div id="container-nomarkup">
+        <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "NoMarkup container", "HST-XType": "HST.NoMarkup", "uuid": "container-nomarkup" } -->
+        <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component C", "uuid": "cccc" } -->
+        <div id="componentC">
+        </div>
+        <!-- { "HST-End": "true", "uuid": "cccc" } -->
+        <!-- { "HST-End": "true", "uuid": "container-nomarkup" } -->
+      </div>
+
+      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty container", "HST-XType": "HST.vBox", "uuid": "container-empty" } -->
+      <div id="container-empty">
+      </div>
+      <!-- { "HST-End": "true", "uuid": "container-empty" } -->
+
+      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Inherited container", "HST-XType": "HST.vBox", "uuid": "container-inherited", "HST-Inherited": "true" } -->
+      <div id="container-inherited">
+        <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "Component with experiment", "uuid": "component-with-experiment", "Targeting-experiment-id": "1234", "Targeting-experiment-state": "RUNNING" } -->
+        <p>Some markup in component with experiment</p>
+        <!-- { "HST-End": "true", "uuid": "component-with-experiment" } -->
+      </div>
+      <!-- { "HST-End": "true", "uuid": "container-inherited" } -->
+    </main>
+  </body>
+</html>

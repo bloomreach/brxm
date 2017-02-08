@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,61 +14,21 @@
   limitations under the License.
   -->
 
-<md-content class="channel-iframe-base" flex layout="row">
-  <div class="channel-iframe-canvas" flex layout="row">
-    <div class="channel-iframe-sheet cm-scale" flex="grow" layout="row">
-      <div class="channel-iframe-scroll-x" flex layout="row">
-        <iframe class="qa-view"
-                flex="noshrink"
-                ng-src="{{ iframe.getSrc() }}"></iframe>
-        <div class="overlay qa-overlay" component-adder>
-          <div ng-repeat="container in iframe.getContainers()" class="qa-container">
-            <overlay-element class="overlay-element-container"
-                             layout="row"
-                             ng-class="{
-                               'overlay-label-visible': container.isEmpty() || iframe.isDragging(),
-                               'overlay-element-container-visible': container.isEmpty() || container.isDisabled() || iframe.isDragging(),
-                               'overlay-permeable': iframe.isDraggingOrClicking() || container.isDisabled(),
-                             }"
-                             structure-element="container">
-            </overlay-element>
-            <div ng-repeat="component in container.getComponents()" class="qa-component">
-              <overlay-element class="overlay-element-component"
-                               layout="row"
-                               structure-element="component"
-                               ng-class="{ 'overlay-element-component-visible': !iframe.isDragging(), 'overlay-permeable': iframe.isDraggingOrClicking() }"
-                               ng-mousedown="iframe.startDragOrClick($event, component)">
-              </overlay-element>
-            </div>
-          </div>
-          <div ng-repeat="contentLink in iframe.getContentLinks()">
-            <overlay-element structure-element="contentLink">
-              <md-button class="overlay-element-fab overlay-element-fab-content-link md-fab md-mini md-hue-2 qa-content-link"
-                         ng-click="iframe.openContent(contentLink)">
-                <md-icon aria-label="{{'IFRAME_OPEN_DOCUMENT' | translate }}"
-                         md-svg-src="images/edit-document.svg"></md-icon>
-                <md-tooltip md-direction="top">
-                  {{'IFRAME_OPEN_DOCUMENT' | translate}}
-                </md-tooltip>
-              </md-button>
-            </overlay-element>
-          </div>
-          <div ng-repeat="editMenuLink in iframe.getEditMenuLinks()">
-            <overlay-element structure-element="editMenuLink">
-              <md-button class="overlay-element-fab md-fab md-mini md-hue-2 qa-edit-menu-link"
-                         ng-click="iframe.openMenuEditor(editMenuLink)">
-                <md-icon aria-label="{{'IFRAME_EDIT_MENU' | translate }}"
-                         md-svg-src="images/edit-menu.svg">
-                </md-icon>
-                <md-tooltip md-direction="top">
-                  {{'IFRAME_EDIT_MENU' | translate}}
-                </md-tooltip>
-              </md-button>
-            </overlay-element>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="channel-dragula-mirror cm-scale"></div>
+<!-- The gray background behind the channel. Visible when the viewport is constrained. -->
+<div class="channel-iframe-canvas"
+     flex
+     layout="column" layout-align="start center"
+     ng-class="{'iframe-lifted': iframe.isIframeLifted()}">
+
+  <!-- Glues the iframe and Dragula mirror container on top of each other. Needed to position the mirror correctly. -->
+  <div class="channel-iframe-sheet flex-grow">
+
+    <!-- Renders the channel -->
+    <iframe class="qa-view"
+            ng-src="{{ iframe.getSrc() }}">
+    </iframe>
+
+    <!-- Contains the Dragula mirror rendered in the app so the mirror is also visible outside the iframe borders. -->
+    <div class="channel-dragula-mirror"></div>
   </div>
-</md-content>
+</div>
