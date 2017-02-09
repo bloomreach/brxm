@@ -99,7 +99,6 @@ public class ChannelEditor extends ExtPanel {
         this.contextPaths = contextPaths;
         this.locale = Session.get().getLocale().toString();
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
-        this.locale = Session.get().getLocale().toString();
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
 
         String variantsPath = null;
