@@ -100,7 +100,8 @@ md-toolbar.hippo-toolbar {
   }
 
   .channel-button md-icon {
-    fill: $orange-a400;
+    fill: $toolbar-channel-changes-color;
+    margin-top: 1px;
   }
 }
 
