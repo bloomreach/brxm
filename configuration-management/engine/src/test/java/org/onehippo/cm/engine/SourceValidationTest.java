@@ -337,8 +337,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node config0 = firstInstructionFirstTupleFirstValue(root);
 
-        assertParserException(root, firstTuple(config0).getKeyNode(),
-                "Path must not contain (unescaped) double slashes");
+        assertParserException(root, firstTuple(config0).getKeyNode(), "Path must not contain double slashes");
     }
 
     @Test
@@ -351,22 +350,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node config0 = firstInstructionFirstTupleFirstValue(root);
 
-        assertParserException(root, firstTuple(config0).getKeyNode(),
-                "Path must not contain (unescaped) double slashes");
-    }
-
-    @Test
-    public void configWithPathKeyIncludingDoubleSlashesAndEscapes() {
-        final String yaml = "instructions:\n"
-                + "- config:\n"
-                + "  - /path/to\\\\//node:\n"
-                + "    - property: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstTupleFirstValue(root);
-
-        assertParserException(root, firstTuple(config0).getKeyNode(),
-                "Path must not contain (unescaped) double slashes");
+        assertParserException(root, firstTuple(config0).getKeyNode(), "Path must not contain double slashes");
     }
 
     @Test
@@ -379,10 +363,8 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node config0 = firstInstructionFirstTupleFirstValue(root);
 
-        assertParserException(root, firstTuple(config0).getKeyNode(),
-                "Path must not end with (unescaped) slash");
+        assertParserException(root, firstTuple(config0).getKeyNode(), "Path must not end with a slash");
     }
-
 
     @Test
     public void configWithScalarDefinition() {
