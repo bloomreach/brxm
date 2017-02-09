@@ -60,7 +60,7 @@ class ConfigurationTreeBuilder {
         final ConfigurationNodeImpl rootForDefinition = getOrCreateRootForDefinition(definition);
 
         if (rootForDefinition != null) {
-            merge(rootForDefinition, definition.getModifiableNode());
+            mergeNode(rootForDefinition, definition.getModifiableNode());
         }
     }
 
@@ -68,21 +68,20 @@ class ConfigurationTreeBuilder {
      * Recursively merge a tree of {@link DefinitionNodeImpl}s and {@link DefinitionPropertyImpl}s
      * onto the tree of {@link ConfigurationNodeImpl}s and {@link ConfigurationPropertyImpl}s.
      */
-    private void merge(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
+    private void mergeNode(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
         if (definitionNode.isDelete()) {
             markNodeAsDeletedBy(node, definitionNode);
             return;
         }
 
-        for (Map.Entry<String, DefinitionPropertyImpl> propertyEntry : definitionNode.getModifiableProperties().entrySet()) {
-            setProperty(node, propertyEntry);
+        for (DefinitionPropertyImpl property: definitionNode.getModifiableProperties().values()) {
+            mergeProperty(node, property);
         }
 
         final Map<String, ConfigurationNodeImpl> children = node.getModifiableNodes();
-        for (Map.Entry<String, DefinitionNodeImpl> nodeEntry : definitionNode.getModifiableNodes().entrySet()) {
-            final String name = nodeEntry.getKey();
-            final DefinitionNodeImpl definitionChild = nodeEntry.getValue();
-            ConfigurationNodeImpl child;
+        for (DefinitionNodeImpl definitionChild : definitionNode.getModifiableNodes().values()) {
+            final String name = definitionChild.getName();
+            final ConfigurationNodeImpl child;
             if (children.containsKey(name)) {
                 child = children.get(name);
                 if (child.isDeleted()) {
@@ -92,7 +91,7 @@ class ConfigurationTreeBuilder {
             } else {
                 child = createChildNode(node, definitionChild.getName(), definitionChild);
             }
-            merge(child, definitionChild);
+            mergeNode(child, definitionChild);
         }
     }
 
@@ -174,11 +173,10 @@ class ConfigurationTreeBuilder {
         return node;
     }
 
-    private void setProperty(final ConfigurationNodeImpl parent,
-                             final Map.Entry<String, DefinitionPropertyImpl> entry) {
+    private void mergeProperty(final ConfigurationNodeImpl parent,
+                               final DefinitionPropertyImpl definitionProperty) {
         final Map<String, ConfigurationPropertyImpl> properties = parent.getModifiableProperties();
-        final String name = entry.getKey();
-        final DefinitionPropertyImpl definitionProperty = entry.getValue();
+        final String name = definitionProperty.getName();
         final PropertyOperation op = definitionProperty.getOperation();
 
         ConfigurationPropertyImpl property;
@@ -355,13 +353,14 @@ class ConfigurationTreeBuilder {
         }
 
         final Map<String, ConfigurationPropertyImpl> propertyMap = node.getModifiableProperties();
-        final List<String> properties = propertyMap.keySet().stream().collect(Collectors.toList());
-        properties.stream()
+        final List<String> deletedProperties = propertyMap.keySet().stream()
                 .filter(propertyName -> propertyMap.get(propertyName).isDeleted())
-                .forEach(propertyMap::remove);
+                .collect(Collectors.toList());
+        deletedProperties.forEach(propertyMap::remove);
 
         final Map<String, ConfigurationNodeImpl> childMap = node.getModifiableNodes();
         final List<String> children = childMap.keySet().stream().collect(Collectors.toList());
         children.forEach(name -> pruneDeletedItems(childMap.get(name)));
     }
+
 }

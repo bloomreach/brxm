@@ -18,6 +18,7 @@ package org.onehippo.cm.impl.model.builder;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
@@ -47,7 +48,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         builder.push(definition);
         final ConfigurationNodeImpl root = builder.build();
 
-                assertEquals("[]", sortedCollectionToString(root.getProperties()));
+        assertEquals("[]", sortedCollectionToString(root.getProperties()));
         assertEquals("[a]", sortedCollectionToString(root.getNodes()));
         final ConfigurationNode a = root.getNodes().get("a");
         assertEquals("[property1, property2]", sortedCollectionToString(a.getProperties()));
@@ -342,6 +343,32 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         assertEquals("[e, c, d]", sortedCollectionToString(b.getNodes()));
     }
 
+    @Ignore
+    @Test
+    public void reorder_existing_child() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - /c:\n"
+                + "        - property1: [bla1]\n"
+                + "      - /d:\n"
+                + "        - property2: [bla2]\n"
+                + "  - /a/b:\n"
+                + "    - /d:\n"
+                + "      - .meta:order-before: c";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[d, c]", sortedCollectionToString(b.getNodes()));
+    }
+
     @Test
     public void delete_leaf_node() throws Exception {
         final String yaml = "instructions:\n"
@@ -536,6 +563,33 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         } catch (IllegalArgumentException e) {
             assertEquals("Not yet created node '/a/b/c' has delete-flag set in 'test-configuration/test-project/test-module [string]'.", e.getMessage());
         }
+    }
+
+    @Test
+    public void double_delete() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - /c:\n"
+                + "        - property1: bla1\n"
+                + "  - /a/b/c:\n"
+                + "    - .meta:delete: true\n"
+                + "  - /a/b:\n"
+                + "    - /c:\n"
+                + "      - .meta:delete: true";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        builder.push((ContentDefinitionImpl) definitions.get(1));
+        builder.push((ContentDefinitionImpl) definitions.get(2));
+
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[]", sortedCollectionToString(b.getNodes()));
     }
 
     @Test
