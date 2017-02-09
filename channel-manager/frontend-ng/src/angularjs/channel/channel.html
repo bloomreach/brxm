@@ -63,7 +63,7 @@
     </md-progress-linear>
   </md-toolbar>
 
-  <md-content layout="row" flex>
+  <md-content layout="row" flex ng-class="{ 'hide-scrollbar': !channelCtrl.isSubpageOpen() }">
     <channel-sidenav edit-mode="channelCtrl.isEditMode"></channel-sidenav>
 
     <hippo-iframe
@@ -115,4 +115,4 @@
              on-error="channelCtrl.onSubpageError(key, params)">
 </menu-editor>
 
-<div class="mask qa-mask" mask></div>
+<mask></mask>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,24 @@
 
 import ComponentElement from './element/componentElement';
 import ContainerElement from './element/containerElement';
-import EmbeddedLink from './element/embeddedLink';
-
-const EMBEDDED_LINK_MARKUP = '<a class="hst-cmseditlink"></a>';
+import ContentLink from './element/contentLink';
+import MenuLink from './element/menuLink';
 
 class PageStructureService {
 
-  constructor($log,
-              $q,
-              ChannelService,
-              CmsService,
-              FeedbackService,
-              HippoIframeService,
-              hstCommentsProcessorService,
-              HstConstants,
-              HstService,
-              MaskService,
-              OverlaySyncService,
-              PageMetaDataService,
-              RenderingService) {
+  constructor(
+    $log,
+    $q,
+    ChannelService,
+    CmsService,
+    FeedbackService,
+    HippoIframeService,
+    hstCommentsProcessorService,
+    HstConstants,
+    HstService,
+    MaskService,
+    PageMetaDataService,
+    RenderingService) {
     'ngInject';
 
     // Injected
@@ -48,23 +47,25 @@ class PageStructureService {
     this.HST = HstConstants;
     this.HstService = HstService;
     this.MaskService = MaskService;
-    this.OverlaySyncService = OverlaySyncService;
     this.PageMetaDataService = PageMetaDataService;
     this.RenderingService = RenderingService;
 
+    this.changeListeners = [];
+    this.CmsService.subscribe('hide-component-properties', () => this.MaskService.unmask());
     this.clearParsedElements();
   }
 
   clearParsedElements() {
     this.containers = [];
-    this.contentLinks = [];
-    this.editMenuLinks = [];
+    this.embeddedLinks = [];
     this.headContributions = [];
     this.PageMetaDataService.clear();
+    this._notifyChangeListeners();
   }
 
   registerParsedElement(commentDomElement, metaData) {
-    switch (metaData[this.HST.TYPE]) {
+    const type = metaData[this.HST.TYPE];
+    switch (type) {
       case this.HST.TYPE_CONTAINER:
         this._registerContainer(commentDomElement, metaData);
         break;
@@ -78,9 +79,14 @@ class PageStructureService {
       case this.HST.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
         this._registerHeadContributions(metaData);
         break;
-      default:
-        this._registerEmbeddedLink(commentDomElement, metaData);
+      case this.HST.TYPE_CONTENT_LINK:
+        this._registerContentLink(commentDomElement, metaData);
         break;
+      case this.HST.TYPE_EDIT_MENU_LINK:
+        this._registerMenuLink(commentDomElement, metaData);
+        break;
+      default:
+        this.$log.warn(`Ignoring unknown page structure element '${type}'`);
     }
   }
 
@@ -113,22 +119,30 @@ class PageStructureService {
     this.headContributions = this.headContributions.concat(metaData[this.HST.HEAD_ELEMENTS]);
   }
 
-  _registerEmbeddedLink(commentDomElement, metaData) {
-    if (metaData[this.HST.TYPE] === this.HST.TYPE_CONTENT_LINK) {
-      this.contentLinks.push(new EmbeddedLink(commentDomElement, metaData));
-    }
+  _registerContentLink(commentDomElement, metaData) {
+    this.embeddedLinks.push(new ContentLink(commentDomElement, metaData));
+  }
 
-    if (metaData[this.HST.TYPE] === this.HST.TYPE_EDIT_MENU_LINK) {
-      this.editMenuLinks.push(new EmbeddedLink(commentDomElement, metaData));
-    }
+  _registerMenuLink(commentDomElement, metaData) {
+    this.embeddedLinks.push(new MenuLink(commentDomElement, metaData));
+  }
+
+  registerChangeListener(callback) {
+    this.changeListeners.push(callback);
+  }
+
+  _notifyChangeListeners() {
+    this.changeListeners.forEach((callback) => {
+      callback();
+    });
   }
 
   // Attaching the embedded links to the page structure (by means of the 'enclosingElement') is only
   // done as a final step of processing an entire page or markup fragment, because it requires an
   // up-to-date and complete page structure (containers, components).
   attachEmbeddedLinks() {
-    this.contentLinks.forEach(link => this._attachEmbeddedLink(link));
-    this.editMenuLinks.forEach(link => this._attachEmbeddedLink(link));
+    this.embeddedLinks.forEach(link => this._attachEmbeddedLink(link));
+    this._notifyChangeListeners();
   }
 
   _attachEmbeddedLink(link) {
@@ -155,26 +169,12 @@ class PageStructureService {
       link.setEnclosingElement(enclosingElement);
 
       // insert transparent placeholder into page
-      const linkElement = $(EMBEDDED_LINK_MARKUP);
-      link.getStartComment().after(linkElement);
-      link.setBoxElement(linkElement);
+      link.prepareBoxElement();
     }
   }
 
-  hasContentLinks() {
-    return this.contentLinks.length > 0;
-  }
-
-  getContentLinks() {
-    return this.contentLinks;
-  }
-
-  hasEditMenuLinks() {
-    return this.editMenuLinks.length > 0;
-  }
-
-  getEditMenuLinks() {
-    return this.editMenuLinks;
+  getEmbeddedLinks() {
+    return this.embeddedLinks;
   }
 
   getComponentById(id) {
@@ -208,6 +208,7 @@ class PageStructureService {
         .then(() => {
           this._onAfterRemoveComponent();
           return this.renderContainer(oldContainer).then((newContainer) => { // eslint-disable-line arrow-body-style
+            this._notifyChangeListeners();
             return { oldContainer, newContainer };
           });
         },
@@ -226,6 +227,15 @@ class PageStructureService {
     this.ChannelService.recordOwnChange();
   }
 
+  getComponentByOverlayElement(componentOverlayElement) {
+    let component;
+    this.containers.some((container) => {
+      component = container.getComponents().find(c => c.getOverlayElement().is(componentOverlayElement));
+      return !!component;
+    });
+    return component;
+  }
+
   getContainerByIframeElement(containerIFrameElement) {
     return this.containers.find(container => container.getBoxElement().is(containerIFrameElement));
   }
@@ -235,6 +245,8 @@ class PageStructureService {
       this.$log.warn('Problem opening the component properties dialog: no component provided.');
       return;
     }
+
+    this.MaskService.mask();
 
     this.CmsService.publish('show-component-properties', {
       component: {
@@ -248,7 +260,6 @@ class PageStructureService {
       },
       page: this.PageMetaDataService.get(),
     });
-    this.MaskService.add();
   }
 
   printParsedElements() {
@@ -261,15 +272,18 @@ class PageStructureService {
   }
 
   renderComponent(componentId, propertiesMap) {
-    const component = this.getComponentById(componentId);
+    let component = this.getComponentById(componentId);
     if (component) {
       this.RenderingService.fetchComponentMarkup(component, propertiesMap).then((response) => {
-        const updatedComponent = this._updateComponent(componentId, response.data);
+        // re-fetch component because a parallel renderComponent call may have updated the component's markup
+        component = this.getComponentById(componentId);
+
+        const newMarkup = response.data;
+        const updatedComponent = this._updateComponent(component, newMarkup);
+
         if ($.isEmptyObject(propertiesMap) && this.containsNewHeadContributions(updatedComponent)) {
           this.$log.info(`Updated '${updatedComponent.getLabel()}' component needs additional head contributions, reloading page`);
           this.HippoIframeService.reload();
-        } else {
-          this.OverlaySyncService.syncIframe();
         }
       });
       // TODO handle error
@@ -283,16 +297,22 @@ class PageStructureService {
   /**
    * Update the component with the new markup
    */
-  _updateComponent(componentId, newMarkup) {
-    const oldComponent = this.getComponentById(componentId);
+  _updateComponent(oldComponent, newMarkup) {
+    const $newMarkup = $(newMarkup);
     const container = oldComponent.getContainer();
 
     this._removeEmbeddedLinksInComponent(oldComponent);
-    const jQueryNodeCollection = oldComponent.replaceDOM(newMarkup);
-    const newComponent = this._createComponent(jQueryNodeCollection, container);
+
+    oldComponent.replaceDOM($newMarkup, () => {
+      this._notifyChangeListeners();
+    });
+
+    const newComponent = this._createComponent($newMarkup, container);
 
     if (newComponent) {
       container.replaceComponent(oldComponent, newComponent);
+      // reuse the overlay element to reduce DOM manipulation and improve performance
+      newComponent.setOverlayElement(oldComponent.getOverlayElement());
     } else {
       container.removeComponent(oldComponent);
     }
@@ -301,24 +321,21 @@ class PageStructureService {
     return newComponent;
   }
 
-  /**
-   * Lets the back-end re-render a container.
-   * @param container
-   * @returns {*} a promise with the new container object
-   * @private
-   */
   renderContainer(container) {
     return this.RenderingService.fetchContainerMarkup(container)
       .then(markup => this._updateContainer(container, markup));
-    // TODO: handle error
-    // try reloading the entire page?
   }
 
   _updateContainer(oldContainer, newMarkup) {
     this._removeEmbeddedLinksInContainer(oldContainer);
+    const $newMarkup = $(newMarkup);
 
-    // consider following three actions to be an atomic operation
-    const newContainer = this._replaceContainer(oldContainer, this._createContainer(oldContainer.replaceDOM(newMarkup)));
+    oldContainer.replaceDOM($newMarkup, () => {
+      this._notifyChangeListeners();
+    });
+
+    const container = this._createContainer($newMarkup);
+    const newContainer = this._replaceContainer(oldContainer, container);
 
     this.attachEmbeddedLinks();
     return newContainer;
@@ -335,13 +352,11 @@ class PageStructureService {
   _removeEmbeddedLinksInContainer(container) {
     container.getComponents().forEach(component => this._removeEmbeddedLinksInComponent(component));
 
-    this.contentLinks = this._getLinksNotEnclosedInElement(this.contentLinks, container);
-    this.editMenuLinks = this._getLinksNotEnclosedInElement(this.editMenuLinks, container);
+    this.embeddedLinks = this._getLinksNotEnclosedInElement(this.embeddedLinks, container);
   }
 
   _removeEmbeddedLinksInComponent(component) {
-    this.contentLinks = this._getLinksNotEnclosedInElement(this.contentLinks, component);
-    this.editMenuLinks = this._getLinksNotEnclosedInElement(this.editMenuLinks, component);
+    this.embeddedLinks = this._getLinksNotEnclosedInElement(this.embeddedLinks, component);
   }
 
   _getLinksNotEnclosedInElement(links, element) {
@@ -385,6 +400,8 @@ class PageStructureService {
     }
     if (newContainer) {
       this.containers[index] = newContainer;
+      // reuse the overlay element to reduce DOM manipulation and improve performance
+      newContainer.setOverlayElement(oldContainer.getOverlayElement());
     } else {
       this.containers.splice(index, 1);
     }
@@ -401,8 +418,9 @@ class PageStructureService {
     let container = null;
 
     this.hstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
+      const type = metaData[this.HST.TYPE];
       try {
-        switch (metaData[this.HST.TYPE]) {
+        switch (type) {
           case this.HST.TYPE_CONTAINER:
             if (!container) {
               container = new ContainerElement(commentDomElement, metaData, this.hstCommentsProcessorService);
@@ -433,8 +451,16 @@ class PageStructureService {
             }
             break;
 
+          case this.HST.TYPE_CONTENT_LINK:
+            this._registerContentLink(commentDomElement, metaData);
+            break;
+
+          case this.HST.TYPE_EDIT_MENU_LINK:
+            this._registerMenuLink(commentDomElement, metaData);
+            break;
+
           default:
-            this._registerEmbeddedLink(commentDomElement, metaData);
+            this.$log.warn(`Ignoring unknown page structure element '${type}'`);
             break;
         }
       } catch (exception) {
@@ -456,7 +482,8 @@ class PageStructureService {
     let component = null;
 
     this.hstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
-      switch (metaData[this.HST.TYPE]) {
+      const type = metaData[this.HST.TYPE];
+      switch (type) {
         case this.HST.TYPE_COMPONENT:
           try {
             component = new ComponentElement(commentDomElement, metaData, container, this.hstCommentsProcessorService);
@@ -472,8 +499,16 @@ class PageStructureService {
           }
           break;
 
+        case this.HST.TYPE_CONTENT_LINK:
+          this._registerContentLink(commentDomElement, metaData);
+          break;
+
+        case this.HST.TYPE_EDIT_MENU_LINK:
+          this._registerMenuLink(commentDomElement, metaData);
+          break;
+
         default:
-          this._registerEmbeddedLink(commentDomElement, metaData);
+          this.$log.warn(`Ignoring unknown page structure element '${type}'`);
           break;
       }
     });

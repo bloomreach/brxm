@@ -184,10 +184,6 @@ class ChannelService {
       });
   }
 
-  getCatalog() {
-    return this.CatalogService.getComponents();
-  }
-
   recordOwnChange() {
     const user = this.ConfigService.cmsUser;
 
