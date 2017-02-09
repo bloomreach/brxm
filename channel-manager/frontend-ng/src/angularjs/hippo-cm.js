@@ -24,6 +24,7 @@ import channelManagerApi from './api/api';
 import channelModule from './channel/channel';
 import config from './hippo-cm.config';
 import run from './hippo-cm.run';
+import utilsModule from './utils/utils';
 
 const hippoCmng = angular
   .module('hippo-cm', [
@@ -32,6 +33,7 @@ const hippoCmng = angular
     uiRouter,
     channelManagerApi.name,
     channelModule.name,
+    utilsModule.name,
   ])
   .config(config)
   .run(run);

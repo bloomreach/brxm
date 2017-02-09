@@ -1,4 +1,4 @@
-// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,27 +12,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.channel-iframe-base {
+.channel-iframe-canvas {
   background-color: $canvas-bgcolor;
+  overflow: hidden;
+  user-select: none;
 
-  iframe {
-    border: 0;
+  &.hippo-dragging {
+    // IE does not support the grabbing cursor so we show 'move' instead
+    cursor: move;
+    cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
   }
 }
 
-.channel-iframe-canvas {
-  user-select: none;
-}
-
 .channel-iframe-sheet {
-  background-color: $sheet-bgcolor;
+  background-color: $grey-50;
   box-shadow: 0 0 20px $black-shadow;
-  margin-left: auto;
-  margin-right: auto;
+  height: 100%;
+  max-width: 100%;  // use explicit max-width so its transition can be animated
+  transition: max-width $viewport-animation-transition;
+  width: 100%;
+
+  &.shift-animated {
+    transition: max-width $scale-animation-transition, transform $scale-animation-transition;
+  }
+
+  iframe {
+    border: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  iframe,
+  .channel-dragula-mirror {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
 }
 
-.channel-iframe-scroll-x {
-  overflow-x: visible;
-  overflow-y: hidden;
+.iframe-lifted {
   position: relative;
+  z-index: $z-index-iframe-lifted;
 }

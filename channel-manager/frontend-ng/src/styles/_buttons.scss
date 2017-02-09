@@ -45,7 +45,7 @@
 
 .md-icon-button {
   > md-icon {
-    color: $text-dark;
+    color: $icon-button-default;
   }
 
   &[disabled] > md-icon {
