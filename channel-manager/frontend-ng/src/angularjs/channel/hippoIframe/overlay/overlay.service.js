@@ -202,7 +202,6 @@ class OverlayService {
     this._addMarkupAndBehavior(structureElement, overlayElement);
 
     structureElement.setOverlayElement(overlayElement);
-    structureElement.prepareBoxElement();
 
     this._syncElements(structureElement, overlayElement);
 
@@ -339,7 +338,7 @@ class OverlayService {
   }
 
   _syncElements(structureElement, overlayElement) {
-    const boxElement = structureElement.getBoxElement();
+    const boxElement = structureElement.prepareBoxElement();
     boxElement.addClass('hippo-overlay-box');
 
     overlayElement.toggleClass('hippo-overlay-element-visible', this._isElementVisible(structureElement, boxElement));

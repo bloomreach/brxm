@@ -172,9 +172,9 @@ describe('OverlayService', () => {
 
   it('generates overlay elements', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(8);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(3);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(3);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(10);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').length).toBe(1);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
       done();
@@ -189,14 +189,44 @@ describe('OverlayService', () => {
       const vboxContainerOverlay = iframe('.hippo-overlay-element-container').eq(0);
       expect(vboxContainerOverlay).not.toHaveClass('hippo-overlay-element-container-empty');
 
+      const nomarkupContainerBox = iframe('#container-nomarkup');
+      expect(nomarkupContainerBox).toHaveClass('hippo-overlay-box-container-filled');
+
+      const nomarkupContainerOverlay = iframe('.hippo-overlay-element-container').eq(1);
+      expect(nomarkupContainerOverlay).not.toHaveClass('hippo-overlay-element-container-empty');
+
       const emptyContainerBox = iframe('#container-empty');
       expect(emptyContainerBox).not.toHaveClass('hippo-overlay-box-container-filled');
 
-      const emptyContainerOverlay = iframe('.hippo-overlay-element-container').eq(1);
+      const emptyContainerOverlay = iframe('.hippo-overlay-element-container').eq(2);
       expect(emptyContainerOverlay).toHaveClass('hippo-overlay-element-container-empty');
 
-      const inheritedContainerOverlay = iframe('.hippo-overlay-element-container').eq(2);
+      const inheritedContainerOverlay = iframe('.hippo-overlay-element-container').eq(3);
       expect(inheritedContainerOverlay).toHaveClass('hippo-overlay-element-container-disabled');
+
+      done();
+    });
+  });
+
+  it('generates box elements for re-rendered components without any markup in an HST.NoMarkup container', (done) => {
+    loadIframeFixture(() => {
+      const markupComponentC = iframe('#componentC');
+      const boxElement = PageStructureService.getComponentById('cccc').getBoxElement();
+
+      expect(boxElement.is(markupComponentC)).toBe(true);
+
+      const emptyMarkup = `
+        <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component C", "uuid": "cccc" } -->
+        <!-- { "HST-End": "true", "uuid": "cccc" } -->
+      `;
+      spyOn(RenderingService, 'fetchComponentMarkup').and.returnValue($q.when({ data: emptyMarkup }));
+
+      PageStructureService.renderComponent('cccc');
+      $rootScope.$digest();
+
+      const generatedBoxElement = PageStructureService.getComponentById('cccc').getBoxElement();
+      expect(generatedBoxElement).toBeDefined();
+      expect(generatedBoxElement).toHaveClass('hippo-overlay-box-empty');
 
       done();
     });
@@ -204,11 +234,11 @@ describe('OverlayService', () => {
 
   it('only renders labels for structure elements that have a label', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(3);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(3);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
 
-      const emptyContainer = iframe('.hippo-overlay-element-container').eq(1);
+      const emptyContainer = iframe('.hippo-overlay-element-container').eq(2);
       expect(emptyContainer.find('.hippo-overlay-label-text').html()).toBe('Empty container');
       done();
     });
@@ -216,10 +246,10 @@ describe('OverlayService', () => {
 
   it('renders the name structure elements in a data-qa-name attribute', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length).toBe(3);
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(3);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length).toBe(4);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(4);
 
-      const emptyContainer = iframe('.hippo-overlay-element-container').eq(1);
+      const emptyContainer = iframe('.hippo-overlay-element-container').eq(2);
       expect(emptyContainer.find('.hippo-overlay-label').attr('data-qa-name')).toBe('Empty container');
       done();
     });
@@ -262,7 +292,7 @@ describe('OverlayService', () => {
 
   it('renders lock icons for inherited containers', (done) => {
     loadIframeFixture(() => {
-      const inheritedContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(2);
+      const inheritedContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(3);
       const lock = inheritedContainer.find('.hippo-overlay-lock');
       expect(lock.length).toBe(1);
       expect(lock.find('svg').length).toBe(1);
@@ -274,7 +304,7 @@ describe('OverlayService', () => {
 
   it('renders the experiment state of components', (done) => {
     loadIframeFixture(() => {
-      const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(2);
+      const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(3);
       const label = componentWithExperiment.find('.hippo-overlay-label');
       expect(label.length).toBe(1);
       expect(label.attr('data-qa-experiment-id')).toBe('1234');
@@ -290,7 +320,7 @@ describe('OverlayService', () => {
 
   it('updates the experiment state of components', (done) => {
     loadIframeFixture(() => {
-      const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(2);
+      const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(3);
       const labelText = componentWithExperiment.find('.hippo-overlay-label-text');
       expect(labelText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
 
@@ -359,7 +389,7 @@ describe('OverlayService', () => {
     loadIframeFixture(() => {
       const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
 
-      const componentA = $(components[0]);
+      const componentA = components.eq(0);
       expect(componentA.css('top')).toBe('4px');
       expect(componentA.css('left')).toBe('2px');
       expect(componentA.css('width')).toBe(`${200 - 2}px`);
@@ -374,14 +404,14 @@ describe('OverlayService', () => {
       const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
       expect(contentLink).not.toHaveClass('hippo-overlay-element-visible');
 
-      const componentB = $(components[1]);
+      const componentB = components.eq(1);
       expect(componentB.css('top')).toBe(`${4 + 100 + 60}px`);
       expect(componentB.css('left')).toBe('2px');
       expect(componentB.css('width')).toBe(`${200 - 2}px`);
       expect(componentB.css('height')).toBe('200px');
 
-      const emptyContainer = $(iframe('.hippo-overlay > .hippo-overlay-element-container')[1]);
-      expect(emptyContainer.css('top')).toBe(`${400 + 4}px`);
+      const emptyContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(2);
+      expect(emptyContainer.css('top')).toBe(`${400 + 40 + 4}px`);
       expect(emptyContainer.css('left')).toBe('0px');
       expect(emptyContainer.css('width')).toBe('200px');
       expect(emptyContainer.css('height')).toBe('40px');  // minimum height of empty container
@@ -490,7 +520,7 @@ describe('OverlayService', () => {
     OverlayService.setMode('edit');
 
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(8);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(10);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
       const componentMarkupWithoutMenuLink = `
@@ -503,7 +533,7 @@ describe('OverlayService', () => {
       PageStructureService.renderComponent('aaaa');
       $rootScope.$digest();
 
-      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(7);
+      expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(9);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
 
       done();
