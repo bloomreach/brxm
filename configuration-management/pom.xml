@@ -41,6 +41,7 @@
     <snakeyaml.version>1.17</snakeyaml.version>
     <commons-lang3.version>3.5</commons-lang3.version>
     <commons-io.version>2.5</commons-io.version>
+    <tdunning-json.version>1.8</tdunning-json.version>
   </properties>
   
   <modules>
@@ -84,6 +85,11 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.tdunning</groupId>
+        <artifactId>json</artifactId>
+        <version>${tdunning-json.version}</version>
       </dependency>
     </dependencies>
 
