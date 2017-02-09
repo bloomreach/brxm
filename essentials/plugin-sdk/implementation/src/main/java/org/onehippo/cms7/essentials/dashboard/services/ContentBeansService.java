@@ -115,7 +115,7 @@ public class ContentBeansService {
             // check if directly extending compound:
             final Set<String> superTypes = missingBean.getSuperTypes();
             if (superTypes.size() == 1 && superTypes.iterator().next().equals(BASE_COMPOUND_TYPE)) {
-                createBaseBean(missingBean);
+                createCompoundBaseBean(missingBean);
                 missingBeanIterator.remove();
             } else {
                 final String parent = findExistingParent(missingBean, existing);
@@ -400,11 +400,11 @@ public class ContentBeansService {
     }
 
 
-    private void createBaseBean(final HippoContentBean bean) {
+    private void createCompoundBaseBean(final HippoContentBean bean) {
         final Path javaClass = createJavaClass(bean);
         JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), bean.getName(), bean.getName());
-        JavaSourceUtils.addExtendsClass(javaClass, "HippoDocument");
-        JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_DOCUMENT_IMPORT);
+        JavaSourceUtils.addExtendsClass(javaClass, "HippoCompound");
+        JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_COMPOUND_IMPORT);
     }
 
 
@@ -756,7 +756,6 @@ public class ContentBeansService {
         JavaSourceUtils.createHippoBean(javaClass, context.beansPackageName(), bean.getName(), bean.getName());
         final String extendsName = FilenameUtils.removeExtension(parentPath.toFile().getName());
         JavaSourceUtils.addExtendsClass(javaClass, extendsName);
-        JavaSourceUtils.addImport(javaClass, EssentialConst.HIPPO_DOCUMENT_IMPORT);
 
     }
 
