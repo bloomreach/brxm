@@ -18,7 +18,6 @@ package org.onehippo.cm.impl.model.builder;
 
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
@@ -343,7 +342,6 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         assertEquals("[e, c, d]", sortedCollectionToString(b.getNodes()));
     }
 
-    @Ignore
     @Test
     public void reorder_existing_child() throws Exception {
         final String yaml = "instructions:\n"

@@ -74,6 +74,12 @@ class ConfigurationTreeBuilder {
             return;
         }
 
+        final ConfigurationNodeImpl parent = node.getModifiableParent();
+        if (parent != null) {
+            definitionNode.getOrderBefore()
+                    .ifPresent(destChildName -> parent.orderBefore(node.getName(), destChildName));
+        }
+
         for (DefinitionPropertyImpl property: definitionNode.getModifiableProperties().values()) {
             mergeProperty(node, property);
         }
@@ -137,12 +143,6 @@ class ConfigurationTreeBuilder {
             if (rootForDefinition == root && definitionNode.isDelete()) {
                 throw new IllegalArgumentException("Deleting the root node is not supported.");
             }
-
-            if (pathSegments.length > 0) {
-                final ConfigurationNodeImpl parent = rootForDefinition.getModifiableParent();
-                definitionNode.getOrderBefore()
-                        .ifPresent(destChildName -> parent.orderBefore(pathSegments[pathSegments.length - 1], destChildName));
-            }
         }
 
         return rootForDefinition;
@@ -166,9 +166,6 @@ class ConfigurationTreeBuilder {
         node.addDefinitionItem(definitionNode);
 
         parent.addNode(name, node);
-
-        definitionNode.getOrderBefore()
-                .ifPresent(destChildName -> parent.orderBefore(name, destChildName));
 
         return node;
     }
