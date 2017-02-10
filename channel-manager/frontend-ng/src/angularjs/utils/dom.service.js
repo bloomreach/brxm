@@ -16,13 +16,14 @@
 
 class DomService {
 
-  constructor($q, $rootScope, $document) {
+  constructor($q, $rootScope, $document, BrowserService) {
     'ngInject';
 
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.$document = $document;
     this._scrollBarWidth = 0;
+    this.BrowserService = BrowserService;
   }
 
   getAppRootUrl() {
@@ -111,9 +112,7 @@ class DomService {
   }
 
   createMouseDownEvent(view, clientX, clientY) {
-    // IE11 needs type 'MSPointerDown' instead of 'mousedown'
-    const type = window.navigator.msPointerEnabled ? 'MSPointerDown' : 'mousedown';
-    const canBubble = true;
+    const bubbles = true;
     const cancelable = false;
     const detail = 0;
     const screenX = 0;
@@ -125,10 +124,20 @@ class DomService {
     const button = 0;
     const relatedTarget = null;
 
-    // IE11 does not support new MouseEvent(), so use the deprecated initMouseEvent() method instead
-    const mouseEvent = view.document.createEvent('MouseEvent');
-    mouseEvent.initMouseEvent(type, canBubble, cancelable, view, detail, screenX, screenY, clientX, clientY,
-      ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget);
+    let mouseEvent;
+    if (this.BrowserService.isIE()) {
+      // IE11 does not support new MouseEvent(), so use the deprecated initMouseEvent() method instead
+      mouseEvent = view.document.createEvent('MouseEvent');
+      mouseEvent.initMouseEvent('MSPointerDown',
+        bubbles, cancelable, view, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget
+      );
+    } else {
+      // Dragula attaches a pointerdown listener to the DOM for Edge
+      const type = this.BrowserService.isEdge() ? 'pointerdown' : 'mousedown';
+      mouseEvent = new MouseEvent(type, {
+        bubbles, cancelable, view, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget,
+      });
+    }
     return mouseEvent;
   }
 
