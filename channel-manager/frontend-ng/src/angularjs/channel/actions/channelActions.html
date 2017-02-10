@@ -20,7 +20,8 @@
              ng-click="$mdOpenMenu($event)">
     {{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}
 
-    <md-icon ng-if="channelActions.hasOwnChanges()"
+    <md-icon ng-if="channelActions.isShowChangesMenu()"
+             class="qa-channel-changes"
              md-svg-src="images/attention.svg">
     </md-icon>
   </md-button>
