@@ -19,7 +19,7 @@ describe('ChannelSidePanelService', () => {
   let $q;
   let $rootScope;
   const leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close']);
-  const OverlaySyncService = jasmine.createSpyObj('OverlaySyncService', ['syncIframe']);
+  const OverlayService = jasmine.createSpyObj('OverlayService', ['sync']);
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -28,7 +28,7 @@ describe('ChannelSidePanelService', () => {
 
     angular.mock.module(($provide) => {
       $provide.value('$mdSidenav', $mdSidenav);
-      $provide.value('OverlaySyncService', OverlaySyncService);
+      $provide.value('OverlayService', OverlayService);
     });
 
     inject((_ChannelSidePanelService_, _$q_, _$rootScope_) => {
@@ -155,11 +155,11 @@ describe('ChannelSidePanelService', () => {
 
     ChannelSidePanelService.open('left');
     $rootScope.$digest();
-    expect(OverlaySyncService.syncIframe).toHaveBeenCalled();
+    expect(OverlayService.sync).toHaveBeenCalled();
 
-    OverlaySyncService.syncIframe.calls.reset();
+    OverlayService.sync.calls.reset();
     ChannelSidePanelService.close('left');
     $rootScope.$digest();
-    expect(OverlaySyncService.syncIframe).toHaveBeenCalled();
+    expect(OverlayService.sync).toHaveBeenCalled();
   });
 });

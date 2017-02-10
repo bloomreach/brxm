@@ -16,7 +16,7 @@
 
 class PageCreateCtrl {
   constructor($element, $log, $scope, $translate, ChannelService, SiteMapService, HippoIframeService,
-              FeedbackService, lowercaseFilter) {
+    FeedbackService, lowercaseFilter) {
     'ngInject';
 
     this.$log = $log;

@@ -22,14 +22,14 @@ import channelActionsModule from './actions/actions';
 import channelSidePanelModule from './sidePanels/sidePanel';
 import channelHippoIframeModule from './hippoIframe/hippoIframe';
 import channelMenuModule from './menu/editor';
-import channelMaskModule from './mask/mask';
+import maskModule from './mask/mask.module';
 import channelRelevanceModule from './relevance/relevance';
+import channelViewportsModule from './viewports/viewports';
+import componentCatalogModule from './componentCatalog/componentCatalog.module';
 import config from './channel.config';
 import ChannelCtrl from './channel.controller';
 import ChannelService from './channel.service';
 import run from './channel.run';
-import CatalogComponentDirective from './catalog.component.directive';
-import channelViewportsModule from './viewports/viewports';
 
 const channelModule = angular
   .module('hippo-cm.channel', [
@@ -41,14 +41,14 @@ const channelModule = angular
     channelSidePanelModule.name,
     channelHippoIframeModule.name,
     channelMenuModule.name,
-    channelMaskModule.name,
     channelRelevanceModule.name,
     channelViewportsModule.name,
+    maskModule.name,
+    componentCatalogModule.name,
   ])
   .config(config)
   .controller('ChannelCtrl', ChannelCtrl)
   .service('ChannelService', ChannelService)
-  .directive('catalogComponent', CatalogComponentDirective)
   .run(run);
 
 export default channelModule;

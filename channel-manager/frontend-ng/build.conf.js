@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ const npmDir = path.resolve('./node_modules');
 
 const customConfig = {
   dist: targetDir,
-  publicPath: '/cms/angular/hippo-cm/',
+  publicPath: '',
   htmlExcludes: /items.renderer.html/,
   vendorExcludes: [
     'open-sans-fontface',

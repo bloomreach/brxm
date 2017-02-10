@@ -22,20 +22,18 @@ import 'angular-mocks';
 describe('ChannelLeftSidePanelToggle', () => {
   let $rootScope;
   let $compile;
+
   let ChannelSidePanelService;
-  let ChannelService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_, _ChannelService_) => {
+    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       ChannelSidePanelService = _ChannelSidePanelService_;
-      ChannelService = _ChannelService_;
     });
 
-    spyOn(ChannelService, 'getCatalog').and.returnValue([]);
     spyOn(ChannelSidePanelService, 'toggle');
     spyOn(ChannelSidePanelService, 'isOpen');
   });

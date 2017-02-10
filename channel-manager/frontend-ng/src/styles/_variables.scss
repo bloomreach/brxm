@@ -1,4 +1,4 @@
-// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -80,6 +80,7 @@ $grey-a700: #39434c;
 // Text colors
 $text-dark: rgba(0, 0, 0, .87);
 $text-light: rgba(255, 255, 255, .87);
+$icon-button-default: rgba(0, 0, 0, .54);
 
 // Typography
 $font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
@@ -115,6 +116,10 @@ $tree-active-bg: $blue-500;
 $tree-active-border-color: $blue-shadow;
 $tree-active-color: $white;
 
+// Animation
+$scale-animation-transition: 400ms cubic-bezier(.25, .8, .25, 1);
+$viewport-animation-transition: 400ms cubic-bezier(.25, .8, .25, 1);
+
 // DragDrop placeholder
 $tree-dd-bg: $black-shadow;
 
@@ -130,6 +135,47 @@ $toolbar-height: 40px;
 // Forms
 $form-dense-distance: 12px;
 
+// Embedded links
+$embedded-link-height: 40px;
+$embedded-link-width: 40px;
+
+// Overlay
+$overlay-box-minheight: 40px;
+
+$overlay-container-outline-color: $grey-600;
+$overlay-container-inline-color: $white;
+$overlay-container-glow-color: rgba(105, 114, 121, .75);
+$overlay-container-label-bgcolor: $grey-600;
+$overlay-container-label-border-color: $grey-600;
+$overlay-container-add-mode-hover-bgcolor: rgba(184, 188, 191, .9);
+
+$overlay-component-outline-color: $blue-500;
+$overlay-component-inline-color: $white;
+$overlay-component-glow-color: rgba(8, 120, 212, .75);
+$overlay-component-hover-shadow-color: rgba(8, 120, 212, .25);
+$overlay-component-label-bgcolor: $blue-500;
+$overlay-component-label-border-color: $blue-500;
+
+$overlay-label-color: $white;
+$overlay-label-font-size: 12px;
+
+$overlay-lock-bgcolor: $grey-600;
+$overlay-lock-color: $white;
+$overlay-lock-font-size: $overlay-label-font-size;
+$overlay-lock-height: 26px;
+$overlay-lock-width: 26px;
+
+$overlay-link-bgcolor: $orange-a400;
+$overlay-link-shadow-color: rgba(0, 0, 0, .26);
+$overlay-link-fill-color: $white;
+$overlay-link-transition: 300ms cubic-bezier(.55, 0, .55, .2);
+$overlay-link-hover-bgcolor: #e06717;
+$overlay-link-active-shadow-color: rgba(0, 0, 0, .4);
+$overlay-link-clicked-bgcolor: $orange-a200;
+
+$overlay-icon-fill: $grey-600;
+$overlay-icon-size: 36px;
+
 // Layout breakpoints
 $layout-breakpoint-xs: 600px !default;
 $layout-breakpoint-sm: 960px !default;
@@ -140,4 +186,14 @@ $layout-breakpoint-lg: 1920px !default;
 $swift-ease-in: .3s cubic-bezier(.55, 0, .55, .2);
 $swift-ease-out: .2s cubic-bezier(.25, .8, .25, 1);
 
+// Z-indexes
+$z-index-sidepanel: 60;
+$z-index-mask: $z-index-sidepanel + 1;
+$z-index-iframe-lifted: $z-index-mask + 1;
+$z-index-sidepanel-lifted: $z-index-iframe-lifted + 1;
+$z-index-tree: 999;
 
+$z-index-overlay: 10000;
+$z-index-overlay-component: $z-index-overlay + 1;
+$z-index-overlay-container: $z-index-overlay-component + 1;
+$z-index-overlay-link: $z-index-overlay-container + 1;

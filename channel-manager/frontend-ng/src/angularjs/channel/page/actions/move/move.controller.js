@@ -16,7 +16,7 @@
 
 class PageMoveCtrl {
   constructor($log, $translate, ChannelService, SiteMapService, SiteMapItemService, HippoIframeService,
-              FeedbackService) {
+    FeedbackService) {
     'ngInject';
 
     this.$log = $log;

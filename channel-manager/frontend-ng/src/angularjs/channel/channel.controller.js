@@ -17,18 +17,17 @@
 class ChannelCtrl {
 
   constructor(
-      $log,
-      $rootScope,
-      $translate,
-      $stateParams,
-      $timeout,
-      ChannelService,
-      ComponentAdderService,
-      CmsService,
-      FeedbackService,
-      HippoIframeService,
-      PageMetaDataService,
-      SessionService
+    $log,
+    $rootScope,
+    $stateParams,
+    $timeout,
+    $translate,
+    ChannelService,
+    CmsService,
+    FeedbackService,
+    HippoIframeService,
+    PageMetaDataService,
+    SessionService,
     ) {
     'ngInject';
 
@@ -41,17 +40,16 @@ class ChannelCtrl {
     this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
     this.SessionService = SessionService;
+
     this.isEditMode = false;
     this.isCreatingPreview = false;
-
-    ComponentAdderService.setCatalogContainerClass('catalog-dd-container');
-    ComponentAdderService.setCatalogContainerItemClass('catalog-dd-container-item');
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
 
     // editToggleState is only used as a 'fake' model for the toggle; isEditMode is updated in the onChange callback,
     // which may happen asynchronously if preview configuration needs to be created.
-    this.editToggleState = this.isEditMode = false;
+    this.editToggleState = false;
+    this.isEditMode = false;
 
     CmsService.subscribe('clear-channel', () => this._clear());
   }

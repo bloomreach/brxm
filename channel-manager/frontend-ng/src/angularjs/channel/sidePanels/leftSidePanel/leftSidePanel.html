@@ -14,10 +14,17 @@
   limitations under the License.
   -->
 
-<md-sidenav layout="row" md-is-locked-open="$ctrl.isLockedOpen()" class="md-sidenav-left left-side-panel qa-left-side-panel" md-component-id="left-side-panel" md-disable-backdrop>
-  <md-tabs flex md-no-pagination class="qa-sidenav-tabs">
+<md-sidenav layout="row"
+            md-is-locked-open="$ctrl.isLockedOpen()"
+            class="md-sidenav-left left-side-panel qa-left-side-panel"
+            ng-class="{'sidepanel-lifted': $ctrl.isSidePanelLifted()}"
+            md-component-id="left-side-panel"
+            md-disable-backdrop>
+  <md-tabs flex
+           md-no-pagination
+           class="qa-sidenav-tabs">
     <md-tab label="{{ 'LEFT_SIDE_PANEL_TAB_SITEMAP' | translate }}">
-      <md-list md-no-ink class="qa-sitemap">
+      <md-list class="qa-sitemap">
         <md-list-item class="md-2-line qa-sitemap-item"
                       ng-class="{'list-item-active': $ctrl.isActiveSiteMapItem(item) }"
                       ng-repeat="item in $ctrl.getSiteMap()"
@@ -28,28 +35,14 @@
             <p class="qa-name">{{ item.pageTitle || item.name }}</p>
           </div>
           <md-divider ng-if="!$last"></md-divider>
-        </md-list-item>
+          </md-list-item>
       </md-list>
     </md-tab>
     <md-tab label="{{ 'LEFT_SIDE_PANEL_TAB_COMPONENTS' | translate }}"
             ng-if="$ctrl.showComponentsTab()">
-      <md-list md-no-ink class="qa-catalog">
-        <md-list-item class="md-1-line catalog-dd-container"
-                      ng-repeat="component in $ctrl.getCatalog()">
-          <div layout="row"
-                layout-align="start center"
-                catalog-component="component"
-                class="catalog-dd-container-item">
-            <div class="component-icon">
-              <img ng-src="{{component.iconURL}}"/>
-            </div>
-            <span class="md-list-item-text qa-name">
-              {{ component.label }}
-            </span>
-          </div>
-          <md-divider ng-if="!$last"></md-divider>
-        </md-list-item>
-      </md-list>
+      <component-catalog components="$ctrl.getCatalog()"></component-catalog>
     </md-tab>
   </md-tabs>
+
+  <mask></mask>
 </md-sidenav>

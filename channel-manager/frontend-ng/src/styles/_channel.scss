@@ -12,21 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.mask {
-  height: 100%;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 100; // must be higher than left side panel (60)
-
-  &.masked {
-    cursor: not-allowed;
-    pointer-events: auto;
-  }
-}
-
 // let a linear progress indicator float 'above' the bottom of a toolbar
 // instead of taking up extra space below the toolbar
 md-toolbar > md-progress-linear {
@@ -60,10 +45,6 @@ md-toolbar > md-progress-linear {
   top: 10px;
 }
 
-// avoid that help icon tooltips grow wider than the subpage; wrap text when necessary.
-md-tooltip .md-content {
-  height: auto;
-  max-width: 500px;
-  text-overflow: clip;
-  white-space: normal;
+.hide-scrollbar {
+  overflow: hidden;
 }

@@ -14,30 +14,26 @@
  * limitations under the License.
  */
 
-import ngDeviceDetector from 'ng-device-detector';
-
-import overlayModule from './overlay/overlay';
-import componentAdderModule from './componentAdder/componentAdder';
 import hippoIframe from './hippoIframe.directive';
 import HippoIframeCtrl from './hippoIframe.controller';
 import HippoIframeService from './hippoIframe.service';
-import HstCommentsProcessorService from './hstCommentsProcessor.service';
-import LinkProcessorService from './linkProcessor.service';
-import ScrollService from './scroll.service';
-import DragDropService from './dragDrop.service';
+import DragDropService from './dragDrop/dragDrop.service';
+import HstCommentsProcessorService from './processing/hstCommentsProcessor.service';
+import LinkProcessorService from './processing/linkProcessor.service';
+import OverlayService from './overlay/overlay.service';
+import ScrollService from './scrolling/scroll.service';
+import ViewportService from './viewport/viewport.service';
 
 const channelHippoIframeModule = angular
-  .module('hippo-cm.channel.hippoIframe', [
-    ngDeviceDetector,
-    overlayModule.name,
-    componentAdderModule.name,
-  ])
+  .module('hippo-cm.channel.hippoIframe', [])
   .directive('hippoIframe', hippoIframe)
   .controller('hippoIframeCtrl', HippoIframeCtrl)
   .service('HippoIframeService', HippoIframeService)
   .service('hstCommentsProcessorService', HstCommentsProcessorService)
   .service('linkProcessorService', LinkProcessorService)
   .service('ScrollService', ScrollService)
-  .service('DragDropService', DragDropService);
+  .service('DragDropService', DragDropService)
+  .service('ViewportService', ViewportService)
+  .service('OverlayService', OverlayService);
 
 export default channelHippoIframeModule;

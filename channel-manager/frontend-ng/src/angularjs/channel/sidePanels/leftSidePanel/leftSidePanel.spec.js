@@ -23,6 +23,7 @@ describe('ChannelLeftSidePanel', () => {
   let ChannelSidePanelService;
   let SiteMapService;
   let ChannelService;
+  let CatalogService;
   let HippoIframeService;
   let parentScope;
   const catalogComponents = [
@@ -32,18 +33,21 @@ describe('ChannelLeftSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_, _ChannelService_, _SiteMapService_, _HippoIframeService_) => {
+    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_, _ChannelService_, _CatalogService_, _SiteMapService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
       ChannelSidePanelService = _ChannelSidePanelService_;
       ChannelService = _ChannelService_;
+      CatalogService = _CatalogService_;
       SiteMapService = _SiteMapService_;
       HippoIframeService = _HippoIframeService_;
     });
 
-    spyOn(ChannelService, 'getCatalog').and.returnValue([]);
-    spyOn(ChannelSidePanelService, 'initialize');
+    spyOn(CatalogService, 'getComponents').and.returnValue([]);
+    spyOn(CatalogService, 'load');
+    spyOn(ChannelService, 'getMountId');
     spyOn(ChannelSidePanelService, 'close');
+    spyOn(ChannelSidePanelService, 'initialize');
     spyOn(SiteMapService, 'get');
     spyOn(HippoIframeService, 'load');
     spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
@@ -77,7 +81,7 @@ describe('ChannelLeftSidePanel', () => {
   });
 
   it('retrieves the catalog from the channel service', () => {
-    ChannelService.getCatalog.and.returnValue(catalogComponents);
+    CatalogService.getComponents.and.returnValue(catalogComponents);
     const ChannelLeftSidePanelCtrl = instantiateController();
 
     expect(ChannelLeftSidePanelCtrl.getCatalog()).toBe(catalogComponents);
@@ -91,7 +95,7 @@ describe('ChannelLeftSidePanel', () => {
     $rootScope.$digest();
     expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(false);
 
-    ChannelService.getCatalog.and.returnValue(catalogComponents);
+    CatalogService.getComponents.and.returnValue(catalogComponents);
     expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(true);
 
     parentScope.editMode = false;

@@ -15,14 +15,22 @@
  */
 
 class LeftSidePanelCtrl {
-  constructor($scope, $element, ChannelSidePanelService, ChannelService, SiteMapService, HippoIframeService) {
+  constructor(
+    $scope,
+    $element,
+    ChannelSidePanelService,
+    CatalogService,
+    SiteMapService,
+    HippoIframeService,
+    ) {
     'ngInject';
 
     this.$scope = $scope;
-    this.ChannelService = ChannelService;
+    this.CatalogService = CatalogService;
     this.ChannelSidePanelService = ChannelSidePanelService;
     this.SiteMapService = SiteMapService;
     this.HippoIframeService = HippoIframeService;
+    this.SiteMapService = SiteMapService;
 
     ChannelSidePanelService.initialize('left', $element.find('.left-side-panel'));
   }
@@ -37,7 +45,7 @@ class LeftSidePanelCtrl {
   }
 
   getCatalog() {
-    return this.ChannelService.getCatalog();
+    return this.CatalogService.getComponents();
   }
 
   getSiteMap() {
@@ -50,6 +58,10 @@ class LeftSidePanelCtrl {
 
   isActiveSiteMapItem(siteMapItem) {
     return siteMapItem.renderPathInfo === this.HippoIframeService.getCurrentRenderPathInfo();
+  }
+
+  isSidePanelLifted() {
+    return this.ChannelSidePanelService.isSidePanelLifted;
   }
 }
 

@@ -15,21 +15,22 @@
  */
 
 class ViewportToggleCtrl {
-  constructor($translate, OverlaySyncService, ChannelService) {
+  constructor($translate, OverlayService, ChannelService, ViewportService) {
     'ngInject';
 
     this.$translate = $translate;
-    this.OverlaySyncService = OverlaySyncService;
+    this.OverlayService = OverlayService;
     this.ChannelService = ChannelService;
+    this.ViewportService = ViewportService;
 
-    this.setViewPorts();
+    this.setViewports();
     this.activate();
   }
 
-  setViewPorts() {
+  setViewports() {
     const viewportMap = this.ChannelService.getChannel().viewportMap;
 
-    this.viewPorts = [
+    this.viewports = [
       {
         id: 'ANY_DEVICE',
         icon: 'images/any-device.svg',
@@ -54,17 +55,20 @@ class ViewportToggleCtrl {
   }
 
   activate() {
-    this.selectedViewPort = this.viewPorts[0];
-    this.viewPortChanged();
+    this.selectedViewport = this.viewports[0];
+    this.viewportChanged();
   }
 
   getDisplayName(viewport) {
     return this.$translate.instant(`VIEWPORT_${viewport.id}`);
   }
 
-  viewPortChanged() {
-    this.OverlaySyncService.setViewPortWidth(this.selectedViewPort.maxWidth);
-    this.OverlaySyncService.syncIframe();
+  viewportChanged() {
+    if (this.selectedViewport.width) {
+      this.ViewportService.setWidth(this.selectedViewport.width);
+    }
+
+    this.OverlayService.sync();
   }
 }
 

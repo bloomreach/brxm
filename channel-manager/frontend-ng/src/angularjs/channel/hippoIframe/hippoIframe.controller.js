@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import hippoIframeCss from '../../../styles/string/hippo-iframe.scss';
 
 class HippoIframeCtrl {
   constructor(
@@ -29,12 +31,13 @@ class HippoIframeCtrl {
     DomService,
     DragDropService,
     HippoIframeService,
-    OverlaySyncService,
+    OverlayService,
     PageMetaDataService,
     PageStructureService,
     ScrollService,
+    ViewportService,
     hstCommentsProcessorService,
-    linkProcessorService
+    linkProcessorService,
   ) {
     'ngInject';
 
@@ -49,7 +52,7 @@ class HippoIframeCtrl {
     this.DomService = DomService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
-    this.OverlaySyncService = OverlaySyncService;
+    this.OverlayService = OverlayService;
     this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
     this.hstCommentsProcessorService = hstCommentsProcessorService;
@@ -62,27 +65,28 @@ class HippoIframeCtrl {
 
     HippoIframeService.initialize(this.iframeJQueryElement);
 
-    const baseJQueryElement = $element.find('.channel-iframe-base');
-    OverlaySyncService.init(
-      baseJQueryElement,
-      $element.find('.channel-iframe-sheet'),
-      this.iframeJQueryElement,
-      $element.find('.overlay')
-    );
+    OverlayService.init(this.iframeJQueryElement);
+    OverlayService.onEditMenu((menuUuid) => {
+      this.onEditMenu({ menuUuid });
+    });
 
-    DragDropService.init(this.iframeJQueryElement, baseJQueryElement);
+    const sheetJQueryElement = $element.find('.channel-iframe-sheet');
+    ViewportService.init(sheetJQueryElement);
 
-    ScrollService.init(this.iframeJQueryElement, baseJQueryElement);
+    const canvasJQueryElement = $element.find('.channel-iframe-canvas');
+    DragDropService.init(this.iframeJQueryElement, canvasJQueryElement);
 
     const deleteComponentHandler = componentId => this.deleteComponent(componentId);
     CmsService.subscribe('delete-component', deleteComponentHandler);
     $scope.$on('$destroy', () => CmsService.unsubscribe('delete-component', deleteComponentHandler));
 
-    $scope.$watch('iframe.editMode', () => this._updateDragDrop());
+    $scope.$watch('iframe.editMode', () => {
+      this._toggleOverlay();
+      this._updateDragDrop();
+    });
   }
 
   onLoad() {
-    // we insert the CSS for every page, because embedded links can come and go without reloading the page
     this.PageStructureService.clearParsedElements();
     this._insertCss().then(() => {
       if (this._isIframeDomPresent()) {
@@ -112,7 +116,7 @@ class HippoIframeCtrl {
     }
     this._confirmDelete(selectedComponent).then(
       this._doDelete(componentId),
-      () => this.PageStructureService.showComponentProperties(selectedComponent)
+      () => this.PageStructureService.showComponentProperties(selectedComponent),
     );
   }
 
@@ -133,24 +137,21 @@ class HippoIframeCtrl {
     return this.DialogService.show(confirm);
   }
 
+  _toggleOverlay() {
+    const mode = this.editMode ? 'edit' : 'view';
+    this.OverlayService.setMode(mode);
+  }
+
   _updateDragDrop() {
     if (this.editMode) {
-      this.DragDropService.enable(this.PageStructureService.getContainers());
+      this.DragDropService.enable()
+      .then(() => {
+        this.OverlayService.attachComponentMouseDown((e, component) => this.DragDropService.startDragOrClick(e, component));
+      });
     } else {
       this.DragDropService.disable();
+      this.OverlayService.detachComponentMouseDown();
     }
-  }
-
-  startDragOrClick($event, component) {
-    this.DragDropService.startDragOrClick($event, component);
-  }
-
-  isDraggingOrClicking() {
-    return this.DragDropService.isDraggingOrClicking();
-  }
-
-  isDragging() {
-    return this.DragDropService.isDragging();
   }
 
   _insertCss() {
@@ -160,9 +161,8 @@ class HippoIframeCtrl {
         return this.$q.reject();
       }
       const iframeWindow = iframeDom.defaultView;
-      const appRootUrl = this.DomService.getAppRootUrl();
-      const hippoIframeCss = `${appRootUrl}styles/hippo-iframe.css?antiCache=${this.ConfigService.antiCache}`;
-      return this.DomService.addCss(iframeWindow, hippoIframeCss);
+      this.DomService.addCss(iframeWindow, hippoIframeCss);
+      return this.$q.resolve();
     } catch (e) {
       return this.$q.reject();
     }
@@ -171,7 +171,7 @@ class HippoIframeCtrl {
   _parseHstComments() {
     this.hstCommentsProcessorService.run(
       this._getIframeDom(),
-      this.PageStructureService.registerParsedElement.bind(this.PageStructureService)
+      this.PageStructureService.registerParsedElement.bind(this.PageStructureService),
     );
     this.PageStructureService.attachEmbeddedLinks();
   }
@@ -224,6 +224,10 @@ class HippoIframeCtrl {
 
   getSrc() {
     return this.HippoIframeService.getSrc();
+  }
+
+  isIframeLifted() {
+    return this.HippoIframeService.isIframeLifted;
   }
 }
 

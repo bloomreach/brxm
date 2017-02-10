@@ -19,6 +19,31 @@
 
 .left-side-panel {
   border-right: 1px solid $grey-200;
+
+  md-list {
+    padding: 0;
+  }
+
+  .md-avatar {
+    border-radius: 0 !important;
+  }
+
+  .list-item-active {
+    background-color: $list-item-active-bgcolor;
+  }
+
+  .catalog-list-item-active {
+    font-style: italic;
+  }
+
+  // OpenSans fonts cut off at the 'g' with line-height 1.2 from Material
+  .md-list-item-text h4 {
+    line-height: 1.3em !important;
+  }
+
+  &.sidepanel-lifted {
+    z-index: $z-index-sidepanel-lifted;
+  }
 }
 
 .right-side-panel {
@@ -46,28 +71,6 @@
     margin-right: 0;
     padding-left: 0;
     padding-right: 0;
-  }
-}
-
-.list-item-active {
-  background-color: $list-item-active-bgcolor;
-}
-
-// OpenSans fonts cut off at the 'g' with line-height 1.2 from Material
-.md-list-item-text h4 {
-  line-height: 1.3em !important;
-}
-
-.catalog-dd-container-item {
-  cursor: grab;
-
-  .ie11 & {
-    cursor: move;
-  }
-
-  &:active,
-  &.gu-mirror {
-    cursor: grabbing;
   }
 }
 

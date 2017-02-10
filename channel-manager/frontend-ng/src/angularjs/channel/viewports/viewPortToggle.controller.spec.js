@@ -34,6 +34,7 @@ describe('ViewportToggleCtrl', () => {
       $translate = _$translate_;
       ChannelService = _ChannelService_;
     });
+
     spyOn($translate, 'instant');
   });
 
@@ -41,41 +42,46 @@ describe('ViewportToggleCtrl', () => {
     spyOn(ChannelService, 'getChannel').and.returnValue({
       viewportMap,
     });
+
     return $controller('ViewportToggleCtrl', {
       $scope: $rootScope.$new(),
       ChannelService,
     });
   }
 
-  describe('setViewPorts', () => {
+  describe('setViewports', () => {
     it('should set the viewport widths from the backend', () => {
       $ctrl = createController({
         desktop: 1167,
         tablet: 678,
         phone: 256,
       });
-      $ctrl.setViewPorts();
       $rootScope.$apply();
+      $ctrl.setViewports();
 
-      expect($ctrl.viewPorts[1].id).toBe('DESKTOP');
-      expect($ctrl.viewPorts[1].maxWidth).toBe(1167);
-      expect($ctrl.viewPorts[2].id).toBe('TABLET');
-      expect($ctrl.viewPorts[2].maxWidth).toBe(678);
-      expect($ctrl.viewPorts[3].id).toBe('PHONE');
-      expect($ctrl.viewPorts[3].maxWidth).toBe(256);
+      expect($ctrl.viewports[0].id).toBe('ANY_DEVICE');
+      expect($ctrl.viewports[0].maxWidth).toBe(0);
+      expect($ctrl.viewports[1].id).toBe('DESKTOP');
+      expect($ctrl.viewports[1].maxWidth).toBe(1167);
+      expect($ctrl.viewports[2].id).toBe('TABLET');
+      expect($ctrl.viewports[2].maxWidth).toBe(678);
+      expect($ctrl.viewports[3].id).toBe('PHONE');
+      expect($ctrl.viewports[3].maxWidth).toBe(256);
     });
 
     it('should use the default viewport width values when the backend does not return any', () => {
       $ctrl = createController({});
-      $ctrl.setViewPorts();
       $rootScope.$apply();
+      $ctrl.setViewports();
 
-      expect($ctrl.viewPorts[1].id).toBe('DESKTOP');
-      expect($ctrl.viewPorts[1].maxWidth).toBe(1280);
-      expect($ctrl.viewPorts[2].id).toBe('TABLET');
-      expect($ctrl.viewPorts[2].maxWidth).toBe(720);
-      expect($ctrl.viewPorts[3].id).toBe('PHONE');
-      expect($ctrl.viewPorts[3].maxWidth).toBe(320);
+      expect($ctrl.viewports[0].id).toBe('ANY_DEVICE');
+      expect($ctrl.viewports[0].maxWidth).toBe(0);
+      expect($ctrl.viewports[1].id).toBe('DESKTOP');
+      expect($ctrl.viewports[1].maxWidth).toBe(1280);
+      expect($ctrl.viewports[2].id).toBe('TABLET');
+      expect($ctrl.viewports[2].maxWidth).toBe(720);
+      expect($ctrl.viewports[3].id).toBe('PHONE');
+      expect($ctrl.viewports[3].maxWidth).toBe(320);
     });
   });
 

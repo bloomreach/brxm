@@ -83,7 +83,7 @@ describe('collapse controller', () => {
       {
         from: { height: collapseCtrl.toggledElementHeight },
         to: { height: 0 },
-      }
+      },
     );
   });
 
@@ -98,7 +98,7 @@ describe('collapse controller', () => {
       {
         from: { height: 0 },
         to: { height: collapseCtrl.toggledElementHeight },
-      }
+      },
     );
   });
 

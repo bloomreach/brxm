@@ -42,7 +42,7 @@ describe('ChangesMenu', () => {
       _HippoIframeService_,
       _ConfigService_,
       _SessionService_,
-      _SiteMapService_
+      _SiteMapService_,
     ) => {
       $compile = _$compile_;
       $q = _$q_;
