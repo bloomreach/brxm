@@ -51,8 +51,9 @@ public class AddDocumentValidator extends DocumentFormValidator {
 
     @Override
     public void validate(final Form<?> form) {
-        final String newNodeName = nameUriField.getUrlComponent().getValue().toLowerCase();
-        final String newDisplayName = nameUriField.getNameComponent().getValue();
+        final String newNodeName = nameUriField.getUrlValue();
+        final String newDisplayName = nameUriField.getNameValue();
+
         try {
             final Node parentNode = workflowDescriptor.getNode();
             final boolean hasNodeWithSameName = parentNode.hasNode(newNodeName);

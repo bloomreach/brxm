@@ -206,4 +206,13 @@ public class NameUriField extends Panel {
     public void setAjaxChannel(final AjaxChannel ajaxChannel) {
         this.ajaxChannel = ajaxChannel;
     }
+
+    public String getNameValue() {
+        return nameComponent.getValue();
+    }
+
+    public String getUrlValue() {
+        final String url = urlIsEditable ? urlComponent.getValue() : nameComponent.getValue();
+        return url != null ? url : url.toLowerCase();
+    }
 }

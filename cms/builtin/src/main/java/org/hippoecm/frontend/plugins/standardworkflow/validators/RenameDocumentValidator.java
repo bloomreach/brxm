@@ -56,8 +56,8 @@ public class RenameDocumentValidator extends DocumentFormValidator {
 
     @Override
     public void validate(final Form<?> form) {
-        final String newUrlName = nameUriField.getUrlComponent().getValue().toLowerCase();
-        final String newLocalizedName = nameUriField.getNameComponent().getValue();
+        final String newUrlName = nameUriField.getUrlValue();
+        final String newLocalizedName = nameUriField.getNameValue();
         try {
             final Node parentNode = workflowDescriptor.getNode().getParent();
 
