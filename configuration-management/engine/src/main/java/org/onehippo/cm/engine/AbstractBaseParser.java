@@ -146,33 +146,12 @@ public abstract class AbstractBaseParser {
             throw new ParserException("Path must start with a slash", node);
         }
 
-        // 'path' represents a node-path, where slashes indicate the root node or node name borders.
-        // we validate that slashes *inside* node names are \-escaped correctly:
-        int slash = 0; // count consecutive slashes
-        boolean escaped = false;
-        for (int i = 0; i < path.length(); i++) {
-            switch (path.charAt(i)) {
-                case '/':
-                    if (slash > 0) {
-                        throw new ParserException("Path must not contain (unescaped) double slashes", node);
-                    }
-                    if (!escaped) {
-                        slash++;
-                    }
-                    escaped = false;
-                    break;
-                case '\\':
-                    slash = 0;
-                    escaped = !escaped;
-                    break;
-                default:
-                    slash = 0;
-                    escaped = false;
-                    break;
-            }
+        if (path.contains("//")) {
+            throw new ParserException("Path must not contain double slashes", node);
         }
-        if (slash > 0 && !isRootNodePath(path)) {
-            throw new ParserException("Path must not end with (unescaped) slash", node);
+
+        if (path.endsWith("/") && !isRootNodePath(path)) {
+            throw new ParserException("Path must not end with a slash", node);
         }
 
         return path;

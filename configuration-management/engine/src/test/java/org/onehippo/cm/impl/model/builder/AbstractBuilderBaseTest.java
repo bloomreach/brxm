@@ -20,12 +20,15 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.onehippo.cm.api.model.ConfigurationProperty;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Source;
+import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.engine.ResourceInputProvider;
 import org.onehippo.cm.engine.SourceParser;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
@@ -38,6 +41,14 @@ public abstract class AbstractBuilderBaseTest {
 
     protected ModuleImpl makeModule() {
         return new ConfigurationImpl("test-configuration").addProject("test-project").addModule("test-module");
+    }
+
+    protected String valuesToString(final ConfigurationProperty property) {
+        return Arrays.stream(property.getValues()).map(Value::getString).collect(Collectors.toList()).toString();
+    }
+
+    protected String valueToString(final ConfigurationProperty property) {
+        return property.getValue().getString();
     }
 
     protected String sortedCollectionToString(final Map<String, ? extends Object> map) {

@@ -100,8 +100,16 @@ public class ValueImpl implements Value {
     }
 
     @Override
-    public boolean isDeleted() {
-        return false;
-    }
+    public boolean equals(Object otherObj) {
+        if (!(otherObj instanceof ValueImpl)) {
+            return false;
+        }
 
+        final ValueImpl other = (ValueImpl) otherObj;
+
+        return valueType == other.valueType
+                && isResource == other.isResource
+                && isPath == other.isPath
+                && value.equals(other.value);
+    }
 }

@@ -18,6 +18,7 @@ package org.onehippo.cm.impl.model;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
@@ -31,6 +32,8 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     private final Map<String, DefinitionNode> nodes = Collections.unmodifiableMap(modifiableNodes);
     private final Map<String, DefinitionPropertyImpl> modifiableProperties = new LinkedHashMap<>();
     private final Map<String, DefinitionProperty> properties = Collections.unmodifiableMap(modifiableProperties);
+    private boolean delete = false;
+    private String orderBefore = null;
 
     public DefinitionNodeImpl(final String path, final String name, final Definition definition) {
         super(path, name, definition);
@@ -56,6 +59,24 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
 
     public Map<String, DefinitionPropertyImpl> getModifiableProperties() {
         return modifiableProperties;
+    }
+
+    @Override
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void setDelete(final boolean delete) {
+        this.delete = delete;
+    }
+
+    @Override
+    public Optional<String> getOrderBefore() {
+        return Optional.ofNullable(orderBefore);
+    }
+
+    public void setOrderBefore(final String orderBefore) {
+        this.orderBefore = orderBefore;
     }
 
     public DefinitionNodeImpl addNode(final String name) {
