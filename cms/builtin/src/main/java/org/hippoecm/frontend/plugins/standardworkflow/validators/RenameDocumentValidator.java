@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,32 +33,33 @@ public class RenameDocumentValidator extends DocumentFormValidator {
 
     public static final String ERROR_SAME_NAMES = "error-same-names";
 
-    private final WorkflowDescriptorModel workflowDescriptorModel;
-    private final NameUriField nameUriContainer;
+    private final NameUriField nameUriField;
+    private final WorkflowDescriptorModel workflowDescriptor;
     private final String originalName;
     private final String originalUrl;
 
-    public RenameDocumentValidator(final Form form, final NameUriField nameUriContainer,
-                                   final WorkflowDescriptorModel workflowDescriptorModel) {
+    public RenameDocumentValidator(final Form form, final NameUriField nameUriField,
+                                   final WorkflowDescriptorModel workflowDescriptor) {
         super(form);
 
-        this.nameUriContainer = nameUriContainer;
-        this.workflowDescriptorModel = workflowDescriptorModel;
-        this.originalName = nameUriContainer.getName();
-        this.originalUrl = nameUriContainer.getUrl();
+        this.nameUriField = nameUriField;
+        this.workflowDescriptor = workflowDescriptor;
+
+        originalName = nameUriField.getName();
+        originalUrl = nameUriField.getUrl();
     }
 
     @Override
     public FormComponent<?>[] getDependentFormComponents() {
-        return nameUriContainer.getComponents();
+        return nameUriField.getComponents();
     }
 
     @Override
     public void validate(final Form<?> form) {
-        final String newUrlName = nameUriContainer.getUrlComponent().getValue().toLowerCase();
-        final String newLocalizedName = nameUriContainer.getNameComponent().getValue();
+        final String newUrlName = nameUriField.getUrlComponent().getValue().toLowerCase();
+        final String newLocalizedName = nameUriField.getNameComponent().getValue();
         try {
-            final Node parentNode = workflowDescriptorModel.getNode().getParent();
+            final Node parentNode = workflowDescriptor.getNode().getParent();
 
             if (StringUtils.equals(newUrlName, originalUrl)) {
                 if (StringUtils.equals(newLocalizedName, originalName)) {
