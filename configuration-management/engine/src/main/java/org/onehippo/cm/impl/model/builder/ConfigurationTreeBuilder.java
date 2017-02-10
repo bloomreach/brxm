@@ -155,8 +155,8 @@ class ConfigurationTreeBuilder {
 
         if (definitionNode.isDelete()) {
             final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
-            final String msg = String.format("Not yet created node '%s' has delete-flag set in '%s'.",
-                    definitionNode.getPath(), culprit);
+            final String msg = String.format("%s: Trying to delete node %s that does not exist.",
+                    culprit, definitionNode.getPath());
             throw new IllegalArgumentException(msg);
         }
 
@@ -193,29 +193,11 @@ class ConfigurationTreeBuilder {
             }
 
             if (property.getType() != definitionProperty.getType()) {
-                if (op == OVERRIDE) {
-                    property.setType(definitionProperty.getType());
-                    property.setValue(null);
-                    property.setValues(null);
-                } else {
-                    final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
-                    final String msg = String.format("Property %s already exists with type %s, but type %s is requested in %s.",
-                            property.getPath(), property.getType(), definitionProperty.getType(), culprit);
-                    throw new IllegalStateException(msg);
-                }
+                handleTypeConflict(property, definitionProperty, op == OVERRIDE);
             }
 
             if (property.getValueType() != definitionProperty.getValueType()) {
-                if (op == OVERRIDE) {
-                    property.setValueType(definitionProperty.getValueType());
-                    property.setValue(null);
-                    property.setValues(null);
-                } else {
-                    final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
-                    final String msg = String.format("Property %s already exists with value type %s, but value type %s is requested in %s.",
-                            property.getPath(), property.getValueType(), definitionProperty.getValueType(), culprit);
-                    throw new IllegalStateException(msg);
-                }
+                handleValueTypeConflict(property, definitionProperty, op == OVERRIDE);
             }
 
             requireOverrideOperationForPrimaryType(definitionProperty, property, op == OVERRIDE);
@@ -223,8 +205,8 @@ class ConfigurationTreeBuilder {
         } else {
             if (op == DELETE) {
                 final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
-                final String msg = String.format("Not yet created property '%s' specifies delete operation in '%s'.",
-                        definitionProperty.getPath(), culprit);
+                final String msg = String.format("%s: Trying to delete property %s that does not exist.",
+                        culprit, definitionProperty.getPath());
                 throw new IllegalArgumentException(msg);
             }
 
@@ -251,6 +233,39 @@ class ConfigurationTreeBuilder {
         }
 
         parent.addProperty(name, property);
+    }
+
+    private void handleTypeConflict(final ConfigurationPropertyImpl property,
+                                    final DefinitionPropertyImpl definitionProperty, boolean isOverride) {
+        if (isOverride) {
+            property.setType(definitionProperty.getType());
+            property.setValue(null);
+            property.setValues(null);
+        } else {
+            final String sourceList = ModelUtils.formatDefinitions(property);
+            final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
+            final String msg = String.format("Property %s already exists with type '%s', as determined by %s, "
+                            + "but type '%s' is requested in %s.",
+                    property.getPath(), property.getType(), sourceList, definitionProperty.getType(), culprit);
+            throw new IllegalStateException(msg);
+        }
+    }
+
+    private void handleValueTypeConflict(final ConfigurationPropertyImpl property,
+                                         final DefinitionPropertyImpl definitionProperty, boolean isOverride) {
+        if (isOverride) {
+            property.setValueType(definitionProperty.getValueType());
+            property.setValue(null);
+            property.setValues(null);
+        } else {
+            final String sourceList = ModelUtils.formatDefinitions(property);
+            final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
+            final String msg = String.format("Property %s already exists with value type '%s', "
+                            + "as determined by %s, but value type '%s' is requested in %s.",
+                    property.getPath(), property.getValueType(), sourceList, definitionProperty.getValueType(),
+                    culprit);
+            throw new IllegalStateException(msg);
+        }
     }
 
     private void requireOverrideOperationForPrimaryType(final DefinitionPropertyImpl definitionProperty,
@@ -296,7 +311,7 @@ class ConfigurationTreeBuilder {
         final Value[] existingValues = property.getValues();
         if (existingValues == null) {
             final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
-            logger.warn("Property '{}' defined in '{}' claims to ADD values, but no values are present. Applying default behaviour.",
+            logger.warn("Property '{}' defined in '{}' claims to ADD values, but property doesn't exist yet. Applying default behaviour.",
                     definitionProperty.getPath(), culprit);
             property.setValues(definitionProperty.getValues());
         } else {

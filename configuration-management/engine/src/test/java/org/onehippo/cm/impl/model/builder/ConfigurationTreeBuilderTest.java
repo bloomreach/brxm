@@ -536,7 +536,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Not yet created node '/a/b/c' has delete-flag set in 'test-configuration/test-project/test-module [string]'.", e.getMessage());
+            assertEquals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.", e.getMessage());
         }
     }
 
@@ -559,7 +559,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Not yet created node '/a/b/c' has delete-flag set in 'test-configuration/test-project/test-module [string]'.", e.getMessage());
+            assertEquals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.", e.getMessage());
         }
     }
 
@@ -789,7 +789,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("Property /a/b/property2 already exists with type single, but type list is requested in test-configuration/test-project/test-module [string].", e.getMessage());
+            assertEquals("Property /a/b/property2 already exists with type 'single', as determined by [test-configuration/test-project/test-module [string]], but type 'list' is requested in test-configuration/test-project/test-module [string].", e.getMessage());
         }
     }
 
@@ -836,7 +836,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("Property /a/b/property2 already exists with value type string, but value type long is requested in test-configuration/test-project/test-module [string].", e.getMessage());
+            assertEquals("Property /a/b/property2 already exists with value type 'string', as determined by [test-configuration/test-project/test-module [string]], but value type 'long' is requested in test-configuration/test-project/test-module [string].", e.getMessage());
         }
     }
 
@@ -1055,7 +1055,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(0));
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Not yet created property '/a/property1' specifies delete operation in 'test-configuration/test-project/test-module [string]'.", e.getMessage());
+            assertEquals("test-configuration/test-project/test-module [string]: Trying to delete property /a/property1 that does not exist.", e.getMessage());
         }
     }
 
