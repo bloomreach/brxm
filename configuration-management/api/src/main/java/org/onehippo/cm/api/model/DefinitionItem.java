@@ -22,4 +22,5 @@ public interface DefinitionItem {
     boolean isRoot();
     Definition getDefinition();
     boolean isDelete();
+    SourceLocation getSourceLocation();
 }
