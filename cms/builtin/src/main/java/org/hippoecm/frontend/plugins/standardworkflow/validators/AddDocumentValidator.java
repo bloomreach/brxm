@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,28 +33,29 @@ public class AddDocumentValidator extends DocumentFormValidator {
 
     private static final Logger log = LoggerFactory.getLogger(AddDocumentValidator.class);
 
-    private final NameUriField nameUriContainer;
-    private final WorkflowDescriptorModel workflowDescriptorModel;
+    private final NameUriField nameUriField;
+    private final WorkflowDescriptorModel workflowDescriptor;
 
-    public AddDocumentValidator(final Form form, final NameUriField nameUriContainer,
-                                final WorkflowDescriptorModel workflowDescriptorModel) {
+    public AddDocumentValidator(final Form form, final NameUriField nameUriField,
+                                final WorkflowDescriptorModel workflowDescriptor) {
         super(form);
 
-        this.nameUriContainer = nameUriContainer;
-        this.workflowDescriptorModel = workflowDescriptorModel;
+        this.nameUriField = nameUriField;
+        this.workflowDescriptor = workflowDescriptor;
     }
 
     @Override
     public FormComponent<?>[] getDependentFormComponents() {
-        return nameUriContainer.getComponents();
+        return nameUriField.getComponents();
     }
 
     @Override
     public void validate(final Form<?> form) {
-        final String newNodeName = nameUriContainer.getUrlComponent().getValue().toLowerCase();
-        final String newDisplayName = nameUriContainer.getNameComponent().getValue();
+        final String newNodeName = nameUriField.getUrlValue();
+        final String newDisplayName = nameUriField.getNameValue();
+
         try {
-            final Node parentNode = workflowDescriptorModel.getNode();
+            final Node parentNode = workflowDescriptor.getNode();
             final boolean hasNodeWithSameName = parentNode.hasNode(newNodeName);
             final boolean hasNodeWithSameLocalizedName = hasChildWithDisplayName(parentNode, newDisplayName);
 
