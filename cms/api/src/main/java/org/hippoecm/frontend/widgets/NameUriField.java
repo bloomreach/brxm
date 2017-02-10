@@ -213,6 +213,6 @@ public class NameUriField extends Panel {
 
     public String getUrlValue() {
         final String url = urlIsEditable ? urlComponent.getValue() : nameComponent.getValue();
-        return url != null ? url : url.toLowerCase();
+        return url != null ? encode(url.toLowerCase()) : StringUtils.EMPTY;
     }
 }
