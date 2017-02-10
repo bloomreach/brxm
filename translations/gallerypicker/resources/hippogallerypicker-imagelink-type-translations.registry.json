@@ -1,0 +1,15 @@
+{
+  "bundleType" : "REPOSITORY",
+  "keyData" : {
+    "hippo:types.hippogallerypicker:imagelink/jcr:name" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    }
+  }
+}
