@@ -52,11 +52,13 @@ public class RequirementsCheckFilter implements Filter {
                 return;
             }
             if (!file.isDirectory()) {
-                sendRedirect(req, res, "Directory: " + directory + " must be a directory");
+                sendRedirect(req, res, "File: " + directory + " must be a directory");
                 return;
             }
         } catch (IllegalStateException e) {
-            log.error("Error processing req", e);
+            if (log.isDebugEnabled()) {
+                log.error("Error processing request:", e);
+            }
             sendRedirect(req, res, e.getMessage());
             return;
         }
@@ -65,6 +67,7 @@ public class RequirementsCheckFilter implements Filter {
 
     private void sendRedirect(final ServletRequest req, final ServletResponse resp, final String error) throws IOException {
         final HttpServletResponse response = (HttpServletResponse) resp;
+        log.error(error);
         req.setAttribute("error", error);
         response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE, error);
     }

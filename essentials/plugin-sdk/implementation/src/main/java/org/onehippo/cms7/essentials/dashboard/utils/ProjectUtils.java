@@ -116,7 +116,7 @@ public final class ProjectUtils {
         if (System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY).isEmpty()) {
             return System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
         }
-        throw new IllegalStateException("System property 'project.basedir' was not null or empty. Please start your application with -D=project.basedir=/project/path");
+        throw new IllegalStateException("System property 'project.basedir' was null or empty. Please start your application with -D=project.basedir=/project/path");
     }
 
     public static String getEssentialsModuleName() {
