@@ -18,6 +18,7 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('DomService', () => {
+  let BrowserService;
   let DomService;
   const fixturesPath = `/${jasmine.getFixtures().fixturesPath}`;
 
@@ -33,7 +34,8 @@ describe('DomService', () => {
       }]);
     });
 
-    inject((_DomService_) => {
+    inject((_BrowserService_, _DomService_) => {
+      BrowserService = _BrowserService_;
       DomService = _DomService_;
     });
 
@@ -155,8 +157,18 @@ describe('DomService', () => {
     expect(mouseDownEvent.view).toEqual(window);
   });
 
+  it('can create a mousedown event in Edge', () => {
+    spyOn(BrowserService, 'isEdge').and.returnValue(true);
+    const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
+    expect(mouseDownEvent.type).toEqual('pointerdown');
+    expect(mouseDownEvent.bubbles).toEqual(true);
+    expect(mouseDownEvent.clientX).toEqual(100);
+    expect(mouseDownEvent.clientY).toEqual(200);
+    expect(mouseDownEvent.view).toEqual(window);
+  });
+
   it('can create a mousedown event in IE11', () => {
-    window.navigator.msPointerEnabled = true;
+    spyOn(BrowserService, 'isIE').and.returnValue(true);
     const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
     expect(mouseDownEvent.type).toEqual('MSPointerDown');
     expect(mouseDownEvent.bubbles).toEqual(true);
