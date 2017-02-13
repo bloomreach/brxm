@@ -20,6 +20,7 @@ package org.hippoecm.hst.demo.components;
 import java.util.Date;
 
 import org.hippoecm.hst.core.parameters.Color;
+import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 
@@ -46,4 +47,13 @@ public interface BannerInfo {
             pickerSelectableNodeTypes = { "demosite:qaimageset" },
             pickerInitialPath = "/content/gallery/images")
     String getPath();
+
+    @Parameter(name = "cssDisplay", displayName = "CSS Display")
+    @DropDownList(value = { "inline", "block", "flex" })
+    String getCssDisplay();
+
+    @Parameter(name = "cssDisplay2", displayName = "CSS Display 2")
+    @DropDownList(valueListProvider = CssDisplayValueListProvider.class)
+    String getCssDisplay2();
+
 }
