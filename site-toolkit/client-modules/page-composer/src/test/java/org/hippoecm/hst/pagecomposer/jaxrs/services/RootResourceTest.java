@@ -49,6 +49,7 @@ import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.parameters.DropDownList;
+import org.hippoecm.hst.core.parameters.EmptyValueListProvider;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.parameters.ValueListProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -404,7 +405,7 @@ public class RootResourceTest extends AbstractResourceTest {
 
             @Override
             public Class<? extends ValueListProvider> valueListProvider() {
-                return null;
+                return EmptyValueListProvider.class;
             }
         };
     }
