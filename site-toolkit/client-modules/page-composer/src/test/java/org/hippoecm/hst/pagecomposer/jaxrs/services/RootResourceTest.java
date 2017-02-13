@@ -17,6 +17,21 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import static com.jayway.restassured.http.ContentType.JSON;
+import static org.easymock.EasyMock.and;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.notNull;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +50,7 @@ import org.hippoecm.hst.configuration.channel.exceptions.ChannelNotFoundExceptio
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.HstValueType;
+import org.hippoecm.hst.core.parameters.ValueListProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
@@ -51,21 +67,6 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import static com.jayway.restassured.http.ContentType.JSON;
-import static org.easymock.EasyMock.and;
-import static org.easymock.EasyMock.capture;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.notNull;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.net.ssl.*")
@@ -399,6 +400,11 @@ public class RootResourceTest extends AbstractResourceTest {
             @Override
             public String[] value() {
                 return values;
+            }
+
+            @Override
+            public Class<? extends ValueListProvider> valueListProvider() {
+                return null;
             }
         };
     }

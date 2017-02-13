@@ -32,17 +32,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
-
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
+import org.hippoecm.hst.core.parameters.EmptyValueListProvider;
 import org.hippoecm.hst.core.parameters.FieldGroup;
 import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.parameters.ValueListProvider;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PropertyRepresentationFactory;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils;
@@ -51,6 +52,9 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 
 public class ParametersInfoProcessor {
 
@@ -210,11 +214,40 @@ public class ParametersInfoProcessor {
                     prop.setPickerSelectableNodeTypes(jcrPath.pickerSelectableNodeTypes());
                 } else if (annotation instanceof DropDownList) {
                     final DropDownList dropDownList = (DropDownList) annotation;
-                    final String values[] = dropDownList.value();
-                    final String[] displayValues = new String[values.length];
+                    String values[] = dropDownList.value();
 
-                    for (int i = 0; i < values.length; i++) {
-                        displayValues[i] = getResourceSubValue(resourceBundles, propAnnotation.name(), values[i]);
+                    ValueListProvider valueListProvider = null;
+                    final Class<?> valueListProviderClass = dropDownList.valueListProvider();
+                    if (valueListProviderClass != null
+                            && !EmptyValueListProvider.class.equals(valueListProviderClass)) {
+                        try {
+                            valueListProvider = (ValueListProvider) valueListProviderClass.newInstance();
+                        } catch (Exception e) {
+                            log.error("Failed to create or invoke the custom valueListProvider: '{}'.",
+                                    valueListProviderClass, e);
+                        }
+                    }
+
+                    String[] displayValues;
+
+                    if (valueListProvider == null) {
+                        displayValues = new String[values.length];
+                        for (int i = 0; i < values.length; i++) {
+                            displayValues[i] = getResourceSubValue(resourceBundles, propAnnotation.name(), values[i]);
+                        }
+                    } else {
+                        final List<String> valueList = valueListProvider.getValues();
+                        values = valueList.toArray(new String[valueList.size()]);
+                        displayValues = new String[values.length];
+                        final HstRequestContext requestContext = RequestContextProvider.get();
+                        final Locale locale = (requestContext != null) ? requestContext.getPreferredLocale() : null;
+                        String value;
+                        String displayValue;
+                        for (int i = 0; i < values.length; i++) {
+                            value = values[i];
+                            displayValue = valueListProvider.getDisplayValue(value, locale);
+                            displayValues[i] = (displayValue != null) ? displayValue : value;
+                        }
                     }
 
                     prop.setDropDownListValues(values);
