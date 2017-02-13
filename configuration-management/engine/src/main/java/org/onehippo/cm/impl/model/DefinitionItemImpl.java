@@ -26,21 +26,29 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
     private DefinitionNode parent;
     private Definition definition;
     private boolean delete;
+    private SourceLocationImpl sourceLocation;
 
     public DefinitionItemImpl(final String path, final String name, final Definition definition) {
         this.path = path;
         this.name = name;
         this.parent = null;
         this.definition = definition;
+        this.sourceLocation = new SourceLocationImpl();
     }
 
     public DefinitionItemImpl(final String name, final DefinitionNodeImpl parent) {
         this.name = name;
         this.parent = parent;
         this.definition = parent.getDefinition();
+        this.sourceLocation = new SourceLocationImpl();
 
         final String parentPath = parent.getPath();
         path = parentPath + (parentPath.endsWith("/") ? "" : "/") + name;
+    }
+
+    @Override
+    public SourceLocationImpl getSourceLocation() {
+        return sourceLocation;
     }
 
     @Override
@@ -71,12 +79,4 @@ public abstract class DefinitionItemImpl implements DefinitionItem {
         return definition;
     }
 
-    @Override
-    public boolean isDelete() {
-        return delete;
-    }
-
-    public void setDelete(final boolean delete) {
-        this.delete = delete;
-    }
 }

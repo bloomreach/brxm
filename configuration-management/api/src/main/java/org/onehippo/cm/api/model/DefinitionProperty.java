@@ -29,4 +29,6 @@ public interface DefinitionProperty extends DefinitionItem {
      * @throws ValueFormatException if the property is single-valued.
      */
     Value[] getValues() throws ValueFormatException;
+
+    PropertyOperation getOperation();
 }

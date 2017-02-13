@@ -15,8 +15,10 @@
  */
 package org.onehippo.cm.impl.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.onehippo.cm.api.model.ConfigurationNode;
@@ -42,6 +44,14 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
         modifiableNodes.put(name, node);
     }
 
+    public void removeNode(final String name) {
+        modifiableNodes.remove(name);
+    }
+
+    public void clearNodes() {
+        modifiableNodes.clear();
+    }
+
     @Override
     public Map<String, ConfigurationProperty> getProperties() {
         return properties;
@@ -53,5 +63,35 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
 
     public void addProperty(final String name, final ConfigurationPropertyImpl property) {
         modifiableProperties.put(name, property);
+    }
+
+    public void clearProperties() {
+        modifiableProperties.clear();
+    }
+
+    public void orderBefore(final String srcChildName, final String destChildName) {
+        if (!modifiableNodes.containsKey(srcChildName)) {
+            final String msg = String.format("Node '%s' has no child named '%s'.", getPath(), srcChildName);
+            throw new IllegalArgumentException(msg);
+        }
+        if (!modifiableNodes.containsKey(destChildName)) {
+            final String msg = String.format("Node '%s' has no child named '%s'.", getPath(), destChildName);
+            throw new IllegalArgumentException(msg);
+        }
+
+        final List<String> toBeReinsertedChildren = new ArrayList<>();
+        boolean destFound = false;
+
+        for (String childName : modifiableNodes.keySet()) {
+            if (childName.equals(destChildName)) {
+                destFound = true;
+            }
+            if (destFound && !childName.equals(srcChildName)) {
+                toBeReinsertedChildren.add(childName);
+            }
+        }
+
+        modifiableNodes.put(srcChildName, modifiableNodes.remove(srcChildName));
+        toBeReinsertedChildren.forEach(child -> modifiableNodes.put(child, modifiableNodes.remove(child)));
     }
 }

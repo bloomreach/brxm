@@ -197,10 +197,17 @@ public class InitializeInstruction {
                     throw new EsvParseException("Unsupported initialization type: "+type.getPropertyName() +
                             " for hippo:initializationitem: " + node.getName());
                 }
-                InitializeInstruction instruction =
-                        type == Type.CONTENTRESOURCE ?
-                                new SourceInitializeInstruction(node, type, first) :
-                                new InitializeInstruction(node, type, first);
+                InitializeInstruction instruction;
+                switch (type) {
+                    case CONTENTRESOURCE:
+                        instruction = new SourceInitializeInstruction(node, type, first);
+                        break;
+                    case RESOURCEBUNDLES:
+                        instruction = new ResourcebundlesInitializeInstruction(node, type, first);
+                        break;
+                    default:
+                        instruction = new InitializeInstruction(node, type, first);
+                }
                 if (first != null) {
                     second = instruction;
                     // link first to second (second already linked to first in constructor call above)

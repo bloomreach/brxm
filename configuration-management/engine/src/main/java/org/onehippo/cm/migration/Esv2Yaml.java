@@ -235,6 +235,8 @@ public class Esv2Yaml {
                 case NODETYPESRESOURCE:
                     mainSource.addNodeTypeDefinition(instruction.getResourcePath(), true);
                     break;
+                case RESOURCEBUNDLES:
+                    ((ResourcebundlesInitializeInstruction)instruction).processResourceBundles(module);
                 default:
                     // todo
                     break;

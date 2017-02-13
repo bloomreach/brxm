@@ -16,8 +16,12 @@
 
 package org.onehippo.cm.impl.model;
 
+import java.util.stream.Collectors;
+
 import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.api.model.ConfigurationItem;
 import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.DefinitionItem;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
@@ -34,5 +38,14 @@ public class ModelUtils {
         final Source source = definition.getSource();
 
         return String.format("%s [%s]", formatModule(source.getModule()), source.getPath());
+    }
+
+    public static String formatDefinitions(final ConfigurationItem item) {
+        return item.getDefinitions()
+                .stream()
+                .map(DefinitionItem::getDefinition)
+                .map(ModelUtils::formatDefinition)
+                .collect(Collectors.toList())
+                .toString();
     }
 }

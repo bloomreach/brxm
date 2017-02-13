@@ -15,32 +15,13 @@
  */
 package org.onehippo.cm.api.model;
 
-public enum ValueType {
-
-    /* required matching set of types, *and* their enum ordinal (order), for javax.jcr.PropertyType definitions (int) */
-    UNDEFINED,
-    STRING,
-    BINARY,
-    LONG,
-    DOUBLE,
-    DATE,
-    BOOLEAN,
-    NAME,
-    PATH,
-    REFERENCE,
-    WEAKREFERENCE,
-    URI,
-    DECIMAL;
-
-    /* other value types, not mapping on jcr PropertyType definitions, must go *after* the above required types */
-
-    // todo: decide whether to support (or remove) these
-    // ENCRYPTED
-    // CLASSNAME
-    // FOLDER
+public enum PropertyOperation {
+    ADD,
+    DELETE,
+    OVERRIDE,
+    REPLACE;
 
     public final String toString() {
         return name().toLowerCase();
     }
-
 }
