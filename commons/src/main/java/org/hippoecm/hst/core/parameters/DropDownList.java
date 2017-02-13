@@ -29,11 +29,20 @@ import java.lang.annotation.Target;
 public @interface DropDownList {
 
     /**
-     * List of options to show in the drop-down list. The selected option value is converted from a
-     * {@link String} to the return type of the annotated method
+     * Static list of options to show in the drop-down list. The selected option value is converted from a
+     * {@link String} to the return type of the annotated method.
      *
      * @return the options to show in the drop-down list.
      */
-    String[] value();
+    String[] value() default {};
 
+    /**
+     * Dynamic value list provider class that can return a list of options to show in the drop-down list dynamically
+     * from any data sources.  The selected option value is converted from a {@link String} to the return type
+     * of the annotated method.
+     *
+     * @return dynamic value list provider class that can return a list of options to show in the drop-down list
+     *         dynamically from any data sources.
+     */
+    Class<? extends ValueListProvider> valueListProvider() default EmptyValueListProvider.class;
 }
