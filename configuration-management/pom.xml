@@ -37,6 +37,7 @@
     <notice.project.name>Hippo Configuration Management</notice.project.name>
 
     <!-- Test dependencies  -->
+    <hippo.repository.version>4.2.0-SNAPSHOT</hippo.repository.version>
     <junit.version>4.12</junit.version>
     <snakeyaml.version>1.17</snakeyaml.version>
     <commons-lang3.version>3.5</commons-lang3.version>
@@ -65,6 +66,18 @@
   <dependencyManagement>
 
     <dependencies>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-dependencies</artifactId>
+        <version>${hippo.repository.version}</version>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-testutils</artifactId>
+        <version>${hippo.repository.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>

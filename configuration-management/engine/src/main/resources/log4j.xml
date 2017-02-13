@@ -23,7 +23,7 @@
   </category>
 
   <root>
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
     <appender-ref ref="root"/>
   </root>

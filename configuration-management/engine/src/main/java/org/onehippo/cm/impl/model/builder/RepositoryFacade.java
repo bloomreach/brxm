@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cm.impl.model.builder;
 
 import java.io.ByteArrayInputStream;
@@ -61,9 +60,11 @@ import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 public class RepositoryFacade {
     private static final Logger logger = LoggerFactory.getLogger(RepositoryFacade.class);
     private final Session session;
+    private final Node repositoryRoot;
 
-    public RepositoryFacade(final Session session) {
+    protected RepositoryFacade(final Session session, final Node repositoryRoot) {
         this.session = session;
+        this.repositoryRoot = repositoryRoot;
     }
 
     public void push(final MergedModel model) throws RepositoryException, ParseException {
@@ -149,11 +150,9 @@ public class RepositoryFacade {
         */
     }
 
-    private void pushNodes(final ConfigurationNode root) throws RepositoryException {
-        final Node node = session.getRootNode();
-
-        pushProperties(root, node);
-        pushNodes(root, node);
+    private void pushNodes(final ConfigurationNode configurationRoot) throws RepositoryException {
+        pushProperties(configurationRoot, repositoryRoot);
+        pushNodes(configurationRoot, repositoryRoot);
     }
 
     private void pushNodes(final ConfigurationNode modelNode, final Node jcrNode) throws RepositoryException {
@@ -173,6 +172,7 @@ public class RepositoryFacade {
             nextChildNameProvider.ignore(indexedName); // 'indexedName' is consumed.
 
             // ensure correct ordering
+            // TODO: add check for "isOrderable"
             if (indexedName.equals(nextChildIndexedName)) {
                 // 'nextChildIndexedName' is processed, get new next
                 nextChildIndexedName = nextChildNameProvider.next();
@@ -362,16 +362,20 @@ public class RepositoryFacade {
                 return factory.createValue((Calendar)sourceValue.getObject());
             case REFERENCE:
             case WEAKREFERENCE:
+                // TODO: resolve path references
                 final String uuid = sourceValue.getString();
                 final Node node = session.getNodeByIdentifier(uuid);
                 return factory.createValue(node, type == ValueType.WEAKREFERENCE);
-            case PATH: // TODO: do anything special here?
+            case PATH:
+                return factory.createValue(sourceValue.getString()); //todo
             case STRING:
+                return factory.createValue(sourceValue.getString()); //todo
             case NAME:
-                return factory.createValue(sourceValue.getString());
+                return factory.createValue(sourceValue.getString()); //todo
             default:
                 final String msg = String.format("Unsupported value type '%s'.", type);
                 throw new IllegalArgumentException(msg);
         }
     }
+
 }
