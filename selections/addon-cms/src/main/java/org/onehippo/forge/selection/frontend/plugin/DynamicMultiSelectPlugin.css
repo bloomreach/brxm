@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,4 +32,8 @@ div.multiselect-selection-link:not(:last-child) {
 
 div.multiselect-selection-link a {
   color: #333333;
+}
+
+span.multiselect-checkboxes input[type="checkbox"] {
+  margin: 0 6px 3px 0;
 }

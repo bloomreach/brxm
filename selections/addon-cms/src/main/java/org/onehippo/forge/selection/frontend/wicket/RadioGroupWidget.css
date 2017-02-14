@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
  * limitations under the License.
 */
 .radiogroup ul { margin: 0; padding: 0; list-style-type: none; list-style-image: none; }
-.radiogroup input { vertical-align: middle; width:auto;}
+.radiogroup input { vertical-align: middle; width:auto; }
+.radiogroup.vertical input { margin-right: 3px; }
+.radiogroup.horizontal input { margin-right: 2px; }
 .radiogroup label { vertical-align: middle; }
-.radiogroup.horizontal li {display: inline; }
+.radiogroup.horizontal li {display: inline; margin-right: 8px; }
+.radiogroup.vertical li { padding-bottom: 2px; }
