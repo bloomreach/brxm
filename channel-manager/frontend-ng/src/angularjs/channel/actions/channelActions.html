@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -16,9 +16,14 @@
 
 <md-menu ng-if="channelActions.hasMenuOptions()">
   <md-button aria-label="{{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}"
-             class="qa-button-channel"
+             class="qa-button-channel channel-button"
              ng-click="$mdOpenMenu($event)">
     {{ 'TOOLBAR_BUTTON_CHANNEL' | translate }}
+
+    <md-icon ng-if="channelActions.isShowChangesMenu()"
+             class="qa-channel-changes"
+             md-svg-src="images/attention.svg">
+    </md-icon>
   </md-button>
   <md-menu-content width="4" class="qa-channel-menu">
     <md-menu-item ng-if="channelActions.isChannelSettingsAvailable()">
@@ -31,8 +36,34 @@
     <md-menu-item ng-if="channelActions.isChannelDeletionAvailable()">
       <md-button class="qa-channel-action-delete"
                  aria-label="{{ 'TOOLBAR_MENU_CHANNEL_DELETE' | translate }}"
-                 ng-click="channelActions.deleteChannel()">
+                 ngclick="channelActions.deleteChannel()">
         {{ 'TOOLBAR_MENU_CHANNEL_DELETE' | translate }}
+      </md-button>
+    </md-menu-item>
+
+    <md-divider ng-if="channelActions.hasOwnChanges() || channelActions.canManageChanges()"></md-divider>
+
+    <md-menu-item ng-if="channelActions.hasOwnChanges()">
+      <md-button class="qa-channel-action-publish"
+                 aria-label="{{ 'TOOLBAR_MENU_CHANGES_PUBLISH' | translate }}"
+                 ng-click="channelActions.publish()">
+        {{ 'TOOLBAR_MENU_CHANGES_PUBLISH' | translate }}
+      </md-button>
+    </md-menu-item>
+
+    <md-menu-item ng-if="channelActions.hasOwnChanges()">
+      <md-button class="qa-channel-action-discard"
+                 aria-label="{{ 'TOOLBAR_MENU_CHANGES_DISCARD' | translate }}"
+                 ng-click="channelActions.discard()">
+        {{ 'TOOLBAR_MENU_CHANGES_DISCARD' | translate }}
+      </md-button>
+    </md-menu-item>
+
+    <md-menu-item ng-if="channelActions.canManageChanges()">
+      <md-button aria-label="{{ 'TOOLBAR_MENU_MANAGE_CHANGES' | translate }}"
+                 ng-disabled="!channelActions.isManageChangesEnabled()"
+                 ng-click="channelActions.manageChanges()">
+        {{ 'TOOLBAR_MENU_MANAGE_CHANGES' | translate }}
       </md-button>
     </md-menu-item>
   </md-menu-content>

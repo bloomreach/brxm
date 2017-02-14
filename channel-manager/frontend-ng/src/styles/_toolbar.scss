@@ -1,4 +1,4 @@
-// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -99,17 +99,9 @@ md-toolbar.hippo-toolbar {
     margin: 0;
   }
 
-  .changes-button {
-    margin-left: 0;
-    margin-right: 4px;
-    padding-right: 20px;
-
-    md-icon {
-      bottom: 1px;
-      color: $orange-a400;
-      left: 6px;
-      position: relative;
-    }
+  .channel-button md-icon {
+    fill: $toolbar-channel-changes-color;
+    margin-top: 1px;
   }
 }
 
