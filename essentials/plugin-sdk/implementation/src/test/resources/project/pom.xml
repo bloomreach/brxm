@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>11.1.0</version>
+    <version>unmaintained</version>
   </parent>
 
   <name>My Hippo Project</name>
