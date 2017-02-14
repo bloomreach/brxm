@@ -45,31 +45,47 @@
       <a class="left carousel-control" href="#${componentId}" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
       <a class="right carousel-control" href="#${componentId}" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
     </c:if>
+      <%--
+        The Carousel component is initialized on page-load by means of the data attributes. However, when the
+        channel-manager redraws a container (after actions like adding, removing or reordering components) it will only
+        do a page reload if one of the affected components adds a headContribution that has not been processed yet
+        (see HSTTWO-3747). To ensure it is also initialiazed when the page is *not* reloaded, the following snippet is
+        used.
+      --%>
+    <c:if test="${requestScope.editMode}">
+      <script type="text/javascript">
+        if (window.jQuery && window.jQuery.fn.carousel) {
+          jQuery('#${componentId}').carousel();
+        }
+      </script>
+    </c:if>
   </div>
-  <style type="text/css">
-    /* Carousel base class */
-    #${componentId} {
-      height: ${requestScope.cparam.carouselHeight}px;
-      /*width: ${requestScope.cparam.carouselWidth}px;*/
-      margin-bottom: 60px;
-    }
 
-    /* Since positioning the image, we need to help out the caption */
-    .carousel-caption {
-      z-index: 10;
-      background: rgba(51, 122, 183, 0.7);
-    }
+  <hst:headContribution category="htmlHead">
+    <style type="text/css">
+      /* Carousel base class */
+      #${componentId} {
+        height: ${requestScope.cparam.carouselHeight}px;
+        margin-bottom: 60px;
+      }
 
-    /* Declare heights because of positioning of img element */
-    #${componentId} .item {
-      height: ${requestScope.cparam.carouselHeight}px;
-      background-color: ${requestScope.cparam.carouselBackgroundColor};
-    }
-    /* center images*/
-    .carousel-inner > .item > img {
-      margin: 0 auto;
-    }
-  </style>
+      /* Since positioning the image, we need to help out the caption */
+      .carousel-caption {
+        z-index: 10;
+        background: rgba(51, 122, 183, 0.7);
+      }
+
+      /* Declare heights because of positioning of img element */
+      #${componentId} .item {
+        height: ${requestScope.cparam.carouselHeight}px;
+        background-color: ${requestScope.cparam.carouselBackgroundColor};
+      }
+      /* center images*/
+      .carousel-inner > .item > img {
+        margin: 0 auto;
+      }
+    </style>
+  </hst:headContribution>
 
   <hst:headContribution category="htmlBodyEnd">
     <script type="text/javascript" src="<hst:webfile path="/js/jquery-2.1.0.min.js"/>"></script>
@@ -79,23 +95,10 @@
     <script type="text/javascript" src="<hst:webfile path="/js/bootstrap.min.js"/>"></script>
   </hst:headContribution>
 
-  <%--
-    The Carousel component is initialized on page-load by means of the data attributes. However, when the
-    channel-manager redraws a container (after actions like adding, removing or reordering components) it will only
-    do a page reload if one of the affected components adds a headContribution that has not been processed yet
-    (see HSTTWO-3747). To ensure it is also initialiazed when the page is *not* reloaded, the following snippet is
-    used.
-  --%>
-  <c:if test="${editMode}">
-    <script type="text/javascript">
-      if (window.jQuery && window.jQuery.fn.carousel) {
-        jQuery('#${componentId}').carousel();
-      }
-    </script>
-  </c:if>
-
 </c:if>
 
 <c:if test="${requestScope.editMode && (requestScope.pageable eq null || requestScope.pageable.total lt 1)}">
-  <img src="<hst:link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
+  <div>
+    <img src="<hst:link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
+  </div>
 </c:if>

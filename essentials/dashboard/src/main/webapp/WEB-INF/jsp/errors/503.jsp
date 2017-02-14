@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+<%@ page language="java" contentType="text/html; charset=UTF-8" session="false" pageEncoding="UTF-8" %>
+<%--
+  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -13,13 +13,13 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  -->
-
-<sv:node sv:name="contentlist-main-contentlist" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hst:template</sv:value>
-  </sv:property>
-  <sv:property sv:name="hst:renderpath" sv:type="String">
-    <sv:value>{{webfilesPrefix}}/freemarker/hstdefault/contentlist-main-contentlist.ftl</sv:value>
-  </sv:property>
-</sv:node>
+  --%>
+<!doctype html>
+<html>
+<head>
+</head>
+<body>
+<h1>Service unavailable:</h1>
+<p style="color:#ef7357; font-size: 16px;">${error}</p>
+</body>
+</html>

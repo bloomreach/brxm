@@ -45,6 +45,20 @@
             <a class="left carousel-control" href="#${componentId}" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
             <a class="right carousel-control" href="#${componentId}" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
         </#if>
+        <#--
+          The Carousel component is initialized on page-load by means of the data attributes. However, when the
+          channel-manager redraws a container (after actions like adding, removing or reordering components) it will only
+          do a page reload if one of the affected components adds a headContribution that has not been processed yet
+          (see HSTTWO-3747). To ensure it is also initialiazed when the page is *not* reloaded, the following snippet is
+          used.
+        -->
+        <#if editMode>
+          <script type="text/javascript">
+            if (window.jQuery && window.jQuery.fn.carousel) {
+              jQuery('#${componentId}').carousel();
+            }
+          </script>
+        </#if>
     </div>
 
     <@hst.headContribution category="htmlHead">
@@ -52,7 +66,6 @@
             /* Carousel base class */
             #${componentId} {
                 height: ${cparam.carouselHeight}px;
-                /*width: ${cparam.carouselWidth}px;*/
                 margin-bottom: 60px;
             }
 
@@ -83,21 +96,8 @@
         <script type="text/javascript" src="<@hst.webfile path="/js/bootstrap.min.js"/>"></script>
     </@hst.headContribution>
 
-    <#--
-        The Carousel component is initialized on page-load by means of the data attributes. However, when the
-        channel-manager redraws a container (after actions like adding, removing or reordering components) it will only
-        do a page reload if one of the affected components adds a headContribution that has not been processed yet
-        (see HSTTWO-3747). To ensure it is also initialiazed when the page is *not* reloaded, the following snippet is
-        used.
-    -->
-    <#if editMode>
-        <script type="text/javascript">
-            if (window.jQuery && window.jQuery.fn.carousel) {
-                jQuery('#${componentId}').carousel();
-            }
-        </script>
-    </#if>
-
 <#elseif editMode>
+  <div>
     <img src="<@hst.link path='/images/essentials/catalog-component-icons/carousel.png'/>"> Click to edit Carousel
+  </div>
 </#if>

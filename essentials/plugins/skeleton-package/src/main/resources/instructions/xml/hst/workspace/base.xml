@@ -27,7 +27,7 @@
       <sv:value>Top</sv:value>
     </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
-      <sv:value>hst.span</sv:value>
+      <sv:value>hst.nomarkup</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="footer">
@@ -38,7 +38,7 @@
       <sv:value>Footer</sv:value>
     </sv:property>
     <sv:property sv:name="hst:xtype" sv:type="String">
-      <sv:value>hst.vbox</sv:value>
+      <sv:value>hst.nomarkup</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
