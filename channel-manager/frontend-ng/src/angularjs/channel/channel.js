@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 import channelSubpageModule from './subpage/subpage';
+import channelChangesModule from './changes/changes';
 import channelPageModule from './page/page';
 import channelPageActionsModule from './page/actions/actions';
 import channelActionsModule from './actions/actions';
@@ -34,6 +35,7 @@ const channelModule = angular
   .module('hippo-cm.channel', [
     'hippo-cm-api',
     channelSubpageModule.name,
+    channelChangesModule.name,
     channelPageModule.name,
     channelPageActionsModule.name,
     channelActionsModule.name,

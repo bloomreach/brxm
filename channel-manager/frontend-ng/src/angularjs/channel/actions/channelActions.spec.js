@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,17 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ChannelActions', () => {
+  let $rootScope;
   let $compile;
+  let $scope;
   let $element;
   let $q;
-  let $rootScope;
-  let $scope;
   let $translate;
   let ChannelService;
   let CmsService;
-  let ConfigService;
   let DialogService;
   let FeedbackService;
-  let HippoIframeService;
   let SessionService;
-  let SiteMapService;
 
   const confirmDialog = jasmine.createSpyObj('confirmDialog', ['title', 'textContent', 'ok', 'cancel']);
   confirmDialog.title.and.returnValue(confirmDialog);
@@ -42,41 +39,21 @@ describe('ChannelActions', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((
-      _$compile_,
-      _$q_,
-      _$rootScope_,
-      _$translate_,
-      _ChannelService_,
-      _CmsService_,
-      _ConfigService_,
-      _DialogService_,
-      _FeedbackService_,
-      _HippoIframeService_,
-      _SessionService_,
-      _SiteMapService_
-    ) => {
+    inject((_$rootScope_, _$compile_, _$q_, _$translate_, _ChannelService_, _CmsService_, _DialogService_, _FeedbackService_,
+            _SessionService_) => {
+      $rootScope = _$rootScope_;
       $compile = _$compile_;
       $q = _$q_;
-      $rootScope = _$rootScope_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
-      ConfigService = _ConfigService_;
       DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
-      HippoIframeService = _HippoIframeService_;
       SessionService = _SessionService_;
-      SiteMapService = _SiteMapService_;
     });
 
     spyOn($translate, 'instant');
-    spyOn(ChannelService, 'getChannel').and.returnValue({
-      changedBySet: [],
-      hasCustomProperties: true,
-    });
-    spyOn(ChannelService, 'publishOwnChanges').and.returnValue($q.resolve());
-    spyOn(ChannelService, 'discardOwnChanges').and.returnValue($q.resolve());
+    spyOn(ChannelService, 'getChannel').and.returnValue({ hasCustomProperties: true });
     spyOn(ChannelService, 'getName').and.returnValue('test-channel');
     spyOn(ChannelService, 'deleteChannel').and.returnValue($q.when());
     spyOn(DialogService, 'confirm').and.returnValue(confirmDialog);
@@ -84,13 +61,7 @@ describe('ChannelActions', () => {
     spyOn(DialogService, 'hide');
     spyOn(DialogService, 'show').and.returnValue($q.when());
     spyOn(FeedbackService, 'showErrorResponse');
-    spyOn(FeedbackService, 'showError');
-    spyOn(HippoIframeService, 'reload');
     spyOn(SessionService, 'canDeleteChannel').and.returnValue(true);
-    spyOn(SessionService, 'canManageChanges').and.returnValue(true);
-    spyOn(SiteMapService, 'load');
-
-    ConfigService.cmsUser = 'testUser';
   });
 
   function compileDirectiveAndGetController() {
@@ -225,116 +196,5 @@ describe('ChannelActions', () => {
 
     channelRemovedFromOverviewCallback();
     expect(DialogService.hide).toHaveBeenCalled();
-  });
-
-  it('determines if there are own changes', () => {
-    const ChannelActionsCtrl = compileDirectiveAndGetController();
-    expect(ChannelActionsCtrl.hasOwnChanges()).toBe(false);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser'] });
-    expect(ChannelActionsCtrl.hasOwnChanges()).toBe(false);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'] });
-    expect(ChannelActionsCtrl.hasOwnChanges()).toBe(true);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser', 'testUser'] });
-    expect(ChannelActionsCtrl.hasOwnChanges()).toBe(true);
-
-    ChannelService.getChannel.and.returnValue({});
-    expect(ChannelActionsCtrl.hasOwnChanges()).toBe(false);
-  });
-
-  it('enables the manage changes option when there are changes by other users', () => {
-    let ChannelActionsCtrl = compileDirectiveAndGetController();
-    expect(ChannelActionsCtrl.isManageChangesEnabled()).toBe(false);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser'] });
-    expect(ChannelActionsCtrl.isManageChangesEnabled()).toBe(false);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['otherUser'] });
-    expect(ChannelActionsCtrl.isManageChangesEnabled()).toBe(true);
-
-    ChannelService.getChannel.and.returnValue({ changedBySet: ['testUser', 'otherUser'] });
-    expect(ChannelActionsCtrl.isManageChangesEnabled()).toBe(true);
-
-    ChannelService.getChannel.and.returnValue({});
-    expect(ChannelActionsCtrl.isManageChangesEnabled()).toBe(false);
-
-    SessionService.canManageChanges.and.returnValue(false);
-    ChannelActionsCtrl = compileDirectiveAndGetController();
-    expect(ChannelActionsCtrl.isManageChangesEnabled()).toBe(false);
-  });
-
-  it('publishes changes', () => {
-    const ChannelActionsCtrl = compileDirectiveAndGetController();
-    ChannelActionsCtrl.publish();
-    $rootScope.$digest();
-
-    expect(ChannelService.publishOwnChanges).toHaveBeenCalled();
-    expect(HippoIframeService.reload).toHaveBeenCalled();
-  });
-
-  it('flashes a toast when publication failed', () => {
-    const ChannelActionsCtrl = compileDirectiveAndGetController();
-
-    const params = { };
-    ChannelService.publishOwnChanges.and.returnValue($q.reject({ data: params }));
-    ChannelActionsCtrl.publish();
-    $rootScope.$digest();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', params);
-
-    ChannelService.publishOwnChanges.and.returnValue($q.reject());
-    ChannelActionsCtrl.publish();
-    $rootScope.$digest();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_PUBLICATION_FAILED', undefined);
-  });
-
-  it('discards changes', () => {
-    const ChannelActionsCtrl = compileDirectiveAndGetController();
-    ChannelActionsCtrl.discard();
-    $rootScope.$digest();
-
-    expect(DialogService.confirm).toHaveBeenCalled();
-    expect(DialogService.show).toHaveBeenCalled();
-    expect(ChannelService.discardOwnChanges).toHaveBeenCalled();
-    expect(HippoIframeService.reload).toHaveBeenCalled();
-  });
-
-  it('flashes a toast when discarding failed', () => {
-    const ChannelActionsCtrl = compileDirectiveAndGetController();
-
-    const params = { };
-    ChannelService.discardOwnChanges.and.returnValue($q.reject({ data: params }));
-    ChannelActionsCtrl.discard();
-    $rootScope.$digest();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', params);
-
-    ChannelService.discardOwnChanges.and.returnValue($q.reject());
-    ChannelActionsCtrl.discard();
-    $rootScope.$digest();
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_CHANGE_DISCARD_FAILED', undefined);
-  });
-
-  it('does not discard changes if not confirmed', () => {
-    DialogService.show.and.returnValue($q.reject());
-
-    const ChannelActionsCtrl = compileDirectiveAndGetController();
-    ChannelActionsCtrl.discard();
-    $rootScope.$digest();
-
-    expect(DialogService.confirm).toHaveBeenCalled();
-    expect(DialogService.show).toHaveBeenCalled();
-    expect(ChannelService.discardOwnChanges).not.toHaveBeenCalled();
-  });
-
-  it('calls input function when manage changes', () => {
-    const ChannelActionsCtrl = compileDirectiveAndGetController();
-    spyOn(ChannelActionsCtrl, 'onActionSelected');
-
-    ChannelActionsCtrl.manageChanges();
-
-    expect(ChannelActionsCtrl.onActionSelected).toHaveBeenCalledWith({
-      subpage: 'manage-changes',
-    });
   });
 });

@@ -1,5 +1,5 @@
 <!--
-  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -35,6 +35,10 @@
       </div>
 
       <div flex="30" layout layout-align="end center">
+        <changes-menu ng-show="channelCtrl.isChannelLoaded()"
+          on-manage-changes="channelCtrl.showSubpage('manage-changes')">
+        </changes-menu>
+
         <div class="button-toggle" layout>
           <md-button class="qa-button-view"
                      ng-class="{ 'button-active': !channelCtrl.isEditMode }"
