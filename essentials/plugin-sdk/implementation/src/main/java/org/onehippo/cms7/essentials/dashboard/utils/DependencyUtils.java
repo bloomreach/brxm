@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ADDON_EDITION_INDICATOR_ARTIFACT_ID;
-import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_ARTIFACT_ID;
+import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_RELEASE_ID;
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_GROUP_ID;
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO_ID;
 import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO_NAME;
@@ -273,7 +273,7 @@ public final class DependencyUtils {
         final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
         if (pomModel != null) {
             final Parent parent = new Parent();
-            parent.setArtifactId(ENT_ARTIFACT_ID);
+            parent.setArtifactId(ENT_RELEASE_ID);
             parent.setGroupId(ENT_GROUP_ID);
             parent.setVersion(pomModel.getParent().getVersion());
             pomModel.setParent(parent);
@@ -298,7 +298,7 @@ public final class DependencyUtils {
         }
         final String groupId = parent.getGroupId();
         final String artifactId = parent.getArtifactId();
-        return groupId.equals(ENT_GROUP_ID) && artifactId.equals(ENT_ARTIFACT_ID);
+        return groupId.equals(ENT_GROUP_ID) && artifactId.equals(ENT_RELEASE_ID);
 
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,7 @@
 package org.onehippo.cms7.essentials.dashboard.utils;
 
 import java.net.URL;
-
-import org.apache.maven.model.Dependency;
-import org.junit.Ignore;
+import org.apache.maven.model.Model;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseResourceTest;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
@@ -33,13 +31,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @version "$Id$"
  */
 public class DependencyUtilsTest extends BaseResourceTest {
 
+    private static final String NEW_REPO = "http://maven.onehippo.com/maven3/";
 
-    public static final String NEW_REPO = "http://maven.onehippo.com/maven3/";
+    private Logger log = LoggerFactory.getLogger(DependencyUtilsTest.class);
 
     @Test
     public void testRepositoryAdd() throws Exception {
@@ -99,19 +101,43 @@ public class DependencyUtilsTest extends BaseResourceTest {
 
     }
 
-    @Ignore("Ignore temporary to fix windows testcase errors")
     @Test
-    public void testDependencies() throws Exception {
+    public void testIsEnterpriseProject() throws Exception {
         final URL resource = getClass().getResource("/project");
-        Dependency dependency = new Dependency();
-        dependency.setGroupId("org.onehippo.cms7.essentials");
-        dependency.setArtifactId("hippo-components-plugin-components");
         System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, resource.getPath());
+
         final PluginContext context = getContext();
         boolean enterpriseProject = DependencyUtils.isEnterpriseProject(context);
         assertFalse(enterpriseProject);
+    }
+
+    @Test
+    public void testUpgradeToEnterpriseProject() throws Exception {
+        final URL resource = getClass().getResource("/project");
+        System.setProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY, resource.getPath());
+
+        final PluginContext context = getContext();
+        boolean enterpriseProject = DependencyUtils.isEnterpriseProject(context);
+        if (enterpriseProject) {
+            log.info("Probably read Enterprise project from already upgraded target");
+            return;
+        }
+
         enterpriseProject = DependencyUtils.upgradeToEnterpriseProject(context);
         assertTrue(enterpriseProject);
 
+        final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
+
+        for (final org.apache.maven.model.Repository repository : pomModel.getRepositories()) {
+            if (repository.getId().equals(ProjectUtils.ENT_REPO_ID)) {
+                assertTrue(repository.getName().equals(ProjectUtils.ENT_REPO_NAME));
+                assertTrue(repository.getReleases().getUpdatePolicy().equals("never"));
+                assertTrue(repository.getReleases().getChecksumPolicy().equals("fail"));
+                log.debug("Found Enterprise Repository as expected");
+                return;
+            }
+        }
+
+        assertTrue("No Enterprise Repositories found in pom: " + pomModel.getRepositories(), false);
     }
 }
