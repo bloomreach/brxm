@@ -16,5 +16,7 @@
     </a>
   </div>
 <#elseif editMode>
-  <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.png'/>"> Click to edit Banner
+  <div>
+    <img src="<@hst.link path='/images/essentials/catalog-component-icons/banner.png'/>"> Click to edit Banner
+  </div>
 </#if>
