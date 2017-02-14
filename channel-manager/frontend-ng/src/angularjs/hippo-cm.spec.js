@@ -70,7 +70,7 @@ describe('The hippo-cm module', () => {
     $httpBackend.whenGET('i18n/no-such-locale.json?antiCache=123').respond(404);
 
     $state.go('hippo-cm.dummy-child-state');
-    $httpBackend.flush();
+    $rootScope.$apply();
 
     expect($translate.instant('HIPPO')).toEqual('Hippo');
   });
