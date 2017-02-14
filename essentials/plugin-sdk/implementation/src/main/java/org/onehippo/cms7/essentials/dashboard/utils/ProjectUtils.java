@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ public final class ProjectUtils {
         if (System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY) != null && !System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY).isEmpty()) {
             return System.getProperty(EssentialConst.PROJECT_BASEDIR_PROPERTY);
         }
-        throw new IllegalStateException("System property 'project.basedir' was not null or empty. Please start your application with -D=project.basedir=/project/path");
+        throw new IllegalStateException("System property 'project.basedir' was null or empty. Please start your application with -D=project.basedir=/project/path");
     }
 
     public static String getEssentialsModuleName() {
