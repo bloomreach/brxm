@@ -33,92 +33,92 @@
  */
 
 .cke_wysiwyg_div.cke_editable {
-    line-height: 1.6em;
-    padding: 16px;
+  line-height: 1.6em;
+  padding: 16px;
 }
 
 .cke_wysiwyg_div.cke_editable,
 .cke_panel_container {
-    color: #333;
-    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 13px;
+  color: #333;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 13px;
 }
 
 .cke_wysiwyg_div.cke_editable blockquote {
-    border: 0 solid #ccc;
-    font-family: Georgia, Times, "Times New Roman", serif;
-    font-style: italic;
-    padding: 2px 0;
+  border: 0 solid #ccc;
+  font-family: Georgia, Times, "Times New Roman", serif;
+  font-style: italic;
+  padding: 2px 0;
 }
 
 .cke_wysiwyg_div.cke_editable.cke_contents_ltr blockquote {
-    border-left-width: 5px;
-    padding-left: 20px;
-    padding-right: 8px;
+  border-left-width: 5px;
+  padding-left: 20px;
+  padding-right: 8px;
 }
 
 .cke_wysiwyg_div.cke_editable.cke_contents_rtl blockquote {
-    border-right-width: 5px;
-    padding-left: 8px;
-    padding-right: 20px;
+  border-right-width: 5px;
+  padding-left: 8px;
+  padding-right: 20px;
 }
 
 .cke_wysiwyg_div.cke_editable a {
-    color: #0877d1;
-    text-decoration: underline;
+  color: #0877d1;
+  text-decoration: underline;
 }
 
 .cke_wysiwyg_div.cke_editable em {
-    font-style: italic;
+  font-style: italic;
 }
 
 .cke_wysiwyg_div.cke_editable strong {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .cke_wysiwyg_div.cke_editable em strong, .cke_wysiwyg_div.cke_editable strong em {
-    font-style: italic;
-    font-weight: bold;
+  font-style: italic;
+  font-weight: bold;
 }
 
 .cke_wysiwyg_div.cke_editable sub {
-    vertical-align: sub;
+  vertical-align: sub;
 }
 
 .cke_wysiwyg_div.cke_editable sup {
-    vertical-align: super;
+  vertical-align: super;
 }
 
 .cke_wysiwyg_div.cke_editable ol,
 .cke_wysiwyg_div.cke_editable ul,
 .cke_wysiwyg_div.cke_editable dl {
-    margin-right: 0;
-    padding: 0 40px;
+  margin-right: 0;
+  padding: 0 40px;
 }
 
 .cke_wysiwyg_div.cke_editable ol {
-    list-style-type: decimal;
+  list-style-type: decimal;
 }
 
 .cke_wysiwyg_div.cke_editable ul {
-    list-style-type: disc;
+  list-style-type: disc;
 }
 
 .cke_wysiwyg_div.cke_editable li,
 .cke_wysiwyg_div.cke_editable li {
-    list-style-type: inherit;
+  list-style-type: inherit;
 }
 
 .cke_panel_block {
-    outline: 0;
+  outline: 0;
 }
 
 .cke_panel_grouptitle {
-    background: #f2f2f2 none;
+  background: #f2f2f2 none;
 }
 
 .cke_panel_container .cke_selected > a {
-    border-color: #d4d6d8;
+  border-color: #d4d6d8;
 }
 
 .cke_wysiwyg_div.cke_editable h1,
@@ -133,8 +133,8 @@
 .cke_panel_container .cke_panel_listItem h4,
 .cke_panel_container .cke_panel_listItem h5,
 .cke_panel_container .cke_panel_listItem h6 {
-    font-weight: bold;
-    line-height: 1.2em;
+  font-weight: bold;
+  line-height: 1.2em;
 }
 
 .cke_wysiwyg_div.cke_editable h1,
@@ -155,68 +155,68 @@
 .cke_wysiwyg_div.cke_editable h5:first-child,
 .cke_wysiwyg_div.cke_editable h6:first-child,
 .cke_wysiwyg_div.cke_editable p:first-child {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 .cke_wysiwyg_div.cke_editable h1,
 .cke_panel_container .cke_panel_listItem h1 {
-    font-size: 2em;
+  font-size: 2em;
 }
 
 .cke_wysiwyg_div.cke_editable h2,
 .cke_panel_container .cke_panel_listItem h2 {
-    font-size: 1.5em;
+  font-size: 1.5em;
 }
 
 .cke_wysiwyg_div.cke_editable h3,
 .cke_panel_container .cke_panel_listItem h3 {
-    font-size: 1.17em;
+  font-size: 1.17em;
 }
 
 .cke_wysiwyg_div.cke_editable h4,
 .cke_panel_container .cke_panel_listItem {
-    font-size: 1em;
+  font-size: 1em;
 }
 
 .cke_wysiwyg_div.cke_editable h5,
 .cke_panel_container .cke_panel_listItem h5 {
-    font-size: 0.9em;
+  font-size: 0.9em;
 }
 
 .cke_wysiwyg_div.cke_editable h6,
 .cke_panel_container .cke_panel_listItem h6 {
-    font-size: 0.8em;
+  font-size: 0.8em;
 }
 
 .cke_wysiwyg_div.cke_editable hr {
-    border: 0;
-    border-top: 1px solid #ccc;
+  border: 0;
+  border-top: 1px solid #ccc;
 }
 
 .cke_wysiwyg_div.cke_editable img.right {
-    border: 1px solid #ccc;
-    float: right;
-    margin-left: 15px;
-    padding: 5px;
+  border: 1px solid #ccc;
+  float: right;
+  margin-left: 15px;
+  padding: 5px;
 }
 
 .cke_wysiwyg_div.cke_editable img.left {
-    border: 1px solid #ccc;
-    float: left;
-    margin-right: 15px;
-    padding: 5px;
+  border: 1px solid #ccc;
+  float: left;
+  margin-right: 15px;
+  padding: 5px;
 }
 
 .cke_wysiwyg_div.cke_editable img:hover {
-    filter: alpha(opacity = 90);
-    opacity: .9;
+  filter: alpha(opacity=90);
+  opacity: .9;
 }
 
 .cke_wysiwyg_div.cke_editable pre {
-    overflow: visible;
-    white-space: pre-wrap;
+  overflow: visible;
+  white-space: pre-wrap;
 }
 
 .cke_wysiwyg_div.cke_editable .marker {
-    background-color: yellow;
+  background-color: yellow;
 }
