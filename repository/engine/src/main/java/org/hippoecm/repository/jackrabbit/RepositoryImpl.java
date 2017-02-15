@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
     public static final String REPOSITORY_STATS_JMX_NAME = "org.hippoecm.repository:type=Repository,name=statistics";
 
     private static Logger log = LoggerFactory.getLogger(RepositoryImpl.class);
-    
+
     private FacetedNavigationEngine<FacetedNavigationEngine.Query, FacetedNavigationEngine.Context> facetedEngine;
 
     protected boolean isStarted = false;
@@ -166,9 +166,9 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
     public FacetedNavigationEngine<FacetedNavigationEngine.Query, FacetedNavigationEngine.Context> getFacetedNavigationEngine() {
         if (facetedEngine == null) {
             log.warn("Please configure your facetedEngine correctly. Application will fall back to default "
-                            + "faceted engine, but this is a very inefficient one. In your repository.xml (or workspace.xml if you have "
-                            + "started the repository already at least once) configure the correct class for SearchIndex. See Hippo ECM "
-                            + "documentation 'SearchIndex configuration' for further information.");
+                    + "faceted engine, but this is a very inefficient one. In your repository.xml (or workspace.xml if you have "
+                    + "started the repository already at least once) configure the correct class for SearchIndex. See Hippo ECM "
+                    + "documentation 'SearchIndex configuration' for further information.");
         }
         return facetedEngine;
     }
@@ -193,7 +193,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
     }
 
     void initializeLocalItemStateManager(HippoLocalItemStateManager stateMgr,
-            org.apache.jackrabbit.core.SessionImpl session, Subject subject) throws RepositoryException {
+                                         org.apache.jackrabbit.core.SessionImpl session, Subject subject) throws RepositoryException {
         FacetedNavigationEngine.Context facetedContext = null;
         if (facetedEngine != null) {
             facetedContext = facetedEngine.prepare(session.getUserID(), subject, null, session);
@@ -209,11 +209,11 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
                 context.getNodeTypeRegistry(), true, context.getItemStateCacheFactory(),
                 locking, context.getNodeIdFactory());
     }
-               
+
 
     @Override
     protected org.apache.jackrabbit.core.SessionImpl createSessionInstance(AuthContext loginContext,
-            WorkspaceConfig wspConfig) throws AccessDeniedException, RepositoryException {
+                                                                           WorkspaceConfig wspConfig) throws AccessDeniedException, RepositoryException {
 
         return new XASessionImpl(context, loginContext, wspConfig);
     }
@@ -262,6 +262,10 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
         return getWorkspaceInfo(workspaceName).getPersistenceManager();
     }
 
+    public ClusterNode getClusterNode() {
+        return context.getClusterNode();
+    }
+
     /**
      * Get the root/system session for a workspace
      * @param workspaceName if the workspaceName equals null the default namespace is taken
@@ -306,7 +310,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
         protected SearchManager getSearchManager() throws RepositoryException {
             if (!isInitialized()) {
                 throw new IllegalStateException("workspace '" + getName()
-                                                        + "' not initialized");
+                        + "' not initialized");
             }
 
             synchronized (this) {
@@ -314,13 +318,13 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl im
                     // search manager is lazily instantiated in order to avoid
                     // 'chicken & egg' bootstrap problems
                     searchMgr = new HippoSearchManager(getName(),
-                        context, HippoWorkspaceInfo.this.getConfig(), HippoWorkspaceInfo.this.getItemStateProvider(),
-                              HippoWorkspaceInfo.this.getPersistenceManager(), context.getRootNodeId(),
-                              getSystemSearchManager(HippoWorkspaceInfo.this.getName()),
-                              org.apache.jackrabbit.core.RepositoryImpl.SYSTEM_ROOT_NODE_ID);
+                            context, HippoWorkspaceInfo.this.getConfig(), HippoWorkspaceInfo.this.getItemStateProvider(),
+                            HippoWorkspaceInfo.this.getPersistenceManager(), context.getRootNodeId(),
+                            getSystemSearchManager(HippoWorkspaceInfo.this.getName()),
+                            org.apache.jackrabbit.core.RepositoryImpl.SYSTEM_ROOT_NODE_ID);
                 }
                 return searchMgr;
-             }
+            }
         }
 
         @Override
