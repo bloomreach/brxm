@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -23,5 +23,14 @@
   </sv:property>
   <sv:property sv:name="locales" sv:type="String" sv:multiple="true">
     <sv:value>en</sv:value>
+  </sv:property>
+  <sv:property sv:name="public.package.resource.class.name.prefixes" sv:type="String" sv:multiple="true">
+    <!--
+      Prefixes of class names that are used for loading public package resources (i.e. resources referenced
+      relative to a class that are required for public pages, like the login page).
+    -->
+    <sv:value>org.apache.wicket.</sv:value>
+    <sv:value>org.hippoecm.</sv:value>
+    <sv:value>org.onehippo.</sv:value>
   </sv:property>
 </sv:node>
