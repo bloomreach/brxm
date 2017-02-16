@@ -16,168 +16,163 @@
 // -------------------------
 
 // Bootstrap Grays
-$gray-darker:                                 $darkest-shade;
-$gray-dark:                                   $darker-shade;
-$gray:                                        $dark-shade;
-$gray-light:                                  $light-gray;
-$gray-lighter:                                $lighter-shade;
+$gray-darker: $darkest-shade;
+$gray-dark: $darker-shade;
+$gray: $dark-shade;
+$gray-light: $light-gray;
+$gray-lighter: $lighter-shade;
 
 // Bootstrap Colors
-$brand-primary:                               $primary;
-$brand-success:                               $success;
-$brand-info:                                  $info;
-$brand-warning:                               $warning;
-$brand-danger:                                $danger;
+$brand-primary: $primary;
+$brand-success: $success;
+$brand-info: $info;
+$brand-warning: $warning;
+$brand-danger: $danger;
 
-$body-bg:                                     $white;
-$text-color:                                  $darkest-shade;
-$link-color:                                  $primary;
-$link-hover-color:                            $darker-shade;
-$link-hover-decoration:                       none;
+$body-bg: $white;
+$text-color: $darkest-shade;
+$link-color: $primary;
+$link-hover-color: $darker-shade;
+$link-hover-decoration: none;
 
 // Typography
-$font-family-sans-serif:                      "Helvetica Neue", Helvetica, Arial, sans-serif;
-$font-family-monospace:                       Menlo, Monaco, Consolas, "Courier New", monospace;
-$font-family-base:                            "Open Sans", $font-family-sans-serif;
+$font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-family-monospace: Menlo, Monaco, Consolas, "Courier New", monospace;
+$font-family-base: "Open Sans", $font-family-sans-serif;
 /* No need for a serif font in the CMS UI */
-$font-family-serif:                           $font-family-base;
+$font-family-serif: $font-family-base;
 
-$font-size-base:                              13px;
-$font-size-large:                             ceil(($font-size-base * 1.10)); // ~15px
-$font-size-small:                             ceil(($font-size-base * 0.85)); // ~12px
-$font-size-tiny:                              ceil(($font-size-base * 0.75)); // ~10px
+$font-size-base: 13px;
+$font-size-large: ceil(($font-size-base * 1.10)); // ~15px
+$font-size-small: ceil(($font-size-base * 0.85)); // ~12px
+$font-size-tiny: ceil(($font-size-base * 0.75)); // ~10px
 
-$font-size-h1:                                floor(($font-size-base * 2.6)); // ~33px
-$font-size-h2:                                floor(($font-size-base * 2.15)); // ~27px
-$font-size-h3:                                ceil(($font-size-base * 1.7)); // ~23px
-$font-size-h4:                                ceil(($font-size-base * 1.25)); // ~17px
-$font-size-h5:                                $font-size-base;
-$font-size-h6:                                ceil(($font-size-base * 0.85)); // ~12px
+$font-size-h1: floor(($font-size-base * 2.6)); // ~33px
+$font-size-h2: floor(($font-size-base * 2.15)); // ~27px
+$font-size-h3: ceil(($font-size-base * 1.7)); // ~23px
+$font-size-h4: ceil(($font-size-base * 1.25)); // ~17px
+$font-size-h5: $font-size-base;
+$font-size-h6: ceil(($font-size-base * 0.85)); // ~12px
 
-$line-height-base:                            1.24;
-$line-height-computed:                        floor($font-size-base * $line-height-base); // ~16px
+$line-height-base: 1.24;
+$line-height-computed: floor($font-size-base * $line-height-base); // ~16px
 
-$headings-font-family:                        inherit;
-$headings-font-weight:                        500;
-$headings-line-height:                        $line-height-base;
-$headings-color:                              inherit;
+$headings-font-family: inherit;
+$headings-font-weight: 500;
+$headings-line-height: $line-height-base;
+$headings-color: inherit;
 
-$icon-font-path:                              '../fonts/';
-
+$icon-font-path: '../fonts/';
 
 //== Components
 //
 //## Define common padding and border radius sizes and more. Values based on 14px text and 1.428 line-height (~20px to start).
-$padding-base-vertical:                       8px;
-$padding-large-vertical:                      12px;
-$padding-small-vertical:                      4px;
-$padding-small-horizontal:                    8px;
-$padding-xs-horizontal:                       4px;
+$padding-base-vertical: 8px;
+$padding-large-vertical: 12px;
+$padding-small-vertical: 4px;
+$padding-small-horizontal: 8px;
+$padding-xs-horizontal: 4px;
 
-$border-radius-base:                          0;
-$border-radius-large:                         0;
-$border-radius-small:                         0;
+$border-radius-base: 0;
+$border-radius-large: 0;
+$border-radius-small: 0;
 
 // Allows for customizing button radius independently from global border radius
-$btn-border-radius-base:                      5px;
+$btn-border-radius-base: 5px;
 
 //== Tables
 //
 //## Customizes the `.table` component with basic values, each used across all table variations.
 
 //** Padding for cells in `.table-condensed`.
-$table-condensed-cell-padding:                4px;
+$table-condensed-cell-padding: 4px;
 
 //** Default background color used for all tables.
-$table-bg:                      transparent;
+$table-bg: transparent;
 //** Background color used for `.table-striped`.
-$table-bg-accent:                             $lightest-shade;
+$table-bg-accent: $lightest-shade;
 //** Background color used for `.table-hover`.
-$table-bg-hover:                              $lighter-shade;
-$table-bg-active:                             $table-bg-hover;
+$table-bg-hover: $lighter-shade;
+$table-bg-active: $table-bg-hover;
 
 //** Border color for table and cell borders.
-$table-border-color:                          $light-gray;
-
+$table-border-color: $light-gray;
 
 // //== Buttons
 // //
 // //## For each of Bootstrap's buttons, define text, background and border color.
 
-$btn-default-color:                           $text-color;
-$btn-default-bg:                              $white;
-$btn-default-border:                          $light-gray;
+$btn-default-color: $text-color;
+$btn-default-bg: $white;
+$btn-default-border: $light-gray;
 
-$btn-primary-color:                           $white;
-$btn-primary-bg:                              $primary;
-$btn-primary-border:             darken($btn-primary-bg, 5%) !default;
+$btn-primary-color: $white;
+$btn-primary-bg: $primary;
+$btn-primary-border: darken($btn-primary-bg, 5%) !default;
 
-$btn-success-color:                           $white;
-$btn-success-bg:                              $success;
-$btn-success-border:             darken($btn-success-bg, 5%) !default;
+$btn-success-color: $white;
+$btn-success-bg: $success;
+$btn-success-border: darken($btn-success-bg, 5%) !default;
 
-$btn-info-color:                              $white;
-$btn-info-bg:                                 $brand-info;
-$btn-info-border:                darken($btn-info-bg, 5%) !default;
+$btn-info-color: $white;
+$btn-info-bg: $brand-info;
+$btn-info-border: darken($btn-info-bg, 5%) !default;
 
-$btn-warning-color:                           $white;
-$btn-warning-bg:                              $warning;
-$btn-warning-border:             darken($btn-warning-bg, 5%) !default;
+$btn-warning-color: $white;
+$btn-warning-bg: $warning;
+$btn-warning-border: darken($btn-warning-bg, 5%) !default;
 
-$btn-danger-color:                            $white;
-$btn-danger-bg:                               $danger;
-$btn-danger-border:              darken($btn-danger-bg, 5%) !default;
+$btn-danger-color: $white;
+$btn-danger-bg: $danger;
+$btn-danger-border: darken($btn-danger-bg, 5%) !default;
 
-$btn-link-disabled-color:                     $dark-gray;
-
+$btn-link-disabled-color: $dark-gray;
 
 //== Form states and alerts
 //
 //## Define colors for form feedback states and, by default, alerts.
 
-$state-success-text:                          $success;
-$state-success-bg:                            $success-light;
-$state-success-border:                        $success-shaded;
+$state-success-text: $success;
+$state-success-bg: $success-light;
+$state-success-border: $success-shaded;
 
-$state-info-text:                             $info;
-$state-info-bg:                               $info-light;
-$state-info-border:                           $info-shaded;
+$state-info-text: $info;
+$state-info-bg: $info-light;
+$state-info-border: $info-shaded;
 
-$state-warning-text:                          $warning;
-$state-warning-bg:                            $warning-light;
-$state-warning-border:                        $warning-shaded;
+$state-warning-text: $warning;
+$state-warning-bg: $warning-light;
+$state-warning-border: $warning-shaded;
 
-$state-danger-text:                           $danger;
-$state-danger-bg:                             $danger-light;
-$state-danger-border:                         $danger-shaded;
-
+$state-danger-text: $danger;
+$state-danger-bg: $danger-light;
+$state-danger-border: $danger-shaded;
 
 //== Alerts
 //
 //## Define alert colors, border radius, and padding.
 
-$alert-border-radius:         $border-radius-base !default;
+$alert-border-radius: $border-radius-base !default;
 
-$alert-success-bg:            $state-success-bg !default;
-$alert-success-text:                          darken($state-success-text, 50%);
-$alert-success-border:        $state-success-border !default;
+$alert-success-bg: $state-success-bg !default;
+$alert-success-text: darken($state-success-text, 50%);
+$alert-success-border: $state-success-border !default;
 
-$alert-info-bg:               $state-info-bg !default;
-$alert-info-text:                             darken($state-info-text, 50%);
-$alert-info-border:           $state-info-border !default;
+$alert-info-bg: $state-info-bg !default;
+$alert-info-text: darken($state-info-text, 50%);
+$alert-info-border: $state-info-border !default;
 
-$alert-warning-bg:            $state-warning-bg !default;
-$alert-warning-text:                          darken($state-warning-text, 50%);
-$alert-warning-border:        $state-warning-border !default;
+$alert-warning-bg: $state-warning-bg !default;
+$alert-warning-text: darken($state-warning-text, 50%);
+$alert-warning-border: $state-warning-border !default;
 
-$alert-danger-bg:             $state-danger-bg !default;
-$alert-danger-text:                           darken($state-danger-text, 50%);
-$alert-danger-border:         $state-danger-border !default;
-
+$alert-danger-bg: $state-danger-bg !default;
+$alert-danger-text: darken($state-danger-text, 50%);
+$alert-danger-border: $state-danger-border !default;
 
 //== Type
 //
 //##
 
 // //** Text muted color
-$text-muted:                                  $light-gray;
+$text-muted: $light-gray;
