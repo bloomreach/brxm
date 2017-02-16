@@ -115,7 +115,7 @@ public class Main extends PluginApplication {
     static final Logger log = LoggerFactory.getLogger(Main.class);
 
     private static final String FRONTEND_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
-    private static final String PUBLIC_PACKAGE_RESOURCE_CLASS_NAME_PREFIXES = "public.package.resource.class.name.prefixes";
+    private static final String WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES = "whitelisted.classes.for.package.resources";
 
     /**
      * Parameter name of the repository storage directory
@@ -476,6 +476,7 @@ public class Main extends PluginApplication {
 
                     @Override
                     protected BufferedWebResponse renderPage(final Url targetUrl, final RequestCycle requestCycle) {
+                        // at this point we have repository access so we can read the package resource guard settings
                         initPackageResourceGuard();
 
                         IRequestHandler scheduled = requestCycle.getRequestHandlerScheduledAfterCurrent();
@@ -499,8 +500,8 @@ public class Main extends PluginApplication {
     }
 
     protected void initPackageResourceGuard() {
-        final WhitelistedPublicClassesPackageResourceGuard packageResourceGuard = new WhitelistedPublicClassesPackageResourceGuard();
-        final String[] classNamePrefixes = GlobalSettings.get().getStringArray(PUBLIC_PACKAGE_RESOURCE_CLASS_NAME_PREFIXES);
+        final WhitelistedClassesResourceGuard packageResourceGuard = new WhitelistedClassesResourceGuard();
+        final String[] classNamePrefixes = GlobalSettings.get().getStringArray(WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES);
         packageResourceGuard.addClassNamePrefixes(classNamePrefixes);
 
         // CMS7-8898: allow .woff2 files to be served

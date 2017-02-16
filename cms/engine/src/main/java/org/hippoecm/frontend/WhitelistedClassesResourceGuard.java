@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -33,14 +33,14 @@ import org.slf4j.LoggerFactory;
  * When either of these criteria is met, access is granted by the super class ({@link SecurePackageResourceGuard}).
  * Otherwise access is denied.
  */
-public class WhitelistedPublicClassesPackageResourceGuard extends SecurePackageResourceGuard {
+public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard {
 
-    private static final Logger log = LoggerFactory.getLogger(WhitelistedPublicClassesPackageResourceGuard.class);
+    private static final Logger log = LoggerFactory.getLogger(WhitelistedClassesResourceGuard.class);
 
-    private final Set<String> classNamePrefixes;
+    private final List<String> classNamePrefixes;
 
-    public WhitelistedPublicClassesPackageResourceGuard() {
-        this.classNamePrefixes = new HashSet<>();
+    public WhitelistedClassesResourceGuard() {
+        this.classNamePrefixes = new ArrayList<>();
     }
 
     public void addClassNamePrefixes(String... prefixes) {
@@ -51,7 +51,7 @@ public class WhitelistedPublicClassesPackageResourceGuard extends SecurePackageR
 
     @Override
     public boolean accept(final Class<?> scope, final String absolutePath) {
-        if (isUserLoggedIn() || isWhitelisted(scope)) {
+        if (isWhitelisted(scope) || isUserLoggedIn()) {
             return super.accept(scope, absolutePath);
         }
         log.error("Public access denied to non-whitelisted (static) package resource: {}", absolutePath);

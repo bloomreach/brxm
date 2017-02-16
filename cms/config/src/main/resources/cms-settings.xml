@@ -24,10 +24,9 @@
   <sv:property sv:name="locales" sv:type="String" sv:multiple="true">
     <sv:value>en</sv:value>
   </sv:property>
-  <sv:property sv:name="public.package.resource.class.name.prefixes" sv:type="String" sv:multiple="true">
+  <sv:property sv:name="whitelisted.classes.for.package.resources" sv:type="String" sv:multiple="true">
     <!--
-      Prefixes of class names that are used for loading public package resources (i.e. resources referenced
-      relative to a class that are required for public pages, like the login page).
+      Prefixes of class names that are used by public pages to load package resources (e.g. the login page).
     -->
     <sv:value>org.hippoecm.</sv:value>
     <sv:value>org.apache.wicket.</sv:value>

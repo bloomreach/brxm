@@ -24,19 +24,25 @@ import org.onehippo.cms7.services.cmscontext.CmsContextServiceImpl;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class WhitelistedPublicClassesPackageResourceGuardTest {
+public class WhitelistedClassesResourceGuardTest {
 
     private WicketTester tester;
-    private WhitelistedPublicClassesPackageResourceGuard guard;
+    private WhitelistedClassesResourceGuard guard;
 
     @Before
     public void setUp() {
         tester = new WicketTester();
-        guard = new WhitelistedPublicClassesPackageResourceGuard();
+        guard = new WhitelistedClassesResourceGuard();
     }
 
     @Test
     public void denyPublicNonWhitelistedResource() {
+        assertFalse(guard.accept(getClass(), "/test/file.js"));
+    }
+
+    @Test
+    public void nullClassNamePrefixesAreIgnored() {
+        guard.addClassNamePrefixes(null);
         assertFalse(guard.accept(getClass(), "/test/file.js"));
     }
 

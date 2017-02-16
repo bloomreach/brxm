@@ -273,12 +273,12 @@
       <sv:value>4.0.0</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="cms-settings-set-public-package-resource-class-name-prefixes">
+  <sv:node sv:name="cms-settings-set-whitelisted-classes-for-package-resources">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:frontend/settings/public.package.resource.class.name.prefixes</sv:value>
+      <sv:value>/hippo:configuration/hippo:frontend/settings/whitelisted.classes.for.package.resources</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentpropset" sv:type="String" sv:multiple="true">
       <sv:value>org.hippoecm.</sv:value>
