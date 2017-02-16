@@ -38,11 +38,7 @@ class ScrollService {
 
   enable(scrollAllowed) {
     if (!this.enabled && this.iframe) {
-      this.iframeWindow = $(this.iframe[0].contentWindow);
-      this.iframeDocument = this.iframe.contents();
-      this.scrollable = this.iframeDocument.find('html, body');
-      this.iframeBody = this.iframeDocument.find('body');
-
+      this._initIframeElements();
       if (this.BrowserService.isFF()) {
         this._bindMouseMove(scrollAllowed);
       } else {
@@ -62,6 +58,13 @@ class ScrollService {
       }
       this.enabled = false;
     }
+  }
+
+  _initIframeElements() {
+    this.iframeWindow = $(this.iframe[0].contentWindow);
+    this.iframeDocument = this.iframe.contents();
+    this.iframeHtmlBody = this.iframeDocument.find('html, body');
+    this.iframeBody = this.iframeDocument.find('body');
   }
 
   _bindMouseEnterMouseLeave(scrollAllowed) {
@@ -98,7 +101,7 @@ class ScrollService {
     this.iframeDocument.on(`mousemove${EVENT_NAMESPACE}`, (event) => {
       if (scrollAllowed()) {
         // event pageX&Y coordinates are relative to the iframe, but expected to be relative to the NG app.
-        const pageY = event.pageY - this._getBodyScrollTop();
+        const pageY = event.pageY - this._getScrollTop();
 
         if (mouseHasLeft) {
           if (mouseEnters(pageY)) {
@@ -120,7 +123,7 @@ class ScrollService {
 
   _startScrolling(mouseX, mouseY) {
     const { iframeHeight, iframeTop, iframeBottom } = this._getIframeCoords();
-    const bodyScrollTop = this._getBodyScrollTop();
+    const iframeScrollTop = this._getScrollTop();
 
     let targetScrollTop;
     let distance;
@@ -128,12 +131,12 @@ class ScrollService {
     if (mouseY <= iframeTop) {
       // scroll to top
       targetScrollTop = 0;
-      distance = bodyScrollTop;
+      distance = iframeScrollTop;
     } else if (mouseY >= iframeBottom) {
       // scroll to bottom
       const pageHeight = this.iframeBody[0].scrollHeight;
       targetScrollTop = pageHeight - iframeHeight;
-      distance = targetScrollTop - bodyScrollTop;
+      distance = targetScrollTop - iframeScrollTop;
     }
 
     if (distance > 0) {
@@ -143,13 +146,13 @@ class ScrollService {
   }
 
   _stopScrolling() {
-    if (this.scrollable) {
-      this.scrollable.stop();
+    if (this.iframeHtmlBody) {
+      this.iframeHtmlBody.stop();
     }
   }
 
   _scroll(scrollTop, duration) {
-    this.scrollable.stop().animate({ scrollTop }, {
+    this.iframeHtmlBody.stop().animate({ scrollTop }, {
       duration,
     });
   }
@@ -163,10 +166,20 @@ class ScrollService {
     return Math.min(Math.max(min, duration), max);
   }
 
-  // IE and FireFox with mousemove always return zero for body.scrollTop(), so check html as well
-  _getBodyScrollTop() {
-    return (this.iframeDocument[0].documentElement && this.iframeDocument[0].documentElement.scrollTop) ||
-            this.iframeBody.scrollTop();
+  _getScrollTop() {
+    return this.iframeWindow.scrollTop();
+  }
+
+  _setScrollTop(scrollTop) {
+    this.iframeHtmlBody.scrollTop(scrollTop);
+  }
+
+  _getScrollLeft() {
+    return this.iframeWindow.scrollLeft();
+  }
+
+  _setScrollLeft(scrollLeft) {
+    this.iframeHtmlBody.scrollLeft(scrollLeft);
   }
 
   _getIframeCoords() {
@@ -185,13 +198,15 @@ class ScrollService {
   }
 
   saveScrollPosition() {
-    this.savedScrollPosition.top = this.container.scrollTop();
-    this.savedScrollPosition.left = this.container.scrollLeft();
+    this._initIframeElements();
+    this.savedScrollPosition.top = this._getScrollTop();
+    this.savedScrollPosition.left = this._getScrollLeft();
   }
 
   restoreScrollPosition() {
-    this.container.scrollTop(this.savedScrollPosition.top);
-    this.container.scrollLeft(this.savedScrollPosition.left);
+    this._initIframeElements();
+    this._setScrollTop(this.savedScrollPosition.top);
+    this._setScrollLeft(this.savedScrollPosition.left);
   }
 }
 
