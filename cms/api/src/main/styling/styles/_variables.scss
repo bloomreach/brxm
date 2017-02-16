@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@import "../../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables";
+@import "_variables-colorscheme";
+@import "_variables-bs-overrides";
+
 // Paths
 $images:                             "../../../wicket/resource/org.hippoecm.frontend.skin.Icon/images";
 $images_extjs:                       "../../../resource/org.hippoecm.frontend.skin.Icon/images";
@@ -297,3 +301,4 @@ $mimetypes: (
   xls xlsx
   zip
 );
+
