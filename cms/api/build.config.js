@@ -29,5 +29,6 @@ module.exports = {
         target: 'target/classes/org/hippoecm/frontend/plugins/jquery/upload'
     },
     target:     'target',
-    tmp:        'target/.tmp'
+    tmp:        'target/.tmp',
+    svgsprite:  'src/main/styling/svgsprite/**/*.svg'
 };
