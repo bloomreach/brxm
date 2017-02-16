@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="48px" viewBox="0 0 48 48" enable-background="new 0 0 48 48" xml:space="preserve">
+  <path fill="currentColor" d="M46.075,9.234v29.062c0,0-32.121-9.839-40.138-12.422L2,29V19l4,3L45.992,9.187 M45.992,7.405 c-0.193,0-0.388,0.028-0.577,0.085L6.047,19.797l-2.808-2.292c-0.362-0.292-0.807-0.443-1.255-0.443 c-0.294,0-0.589,0.064-0.864,0.196C0.425,17.592-0.001,18.229,0,19.062v9.987c0.001,0.737,0.479,1.46,1.215,1.773 c0.253,0.108,0.52,0.161,0.785,0.161c0.504,0,1.001-0.191,1.381-0.553l2.348-2.241c9.209,2.904,39.407,11.808,39.69,11.891 c0.185,0.055,0.374,0.081,0.562,0.081c0.428,0,0.849-0.137,1.199-0.399c0.504-0.378,0.801-0.971,0.801-1.601l0.011-28.757 c0-0.633-0.3-1.228-0.808-1.605C46.836,7.54,46.417,7.405,45.992,7.405L45.992,7.405z"/>
+  <path fill="currentColor" d="M29.345,42.418c-0.276,0-0.554-0.041-0.825-0.123l-11.444-3.469c-0.726-0.22-1.322-0.709-1.681-1.378 c-0.357-0.669-0.434-1.438-0.214-2.163l1.501-4.951l1.914,0.58l-1.501,4.951c-0.064,0.214-0.042,0.441,0.063,0.64 c0.105,0.197,0.282,0.342,0.496,0.407l11.444,3.469c0.216,0.066,0.443,0.041,0.641-0.064c0.198-0.105,0.343-0.281,0.407-0.495 l1.502-4.953l1.914,0.58L32.061,40.4c-0.219,0.725-0.708,1.321-1.377,1.68C30.265,42.304,29.807,42.418,29.345,42.418z"/>
+  <rect fill="currentColor" x="6.041" y="19.8" width="1.914" height="7.799"/>
+</svg>

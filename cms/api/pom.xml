@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -53,14 +53,6 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.frontend</groupId>
-      <artifactId>hippo-theme</artifactId>
-      <version>${hippo.frontend.theme.version}</version>
-      <classifier>distribution</classifier>
-      <type>tar.gz</type>
-      <scope>provided</scope>
     </dependency>
 
     <!-- FIXME: these versions need to be in sync with the repository dependencies -->
@@ -296,26 +288,6 @@
             </manifestEntries>
           </archive>
         </configuration>
-      </plugin>
-
-      <!-- Fetch Hippo-specific npm dependencies using Maven -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>${maven.plugin.dependency.version}</version>
-        <executions>
-          <execution>
-            <id>fetch-npm-dependencies</id>
-            <phase>initialize</phase>
-            <goals><goal>copy-dependencies</goal></goals>
-            <configuration>
-              <includeGroupIds>org.onehippo.cms7.frontend</includeGroupIds>
-              <includeArtifactIds>hippo-theme</includeArtifactIds>
-              <stripClassifier>true</stripClassifier>
-              <stripVersion>true</stripVersion>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
 
       <!-- Use NPM to install/build Hippo theme -->

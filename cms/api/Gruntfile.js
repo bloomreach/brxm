@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,11 @@ module.exports = function (grunt) {
       images: {
         files: ['<%= build.src %>/images/**'],
         tasks: ['newer:copy:binaries', 'svgmin:theme']
-      }
+      },
+      svg: {
+        files: ['<%= buildConfig.svgsprite %>'],
+        tasks: ['newer:svgstore']
+      },
     },
 
     // Compile Sass to CSS.
@@ -129,6 +133,20 @@ module.exports = function (grunt) {
         cwd: '<%= build.images %>/',
         src: ['**/*.svg'],
         dest: '<%= build.images %>'
+      }
+    },
+
+    svgstore: {
+      options: {
+        prefix: 'hi-',
+        svg: {
+          xmlns: 'http://www.w3.org/2000/svg',
+          class: 'hi-defs'
+        }
+      },
+      theme: {
+        src: ['<%= build.svgsprite %>'],
+        dest: '<%= build.images %>/icons/hippo-icon-sprite.svg'
       }
     },
 
@@ -209,15 +227,6 @@ module.exports = function (grunt) {
             dest: '<%= build.images %>'
           },
           {
-            // Copy the svg sprite from the hippo theme to the correct location
-            // so it can be used in the java code.
-            expand: true,
-            nonull: true,
-            cwd: '<%= build.npmDir %>/hippo-theme/dist/images/',
-            src: ['hippo-icon-sprite.svg'],
-            dest: '<%= build.images %>/icons/'
-          },
-          {
             expand: true,
             nonull: true,
             cwd: '<%= build.npmDir %>/blueimp-file-upload/',
@@ -266,6 +275,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', 'Build the theme', [
     'clean:copies',
     'sass',
+    'svgstore',
     'autoprefixer',
     'csslint',
     'concat',
