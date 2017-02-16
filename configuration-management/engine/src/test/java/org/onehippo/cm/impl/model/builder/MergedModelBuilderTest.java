@@ -258,7 +258,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         try {
             builder.push(c1b);
         } catch (IllegalStateException e) {
-            assertEquals("Module c1/p1/m1 already exists while merged projects. Merging of modules is not supported.", e.getMessage());
+            assertEquals("Module c1/p1/m1 already exists while merging projects. Merging of modules is not supported.", e.getMessage());
         }
     }
 
