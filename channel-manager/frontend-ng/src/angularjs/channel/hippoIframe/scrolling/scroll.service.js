@@ -34,14 +34,11 @@ class ScrollService {
       top: 0,
       left: 0,
     };
-
-    this.iframe.on('load', () => {
-      this._initIframeElements();
-    });
   }
 
   enable(scrollAllowed) {
     if (!this.enabled && this.iframe) {
+      this._initIframeElements();
       if (this.BrowserService.isFF()) {
         this._bindMouseMove(scrollAllowed);
       } else {
