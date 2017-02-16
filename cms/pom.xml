@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -85,7 +85,6 @@
     <notice.project.name>Hippo CMS</notice.project.name>
 
     <hippo.commons.version>3.2.0-SNAPSHOT</hippo.commons.version>
-    <hippo.frontend.theme.version>3.2.0-SNAPSHOT</hippo.frontend.theme.version>
     <hippo.utilities.version>3.2.0-SNAPSHOT</hippo.utilities.version>
     <hippo.services.version>3.2.0-SNAPSHOT</hippo.services.version>
     <hippo.repository.version>4.2.0-SNAPSHOT</hippo.repository.version>
