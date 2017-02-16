@@ -22,7 +22,9 @@ class ViewportToggleCtrl {
     this.OverlayService = OverlayService;
     this.ChannelService = ChannelService;
     this.ViewportService = ViewportService;
+  }
 
+  $onInit() {
     this.setViewports();
     this.activate();
   }
@@ -59,16 +61,13 @@ class ViewportToggleCtrl {
     this.viewportChanged();
   }
 
-  getDisplayName(viewport) {
-    return this.$translate.instant(`VIEWPORT_${viewport.id}`);
+  viewportChanged() {
+    this.ViewportService.setWidth(this.selectedViewport.maxWidth);
+    this.OverlayService.sync();
   }
 
-  viewportChanged() {
-    if (this.selectedViewport.width) {
-      this.ViewportService.setWidth(this.selectedViewport.width);
-    }
-
-    this.OverlayService.sync();
+  getDisplayName(viewport) {
+    return this.$translate.instant(`VIEWPORT_${viewport.id}`);
   }
 }
 

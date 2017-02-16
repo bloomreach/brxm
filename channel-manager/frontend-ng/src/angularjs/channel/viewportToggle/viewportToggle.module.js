@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-import template from './viewportToggle.html';
+import viewportToggleComponent from './viewportToggle.component';
 
-function viewportToggleDirective() {
-  return {
-    restrict: 'E',
-    template,
-    bindToController: {
-      disabled: '=',
-    },
-    controller: 'ViewportToggleCtrl',
-    controllerAs: 'toggleCtrl',
-  };
-}
+const viewportsModule = angular
+  .module('hippo-cm.channel.viewports', [])
+  .component('viewportToggle', viewportToggleComponent);
 
-export default viewportToggleDirective;
+export default viewportsModule;
