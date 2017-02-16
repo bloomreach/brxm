@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="48px" height="48px" viewBox="0 0 48 48" enable-background="new 0 0 48 48" xml:space="preserve">
+  <path fill="currentColor" d="M27.808,25.732l5.911-5.851c1.171-1.172,1.171-3.074,0.002-4.244l-1.678-1.68l1.43-1.398l1.317,1.318 c3.025,3.025,2.742,5.018,0.345,7.416l-5.819,5.931L27.808,25.732z"/>
+  <polygon fill="currentColor" points="22.477,20.413 23.939,18.938 23.939,15.966 20.912,18.819 "/>
+  <path fill="currentColor" d="M39.009,14.605l3.019-3.068c1.171-1.172,1.171-3.075,0.002-4.244l-1.414-1.415c-1.132-1.133-3.109-1.133-4.243,0 l-7.465,7.517c-1.171,1.171-1.171,3.074-0.002,4.244l2.01,2.012l-1.43,1.398l-2-2.002c-1.949-1.95-2.432-4.627,0.006-7.064 l7.465-7.517C35.902,3.52,37.158,3,38.493,3c1.336,0,2.592,0.52,3.536,1.464l1.414,1.415c1.949,1.948,1.949,5.12,0,7.07 l-4.426,4.506L39.009,14.605z"/>
+  <path fill="currentColor" d="M25.732,27.902l-5.727,5.787c-1.172,1.171-3.074,1.171-4.244,0.002l-1.68-1.678l-1.398,1.43l1.318,1.317 c3.025,3.025,5.018,2.742,7.416,0.345l5.807-5.695L25.732,27.902z"/>
+  <polygon fill="currentColor" points="20.413,22.571 18.994,23.979 16.021,23.979 18.819,21.007 "/>
+  <path fill="currentColor" d="M17.427,39.067l-4.478,4.471c-1.95,1.949-5.122,1.949-7.07,0l-1.415-1.414C3.52,41.18,3,39.924,3,38.588 c0-1.335,0.52-2.591,1.466-3.537l7.517-7.465c2.438-2.438,5.114-1.955,7.064-0.006l2.002,2l-1.398,1.43L17.639,29 c-1.17-1.169-3.073-1.169-4.244,0.002l-7.517,7.465c-1.133,1.134-1.133,3.111,0,4.243l1.415,1.414 c1.169,1.169,3.072,1.169,4.244-0.002l3.04-3.063L17.427,39.067z"/>
+  <polygon fill="currentColor" points="14.534,16.339 13.522,17.975 7.134,12.333 "/>
+  <polygon fill="currentColor" points="17.019,13.854 18.654,12.843 13.014,6.454 "/>
+  <polygon fill="currentColor" points="33.604,30.75 34.615,29.114 41.004,34.756 "/>
+  <polygon fill="currentColor" points="31.119,33.234 29.483,34.246 35.124,40.635 "/>
+</svg>

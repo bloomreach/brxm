@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+<rect x="13" y="23" fill="currentColor" width="3" height="1"/>
+<rect x="9" y="19" fill="currentColor" width="17" height="10.875"/>
+<g>
+	<path fill="currentColor" d="M26,2H5.854C5.383,2,5,2.383,5,2.854v26.292C5,29.617,5.383,30,5.854,30h20.114C26.439,30,27,29.472,27,29
+		c0,0,0-25,0-26S26,2,26,2z M26,29L5.998,29.049L6,2.941L26,3V29z"/>
+	<rect x="8" y="10" fill="currentColor" width="16" height="1"/>
+	<rect x="8" y="19" fill="currentColor" width="16" height="1"/>
+	<rect x="8" y="12" fill="currentColor" width="15" height="1"/>
+	<rect x="8" y="17" fill="currentColor" width="15" height="1"/>
+	<rect x="8" y="14" fill="currentColor" width="7" height="1"/>
+	<rect x="8" y="21" fill="currentColor" width="7" height="1"/>
+	<rect x="8" y="23" fill="currentColor" width="7" height="1"/>
+	<rect x="8" y="25" fill="currentColor" width="7" height="1"/>
+	<rect x="8" y="8" fill="currentColor" width="15" height="1"/>
+	<rect x="8" y="6" fill="currentColor" width="16" height="1"/>
+</g>
+<g>
+	<polygon points="19.509,22 18.509,22 17.509,23.666 16.509,22 15.509,22 17.009,24.5 15.509,27 16.509,27
+		17.509,25.334 18.509,27 19.509,27 18.009,24.5 	"/>
+	<polygon points="24,22 23.375,25.125 23,24 22,24 21.625,25.125 21,22 20,22 21,27 22,27 22.5,25.5 23,27 24,27
+		25,22 	"/>
+</g>
+<path d="M15,23v-1h-3c0,0-1,0-1,1s0,1,0,1s0,1,1,1s2,0,2,0v1h-3v1c0,0,2,0,3,0s1-1,1-1v-1c0,0,0-1-1-1s-2,0-2,0v-1
+	H15z"/>
+</svg>

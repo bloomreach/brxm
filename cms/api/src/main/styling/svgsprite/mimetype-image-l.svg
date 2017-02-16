@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+<g>
+	<path fill="currentColor" d="M3,5c1,0,26,0,26,0c0.472,0,1,0.561,1,1.031v20.114C30,26.617,29.617,27,29.146,27H2.854
+		C2.383,27,2,26.617,2,26.146V6C2,6,2,5,3,5z M3,6L2.941,26l26.107,0.002L29,6H3z"/>
+</g>
+<polygon fill="currentColor" points="20.25,15 17.068,19.582 9.5,10.5 5,24 14,24 20.75,24 27,24 "/>
+<ellipse transform="matrix(-0.9996 -0.0286 0.0286 -0.9996 48.9887 21.4808)" fill="currentColor" cx="24.648" cy="10.39" rx="2.339" ry="2.361"/>
+</svg>

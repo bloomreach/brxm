@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+  <g>
+    <path fill="currentColor" d="M14.032,2C14.532,2,15,2.438,15,3s0,10.146,0,10.146C15,13.617,13.97,14,14.001,14S1.854,14,1.854,14 C1.383,14,1,13.617,1,13.146V2.912C1,2.441,1.383,2,1.854,2H14.032 M14.032,3H2L1.998,13l12.034,0.047V3z M15,13.146 C15,13.617,14.204,14,14.235,14S1.854,14,1.854,14"/>
+  </g>
+  <polygon fill="currentColor" points="5,6 3,12 10,12 "/>
+  <polygon fill="currentColor" points="10,8 7,12 13,12 "/>
+  <circle fill="currentColor" cx="11.5" cy="5.5" r="1.5"/>
+</svg>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+<g>
+	<path fill="currentColor" d="M13,0H1.854C1.383,0,1,0.383,1,0.854v14.292C1,15.617,1.383,16,1.854,16h11.114C13.439,16,14,15.472,14,15
+		c0,0,0-13,0-14S13,0,13,0z M13,15L1.998,15.049L2,1h11V15z"/>
+	<path fill="currentColor" d="M11,11h1v-1V8V7V5V4h-1H4H3v1v2v1v2v1h1H11z M8,5h3v2H8V5z M8,8h3v2H8V8z M4,5h3v2H4V5z M4,8h3v2H4V8z"/>
+</g>
+</svg>

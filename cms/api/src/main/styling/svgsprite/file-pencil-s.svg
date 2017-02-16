@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+  <g>
+    <path fill="currentColor" d="M14.22,9.048L9.5,14H7v-2.5l4.97-4.702L14.22,9.048z M10,13l-1.984-2L8,11.984l-0.031,1.042l1.062-0.021L10,13z M15.064,8.203l-2.25-2.25l0.719-0.719c0.289-0.289,0.773-0.289,1.062,0l1.188,1.188c0.289,0.289,0.289,0.773,0,1.062L15.064,8.203 z"/>
+  </g>
+  <g>
+   <path fill="currentColor" d="M12,5v10c0,0.472-0.561,1-1.031,1H0.854C0.383,16,0,15.617,0,15.146V1.912c0-0.471,0.383-0.854,0.854-0.854h6.97 c0.473,0,1.131,0.275,1.461,0.605l2.111,1.877C11.725,3.871,12,4.528,12,5z M11,6H8C7.529,6,7,5.471,7,5V2H1L0.998,15.049L11,15V6z M3.284,8h3.431C6.875,8,7,8.125,7,8.285v0.43C7,8.875,6.875,9,6.715,9H3.284C3.125,9,3,8.875,3,8.715v-0.43 C3,8.125,3.125,8,3.284,8z M3.284,10h2.431C5.875,10,6,10.124,6,10.284v0.431C6,10.875,5.875,11,5.715,11H3.284 C3.125,11,3,10.875,3,10.715v-0.431C3,10.124,3.125,10,3.284,10z M3.284,12h2.431C5.875,12,6,12.124,6,12.284v0.431 C6,12.875,5.875,13,5.715,13H3.284C3.125,13,3,12.875,3,12.715v-0.431C3,12.124,3.125,12,3.284,12z M8,5h3 c-0.053-0.15-0.135-0.303-0.197-0.365L8.365,2.196C8.303,2.135,8.152,2.054,8,2V5z"/>
+ </g>
+</svg>

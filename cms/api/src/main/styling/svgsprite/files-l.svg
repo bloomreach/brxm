@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+	<g>
+		<g>
+			<g>
+				<path fill="currentColor" d="M12,3h5.609C17.825,3,18,3.203,18,3.453V5v3h1V3.453C19,2.646,18.377,2,17.609,2h-5.231l0,0 C11.608,2,10.537,2.471,10,3.036L4,9.422c-0.534,0.564-1,1.191-1,2V23c0,0.807,0.912,2,1.678,2H12v-1H4.678 C4.478,23.938,4,23.316,4,23V11c0-0.387,0.21-0.768,0.727-1.312l5.623-5.965C10.701,3.352,11.504,3,12,3"/>
+			</g>
+		</g>
+		<g>
+			<g>
+				<polygon fill="currentColor" points="3.909,11 12,10.991 12,3.001 11,3.001 11,10 3.907,10"/>
+			</g>
+		</g>
+	</g>
+	<g>
+		<g>
+			<g>
+				<path fill="currentColor" d="M21,7h5.609C26.825,7,27,7.203,27,7.453v20.016C27,27.75,26.768,28,26.585,28H13.678 C13.478,27.938,13,27.316,13,27V15c0-0.387,0.21-0.768,0.727-1.312l5.623-5.965C19.701,7.352,20.504,7,21,7 M21.378,6 C20.608,6,19.537,6.471,19,7.036l-6,6.386c-0.534,0.564-1,1.191-1,2V27c0,0.807,0.912,2,1.678,2h12.907 C27.354,29,28,28.275,28,27.469V7.453C28,6.646,27.377,6,26.609,6H21.378L21.378,6z"/>
+			</g>
+		</g>
+		<g>
+			<g>
+				<polygon fill="currentColor" points="12.909,15 21,14.991 21,7.001 20,7.001 20,14 12.907,14"/>
+			</g>
+		</g>
+	</g>
+	<path fill="currentColor" d="M19,5"/>
+	<path fill="currentColor" d="M19,5"/>
+</svg>
