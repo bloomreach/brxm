@@ -203,12 +203,12 @@ describe('ScrollService', () => {
   it('should always start a new scroll animation', (done) => {
     loadIframeFixture(() => {
       ScrollService.enable();
-      spyOn(ScrollService.scrollable, 'stop').and.callThrough();
-      spyOn(ScrollService.scrollable, 'animate').and.callThrough();
+      spyOn(ScrollService.iframeHtmlBody, 'stop').and.callThrough();
+      spyOn(ScrollService.iframeHtmlBody, 'animate').and.callThrough();
 
       ScrollService._scroll(0, 0);
-      expect(ScrollService.scrollable.stop).toHaveBeenCalled();
-      expect(ScrollService.scrollable.animate).toHaveBeenCalledWith({ scrollTop: 0 }, { duration: 0 });
+      expect(ScrollService.iframeHtmlBody.stop).toHaveBeenCalled();
+      expect(ScrollService.iframeHtmlBody.animate).toHaveBeenCalledWith({ scrollTop: 0 }, { duration: 0 });
       done();
     });
   });
@@ -216,15 +216,15 @@ describe('ScrollService', () => {
   it('should stop the animation when stopscrolling is called', (done) => {
     loadIframeFixture(() => {
       ScrollService.enable();
-      const scrollable = spyOn(ScrollService.scrollable, 'stop');
+      const iframeHtmlBody = spyOn(ScrollService.iframeHtmlBody, 'stop');
 
       ScrollService._stopScrolling();
-      expect(scrollable).toHaveBeenCalled();
-      scrollable.calls.reset();
+      expect(iframeHtmlBody).toHaveBeenCalled();
+      iframeHtmlBody.calls.reset();
 
-      ScrollService.scrollable = null;
+      ScrollService.iframeHtmlBody = null;
       ScrollService._stopScrolling();
-      expect(scrollable).not.toHaveBeenCalled();
+      expect(iframeHtmlBody).not.toHaveBeenCalled();
 
       done();
     });
@@ -237,6 +237,40 @@ describe('ScrollService', () => {
     expect(ScrollService._calculateDuration(300, 500, 1500)).toBe(600);
     expect(ScrollService._calculateDuration(750, 500, 1500)).toBe(1500);
     expect(ScrollService._calculateDuration(800, 500, 1500)).toBe(1500);
+  });
+
+  it('should save scroll position', (done) => {
+    loadIframeFixture(() => {
+      const iframeDocument = $iframe.contents();
+      const iframeBody = iframeDocument.find('html,body');
+
+      iframeBody.scrollTop(50);
+      iframeBody.scrollLeft(60);
+
+      ScrollService.saveScrollPosition();
+
+      expect(ScrollService.savedScrollPosition).toEqual({
+        top: 50,
+        left: 60,
+      });
+      done();
+    });
+  });
+
+  it('should restore scroll position', (done) => {
+    loadIframeFixture(() => {
+      ScrollService.savedScrollPosition = {
+        top: 20,
+        left: 30,
+      };
+
+      ScrollService.restoreScrollPosition();
+
+      const iframeWindow = $($iframe[0].contentWindow);
+      expect(iframeWindow.scrollTop()).toEqual(20);
+      expect(iframeWindow.scrollLeft()).toEqual(30);
+      done();
+    });
   });
 
   describe('the workaround for Firefox', () => {
