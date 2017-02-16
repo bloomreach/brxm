@@ -242,10 +242,10 @@ describe('ScrollService', () => {
   it('should save scroll position', (done) => {
     loadIframeFixture(() => {
       const iframeDocument = $iframe.contents();
-      const iframeBody = iframeDocument.find('html,body');
+      const iframeHtmlBody = iframeDocument.find('html,body');
 
-      iframeBody.scrollTop(50);
-      iframeBody.scrollLeft(60);
+      iframeHtmlBody.scrollTop(50);
+      iframeHtmlBody.scrollLeft(60);
 
       ScrollService.saveScrollPosition();
 
