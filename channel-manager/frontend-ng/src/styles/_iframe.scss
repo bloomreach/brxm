@@ -29,6 +29,7 @@
   box-shadow: 0 0 20px $black-shadow;
   height: 100%;
   max-width: 100%;  // use explicit max-width so its transition can be animated
+  position: relative;
   transition: max-width $viewport-animation-transition;
   width: 100%;
 
