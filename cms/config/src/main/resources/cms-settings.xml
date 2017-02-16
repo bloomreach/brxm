@@ -29,8 +29,8 @@
       Prefixes of class names that are used for loading public package resources (i.e. resources referenced
       relative to a class that are required for public pages, like the login page).
     -->
-    <sv:value>org.apache.wicket.</sv:value>
     <sv:value>org.hippoecm.</sv:value>
+    <sv:value>org.apache.wicket.</sv:value>
     <sv:value>org.onehippo.</sv:value>
   </sv:property>
 </sv:node>

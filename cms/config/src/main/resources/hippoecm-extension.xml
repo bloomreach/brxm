@@ -281,8 +281,8 @@
       <sv:value>/hippo:configuration/hippo:frontend/settings/public.package.resource.class.name.prefixes</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentpropset" sv:type="String" sv:multiple="true">
-      <sv:value>org.apache.wicket.</sv:value>
       <sv:value>org.hippoecm.</sv:value>
+      <sv:value>org.apache.wicket.</sv:value>
       <sv:value>org.onehippo.</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
