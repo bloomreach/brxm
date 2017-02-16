@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
 
-    Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -83,12 +83,6 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-testsuite-prod-config-hostgroup</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-testsuite-usage-statistics-logger</artifactId>
       <version>${project.version}</version>
     </dependency>
 
