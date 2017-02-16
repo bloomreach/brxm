@@ -17,6 +17,7 @@ package org.hippoecm.frontend;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -116,6 +117,9 @@ public class Main extends PluginApplication {
 
     private static final String FRONTEND_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
     private static final String WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES = "whitelisted.classes.for.package.resources";
+    private static final String[] DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES = {
+            "org.hippoecm.", "org.apache.wicket.", "org.onehippo.", "wicket.contrib."
+    };
 
     /**
      * Parameter name of the repository storage directory
@@ -501,7 +505,13 @@ public class Main extends PluginApplication {
 
     protected void initPackageResourceGuard() {
         final WhitelistedClassesResourceGuard packageResourceGuard = new WhitelistedClassesResourceGuard();
-        final String[] classNamePrefixes = GlobalSettings.get().getStringArray(WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES);
+
+        String[] classNamePrefixes = GlobalSettings.get().getStringArray(WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES);
+        if (classNamePrefixes == null || classNamePrefixes.length == 0) {
+            log.info("No whitelisted package resources found, using the default whitelist: {}",
+                    Arrays.asList(DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES));
+            classNamePrefixes = DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES;
+        }
         packageResourceGuard.addClassNamePrefixes(classNamePrefixes);
 
         // CMS7-8898: allow .woff2 files to be served

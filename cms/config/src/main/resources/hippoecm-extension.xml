@@ -284,6 +284,7 @@
       <sv:value>org.hippoecm.</sv:value>
       <sv:value>org.apache.wicket.</sv:value>
       <sv:value>org.onehippo.</sv:value>
+      <sv:value>wicket.contrib.</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>910.1</sv:value>
