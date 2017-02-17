@@ -46,6 +46,9 @@ class OverlayService {
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
 
+    this.editMenuHandler = angular.noop;
+    this.editContentHandler = angular.noop;
+
     PageStructureService.registerChangeListener(() => this.sync());
   }
 
@@ -56,6 +59,10 @@ class OverlayService {
 
   onEditMenu(callback) {
     this.editMenuHandler = callback;
+  }
+
+  onEditContent(callback) {
+    this.editContentHandler = callback;
   }
 
   _onLoad() {
@@ -303,7 +310,9 @@ class OverlayService {
     this._linkButtonTransition(overlayElement);
 
     this._addClickHandler(overlayElement, () => {
-      this.CmsService.publish('open-content', structureElement.getUuid());
+      this.$rootScope.$apply(() => {
+        this.editContentHandler(structureElement.getUuid());
+      });
     });
   }
 
