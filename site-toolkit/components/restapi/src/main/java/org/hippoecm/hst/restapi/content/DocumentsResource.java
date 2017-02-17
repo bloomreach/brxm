@@ -171,7 +171,7 @@ public class DocumentsResource extends AbstractResource {
                                  @QueryParam("_query") final String queryString,
                                  @QueryParam("_nodetype") final String nodeTypeString,
                                  @QueryParam("_orderBy") @DefaultValue(HIPPOSTDPUBWF_PUBLICATION_DATE) final String orderBy,
-                                 @QueryParam("_sortOrder") @DefaultValue("ascending") final String sortOrder) {
+                                 @QueryParam("_sortOrder") @DefaultValue("descending") final String sortOrder) {
         try {
             ResourceContext context = getResourceContextFactory().createResourceContext();
             final int offset = parseOffset(offsetString);
