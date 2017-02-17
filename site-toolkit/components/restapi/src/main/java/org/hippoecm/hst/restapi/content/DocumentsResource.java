@@ -16,7 +16,10 @@
 
 package org.hippoecm.hst.restapi.content;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -42,6 +45,7 @@ import org.hippoecm.hst.restapi.ResourceContext;
 import org.hippoecm.hst.restapi.content.search.SearchResult;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.onehippo.cms7.services.contenttype.ContentType;
+import org.onehippo.cms7.services.search.query.AndClause;
 import org.onehippo.cms7.services.search.query.Query;
 import org.onehippo.cms7.services.search.query.QueryUtils;
 import org.onehippo.cms7.services.search.query.constraint.ExistsConstraint;
@@ -137,11 +141,26 @@ public class DocumentsResource extends AbstractResource {
         throw new IllegalArgumentException(String.format("_nodetype must be of (sub)type: '%s'", NT_DOCUMENT));
     }
 
-    private SortOrder parseSortOrder(final String sortOrder) {
+    private List<String> parseOrderBy(final String orderBy) {
+        return Arrays.asList(StringUtils.split(orderBy, ','));
+    }
+
+    private List<SortOrder> parseSortOrder(final String sortOrder) {
+        final List<SortOrder> sortOrders = new ArrayList<>();
         try {
-            return SortOrder.valueOf(sortOrder.toUpperCase());
+            final String[] sortOrderArray = StringUtils.split(sortOrder, ',');
+            for(String sort : sortOrderArray) {
+                sortOrders.add(SortOrder.valueOf(sort.toUpperCase()));
+            }
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("_sortorder value must be one of: " + StringUtils.join(SortOrder.values(), ", ").toLowerCase());
+        }
+        return sortOrders;
+    }
+
+    private void checkOrderParameters(final List<String> orderBys, final List<SortOrder> parsedSortOrders) {
+        if(orderBys.size() != parsedSortOrders.size()) {
+            throw new IllegalArgumentException("Number of values for _orderBy and _sortOrder must be equal.");
         }
     }
 
@@ -159,7 +178,9 @@ public class DocumentsResource extends AbstractResource {
             final int max = parseMax(maxString);
             final String parsedQuery = parseQuery(queryString);
             final String parsedNodeType = parseNodeType(context, nodeTypeString);
-            final SortOrder parsedSortOrder = parseSortOrder(sortOrder);
+            final List<String> orderBys = parseOrderBy(orderBy);
+            final List<SortOrder> parsedSortOrders = parseSortOrder(sortOrder);
+            checkOrderParameters(orderBys, parsedSortOrders);
 
             final String availability;
             if (RequestContextProvider.get().isPreview() ) {
@@ -168,19 +189,24 @@ public class DocumentsResource extends AbstractResource {
                 availability = "live";
             }
             final SearchService searchService = getSearchService(context);
-            Query query = searchService.createQuery()
+            Query query = null;
+            AndClause andClause = searchService.createQuery()
                     .from(RequestContextProvider.get()
                             .getResolvedMount()
                             .getMount()
                             .getContentPath())
                     .ofType(parsedNodeType)
                     .where(QueryUtils.text().contains(parsedQuery == null ? "" : parsedQuery))
-                    .and(QueryUtils.text(HIPPO_AVAILABILITY).isEqualTo(availability))
-                    .and(new ExistsConstraint(orderBy))
-                    .offsetBy(offset)
-                    .limitTo(max);
+                    .and(QueryUtils.text(HIPPO_AVAILABILITY).isEqualTo(availability));
 
-            query = applyOrdering(query, orderBy, parsedSortOrder);
+            for(String ob : orderBys) {
+                andClause = andClause.and(new ExistsConstraint(ob));
+            }
+            for(int x = 0; x < orderBys.size(); x++) {
+                query = applyOrdering(andClause, orderBys.get(x), parsedSortOrders.get(x));
+            }
+            query.offsetBy(offset)
+                 .limitTo(max);
 
             final QueryResult queryResult = searchService.search(query);
             final SearchResult result = new SearchResult();
@@ -204,7 +230,7 @@ public class DocumentsResource extends AbstractResource {
     }
 
     private Query applyOrdering(final Query query, final String orderBy, final SortOrder sortOrder) {
-        switch(sortOrder) {
+        switch (sortOrder) {
             case DESCENDING:
             case DESC:
                 return query.orderBy(orderBy).descending();
