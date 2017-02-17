@@ -205,11 +205,11 @@ public class DocumentsResource extends AbstractResource {
 
     private Query applyOrdering(final Query query, final String orderBy, final SortOrder sortOrder) {
         switch(sortOrder) {
-            case ASCENDING:
-            case ASC:
-                return query.orderBy(orderBy).ascending();
-            default:
+            case DESCENDING:
+            case DESC:
                 return query.orderBy(orderBy).descending();
+            default:
+                return query.orderBy(orderBy);
         }
     }
 
