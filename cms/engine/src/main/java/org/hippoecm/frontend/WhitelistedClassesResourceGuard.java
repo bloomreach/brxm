@@ -40,10 +40,10 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
     private final List<String> classNamePrefixes;
 
     public WhitelistedClassesResourceGuard() {
-        this.classNamePrefixes = new ArrayList<>();
+        classNamePrefixes = new ArrayList<>();
     }
 
-    public void addClassNamePrefixes(String... prefixes) {
+    public void addClassNamePrefixes(final String... prefixes) {
         if (prefixes != null) {
             classNamePrefixes.addAll(Arrays.asList(prefixes));
         }
@@ -51,14 +51,27 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
 
     @Override
     public boolean accept(final Class<?> scope, final String absolutePath) {
-        if (isWhitelisted(scope) || isUserLoggedIn()) {
+        if (isUserLoggedIn() || isWhitelisted(scope)) {
             return super.accept(scope, absolutePath);
         }
         log.error("Public access denied to non-whitelisted (static) package resource: {}", absolutePath);
         return false;
     }
 
-    private boolean isUserLoggedIn() {
+    private boolean isWhitelisted(final Class<?> scope) {
+        String scopeClassName = scope.getCanonicalName();
+        if (scopeClassName == null) {
+            scopeClassName = scope.getName();
+        }
+        for (final String prefix : classNamePrefixes) {
+            if (scopeClassName.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isUserLoggedIn() {
         final HttpServletRequest servletRequest = WebApplicationHelper.retrieveWebRequest().getContainerRequest();
         final HttpSession httpSession = servletRequest.getSession(false);
 
@@ -68,15 +81,5 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
 
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
         return cmsSessionContext != null;
-    }
-
-    private boolean isWhitelisted(final Class<?> scope) {
-        final String scopeClassName = scope.getCanonicalName();
-        for (String prefix : classNamePrefixes) {
-            if (scopeClassName.startsWith(prefix)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
