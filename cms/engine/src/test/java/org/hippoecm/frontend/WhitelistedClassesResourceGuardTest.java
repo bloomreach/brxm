@@ -59,6 +59,13 @@ public class WhitelistedClassesResourceGuardTest {
         assertTrue(guard.accept(getClass(), "/test/file.js"));
     }
 
+    @Test
+    public void scopeCanBeAnonymousClass() {
+        Class<?> anonymousClass = new Cloneable() {}.getClass();
+        guard.addClassNamePrefixes(anonymousClass.getPackage().getName());
+        assertTrue(guard.accept(anonymousClass, "/test/file.js"));
+    }
+
     private void login() {
         final MockHttpSession httpSession = tester.getHttpSession();
         httpSession.setTemporary(false);
