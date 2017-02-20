@@ -87,6 +87,10 @@ public class ModuleImpl implements Module {
         return source;
     }
 
+    public Set<SourceImpl> getModifiableSources() {
+        return sortedSources;
+    }
+
     /**
      * @return a sorted list of namespace definitions.
      * Note that these definitions are only populated for Modules that are part of the {@link MergedModel}.

@@ -28,7 +28,8 @@ public class SourceImpl implements Source {
 
     private String path;
     private Module module;
-    private List<Definition> definitions = new ArrayList<>();
+    private List<Definition> modifiableDefinitions = new ArrayList<>();
+    private List<Definition> definitions = Collections.unmodifiableList(modifiableDefinitions);
 
     public SourceImpl(final String path, final ModuleImpl module) {
         if (path == null) {
@@ -54,31 +55,46 @@ public class SourceImpl implements Source {
 
     @Override
     public List<Definition> getDefinitions() {
-        return Collections.unmodifiableList(definitions);
+        return definitions;
+    }
+
+    public List<Definition> getModifiableDefinitions() {
+        return modifiableDefinitions;
     }
 
     public NamespaceDefinitionImpl addNamespaceDefinition(final String prefix, final URI uri) {
         final NamespaceDefinitionImpl definition = new NamespaceDefinitionImpl(this, prefix, uri);
-        definitions.add(definition);
+        modifiableDefinitions.add(definition);
         return definition;
     }
 
     public NodeTypeDefinitionImpl addNodeTypeDefinition(final String value, final boolean isResource) {
         final NodeTypeDefinitionImpl definition = new NodeTypeDefinitionImpl(this, value, isResource);
-        definitions.add(definition);
+        modifiableDefinitions.add(definition);
         return definition;
     }
 
     public ConfigDefinitionImpl addConfigDefinition() {
         final ConfigDefinitionImpl definition = new ConfigDefinitionImpl(this);
-        definitions.add(definition);
+        modifiableDefinitions.add(definition);
         return definition;
     }
 
     public ContentDefinitionImpl addContentDefinition() {
         final ContentDefinitionImpl definition = new ContentDefinitionImpl(this);
-        definitions.add(definition);
+        modifiableDefinitions.add(definition);
         return definition;
     }
 
+    public void addContentDefinition(final ContentDefinitionImpl definition) {
+        if (definition.getSource() != this) {
+            throw new IllegalArgumentException("Definition does for this source");
+        }
+        for (Definition def : modifiableDefinitions) {
+            if (def == definition) {
+                throw new IllegalStateException("Definition already added to this source");
+            }
+        }
+        modifiableDefinitions.add(definition);
+    }
 }

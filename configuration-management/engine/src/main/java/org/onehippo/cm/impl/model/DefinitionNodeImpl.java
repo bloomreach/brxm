@@ -28,7 +28,7 @@ import org.onehippo.cm.api.model.ValueType;
 
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
 
-    private final Map<String, DefinitionNodeImpl> modifiableNodes = new LinkedHashMap<>();
+    private final LinkedHashMap<String, DefinitionNodeImpl> modifiableNodes = new LinkedHashMap<>();
     private final Map<String, DefinitionNode> nodes = Collections.unmodifiableMap(modifiableNodes);
     private final Map<String, DefinitionPropertyImpl> modifiableProperties = new LinkedHashMap<>();
     private final Map<String, DefinitionProperty> properties = Collections.unmodifiableMap(modifiableProperties);
@@ -48,7 +48,7 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         return nodes;
     }
 
-    public Map<String, DefinitionNodeImpl> getModifiableNodes() {
+    public LinkedHashMap<String, DefinitionNodeImpl> getModifiableNodes() {
         return modifiableNodes;
     }
 
