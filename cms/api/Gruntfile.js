@@ -66,7 +66,7 @@ module.exports = function (grunt) {
         tasks: ['newer:copy:binaries', 'svgmin:theme']
       },
       svg: {
-        files: ['<%= buildConfig.svgsprite %>'],
+        files: ['<%= build.svgsprite %>'],
         tasks: ['newer:svgstore']
       },
     },
