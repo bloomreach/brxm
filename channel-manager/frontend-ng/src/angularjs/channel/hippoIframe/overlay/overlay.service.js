@@ -259,11 +259,11 @@ class OverlayService {
         this._addLockIcon(structureElement, overlayElement);
         break;
       case 'content-link':
-        this._addLinkMarkup(overlayElement, contentLinkSvg, 'IFRAME_OPEN_DOCUMENT');
+        this._addLinkMarkup(overlayElement, contentLinkSvg, 'IFRAME_OPEN_DOCUMENT', 'qa-content-link');
         this._addContentLinkClickHandler(structureElement, overlayElement);
         break;
       case 'menu-link':
-        this._addLinkMarkup(overlayElement, menuLinkSvg, 'IFRAME_EDIT_MENU');
+        this._addLinkMarkup(overlayElement, menuLinkSvg, 'IFRAME_EDIT_MENU', 'qa-menu-link');
         this._addMenuLinkClickHandler(structureElement, overlayElement);
         break;
       default:
@@ -300,8 +300,8 @@ class OverlayService {
     return this.$translate.instant('CONTAINER_LOCKED_BY', { user: escapedLockedBy });
   }
 
-  _addLinkMarkup(overlayElement, svg, titleKey) {
-    overlayElement.addClass('hippo-overlay-element-link');
+  _addLinkMarkup(overlayElement, svg, titleKey, qaClass = '') {
+    overlayElement.addClass(`hippo-overlay-element-link ${qaClass}`);
     overlayElement.attr('title', this.$translate.instant(titleKey));
     overlayElement.append(svg);
   }
