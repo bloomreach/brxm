@@ -480,9 +480,6 @@ public class Main extends PluginApplication {
 
                     @Override
                     protected BufferedWebResponse renderPage(final Url targetUrl, final RequestCycle requestCycle) {
-                        // at this point we have repository access so we can read the package resource guard settings
-                        initPackageResourceGuard();
-
                         IRequestHandler scheduled = requestCycle.getRequestHandlerScheduledAfterCurrent();
                         if (scheduled == null) {
                             IRequestablePage page = getPage();
@@ -497,6 +494,9 @@ public class Main extends PluginApplication {
                 };
             }
         });
+
+        // don't allow public access to any package resource (empty whitelist) by default
+        resourceSettings.setPackageResourceGuard(new WhitelistedClassesResourceGuard());
 
         if (log.isInfoEnabled()) {
             log.info("Hippo CMS application " + applicationName + " has started");
@@ -521,7 +521,10 @@ public class Main extends PluginApplication {
     }
 
     protected void registerSessionListeners() {
-        getSessionListeners().add(session -> ((PluginUserSession) session).login());
+        getSessionListeners().add(session -> {
+            ((PluginUserSession) session).login();
+            initPackageResourceGuard();
+        });
     }
 
     @Override
