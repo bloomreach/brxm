@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -376,58 +375,84 @@ public class RepositoryFacade {
     }
 
     private boolean valueIsIdentical(final Value modelValue, final javax.jcr.Value jcrValue) throws RepositoryException {
-        // TODO: handle resources
-        return modelValue.getType().ordinal() == jcrValue.getType() &&
-                modelValue.getString().equals(jcrValue.getString());
-    }
-
-    private javax.jcr.Value[] valuesFrom(final Value[] pValues, final ValueType type) throws RepositoryException {
-        final List<javax.jcr.Value> valueList = new ArrayList<>();
-        for (Value pValue : pValues) {
-            valueList.add(valueFrom(pValue, type));
-        }
-        return valueList.toArray(new javax.jcr.Value[valueList.size()]);
-    }
-
-    private javax.jcr.Value valueFrom(final Value pValue, final ValueType type) throws RepositoryException {
-        Value value = pValue;
-        if (pValue.isResource()) {
-            // TODO: read value form resource!
-            // value = ...
+        if (modelValue.getType().ordinal() != jcrValue.getType()) {
+            return false;
         }
 
-        return singleValueFrom(value, type);
-    }
-
-    private javax.jcr.Value singleValueFrom(final Value sourceValue, final ValueType type) throws RepositoryException {
-        final ValueFactory factory = session.getValueFactory();
-        switch (type) {
-            case URI:
-                return factory.createValue(sourceValue.toString());
-            case BOOLEAN:
-                return factory.createValue((Boolean)sourceValue.getObject());
-            case LONG:
-                return factory.createValue((Long)sourceValue.getObject());
-            case DOUBLE:
-                return factory.createValue((Double)sourceValue.getObject());
-            case DECIMAL:
-                return factory.createValue((BigDecimal)sourceValue.getObject());
+        switch (modelValue.getType()) {
+            case STRING:
+                // TODO: handle resources
+                return modelValue.getString().equals(jcrValue.getString());
             case BINARY:
-                return factory.createValue((Binary)sourceValue.getObject());
+                // TODO: handle resources
+                return modelValue.getString().equals(jcrValue.getString());
+            case LONG:
+                return modelValue.getObject().equals(jcrValue.getLong());
+            case DOUBLE:
+                return modelValue.getObject().equals(jcrValue.getDouble());
             case DATE:
-                return factory.createValue((Calendar)sourceValue.getObject());
+                return modelValue.getObject().equals(jcrValue.getDate());
+            case BOOLEAN:
+                return modelValue.getObject().equals(jcrValue.getBoolean());
+            case URI:
+            case NAME:
+            case PATH:
+                return modelValue.getString().equals(jcrValue.getString());
             case REFERENCE:
             case WEAKREFERENCE:
-                // TODO: resolve path references
-                final String uuid = sourceValue.getString();
-                final Node node = session.getNodeByIdentifier(uuid);
-                return factory.createValue(node, type == ValueType.WEAKREFERENCE);
-            case PATH:
-                return factory.createValue(sourceValue.getString()); //todo
+                if (modelValue.isPath()) {
+                    // TODO: resolve path references
+                }
+                return modelValue.getString().equals(jcrValue.getString());
+            case DECIMAL:
+                return modelValue.getObject().equals(jcrValue.getDecimal());
+            default:
+                final String msg = String.format("Unsupported value type '%s'.", modelValue.getType());
+                throw new IllegalArgumentException(msg);
+        }
+    }
+
+    private javax.jcr.Value[] valuesFrom(final Value[] modelValues, final ValueType type) throws RepositoryException {
+        final javax.jcr.Value[] jcrValues = new javax.jcr.Value[modelValues.length];
+        for (int i = 0; i < modelValues.length; i++) {
+            jcrValues[i] = valueFrom(modelValues[i], type);
+        }
+        return jcrValues;
+    }
+
+    private javax.jcr.Value valueFrom(final Value modelValue, final ValueType type) throws RepositoryException {
+        final ValueFactory factory = session.getValueFactory();
+
+        switch (type) {
             case STRING:
-                return factory.createValue(sourceValue.getString()); //todo
+                // TODO: handle resources
+                return factory.createValue(modelValue.getString());
+            case BINARY:
+                // TODO: handle resources
+                final Binary binary = factory.createBinary(new ByteArrayInputStream((byte[]) modelValue.getObject()));
+                final javax.jcr.Value jcrValue = factory.createValue(binary);
+                binary.dispose();
+                return jcrValue;
+            case LONG:
+                return factory.createValue((Long)modelValue.getObject());
+            case DOUBLE:
+                return factory.createValue((Double)modelValue.getObject());
+            case DATE:
+                return factory.createValue((Calendar)modelValue.getObject());
+            case BOOLEAN:
+                return factory.createValue((Boolean)modelValue.getObject());
+            case URI:
             case NAME:
-                return factory.createValue(sourceValue.getString()); //todo
+            case PATH:
+                return factory.createValue(modelValue.getString(), type.ordinal());
+            case REFERENCE:
+            case WEAKREFERENCE:
+                if (modelValue.isPath()) {
+                    // TODO: resolve path references
+                }
+                return factory.createValue(modelValue.getString(), type.ordinal());
+            case DECIMAL:
+                return factory.createValue((BigDecimal)modelValue.getObject());
             default:
                 final String msg = String.format("Unsupported value type '%s'.", type);
                 throw new IllegalArgumentException(msg);

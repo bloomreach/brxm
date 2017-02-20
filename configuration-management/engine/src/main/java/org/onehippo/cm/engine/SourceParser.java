@@ -391,7 +391,9 @@ public class SourceParser extends AbstractBaseParser {
             return new ValueImpl((String) object);
         }
         if (Tag.TIMESTAMP.equals(scalar.getTag())) {
-            return new ValueImpl((Calendar) object);
+            final Calendar calendar = (Calendar) object;
+            calendar.setLenient(false);
+            return new ValueImpl(calendar);
         }
 
         throw new ParserException("Tag not recognized: " + scalar.getTag(), node);

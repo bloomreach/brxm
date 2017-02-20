@@ -64,6 +64,7 @@ public class ParserValueTest extends AbstractBaseTest {
         calendar.setTimeInMillis(0);
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         calendar.set(2015, 9, 21, 7, 28, 0);
+        calendar.setLenient(false);
         assertProperty(autoDetectedNode, "/autodetected/date", "date", autoDetectedDefinition, ValueType.DATE, calendar);
         assertProperty(autoDetectedNode, "/autodetected/double", "double", autoDetectedDefinition, ValueType.DOUBLE, 3.1415);
         assertProperty(autoDetectedNode, "/autodetected/longAsInt", "longAsInt", autoDetectedDefinition, ValueType.LONG, (long) 42);

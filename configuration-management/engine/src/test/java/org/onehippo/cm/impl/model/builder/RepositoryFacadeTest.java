@@ -230,6 +230,64 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         expectProperty("/test/not-yet-existing", PropertyType.STRING, "new");
     }
 
+    @Test
+    public void expect_all_value_types_to_be_handled_correctly() throws Exception {
+        final String definition
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - string: hello world\n"
+                + "    - binary: !!binary |-\n"
+                + "        aGVsbG8gd29ybGQ=\n"
+                + "    - long: 42\n"
+                + "    - double: 3.1415\n"
+                + "    - date: 2015-10-21T07:28:00+8:00\n"
+                + "    - boolean: true\n"
+                + "    - name:\n"
+                + "          type: name\n"
+                + "          value: nt:unstructured\n"
+                + "    - path:\n"
+                + "          type: path\n"
+                + "          value: /path/to/something\n"
+                + "    - reference:\n"
+                + "          type: reference\n"
+                + "          value: cafebabe-cafe-babe-cafe-babecafebabe\n"
+                + "    - weakreference:\n"
+                + "          type: weakreference\n"
+                + "          value: cafebabe-cafe-babe-cafe-babecafebabe\n"
+                + "    - uri:\n"
+                + "          type: uri\n"
+                + "          value: http://onehippo.org\n"
+                + "    - decimal:\n"
+                + "          type: decimal\n"
+                + "          value: '31415926535897932384626433832795028841971'\n"
+                + "";
+
+        applyDefinitions(definition);
+
+        expectProperty("/test/string", PropertyType.STRING, "hello world");
+        expectProperty("/test/binary", PropertyType.BINARY, "hello world");
+        expectProperty("/test/long", PropertyType.LONG, "42");
+        expectProperty("/test/double", PropertyType.DOUBLE, "3.1415");
+        expectProperty("/test/date", PropertyType.DATE, "2015-10-21T07:28:00.000+08:00");
+        expectProperty("/test/boolean", PropertyType.BOOLEAN, "true");
+        expectProperty("/test/name", PropertyType.NAME, "nt:unstructured");
+        expectProperty("/test/path", PropertyType.PATH, "/path/to/something");
+        expectProperty("/test/reference", PropertyType.REFERENCE, "cafebabe-cafe-babe-cafe-babecafebabe");
+        expectProperty("/test/weakreference", PropertyType.WEAKREFERENCE, "cafebabe-cafe-babe-cafe-babecafebabe");
+        expectProperty("/test/uri", PropertyType.URI, "http://onehippo.org");
+        expectProperty("/test/decimal", PropertyType.DECIMAL, "31415926535897932384626433832795028841971");
+
+        // when applying the same definition again, expect no events
+        final ExpectedEvents expectedEvents = new ExpectedEvents();
+        applyDefinitions(definition, expectedEvents);
+    }
+
+    private void applyDefinitions(final String source) throws Exception {
+        applyDefinitions(new String[]{source}, null);
+    }
+
     private void applyDefinitions(final String source, final ExpectedEvents expectedEvents) throws Exception {
         applyDefinitions(new String[]{source}, expectedEvents);
     }
@@ -255,7 +313,9 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
 
         final List<EventPojo> events = eventCollector.stop();
 
-        expectedEvents.check(events);
+        if (expectedEvents != null) {
+            expectedEvents.check(events);
+        }
     }
 
     private void expectNode(final String nodePath, final String childNodes, final String childProperties) throws RepositoryException {
