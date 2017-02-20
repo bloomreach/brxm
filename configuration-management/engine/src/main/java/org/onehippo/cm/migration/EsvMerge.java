@@ -19,14 +19,14 @@ public enum EsvMerge {
 
     APPEND(false, true),
     COMBINE(true, false),
-    INSERT(true, true),
+    INSERT(true, /* todo: internally supported but undocumented, for now disallow */ false),
     OVERLAY(true, false),
     OVERRIDE(false, true),
     SKIP(true, true);
 
     private final boolean forNode;
     private final boolean forProperty;
-    private final String  name;
+    private final String name;
 
     public static EsvMerge lookup(String name) {
         for (EsvMerge merge : values()) {

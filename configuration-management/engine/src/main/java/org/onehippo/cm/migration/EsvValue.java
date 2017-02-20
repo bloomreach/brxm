@@ -15,36 +15,105 @@
  */
 package org.onehippo.cm.migration;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.UUID;
+
+import javax.jcr.PropertyType;
+
+import org.apache.jackrabbit.util.Base64;
+import org.apache.jackrabbit.util.ISO8601;
+import org.onehippo.cm.impl.model.SourceLocationImpl;
+
 public class EsvValue {
 
-    private String value;
-    private boolean path;
-    private boolean base64;
+    private final boolean resourcePath;
+    private final boolean base64;
+    private final SourceLocationImpl location;
+    private String string;
+    private final int type;
 
-    public EsvValue(String path) {
-        this.path = true;
+    public EsvValue(final int type, final String resourcePath, final SourceLocationImpl location) {
+        this.type = type;
+        this.resourcePath = true;
         this.base64 = false;
-        this.value = path;
+        this.location = location;
+        this.string = resourcePath;
     }
 
-    public EsvValue(final boolean base64) {
-        this.path = false;
+    public EsvValue(final int type, final boolean base64, final SourceLocationImpl location) {
+        this.type = type;
+        this.resourcePath = false;
         this.base64 = base64;
+        this.location = location;
     }
 
-    public String getValue() {
-        return value;
+    public int getType() {
+        return type;
     }
 
-    public void setValue(final String value) {
-        this.value = value;
+    public SourceLocationImpl getSourceLocation() {
+        return location;
     }
 
-    public boolean isPath() {
-        return path;
+    public String getString() {
+        return string;
+    }
+
+    public void setString(final String string) {
+        this.string = string;
+    }
+
+    public boolean isResourcePath() {
+        return resourcePath;
     }
 
     public boolean isBase64() {
         return base64;
+    }
+
+    public Object getValue() throws EsvParseException {
+        final int effectiveType = resourcePath ? PropertyType.STRING : this.type;
+        String value = string;
+        try {
+            if (base64) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                Base64.decode(string, out);
+                value = new String(out.toByteArray(), "UTF-8");
+            }
+            switch (effectiveType) {
+                case PropertyType.BINARY:
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    Base64.decode(value, out);
+                    return out.toByteArray();
+                case PropertyType.STRING:
+                case PropertyType.NAME:
+                case PropertyType.PATH:
+                    return value;
+                case PropertyType.REFERENCE:
+                case PropertyType.WEAKREFERENCE:
+                    return UUID.fromString(value);
+                case PropertyType.BOOLEAN:
+                    return Boolean.valueOf(value);
+                case PropertyType.DATE:
+                    return ISO8601.parse(value);
+                case PropertyType.DECIMAL:
+                    return new BigDecimal(value);
+                case PropertyType.DOUBLE:
+                    return Double.valueOf(value);
+                case PropertyType.LONG:
+                    return Long.valueOf(value);
+                case PropertyType.URI:
+                    return URI.create(value);
+                default:
+                    throw new EsvParseException("Unsupported value type " + PropertyType.nameFromValue(type) +
+                            " at " + location);
+            }
+        } catch (IOException | IllegalArgumentException e) {
+            throw new EsvParseException("Invalid value \"" + string + "\" for value type: " +
+                    PropertyType.nameFromValue(type) + " at " + location, e);
+        }
     }
 }

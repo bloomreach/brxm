@@ -26,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.onehippo.cm.impl.model.SourceLocationImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -33,6 +34,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.onehippo.cm.migration.Esv2Yaml.log;
 
 public class EsvParser extends DefaultHandler {
@@ -51,9 +55,7 @@ public class EsvParser extends DefaultHandler {
     private static final String ESV_LOCATION = "location";
     private static final String ESV_FILE = "file";
 
-    private static final String JCR_PRIMARYTYPE = "jcr:primaryType";
-    private static final String JCR_MIXINTYPES = "jcr:mixinTypes";
-    private static final String JCR_UUID = "jcr:uuid";
+    private static final String[] IGNORED_PROPERTIES = new String[]{"hippo:paths", "hippo:related"};
 
     private final File baseDir;
     private final Stack<EsvNode> stack = new Stack<>();
@@ -67,6 +69,14 @@ public class EsvParser extends DefaultHandler {
 
     public EsvParser(File baseDir) {
         this.baseDir = baseDir;
+    }
+
+    private static boolean isEmpty(final String str) {
+        return str == null || str.length() == 0;
+    }
+
+    private static String getAttribute(final Attributes attr, final String uri, final String localName) {
+        return attr.getValue(uri, localName);
     }
 
     public File getBaseDir() {
@@ -105,8 +115,7 @@ public class EsvParser extends DefaultHandler {
             } else {
                 throw new EsvParseException("Error parsing XML import", e);
             }
-        }
-        finally {
+        } finally {
             stack.clear();
             rootNode = null;
             currentProperty = null;
@@ -143,7 +152,7 @@ public class EsvParser extends DefaultHandler {
         } else if (NS_SV_URI.equals(namespaceURI) && SV_VALUE.equals(localName)) {
             startValue(atts);
         } else {
-            throw new SAXException("Unknown element: " + qName + getParseLocation());
+            throw new SAXException("Unknown element: " + qName + " at " + getLocation());
         }
     }
 
@@ -166,39 +175,36 @@ public class EsvParser extends DefaultHandler {
         } else if (NS_SV_URI.equals(namespaceURI) && SV_VALUE.equals(localName)) {
             endValue();
         } else {
-            throw new SAXException("Unknown element: " + qName + getParseLocation());
+            throw new SAXException("Unknown element: " + qName + " at " + getLocation());
         }
     }
 
     private void startNode(final Attributes atts) throws SAXException {
         if (currentValue != null) {
-            throw new SAXException("Invalid sv:node element within sv:value element");
-        }
-        else if (currentProperty != null) {
-            throw new SAXException("Invalid sv:node element within sv:property element");
+            throw new SAXException("Invalid sv:node element within sv:value element at " + getLocation());
+        } else if (currentProperty != null) {
+            throw new SAXException("Invalid sv:node element within sv:property element at " + getLocation());
         }
         String svName = getAttribute(atts, NS_SV_URI, SV_NAME);
         if (isEmpty(svName)) {
-            throw new SAXException("Empty or missing mandatory sv:name attribute for sv:node element" + getParseLocation());
+            throw new SAXException("Empty or missing mandatory sv:name attribute for sv:node element at " + getLocation());
         }
         int index = -1;
         int offset = svName.indexOf('[');
         if (offset != -1) {
-            index = Integer.valueOf(svName.substring(offset+1, svName.length()-1));
+            index = Integer.valueOf(svName.substring(offset + 1, svName.length() - 1));
             svName = svName.substring(0, offset);
         }
-        final EsvNode newNode = new EsvNode(svName, index);
+        final EsvNode newNode = new EsvNode(svName, index, getLocation());
         final String strMerge = getAttribute(atts, NS_ESV_URI, ESV_MERGE);
         if (strMerge != null) {
             if (isEmpty(strMerge)) {
-                log.warn("Empty esv:merge value for sv:node element" + getParseLocation());
-            }
-            else {
+                log.warn("Empty esv:merge value for sv:node element at " + getLocation());
+            } else {
                 EsvMerge esvMerge = EsvMerge.lookup(strMerge);
                 if (esvMerge == null || !esvMerge.isForNode()) {
-                    log.warn("Ignored unknown or invalid esv:merge value: "+strMerge+" for sv:node element" + getParseLocation());
-                }
-                else {
+                    log.warn("Ignored unknown or invalid esv:merge value: " + strMerge + " for sv:node element at " + getLocation());
+                } else {
                     newNode.setMerge(esvMerge);
                     newNode.setMergeLocation(getAttribute(atts, NS_ESV_URI, ESV_LOCATION));
                 }
@@ -207,8 +213,7 @@ public class EsvParser extends DefaultHandler {
 
         if (rootNode == null) {
             rootNode = newNode;
-        }
-        else {
+        } else {
             getCurrentNode().getChildren().add(newNode);
         }
         stack.push(newNode);
@@ -216,30 +221,29 @@ public class EsvParser extends DefaultHandler {
 
     private void startProperty(final Attributes atts) throws SAXException {
         if (currentValue != null) {
-            throw new SAXException("Invalid sv:property element within sv:value element" + getParseLocation());
-        }
-        else if (currentProperty != null) {
-            throw new SAXException("Invalid sv:property element within sv:property element" + getParseLocation());
+            throw new SAXException("Invalid sv:property element within sv:value element at " + getLocation());
+        } else if (currentProperty != null) {
+            throw new SAXException("Invalid sv:property element within sv:property element at " + getLocation());
         }
         final EsvNode node = getCurrentNode();
         if (node == null) {
-            throw new SAXException("Invalid sv:property element outside sv:node element" + getParseLocation());
+            throw new SAXException("Invalid sv:property element outside sv:node element at " + getLocation());
         }
         final String svName = getAttribute(atts, NS_SV_URI, SV_NAME);
         if (isEmpty(svName)) {
-            throw new SAXException("Empty or missing mandatory sv:name attribute for sv:property element" + getParseLocation());
+            throw new SAXException("Empty or missing mandatory sv:name attribute for sv:property element at " + getLocation());
         }
         final String strType = getAttribute(atts, NS_SV_URI, SV_TYPE);
         if (isEmpty(strType)) {
-            throw new SAXException("Empty or missing mandatory sv:type attribute for sv:property element" + getParseLocation());
+            throw new SAXException("Empty or missing mandatory sv:type attribute for sv:property element at " + getLocation());
         }
         final int jcrType;
         try {
             jcrType = PropertyType.valueFromName(strType);
         } catch (IllegalArgumentException e) {
-            throw new SAXException("Unsupported property sv:type: " + strType + getParseLocation());
+            throw new SAXException("Unsupported property sv:type: " + strType + " at " + getLocation());
         }
-        currentProperty = new EsvProperty(svName, jcrType);
+        currentProperty = new EsvProperty(svName, jcrType, getLocation());
         final String strMultiple = getAttribute(atts, NS_SV_URI, SV_MULTIPLE);
         if (!isEmpty(strMultiple)) {
             currentProperty.setMultiple(Boolean.valueOf(strMultiple));
@@ -247,16 +251,18 @@ public class EsvParser extends DefaultHandler {
         final String strMerge = getAttribute(atts, NS_ESV_URI, ESV_MERGE);
         if (strMerge != null) {
             if (isEmpty(strMerge)) {
-                log.warn("Empty esv:merge value for sv:property element" + getParseLocation());
-            }
-            else {
+                log.warn("Empty esv:merge value for sv:property element at " + getLocation());
+            } else {
                 EsvMerge esvMerge = EsvMerge.lookup(strMerge);
                 if (esvMerge == null || !esvMerge.isForProperty()) {
-                    log.warn("Ignored unknown or invalid esv:merge value: "+strMerge+" for sv:property element" + getParseLocation());
-                }
-                else {
+                    log.warn("Ignored unknown or invalid esv:merge value: " + strMerge + " for sv:property element at " + getLocation());
+                } else {
                     currentProperty.setMerge(esvMerge);
+                    // todo: keep for now but only supported internally (together with merge INSERT)
                     currentProperty.setMergeLocation(getAttribute(atts, NS_ESV_URI, ESV_LOCATION));
+                    if (EsvMerge.APPEND == esvMerge) {
+                        currentProperty.setMultiple(Boolean.TRUE);
+                    }
                 }
             }
         }
@@ -264,17 +270,15 @@ public class EsvParser extends DefaultHandler {
 
     private void startValue(final Attributes atts) throws SAXException {
         if (currentValue != null) {
-            throw new SAXException("Invalid sv:value element within sv:value element" + getParseLocation());
-        }
-        else if (currentProperty == null) {
-            throw new SAXException("Invalid sv:value element outside sv:property element" + getParseLocation());
+            throw new SAXException("Invalid sv:value element within sv:value element at " + getLocation());
+        } else if (currentProperty == null) {
+            throw new SAXException("Invalid sv:value element outside sv:property element at " + getLocation());
         }
         final String esvFile = getAttribute(atts, NS_ESV_URI, ESV_FILE);
         if (esvFile != null) {
-            currentValue = new EsvValue(getPath(esvFile));
-        }
-        else {
-            currentValue = new EsvValue("xs:base64Binary".equals(atts.getValue("xsi:type")));
+            currentValue = new EsvValue(currentProperty.getType(), getResourcePath(esvFile), getLocation());
+        } else {
+            currentValue = new EsvValue(currentProperty.getType(), "xs:base64Binary".equals(atts.getValue("xsi:type")), getLocation());
         }
     }
 
@@ -285,24 +289,42 @@ public class EsvParser extends DefaultHandler {
     private void endProperty() throws SAXException {
         if (JCR_PRIMARYTYPE.equals(currentProperty.getName())) {
             setPrimaryType(getCurrentNode(), currentProperty);
-        }
-        else if (JCR_MIXINTYPES.equals(currentProperty.getName())) {
+        } else if (JCR_MIXINTYPES.equals(currentProperty.getName())) {
             setMixinTypes(getCurrentNode(), currentProperty);
-        }
-        else if (JCR_UUID.equals(currentProperty.getName())) {
+        } else if (JCR_UUID.equals(currentProperty.getName())) {
             setUuid(getCurrentNode(), currentProperty);
-        }
-        else {
-            getCurrentNode().getProperties().add(currentProperty);
+        } else {
+            for (String ignored : IGNORED_PROPERTIES) {
+                if (ignored.equals(currentProperty.getName())) {
+                    currentProperty = null;
+                    break;
+                }
+            }
+            if (currentProperty != null && currentProperty.getValues().size() == 0) {
+                if (currentProperty.isSingle()) {
+                    log.warn("Ignored multiple=\"false\" property " + currentProperty.getName() + " without value at " + getLocation());
+                    currentProperty = null;
+                } else {
+                    // ensure multiple
+                    currentProperty.setMultiple(true);
+                }
+            }
+            if (currentProperty != null) {
+                getCurrentNode().getProperties().add(currentProperty);
+            }
         }
         currentProperty = null;
     }
 
     private void endValue() throws SAXException {
-        if (!currentValue.isPath() && valueBuilder != null) {
-            currentValue.setValue(valueBuilder.toString());
+        if (!currentValue.isResourcePath()) {
+            if (valueBuilder != null) {
+                currentValue.setString(valueBuilder.toString());
+            } else {
+                currentValue.setString("");
+            }
         }
-        if (currentValue.getValue() != null) {
+        if (currentValue.getString() != null) {
             currentProperty.getValues().add(currentValue);
         }
         currentValue = null;
@@ -323,55 +345,55 @@ public class EsvParser extends DefaultHandler {
     }
 
     private void setPrimaryType(final EsvNode node, final EsvProperty property) throws SAXException {
-        if(!property.getValues().isEmpty()) {
-            node.setType(property.getValues().get(0).getValue());
+        if (!property.getValues().isEmpty()) {
+            cleanupProperty(property, PropertyType.NAME, true);
+            node.getProperties().add(property);
         } else {
-            throw new SAXException("Missing value for property "+JCR_PRIMARYTYPE + getParseLocation());
+            throw new SAXException("Missing value for property " + JCR_PRIMARYTYPE + " at " + getLocation());
         }
     }
 
     private void setMixinTypes(final EsvNode node, final EsvProperty property) throws SAXException {
-        for (EsvValue value : property.getValues()) {
-            node.getMixins().add(value.getValue());
+        if (!property.getValues().isEmpty()) {
+            cleanupProperty(property, PropertyType.NAME, false);
+            node.getProperties().add(property);
         }
     }
 
     private void setUuid(final EsvNode node, final EsvProperty property) throws SAXException {
-        if(!property.getValues().isEmpty()) {
-            node.setUuid(property.getValues().get(0).getValue());
+        if (!property.getValues().isEmpty()) {
+            cleanupProperty(property, PropertyType.STRING, true);
+            node.getProperties().add(property);
         } else {
-            throw new SAXException("Missing value for property "+JCR_UUID + getParseLocation());
+            throw new SAXException("Missing value for property " + JCR_UUID + " at " + getLocation());
         }
     }
 
-    private String getPath(final String esvFile) throws SAXException {
+    private void cleanupProperty(final EsvProperty property, final int type, boolean single) {
+        property.setType(type);
+        if (single) {
+            property.setMultiple(false);
+            EsvValue value = property.getValues().get(0);
+            property.getValues().clear();
+            property.getValues().add(value);
+        }
+        property.setMerge(null);
+        property.setMergeLocation(null);
+    }
+
+    private String getResourcePath(final String esvFile) throws SAXException {
         if (isEmpty(esvFile)) {
-            throw new SAXException("Empty esv:file property for sv:value element" + getParseLocation());
+            throw new SAXException("Empty esv:file property for sv:value element at " + getLocation());
         }
         final String path = esvFile.startsWith("/") ? esvFile.substring(1) : esvFile;
         final File file = new File(baseDir, path);
         if (!file.exists() || !file.isFile()) {
-            throw new SAXException("File esv:file: "+esvFile+" not found or not a file" + getParseLocation());
+            throw new SAXException("File esv:file: " + esvFile + " not found or not a file at " + getLocation());
         }
         return path;
     }
 
-    private String getParseLocation() {
-        return new StringBuilder(" at ")
-                .append(resourcePath)
-                .append(" (")
-                .append(locator.getLineNumber())
-                .append(", ")
-                .append(locator.getColumnNumber())
-                .append(")")
-                .toString();
-    }
-
-    private static boolean isEmpty(final String str) {
-        return str == null || str.length() == 0;
-    }
-
-    private static String getAttribute(final Attributes attr, final String uri, final String localName) {
-        return attr.getValue(uri, localName);
+    private SourceLocationImpl getLocation() {
+        return new SourceLocationImpl(resourcePath, locator.getLineNumber(), locator.getColumnNumber());
     }
 }
