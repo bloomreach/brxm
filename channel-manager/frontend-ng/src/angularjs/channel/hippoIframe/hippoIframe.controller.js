@@ -69,6 +69,9 @@ class HippoIframeCtrl {
     OverlayService.onEditMenu((menuUuid) => {
       this.onEditMenu({ menuUuid });
     });
+    OverlayService.onEditContent((contentUuid) => {
+      this.onEditContent({ contentUuid });
+    });
 
     const sheetJQueryElement = $element.find('.channel-iframe-sheet');
     ViewportService.init(sheetJQueryElement);
@@ -209,17 +212,8 @@ class HippoIframeCtrl {
     return !this.editMode ? this.PageStructureService.getContentLinks() : [];
   }
 
-  openContent(contentLink) {
-    const contentId = contentLink.getUuid();
-    this.ChannelSidePanelService.open('right', contentId);
-  }
-
   getEditMenuLinks() {
     return this.editMode ? this.PageStructureService.getEditMenuLinks() : [];
-  }
-
-  openMenuEditor(editMenuLink) {
-    this.onEditMenu({ menuUuid: editMenuLink.getUuid() });
   }
 
   getSrc() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ class ChannelCtrl {
     $timeout,
     $translate,
     ChannelService,
+    ChannelSidePanelService,
     CmsService,
     FeedbackService,
     HippoIframeService,
@@ -36,6 +37,7 @@ class ChannelCtrl {
     this.$timeout = $timeout;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
+    this.ChannelSidePanelService = ChannelSidePanelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
@@ -93,6 +95,10 @@ class ChannelCtrl {
   editMenu(menuUuid) {
     this.menuUuid = menuUuid;
     this.showSubpage('menu-editor');
+  }
+
+  editContent(contentUuid) {
+    this.ChannelSidePanelService.open('right', contentUuid);
   }
 
   _createPreviewConfiguration() {

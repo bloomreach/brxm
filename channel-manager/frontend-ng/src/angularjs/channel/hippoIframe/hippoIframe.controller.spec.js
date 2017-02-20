@@ -16,24 +16,22 @@
 
 import angular from 'angular';
 import 'angular-mocks';
-import ContentLink from '../page/element/contentLink';
 
 describe('hippoIframeCtrl', () => {
-  let PageStructureService;
-  let hippoIframeCtrl;
-  let scope;
   let $q;
   let $rootScope;
-  let DragDropService;
-  let OverlayService;
-  let hstCommentsProcessorService;
-  let PageMetaDataService;
   let ChannelService;
   let CmsService;
-  let ChannelSidePanelService;
-  let HippoIframeService;
   let DialogService;
   let DomService;
+  let DragDropService;
+  let HippoIframeService;
+  let OverlayService;
+  let PageMetaDataService;
+  let PageStructureService;
+  let hippoIframeCtrl;
+  let hstCommentsProcessorService;
+  let scope;
   const iframeDom = {
     defaultView: window,
     location: {
@@ -46,36 +44,52 @@ describe('hippoIframeCtrl', () => {
     let $compile;
     angular.mock.module('hippo-cm');
 
-    inject(($controller, _$rootScope_, _$compile_, _$q_, _DragDropService_, _OverlayService_,
-            _PageStructureService_, _hstCommentsProcessorService_, _PageMetaDataService_,
-            _ChannelService_, _CmsService_, _ChannelSidePanelService_, _HippoIframeService_,
-            _DialogService_, _DomService_) => {
-      $rootScope = _$rootScope_;
+    inject(($controller,
+            _$compile_,
+            _$q_,
+            _$rootScope_,
+            _ChannelService_,
+            _ChannelSidePanelService_,
+            _CmsService_,
+            _DialogService_,
+            _DomService_,
+            _DragDropService_,
+            _HippoIframeService_,
+            _OverlayService_,
+            _PageMetaDataService_,
+            _PageStructureService_,
+            _hstCommentsProcessorService_) => {
       $compile = _$compile_;
       $q = _$q_;
-      DragDropService = _DragDropService_;
-      OverlayService = _OverlayService_;
-      PageStructureService = _PageStructureService_;
-      hstCommentsProcessorService = _hstCommentsProcessorService_;
-      PageMetaDataService = _PageMetaDataService_;
+      $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
-      ChannelSidePanelService = _ChannelSidePanelService_;
-      HippoIframeService = _HippoIframeService_;
       DialogService = _DialogService_;
       DomService = _DomService_;
+      DragDropService = _DragDropService_;
+      HippoIframeService = _HippoIframeService_;
+      OverlayService = _OverlayService_;
+      PageMetaDataService = _PageMetaDataService_;
+      PageStructureService = _PageStructureService_;
+      hstCommentsProcessorService = _hstCommentsProcessorService_;
       scope = $rootScope.$new();
     });
 
+    spyOn(DomService, 'addCss').and.returnValue($q.resolve());
     spyOn(DragDropService, 'init');
     spyOn(OverlayService, 'init');
     spyOn(OverlayService, 'onEditMenu');
-    spyOn(DomService, 'addCss').and.returnValue($q.resolve());
+    spyOn(OverlayService, 'onEditContent');
 
     scope.testEditMode = false;
     scope.onEditMenu = jasmine.createSpy('onEditMenu');
+    scope.onEditContent = jasmine.createSpy('onEditContent');
 
-    const el = angular.element('<hippo-iframe edit-mode="testEditMode" on-edit-menu="onEditMenu(menuUuid)"></hippo-iframe>');
+    const el = angular.element(
+      `<hippo-iframe edit-mode="testEditMode" 
+                    on-edit-content="onEditContent(contentUuid)" 
+                    on-edit-menu="onEditMenu(menuUuid)">
+      </hippo-iframe>`);
     $compile(el)(scope);
     scope.$digest();
 
@@ -221,14 +235,8 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('opens right side panel when clicking the edit content button', () => {
-    const contentLinkComment = $j('<!-- { "HST-Type": "CONTENT_LINK" -->')[0];
-    const contentLink = new ContentLink(contentLinkComment, {
-      uuid: '1234',
-    });
-    spyOn(ChannelSidePanelService, 'open');
-
-    hippoIframeCtrl.openContent(contentLink);
-
-    expect(ChannelSidePanelService.open).toHaveBeenCalledWith('right', '1234');
+    const callback = OverlayService.onEditContent.calls.mostRecent().args[0];
+    callback('document-uuid');
+    expect(scope.onEditContent).toHaveBeenCalledWith('document-uuid');
   });
 });
