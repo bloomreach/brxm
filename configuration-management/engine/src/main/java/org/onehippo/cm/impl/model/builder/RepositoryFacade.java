@@ -16,6 +16,7 @@
 package org.onehippo.cm.impl.model.builder;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -42,14 +43,21 @@ import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.NodeType;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
+import org.onehippo.cm.api.model.DefinitionItem;
+import org.onehippo.cm.api.model.DefinitionProperty;
+import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
+import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
+import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
+import org.onehippo.cm.engine.ResourceInputProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,13 +68,17 @@ public class RepositoryFacade {
     private static final Logger logger = LoggerFactory.getLogger(RepositoryFacade.class);
     private final Session session;
     private final Node repositoryRoot;
+    private final Map<Module, ResourceInputProvider> resourceInputProviders;
 
-    protected RepositoryFacade(final Session session, final Node repositoryRoot) {
+    protected RepositoryFacade(final Session session,
+                               final Node repositoryRoot,
+                               final Map<Module, ResourceInputProvider> resourceInputProviders) {
         this.session = session;
         this.repositoryRoot = repositoryRoot;
+        this.resourceInputProviders = resourceInputProviders;
     }
 
-    public void push(final MergedModel model) throws RepositoryException, ParseException {
+    public void push(final MergedModel model) throws Exception {
         pushNamespaces(model.getNamespaceDefinitions());
         pushNodeTypes(model.getNodeTypeDefinitions());
         pushNodes(model.getConfigurationRootNode());
@@ -149,12 +161,12 @@ public class RepositoryFacade {
         */
     }
 
-    private void pushNodes(final ConfigurationNode configurationRoot) throws RepositoryException {
+    private void pushNodes(final ConfigurationNode configurationRoot) throws Exception {
         pushProperties(configurationRoot, repositoryRoot);
         pushNodes(configurationRoot, repositoryRoot);
     }
 
-    private void pushNodes(final ConfigurationNode modelNode, final Node jcrNode) throws RepositoryException {
+    private void pushNodes(final ConfigurationNode modelNode, final Node jcrNode) throws Exception {
         final Map<String, Node> retainedChildren = removeNonModelNodes(modelNode, jcrNode);
         final NextChildNameProvider nextChildNameProvider = new NextChildNameProvider(retainedChildren);
         String nextChildIndexedName = nextChildNameProvider.next();
@@ -267,7 +279,7 @@ public class RepositoryFacade {
         return node.getName() + (index > 1 ? "[" + index + "]" : "");
     }
 
-    private void pushProperties(final ConfigurationNode source, final Node target) throws RepositoryException {
+    private void pushProperties(final ConfigurationNode source, final Node target) throws Exception {
         final Map<String, Property> existingProperties = new HashMap<>();
         final PropertyIterator iterator = target.getProperties();
         while (iterator.hasNext()) {
@@ -333,15 +345,16 @@ public class RepositoryFacade {
         }
     }
 
-    private void pushProperty(final ConfigurationProperty property, final Node target) throws RepositoryException {
+    private void pushProperty(final ConfigurationProperty property, final Node target) throws Exception {
         if (property.getType() == PropertyType.SINGLE) {
-            target.setProperty(property.getName(), valueFrom(property.getValue(), property.getValueType()));
+            target.setProperty(property.getName(), valueFrom(property, property.getValue(), property.getValueType()));
         } else {
-            target.setProperty(property.getName(), valuesFrom(property.getValues(), property.getValueType()));
+            target.setProperty(property.getName(), valuesFrom(property, property.getValues(), property.getValueType()));
         }
     }
 
-    private boolean isOverride(final ConfigurationProperty modelProperty, final Property jcrProperty) throws RepositoryException {
+    private boolean isOverride(final ConfigurationProperty modelProperty,
+                               final Property jcrProperty) throws RepositoryException {
         if (modelProperty.getValueType().ordinal() != jcrProperty.getType()) {
             return true;
         }
@@ -352,13 +365,14 @@ public class RepositoryFacade {
         }
     }
 
-    private boolean valuesAreIdentical(final ConfigurationProperty modelProperty, final Property jcrProperty) throws RepositoryException {
+    private boolean valuesAreIdentical(final ConfigurationProperty modelProperty,
+                                       final Property jcrProperty) throws Exception {
         if (isOverride(modelProperty, jcrProperty)) {
             return false;
         }
 
         if (modelProperty.getType() == PropertyType.SINGLE) {
-            return valueIsIdentical(modelProperty.getValue(), jcrProperty.getValue());
+            return valueIsIdentical(modelProperty, modelProperty.getValue(), jcrProperty.getValue());
         } else {
             final Value[] modelValues = modelProperty.getValues();
             final javax.jcr.Value[] jcrValues = jcrProperty.getValues();
@@ -366,7 +380,7 @@ public class RepositoryFacade {
                 return false;
             }
             for (int i = 0; i < modelValues.length; i++) {
-                if (!valueIsIdentical(modelValues[i], jcrValues[i])) {
+                if (!valueIsIdentical(modelProperty, modelValues[i], jcrValues[i])) {
                     return false;
                 }
             }
@@ -374,18 +388,26 @@ public class RepositoryFacade {
         }
     }
 
-    private boolean valueIsIdentical(final Value modelValue, final javax.jcr.Value jcrValue) throws RepositoryException {
+    private boolean valueIsIdentical(final ConfigurationProperty modelProperty,
+                                     final Value modelValue,
+                                     final javax.jcr.Value jcrValue) throws Exception {
         if (modelValue.getType().ordinal() != jcrValue.getType()) {
             return false;
         }
 
         switch (modelValue.getType()) {
             case STRING:
-                // TODO: handle resources
-                return modelValue.getString().equals(jcrValue.getString());
+                final String modelStringValue = getStringValue(modelProperty, modelValue);
+                return modelStringValue.equals(jcrValue.getString());
             case BINARY:
-                // TODO: handle resources
-                return modelValue.getString().equals(jcrValue.getString());
+                try (final InputStream modelInputStream = getBinaryInputStream(modelProperty, modelValue)) {
+                    final Binary jcrBinary = jcrValue.getBinary();
+                    try {
+                        return IOUtils.contentEquals(modelInputStream, jcrBinary.getStream());
+                    } finally {
+                        jcrBinary.dispose();
+                    }
+                }
             case LONG:
                 return modelValue.getObject().equals(jcrValue.getLong());
             case DOUBLE:
@@ -412,27 +434,106 @@ public class RepositoryFacade {
         }
     }
 
-    private javax.jcr.Value[] valuesFrom(final Value[] modelValues, final ValueType type) throws RepositoryException {
+    private String getStringValue(final ConfigurationProperty modelProperty,
+                                  final Value modelValue) throws IOException {
+        if (modelValue.isResource()) {
+            try (final InputStream inputStream = getResourceInputStream(modelProperty, modelValue)) {
+                return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            }
+        } else {
+            return modelValue.getString();
+        }
+    }
+
+    private InputStream getBinaryInputStream(final ConfigurationProperty modelProperty,
+                                             final Value modelValue) throws IOException {
+        if (modelValue.isResource()) {
+            return getResourceInputStream(modelProperty, modelValue);
+        } else {
+            return new ByteArrayInputStream((byte[]) modelValue.getObject());
+        }
+    }
+
+    private InputStream getResourceInputStream(final ConfigurationProperty modelProperty,
+                                               final Value modelValue) throws IOException {
+        final List<DefinitionItem> definitions = modelProperty.getDefinitions();
+        final DefinitionItem definitionItem = findDefinitionItemForValue(definitions, modelValue);
+        if (definitionItem == null) {
+            final String msg = String.format(
+                    "Cannot find definition item that contributed resource '%s' in node '%s'.",
+                    modelValue.getString(),
+                    modelProperty.getPath());
+            throw new IllegalArgumentException(msg);
+        }
+        final Source source = definitionItem.getDefinition().getSource();
+        return resourceInputProviders.get(source.getModule()).getResourceInputStream(source, modelValue.getString());
+    }
+
+    /**
+     * Finds the {@link DefinitionItem} that contributed the given {@link Value} or null if not found. It might be that
+     * a value cannot be found because {@link DefinitionItem} later in the model processing order performs a
+     * {@link PropertyOperation} delete, replace or override.
+     */
+    private DefinitionItem findDefinitionItemForValue(final List<DefinitionItem> definitions, final Value value) {
+        for (int i = definitions.size() - 1; i > -1 ; i--) {
+            final DefinitionProperty definitionProperty = (DefinitionProperty) definitions.get(i);
+            if (definitionProperty.getOperation() == PropertyOperation.DELETE) {
+                return null;
+            }
+            if (definitionPropertyContainsValue(definitionProperty, value)) {
+                return definitionProperty;
+            }
+            if (definitionProperty.getOperation() == PropertyOperation.REPLACE
+                    || definitionProperty.getOperation() == PropertyOperation.OVERRIDE) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    private boolean definitionPropertyContainsValue(final DefinitionProperty definitionProperty, final Value value) {
+        // intentionally uses reference equality, not object equality
+        // see also the test "expect_value_add_on_resource_to_work" which would fail if object equality would be used
+        if (definitionProperty.getType() == PropertyType.SINGLE) {
+            return definitionProperty.getValue() == value;
+        } else {
+            final Value[] values = definitionProperty.getValues();
+            for (int i = 0; i < values.length; i++) {
+                if (values[i] == value) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private javax.jcr.Value[] valuesFrom(final ConfigurationProperty modelProperty,
+                                         final Value[] modelValues,
+                                         final ValueType type) throws Exception {
         final javax.jcr.Value[] jcrValues = new javax.jcr.Value[modelValues.length];
         for (int i = 0; i < modelValues.length; i++) {
-            jcrValues[i] = valueFrom(modelValues[i], type);
+            jcrValues[i] = valueFrom(modelProperty, modelValues[i], type);
         }
         return jcrValues;
     }
 
-    private javax.jcr.Value valueFrom(final Value modelValue, final ValueType type) throws RepositoryException {
+    private javax.jcr.Value valueFrom(final ConfigurationProperty modelProperty,
+                                      final Value modelValue,
+                                      final ValueType type) throws Exception {
         final ValueFactory factory = session.getValueFactory();
 
         switch (type) {
             case STRING:
-                // TODO: handle resources
-                return factory.createValue(modelValue.getString());
+                return factory.createValue(getStringValue(modelProperty, modelValue));
             case BINARY:
-                // TODO: handle resources
-                final Binary binary = factory.createBinary(new ByteArrayInputStream((byte[]) modelValue.getObject()));
-                final javax.jcr.Value jcrValue = factory.createValue(binary);
-                binary.dispose();
-                return jcrValue;
+                // createBinary closes the inputStream after use or on error
+                final Binary binary = factory.createBinary(getBinaryInputStream(modelProperty, modelValue));
+                try {
+                    return factory.createValue(binary);
+                } finally {
+                    binary.dispose();
+                }
             case LONG:
                 return factory.createValue((Long)modelValue.getObject());
             case DOUBLE:

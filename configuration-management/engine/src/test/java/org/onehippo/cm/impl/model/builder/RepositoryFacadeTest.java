@@ -17,7 +17,9 @@ package org.onehippo.cm.impl.model.builder;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -30,7 +32,10 @@ import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.engine.ResourceInputProvider;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.ModelTestUtils;
 import org.onehippo.cm.impl.model.builder.eventutils.EventCollector;
 import org.onehippo.cm.impl.model.builder.eventutils.EventPojo;
 import org.onehippo.cm.impl.model.builder.eventutils.ExpectedEvents;
@@ -264,7 +269,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 + "          value: '31415926535897932384626433832795028841971'\n"
                 + "";
 
-        applyDefinitions(definition);
+        applyDefinitions(definition); // ignore all events
 
         expectProperty("/test/string", PropertyType.STRING, "hello world");
         expectProperty("/test/binary", PropertyType.BINARY, "hello world");
@@ -284,6 +289,71 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         applyDefinitions(definition, expectedEvents);
     }
 
+    @Test
+    public void expect_resources_are_loaded() throws Exception {
+        final String definition
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - string:\n"
+                + "        type: string\n"
+                + "        resource: folder/string.txt\n"
+                + "    - binary:\n"
+                + "        type: binary\n"
+                + "        resource: folder/binary.bin\n"
+                + "";
+
+        ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectPropertyAdded("/test/string")
+                .expectPropertyAdded("/test/binary");
+
+        applyDefinitions(definition, expectedEvents);
+
+        expectProperty("/test/string", PropertyType.STRING,
+                "test-configuration/test-project/test-module-0/string/folder/string.txt");
+        expectProperty("/test/binary", PropertyType.BINARY,
+                "test-configuration/test-project/test-module-0/string/folder/binary.bin");
+
+        // when applying the same definition again, expect no events
+        expectedEvents = new ExpectedEvents();
+        applyDefinitions(definition, expectedEvents);
+    }
+
+    @Test
+    public void expect_value_add_on_resource_to_work() throws Exception {
+        final String definition1
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - string:\n"
+                + "        type: string\n"
+                + "        resource: [folder/string1.txt]\n"
+                + "";
+        final String definition2
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /:\n"
+                + "    - string:\n"
+                + "        operation: add\n"
+                + "        resource: [folder/string1.txt]\n"
+                + "";
+
+        ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectPropertyAdded("/test/string");
+
+        applyDefinitions(new String[]{definition1,definition2}, expectedEvents);
+
+        expectProperty("/test/string", PropertyType.STRING, new String[]{
+                "test-configuration/test-project/test-module-0/string/folder/string1.txt",
+                "test-configuration/test-project/test-module-1/string/folder/string1.txt"});
+
+        // when applying the same definition again, expect no events
+        expectedEvents = new ExpectedEvents();
+        applyDefinitions(new String[]{definition1,definition2}, expectedEvents);
+    }
+
     private void applyDefinitions(final String source) throws Exception {
         applyDefinitions(new String[]{source}, null);
     }
@@ -296,17 +366,19 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         final EventCollector eventCollector = new EventCollector(session, testNode);
         eventCollector.start();
 
-        final RepositoryFacade repositoryFacade = new RepositoryFacade(session, testNode);
+        final Map<Module, ResourceInputProvider> resourceInputProviders = new HashMap<>();
         final MergedModelBuilder mergedModelBuilder = new MergedModelBuilder();
         for (int i = 0; i < sources.length; i++) {
             final List<Definition> definitions = parseNoSort(sources[i], "test-module-" + i);
             assertTrue(definitions.size() > 0);
-            final ConfigurationImpl configuration =
-                    (ConfigurationImpl) definitions.get(0).getSource().getModule().getProject().getConfiguration();
+            final Module module = definitions.get(0).getSource().getModule();
+            final ConfigurationImpl configuration = (ConfigurationImpl) module.getProject().getConfiguration();
             mergedModelBuilder.push(configuration);
+            resourceInputProviders.put(module, ModelTestUtils.getTestResourceInputProvider());
         }
         final MergedModel mergedModel = mergedModelBuilder.build();
 
+        final RepositoryFacade repositoryFacade = new RepositoryFacade(session, testNode, resourceInputProviders);
         repositoryFacade.push(mergedModel);
 
         session.save();

@@ -38,6 +38,7 @@ import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.api.model.PropertyOperation.ADD;
 import static org.onehippo.cm.api.model.PropertyOperation.DELETE;
 import static org.onehippo.cm.api.model.PropertyOperation.OVERRIDE;
+import static org.onehippo.cm.api.model.PropertyOperation.REPLACE;
 
 class ConfigurationTreeBuilder {
 
@@ -220,7 +221,10 @@ class ConfigurationTreeBuilder {
             property.setValueType(definitionProperty.getValueType());
         }
 
-        warnIfValuesAreEqual(definitionProperty, property);
+        if (op == REPLACE) {
+            warnIfValuesAreEqual(definitionProperty, property);
+        }
+
         property.addDefinitionItem(definitionProperty);
         if (PropertyType.SINGLE == definitionProperty.getType()) {
             property.setValue(definitionProperty.getValue());
