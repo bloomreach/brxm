@@ -31,6 +31,9 @@ public class EsvNode {
     private List<EsvProperty> properties = new ArrayList<>();
     private List<EsvNode> children = new ArrayList<>();
 
+    private final String AUTH_ROLE_NT = "hipposys:authrole";
+    private final String HIPPOSYS_ROLE = "hipposys:role";
+
     public EsvNode(final String name, final int index, SourceLocationImpl location) {
         this.name = name;
         this.index = index;
@@ -38,6 +41,12 @@ public class EsvNode {
     }
 
     public String getName() {
+        if (AUTH_ROLE_NT.equals(getType())) {
+            EsvProperty prop = getProperty(HIPPOSYS_ROLE);
+            if (prop != null && prop.getValue() != null) {
+                return prop.getValue();
+            }
+        }
         return name;
     }
 
