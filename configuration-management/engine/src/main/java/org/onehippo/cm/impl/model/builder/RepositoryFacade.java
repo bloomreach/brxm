@@ -280,49 +280,105 @@ public class RepositoryFacade {
             final ConfigurationProperty property = source.getProperties().get(name);
 
             if (name.equals(JCR_PRIMARYTYPE)) {
-                final String modelPrimaryType = property.getValue().getString();
-                final String jcrPrimaryType = target.getPrimaryNodeType().getName();
-                if (!jcrPrimaryType.equals(modelPrimaryType)) {
-                    target.setPrimaryType(modelPrimaryType);
-                }
+                pushPrimaryType(property, target);
             } else if (name.equals(JCR_MIXINTYPES)) {
-                final List<String> jcrMixinTypes = Arrays.stream(target.getMixinNodeTypes())
-                        .map(NodeType::getName)
-                        .collect(Collectors.toList());
-                final List<String> modelMixinTypes = Arrays.stream(property.getValues())
-                        .map(Value::getString)
-                        .collect(Collectors.toList());
-
-                for (String modelMixinType : modelMixinTypes) {
-                    if (jcrMixinTypes.contains(modelMixinType)) {
-                        jcrMixinTypes.remove(modelMixinType);
-                    } else {
-                        target.addMixin(modelMixinType);
+                pushMixinTypes(property, target);
+            } else {
+                final Property jcrProperty = existingProperties.get(name);
+                if (jcrProperty == null) {
+                    pushProperty(property, target);
+                } else {
+                    if (isOverride(property, jcrProperty)) {
+                        jcrProperty.remove();
+                        pushProperty(property, target);
+                    } else if (!valuesAreIdentical(property, jcrProperty)) {
+                        pushProperty(property, target);
                     }
                 }
-                for (String mixinType : jcrMixinTypes) {
-                    target.removeMixin(mixinType);
-                }
-            } else {
-                if (existingProperties.containsKey(name)) {
-                    // TODO: don't do that if the values are identical?
-                    final Property existingProperty = existingProperties.get(name);
-                    existingProperty.remove();
-                    existingProperties.remove(name);
-                }
+            }
+            existingProperties.remove(name);
+        }
 
-                if (PropertyType.SINGLE == property.getType()) {
-                    target.setProperty(name, valueFrom(property.getValue(), property.getValueType()));
-                } else {
-                    target.setProperty(name, valuesFrom(property.getValues(), property.getValueType()));
-                }
+        // delete all existing properties that are not part of the source model
+        for (String name : existingProperties.keySet()) {
+            target.getProperty(name).remove();
+        }
+    }
+
+    private void pushPrimaryType(final ConfigurationProperty property, final Node target) throws RepositoryException {
+        final String modelPrimaryType = property.getValue().getString();
+        final String jcrPrimaryType = target.getPrimaryNodeType().getName();
+        if (!jcrPrimaryType.equals(modelPrimaryType)) {
+            target.setPrimaryType(modelPrimaryType);
+        }
+    }
+
+    private void pushMixinTypes(final ConfigurationProperty property, final Node target) throws RepositoryException {
+        final List<String> jcrMixinTypes = Arrays.stream(target.getMixinNodeTypes())
+                .map(NodeType::getName)
+                .collect(Collectors.toList());
+        final List<String> modelMixinTypes = Arrays.stream(property.getValues())
+                .map(Value::getString)
+                .collect(Collectors.toList());
+
+        for (String modelMixinType : modelMixinTypes) {
+            if (jcrMixinTypes.contains(modelMixinType)) {
+                jcrMixinTypes.remove(modelMixinType);
+            } else {
+                target.addMixin(modelMixinType);
             }
         }
 
-        // delete all existing propertie that are not part of the source model
-        for (String name : existingProperties.keySet()) {
-            existingProperties.remove(name);
+        for (String mixinType : jcrMixinTypes) {
+            target.removeMixin(mixinType);
         }
+    }
+
+    private void pushProperty(final ConfigurationProperty property, final Node target) throws RepositoryException {
+        if (property.getType() == PropertyType.SINGLE) {
+            target.setProperty(property.getName(), valueFrom(property.getValue(), property.getValueType()));
+        } else {
+            target.setProperty(property.getName(), valuesFrom(property.getValues(), property.getValueType()));
+        }
+    }
+
+    private boolean isOverride(final ConfigurationProperty modelProperty, final Property jcrProperty) throws RepositoryException {
+        if (modelProperty.getValueType().ordinal() != jcrProperty.getType()) {
+            return true;
+        }
+        if (modelProperty.getType() == PropertyType.SINGLE) {
+            return jcrProperty.isMultiple();
+        } else {
+            return !jcrProperty.isMultiple();
+        }
+    }
+
+    private boolean valuesAreIdentical(final ConfigurationProperty modelProperty, final Property jcrProperty) throws RepositoryException {
+        if (isOverride(modelProperty, jcrProperty)) {
+            return false;
+        }
+
+        if (modelProperty.getType() == PropertyType.SINGLE) {
+            return valueIsIdentical(modelProperty.getValue(), jcrProperty.getValue());
+        } else {
+            final Value[] modelValues = modelProperty.getValues();
+            final javax.jcr.Value[] jcrValues = jcrProperty.getValues();
+            if (modelValues.length != jcrValues.length) {
+                return false;
+            }
+            for (int i = 0; i < modelValues.length; i++) {
+                if (!valueIsIdentical(modelValues[i], jcrValues[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    private boolean valueIsIdentical(final Value modelValue, final javax.jcr.Value jcrValue) throws RepositoryException {
+        // TODO: handle resources
+        return modelValue.getType().ordinal() == jcrValue.getType() &&
+                modelValue.getString().equals(jcrValue.getString());
     }
 
     private javax.jcr.Value[] valuesFrom(final Value[] pValues, final ValueType type) throws RepositoryException {

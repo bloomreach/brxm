@@ -33,6 +33,8 @@ import org.onehippo.cm.impl.model.ProjectImpl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.onehippo.cm.impl.model.ModelTestUtils.loadYAMLResource;
+import static org.onehippo.cm.impl.model.ModelTestUtils.loadYAMLString;
 
 public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
 
@@ -318,7 +320,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         final ConfigurationImpl c1 = new ConfigurationImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
-        loadYAMLFile("builder/definition-sorter.yaml", m1);
+        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
 
         MergedModel model = new MergedModelBuilder().push(c1).build();
 
@@ -340,8 +342,8 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         final ConfigurationImpl c1 = new ConfigurationImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
-        loadYAMLFile("builder/definition-sorter.yaml", m1);
-        loadYAMLFile("builder/definition-sorter2.yaml", m1);
+        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
+        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m1);
 
         MergedModel model = new MergedModelBuilder().push(c1).build();
 
@@ -364,8 +366,8 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         final ConfigurationImpl c1 = new ConfigurationImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
-        loadYAMLFile("builder/definition-sorter2.yaml", m1);
-        loadYAMLFile("builder/definition-sorter.yaml", m1);
+        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter2.yaml", m1);
+        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
 
         MergedModel model = new MergedModelBuilder().push(c1).build();
 
@@ -393,7 +395,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
                 + "    - /a/b:\n"
                 + "      - propertyX: blaX";
 
-        loadYAMLFile("builder/definition-sorter.yaml", m1);
+        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
         loadYAMLString(yaml, m1);
 
         MergedModelBuilder builder = new MergedModelBuilder();
@@ -407,7 +409,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
     }
 
     @Test
-    public void reject_node_type_definitions_in_moltiple_sources_of_module() throws Exception {
+    public void reject_node_type_definitions_in_multiple_sources_of_module() throws Exception {
         final ConfigurationImpl c1 = new ConfigurationImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
@@ -415,7 +417,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
                 + "  - cnd:\n"
                 + "    - dummy CND content";
 
-        loadYAMLFile("builder/definition-sorter.yaml", m1);
+        loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
         loadYAMLString(yaml, m1);
 
         MergedModelBuilder builder = new MergedModelBuilder();

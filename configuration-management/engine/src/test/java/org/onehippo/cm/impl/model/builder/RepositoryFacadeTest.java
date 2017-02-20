@@ -15,80 +15,301 @@
  */
 package org.onehippo.cm.impl.model.builder;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
-import org.junit.Ignore;
+import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropertyIterable;
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.builder.eventutils.EventCollector;
+import org.onehippo.cm.impl.model.builder.eventutils.EventPojo;
+import org.onehippo.cm.impl.model.builder.eventutils.ExpectedEvents;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
 
 public class RepositoryFacadeTest extends RepositoryTestCase {
 
-    @Ignore
+    /* - add test for resources
+     * - add test for all value types
+     * - add test & logic for path references
+     * - add node
+     * - merge node
+     * - reorder node
+     * - attempt reorder within not-orderable node
+     * - delete node
+     * - jcrProperty and MixinType tests
+     *   - check if it is possible to remove either using a prop-delete ...
+     */
+    private Node testNode;
+
+    @Before
+    public void createTestNode() throws RepositoryException {
+        testNode = session.getRootNode().addNode("test");
+        session.save();
+    }
+
     @Test
-    public void test_order() throws Exception {
-        final String yaml
+    public void expect_unchanged_existing_properties_to_be_untouched() throws Exception {
+        setProperty("/test", "single", PropertyType.STRING, "org");
+        setProperty("/test", "multiple", PropertyType.STRING, new String[]{"org1","org2"});
+
+        final String source
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /root:\n"
+                + "  - /:\n"
                 + "    - jcr:primaryType: nt:unstructured\n"
-                + "    - /c:\n"
-                + "      - .meta:order-before: b\n"
-                + "      - jcr:primaryType: nt:unstructured\n"
-                + "      - prop-c: value-c\n"
-                + "    - /b:\n"
-                + "      - .meta:order-before: a\n"
-                + "      - jcr:primaryType: nt:unstructured\n"
-                + "      - prop-b: value-b\n"
-                + "    - /a:\n"
-                + "      - jcr:primaryType: nt:unstructured\n"
-                + "      - prop-a: value-a\n"
+                + "    - single: org\n"
+                + "    - multiple: [org1, org2]\n"
                 + "";
 
-        final Node testNode = session.getRootNode().addNode("test");
-        final Node rootNode = testNode.addNode("root");
-        rootNode.addNode("a");
-        session.save();
+        final ExpectedEvents expectedEvents = new ExpectedEvents(); // aka, expect to see no events
+
+        applyDefinitions(source, expectedEvents);
+
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
+        expectProperty("/test/single", PropertyType.STRING, "org");
+        expectProperty("/test/multiple", PropertyType.STRING, new String[]{"org1","org2"});
+    }
+
+    @Test
+    public void expect_new_properties_to_be_created() throws Exception {
+        // no initial content
+
+        final String definition
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - single: new\n"
+                + "    - multiple: [new1, new2]\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectPropertyAdded("/test/single")
+                .expectPropertyAdded("/test/multiple");
+
+        applyDefinitions(definition, expectedEvents);
+
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
+        expectProperty("/test/single", PropertyType.STRING, "new");
+        expectProperty("/test/multiple", PropertyType.STRING, new String[]{"new1","new2"});
+    }
+
+    @Test
+    public void expect_updated_properties_to_be_updated() throws Exception {
+        setProperty("/test", "single", PropertyType.STRING, "org");
+        setProperty("/test", "multiple", PropertyType.STRING, new String[]{"org1","org2"});
+        setProperty("/test", "reordered", PropertyType.STRING, new String[]{"new2","new1"});
+
+        final String definition
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - single: new\n"
+                + "    - multiple: [new1, new2]\n"
+                + "    - reordered: [new1, new2]\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectPropertyChanged("/test/single")
+                .expectPropertyChanged("/test/multiple")
+                .expectPropertyChanged("/test/reordered");
+
+        applyDefinitions(definition, expectedEvents);
+
+        expectNode("/test", "[]", "[jcr:primaryType, multiple, reordered, single]");
+        expectProperty("/test/single", PropertyType.STRING, "new");
+        expectProperty("/test/multiple", PropertyType.STRING, new String[]{"new1","new2"});
+        expectProperty("/test/reordered", PropertyType.STRING, new String[]{"new1","new2"});
+    }
+
+    @Test
+    public void expect_deleted_properties_to_be_gone() throws Exception {
+        setProperty("/test", "not-in-config", PropertyType.STRING, "value");
+        setProperty("/test", "explicitly-deleted", PropertyType.STRING, "value");
+
+        final String definition1
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - explicitly-deleted: value\n"
+                + "    - explicitly-deleted-non-existing: value\n"
+                + "";
+        final String definition2
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /:\n"
+                + "    - explicitly-deleted:\n"
+                + "        operation: delete\n"
+                + "    - explicitly-deleted-non-existing:\n"
+                + "        operation: delete\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectPropertyRemoved("/test/not-in-config")
+                .expectPropertyRemoved("/test/explicitly-deleted");
+
+        applyDefinitions(new String[]{definition1,definition2}, expectedEvents);
+
+        expectNode("/test", "[]", "[jcr:primaryType]");
+    }
+
+    @Test
+    public void expect_overrides_to_be_applied_if_necessary() throws Exception {
+        setProperty("/test", "incorrect-should-be-single", PropertyType.STRING, new String[]{"org1","org2"});
+        setProperty("/test", "incorrect-should-be-long", PropertyType.STRING, new String[]{"org1","org2"});
+        setProperty("/test", "already-changed-to-single", PropertyType.STRING, "new");
+        setProperty("/test", "already-changed-to-long", PropertyType.LONG, new String[]{"42","31415"});
+
+        final String definition1
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - incorrect-should-be-single: [org1, org2]\n"
+                + "    - incorrect-should-be-long: [org1, org2]\n"
+                + "    - already-changed-to-single: [org1, org2]\n"
+                + "    - already-changed-to-long: [org1, org2]\n"
+                + "    - not-yet-existing: [org1, org2]\n"
+                + "";
+        final String definition2
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /:\n"
+                + "    - incorrect-should-be-single:\n"
+                + "        operation: override\n"
+                + "        type: string\n"
+                + "        value: new\n"
+                + "    - incorrect-should-be-long:\n"
+                + "        operation: override\n"
+                + "        type: long\n"
+                + "        value: [42, 31415]\n"
+                + "    - already-changed-to-single:\n"
+                + "        operation: override\n"
+                + "        type: string\n"
+                + "        value: new\n"
+                + "    - already-changed-to-long:\n"
+                + "        operation: override\n"
+                + "        type: long\n"
+                + "        value: [42, 31415]\n"
+                + "    - not-yet-existing:\n"
+                + "        operation: override\n"
+                + "        type: string\n"
+                + "        value: new\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectPropertyChanged("/test/incorrect-should-be-single")
+                .expectPropertyChanged("/test/incorrect-should-be-long")
+                .expectPropertyAdded("/test/not-yet-existing");
+
+        applyDefinitions(new String[]{definition1,definition2}, expectedEvents);
+
+        expectNode("/test", "[]", "[already-changed-to-long, already-changed-to-single, incorrect-should-be-long, "
+                + "incorrect-should-be-single, jcr:primaryType, not-yet-existing]");
+        expectProperty("/test/incorrect-should-be-single", PropertyType.STRING, "new");
+        expectProperty("/test/incorrect-should-be-long", PropertyType.LONG, new String[]{"42","31415"});
+        expectProperty("/test/already-changed-to-single", PropertyType.STRING, "new");
+        expectProperty("/test/already-changed-to-long", PropertyType.LONG, new String[]{"42","31415"});
+        expectProperty("/test/not-yet-existing", PropertyType.STRING, "new");
+    }
+
+    private void applyDefinitions(final String source, final ExpectedEvents expectedEvents) throws Exception {
+        applyDefinitions(new String[]{source}, expectedEvents);
+    }
+
+    private void applyDefinitions(final String[] sources, final ExpectedEvents expectedEvents) throws Exception {
+        final EventCollector eventCollector = new EventCollector(session, testNode);
+        eventCollector.start();
 
         final RepositoryFacade repositoryFacade = new RepositoryFacade(session, testNode);
         final MergedModelBuilder mergedModelBuilder = new MergedModelBuilder();
-        mergedModelBuilder.push(utils.parseToConfigurationImpl(yaml));
+        for (int i = 0; i < sources.length; i++) {
+            final List<Definition> definitions = parseNoSort(sources[i], "test-module-" + i);
+            assertTrue(definitions.size() > 0);
+            final ConfigurationImpl configuration =
+                    (ConfigurationImpl) definitions.get(0).getSource().getModule().getProject().getConfiguration();
+            mergedModelBuilder.push(configuration);
+        }
         final MergedModel mergedModel = mergedModelBuilder.build();
 
         repositoryFacade.push(mergedModel);
 
-        assertEquals("[c,b,a]", utils.nodeListToString(rootNode.getNodes()));
+        session.save();
+
+        final List<EventPojo> events = eventCollector.stop();
+
+        expectedEvents.check(events);
     }
 
-    // TODO refactor
-    private final Utils utils = new Utils();
-    private class Utils extends AbstractBuilderBaseTest {
-        ConfigurationImpl parseToConfigurationImpl(final String yaml) throws Exception {
-            final List<Definition> definitions = parseNoSort(yaml);
-            assertTrue(definitions.size() > 0);
-            return (ConfigurationImpl) definitions.get(0).getSource().getModule().getProject().getConfiguration();
+    private void expectNode(final String nodePath, final String childNodes, final String childProperties) throws RepositoryException {
+        final Node node = session.getNode(nodePath);
+        assertEquals(childNodes, createChildNodesString(node));
+        assertEquals(childProperties, createChildPropertiesString(node));
+    }
+
+    private void setProperty(final String nodePath, final String name, final int valueType, final String value) throws RepositoryException {
+        session.getNode(nodePath).setProperty(name, value, valueType);
+        session.save();
+    }
+
+    private void setProperty(final String nodePath, final String name, final int valueType, final String[] values) throws RepositoryException {
+        session.getNode(nodePath).setProperty(name, values, valueType);
+        session.save();
+    }
+
+    private void expectProperty(final String path, final int expectedValueType, final String expectedValue) throws RepositoryException {
+        final Property property = session.getProperty(path);
+        assertEquals(expectedValueType, property.getType());
+        assertFalse(property.isMultiple());
+        assertEquals(expectedValue, property.getValue().getString());
+    }
+
+    private void expectProperty(final String path, final int expectedValueType, final String[] expectedValues) throws RepositoryException {
+        final Property property = session.getProperty(path);
+        assertEquals(expectedValueType, property.getType());
+        assertTrue(property.isMultiple());
+        final Value[] values = property.getValues();
+        assertEquals(values.length, expectedValues.length);
+        for (int i = 0; i < values.length; i++) {
+            assertEquals(expectedValues[i], values[i].getString());
         }
-        public String nodeListToString(final NodeIterator nodes) throws RepositoryException {
-            final StringBuilder builder = new StringBuilder();
-            builder.append('[');
-            while (nodes.hasNext()) {
-                final Node node = nodes.nextNode();
-                if (builder.length() > 1) {
-                    builder.append(',');
-                }
-                builder.append(node.getName());
-            }
-            builder.append(']');
-            return builder.toString();
+    }
+
+    String createChildNodesString(final Node node) throws RepositoryException {
+        final List<String> names = new ArrayList<>();
+        for (Node child : new NodeIterable(node.getNodes())) {
+            names.add(child.getName());
         }
+        if (!node.getPrimaryNodeType().hasOrderableChildNodes()) {
+            Collections.sort(names);
+        }
+        return names.toString();
+    }
+
+    String createChildPropertiesString(final Node node) throws RepositoryException {
+        final List<String> names = new ArrayList<>();
+        for (Property property : new PropertyIterable(node.getProperties())) {
+            names.add(property.getName());
+        }
+        Collections.sort(names);
+        return names.toString();
     }
 
 }
