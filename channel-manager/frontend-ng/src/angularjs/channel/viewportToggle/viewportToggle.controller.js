@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,9 @@ class ViewportToggleCtrl {
     this.OverlayService = OverlayService;
     this.ChannelService = ChannelService;
     this.ViewportService = ViewportService;
+  }
 
+  $onInit() {
     this.setViewports();
     this.activate();
   }
@@ -59,16 +61,13 @@ class ViewportToggleCtrl {
     this.viewportChanged();
   }
 
-  getDisplayName(viewport) {
-    return this.$translate.instant(`VIEWPORT_${viewport.id}`);
+  viewportChanged() {
+    this.ViewportService.setWidth(this.selectedViewport.maxWidth);
+    this.OverlayService.sync();
   }
 
-  viewportChanged() {
-    if (this.selectedViewport.width) {
-      this.ViewportService.setWidth(this.selectedViewport.width);
-    }
-
-    this.OverlayService.sync();
+  getDisplayName(viewport) {
+    return this.$translate.instant(`VIEWPORT_${viewport.id}`);
   }
 }
 

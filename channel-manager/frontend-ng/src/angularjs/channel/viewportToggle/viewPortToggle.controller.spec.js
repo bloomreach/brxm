@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,15 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ViewportToggleCtrl', () => {
-  let $rootScope;
-  let $controller;
+  let $componentController;
   let $translate;
   let ChannelService;
-
-  let $ctrl;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_, _$controller_, _$translate_, _ChannelService_) => {
-      $rootScope = _$rootScope_;
-      $controller = _$controller_;
+    inject((_$componentController_, _$translate_, _ChannelService_) => {
+      $componentController = _$componentController_;
       $translate = _$translate_;
       ChannelService = _ChannelService_;
     });
@@ -43,20 +39,19 @@ describe('ViewportToggleCtrl', () => {
       viewportMap,
     });
 
-    return $controller('ViewportToggleCtrl', {
-      $scope: $rootScope.$new(),
+    return $componentController('viewportToggle', {
       ChannelService,
     });
   }
 
   describe('setViewports', () => {
     it('should set the viewport widths from the backend', () => {
-      $ctrl = createController({
+      const $ctrl = createController({
         desktop: 1167,
         tablet: 678,
         phone: 256,
       });
-      $rootScope.$apply();
+
       $ctrl.setViewports();
 
       expect($ctrl.viewports[0].id).toBe('ANY_DEVICE');
@@ -70,8 +65,7 @@ describe('ViewportToggleCtrl', () => {
     });
 
     it('should use the default viewport width values when the backend does not return any', () => {
-      $ctrl = createController({});
-      $rootScope.$apply();
+      const $ctrl = createController({});
       $ctrl.setViewports();
 
       expect($ctrl.viewports[0].id).toBe('ANY_DEVICE');
@@ -87,11 +81,10 @@ describe('ViewportToggleCtrl', () => {
 
   describe('getDisplayName', () => {
     it('should return the display name', () => {
-      $ctrl = createController({});
+      const $ctrl = createController({});
       $ctrl.getDisplayName({
         id: 'TEST',
       });
-      $rootScope.$apply();
 
       expect($translate.instant).toHaveBeenCalledWith('VIEWPORT_TEST');
     });

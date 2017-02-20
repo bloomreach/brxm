@@ -27,6 +27,10 @@ class ViewportService {
   }
 
   setWidth(width) {
+    if (!this.$sheet) {
+      return;
+    }
+
     this.width = width;
 
     if (width === 0) {
