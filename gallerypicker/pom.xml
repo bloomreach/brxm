@@ -37,8 +37,8 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>4.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>4.2.0-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.0.0-SNAPSHOT</hippo.cms.version>
 
     <lib.commons-lang.version>2.6</lib.commons-lang.version>
     <lib.easymock.version>2.4</lib.easymock.version>
