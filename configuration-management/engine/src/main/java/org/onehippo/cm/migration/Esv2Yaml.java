@@ -55,14 +55,19 @@ public class Esv2Yaml {
 
     public static void main(final String[] args) throws IOException, EsvParseException {
 
-        if (args.length != 2) {
-            System.out.println("usage: <src> <target>\n" +
-                    "<src>   : directory of a " + HIPPOECM_EXTENSION_FILE + " file\n" +
-                    "<target>: directory for writing the repo-config (will be emptied first)");
+        if (args.length < 2 || args.length > 3) {
+            System.out.println("usage: [<init>] <src> <target>\n" +
+                    "<init>   : (optional) location of hippoecm-extension.xml file, if not within <src> folder\n" +
+                    "<src>    : bootstrap initialization resources folder\n" +
+                    "<target> : directory for writing the repo-config (will be emptied first)");
             return;
         }
         try {
-            new Esv2Yaml(new File(args[0]), new File(args[1])).convert();
+            if (args.length == 2) {
+                new Esv2Yaml(new File(args[0]), new File(args[1])).convert();
+            } else {
+                new Esv2Yaml(new File(args[0]), new File(args[1]), new File(args[2])).convert();
+            }
         } catch (Exception e) {
             Throwable t = e;
             if (e.getCause() != null) {
@@ -86,12 +91,22 @@ public class Esv2Yaml {
     private final ModuleImpl module;
 
     public Esv2Yaml(final File src, final File target) throws IOException, EsvParseException {
+        this(null, src, target);
+    }
+
+    public Esv2Yaml(final File init, final File src, final File target) throws IOException, EsvParseException {
         this.src = src;
         this.target = target;
-        extensionFile = new File(src, HIPPOECM_EXTENSION_FILE);
+        extensionFile = init != null ? new File(init, HIPPOECM_EXTENSION_FILE) : new File(src, HIPPOECM_EXTENSION_FILE);
         if (!extensionFile.exists() || !extensionFile.isFile()) {
             throw new IOException("File not found: " + extensionFile.getCanonicalPath());
         }
+        if (init != null) {
+            if (!src.exists() || !src.isDirectory()) {
+                throw new IOException("bootstrap folder not found: " + src.getCanonicalPath());
+            }
+        }
+
         if (target.exists()) {
             if (target.isFile()) {
                 throw new IllegalArgumentException("Target is not a directory");
