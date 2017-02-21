@@ -72,8 +72,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         final String source
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /:\n"
-                + "    - jcr:primaryType: nt:unstructured\n"
+                + "  - /test:\n"
                 + "    - single: org\n"
                 + "    - multiple: [org1, org2]\n"
                 + "";
@@ -94,8 +93,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         final String definition
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /:\n"
-                + "    - jcr:primaryType: nt:unstructured\n"
+                + "  - /test:\n"
                 + "    - single: new\n"
                 + "    - multiple: [new1, new2]\n"
                 + "";
@@ -120,8 +118,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         final String definition
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /:\n"
-                + "    - jcr:primaryType: nt:unstructured\n"
+                + "  - /test:\n"
                 + "    - single: new\n"
                 + "    - multiple: [new1, new2]\n"
                 + "    - reordered: [new1, new2]\n"
@@ -148,15 +145,14 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         final String definition1
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /:\n"
-                + "    - jcr:primaryType: nt:unstructured\n"
+                + "  - /test:\n"
                 + "    - explicitly-deleted: value\n"
                 + "    - explicitly-deleted-non-existing: value\n"
                 + "";
         final String definition2
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /:\n"
+                + "  - /test:\n"
                 + "    - explicitly-deleted:\n"
                 + "        operation: delete\n"
                 + "    - explicitly-deleted-non-existing:\n"
@@ -182,8 +178,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         final String definition1
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /:\n"
-                + "    - jcr:primaryType: nt:unstructured\n"
+                + "  - /test:\n"
                 + "    - incorrect-should-be-single: [org1, org2]\n"
                 + "    - incorrect-should-be-long: [org1, org2]\n"
                 + "    - already-changed-to-single: [org1, org2]\n"
@@ -193,7 +188,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         final String definition2
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /:\n"
+                + "  - /test:\n"
                 + "    - incorrect-should-be-single:\n"
                 + "        operation: override\n"
                 + "        type: string\n"
@@ -237,8 +232,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         final String definition
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /:\n"
-                + "    - jcr:primaryType: nt:unstructured\n"
+                + "  - /test:\n"
                 + "    - string: hello world\n"
                 + "    - binary: !!binary |-\n"
                 + "        aGVsbG8gd29ybGQ=\n"
@@ -291,8 +285,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         final String definition
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /:\n"
-                + "    - jcr:primaryType: nt:unstructured\n"
+                + "  - /test:\n"
                 + "    - string:\n"
                 + "        type: string\n"
                 + "        resource: folder/string.txt\n"
@@ -322,8 +315,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         final String definition1
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /:\n"
-                + "    - jcr:primaryType: nt:unstructured\n"
+                + "  - /test:\n"
                 + "    - string:\n"
                 + "        type: string\n"
                 + "        resource: [folder/string1.txt]\n"
@@ -331,7 +323,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         final String definition2
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /:\n"
+                + "  - /test:\n"
                 + "    - string:\n"
                 + "        operation: add\n"
                 + "        resource: [folder/string1.txt]\n"
@@ -356,8 +348,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         final String definition
                 = "instructions:\n"
                 + "- config:\n"
-                + "  - /:\n"
-                + "    - jcr:primaryType: nt:unstructured\n"
+                + "  - /test:\n"
                 + "    - absolute:\n"
                 + "        type: reference\n"
                 + "        path: /test/foo/bar\n"
@@ -406,7 +397,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         }
         final MergedModel mergedModel = mergedModelBuilder.build();
 
-        final RepositoryFacade repositoryFacade = new RepositoryFacade(session, testNode, resourceInputProviders);
+        final RepositoryFacade repositoryFacade = new RepositoryFacade(session, resourceInputProviders);
         repositoryFacade.push(mergedModel);
 
         session.save();

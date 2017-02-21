@@ -72,15 +72,12 @@ public class RepositoryFacade {
     private static final Logger logger = LoggerFactory.getLogger(RepositoryFacade.class);
 
     private final Session session;
-    private final Node repositoryRoot;
     private final Map<Module, ResourceInputProvider> resourceInputProviders;
     private final List<Pair<ConfigurationProperty, Node>> unprocessedReferences = new ArrayList<>();
 
     protected RepositoryFacade(final Session session,
-                               final Node repositoryRoot,
                                final Map<Module, ResourceInputProvider> resourceInputProviders) {
         this.session = session;
-        this.repositoryRoot = repositoryRoot;
         this.resourceInputProviders = resourceInputProviders;
     }
 
@@ -171,8 +168,9 @@ public class RepositoryFacade {
     }
 
     private void pushNodes(final ConfigurationNode configurationRoot) throws Exception {
-        pushProperties(configurationRoot, repositoryRoot);
-        pushNodes(configurationRoot, repositoryRoot);
+        final Node root = session.getRootNode();
+        pushProperties(configurationRoot, root);
+        pushNodes(configurationRoot, root);
     }
 
     private void pushNodes(final ConfigurationNode modelNode, final Node jcrNode) throws Exception {
@@ -236,9 +234,11 @@ public class RepositoryFacade {
             }
         }
 
-        // remove nodes unknown to the model
-        for (final String indexedName : existingChildren.keySet()) {
-            existingChildren.get(indexedName).remove();
+        // remove nodes unknown to the model, except top-level nodes
+        if (jcrNode.getDepth() > 0) {
+            for (final String indexedName : existingChildren.keySet()) {
+                existingChildren.get(indexedName).remove();
+            }
         }
 
         return retainedChildren;
@@ -314,8 +314,9 @@ public class RepositoryFacade {
 
         // delete all existing properties that are not part of the source model
         for (String name : existingProperties.keySet()) {
-            if (!name.equals("jcr:uuid")) {
-                target.getProperty(name).remove();
+            final Property jcrProperty = target.getProperty(name);
+            if (!jcrProperty.getDefinition().isProtected()) {
+                jcrProperty.remove();
             }
         }
     }
