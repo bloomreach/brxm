@@ -18,14 +18,6 @@
 @import '~open-sans-fontface/sass/mixins';
 @import '~open-sans-fontface/sass/Regular';
 
-.hippo-scale {
-  transform-origin: top right;
-}
-
-.hippo-scale-animated {
-  transition: transform $scale-animation-transition, translateY $scale-animation-transition;
-}
-
 .hst-cmseditlink {
   display: block;
   height: $embedded-link-height;
