@@ -63,10 +63,6 @@ hippo-iframe {
   transition: max-width $viewport-animation-transition, min-width $viewport-animation-transition;
   width: 100%;
 
-  &.shift-animated {
-    transition: max-width $scale-animation-transition, min-width $viewport-animation-transition, transform $scale-animation-transition;
-  }
-
   iframe {
     border: 0;
     height: 100%;
