@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ class LeftSidePanelCtrl {
   constructor(
     $scope,
     $element,
-    ChannelSidePanelService,
+    SidePanelService,
     CatalogService,
     SiteMapService,
     HippoIframeService,
@@ -27,16 +27,16 @@ class LeftSidePanelCtrl {
 
     this.$scope = $scope;
     this.CatalogService = CatalogService;
-    this.ChannelSidePanelService = ChannelSidePanelService;
+    this.SidePanelService = SidePanelService;
     this.SiteMapService = SiteMapService;
     this.HippoIframeService = HippoIframeService;
     this.SiteMapService = SiteMapService;
 
-    ChannelSidePanelService.initialize('left', $element.find('.left-side-panel'));
+    SidePanelService.initialize('left', $element.find('.left-side-panel'));
   }
 
   isLockedOpen() {
-    return this.ChannelSidePanelService.isOpen('left');
+    return this.SidePanelService.isOpen('left');
   }
 
   showComponentsTab() {
@@ -61,7 +61,7 @@ class LeftSidePanelCtrl {
   }
 
   isSidePanelLifted() {
-    return this.ChannelSidePanelService.isSidePanelLifted;
+    return this.SidePanelService.isSidePanelLifted;
   }
 }
 

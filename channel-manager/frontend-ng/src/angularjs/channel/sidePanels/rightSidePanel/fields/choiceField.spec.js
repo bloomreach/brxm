@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,43 @@
  * limitations under the License.
  */
 
-describe('CompoundField', () => {
+describe('ChoiceField', () => {
   let $componentController;
 
   let $ctrl;
   let onFieldFocus;
   let onFieldBlur;
 
-  const dummyType = { };
-  const dummyValues = [];
+  const choiceType = {
+    displayName: 'Choice',
+    required: true,
+    hint: 'bla bla',
+    choices: {
+      choice1: {
+        id: 'choice1',
+        fields: [],
+      },
+      choice2: {
+        id: 'choice2',
+        fields: [],
+      },
+    },
+  };
+
+  const choiceValues = [
+    {
+      chosenId: 'choice2',
+      chosenValue: { fields: [] },
+    },
+    {
+      chosenId: 'choice1',
+      chosenValue: { fields: [] },
+    },
+    {
+      chosenId: 'choice2',
+      chosenValue: { fields: [] },
+    },
+  ];
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -34,19 +62,19 @@ describe('CompoundField', () => {
     onFieldFocus = jasmine.createSpy('onFieldFocus');
     onFieldBlur = jasmine.createSpy('onFieldBlur');
 
-    $ctrl = $componentController('compoundField', {
+    $ctrl = $componentController('choiceField', {
     }, {
-      fieldType: dummyType,
-      fieldValues: dummyValues,
+      fieldType: choiceType,
+      fieldValues: choiceValues,
       name: 'test-name',
       onFieldFocus,
       onFieldBlur,
     });
   });
 
-  it('initializes the component', () => {
-    expect($ctrl.fieldType).toBe(dummyType);
-    expect($ctrl.fieldValues).toBe(dummyValues);
+  it('initializes the fields component', () => {
+    expect($ctrl.fieldType).toBe(choiceType);
+    expect($ctrl.fieldValues).toBe(choiceValues);
     expect($ctrl.name).toBe('test-name');
     expect($ctrl.onFieldFocus).toBe(onFieldFocus);
     expect($ctrl.onFieldBlur).toBe(onFieldBlur);
@@ -55,17 +83,23 @@ describe('CompoundField', () => {
   it('keeps track of the focused state', () => {
     expect($ctrl.hasFocus).toBeFalsy();
 
-    $ctrl.focusCompound();
+    $ctrl.focusChoice();
 
     expect($ctrl.hasFocus).toBeTruthy();
     expect(onFieldFocus).toHaveBeenCalled();
     expect(onFieldBlur).not.toHaveBeenCalled();
     onFieldFocus.calls.reset();
 
-    $ctrl.blurCompound();
+    $ctrl.blurChoice();
 
     expect($ctrl.hasFocus).toBeFalsy();
     expect(onFieldFocus).not.toHaveBeenCalled();
     expect(onFieldBlur).toHaveBeenCalled();
+  });
+
+  it('helps composing unique form field names', () => {
+    expect($ctrl.getFieldName(0)).toBe('test-name/choice2');
+    expect($ctrl.getFieldName(1)).toBe('test-name/choice1[1]');
+    expect($ctrl.getFieldName(2)).toBe('test-name/choice2[2]');
   });
 });

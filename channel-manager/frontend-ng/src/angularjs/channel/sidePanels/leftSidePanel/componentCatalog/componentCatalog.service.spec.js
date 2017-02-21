@@ -18,7 +18,7 @@ describe('ComponentCatalogService', () => {
   let $q;
   let $log;
   let $rootScope;
-  let ChannelSidePanelService;
+  let SidePanelService;
   let ComponentCatalogService;
   let HippoIframeService;
   let MaskService;
@@ -32,7 +32,7 @@ describe('ComponentCatalogService', () => {
       _$q_,
       _$log_,
       _$rootScope_,
-      _ChannelSidePanelService_,
+      _SidePanelService_,
       _ComponentCatalogService_,
       _HippoIframeService_,
       _MaskService_,
@@ -42,7 +42,7 @@ describe('ComponentCatalogService', () => {
       $q = _$q_;
       $log = _$log_;
       $rootScope = _$rootScope_;
-      ChannelSidePanelService = _ChannelSidePanelService_;
+      SidePanelService = _SidePanelService_;
       ComponentCatalogService = _ComponentCatalogService_;
       HippoIframeService = _HippoIframeService_;
       MaskService = _MaskService_;
@@ -57,8 +57,8 @@ describe('ComponentCatalogService', () => {
       spyOn(MaskService, 'unmask');
       spyOn(MaskService, 'removeClickHandler');
       spyOn(MaskService, 'onClick');
-      spyOn(ChannelSidePanelService, 'liftSidePanelAboveMask');
-      spyOn(ChannelSidePanelService, 'lowerSidePanelBeneathMask');
+      spyOn(SidePanelService, 'liftSidePanelAboveMask');
+      spyOn(SidePanelService, 'lowerSidePanelBeneathMask');
       spyOn(HippoIframeService, 'liftIframeAboveMask');
       spyOn(HippoIframeService, 'lowerIframeBeneathMask');
       spyOn(OverlayService, 'onContainerClick');
@@ -72,7 +72,7 @@ describe('ComponentCatalogService', () => {
       ComponentCatalogService.selectComponent({ id: 'componentId' });
 
       expect(MaskService.mask).toHaveBeenCalled();
-      expect(ChannelSidePanelService.liftSidePanelAboveMask).toHaveBeenCalled();
+      expect(SidePanelService.liftSidePanelAboveMask).toHaveBeenCalled();
       expect(HippoIframeService.liftIframeAboveMask).toHaveBeenCalled();
       expect(OverlayService.enableAddMode).toHaveBeenCalled();
       expect(OverlayService.onContainerClick).toHaveBeenCalledWith(jasmine.any(Function));
@@ -84,7 +84,7 @@ describe('ComponentCatalogService', () => {
 
       expect(ComponentCatalogService.selectedComponent).toBe(undefined);
       expect(MaskService.unmask).toHaveBeenCalled();
-      expect(ChannelSidePanelService.lowerSidePanelBeneathMask).toHaveBeenCalled();
+      expect(SidePanelService.lowerSidePanelBeneathMask).toHaveBeenCalled();
       expect(HippoIframeService.lowerIframeBeneathMask).toHaveBeenCalled();
       expect(OverlayService.disableAddMode).toHaveBeenCalled();
       expect(OverlayService.offContainerClick).toHaveBeenCalled();

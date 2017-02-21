@@ -23,19 +23,19 @@ describe('ChannelLeftSidePanelToggle', () => {
   let $rootScope;
   let $compile;
 
-  let ChannelSidePanelService;
+  let SidePanelService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_) => {
+    inject((_$rootScope_, _$compile_, _SidePanelService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      ChannelSidePanelService = _ChannelSidePanelService_;
+      SidePanelService = _SidePanelService_;
     });
 
-    spyOn(ChannelSidePanelService, 'toggle');
-    spyOn(ChannelSidePanelService, 'isOpen');
+    spyOn(SidePanelService, 'toggle');
+    spyOn(SidePanelService, 'isOpen');
   });
 
   function instantiateController() {
@@ -48,17 +48,17 @@ describe('ChannelLeftSidePanelToggle', () => {
 
   it('forwards the toggle call to the left side panel service', () => {
     const ToggleCtrl = instantiateController();
-    expect(ChannelSidePanelService.toggle).not.toHaveBeenCalled();
+    expect(SidePanelService.toggle).not.toHaveBeenCalled();
 
     ToggleCtrl.toggleLeftSidePanel();
-    expect(ChannelSidePanelService.toggle).toHaveBeenCalled();
+    expect(SidePanelService.toggle).toHaveBeenCalled();
   });
 
   it('forwards the is open call to the left side panel service', () => {
     const ToggleCtrl = instantiateController();
-    ChannelSidePanelService.isOpen.and.returnValue(false);
+    SidePanelService.isOpen.and.returnValue(false);
     expect(ToggleCtrl.isLeftSidePanelOpen()).toBe(false);
-    ChannelSidePanelService.isOpen.and.returnValue(true);
+    SidePanelService.isOpen.and.returnValue(true);
     expect(ToggleCtrl.isLeftSidePanelOpen()).toBe(true);
   });
 });
