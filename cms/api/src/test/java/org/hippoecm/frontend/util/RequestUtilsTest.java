@@ -21,6 +21,8 @@ import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Url;
+import org.junit.Before;
 import org.junit.Test;
 
 public class RequestUtilsTest {
@@ -40,27 +43,43 @@ public class RequestUtilsTest {
 
     private static final String CUSTOM_X_FORWARDED_FOR_HEADER_VALUE = "100.100.100.102, 100.100.100.11";
 
+    @Before
+    public void setUp() {
+        // Reset the http forwarded header for clean state in each test.
+        RequestUtils.httpForwardedForHeader = null;
+    }
+
     @Test
     public void testGetRemoteAddrsByDefault() {
         Request request = createRequest();
-        assertArrayEquals(new String[] { DEFAULT_REMOTE_ADDR }, RequestUtils.getRemoteAddrs(request));
-        assertEquals(DEFAULT_REMOTE_ADDR, RequestUtils.getFarthestRemoteAddr(request));
+        String[] expArr = new String[] { DEFAULT_REMOTE_ADDR };
+        String[] actArr = RequestUtils.getRemoteAddrs(request);
+        assertArrayEquals(createErrorMessage(expArr, actArr), expArr, actArr);
+        String expVal = DEFAULT_REMOTE_ADDR;
+        String actVal = RequestUtils.getFarthestRemoteAddr(request);
+        assertEquals(createErrorMessage(expVal, actVal), expVal, actVal);
     }
 
     @Test
     public void testGetRemoteAddrsWithDefaultForwardedForHeader() {
         Request request = createRequest(createServletContext(), DEFAULT_X_FORWARDED_FOR_HEADER_VALUE, null);
-        assertArrayEquals(StringUtils.split(DEFAULT_X_FORWARDED_FOR_HEADER_VALUE, ", "),
-                RequestUtils.getRemoteAddrs(request));
-        assertEquals(StringUtils.split(DEFAULT_X_FORWARDED_FOR_HEADER_VALUE, ", ")[0],
-                RequestUtils.getFarthestRemoteAddr(request));
+        String[] expArr = StringUtils.split(DEFAULT_X_FORWARDED_FOR_HEADER_VALUE, ", ");
+        String[] actArr = RequestUtils.getRemoteAddrs(request);
+        assertArrayEquals(createErrorMessage(expArr, actArr), expArr, actArr);
+        String expVal = StringUtils.split(DEFAULT_X_FORWARDED_FOR_HEADER_VALUE, ", ")[0];
+        String actVal = RequestUtils.getFarthestRemoteAddr(request);
+        assertEquals(createErrorMessage(expVal, actVal), expVal, actVal);
     }
 
     @Test
     public void testGetRemoteAddrsWithDefaultForwardedForHeaderSetEmpty() {
         Request request = createRequest(createServletContext(), "", null);
-        assertArrayEquals(new String[] { DEFAULT_REMOTE_ADDR }, RequestUtils.getRemoteAddrs(request));
-        assertEquals(DEFAULT_REMOTE_ADDR, RequestUtils.getFarthestRemoteAddr(request));
+        String[] expArr = new String[] { DEFAULT_REMOTE_ADDR };
+        String[] actArr = RequestUtils.getRemoteAddrs(request);
+        assertArrayEquals(createErrorMessage(expArr, actArr), expArr, actArr);
+        String expVal = DEFAULT_REMOTE_ADDR;
+        String actVal = RequestUtils.getFarthestRemoteAddr(request);
+        assertEquals(createErrorMessage(expVal, actVal), expVal, actVal);
     }
 
     @Test
@@ -69,13 +88,14 @@ public class RequestUtilsTest {
         expect(servletContext.getInitParameter(RequestUtils.HTTP_FORWARDED_FOR_HEADER_PARAM))
                 .andReturn(CUSTOM_X_FORWARDED_FOR_HEADER_NAME).anyTimes();
         replay(servletContext);
-        RequestUtils.httpForwardedForHeader = null;
         Request request = createRequest(servletContext, null, CUSTOM_X_FORWARDED_FOR_HEADER_VALUE);
 
-        assertArrayEquals(StringUtils.split(CUSTOM_X_FORWARDED_FOR_HEADER_VALUE, ", "),
-                RequestUtils.getRemoteAddrs(request));
-        assertEquals(StringUtils.split(CUSTOM_X_FORWARDED_FOR_HEADER_VALUE, ", ")[0],
-                RequestUtils.getFarthestRemoteAddr(request));
+        String[] expArr = StringUtils.split(CUSTOM_X_FORWARDED_FOR_HEADER_VALUE, ", ");
+        String[] actArr = RequestUtils.getRemoteAddrs(request);
+        assertArrayEquals(createErrorMessage(expArr, actArr), expArr, actArr);
+        String expVal = StringUtils.split(CUSTOM_X_FORWARDED_FOR_HEADER_VALUE, ", ")[0];
+        String actVal = RequestUtils.getFarthestRemoteAddr(request);
+        assertEquals(createErrorMessage(expVal, actVal), expVal, actVal);
     }
 
     @Test
@@ -84,11 +104,14 @@ public class RequestUtilsTest {
         expect(servletContext.getInitParameter(RequestUtils.HTTP_FORWARDED_FOR_HEADER_PARAM))
                 .andReturn(CUSTOM_X_FORWARDED_FOR_HEADER_NAME).anyTimes();
         replay(servletContext);
-        // Set httpForwardedForHeaders to null to clean the cache in HstRequestUtils.
-        RequestUtils.httpForwardedForHeader = null;
         Request request = createRequest(servletContext, null, "");
-        assertArrayEquals(new String[] { DEFAULT_REMOTE_ADDR }, RequestUtils.getRemoteAddrs(request));
-        assertEquals(DEFAULT_REMOTE_ADDR, RequestUtils.getFarthestRemoteAddr(request));
+
+        String[] expArr = new String[] { DEFAULT_REMOTE_ADDR };
+        String[] actArr = RequestUtils.getRemoteAddrs(request);
+        assertArrayEquals(createErrorMessage(expArr, actArr), expArr, actArr);
+        String expVal = DEFAULT_REMOTE_ADDR;
+        String actVal = RequestUtils.getFarthestRemoteAddr(request);
+        assertEquals(createErrorMessage(expVal, actVal), expVal, actVal);
     }
 
     private ServletContext createServletContext() {
@@ -119,4 +142,13 @@ public class RequestUtilsTest {
         return request;
     }
 
+    private String createErrorMessage(String[] expArr, String[] actArr) {
+        return "Different array (RequestUtils.httpForwardedForHeader=" + RequestUtils.httpForwardedForHeader
+                + "). expected=" + Arrays.toString(expArr) + ", actual=" + Arrays.toString(actArr);
+    }
+
+    private String createErrorMessage(String expVal, String actVal) {
+        return "Different value (RequestUtils.httpForwardedForHeader=" + RequestUtils.httpForwardedForHeader
+                + ").expected=" + expVal + ", actual=" + actVal;
+    }
 }
