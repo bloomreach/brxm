@@ -376,6 +376,8 @@ public class EsvParser extends DefaultHandler {
             EsvValue value = property.getValues().get(0);
             property.getValues().clear();
             property.getValues().add(value);
+        } else {
+            property.setMultiple(true);
         }
         property.setMerge(null);
         property.setMergeLocation(null);
