@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,21 @@
  */
 package org.hippoecm.hst.restapi.content.requests;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
-import javax.servlet.ServletException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.restapi.AbstractRestApiIT;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
@@ -46,7 +43,8 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
     private static final Logger log = LoggerFactory.getLogger(DocumentsResourceIT.class);
 
     private static ObjectMapper mapper = new ObjectMapper();
-
+    private static String PROPERTY_TITLE = "myhippoproject:title";
+    private static String PROPERTY_DATE = "myhippoproject:date";
 
     @Test
     public void test_about_us_document() throws Exception {
@@ -119,7 +117,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
             final String restResponse = response.getContentAsString();
             // TODO assertions
         } catch (Exception e) {
-            log.error("error : ",e);
+            log.error("error : ", e);
         } finally {
             session.logout();
         }
@@ -138,7 +136,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
             for (Map<String, Object> item : itemsList) {
-                final Node node = liveUser.getNodeByIdentifier((String)item.get("id"));
+                final Node node = liveUser.getNodeByIdentifier((String) item.get("id"));
                 assertTrue(node.isNodeType(NT_HANDLE));
             }
         } finally {
@@ -162,9 +160,10 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
 
             final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
 
+            int processed = 0;
             Calendar prev = null;
             for (Map<String, Object> item : itemsList) {
-                final Node handleNode = liveUser.getNodeByIdentifier((String)item.get("id"));
+                final Node handleNode = liveUser.getNodeByIdentifier((String) item.get("id"));
                 final Node node = handleNode.getNode(handleNode.getName());
                 if (!node.hasProperty(HIPPOSTDPUBWF_PUBLICATION_DATE)) {
                     continue;
@@ -174,7 +173,89 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
                     assertTrue(prev.after(date) || prev.equals(date));
                 }
                 prev = date;
+                processed++;
             }
+
+            assertTrue("There must be at least two results to be able to compare sort order.", processed > 1);
+
+        } finally {
+            if (liveUser != null) {
+                liveUser.logout();
+            }
+        }
+    }
+
+    @Test
+    public void test_search_result_is_ordered_by_one_sort_parameter_default_sortorder() throws Exception {
+        Session liveUser = createLiveUserSession();
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "onehippo.io", "/myhippoproject/documents/", "_orderBy=" + PROPERTY_TITLE);
+
+            final MockHttpServletResponse response = render(requestResponse);
+            final String restResponse = response.getContentAsString();
+
+            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+
+            final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
+
+            int processed = 0;
+            String previous = null;
+            for (Map<String, Object> item : itemsList) {
+                final Node handleNode = liveUser.getNodeByIdentifier((String) item.get("id"));
+                final Node node = handleNode.getNode(handleNode.getName());
+                if (!node.hasProperty(PROPERTY_TITLE) && !node.hasProperty(PROPERTY_DATE)) {
+                    continue;
+                }
+                String current = node.getProperty(PROPERTY_TITLE).getString();
+                if (previous != null) {
+                    assertTrue(previous.compareTo(current) >= 0); // default order is descending
+                }
+                previous = current;
+                processed++;
+            }
+
+            assertTrue("There must be at least two results to be able to compare sort order.", processed > 1);
+
+        } finally {
+            if (liveUser != null) {
+                liveUser.logout();
+            }
+        }
+    }
+
+    @Test
+    public void test_search_result_is_ordered_by_one_sort_parameter_ascending_sortorder() throws Exception {
+        Session liveUser = createLiveUserSession();
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "onehippo.io", "/myhippoproject/documents/", "_orderBy=" + PROPERTY_TITLE + "&_sortOrder=ascending");
+
+            final MockHttpServletResponse response = render(requestResponse);
+            final String restResponse = response.getContentAsString();
+
+            final Map<String, Object> searchResult = mapper.reader(Map.class).readValue(restResponse);
+
+            final List<Map<String, Object>> itemsList = getItemsFromSearchResult(searchResult);
+
+            int processed = 0;
+            String previous = null;
+            for (Map<String, Object> item : itemsList) {
+                final Node handleNode = liveUser.getNodeByIdentifier((String) item.get("id"));
+                final Node node = handleNode.getNode(handleNode.getName());
+                if (!node.hasProperty(PROPERTY_TITLE)) {
+                    continue;
+                }
+                String current = node.getProperty(PROPERTY_TITLE).getString();
+                if (previous != null) {
+                    assertTrue(previous.compareTo(current) <= 0);
+                }
+                processed++;
+                previous = current;
+            }
+
+            assertTrue("There must be at least two results to be able to compare sort order.", processed > 1);
+
         } finally {
             if (liveUser != null) {
                 liveUser.logout();
@@ -186,6 +267,6 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
         final Object items = searchResult.get("items");
         assertNotNull(items);
         assertTrue(items instanceof List);
-        return (List)items;
+        return (List) items;
     }
 }
