@@ -40,8 +40,8 @@
   <properties>
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Robots.txt Generator</notice.project.name>
-    <hippo.hst.version>4.2.0-SNAPSHOT</hippo.hst.version>
-    <hippo.repository.version>4.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
     <taglibs.version>1.1.2</taglibs.version>
   </properties>
 
