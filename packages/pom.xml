@@ -40,13 +40,13 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS7 Product Packages</notice.project.name>
 
-    <hippo.utilities.version>3.2.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.repository.version>4.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>4.2.0-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>4.2.0-SNAPSHOT</hippo.hst.version>
-    <hippo.services.webfiles.version>3.2.0-SNAPSHOT</hippo.services.webfiles.version>
-    <hippo.services.contenttype.version>3.2.0-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.essentials-components.version>3.2.0-SNAPSHOT</hippo.essentials-components.version>
+    <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.services.webfiles.version>4.0.0-SNAPSHOT</hippo.services.webfiles.version>
+    <hippo.services.contenttype.version>4.0.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.essentials-components.version>4.0.0-SNAPSHOT</hippo.essentials-components.version>
 
   </properties>
 
