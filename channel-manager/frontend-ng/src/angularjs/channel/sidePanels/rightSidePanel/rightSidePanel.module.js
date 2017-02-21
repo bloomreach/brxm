@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 import rightSidePanelComponent from './rightSidePanel.component';
-import documentFieldsComponent from './documentFields.component';
-import primitiveFieldComponent from './primitiveField.component';
-import choiceFieldComponent from './choiceField.component';
-import compoundFieldComponent from './compoundField.component';
-import collapse from './collapse.directive';
+import fieldsModule from './fields/fields.module';
 
 const rightSidePanelModule = angular
-  .module('hippo-cm.channel.rightSidePanelModule', [])
-  .component('rightSidePanel', rightSidePanelComponent)
-  .component('documentFields', documentFieldsComponent)
-  .component('primitiveField', primitiveFieldComponent)
-  .component('choiceField', choiceFieldComponent)
-  .component('compoundField', compoundFieldComponent)
-  .directive('collapse', collapse);
+  .module('hippo-cm.channel.rightSidePanelModule', [
+    fieldsModule,
+  ])
+  .component('rightSidePanel', rightSidePanelComponent);
 
 export default rightSidePanelModule.name;
 
