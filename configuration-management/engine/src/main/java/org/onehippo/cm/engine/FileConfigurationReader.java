@@ -53,7 +53,7 @@ public class FileConfigurationReader {
     public ReadResult read(final Path repoConfigPath) throws IOException, ParserException {
         final RepoConfigParser parser = new RepoConfigParser();
         final Map<String, Configuration> configurations =
-                parser.parse(new FileInputStream(repoConfigPath.toFile()));
+                parser.parse(repoConfigPath.toAbsolutePath().toString(), new FileInputStream(repoConfigPath.toFile()));
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
         final Map<Module, ResourceInputProvider> resourceDataProviders = new HashMap<>();
 
@@ -67,7 +67,7 @@ public class FileConfigurationReader {
                     final SourceParser sourceParser = new SourceParser(provider);
 
                     for (Pair<String, InputStream> pair : getSourceData(moduleRootPath)) {
-                        sourceParser.parse(pair.getLeft(), pair.getRight(), (ModuleImpl) module);
+                        sourceParser.parse(moduleRootPath.resolve(pair.getLeft()).toString(), pair.getLeft(), pair.getRight(), (ModuleImpl) module);
                     }
                 }
             }

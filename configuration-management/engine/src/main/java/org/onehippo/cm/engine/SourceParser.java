@@ -71,8 +71,8 @@ public class SourceParser extends AbstractBaseParser {
         this.resourceInputProvider = resourceInputProvider;
     }
 
-    public void parse(final String path, final InputStream inputStream, final ModuleImpl parent) throws ParserException {
-        final Node node = composeYamlNode(inputStream);
+    public void parse(final String sourcePath, final String path, final InputStream inputStream, final ModuleImpl parent) throws ParserException {
+        final Node node = composeYamlNode(sourcePath, inputStream);
         constructSource(path, node, parent);
     }
 

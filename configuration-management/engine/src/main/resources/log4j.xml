@@ -41,10 +41,6 @@
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
 
-  <category name="org.onehippo.cm.migration">
-    <level value="debug"/>
-  </category>
-
   <root>
     <level value="info"/>
     <appender-ref ref="console"/>

@@ -82,6 +82,6 @@ public abstract class AbstractBuilderBaseTest {
             public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
                 return null;
             }
-        }).parse(sourcePath, input, module);
+        }).parse(sourcePath, sourcePath, input, module);
     }
 }

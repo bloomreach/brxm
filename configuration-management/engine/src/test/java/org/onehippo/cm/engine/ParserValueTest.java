@@ -142,7 +142,7 @@ public class ParserValueTest extends AbstractBaseTest {
                 "              value: []";
         final InputStream inputStream = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
 
-        sourceParser.parse("dummy.yaml", inputStream, module);
+        sourceParser.parse("dummy.yaml", "dummy.yaml", inputStream, module);
 
         final Source source = assertSource(module, "dummy.yaml", 1);
         final ConfigDefinition definition = assertDefinition(source, 0, ConfigDefinition.class);
