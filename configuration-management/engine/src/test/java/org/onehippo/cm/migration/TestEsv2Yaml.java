@@ -23,10 +23,15 @@ public class TestEsv2Yaml {
 
     @Test
     public void main() throws IOException, EsvParseException {
+        String init = System.getProperty("init");
         String src = System.getProperty("src");
         String target = System.getProperty("target");
         if (src != null && target != null) {
-            Esv2Yaml.main(new String[]{src, target});
+            if (init != null) {
+                Esv2Yaml.main(new String[]{init, src, target});
+            } else {
+                Esv2Yaml.main(new String[]{src, target});
+            }
         }
     }
 }
