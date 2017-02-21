@@ -267,8 +267,7 @@ public final class SearchInputParsingUtils {
             // Some of these characters break the jcr query and others like * and ? have a very negative impact
             // on performance.
             if (!ignoreChar(c, ignore) && isSpecialChar(c)) {
-                if (c == '\"' || c == '\\') {
-                    // escape it
+                if (c == '\"') {
                     sb.append('\\');
                     sb.append(c);
                 } else if (c == '\'') {

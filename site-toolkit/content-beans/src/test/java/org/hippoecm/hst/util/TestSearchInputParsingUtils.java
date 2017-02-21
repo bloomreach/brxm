@@ -209,4 +209,10 @@ public class TestSearchInputParsingUtils {
         assertEquals("The quick", SearchInputParsingUtils.parse("The quic‘k", true, false));
     }
 
+    @Test
+    public void testSearchInputParsingUtils_bashslash_escaping() throws Exception {
+        assertEquals("The quic k", SearchInputParsingUtils.parse("The quic\\k", true, true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quic\\k", true, false));
+    }
+
 }
