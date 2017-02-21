@@ -27,7 +27,7 @@
   <description>Demo for the Hippo Plugin Content Blocks</description>
   <groupId>org.onehippo.cms7.content-blocks-demo</groupId>
   <artifactId>hippo-plugin-content-blocks-demo</artifactId>
-  <version>3.2.0-SNAPSHOT</version>
+  <version>4.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
