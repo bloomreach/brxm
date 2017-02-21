@@ -28,7 +28,7 @@
       <span flex></span>
 
       <md-button class="md-icon-button qa-publish-in-content-perspective"
-                 aria-label="{{ 'PUBLISH' | translate }}"
+                   aria-label="{{ 'PUBLISH' | translate }}"
                  ng-disabled="!$ctrl.editing || $ctrl.disableContentButtons"
                  ng-click="$ctrl.openFullContent('view')">
         <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
@@ -46,10 +46,12 @@
       </md-button>
     </div>
     <md-progress-linear md-mode="indeterminate"
-                        ng-if="$ctrl.loading"></md-progress-linear>
+                        ng-if="$ctrl.loading">
+    </md-progress-linear>
   </md-toolbar>
 
-  <md-content flex="grow" layout="column">
+  <md-content flex="grow"
+              layout="column">
     <div ng-if="$ctrl.feedback"
          class="md-padding qa-feedback"
          md-colors="{background: 'hippo-red-50'}">

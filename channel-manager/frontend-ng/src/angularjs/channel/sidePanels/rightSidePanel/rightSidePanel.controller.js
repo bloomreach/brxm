@@ -61,7 +61,7 @@ class RightSidePanelCtrl {
     $timeout,
     $translate,
     $q,
-    ChannelSidePanelService,
+    SidePanelService,
     CmsService,
     ContentService,
     DialogService,
@@ -76,7 +76,7 @@ class RightSidePanelCtrl {
     this.$translate = $translate;
     this.$q = $q;
 
-    this.ChannelSidePanelService = ChannelSidePanelService;
+    this.SidePanelService = SidePanelService;
     this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.DialogService = DialogService;
@@ -87,7 +87,7 @@ class RightSidePanelCtrl {
     this.closeLabel = $translate.instant('CLOSE');
     this.cancelLabel = $translate.instant('CANCEL');
 
-    ChannelSidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
+    SidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
       this.openDocument(documentId);
     });
 
@@ -219,7 +219,7 @@ class RightSidePanelCtrl {
   }
 
   isLockedOpen() {
-    return this.ChannelSidePanelService.isOpen('right');
+    return this.SidePanelService.isOpen('right');
   }
 
   saveDocument() {
@@ -366,7 +366,7 @@ class RightSidePanelCtrl {
   }
 
   _closePanel() {
-    this.ChannelSidePanelService.close('right')
+    this.SidePanelService.close('right')
       .then(() => this._resetState());
   }
 }

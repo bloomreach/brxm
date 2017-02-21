@@ -23,7 +23,7 @@ class ChannelCtrl {
     $timeout,
     $translate,
     ChannelService,
-    ChannelSidePanelService,
+    SidePanelService,
     CmsService,
     FeedbackService,
     HippoIframeService,
@@ -37,7 +37,7 @@ class ChannelCtrl {
     this.$timeout = $timeout;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
-    this.ChannelSidePanelService = ChannelSidePanelService;
+    this.SidePanelService = SidePanelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
@@ -98,7 +98,7 @@ class ChannelCtrl {
   }
 
   editContent(contentUuid) {
-    this.ChannelSidePanelService.open('right', contentUuid);
+    this.SidePanelService.open('right', contentUuid);
   }
 
   _createPreviewConfiguration() {

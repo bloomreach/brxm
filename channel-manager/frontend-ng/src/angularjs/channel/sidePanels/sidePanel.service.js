@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class ChannelSidePanelService {
+class SidePanelService {
   constructor($mdSidenav, $q, OverlayService) {
     'ngInject';
 
@@ -78,4 +78,4 @@ class ChannelSidePanelService {
   }
 }
 
-export default ChannelSidePanelService;
+export default SidePanelService;

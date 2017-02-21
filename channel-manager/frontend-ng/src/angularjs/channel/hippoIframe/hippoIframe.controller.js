@@ -24,7 +24,7 @@ class HippoIframeCtrl {
     $scope,
     $translate,
     ChannelService,
-    ChannelSidePanelService,
+    SidePanelService,
     CmsService,
     ConfigService,
     DialogService,
@@ -45,7 +45,7 @@ class HippoIframeCtrl {
     this.$q = $q;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
-    this.ChannelSidePanelService = ChannelSidePanelService;
+    this.SidePanelService = SidePanelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
     this.DialogService = DialogService;

@@ -17,7 +17,7 @@
 class ComponentCatalogService {
   constructor(
     $log,
-    ChannelSidePanelService,
+    SidePanelService,
     HippoIframeService,
     MaskService,
     OverlayService,
@@ -27,7 +27,7 @@ class ComponentCatalogService {
 
     this.$log = $log;
 
-    this.ChannelSidePanelService = ChannelSidePanelService;
+    this.SidePanelService = SidePanelService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
     this.OverlayService = OverlayService;
@@ -40,7 +40,7 @@ class ComponentCatalogService {
 
   _enableAddModeMask() {
     this.MaskService.mask('mask-add-component');
-    this.ChannelSidePanelService.liftSidePanelAboveMask();
+    this.SidePanelService.liftSidePanelAboveMask();
     this.HippoIframeService.liftIframeAboveMask();
     this.OverlayService.enableAddMode();
   }
@@ -48,7 +48,7 @@ class ComponentCatalogService {
   _disableAddModeMask() {
     this.MaskService.resetMaskClass();
 
-    this.ChannelSidePanelService.lowerSidePanelBeneathMask();
+    this.SidePanelService.lowerSidePanelBeneathMask();
     this.HippoIframeService.lowerIframeBeneathMask();
     this.OverlayService.disableAddMode();
     this.OverlayService.offContainerClick();
@@ -58,7 +58,7 @@ class ComponentCatalogService {
   selectComponent(component) {
     this.selectedComponent = component;
     this.MaskService.mask('mask-add-component');
-    this.ChannelSidePanelService.liftSidePanelAboveMask();
+    this.SidePanelService.liftSidePanelAboveMask();
     this.HippoIframeService.liftIframeAboveMask();
     this.OverlayService.enableAddMode();
     this.OverlayService.onContainerClick(this._handleContainerClick.bind(this));
@@ -68,7 +68,7 @@ class ComponentCatalogService {
   _handleMaskClick() {
     delete this.selectedComponent;
     this.MaskService.unmask();
-    this.ChannelSidePanelService.lowerSidePanelBeneathMask();
+    this.SidePanelService.lowerSidePanelBeneathMask();
     this.HippoIframeService.lowerIframeBeneathMask();
     this.OverlayService.disableAddMode();
     this.OverlayService.offContainerClick();

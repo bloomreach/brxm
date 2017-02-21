@@ -25,7 +25,7 @@ describe('ChannelCtrl', () => {
   let $timeout;
   let ChannelCtrl;
   let ChannelService;
-  let ChannelSidePanelService;
+  let SidePanelService;
   let ComponentsService;
   let FeedbackService;
   let HippoIframeService;
@@ -60,7 +60,7 @@ describe('ChannelCtrl', () => {
 
       ChannelService.createPreviewConfiguration.and.returnValue(resolvedPromise);
 
-      ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', [
+      SidePanelService = jasmine.createSpyObj('SidePanelService', [
         'open',
       ]);
 
@@ -83,7 +83,7 @@ describe('ChannelCtrl', () => {
         $scope: $rootScope.$new(),
         $stateParams,
         ChannelService,
-        ChannelSidePanelService,
+        SidePanelService,
         ComponentsService,
         HippoIframeService,
         PageMetaDataService,
@@ -221,6 +221,6 @@ describe('ChannelCtrl', () => {
 
   it('opens the content editor in the right sidepanel when told so', () => {
     ChannelCtrl.editContent('testUuid');
-    expect(ChannelSidePanelService.open).toHaveBeenCalledWith('right', 'testUuid');
+    expect(SidePanelService.open).toHaveBeenCalledWith('right', 'testUuid');
   });
 });

@@ -20,7 +20,7 @@ import 'angular-mocks';
 describe('ChannelLeftSidePanel', () => {
   let $rootScope;
   let $compile;
-  let ChannelSidePanelService;
+  let SidePanelService;
   let SiteMapService;
   let ChannelService;
   let CatalogService;
@@ -33,10 +33,10 @@ describe('ChannelLeftSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_, _ChannelService_, _CatalogService_, _SiteMapService_, _HippoIframeService_) => {
+    inject((_$rootScope_, _$compile_, _SidePanelService_, _ChannelService_, _CatalogService_, _SiteMapService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      ChannelSidePanelService = _ChannelSidePanelService_;
+      SidePanelService = _SidePanelService_;
       ChannelService = _ChannelService_;
       CatalogService = _CatalogService_;
       SiteMapService = _SiteMapService_;
@@ -46,8 +46,8 @@ describe('ChannelLeftSidePanel', () => {
     spyOn(CatalogService, 'getComponents').and.returnValue([]);
     spyOn(CatalogService, 'load');
     spyOn(ChannelService, 'getMountId');
-    spyOn(ChannelSidePanelService, 'close');
-    spyOn(ChannelSidePanelService, 'initialize');
+    spyOn(SidePanelService, 'close');
+    spyOn(SidePanelService, 'initialize');
     spyOn(SiteMapService, 'get');
     spyOn(HippoIframeService, 'load');
     spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
@@ -65,18 +65,18 @@ describe('ChannelLeftSidePanel', () => {
   it('initializes the channel left side panel service upon instantiation', () => {
     instantiateController(false);
 
-    expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
+    expect(SidePanelService.initialize).toHaveBeenCalled();
   });
 
   it('knows when it is locked open', () => {
     const ctrl = instantiateController();
-    spyOn(ChannelSidePanelService, 'isOpen').and.returnValue(true);
+    spyOn(SidePanelService, 'isOpen').and.returnValue(true);
     expect(ctrl.isLockedOpen()).toBe(true);
   });
 
   it('knows when it is not locked open', () => {
     const ctrl = instantiateController();
-    spyOn(ChannelSidePanelService, 'isOpen').and.returnValue(false);
+    spyOn(SidePanelService, 'isOpen').and.returnValue(false);
     expect(ctrl.isLockedOpen()).toBe(false);
   });
 

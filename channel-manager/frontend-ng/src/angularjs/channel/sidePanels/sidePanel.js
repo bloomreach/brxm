@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import ChannelSidePanelService from './sidePanel.service';
+import SidePanelService from './sidePanel.service';
 import leftSidePanelModule from './leftSidePanel/leftSidePanel.module';
 import rightSidePanelModule from './rightSidePanel/rightSidePanel.module';
 
@@ -23,6 +23,6 @@ const channelSidePanelModule = angular
     leftSidePanelModule,
     rightSidePanelModule,
   ])
-  .service('ChannelSidePanelService', ChannelSidePanelService);
+  .service('SidePanelService', SidePanelService);
 
 export default channelSidePanelModule;
