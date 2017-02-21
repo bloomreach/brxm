@@ -16,9 +16,9 @@
 
 package org.hippoecm.hst.restapi.content;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -142,11 +142,11 @@ public class DocumentsResource extends AbstractResource {
     }
 
     private List<String> parseOrderBy(final String orderBy) {
-        return Arrays.asList(StringUtils.split(orderBy, ','));
+        return new LinkedList<>(Arrays.asList(StringUtils.split(orderBy, ',')));
     }
 
     private List<SortOrder> parseSortOrder(final String sortOrder) {
-        final List<SortOrder> sortOrders = new ArrayList<>();
+        final List<SortOrder> sortOrders = new LinkedList<>();
         try {
             final String[] sortOrderArray = StringUtils.split(sortOrder, ',');
             for(String sort : sortOrderArray) {
@@ -202,9 +202,7 @@ public class DocumentsResource extends AbstractResource {
             for(String ob : orderBys) {
                 andClause = andClause.and(new ExistsConstraint(ob));
             }
-            for(int x = 0; x < orderBys.size(); x++) {
-                query = applyOrdering(andClause, orderBys.get(x), parsedSortOrders.get(x));
-            }
+            query = addOrdering(andClause, orderBys, parsedSortOrders);
             query.offsetBy(offset)
                  .limitTo(max);
 
@@ -229,14 +227,21 @@ public class DocumentsResource extends AbstractResource {
         }
     }
 
-    private Query applyOrdering(final Query query, final String orderBy, final SortOrder sortOrder) {
-        switch (sortOrder) {
-            case DESCENDING:
-            case DESC:
-                return query.orderBy(orderBy).descending();
-            default:
-                return query.orderBy(orderBy);
+    private Query addOrdering(final AndClause andClause, final List<String> orderBys, final List<SortOrder> sortOrders) {
+        Query query = andClause;
+        for(int x = 0; x < orderBys.size(); x++) {
+            final String orderBy = orderBys.get(x);
+            final SortOrder sortOrder = sortOrders.get(x);
+            switch (sortOrder) {
+                case DESCENDING:
+                case DESC:
+                    query = query.orderBy(orderBy).descending();
+                    break;
+                default:
+                    query = query.orderBy(orderBy);
+            }
         }
+        return query;
     }
 
     @GET
