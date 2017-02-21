@@ -40,8 +40,8 @@
   </scm>
 
   <properties>
-    <hippo.repository.version>4.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>4.2.0-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.0.0-SNAPSHOT</hippo.cms.version>
 
     <lib.json.version>2.2.2</lib.json.version>
     <lib.junit.version>4.8.2</lib.junit.version>
