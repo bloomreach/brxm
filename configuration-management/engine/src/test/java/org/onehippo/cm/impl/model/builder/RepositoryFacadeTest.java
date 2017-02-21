@@ -48,10 +48,7 @@ import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
 
 public class RepositoryFacadeTest extends RepositoryTestCase {
 
-    /* - add test for resources
-     * - add test for all value types
-     * - add test & logic for path references
-     * - add node
+    /* - add node
      * - merge node
      * - reorder node
      * - attempt reorder within not-orderable node
@@ -352,6 +349,37 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         // when applying the same definition again, expect no events
         expectedEvents = new ExpectedEvents();
         applyDefinitions(new String[]{definition1,definition2}, expectedEvents);
+    }
+
+    @Test
+    public void expect_path_references_to_be_resolved() throws Exception {
+        final String definition
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - absolute:\n"
+                + "        type: reference\n"
+                + "        path: /test/foo/bar\n"
+                + "    - relative:\n"
+                + "        type: reference\n"
+                + "        path: foo/bar\n"
+                + "    - /foo:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "      - /bar:\n"
+                + "        - jcr:primaryType: nt:unstructured\n"
+                + "        - jcr:mixinTypes: ['mix:referenceable']\n"
+                + "";
+
+        applyDefinitions(definition);
+
+        final Node bar = testNode.getNode("foo/bar");
+        expectProperty("/test/absolute", PropertyType.REFERENCE, bar.getIdentifier());
+        expectProperty("/test/relative", PropertyType.REFERENCE, bar.getIdentifier());
+
+        // when applying the same definition again, expect no events
+        final ExpectedEvents expectedEvents = new ExpectedEvents();
+        applyDefinitions(definition, expectedEvents);
     }
 
     private void applyDefinitions(final String source) throws Exception {

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
@@ -44,6 +46,7 @@ import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
@@ -65,10 +68,13 @@ import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
 public class RepositoryFacade {
+
     private static final Logger logger = LoggerFactory.getLogger(RepositoryFacade.class);
+
     private final Session session;
     private final Node repositoryRoot;
     private final Map<Module, ResourceInputProvider> resourceInputProviders;
+    private final List<Pair<ConfigurationProperty, Node>> unprocessedReferences = new ArrayList<>();
 
     protected RepositoryFacade(final Session session,
                                final Node repositoryRoot,
@@ -79,9 +85,12 @@ public class RepositoryFacade {
     }
 
     public void push(final MergedModel model) throws Exception {
+        unprocessedReferences.clear();
+
         pushNamespaces(model.getNamespaceDefinitions());
         pushNodeTypes(model.getNodeTypeDefinitions());
         pushNodes(model.getConfigurationRootNode());
+        pushUnprocessedReferences();
     }
 
     private void pushNamespaces(final List<? extends NamespaceDefinition> namespaces) throws RepositoryException {
@@ -288,31 +297,26 @@ public class RepositoryFacade {
         }
 
         for (String name : source.getProperties().keySet()) {
-            final ConfigurationProperty property = source.getProperties().get(name);
+            final ConfigurationProperty modelProperty = source.getProperties().get(name);
 
             if (name.equals(JCR_PRIMARYTYPE)) {
-                pushPrimaryType(property, target);
+                pushPrimaryType(modelProperty, target);
             } else if (name.equals(JCR_MIXINTYPES)) {
-                pushMixinTypes(property, target);
+                pushMixinTypes(modelProperty, target);
+            } else if (modelProperty.getValueType() == ValueType.REFERENCE ||
+                    modelProperty.getValueType() == ValueType.WEAKREFERENCE) {
+                unprocessedReferences.add(Pair.of(modelProperty, target));
             } else {
-                final Property jcrProperty = existingProperties.get(name);
-                if (jcrProperty == null) {
-                    pushProperty(property, target);
-                } else {
-                    if (isOverride(property, jcrProperty)) {
-                        jcrProperty.remove();
-                        pushProperty(property, target);
-                    } else if (!valuesAreIdentical(property, jcrProperty)) {
-                        pushProperty(property, target);
-                    }
-                }
+                pushProperty(modelProperty, target);
             }
             existingProperties.remove(name);
         }
 
         // delete all existing properties that are not part of the source model
         for (String name : existingProperties.keySet()) {
-            target.getProperty(name).remove();
+            if (!name.equals("jcr:uuid")) {
+                target.getProperty(name).remove();
+            }
         }
     }
 
@@ -345,11 +349,21 @@ public class RepositoryFacade {
         }
     }
 
-    private void pushProperty(final ConfigurationProperty property, final Node target) throws Exception {
-        if (property.getType() == PropertyType.SINGLE) {
-            target.setProperty(property.getName(), valueFrom(property, property.getValue(), property.getValueType()));
+    private void pushProperty(final ConfigurationProperty modelProperty, final Node jcrNode) throws Exception {
+        final Property jcrProperty = getPropertyIfExists(jcrNode, modelProperty.getName());
+
+        if (jcrProperty != null) {
+            if (isOverride(modelProperty, jcrProperty)) {
+                jcrProperty.remove();
+            } else if (valuesAreIdentical(modelProperty, jcrNode, jcrProperty)) {
+                return;
+            }
+        }
+
+        if (modelProperty.getType() == PropertyType.SINGLE) {
+            jcrNode.setProperty(modelProperty.getName(), valueFrom(modelProperty, modelProperty.getValue(), jcrNode));
         } else {
-            target.setProperty(property.getName(), valuesFrom(property, property.getValues(), property.getValueType()));
+            jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelProperty, modelProperty.getValues(), jcrNode));
         }
     }
 
@@ -366,13 +380,14 @@ public class RepositoryFacade {
     }
 
     private boolean valuesAreIdentical(final ConfigurationProperty modelProperty,
+                                       final Node jcrNode,
                                        final Property jcrProperty) throws Exception {
         if (isOverride(modelProperty, jcrProperty)) {
             return false;
         }
 
         if (modelProperty.getType() == PropertyType.SINGLE) {
-            return valueIsIdentical(modelProperty, modelProperty.getValue(), jcrProperty.getValue());
+            return valueIsIdentical(modelProperty, modelProperty.getValue(), jcrNode, jcrProperty.getValue());
         } else {
             final Value[] modelValues = modelProperty.getValues();
             final javax.jcr.Value[] jcrValues = jcrProperty.getValues();
@@ -380,7 +395,7 @@ public class RepositoryFacade {
                 return false;
             }
             for (int i = 0; i < modelValues.length; i++) {
-                if (!valueIsIdentical(modelProperty, modelValues[i], jcrValues[i])) {
+                if (!valueIsIdentical(modelProperty, modelValues[i], jcrNode, jcrValues[i])) {
                     return false;
                 }
             }
@@ -390,6 +405,7 @@ public class RepositoryFacade {
 
     private boolean valueIsIdentical(final ConfigurationProperty modelProperty,
                                      final Value modelValue,
+                                     final Node jcrNode,
                                      final javax.jcr.Value jcrValue) throws Exception {
         if (modelValue.getType().ordinal() != jcrValue.getType()) {
             return false;
@@ -397,13 +413,12 @@ public class RepositoryFacade {
 
         switch (modelValue.getType()) {
             case STRING:
-                final String modelStringValue = getStringValue(modelProperty, modelValue);
-                return modelStringValue.equals(jcrValue.getString());
+                return getStringValue(modelProperty, modelValue).equals(jcrValue.getString());
             case BINARY:
                 try (final InputStream modelInputStream = getBinaryInputStream(modelProperty, modelValue)) {
                     final Binary jcrBinary = jcrValue.getBinary();
-                    try {
-                        return IOUtils.contentEquals(modelInputStream, jcrBinary.getStream());
+                    try (final InputStream jcrInputStream = jcrBinary.getStream()) {
+                        return IOUtils.contentEquals(modelInputStream, jcrInputStream);
                     } finally {
                         jcrBinary.dispose();
                     }
@@ -422,10 +437,7 @@ public class RepositoryFacade {
                 return modelValue.getString().equals(jcrValue.getString());
             case REFERENCE:
             case WEAKREFERENCE:
-                if (modelValue.isPath()) {
-                    // TODO: resolve path references
-                }
-                return modelValue.getString().equals(jcrValue.getString());
+                return getReferredNodeIdentifier(modelValue, jcrNode).equals(jcrValue.getString());
             case DECIMAL:
                 return modelValue.getObject().equals(jcrValue.getDecimal());
             default:
@@ -508,26 +520,42 @@ public class RepositoryFacade {
         return false;
     }
 
+    private String getReferredNodeIdentifier(final Value modelValue, final Node jcrNode) throws RepositoryException {
+        if (modelValue.isPath()) {
+            return resolveReference(modelValue.getString(), jcrNode);
+        } else {
+            return modelValue.getString();
+        }
+    }
+
+    private String resolveReference(final String path, final Node jcrNode) throws RepositoryException {
+        if (path.startsWith("/")) {
+            return jcrNode.getSession().getNode(path).getIdentifier();
+        } else {
+            return jcrNode.getNode(path).getIdentifier();
+        }
+    }
+
     private javax.jcr.Value[] valuesFrom(final ConfigurationProperty modelProperty,
                                          final Value[] modelValues,
-                                         final ValueType type) throws Exception {
+                                         final Node jcrNode) throws Exception {
         final javax.jcr.Value[] jcrValues = new javax.jcr.Value[modelValues.length];
         for (int i = 0; i < modelValues.length; i++) {
-            jcrValues[i] = valueFrom(modelProperty, modelValues[i], type);
+            jcrValues[i] = valueFrom(modelProperty, modelValues[i], jcrNode);
         }
         return jcrValues;
     }
 
     private javax.jcr.Value valueFrom(final ConfigurationProperty modelProperty,
                                       final Value modelValue,
-                                      final ValueType type) throws Exception {
+                                      final Node jcrNode) throws Exception {
         final ValueFactory factory = session.getValueFactory();
+        final ValueType type = modelValue.getType();
 
         switch (type) {
             case STRING:
                 return factory.createValue(getStringValue(modelProperty, modelValue));
             case BINARY:
-                // createBinary closes the inputStream after use or on error
                 final Binary binary = factory.createBinary(getBinaryInputStream(modelProperty, modelValue));
                 try {
                     return factory.createValue(binary);
@@ -548,15 +576,43 @@ public class RepositoryFacade {
                 return factory.createValue(modelValue.getString(), type.ordinal());
             case REFERENCE:
             case WEAKREFERENCE:
-                if (modelValue.isPath()) {
-                    // TODO: resolve path references
-                }
-                return factory.createValue(modelValue.getString(), type.ordinal());
+                return factory.createValue(getReferredNode(modelValue, jcrNode), type == ValueType.WEAKREFERENCE);
             case DECIMAL:
                 return factory.createValue((BigDecimal)modelValue.getObject());
             default:
                 final String msg = String.format("Unsupported value type '%s'.", type);
                 throw new IllegalArgumentException(msg);
+        }
+    }
+
+    private Node getReferredNode(final Value modelValue, final Node jcrNode) throws RepositoryException {
+        return session.getNodeByIdentifier(getReferredNodeIdentifier(modelValue, jcrNode));
+    }
+
+    // TODO: copied from JcrUtils as afaik we do not want a compile dependency on that project yet
+    /**
+     * Get the property at <code>relPath</code> from <code>baseNode</code> or <code>null</code> if no such property
+     * exists.
+     *
+     * @param baseNode existing node that should be the base for the relative path
+     * @param relPath  relative path to the property to get
+     * @return the property at <code>relPath</code> from <code>baseNode</code> or <code>null</code> if no such property
+     *         exists.
+     * @throws RepositoryException in case of exception accessing the Repository
+     */
+    public static Property getPropertyIfExists(Node baseNode, String relPath) throws RepositoryException {
+        try {
+            return baseNode.getProperty(relPath);
+        } catch (PathNotFoundException e) {
+            return null;
+        }
+    }
+
+    private void pushUnprocessedReferences() throws Exception {
+        for (Pair<ConfigurationProperty, Node> unprocessedReference : unprocessedReferences) {
+            final ConfigurationProperty configurationProperty = unprocessedReference.getLeft();
+            final Node jcrNode = unprocessedReference.getRight();
+            pushProperty(configurationProperty, jcrNode);
         }
     }
 
