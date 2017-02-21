@@ -14,10 +14,11 @@
   limitations under the License.
   -->
 
-<md-sidenav md-component-id="right-side-panel"
-            class="md-sidenav-right right-side-panel qa-side-panel-right"
+<md-sidenav layout="column"
             md-is-locked-open="$ctrl.isLockedOpen()"
-            layout="column">
+            class="md-sidenav-right right-side-panel qa-side-panel-right"
+            md-component-id="right-side-panel"
+            md-disable-backdrop>
   <md-toolbar>
     <div class="md-toolbar-tools">
       <h1 class="md-title text-truncate">
@@ -28,7 +29,7 @@
       <span flex></span>
 
       <md-button class="md-icon-button qa-publish-in-content-perspective"
-                   aria-label="{{ 'PUBLISH' | translate }}"
+                 aria-label="{{ 'PUBLISH' | translate }}"
                  ng-disabled="!$ctrl.editing || $ctrl.disableContentButtons"
                  ng-click="$ctrl.openFullContent('view')">
         <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
