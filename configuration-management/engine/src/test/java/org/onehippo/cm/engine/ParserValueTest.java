@@ -64,6 +64,7 @@ public class ParserValueTest extends AbstractBaseTest {
         calendar.setTimeInMillis(0);
         calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         calendar.set(2015, 9, 21, 7, 28, 0);
+        calendar.setLenient(false);
         assertProperty(autoDetectedNode, "/autodetected/date", "date", autoDetectedDefinition, ValueType.DATE, calendar);
         assertProperty(autoDetectedNode, "/autodetected/double", "double", autoDetectedDefinition, ValueType.DOUBLE, 3.1415);
         assertProperty(autoDetectedNode, "/autodetected/longAsInt", "longAsInt", autoDetectedDefinition, ValueType.LONG, (long) 42);
@@ -109,7 +110,7 @@ public class ParserValueTest extends AbstractBaseTest {
         final ConfigDefinition stringDefinition = assertDefinition(source, 2, ConfigDefinition.class);
         final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "string", stringDefinition, 0, 8);
         assertProperty(stringNode, "/string/strBoolean", "strBoolean", stringDefinition, ValueType.STRING, "true");
-        assertProperty(stringNode, "/string/strDate", "strDate", stringDefinition, ValueType.STRING, "2015-10-21T07:28:00+8:00");
+        assertProperty(stringNode, "/string/strDate", "strDate", stringDefinition, ValueType.STRING, "2015-10-21T07:28:00.000+08:00");
         assertProperty(stringNode, "/string/strDouble", "strDouble", stringDefinition, ValueType.STRING, "3.1415");
         assertProperty(stringNode, "/string/strLong", "strLong", stringDefinition, ValueType.STRING, "42");
         assertProperty(stringNode, "/string/strWithQuotes", "strWithQuotes", stringDefinition, ValueType.STRING, "string ' \"");

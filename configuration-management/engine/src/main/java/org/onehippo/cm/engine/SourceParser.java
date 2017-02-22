@@ -22,10 +22,14 @@ import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jackrabbit.util.ISO8601;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
@@ -37,8 +41,10 @@ import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
 import org.onehippo.cm.impl.model.ValueImpl;
+import org.yaml.snakeyaml.constructor.AbstractConstruct;
 import org.yaml.snakeyaml.constructor.Construct;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
@@ -52,14 +58,51 @@ public class SourceParser extends AbstractBaseParser {
     // class is needed to access the protected Constructor#construct method which uses the built-in parsers for the
     // known basic scalar types. The additional check for the ConstructYamlTimestamp is done as the constructor for
     // timestamp returns a Date by internally constructing a Calendar.
+    // Furthermore the snakeyaml ConstructYamlTimestamp is ignored and replaced with our own implementation which
+    // uses the JR ISO8601 class for parsing of timestamps (not YMD dates) as we also (have to, see HCM-17) use ISO8601
+    // for writing.
     private static final class ScalarConstructor extends Constructor {
-        Object constructScalarNode(final ScalarNode node) {
-            final Construct constructor = getConstructor(node);
-            final Object object = constructor.construct(node);
-            if (constructor instanceof ConstructYamlTimestamp) {
-                return ((ConstructYamlTimestamp)constructor).getCalendar().clone();
+
+        private final static Pattern YMD_REGEXP = Pattern
+                .compile("^([0-9][0-9][0-9][0-9])-([0-9][0-9]?)-([0-9][0-9]?)$");
+
+        private static final Construct constructISO8601Timestamp = new AbstractConstruct() {
+
+            // adapted from snakeyaml SafeConstructor.ConstructYamlTimestamp, replacing the timestamp parsing
+            // using JR ISO8601
+            public Object construct(Node node) {
+                ScalarNode scalar = (ScalarNode) node;
+                String nodeValue = scalar.getValue();
+                Calendar calendar;
+                Matcher match = YMD_REGEXP.matcher(nodeValue);
+                if (match.matches()) {
+                    String year_s = match.group(1);
+                    String month_s = match.group(2);
+                    String day_s = match.group(3);
+                    calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                    calendar.clear();
+                    calendar.set(Calendar.YEAR, Integer.parseInt(year_s));
+                    // Java's months are zero-based...
+                    calendar.set(Calendar.MONTH, Integer.parseInt(month_s) - 1); // x
+                    calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(day_s));
+                    return calendar;
+                } else {
+                    // use ISO8601 instead of original ConstructYamlTimestamp logic
+                    calendar = ISO8601.parse(nodeValue);
+                    if (calendar == null) {
+                        throw new YAMLException("Unexpected timestamp: " + nodeValue);
+                    }
+                    return calendar;
+                }
             }
-            return object;
+        };
+
+        Object constructScalarNode(final ScalarNode node) {
+            Construct constructor = getConstructor(node);
+            if (constructor instanceof ConstructYamlTimestamp) {
+                constructor = constructISO8601Timestamp;
+            }
+            return constructor.construct(node);
         }
     }
 
@@ -72,8 +115,12 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     public void parse(final String sourcePath, final String path, final InputStream inputStream, final ModuleImpl parent) throws ParserException {
-        final Node node = composeYamlNode(sourcePath, inputStream);
-        constructSource(path, node, parent);
+        try {
+            final Node node = composeYamlNode(sourcePath, inputStream);
+            constructSource(path, node, parent);
+        } catch (YAMLException e) {
+            throw new ParserException("YAML parse exception: " + e.getMessage(), e);
+        }
     }
 
     protected void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException {
@@ -367,31 +414,35 @@ public class SourceParser extends AbstractBaseParser {
      */
     private Value constructValueFromScalar(final Node node) throws ParserException {
         final ScalarNode scalar = asScalar(node);
-        final Object object = scalarConstructor.constructScalarNode(scalar);
+        try {
+            final Object object = scalarConstructor.constructScalarNode(scalar);
 
-        if (Tag.BINARY.equals(scalar.getTag())) {
-            return new ValueImpl((byte[]) object);
-        }
-        if (Tag.BOOL.equals(scalar.getTag())) {
-            return new ValueImpl((Boolean) object);
-        }
-        if (Tag.FLOAT.equals(scalar.getTag())) {
-            return new ValueImpl((Double) object);
-        }
-        if (Tag.INT.equals(scalar.getTag())) {
-            if (object instanceof Integer) {
-                return new ValueImpl(((Integer)object).longValue());
-            } else if (object instanceof Long) {
-                return new ValueImpl((Long)object);
-            } else {
-                throw new ParserException("Value is too big to fit into a long, use a property of type decimal", node);
+            if (Tag.BINARY.equals(scalar.getTag())) {
+                return new ValueImpl((byte[]) object);
             }
-        }
-        if (Tag.STR.equals(scalar.getTag())) {
-            return new ValueImpl((String) object);
-        }
-        if (Tag.TIMESTAMP.equals(scalar.getTag())) {
-            return new ValueImpl((Calendar) object);
+            if (Tag.BOOL.equals(scalar.getTag())) {
+                return new ValueImpl((Boolean) object);
+            }
+            if (Tag.FLOAT.equals(scalar.getTag())) {
+                return new ValueImpl((Double) object);
+            }
+            if (Tag.INT.equals(scalar.getTag())) {
+                if (object instanceof Integer) {
+                    return new ValueImpl(((Integer) object).longValue());
+                } else if (object instanceof Long) {
+                    return new ValueImpl((Long) object);
+                } else {
+                    throw new ParserException("Value is too big to fit into a long, use a property of type decimal", node);
+                }
+            }
+            if (Tag.STR.equals(scalar.getTag())) {
+                return new ValueImpl((String) object);
+            }
+            if (Tag.TIMESTAMP.equals(scalar.getTag())) {
+                return new ValueImpl((Calendar) object);
+            }
+        } catch (YAMLException e) {
+            throw new ParserException("YAML parse exception: "+e.getMessage(), node, e);
         }
 
         throw new ParserException("Tag not recognized: " + scalar.getTag(), node);

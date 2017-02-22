@@ -4,7 +4,7 @@ instructions:
           - binary: !!binary |-
                 aGVsbG8gd29ybGQ=
           - boolean: true
-          - date: 2015-10-21T07:28:00+8:00
+          - date: 2015-10-21T07:28:00.000+08:00
           - double: 3.1415
           - longAsInt: 42
           - longAsLong: 4200000000
@@ -45,7 +45,7 @@ instructions:
                 value: cafebabe-cafe-babe-cafe-babecafebabe
       - /string:
           - strBoolean: 'true'
-          - strDate: '2015-10-21T07:28:00+8:00'
+          - strDate: '2015-10-21T07:28:00.000+08:00'
           - strDouble: '3.1415'
           - strLong: '42'
           - strWithQuotes: string ' "
