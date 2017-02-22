@@ -19,7 +19,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('ChannelLeftSidePanelToggle', () => {
+describe('LeftSidePanelToggle', () => {
   let $rootScope;
   let $compile;
 

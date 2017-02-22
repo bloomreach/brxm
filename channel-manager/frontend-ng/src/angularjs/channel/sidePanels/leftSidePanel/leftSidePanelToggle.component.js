@@ -16,7 +16,7 @@
 
 import template from './leftSidePanelToggle.html';
 
-export class ChannelLeftSidePanelToggleCtrl {
+export class LeftSidePanelToggleCtrl {
   constructor(SidePanelService, ChannelService) {
     'ngInject';
 
@@ -37,7 +37,7 @@ const leftSidePanelToggleComponent = {
   bindings: {
     disabled: '=',
   },
-  controller: ChannelLeftSidePanelToggleCtrl,
+  controller: LeftSidePanelToggleCtrl,
   template,
 };
 
