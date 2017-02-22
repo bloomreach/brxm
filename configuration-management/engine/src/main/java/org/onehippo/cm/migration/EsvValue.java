@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
+import java.util.Calendar;
 import java.util.UUID;
 
 import javax.jcr.PropertyType;
@@ -98,7 +99,11 @@ public class EsvValue {
                 case PropertyType.BOOLEAN:
                     return Boolean.valueOf(value);
                 case PropertyType.DATE:
-                    return ISO8601.parse(value);
+                    Calendar calendar = ISO8601.parse(value);
+                    if (calendar == null) {
+                        throw new EsvParseException("Not a valid date: "+value+" at " + location);
+                    }
+                    return calendar;
                 case PropertyType.DECIMAL:
                     return new BigDecimal(value);
                 case PropertyType.DOUBLE:
