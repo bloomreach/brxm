@@ -216,6 +216,62 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     }
 
     @Test
+    public void reorder_first_node_to_first() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - property1: [bla1]\n"
+                + "    - /c:\n"
+                + "      - property2: [bla2]\n"
+                + "    - /d:\n"
+                + "      - property3: [bla3]\n"
+                + "  - /a/b:\n"
+                + "    - .meta:order-before: ''";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.startsWith("Unnecessary orderBefore: '' (first) for node '/a/b'")));
+        }
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        assertEquals("[b, c, d]", sortedCollectionToString(a.getNodes()));
+    }
+
+    @Test
+    public void reorder_node_unnecessary() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - property1: [bla1]\n"
+                + "    - /c:\n"
+                + "      - property2: [bla2]\n"
+                + "    - /d:\n"
+                + "      - property3: [bla3]\n"
+                + "  - /a/b:\n"
+                + "    - .meta:order-before: 'c'";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.startsWith("Unnecessary orderBefore: 'c' for node '/a/b'")));
+        }
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        assertEquals("[b, c, d]", sortedCollectionToString(a.getNodes()));
+    }
+
+    @Test
     public void reorder_existing_node_to_first() throws Exception {
         final String yaml = "instructions:\n"
                 + "- config:\n"

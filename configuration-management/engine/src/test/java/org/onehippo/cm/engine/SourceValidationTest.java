@@ -26,6 +26,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 
 import static org.junit.Assert.assertEquals;
@@ -937,7 +938,34 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithDefinitionWithEmptyOrderBefore() {
+    public void configWithDefinitionWithNullOrderBefore() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - .meta:order-before: !!null";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
+
+        assertParserException(root, firstTuple(propertyMap).getValueNode(), "Scalar must be a string");
+    }
+
+    @Test
+    public void configWithDefinitionWithOrderBeforeSelf() {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /path/to/node:\n"
+                + "    - .meta:order-before: node";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node config0 = firstInstructionFirstTupleFirstValue(root);
+
+        assertParserException(root, firstTuple(config0).getValueNode(), "Invalid .meta:order-before targeting this node itself");
+    }
+
+    @Test
+    public void configWithDefinitionWithOrderBeforeFirst() {
         final String yaml = "instructions:\n"
                 + "- config:\n"
                 + "  - /path/to/node:\n"
@@ -946,9 +974,8 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node config0 = firstInstructionFirstTupleFirstValue(root);
         final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Value for .meta:order-before must be non-empty string");
+        final ScalarNode orderBefore = (ScalarNode)firstTuple(propertyMap).getValueNode();
+        assertEquals(orderBefore.getValue(), "");
     }
 
     @Test

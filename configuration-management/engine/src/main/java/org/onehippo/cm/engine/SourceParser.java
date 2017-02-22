@@ -214,6 +214,9 @@ public class SourceParser extends AbstractBaseParser {
                 definitionNode.setDelete(delete);
             } else if (key.equals(".meta:order-before")) {
                 final String name = asNodeOrderBeforeValue(children.get(keyNode));
+                if (definitionNode.getName().equals(name)) {
+                    throw new ParserException("Invalid .meta:order-before targeting this node itself", value);
+                }
                 definitionNode.setOrderBefore(name);
             } else if (key.startsWith("/")) {
                 final String name = key.substring(1);
@@ -234,11 +237,7 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     private String asNodeOrderBeforeValue(final Node node) throws ParserException {
-        final String string = asStringScalar(node);
-        if (StringUtils.isEmpty(string)) {
-            throw new ParserException("Value for .meta:order-before must be non-empty string", node);
-        }
-        return string;
+        return asStringScalar(node);
     }
 
     private void constructDefinitionNode(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {

@@ -75,9 +75,58 @@ class ConfigurationTreeBuilder {
         }
 
         final ConfigurationNodeImpl parent = node.getModifiableParent();
-        if (parent != null) {
-            definitionNode.getOrderBefore()
-                    .ifPresent(destChildName -> parent.orderBefore(node.getName(), destChildName));
+        if (parent != null && definitionNode.getOrderBefore().isPresent()) {
+            final String destChildName = definitionNode.getOrderBefore().get();
+            final boolean orderFirst = "".equals(destChildName);
+            if (!orderFirst) {
+                if (node.getName().equals(destChildName)) {
+                    final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+                    final String msg = String.format("Invalid orderBefore: '%s for node '%s' defined in '%s': targeting this node itself.",
+                            destChildName, node.getPath(), culprit);
+                    throw new IllegalArgumentException(msg);
+                }
+                if (!parent.getNodes().containsKey(destChildName)) {
+                    final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+                    final String msg = String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': no sibling named '%s'.",
+                            destChildName, node.getPath(), culprit, destChildName);
+                    throw new IllegalArgumentException(msg);
+                }
+            }
+            boolean first = true;
+            boolean prevIsSrc = false;
+            for (String name : parent.getNodes().keySet()) {
+                if (name.equals(node.getName())) {
+                    // current == src
+                    if (first && orderFirst) {
+                        // src already first
+                        final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+                        logger.warn("Unnecessary orderBefore: '' (first) for node '{}' defined in '{}': already first child of '{}'.",
+                                node.getPath(), culprit, parent.getPath());
+                        break;
+                    }
+                    // track src for next loop, once
+                    prevIsSrc = true;
+                } else if (orderFirst) {
+                    // current != src != first
+                    parent.orderBefore(node.getName(), name);
+                    break;
+                } else if (name.equals(destChildName)) {
+                    // found dest: only reorder if prev != src
+                    if (prevIsSrc) {
+                        // previous was src, current is dest: already is right order
+                        final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+                        logger.warn("Unnecessary orderBefore: '{}' for node '{}' defined in '{}': already ordered before sibling '{}'.",
+                                destChildName, node.getPath(), culprit, destChildName);
+                    } else {
+                        // dest < src: reorder
+                        parent.orderBefore(node.getName(), destChildName);
+                    }
+                    break;
+                } else {
+                    prevIsSrc = false;
+                }
+                first = false;
+            }
         }
 
         for (DefinitionPropertyImpl property: definitionNode.getModifiableProperties().values()) {
