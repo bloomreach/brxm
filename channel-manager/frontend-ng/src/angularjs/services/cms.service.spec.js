@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('CmsService', () => {
+  let $rootScope;
   let $window;
   let CmsService;
 
@@ -28,7 +29,8 @@ describe('CmsService', () => {
 
     angular.mock.module('hippo-cm');
 
-    inject((_$window_, _CmsService_) => {
+    inject((_$rootScope_, _$window_, _CmsService_) => {
+      $rootScope = _$rootScope_;
       $window = _$window_;
       CmsService = _CmsService_;
     });
@@ -98,5 +100,89 @@ describe('CmsService', () => {
     expect(() => {
       CmsService.getParentIFramePanelId();
     }).toThrowError(Error, 'Request parameter \'parentExtIFramePanelId\' not found in IFrame url');
+  });
+
+  it('closes a valid document', (done) => {
+    CmsService.closeDocumentWhenValid('test').then(done);
+
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('close-content', 'test');
+    $window.CMS_TO_APP.publish('close-content-result', 'test', true);
+    $rootScope.$digest();
+  });
+
+  it('does not close an invalid document', (done) => {
+    CmsService.closeDocumentWhenValid('test').catch(done);
+
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('close-content', 'test');
+    $window.CMS_TO_APP.publish('close-content-result', 'test', false);
+    $rootScope.$digest();
+  });
+
+  it('closes different documents independently', () => {
+    let okCount1 = 0;
+    let errorCount1 = 0;
+    let okCount2 = 0;
+    let errorCount2 = 0;
+
+    CmsService.closeDocumentWhenValid('one')
+      .then(() => {
+        okCount1 += 1;
+      })
+      .catch(() => {
+        errorCount1 += 1;
+      });
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('close-content', 'one');
+
+    CmsService.closeDocumentWhenValid('two')
+      .then(() => {
+        okCount2 += 1;
+      })
+      .catch(() => {
+        errorCount2 += 1;
+      });
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('close-content', 'two');
+
+    $window.CMS_TO_APP.publish('close-content-result', 'two', true);
+    $window.CMS_TO_APP.publish('close-content-result', 'one', false);
+    $rootScope.$digest();
+
+    expect(okCount1).toBe(0);
+    expect(errorCount1).toBe(1);
+    expect(okCount2).toBe(1);
+    expect(errorCount2).toBe(0);
+  });
+
+  it('closes the same document only once', () => {
+    let okCount1 = 0;
+    let errorCount1 = 0;
+    let okCount2 = 0;
+    let errorCount2 = 0;
+
+    CmsService.closeDocumentWhenValid('test')
+      .then(() => {
+        okCount1 += 1;
+      })
+      .catch(() => {
+        errorCount1 += 1;
+      });
+    expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('close-content', 'test');
+
+    $window.APP_TO_CMS.publish.calls.reset();
+    CmsService.closeDocumentWhenValid('test')
+      .then(() => {
+        okCount2 += 1;
+      })
+      .catch(() => {
+        errorCount2 += 1;
+      });
+    expect($window.APP_TO_CMS.publish).not.toHaveBeenCalled();
+
+    $window.CMS_TO_APP.publish('close-content-result', 'test', true);
+    $rootScope.$digest();
+
+    expect(okCount1).toBe(1);
+    expect(okCount2).toBe(1);
+    expect(errorCount1).toBe(0);
+    expect(errorCount2).toBe(0);
   });
 });

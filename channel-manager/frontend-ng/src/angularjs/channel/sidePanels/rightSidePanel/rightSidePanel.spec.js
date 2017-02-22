@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-describe('ChannelRightSidePanel', () => {
+describe('RightSidePanel', () => {
   let $componentController;
   let $q;
   let $rootScope;
@@ -93,7 +93,7 @@ describe('ChannelRightSidePanel', () => {
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
 
-    CmsService = jasmine.createSpyObj('CmsService', ['publish', 'subscribe']);
+    CmsService = jasmine.createSpyObj('CmsService', ['closeDocumentWhenValid', 'publish', 'subscribe']);
     DialogService = jasmine.createSpyObj('DialogService', ['confirm', 'show']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
 
@@ -213,6 +213,7 @@ describe('ChannelRightSidePanel', () => {
 
   it('opens a document', () => {
     testDocument.displayName = 'Display Name';
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.resolve(testDocument));
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     spyOn($scope, '$broadcast');
@@ -222,6 +223,7 @@ describe('ChannelRightSidePanel', () => {
     onOpenCallback('test');
     $rootScope.$digest();
 
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
 
@@ -229,7 +231,6 @@ describe('ChannelRightSidePanel', () => {
     expect($ctrl.docType).toEqual(testDocumentType);
     expect($ctrl.form.$setPristine).toHaveBeenCalled();
     expect($translate.instant).toHaveBeenCalledWith('EDIT_DOCUMENT', testDocument);
-    expect(CmsService.publish).toHaveBeenCalledWith('close-content', 'test');
 
     $timeout.flush();
     expect($scope.$broadcast).toHaveBeenCalledWith('md-resize-textarea');
@@ -237,6 +238,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('opens a document with no display name', () => {
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.resolve(testDocument));
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     spyOn($scope, '$broadcast');
@@ -246,6 +248,7 @@ describe('ChannelRightSidePanel', () => {
     onOpenCallback('test');
     $rootScope.$digest();
 
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:testdocument');
 
@@ -267,6 +270,7 @@ describe('ChannelRightSidePanel', () => {
       },
       fields: { },
     };
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.resolve(emptyDocument));
     spyOn($translate, 'instant');
 
@@ -274,6 +278,7 @@ describe('ChannelRightSidePanel', () => {
     onOpenCallback('test');
     $rootScope.$digest();
 
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
 
     expect($ctrl.doc).toBeUndefined();
@@ -296,6 +301,7 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('knows that a document is loading', () => {
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.resolve(testDocument));
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
 
@@ -335,6 +341,7 @@ describe('ChannelRightSidePanel', () => {
       $ctrl.docType = testDocumentType;
       $ctrl.editing = true;
 
+      CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
       ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
       ContentService.createDraft.and.returnValue($q.resolve(newDocument));
       ContentService.deleteDraft.and.returnValue($q.resolve());
@@ -345,6 +352,7 @@ describe('ChannelRightSidePanel', () => {
     });
 
     function expectNewDocument() {
+      expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('newdoc');
       expect(ContentService.createDraft).toHaveBeenCalledWith('newdoc');
       expect(ContentService.getDocumentType).toHaveBeenCalledWith('ns:newdoctype');
 
@@ -425,6 +433,20 @@ describe('ChannelRightSidePanel', () => {
     });
   });
 
+  it('fails to open a document with pending invalid changes in the draft', () => {
+    spyOn($translate, 'instant');
+    CmsService.closeDocumentWhenValid.and.returnValue($q.reject());
+
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
+    onOpenCallback('test');
+    $rootScope.$digest();
+
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
+    expect(ContentService.createDraft).not.toHaveBeenCalled();
+    expect($ctrl.doc).toBeUndefined();
+    expect($translate.instant).toHaveBeenCalledWith('FEEDBACK_DRAFT_INVALID_MESSAGE');
+  });
+
   it('fails to open a document owned by another user', () => {
     const response = {
       reason: 'OTHER_HOLDER',
@@ -435,12 +457,14 @@ describe('ChannelRightSidePanel', () => {
       },
     };
     spyOn($translate, 'instant');
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
@@ -456,12 +480,14 @@ describe('ChannelRightSidePanel', () => {
       },
     };
     spyOn($translate, 'instant');
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
@@ -477,12 +503,14 @@ describe('ChannelRightSidePanel', () => {
       },
     };
     spyOn($translate, 'instant');
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
@@ -494,12 +522,14 @@ describe('ChannelRightSidePanel', () => {
       reason: 'NOT_A_DOCUMENT',
     };
     spyOn($translate, 'instant');
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
@@ -509,12 +539,14 @@ describe('ChannelRightSidePanel', () => {
 
   it('fails to open a non-existent document', () => {
     spyOn($translate, 'instant');
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ status: 404 }));
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
@@ -525,12 +557,14 @@ describe('ChannelRightSidePanel', () => {
   it('fails to open a document with random data in the response', () => {
     const response = { bla: 'test' };
     spyOn($translate, 'instant');
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
@@ -539,12 +573,14 @@ describe('ChannelRightSidePanel', () => {
 
   it('fails to open a document with no data in the response', () => {
     spyOn($translate, 'instant');
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({}));
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
@@ -556,12 +592,14 @@ describe('ChannelRightSidePanel', () => {
       reason: 'unknown',
     };
     spyOn($translate, 'instant');
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).not.toHaveBeenCalled();
     expect($ctrl.doc).toBeUndefined();
@@ -581,6 +619,7 @@ describe('ChannelRightSidePanel', () => {
       displayName: 'Document Display Name',
     };
     spyOn($translate, 'instant');
+    CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.resolve(doc));
     ContentService.getDocumentType.and.returnValue($q.reject({}));
 
@@ -588,6 +627,7 @@ describe('ChannelRightSidePanel', () => {
     onOpenCallback('test');
     $rootScope.$digest();
 
+    expect(CmsService.closeDocumentWhenValid).toHaveBeenCalledWith('test');
     expect(ContentService.createDraft).toHaveBeenCalledWith('test');
     expect(ContentService.getDocumentType).toHaveBeenCalledWith('document:type');
     expect($ctrl.doc).toBeUndefined();

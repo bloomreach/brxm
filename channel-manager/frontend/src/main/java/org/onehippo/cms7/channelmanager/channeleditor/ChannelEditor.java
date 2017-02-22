@@ -124,7 +124,7 @@ public class ChannelEditor extends ExtPanel {
         this.hideHstConfigEditor = true;
 
         addEventListener(OPEN_DOCUMENT_EVENT, new OpenDocumentEditorEventListener(config, context));
-        addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context));
+        addEventListener(CLOSE_DOCUMENT_EVENT, new CloseDocumentEditorEventListener(config, context, getMarkupId()));
     }
 
     @Override
