@@ -273,6 +273,23 @@
       <sv:value>4.0.0</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="cms-settings-set-whitelisted-classes-for-package-resources">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/settings/whitelisted.classes.for.package.resources</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String" sv:multiple="true">
+      <sv:value>org.hippoecm.</sv:value>
+      <sv:value>org.apache.wicket.</sv:value>
+      <sv:value>org.onehippo.</sv:value>
+      <sv:value>wicket.contrib.</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>910.1</sv:value>
+    </sv:property>
+  </sv:node>
   <!-- CMS static configuration-->
   <sv:node sv:name="cms-static">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

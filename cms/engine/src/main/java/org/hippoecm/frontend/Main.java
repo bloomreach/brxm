@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.frontend;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -46,8 +47,6 @@ import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
-import org.apache.wicket.markup.html.IPackageResourceGuard;
-import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 import org.apache.wicket.page.IPageManagerContext;
 import org.apache.wicket.pageStore.IDataStore;
 import org.apache.wicket.pageStore.IPageStore;
@@ -98,16 +97,17 @@ import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.settings.GlobalSettings;
 import org.hippoecm.frontend.util.CmsSessionUtil;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
-import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsContextServiceImpl;
-import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,6 +116,10 @@ public class Main extends PluginApplication {
     static final Logger log = LoggerFactory.getLogger(Main.class);
 
     private static final String FRONTEND_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.FRONTEND_PATH;
+    private static final String WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES = "whitelisted.classes.for.package.resources";
+    private static final String[] DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES = {
+            "org.hippoecm.", "org.apache.wicket.", "org.onehippo.", "wicket.contrib."
+    };
 
     /**
      * Parameter name of the repository storage directory
@@ -419,14 +423,6 @@ public class Main extends PluginApplication {
             }
         });
 
-        final IPackageResourceGuard packageResourceGuard = resourceSettings.getPackageResourceGuard();
-        if (packageResourceGuard instanceof SecurePackageResourceGuard) {
-            SecurePackageResourceGuard guard = (SecurePackageResourceGuard) packageResourceGuard;
-
-            // CMS7-8898: allow .woff2 files to be served
-            guard.addPattern("+*.woff2");
-        }
-
         if (RuntimeConfigurationType.DEVELOPMENT.equals(getConfigurationType())) {
             // disable cache
             resourceSettings.getLocalizer().setEnableCache(false);
@@ -499,13 +495,36 @@ public class Main extends PluginApplication {
             }
         });
 
+        // don't allow public access to any package resource (empty whitelist) by default
+        resourceSettings.setPackageResourceGuard(new WhitelistedClassesResourceGuard());
+
         if (log.isInfoEnabled()) {
             log.info("Hippo CMS application " + applicationName + " has started");
         }
     }
 
+    protected void initPackageResourceGuard() {
+        final WhitelistedClassesResourceGuard packageResourceGuard = new WhitelistedClassesResourceGuard();
+
+        String[] classNamePrefixes = GlobalSettings.get().getStringArray(WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES);
+        if (classNamePrefixes == null || classNamePrefixes.length == 0) {
+            log.info("No whitelisted package resources found, using the default whitelist: {}",
+                    Arrays.asList(DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES));
+            classNamePrefixes = DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES;
+        }
+        packageResourceGuard.addClassNamePrefixes(classNamePrefixes);
+
+        // CMS7-8898: allow .woff2 files to be served
+        packageResourceGuard.addPattern("+*.woff2");
+
+        getResourceSettings().setPackageResourceGuard(packageResourceGuard);
+    }
+
     protected void registerSessionListeners() {
-        getSessionListeners().add(session -> ((PluginUserSession) session).login());
+        getSessionListeners().add(session -> {
+            ((PluginUserSession) session).login();
+            initPackageResourceGuard();
+        });
     }
 
     @Override

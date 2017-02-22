@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+<g>
+	<path fill="currentColor" d="M26,2H5.854C5.383,2,5,2.383,5,2.854v26.292C5,29.617,5.383,30,5.854,30h20.114C26.439,30,27,29.472,27,29
+		c0,0,0-25,0-26S26,2,26,2z M26,29L5.998,29.049L6,2.941L26,3V29z"/>
+	<polygon fill="currentColor" points="15,29 18,29 18,28 16,28 16,27 18,27 18,26 16,26 16,25 18,25 18,24 16,24 16,23 18,23 18,22
+		16,22 16,21 18,21 18,20 16,20 16,19 18,19 18,18 16,18 16,17 18,17 18,16 16,16 16,15 18,15 18,14 16,14 16,13 18,13 18,12 16,12
+		16,11 18,11 18,10 16,10 16,9 18,9 18,8 16,8 16,7 18,7 18,6 16,6 16,5 18,5 18,4 16,4 16,3 13,3 13,4 15,4 15,5 13,5 13,6 15,6
+		15,7 13,7 13,8 15,8 15,9 13,9 13,10 15,10 15,11 13,11 13,12 15,12 15,13 13,13 13,14 15,14 15,15 13,15 13,16 15,16 15,17 13,17
+		13,18 15,18 15,19 13,19 13,20 15,20 15,21 13,21 13,22 15,22 15,23 13,23 13,24 15,24 15,25 13,25 13,26 15,26 15,27 13,27 13,28
+		15,28 	"/>
+</g>
+<rect x="12" y="21.125" fill="currentColor" width="14" height="8.875"/>
+<polygon points="18,24 18,23 14,23 14,24 16.776,24 14,27 14,27 14,28 18,28 18,27 15.226,27 18,24 "/>
+<rect x="19" y="23" width="1" height="5"/>
+<path d="M24,23h-2h-1v5h1v-2h2l1-1c0,0,0,0,0-1S24,23,24,23z M22,25v-1h2v1H22z"/>
+</svg>
