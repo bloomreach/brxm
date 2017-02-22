@@ -29,6 +29,10 @@ class BrowserService {
   isFF() {
     return this.deviceDetector.browser === this.BROWSERS.FIREFOX;
   }
+
+  isEdge() {
+    return this.deviceDetector.browser === this.BROWSERS.MS_EDGE;
+  }
 }
 
 export default BrowserService;

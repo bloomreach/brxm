@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-addon-channel-manager</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>4.2.0-visual-editing-psp1-SNAPSHOT</version>
+    <version>5.0.0-visual-editing-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-addon-channel-manager-repository</artifactId>
