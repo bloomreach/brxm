@@ -259,11 +259,11 @@ class OverlayService {
         this._addLockIcon(structureElement, overlayElement);
         break;
       case 'content-link':
-        this._addLinkMarkup(overlayElement, contentLinkSvg, 'IFRAME_OPEN_DOCUMENT', 'qa-content-link');
+        this._addLinkMarkup(overlayElement, contentLinkSvg, 'EDIT_CONTENT', 'qa-content-link');
         this._addContentLinkClickHandler(structureElement, overlayElement);
         break;
       case 'menu-link':
-        this._addLinkMarkup(overlayElement, menuLinkSvg, 'IFRAME_EDIT_MENU', 'qa-menu-link');
+        this._addLinkMarkup(overlayElement, menuLinkSvg, 'EDIT_MENU', 'qa-menu-link');
         this._addMenuLinkClickHandler(structureElement, overlayElement);
         break;
       default:
