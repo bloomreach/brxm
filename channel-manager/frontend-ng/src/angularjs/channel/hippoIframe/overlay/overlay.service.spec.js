@@ -264,8 +264,8 @@ describe('OverlayService', () => {
 
   it('renders a title for links', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').attr('title')).toBe('IFRAME_OPEN_DOCUMENT');
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').attr('title')).toBe('IFRAME_EDIT_MENU');
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').attr('title')).toBe('EDIT_CONTENT');
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').attr('title')).toBe('EDIT_MENU');
       done();
     });
   });
