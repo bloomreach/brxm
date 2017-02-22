@@ -25,7 +25,7 @@ hippo-iframe {
 }
 
 .channel-iframe-canvas {
-  @include parent-size();
+  @include parent-size;
 
   background-color: $canvas-bgcolor;
 
@@ -71,6 +71,6 @@ hippo-iframe {
 
   iframe,
   .channel-dragula-mirror {
-    @include parent-size();
+    @include parent-size;
   }
 }
