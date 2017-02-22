@@ -103,6 +103,8 @@ describe('RightSidePanel', () => {
     dialog.cancel.and.returnValue(dialog);
     DialogService.confirm.and.returnValue(dialog);
 
+    spyOn($translate, 'instant').and.callThrough();
+
     $scope = $rootScope.$new();
     const $element = angular.element('<div></div>');
     $ctrl = $componentController('rightSidePanel', {
@@ -177,8 +179,6 @@ describe('RightSidePanel', () => {
   });
 
   it('asks for confirmation when cancelling changes', () => {
-    spyOn($translate, 'instant');
-
     DialogService.show.and.returnValue($q.resolve());
     SidePanelService.close.and.returnValue($q.resolve());
     $ctrl.doc = {
@@ -217,7 +217,6 @@ describe('RightSidePanel', () => {
     ContentService.createDraft.and.returnValue($q.resolve(testDocument));
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     spyOn($scope, '$broadcast');
-    spyOn($translate, 'instant');
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
@@ -242,7 +241,6 @@ describe('RightSidePanel', () => {
     ContentService.createDraft.and.returnValue($q.resolve(testDocument));
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     spyOn($scope, '$broadcast');
-    spyOn($translate, 'instant');
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
@@ -272,7 +270,6 @@ describe('RightSidePanel', () => {
     };
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.resolve(emptyDocument));
-    spyOn($translate, 'instant');
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
@@ -434,7 +431,6 @@ describe('RightSidePanel', () => {
   });
 
   it('fails to open a document with pending invalid changes in the draft', () => {
-    spyOn($translate, 'instant');
     CmsService.closeDocumentWhenValid.and.returnValue($q.reject());
 
     const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
@@ -456,7 +452,6 @@ describe('RightSidePanel', () => {
         displayName: 'Display Name',
       },
     };
-    spyOn($translate, 'instant');
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
@@ -479,7 +474,6 @@ describe('RightSidePanel', () => {
         userId: 'tester',
       },
     };
-    spyOn($translate, 'instant');
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
@@ -502,7 +496,6 @@ describe('RightSidePanel', () => {
         displayName: 'Display Name',
       },
     };
-    spyOn($translate, 'instant');
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
@@ -521,7 +514,6 @@ describe('RightSidePanel', () => {
     const response = {
       reason: 'NOT_A_DOCUMENT',
     };
-    spyOn($translate, 'instant');
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
@@ -538,7 +530,6 @@ describe('RightSidePanel', () => {
   });
 
   it('fails to open a non-existent document', () => {
-    spyOn($translate, 'instant');
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ status: 404 }));
 
@@ -556,7 +547,6 @@ describe('RightSidePanel', () => {
 
   it('fails to open a document with random data in the response', () => {
     const response = { bla: 'test' };
-    spyOn($translate, 'instant');
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
@@ -572,7 +562,6 @@ describe('RightSidePanel', () => {
   });
 
   it('fails to open a document with no data in the response', () => {
-    spyOn($translate, 'instant');
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({}));
 
@@ -591,7 +580,6 @@ describe('RightSidePanel', () => {
     const response = {
       reason: 'unknown',
     };
-    spyOn($translate, 'instant');
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
@@ -618,7 +606,6 @@ describe('RightSidePanel', () => {
       },
       displayName: 'Document Display Name',
     };
-    spyOn($translate, 'instant');
     CmsService.closeDocumentWhenValid.and.returnValue($q.resolve());
     ContentService.createDraft.and.returnValue($q.resolve(doc));
     ContentService.getDocumentType.and.returnValue($q.reject({}));
@@ -757,7 +744,6 @@ describe('RightSidePanel', () => {
 
     it('shows an error when reloading the document type fails', () => {
       ContentService.getDocumentType.and.returnValue($q.reject({ status: 404 }));
-      spyOn($translate, 'instant');
 
       $ctrl.saveDocument();
 
