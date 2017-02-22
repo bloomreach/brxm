@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -138,6 +138,13 @@
 
     _closeContent: function(uuid) {
       this.fireEvent('close-document', uuid);
+    },
+
+    /**
+     * Called by ChannelEditor.java
+     */
+    closeDocumentResult: function(uuid, isClosed) {
+      this.hostToIFrame.publish('close-content-result', uuid, isClosed);
     },
 
     _setChannel: function(channelId) {

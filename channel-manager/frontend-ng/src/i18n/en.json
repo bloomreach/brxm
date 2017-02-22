@@ -85,6 +85,8 @@
   "FEEDBACK_CUSTOM_VALIDATION_PRESENT_TITLE": "Can't edit this document here",
   "FEEDBACK_DEFAULT_MESSAGE": "Couldn't open the document for editing",
   "FEEDBACK_DEFAULT_TITLE": "Error",
+  "FEEDBACK_DRAFT_INVALID_TITLE": "Invalid pending changes found",
+  "FEEDBACK_DRAFT_INVALID_MESSAGE": "The document has some invalid pending changes. Please resolve them first.",
   "FEEDBACK_HELD_BY_OTHER_USER_MESSAGE": "The document is locked by {{user}}.",
   "FEEDBACK_NO_EDITABLE_CONTENT_MESSAGE": "The document has no content that can be edited in the Channel Manager.",
   "FEEDBACK_NOT_A_DOCUMENT_MESSAGE": "Only documents can be edited in the Channel Manager.",

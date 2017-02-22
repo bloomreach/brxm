@@ -129,16 +129,28 @@ class RightSidePanelCtrl {
   _loadDocument(id) {
     this.documentId = id;
     this.loading = true;
-    this.ContentService.createDraft(id)
-      .then((doc) => {
-        if (this._hasFields(doc)) {
-          return this.ContentService.getDocumentType(doc.info.type.id)
-            .then(docType => this._onLoadSuccess(doc, docType));
-        }
-        return this.$q.reject(this._noContentResponse(doc));
+    this.CmsService.closeDocumentWhenValid(id)
+      .then(() => {
+        this.ContentService.createDraft(id)
+          .then((doc) => {
+            if (this._hasFields(doc)) {
+              return this.ContentService.getDocumentType(doc.info.type.id)
+                .then(docType => this._onLoadSuccess(doc, docType));
+            }
+            return this.$q.reject(this._noContentResponse(doc));
+          })
+          .catch(response => this._onLoadFailure(response));
       })
-      .catch(response => this._onLoadFailure(response))
+      .catch(() => this._showFeedbackDraftInvalid())
       .finally(() => delete this.loading);
+  }
+
+  _showFeedbackDraftInvalid() {
+    this.feedback = {
+      title: 'FEEDBACK_DRAFT_INVALID_TITLE',
+      message: this.$translate.instant('FEEDBACK_DRAFT_INVALID_MESSAGE'),
+      linkToFullEditor: true,
+    };
   }
 
   _hasFields(doc) {
@@ -164,8 +176,6 @@ class RightSidePanelCtrl {
       this.title = this.$translate.instant('EDIT_DOCUMENT', this.doc);
     }
     this._resizeTextareas();
-
-    this.CmsService.publish('close-content', this.documentId);
   }
 
   _onLoadFailure(response) {
