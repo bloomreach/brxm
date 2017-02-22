@@ -339,6 +339,7 @@ $doclist-icon-shift-right: 2px;
   right: 0;
   float: right;
   z-index: 100;
+  background-color: $doclist-head-bgcolor;
 
   > a {
     display: flex;

@@ -96,4 +96,20 @@
       <sv:value>903.2</sv:value>
     </sv:property>
   </sv:node>
+
+  <!-- merge into reloaded automatic-export-plugin.xml in CMS 12.0 -->
+  <sv:node sv:name="automatic-export-exclude-broadcast-module">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>903.4</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig/autoexport:excluded</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropadd" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:modules/broadcast/**</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>
