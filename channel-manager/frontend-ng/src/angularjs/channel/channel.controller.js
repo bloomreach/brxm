@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@
 class ChannelCtrl {
 
   constructor(
-      $log,
-      $rootScope,
-      $stateParams,
-      $timeout,
-      $translate,
-      ChannelService,
-      CmsService,
-      FeedbackService,
-      HippoIframeService,
-      PageMetaDataService,
-      ScalingService,
-      SessionService
+    $log,
+    $rootScope,
+    $stateParams,
+    $timeout,
+    $translate,
+    ChannelService,
+    SidePanelService,
+    CmsService,
+    FeedbackService,
+    HippoIframeService,
+    PageMetaDataService,
+    SessionService,
     ) {
     'ngInject';
 
@@ -37,23 +37,21 @@ class ChannelCtrl {
     this.$timeout = $timeout;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
+    this.SidePanelService = SidePanelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
-    this.ScalingService = ScalingService;
     this.SessionService = SessionService;
 
     this.isEditMode = false;
     this.isCreatingPreview = false;
 
-    // reset service state to avoid weird scaling when controller is reloaded due to state change
-    ScalingService.setPushWidth(0);
-
     this.HippoIframeService.load($stateParams.initialRenderPath);
 
     // editToggleState is only used as a 'fake' model for the toggle; isEditMode is updated in the onChange callback,
     // which may happen asynchronously if preview configuration needs to be created.
-    this.editToggleState = this.isEditMode = false;
+    this.editToggleState = false;
+    this.isEditMode = false;
 
     CmsService.subscribe('clear-channel', () => this._clear());
   }
@@ -99,6 +97,10 @@ class ChannelCtrl {
     this.showSubpage('menu-editor');
   }
 
+  editContent(contentUuid) {
+    this.SidePanelService.open('right', contentUuid);
+  }
+
   _createPreviewConfiguration() {
     this.isCreatingPreview = true;
     this.ChannelService.createPreviewConfiguration().then(() => {
@@ -128,9 +130,6 @@ class ChannelCtrl {
 
   hideSubpage() {
     delete this.currentSubpage;
-    this.$timeout(() => {
-      this.ScalingService.sync();
-    }, 0);
   }
 
   onSubpageSuccess(key, params) {

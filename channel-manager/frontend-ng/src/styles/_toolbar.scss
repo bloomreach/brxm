@@ -1,4 +1,4 @@
-// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,16 +18,12 @@ md-toolbar.hippo-toolbar {
   height: $toolbar-height;
   min-height: $toolbar-height;
 
-  md-progress-linear {
-    height: 2px;
+  .md-container {
+    background-color: $grey-200;
+  }
 
-    ._md-container {
-      background-color: $grey-200;
-      height: 2px;
-    }
-    ._md-bar {
-      background-color: $grey-400;
-    }
+  .md-bar {
+    background-color: $grey-400;
   }
 
   .md-button {
@@ -109,6 +105,14 @@ md-toolbar.hippo-toolbar {
       left: 4px;
       position: relative;
     }
+  }
+}
+
+md-toolbar md-progress-linear {
+  height: 2px;
+
+  .md-container {
+    height: 2px;
   }
 }
 

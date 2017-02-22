@@ -21,6 +21,7 @@ function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $transla
 
   $urlRouterProvider.otherwise('/');
 
+  // TODO: Switch to component router
   $stateProvider.state('hippo-cm', {
     url: '/',
     template,
@@ -133,6 +134,5 @@ function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $transla
     .warnPalette('hippo-red')
     .backgroundPalette('hippo-grey');
 }
-
 
 export default config;

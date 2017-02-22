@@ -1,0 +1,98 @@
+<!--
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<md-sidenav layout="column"
+            md-is-locked-open="$ctrl.isLockedOpen()"
+            class="md-sidenav-right right-side-panel qa-side-panel-right"
+            md-component-id="right-side-panel"
+            md-disable-backdrop>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <h1 class="md-title text-truncate">
+        {{ $ctrl.title }}
+        <md-tooltip md-delay="500">{{ $ctrl.doc.displayName }}</md-tooltip>
+      </h1>
+
+      <span flex></span>
+
+      <md-button class="md-icon-button qa-publish-in-content-perspective"
+                 aria-label="{{ 'PUBLISH' | translate }}"
+                 ng-disabled="!$ctrl.editing || $ctrl.disableContentButtons"
+                 ng-click="$ctrl.openFullContent('view')">
+        <md-tooltip md-delay="500">{{ 'PUBLISH' | translate }}</md-tooltip>
+
+        <md-icon md-svg-src="images/publish.svg"></md-icon>
+      </md-button>
+
+      <md-button class="md-icon-button qa-edit-in-content-perspective"
+                 aria-label="{{ 'SWITCH_TO_FULL_EDITOR' | translate }}"
+                 ng-disabled="$ctrl.disableContentButtons"
+                 ng-click="$ctrl.openFullContent('edit')">
+        <md-tooltip md-delay="500">{{ 'SWITCH_TO_FULL_EDITOR' | translate }}</md-tooltip>
+
+        <md-icon md-svg-src="images/document.svg"></md-icon>
+      </md-button>
+    </div>
+    <md-progress-linear md-mode="indeterminate"
+                        ng-if="$ctrl.loading">
+    </md-progress-linear>
+  </md-toolbar>
+
+  <md-content flex="grow"
+              layout="column">
+    <div ng-if="$ctrl.feedback"
+         class="md-padding qa-feedback"
+         md-colors="{background: 'hippo-red-50'}">
+      <h4 class="qa-feedback-title">{{::$ctrl.feedback.title | translate}}</h4>
+
+      <p class="qa-feedback-message">
+        {{::$ctrl.feedback.message }}
+      </p>
+
+      <md-button ng-if="$ctrl.feedback.linkToFullEditor"
+                 ng-click="$ctrl.openFullContent('edit')">
+        <md-icon md-svg-src="images/document.svg"></md-icon>
+        {{'FEEDBACK_SWITCH_TO_THE_FULL_EDITOR' | translate}}
+      </md-button>
+    </div>
+
+    <form ng-if="$ctrl.editing"
+          name="$ctrl.form"
+          class="form-dense-layout">
+      <document-fields class="top-level"
+                       field-types="$ctrl.docType.fields"
+                       field-values="$ctrl.doc.fields">
+      </document-fields>
+    </form>
+  </md-content>
+
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <span flex></span>
+
+      <md-button class="qa-close"
+                 ng-click="$ctrl.close()">
+        {{ $ctrl.closeButtonLabel() }}
+      </md-button>
+
+      <md-button class="qa-save"
+                 ng-click="$ctrl.saveDocument()"
+                 ng-disabled="!$ctrl.editing || $ctrl.form.$pristine || $ctrl.form.$invalid">
+        {{'SAVE' | translate }}
+      </md-button>
+    </div>
+  </md-toolbar>
+</md-sidenav>

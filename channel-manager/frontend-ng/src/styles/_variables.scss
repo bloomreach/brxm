@@ -117,7 +117,6 @@ $tree-active-border-color: $blue-shadow;
 $tree-active-color: $white;
 
 // Animation
-$scale-animation-transition: 400ms cubic-bezier(.25, .8, .25, 1);
 $viewport-animation-transition: 400ms cubic-bezier(.25, .8, .25, 1);
 
 // DragDrop placeholder
@@ -134,6 +133,9 @@ $toolbar-height: 40px;
 
 // For consistency we use the same yellow color as is used in the CMS for the exclamation icon
 $toolbar-channel-changes-color: #ffa733;
+
+// Forms
+$form-dense-distance: 12px;
 
 // Embedded links
 $embedded-link-height: 40px;
@@ -182,11 +184,15 @@ $layout-breakpoint-sm: 960px !default;
 $layout-breakpoint-md: 1280px !default;
 $layout-breakpoint-lg: 1920px !default;
 
+// Transitions, based on angular material variables
+$swift-ease-in: .3s cubic-bezier(.55, 0, .55, .2);
+$swift-ease-out: .2s cubic-bezier(.25, .8, .25, 1);
+
 // Z-indexes
-$z-index-sidenav: 60;
-$z-index-mask: $z-index-sidenav + 1;
+$z-index-sidepanel: 60;
+$z-index-mask: $z-index-sidepanel + 1;
 $z-index-iframe-lifted: $z-index-mask + 1;
-$z-index-sidenav-lifted: $z-index-iframe-lifted + 1;
+$z-index-sidepanel-lifted: $z-index-iframe-lifted + 1;
 $z-index-tree: 999;
 
 $z-index-overlay: 10000;

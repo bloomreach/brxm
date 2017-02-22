@@ -68,3 +68,4 @@ Run unit tests once (Chrome needs to be installed)
 Build optimized application for production
 
     gulp build
+

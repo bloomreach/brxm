@@ -31,44 +31,41 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.util.ExtEventListener;
 
 /**
- * Opens an editor for a document. The UUID of the document's handle is passed as a parameter by the front-end.
+ * Opens an editor for a document. The UUID of the document's handle and the mode to open the document in are passed
+ * as parameters by the front-end.
  */
 class OpenDocumentEditorEventListener extends ExtEventListener {
 
     private static final String PARAM_UUID = "uuid";
+    private static final String PARAM_MODE = "mode";
 
     private final String editorManagerServiceId;
     private final IPluginContext context;
 
-    public OpenDocumentEditorEventListener(final IPluginConfig config, final IPluginContext context) {
+    OpenDocumentEditorEventListener(final IPluginConfig config, final IPluginContext context) {
         editorManagerServiceId = config.getString(IEditorManager.EDITOR_ID, "service.edit");
         this.context = context;
     }
 
     static ExtEventAjaxBehavior getExtEventBehavior() {
-        return new ExtEventAjaxBehavior(PARAM_UUID);
+        return new ExtEventAjaxBehavior(PARAM_UUID, PARAM_MODE);
     }
 
     @Override
     public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
-        final JSONArray values = parameters.get(PARAM_UUID);
-        if (values == null || values.length() == 0) {
-            return;
-        }
-        try {
-            final String documentHandleUuid = values.get(0).toString();
-            openDocumentEditor(documentHandleUuid);
-        } catch (JSONException e) {
-            ChannelEditor.log.warn("Invalid JSON parameter '{}'", PARAM_UUID, e);
-        }
+        getParameter(PARAM_UUID, parameters).ifPresent((uuid) -> {
+            getParameter(PARAM_MODE, parameters).ifPresent((modeName) -> {
+                final IEditor.Mode mode = IEditor.Mode.fromString(modeName);
+                openDocumentEditor(uuid, mode);
+            });
+        });
     }
 
-    private void openDocumentEditor(final String documentHandleUuid) {
+    private void openDocumentEditor(final String documentHandleUuid, final IEditor.Mode mode) {
         final IEditorManager editorManager = context.getService(editorManagerServiceId, IEditorManager.class);
         try {
             final Node documentHandle = UserSession.get().getJcrSession().getNodeByIdentifier(documentHandleUuid);
@@ -77,12 +74,14 @@ class OpenDocumentEditorEventListener extends ExtEventListener {
             if (editor == null) {
                 editor = editorManager.openEditor(documentHandleModel);
             }
-            editor.setMode(IEditor.Mode.EDIT);
+            if (mode == IEditor.Mode.EDIT && editor.getMode() != IEditor.Mode.EDIT) {
+                editor.setMode(mode);
+            }
             editor.focus();
         } catch (ItemNotFoundException e) {
             ChannelEditor.log.warn("Could not find document with uuid '{}'", documentHandleUuid, e);
         } catch (EditorException|RepositoryException|ServiceException e) {
-            ChannelEditor.log.warn("Failed to open editor for document with uuid '{}'", documentHandleUuid, e);
+            ChannelEditor.log.warn("Failed to open editor in '{}' mode for document with uuid '{}'", mode, documentHandleUuid, e);
         }
     }
 }

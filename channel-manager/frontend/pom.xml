@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
   <parent>
     <artifactId>hippo-addon-channel-manager</artifactId>
     <groupId>org.onehippo.cms7</groupId>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>5.0.0-visual-editing-SNAPSHOT</version>
   </parent>
 
 
@@ -117,8 +117,6 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
-      <version>${hippo.repository.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>

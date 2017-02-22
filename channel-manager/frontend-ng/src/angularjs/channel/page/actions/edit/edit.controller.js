@@ -16,7 +16,7 @@
 
 class PageEditCtrl {
   constructor($translate, $mdDialog, SiteMapService, SiteMapItemService, ChannelService, HippoIframeService,
-              FeedbackService) {
+    FeedbackService) {
     'ngInject';
 
     this.$translate = $translate;
@@ -96,7 +96,7 @@ class PageEditCtrl {
         this.$mdDialog.alert()
           .clickOutsideToClose(true)
           .textContent(textContent)
-          .ok(this.$translate.instant('OK'))
+          .ok(this.$translate.instant('OK')),
       );
     }
   }

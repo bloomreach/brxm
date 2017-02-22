@@ -1,0 +1,51 @@
+#
+#  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+#
+#  Licensed under the Apache License, Version 2.0 (the  "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS"
+#  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+
+Empty contextPath
+No Server set for org.apache.cxf.transport.http_jetty.JettyHTTPServerEngine
+Failed to determine editing info for node 'bla'
+Failed to create user session for 'tester'
+Failed to read property 'plugin.class'
+Failed to determine layout of content type
+Failed to sort fields of content type
+Failed to create field context
+Failed to retrieve content type 'type'
+Failed to read property 'caption'
+Failed to retrieve draft node
+Failed to read string field 'test:id' from 'bla'
+Failed to write singular String value to property test:id
+Failed to write multiple String value to property test:id
+Failed to read nodes for compound type 'node:name'
+Failed to write compound value to node node:name
+Failed reading hints from workflow
+Failed to determine if field is of type CHOICE
+Failed to determine provider-based choices for field
+Failed to determine list-based choices for field
+Failed to read nodes for choice type 'choice'
+Failed to write value for choice type 'choice'
+Node with identifier 'unknown-uuid' does not exist
+Failed to retrieve type of document '/bla'
+Failed to retrieve JCR session for node '/bla'
+User 'admin' failed to re-obtain ownership of document
+Failed to dispose of editable instance
+Failed to save changes to draft node of document uuid
+Failed to persist changes
+Failed to retrieve editor config node content type '/bla'
+Failed to retrieve content type 'namespaced:type'
+Failed to retrieve child node 'fieldName' of node '/bla'.
+Failed to retrieve hints for workflow
+Failed to obtain draft for user 'bla'.
+Failed to commit changes for user 'bla'.

@@ -18,6 +18,7 @@ import './vendor.scss';
 import './index.scss';
 import './angularjs/hippo-cm';
 
+// disable webpack hot module reload for javascript
 if (module.hot) {
   module.hot.decline();
 }

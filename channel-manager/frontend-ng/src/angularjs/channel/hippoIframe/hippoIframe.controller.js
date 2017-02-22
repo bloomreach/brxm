@@ -18,44 +18,45 @@ import hippoIframeCss from '../../../styles/string/hippo-iframe.scss';
 
 class HippoIframeCtrl {
   constructor(
-    $q,
-    $log,
     $element,
+    $log,
+    $q,
     $scope,
     $translate,
     ChannelService,
+    SidePanelService,
     CmsService,
     ConfigService,
     DialogService,
     DomService,
     DragDropService,
+    HippoIframeService,
+    OverlayService,
+    PageMetaDataService,
+    PageStructureService,
+    ScrollService,
+    ViewportService,
     hstCommentsProcessorService,
     linkProcessorService,
-    OverlayService,
-    PageStructureService,
-    PageMetaDataService,
-    ScalingService,
-    ViewportService,
-    HippoIframeService
   ) {
     'ngInject';
 
-    this.$q = $q;
     this.$log = $log;
+    this.$q = $q;
     this.$translate = $translate;
-    this.linkProcessorService = linkProcessorService;
-    this.hstCommentsProcessorService = hstCommentsProcessorService;
+    this.ChannelService = ChannelService;
+    this.SidePanelService = SidePanelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
-    this.ChannelService = ChannelService;
     this.DialogService = DialogService;
     this.DomService = DomService;
-    this.OverlayService = OverlayService;
-    this.PageStructureService = PageStructureService;
-    this.PageMetaDataService = PageMetaDataService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
-    this.ScalingService = ScalingService;
+    this.OverlayService = OverlayService;
+    this.PageMetaDataService = PageMetaDataService;
+    this.PageStructureService = PageStructureService;
+    this.hstCommentsProcessorService = hstCommentsProcessorService;
+    this.linkProcessorService = linkProcessorService;
 
     this.PageStructureService.clearParsedElements();
 
@@ -68,12 +69,14 @@ class HippoIframeCtrl {
     OverlayService.onEditMenu((menuUuid) => {
       this.onEditMenu({ menuUuid });
     });
+    OverlayService.onEditContent((contentUuid) => {
+      this.onEditContent({ contentUuid });
+    });
 
     const sheetJQueryElement = $element.find('.channel-iframe-sheet');
     ViewportService.init(sheetJQueryElement);
 
     const canvasJQueryElement = $element.find('.channel-iframe-canvas');
-    ScalingService.init($element, canvasJQueryElement, sheetJQueryElement, this.iframeJQueryElement);
     DragDropService.init(this.iframeJQueryElement, canvasJQueryElement);
 
     const deleteComponentHandler = componentId => this.deleteComponent(componentId);
@@ -90,7 +93,6 @@ class HippoIframeCtrl {
     this.PageStructureService.clearParsedElements();
     this._insertCss().then(() => {
       if (this._isIframeDomPresent()) {
-        this.ScalingService.onIframeReady();
         this._parseHstComments();
         this._updateDragDrop();
         this._updateChannelIfSwitched().then(() => {
@@ -117,7 +119,7 @@ class HippoIframeCtrl {
     }
     this._confirmDelete(selectedComponent).then(
       this._doDelete(componentId),
-      () => this.PageStructureService.showComponentProperties(selectedComponent)
+      () => this.PageStructureService.showComponentProperties(selectedComponent),
     );
   }
 
@@ -172,7 +174,7 @@ class HippoIframeCtrl {
   _parseHstComments() {
     this.hstCommentsProcessorService.run(
       this._getIframeDom(),
-      this.PageStructureService.registerParsedElement.bind(this.PageStructureService)
+      this.PageStructureService.registerParsedElement.bind(this.PageStructureService),
     );
     this.PageStructureService.attachEmbeddedLinks();
   }
@@ -204,6 +206,14 @@ class HippoIframeCtrl {
 
   getContainers() {
     return this.editMode ? this.PageStructureService.getContainers() : [];
+  }
+
+  getContentLinks() {
+    return !this.editMode ? this.PageStructureService.getContentLinks() : [];
+  }
+
+  getEditMenuLinks() {
+    return this.editMode ? this.PageStructureService.getEditMenuLinks() : [];
   }
 
   getSrc() {

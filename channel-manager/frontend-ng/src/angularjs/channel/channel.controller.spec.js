@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,17 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('ChannelCtrl', () => {
-  let ChannelService;
-  let ComponentsService;
-  let ScalingService;
-  let FeedbackService;
-  let PageMetaDataService;
-  let SessionService;
-  let ChannelCtrl;
-  let HippoIframeService;
+  let $q;
   let $rootScope;
   let $timeout;
-  let $q;
+  let ChannelCtrl;
+  let ChannelService;
+  let SidePanelService;
+  let ComponentsService;
+  let FeedbackService;
+  let HippoIframeService;
+  let PageMetaDataService;
+  let SessionService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -60,35 +60,33 @@ describe('ChannelCtrl', () => {
 
       ChannelService.createPreviewConfiguration.and.returnValue(resolvedPromise);
 
+      SidePanelService = jasmine.createSpyObj('SidePanelService', [
+        'open',
+      ]);
+
       ComponentsService = jasmine.createSpyObj('ComponentsService', [
         'components',
         'getComponents',
       ]);
       ComponentsService.getComponents.and.returnValue(resolvedPromise);
 
-      PageMetaDataService = jasmine.createSpyObj('PageMetaDataService', [
-        'getRenderVariant',
-      ]);
-
-      ScalingService = jasmine.createSpyObj('ScalingService', [
-        'init',
-        'setPushWidth',
-        'sync',
-      ]);
-
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', [
         'load',
         'reload',
       ]);
 
+      PageMetaDataService = jasmine.createSpyObj('PageMetaDataService', [
+        'getRenderVariant',
+      ]);
+
       ChannelCtrl = $controller('ChannelCtrl', {
         $scope: $rootScope.$new(),
         $stateParams,
-        ComponentsService,
         ChannelService,
-        PageMetaDataService,
-        ScalingService,
+        SidePanelService,
+        ComponentsService,
         HippoIframeService,
+        PageMetaDataService,
       });
     });
 
@@ -97,17 +95,6 @@ describe('ChannelCtrl', () => {
 
   it('loads the initial page', () => {
     expect(HippoIframeService.load).toHaveBeenCalledWith('/testPath');
-  });
-
-  it('resets the ScalingService pushWidth state during initialization', () => {
-    ScalingService.setPushWidth.calls.reset();
-    inject(($controller) => {
-      $controller('ChannelCtrl', {
-        $scope: $rootScope.$new(),
-        ScalingService,
-      });
-      expect(ScalingService.setPushWidth).toHaveBeenCalledWith(0);
-    });
   });
 
   it('checks with the session service is the current user has write access', () => {
@@ -204,7 +191,6 @@ describe('ChannelCtrl', () => {
     ChannelCtrl.hideSubpage();
     expect(ChannelCtrl.isSubpageOpen()).toBe(false);
     $timeout.flush();
-    expect(ScalingService.sync).toHaveBeenCalled();
 
     ChannelCtrl.showSubpage('test');
     ChannelCtrl.onSubpageError('key', { param: 'value' });
@@ -231,5 +217,10 @@ describe('ChannelCtrl', () => {
 
     expect(ChannelCtrl.menuUuid).toBe('testUuid');
     expect(ChannelCtrl.currentSubpage).toBe('menu-editor');
+  });
+
+  it('opens the content editor in the right sidepanel when told so', () => {
+    ChannelCtrl.editContent('testUuid');
+    expect(SidePanelService.open).toHaveBeenCalledWith('right', 'testUuid');
   });
 });

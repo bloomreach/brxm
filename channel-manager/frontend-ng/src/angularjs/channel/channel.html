@@ -1,5 +1,5 @@
 <!--
-  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@
   <md-toolbar class="hippo-toolbar qa-toolbar">
     <div class="md-toolbar-tools">
       <div flex="30" layout layout-align="start center">
-        <channel-sidenav-toggle
-          disabled="channelCtrl.isControlsDisabled()">
-        </channel-sidenav-toggle>
+        <left-side-panel-toggle disabled="channelCtrl.isControlsDisabled()"></left-side-panel-toggle>
 
         <channel-actions ng-if="channelCtrl.isEditMode" on-action-selected="channelCtrl.showSubpage(subpage)"></channel-actions>
 
@@ -64,15 +62,17 @@
   </md-toolbar>
 
   <md-content layout="row" flex ng-class="{ 'hide-scrollbar': !channelCtrl.isSubpageOpen() }">
-    <channel-sidenav edit-mode="channelCtrl.isEditMode"></channel-sidenav>
+    <left-side-panel layout="row" edit-mode="channelCtrl.isEditMode"></left-side-panel>
 
     <hippo-iframe
       flex
-      layout="row"
       ng-show="channelCtrl.isChannelLoaded()"
       edit-mode="channelCtrl.isEditMode"
+      on-edit-content="channelCtrl.editContent(contentUuid)"
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
+
+    <right-side-panel layout="row" edit-mode="channelCtrl.isEditMode"></right-side-panel>
   </md-content>
 </div>
 

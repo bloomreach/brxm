@@ -16,18 +16,18 @@
 
 class ChannelService {
   constructor(
-      $log,
-      $rootScope,
-      $http,
-      $state,
-      SessionService,
-      CatalogService,
-      FeedbackService,
-      HstService,
-      ConfigService,
-      CmsService,
-      SiteMapService,
-      PathService
+    $log,
+    $rootScope,
+    $http,
+    $state,
+    SessionService,
+    CatalogService,
+    FeedbackService,
+    HstService,
+    ConfigService,
+    CmsService,
+    SiteMapService,
+    PathService,
     ) {
     'ngInject';
 
@@ -96,7 +96,7 @@ class ChannelService {
         .then(() => {
           this._setChannel(channel);
           return channel.id;
-        })
+        }),
       )
       .catch((error) => {
         // TODO: improve error handling.

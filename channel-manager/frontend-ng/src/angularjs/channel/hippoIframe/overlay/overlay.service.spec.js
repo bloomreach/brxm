@@ -19,7 +19,6 @@ import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss';
 describe('OverlayService', () => {
   let $q;
   let $rootScope;
-  let CmsService;
   let DomService;
   let ExperimentStateService;
   let hstCommentsProcessorService;
@@ -34,7 +33,6 @@ describe('OverlayService', () => {
 
     inject((_$q_,
             _$rootScope_,
-            _CmsService_,
             _DomService_,
             _ExperimentStateService_,
             _hstCommentsProcessorService_,
@@ -43,7 +41,6 @@ describe('OverlayService', () => {
             _RenderingService_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      CmsService = _CmsService_;
       DomService = _DomService_;
       ExperimentStateService = _ExperimentStateService_;
       hstCommentsProcessorService = _hstCommentsProcessorService_;
@@ -58,13 +55,15 @@ describe('OverlayService', () => {
 
   function loadIframeFixture(callback) {
     OverlayService.init($iframe);
+
     $iframe.one('load', () => {
       iframeWindow = $iframe[0].contentWindow;
       DomService.addCss(iframeWindow, hippoIframeCss);
+
       try {
         hstCommentsProcessorService.run(
           iframeWindow.document,
-          PageStructureService.registerParsedElement.bind(PageStructureService)
+          PageStructureService.registerParsedElement.bind(PageStructureService),
         );
         PageStructureService.attachEmbeddedLinks();
         callback();
@@ -73,6 +72,7 @@ describe('OverlayService', () => {
         fail(e);
       }
     });
+
     $iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/overlay/overlay.service.iframe.fixture.html`);
   }
 
@@ -264,8 +264,8 @@ describe('OverlayService', () => {
 
   it('renders a title for links', (done) => {
     loadIframeFixture(() => {
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').attr('title')).toBe('IFRAME_OPEN_DOCUMENT');
-      expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').attr('title')).toBe('IFRAME_EDIT_MENU');
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').attr('title')).toBe('EDIT_CONTENT');
+      expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').attr('title')).toBe('EDIT_MENU');
       done();
     });
   });
@@ -484,16 +484,39 @@ describe('OverlayService', () => {
     });
   });
 
-  it('sends an "open-content" event to the CMS to open content', (done) => {
-    spyOn(CmsService, 'publish');
-    OverlayService.setMode('view');
+  it('does not throw an error when calling edit content handler if not set', (done) => {
+    loadIframeFixture(() => {
+      const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
+
+      expectNoPropagatedClicks();
+      expect(() => contentLink.click()).not.toThrow();
+
+      done();
+    });
+  });
+
+  it('calls the edit content handler to edit a document', (done) => {
+    const editContentHandler = jasmine.createSpy('editContentHandler');
+
+    OverlayService.onEditContent(editContentHandler);
     loadIframeFixture(() => {
       const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
 
       expectNoPropagatedClicks();
       contentLink.click();
 
-      expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'content-in-container-vbox');
+      expect(editContentHandler).toHaveBeenCalledWith('content-in-container-vbox');
+
+      done();
+    });
+  });
+
+  it('does not throw an error when calling edit menu handler if not set', (done) => {
+    loadIframeFixture(() => {
+      const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
+
+      expectNoPropagatedClicks();
+      expect(() => menuLink.click()).not.toThrow();
 
       done();
     });

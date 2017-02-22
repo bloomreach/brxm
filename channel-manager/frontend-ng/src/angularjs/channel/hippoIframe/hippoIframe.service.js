@@ -16,14 +16,14 @@
 
 class HippoIframeService {
 
-  constructor($q, $log, ChannelService, CmsService) {
+  constructor($q, $log, ChannelService, CmsService, ScrollService) {
     'ngInject';
 
     this.$q = $q;
     this.$log = $log;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
-
+    this.ScrollService = ScrollService;
     CmsService.subscribe('reload-page', () => this.reload());
   }
 
@@ -71,6 +71,8 @@ class HippoIframeService {
       return this.deferredReload.promise;
     }
 
+    this.ScrollService.saveScrollPosition();
+
     this.deferredReload = this.$q.defer();
     this.iframeJQueryElement[0].contentWindow.location.reload();
     return this.deferredReload.promise;
@@ -80,6 +82,8 @@ class HippoIframeService {
   signalPageLoadCompleted() {
     this.renderPathInfo = this._determineRenderPathInfo();
     this.pageLoaded = true;
+
+    this.ScrollService.restoreScrollPosition();
 
     const deferred = this.deferredReload;
     if (deferred) {

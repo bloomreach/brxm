@@ -135,7 +135,8 @@ describe('PickerCtrl', () => {
   describe('ok', () => {
     it('should close the dialog with the selected document return value', () => {
       const PickerCtrl = getCtrl(testPickerTypes);
-      const selectedDoc = PickerCtrl.selectedDocument = {};
+      const selectedDoc = {};
+      PickerCtrl.selectedDocument = {};
       spyOn($mdDialog, 'hide');
       PickerCtrl.ok();
       expect($mdDialog.hide).toHaveBeenCalledWith(selectedDoc);
@@ -145,7 +146,8 @@ describe('PickerCtrl', () => {
   describe('cancel', () => {
     it('should cancel the dialog', () => {
       const PickerCtrl = getCtrl(testPickerTypes);
-      const selectedDoc = PickerCtrl.selectedDocument = {};
+      const selectedDoc = {};
+      PickerCtrl.selectedDocument = {};
       spyOn($mdDialog, 'cancel');
       PickerCtrl.cancel();
       expect($mdDialog.cancel).not.toHaveBeenCalledWith(selectedDoc);

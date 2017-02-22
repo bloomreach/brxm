@@ -38,22 +38,6 @@ md-toolbar > md-progress-linear {
   }
 }
 
-// Style invalid select boxes
-.md-input-invalid md-select {
-  // color required invalid select boxes red
-  &.ng-invalid ._md-select-value {
-    border-bottom-color: $select-invalid-color;
-    color: $select-invalid-color;
-  }
-
-  // mark required select boxes with an asterisk
-  .ng-invalid-required > ._md-select-value > ::after {
-    content: ' *';
-    font-size: 13px;
-    vertical-align: top;
-  }
-}
-
 .help-icon {
   cursor: default;
   position: absolute;

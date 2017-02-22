@@ -1,0 +1,107 @@
+// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import 'variables';
+
+.right-side-panel form {
+  padding-right: $form-dense-distance;
+  padding-top: $form-dense-distance;
+}
+
+primitive-field,
+compound-field,
+choice-field {
+  display: block;
+
+  > .field {
+    padding-left: $form-dense-distance;
+  }
+
+  primitive-field > .field {
+    padding-left: 0;
+  }
+}
+
+.top-level > .field-wrapper > * > .field-bordered {
+  border-left: 3px solid $grey-500;
+  margin-bottom: $form-dense-distance;
+}
+
+document-fields {
+  display: block;
+
+  label {
+    // md-tooltip searches for the first parent with pointer-events
+    // ng-material disables pointer events on labels, they should be enabled
+    // when using md-no-float
+    pointer-events: auto !important;
+
+    &::after {
+      content: '' !important; // hide material required mark
+    }
+  }
+
+  h5 {
+    margin-bottom: $form-dense-distance;
+    margin-left: -6px;
+  }
+
+  md-icon {
+    margin: 0 2px;
+  }
+}
+
+// multiple fields should only have 1 error message visible
+md-input-container:not(:last-child) .md-errors-spacer {
+  height: 0;
+  min-height: 0;
+}
+
+.has-focused-field {
+  border-color: $blue-500 !important;
+
+  & > h5 {
+    color: $blue-500 !important;
+
+    md-icon {
+      color: $blue-500 !important;
+    }
+  }
+
+  &:not(.has-invalid-field) > md-input-container > label {
+    color: $blue-500 !important;
+
+    .required {
+      color: $red-a700 !important; // keep required mark red, like in material
+    }
+  }
+}
+
+.has-invalid-field {
+  label,
+  md-icon {
+    color: $red-a700 !important;
+  }
+
+  .md-input.ng-invalid {
+    border-color: $red-a700 !important;
+  }
+
+  // ensure that error messages are also shown if an element has not been touched
+  .md-input-message-animation:not(.ng-animate) {
+    margin-top: 0;
+    opacity: 1;
+  }
+}
+

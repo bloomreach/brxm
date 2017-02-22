@@ -24,16 +24,15 @@ import disabledSvg from '../../../../images/html/not-allowed.svg';
 
 class OverlayService {
   constructor(
-      $log,
-      $rootScope,
-      $translate,
-      CmsService,
-      DomService,
-      ExperimentStateService,
-      HippoIframeService,
-      MaskService,
-      PageStructureService,
-      ScalingService
+    $log,
+    $rootScope,
+    $translate,
+    CmsService,
+    DomService,
+    ExperimentStateService,
+    HippoIframeService,
+    MaskService,
+    PageStructureService,
     ) {
     'ngInject';
 
@@ -46,7 +45,9 @@ class OverlayService {
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
-    this.ScalingService = ScalingService;
+
+    this.editMenuHandler = angular.noop;
+    this.editContentHandler = angular.noop;
 
     PageStructureService.registerChangeListener(() => this.sync());
   }
@@ -58,6 +59,10 @@ class OverlayService {
 
   onEditMenu(callback) {
     this.editMenuHandler = callback;
+  }
+
+  onEditContent(callback) {
+    this.editContentHandler = callback;
   }
 
   _onLoad() {
@@ -77,7 +82,6 @@ class OverlayService {
   }
 
   _onUnload() {
-    this.ScalingService.onIframeUnload();
     this.$rootScope.$apply(() => {
       this.observer.disconnect();
       delete this.overlay;
@@ -143,7 +147,7 @@ class OverlayService {
   }
 
   sync() {
-    if (this.overlay && !this.ScalingService.isAnimating()) {
+    if (this.overlay) {
       const currentOverlayElements = new Set();
 
       this._forAllStructureElements((structureElement) => {
@@ -255,11 +259,11 @@ class OverlayService {
         this._addLockIcon(structureElement, overlayElement);
         break;
       case 'content-link':
-        this._addLinkMarkup(overlayElement, contentLinkSvg, 'IFRAME_OPEN_DOCUMENT');
+        this._addLinkMarkup(overlayElement, contentLinkSvg, 'EDIT_CONTENT', 'qa-content-link');
         this._addContentLinkClickHandler(structureElement, overlayElement);
         break;
       case 'menu-link':
-        this._addLinkMarkup(overlayElement, menuLinkSvg, 'IFRAME_EDIT_MENU');
+        this._addLinkMarkup(overlayElement, menuLinkSvg, 'EDIT_MENU', 'qa-menu-link');
         this._addMenuLinkClickHandler(structureElement, overlayElement);
         break;
       default:
@@ -296,8 +300,8 @@ class OverlayService {
     return this.$translate.instant('CONTAINER_LOCKED_BY', { user: escapedLockedBy });
   }
 
-  _addLinkMarkup(overlayElement, svg, titleKey) {
-    overlayElement.addClass('hippo-overlay-element-link');
+  _addLinkMarkup(overlayElement, svg, titleKey, qaClass = '') {
+    overlayElement.addClass(`hippo-overlay-element-link ${qaClass}`);
     overlayElement.attr('title', this.$translate.instant(titleKey));
     overlayElement.append(svg);
   }
@@ -306,7 +310,9 @@ class OverlayService {
     this._linkButtonTransition(overlayElement);
 
     this._addClickHandler(overlayElement, () => {
-      this.CmsService.publish('open-content', structureElement.getUuid());
+      this.$rootScope.$apply(() => {
+        this.editContentHandler(structureElement.getUuid());
+      });
     });
   }
 
@@ -403,29 +409,13 @@ class OverlayService {
 
     let top = rect.top;
     let left = rect.left;
-    let width = rect.width;
-    let height = rect.height;
+    const width = rect.width;
+    const height = rect.height;
 
     // Include scroll position since coordinates are relative to page but rect is relative to viewport.
     // IE11 does not support window.scrollX and window.scrollY, so use window.pageXOffset and window.pageYOffset
     left += this.iframeWindow.pageXOffset;
     top += this.iframeWindow.pageYOffset;
-
-    // Compensate for the scale factor. The page elements are scaled, but their position and size is relative to the
-    // viewport, which does not scale. Yet the position of the overlay elements is relative to the overlay root, which
-    // is already scaled. The scaling of the page element rectangles therefore has to be reverted in their overlay
-    // counterparts to avoid scaling the overlay twice.
-    // In addition, the scaling transforms to the top-right corner. Hence the page shifts to the right when scaled, so
-    // this shift has to be subtracted from the left of each overlay rectangle.
-    const scale = this.ScalingService.getScaleFactor();
-    if (scale < 1) {
-      const windowWidth = this.iframeWindow.document.documentElement.clientWidth;
-      const shiftX = windowWidth - (windowWidth * scale);
-      left = (left - shiftX) / scale;
-      top /= scale;
-      width /= scale;
-      height /= scale;
-    }
 
     overlayElement.css('top', `${top}px`);
     overlayElement.css('left', `${left}px`);

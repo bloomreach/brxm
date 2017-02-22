@@ -127,7 +127,7 @@ describe('ChannelService', () => {
       },
       {
         reload: true,
-      }
+      },
     );
   });
 

@@ -13,9 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<md-dialog class="dialog-transparent" aria-label="{{ 'DELETING_CHANNEL' | translate:translationData }}">
-  <div layout="column" layout-align="center center">
-    <h3>{{ 'DELETING_CHANNEL' | translate:translationData }}</h3>
-    <md-progress-linear md-mode="indeterminate"></md-progress-linear>
-  </div>
+<md-dialog aria-label="{{ 'DELETING_CHANNEL' | translate:translationData }}">
+  <md-dialog-content class="md-dialog-content">
+      <p>
+        {{ 'DELETING_CHANNEL' | translate:translationData }}
+      </p>
+      <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+  </md-dialog-content>
 </md-dialog>

@@ -21,21 +21,22 @@ const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 
 class DragDropService {
 
-  constructor($rootScope,
-              $q,
-              BrowserService,
-              ChannelService,
-              ConfigService,
-              DomService,
-              FeedbackService,
-              HstService,
-              PageStructureService,
-              ScalingService,
-              ScrollService) {
+  constructor(
+    $q,
+    $rootScope,
+    BrowserService,
+    ChannelService,
+    ConfigService,
+    DomService,
+    FeedbackService,
+    HstService,
+    PageStructureService,
+    ScrollService,
+    ) {
     'ngInject';
 
-    this.$rootScope = $rootScope;
     this.$q = $q;
+    this.$rootScope = $rootScope;
     this.BrowserService = BrowserService;
     this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
@@ -43,7 +44,6 @@ class DragDropService {
     this.FeedbackService = FeedbackService;
     this.HstService = HstService;
     this.PageStructureService = PageStructureService;
-    this.ScalingService = ScalingService;
     this.ScrollService = ScrollService;
 
     this.draggingOrClicking = false;
@@ -208,6 +208,9 @@ class DragDropService {
     this._getIframeHtmlElement().addClass('hippo-dragging');
     this.canvasJQueryElement.addClass('hippo-dragging');
     this._updateDragDirection(containerElement);
+
+    // make Angular evaluate isDragging() again
+    this._digestIfNeeded();
   }
 
   _onMirrorCreated(mirrorElement, originalElement) {
@@ -223,10 +226,9 @@ class DragDropService {
         'opacity',
         'pointer-events',
         'position',
-        'transform-origin',
         '[a-z\\-]*user-select',
         'width',
-      ]
+      ],
     );
 
     this.DomService.copyComputedStyleOfDescendantsExcept(
@@ -236,33 +238,11 @@ class DragDropService {
         'opacity',
         'pointer-events',
         '[a-z\\-]*user-select',
-      ]
+      ],
     );
 
-    if (this.ScalingService.isScaled()) {
-      this._scaleMirror($(mirrorElement));
-    }
-  }
-
-  _scaleMirror(mirror) {
-    const scaleFactor = this.ScalingService.getScaleFactor();
-
-    // first ensure that the scaled mirror will be as big as the original by enlarging it
-    mirror.width(mirror.width() / scaleFactor);
-    mirror.height(mirror.height() / scaleFactor);
-
-    // then scale the mirror down
-    let transform = `scale(${scaleFactor})`;
-    if (this.BrowserService.isIE()) {
-      // Only IE shifts the mirror to the right by the scaled width of the left side-panel.
-      // Neutralize this effect by translating the mirror to the left again.
-      const [translatedX] = this._shiftAndDescaleCoordinates({
-        clientX: 0,
-        clientY: 0,
-      });
-      transform += `translateX(${translatedX}px)`;
-    }
-    mirror.css('transform', transform);
+    const iframeOffset = this.iframeJQueryElement.offset();
+    $(MIRROR_WRAPPER_SELECTOR).offset(iframeOffset);
   }
 
   _updateDragDirection(containerElement) {
@@ -332,7 +312,7 @@ class DragDropService {
   }
 
   _dispatchMouseDownInIframe($event, component) {
-    const [clientX, clientY] = this.ScalingService.getScaleFactor() === 1.0 ? this._shiftCoordinates($event) : this._shiftAndDescaleCoordinates($event);
+    const [clientX, clientY] = this._shiftCoordinates($event);
     const iframeMouseDownEvent = this.DomService.createMouseDownEvent(this.iframe, clientX, clientY);
     const iframeElement = component.getBoxElement();
     iframeElement[0].dispatchEvent(iframeMouseDownEvent);
@@ -350,26 +330,6 @@ class DragDropService {
 
     return [shiftedX, shiftedY];
   }
-
-  _shiftAndDescaleCoordinates($event) {
-    const iframeOffset = this.iframeJQueryElement.offset();
-    const canvasOffset = this.canvasJQueryElement.offset();
-    const scale = this.ScalingService.getScaleFactor();
-
-    // Shift horizontal using the base offset since the iframe offset is also scaled
-    // and hence to far to the right.
-    const shiftedX = $event.clientX - canvasOffset.left;
-    const shiftedY = $event.clientY - iframeOffset.top;
-
-    // The user sees the scaled iframe, but the browser actually uses the unscaled coordinates,
-    // so we have to transform the click in the scaled iframe to its 'descaled' position.
-    const iframeWidth = this.iframeJQueryElement.width();
-    const shiftedAndDescaledX = (shiftedX - (iframeWidth * (1 - scale))) / scale;
-    const shiftedAndDescaledY = shiftedY / scale;
-
-    return [shiftedAndDescaledX, shiftedAndDescaledY];
-  }
-
 }
 
 export default DragDropService;

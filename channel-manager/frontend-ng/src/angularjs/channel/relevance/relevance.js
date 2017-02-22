@@ -19,9 +19,7 @@ import ViewAsCtrl from './viewAs.controller';
 import ExperimentStateService from './experimentState.service';
 
 const channelRelevanceModule = angular
-  .module('hippo-cm.channel.relevance', [
-    'hippo-cm-api',
-  ])
+  .module('hippo-cm.channel.relevance', [])
   .controller('ViewAsCtrl', ViewAsCtrl)
   .directive('relevanceViewAs', ViewAsDirective)
   .service('ExperimentStateService', ExperimentStateService);

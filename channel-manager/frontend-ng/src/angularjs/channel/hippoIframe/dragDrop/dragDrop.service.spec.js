@@ -20,7 +20,6 @@ import 'angular-mocks';
 describe('DragDropService', () => {
   let $q;
   let DragDropService;
-  let ScalingService;
   let PageStructureService;
   let HstService;
   let ChannelService;
@@ -40,14 +39,12 @@ describe('DragDropService', () => {
 
     inject((_$q_,
             _DragDropService_,
-            _ScalingService_,
             _PageStructureService_,
             _HstService_,
             _ChannelService_,
             _FeedbackService_) => {
       $q = _$q_;
       DragDropService = _DragDropService_;
-      ScalingService = _ScalingService_;
       PageStructureService = _PageStructureService_;
       HstService = _HstService_;
       ChannelService = _ChannelService_;
@@ -70,7 +67,7 @@ describe('DragDropService', () => {
         'HST-Type': 'CONTAINER_COMPONENT',
         'HST-XType': xtype,
       },
-      mockCommentData[`container${number}`]
+      mockCommentData[`container${number}`],
     );
     PageStructureService.registerParsedElement(iframeContainerComment, commentData);
     const containers = PageStructureService.getContainers();
@@ -85,7 +82,7 @@ describe('DragDropService', () => {
         'HST-Type': 'CONTAINER_ITEM_COMPONENT',
         'HST-Label': `Component ${number}`,
       },
-      mockCommentData[`component${number}`]
+      mockCommentData[`component${number}`],
     );
     PageStructureService.registerParsedElement(iframeComponentComment, commentData);
     return PageStructureService.getComponentById(`component${number}`);
@@ -149,7 +146,7 @@ describe('DragDropService', () => {
     });
   });
 
-  it('forwards a shifted mouse event to the iframe when it starts dragging in a non-scaled iframe', (done) => {
+  it('forwards a shifted mouse event to the iframe when it starts dragging in an iframe', (done) => {
     loadIframeFixture(() => {
       const mockedMouseDownEvent = {
         clientX: 100,
@@ -161,7 +158,6 @@ describe('DragDropService', () => {
         left: 10,
         top: 20,
       });
-      spyOn(ScalingService, 'getScaleFactor').and.returnValue(1.0);
       spyOn(iframeComponentElement1, 'dispatchEvent');
 
       DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
@@ -175,39 +171,6 @@ describe('DragDropService', () => {
       expect(dispatchedEvent.clientX).toEqual(90);
       expect(dispatchedEvent.clientY).toEqual(180);
 
-      done();
-    });
-  });
-
-  it('forwards a shifted mouse event to the iframe when it starts dragging in a scaled iframe', (done) => {
-    loadIframeFixture(() => {
-      const mockedMouseDownEvent = {
-        clientX: 150,
-        clientY: 150,
-      };
-      const iframeComponentElement1 = component1.getBoxElement()[0];
-
-      canvas.offset({
-        left: 10,
-        top: 10,
-      });
-      iframe.offset({
-        left: 20,
-        top: 20,
-      });
-      iframe.width(200);
-
-      spyOn(ScalingService, 'getScaleFactor').and.returnValue(0.5);
-      spyOn(iframeComponentElement1, 'dispatchEvent');
-
-      DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
-
-      const dispatchedEvent = iframeComponentElement1.dispatchEvent.calls.argsFor(0)[0];
-
-      expect(dispatchedEvent.type).toEqual('mousedown');
-      expect(dispatchedEvent.bubbles).toEqual(true);
-      expect(dispatchedEvent.clientX).toEqual(80);
-      expect(dispatchedEvent.clientY).toEqual(260);
       done();
     });
   });
@@ -228,45 +191,6 @@ describe('DragDropService', () => {
       expect(DragDropService.isDragging()).toBeFalsy();
 
       done();
-    });
-  });
-
-  describe('the mirror', () => {
-    let BrowserService;
-    let mirror;
-
-    beforeEach(() => {
-      inject((_BrowserService_) => {
-        BrowserService = _BrowserService_;
-      });
-
-      mirror = $('<div></div>');
-      mirror.width(300);
-      mirror.height(75);
-
-      spyOn(ScalingService, 'getScaleFactor').and.returnValue(0.75);
-    });
-
-    it('scales when the iframe is scaled', () => {
-      DragDropService._scaleMirror(mirror);
-
-      expect(mirror.width()).toBe(400);
-      expect(mirror.height()).toBe(100);
-      expect(mirror.css('transform')).toBe('scale(0.75)');
-    });
-
-    it('unshifts and descales its x-coordinate in IE', (done) => {
-      spyOn(BrowserService, 'isIE').and.returnValue(true);
-
-      loadIframeFixture(() => {
-        DragDropService._scaleMirror(mirror);
-
-        expect(mirror.width()).toBe(400);
-        expect(mirror.height()).toBe(100);
-        expect(mirror.css('transform')).toBe('scale(0.75) translateX(-144px)');
-
-        done();
-      });
     });
   });
 
@@ -436,7 +360,7 @@ describe('DragDropService', () => {
       const rerenderedContainer2 = createContainer(4);
       spyOn(PageStructureService, 'renderContainer').and.returnValues(
         $q.resolve(rerenderedContainer1),
-        $q.resolve(rerenderedContainer2)
+        $q.resolve(rerenderedContainer2),
       );
 
       const componentElement1 = component1.getBoxElement();
@@ -470,7 +394,7 @@ describe('DragDropService', () => {
       const rerenderedContainer2 = createContainer(4);
       spyOn(PageStructureService, 'renderContainer').and.returnValues(
         $q.resolve(rerenderedContainer1),
-        $q.resolve(rerenderedContainer2)
+        $q.resolve(rerenderedContainer2),
       );
 
       const componentElement1 = component1.getBoxElement();

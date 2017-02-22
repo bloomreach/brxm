@@ -16,7 +16,7 @@
 
 class MenuEditorCtrl {
   constructor($scope, $translate, SiteMenuService, HippoIframeService, DialogService,
-              FeedbackService, ChannelService, PickerService, ConfigService) {
+    FeedbackService, ChannelService, PickerService, ConfigService) {
     'ngInject';
 
     this.$translate = $translate;
@@ -49,7 +49,7 @@ class MenuEditorCtrl {
           () => menu.items,
           () => {
             this.items = menu.items;
-          }
+          },
         );
       })
       .catch((response) => {
@@ -151,7 +151,8 @@ class MenuEditorCtrl {
     };
 
     this.PickerService.show(pickerCfg).then(({ pathInfo }) => {
-      this.editingItem.sitemapLink = this.editingItem.link = pathInfo;
+      this.editingItem.sitemapLink = pathInfo;
+      this.editingItem.link = pathInfo;
     });
   }
 

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  Copyright 2007-2016 Hippo B.V. (http://www.onehippo.com)
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+  <!-- ====================================================================== -->
+  <!-- A P P E N D E R S                                                      -->
+  <!-- ====================================================================== -->
+
+  <!-- console -->
+  <appender name="console" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
+    </layout>
+    <filter class="org.onehippo.repository.testutils.log4j.StringMatchFilter"/>
+  </appender>
+
+  <appender name="debugging" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.err"/>
+    <layout class="org.apache.log4j.SimpleLayout">
+    </layout>
+  </appender>
+
+  <!-- log4j.log -->
+  <appender name="root" class="org.apache.log4j.FileAppender">
+    <param name="File" value="log4j.log"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
+    </layout>
+  </appender>
+
+  <!-- ====================================================================== -->
+  <!-- L O G G E R S                                                          -->
+  <!-- ====================================================================== -->
+  <category additivity="false" name="org.apache.jackrabbit.core">
+    <level value="warn"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="false" name="org.apache.jackrabbit.core.state.MLRUItemStateCache">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateMap">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateReferenceCache">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.export">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+
+  <category additivity="false" name="org.hippoecm.repository.jackrabbit.HippoVirtualProvider">
+    <level value="error"/>
+    <appender-ref ref="console"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.security.HippoAccessManager">
+    <level value="warn"/>
+    <appender-ref ref="root"/>
+  </category>
+  <category additivity="false" name="org.hippoecm.repository.security.HippoLoginModule">
+    <level value="warn"/>
+    <appender-ref ref="root"/>
+  </category>
+
+  <!-- surpress classcast warning in dispose() method over SPI -->
+  <category additivity="false" name="org.apache.jackrabbit.jcr2spi.WorkspaceManager">
+    <level value="error"/>
+    <appender-ref ref="root"/>
+  </category>
+
+  <category additivity="false" name="org.hippoecm.checker">
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+  </category>
+  
+  <category additivity="false" name="org.quartz.core.ErrorLogger">
+    <level value="off"/>
+    <appender-ref ref="console"/>
+  </category>
+
+  <root>
+    <level value="warn"/>
+    <appender-ref ref="console"/>
+    <appender-ref ref="root"/>
+  </root>
+
+</log4j:configuration>

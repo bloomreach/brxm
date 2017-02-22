@@ -21,5 +21,9 @@
   .flex-no-grow-ie {
     flex-grow: 0 !important;
   }
-}
 
+  md-input-container label:not(.md-no-float):not(.md-container-ignore),
+  md-input-container .md-placeholder {
+    width: auto;
+  }
+}

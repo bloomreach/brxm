@@ -16,16 +16,16 @@
 
 class ChangesMenuCtrl {
   constructor(
-      $log,
-      $translate,
-      ChannelService,
-      ConfigService,
-      CmsService,
-      DialogService,
-      FeedbackService,
-      HippoIframeService,
-      SessionService,
-      SiteMapService
+    $log,
+    $translate,
+    ChannelService,
+    ConfigService,
+    CmsService,
+    DialogService,
+    FeedbackService,
+    HippoIframeService,
+    SessionService,
+    SiteMapService,
     ) {
     'ngInject';
 

@@ -48,7 +48,7 @@ describe('ChangeManagement', () => {
       _ConfigService_,
       _DialogService_,
       _FeedbackService_,
-      _HippoIframeService_
+      _HippoIframeService_,
     ) => {
       $compile = _$compile_;
       $q = _$q_;

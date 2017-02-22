@@ -12,9 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@mixin parent-size {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+hippo-iframe {
+  position: relative;
+}
+
 .channel-iframe-canvas {
+  @include parent-size;
+
   background-color: $canvas-bgcolor;
-  overflow: hidden;
+
+  // ensure a horizontal scrollbar in Safari for constrained viewport widths
+  height: 100%;
+  overflow-y: hidden;
+
   user-select: none;
 
   &.hippo-dragging {
@@ -22,19 +40,28 @@
     cursor: move;
     cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
   }
+
+  &.iframe-lifted {
+    z-index: $z-index-iframe-lifted;
+  }
 }
 
 .channel-iframe-sheet {
   background-color: $grey-50;
   box-shadow: 0 0 20px $black-shadow;
   height: 100%;
-  max-width: 100%;  // use explicit max-width so its transition can be animated
-  transition: max-width $viewport-animation-transition;
-  width: 100%;
 
-  &.shift-animated {
-    transition: max-width $scale-animation-transition, transform $scale-animation-transition;
-  }
+  // center the sheet on the canvas; use margin instead of flexbox to properly center fixed-width viewports (Tablet etc.)
+  margin-left: auto;
+  margin-right: auto;
+
+  // use explicit max-width and min-width so its transition can be animated
+  max-width: 100%;
+  min-width: 0;
+
+  position: relative;
+  transition: max-width $viewport-animation-transition, min-width $viewport-animation-transition;
+  width: 100%;
 
   iframe {
     border: 0;
@@ -44,15 +71,6 @@
 
   iframe,
   .channel-dragula-mirror {
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
+    @include parent-size;
   }
-}
-
-.iframe-lifted {
-  position: relative;
-  z-index: $z-index-iframe-lifted;
 }
