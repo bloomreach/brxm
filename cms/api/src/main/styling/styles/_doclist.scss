@@ -78,7 +78,7 @@ $doclist-icon-shift-right: 2px;
     }
     &.doclisting-name {
       width: 100%;
-      min-width: 10px;
+      min-width: 60px;
     }
     &.doclisting-path {
       @include fixed-width(400px);
