@@ -26,8 +26,10 @@ import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
+import org.onehippo.cms.testutils.log4j.Log4jListener;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
@@ -532,11 +534,10 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
 
-        try {
+        try (Log4jListener listener = Log4jListener.onWarn()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.", e.getMessage());
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
         }
     }
 
@@ -555,11 +556,10 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         builder.push((ContentDefinitionImpl) definitions.get(0));
 
-        try {
+        try (Log4jListener listener = Log4jListener.onWarn()) {
             builder.push((ContentDefinitionImpl) definitions.get(1));
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.", e.getMessage());
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
         }
     }
 

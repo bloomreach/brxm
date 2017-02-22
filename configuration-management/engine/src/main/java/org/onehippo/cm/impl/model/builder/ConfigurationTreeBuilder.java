@@ -96,6 +96,9 @@ class ConfigurationTreeBuilder {
                 }
             } else {
                 child = createChildNode(node, definitionChild.getName(), definitionChild);
+                if (child == null) {
+                    continue;
+                }
             }
             mergeNode(child, definitionChild);
         }
@@ -157,7 +160,8 @@ class ConfigurationTreeBuilder {
             final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
             final String msg = String.format("%s: Trying to delete node %s that does not exist.",
                     culprit, definitionNode.getPath());
-            throw new IllegalArgumentException(msg);
+            logger.warn(msg);
+            return null;
         }
 
         node.setName(name);
