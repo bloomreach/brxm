@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +34,21 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.onehippo.cms7.essentials.dashboard.ctx.PluginContext;
 import org.onehippo.cms7.essentials.dashboard.model.EssentialsDependency;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
+import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicy;
+import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicyRestful;
 import org.onehippo.cms7.essentials.dashboard.model.RepositoryRestful;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+
+import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ADDON_EDITION_INDICATOR_ARTIFACT_ID;
+import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_RELEASE_ID;
+import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_GROUP_ID;
+import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO_ID;
+import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO_NAME;
+import static org.onehippo.cms7.essentials.dashboard.utils.ProjectUtils.ENT_REPO_URL;
 
 /**
  * @version "$Id$"
@@ -70,7 +79,6 @@ public final class DependencyUtils {
             return false;
         }
         if (!hasRepository(context, repository)) {
-
             final org.apache.maven.model.Repository mavenRepository = repository.createMavenRepository();
             model.addRepository(mavenRepository);
             log.debug("Added new maven repository {}", repository);
@@ -214,7 +222,7 @@ public final class DependencyUtils {
      * Checks if project has dependency
      *
      * @param dependency instance of EssentialsDependency dependency
-     * @return
+     * @return true when dependency already exists in the target pom
      */
     public static boolean hasDependency(final PluginContext context, final EssentialsDependency dependency) {
         final TargetPom targetPom = dependency.getDependencyTargetPom();
@@ -249,22 +257,32 @@ public final class DependencyUtils {
         if (isEnterpriseProject(context)) {
             return true;
         }
+
         final Repository repository = new RepositoryRestful();
-        repository.setId("hippo-maven2-enterprise");
-        repository.setId("Hippo Enterprise Maven 2");
-        repository.setId("https://maven.onehippo.com/maven2-enterprise");
+        repository.setId(ENT_REPO_ID);
+        repository.setName(ENT_REPO_NAME);
+        repository.setUrl(ENT_REPO_URL);
+        final RepositoryPolicy releases = new RepositoryPolicyRestful();
+        releases.setUpdatePolicy("never");
+        releases.setChecksumPolicy("fail");
+        repository.setReleases(releases);
+        repository.setTargetPom(TargetPom.PROJECT.getName());
+
         addRepository(context, repository);
+
         final Model pomModel = ProjectUtils.getPomModel(context, TargetPom.PROJECT);
         if (pomModel != null) {
             final Parent parent = new Parent();
-            parent.setArtifactId(ProjectUtils.ENT_GROUP_ID);
-            parent.setGroupId(ProjectUtils.ENT_GROUP_ID);
+            parent.setArtifactId(ENT_RELEASE_ID);
+            parent.setGroupId(ENT_GROUP_ID);
+            parent.setVersion(pomModel.getParent().getVersion());
             pomModel.setParent(parent);
+
             // add indicator:
             final Model cmsModel = ProjectUtils.getPomModel(context, TargetPom.CMS);
             final Dependency indicator = new Dependency();
-            indicator.setArtifactId("hippo-addon-edition-indicator");
-            indicator.setGroupId("com.onehippo.cms7");
+            indicator.setArtifactId(ADDON_EDITION_INDICATOR_ARTIFACT_ID);
+            indicator.setGroupId(ENT_GROUP_ID);
             cmsModel.addDependency(indicator);
             writePom(ProjectUtils.getPomPath(context, TargetPom.CMS), cmsModel);
             return writePom(ProjectUtils.getPomPath(context, TargetPom.PROJECT), pomModel);
@@ -280,7 +298,7 @@ public final class DependencyUtils {
         }
         final String groupId = parent.getGroupId();
         final String artifactId = parent.getArtifactId();
-        return groupId.equals(ProjectUtils.ENT_GROUP_ID) && artifactId.equals(ProjectUtils.ENT_ARTIFACT_ID);
+        return groupId.equals(ENT_GROUP_ID) && artifactId.equals(ENT_RELEASE_ID);
 
     }
 

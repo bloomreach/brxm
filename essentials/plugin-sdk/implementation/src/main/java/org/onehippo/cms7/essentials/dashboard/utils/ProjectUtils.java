@@ -50,11 +50,14 @@ import com.google.common.base.Strings;
  */
 public final class ProjectUtils {
 
-
     public static final String ENT_GROUP_ID = "com.onehippo.cms7";
-    public static final String ENT_ARTIFACT_ID = "hippo-cms7-enterprise-release";
-    private static Logger log = LoggerFactory.getLogger(ProjectUtils.class);
+    public static final String ENT_RELEASE_ID = "hippo-cms7-enterprise-release";
+    public static final String ENT_REPO_ID = "hippo-maven2-enterprise";
+    public static final String ENT_REPO_NAME = "Hippo Enterprise Maven 2";
+    public static final String ENT_REPO_URL = "https://maven.onehippo.com/maven2-enterprise";
+    public static final String ADDON_EDITION_INDICATOR_ARTIFACT_ID = "hippo-addon-edition-indicator";
 
+    private static Logger log = LoggerFactory.getLogger(ProjectUtils.class);
 
     private ProjectUtils() {
     }

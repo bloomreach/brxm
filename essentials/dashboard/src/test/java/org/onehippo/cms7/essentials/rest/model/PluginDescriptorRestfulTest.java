@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import java.util.Calendar;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
+import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicy;
+import org.onehippo.cms7.essentials.dashboard.model.RepositoryPolicyRestful;
 import org.onehippo.cms7.essentials.dashboard.model.TargetPom;
 import org.onehippo.cms7.essentials.dashboard.model.PluginDescriptorRestful;
 import org.onehippo.cms7.essentials.dashboard.model.Repository;
@@ -58,12 +60,16 @@ public class PluginDescriptorRestfulTest {
         final Vendor vendor = new VendorRestful();
         vendor.setName("hippo");
         value.setVendor(vendor);
+
         final Repository repository = new RepositoryRestful();
         repository.setId("myId");
         repository.setUrl("http://onehippo.com/maven2");
         final Snapshot snapshots = new SnapshotRestful();
         snapshots.setEnabled(true);
-        repository.setSnapshots(snapshots);
+        final RepositoryPolicy repositoryPolicy = new RepositoryPolicyRestful();
+        repositoryPolicy.setChecksumPolicy("testchecksumpolicy");
+        repositoryPolicy.setUpdatePolicy("testupdatepolicy");
+        repository.setReleases(repositoryPolicy);
         repository.setTargetPom(TargetPom.PROJECT.getName());
         value.addRepository(repository);
 
@@ -80,7 +86,9 @@ public class PluginDescriptorRestfulTest {
         assertEquals("Expected 1 prefixed library", 1, value.getLibraries().size());
         assertEquals("Expected 2 js libraries", 2, value.getLibraries().get(0).getItems().size());
         assertEquals("Expected 1 repository", 1, value.getRepositories().size());
-
+        assertEquals("Expected repository checksum policy", "testchecksumpolicy", value.getRepositories().get(0).getReleases().getChecksumPolicy());
+        assertEquals("Expected repository update policy", "testupdatepolicy", value.getRepositories().get(0).getReleases().getUpdatePolicy());
+        assertEquals("Expected repository enabled not to be set", null, value.getRepositories().get(0).getReleases().getEnabled());
 
     }
 }
