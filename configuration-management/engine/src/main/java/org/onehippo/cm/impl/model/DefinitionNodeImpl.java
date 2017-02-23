@@ -97,4 +97,18 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         return property;
     }
 
+    public void delete() {
+        delete = true;
+        modifiableNodes.clear();
+        modifiableProperties.clear();
+        orderBefore = null;
+    }
+
+    public boolean isEmpty() {
+        return modifiableNodes.isEmpty() && modifiableProperties.isEmpty() && orderBefore == null;
+    }
+
+    public boolean isDeleted() {
+        return isDelete() && isEmpty();
+    }
 }

@@ -57,7 +57,7 @@ public class EsvProperty {
     }
 
     public boolean isMultiple() {
-        return (multiple != null && multiple) || getValues().size() > 1;
+        return (multiple != null && multiple) || (multiple == null && getValues().size() > 1);
     }
 
     public boolean isSingle() {
@@ -74,6 +74,9 @@ public class EsvProperty {
 
     public void setMerge(final EsvMerge merge) {
         this.merge = merge;
+        if (isMergeAppend()) {
+            multiple = Boolean.TRUE;
+        }
     }
 
     public boolean isMergeSkip() {

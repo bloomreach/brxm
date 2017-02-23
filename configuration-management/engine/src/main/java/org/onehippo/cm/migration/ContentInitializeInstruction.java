@@ -17,11 +17,14 @@ package org.onehippo.cm.migration;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.cm.api.model.Definition;
+import org.onehippo.cm.api.model.DefinitionNode;
+import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
@@ -51,7 +54,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
     }
 
     public void processContentInstruction(final SourceImpl source, final Map<String, DefinitionNodeImpl> nodeDefinitions,
-                                          Map<DefinitionNodeImpl, Boolean> deltaNodes) throws EsvParseException {
+                                          Set<DefinitionNode> deltaNodes) throws EsvParseException {
         final String nodePath = getNodePath();
         final String name = StringUtils.substringAfterLast(getContentPath(), "/");
 
@@ -62,46 +65,44 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         switch (getType()) {
             case CONTENTDELETE:
                 if (node != null) {
-                    if (node.isDelete()) {
+                    if (node.isDeleted()) {
                         log.warn("Ignoring hippo:contentdelete " + getName() + " at " + getInstructionNode().getSourceLocation() +
                                 ": path " + nodePath + " already deleted at " + node.getSourceLocation());
                     } else {
-                        log.info(isDelta(node, deltaNodes) ? "Deleting" : "Removing" + " path " + nodePath + " defined at " + node.getSourceLocation() +
+                        final boolean removable = isRemovableNode(node, deltaNodes);
+                        log.info(removable ? "Removing" : "Deleting" + " path " + nodePath + " defined at " + node.getSourceLocation() +
                                 " by hippo:contentdelete " + getName() + " at " + getInstructionNode().getSourceLocation());
                         deleteChildren(nodePath + "/", nodeDefinitions);
+                        if (deltaNodes.contains(node)) {
+                            deltaNodes.remove(node);
+                        }
                         if (node.isRoot()) {
                             deleteDefinition(node.getDefinition());
-                            if (isDelta(node, deltaNodes)) {
+                            if (!removable) {
                                 // force add new (root) delete on nodePath, will *replace* nodeDefinition on nodePath
                                 node = null;
                             }
                         } else {
-                            // check (should be delta) parent becoming empty itself
-                            if (isDelta(node, deltaNodes)) {
+                            if (removable) {
+                                deleteDefinitionNode(node);
                                 DefinitionNodeImpl parentNode = (DefinitionNodeImpl) node.getParent();
-                                while (parentNode.getNodes().size() == 1 && parentNode.getProperties().isEmpty()) {
-                                    // (delta) parent only contains node to be deleted, can delete parent as well
-                                    nodeDefinitions.remove(node.getPath());
+                                while (parentNode.isEmpty()) {
+                                    // empty (delta) parent: remove as well
+                                    nodeDefinitions.remove(parentNode.getPath());
+                                    deltaNodes.remove(parentNode);
                                     if (parentNode.isRoot()) {
-                                        // can delete whole of delta definition
+                                        // can remove whole of delta definition
                                         deleteDefinition(parentNode.getDefinition());
-                                        // force add new (root) delete on nodePath
-                                        node = null;
                                         break;
                                     } else {
+                                        // first time redundant
+                                        deleteDefinitionNode(node);
                                         node = parentNode;
-                                        parentNode = (DefinitionNodeImpl) parentNode.getParent();
                                     }
                                 }
-                                if (node != null) {
-                                    node.setDelete(true);
-                                    node.getModifiableNodes().clear();
-                                    node.getModifiableProperties().clear();
-                                    node.getSourceLocation().copy(getInstructionNode().getSourceLocation());
-                                }
                             } else {
-                                deleteDefinitionNode(node);
-                                nodeDefinitions.remove(node.getPath());
+                                node.delete();
+                                node.getSourceLocation().copy(getInstructionNode().getSourceLocation());
                             }
                         }
                     }
@@ -119,7 +120,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                 break;
             case CONTENTPROPDELETE:
                 if (node != null) {
-                    if (node.isDelete()) {
+                    if (node.isDeleted()) {
                         log.warn("Ignoring hippo:contentpropdelete " + getName() + " for property " + getContentPath() +
                                 " at " + getInstructionNode().getSourceLocation() +
                                 ":  parent node already deleted at " + node.getSourceLocation());
@@ -135,10 +136,11 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                 // skip adding delete property
                                 node = null;
                             } else {
-                                log.info(isDelta(prop, deltaNodes) ? "Deleting" : "Removing" + " property " + getContentPath()
+                                final boolean removable = isRemovableProp(prop, deltaNodes);
+                                log.info(removable ? "Removing" : "Deleting" + " property " + getContentPath()
                                         + " defined at " + prop.getSourceLocation() + " by hippo:contentpropdelete " +
                                         getName() + " at " + getInstructionNode().getSourceLocation());
-                                if (!isDelta(prop, deltaNodes)) {
+                                if (removable) {
                                     node.getModifiableProperties().remove(name);
                                     // no need to add delete property
                                     node = null;
@@ -150,16 +152,24 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                         }
                     }
                 } else {
-                    node = findNearestDeltaParent(nodePath, nodeDefinitions, deltaNodes);
+                    node = findNearestParent(nodePath, nodeDefinitions, deltaNodes);
                     if (node != null) {
-                        if (node.isDelete()) {
+                        if (node.isDeleted()) {
                             log.warn("Ignoring hippo:contentpropdelete " + getName() + " for property " + getContentPath() +
                                     " at " + getInstructionNode().getSourceLocation() +
                                     ":  nearest parent node already deleted at " + node.getSourceLocation());
                             // skip adding delete property
                             node = null;
                         } else {
-                            node = addIntermediateParents(node, nodePath, nodeDefinitions);
+                            if (deltaNodes.contains(node)) {
+                                node = addIntermediateParents(node, nodePath, nodeDefinitions, deltaNodes);
+                            } else {
+                                log.warn("Ignoring hippo:contentpropdelete " + getName() + " for property " + getContentPath() +
+                                        " at " + getInstructionNode().getSourceLocation() +
+                                        ": no direct or intermediate delta node parent defined.");
+                                // skip adding delete property
+                                node = null;
+                            }
                         }
                     } else {
                         node = addDeltaRootNode(source, nodePath, name, nodeDefinitions, deltaNodes);
@@ -179,7 +189,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                 EsvProperty property = getTypeProperty();
                 DefinitionPropertyImpl prop = null;
                 if (node != null) {
-                    if (node.isDelete()) {
+                    if (node.isDeleted()) {
                         log.warn("Ignoring " + getType().getPropertyName() + " " + getName() + " for property " + getContentPath() +
                                 " at " + getInstructionNode().getSourceLocation() +
                                 ":  parent node already deleted at " + node.getSourceLocation());
@@ -208,16 +218,16 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                         log.info("Merging " + getType().getPropertyName() + " for " + nodePath + " defined at " + node.getSourceLocation());
                     }
                 } else {
-                    node = findNearestDeltaParent(nodePath, nodeDefinitions, deltaNodes);
+                    node = findNearestParent(nodePath, nodeDefinitions, deltaNodes);
                     if (node != null) {
-                        if (node.isDelete()) {
+                        if (node.isDeleted()) {
                             log.warn("Ignoring " + getType().getPropertyName() + " " + getName() + " for property " + getContentPath() +
                                     " at " + getInstructionNode().getSourceLocation() +
                                     ":  nearest parent node already deleted at " + node.getSourceLocation());
                             // skip adding property
                             node = null;
                         } else {
-                            node = addIntermediateParents(node, nodePath, nodeDefinitions);
+                            node = addIntermediateParents(node, nodePath, nodeDefinitions, deltaNodes);
                         }
                     } else {
                         node = addDeltaRootNode(source, nodePath, name, nodeDefinitions, deltaNodes);
@@ -227,13 +237,13 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                     }
                 }
                 if (node != null) {
-                    EsvMerge merge = null;
+                    PropertyOperation op = PropertyOperation.REPLACE;
                     if (prop != null && PropertyOperation.OVERRIDE == prop.getOperation()) {
-                        merge = EsvMerge.OVERRIDE;
+                        op = prop.getOperation();
                     } else if (getType() == Type.CONTENTPROPADD) {
-                        merge = EsvMerge.APPEND;
+                        op = PropertyOperation.ADD;
                     }
-                    addProperty(node, property, name, prop, merge, false);
+                    addProperty(node, property, name, prop, op, false);
                 }
                 break;
         }
@@ -241,7 +251,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
 
     protected DefinitionPropertyImpl addProperty(final DefinitionNodeImpl node, final EsvProperty property,
                                                  final String propertyName, final DefinitionPropertyImpl current,
-                                                 final EsvMerge merge, final boolean isPathReference)
+                                                 final PropertyOperation op, final boolean isPathReference)
             throws EsvParseException {
         DefinitionPropertyImpl prop;
         ValueType valueType = ValueType.values()[property.getType()];
@@ -250,7 +260,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
             EsvValue value = property.getValues().get(i);
             newValues[i] = new ValueImpl(value.getValue(), valueType, value.isResourcePath(), isPathReference);
         }
-        if (current != null && EsvMerge.APPEND == merge) {
+        if (current != null && PropertyOperation.ADD == op) {
             Value[] oldValues = current.getValues();
             Value[] values = new ValueImpl[oldValues.length + newValues.length];
             System.arraycopy(oldValues, 0, values, 0, oldValues.length);
@@ -262,51 +272,50 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         } else {
             prop = node.addProperty(propertyName, newValues[0]);
         }
-        if (EsvMerge.OVERRIDE == merge) {
-            prop.setOperation(PropertyOperation.OVERRIDE);
-        } else if (EsvMerge.APPEND == merge) {
-            prop.setOperation(PropertyOperation.ADD);
+        if (PropertyOperation.ADD != op) {
+            prop.setOperation(op);
         }
         prop.getSourceLocation().copy(property.getSourceLocation());
         return prop;
     }
 
     private DefinitionNodeImpl addIntermediateParents(final DefinitionNodeImpl parentNode, final String nodePath,
-                                                      final Map<String, DefinitionNodeImpl> nodeDefinitions) {
+                                                      final Map<String, DefinitionNodeImpl> nodeDefinitions,
+                                                      final Set<DefinitionNode> deltaNodes) {
         DefinitionNodeImpl node = parentNode;
         String[] parentsToAdd = nodePath.substring(parentNode.getPath().length() + 1).split("/");
         for (String parent : parentsToAdd) {
             node = node.addNode(parent);
             node.getSourceLocation().copy(getInstructionNode().getSourceLocation());
             nodeDefinitions.put(node.getPath(), node);
+            deltaNodes.add(node);
         }
         return node;
     }
 
-    private DefinitionNodeImpl addDeltaRootNode(final SourceImpl source, final String nodePath, final String name,
+    protected DefinitionNodeImpl addDeltaRootNode(final SourceImpl source, final String nodePath, final String name,
                                                 final Map<String, DefinitionNodeImpl> nodeDefinitions,
-                                                final Map<DefinitionNodeImpl, Boolean> deltaNodes) {
+                                                final Set<DefinitionNode> deltaNodes) {
         ConfigDefinitionImpl def = source.addConfigDefinition();
         DefinitionNodeImpl node = new DefinitionNodeImpl(nodePath, name, def);
         def.setNode(node);
-        deltaNodes.put(node, null);
-//        node.setDelta(true);
+        deltaNodes.add(node);
         node.getSourceLocation().copy(getInstructionNode().getSourceLocation());
         nodeDefinitions.put(nodePath, node);
         return node;
     }
 
-    private DefinitionNodeImpl findNearestDeltaParent(final String nodePath, final Map<String, DefinitionNodeImpl> nodeDefinitions,
-                                                      final Map<DefinitionNodeImpl, Boolean> deltaNodes) {
+    private DefinitionNodeImpl findNearestParent(final String nodePath, final Map<String, DefinitionNodeImpl> nodeDefinitions,
+                                                      final Set<DefinitionNode> deltaNodes) {
         String path = StringUtils.substringBeforeLast(nodePath, "/");
         if (path.equals("")) {
             path = "/";
         }
         DefinitionNodeImpl parent = nodeDefinitions.get(path);
         if (parent != null) {
-            return isDelta(parent, deltaNodes) ? parent : null;
+            return parent;
         } else if (!path.equals("/")) {
-            return findNearestDeltaParent(path, nodeDefinitions, deltaNodes);
+            return findNearestParent(path, nodeDefinitions, deltaNodes);
         }
         return null;
     }
@@ -344,17 +353,15 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         ((DefinitionNodeImpl) node.getParent()).getModifiableNodes().remove(node.getName());
     }
 
-    protected boolean isDelta(final DefinitionPropertyImpl property, final Map<DefinitionNodeImpl, Boolean> deltaNodes) {
-        return isDelta((DefinitionNodeImpl)property.getParent(), deltaNodes);
+    protected boolean isRemovableProp(final DefinitionProperty property, final Set<DefinitionNode> deltaNodes) {
+        return !deltaNodes.contains(property.getParent());
     }
 
-    protected boolean isDelta(final DefinitionNodeImpl node, final Map<DefinitionNodeImpl, Boolean> deltaNodes) {
-        if (deltaNodes.containsKey(node)) {
-            return true;
+    protected boolean isRemovableNode(final DefinitionNode node, final Set<DefinitionNode> deltaNodes) {
+        if (node.isRoot()) {
+            return !deltaNodes.contains(node);
+        } else {
+            return !deltaNodes.contains(node) || !deltaNodes.contains(node.getParent());
         }
-        else if (!node.isRoot()) {
-            return isDelta((DefinitionNodeImpl)node.getParent(), deltaNodes);
-        }
-        return false;
     }
 }

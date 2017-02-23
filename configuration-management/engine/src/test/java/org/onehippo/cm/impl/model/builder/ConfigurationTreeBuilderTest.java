@@ -938,7 +938,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             fail("Should have thrown exception");
         } catch (IllegalStateException e) {
-            assertEquals("Property jcr:primaryType is already defined on node /a/b, but change is requested in test-configuration/test-project/test-module [string]. Use 'operation: override' if you really intend to change the value of this property.", e.getMessage());
+            assertEquals("Property jcr:primaryType is already defined on node /a/b as determined by [test-configuration/test-project/test-module [string]], but change is requested in test-configuration/test-project/test-module [string]. Use 'operation: override' if you really intend to change the value of this property.", e.getMessage());
         }
     }
 

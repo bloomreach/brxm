@@ -27,6 +27,7 @@ import javax.jcr.PropertyType;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
@@ -38,7 +39,6 @@ import org.onehippo.cm.impl.model.SourceImpl;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
-import static org.onehippo.cm.api.model.PropertyType.SINGLE;
 
 public class SourceInitializeInstruction extends ContentInitializeInstruction {
 
@@ -72,7 +72,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
     }
 
     public void processSource(final ModuleImpl module, final Map<String, DefinitionNodeImpl> nodeDefinitions,
-                              final Map<DefinitionNodeImpl, Boolean> deltaNodes) throws EsvParseException {
+                              final Set<DefinitionNode> deltaNodes) throws EsvParseException {
         final SourceImpl source = module.addSource(getSourcePath());
         log.info("Processing " + getType().getPropertyName() + " " + getContentPath() + " from file " + getResourcePath());
         processNode(sourceNode, getContentPath(), source, null, nodeDefinitions, deltaNodes);
@@ -80,7 +80,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
 
     private void processNode(final EsvNode node, final String path, final SourceImpl source, DefinitionNodeImpl parentNode,
                              final Map<String, DefinitionNodeImpl> nodeDefinitions,
-                             final Map<DefinitionNodeImpl, Boolean> deltaNodes) throws EsvParseException {
+                             final Set<DefinitionNode> deltaNodes) throws EsvParseException {
 
         DefinitionNodeImpl defNode = nodeDefinitions.get(path);
         if (defNode != null && !defNode.isDelete()) {
@@ -94,11 +94,12 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                         defNode.getSourceLocation() + ".");
             }
         }
-        final boolean newNode = defNode == null || defNode.isDelete();
+        final boolean newNode = defNode == null || defNode.isDeleted();
         if (newNode) {
+            final boolean deleted = defNode != null && defNode.isDelete();
             String parentPath = null;
             if (parentNode == null && node.getMerge() != null) {
-                if (defNode != null && !defNode.isRoot()) {
+                if (defNode != null) {
                     parentNode = (DefinitionNodeImpl) defNode.getParent();
                 } else {
                     parentPath = StringUtils.substringBeforeLast(path, "/");
@@ -109,32 +110,27 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                 }
             }
             if (node.isDeltaInsert() && parentNode == null) {
-                ConfigDefinitionImpl def = source.addConfigDefinition();
-                parentNode = new DefinitionNodeImpl(parentPath, StringUtils.substringAfterLast(parentPath, "/"), def);
-                def.setNode(parentNode);
-                parentNode.getSourceLocation().copy(node.getSourceLocation());
-                deltaNodes.put(parentNode, null);
-//                parentNode.setDelta(true);
-                nodeDefinitions.put(parentPath, parentNode);
+                parentNode = addDeltaRootNode(source, parentPath, StringUtils.substringAfterLast(parentPath, "/"), nodeDefinitions, deltaNodes);
             }
             if (parentNode != null) {
                 defNode = parentNode.addNode(node.getName());
             } else {
                 ConfigDefinitionImpl def = source.addConfigDefinition();
-                boolean delta = defNode == null && node.getMerge() != null;
                 defNode = new DefinitionNodeImpl(path, node.getName(), def);
                 def.setNode(defNode);
-                if (delta) {
-                    deltaNodes.put(defNode, null);
-                }
-//                defNode.setDelta(delta);
             }
+            if (node.getMerge() != null) {
+                deltaNodes.add(defNode);
+            }
+            // if (deleted) -> mixed bag
+            defNode.setDelete(deleted);
+
             defNode.getSourceLocation().copy(node.getSourceLocation());
 
             nodeDefinitions.put(path, defNode);
 
             if (node.isDeltaInsert()) {
-                if (isDelta(defNode, deltaNodes)) {
+                if (deltaNodes.contains(parentNode)) {
                     defNode.setOrderBefore(node.getMergeLocation());
                 } else {
                     boolean hasAfter = parentNode.getModifiableNodes().size() > 1 &&
@@ -170,54 +166,37 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                         node.getSourceLocation());
             }
         }
+        final boolean deltaNode = deltaNodes.contains(defNode);
         for (EsvProperty property : node.getProperties()) {
-            processProperty(node, defNode, property);
+            processProperty(node, defNode, property, deltaNode);
         }
         for (EsvNode child : node.getChildren()) {
             processNode(child, path + "/" + child.getName(), source, defNode, nodeDefinitions, deltaNodes);
         }
     }
 
-    private void processProperty(final EsvNode node, final DefinitionNodeImpl defNode, final EsvProperty property)
+    private void processProperty(final EsvNode node, final DefinitionNodeImpl defNode, final EsvProperty property, final boolean deltaNode)
             throws EsvParseException {
         final boolean isPathReference = property.getName().endsWith(PATH_REFERENCE_POSTFIX);
         final String propertyName = isPathReference ? StringUtils.substringBefore(property.getName(), PATH_REFERENCE_POSTFIX) : property.getName();
         DefinitionPropertyImpl prop = defNode.getModifiableProperties().get(propertyName);
-        boolean override = false;
+        PropertyOperation op = PropertyOperation.REPLACE;
         if (prop != null) {
             if (PropertyOperation.DELETE == prop.getOperation()) {
-                if (property.getMerge() != null && !property.isMergeOverride()) {
-                    throw new EsvParseException("Unsupported delta merging of property " + prop.getPath() + " at " +
-                            property.getSourceLocation() + " which has been deleted before at " +
-                            prop.getSourceLocation() + ". Requires esv:merge=\"overrride\"");
-                } else {
-                    // will be replaced with incoming property
-                    override = true;
-                    prop = null;
-                }
+                // will be replaced with incoming property
+                prop = null;
             } else {
                 if (property.isMergeSkip()) {
                     log.warn("Skipping property " + prop.getPath() + " which already is defined at " + prop.getSourceLocation());
                     return;
                 }
-                if (PropertyOperation.REPLACE != prop.getOperation()) {
-                    throw new EsvParseException("Unsupported delta merging of property " + prop.getPath() + " at " +
-                            property.getSourceLocation() + " which already is delta merge defined at " + prop.getSourceLocation());
-                }
-                if (prop.getValueType().ordinal() != property.getType()) {
-                    throw new EsvParseException("Unsupported property " + prop.getPath() + " type change to " +
-                            ValueType.values()[property.getType()].name() + " at " + property.getSourceLocation() +
-                            " (from " + prop.getValueType().toString() + " at " + prop.getSourceLocation() + ")");
-                }
-                if ((prop.getType() == SINGLE && property.isMultiple()) || (prop.getType() != SINGLE && property.isSingle())) {
-                    // note: won't happen with restricted properties (jcr:primaryType, jcr:mixins)
-                    if (!property.isMergeOverride()) {
-                        throw new EsvParseException("Unsupported property " + prop.getPath() + " multiplicity change to " +
-                                property.isMultiple() + " at " + property.getSourceLocation() +
-                                " (from " + !property.isMultiple() + " at " + prop.getSourceLocation() + ")");
-                    } else {
-                        override = true;
+                if (property.isMergeAppend()) {
+                    if (prop.getValueType().ordinal() != property.getType()) {
+                        throw new EsvParseException("Invalid esv:merge=\"append\" for property " + prop.getPath() + " with different type " +
+                                ValueType.values()[property.getType()].name() + " at " + property.getSourceLocation() +
+                                " (from " + prop.getValueType().toString() + " at " + prop.getSourceLocation() + ")");
                     }
+                    op = PropertyOperation.ADD;
                 }
                 if (JCR_PRIMARYTYPE.equals(propertyName)) {
                     String newType = property.getValue();
@@ -228,7 +207,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                                     property.getSourceLocation() + " (from " + oldType + " at " + prop.getSourceLocation() +
                                     ") not allowed: requires esv:merge=\"overlay\").");
                         } else {
-                            override = true;
+                            op = PropertyOperation.OVERRIDE;
                         }
                     } else {
                         // no change
@@ -243,7 +222,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                                     " at " + property.getSourceLocation() + " (from " + oldMixins + " at " + prop.getSourceLocation() +
                                     ") not allowed: requires esv:merge=\"overlay\").");
                         } else {
-                            override = true;
+                            op = PropertyOperation.OVERRIDE;
                         }
                     } else {
                         // no change
@@ -251,7 +230,17 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                     }
                 }
             }
+        } else if (deltaNode) {
+            if ((JCR_PRIMARYTYPE.equals(propertyName) || JCR_MIXINTYPES.equals(propertyName)) && node.isDeltaOverlay()) {
+                op = PropertyOperation.OVERRIDE;
+            } else if (property.isMergeAppend()) {
+                op = PropertyOperation.ADD;
+            } else if (property.isMergeOverride()) {
+                op = PropertyOperation.OVERRIDE;
+            } else if (property.isMergeSkip()) {
+                // TODO: implement PropertyOperation.SKIP
+            }
         }
-        addProperty(defNode, property, propertyName, prop, override ? EsvMerge.OVERRIDE : property.getMerge(), isPathReference);
+        addProperty(defNode, property, propertyName, prop, op, isPathReference);
     }
 }

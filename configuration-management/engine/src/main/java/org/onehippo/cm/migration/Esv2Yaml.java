@@ -28,12 +28,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import javax.jcr.PropertyType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.engine.FileConfigurationWriter;
 import org.onehippo.cm.engine.FileResourceInputProvider;
 import org.onehippo.cm.engine.FileResourceOutputProvider;
@@ -236,7 +236,7 @@ public class Esv2Yaml {
             throws IOException, EsvParseException {
 
         Set<String> resourceBundles = new HashSet<>();
-        Map<DefinitionNodeImpl, Boolean> deltaNodes = new WeakHashMap<>();
+        Set<DefinitionNode> deltaNodes = new HashSet<>();
         Map<String, DefinitionNodeImpl> nodeDefinitions = new HashMap<>();
 
         // not yet 'added' definition for resourcebundle root translation parent definitions, if needed

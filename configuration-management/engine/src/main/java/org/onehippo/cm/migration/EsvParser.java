@@ -257,12 +257,12 @@ public class EsvParser extends DefaultHandler {
                 if (esvMerge == null || !esvMerge.isForProperty()) {
                     log.warn("Ignored unknown or invalid esv:merge value: " + strMerge + " for sv:property element at " + getLocation());
                 } else {
+                    if (EsvMerge.APPEND == esvMerge && Boolean.FALSE.equals(currentProperty.getMultiple())) {
+
+                    }
                     currentProperty.setMerge(esvMerge);
                     // todo: keep for now but only supported internally (together with merge INSERT)
                     currentProperty.setMergeLocation(getAttribute(atts, NS_ESV_URI, ESV_LOCATION));
-                    if (EsvMerge.APPEND == esvMerge) {
-                        currentProperty.setMultiple(Boolean.TRUE);
-                    }
                 }
             }
         }

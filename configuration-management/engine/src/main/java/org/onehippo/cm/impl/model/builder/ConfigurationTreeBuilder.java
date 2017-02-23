@@ -184,8 +184,8 @@ class ConfigurationTreeBuilder {
             // that's unsupported, because it is likely to create models that cannot be persisted to JCR.
             final String culprit = ModelUtils.formatDefinition(definition);
             String msg = String.format("%s contains definition rooted at unreachable node '%s'. "
-                    + "Closest ancestor is at '%s'.", culprit, definitionRootPath,
-                      rootForDefinition.getPath());
+                            + "Closest ancestor is at '%s'.", culprit, definitionRootPath,
+                    rootForDefinition.getPath());
             throw new IllegalStateException(msg);
         }
 
@@ -327,10 +327,11 @@ class ConfigurationTreeBuilder {
         if (property.getName().equals(JCR_PRIMARYTYPE)
                 && !property.getValue().getString().equals(definitionProperty.getValue().getString())
                 && !isOverride) {
+            final String sourceList = ModelUtils.formatDefinitions(property);
             final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
-            final String msg = String.format("Property %s is already defined on node %s, but change is requested in %s. "
+            final String msg = String.format("Property %s is already defined on node %s as determined by %s, but change is requested in %s. "
                             + "Use 'operation: override' if you really intend to change the value of this property.",
-                    JCR_PRIMARYTYPE, property.getParent().getPath(), culprit);
+                    JCR_PRIMARYTYPE, property.getParent().getPath(), sourceList, culprit);
             throw new IllegalStateException(msg);
         }
     }
