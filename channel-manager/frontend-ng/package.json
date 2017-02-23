@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "angular-mocks": "1.5.8",
-    "frontend-build": "file:/Users/adcb/Development/Bloomreach/try/frontend/hippo-frontend-build",
+    "frontend-build": "/home/jdegooijer/Projects/hippoprojects/frontend-build",
     "gulp": "gulpjs/gulp#4.0",
     "gulp-hub": "frankwallis/gulp-hub#4.1.0"
   }
