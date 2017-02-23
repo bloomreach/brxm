@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -382,11 +382,20 @@ public class HstSitePipeline implements Pipeline
         private Map<String, Serializable> linkedKeyFragments = new LinkedHashMap<String, Serializable>();
         // we keep the hashcode as instance variable for efficiency
         private int hashCode;
+        private boolean sealed;
 
         @Override
         public void setAttribute(final String subKey, final Serializable keyFragment) {
+            if (sealed) {
+                throw new IllegalStateException("PageCacheKey has been sealed already.");
+            }
             linkedKeyFragments.put(subKey, keyFragment);
             hashCode = 0;
+        }
+
+        @Override
+        public void seal() {
+            sealed = true;
         }
 
         @Override
@@ -430,14 +439,16 @@ public class HstSitePipeline implements Pipeline
         @Override
         public int hashCode() {
             if (hashCode == 0) {
-                hashCode = linkedKeyFragments.hashCode();
+                int result = linkedKeyFragments.hashCode();
+                result = 31 * result + (sealed ? 1 : 0);
+                hashCode = result;
             }
             return hashCode;
         }
 
         @Override
         public String toString() {
-            return "PageCacheKey[" + linkedKeyFragments.toString() + "]";
+            return "PageCacheKey[" + linkedKeyFragments.toString() + ", sealed = " +sealed + "]";
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,17 +23,17 @@ import net.sf.ehcache.Element;
  * CacheElementEhCacheImpl
  * @version $Id$
  */
-class CacheElementEhCacheImpl implements CacheElement {
+public class CacheElementEhCacheImpl implements CacheElement {
     
     final Element element;
     private final boolean cacheable;
-    
-    CacheElementEhCacheImpl(final Element element) {
+
+    public CacheElementEhCacheImpl(final Element element) {
         this.element = element;
         cacheable = true;
     }
-    
-    CacheElementEhCacheImpl(final Object key, final Object value) {
+
+    public CacheElementEhCacheImpl(final Object key, final Object value) {
         this.element = new Element(key, value);
         cacheable = true;
     }
@@ -41,6 +41,10 @@ class CacheElementEhCacheImpl implements CacheElement {
     public CacheElementEhCacheImpl(final Object key, final Object value, final boolean cacheable) {
         this.element = new Element(key, value);
         this.cacheable = cacheable;
+    }
+
+    public Element getElement() {
+        return element;
     }
 
     public Object getKey() {

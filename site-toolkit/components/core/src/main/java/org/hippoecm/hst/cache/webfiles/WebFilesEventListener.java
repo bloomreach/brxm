@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
-import com.google.common.cache.Cache;
-
+import org.hippoecm.hst.cache.CompositeHstCache;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.PageCacheEventListener;
-import org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl;
+import org.hippoecm.hst.core.container.RequestInfoCacheKeyFragmentCreator;
 import org.hippoecm.hst.core.container.WebFileValve;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
 import org.slf4j.Logger;
@@ -39,8 +38,9 @@ public class WebFilesEventListener extends GenericEventListener {
 
     private HstCache pageCache;
     private WebFileValve webFileValve;
+    private RequestInfoCacheKeyFragmentCreator requestInfoCacheKeyFragmentCreator;
 
-    public void setPageCache(HstCacheEhCacheImpl pageCache) {
+    public void setPageCache(CompositeHstCache pageCache) {
         this.pageCache = pageCache;
     }
 
@@ -48,6 +48,9 @@ public class WebFilesEventListener extends GenericEventListener {
         this.webFileValve = webFileValve;
     }
 
+    public void setRequestInfoCacheKeyFragmentCreator(final RequestInfoCacheKeyFragmentCreator requestInfoCacheKeyFragmentCreator) {
+        this.requestInfoCacheKeyFragmentCreator = requestInfoCacheKeyFragmentCreator;
+    }
     @Override
     public void onEvent(EventIterator events) {
         boolean pageCacheCleared = false;
@@ -61,10 +64,14 @@ public class WebFilesEventListener extends GenericEventListener {
                     pageCacheCleared = true;
                     pageCache.clear();
                 }
+                if (requestInfoCacheKeyFragmentCreator != null) {
+                    requestInfoCacheKeyFragmentCreator.reset();
+                }
                 webFileValve.onEvent(event);
             } catch (RepositoryException e) {
                 log.error("Error processing event");
             }
         }
     }
+
 }

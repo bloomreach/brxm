@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,132 +15,30 @@
  */
 package org.hippoecm.hst.cache.ehcache;
 
-import java.util.concurrent.Callable;
-
-import org.hippoecm.hst.cache.CacheElement;
-import org.hippoecm.hst.cache.HstCache;
+import org.hippoecm.hst.cache.CompositeHstCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.InvalidConfigurationException;
 import net.sf.ehcache.config.PersistenceConfiguration;
 
 /**
- * HstCacheEhCacheImpl
- * @version $Id$
+ * @deprecated since HST 4.2.0 (CMS 11.2.0). Use {@link CompositeHstCache} instead.
  */
-public class HstCacheEhCacheImpl implements HstCache {
+@Deprecated
+public class HstCacheEhCacheImpl extends CompositeHstCache {
 
     private static final Logger log = LoggerFactory.getLogger(HstCacheEhCacheImpl.class);
-    private final Ehcache ehcache;
-    private volatile int invalidationCounter;
 
     public HstCacheEhCacheImpl(final Ehcache ehcache) {
         this(ehcache, new PersistenceConfiguration().strategy(PersistenceConfiguration.Strategy.NONE));
     }
 
     public HstCacheEhCacheImpl(final Ehcache ehcache, final PersistenceConfiguration persistenceConfiguration) {
-        this.ehcache = ehcache;
-        try {
-            ehcache.getCacheConfiguration().addPersistence(persistenceConfiguration);
-        } catch (InvalidConfigurationException e) {
-            log.warn("Cannot add PersistenceConfiguration since deprecated 'overflowToDisk' or 'diskPersistent' is still " +
-                    "configured.");
-        }
-    }
-    
-    public CacheElement get(Object key) {
-        Element element = ehcache.get(key);
-        if (element == null) {
-            return null;
-        }
-        return new CacheElementEhCacheImpl(element);
+        super(ehcache, persistenceConfiguration);
+        log.warn(String.format("This class '%s' has been deprecated, use '%s' instead.", HstCacheEhCacheImpl.class.getName(),
+                CompositeHstCache.class.getName()));
     }
 
-    @Override
-    public CacheElement get(final Object key, final Callable<? extends CacheElement> valueLoader) throws Exception {
-        if (valueLoader == null) {
-            throw new IllegalArgumentException("valueLoader is not allowed to be null");
-        }
-        CacheElement cached = get(key);
-        if (cached != null) {
-            return cached;
-        }
-
-        int preCallInvalidationCounter = invalidationCounter;
-        // to make sure the lock is freed in case of blocking cache, make sure we start with an non null element,
-        CacheElement element = null;
-        try {
-            element = valueLoader.call();
-            if (element == null) {
-                log.debug("valueLoader '{}#call()' did " +
-                        "return null for key '{}'",valueLoader.getClass().getName(), key);
-            }
-        } finally {
-            int postCallInvalidationCounter = invalidationCounter;
-            // if exceptions (also unchecked) happened or the CacheElement is uncacheable, we put an empty element (createElement(key,null))
-            // to make sure that if a blocking cache is used, the lock on the key is freed. Also see ehcache BlockingCache
-            if (element == null) {
-                element = createElement(key, null);
-                put(element);
-            } else if (postCallInvalidationCounter != preCallInvalidationCounter){
-                put(createElement(key, null));
-            } else {
-                put(element);
-            }
-        }
-        
-        return element;
-    }
-
-    public int getTimeToIdleSeconds() {
-        return (int) ehcache.getCacheConfiguration().getTimeToIdleSeconds();
-    }
-
-    public int getTimeToLiveSeconds() {
-        return (int) ehcache.getCacheConfiguration().getTimeToLiveSeconds();
-    }
-
-    public boolean isKeyInCache(Object key) {
-        return ehcache.isKeyInCache(key);
-    }
-
-    public void put(CacheElement element) {
-        if (!element.isCacheable()) {
-            final CacheElement uncacheable = createElement(element.getKey(), null);
-            ehcache.put(((CacheElementEhCacheImpl) uncacheable).element);
-            return;
-        }
-        CacheElementEhCacheImpl cacheElem = (CacheElementEhCacheImpl) element;
-        ehcache.put(cacheElem.element);
-    }
-
-    public CacheElement createElement(Object key, Object content) {
-        return new CacheElementEhCacheImpl(key, content);
-    }
-
-    public CacheElement createUncacheableElement(Object key, Object content) {
-        return new CacheElementEhCacheImpl(key, content, false);
-    }
-
-    public boolean remove(Object key) {
-        return ehcache.remove(key);
-    }
-
-    public void clear() {
-        invalidationCounter++;
-        ehcache.removeAll();
-    }
-
-    public int getSize() {
-        return ehcache.getSize();
-    }
-
-    public int getMaxSize() {
-        return new Long(ehcache.getCacheConfiguration().getMaxEntriesLocalHeap()).intValue()
-                + (int)ehcache.getCacheConfiguration().getMaxEntriesLocalDisk();
-    }
 
 }
