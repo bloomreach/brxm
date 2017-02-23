@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ class RightSidePanelCtrl {
     $timeout,
     $translate,
     $q,
-    ChannelSidePanelService,
+    SidePanelService,
     CmsService,
     ContentService,
     DialogService,
@@ -76,7 +76,7 @@ class RightSidePanelCtrl {
     this.$translate = $translate;
     this.$q = $q;
 
-    this.ChannelSidePanelService = ChannelSidePanelService;
+    this.SidePanelService = SidePanelService;
     this.CmsService = CmsService;
     this.ContentService = ContentService;
     this.DialogService = DialogService;
@@ -87,7 +87,7 @@ class RightSidePanelCtrl {
     this.closeLabel = $translate.instant('CLOSE');
     this.cancelLabel = $translate.instant('CANCEL');
 
-    ChannelSidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
+    SidePanelService.initialize('right', $element.find('.right-side-panel'), (documentId) => {
       this.openDocument(documentId);
     });
 
@@ -129,16 +129,28 @@ class RightSidePanelCtrl {
   _loadDocument(id) {
     this.documentId = id;
     this.loading = true;
-    this.ContentService.createDraft(id)
-      .then((doc) => {
-        if (this._hasFields(doc)) {
-          return this.ContentService.getDocumentType(doc.info.type.id)
-            .then(docType => this._onLoadSuccess(doc, docType));
-        }
-        return this.$q.reject(this._noContentResponse(doc));
+    this.CmsService.closeDocumentWhenValid(id)
+      .then(() => {
+        this.ContentService.createDraft(id)
+          .then((doc) => {
+            if (this._hasFields(doc)) {
+              return this.ContentService.getDocumentType(doc.info.type.id)
+                .then(docType => this._onLoadSuccess(doc, docType));
+            }
+            return this.$q.reject(this._noContentResponse(doc));
+          })
+          .catch(response => this._onLoadFailure(response));
       })
-      .catch(response => this._onLoadFailure(response))
+      .catch(() => this._showFeedbackDraftInvalid())
       .finally(() => delete this.loading);
+  }
+
+  _showFeedbackDraftInvalid() {
+    this.feedback = {
+      title: 'FEEDBACK_DRAFT_INVALID_TITLE',
+      message: this.$translate.instant('FEEDBACK_DRAFT_INVALID_MESSAGE'),
+      linkToFullEditor: true,
+    };
   }
 
   _hasFields(doc) {
@@ -164,8 +176,6 @@ class RightSidePanelCtrl {
       this.title = this.$translate.instant('EDIT_DOCUMENT', this.doc);
     }
     this._resizeTextareas();
-
-    this.CmsService.publish('close-content', this.documentId);
   }
 
   _onLoadFailure(response) {
@@ -219,7 +229,7 @@ class RightSidePanelCtrl {
   }
 
   isLockedOpen() {
-    return this.ChannelSidePanelService.isOpen('right');
+    return this.SidePanelService.isOpen('right');
   }
 
   saveDocument() {
@@ -366,7 +376,7 @@ class RightSidePanelCtrl {
   }
 
   _closePanel() {
-    this.ChannelSidePanelService.close('right')
+    this.SidePanelService.close('right')
       .then(() => this._resetState());
   }
 }

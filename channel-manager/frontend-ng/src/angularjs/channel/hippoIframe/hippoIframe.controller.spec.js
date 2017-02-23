@@ -49,7 +49,7 @@ describe('hippoIframeCtrl', () => {
             _$q_,
             _$rootScope_,
             _ChannelService_,
-            _ChannelSidePanelService_,
+            _SidePanelService_,
             _CmsService_,
             _DialogService_,
             _DomService_,
@@ -86,8 +86,8 @@ describe('hippoIframeCtrl', () => {
     scope.onEditContent = jasmine.createSpy('onEditContent');
 
     const el = angular.element(
-      `<hippo-iframe edit-mode="testEditMode" 
-                    on-edit-content="onEditContent(contentUuid)" 
+      `<hippo-iframe edit-mode="testEditMode"
+                    on-edit-content="onEditContent(contentUuid)"
                     on-edit-menu="onEditMenu(menuUuid)">
       </hippo-iframe>`);
     $compile(el)(scope);

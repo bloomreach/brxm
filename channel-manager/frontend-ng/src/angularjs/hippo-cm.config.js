@@ -40,6 +40,15 @@ function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $transla
     abstract: true,
   });
 
+  $translateProvider
+    .registerAvailableLanguageKeys(['en', 'nl', 'fr', 'de', 'es', 'zh'], {
+      'en_*': 'en',
+      'nl_*': 'nl',
+      'fr_*': 'fr',
+      'de_*': 'de',
+      'es_*': 'es',
+      'zh_*': 'zh',
+    });
   $translateProvider.fallbackLanguage('en');
   $translateProvider.useSanitizeValueStrategy('escaped');
 

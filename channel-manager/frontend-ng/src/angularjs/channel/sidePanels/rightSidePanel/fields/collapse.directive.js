@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-import template from './choiceField.html';
-import ChoiceFieldCtrl from './choiceField.controller';
+import './collapse.scss';
+import CollapseCtrl from './collapse.controller';
 
-const choiceFieldComponent = {
-  bindings: {
-    name: '<',
-    fieldType: '<',
-    fieldValues: '<',
-    onFieldFocus: '&',
-    onFieldBlur: '&',
-  },
-  controller: ChoiceFieldCtrl,
-  template,
-  require: {
-    form: '^^form',
-  },
-};
+function collapse() {
+  return {
+    restrict: 'A',
+    controller: CollapseCtrl,
+    controllerAs: 'collapse',
+  };
+}
 
-export default choiceFieldComponent;
+export default collapse;
+

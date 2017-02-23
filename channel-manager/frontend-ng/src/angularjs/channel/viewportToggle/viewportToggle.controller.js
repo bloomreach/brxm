@@ -36,22 +36,22 @@ class ViewportToggleCtrl {
       {
         id: 'ANY_DEVICE',
         icon: 'images/any-device.svg',
-        maxWidth: 0,
+        width: 0,
       },
       {
         id: 'DESKTOP',
         icon: 'images/desktop.svg',
-        maxWidth: viewportMap.desktop ? viewportMap.desktop : 1280,
+        width: viewportMap.desktop ? viewportMap.desktop : 1280,
       },
       {
         id: 'TABLET',
         icon: 'images/tablet.svg',
-        maxWidth: viewportMap.tablet ? viewportMap.tablet : 720,
+        width: viewportMap.tablet ? viewportMap.tablet : 720,
       },
       {
         id: 'PHONE',
         icon: 'images/phone.svg',
-        maxWidth: viewportMap.phone ? viewportMap.phone : 320,
+        width: viewportMap.phone ? viewportMap.phone : 320,
       },
     ];
   }
@@ -62,7 +62,7 @@ class ViewportToggleCtrl {
   }
 
   viewportChanged() {
-    this.ViewportService.setWidth(this.selectedViewport.maxWidth);
+    this.ViewportService.setWidth(this.selectedViewport.width);
     this.OverlayService.sync();
   }
 

@@ -33,12 +33,20 @@ class ViewportService {
 
     this.width = width;
 
+    // set max-width and min-width because just 'width' does not work in Safari.
+
     if (width === 0) {
-      // Desktop mode - no width constraints
-      this.$sheet.css('max-width', '100%');
+      // 'any device' mode - no width constraints.
+      this.$sheet.css({
+        'max-width': '100%',
+        'min-width': 0,
+      });
     } else {
       // viewport is constrained
-      this.$sheet.css('max-width', `${width}px`);
+      this.$sheet.css({
+        'max-width': `${width}px`,
+        'min-width': `${width}px`,
+      });
     }
   }
 

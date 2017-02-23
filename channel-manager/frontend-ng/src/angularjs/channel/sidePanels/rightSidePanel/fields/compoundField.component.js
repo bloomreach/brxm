@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import template from './primitiveField.html';
-import PrimitiveFieldCtrl from './primitiveField.controller';
+import template from './compoundField.html';
+import CompoundFieldCtrl from './compoundField.controller';
 
-const primitiveFieldComponent = {
+const compoundFieldComponent = {
   bindings: {
     name: '<',
     fieldType: '<',
@@ -25,11 +25,11 @@ const primitiveFieldComponent = {
     onFieldFocus: '&',
     onFieldBlur: '&',
   },
-  controller: PrimitiveFieldCtrl,
+  controller: CompoundFieldCtrl,
   template,
   require: {
     form: '^^form',
   },
 };
 
-export default primitiveFieldComponent;
+export default compoundFieldComponent;

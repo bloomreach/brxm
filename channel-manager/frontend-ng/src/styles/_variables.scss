@@ -117,7 +117,6 @@ $tree-active-border-color: $blue-shadow;
 $tree-active-color: $white;
 
 // Animation
-$scale-animation-transition: 400ms cubic-bezier(.25, .8, .25, 1);
 $viewport-animation-transition: 400ms cubic-bezier(.25, .8, .25, 1);
 
 // DragDrop placeholder
@@ -131,6 +130,9 @@ $select-invalid-color: #f70029;
 
 // Toolbar
 $toolbar-height: 40px;
+
+// For consistency we use the same yellow color as is used in the CMS for the exclamation icon
+$toolbar-channel-changes-color: #ffa733;
 
 // Forms
 $form-dense-distance: 12px;

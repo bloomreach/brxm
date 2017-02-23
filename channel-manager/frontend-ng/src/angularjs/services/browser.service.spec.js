@@ -44,5 +44,10 @@ describe('BrowserService', () => {
     deviceDetector.browser = 'firefox';
     expect(BrowserService.isFF()).toBe(true);
   });
+
+  it('detects Edge', () => {
+    deviceDetector.browser = 'ms-edge';
+    expect(BrowserService.isEdge()).toBe(true);
+  });
 });
 

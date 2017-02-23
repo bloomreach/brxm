@@ -55,13 +55,13 @@ describe('ViewportToggleCtrl', () => {
       $ctrl.setViewports();
 
       expect($ctrl.viewports[0].id).toBe('ANY_DEVICE');
-      expect($ctrl.viewports[0].maxWidth).toBe(0);
+      expect($ctrl.viewports[0].width).toBe(0);
       expect($ctrl.viewports[1].id).toBe('DESKTOP');
-      expect($ctrl.viewports[1].maxWidth).toBe(1167);
+      expect($ctrl.viewports[1].width).toBe(1167);
       expect($ctrl.viewports[2].id).toBe('TABLET');
-      expect($ctrl.viewports[2].maxWidth).toBe(678);
+      expect($ctrl.viewports[2].width).toBe(678);
       expect($ctrl.viewports[3].id).toBe('PHONE');
-      expect($ctrl.viewports[3].maxWidth).toBe(256);
+      expect($ctrl.viewports[3].width).toBe(256);
     });
 
     it('should use the default viewport width values when the backend does not return any', () => {
@@ -69,13 +69,13 @@ describe('ViewportToggleCtrl', () => {
       $ctrl.setViewports();
 
       expect($ctrl.viewports[0].id).toBe('ANY_DEVICE');
-      expect($ctrl.viewports[0].maxWidth).toBe(0);
+      expect($ctrl.viewports[0].width).toBe(0);
       expect($ctrl.viewports[1].id).toBe('DESKTOP');
-      expect($ctrl.viewports[1].maxWidth).toBe(1280);
+      expect($ctrl.viewports[1].width).toBe(1280);
       expect($ctrl.viewports[2].id).toBe('TABLET');
-      expect($ctrl.viewports[2].maxWidth).toBe(720);
+      expect($ctrl.viewports[2].width).toBe(720);
       expect($ctrl.viewports[3].id).toBe('PHONE');
-      expect($ctrl.viewports[3].maxWidth).toBe(320);
+      expect($ctrl.viewports[3].width).toBe(320);
     });
   });
 
