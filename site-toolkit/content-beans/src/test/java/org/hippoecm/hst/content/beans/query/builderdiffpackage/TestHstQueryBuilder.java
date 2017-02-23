@@ -23,6 +23,7 @@ import javax.jcr.Node;
 import com.google.common.collect.Lists;
 
 import org.hippoecm.hst.AbstractHstQueryTest;
+import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.beans.BasePage;
 import org.hippoecm.hst.content.beans.NewsPage;
 import org.hippoecm.hst.content.beans.PersistableTextPage;
