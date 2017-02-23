@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -67,6 +67,8 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     private HstComponentRegistry componentRegistry;
     private HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry;
     private HstCache pageCache;
+    private boolean clearPageCacheAfterModelLoad;
+
 
     private HstNodeLoadingCache hstNodeLoadingCache;
     private HstEventsDispatcher hstEventsDispatcher;
@@ -121,7 +123,12 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
     public void setPageCache(HstCache pageCache) {
         this.pageCache = pageCache;
     }
-    
+
+    public void setClearPageCacheAfterModelLoad(final boolean clearPageCacheAfterModelLoad) {
+        this.clearPageCacheAfterModelLoad = clearPageCacheAfterModelLoad;
+    }
+
+
     public String getCmsPreviewPrefix() {
         return cmsPreviewPrefix;
     }
@@ -325,8 +332,12 @@ public class HstManagerImpl implements HstManager, ServletContextAware {
                         // do not flush pageCache but return old prev virtual host instance instead
                         return prevVirtualHostsModel;
                     }
-                    log.info("Flushing page cache after new model is loaded");
-                    pageCache.clear();
+                    if (clearPageCacheAfterModelLoad) {
+                        log.info("Clearing page cache after new model is loaded");
+                        pageCache.clear();
+                    } else {
+                        log.debug("Page cache won't be cleared because 'clearPageCacheAfterModelLoad = false'");
+                    }
                 }
                 if (state == BuilderState.UP2DATE) {
                     consecutiveBuildFailCounter = 0;

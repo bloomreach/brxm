@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.hippoecm.hst.content.beans.query.exceptions.RuntimeQueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.repository.util.DateTools;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,10 +45,15 @@ import static org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder.Order
 import static org.hippoecm.hst.content.beans.query.builder.HstQueryBuilder.create;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TestHstQueryBuilder extends AbstractHstQueryTest {
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        ModifiableRequestContextProvider.clear();
+    }
 
     @Test
     public void basic_query_without_constraints() throws Exception {

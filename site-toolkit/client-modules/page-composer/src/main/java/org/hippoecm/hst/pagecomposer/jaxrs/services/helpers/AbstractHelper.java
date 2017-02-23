@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -33,7 +34,6 @@ import com.google.common.collect.Iterables;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
@@ -146,10 +146,52 @@ public abstract class AbstractHelper {
                             lockedNode.getPath(), liveConfigurationPath + liveParentRelPath);
                 } else {
                     log.info("Publishing '{}'", lockedNode.getPath());
-                    JcrUtils.copy(session, lockedNode.getPath(), liveConfigurationPath + relPath);
+                    Node copy = JcrUtils.copy(session, lockedNode.getPath(), liveConfigurationPath + relPath);
+                    reorderCopyIfNeeded(lockedNode, copy);
                 }
             }
 
+        }
+    }
+
+    /**
+     * Reorder the {@code copy} ot be in the same location as {@code source} with respect to their parents in case the
+     * parents are orderable.
+     * @param source
+     * @param copy
+     * @throws RepositoryException
+     */
+    private void reorderCopyIfNeeded(final Node source, final Node copy) throws RepositoryException {
+
+        if (!source.getParent().getPrimaryNodeType().hasOrderableChildNodes()) {
+            return;
+        }
+
+        Node parentOfCopy = copy.getParent();
+
+        if (!parentOfCopy.getPrimaryNodeType().hasOrderableChildNodes()) {
+            return;
+        }
+
+        // reorder the copied source if needed and if the parent is orderable
+        // find the next sibling of 'source' : We need to try to order the 'copy' before the
+        // same node as the source in preview. In case for some reason the next sibling does not
+        // exist in live, we need to catch the exception and log an error (because it indicates a
+        // live and preview that is out of sync)
+        Node nextSibling = JcrUtils.getNextSiblingIfExists(source);
+
+        if (nextSibling != null) {
+            try {
+                // HST nodes do not allow same name siblings so we do not take into account the index
+                // if nextSibling is null, the copy will just be at the end of the list which is fine
+                parentOfCopy.orderBefore(copy.getName(), nextSibling.getName());
+            } catch (ItemNotFoundException e) {
+                log.error("Cannot reorder '{}' before '{}' because a node with the name '{}' does " +
+                        "not exist in the live configuration which should not be the case because preview " +
+                        "and live configuration are out of sync. The preview configuration node that misses " +
+                        "in live is '{}'." +
+                        "", copy.getPath(), nextSibling.getName(), nextSibling.getPath());
+            }
         }
     }
 
@@ -174,6 +216,7 @@ public abstract class AbstractHelper {
             }
             lockedNodeRoot.remove();
             JcrUtils.copy(session, liveConfigurationPath + relPath, lockedNodePath);
+            reorderCopyIfNeeded(session.getNode(liveConfigurationPath + relPath), session.getNode(lockedNodePath));
         }
     }
 

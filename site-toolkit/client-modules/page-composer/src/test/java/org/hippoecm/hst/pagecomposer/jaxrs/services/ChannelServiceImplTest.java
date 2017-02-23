@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.HstConfigurationException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
@@ -110,6 +111,11 @@ public class ChannelServiceImplTest {
                 .createMock();
         channelService.setHstConfigurationService(hstConfigurationService);
         channelService.setValidatorFactory(new ValidatorFactory());
+    }
+
+    @After
+    public void tearDown() {
+        ModifiableRequestContextProvider.clear();
     }
 
     private void deleteChannel(final Session session, final String channelId) throws RepositoryException, ChannelException {

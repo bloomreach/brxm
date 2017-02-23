@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -48,16 +48,22 @@
     <property name="timeoutMillis" value="${default.blocking.cache.timeout}"/>
   </bean>
 
-  <bean id="defaultBinariesCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
+  <bean id="org.hippoecm.hst.cache.jmx.BinariesCacheStats" class="org.hippoecm.hst.cache.jmx.CacheStats"/>
+  <bean id="org.hippoecm.hst.cache.jmx.PageCacheStats" class="org.hippoecm.hst.cache.jmx.CacheStats"/>
+  <bean id="org.hippoecm.hst.cache.jmx.WebFilesCacheStats" class="org.hippoecm.hst.cache.jmx.CacheStats"/>
+
+  <bean id="defaultBinariesCache" class="org.hippoecm.hst.cache.CompositeHstCache">
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
         <property name="cacheName" value="binariesCache" />
+        <property name="maxEntriesLocalHeap" value="${default.binaries.cache.maxEntries}"/>
         <property name="timeToLive" value="${default.binaries.cache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
+    <property name="cacheStats" ref="org.hippoecm.hst.cache.jmx.BinariesCacheStats"/>
   </bean>
 
-  <bean id="pageCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
+  <bean id="pageCache" class="org.hippoecm.hst.cache.CompositeHstCache">
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
         <property name="cacheName" value="hstPageBlockingCache" />
@@ -65,9 +71,10 @@
         <property name="timeToLive" value="${pageCache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
+    <property name="cacheStats" ref="org.hippoecm.hst.cache.jmx.PageCacheStats"/>
   </bean>
 
-  <bean id="webFileCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
+  <bean id="webFileCache" class="org.hippoecm.hst.cache.CompositeHstCache">
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
         <property name="cacheName" value="hstWebFileCache" />
@@ -75,6 +82,7 @@
         <property name="timeToLive" value="${webFileCache.timeToLiveSeconds}" />
       </bean>
     </constructor-arg>
+    <property name="cacheStats" ref="org.hippoecm.hst.cache.jmx.WebFilesCacheStats"/>
   </bean>
 
 

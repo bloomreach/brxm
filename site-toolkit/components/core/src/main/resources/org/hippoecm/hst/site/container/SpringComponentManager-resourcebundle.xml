@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -28,6 +28,11 @@
   <bean id="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry"
         class="org.hippoecm.hst.resourcebundle.internal.DefaultMutableResourceBundleRegistry">
     <property name="resourceBundleFamilyFactory" ref="org.hippoecm.hst.resourcebundle.internal.ResourceBundleFamilyFactory" />
+  </bean>
+
+  <bean class="org.hippoecm.hst.resourcebundle.internal.ResourceBundleWorkflowEventListener"
+        init-method="init" destroy-method="destroy">
+    <constructor-arg ref="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry"/>
   </bean>
 
 </beans>

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.hst.cache;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.EventIterator;
 
-import org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl;
 import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
 import org.hippoecm.hst.core.jcr.GenericEventListener;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ public class PageCacheEventListener extends GenericEventListener implements Even
 
     private HstCache pageCache;
 
-    public void setPageCache(HstCacheEhCacheImpl pageCache) {
+    public void setPageCache(CompositeHstCache pageCache) {
         this.pageCache = pageCache;
     }
 

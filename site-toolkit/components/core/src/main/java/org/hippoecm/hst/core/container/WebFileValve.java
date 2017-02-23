@@ -257,11 +257,20 @@ public class WebFileValve extends AbstractBaseOrderableValve {
     }
 
     public void onEvent(final Event event) throws RepositoryException {
-        final String path = event.getPath();
-        final boolean remove = webFileCache.remove(path);
-        if (remove) {
-            log.debug("Removed '{}' from webFileCache", path);
+        String path = event.getPath();
+        if (path != null) {
+            // if the path is from either jcr:content child node or property of jcr:content child node
+            // of the web resource node, then remove the descendant path to use the web resource node path
+            // as the cache key by the event.
+            final int offset = path.indexOf("/jcr:content");
+            if (offset != -1) {
+                path = path.substring(0, offset);
+            }
+            final boolean remove = webFileCache.remove(path);
+            if (remove) {
+                log.debug("Removed '{}' from webFileCache", path);
+            }
+            negativeWebFileCache.invalidate(path);
         }
-        negativeWebFileCache.invalidate(path);
     }
 }

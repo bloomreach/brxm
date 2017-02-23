@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -82,6 +82,16 @@ public class TestSimpleContentRewriter {
             "<img src=\"http://upload.wikimedia.org/wikipedia/commons/3/31/Red-dot-5px.png\" alt=\"Red dot\"/>\n" +
             "</div>";
 
+    private static final String CONTENT_WITH_EXTERNAL_PROTOCOLS =
+            "<html>\n" +
+            "<head>\n" +
+            "<title>Hello</title>\n" +
+            "</head>\n" +
+            "<body>" +
+            "<a href=\"sip:mail@provider.com\">sip-protocol</a>" +
+            "</body>\n" +
+            "</html>";
+
     private Node node;
     private HstRequestContext requestContext;
     private Mount mount;
@@ -153,6 +163,13 @@ public class TestSimpleContentRewriter {
         ContentRewriter<String> rewriter = new SimpleContentRewriter();
         String html = rewriter.rewrite(CONTENT_WITH_NON_INTERNAL_IMAGES, node, requestContext, mount);
         assertEquals(CONTENT_WITH_NON_INTERNAL_IMAGES, html);
+    }
+
+    @Test
+    public void testContentWithExternalProtocols() {
+        ContentRewriter<String> rewriter = new SimpleContentRewriter();
+        String html = rewriter.rewrite(CONTENT_WITH_EXTERNAL_PROTOCOLS, node, requestContext, mount);
+        assertTrue(html.contains("href=\"sip:mail@provider.com\""));
     }
 
     @Test

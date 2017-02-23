@@ -48,6 +48,21 @@ public class HstRequestUtils {
 
     public static final String HTTP_METHOD_POST = "POST";
 
+    /**
+     * Default HTTP Forwarded-For header name. <code>X-Forwarded-For</code> by default.
+     */
+    public static final String DEFAULT_HTTP_FORWARDED_FOR_HEADER = "X-Forwarded-For";
+
+    /**
+     * Servlet context init parameter name for custom HTTP Forwarded-For header name.
+     * If not set, {@link #DEFAULT_HTTP_FORWARDED_FOR_HEADER} is used by default.
+     */
+    public static final String HTTP_FORWARDED_FOR_HEADER_PARAM = "http-forwarded-for-header";
+
+    /*
+     * Package protected for unit tests.
+     */
+    static String httpForwardedForHeader;
 
     private HstRequestUtils() {
 
@@ -380,19 +395,17 @@ public class HstRequestUtils {
      * @return
      */
     public static String [] getRemoteAddrs(HttpServletRequest request) {
-        String xff = request.getHeader("X-Forwarded-For");
+        String headerName = getForwardedForHeaderName(request);
+        String headerValue = request.getHeader(headerName);
 
-        if (xff != null) {
-            String [] addrs = xff.split(",");
-
+        if (headerValue != null && headerValue.length() > 0) {
+            String [] addrs = headerValue.split(",");
             for (int i = 0; i < addrs.length; i++) {
                 addrs[i] = addrs[i].trim();
             }
-
             return addrs;
-        } else {
-            return new String [] { request.getRemoteAddr() };
         }
+        return new String [] { request.getRemoteAddr() };
     }
 
     /**
@@ -644,4 +657,39 @@ public class HstRequestUtils {
         return url.toString();
     }
 
+    /**
+     * Return <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent HTTP header name
+     * if {@link #HTTP_FORWARDED_FOR_HEADER_PARAM} context parameter is defined to use any other custom HTTP header instead.
+     * @param request servlet request
+     * @return <code>X-Forwarded-For</code> HTTP header name by default or custom equivalent HTTP header name
+     */
+    private static String getForwardedForHeaderName(final HttpServletRequest request) {
+        String forwardedForHeader = httpForwardedForHeader;
+
+        if (forwardedForHeader == null) {
+            synchronized (HstRequestUtils.class) {
+                forwardedForHeader = httpForwardedForHeader;
+
+                if (forwardedForHeader == null) {
+                    String param = request.getServletContext().getInitParameter(HTTP_FORWARDED_FOR_HEADER_PARAM);
+
+                    if (param != null) {
+                        param = param.trim();
+
+                        if (!param.isEmpty()) {
+                            forwardedForHeader = param;
+                        }
+                    }
+
+                    if (forwardedForHeader == null) {
+                        forwardedForHeader = DEFAULT_HTTP_FORWARDED_FOR_HEADER;
+                    }
+
+                    httpForwardedForHeader = forwardedForHeader;
+                }
+            }
+        }
+
+        return forwardedForHeader;
+    }
 }
