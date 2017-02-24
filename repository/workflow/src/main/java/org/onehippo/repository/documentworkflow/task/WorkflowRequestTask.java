@@ -1,12 +1,12 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *         http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,8 @@ public class WorkflowRequestTask extends AbstractDocumentTask {
 
     private String type;
     private DocumentVariant contextVariant;
-    private Date targetDate;
+    private Date publicationDate;
+    private Date depublicationDate;
 
     public String getType() {
         return type;
@@ -55,35 +56,37 @@ public class WorkflowRequestTask extends AbstractDocumentTask {
     }
 
     @SuppressWarnings("unused")
-    public Date getTargetDate() {
-        return targetDate;
+    public Date getPublicationDate() {
+        return publicationDate;
     }
 
-    public void setTargetDate(Date targetDate) {
-        this.targetDate = targetDate;
+    public void setPublicationDate(final Date publicationDate) {
+        this.publicationDate = publicationDate;
+    }
+
+    @SuppressWarnings("unused")
+    public Date getDepublicationDate() {
+        return depublicationDate;
+    }
+
+    public void setDepublicationDate(final Date depublicationDate) {
+        this.depublicationDate = depublicationDate;
     }
 
     @Override
     public Object doExecute() throws WorkflowException, RepositoryException, RemoteException {
 
-        DocumentHandle dm = getDocumentHandle();
-
-        if (!dm.isRequestPending()) {
-
-            if (targetDate == null) {
-                new WorkflowRequest(getType(), contextVariant.getNode(getWorkflowContext().getInternalWorkflowSession()),
-                        contextVariant, getWorkflowContext().getUserIdentity());
-            } else {
-                new WorkflowRequest(getType(), contextVariant.getNode(getWorkflowContext().getInternalWorkflowSession()),
-                        contextVariant, getWorkflowContext().getUserIdentity(), targetDate);
-            }
-
-            getWorkflowContext().getInternalWorkflowSession().save();
-        } else {
+        DocumentHandle documentHandle = getDocumentHandle();
+        if (getDocumentHandle().isRequestPending()) {
             throw new WorkflowException("publication request already pending");
         }
 
-        return null;
+        new WorkflowRequest(getType(), contextVariant.getNode(getWorkflowContext().getInternalWorkflowSession()),
+                contextVariant, getWorkflowContext().getUserIdentity());
+        getWorkflowContext().getInternalWorkflowSession().save();
+
+       return null;
     }
+
 
 }

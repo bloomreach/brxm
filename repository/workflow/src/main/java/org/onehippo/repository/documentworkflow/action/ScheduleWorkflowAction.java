@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,13 @@ import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
 import org.onehippo.repository.documentworkflow.task.ScheduleWorkflowTask;
 
+import static org.onehippo.repository.documentworkflow.action.WorkflowRequestAction.DEPUBLICATION_DATE_EXPR;
+import static org.onehippo.repository.documentworkflow.action.WorkflowRequestAction.PUBLICATION_DATE_EXPR;
+
 /**
  * ScheduleWorkflowAction is a custom DocumentWorkflow SCXML state machine action for scheduling a "publish" or
  * "depublish" {@link #setType(String) type} workflow operation of the current document on a specific
- * {@link #setTargetDateExpr(String) date}.
+ * {@link #setPublicationDateExpr(String)} (String) date} or {@link #setDepublicationDateExpr(String)} (String) date}.
  * <p>
  * The execution of this task is delegated to its corresponding {@link ScheduleWorkflowTask}.
  * </p>
@@ -43,13 +46,20 @@ public class ScheduleWorkflowAction extends AbstractDocumentTaskAction<ScheduleW
         setParameter("type", type);
     }
 
-    public String getTargetDateExpr() {
-        return getParameter("targetDateExpr");
+    public String getPublicationDateExpr() {
+        return getParameter(PUBLICATION_DATE_EXPR);
     }
 
-    @SuppressWarnings("unused")
-    public void setTargetDateExpr(String targetDateExpr) {
-        setParameter("targetDateExpr", targetDateExpr);
+    public void setPublicationDateExpr(String publishDateExpr) {
+        setParameter(PUBLICATION_DATE_EXPR, publishDateExpr);
+    }
+
+    public String getDepublicationDateExpr() {
+        return getParameter(DEPUBLICATION_DATE_EXPR);
+    }
+
+    public void setDepublicationDateExpr(String unpublicationDateExpr) {
+        setParameter(DEPUBLICATION_DATE_EXPR, unpublicationDateExpr);
     }
 
     @Override
@@ -61,7 +71,8 @@ public class ScheduleWorkflowAction extends AbstractDocumentTaskAction<ScheduleW
     protected void initTask(ScheduleWorkflowTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
         task.setType(getType());
-        task.setTargetDate((Date) eval(getTargetDateExpr()));
+        task.setPublicationDate(eval(getPublicationDateExpr()));
+        task.setDepublicationDate(eval(getDepublicationDateExpr()));
     }
 
 }

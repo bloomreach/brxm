@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,8 @@
 
 package org.onehippo.repository.documentworkflow.action;
 
-import java.util.Date;
-
 import org.apache.commons.scxml2.SCXMLExpressionException;
 import org.apache.commons.scxml2.model.ModelException;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.task.WorkflowRequestTask;
 
 /**
@@ -34,6 +31,9 @@ import org.onehippo.repository.documentworkflow.task.WorkflowRequestTask;
 public class WorkflowRequestAction extends AbstractDocumentTaskAction<WorkflowRequestTask> {
 
     private static final long serialVersionUID = 1L;
+
+    static final String PUBLICATION_DATE_EXPR = "publicationDateExpr";
+    static final String DEPUBLICATION_DATE_EXPR = "depublicationDateExpr";
 
     public String getType() {
         return getParameter("type");
@@ -53,13 +53,20 @@ public class WorkflowRequestAction extends AbstractDocumentTaskAction<WorkflowRe
         setParameter("contextVariantExpr", contextVariantExpr);
     }
 
-    public String getTargetDateExpr() {
-        return getParameter("targetDateExpr");
+    public String getPublicationDateExpr() {
+        return getParameter(PUBLICATION_DATE_EXPR);
     }
 
-    @SuppressWarnings("unused")
-    public void setTargetDateExpr(String targetDateExpr) {
-        setParameter("targetDateExpr", targetDateExpr);
+    public void setPublicationDateExpr(String publishDateExpr) {
+        setParameter(PUBLICATION_DATE_EXPR, publishDateExpr);
+    }
+
+    public String getDepublicationDateExpr() {
+        return getParameter(DEPUBLICATION_DATE_EXPR);
+    }
+
+    public void setDepublicationDateExpr(String unpublicationDateExpr) {
+        setParameter(DEPUBLICATION_DATE_EXPR, unpublicationDateExpr);
     }
 
     @Override
@@ -71,7 +78,8 @@ public class WorkflowRequestAction extends AbstractDocumentTaskAction<WorkflowRe
     protected void initTask(WorkflowRequestTask task) throws ModelException, SCXMLExpressionException {
         super.initTask(task);
         task.setType(getType());
-        task.setContextVariant((DocumentVariant) eval(getContextVariantExpr()));
-        task.setTargetDate((Date) eval(getTargetDateExpr()));
+        task.setContextVariant((eval(getContextVariantExpr())));
+        task.setPublicationDate(eval(getPublicationDateExpr()));
+        task.setDepublicationDate(eval(getDepublicationDateExpr()));
     }
 }

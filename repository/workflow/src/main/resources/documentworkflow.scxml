@@ -264,23 +264,18 @@
           <cs:var name="request" expr="_event.data?.request"/>
           <!-- store the request workflow type as temporary variable -->
           <cs:var name="workflowType" expr="request.workflowType"/>
-          <!-- store the request targetDate as temporary variable -->
-          <cs:var name="targetDate" expr="request.scheduledDate"/>
 
           <!-- First delete the request itself.
                Note: After this, the request object no longer can be accessed!
-                     Which is why we need to define the temporary variables workflowType and targetDate above.
+                     Which is why we need to define the temporary variable workflowType.
           -->
           <hippo:deleteRequest requestExpr="request"/>
 
-          <if cond="!targetDate">
+          <if cond="true">
             <!-- the request didn't have a targetDate defined, simply trigger the "workflowType" value as event -->
             <send event="workflowType"/>
             <!-- log the workflowType after it has been processed -->
             <send event="'logEvent.'+workflowType"/>
-          <else/>
-            <!-- the request did have a targetDate: trigger a 'scheduled' workflow action event -->
-            <send event="workflowType" namelist="targetDate"/>
           </if>
 
         </transition>
@@ -334,18 +329,18 @@
           </if>
         </onentry>
 
-        <!-- target-less transition to create a publish request when no event payload parameter targetDate is provided -->
-        <transition event="requestPublication" cond="!_event.data?.targetDate">
+        <!-- target-less transition to create a publish request when no event payload parameter publicationDate is provided -->
+        <transition event="requestPublication" cond="!_event.data?.publicationDate">
           <hippo:workflowRequest type="publish" contextVariantExpr="unpublished"/>
         </transition>
 
-        <!-- target-less transition to create a scheduledpublish request at the required event payload parameter targetDate -->
-        <transition event="requestPublication" cond="!!_event.data?.targetDate">
-          <hippo:workflowRequest type="scheduledpublish" contextVariantExpr="unpublished" targetDateExpr="_event.data?.targetDate"/>
+        <!-- target-less transition to create a scheduledpublish request at the required event payload parameter publicationDate -->
+        <transition event="requestPublication" cond="!!_event.data?.publicationDate">
+          <hippo:workflowRequest type="scheduledpublish" contextVariantExpr="unpublished" publicationDateExpr="_event.data?.publicationDate"/>
         </transition>
 
-        <!-- target-less transition to publish the document when no event payload parameter targetDate is provided -->
-        <transition event="publish" cond="!_event.data?.targetDate">
+        <!-- target-less transition to publish the document when no event payload parameter publicationDate is provided -->
+        <transition event="publish" cond="!_event.data?.publicationDate">
           <!-- copy the content of the unpublished variant to the published variant -->
           <hippo:copyVariant sourceState="unpublished" targetState="published"/>
           <!-- mark the published variant as published and set its availability to (only) 'live' -->
@@ -354,9 +349,9 @@
           <hippo:version variant="unpublished"/>
         </transition>
 
-        <!-- target-less transition to schedule the publication of the document at the required event payload parameter targetDate -->
-        <transition event="publish" cond="!!_event.data?.targetDate">
-          <hippo:scheduleWorkflow type="publish" targetDateExpr="_event.data?.targetDate"/>
+        <!-- target-less transition to schedule the publication of the document at the required event payload parameter publicationDate -->
+        <transition event="publish" cond="!!_event.data?.publicationDate">
+          <hippo:scheduleWorkflow type="publish" publicationDateExpr="_event.data?.publicationDate"/>
         </transition>
 
       </state>
@@ -395,18 +390,18 @@
           </if>
         </onentry>
 
-        <!-- target-less transition to create a depublish request when no event payload parameter targetDate is provided -->
-        <transition event="requestDepublication" cond="!_event.data?.targetDate">
+        <!-- target-less transition to create a depublish request when no event payload parameter depublicationDate is provided -->
+        <transition event="requestDepublication" cond="!_event.data?.depublicationDate">
           <hippo:workflowRequest type="depublish" contextVariantExpr="published"/>
         </transition>
 
-        <!-- target-less transition to create a scheduleddepublish request at the required event payload parameter targetDate -->
-        <transition event="requestDepublication" cond="!!_event.data?.targetDate">
-          <hippo:workflowRequest type="scheduleddepublish" contextVariantExpr="published" targetDateExpr="_event.data?.targetDate"/>
+        <!-- target-less transition to create a scheduleddepublish request at the required event payload parameter depublicationDate -->
+        <transition event="requestDepublication" cond="!!_event.data?.depublicationDate">
+          <hippo:workflowRequest type="scheduleddepublish" contextVariantExpr="published" depublicationDateExpr="_event.data?.depublicationDate"/>
         </transition>
 
-        <!-- target-less transition to depublish the document when no event payload parameter targetDate is provided -->
-        <transition event="depublish" cond="!_event.data?.targetDate">
+        <!-- target-less transition to depublish the document when no event payload parameter depublicationDate is provided -->
+        <transition event="depublish" cond="!_event.data?.depublicationDate">
           <if cond="!unpublished">
             <!-- if no unpublished variant exists yet, copy it from the published variant -->
             <hippo:copyVariant sourceState="published" targetState="unpublished"/>
@@ -419,9 +414,9 @@
           <hippo:version variant="unpublished"/>
         </transition>
 
-        <!-- target-less transition to schedule the depublication of the document at the required event payload parameter targetDate -->
-        <transition event="depublish" cond="!!_event.data?.targetDate">
-          <hippo:scheduleWorkflow type="depublish" targetDateExpr="_event.data?.targetDate"/>
+        <!-- target-less transition to schedule the depublication of the document at the required event payload parameter depublicationDate -->
+        <transition event="depublish" cond="!!_event.data?.depublicationDate">
+          <hippo:scheduleWorkflow type="depublish" depublicationDateExpr="_event.data?.depublicationDate"/>
         </transition>
 
       </state>
