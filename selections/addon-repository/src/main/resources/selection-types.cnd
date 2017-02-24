@@ -3,7 +3,7 @@
 
 [selection:basedocument] > hippo:document
 
-[selection:listitem] 
+[selection:listitem] > hippo:compound
   - selection:key (string) 
   - selection:label (string) 
 
