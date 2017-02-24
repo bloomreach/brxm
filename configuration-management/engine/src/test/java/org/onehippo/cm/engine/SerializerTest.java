@@ -87,12 +87,11 @@ public class SerializerTest extends AbstractBaseTest {
         final Path path = folder.getRoot().toPath().resolve("repo-config").resolve("test.yaml");
 
         assertEquals(
-                // the value for str should actually be broken over two lines, see
-                // https://bitbucket.org/asomov/snakeyaml/issues/355/dumping-long-string-values-are-not-split
                 "instructions:\n" +
                 "  - config:\n" +
                 "      - /foo:\n" +
-                "          - str: 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789\n",
+                "          - str: 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789\n" +
+                "                0123456789 0123456789 0123456789 0123456789\n",
                 new String(Files.readAllBytes(path)));
     }
 
