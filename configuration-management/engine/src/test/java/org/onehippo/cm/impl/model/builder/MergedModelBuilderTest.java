@@ -49,7 +49,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         assertEquals("", root.getName());
         assertNull(root.getParent());
         assertEquals(0, root.getNodes().size());
-        assertEquals(0, root.getProperties().size());
+        assertEquals(1, root.getProperties().size());
     }
 
     @Test

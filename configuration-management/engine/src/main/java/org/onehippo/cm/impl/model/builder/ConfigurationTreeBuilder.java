@@ -24,12 +24,14 @@ import java.util.stream.Collectors;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ConfigurationPropertyImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
+import org.onehippo.cm.impl.model.ValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,11 +44,26 @@ import static org.onehippo.cm.api.model.PropertyOperation.OVERRIDE;
 class ConfigurationTreeBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationTreeBuilder.class);
+    private static final String REP_ROOT_NT = "rep:root";
+
     private final ConfigurationNodeImpl root = new ConfigurationNodeImpl();
+
 
     ConfigurationTreeBuilder() {
         root.setPath("/");
         root.setName("");
+
+        ConfigurationPropertyImpl property;
+
+        // add required jcr:primaryType: rep:root
+        property = new ConfigurationPropertyImpl();
+        property.setName(JCR_PRIMARYTYPE);
+        property.setParent(root);
+        property.setPath("/" + JCR_PRIMARYTYPE);
+        property.setType(PropertyType.SINGLE);
+        property.setValueType(ValueType.NAME);
+        property.setValue(new ValueImpl(REP_ROOT_NT, ValueType.NAME, false, false));
+        root.addProperty(JCR_PRIMARYTYPE, property);
     }
 
     ConfigurationNodeImpl build() {
@@ -132,6 +149,8 @@ class ConfigurationTreeBuilder {
         for (DefinitionPropertyImpl property: definitionNode.getModifiableProperties().values()) {
             mergeProperty(node, property);
         }
+
+        requirePrimaryType(node, definitionNode);
 
         final Map<String, ConfigurationNodeImpl> children = node.getModifiableNodes();
         for (DefinitionNodeImpl definitionChild : definitionNode.getModifiableNodes().values()) {
@@ -356,6 +375,15 @@ class ConfigurationTreeBuilder {
                         JCR_MIXINTYPES, property.getParent().getPath(), culprit, missingMixins.toString());
                 throw new IllegalStateException(msg);
             }
+        }
+    }
+
+    private void requirePrimaryType(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
+        if (!node.getProperties().containsKey(JCR_PRIMARYTYPE)) {
+            final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+            final String msg = String.format("Node '%s' defined at '%s' is missing the required %s property.",
+                    definitionNode.getPath(), culprit, JCR_PRIMARYTYPE);
+            throw new IllegalStateException(msg);
         }
     }
 
