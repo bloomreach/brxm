@@ -32,6 +32,11 @@ public class ExpectedEvents {
         return this;
     }
 
+    public ExpectedEvents expectNodeAdded(final String path, final String additionalProperty) throws RepositoryException {
+        expectedEvents.add(new EventPojo(Event.NODE_ADDED, path));
+        return expectPropertyAdded(path + "/" + additionalProperty);
+    }
+
     public ExpectedEvents expectNodeReordered(final String parent, final String srcChildRelPath, final String destChildRelPath) throws RepositoryException {
         expectedEvents.add(new EventPojo(Event.NODE_MOVED, parent, srcChildRelPath, destChildRelPath));
         return this;

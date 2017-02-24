@@ -41,21 +41,13 @@ import org.onehippo.cm.impl.model.builder.eventutils.EventPojo;
 import org.onehippo.cm.impl.model.builder.eventutils.ExpectedEvents;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
 
 public class RepositoryFacadeTest extends RepositoryTestCase {
 
-    /* - add node
-     * - merge node
-     * - reorder node
-     * - attempt reorder within not-orderable node
-     * - delete node
-     * - jcrProperty and MixinType tests
-     *   - check if it is possible to remove either using a prop-delete ...
-     */
     private Node testNode;
 
     @Before
@@ -73,6 +65,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 = "instructions:\n"
                 + "- config:\n"
                 + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
                 + "    - single: org\n"
                 + "    - multiple: [org1, org2]\n"
                 + "";
@@ -82,8 +75,8 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         applyDefinitions(source, expectedEvents);
 
         expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
-        expectProperty("/test/single", PropertyType.STRING, "org");
-        expectProperty("/test/multiple", PropertyType.STRING, new String[]{"org1","org2"});
+        expectProp("/test/single", PropertyType.STRING, "org");
+        expectProp("/test/multiple", PropertyType.STRING, "[org1, org2]");
     }
 
     @Test
@@ -94,6 +87,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 = "instructions:\n"
                 + "- config:\n"
                 + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
                 + "    - single: new\n"
                 + "    - multiple: [new1, new2]\n"
                 + "";
@@ -105,8 +99,8 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         applyDefinitions(definition, expectedEvents);
 
         expectNode("/test", "[]", "[jcr:primaryType, multiple, single]");
-        expectProperty("/test/single", PropertyType.STRING, "new");
-        expectProperty("/test/multiple", PropertyType.STRING, new String[]{"new1","new2"});
+        expectProp("/test/single", PropertyType.STRING, "new");
+        expectProp("/test/multiple", PropertyType.STRING, "[new1, new2]");
     }
 
     @Test
@@ -119,6 +113,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 = "instructions:\n"
                 + "- config:\n"
                 + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
                 + "    - single: new\n"
                 + "    - multiple: [new1, new2]\n"
                 + "    - reordered: [new1, new2]\n"
@@ -132,9 +127,9 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         applyDefinitions(definition, expectedEvents);
 
         expectNode("/test", "[]", "[jcr:primaryType, multiple, reordered, single]");
-        expectProperty("/test/single", PropertyType.STRING, "new");
-        expectProperty("/test/multiple", PropertyType.STRING, new String[]{"new1","new2"});
-        expectProperty("/test/reordered", PropertyType.STRING, new String[]{"new1","new2"});
+        expectProp("/test/single", PropertyType.STRING, "new");
+        expectProp("/test/multiple", PropertyType.STRING, "[new1, new2]");
+        expectProp("/test/reordered", PropertyType.STRING, "[new1, new2]");
     }
 
     @Test
@@ -146,6 +141,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 = "instructions:\n"
                 + "- config:\n"
                 + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
                 + "    - explicitly-deleted: value\n"
                 + "    - explicitly-deleted-non-existing: value\n"
                 + "";
@@ -169,7 +165,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
     }
 
     @Test
-    public void expect_overrides_to_be_applied_if_necessary() throws Exception {
+    public void expect_propertytype_overrides_to_be_applied_if_necessary() throws Exception {
         setProperty("/test", "incorrect-should-be-single", PropertyType.STRING, new String[]{"org1","org2"});
         setProperty("/test", "incorrect-should-be-long", PropertyType.STRING, new String[]{"org1","org2"});
         setProperty("/test", "already-changed-to-single", PropertyType.STRING, "new");
@@ -179,6 +175,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 = "instructions:\n"
                 + "- config:\n"
                 + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
                 + "    - incorrect-should-be-single: [org1, org2]\n"
                 + "    - incorrect-should-be-long: [org1, org2]\n"
                 + "    - already-changed-to-single: [org1, org2]\n"
@@ -220,11 +217,11 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
 
         expectNode("/test", "[]", "[already-changed-to-long, already-changed-to-single, incorrect-should-be-long, "
                 + "incorrect-should-be-single, jcr:primaryType, not-yet-existing]");
-        expectProperty("/test/incorrect-should-be-single", PropertyType.STRING, "new");
-        expectProperty("/test/incorrect-should-be-long", PropertyType.LONG, new String[]{"42","31415"});
-        expectProperty("/test/already-changed-to-single", PropertyType.STRING, "new");
-        expectProperty("/test/already-changed-to-long", PropertyType.LONG, new String[]{"42","31415"});
-        expectProperty("/test/not-yet-existing", PropertyType.STRING, "new");
+        expectProp("/test/incorrect-should-be-single", PropertyType.STRING, "new");
+        expectProp("/test/incorrect-should-be-long", PropertyType.LONG, "[42, 31415]");
+        expectProp("/test/already-changed-to-single", PropertyType.STRING, "new");
+        expectProp("/test/already-changed-to-long", PropertyType.LONG, "[42, 31415]");
+        expectProp("/test/not-yet-existing", PropertyType.STRING, "new");
     }
 
     @Test
@@ -233,6 +230,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 = "instructions:\n"
                 + "- config:\n"
                 + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
                 + "    - string: hello world\n"
                 + "    - binary: !!binary |-\n"
                 + "        aGVsbG8gd29ybGQ=\n"
@@ -262,18 +260,18 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
 
         applyDefinitions(definition); // ignore all events
 
-        expectProperty("/test/string", PropertyType.STRING, "hello world");
-        expectProperty("/test/binary", PropertyType.BINARY, "hello world");
-        expectProperty("/test/long", PropertyType.LONG, "42");
-        expectProperty("/test/double", PropertyType.DOUBLE, "3.1415");
-        expectProperty("/test/date", PropertyType.DATE, "2015-10-21T07:28:00.000+08:00");
-        expectProperty("/test/boolean", PropertyType.BOOLEAN, "true");
-        expectProperty("/test/name", PropertyType.NAME, "nt:unstructured");
-        expectProperty("/test/path", PropertyType.PATH, "/path/to/something");
-        expectProperty("/test/reference", PropertyType.REFERENCE, "cafebabe-cafe-babe-cafe-babecafebabe");
-        expectProperty("/test/weakreference", PropertyType.WEAKREFERENCE, "cafebabe-cafe-babe-cafe-babecafebabe");
-        expectProperty("/test/uri", PropertyType.URI, "http://onehippo.org");
-        expectProperty("/test/decimal", PropertyType.DECIMAL, "31415926535897932384626433832795028841971");
+        expectProp("/test/string", PropertyType.STRING, "hello world");
+        expectProp("/test/binary", PropertyType.BINARY, "hello world");
+        expectProp("/test/long", PropertyType.LONG, "42");
+        expectProp("/test/double", PropertyType.DOUBLE, "3.1415");
+        expectProp("/test/date", PropertyType.DATE, "2015-10-21T07:28:00.000+08:00");
+        expectProp("/test/boolean", PropertyType.BOOLEAN, "true");
+        expectProp("/test/name", PropertyType.NAME, "nt:unstructured");
+        expectProp("/test/path", PropertyType.PATH, "/path/to/something");
+        expectProp("/test/reference", PropertyType.REFERENCE, "cafebabe-cafe-babe-cafe-babecafebabe");
+        expectProp("/test/weakreference", PropertyType.WEAKREFERENCE, "cafebabe-cafe-babe-cafe-babecafebabe");
+        expectProp("/test/uri", PropertyType.URI, "http://onehippo.org");
+        expectProp("/test/decimal", PropertyType.DECIMAL, "31415926535897932384626433832795028841971");
 
         // when applying the same definition again, expect no events
         final ExpectedEvents expectedEvents = new ExpectedEvents();
@@ -286,6 +284,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 = "instructions:\n"
                 + "- config:\n"
                 + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
                 + "    - string:\n"
                 + "        type: string\n"
                 + "        resource: folder/string.txt\n"
@@ -300,9 +299,9 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
 
         applyDefinitions(definition, expectedEvents);
 
-        expectProperty("/test/string", PropertyType.STRING,
+        expectProp("/test/string", PropertyType.STRING,
                 "test-configuration/test-project/test-module-0/string/folder/string.txt");
-        expectProperty("/test/binary", PropertyType.BINARY,
+        expectProp("/test/binary", PropertyType.BINARY,
                 "test-configuration/test-project/test-module-0/string/folder/binary.bin");
 
         // when applying the same definition again, expect no events
@@ -316,6 +315,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 = "instructions:\n"
                 + "- config:\n"
                 + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
                 + "    - string:\n"
                 + "        type: string\n"
                 + "        resource: [folder/string1.txt]\n"
@@ -334,9 +334,9 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
 
         applyDefinitions(new String[]{definition1,definition2}, expectedEvents);
 
-        expectProperty("/test/string", PropertyType.STRING, new String[]{
-                "test-configuration/test-project/test-module-0/string/folder/string1.txt",
-                "test-configuration/test-project/test-module-1/string/folder/string1.txt"});
+        expectProp("/test/string", PropertyType.STRING,
+                "[test-configuration/test-project/test-module-0/string/folder/string1.txt, " +
+                "test-configuration/test-project/test-module-1/string/folder/string1.txt]");
 
         // when applying the same definition again, expect no events
         expectedEvents = new ExpectedEvents();
@@ -349,6 +349,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 = "instructions:\n"
                 + "- config:\n"
                 + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
                 + "    - absolute:\n"
                 + "        type: reference\n"
                 + "        path: /test/foo/bar\n"
@@ -365,12 +366,265 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         applyDefinitions(definition);
 
         final Node bar = testNode.getNode("foo/bar");
-        expectProperty("/test/absolute", PropertyType.REFERENCE, bar.getIdentifier());
-        expectProperty("/test/relative", PropertyType.REFERENCE, bar.getIdentifier());
+        expectProp("/test/absolute", PropertyType.REFERENCE, bar.getIdentifier());
+        expectProp("/test/relative", PropertyType.REFERENCE, bar.getIdentifier());
 
         // when applying the same definition again, expect no events
         final ExpectedEvents expectedEvents = new ExpectedEvents();
         applyDefinitions(definition, expectedEvents);
+    }
+
+    @Test
+    public void expect_unchanged_existing_nodes_to_be_untouched() throws Exception {
+        addNode("/test", "a", "nt:unstructured");
+        addNode("/test/a", "z", "nt:unstructured");
+        addNode("/test", "b", "nt:unstructured");
+        setProperty("/test/a", "property", PropertyType.STRING, "a");
+        setProperty("/test/a/z", "property", PropertyType.STRING, "z");
+        setProperty("/test/b", "property", PropertyType.STRING, "b");
+
+        final String source
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - /a:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "      - property: a\n"
+                + "      - /z:\n"
+                + "        - jcr:primaryType: nt:unstructured\n"
+                + "        - property: z\n"
+                + "    - /b:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "      - property: b\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents(); // aka, expect to see no events
+
+        applyDefinitions(source, expectedEvents);
+
+        expectNode("/test", "[a, b]", "[jcr:primaryType]");
+        expectNode("/test/a", "[z]", "[jcr:primaryType, property]");
+        expectNode("/test/a/z", "[]", "[jcr:primaryType, property]");
+        expectNode("/test/b", "[]", "[jcr:primaryType, property]");
+        expectProp("/test/a/property", PropertyType.STRING, "a");
+        expectProp("/test/a/z/property", PropertyType.STRING, "z");
+        expectProp("/test/b/property", PropertyType.STRING, "b");
+    }
+
+    @Test
+    public void expect_nodes_to_be_merged() throws Exception {
+        addNode("/test", "a", "nt:unstructured");
+        addNode("/test/a", "z", "nt:unstructured");
+        addNode("/test", "b", "nt:unstructured");
+        setProperty("/test/a", "property", PropertyType.STRING, "a");
+        setProperty("/test/a/z", "property", PropertyType.STRING, "z");
+        setProperty("/test/b", "property", PropertyType.STRING, "b");
+
+        final String source
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - /first:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "      - property: first\n"
+                + "    - /a:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "      - property: a\n"
+                + "      - /z:\n"
+                + "        - jcr:primaryType: nt:unstructured\n"
+                + "        - property: z\n"
+                + "      - /recurse:\n"
+                + "        - jcr:primaryType: nt:unstructured\n"
+                + "        - property: recurse\n"
+                + "    - /middle:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "      - property: middle\n"
+                + "    - /b:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "      - property: b\n"
+                + "    - /last:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "      - property: last\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectNodeAdded("/test/first", JCR_PRIMARYTYPE)
+                .expectNodeAdded("/test/middle", JCR_PRIMARYTYPE)
+                .expectNodeAdded("/test/last", JCR_PRIMARYTYPE)
+                .expectNodeAdded("/test/a/recurse", JCR_PRIMARYTYPE)
+                .expectPropertyAdded("/test/first/property")
+                .expectPropertyAdded("/test/middle/property")
+                .expectPropertyAdded("/test/last/property")
+                .expectPropertyAdded("/test/a/recurse/property");
+
+        applyDefinitions(source, expectedEvents);
+
+        expectNode("/test", "[first, a, middle, b, last]", "[jcr:primaryType]");
+        expectNode("/test/first", "[]", "[jcr:primaryType, property]");
+        expectProp("/test/first/property", PropertyType.STRING, "first");
+        expectNode("/test/middle", "[]", "[jcr:primaryType, property]");
+        expectProp("/test/middle/property", PropertyType.STRING, "middle");
+        expectNode("/test/last", "[]", "[jcr:primaryType, property]");
+        expectProp("/test/last/property", PropertyType.STRING, "last");
+        expectNode("/test/a/recurse", "[]", "[jcr:primaryType, property]");
+        expectProp("/test/a/recurse/property", PropertyType.STRING, "recurse");
+    }
+
+    @Test
+    public void expect_deleted_nodes_to_be_deleted() throws Exception {
+        addNode("/test", "a", "nt:unstructured");
+        addNode("/test/a", "z", "nt:unstructured");
+        addNode("/test", "b", "nt:unstructured");
+        setProperty("/test/a", "property", PropertyType.STRING, "a");
+        setProperty("/test/a/z", "property", PropertyType.STRING, "z");
+        setProperty("/test/b", "property", PropertyType.STRING, "b");
+
+        final String source
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - /a:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "      - property: a\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectNodeRemoved("/test/a/z")
+                .expectNodeRemoved("/test/b");
+
+        applyDefinitions(source, expectedEvents);
+
+        expectNode("/test", "[a]", "[jcr:primaryType]");
+    }
+
+    @Test
+    public void expect_nodetype_overrides_to_be_applied_if_necessary() throws Exception {
+        addNode("/test", "keep-as-is", "nt:unstructured", new String[]{"mix:language"});
+        addNode("/test", "remove-mixin", "nt:unstructured", new String[]{"mix:language"});
+        addNode("/test", "change-type-and-mixin", "nt:unstructured", new String[]{"mix:language"});
+
+        // TODO: as part of HCM-24, expand this test
+        // TODO: replace hippo types with custom test types
+        final String source
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - /keep-as-is:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "      - jcr:mixinTypes: ['mix:language']\n"
+                + "    - /remove-mixin:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "    - /change-type-and-mixin:\n"
+                + "      - jcr:primaryType: hippo:document\n"
+                + "      - jcr:mixinTypes: ['hippostd:relaxed']\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectPropertyRemoved("/test/remove-mixin/jcr:mixinTypes")
+                .expectPropertyChanged("/test/change-type-and-mixin/jcr:primaryType")
+                .expectPropertyChanged("/test/change-type-and-mixin/jcr:mixinTypes")
+                .expectPropertyAdded("/test/change-type-and-mixin/hippo:paths");
+
+        applyDefinitions(source, expectedEvents);
+
+        expectNode("/test", "[keep-as-is, remove-mixin, change-type-and-mixin]", "[jcr:primaryType]");
+        expectNode("/test/keep-as-is", "[]", "[jcr:mixinTypes, jcr:primaryType]");
+        expectProp("/test/keep-as-is/jcr:primaryType", PropertyType.NAME, "nt:unstructured");
+        expectProp("/test/keep-as-is/jcr:mixinTypes", PropertyType.NAME, "[mix:language]");
+        expectNode("/test/remove-mixin", "[]", "[jcr:primaryType]");
+        expectProp("/test/remove-mixin/jcr:primaryType", PropertyType.NAME, "nt:unstructured");
+        expectNode("/test/change-type-and-mixin", "[]", "[hippo:paths, jcr:mixinTypes, jcr:primaryType]");
+        expectProp("/test/change-type-and-mixin/jcr:primaryType", PropertyType.NAME, "hippo:document");
+        expectProp("/test/change-type-and-mixin/jcr:mixinTypes", PropertyType.NAME, "[hippostd:relaxed]");
+    }
+
+    @Test
+    public void expect_reorders_to_be_applied() throws Exception {
+        addNode("/test", "a", "nt:unstructured");
+        addNode("/test", "b", "nt:unstructured");
+        addNode("/test", "c", "nt:unstructured");
+
+        final String source
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - /c:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "    - /b:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "    - /a:\n"
+                + "      - jcr:primaryType: nt:unstructured\n"
+                + "";
+
+        // TODO: discuss how to handle JackRabbit reporting these events as a number of deletes and adds and not 2 moves
+//        final ExpectedEvents expectedEvents = new ExpectedEvents()
+//                .expectNodeReordered("/test", "/test/c", "/test/a")
+//                .expectNodeReordered("/test", "/test/b", "/test/a");
+//
+//        applyDefinitions(source, expectedEvents);
+        applyDefinitions(source);
+
+        expectNode("/test", "[c, b, a]", "[jcr:primaryType]");
+    }
+
+    @Test
+    public void expect_node_order_ignored_in_non_orderable_node() throws Exception {
+        addNode("/test", "non-orderable", "hippostd:directory", new String[]{"hippostd:relaxed"});
+        addNode("/test/non-orderable", "a", "nt:unstructured");
+        addNode("/test/non-orderable", "b", "nt:unstructured");
+        addNode("/test/non-orderable", "c", "nt:unstructured");
+
+        final String source
+                = "instructions:\n"
+                + "- config:\n"
+                + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - /non-orderable:\n"
+                + "      - jcr:primaryType: hippostd:directory\n"
+                + "      - jcr:mixinTypes: ['hippostd:relaxed']\n"
+                + "      - /c:\n"
+                + "        - jcr:primaryType: nt:unstructured\n"
+                + "      - /b:\n"
+                + "        - jcr:primaryType: nt:unstructured\n"
+                + "      - /a:\n"
+                + "        - jcr:primaryType: nt:unstructured\n"
+                + "";
+
+        // TODO: replace hippo types with custom test types to get rid of changed hippo:paths property
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectPropertyChanged("/test/non-orderable/hippo:paths");
+
+        applyDefinitions(source, expectedEvents);
+
+        expectNode("/test/non-orderable", "[a, b, c]", "[hippo:paths, jcr:mixinTypes, jcr:primaryType]");
+    }
+
+    private void setProperty(final String nodePath, final String name, final int valueType, final String value) throws RepositoryException {
+        session.getNode(nodePath).setProperty(name, value, valueType);
+        session.save();
+    }
+
+    private void setProperty(final String nodePath, final String name, final int valueType, final String[] values) throws RepositoryException {
+        session.getNode(nodePath).setProperty(name, values, valueType);
+        session.save();
+    }
+
+    private void addNode(final String parent, final String name, final String primaryType) throws RepositoryException {
+        session.getNode(parent).addNode(name, primaryType);
+        session.save();
+    }
+
+    private void addNode(final String parent, final String name, final String primaryType, final String[] mixinTypes) throws RepositoryException {
+        final Node node = session.getNode(parent).addNode(name, primaryType);
+        for (String mixinType : mixinTypes) {
+            node.addMixin(mixinType);
+        }
+        session.save();
     }
 
     private void applyDefinitions(final String source) throws Exception {
@@ -415,32 +669,22 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         assertEquals(childProperties, createChildPropertiesString(node));
     }
 
-    private void setProperty(final String nodePath, final String name, final int valueType, final String value) throws RepositoryException {
-        session.getNode(nodePath).setProperty(name, value, valueType);
-        session.save();
-    }
-
-    private void setProperty(final String nodePath, final String name, final int valueType, final String[] values) throws RepositoryException {
-        session.getNode(nodePath).setProperty(name, values, valueType);
-        session.save();
-    }
-
-    private void expectProperty(final String path, final int expectedValueType, final String expectedValue) throws RepositoryException {
+    private void expectProp(final String path, final int expectedValueType, final String expectedValue) throws RepositoryException {
         final Property property = session.getProperty(path);
         assertEquals(expectedValueType, property.getType());
-        assertFalse(property.isMultiple());
-        assertEquals(expectedValue, property.getValue().getString());
-    }
 
-    private void expectProperty(final String path, final int expectedValueType, final String[] expectedValues) throws RepositoryException {
-        final Property property = session.getProperty(path);
-        assertEquals(expectedValueType, property.getType());
-        assertTrue(property.isMultiple());
-        final Value[] values = property.getValues();
-        assertEquals(values.length, expectedValues.length);
-        for (int i = 0; i < values.length; i++) {
-            assertEquals(expectedValues[i], values[i].getString());
+        final String actualValue;
+        if (property.isMultiple()) {
+            final List<String> values = new ArrayList();
+            for (Value value : property.getValues()) {
+                values.add(value.getString());
+            }
+            actualValue = values.toString();
+        } else {
+            actualValue = property.getValue().getString();
         }
+
+        assertEquals(expectedValue, actualValue);
     }
 
     String createChildNodesString(final Node node) throws RepositoryException {

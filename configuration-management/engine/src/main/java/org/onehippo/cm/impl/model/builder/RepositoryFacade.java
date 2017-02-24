@@ -23,7 +23,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -190,13 +189,14 @@ public class RepositoryFacade {
             nextChildNameProvider.ignore(indexedName); // 'indexedName' is consumed.
 
             // ensure correct ordering
-            // TODO: add check for "isOrderable"
-            if (indexedName.equals(nextChildIndexedName)) {
-                // 'nextChildIndexedName' is processed, get new next
-                nextChildIndexedName = nextChildNameProvider.next();
-            } else {
-                // jcrChild is not at next child position, move it there
-                jcrNode.orderBefore(indexName(jcrChild), nextChildIndexedName);
+            if (jcrNode.getPrimaryNodeType().hasOrderableChildNodes()) {
+                if (indexedName.equals(nextChildIndexedName)) {
+                    // 'nextChildIndexedName' is processed, get new next
+                    nextChildIndexedName = nextChildNameProvider.next();
+                } else {
+                    // jcrChild is not at next child position, move it there
+                    jcrNode.orderBefore(indexName(jcrChild), nextChildIndexedName);
+                }
             }
 
             pushProperties(modelChild, jcrChild);
@@ -217,27 +217,23 @@ public class RepositoryFacade {
     private Map<String, Node> removeNonModelNodes(final ConfigurationNode modelNode, final Node jcrNode)
             throws RepositoryException {
 
-        // compile map of uniquely named child nodes
-        final Map<String, Node> existingChildren = new LinkedHashMap<>();
+        final Map<String, Node> retainedChildren = new LinkedHashMap<>();
+        final List<Node> nonModelNodes = new ArrayList<>();
+
         final NodeIterator iterator = jcrNode.getNodes();
         while (iterator.hasNext()) {
             final Node jcrChild = iterator.nextNode();
-            existingChildren.put(indexName(jcrChild), jcrChild);
-        }
-
-        // compile map of retained nodes
-        final Map<String, Node> retainedChildren = new LinkedHashMap<>();
-        for (String indexedName : modelNode.getNodes().keySet()) {
-            if (existingChildren.containsKey(indexedName)) {
-                retainedChildren.put(indexedName, existingChildren.get(indexedName));
-                existingChildren.remove(indexedName);
+            if (modelNode.getNodes().containsKey(jcrChild.getName())) {
+                retainedChildren.put(jcrChild.getName(), jcrChild);
+            } else {
+                nonModelNodes.add(jcrChild);
             }
         }
 
         // remove nodes unknown to the model, except top-level nodes
         if (jcrNode.getDepth() > 0) {
-            for (final String indexedName : existingChildren.keySet()) {
-                existingChildren.get(indexedName).remove();
+            for (final Node nonModelNode : nonModelNodes) {
+                nonModelNode.remove();
             }
         }
 
@@ -289,53 +285,47 @@ public class RepositoryFacade {
     }
 
     private void pushProperties(final ConfigurationNode source, final Node target) throws Exception {
-        final Map<String, Property> existingProperties = new HashMap<>();
-        final PropertyIterator iterator = target.getProperties();
-        while (iterator.hasNext()) {
-            final Property property = iterator.nextProperty();
-            existingProperties.put(property.getName(), property);
-        }
+        removeNonModelProperties(source, target);
 
-        for (String name : source.getProperties().keySet()) {
-            final ConfigurationProperty modelProperty = source.getProperties().get(name);
+        pushPrimaryAndMixinTypes(source, target);
 
-            if (name.equals(JCR_PRIMARYTYPE)) {
-                pushPrimaryType(modelProperty, target);
-            } else if (name.equals(JCR_MIXINTYPES)) {
-                pushMixinTypes(modelProperty, target);
-            } else if (modelProperty.getValueType() == ValueType.REFERENCE ||
+        for (ConfigurationProperty modelProperty : source.getProperties().values()) {
+            if (modelProperty.getValueType() == ValueType.REFERENCE ||
                     modelProperty.getValueType() == ValueType.WEAKREFERENCE) {
                 unprocessedReferences.add(Pair.of(modelProperty, target));
             } else {
                 pushProperty(modelProperty, target);
             }
-            existingProperties.remove(name);
         }
+    }
 
-        // delete all existing properties that are not part of the source model
-        for (String name : existingProperties.keySet()) {
-            final Property jcrProperty = target.getProperty(name);
-            if (!jcrProperty.getDefinition().isProtected()) {
-                jcrProperty.remove();
+    private void removeNonModelProperties(final ConfigurationNode source, final Node target) throws RepositoryException {
+        final PropertyIterator iterator = target.getProperties();
+        while (iterator.hasNext()) {
+            final Property property = iterator.nextProperty();
+            if (!property.getDefinition().isProtected()) {
+                if (!source.getProperties().containsKey(property.getName())) {
+                    property.remove();
+                }
             }
         }
     }
 
-    private void pushPrimaryType(final ConfigurationProperty property, final Node target) throws RepositoryException {
-        final String modelPrimaryType = property.getValue().getString();
-        final String jcrPrimaryType = target.getPrimaryNodeType().getName();
-        if (!jcrPrimaryType.equals(modelPrimaryType)) {
-            target.setPrimaryType(modelPrimaryType);
-        }
-    }
+    private void pushPrimaryAndMixinTypes(final ConfigurationNode source, final Node target) throws RepositoryException {
+        // TODO: for now ignore root, as it does not have type information in the model yet
+        if (target.getDepth() == 0) return;
 
-    private void pushMixinTypes(final ConfigurationProperty property, final Node target) throws RepositoryException {
         final List<String> jcrMixinTypes = Arrays.stream(target.getMixinNodeTypes())
                 .map(NodeType::getName)
                 .collect(Collectors.toList());
-        final List<String> modelMixinTypes = Arrays.stream(property.getValues())
-                .map(Value::getString)
-                .collect(Collectors.toList());
+
+        final List<String> modelMixinTypes = new ArrayList<>();
+        final ConfigurationProperty modelProperty = source.getProperties().get(JCR_MIXINTYPES);
+        if (modelProperty != null) {
+            for (Value value : modelProperty.getValues()) {
+                modelMixinTypes.add(value.getString());
+            }
+        }
 
         for (String modelMixinType : modelMixinTypes) {
             if (jcrMixinTypes.contains(modelMixinType)) {
@@ -345,12 +335,20 @@ public class RepositoryFacade {
             }
         }
 
+        final String modelPrimaryType = source.getProperties().get(JCR_PRIMARYTYPE).getValue().getString();
+        final String jcrPrimaryType = target.getPrimaryNodeType().getName();
+        if (!jcrPrimaryType.equals(modelPrimaryType)) {
+            target.setPrimaryType(modelPrimaryType);
+        }
+
         for (String mixinType : jcrMixinTypes) {
             target.removeMixin(mixinType);
         }
     }
 
     private void pushProperty(final ConfigurationProperty modelProperty, final Node jcrNode) throws Exception {
+        // TODO: discuss how to efficiently filter out protected properties here
+        // TODO: the code now "works" as primaryType and mixinTypes are correctly set and valuesAreIdentical returns true
         final Property jcrProperty = getPropertyIfExists(jcrNode, modelProperty.getName());
 
         if (jcrProperty != null) {
