@@ -96,9 +96,15 @@ class ConfigurationTreeBuilder {
      * onto the tree of {@link ConfigurationNodeImpl}s and {@link ConfigurationPropertyImpl}s.
      */
     private void mergeNode(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
-        if (definitionNode.isDelete()) {
+        if (definitionNode.isDeleted()) {
             markNodeAsDeletedBy(node, definitionNode);
             return;
+        } else if (definitionNode.isDelete() && !node.isNew()) {
+            final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+            final String sourceList = ModelUtils.formatDefinitions(node);
+            String msg = String.format("%s: Trying to delete AND merge node %s defined before by %s.",
+                    culprit, definitionNode.getPath(), sourceList);
+            throw new IllegalArgumentException(msg);
         }
 
         final ConfigurationNodeImpl parent = node.getModifiableParent();
@@ -236,10 +242,12 @@ class ConfigurationTreeBuilder {
 
         if (definitionNode.isDelete()) {
             final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
-            final String msg = String.format("%s: Trying to delete node %s that does not exist.",
-                    culprit, definitionNode.getPath());
+            final String msg = String.format("%s: Trying to %sdelete node %s that does not exist.",
+                    culprit, definitionNode.isDeleted() ? "" : "merge ", definitionNode.getPath());
             logger.warn(msg);
-            return null;
+            if (definitionNode.isDeleted()) {
+                return null;
+            }
         }
 
         node.setName(name);

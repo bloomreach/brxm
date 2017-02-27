@@ -77,27 +77,43 @@ public class ModelTestUtils {
     }
 
     public static List<Definition> parseNoSort(final String yaml) throws Exception {
-        return parseNoSort(yaml, "test-module");
+        return parseNoSort(yaml, false);
+    }
+
+    public static List<Definition> parseNoSort(final String yaml, final boolean verifyOnly) throws Exception {
+        return parseNoSort(yaml, "test-module", verifyOnly);
     }
 
     public static List<Definition> parseNoSort(final String yaml, final String moduleName) throws Exception {
+        return parseNoSort(yaml, moduleName, false);
+    }
+
+    public static List<Definition> parseNoSort(final String yaml, final String moduleName, final boolean verifyOnly) throws Exception {
         final ModuleImpl module = makeModule(moduleName);
-        loadYAMLString(yaml, module);
+        loadYAMLString(yaml, module, verifyOnly);
         return findByPath(STRING_SOURCE, module.getSources()).getDefinitions();
     }
 
     public static void loadYAMLResource(final ClassLoader classLoader, final String resourcePath, final ModuleImpl module) throws Exception {
+        loadYAMLResource(classLoader, resourcePath, module, false);
+    }
+
+    public static void loadYAMLResource(final ClassLoader classLoader, final String resourcePath, final ModuleImpl module, final boolean verifyOnly) throws Exception {
         final InputStream input = classLoader.getResourceAsStream(resourcePath);
-        loadYAMLStream(input, resourcePath, module);
+        loadYAMLStream(input, resourcePath, module, verifyOnly);
     }
 
     public static void loadYAMLString(final String yaml, final ModuleImpl module) throws Exception {
-        final InputStream input = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
-        loadYAMLStream(input, STRING_SOURCE, module);
+        loadYAMLString(yaml, module, false);
     }
 
-    private static void loadYAMLStream(final InputStream input, final String sourcePath, final ModuleImpl module) throws Exception {
-        new SourceParser(resourceInputProvider).parse(sourcePath, sourcePath, input, module);
+    public static void loadYAMLString(final String yaml, final ModuleImpl module, final boolean verifyOnly) throws Exception {
+        final InputStream input = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
+        loadYAMLStream(input, STRING_SOURCE, module, verifyOnly);
+    }
+
+    private static void loadYAMLStream(final InputStream input, final String sourcePath, final ModuleImpl module, final boolean verifyOnly) throws Exception {
+        new SourceParser(resourceInputProvider, verifyOnly).parse(sourcePath, sourcePath, input, module);
     }
 
 }

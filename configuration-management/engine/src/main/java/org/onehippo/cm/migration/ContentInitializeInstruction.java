@@ -340,7 +340,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         }
     }
 
-    private void deleteDefinition(final Definition definition) {
+    protected void deleteDefinition(final Definition definition) {
         // remove definition from source
         SourceImpl defSource = (SourceImpl) definition.getSource();
         for (Iterator<Definition> defIterator = defSource.getModifiableDefinitions().iterator(); defIterator.hasNext(); ) {
