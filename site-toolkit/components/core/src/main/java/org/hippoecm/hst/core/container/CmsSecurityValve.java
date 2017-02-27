@@ -227,13 +227,13 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
     private static String createCmsAuthenticationUrl(final HttpServletRequest servletRequest, final HstRequestContext requestContext, final String cmsContextServiceId) throws ContainerException {
         final String farthestRequestUrlPrefix = getFarthestUrlPrefix(servletRequest);
         final String cmsLocation = getCmsLocationByPrefix(requestContext, farthestRequestUrlPrefix);
-        final String destinationURL = createDestinationUrl(servletRequest, requestContext, farthestRequestUrlPrefix);
+        final String destinationPath = createDestinationPath(servletRequest, requestContext);
 
         final StringBuilder authUrl = new StringBuilder(cmsLocation);
         if (!cmsLocation.endsWith("/")) {
             authUrl.append("/");
         }
-        authUrl.append("auth?destinationUrl=").append(destinationURL);
+        authUrl.append("auth?destinationPath=").append(destinationPath);
         if (cmsContextServiceId != null) {
             authUrl.append("&cmsCSID=").append(cmsContextServiceId);
         }
@@ -257,23 +257,23 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         throw new ContainerException("Could not establish a SSO between CMS & site application because no CMS location could be found that starts with '" + prefix + "'");
     }
 
-    private static String createDestinationUrl(final HttpServletRequest servletRequest, final HstRequestContext requestContext, final String prefix) {
-        final StringBuilder destinationURL = new StringBuilder(prefix);
+    private static String createDestinationPath(final HttpServletRequest servletRequest, final HstRequestContext requestContext) {
+        final StringBuilder destinationPath = new StringBuilder();
 
-        // we append the request uri including the context path (normally this is /site/...)
-        destinationURL.append(servletRequest.getRequestURI());
+        // we start with the request uri including the context path (normally this is /site/...)
+        destinationPath.append(servletRequest.getRequestURI());
 
         if (requestContext.getPathSuffix() != null) {
             final HstManager hstManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
             final String subPathDelimiter = hstManager.getPathSuffixDelimiter();
-            destinationURL.append(subPathDelimiter).append(requestContext.getPathSuffix());
+            destinationPath.append(subPathDelimiter).append(requestContext.getPathSuffix());
         }
 
         final String queryString = servletRequest.getQueryString();
         if (queryString != null) {
-            destinationURL.append("?").append(queryString);
+            destinationPath.append("?").append(queryString);
         }
-        return destinationURL.toString();
+        return destinationPath.toString();
     }
 
     private static void updateHstSessionCookie(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse, final HttpSession session) {
