@@ -97,6 +97,11 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
         final boolean newNode = defNode == null || defNode.isDeleted();
         if (newNode) {
             final boolean deleted = defNode != null && defNode.isDelete();
+            if (deleted && defNode.isRoot()) {
+                // earlier hippo:contentdelete
+                deleteDefinition(defNode.getDefinition());
+                defNode = null;
+            }
             String parentPath = null;
             if (parentNode == null && node.getMerge() != null) {
                 if (defNode != null) {
