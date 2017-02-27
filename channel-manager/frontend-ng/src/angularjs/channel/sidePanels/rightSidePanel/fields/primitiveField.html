@@ -13,7 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-
 <div class="field" layout="column">
   <md-input-container class="qa-field"
                       md-no-float
@@ -62,6 +61,7 @@
     <!-- TODO render with CKEditor -->
     <textarea ng-switch-when="HTML"
               ng-model="fieldValue.value"
+              ckeditor
               name="{{ ::$ctrl.getFieldName($index) }}"
               placeholder=""
               aria-label="{{::$ctrl.fieldType.displayName}}"
