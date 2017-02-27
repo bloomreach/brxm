@@ -56,22 +56,34 @@ public abstract class AbstractBuilderBaseTest {
     }
 
     protected List<Definition> parseNoSort(final String yaml) throws Exception {
+        return parseNoSort(yaml, false);
+    }
+
+    protected List<Definition> parseNoSort(final String yaml, final boolean verifyOnly) throws Exception {
         final ModuleImpl module = makeModule();
-        loadYAMLString(yaml, module);
+        loadYAMLString(yaml, module, verifyOnly);
         return findByPath(STRING_SOURCE, module.getSources()).getDefinitions();
     }
 
     protected void loadYAMLFile(final String filePath, final ModuleImpl module) throws Exception {
+        loadYAMLFile(filePath, module, false);
+    }
+
+    protected void loadYAMLFile(final String filePath, final ModuleImpl module, final boolean verifyOnly) throws Exception {
         final InputStream input = getClass().getClassLoader().getResourceAsStream(filePath);
-        loadYAMLStream(input, filePath, module);
+        loadYAMLStream(input, filePath, module, verifyOnly);
     }
 
     protected void loadYAMLString(final String yaml, final ModuleImpl module) throws Exception {
-        final InputStream input = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
-        loadYAMLStream(input, STRING_SOURCE, module);
+        loadYAMLString(yaml, module, false);
     }
 
-    private static void loadYAMLStream(final InputStream input, final String sourcePath, final ModuleImpl module) throws Exception {
+    protected void loadYAMLString(final String yaml, final ModuleImpl module, final boolean verifyOnly) throws Exception {
+        final InputStream input = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
+        loadYAMLStream(input, STRING_SOURCE, module, verifyOnly);
+    }
+
+    private static void loadYAMLStream(final InputStream input, final String sourcePath, final ModuleImpl module, boolean verifyOnly) throws Exception {
         new SourceParser(new ResourceInputProvider() {
             @Override
             public boolean hasResource(final Source source, final String resourcePath) {
@@ -82,6 +94,6 @@ public abstract class AbstractBuilderBaseTest {
             public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
                 return null;
             }
-        }).parse(sourcePath, sourcePath, input, module);
+        }, verifyOnly).parse(sourcePath, sourcePath, input, module);
     }
 }

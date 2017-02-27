@@ -52,6 +52,10 @@ public class ConfigurationNodeImpl extends ConfigurationItemImpl implements Conf
         modifiableNodes.clear();
     }
 
+    public boolean isNew() {
+        return modifiableNodes.isEmpty() && modifiableProperties.isEmpty();
+    }
+
     @Override
     public Map<String, ConfigurationProperty> getProperties() {
         return properties;

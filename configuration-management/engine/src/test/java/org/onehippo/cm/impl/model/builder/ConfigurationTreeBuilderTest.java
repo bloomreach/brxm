@@ -641,6 +641,29 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     }
 
     @Test
+    public void non_existent_definition_root_with_delete_and_merge() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - jcr:primaryType: foo\n"
+                + "    - /b:\n"
+                + "      - jcr:primaryType: foo\n"
+                + "  - /a/b/c:\n"
+                + "    - .meta:delete: true\n"
+                + "    - jcr:primaryType: foo";
+
+        final List<Definition> definitions = parseNoSort(yaml, true);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to merge delete node /a/b/c that does not exist.")));
+        }
+    }
+
+    @Test
     public void non_existent_definition_node_with_delete_flag() throws Exception {
         final String yaml = "instructions:\n"
                 + "- config:\n"
@@ -661,6 +684,86 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             builder.push((ContentDefinitionImpl) definitions.get(1));
             assertTrue(listener.messages()
                     .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
+        }
+    }
+
+    @Test
+    public void non_existent_definition_node_with_delete_and_merge() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - jcr:primaryType: foo\n"
+                + "    - /b:\n"
+                + "      - jcr:primaryType: foo\n"
+                + "      - property1: bla1\n"
+                + "  - /a/b:\n"
+                + "    - /c:\n"
+                + "      - .meta:delete: true\n"
+                + "      - jcr:primaryType: foo";
+
+        final List<Definition> definitions = parseNoSort(yaml, true);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl) definitions.get(1));
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to merge delete node /a/b/c that does not exist.")));
+        }
+    }
+
+    @Test
+    public void existing_definition_root_with_delete_and_merge() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - jcr:primaryType: foo\n"
+                + "    - /b:\n"
+                + "      - jcr:primaryType: foo";
+
+        final String yaml2 = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - /b:\n"
+                + "      - .meta:delete: true\n"
+                + "      - jcr:primaryType: foo";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+        final List<Definition> definitions2 = parseNoSort(yaml2, true);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        try {
+            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("test-configuration/test-project/test-module [string]: Trying to delete AND merge node /a/b defined before by [test-configuration/test-project/test-module [string]].", e.getMessage());
+        }
+    }
+
+    @Test
+    public void existing_definition_with_delete_and_merge() throws Exception {
+        final String yaml = "instructions:\n"
+                + "- config:\n"
+                + "  - /a:\n"
+                + "    - jcr:primaryType: foo\n"
+                + "    - /b:\n"
+                + "      - jcr:primaryType: foo";
+
+        final String yaml2 = "instructions:\n"
+                + "- config:\n"
+                + "  - /a/b:\n"
+                + "    - .meta:delete: true\n"
+                + "    - jcr:primaryType: foo";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+        final List<Definition> definitions2 = parseNoSort(yaml2, true);
+
+        builder.push((ContentDefinitionImpl) definitions.get(0));
+        try {
+            builder.push((ContentDefinitionImpl) definitions2.get(0));
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("test-configuration/test-project/test-module [string]: Trying to delete AND merge node /a/b defined before by [test-configuration/test-project/test-module [string]].", e.getMessage());
         }
     }
 

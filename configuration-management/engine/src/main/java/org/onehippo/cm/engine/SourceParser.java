@@ -109,9 +109,15 @@ public class SourceParser extends AbstractBaseParser {
     private static final ScalarConstructor scalarConstructor = new ScalarConstructor();
 
     private final ResourceInputProvider resourceInputProvider;
+    private final boolean verifyOnly;
 
     public SourceParser(final ResourceInputProvider resourceInputProvider) {
+        this(resourceInputProvider, false);
+    }
+
+    public SourceParser(final ResourceInputProvider resourceInputProvider, boolean verifyOnly) {
         this.resourceInputProvider = resourceInputProvider;
+        this.verifyOnly = verifyOnly;
     }
 
     public void parse(final String sourcePath, final String path, final InputStream inputStream, final ModuleImpl parent) throws ParserException {
@@ -207,8 +213,10 @@ public class SourceParser extends AbstractBaseParser {
         for (Node keyNode : children.keySet()) {
             final String key = asStringScalar(keyNode);
             if (key.equals(".meta:delete")) {
-                if (children.size() > 1) {
-                    throw new ParserException("Node cannot contain '.meta:delete' and other keys", value);
+                if (!verifyOnly) {
+                    if (children.size() > 1) {
+                        throw new ParserException("Node cannot contain '.meta:delete' and other keys", value);
+                    }
                 }
                 final boolean delete = asNodeDeleteValue(children.get(keyNode));
                 definitionNode.setDelete(delete);
