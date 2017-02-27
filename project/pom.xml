@@ -205,6 +205,7 @@
       </snapshots>
       <releases>
         <updatePolicy>never</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
       </releases>
     </repository>
     <!-- DISABLED repositories which are often "transitively" pulled in
@@ -262,6 +263,10 @@
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>fail</checksumPolicy>
+      </releases>
       <id>central</id>
       <name>Central Repository</name>
       <url>https://repo.maven.apache.org/maven2</url>
@@ -278,6 +283,7 @@
       </snapshots>
       <releases>
         <updatePolicy>never</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
       </releases>
       <layout>default</layout>
     </pluginRepository>
@@ -301,6 +307,7 @@
     <pluginRepository>
       <releases>
         <updatePolicy>never</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
       </releases>
       <snapshots>
         <enabled>false</enabled>
