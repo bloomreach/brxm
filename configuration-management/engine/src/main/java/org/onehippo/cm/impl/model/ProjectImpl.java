@@ -26,9 +26,11 @@ import java.util.Set;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
-import org.onehippo.cm.impl.model.builder.sorting.OrderableComparator;
+import org.onehippo.cm.impl.model.builder.OrderableListSorter;
 
 public class ProjectImpl implements Project {
+
+    private static final OrderableListSorter<ModuleImpl> modulesSorter = new OrderableListSorter<>(Module.class.getSimpleName());
 
     private final String name;
     private final ConfigurationImpl configuration;
@@ -89,7 +91,7 @@ public class ProjectImpl implements Project {
     }
 
     public void sortModules() {
-        modifiableModules.sort(new OrderableComparator<>());
+        modulesSorter.sort(modifiableModules);
     }
 
     void pushModule(final ModuleImpl module) {
