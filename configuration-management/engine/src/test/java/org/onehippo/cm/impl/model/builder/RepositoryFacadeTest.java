@@ -68,7 +68,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 + "- cnd:\n"
                 + "  - |\n"
                 + "    <'test'='http://www.onehippo.org/test/nt/1.0'>\n"
-                + "    [absent:type] > nt:unstructured\n"
+                + "    [test:type] > nt:unstructured\n"
                 + "- config:\n"
                 + "  - /test:\n"
                 + "    - jcr:primaryType: nt:unstructured\n"
