@@ -37,9 +37,11 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.apache.jackrabbit.JcrConstants.MIX_REFERENCEABLE;
 import static org.onehippo.cm.api.model.PropertyOperation.ADD;
 import static org.onehippo.cm.api.model.PropertyOperation.DELETE;
 import static org.onehippo.cm.api.model.PropertyOperation.OVERRIDE;
+import static org.onehippo.cm.api.model.PropertyOperation.REPLACE;
 
 class ConfigurationTreeBuilder {
 
@@ -53,17 +55,25 @@ class ConfigurationTreeBuilder {
         root.setPath("/");
         root.setName("");
 
-        ConfigurationPropertyImpl property;
-
         // add required jcr:primaryType: rep:root
-        property = new ConfigurationPropertyImpl();
-        property.setName(JCR_PRIMARYTYPE);
-        property.setParent(root);
-        property.setPath("/" + JCR_PRIMARYTYPE);
-        property.setType(PropertyType.SINGLE);
-        property.setValueType(ValueType.NAME);
-        property.setValue(new ValueImpl(REP_ROOT_NT, ValueType.NAME, false, false));
-        root.addProperty(JCR_PRIMARYTYPE, property);
+        final ConfigurationPropertyImpl primaryTypeProperty = new ConfigurationPropertyImpl();
+        primaryTypeProperty.setName(JCR_PRIMARYTYPE);
+        primaryTypeProperty.setParent(root);
+        primaryTypeProperty.setPath("/" + JCR_PRIMARYTYPE);
+        primaryTypeProperty.setType(PropertyType.SINGLE);
+        primaryTypeProperty.setValueType(ValueType.NAME);
+        primaryTypeProperty.setValue(new ValueImpl(REP_ROOT_NT, ValueType.NAME, false, false));
+        root.addProperty(JCR_PRIMARYTYPE, primaryTypeProperty);
+
+        // add required jcr:mixinTypes: mix:referenceable
+        final ConfigurationPropertyImpl mixinTypesProperty = new ConfigurationPropertyImpl();
+        mixinTypesProperty.setName(JCR_MIXINTYPES);
+        mixinTypesProperty.setParent(root);
+        mixinTypesProperty.setPath("/" + JCR_PRIMARYTYPE);
+        mixinTypesProperty.setType(PropertyType.LIST);
+        mixinTypesProperty.setValueType(ValueType.NAME);
+        mixinTypesProperty.setValues(new Value[]{new ValueImpl(MIX_REFERENCEABLE, ValueType.NAME, false, false)});
+        root.addProperty(JCR_MIXINTYPES, mixinTypesProperty);
     }
 
     ConfigurationNodeImpl build() {
@@ -301,7 +311,10 @@ class ConfigurationTreeBuilder {
             property.setValueType(definitionProperty.getValueType());
         }
 
-        warnIfValuesAreEqual(definitionProperty, property);
+        if (op == REPLACE) {
+            warnIfValuesAreEqual(definitionProperty, property);
+        }
+
         property.addDefinitionItem(definitionProperty);
         if (PropertyType.SINGLE == definitionProperty.getType()) {
             property.setValue(definitionProperty.getValue());

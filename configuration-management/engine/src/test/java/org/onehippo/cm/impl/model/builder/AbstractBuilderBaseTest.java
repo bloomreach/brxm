@@ -16,33 +16,14 @@
 
 package org.onehippo.cm.impl.model.builder;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.onehippo.cm.api.model.ConfigurationProperty;
-import org.onehippo.cm.api.model.Definition;
-import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
-import org.onehippo.cm.engine.ResourceInputProvider;
-import org.onehippo.cm.engine.SourceParser;
-import org.onehippo.cm.impl.model.ConfigurationImpl;
-import org.onehippo.cm.impl.model.ModuleImpl;
-
-import static org.onehippo.cm.impl.model.ModelTestUtils.findByPath;
 
 public abstract class AbstractBuilderBaseTest {
-    private final String STRING_SOURCE = "string";
-
-    protected ModuleImpl makeModule() {
-        return new ConfigurationImpl("test-configuration").addProject("test-project").addModule("test-module");
-    }
-
     protected String valuesToString(final ConfigurationProperty property) {
         return Arrays.stream(property.getValues()).map(Value::getString).collect(Collectors.toList()).toString();
     }
@@ -53,47 +34,5 @@ public abstract class AbstractBuilderBaseTest {
 
     protected String sortedCollectionToString(final Map<String, ? extends Object> map) {
         return map.keySet().stream().collect(Collectors.toList()).toString();
-    }
-
-    protected List<Definition> parseNoSort(final String yaml) throws Exception {
-        return parseNoSort(yaml, false);
-    }
-
-    protected List<Definition> parseNoSort(final String yaml, final boolean verifyOnly) throws Exception {
-        final ModuleImpl module = makeModule();
-        loadYAMLString(yaml, module, verifyOnly);
-        return findByPath(STRING_SOURCE, module.getSources()).getDefinitions();
-    }
-
-    protected void loadYAMLFile(final String filePath, final ModuleImpl module) throws Exception {
-        loadYAMLFile(filePath, module, false);
-    }
-
-    protected void loadYAMLFile(final String filePath, final ModuleImpl module, final boolean verifyOnly) throws Exception {
-        final InputStream input = getClass().getClassLoader().getResourceAsStream(filePath);
-        loadYAMLStream(input, filePath, module, verifyOnly);
-    }
-
-    protected void loadYAMLString(final String yaml, final ModuleImpl module) throws Exception {
-        loadYAMLString(yaml, module, false);
-    }
-
-    protected void loadYAMLString(final String yaml, final ModuleImpl module, final boolean verifyOnly) throws Exception {
-        final InputStream input = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
-        loadYAMLStream(input, STRING_SOURCE, module, verifyOnly);
-    }
-
-    private static void loadYAMLStream(final InputStream input, final String sourcePath, final ModuleImpl module, boolean verifyOnly) throws Exception {
-        new SourceParser(new ResourceInputProvider() {
-            @Override
-            public boolean hasResource(final Source source, final String resourcePath) {
-                return false;
-            }
-
-            @Override
-            public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
-                return null;
-            }
-        }, verifyOnly).parse(sourcePath, sourcePath, input, module);
     }
 }

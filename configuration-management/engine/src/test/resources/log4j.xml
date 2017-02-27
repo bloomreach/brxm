@@ -27,8 +27,7 @@
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
     </layout>
-    <!-- TODO: once we have a dependency on the repository test utils, enable the filter below for a cleaner unit test output. -->
-    <!--<filter class="org.onehippo.repository.testutils.log4j.StringMatchFilter"/>-->
+    <filter class="org.onehippo.repository.testutils.log4j.StringMatchFilter"/>
   </appender>
 
   <!-- log4j.log -->

@@ -14,6 +14,12 @@
 #  limitations under the License.
 #
 
+Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.
+Trying to modify already deleted node '/a/b/c', skipping.
+Property '/a/b/c/property1' defined in 'test-configuration/test-project/test-module [string]' has already been deleted. This property is not re-created.
+Property '/a/b/jcr:primaryType' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.
+Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies values equivalent to existing property.
+Property '/a/b/property2' defined in 'test-configuration/test-project/test-module [string]' claims to ADD values, but property doesn't exist yet. Applying default behaviour.
 Content definition rooted at '/a/b/c' conflicts with deleted node at '/a/b/c', skipping.
 Trying to modify already deleted node '/a/b/c/d', skipping.
 Content definition rooted at '/a/b/c/d' conflicts with deleted node at '/a/b/c', skipping.
