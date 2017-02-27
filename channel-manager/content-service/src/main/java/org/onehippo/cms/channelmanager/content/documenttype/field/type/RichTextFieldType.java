@@ -16,16 +16,21 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import java.util.*;
 
 public class RichTextFieldType extends StringFieldType {
 
@@ -34,7 +39,7 @@ public class RichTextFieldType extends StringFieldType {
 
     public RichTextFieldType() {
         super();
-        setType(Type.RICH_TEXT);
+        setType(Type.HTML);
     }
 
     @Override

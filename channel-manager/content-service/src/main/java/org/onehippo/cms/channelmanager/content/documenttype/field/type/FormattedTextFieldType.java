@@ -18,6 +18,6 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
 public class FormattedTextFieldType extends StringFieldType {
     public FormattedTextFieldType() {
-        setType(Type.RICH_TEXT);
+        setType(Type.HTML);
     }
 }
