@@ -70,8 +70,11 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                 ": path " + nodePath + " already deleted at " + node.getSourceLocation());
                     } else {
                         final boolean removable = isRemovableNode(node, deltaNodes);
-                        log.info(removable ? "Removing" : "Deleting" + " path " + nodePath + " defined at " + node.getSourceLocation() +
+                        log.info((removable ? "Removing" : "Deleting") + " path " + nodePath + " defined at " + node.getSourceLocation() +
                                 " by hippo:contentdelete " + getName() + " at " + getInstructionNode().getSourceLocation());
+                        if (removable) {
+                            nodeDefinitions.remove(nodePath);
+                        }
                         deleteChildren(nodePath + "/", nodeDefinitions);
                         if (deltaNodes.contains(node)) {
                             deltaNodes.remove(node);
@@ -137,7 +140,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                 node = null;
                             } else {
                                 final boolean removable = isRemovableProp(prop, deltaNodes);
-                                log.info(removable ? "Removing" : "Deleting" + " property " + getContentPath()
+                                log.info((removable ? "Removing" : "Deleting") + " property " + getContentPath()
                                         + " defined at " + prop.getSourceLocation() + " by hippo:contentpropdelete " +
                                         getName() + " at " + getInstructionNode().getSourceLocation());
                                 if (removable) {
