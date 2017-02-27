@@ -27,6 +27,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
+import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
@@ -44,6 +45,7 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
 
 public class RepositoryFacadeTest extends RepositoryTestCase {
@@ -54,6 +56,56 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
     public void createTestNode() throws RepositoryException {
         testNode = session.getRootNode().addNode("test");
         session.save();
+    }
+
+    @Test
+    public void expect_namespaces_and_cnds_to_be_registered() throws Exception {
+        final String source
+                = "instructions:\n"
+                + "- namespace:\n"
+                + "  - prefix: test\n"
+                + "    uri: http://www.onehippo.org/test/nt/1.0\n"
+                + "- cnd:\n"
+                + "  - |\n"
+                + "    <'test'='http://www.onehippo.org/test/nt/1.0'>\n"
+                + "    [absent:type] > nt:unstructured\n"
+                + "- config:\n"
+                + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - /node:\n"
+                + "      - jcr:primaryType: test:type\n"
+                + "";
+
+        final ExpectedEvents expectedEvents = new ExpectedEvents()
+                .expectNodeAdded("/test/node", JCR_PRIMARYTYPE);
+
+        applyDefinitions(source, expectedEvents);
+
+        expectNode("/test/node", "[]", "[jcr:primaryType]");
+        expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test:type");
+    }
+
+    @Test
+    public void expect_parse_error_in_cnd() throws Exception {
+        final String source
+                = "instructions:\n"
+                + "- cnd:\n"
+                + "  - |\n"
+                + "    [unknown:type] > nt:unstructured\n"
+                + "- config:\n"
+                + "  - /test:\n"
+                + "    - jcr:primaryType: nt:unstructured\n"
+                + "    - /node:\n"
+                + "      - jcr:primaryType: test:type\n"
+                + "";
+
+        try {
+            applyDefinitions(source);
+            fail("an exception should have occured");
+        } catch (ParseException e) {
+            System.out.println(e);
+            // ignore
+        }
     }
 
     @Test

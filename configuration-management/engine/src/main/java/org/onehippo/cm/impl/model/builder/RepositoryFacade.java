@@ -18,6 +18,7 @@ package org.onehippo.cm.impl.model.builder;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.jcr.Binary;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -43,10 +45,14 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.nodetype.NodeTypeTemplate;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.commons.cnd.ParseException;
+import org.apache.jackrabbit.commons.cnd.TemplateBuilderFactory;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
 import org.onehippo.cm.api.model.DefinitionItem;
@@ -98,72 +104,42 @@ public class RepositoryFacade {
             if (prefixes.contains(prefix)) {
                 final String repositoryURI = session.getNamespaceURI(prefix);
                 if (!uriString.equals(repositoryURI)) {
-                    final String msg = String.format("Namespace with prefix '%s' already exists in repository with different URI. Existing: '%s', from model: '%s'",
+                    final String msg = String.format(
+                            "Namespace with prefix '%s' already exists in repository with different URI. Existing: '%s', from model: '%s'; aborting",
                             prefix, repositoryURI, uriString);
                     throw new IllegalArgumentException(msg);
                 }
-
-                prefixes.remove(prefix);
             } else {
-                session.setNamespacePrefix(prefix, uriString);
+                final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
+                namespaceRegistry.registerNamespace(prefix, uriString);
             }
-        }
-
-        for (String prefix : prefixes) {
-            logger.info("Namespace prefix '{}' is not part of the model, but still exists in the repository.", prefix);
         }
     }
 
-    private void pushNodeTypes(final List<? extends NodeTypeDefinition> nodeTypeDefinitions) throws RepositoryException, ParseException {
+    private void pushNodeTypes(final List<? extends NodeTypeDefinition> nodeTypeDefinitions) throws RepositoryException, ParseException, IOException {
         for (NodeTypeDefinition nodeTypeDefinition : nodeTypeDefinitions) {
             pushNodeType(nodeTypeDefinition);
         }
     }
 
-    private static final Pattern CND_NAME_EXTRACTOR = Pattern.compile("\\[[^\\]]+\\]");
-
-    private String generateNameForInlineCnd(final String cnd) {
-        final Matcher cndMatcher = CND_NAME_EXTRACTOR.matcher(cnd);
-        if (cndMatcher.matches()) {
-            return "..." + cnd.substring(cndMatcher.start(), cndMatcher.end()) + "...";
-        }
-        return "unidentified inline CND";
-    }
-
-    private void pushNodeType(final NodeTypeDefinition nodeTypeDefinition) throws RepositoryException, ParseException {
+    private void pushNodeType(final NodeTypeDefinition nodeTypeDefinition) throws RepositoryException, ParseException, IOException {
         final String definitionValue = nodeTypeDefinition.getValue();
-        final String cndName = nodeTypeDefinition.isResource()
-                ? definitionValue
-                : generateNameForInlineCnd(definitionValue);
         final InputStream cndStream = nodeTypeDefinition.isResource()
-                ? null // TODO read resource
+                ? getResourceInputStream(nodeTypeDefinition.getSource(), definitionValue)
                 : new ByteArrayInputStream(definitionValue.getBytes(StandardCharsets.UTF_8));
 
-        // inspired by BootstrapUtils.initializeNodeTypes()
-        /*
-            below code depends on hippo-repository-engine, which implements the HippoCompactNodeTypeDefReader.
+        final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
+        final TemplateBuilderFactory factory = new TemplateBuilderFactory(session);
 
-            logger.debug("Initializing nodetypes from {} ", cndName);
-            final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
-            final CompactNodeTypeDefReader<QNodeTypeDefinition, CompactNodeTypeDefWriter.NamespaceMapping> cndReader =
-                    new HippoCompactNodeTypeDefReader(new InputStreamReader(cndStream), cndName, namespaceRegistry);
-            final List<QNodeTypeDefinition> ntdList = cndReader.getNodeTypeDefinitions();
-            final NodeTypeRegistry nodeTypeRegistry = ((NodeTypeManagerImpl) session.getWorkspace().getNodeTypeManager()).getNodeTypeRegistry();
+        final CompactNodeTypeDefReader<NodeTypeTemplate, NamespaceRegistry> reader =
+                new CompactNodeTypeDefReader<>(new InputStreamReader(cndStream), "<yaml-reader>", namespaceRegistry, factory);
 
-            for (QNodeTypeDefinition ntd : ntdList) {
-                try {
-                    if (!nodeTypeRegistry.isRegistered(ntd.getName())) {
-                        logger.debug("Registering node type {}", ntd.getName());
-                        nodeTypeRegistry.registerNodeType(ntd);
-                    } else {
-                        logger.debug("Replacing node type {}", ntd.getName());
-                        nodeTypeRegistry.reregisterNodeType(ntd);
-                    }
-                } catch (InvalidNodeTypeDefException e) {
-                    throw new RepositoryException("Invalid node type definition for node type " + ntd.getName(), e);
-                }
-            }
-        */
+        final List<NodeTypeTemplate> nttList = reader.getNodeTypeDefinitions();
+        final NodeTypeManager nodeTypeManager = session.getWorkspace().getNodeTypeManager();
+
+        for (NodeTypeTemplate ntt : nttList) {
+            nodeTypeManager.registerNodeType(ntt, true);
+        }
     }
 
     private void pushNodes(final ConfigurationNode configurationRoot) throws Exception {
@@ -465,6 +441,10 @@ public class RepositoryFacade {
         }
     }
 
+    private InputStream getResourceInputStream(final Source source, final String resourceName) throws IOException {
+        return resourceInputProviders.get(source.getModule()).getResourceInputStream(source, resourceName);
+    }
+
     private InputStream getResourceInputStream(final ConfigurationProperty modelProperty,
                                                final Value modelValue) throws IOException {
         final List<DefinitionItem> definitions = modelProperty.getDefinitions();
@@ -476,8 +456,7 @@ public class RepositoryFacade {
                     modelProperty.getPath());
             throw new IllegalArgumentException(msg);
         }
-        final Source source = definitionItem.getDefinition().getSource();
-        return resourceInputProviders.get(source.getModule()).getResourceInputStream(source, modelValue.getString());
+        return getResourceInputStream(definitionItem.getDefinition().getSource(), modelValue.getString());
     }
 
     /**
