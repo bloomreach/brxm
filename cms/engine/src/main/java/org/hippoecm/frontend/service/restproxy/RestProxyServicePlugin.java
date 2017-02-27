@@ -33,7 +33,6 @@ import org.apache.commons.proxy.ProxyFactory;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
@@ -43,6 +42,7 @@ import org.hippoecm.frontend.service.restproxy.custom.json.deserializers.Annotat
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CmsSessionUtil;
+import org.hippoecm.frontend.util.RequestUtils;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
@@ -191,7 +191,8 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public <T> T createSecureRestProxy(final Class<T> restServiceApiClass, final List<Object> additionalProviders) {
         T clientProxy = JAXRSClientFactory.create(restUri, restServiceApiClass, getProviders(additionalProviders));
 
-        HttpSession httpSession = ((ServletWebRequest)RequestCycle.get().getRequest()).getContainerRequest().getSession();
+        HttpServletRequest httpServletRequest = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
+        HttpSession httpSession = httpServletRequest.getSession();
         CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
         if (cmsSessionContext == null) {
             CmsInternalCmsContextService cmsContextService = (CmsInternalCmsContextService)HippoServiceRegistry.getService(CmsContextService.class);
@@ -203,7 +204,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         WebClient.client(clientProxy)
                 .header(HEADER_CMS_CONTEXT_SERVICE_ID, cmsSessionContext.getCmsContextServiceId())
                 .header(HEADER_CMS_SESSION_CONTEXT_ID, cmsSessionContext.getId())
-                .header(CMSREST_CMSHOST_HEADER, getFarthestRequestHost())
+                .header(CMSREST_CMSHOST_HEADER, RequestUtils.getFarthestRequestHost(httpServletRequest))
                 .accept(MediaType.WILDCARD_TYPE);
 
         // default time out is 60000 ms;
@@ -220,28 +221,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         subject.getPrivateCredentials().add(credentials);
         subject.setReadOnly();
         return subject;
-    }
-
-    protected String getFarthestRequestHost() {
-        final HttpServletRequest request = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
-        String host = request.getHeader("X-Forwarded-Host");
-
-        if (host != null) {
-            String [] hosts = host.split(",");
-            return hosts[0].trim();
-        }
-        host = request.getHeader("Host");
-        if (host != null && !"".equals(host)) {
-            return host;
-        }
-        // should never happen : HTTP/1.0 based browser clients are unlikely to login in the cms :)
-        int serverPort = request.getServerPort();
-        if (serverPort == 80 || serverPort == 443 || serverPort <= 0) {
-            host = request.getServerName();
-        } else {
-            host = request.getServerName() + ":" + serverPort;
-        }
-        return host;
     }
 
     protected List<Object> getProviders(final List<Object> additionalProviders) {

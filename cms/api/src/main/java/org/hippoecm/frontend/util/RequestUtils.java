@@ -19,6 +19,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.http.WebRequest;
 
@@ -184,5 +185,46 @@ public class RequestUtils {
         }
 
         return forwardedForHeader;
+    }
+
+    /**
+     * Returns the original host information requested by the client
+     * @param request
+     * @return the farthest request host
+     */
+    public static String getFarthestRequestHost(HttpServletRequest request) {
+        String host = request.getHeader("X-Forwarded-Host");
+
+        if (host != null) {
+            String [] hosts = host.split(",");
+            return hosts[0].trim();
+        }
+
+        host = request.getHeader("Host");
+
+        if (host != null && !"".equals(host)) {
+            return host;
+        }
+
+        // fallback to request server name for HTTP/1.0 clients.
+        // e.g., HTTP/1.0 based browser clients or load balancer not providing 'Host' header.
+
+        int serverPort = request.getServerPort();
+
+        if (serverPort == 80 || serverPort == 443 || serverPort <= 0) {
+            host = request.getServerName();
+        } else {
+            host = request.getServerName() + ":" + serverPort;
+        }
+
+        return host;
+    }
+
+    public static String getFarthestUrlPrefix(final Request  request) {
+        return getFarthestUrlPrefix(((ServletWebRequest)request).getContainerRequest());
+    }
+
+    public static String getFarthestUrlPrefix(final HttpServletRequest httpServletRequest) {
+        return getFarthestRequestScheme(httpServletRequest) + "://" + getFarthestRequestHost(httpServletRequest);
     }
 }

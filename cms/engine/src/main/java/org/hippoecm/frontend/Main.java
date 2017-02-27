@@ -42,9 +42,9 @@ import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.application.IClassResolver;
-import org.apache.wicket.core.request.handler.BookmarkablePageRequestHandler;
 import org.apache.wicket.core.request.handler.PageProvider;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
+import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectPolicy;
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
 import org.apache.wicket.page.IPageManagerContext;
@@ -99,6 +99,7 @@ import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.settings.GlobalSettings;
 import org.hippoecm.frontend.util.CmsSessionUtil;
+import org.hippoecm.frontend.util.RequestUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -331,11 +332,13 @@ public class Main extends PluginApplication {
                 @Override
                 public IRequestHandler mapRequest(final Request request, final MountParameters mountParams) {
 
-                    IRequestHandler requestTarget = new BookmarkablePageRequestHandler(new PageProvider(getHomePage(), null));
+                    IRequestHandler requestTarget = new RenderPageRequestHandler(new PageProvider(getHomePage(), null), RedirectPolicy.AUTO_REDIRECT);
 
                     IRequestParameters requestParameters = request.getRequestParameters();
                     final List<StringValue> cmsCSIDParams = requestParameters.getParameterValues("cmsCSID");
-                    final List<StringValue> destinationUrlParams = requestParameters.getParameterValues("destinationUrl");
+                    final List<StringValue> destinationPathParams = requestParameters.getParameterValues("destinationPath");
+                    final String destinationPath = destinationPathParams != null && !destinationPathParams.isEmpty()
+                            ? destinationPathParams.get(0).toString() : null;
 
                     PluginUserSession userSession = (PluginUserSession) Session.get();
                     final UserCredentials userCredentials = userSession.getUserCredentials();
@@ -343,13 +346,13 @@ public class Main extends PluginApplication {
                     HttpSession httpSession = ((ServletWebRequest)request).getContainerRequest().getSession();
                     final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
 
-                    if (destinationUrlParams.size() > 0 && (cmsSessionContext != null || userCredentials != null)) {
+                    if (destinationPath != null && destinationPath.startsWith("/") && (cmsSessionContext != null || userCredentials != null)) {
 
                         requestTarget = new IRequestHandler() {
 
                             @Override
                             public void respond(IRequestCycle requestCycle) {
-                                String destinationUrl = destinationUrlParams.get(0).toString();
+                                String destinationUrl = RequestUtils.getFarthestUrlPrefix(request) + destinationPath;
                                 WebResponse response = (WebResponse) RequestCycle.get().getResponse();
                                 String cmsCSID = cmsCSIDParams == null ? null : cmsCSIDParams.get(0) == null ? null : cmsCSIDParams.get(0).toString();
                                 if (!cmsContextService.getId().equals(cmsCSID)) {
