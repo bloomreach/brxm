@@ -288,9 +288,6 @@ public class RepositoryFacade {
     }
 
     private void pushPrimaryAndMixinTypes(final ConfigurationNode source, final Node target) throws RepositoryException {
-        // TODO: for now ignore root, as it does not have type information in the model yet
-        if (target.getDepth() == 0) return;
-
         final List<String> jcrMixinTypes = Arrays.stream(target.getMixinNodeTypes())
                 .map(NodeType::getName)
                 .collect(Collectors.toList());
