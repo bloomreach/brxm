@@ -16,13 +16,30 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.jcr.Node;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.*;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -30,10 +47,11 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import javax.jcr.Node;
-import java.util.*;
-
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
