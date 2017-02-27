@@ -59,6 +59,18 @@
               ng-blur="$ctrl.onFieldBlur()">
     </textarea>
 
+    <!-- TODO render with CKEditor -->
+    <textarea ng-switch-when="HTML"
+              ng-model="fieldValue.value"
+              name="{{ ::$ctrl.getFieldName($index) }}"
+              placeholder=""
+              aria-label="{{::$ctrl.fieldType.displayName}}"
+              ng-required="{{::$ctrl.fieldType.required}}"
+              md-no-resize
+              ng-focus="$ctrl.onFieldFocus()"
+              ng-blur="$ctrl.onFieldBlur()">
+    </textarea>
+
     <div ng-if="$last"
          ng-messages="$ctrl.getFieldError()">
       <div ng-message="required">{{ 'ERROR_FIELD_REQUIRED' | translate:$ctrl.fieldType }}</div>

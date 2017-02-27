@@ -25,16 +25,12 @@ import java.util.Set;
 
 import javax.jcr.Node;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.*;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
@@ -84,6 +80,8 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put("Label", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Text", new TypeDescriptor(MultilineStringFieldType.class, PROPERTY_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put("Html", new TypeDescriptor(FormattedTextFieldType.class, PROPERTY_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
     }
@@ -108,7 +106,7 @@ public class FieldTypeUtils {
      * @param validators List of 0 or more validators specified at JCR level
      */
     public static void determineValidators(final FieldType fieldType, final DocumentType docType, final List<String> validators) {
-        for (String validator : validators) {
+        for (final String validator : validators) {
             if (IGNORED_VALIDATORS.contains(validator)) {
                 // Do nothing
             } else if (VALIDATOR_MAP.containsKey(validator)) {
@@ -155,8 +153,15 @@ public class FieldTypeUtils {
 
     private static String determineFieldType(final FieldTypeContext context) {
         final ContentTypeItem item = context.getContentTypeItem();
+        final String itemType = item.getItemType();
+
+        if (FIELD_TYPE_MAP.containsKey(itemType)) {
+            return itemType;
+        }
+
         if (item.isProperty()) {
-            return item.getItemType();
+            // Unsupported type
+            return "";
         }
 
         return ChoiceFieldUtils.isChoiceField(context) ? FIELD_TYPE_CHOICE : FIELD_TYPE_COMPOUND;
@@ -184,7 +189,7 @@ public class FieldTypeUtils {
     public static void readFieldValues(final Node node,
                                        final List<FieldType> fields,
                                        final Map<String, List<FieldValue>> valueMap) {
-        for (FieldType field : fields) {
+        for (final FieldType field : fields) {
             field.readFrom(node).ifPresent(values -> valueMap.put(field.getId(), values));
         }
     }
@@ -203,7 +208,7 @@ public class FieldTypeUtils {
     public static void writeFieldValues(final Map<String, List<FieldValue>> valueMap,
                                         final List<FieldType> fields,
                                         final Node node) throws ErrorWithPayloadException {
-        for (FieldType fieldType : fields) {
+        for (final FieldType fieldType : fields) {
             if (!fieldType.hasUnsupportedValidator()) {
                 fieldType.writeTo(node, Optional.ofNullable(valueMap.get(fieldType.getId())));
             }
@@ -222,7 +227,7 @@ public class FieldTypeUtils {
     public static boolean validateFieldValues(final Map<String, List<FieldValue>> valueMap, final List<FieldType> fields) {
         boolean isValid = true;
 
-        for (FieldType fieldType : fields) {
+        for (final FieldType fieldType : fields) {
             final String fieldId = fieldType.getId();
             if (valueMap.containsKey(fieldId)) {
                 if (!fieldType.validate(valueMap.get(fieldId))) {

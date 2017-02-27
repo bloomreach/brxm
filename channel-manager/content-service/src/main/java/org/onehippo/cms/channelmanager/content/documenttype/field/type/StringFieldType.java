@@ -16,10 +16,7 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -70,7 +67,7 @@ public class StringFieldType extends FieldType {
     void setMaxLength(final String maxLengthString) {
         try {
             maxLength = Long.valueOf(maxLengthString);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             log.info("Failed to parser value of String's max length '{}'", maxLengthString, e);
         }
     }
@@ -112,19 +109,23 @@ public class StringFieldType extends FieldType {
         try {
             if (node.hasProperty(propertyName)) {
                 final Property property = node.getProperty(propertyName);
-                if (property.isMultiple()) {
-                    for (Value v : property.getValues()) {
-                        values.add(new FieldValue(v.getString()));
-                    }
-                } else {
-                    values.add(new FieldValue(property.getString()));
-                }
+                storeProperty(values, property);
             }
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to read string field '{}' from '{}'", propertyName, JcrUtils.getNodePathQuietly(node), e);
         }
 
         return values;
+    }
+
+    protected static void storeProperty(final Collection<FieldValue> values, final Property property) throws RepositoryException {
+        if (property.isMultiple()) {
+            for (final Value v : property.getValues()) {
+                values.add(new FieldValue(v.getString()));
+            }
+        } else {
+            values.add(new FieldValue(property.getString()));
+        }
     }
 
     @Override
@@ -155,7 +156,7 @@ public class StringFieldType extends FieldType {
                     node.setProperty(propertyName, strings[0]);
                 }
             }
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.warn("Failed to write singular String value to property {}", propertyName, e);
             throw new InternalServerErrorException();
         }
