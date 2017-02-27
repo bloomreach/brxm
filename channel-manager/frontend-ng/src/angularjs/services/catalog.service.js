@@ -49,14 +49,6 @@ class CatalogService {
   getComponents() {
     return this.components;
   }
-
-  setCatalogElement(component, jQueryElement) {
-    component.catalogJQueryElement = jQueryElement;
-  }
-
-  getComponentByDomElement(domElement) {
-    return this.components.find(component => component.catalogJQueryElement[0] === domElement);
-  }
 }
 
 export default CatalogService;

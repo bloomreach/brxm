@@ -16,7 +16,7 @@
 
 class PageCopyCtrl {
   constructor($log, $translate, ChannelService, SessionService, SiteMapService, SiteMapItemService, HippoIframeService,
-              FeedbackService) {
+    FeedbackService) {
     'ngInject';
 
     this.$log = $log;

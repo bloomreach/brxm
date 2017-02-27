@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-class ChannelSidePanelService {
-  constructor($mdSidenav, $q, OverlaySyncService) {
+class SidePanelService {
+  constructor($mdSidenav, $q, OverlayService) {
     'ngInject';
 
     this.$mdSidenav = $mdSidenav;
     this.$q = $q;
-    this.OverlaySyncService = OverlaySyncService;
+    this.OverlayService = OverlayService;
     this.panels = { };
   }
 
@@ -47,7 +47,7 @@ class ChannelSidePanelService {
     if (panel) {
       if (!this.isOpen(side)) {
         this.$mdSidenav(panel.sideNavComponentId).open().then(() => {
-          this.OverlaySyncService.syncIframe();
+          this.OverlayService.sync();
         });
       }
       panel.onOpenCallback(...params);
@@ -63,11 +63,19 @@ class ChannelSidePanelService {
     if (this.isOpen(side)) {
       const panel = this.panels[side];
       return this.$mdSidenav(panel.sideNavComponentId).close().then(() => {
-        this.OverlaySyncService.syncIframe();
+        this.OverlayService.sync();
       });
     }
     return this.$q.resolve();
   }
+
+  liftSidePanelAboveMask() {
+    this.isSidePanelLifted = true;
+  }
+
+  lowerSidePanelBeneathMask() {
+    this.isSidePanelLifted = false;
+  }
 }
 
-export default ChannelSidePanelService;
+export default SidePanelService;

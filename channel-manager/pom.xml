@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>28.3</version>
+    <version>29-SNAPSHOT</version>
   </parent>
 
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>4.2.0-visual-editing-psp1-SNAPSHOT</version>
+  <version>5.0.0-visual-editing-psp2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 
@@ -35,12 +35,12 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
-    <hippo.repository.version>4.2.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>4.2.0-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>4.2.0-SNAPSHOT</hippo.hst.version>
-    <hippo.commons.version>3.2.0-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>3.2.0-SNAPSHOT</hippo.services.version>
-    <hippo.addon-hst-configuration-editor.version>3.2.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
+    <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>5.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
+    <hippo.addon-hst-configuration-editor.version>4.0.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
 
     <commons-lang.version>2.6</commons-lang.version>
     <lib.json.version>20090211</lib.json.version>

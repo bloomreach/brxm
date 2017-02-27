@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 import rightSidePanelComponent from './rightSidePanel.component';
-import documentFieldsComponent from './documentFields.component';
-import primitiveFieldComponent from './primitiveField.component';
-import choiceFieldComponent from './choiceField.component';
-import compoundFieldComponent from './compoundField.component';
-import collapse from './collapse.directive';
+import fieldsModule from './fields/fields.module';
 
 const rightSidePanelModule = angular
-  .module('hippo-cm.channel.rightSidePanelModule', [])
-  .component('rightSidePanel', rightSidePanelComponent)
-  .component('documentFields', documentFieldsComponent)
-  .component('primitiveField', primitiveFieldComponent)
-  .component('choiceField', choiceFieldComponent)
-  .component('compoundField', compoundFieldComponent)
-  .directive('collapse', collapse);
+  .module('hippo-cm.channel.rightSidePanelModule', [
+    fieldsModule,
+  ])
+  .component('rightSidePanel', rightSidePanelComponent);
 
 export default rightSidePanelModule.name;
 

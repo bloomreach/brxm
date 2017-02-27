@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('DomService', () => {
+  let BrowserService;
   let DomService;
   const fixturesPath = `/${jasmine.getFixtures().fixturesPath}`;
 
@@ -33,7 +34,8 @@ describe('DomService', () => {
       }]);
     });
 
-    inject((_DomService_) => {
+    inject((_BrowserService_, _DomService_) => {
+      BrowserService = _BrowserService_;
       DomService = _DomService_;
     });
 
@@ -51,12 +53,12 @@ describe('DomService', () => {
   it('can add a css file to the head', (done) => {
     testInIframe((iframeWindow) => {
       const cssFile = `${fixturesPath}/services/dom.service.fixture.css`;
-      DomService.addCss(iframeWindow, cssFile)
-        .then(() => {
-          const red = $j(iframeWindow.document).find('#red');
-          expect(red.css('color')).toEqual('rgb(255, 0, 0)');
-          done();
-        });
+      $j.get(cssFile).done((cssData) => {
+        DomService.addCss(iframeWindow, cssData);
+        const red = $j(iframeWindow.document).find('#red');
+        expect(red.css('color')).toEqual('rgb(255, 0, 0)');
+        done();
+      }).fail(fail);
     });
   });
 
@@ -155,8 +157,18 @@ describe('DomService', () => {
     expect(mouseDownEvent.view).toEqual(window);
   });
 
+  it('can create a mousedown event in Edge', () => {
+    spyOn(BrowserService, 'isEdge').and.returnValue(true);
+    const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
+    expect(mouseDownEvent.type).toEqual('pointerdown');
+    expect(mouseDownEvent.bubbles).toEqual(true);
+    expect(mouseDownEvent.clientX).toEqual(100);
+    expect(mouseDownEvent.clientY).toEqual(200);
+    expect(mouseDownEvent.view).toEqual(window);
+  });
+
   it('can create a mousedown event in IE11', () => {
-    window.navigator.msPointerEnabled = true;
+    spyOn(BrowserService, 'isIE').and.returnValue(true);
     const mouseDownEvent = DomService.createMouseDownEvent(window, 100, 200);
     expect(mouseDownEvent.type).toEqual('MSPointerDown');
     expect(mouseDownEvent.bubbles).toEqual(true);
@@ -168,20 +180,6 @@ describe('DomService', () => {
   it('can calculate the scroll bar width', () => {
     const width = DomService.getScrollBarWidth();
     expect(width).toBeGreaterThan(-1);
-  });
-
-  it('can calculate the bottom of an element', () => {
-    const bottomEl = $j('#bottomEl')[0];
-    expect(DomService.getBottom(bottomEl)).toBe(76);
-  });
-
-  it('can calculate the bottom of the lowest element in a document', () => {
-    expect(DomService.getLowestElementBottom(document)).toBe(1050);
-  });
-
-  it('can calculate the bottom margin of an element', () => {
-    const bottomEl = $j('#bottomEl')[0];
-    expect(DomService.getBottomMargin(bottomEl)).toBe(6);
   });
 
   it('can check if an element is hidden on the page', () => {
@@ -198,6 +196,11 @@ describe('DomService', () => {
 
   it('can check whether the body is visible', () => {
     expect(DomService.isVisible($j(document.body))).toBe(true);
+  });
+
+  it('escapes HTML characters in strings', () => {
+    expect(DomService.escapeHtml('&<>"\'/')).toEqual('&amp;&lt;&gt;&quot;&#x27;&#x2F;');
+    expect(DomService.escapeHtml('<script>alert("xss")</script>')).toEqual('&lt;script&gt;alert(&quot;xss&quot;)&lt;&#x2F;script&gt;');
   });
 });
 

@@ -16,14 +16,14 @@
 
 class ChangeManagementCtrl {
   constructor(
-      $log,
-      $translate,
-      ChannelService,
-      CmsService,
-      ConfigService,
-      DialogService,
-      FeedbackService,
-      HippoIframeService
+    $log,
+    $translate,
+    ChannelService,
+    CmsService,
+    ConfigService,
+    DialogService,
+    FeedbackService,
+    HippoIframeService,
     ) {
     'ngInject';
 

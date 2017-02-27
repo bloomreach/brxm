@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-describe('ChannelSidePanelService', () => {
-  let ChannelSidePanelService;
+describe('SidePanelService', () => {
+  let SidePanelService;
   let $q;
   let $rootScope;
   const leftSidePanel = jasmine.createSpyObj('leftSidePanel', ['isOpen', 'toggle', 'open', 'close']);
-  const OverlaySyncService = jasmine.createSpyObj('OverlaySyncService', ['syncIframe']);
+  const OverlayService = jasmine.createSpyObj('OverlayService', ['sync']);
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -28,11 +28,11 @@ describe('ChannelSidePanelService', () => {
 
     angular.mock.module(($provide) => {
       $provide.value('$mdSidenav', $mdSidenav);
-      $provide.value('OverlaySyncService', OverlaySyncService);
+      $provide.value('OverlayService', OverlayService);
     });
 
-    inject((_ChannelSidePanelService_, _$q_, _$rootScope_) => {
-      ChannelSidePanelService = _ChannelSidePanelService_;
+    inject((_SidePanelService_, _$q_, _$rootScope_) => {
+      SidePanelService = _SidePanelService_;
       $q = _$q_;
       $rootScope = _$rootScope_;
     });
@@ -44,47 +44,47 @@ describe('ChannelSidePanelService', () => {
   it('toggles a named side-panel', () => {
     const element = angular.element('<div></div>');
     element.width(250);
-    ChannelSidePanelService.initialize('left', element);
+    SidePanelService.initialize('left', element);
 
     leftSidePanel.toggle.calls.reset();
     leftSidePanel.isOpen.and.returnValue(false);
 
-    ChannelSidePanelService.toggle('left');
+    SidePanelService.toggle('left');
 
     expect(leftSidePanel.open).toHaveBeenCalled();
 
     leftSidePanel.toggle.calls.reset();
     leftSidePanel.isOpen.and.returnValue(true);
 
-    ChannelSidePanelService.toggle('left');
+    SidePanelService.toggle('left');
 
     expect(leftSidePanel.close).toHaveBeenCalled();
   });
 
   it('forwards the is-open check to the mdSidenav service', () => {
     const element = angular.element('<div></div>');
-    ChannelSidePanelService.initialize('left', element);
+    SidePanelService.initialize('left', element);
 
     leftSidePanel.isOpen.and.returnValue(true);
-    expect(ChannelSidePanelService.isOpen('left')).toBe(true);
+    expect(SidePanelService.isOpen('left')).toBe(true);
 
     leftSidePanel.isOpen.and.returnValue(false);
-    expect(ChannelSidePanelService.isOpen('left')).toBe(false);
+    expect(SidePanelService.isOpen('left')).toBe(false);
   });
 
   it('the is-open check works when the left side panel has not been rendered yet', () => {
     leftSidePanel.isOpen.and.throwError('left side panel cannot be found');
-    expect(ChannelSidePanelService.isOpen('left')).toBeFalsy();
+    expect(SidePanelService.isOpen('left')).toBeFalsy();
   });
 
   it('closes a side panel if it is open', (done) => {
     const element = angular.element('<div></div>');
-    ChannelSidePanelService.initialize('left', element);
+    SidePanelService.initialize('left', element);
 
     leftSidePanel.close.calls.reset();
     leftSidePanel.isOpen.and.returnValue(true);
 
-    ChannelSidePanelService.close('left').then(() => {
+    SidePanelService.close('left').then(() => {
       expect(leftSidePanel.close).toHaveBeenCalled();
       done();
     });
@@ -93,12 +93,12 @@ describe('ChannelSidePanelService', () => {
 
   it('skips closing a side panel if it is was already closed', (done) => {
     const element = angular.element('<div></div>');
-    ChannelSidePanelService.initialize('left', element);
+    SidePanelService.initialize('left', element);
 
     leftSidePanel.close.calls.reset();
     leftSidePanel.isOpen.and.returnValue(false);
 
-    ChannelSidePanelService.close('left').then(() => {
+    SidePanelService.close('left').then(() => {
       expect(leftSidePanel.close).not.toHaveBeenCalled();
       done();
     });
@@ -107,15 +107,15 @@ describe('ChannelSidePanelService', () => {
 
   it('forwards the open call to the mdSidenav service', () => {
     const element = angular.element('<div></div>');
-    ChannelSidePanelService.initialize('left', element);
+    SidePanelService.initialize('left', element);
 
-    ChannelSidePanelService.open('left');
+    SidePanelService.open('left');
     expect(leftSidePanel.open).toHaveBeenCalled();
   });
 
   it('ignores the open call when the a side panel has not been rendered yet', () => {
     expect(() => {
-      ChannelSidePanelService.open('left');
+      SidePanelService.open('left');
     }).not.toThrow(jasmine.any(Error));
   });
 
@@ -123,9 +123,9 @@ describe('ChannelSidePanelService', () => {
     const element = angular.element('<div md-component-id="left"></div>');
     const onOpen = jasmine.createSpy('onOpen');
 
-    ChannelSidePanelService.initialize('left', element, onOpen);
+    SidePanelService.initialize('left', element, onOpen);
 
-    ChannelSidePanelService.open('left');
+    SidePanelService.open('left');
     expect(onOpen).toHaveBeenCalled();
   });
 
@@ -133,33 +133,33 @@ describe('ChannelSidePanelService', () => {
     const element = angular.element('<div md-component-id="left"></div>');
     const onOpen = jasmine.createSpy('onOpen');
 
-    ChannelSidePanelService.initialize('left', element, onOpen);
+    SidePanelService.initialize('left', element, onOpen);
 
     leftSidePanel.isOpen.and.returnValue(true);
-    ChannelSidePanelService.open('left');
+    SidePanelService.open('left');
 
     expect(onOpen).toHaveBeenCalled();
   });
 
   it('opens without errors when the onOpen callback is omitted', () => {
     const element = angular.element('<div md-component-id="left"></div>');
-    ChannelSidePanelService.initialize('left', element);
+    SidePanelService.initialize('left', element);
     expect(() => {
-      ChannelSidePanelService.open('left');
+      SidePanelService.open('left');
     }).not.toThrow(jasmine.any(Error));
   });
 
   it('syncs the iframe once the side-panel has been opened and closed', () => {
     const element = angular.element('<div></div>');
-    ChannelSidePanelService.initialize('left', element);
+    SidePanelService.initialize('left', element);
 
-    ChannelSidePanelService.open('left');
+    SidePanelService.open('left');
     $rootScope.$digest();
-    expect(OverlaySyncService.syncIframe).toHaveBeenCalled();
+    expect(OverlayService.sync).toHaveBeenCalled();
 
-    OverlaySyncService.syncIframe.calls.reset();
-    ChannelSidePanelService.close('left');
+    OverlayService.sync.calls.reset();
+    SidePanelService.close('left');
     $rootScope.$digest();
-    expect(OverlaySyncService.syncIframe).toHaveBeenCalled();
+    expect(OverlayService.sync).toHaveBeenCalled();
   });
 });

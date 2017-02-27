@@ -21,8 +21,10 @@ import ngMessages from 'angular-messages';
 import ngTranslate from 'angular-translate';
 import 'angular-translate-loader-static-files';
 import uiRouter from 'angular-ui-router';
+import ngDeviceDetector from 'ng-device-detector';
 
 // TODO: Move some of these toplevel modules into functional specific folders/modules
+import BrowserService from './services/browser.service';
 import CatalogService from './services/catalog.service';
 import CmsService from './services/cms.service';
 import ConfigService from './services/config.service';
@@ -55,10 +57,12 @@ const hippoCmng = angular
     ngAnimate,
     uiRouter,
     channelModule.name,
+    ngDeviceDetector,
   ])
   .config(config)
   .run(run)
   .constant('HstConstants', HstConstants)
+  .service('BrowserService', BrowserService)
   .service('CatalogService', CatalogService)
   .service('CmsService', CmsService)
   .service('ConfigService', ConfigService)

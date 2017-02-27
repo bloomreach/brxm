@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import ChannelSidePanelService from './sidePanel.service';
+import SidePanelService from './sidePanel.service';
 import leftSidePanelModule from './leftSidePanel/leftSidePanel.module';
 import rightSidePanelModule from './rightSidePanel/rightSidePanel.module';
 
@@ -23,6 +23,6 @@ const channelSidePanelModule = angular
     leftSidePanelModule,
     rightSidePanelModule,
   ])
-  .service('ChannelSidePanelService', ChannelSidePanelService);
+  .service('SidePanelService', SidePanelService);
 
 export default channelSidePanelModule;

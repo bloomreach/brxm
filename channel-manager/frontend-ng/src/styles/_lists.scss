@@ -12,24 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//TODO: This should be doable with just Material?
-md-list-item {
-  .component-icon {
-    padding-right: 4px;
-    width: 40px;
-
-    img {
-      max-width: 100%;
-    }
-  }
-}
-
-.left-side-panel {
-  md-list {
-    padding: 0;
-  }
-}
-
 .hippo-listing {
   border-left: 1px solid $picker-border-color;
 

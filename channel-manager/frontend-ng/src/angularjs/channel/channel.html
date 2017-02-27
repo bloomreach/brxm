@@ -1,5 +1,5 @@
 <!--
-  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -61,14 +61,14 @@
     </md-progress-linear>
   </md-toolbar>
 
-  <md-content layout="row" flex>
+  <md-content layout="row" flex ng-class="{ 'hide-scrollbar': !channelCtrl.isSubpageOpen() }">
     <left-side-panel layout="row" edit-mode="channelCtrl.isEditMode"></left-side-panel>
 
     <hippo-iframe
       flex
-      layout="row"
       ng-show="channelCtrl.isChannelLoaded()"
       edit-mode="channelCtrl.isEditMode"
+      on-edit-content="channelCtrl.editContent(contentUuid)"
       on-edit-menu="channelCtrl.editMenu(menuUuid)">
     </hippo-iframe>
 
@@ -115,4 +115,4 @@
              on-error="channelCtrl.onSubpageError(key, params)">
 </menu-editor>
 
-<div class="mask qa-mask" mask></div>
+<mask></mask>

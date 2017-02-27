@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,10 @@ import 'angular-mocks';
 describe('ChannelLeftSidePanel', () => {
   let $rootScope;
   let $compile;
-  let ChannelSidePanelService;
+  let SidePanelService;
   let SiteMapService;
   let ChannelService;
+  let CatalogService;
   let HippoIframeService;
   let parentScope;
   const catalogComponents = [
@@ -32,18 +33,21 @@ describe('ChannelLeftSidePanel', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$rootScope_, _$compile_, _ChannelSidePanelService_, _ChannelService_, _SiteMapService_, _HippoIframeService_) => {
+    inject((_$rootScope_, _$compile_, _SidePanelService_, _ChannelService_, _CatalogService_, _SiteMapService_, _HippoIframeService_) => {
       $rootScope = _$rootScope_;
       $compile = _$compile_;
-      ChannelSidePanelService = _ChannelSidePanelService_;
+      SidePanelService = _SidePanelService_;
       ChannelService = _ChannelService_;
+      CatalogService = _CatalogService_;
       SiteMapService = _SiteMapService_;
       HippoIframeService = _HippoIframeService_;
     });
 
-    spyOn(ChannelService, 'getCatalog').and.returnValue([]);
-    spyOn(ChannelSidePanelService, 'initialize');
-    spyOn(ChannelSidePanelService, 'close');
+    spyOn(CatalogService, 'getComponents').and.returnValue([]);
+    spyOn(CatalogService, 'load');
+    spyOn(ChannelService, 'getMountId');
+    spyOn(SidePanelService, 'close');
+    spyOn(SidePanelService, 'initialize');
     spyOn(SiteMapService, 'get');
     spyOn(HippoIframeService, 'load');
     spyOn(HippoIframeService, 'getCurrentRenderPathInfo');
@@ -61,23 +65,23 @@ describe('ChannelLeftSidePanel', () => {
   it('initializes the channel left side panel service upon instantiation', () => {
     instantiateController(false);
 
-    expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
+    expect(SidePanelService.initialize).toHaveBeenCalled();
   });
 
   it('knows when it is locked open', () => {
     const ctrl = instantiateController();
-    spyOn(ChannelSidePanelService, 'isOpen').and.returnValue(true);
+    spyOn(SidePanelService, 'isOpen').and.returnValue(true);
     expect(ctrl.isLockedOpen()).toBe(true);
   });
 
   it('knows when it is not locked open', () => {
     const ctrl = instantiateController();
-    spyOn(ChannelSidePanelService, 'isOpen').and.returnValue(false);
+    spyOn(SidePanelService, 'isOpen').and.returnValue(false);
     expect(ctrl.isLockedOpen()).toBe(false);
   });
 
   it('retrieves the catalog from the channel service', () => {
-    ChannelService.getCatalog.and.returnValue(catalogComponents);
+    CatalogService.getComponents.and.returnValue(catalogComponents);
     const ChannelLeftSidePanelCtrl = instantiateController();
 
     expect(ChannelLeftSidePanelCtrl.getCatalog()).toBe(catalogComponents);
@@ -91,7 +95,7 @@ describe('ChannelLeftSidePanel', () => {
     $rootScope.$digest();
     expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(false);
 
-    ChannelService.getCatalog.and.returnValue(catalogComponents);
+    CatalogService.getComponents.and.returnValue(catalogComponents);
     expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(true);
 
     parentScope.editMode = false;

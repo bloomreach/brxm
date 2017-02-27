@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ describe('ChannelRightSidePanel', () => {
   let $rootScope;
   let $timeout;
   let $translate;
-  let ChannelSidePanelService;
+  let SidePanelService;
   let CmsService;
   let ContentService;
   let DialogService;
@@ -89,7 +89,7 @@ describe('ChannelRightSidePanel', () => {
       $translate = _$translate_;
     });
 
-    ChannelSidePanelService = jasmine.createSpyObj('ChannelSidePanelService', ['initialize', 'isOpen', 'close']);
+    SidePanelService = jasmine.createSpyObj('SidePanelService', ['initialize', 'isOpen', 'close']);
     ContentService = jasmine.createSpyObj('ContentService', ['createDraft', 'getDocumentType', 'saveDraft', 'deleteDraft']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
 
@@ -109,7 +109,7 @@ describe('ChannelRightSidePanel', () => {
       $scope,
       $element,
       $timeout,
-      ChannelSidePanelService,
+      SidePanelService,
       CmsService,
       ContentService,
       DialogService,
@@ -123,18 +123,18 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('initializes the channel right side panel service upon instantiation', () => {
-    expect(ChannelSidePanelService.initialize).toHaveBeenCalled();
+    expect(SidePanelService.initialize).toHaveBeenCalled();
     expect($ctrl.doc).not.toBeDefined();
     expect($ctrl.docType).not.toBeDefined();
   });
 
   it('knows when it is locked open', () => {
-    ChannelSidePanelService.isOpen.and.returnValue(true);
+    SidePanelService.isOpen.and.returnValue(true);
     expect($ctrl.isLockedOpen()).toBe(true);
   });
 
   it('knows when it is not locked open', () => {
-    ChannelSidePanelService.isOpen.and.returnValue(false);
+    SidePanelService.isOpen.and.returnValue(false);
     expect($ctrl.isLockedOpen()).toBe(false);
   });
 
@@ -154,18 +154,18 @@ describe('ChannelRightSidePanel', () => {
   });
 
   it('closes the panel', () => {
-    ChannelSidePanelService.close.and.returnValue($q.resolve());
+    SidePanelService.close.and.returnValue($q.resolve());
     $ctrl.close();
     $rootScope.$digest();
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect(SidePanelService.close).toHaveBeenCalledWith('right');
 
     $ctrl.documentId = 'test';
     $ctrl.editing = true;
     $ctrl.close();
     $rootScope.$digest();
     expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
-    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect($ctrl.doc).toBeUndefined();
     expect($ctrl.documentId).toBeUndefined();
     expect($ctrl.docType).toBeUndefined();
@@ -180,7 +180,7 @@ describe('ChannelRightSidePanel', () => {
     spyOn($translate, 'instant');
 
     DialogService.show.and.returnValue($q.resolve());
-    ChannelSidePanelService.close.and.returnValue($q.resolve());
+    SidePanelService.close.and.returnValue($q.resolve());
     $ctrl.doc = {
       displayName: 'test',
     };
@@ -192,7 +192,7 @@ describe('ChannelRightSidePanel', () => {
     $rootScope.$digest();
 
     expect(ContentService.deleteDraft).toHaveBeenCalledWith('test');
-    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect($translate.instant).toHaveBeenCalledWith('CONFIRM_DISCARD_UNSAVED_CHANGES_MESSAGE', {
       documentName: 'test',
     });
@@ -208,7 +208,7 @@ describe('ChannelRightSidePanel', () => {
     $rootScope.$digest();
 
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    expect(ChannelSidePanelService.close).not.toHaveBeenCalled();
+    expect(SidePanelService.close).not.toHaveBeenCalled();
   });
 
   it('opens a document', () => {
@@ -218,7 +218,7 @@ describe('ChannelRightSidePanel', () => {
     spyOn($scope, '$broadcast');
     spyOn($translate, 'instant');
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
@@ -242,7 +242,7 @@ describe('ChannelRightSidePanel', () => {
     spyOn($scope, '$broadcast');
     spyOn($translate, 'instant');
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
@@ -270,7 +270,7 @@ describe('ChannelRightSidePanel', () => {
     ContentService.createDraft.and.returnValue($q.resolve(emptyDocument));
     spyOn($translate, 'instant');
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
@@ -287,7 +287,7 @@ describe('ChannelRightSidePanel', () => {
     ContentService.getDocumentType.and.returnValue($q.resolve(testDocumentType));
     delete $ctrl.form;
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
 
     expect(() => {
       onOpenCallback('test');
@@ -341,7 +341,7 @@ describe('ChannelRightSidePanel', () => {
       ContentService.getDocumentType.and.returnValue($q.resolve(newDocumentType));
       spyOn($scope, '$broadcast');
 
-      onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+      onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     });
 
     function expectNewDocument() {
@@ -437,7 +437,7 @@ describe('ChannelRightSidePanel', () => {
     spyOn($translate, 'instant');
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
@@ -458,7 +458,7 @@ describe('ChannelRightSidePanel', () => {
     spyOn($translate, 'instant');
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
@@ -479,7 +479,7 @@ describe('ChannelRightSidePanel', () => {
     spyOn($translate, 'instant');
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
@@ -496,7 +496,7 @@ describe('ChannelRightSidePanel', () => {
     spyOn($translate, 'instant');
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
@@ -511,7 +511,7 @@ describe('ChannelRightSidePanel', () => {
     spyOn($translate, 'instant');
     ContentService.createDraft.and.returnValue($q.reject({ status: 404 }));
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
@@ -527,7 +527,7 @@ describe('ChannelRightSidePanel', () => {
     spyOn($translate, 'instant');
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
@@ -541,7 +541,7 @@ describe('ChannelRightSidePanel', () => {
     spyOn($translate, 'instant');
     ContentService.createDraft.and.returnValue($q.reject({}));
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
@@ -558,7 +558,7 @@ describe('ChannelRightSidePanel', () => {
     spyOn($translate, 'instant');
     ContentService.createDraft.and.returnValue($q.reject({ data: response }));
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
@@ -584,7 +584,7 @@ describe('ChannelRightSidePanel', () => {
     ContentService.createDraft.and.returnValue($q.resolve(doc));
     ContentService.getDocumentType.and.returnValue($q.reject({}));
 
-    const onOpenCallback = ChannelSidePanelService.initialize.calls.mostRecent().args[2];
+    const onOpenCallback = SidePanelService.initialize.calls.mostRecent().args[2];
     onOpenCallback('test');
     $rootScope.$digest();
 
@@ -748,7 +748,7 @@ describe('ChannelRightSidePanel', () => {
 
   it('directly opens the full content in a certain mode if the form is not dirty', () => {
     $ctrl.documentId = 'test';
-    ChannelSidePanelService.close.and.returnValue($q.resolve());
+    SidePanelService.close.and.returnValue($q.resolve());
 
     const mode = 'view';
     $ctrl.openFullContent(mode);
@@ -756,13 +756,13 @@ describe('ChannelRightSidePanel', () => {
 
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', mode);
   });
 
   it('can discard pending changes before opening the full content', () => {
     DialogService.show.and.returnValue($q.resolve('DISCARD'));
-    ChannelSidePanelService.close.and.returnValue($q.resolve());
+    SidePanelService.close.and.returnValue($q.resolve());
     $ctrl.documentId = 'test';
     $ctrl.doc = { displayName: 'Display Name' };
     $ctrl.form.$dirty = true;
@@ -773,7 +773,7 @@ describe('ChannelRightSidePanel', () => {
     expect(DialogService.show).toHaveBeenCalled();
     expect(ContentService.saveDraft).not.toHaveBeenCalled();
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', 'edit');
   });
 
@@ -783,7 +783,7 @@ describe('ChannelRightSidePanel', () => {
     $ctrl.doc = testDocument;
     $ctrl.form.$dirty = true;
     ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
-    ChannelSidePanelService.close.and.returnValue($q.resolve());
+    SidePanelService.close.and.returnValue($q.resolve());
 
     $ctrl.openFullContent('edit');
     $rootScope.$digest();
@@ -791,7 +791,7 @@ describe('ChannelRightSidePanel', () => {
     expect(DialogService.show).toHaveBeenCalled();
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'test', 'edit');
   });
 
@@ -803,7 +803,7 @@ describe('ChannelRightSidePanel', () => {
     $ctrl.editing = true;
     ContentService.saveDraft.and.returnValue($q.resolve(testDocument));
     ContentService.deleteDraft.and.returnValue($q.resolve());
-    ChannelSidePanelService.close.and.returnValue($q.resolve());
+    SidePanelService.close.and.returnValue($q.resolve());
 
     $ctrl.openFullContent('view');
     $rootScope.$digest();
@@ -811,7 +811,7 @@ describe('ChannelRightSidePanel', () => {
     expect(DialogService.show).toHaveBeenCalled();
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
     expect(ContentService.deleteDraft).toHaveBeenCalledWith('documentId');
-    expect(ChannelSidePanelService.close).toHaveBeenCalledWith('right');
+    expect(SidePanelService.close).toHaveBeenCalledWith('right');
     expect(CmsService.publish).toHaveBeenCalledWith('open-content', 'documentId', 'view');
   });
 
@@ -829,7 +829,7 @@ describe('ChannelRightSidePanel', () => {
     expect(DialogService.show).toHaveBeenCalled();
     expect(ContentService.saveDraft).toHaveBeenCalledWith(testDocument);
     expect(ContentService.deleteDraft).not.toHaveBeenCalled();
-    expect(ChannelSidePanelService.close).not.toHaveBeenCalled();
+    expect(SidePanelService.close).not.toHaveBeenCalled();
     expect(CmsService.publish).not.toHaveBeenCalled();
   });
 
@@ -837,14 +837,14 @@ describe('ChannelRightSidePanel', () => {
     expect(CmsService.subscribe).toHaveBeenCalled();
     const onKillEditor = CmsService.subscribe.calls.mostRecent().args[1];
 
-    ChannelSidePanelService.close.and.returnValue($q.resolve());
+    SidePanelService.close.and.returnValue($q.resolve());
     $ctrl.documentId = 'documentId';
 
     onKillEditor('differentId');
-    expect(ChannelSidePanelService.close).not.toHaveBeenCalled();
+    expect(SidePanelService.close).not.toHaveBeenCalled();
 
     onKillEditor('documentId');
-    expect(ChannelSidePanelService.close).toHaveBeenCalled();
+    expect(SidePanelService.close).toHaveBeenCalled();
   });
 });
 

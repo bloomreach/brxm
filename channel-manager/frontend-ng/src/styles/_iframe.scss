@@ -1,4 +1,4 @@
-// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,27 +12,65 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.channel-iframe-base {
-  background-color: $canvas-bgcolor;
+@mixin parent-size {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
 
-  iframe {
-    border: 0;
-  }
+hippo-iframe {
+  position: relative;
 }
 
 .channel-iframe-canvas {
+  @include parent-size;
+
+  background-color: $canvas-bgcolor;
+
+  // ensure a horizontal scrollbar in Safari for constrained viewport widths
+  height: 100%;
+  overflow-y: hidden;
+
   user-select: none;
+
+  &.hippo-dragging {
+    // IE does not support the grabbing cursor so we show 'move' instead
+    cursor: move;
+    cursor: grabbing; // sass-lint:disable-line no-duplicate-properties
+  }
+
+  &.iframe-lifted {
+    z-index: $z-index-iframe-lifted;
+  }
 }
 
 .channel-iframe-sheet {
-  background-color: $sheet-bgcolor;
+  background-color: $grey-50;
   box-shadow: 0 0 20px $black-shadow;
+  height: 100%;
+
+  // center the sheet on the canvas; use margin instead of flexbox to properly center fixed-width viewports (Tablet etc.)
   margin-left: auto;
   margin-right: auto;
-}
 
-.channel-iframe-scroll-x {
-  overflow-x: visible;
-  overflow-y: hidden;
+  // use explicit max-width and min-width so its transition can be animated
+  max-width: 100%;
+  min-width: 0;
+
   position: relative;
+  transition: max-width $viewport-animation-transition, min-width $viewport-animation-transition;
+  width: 100%;
+
+  iframe {
+    border: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  iframe,
+  .channel-dragula-mirror {
+    @include parent-size;
+  }
 }

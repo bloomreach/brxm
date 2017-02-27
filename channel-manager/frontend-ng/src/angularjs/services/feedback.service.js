@@ -83,7 +83,7 @@ class FeedbackService {
         .textContent(text)
         .position('top right')
         .hideDelay(HIDE_DELAY_IN_MS)
-        .parent(parentJQueryElement)
+        .parent(parentJQueryElement),
     );
   }
 }

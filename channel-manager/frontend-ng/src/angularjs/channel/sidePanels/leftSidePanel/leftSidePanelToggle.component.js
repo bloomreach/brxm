@@ -17,19 +17,19 @@
 import template from './leftSidePanelToggle.html';
 
 export class ChannelLeftSidePanelToggleCtrl {
-  constructor(ChannelSidePanelService, ChannelService) {
+  constructor(SidePanelService, ChannelService) {
     'ngInject';
 
-    this.ChannelSidePanelService = ChannelSidePanelService;
+    this.SidePanelService = SidePanelService;
     this.ChannelService = ChannelService;
   }
 
   toggleLeftSidePanel() {
-    this.ChannelSidePanelService.toggle('left');
+    this.SidePanelService.toggle('left');
   }
 
   isLeftSidePanelOpen() {
-    return this.ChannelSidePanelService.isOpen('left');
+    return this.SidePanelService.isOpen('left');
   }
 }
 

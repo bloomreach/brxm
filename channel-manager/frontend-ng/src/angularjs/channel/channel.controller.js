@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@
 class ChannelCtrl {
 
   constructor(
-      $log,
-      $rootScope,
-      $translate,
-      $stateParams,
-      $timeout,
-      ChannelService,
-      ComponentAdderService,
-      CmsService,
-      FeedbackService,
-      HippoIframeService,
-      PageMetaDataService,
-      SessionService
+    $log,
+    $rootScope,
+    $stateParams,
+    $timeout,
+    $translate,
+    ChannelService,
+    SidePanelService,
+    CmsService,
+    FeedbackService,
+    HippoIframeService,
+    PageMetaDataService,
+    SessionService,
     ) {
     'ngInject';
 
@@ -37,21 +37,21 @@ class ChannelCtrl {
     this.$timeout = $timeout;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
+    this.SidePanelService = SidePanelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageMetaDataService = PageMetaDataService;
     this.SessionService = SessionService;
+
     this.isEditMode = false;
     this.isCreatingPreview = false;
-
-    ComponentAdderService.setCatalogContainerClass('catalog-dd-container');
-    ComponentAdderService.setCatalogContainerItemClass('catalog-dd-container-item');
 
     this.HippoIframeService.load($stateParams.initialRenderPath);
 
     // editToggleState is only used as a 'fake' model for the toggle; isEditMode is updated in the onChange callback,
     // which may happen asynchronously if preview configuration needs to be created.
-    this.editToggleState = this.isEditMode = false;
+    this.editToggleState = false;
+    this.isEditMode = false;
 
     CmsService.subscribe('clear-channel', () => this._clear());
   }
@@ -95,6 +95,10 @@ class ChannelCtrl {
   editMenu(menuUuid) {
     this.menuUuid = menuUuid;
     this.showSubpage('menu-editor');
+  }
+
+  editContent(contentUuid) {
+    this.SidePanelService.open('right', contentUuid);
   }
 
   _createPreviewConfiguration() {

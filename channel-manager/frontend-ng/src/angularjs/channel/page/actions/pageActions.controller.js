@@ -16,7 +16,7 @@
 
 class PageActionsCtrl {
   constructor($translate, FeedbackService, ChannelService, SiteMapService, SiteMapItemService, DialogService,
-              HippoIframeService, PageMetaDataService, SessionService) {
+    HippoIframeService, PageMetaDataService, SessionService) {
     'ngInject';
 
     this.$translate = $translate;
