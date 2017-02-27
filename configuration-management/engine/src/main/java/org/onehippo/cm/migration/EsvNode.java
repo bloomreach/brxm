@@ -18,49 +18,49 @@ package org.onehippo.cm.migration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.jackrabbit.JcrConstants;
+import org.onehippo.cm.impl.model.SourceLocationImpl;
+
 public class EsvNode {
 
-    private String name;
-    private String type;
-    private List<String> mixins = new ArrayList<>();
-    private String uuid;
-    private int index;
+    private final String name;
+    private final int index;
+    private final SourceLocationImpl location;
     private EsvMerge merge;
     private String mergeLocation;
     private List<EsvProperty> properties = new ArrayList<>();
     private List<EsvNode> children = new ArrayList<>();
 
-    public EsvNode(final String name, final int index) {
+    private final String AUTH_ROLE_NT = "hipposys:authrole";
+    private final String HIPPOSYS_ROLE = "hipposys:role";
+
+    public EsvNode(final String name, final int index, SourceLocationImpl location) {
         this.name = name;
         this.index = index;
+        this.location = location;
     }
 
     public String getName() {
+        if (AUTH_ROLE_NT.equals(getType())) {
+            EsvProperty prop = getProperty(HIPPOSYS_ROLE);
+            if (prop != null && prop.getValue() != null) {
+                return prop.getValue();
+            }
+        }
         return name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(final String type) {
-        this.type = type;
-    }
-
-    public List<String> getMixins() {
-        return mixins;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(final String uuid) {
-        this.uuid = uuid;
     }
 
     public int getIndex() {
         return index;
+    }
+
+    public SourceLocationImpl getSourceLocation() {
+        return location;
+    }
+
+    public String getType() {
+        EsvProperty prop = getProperty(JcrConstants.JCR_PRIMARYTYPE);
+        return prop != null ? prop.getValue() : null;
     }
 
     public EsvMerge getMerge() {
@@ -71,16 +71,28 @@ public class EsvNode {
         this.merge = merge;
     }
 
+    public boolean isDeltaCombine() {
+        return EsvMerge.COMBINE == merge;
+    }
+
     public boolean isDeltaMerge() {
-        return merge != null && (EsvMerge.COMBINE == merge || EsvMerge.OVERLAY == merge);
+        return isDeltaCombine() || isDeltaOverlay();
     }
 
     public boolean isDeltaSkip() {
-        return merge != null && (EsvMerge.SKIP == merge);
+        return EsvMerge.SKIP == merge;
+    }
+
+    public boolean isDeltaOverlay() {
+        return EsvMerge.OVERLAY == merge;
+    }
+
+    public boolean isDeltaInsert() {
+        return EsvMerge.INSERT == merge;
     }
 
     public String getMergeLocation() {
-        return mergeLocation;
+        return mergeLocation != null ? mergeLocation : "";
     }
 
     public void setMergeLocation(final String mergeLocation) {

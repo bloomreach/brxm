@@ -110,7 +110,7 @@ public class ParserValueTest extends AbstractBaseTest {
         final ConfigDefinition stringDefinition = assertDefinition(source, 2, ConfigDefinition.class);
         final DefinitionNode stringNode = assertNode(stringDefinition, "/string", "string", stringDefinition, 0, 8);
         assertProperty(stringNode, "/string/strBoolean", "strBoolean", stringDefinition, ValueType.STRING, "true");
-        assertProperty(stringNode, "/string/strDate", "strDate", stringDefinition, ValueType.STRING, "2015-10-21T07:28:00+8:00");
+        assertProperty(stringNode, "/string/strDate", "strDate", stringDefinition, ValueType.STRING, "2015-10-21T07:28:00.000+08:00");
         assertProperty(stringNode, "/string/strDouble", "strDouble", stringDefinition, ValueType.STRING, "3.1415");
         assertProperty(stringNode, "/string/strLong", "strLong", stringDefinition, ValueType.STRING, "42");
         assertProperty(stringNode, "/string/strWithQuotes", "strWithQuotes", stringDefinition, ValueType.STRING, "string ' \"");
@@ -143,7 +143,7 @@ public class ParserValueTest extends AbstractBaseTest {
                 "              value: []";
         final InputStream inputStream = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
 
-        sourceParser.parse("dummy.yaml", inputStream, module);
+        sourceParser.parse("dummy.yaml", "dummy.yaml", inputStream, module);
 
         final Source source = assertSource(module, "dummy.yaml", 1);
         final ConfigDefinition definition = assertDefinition(source, 0, ConfigDefinition.class);

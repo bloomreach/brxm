@@ -33,6 +33,8 @@ import java.util.Set;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.model.Source;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.MappingNode;
 import org.yaml.snakeyaml.nodes.Node;
@@ -44,7 +46,10 @@ import org.yaml.snakeyaml.nodes.Tag;
 
 public abstract class AbstractBaseParser {
 
-    protected Node composeYamlNode(final InputStream inputStream) throws ParserException {
+    static final Logger log = LoggerFactory.getLogger(AbstractBaseParser.class);
+
+    protected Node composeYamlNode(final String path, final InputStream inputStream) throws ParserException {
+        log.debug("Parsing yaml source: {}", path);
         final Yaml yamlParser = new Yaml();
         try {
             return yamlParser.compose(new InputStreamReader(inputStream, StandardCharsets.UTF_8));

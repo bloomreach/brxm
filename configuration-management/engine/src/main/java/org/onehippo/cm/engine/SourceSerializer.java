@@ -18,9 +18,13 @@ package org.onehippo.cm.engine;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.function.Consumer;
 
+import org.apache.jackrabbit.util.ISO8601;
 import org.onehippo.cm.api.model.ConfigDefinition;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;
@@ -37,6 +41,7 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
@@ -44,7 +49,34 @@ import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 
 public class SourceSerializer extends AbstractBaseSerializer {
 
-    final static Representer representer = new Representer();
+    private static class YamlRepresenter extends Representer {
+
+        /**
+         * Replacement for default snakeyaml SafeRepresenter#RepresentDate class using JR ISO8601
+         * because the snakeyaml implementation has a bug in the timezone representation, see HCM-27
+         * and otherwise can have (small) deviations from the ISO8601 produced output
+         */
+        protected class RepresentDate implements Represent {
+            public Node representData(Object data) {
+                Calendar calendar;
+                if (data instanceof Calendar) {
+                    calendar = (Calendar) data;
+                } else {
+                    calendar = Calendar.getInstance(getTimeZone() == null ? TimeZone.getTimeZone("UTC")
+                            : timeZone);
+                    calendar.setTime((Date) data);
+                }
+                return representScalar(getTag(data.getClass(), Tag.TIMESTAMP), ISO8601.format(calendar), null);
+            }
+        }
+
+        public YamlRepresenter() {
+            super();
+            this.multiRepresenters.put(Calendar.class, new RepresentDate());
+        }
+    }
+
+    private final static YamlRepresenter representer = new YamlRepresenter();
 
     public void serialize(final OutputStream outputStream, final Source source, final Consumer<String> resourceConsumer) throws IOException {
         final Node node = representSource(source, resourceConsumer);

@@ -22,19 +22,25 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.PropertyType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.engine.FileConfigurationWriter;
 import org.onehippo.cm.engine.FileResourceInputProvider;
 import org.onehippo.cm.engine.FileResourceOutputProvider;
 import org.onehippo.cm.engine.SourceSerializer;
+import org.onehippo.cm.impl.model.ConfigDefinitionImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
+import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
 import org.slf4j.Logger;
@@ -49,25 +55,34 @@ public class Esv2Yaml {
 
     public static void main(final String[] args) throws IOException, EsvParseException {
 
-        if (args.length != 2) {
-            System.out.println("usage: <src> <target>\n" +
-                               "<src>   : directory of a "+HIPPOECM_EXTENSION_FILE+" file\n" +
-                               "<target>: directory for writing the repo-config (will be emptied first)");
+        if (args.length < 2 || args.length > 3) {
+            System.out.println("usage: [<init>] <src> <target>\n" +
+                    "<init>   : (optional) location of hippoecm-extension.xml file, if not within <src> folder\n" +
+                    "<src>    : bootstrap initialization resources folder\n" +
+                    "<target> : directory for writing the repo-config (will be emptied first)");
             return;
         }
         try {
-            new Esv2Yaml(new File(args[0]), new File(args[1])).convert();
+            if (args.length == 2) {
+                new Esv2Yaml(new File(args[0]), new File(args[1])).convert();
+            } else {
+                new Esv2Yaml(new File(args[0]), new File(args[1]), new File(args[2])).convert();
+            }
         } catch (Exception e) {
             Throwable t = e;
             if (e.getCause() != null) {
                 t = e.getCause();
             }
-            log.error("Esv2Yaml.convert() failed: "+t.getMessage());
+            if (log.isDebugEnabled()) {
+                log.error("Esv2Yaml.convert() failed: " + t.getMessage(), t);
+            } else {
+                log.error("Esv2Yaml.convert() failed: " + t.getMessage());
+            }
 //            throw e;
         }
     }
 
-    private static final String[] MAIN_YAML_NAMES = { "main", "root", "base", "index" };
+    private static final String[] MAIN_YAML_NAMES = {"main", "root", "base", "index"};
 
     private final File src;
     private final File target;
@@ -76,17 +91,26 @@ public class Esv2Yaml {
     private final ModuleImpl module;
 
     public Esv2Yaml(final File src, final File target) throws IOException, EsvParseException {
+        this(null, src, target);
+    }
+
+    public Esv2Yaml(final File init, final File src, final File target) throws IOException, EsvParseException {
         this.src = src;
         this.target = target;
-        extensionFile = new File(src, HIPPOECM_EXTENSION_FILE);
+        extensionFile = init != null ? new File(init, HIPPOECM_EXTENSION_FILE) : new File(src, HIPPOECM_EXTENSION_FILE);
         if (!extensionFile.exists() || !extensionFile.isFile()) {
-            throw new IOException("File not found: "+extensionFile.getCanonicalPath());
+            throw new IOException("File not found: " + extensionFile.getCanonicalPath());
         }
+        if (init != null) {
+            if (!src.exists() || !src.isDirectory()) {
+                throw new IOException("bootstrap folder not found: " + src.getCanonicalPath());
+            }
+        }
+
         if (target.exists()) {
             if (target.isFile()) {
                 throw new IllegalArgumentException("Target is not a directory");
-            }
-            else {
+            } else {
                 FileUtils.deleteDirectory(target);
                 target.mkdirs();
             }
@@ -96,11 +120,11 @@ public class Esv2Yaml {
     }
 
     public void convert() throws IOException, EsvParseException {
-        log.info("Converting src: "+src.getCanonicalPath());
+        log.info("Converting src: " + src.getCanonicalPath());
 
         final EsvNode rootNode = esvParser.parse(new FileInputStream(extensionFile), extensionFile.getCanonicalPath());
         if (rootNode != null) {
-            if ("hippo:initializefolder".equals(rootNode.getType())) {
+            if ("hippo:initialize".equals(rootNode.getName())) {
 
                 // parse and create list of initializeitem instructions
                 final List<InitializeInstruction> instructions = new ArrayList<>();
@@ -109,12 +133,11 @@ public class Esv2Yaml {
                     if ("hippo:initializeitem".equals(child.getType())) {
                         // fail on duplicate initializeitem names, as that is not allowed/error anyway and could cause sorting error
                         if (!initializeItemNames.add(child.getName())) {
-                            throw new EsvParseException("Duplicate hippo:initializeitem name: "+child.getName());
+                            throw new EsvParseException("Duplicate hippo:initializeitem name: " + child.getName());
                         }
                         InitializeInstruction.parse(child, instructions);
-                    }
-                    else {
-                        log.warn("Ignored "+HIPPOECM_EXTENSION_FILE+" node: "+child.getName());
+                    } else {
+                        log.warn("Ignored " + HIPPOECM_EXTENSION_FILE + " node: " + child.getName());
                     }
                 }
 
@@ -146,9 +169,9 @@ public class Esv2Yaml {
 
                 processInitializeInstructions(mainSource, instructions);
                 serializeModule();
-            }
-            else {
-                throw new EsvParseException(extensionFile.getCanonicalPath()+" should have a root node with \"hippo:initializefolder\" jcr:primaryType");
+            } else {
+                throw new EsvParseException(extensionFile.getCanonicalPath() +
+                        " should have a root node with name \"hippo:initialize\"");
             }
             return;
         }
@@ -158,14 +181,14 @@ public class Esv2Yaml {
     protected String createSourcePath(final String[] candidates, final Set<String> sourcePaths, final int sequence) {
         String sourcePath = null;
         for (String name : candidates) {
-            name = name + (sequence == 0 ? "" : "-"+sequence) + ".yaml";
+            name = name + (sequence == 0 ? "" : "-" + sequence) + ".yaml";
             if (!sourcePaths.contains(name)) {
                 sourcePath = name;
                 break;
             }
         }
         if (sourcePath == null) {
-            return createSourcePath(candidates, sourcePaths, sequence+1);
+            return createSourcePath(candidates, sourcePaths, sequence + 1);
         }
         return sourcePath;
     }
@@ -178,9 +201,8 @@ public class Esv2Yaml {
                 String uriValue = instruction.getTypePropertyValue();
                 try {
                     new URI(uriValue);
-                }
-                catch (URISyntaxException e) {
-                    throw new EsvParseException("Invalid namespace uri: "+uriValue+" for initialize item: "+instruction.getName());
+                } catch (URISyntaxException e) {
+                    throw new EsvParseException("Invalid namespace uri: " + uriValue + " for initialize item: " + instruction.getName());
                 }
                 break;
             case NODETYPESRESOURCE:
@@ -191,10 +213,12 @@ public class Esv2Yaml {
                 instruction.setContentPath(instruction.getTypePropertyValue());
                 break;
             case CONTENTRESOURCE:
-                ((SourceInitializeInstruction)instruction).prepareSource(esvParser);
+                ((SourceInitializeInstruction) instruction).prepareSource(esvParser);
                 break;
-            case CONTENTPROPSET:
             case CONTENTPROPADD:
+                // ensure/force multiple by definition
+                instruction.getTypeProperty().setMultiple(true);
+            case CONTENTPROPSET:
                 instruction.setContentPath(instruction.getPropertyValue("hippo:contentroot", PropertyType.STRING, true));
                 break;
             case WEBFILEBUNDLE:
@@ -208,44 +232,64 @@ public class Esv2Yaml {
     }
 
     // generate and merge instruction definitions which already have been sorted in processing order
-    protected void processInitializeInstructions(final SourceImpl mainSource, final List<InitializeInstruction> instructions) throws IOException, EsvParseException {
+    protected void processInitializeInstructions(final SourceImpl mainSource, final List<InitializeInstruction> instructions)
+            throws IOException, EsvParseException {
+
+        Set<String> resourceBundles = new HashSet<>();
+        Set<DefinitionNode> deltaNodes = new HashSet<>();
+        Map<String, DefinitionNodeImpl> nodeDefinitions = new HashMap<>();
+
+        // not yet 'added' definition for resourcebundle root translation parent definitions, if needed
+        final ConfigDefinitionImpl resourceBundleParents = new ConfigDefinitionImpl(mainSource);
+        resourceBundleParents.setNode(null);
+
         for (InitializeInstruction instruction : instructions) {
 
-            // log instruction to be processed
-            {
-                final StringBuilder delta = new StringBuilder("");
-                if (instruction instanceof SourceInitializeInstruction) {
-                    EsvMerge merge = ((SourceInitializeInstruction) instruction).getSourceNode().getMerge();
-                    if (merge != null) {
-                        delta.append(" (").append(merge).append(")");
-                    }
-                }
-                log.info("Instruction: " + instruction.getType() + " named: " + instruction.getName() + delta.toString());
-            }
+            log.info(instruction.getType().getPropertyName() + ": " + instruction.getName());
 
             switch (instruction.getType()) {
                 case NAMESPACE:
                     try {
                         mainSource.addNamespaceDefinition(instruction.getName(), new URI(instruction.getTypePropertyValue()));
-                    }
-                    catch (URISyntaxException e) {
+                    } catch (URISyntaxException e) {
                         // already checked
                     }
                     break;
                 case NODETYPESRESOURCE:
                     mainSource.addNodeTypeDefinition(instruction.getResourcePath(), true);
                     break;
+                case CONTENTDELETE:
+                case CONTENTPROPDELETE:
+                case CONTENTPROPSET:
+                case CONTENTPROPADD:
+                    ((ContentInitializeInstruction) instruction).processContentInstruction(mainSource, nodeDefinitions, deltaNodes);
+                    break;
+                case CONTENTRESOURCE:
+                    ((SourceInitializeInstruction) instruction).processSource(module, nodeDefinitions, deltaNodes);
+                    break;
+                case WEBFILEBUNDLE:
+                    break;
                 case RESOURCEBUNDLES:
-                    ((ResourcebundlesInitializeInstruction)instruction).processResourceBundles(module);
-                default:
-                    // todo
+                    ((ResourcebundlesInitializeInstruction) instruction).processResourceBundles(module, resourceBundleParents, resourceBundles);
                     break;
             }
+        }
+        if (resourceBundleParents.getNode() != null && !resourceBundleParents.getNode().getNodes().isEmpty()) {
+            // add resourcebundles translations root definition parents
+            mainSource.addContentDefinition(resourceBundleParents);
         }
     }
 
     // write out module
     protected void serializeModule() throws IOException {
+        Iterator<SourceImpl> sourceIter = module.getModifiableSources().iterator();
+        while (sourceIter.hasNext()) {
+            SourceImpl source = sourceIter.next();
+            if (source.getDefinitions().isEmpty()) {
+                log.info("No definitions found or left for source " + source.getPath() + ": source skipped.");
+                sourceIter.remove();
+            }
+        }
         final FileResourceInputProvider resourceInputProvider = new FileResourceInputProvider(src.toPath());
         final FileResourceOutputProvider resourceOutputProvider = new FileResourceOutputProvider(target.toPath());
         new FileConfigurationWriter().writeModule(module, resourceOutputProvider.getModulePath(),

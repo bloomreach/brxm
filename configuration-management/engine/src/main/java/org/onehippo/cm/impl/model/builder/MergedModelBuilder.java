@@ -22,10 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.onehippo.cm.api.model.Configuration;
-import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
-import org.onehippo.cm.impl.model.builder.sorting.OrderableComparator;
+import org.onehippo.cm.impl.model.ModelUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ConfigurationBuilder accumulates {@link ConfigurationImpl}s into a map of configurations and, when building
@@ -33,12 +34,13 @@ import org.onehippo.cm.impl.model.builder.sorting.OrderableComparator;
  * the tree of {@link ConfigurationNodeImpl}s.
  */
 public class MergedModelBuilder {
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationTreeBuilder.class);
+    private static final OrderableListSorter<ConfigurationImpl> configurationSorter = new OrderableListSorter<>(Configuration.class.getSimpleName());
+
     private final List<ConfigurationImpl> configurations = new ArrayList<>();
     private final Map<String, ConfigurationImpl> configurationMap = new HashMap<>();
-    private final DependencyVerifier dependencyVerifier = new DependencyVerifier();
 
     public MergedModel build() {
-        verifyDependencies();
         sort();
 
         final MergedModel mergedModel = new MergedModel();
@@ -50,6 +52,7 @@ public class MergedModelBuilder {
                         project.getModifiableModules().forEach(module -> {
                             mergedModel.addNamespaceDefinitions(module.getNamespaceDefinitions());
                             mergedModel.addNodeTypeDefinitions(module.getNodeTypeDefinitions());
+                            logger.info("Merging module {}", ModelUtils.formatModule(module));
                             module.getContentDefinitions().forEach(configurationTreeBuilder::push);
                         })
                 )
@@ -78,20 +81,8 @@ public class MergedModelBuilder {
         return configuration;
     }
 
-    private void verifyDependencies() {
-        dependencyVerifier.verify(configurations);
-        configurations.stream()
-                .map(Configuration::getProjects)
-                .forEach(projects -> {
-                    dependencyVerifier.verify(projects);
-                    projects.stream()
-                            .map(Project::getModules)
-                            .forEach(dependencyVerifier::verify);
-                });
-    }
-
     private void sort() {
-        configurations.sort(new OrderableComparator<>());
+        configurationSorter.sort(configurations);
         configurations.forEach(ConfigurationImpl::sortProjects);
     }
 }

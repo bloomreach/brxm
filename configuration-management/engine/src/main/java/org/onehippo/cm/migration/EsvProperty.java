@@ -18,18 +18,22 @@ package org.onehippo.cm.migration;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.onehippo.cm.impl.model.SourceLocationImpl;
+
 public class EsvProperty {
 
-    private String name;
+    private final String name;
     private int type;
+    private final SourceLocationImpl location;
     private Boolean multiple;
     private EsvMerge merge;
     private String mergeLocation;
     private List<EsvValue> values = new ArrayList<>();
 
-    public EsvProperty(final String name, final int type) {
+    public EsvProperty(final String name, final int type, final SourceLocationImpl location) {
         this.name = name;
         this.type = type;
+        this.location = location;
     }
 
     public String getName() {
@@ -40,12 +44,24 @@ public class EsvProperty {
         return type;
     }
 
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public SourceLocationImpl getSourceLocation() {
+        return location;
+    }
+
     public Boolean getMultiple() {
         return multiple;
     }
 
-    public Boolean isMultiple() {
-        return multiple != null && multiple;
+    public boolean isMultiple() {
+        return (multiple != null && multiple) || (multiple == null && getValues().size() > 1);
+    }
+
+    public boolean isSingle() {
+        return (multiple == null || !multiple) && getValues().size() == 1;
     }
 
     public void setMultiple(final Boolean multiple) {
@@ -58,6 +74,21 @@ public class EsvProperty {
 
     public void setMerge(final EsvMerge merge) {
         this.merge = merge;
+        if (isMergeAppend()) {
+            multiple = Boolean.TRUE;
+        }
+    }
+
+    public boolean isMergeSkip() {
+        return EsvMerge.SKIP == merge;
+    }
+
+    public boolean isMergeOverride() {
+        return EsvMerge.OVERRIDE == merge;
+    }
+
+    public boolean isMergeAppend() {
+        return EsvMerge.APPEND == merge;
     }
 
     public String getMergeLocation() {
@@ -70,5 +101,9 @@ public class EsvProperty {
 
     public List<EsvValue> getValues() {
         return values;
+    }
+
+    public String getValue() {
+        return getValues().size() == 1 ? getValues().get(0).getString() : null;
     }
 }

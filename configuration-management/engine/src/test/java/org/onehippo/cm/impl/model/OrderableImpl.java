@@ -19,7 +19,6 @@ package org.onehippo.cm.impl.model;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.onehippo.cm.api.model.Orderable;

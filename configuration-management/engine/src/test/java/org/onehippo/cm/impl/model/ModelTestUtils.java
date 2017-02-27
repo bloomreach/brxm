@@ -97,7 +97,7 @@ public class ModelTestUtils {
     }
 
     private static void loadYAMLStream(final InputStream input, final String sourcePath, final ModuleImpl module) throws Exception {
-        new SourceParser(resourceInputProvider).parse(sourcePath, input, module);
+        new SourceParser(resourceInputProvider).parse(sourcePath, sourcePath, input, module);
     }
 
 }

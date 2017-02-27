@@ -24,12 +24,14 @@ import java.util.stream.Collectors;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
+import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ConfigurationPropertyImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.cm.impl.model.DefinitionNodeImpl;
 import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
+import org.onehippo.cm.impl.model.ValueImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,11 +45,26 @@ import static org.onehippo.cm.api.model.PropertyOperation.REPLACE;
 class ConfigurationTreeBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationTreeBuilder.class);
+    private static final String REP_ROOT_NT = "rep:root";
+
     private final ConfigurationNodeImpl root = new ConfigurationNodeImpl();
+
 
     ConfigurationTreeBuilder() {
         root.setPath("/");
         root.setName("");
+
+        ConfigurationPropertyImpl property;
+
+        // add required jcr:primaryType: rep:root
+        property = new ConfigurationPropertyImpl();
+        property.setName(JCR_PRIMARYTYPE);
+        property.setParent(root);
+        property.setPath("/" + JCR_PRIMARYTYPE);
+        property.setType(PropertyType.SINGLE);
+        property.setValueType(ValueType.NAME);
+        property.setValue(new ValueImpl(REP_ROOT_NT, ValueType.NAME, false, false));
+        root.addProperty(JCR_PRIMARYTYPE, property);
     }
 
     ConfigurationNodeImpl build() {
@@ -76,14 +93,65 @@ class ConfigurationTreeBuilder {
         }
 
         final ConfigurationNodeImpl parent = node.getModifiableParent();
-        if (parent != null) {
-            definitionNode.getOrderBefore()
-                    .ifPresent(destChildName -> parent.orderBefore(node.getName(), destChildName));
+        if (parent != null && definitionNode.getOrderBefore().isPresent()) {
+            final String destChildName = definitionNode.getOrderBefore().get();
+            final boolean orderFirst = "".equals(destChildName);
+            if (!orderFirst) {
+                if (node.getName().equals(destChildName)) {
+                    final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+                    final String msg = String.format("Invalid orderBefore: '%s for node '%s' defined in '%s': targeting this node itself.",
+                            destChildName, node.getPath(), culprit);
+                    throw new IllegalArgumentException(msg);
+                }
+                if (!parent.getNodes().containsKey(destChildName)) {
+                    final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+                    final String msg = String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': no sibling named '%s'.",
+                            destChildName, node.getPath(), culprit, destChildName);
+                    throw new IllegalArgumentException(msg);
+                }
+            }
+            boolean first = true;
+            boolean prevIsSrc = false;
+            for (String name : parent.getNodes().keySet()) {
+                if (name.equals(node.getName())) {
+                    // current == src
+                    if (first && orderFirst) {
+                        // src already first
+                        final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+                        logger.warn("Unnecessary orderBefore: '' (first) for node '{}' defined in '{}': already first child of '{}'.",
+                                node.getPath(), culprit, parent.getPath());
+                        break;
+                    }
+                    // track src for next loop, once
+                    prevIsSrc = true;
+                } else if (orderFirst) {
+                    // current != src != first
+                    parent.orderBefore(node.getName(), name);
+                    break;
+                } else if (name.equals(destChildName)) {
+                    // found dest: only reorder if prev != src
+                    if (prevIsSrc) {
+                        // previous was src, current is dest: already is right order
+                        final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+                        logger.warn("Unnecessary orderBefore: '{}' for node '{}' defined in '{}': already ordered before sibling '{}'.",
+                                destChildName, node.getPath(), culprit, destChildName);
+                    } else {
+                        // dest < src: reorder
+                        parent.orderBefore(node.getName(), destChildName);
+                    }
+                    break;
+                } else {
+                    prevIsSrc = false;
+                }
+                first = false;
+            }
         }
 
         for (DefinitionPropertyImpl property: definitionNode.getModifiableProperties().values()) {
             mergeProperty(node, property);
         }
+
+        requirePrimaryType(node, definitionNode);
 
         final Map<String, ConfigurationNodeImpl> children = node.getModifiableNodes();
         for (DefinitionNodeImpl definitionChild : definitionNode.getModifiableNodes().values()) {
@@ -97,6 +165,9 @@ class ConfigurationTreeBuilder {
                 }
             } else {
                 child = createChildNode(node, definitionChild.getName(), definitionChild);
+                if (child == null) {
+                    continue;
+                }
             }
             mergeNode(child, definitionChild);
         }
@@ -133,8 +204,8 @@ class ConfigurationTreeBuilder {
             // that's unsupported, because it is likely to create models that cannot be persisted to JCR.
             final String culprit = ModelUtils.formatDefinition(definition);
             String msg = String.format("%s contains definition rooted at unreachable node '%s'. "
-                    + "Closest ancestor is at '%s'.", culprit, definitionRootPath,
-                      rootForDefinition.getPath());
+                            + "Closest ancestor is at '%s'.", culprit, definitionRootPath,
+                    rootForDefinition.getPath());
             throw new IllegalStateException(msg);
         }
 
@@ -158,7 +229,8 @@ class ConfigurationTreeBuilder {
             final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
             final String msg = String.format("%s: Trying to delete node %s that does not exist.",
                     culprit, definitionNode.getPath());
-            throw new IllegalArgumentException(msg);
+            logger.warn(msg);
+            return null;
         }
 
         node.setName(name);
@@ -208,7 +280,8 @@ class ConfigurationTreeBuilder {
                 final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
                 final String msg = String.format("%s: Trying to delete property %s that does not exist.",
                         culprit, definitionProperty.getPath());
-                throw new IllegalArgumentException(msg);
+                logger.warn(msg);
+                return;
             }
 
             // create new property
@@ -278,10 +351,11 @@ class ConfigurationTreeBuilder {
         if (property.getName().equals(JCR_PRIMARYTYPE)
                 && !property.getValue().getString().equals(definitionProperty.getValue().getString())
                 && !isOverride) {
+            final String sourceList = ModelUtils.formatDefinitions(property);
             final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
-            final String msg = String.format("Property %s is already defined on node %s, but change is requested in %s. "
+            final String msg = String.format("Property %s is already defined on node %s as determined by %s, but change is requested in %s. "
                             + "Use 'operation: override' if you really intend to change the value of this property.",
-                    JCR_PRIMARYTYPE, property.getParent().getPath(), culprit);
+                    JCR_PRIMARYTYPE, property.getParent().getPath(), sourceList, culprit);
             throw new IllegalStateException(msg);
         }
     }
@@ -306,6 +380,15 @@ class ConfigurationTreeBuilder {
                         JCR_MIXINTYPES, property.getParent().getPath(), culprit, missingMixins.toString());
                 throw new IllegalStateException(msg);
             }
+        }
+    }
+
+    private void requirePrimaryType(final ConfigurationNodeImpl node, final DefinitionNodeImpl definitionNode) {
+        if (!node.getProperties().containsKey(JCR_PRIMARYTYPE)) {
+            final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
+            final String msg = String.format("Node '%s' defined at '%s' is missing the required %s property.",
+                    definitionNode.getPath(), culprit, JCR_PRIMARYTYPE);
+            throw new IllegalStateException(msg);
         }
     }
 

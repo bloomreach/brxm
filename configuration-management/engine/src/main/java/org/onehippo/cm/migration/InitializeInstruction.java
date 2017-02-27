@@ -22,16 +22,19 @@ import java.util.List;
 
 import javax.jcr.PropertyType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class InitializeInstruction {
 
     public enum Type {
         NAMESPACE,
         NODETYPESRESOURCE,
-//      NODETYPES, // not supported from hippoecm-extension.xml, only internally
+        //      NODETYPES, // not supported from hippoecm-extension.xml, only internally
         CONTENTDELETE,
         CONTENTRESOURCE,
         CONTENTPROPDELETE,
-//        CONTENT, // no longer in use nor documented
+        //        CONTENT, // no longer in use nor documented
         CONTENTPROPSET,
         CONTENTPROPADD,
         WEBFILEBUNDLE,
@@ -57,9 +60,8 @@ public class InitializeInstruction {
         private final String propertyName;
         private Type combinableWith;
 
-        Type()
-        {
-            this.propertyName = "hippo:"+name().toLowerCase();
+        Type() {
+            this.propertyName = "hippo:" + name().toLowerCase();
         }
 
         public String getPropertyName() {
@@ -139,6 +141,8 @@ public class InitializeInstruction {
         return o1.getName().compareTo(o2.getName());
     };
 
+    static final Logger log = LoggerFactory.getLogger(Esv2Yaml.class);
+
     private final String name;
     private final Type type;
     private InitializeInstruction combinedWith;
@@ -166,17 +170,17 @@ public class InitializeInstruction {
                     // note: combinedWith != other (use-case already handled before in comparator)
                     return getCombinedWith().isDownStream(other);
                 }
-                return getContentPath().equals(other.getContentPath()) || getContentPath().startsWith(other.getContentPath()+"/");
+                return getContentPath().equals(other.getContentPath()) || getContentPath().startsWith(other.getContentPath() + "/");
             case CONTENTRESOURCE:
                 if (getContentPath().equals(other.getContentPath())) {
                     // if paths equal and upstream is delta skip, better swap positions (note: *not* considered in existing bootstrap)
                     return !other.isDeltaSkip();
                 }
-                return getContentPath().startsWith(other.getContentPath()+"/");
+                return getContentPath().startsWith(other.getContentPath() + "/");
             case CONTENTPROPADD:
             case CONTENTPROPSET:
             case CONTENTPROPDELETE:
-                return getContentPath().startsWith(getContentPath()+"/");
+                return getContentPath().startsWith(getContentPath() + "/");
             case RESOURCEBUNDLES:
                 // for now (and probably fine to keep as is) treat resourcebundles as downstream
                 // existing bootstrap uses *much* more complex logic, but bottom line it likely makes no difference
@@ -194,7 +198,7 @@ public class InitializeInstruction {
                 if (second != null ||
                         (first != null &&
                                 (first.getType().getCombinableWith() == null || first.getType().getCombinableWith() != type))) {
-                    throw new EsvParseException("Unsupported initialization type: "+type.getPropertyName() +
+                    throw new EsvParseException("Unsupported initialization type: " + type.getPropertyName() +
                             " for hippo:initializationitem: " + node.getName());
                 }
                 InitializeInstruction instruction;
@@ -205,6 +209,12 @@ public class InitializeInstruction {
                     case RESOURCEBUNDLES:
                         instruction = new ResourcebundlesInitializeInstruction(node, type, first);
                         break;
+                    case CONTENTDELETE:
+                    case CONTENTPROPDELETE:
+                    case CONTENTPROPSET:
+                    case CONTENTPROPADD:
+                        instruction = new ContentInitializeInstruction(node, type, first);
+                        break;
                     default:
                         instruction = new InitializeInstruction(node, type, first);
                 }
@@ -212,8 +222,7 @@ public class InitializeInstruction {
                     second = instruction;
                     // link first to second (second already linked to first in constructor call above)
                     first.setCombinedWith(second);
-                }
-                else {
+                } else {
                     first = instruction;
                 }
             }
@@ -223,14 +232,13 @@ public class InitializeInstruction {
             if (second != null) {
                 instructions.add(second);
             }
-        }
-        else {
-            throw new EsvParseException("Unsupported hippo:initializationitem: "+node.getName());
+        } else {
+            throw new EsvParseException("Unsupported hippo:initializationitem: " + node.getName());
         }
     }
 
     protected InitializeInstruction(final EsvNode instructionNode, final Type type,
-                                  final InitializeInstruction combinedWith) throws EsvParseException {
+                                    final InitializeInstruction combinedWith) throws EsvParseException {
         this.instructionNode = instructionNode;
         this.name = instructionNode.getName();
         this.type = type;
@@ -316,7 +324,7 @@ public class InitializeInstruction {
         this.resourcePath = normalizePath(path);
         this.resource = new File(basedir, resourcePath);
         if (!resource.exists() || !(file && resource.isFile())) {
-            throw new EsvParseException("Resource "+path+" not found or not a "+(file ? "file" : "directory"));
+            throw new EsvParseException("Resource " + path + " not found or not a " + (file ? "file" : "directory"));
         }
     }
 
@@ -324,33 +332,33 @@ public class InitializeInstruction {
         final EsvProperty prop = instructionNode.getProperty(name);
         if (prop == null) {
             if (required) {
-                throw new EsvParseException("Missing required property: " + name+" for initialization item: "+getName());
+                throw new EsvParseException("Missing required property: " + name + " for initialization item: " + getName());
             }
             return null;
         } else {
             if (type != prop.getType()) {
-                throw new EsvParseException("Property: "+name+" is not of type String for initialization item: "+getName());
+                throw new EsvParseException("Property: " + name + " is not of type String for initialization item: " + getName());
             }
             if (prop.isMultiple() || prop.getValues().size() != 1) {
-                throw new EsvParseException("Property: "+name+" requires a single value for initialization item: "+getName());
+                throw new EsvParseException("Property: " + name + " requires a single value for initialization item: " + getName());
             }
-            final String value = prop.getValues().get(0).getValue();
+            final String value = prop.getValues().get(0).getString();
             if (required && (value == null || value.isEmpty())) {
-                throw new EsvParseException("Empty or null property value: "+name+" for initialization item: "+getName());
+                throw new EsvParseException("Empty or null property value: " + name + " for initialization item: " + getName());
             }
             return value;
         }
     }
 
     public static String normalizePath(String path) {
-        if(path == null) {
+        if (path == null) {
             return null;
         }
-        while(path.startsWith("/")) {
+        while (path.startsWith("/")) {
             path = path.substring(1);
         }
-        while(path.endsWith("/" )) {
-            path = path.substring(0, path.length()-1);
+        while (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
         }
         return path;
     }

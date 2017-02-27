@@ -288,7 +288,7 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 + "        aGVsbG8gd29ybGQ=\n"
                 + "    - long: 42\n"
                 + "    - double: 3.1415\n"
-                + "    - date: 2015-10-21T07:28:00+8:00\n"
+                + "    - date: 2015-10-21T07:28:00.000+08:00\n"
                 + "    - boolean: true\n"
                 + "    - name:\n"
                 + "          type: name\n"
