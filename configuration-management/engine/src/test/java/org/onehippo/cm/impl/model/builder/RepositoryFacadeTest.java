@@ -599,6 +599,9 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         addNode("/test", "a", "nt:unstructured");
         addNode("/test", "b", "nt:unstructured");
         addNode("/test", "c", "nt:unstructured");
+        final String idA = session.getNode("/test/a").getIdentifier();
+        final String idB = session.getNode("/test/b").getIdentifier();
+        final String idC = session.getNode("/test/c").getIdentifier();
 
         final String source
                 = "instructions:\n"
@@ -613,15 +616,15 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
                 + "      - jcr:primaryType: nt:unstructured\n"
                 + "";
 
-        // TODO: discuss how to handle JackRabbit reporting these events as a number of deletes and adds and not 2 moves
-//        final ExpectedEvents expectedEvents = new ExpectedEvents()
-//                .expectNodeReordered("/test", "/test/c", "/test/a")
-//                .expectNodeReordered("/test", "/test/b", "/test/a");
-//
-//        applyDefinitions(source, expectedEvents);
         applyDefinitions(source);
 
+        // JackRabbit's event system does not represent node reorders well. Checking that the node IDs did not change
+        // to ensure the nodes did not get deleted and recreated.
+
         expectNode("/test", "[c, b, a]", "[jcr:primaryType]");
+        assertEquals(idA, session.getNode("/test/a").getIdentifier());
+        assertEquals(idB, session.getNode("/test/b").getIdentifier());
+        assertEquals(idC, session.getNode("/test/c").getIdentifier());
     }
 
     @Test

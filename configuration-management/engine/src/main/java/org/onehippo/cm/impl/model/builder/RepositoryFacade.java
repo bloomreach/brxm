@@ -49,6 +49,7 @@ import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.commons.cnd.ParseException;
@@ -71,6 +72,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 
 public class RepositoryFacade {
 
@@ -320,9 +322,11 @@ public class RepositoryFacade {
     }
 
     private void pushProperty(final ConfigurationProperty modelProperty, final Node jcrNode) throws Exception {
-        // TODO: discuss how to efficiently filter out protected properties here
-        // TODO: the code now "works" as primaryType and mixinTypes are correctly set and valuesAreIdentical returns true
         final Property jcrProperty = getPropertyIfExists(jcrNode, modelProperty.getName());
+
+        if (isKnownProtectedPropertyName(modelProperty.getName())) {
+            return;
+        }
 
         if (jcrProperty != null) {
             if (isOverride(modelProperty, jcrProperty)) {
@@ -337,6 +341,23 @@ public class RepositoryFacade {
         } else {
             jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelProperty, modelProperty.getValues(), jcrNode));
         }
+    }
+
+    private boolean isKnownProtectedPropertyName(final String modelPropertyName) {
+        // TODO: use constants from repository module(s) once we have the compile dependency
+        final String[] knownProtectedPropertyNames = new String[] {
+                JCR_PRIMARYTYPE,
+                JCR_MIXINTYPES,
+                JCR_UUID,
+                "hippo:availability",
+                "hippo:related",
+                "hippo:paths",
+                "hippostd:state",
+                "hippostd:holder",
+                "hippostd:stateSummary",
+                "hippostdpubwf:publicationDate"
+        };
+        return ArrayUtils.contains(knownProtectedPropertyNames, modelPropertyName);
     }
 
     private boolean isOverride(final ConfigurationProperty modelProperty,
