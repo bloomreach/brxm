@@ -16,18 +16,14 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.util.NodeIterable;
-import org.hippoecm.repository.util.PropertyIterable;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +31,6 @@ import org.slf4j.LoggerFactory;
 public class RichTextFieldType extends StringFieldType {
 
     private static final Logger log = LoggerFactory.getLogger(RichTextFieldType.class);
-    private static final String HIPPOSTD_CONTENT = "hippostd:content";
 
     public RichTextFieldType() {
         super();
@@ -53,30 +48,17 @@ public class RichTextFieldType extends StringFieldType {
 
     private List<FieldValue> readSingleValue(final Node node) {
         final String nodeName = getId();
-        final List<FieldValue> values = new ArrayList<>();
-        final Map<String, List<FieldValue>> linkedDocuments = new HashMap<>();
 
         try {
             final Node child = node.getNode(nodeName);
-            if (child.hasProperty(HIPPOSTD_CONTENT)) {
-                values.add(new FieldValue(child.getProperty(HIPPOSTD_CONTENT).getString()));
+            if (child.hasProperty(HippoStdNodeType.HIPPOSTD_CONTENT)) {
+                final String html = child.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT).getString();
+                return Collections.singletonList(new FieldValue(html));
             }
-            for (final Node subNode : new NodeIterable(child.getNodes())) {
-                saveLinkedDocuments(linkedDocuments, subNode);
-            }
-            values.add(new FieldValue(linkedDocuments));
         } catch (final RepositoryException e) {
             log.warn("Failed to read nodes for Rich Text Field type '{}'", getId(), e);
         }
-        return values;
-    }
 
-    private static void saveLinkedDocuments(final Map<String, List<FieldValue>> linkedDocuments, final Node subNode) throws RepositoryException {
-        final List<FieldValue> properties = new ArrayList<>();
-        for (final Property property : new PropertyIterable(subNode.getProperties())) {
-            storeProperty(properties, property);
-        }
-        linkedDocuments.put(subNode.getName(), properties);
+        return Collections.emptyList();
     }
-
 }
