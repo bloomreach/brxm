@@ -124,7 +124,7 @@ public class Esv2Yaml {
 
         final EsvNode rootNode = esvParser.parse(new FileInputStream(extensionFile), extensionFile.getCanonicalPath());
         if (rootNode != null) {
-            if ("hippo:initializefolder".equals(rootNode.getType())) {
+            if ("hippo:initialize".equals(rootNode.getName())) {
 
                 // parse and create list of initializeitem instructions
                 final List<InitializeInstruction> instructions = new ArrayList<>();
@@ -171,7 +171,7 @@ public class Esv2Yaml {
                 serializeModule();
             } else {
                 throw new EsvParseException(extensionFile.getCanonicalPath() +
-                        " should have a root node with \"hippo:initializefolder\" jcr:primaryType");
+                        " should have a root node with name \"hippo:initialize\"");
             }
             return;
         }
