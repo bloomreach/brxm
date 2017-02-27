@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.jcr.Node;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
@@ -80,7 +81,7 @@ public class FieldTypeUtils {
         FIELD_TYPE_MAP.put("String", new TypeDescriptor(StringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Text", new TypeDescriptor(MultilineStringFieldType.class, PROPERTY_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put("Html", new TypeDescriptor(FormattedTextFieldType.class, PROPERTY_FIELD_PLUGIN));
-        FIELD_TYPE_MAP.put("hippostd:html", new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
+        FIELD_TYPE_MAP.put(HippoStdNodeType.NT_HTML, new TypeDescriptor(RichTextFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_COMPOUND, new TypeDescriptor(CompoundFieldType.class, NODE_FIELD_PLUGIN));
         FIELD_TYPE_MAP.put(FIELD_TYPE_CHOICE, new TypeDescriptor(ChoiceFieldType.class, CONTENT_BLOCKS_PLUGIN));
     }
@@ -154,7 +155,7 @@ public class FieldTypeUtils {
         final ContentTypeItem item = context.getContentTypeItem();
         final String itemType = item.getItemType();
 
-        if(FIELD_TYPE_MAP.containsKey(itemType)) {
+        if (FIELD_TYPE_MAP.containsKey(itemType)) {
             return itemType;
         }
 
