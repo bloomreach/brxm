@@ -1191,11 +1191,10 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         final List<Definition> definitions = parseNoSort(yaml);
 
-        try {
+        try (Log4jListener listener = Log4jListener.onWarn()) {
             builder.push((ContentDefinitionImpl) definitions.get(0));
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("test-configuration/test-project/test-module [string]: Trying to delete property /a/property1 that does not exist.", e.getMessage());
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to delete property /a/property1 that does not exist.")));
         }
     }
 

@@ -279,7 +279,8 @@ class ConfigurationTreeBuilder {
                 final String culprit = ModelUtils.formatDefinition(definitionProperty.getDefinition());
                 final String msg = String.format("%s: Trying to delete property %s that does not exist.",
                         culprit, definitionProperty.getPath());
-                throw new IllegalArgumentException(msg);
+                logger.warn(msg);
+                return;
             }
 
             // create new property
