@@ -59,6 +59,7 @@ hippo-iframe {
   max-width: 100%;
   min-width: 0;
 
+  overflow: hidden;
   position: relative;
   transition: max-width $viewport-animation-transition, min-width $viewport-animation-transition;
   width: 100%;
