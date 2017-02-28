@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Calendar;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import javax.jcr.PropertyType;
@@ -31,8 +30,6 @@ import org.onehippo.cm.impl.model.SourceLocationImpl;
 
 public class EsvValue {
 
-    private static final TimeZone TIMEZONE_UTC = TimeZone.getTimeZone("UTC");
-    private static final TimeZone TIMEZONE_Z = TimeZone.getTimeZone("Z");
     private final boolean resourcePath;
     private final boolean base64;
     private final SourceLocationImpl location;
@@ -106,11 +103,6 @@ public class EsvValue {
                     if (calendar == null) {
                         throw new EsvParseException("Not a valid date: "+value+" at " + location);
                     }
-                    // temporary hack for snakeyaml not properly serializing Z time zone value, instead checks on UTC
-//                    TimeZone tz = calendar.getTimeZone();
-//                    if (tz.equals(TIMEZONE_Z)) {
-//                        calendar.setTimeZone(TIMEZONE_UTC);
-//                    }
                     return calendar;
                 case PropertyType.DECIMAL:
                     return new BigDecimal(value);

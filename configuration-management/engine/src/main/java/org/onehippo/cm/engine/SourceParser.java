@@ -22,14 +22,10 @@ import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.jackrabbit.util.ISO8601;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;
@@ -41,7 +37,6 @@ import org.onehippo.cm.impl.model.DefinitionPropertyImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.SourceImpl;
 import org.onehippo.cm.impl.model.ValueImpl;
-import org.yaml.snakeyaml.constructor.AbstractConstruct;
 import org.yaml.snakeyaml.constructor.Construct;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -58,51 +53,16 @@ public class SourceParser extends AbstractBaseParser {
     // class is needed to access the protected Constructor#construct method which uses the built-in parsers for the
     // known basic scalar types. The additional check for the ConstructYamlTimestamp is done as the constructor for
     // timestamp returns a Date by internally constructing a Calendar.
-    // Furthermore the snakeyaml ConstructYamlTimestamp is ignored and replaced with our own implementation which
-    // uses the JR ISO8601 class for parsing of timestamps (not YMD dates) as we also (have to, see HCM-17) use ISO8601
-    // for writing.
     private static final class ScalarConstructor extends Constructor {
-
-        private final static Pattern YMD_REGEXP = Pattern
-                .compile("^([0-9][0-9][0-9][0-9])-([0-9][0-9]?)-([0-9][0-9]?)$");
-
-        private static final Construct constructISO8601Timestamp = new AbstractConstruct() {
-
-            // adapted from snakeyaml SafeConstructor.ConstructYamlTimestamp, replacing the timestamp parsing
-            // using JR ISO8601
-            public Object construct(Node node) {
-                ScalarNode scalar = (ScalarNode) node;
-                String nodeValue = scalar.getValue();
-                Calendar calendar;
-                Matcher match = YMD_REGEXP.matcher(nodeValue);
-                if (match.matches()) {
-                    String year_s = match.group(1);
-                    String month_s = match.group(2);
-                    String day_s = match.group(3);
-                    calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                    calendar.clear();
-                    calendar.set(Calendar.YEAR, Integer.parseInt(year_s));
-                    // Java's months are zero-based...
-                    calendar.set(Calendar.MONTH, Integer.parseInt(month_s) - 1); // x
-                    calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(day_s));
-                    return calendar;
-                } else {
-                    // use ISO8601 instead of original ConstructYamlTimestamp logic
-                    calendar = ISO8601.parse(nodeValue);
-                    if (calendar == null) {
-                        throw new YAMLException("Unexpected timestamp: " + nodeValue);
-                    }
-                    return calendar;
-                }
-            }
-        };
-
         Object constructScalarNode(final ScalarNode node) {
-            Construct constructor = getConstructor(node);
+            final Construct constructor = getConstructor(node);
+            final Object object = constructor.construct(node);
             if (constructor instanceof ConstructYamlTimestamp) {
-                constructor = constructISO8601Timestamp;
+                final Calendar result = (Calendar)((ConstructYamlTimestamp)constructor).getCalendar().clone();
+                result.setLenient(false);
+                return result;
             }
-            return constructor.construct(node);
+            return object;
         }
     }
 
@@ -121,12 +81,8 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     public void parse(final String sourcePath, final String path, final InputStream inputStream, final ModuleImpl parent) throws ParserException {
-        try {
-            final Node node = composeYamlNode(sourcePath, inputStream);
-            constructSource(path, node, parent);
-        } catch (YAMLException e) {
-            throw new ParserException("YAML parse exception: " + e.getMessage(), e);
-        }
+        final Node node = composeYamlNode(sourcePath, inputStream);
+        constructSource(path, node, parent);
     }
 
     protected void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException {
@@ -449,7 +405,7 @@ public class SourceParser extends AbstractBaseParser {
                 return new ValueImpl((Calendar) object);
             }
         } catch (YAMLException e) {
-            throw new ParserException("YAML parse exception: "+e.getMessage(), node, e);
+            throw new ParserException("YAML parse exception: " + e.getMessage(), node, e);
         }
 
         throw new ParserException("Tag not recognized: " + scalar.getTag(), node);

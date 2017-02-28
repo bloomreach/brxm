@@ -60,9 +60,8 @@ public class ParserValueTest extends AbstractBaseTest {
         final DefinitionNode autoDetectedNode = assertNode(autoDetectedDefinition, "/autodetected", "autodetected", autoDetectedDefinition, 2, 7);
         assertProperty(autoDetectedNode, "/autodetected/binary", "binary", autoDetectedDefinition, ValueType.BINARY, "hello world".getBytes());
         assertProperty(autoDetectedNode, "/autodetected/boolean", "boolean", autoDetectedDefinition, ValueType.BOOLEAN, true);
-        final Calendar calendar = Calendar.getInstance();
+        final Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
         calendar.setTimeInMillis(0);
-        calendar.setTimeZone(TimeZone.getTimeZone("GMT+8"));
         calendar.set(2015, 9, 21, 7, 28, 0);
         calendar.setLenient(false);
         assertProperty(autoDetectedNode, "/autodetected/date", "date", autoDetectedDefinition, ValueType.DATE, calendar);
@@ -149,6 +148,33 @@ public class ParserValueTest extends AbstractBaseTest {
         final ConfigDefinition definition = assertDefinition(source, 0, ConfigDefinition.class);
         final DefinitionNode node = assertNode(definition, "/node", "node", definition, 0, 1);
         assertProperty(node, "/node/property", "property", definition, ValueType.STRING, new Object[0]);
+    }
+
+    @Test
+    public void expect_date_without_time_to_yield_non_lenient_UTC_date() throws ParserException {
+        final SourceParser sourceParser = new SourceParser(DUMMY_RESOURCE_INPUT_PROVIDER);
+        final ConfigurationImpl configuration = new ConfigurationImpl("configuration");
+        final ProjectImpl project = new ProjectImpl("project", configuration);
+        final ModuleImpl module = new ModuleImpl("module", project);
+
+        final String yaml =
+                "instructions:\n" +
+                "  - config:\n" +
+                "      - /node:\n" +
+                "          - dateShort: 2015-10-21";
+        final InputStream inputStream = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
+
+        sourceParser.parse("dummy.yaml", "dummy.yaml", inputStream, module);
+
+        final Source source = assertSource(module, "dummy.yaml", 1);
+        final ConfigDefinition definition = assertDefinition(source, 0, ConfigDefinition.class);
+        final DefinitionNode node = assertNode(definition, "/node", "node", definition, 0, 1);
+
+        Calendar calendarShort = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        calendarShort.setTimeInMillis(0);
+        calendarShort.set(2015, 9, 21);
+        calendarShort.setLenient(false);
+        assertProperty(node, "/node/dateShort", "dateShort", definition, ValueType.DATE, calendarShort);
     }
 
 }
