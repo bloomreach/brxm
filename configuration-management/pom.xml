@@ -43,6 +43,7 @@
     <commons-lang3.version>3.5</commons-lang3.version>
     <commons-io.version>2.5</commons-io.version>
     <tdunning-json.version>1.8</tdunning-json.version>
+    <lib.json.version>20160810</lib.json.version>
   </properties>
   
   <modules>
@@ -100,10 +101,17 @@
         <version>${commons-io.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.tdunning</groupId>
+        <groupId>org.json</groupId>
         <artifactId>json</artifactId>
-        <version>${tdunning-json.version}</version>
+        <version>${lib.json.version}</version>
       </dependency>
+      <!-- todo: replacement for org.json:json (above) in the future
+        <dependency>
+          <groupId>com.tdunning</groupId>
+          <artifactId>json</artifactId>
+          <version>${tdunning-json.version}</version>
+        </dependency>
+      -->
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
         <artifactId>jackrabbit-jcr-commons</artifactId>
