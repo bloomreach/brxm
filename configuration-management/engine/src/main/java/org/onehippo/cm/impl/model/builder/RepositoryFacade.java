@@ -67,6 +67,7 @@ import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.engine.ResourceInputProvider;
+import org.onehippo.cm.impl.model.ModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +83,7 @@ public class RepositoryFacade {
     private final Map<Module, ResourceInputProvider> resourceInputProviders;
     private final List<Pair<ConfigurationProperty, Node>> unprocessedReferences = new ArrayList<>();
 
-    protected RepositoryFacade(final Session session,
+    public RepositoryFacade(final Session session,
                                final Map<Module, ResourceInputProvider> resourceInputProviders) {
         this.session = session;
         this.resourceInputProviders = resourceInputProviders;
@@ -125,6 +126,7 @@ public class RepositoryFacade {
     }
 
     private void pushNodeType(final NodeTypeDefinition nodeTypeDefinition) throws RepositoryException, ParseException, IOException {
+        logger.debug(String.format("processing cnd '%s' from %s.", nodeTypeDefinition.getValue(), ModelUtils.formatDefinition(nodeTypeDefinition)));
         final String definitionValue = nodeTypeDefinition.getValue();
         final InputStream cndStream = nodeTypeDefinition.isResource()
                 ? getResourceInputStream(nodeTypeDefinition.getSource(), definitionValue)
@@ -140,6 +142,7 @@ public class RepositoryFacade {
         final NodeTypeManager nodeTypeManager = session.getWorkspace().getNodeTypeManager();
 
         for (NodeTypeTemplate ntt : nttList) {
+            logger.debug(String.format("registering node type '%s'", ntt.getName()));
             nodeTypeManager.registerNodeType(ntt, true);
         }
     }
@@ -151,6 +154,7 @@ public class RepositoryFacade {
     }
 
     private void pushNodes(final ConfigurationNode modelNode, final Node jcrNode) throws Exception {
+        logger.debug(String.format("processing node '%s' defined through %s.", modelNode.getPath(), ModelUtils.formatDefinitions(modelNode)));
         final Map<String, Node> retainedChildren = removeNonModelNodes(modelNode, jcrNode);
         final NextChildNameProvider nextChildNameProvider = new NextChildNameProvider(retainedChildren);
         String nextChildIndexedName = nextChildNameProvider.next();
@@ -336,10 +340,15 @@ public class RepositoryFacade {
             }
         }
 
-        if (modelProperty.getType() == PropertyType.SINGLE) {
-            jcrNode.setProperty(modelProperty.getName(), valueFrom(modelProperty, modelProperty.getValue(), jcrNode));
-        } else {
-            jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelProperty, modelProperty.getValues(), jcrNode));
+        try {
+            if (modelProperty.getType() == PropertyType.SINGLE) {
+                jcrNode.setProperty(modelProperty.getName(), valueFrom(modelProperty, modelProperty.getValue(), jcrNode));
+            } else {
+                jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelProperty, modelProperty.getValues(), jcrNode));
+            }
+        } catch (RepositoryException e) {
+            String msg = String.format("Failed to process property '%s' defined through %s: %s", modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty), e.getMessage());
+            throw new RuntimeException(msg, e);
         }
     }
 
@@ -352,9 +361,9 @@ public class RepositoryFacade {
                 "hippo:availability",
                 "hippo:related",
                 "hippo:paths",
-                "hippostd:state",
+// todo: needed for now               "hippostd:state",
                 "hippostd:holder",
-                "hippostd:stateSummary",
+// todo: needed for now               "hippostd:stateSummary",
                 "hippostdpubwf:publicationDate"
         };
         return ArrayUtils.contains(knownProtectedPropertyNames, modelPropertyName);
