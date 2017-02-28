@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,8 +54,6 @@ import com.google.common.base.Strings;
 /**
  * HST component used for listing of documents.
  *
- * Note: due to the deprecation of the (misnamed) EssentialsDocumentListComponentInfo interface, quite some deprecated
- * functions exist inside this class. They will be removed in version 3.0.0, together with above ParametersInfo interface.
  */
 @ParametersInfo(type = EssentialsListComponentInfo.class)
 public class EssentialsListComponent extends CommonComponent {
