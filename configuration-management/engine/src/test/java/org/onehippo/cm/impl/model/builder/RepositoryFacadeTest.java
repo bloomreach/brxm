@@ -27,7 +27,6 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
@@ -101,10 +100,9 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
 
         try {
             applyDefinitions(source);
-            fail("an exception should have occured");
-        } catch (ParseException e) {
-            System.out.println(e);
-            // ignore
+            fail("an exception should have occurred");
+        } catch (RuntimeException e) {
+            assertTrue(e.getMessage().contains("Failed to process CND defined through"));
         }
     }
 

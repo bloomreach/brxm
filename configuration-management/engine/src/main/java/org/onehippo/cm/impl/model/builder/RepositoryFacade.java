@@ -96,19 +96,19 @@ public class RepositoryFacade {
         pushUnprocessedReferences();
     }
 
-    private void pushNamespaces(final List<? extends NamespaceDefinition> namespaces) throws RepositoryException {
+    private void pushNamespaces(final List<? extends NamespaceDefinition> namespaceDefinitions) throws RepositoryException {
         final Set<String> prefixes = new HashSet<>(Arrays.asList(session.getNamespacePrefixes()));
 
-        for (NamespaceDefinition namespace : namespaces) {
-            final String prefix = namespace.getPrefix();
-            final String uriString = namespace.getURI().toString();
+        for (NamespaceDefinition namespaceDefinition : namespaceDefinitions) {
+            final String prefix = namespaceDefinition.getPrefix();
+            final String uriString = namespaceDefinition.getURI().toString();
             if (prefixes.contains(prefix)) {
                 final String repositoryURI = session.getNamespaceURI(prefix);
                 if (!uriString.equals(repositoryURI)) {
                     final String msg = String.format(
-                            "Namespace with prefix '%s' already exists in repository with different URI. Existing: '%s', from model: '%s'; aborting",
-                            prefix, repositoryURI, uriString);
-                    throw new IllegalArgumentException(msg);
+                            "Failed to process namespace definition defined through %s: namespace with prefix '%s' already exists in repository with different URI. Existing: '%s', from model: '%s'; aborting",
+                            ModelUtils.formatDefinition(namespaceDefinition), prefix, repositoryURI, uriString);
+                    throw new RuntimeException(msg);
                 }
             } else {
                 final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
@@ -123,7 +123,7 @@ public class RepositoryFacade {
         }
     }
 
-    private void pushNodeType(final NodeTypeDefinition nodeTypeDefinition) throws RepositoryException, ParseException, IOException {
+    private void pushNodeType(final NodeTypeDefinition nodeTypeDefinition) throws RepositoryException, IOException {
         logger.debug(String.format("processing cnd '%s' from %s.", nodeTypeDefinition.getValue(), ModelUtils.formatDefinition(nodeTypeDefinition)));
         final String definitionValue = nodeTypeDefinition.getValue();
         final InputStream cndStream = nodeTypeDefinition.isResource()
@@ -133,8 +133,15 @@ public class RepositoryFacade {
         final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
         final TemplateBuilderFactory factory = new TemplateBuilderFactory(session);
 
-        final CompactNodeTypeDefReader<NodeTypeTemplate, NamespaceRegistry> reader =
-                new CompactNodeTypeDefReader<>(new InputStreamReader(cndStream), "<yaml-reader>", namespaceRegistry, factory);
+        final CompactNodeTypeDefReader<NodeTypeTemplate, NamespaceRegistry> reader;
+        try {
+            reader = new CompactNodeTypeDefReader<>(new InputStreamReader(cndStream), "<yaml-reader>",
+                    namespaceRegistry, factory);
+        } catch (ParseException e) {
+            final String msg = String.format("Failed to process CND defined through %s: %s",
+                    ModelUtils.formatDefinition(nodeTypeDefinition), e.getMessage());
+            throw new RuntimeException(msg, e);
+        }
 
         final List<NodeTypeTemplate> nttList = reader.getNodeTypeDefinitions();
         final NodeTypeManager nodeTypeManager = session.getWorkspace().getNodeTypeManager();
@@ -186,9 +193,10 @@ public class RepositoryFacade {
 
     private String getPrimaryType(final ConfigurationNode modelNode) {
         if (!modelNode.getProperties().containsKey(JCR_PRIMARYTYPE)) {
-            final String msg = String.format("Cannot add child node '%s': %s property missing.",
-                    modelNode.getPath(), JCR_PRIMARYTYPE);
-            throw new IllegalArgumentException(msg);
+            final String msg = String.format(
+                    "Failed to process node '%s' defined through %s: cannot add child node '%s': %s property missing.",
+                    modelNode.getPath(), ModelUtils.formatDefinitions(modelNode), modelNode.getPath(), JCR_PRIMARYTYPE);
+            throw new RuntimeException(msg);
         }
 
         return modelNode.getProperties().get(JCR_PRIMARYTYPE).getValue().getString();
@@ -327,7 +335,9 @@ public class RepositoryFacade {
                 jcrNode.setProperty(modelProperty.getName(), valuesFrom(modelProperty, modelProperty.getValues(), jcrNode));
             }
         } catch (RepositoryException e) {
-            String msg = String.format("Failed to process property '%s' defined through %s: %s", modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty), e.getMessage());
+            String msg = String.format(
+                    "Failed to process property '%s' defined through %s: %s",
+                    modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty), e.getMessage());
             throw new RuntimeException(msg, e);
         }
     }
@@ -423,8 +433,10 @@ public class RepositoryFacade {
             case DECIMAL:
                 return modelValue.getObject().equals(jcrValue.getDecimal());
             default:
-                final String msg = String.format("Unsupported value type '%s'.", modelValue.getType());
-                throw new IllegalArgumentException(msg);
+                final String msg = String.format(
+                        "Failed to process property '%s' defined through %s: unsupported value type '%s'.",
+                        modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty), modelValue.getType());
+                throw new RuntimeException(msg);
         }
     }
 
@@ -458,10 +470,11 @@ public class RepositoryFacade {
         final DefinitionItem definitionItem = findDefinitionItemForValue(definitions, modelValue);
         if (definitionItem == null) {
             final String msg = String.format(
-                    "Cannot find definition item that contributed resource '%s' in node '%s'.",
-                    modelValue.getString(),
-                    modelProperty.getPath());
-            throw new IllegalArgumentException(msg);
+                    "Failed to process property '%s' defined through %s: cannot find definition item that contributed resource '%s'",
+                    modelProperty.getPath(),
+                    ModelUtils.formatDefinitions(modelProperty),
+                    modelValue.getString());
+            throw new RuntimeException(msg);
         }
         return getResourceInputStream(definitionItem.getDefinition().getSource(), modelValue.getString());
     }
@@ -565,8 +578,10 @@ public class RepositoryFacade {
             case DECIMAL:
                 return factory.createValue((BigDecimal)modelValue.getObject());
             default:
-                final String msg = String.format("Unsupported value type '%s'.", type);
-                throw new IllegalArgumentException(msg);
+                final String msg = String.format(
+                        "Failed to process property '%s' defined through %s: unsupported value type '%s'.",
+                        modelProperty.getPath(), ModelUtils.formatDefinitions(modelProperty), type);
+                throw new RuntimeException(msg);
         }
     }
 
