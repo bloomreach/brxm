@@ -112,7 +112,7 @@
 
     <xerces.version>2.8.1</xerces.version>
     <wicket.version>6.19.0</wicket.version>
-    <wicket-extjs.version>0.25.3-SNAPSHOT</wicket-extjs.version>
+    <wicket-extjs.version>0.25.3</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <httpclient.version>4.2.2</httpclient.version>
 
