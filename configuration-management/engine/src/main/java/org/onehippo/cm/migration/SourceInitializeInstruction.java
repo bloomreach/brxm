@@ -205,7 +205,7 @@ public class SourceInitializeInstruction extends ContentInitializeInstruction {
                 }
                 if (JCR_PRIMARYTYPE.equals(propertyName)) {
                     String newType = property.getValue();
-                    String oldType = prop.getValue().toString();
+                    String oldType = prop.getValue().getString();
                     if (!oldType.equals(newType)) {
                         if (!node.isDeltaOverlay()) {
                             throw new EsvParseException("Redefining node " + defNode.getPath() + " type to " + newType + " at " +
