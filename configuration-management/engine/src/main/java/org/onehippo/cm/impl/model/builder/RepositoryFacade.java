@@ -30,8 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.jcr.Binary;
@@ -157,27 +155,27 @@ public class RepositoryFacade {
         logger.debug(String.format("processing node '%s' defined through %s.", modelNode.getPath(), ModelUtils.formatDefinitions(modelNode)));
         final Map<String, Node> retainedChildren = removeNonModelNodes(modelNode, jcrNode);
         final NextChildNameProvider nextChildNameProvider = new NextChildNameProvider(retainedChildren);
-        String nextChildIndexedName = nextChildNameProvider.next();
+        String nextChildName = nextChildNameProvider.next();
 
         // iterate over desired list of nodes (in desired order)
-        for (String indexedName : modelNode.getNodes().keySet()) {
-            final ConfigurationNode modelChild = modelNode.getNodes().get(indexedName);
+        for (String name : modelNode.getNodes().keySet()) {
+            final ConfigurationNode modelChild = modelNode.getNodes().get(name);
 
             // create child if necessary
-            final Node jcrChild = retainedChildren.containsKey(indexedName)
-                    ? retainedChildren.get(indexedName)
-                    : jcrNode.addNode(unindexName(indexedName), getPrimaryType(modelChild));
+            final Node jcrChild = retainedChildren.containsKey(name)
+                    ? retainedChildren.get(name)
+                    : jcrNode.addNode(name, getPrimaryType(modelChild));
 
-            nextChildNameProvider.ignore(indexedName); // 'indexedName' is consumed.
+            nextChildNameProvider.ignore(name); // 'name' is consumed.
 
             // ensure correct ordering
             if (jcrNode.getPrimaryNodeType().hasOrderableChildNodes()) {
-                if (indexedName.equals(nextChildIndexedName)) {
-                    // 'nextChildIndexedName' is processed, get new next
-                    nextChildIndexedName = nextChildNameProvider.next();
+                if (name.equals(nextChildName)) {
+                    // 'nextChildName' is processed, get new next
+                    nextChildName = nextChildNameProvider.next();
                 } else {
                     // jcrChild is not at next child position, move it there
-                    jcrNode.orderBefore(indexName(jcrChild), nextChildIndexedName);
+                    jcrNode.orderBefore(jcrChild.getName(), nextChildName);
                 }
             }
 
@@ -224,46 +222,28 @@ public class RepositoryFacade {
 
     private static class NextChildNameProvider {
         private final Iterator<String> iterator;
-        private final Set<String> toBeIgnoredIndexedNames = new HashSet<>();
+        private final Set<String> toBeIgnoredNames = new HashSet<>();
 
         NextChildNameProvider(final Map<String, Node> childMap) {
             iterator = childMap.keySet().iterator();
         }
 
         /**
-         * @return next child node name in indexed (in case of SNS), jcr-encoded format
+         * @return next child node name
          */
         String next() {
             while (iterator.hasNext()) {
                 final String next = iterator.next();
-                if (!toBeIgnoredIndexedNames.contains(next)) {
+                if (!toBeIgnoredNames.contains(next)) {
                     return next;
                 }
             }
             return null;
         }
 
-        void ignore(final String indexedName) {
-            toBeIgnoredIndexedNames.add(indexedName);
+        void ignore(final String name) {
+            toBeIgnoredNames.add(name);
         }
-    }
-
-    private static final Pattern INDEXED_NAME_PATTERN = Pattern.compile("\\[\\d+\\]$");
-
-    private String unindexName(final String jcrName) {
-        final Matcher nameMatcher = INDEXED_NAME_PATTERN.matcher(jcrName);
-
-        if (nameMatcher.matches()) {
-            return jcrName.substring(0, nameMatcher.start());
-        }
-
-        return jcrName;
-    }
-
-    private String indexName(final Node node) throws RepositoryException {
-        final int index = node.getIndex();
-
-        return node.getName() + (index > 1 ? "[" + index + "]" : "");
     }
 
     private void pushProperties(final ConfigurationNode source, final Node target) throws Exception {
