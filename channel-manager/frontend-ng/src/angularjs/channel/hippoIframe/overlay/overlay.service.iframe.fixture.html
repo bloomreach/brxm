@@ -57,8 +57,8 @@
   <body>
     <main>
       <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox", "HST-LockedBy": "other user" } -->
-      <div id="container-vbox">
-        <div id="componentA">
+      <div id="container-vbox" class="hst-container">
+        <div id="componentA" class="hst-container-item">
           <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
           <p id="markup-in-component-a">Some markup in component A</p>
           <p id="edit-menu-in-component-a">
@@ -69,7 +69,7 @@
         <p id="content-in-container-vbox">
           <!-- { "HST-Type": "CONTENT_LINK", "uuid": "content-in-container-vbox" } -->
         </p>
-        <div id="componentB">
+        <div id="componentB" class="hst-container-item">
           <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component B", "uuid": "bbbb" } -->
           <p>Some markup in component B</p>
           <!-- { "HST-End": "true", "uuid": "bbbb" } -->
@@ -87,14 +87,14 @@
       </div>
 
       <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty container", "HST-XType": "HST.vBox", "uuid": "container-empty" } -->
-      <div id="container-empty">
+      <div id="container-empty" class="hst-container">
       </div>
       <!-- { "HST-End": "true", "uuid": "container-empty" } -->
 
       <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Inherited container", "HST-XType": "HST.vBox", "uuid": "container-inherited", "HST-Inherited": "true" } -->
-      <div id="container-inherited">
+      <div id="container-inherited" class="hst-container">
         <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "Component with experiment", "uuid": "component-with-experiment", "Targeting-experiment-id": "1234", "Targeting-experiment-state": "RUNNING" } -->
-        <p>Some markup in component with experiment</p>
+        <p class="hst-container-item">Some markup in component with experiment</p>
         <!-- { "HST-End": "true", "uuid": "component-with-experiment" } -->
       </div>
       <!-- { "HST-End": "true", "uuid": "container-inherited" } -->

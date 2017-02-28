@@ -112,6 +112,14 @@ describe('PageStructureService', () => {
     PageStructureService.registerParsedElement(commentElement, JSON.parse(commentElement.data));
   };
 
+  const registerEmptyVBoxContainer = () => {
+    const container = $j('#container-vbox-empty', $document)[0];
+
+    registerParsedElement(previousComment(container));
+
+    return container;
+  };
+
   const registerVBoxContainer = () => {
     const container = $j('#container-vbox', $document)[0];
 
@@ -126,6 +134,14 @@ describe('PageStructureService', () => {
     registerParsedElement(childComment(component));
 
     return component;
+  };
+
+  const registerEmptyNoMarkupContainer = () => {
+    const container = $j('#container-no-markup-empty', $document)[0];
+
+    registerParsedElement(childComment(container));
+
+    return container;
   };
 
   const registerNoMarkupContainer = () => {
@@ -286,6 +302,24 @@ describe('PageStructureService', () => {
     expect(containers[0].isEmpty()).toEqual(false);
     expect(containers[0].getComponents().length).toEqual(1);
     expect(containers[0].getComponents()[0].getBoxElement().length).toEqual(0);
+  });
+
+  it('detects if a container contains DOM elements that represent a container-item', () => {
+    registerVBoxContainer();
+    registerNoMarkupContainer();
+
+    const containers = PageStructureService.getContainers();
+    expect(containers[0].isEmptyInDom()).toEqual(false);
+    expect(containers[1].isEmptyInDom()).toEqual(false);
+  });
+
+  it('detects if a container does not contain DOM elements that represent a container-item', () => {
+    registerEmptyVBoxContainer();
+    registerEmptyNoMarkupContainer();
+
+    const containers = PageStructureService.getContainers();
+    expect(containers[0].isEmptyInDom()).toEqual(true);
+    expect(containers[1].isEmptyInDom()).toEqual(true);
   });
 
   it('parses the page meta-data and adds it to the PageMetaDataService', () => {
