@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('ChannelLeftSidePanel', () => {
+describe('LeftSidePanel', () => {
   let $rootScope;
   let $compile;
   let SidePanelService;

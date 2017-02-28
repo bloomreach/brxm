@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,8 @@ import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.util.ExtEventListener;
 
 /**
- * Checks if an editor is open for a certain document, and if so, closes it.
+ * Checks if an editor is open for a certain document, and if so, closes it when the document is valid.
+ * Whether the editor has been closed/was already closed or whether it still exists is reported back via JavaScript.
  */
 public class CloseDocumentEditorEventListener extends ExtEventListener {
 
@@ -43,10 +44,12 @@ public class CloseDocumentEditorEventListener extends ExtEventListener {
 
     private final String editorManagerServiceId;
     private final IPluginContext context;
+    private final String channelEditorId;
 
-    CloseDocumentEditorEventListener(final IPluginConfig config, final IPluginContext context) {
+    CloseDocumentEditorEventListener(final IPluginConfig config, final IPluginContext context, final String channelEditorId) {
         editorManagerServiceId = config.getString(IEditorManager.EDITOR_ID, "service.edit");
         this.context = context;
+        this.channelEditorId = channelEditorId;
     }
 
     static ExtEventAjaxBehavior getExtEventBehavior() {
@@ -55,22 +58,39 @@ public class CloseDocumentEditorEventListener extends ExtEventListener {
 
     @Override
     public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
-        getParameter(PARAM_UUID, parameters).ifPresent(this::closeDocumentEditor);
+        getParameter(PARAM_UUID, parameters).ifPresent((uuid) -> {
+            final boolean isClosed = this.closeDocumentEditor(uuid);
+            returnResult(uuid, isClosed, target);
+        });
     }
 
-    private void closeDocumentEditor(final String documentHandleUuid) {
+    private boolean closeDocumentEditor(final String documentHandleUuid) {
         final IEditorManager editorManager = context.getService(editorManagerServiceId, IEditorManager.class);
         try {
             final Node documentHandle = UserSession.get().getJcrSession().getNodeByIdentifier(documentHandleUuid);
             final JcrNodeModel documentHandleModel = new JcrNodeModel(documentHandle);
             final IEditor<?> editor = editorManager.getEditor(documentHandleModel);
-            if (editor != null) {
+
+            if (editor == null) {
+                return true;
+            }
+
+            if (editor.isValid()) {
                 editor.close();
+                return true;
             }
         } catch (ItemNotFoundException e) {
             ChannelEditor.log.warn("Could not find document with uuid '{}'", documentHandleUuid, e);
+            return true;
         } catch (EditorException | RepositoryException e) {
             ChannelEditor.log.warn("Failed to close editor for document with uuid '{}'", documentHandleUuid, e);
         }
+        return false;
+    }
+
+    private void returnResult(final String documentHandleUuid, final boolean isClosed, final AjaxRequestTarget target) {
+        final String resultScript = String.format("Ext.getCmp('%1s').closeDocumentResult('%2s', %3s);",
+                channelEditorId, documentHandleUuid, isClosed);
+        target.appendJavaScript(resultScript);
     }
 }

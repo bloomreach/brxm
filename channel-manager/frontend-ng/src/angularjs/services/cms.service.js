@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,40 @@
  * limitations under the License.
  */
 
-// TODO: Rename this to ExtApiService
-
 class CmsService {
-  constructor($window, $log) {
+
+  constructor($q, $window, $log) {
     'ngInject';
 
+    this.$q = $q;
     this.$window = $window;
     this.$log = $log;
     this.iframePanelId = this.getParentIFramePanelId();
+    this.closeContentPromises = {};
+
+    this.subscribe('close-content-result', (documentId, isClosed) => {
+      const promise = this.closeContentPromises[documentId];
+      if (promise) {
+        if (isClosed) {
+          promise.resolve();
+        } else {
+          promise.reject();
+        }
+        delete this.closeContentPromises[documentId];
+      }
+    });
+  }
+
+  closeDocumentWhenValid(documentId) {
+    const closeInProgress = this.closeContentPromises[documentId];
+    if (closeInProgress) {
+      return closeInProgress.promise;
+    }
+
+    this.closeContentPromises[documentId] = this.$q.defer();
+    this.publish('close-content', documentId);
+
+    return this.closeContentPromises[documentId].promise;
   }
 
   getParentIFramePanelId() {

@@ -34,6 +34,8 @@
   },
   "devDependencies": {
     "angular-mocks": "1.5.8",
-    "frontend-build": "4.2.2"
+    "frontend-build": "5.0.0",
+    "gulp": "gulpjs/gulp#4.0",
+    "gulp-hub": "frankwallis/gulp-hub#4.1.0"
   }
 }

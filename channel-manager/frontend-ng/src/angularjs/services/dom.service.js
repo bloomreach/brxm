@@ -129,7 +129,20 @@ class DomService {
       // IE11 does not support new MouseEvent(), so use the deprecated initMouseEvent() method instead
       mouseEvent = view.document.createEvent('MouseEvent');
       mouseEvent.initMouseEvent('MSPointerDown',
-        bubbles, cancelable, view, detail, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget
+        bubbles,
+        cancelable,
+        view,
+        detail,
+        screenX,
+        screenY,
+        clientX,
+        clientY,
+        ctrlKey,
+        altKey,
+        shiftKey,
+        metaKey,
+        button,
+        relatedTarget,
       );
     } else {
       // Dragula attaches a pointerdown listener to the DOM for Edge
