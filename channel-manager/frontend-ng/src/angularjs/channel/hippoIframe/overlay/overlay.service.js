@@ -354,9 +354,9 @@ class OverlayService {
         this._syncLabel(structureElement, overlayElement);
         break;
       case 'container': {
-        const isEmptyInDOM = structureElement.isEmptyInDOM();
-        boxElement.toggleClass('hippo-overlay-box-container-filled', !isEmptyInDOM);
-        overlayElement.toggleClass('hippo-overlay-element-container-empty', isEmptyInDOM);
+        const isEmptyInDom = structureElement.isEmptyInDom();
+        boxElement.toggleClass('hippo-overlay-box-container-filled', !isEmptyInDom);
+        overlayElement.toggleClass('hippo-overlay-element-container-empty', isEmptyInDom);
         overlayElement.toggleClass('hippo-overlay-element-container-disabled', structureElement.isDisabled());
         break;
       }

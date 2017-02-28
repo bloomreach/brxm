@@ -309,8 +309,8 @@ describe('PageStructureService', () => {
     registerNoMarkupContainer();
 
     const containers = PageStructureService.getContainers();
-    expect(containers[0].isEmptyInDOM()).toEqual(false);
-    expect(containers[1].isEmptyInDOM()).toEqual(false);
+    expect(containers[0].isEmptyInDom()).toEqual(false);
+    expect(containers[1].isEmptyInDom()).toEqual(false);
   });
 
   it('detects if a container does not contain DOM elements that represent a container-item', () => {
@@ -318,8 +318,8 @@ describe('PageStructureService', () => {
     registerEmptyNoMarkupContainer();
 
     const containers = PageStructureService.getContainers();
-    expect(containers[0].isEmptyInDOM()).toEqual(true);
-    expect(containers[1].isEmptyInDOM()).toEqual(true);
+    expect(containers[0].isEmptyInDom()).toEqual(true);
+    expect(containers[1].isEmptyInDom()).toEqual(true);
   });
 
   it('parses the page meta-data and adds it to the PageMetaDataService', () => {

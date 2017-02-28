@@ -38,7 +38,7 @@ class ContainerElement extends PageStructureElement {
 
   // For no-markup containers we can not depend on the built-in CSS class .hst-container-item to indicate non-emptiness,
   // instead we simply fallback to checking if there is *any* child element present
-  isEmptyInDOM() {
+  isEmptyInDom() {
     const box = this.getBoxElement();
     const type = this.metaData[HstConstants.XTYPE];
     const items = type === HstConstants.XTYPE_NOMARKUP ? box.children() : box.find('.hst-container-item');
