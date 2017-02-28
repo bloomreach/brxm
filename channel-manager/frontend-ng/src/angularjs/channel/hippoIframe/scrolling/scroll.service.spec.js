@@ -138,7 +138,7 @@ describe('ScrollService', () => {
       ScrollService.enable();
       ScrollService._startScrolling(0, iframeTop);
 
-      expect(ScrollService._scroll).toHaveBeenCalledWith(0, jasmine.any(Number));
+      expect(ScrollService._scroll).toHaveBeenCalledWith({ scrollTop: 0 }, jasmine.any(Number));
       done();
     });
   });
@@ -153,7 +153,7 @@ describe('ScrollService', () => {
       ScrollService.enable();
       ScrollService._startScrolling(0, iframeTop);
 
-      expect(ScrollService._scroll).toHaveBeenCalledWith(0, jasmine.any(Number));
+      expect(ScrollService._scroll).toHaveBeenCalledWith({ scrollTop: 0 }, jasmine.any(Number));
       done();
     });
   });
@@ -180,7 +180,7 @@ describe('ScrollService', () => {
       ScrollService.enable();
       ScrollService._startScrolling(0, iframeBottom);
 
-      expect(ScrollService._scroll).toHaveBeenCalledWith(200, jasmine.any(Number));
+      expect(ScrollService._scroll).toHaveBeenCalledWith({ scrollTop: 200 }, jasmine.any(Number));
       done();
     });
   });
@@ -195,7 +195,7 @@ describe('ScrollService', () => {
       ScrollService.enable();
       ScrollService._startScrolling(0, iframeBottom);
 
-      expect(ScrollService._scroll).toHaveBeenCalledWith(200, jasmine.any(Number));
+      expect(ScrollService._scroll).toHaveBeenCalledWith({ scrollTop: 200 }, jasmine.any(Number));
       done();
     });
   });
@@ -206,9 +206,11 @@ describe('ScrollService', () => {
       spyOn(ScrollService.iframeHtmlBody, 'stop').and.callThrough();
       spyOn(ScrollService.iframeHtmlBody, 'animate').and.callThrough();
 
-      ScrollService._scroll(0, 0);
+      const to = { scrollTop: 0 };
+      ScrollService._scroll(to, 0);
+
       expect(ScrollService.iframeHtmlBody.stop).toHaveBeenCalled();
-      expect(ScrollService.iframeHtmlBody.animate).toHaveBeenCalledWith({ scrollTop: 0 }, { duration: 0 });
+      expect(ScrollService.iframeHtmlBody.animate).toHaveBeenCalledWith(to, { duration: 0 });
       done();
     });
   });

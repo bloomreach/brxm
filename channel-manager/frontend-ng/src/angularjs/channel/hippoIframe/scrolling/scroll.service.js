@@ -123,25 +123,25 @@ class ScrollService {
 
   _startScrolling(mouseX, mouseY) {
     const { iframeHeight, iframeTop, iframeBottom } = this._getIframeCoords();
-    const iframeScrollTop = this._getScrollTop();
 
-    let targetScrollTop;
+    let to;
     let distance;
 
     if (mouseY <= iframeTop) {
       // scroll to top
-      targetScrollTop = 0;
-      distance = iframeScrollTop;
+      distance = this._getScrollTop();
+      to = { scrollTop: 0 };
     } else if (mouseY >= iframeBottom) {
       // scroll to bottom
       const pageHeight = this.iframeBody[0].scrollHeight;
-      targetScrollTop = pageHeight - iframeHeight;
-      distance = targetScrollTop - iframeScrollTop;
+      const targetScrollTop = pageHeight - iframeHeight;
+      distance = targetScrollTop - this._getScrollTop();
+      to = { scrollTop: targetScrollTop };
     }
 
     if (distance > 0) {
       const duration = this._calculateDuration(distance, DURATION_MIN, DURATION_MAX);
-      this._scroll(targetScrollTop, duration);
+      this._scroll(to, duration);
     }
   }
 
@@ -151,8 +151,8 @@ class ScrollService {
     }
   }
 
-  _scroll(scrollTop, duration) {
-    this.iframeHtmlBody.stop().animate({ scrollTop }, {
+  _scroll(to, duration) {
+    this.iframeHtmlBody.stop().animate(to, {
       duration,
     });
   }
