@@ -21,7 +21,9 @@ function ckeditor($window, ConfigService) {
     restrict: 'A',
     require: 'ngModel',
     link: (scope, element, attrs, ngModel) => {
-      // TODO: get editor config from the REST response of the field instead of hard-coding the default 'formatted text' config
+      // TODO: get editor config from the REST response of the field instead of hard-coding the default config here
+/*
+      // editor config for formatted text fields:
       const editorConfig = {
         autoUpdateElement: false,
         entities: false,
@@ -34,6 +36,36 @@ function ckeditor($window, ConfigService) {
           { name: 'styles', items: ['Styles'] },
           { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', '-', 'RemoveFormat'] },
           { name: 'clipboard', items: ['Undo', 'Redo'] },
+        ],
+      };
+*/
+      // editor config for rich text fields:
+      const editorConfig = {
+        autoUpdateElement: false,
+        entities: false,
+        basicEntities: true,
+        customConfig: '',
+        dialog_buttonsOrder: 'ltr',
+        dialog_noConfirmCancel: true,
+        extraAllowedContent: 'embed[allowscriptaccess,height,src,type,width]; img[border,hspace,vspace]; object[align,data,height,id,title,type,width]; p[align]; param[name,value]; table[width]; td[valign,width]; th[valign,width];',
+        keystrokes: [
+          [$window.CKEDITOR.CTRL + 77, 'maximize'],
+          [$window.CKEDITOR.ALT + 66, 'showblocks'],
+        ],
+        language: ConfigService.locale,
+        linkShowAdvancedTab: false,
+        plugins: 'a11yhelp,basicstyles,button,clipboard,codemirror,contextmenu,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,specialchar,stylescombo,tab,table,tableresize,tabletools,textselection,toolbar,undo,youtube',
+        removeFormatAttributes: 'style,lang,width,height,align,hspace,valign',
+        title: false,
+        toolbarGroups: [
+          { name: 'styles' },
+          { name: 'basicstyles' },
+          { name: 'undo' },
+          { name: 'listindentalign', groups: ['list', 'indent', 'align'] },
+          { name: 'links' },
+          { name: 'insert' },
+          { name: 'tools' },
+          { name: 'mode' },
         ],
       };
 
