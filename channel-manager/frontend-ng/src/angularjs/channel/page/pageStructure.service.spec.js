@@ -144,6 +144,14 @@ describe('PageStructureService', () => {
     return container;
   };
 
+  const registerNoMarkupContainerWithoutTextNodesAfterEndComment = () => {
+    const container = $j('#container-no-markup-without-text-nodes-after-end-comment', $document)[0];
+
+    registerParsedElement(childComment(container));
+
+    return container;
+  };
+
   const registerNoMarkupContainer = () => {
     const container = $j('#container-no-markup', $document)[0];
 
@@ -876,6 +884,22 @@ describe('PageStructureService', () => {
     const newContainer = PageStructureService.getContainers()[0];
     expect(newContainer).not.toBe(container);
     expect(newContainer.getEndComment().next().length).toBe(0);
+  });
+
+  it('re-renders a NoMarkup container without any text nodes after the end comment', () => {
+    registerNoMarkupContainerWithoutTextNodesAfterEndComment();
+
+    const container = PageStructureService.getContainers()[0];
+    const updatedMarkup = `
+      <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty NoMarkup container", "HST-XType": "HST.NoMarkup", "uuid": "container-no-markup-without-text-nodes-after-end-comment" } -->
+      <!-- { "HST-End": "true", "uuid": "container-no-markup-without-text-nodes-after-end-comment" } -->`;
+    spyOn(RenderingService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    PageStructureService.renderContainer(container);
+    $rootScope.$digest();
+
+    const newContainer = PageStructureService.getContainers()[0];
+    expect(newContainer).not.toBe(container);
+    expect(newContainer.isEmpty()).toBe(true);
   });
 
   it('re-renders a container with an edit menu link', (done) => {

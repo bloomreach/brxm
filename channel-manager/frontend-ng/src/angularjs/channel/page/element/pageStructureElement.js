@@ -97,7 +97,7 @@ class PageStructureElement {
     // For containers of type NoMarkup, D&D may have placed a moved component after the end comment.
     // This would lead to lingering, duplicate components in the DOM. To get rid of these "misplaced"
     // elements, we also remove all subsequent elements. See CHANNELMGR-1030.
-    if (PageStructureElement.isXTypeNoMarkup(this.metaData)) {
+    if (PageStructureElement.isXTypeNoMarkup(this.metaData) && endComment[0].nextSibling) {
       this._removeSiblingsUntil(endComment[0].nextSibling); // Don't remove the end marker
     }
 
