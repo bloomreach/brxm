@@ -57,7 +57,7 @@ public class FileConfigurationReader {
     public ReadResult read(final Path repoConfigPath, final boolean verifyOnly) throws IOException, ParserException {
         final RepoConfigParser parser = new RepoConfigParser();
         final Map<String, Configuration> configurations =
-                parser.parse(repoConfigPath.toAbsolutePath().toString(), new FileInputStream(repoConfigPath.toFile()));
+                parser.parse(new FileInputStream(repoConfigPath.toFile()), repoConfigPath.toAbsolutePath().toString());
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
         final Map<Module, ResourceInputProvider> resourceDataProviders = new HashMap<>();
 
@@ -70,8 +70,8 @@ public class FileConfigurationReader {
                     resourceDataProviders.put(module, provider);
                     final SourceParser sourceParser = new SourceParser(provider, verifyOnly);
 
-                    for (Pair<String, InputStream> pair : getSourceData(moduleRootPath)) {
-                        sourceParser.parse(moduleRootPath.resolve(pair.getLeft()).toString(), pair.getLeft(), pair.getRight(), (ModuleImpl) module);
+                    for (Pair<InputStream, String> pair : getSourceData(moduleRootPath)) {
+                        sourceParser.parse(pair.getLeft(), pair.getRight(), moduleRootPath.resolve(pair.getRight()).toString(), (ModuleImpl) module);
                     }
                 }
             }
@@ -80,15 +80,15 @@ public class FileConfigurationReader {
         return new ReadResult(configurations, resourceDataProviders);
     }
 
-    private List<Pair<String, InputStream>> getSourceData(final Path modulePath) throws IOException {
+    private List<Pair<InputStream, String>> getSourceData(final Path modulePath) throws IOException {
         final List<Path> paths = new ArrayList<>();
         final BiPredicate<Path, BasicFileAttributes> matcher =
                 (filePath, fileAttr) -> filePath.toString().toLowerCase().endsWith("yaml") && fileAttr.isRegularFile();
         Files.find(modulePath, Integer.MAX_VALUE, matcher).forEachOrdered(paths::add);
 
-        final List<Pair<String, InputStream>> result = new ArrayList<>();
+        final List<Pair<InputStream, String>> result = new ArrayList<>();
         for (Path path : paths) {
-            result.add(Pair.of(modulePath.relativize(path).toString(), new FileInputStream(path.toFile())));
+            result.add(Pair.of(new FileInputStream(path.toFile()), modulePath.relativize(path).toString()));
         }
         return result;
     }

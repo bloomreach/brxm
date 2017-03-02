@@ -27,8 +27,8 @@ import org.yaml.snakeyaml.nodes.Node;
 
 public class RepoConfigParser extends AbstractBaseParser {
 
-    public Map<String, Configuration> parse(final String path, final InputStream inputStream) throws ParserException {
-        final Node node = composeYamlNode(path, inputStream);
+    public Map<String, Configuration> parse(final InputStream inputStream, final String location) throws ParserException {
+        final Node node = composeYamlNode(inputStream, location);
 
         final Map<String, Configuration> result = new LinkedHashMap<>();
         final Map<String, Node> sourceMap = asMapping(node, new String[]{"configurations"}, null);

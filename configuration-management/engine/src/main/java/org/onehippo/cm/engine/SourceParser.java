@@ -80,9 +80,18 @@ public class SourceParser extends AbstractBaseParser {
         this.verifyOnly = verifyOnly;
     }
 
-    public void parse(final String sourcePath, final String path, final InputStream inputStream, final ModuleImpl parent) throws ParserException {
-        final Node node = composeYamlNode(sourcePath, inputStream);
-        constructSource(path, node, parent);
+    /**
+     * Parses a YAML source file from the given {@link InputStream} and adds a {@link org.onehippo.cm.api.model.Source}
+     * to the given {@link ModuleImpl}.
+     * @param inputStream  the {@link InputStream} to read the YAML source file from
+     * @param relativePath the relative path from the module, used in the model
+     * @param location     the location of the file, used for error reporting
+     * @param parent       the parent for this source
+     * @throws ParserException in case the file could not be parsed correctly
+     */
+    public void parse(final InputStream inputStream, final String relativePath, final String location, final ModuleImpl parent) throws ParserException {
+        final Node node = composeYamlNode(inputStream, location);
+        constructSource(relativePath, node, parent);
     }
 
     protected void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException {

@@ -142,7 +142,7 @@ public class ParserValueTest extends AbstractBaseTest {
                 "              value: []";
         final InputStream inputStream = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
 
-        sourceParser.parse("dummy.yaml", "dummy.yaml", inputStream, module);
+        sourceParser.parse(inputStream, "dummy.yaml", "dummy.yaml", module);
 
         final Source source = assertSource(module, "dummy.yaml", 1);
         final ConfigDefinition definition = assertDefinition(source, 0, ConfigDefinition.class);
@@ -164,7 +164,7 @@ public class ParserValueTest extends AbstractBaseTest {
                 "          - dateShort: 2015-10-21";
         final InputStream inputStream = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
 
-        sourceParser.parse("dummy.yaml", "dummy.yaml", inputStream, module);
+        sourceParser.parse(inputStream, "dummy.yaml", "dummy.yaml", module);
 
         final Source source = assertSource(module, "dummy.yaml", 1);
         final ConfigDefinition definition = assertDefinition(source, 0, ConfigDefinition.class);

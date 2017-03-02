@@ -104,7 +104,7 @@ public class Log4jListener implements AutoCloseable {
     }
 
     public Stream<String> messages() {
-        return getEvents().stream().map(m->m.getRenderedMessage());
+        return getEvents().stream().map(LoggingEvent::getRenderedMessage);
     }
 
     @Override

@@ -114,7 +114,7 @@ class ConfigurationTreeBuilder {
             if (!orderFirst) {
                 if (node.getName().equals(destChildName)) {
                     final String culprit = ModelUtils.formatDefinition(definitionNode.getDefinition());
-                    final String msg = String.format("Invalid orderBefore: '%s for node '%s' defined in '%s': targeting this node itself.",
+                    final String msg = String.format("Invalid orderBefore: '%s' for node '%s' defined in '%s': targeting this node itself.",
                             destChildName, node.getPath(), culprit);
                     throw new IllegalArgumentException(msg);
                 }

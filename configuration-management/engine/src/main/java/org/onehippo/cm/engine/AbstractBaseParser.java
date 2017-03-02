@@ -48,13 +48,14 @@ public abstract class AbstractBaseParser {
 
     static final Logger log = LoggerFactory.getLogger(AbstractBaseParser.class);
 
-    protected Node composeYamlNode(final String path, final InputStream inputStream) throws ParserException {
-        log.debug("Parsing yaml source: {}", path);
+    protected Node composeYamlNode(final InputStream inputStream, final String location) throws ParserException {
+        log.debug("Parsing YAML source '{}'", location);
         final Yaml yamlParser = new Yaml();
         try {
             return yamlParser.compose(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         } catch (RuntimeException e) {
-            throw new ParserException("Failed to parse YAML input", e);
+            final String message = String.format("Failed to parse YAML source '%s'", location);
+            throw new ParserException(message, e);
         }
     }
 

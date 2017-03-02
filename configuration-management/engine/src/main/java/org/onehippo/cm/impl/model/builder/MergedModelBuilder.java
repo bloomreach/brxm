@@ -50,9 +50,9 @@ public class MergedModelBuilder {
         configurations.forEach(configuration ->
                 configuration.getModifiableProjects().forEach(project ->
                         project.getModifiableModules().forEach(module -> {
+                            logger.info("Merging module {}", ModelUtils.formatModule(module));
                             mergedModel.addNamespaceDefinitions(module.getNamespaceDefinitions());
                             mergedModel.addNodeTypeDefinitions(module.getNodeTypeDefinitions());
-                            logger.info("Merging module {}", ModelUtils.formatModule(module));
                             module.getContentDefinitions().forEach(configurationTreeBuilder::push);
                         })
                 )

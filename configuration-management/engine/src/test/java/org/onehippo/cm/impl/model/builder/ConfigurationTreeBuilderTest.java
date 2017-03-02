@@ -639,6 +639,11 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             assertTrue(listener.messages()
                     .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
         }
+
+        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[]", sortedCollectionToString(b.getNodes()));
     }
 
     @Test
@@ -662,6 +667,11 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             assertTrue(listener.messages()
                     .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to merge delete node /a/b/c that does not exist.")));
         }
+
+        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[c]", sortedCollectionToString(b.getNodes()));
     }
 
     @Test
@@ -686,6 +696,11 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             assertTrue(listener.messages()
                     .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to delete node /a/b/c that does not exist.")));
         }
+
+        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[]", sortedCollectionToString(b.getNodes()));
     }
 
     @Test
@@ -711,6 +726,11 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
             assertTrue(listener.messages()
                     .anyMatch(m->m.equals("test-configuration/test-project/test-module [string]: Trying to merge delete node /a/b/c that does not exist.")));
         }
+
+        final ConfigurationNodeImpl root = builder.build();
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[c]", sortedCollectionToString(b.getNodes()));
     }
 
     @Test

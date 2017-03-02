@@ -113,7 +113,7 @@ public class ModelTestUtils {
     }
 
     private static void loadYAMLStream(final InputStream input, final String sourcePath, final ModuleImpl module, final boolean verifyOnly) throws Exception {
-        new SourceParser(resourceInputProvider, verifyOnly).parse(sourcePath, sourcePath, input, module);
+        new SourceParser(resourceInputProvider, verifyOnly).parse(input, sourcePath, sourcePath, module);
     }
 
 }

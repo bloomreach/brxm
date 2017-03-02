@@ -72,24 +72,24 @@ public class OrderableListSorter<T extends Orderable> {
     public void sort(final List<T> orderables)
             throws DuplicateNameException, CircularDependencyException, MissingDependencyException {
         // using TreeMap ensures the orderables are processed in alphabetically sorted order
-        Map<String, T> map = new TreeMap<>();
+        final Map<String, T> map = new TreeMap<>();
         for (T o : orderables) {
             if (map.put(o.getName(), o) != null) {
                 throw new DuplicateNameException(String.format("Duplicate %s named '%s'.", orderableTypeName, o.getName()));
             }
         }
-        LinkedHashMap<String, T> sorted = new LinkedHashMap<>(orderables.size());
-        List<String> dependencyChain = new ArrayList<>(sorted.size());
+        final LinkedHashMap<String, T> sorted = new LinkedHashMap<>(orderables.size());
+        final List<String> dependencyChain = new ArrayList<>(sorted.size());
         for (T orderable : map.values()) {
-            sortDeptFirst(orderable, dependencyChain, sorted, map);
+            sortDepthFirst(orderable, dependencyChain, sorted, map);
         }
 
         orderables.clear();
         orderables.addAll(sorted.values());
     }
 
-    private void sortDeptFirst(final T orderable, final List<String> dependencyChain,
-                               final LinkedHashMap<String, T> sorted, final Map<String, T> map)
+    private void sortDepthFirst(final T orderable, final List<String> dependencyChain,
+                                final LinkedHashMap<String, T> sorted, final Map<String, T> map)
             throws CircularDependencyException, MissingDependencyException {
         if (dependencyChain.contains(orderable.getName())) {
             dependencyChain.add(orderable.getName());
@@ -99,13 +99,13 @@ public class OrderableListSorter<T extends Orderable> {
         }
         if (!sorted.containsKey(orderable.getName())) {
             if (!orderable.getAfter().isEmpty()) {
-                List<String> dependencies = new ArrayList<>(orderable.getAfter());
+                final List<String> dependencies = new ArrayList<>(orderable.getAfter());
                 // ensure processing the dependencies in alphabetic order as well
                 Collections.sort(dependencies);
                 dependencyChain.add(orderable.getName());
                 for (String dependency : dependencies) {
                     if (map.containsKey(dependency)) {
-                        sortDeptFirst(map.get(dependency), dependencyChain, sorted, map);
+                        sortDepthFirst(map.get(dependency), dependencyChain, sorted, map);
                     } else {
                         throw new MissingDependencyException(String.format("%s '%s' has a missing dependency '%s'",
                                 orderableTypeName, orderable.getName(), dependency));
