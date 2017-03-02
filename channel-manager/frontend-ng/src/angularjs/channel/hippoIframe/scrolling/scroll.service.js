@@ -89,9 +89,9 @@ class ScrollService {
     let mouseHasLeft = false;
 
     const loadProperties = () => {
-      const coords = this._getIframeCoords();
-      iframeTop = coords.iframeTop;
-      bottomBoundary = coords.iframeBottom - coords.iframeTop;
+      const { top, bottom } = this._getCoords();
+      iframeTop = top;
+      bottomBoundary = bottom - top;
     };
     loadProperties();
 
@@ -123,21 +123,26 @@ class ScrollService {
   }
 
   _startScrolling(mouseX, mouseY) {
-    const { iframeHeight, iframeTop, iframeBottom } = this._getIframeCoords();
-
+    const { width, height, top, right, bottom, left } = this._getCoords();
     let to;
     let distance;
 
-    if (mouseY <= iframeTop) {
-      // scroll to top
-      distance = this._getScrollTop();
+    if (mouseY <= top) {
+      // scroll to the top
       to = { scrollTop: 0 };
-    } else if (mouseY >= iframeBottom) {
-      // scroll to bottom
-      const pageHeight = this.iframeBody[0].scrollHeight;
-      const targetScrollTop = pageHeight - iframeHeight;
-      distance = targetScrollTop - this._getScrollTop();
-      to = { scrollTop: targetScrollTop };
+      distance = this._getScrollTop();
+    } else if (mouseY >= bottom) {
+      // scroll to the bottom
+      to = { scrollTop: height };
+      distance = height - this._getScrollTop();
+    } else if (mouseX <= left) {
+      // scroll to the left
+      to = { scrollLeft: 0 };
+      distance = this._getScrollLeft();
+    } else if (mouseX >= right) {
+      // scroll to the right
+      to = { scrollLeft: width };
+      distance = width - this._getScrollLeft();
     }
 
     if (distance > 0) {
@@ -150,10 +155,14 @@ class ScrollService {
     if (this.iframeHtmlBody) {
       this.iframeHtmlBody.stop();
     }
+    if (this.canvas) {
+      this.canvas.stop();
+    }
   }
 
   _scroll(to, duration) {
-    this.iframeHtmlBody.stop().animate(to, {
+    const target = to.scrollLeft !== undefined ? this.canvas : this.iframeHtmlBody;
+    target.stop().animate(to, {
       duration,
     });
   }
@@ -183,18 +192,21 @@ class ScrollService {
     this.canvas.scrollLeft(scrollLeft);
   }
 
-  _getIframeCoords() {
-    const iframeWidth = this.iframe.outerWidth();
+  _getCoords() {
+    const canvasOffset = this.canvas.offset();
+    const canvasWidth = this.canvas.outerWidth();
     const iframeHeight = this.iframe.outerHeight();
     const iframeOffset = this.iframe.offset();
+    const iframeWidth = this.iframe.outerWidth();
+    const pageHeight = this.iframeBody[0].scrollHeight;
 
     return {
-      iframeWidth,
-      iframeHeight,
-      iframeTop: iframeOffset.top,
-      iframeRight: iframeOffset.left + iframeWidth,
-      iframeBottom: iframeOffset.top + iframeHeight,
-      iframeLeft: iframeOffset.left,
+      width: iframeWidth - canvasWidth,
+      height: pageHeight - iframeHeight,
+      top: iframeOffset.top,
+      right: canvasOffset.left + canvasWidth,
+      bottom: iframeOffset.top + iframeHeight,
+      left: canvasOffset.left,
     };
   }
 
