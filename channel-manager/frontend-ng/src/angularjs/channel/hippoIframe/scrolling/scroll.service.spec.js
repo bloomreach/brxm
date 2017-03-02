@@ -20,6 +20,7 @@ import 'angular-mocks';
 describe('ScrollService', () => {
   let ScrollService;
   let $iframe;
+  let $canvas;
   const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/scrolling/scroll.service.iframe.fixture.html`;
 
   const iframeTop = 40;
@@ -30,10 +31,11 @@ describe('ScrollService', () => {
 
     jasmine.getFixtures().load('channel/hippoIframe/scrolling/scroll.service.fixture.html');
     $iframe = $('#testIframe');
+    $canvas = $('#testCanvas');
 
     inject((_ScrollService_) => {
       ScrollService = _ScrollService_;
-      ScrollService.init($iframe);
+      ScrollService.init($iframe, $canvas);
     });
   });
 
@@ -46,7 +48,7 @@ describe('ScrollService', () => {
       }
     });
     $iframe.attr('src', iframeSrc);
-    ScrollService.init($iframe);
+    ScrollService.init($iframe, $canvas);
   }
 
   it('should start/stop scrolling on mouse enter/leave events', (done) => {
@@ -247,7 +249,7 @@ describe('ScrollService', () => {
       const iframeHtmlBody = iframeDocument.find('html,body');
 
       iframeHtmlBody.scrollTop(50);
-      iframeHtmlBody.scrollLeft(60);
+      $canvas.scrollLeft(60);
 
       ScrollService.saveScrollPosition();
 
@@ -270,7 +272,7 @@ describe('ScrollService', () => {
 
       const iframeWindow = $($iframe[0].contentWindow);
       expect(iframeWindow.scrollTop()).toEqual(20);
-      expect(iframeWindow.scrollLeft()).toEqual(30);
+      expect($canvas.scrollLeft()).toEqual(30);
       done();
     });
   });

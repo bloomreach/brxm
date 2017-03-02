@@ -26,8 +26,9 @@ class ScrollService {
     this.BrowserService = BrowserService;
   }
 
-  init(iframe) {
+  init(iframe, canvas) {
     this.iframe = iframe;
+    this.canvas = canvas;
     this.enabled = false;
 
     this.savedScrollPosition = {
@@ -175,11 +176,11 @@ class ScrollService {
   }
 
   _getScrollLeft() {
-    return this.iframeWindow.scrollLeft();
+    return this.canvas.scrollLeft();
   }
 
   _setScrollLeft(scrollLeft) {
-    this.iframeHtmlBody.scrollLeft(scrollLeft);
+    this.canvas.scrollLeft(scrollLeft);
   }
 
   _getIframeCoords() {

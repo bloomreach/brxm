@@ -56,7 +56,7 @@ class DragDropService {
     this.iframeJQueryElement = iframeJQueryElement;
     this.canvasJQueryElement = canvasJQueryElement;
 
-    this.ScrollService.init(iframeJQueryElement);
+    this.ScrollService.init(iframeJQueryElement, canvasJQueryElement);
     this.iframeJQueryElement.on('load', () => this._onLoad());
   }
 
