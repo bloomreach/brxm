@@ -26,7 +26,7 @@ describe('ScrollService', () => {
   const exitOnTop = [10, 40];
   const exitOnBottom = [10, 240];
   const exitOnLeft = [0, 50];
-  const exitOnRight = [215, 50];
+  const exitOnRight = [200, 50];
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
@@ -229,7 +229,7 @@ describe('ScrollService', () => {
     loadIframeFixture(() => {
       spyOn(ScrollService, '_scroll');
 
-      $canvas.scrollLeft(185); // page width minus scrollbar width
+      $canvas.scrollLeft(200);
       ScrollService.enable();
       ScrollService._startScrolling(...exitOnLeft);
 
@@ -242,7 +242,7 @@ describe('ScrollService', () => {
     loadIframeFixture(() => {
       spyOn(ScrollService, '_scroll');
 
-      $canvas.scrollLeft(185); // page width minus scrollbar width
+      $canvas.scrollLeft(200);
       ScrollService.enable();
       ScrollService._startScrolling(...exitOnRight);
 
