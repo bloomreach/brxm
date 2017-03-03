@@ -83,21 +83,23 @@ class ScrollService {
   }
 
   _bindMouseMove(scrollAllowed) {
-    const topBound = 0;
-    let rightBound = 0;
-    let bottomBound = 0;
-    const leftBound = 0;
-    let iframeTop;
-    let iframeLeft;
+    const iframe = {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    };
+    let iframeX;
+    let iframeY;
     let mouseHasLeft = false;
     let coordsLoaded = false;
 
     const loadCoords = () => {
       const { top, right, bottom, left } = this._getCoords();
-      iframeTop = top;
-      iframeLeft = left;
-      bottomBound = bottom - top;
-      rightBound = right - left;
+      iframeY = top;
+      iframeX = left;
+      iframe.bottom = bottom - top;
+      iframe.right = right - left;
       coordsLoaded = true;
     };
 
@@ -113,15 +115,15 @@ class ScrollService {
         const pageY = event.pageY - this._getScrollTop();
 
         if (mouseHasLeft) {
-          if (pageX > leftBound && pageX < rightBound && pageY > topBound && pageY < bottomBound) {
+          if (pageX > iframe.left && pageX < iframe.right && pageY > iframe.top && pageY < iframe.bottom) {
             // mouse enters
             this._stopScrolling();
             mouseHasLeft = false;
           }
-        } else if (pageX <= leftBound || pageX >= rightBound || pageY <= topBound || pageY >= bottomBound) {
+        } else if (pageX <= iframe.left || pageX >= iframe.right || pageY <= iframe.top || pageY >= iframe.bottom) {
           // mouse leaves
           mouseHasLeft = true;
-          this._startScrolling(pageX + iframeLeft, pageY + iframeTop);
+          this._startScrolling(pageX + iframeX, pageY + iframeY);
         }
       } else {
         coordsLoaded = false;
