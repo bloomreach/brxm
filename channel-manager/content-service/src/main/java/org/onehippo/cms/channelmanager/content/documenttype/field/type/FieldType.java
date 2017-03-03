@@ -156,7 +156,7 @@ public abstract class FieldType {
      * @return true or false
      */
     public boolean isValid() {
-        return true;
+        return !hasUnsupportedValidator();
     }
 
     /**
