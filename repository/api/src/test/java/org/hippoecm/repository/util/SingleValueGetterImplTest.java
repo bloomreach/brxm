@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,50 +15,47 @@
  */
 package org.hippoecm.repository.util;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import javax.jcr.Binary;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+
+import org.easymock.EasyMockRunner;
+import org.easymock.Mock;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static java.math.BigDecimal.ONE;
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+@RunWith(EasyMockRunner.class)
 public class SingleValueGetterImplTest {
 
+    @Mock
     private Value value;
-    private Object[] mocks;
-    private ValueGetter<Value, ?> singleValueGetter;
-
-    @Before
-    public void setUp() {
-        value = createMock(Value.class);
-        mocks = new Object[]{value};
-        this.singleValueGetter = new SingleValueGetterImpl();
-    }
+    private final ValueGetter<Value, Object> singleValueGetter = new SingleValueGetterImpl();
 
     @Test
     public void testGetValue() throws RepositoryException {
 
         expect(value.getType()).andReturn(PropertyType.LONG);
         expect(value.getLong()).andReturn(1L);
-        replay(mocks);
+        replay(value);
 
-        final Long result = (Long) singleValueGetter.getValue(value);
-        assertThat(result, is(1L));
+        assertThat(singleValueGetter.getValue(value), is(1L));
     }
 
     @Test
     public void testGetNullValueReturnsNull() throws RepositoryException {
-
         assertThat(singleValueGetter.getValue(null), is(nullValue()));
     }
 
@@ -87,7 +84,7 @@ public class SingleValueGetterImplTest {
         expect(value.getType()).andReturn(PropertyType.BINARY);
         expect(value.getBinary()).andReturn(createMock(Binary.class));
 
-        replay(mocks);
+        replay(value);
 
         final String v1 = singleValueGetter.getValue(value).toString();
         assertThat(v1, is("test"));
@@ -112,7 +109,7 @@ public class SingleValueGetterImplTest {
     public void testGetValueThrowsForUndefined() throws RepositoryException {
 
         expect(value.getType()).andReturn(PropertyType.UNDEFINED);
-        replay(mocks);
+        replay(value);
 
         singleValueGetter.getValue(value);
     }

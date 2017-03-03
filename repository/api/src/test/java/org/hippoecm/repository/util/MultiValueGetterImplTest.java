@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,35 +15,33 @@
  */
 package org.hippoecm.repository.util;
 
-import org.junit.Before;
-import org.junit.Test;
+import java.util.List;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import java.util.List;
 
-import static org.easymock.EasyMock.*;
+import org.easymock.EasyMockRunner;
+import org.easymock.Mock;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+@RunWith(EasyMockRunner.class)
 public class MultiValueGetterImplTest {
 
+    @Mock
     private Value value;
-    private ValueGetter<Value, ?> singleValueGetter;
-    private Object[] mocks;
-    private ValueGetter<Value[], List<?>> multiValueGetter;
-
-    @Before
-    public void setUp() {
-        singleValueGetter = createMock(ValueGetter.class);
-        value = createMock(Value.class);
-        mocks = new Object[]{singleValueGetter, value};
-        this.multiValueGetter = new MultiValueGetterImpl(singleValueGetter);
-    }
+    @Mock
+    private ValueGetter<Value, Object> singleValueGetter;
 
     @Test
     public void testGetValuesWithoutElements() throws RepositoryException {
+        final ValueGetter<Value[], List<?>> multiValueGetter = new MultiValueGetterImpl(singleValueGetter);
         assertThat(multiValueGetter.getValue(null), is(nullValue()));
         assertThat(multiValueGetter.getValue(new Value[0]), is(nullValue()));
         assertThat(multiValueGetter.getValue(new Value[]{}), is(nullValue()));
@@ -54,8 +52,9 @@ public class MultiValueGetterImplTest {
 
         final Value[] values = new Value[]{value, value, value};
         expect(singleValueGetter.getValue(value)).andReturn("X").times(values.length);
-        replay(mocks);
+        replay(singleValueGetter);
 
+        final ValueGetter<Value[], List<?>> multiValueGetter = new MultiValueGetterImpl(singleValueGetter);
         final List<?> result = multiValueGetter.getValue(values);
         assertThat(result.size(), is(values.length));
         for (Object each : result) {
