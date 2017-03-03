@@ -31,6 +31,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.engine.ResourceInputProvider;

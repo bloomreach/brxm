@@ -21,9 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.model.Configuration;
+import org.onehippo.cm.impl.MergedModelImpl;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
-import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,7 @@ public class MergedModelBuilder {
     public MergedModel build() {
         sort();
 
-        final MergedModel mergedModel = new MergedModel();
+        final MergedModelImpl mergedModel = new MergedModelImpl();
         mergedModel.setSortedConfigurations(configurations);
 
         final ConfigurationTreeBuilder configurationTreeBuilder = new ConfigurationTreeBuilder();

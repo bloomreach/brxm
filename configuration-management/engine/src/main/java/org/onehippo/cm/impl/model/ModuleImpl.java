@@ -23,11 +23,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.impl.model.builder.MergedModel;
 
 public class ModuleImpl implements Module {
 

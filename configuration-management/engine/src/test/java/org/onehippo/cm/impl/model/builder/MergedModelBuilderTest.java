@@ -16,18 +16,23 @@
 
 package org.onehippo.cm.impl.model.builder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableSet;
 
 import org.junit.Test;
+import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ConfigurationNode;
+import org.onehippo.cm.api.model.ContentDefinition;
+import org.onehippo.cm.api.model.Module;
+import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
+import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
-import org.onehippo.cm.impl.model.ContentDefinitionImpl;
 import org.onehippo.cm.impl.model.ModuleImpl;
-import org.onehippo.cm.impl.model.NamespaceDefinitionImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 
 import static org.junit.Assert.assertEquals;
@@ -60,9 +65,9 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         configuration.addProject("p1");
         final MergedModel model = new MergedModelBuilder().push(configuration).build();
 
-        final ConfigurationImpl consolidated = model.getSortedConfigurations().get(0);
+        final Configuration consolidated = model.getSortedConfigurations().get(0);
         assertEquals("c1", consolidated.getName());
-        assertEquals("p1", consolidated.getModifiableProjects().get(0).getName());
+        assertEquals("p1", consolidated.getProjects().get(0).getName());
     }
 
     @Test
@@ -74,15 +79,15 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
 
         MergedModel model = new MergedModelBuilder().push(c1).push(c2).build();
 
-        List<ConfigurationImpl> configurations = model.getSortedConfigurations();
+        List<Configuration> configurations = model.getSortedConfigurations();
         assertEquals(2, configurations.size());
         assertEquals("c1", configurations.get(0).getName());
-        List<ProjectImpl> projects1 = configurations.get(0).getModifiableProjects();
+        List<Project> projects1 = configurations.get(0).getProjects();
         assertEquals(1, projects1.size());
         assertEquals("p1", projects1.get(0).getName());
 
         assertEquals("c2", configurations.get(1).getName());
-        List<ProjectImpl> projects2 = configurations.get(1).getModifiableProjects();
+        List<Project> projects2 = configurations.get(1).getProjects();
         assertEquals(1, projects2.size());
         assertEquals("p2", projects2.get(0).getName());
 
@@ -92,12 +97,12 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         configurations = model.getSortedConfigurations();
         assertEquals(2, configurations.size());
         assertEquals("c1", configurations.get(0).getName());
-        projects1 = configurations.get(0).getModifiableProjects();
+        projects1 = configurations.get(0).getProjects();
         assertEquals(1, projects1.size());
         assertEquals("p1", projects1.get(0).getName());
 
         assertEquals("c2", configurations.get(1).getName());
-        projects2 = configurations.get(1).getModifiableProjects();
+        projects2 = configurations.get(1).getProjects();
         assertEquals(1, projects2.size());
         assertEquals("p2", projects2.get(0).getName());
     }
@@ -111,10 +116,10 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
 
         MergedModel model = new MergedModelBuilder().push(c1a).push(c1b).build();
 
-        List<ConfigurationImpl> configurations = model.getSortedConfigurations();
+        List<Configuration> configurations = model.getSortedConfigurations();
         assertEquals(1, configurations.size());
         assertEquals("c1", configurations.get(0).getName());
-        List<ProjectImpl> projects = configurations.get(0).getModifiableProjects();
+        List<Project> projects = configurations.get(0).getProjects();
         assertEquals(2, projects.size());
         assertEquals("p1", projects.get(0).getName());
         assertEquals("p2", projects.get(1).getName());
@@ -125,7 +130,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         configurations = model.getSortedConfigurations();
         assertEquals(1, configurations.size());
         assertEquals("c1", configurations.get(0).getName());
-        projects = configurations.get(0).getModifiableProjects();
+        projects = configurations.get(0).getProjects();
         assertEquals(2, projects.size());
         assertEquals("p1", projects.get(0).getName());
         assertEquals("p2", projects.get(1).getName());
@@ -177,13 +182,13 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
 
         MergedModel model = new MergedModelBuilder().push(c1a).push(c1b).build();
 
-        List<ConfigurationImpl> configurations = model.getSortedConfigurations();
+        List<Configuration> configurations = model.getSortedConfigurations();
         assertEquals(1, configurations.size());
         assertEquals("c1", configurations.get(0).getName());
-        List<ProjectImpl> projects = configurations.get(0).getModifiableProjects();
+        List<Project> projects = configurations.get(0).getProjects();
         assertEquals(1, projects.size());
         assertEquals("p1", projects.get(0).getName());
-        List<ModuleImpl> modules = projects.get(0).getModifiableModules();
+        List<Module> modules = projects.get(0).getModules();
         assertEquals(2, modules.size());
         assertEquals("m1", modules.get(0).getName());
         assertEquals("m2", modules.get(1).getName());
@@ -193,10 +198,10 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         configurations = model.getSortedConfigurations();
         assertEquals(1, configurations.size());
         assertEquals("c1", configurations.get(0).getName());
-        projects = configurations.get(0).getModifiableProjects();
+        projects = configurations.get(0).getProjects();
         assertEquals(1, projects.size());
         assertEquals("p1", projects.get(0).getName());
-        modules = projects.get(0).getModifiableModules();
+        modules = projects.get(0).getModules();
         assertEquals(2, modules.size());
         assertEquals("m1", modules.get(0).getName());
         assertEquals("m2", modules.get(1).getName());
@@ -210,15 +215,15 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         c1b.addProject("p2");
 
         MergedModel model = new MergedModelBuilder().push(c1a).push(c1b).build();
-        List<ConfigurationImpl> configurations = model.getSortedConfigurations();
-        List<ProjectImpl> projects = configurations.get(0).getModifiableProjects();
+        List<Configuration> configurations = model.getSortedConfigurations();
+        List<Project> projects = configurations.get(0).getProjects();
         assertEquals(2, projects.size());
         assertEquals("p2", projects.get(0).getName());
         assertEquals("p1", projects.get(1).getName());
 
         model = new MergedModelBuilder().push(c1b).push(c1a).build();
         configurations = model.getSortedConfigurations();
-        projects = configurations.get(0).getModifiableProjects();
+        projects = configurations.get(0).getProjects();
         assertEquals(2, projects.size());
         assertEquals("p2", projects.get(0).getName());
         assertEquals("p1", projects.get(1).getName());
@@ -239,9 +244,9 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
                 .push(c1a)
                 .push(c1b)
                 .build();
-        List<ConfigurationImpl> configurations = model.getSortedConfigurations();
+        List<Configuration> configurations = model.getSortedConfigurations();
         assertEquals(1, configurations.size());
-        List<ProjectImpl> projects = configurations.get(0).getModifiableProjects();
+        List<Project> projects = configurations.get(0).getProjects();
         assertEquals("px1", projects.get(0).getName());
         assertEquals("px2", projects.get(1).getName());
         assertEquals("px3", projects.get(2).getName());
@@ -273,9 +278,9 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
 
         MergedModel model = new MergedModelBuilder().push(c1a).push(c1b).build();
 
-        List<ConfigurationImpl> configurations = model.getSortedConfigurations();
-        List<ProjectImpl> projects = configurations.get(0).getModifiableProjects();
-        List<ModuleImpl> modules = projects.get(0).getModifiableModules();
+        List<Configuration> configurations = model.getSortedConfigurations();
+        List<Project> projects = configurations.get(0).getProjects();
+        List<Module> modules = projects.get(0).getModules();
         assertEquals(2, modules.size());
         assertEquals("m2", modules.get(0).getName());
         assertEquals("m1", modules.get(1).getName());
@@ -283,8 +288,8 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         model = new MergedModelBuilder().push(c1b).push(c1a).build();
 
         configurations = model.getSortedConfigurations();
-        projects = configurations.get(0).getModifiableProjects();
-        modules = projects.get(0).getModifiableModules();
+        projects = configurations.get(0).getProjects();
+        modules = projects.get(0).getModules();
         assertEquals(2, modules.size());
         assertEquals("m2", modules.get(0).getName());
         assertEquals("m1", modules.get(1).getName());
@@ -305,9 +310,9 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
 
         MergedModel model = new MergedModelBuilder().push(c1a).push(c1b).build();
 
-        List<ConfigurationImpl> configurations = model.getSortedConfigurations();
-        List<ProjectImpl> projects = configurations.get(0).getModifiableProjects();
-        List<ModuleImpl> modules = projects.get(0).getModifiableModules();
+        List<Configuration> configurations = model.getSortedConfigurations();
+        List<Project> projects = configurations.get(0).getProjects();
+        List<Module> modules = projects.get(0).getModules();
 
         assertEquals("mx1", modules.get(0).getName());
         assertEquals("mx2", modules.get(1).getName());
@@ -327,14 +332,16 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         assertEquals(1, model.getNamespaceDefinitions().size());
         assertEquals(1, model.getNodeTypeDefinitions().size());
 
-        final List<ContentDefinitionImpl> definitions = model.getSortedConfigurations().get(0)
-                .getModifiableProjects().get(0)
-                .getModifiableModules().get(0)
-                .getContentDefinitions();
+        final List<ContentDefinition> definitions = getContentDefinitionsFromFirstModule(model);
 
         assertEquals(5, definitions.size());
         String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
         assertEquals("[/a, /a/b, /a/b/a, /a/b/c, /a/b/c/d]", roots);
+    }
+
+    private List<ContentDefinition> getContentDefinitionsFromFirstModule(final MergedModel mergedModel) {
+        final Module module = mergedModel.getSortedConfigurations().get(0).getProjects().get(0).getModules().get(0);
+        return new ArrayList<>(((ModuleImpl) module).getContentDefinitions());
     }
 
     @Test
@@ -347,14 +354,11 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
 
         MergedModel model = new MergedModelBuilder().push(c1).build();
 
-        String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
+        String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinition::getPrefix).collect(Collectors.toList()).toString();
         assertEquals("[myhippoproject, hishippoproject]", namespaces);
         assertEquals(1, model.getNodeTypeDefinitions().size());
 
-        final List<ContentDefinitionImpl> definitions = model.getSortedConfigurations().get(0)
-                .getModifiableProjects().get(0)
-                .getModifiableModules().get(0)
-                .getContentDefinitions();
+        final List<ContentDefinition> definitions = getContentDefinitionsFromFirstModule(model);
 
         assertEquals(9, definitions.size());
         String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();
@@ -371,14 +375,11 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
 
         MergedModel model = new MergedModelBuilder().push(c1).build();
 
-        String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinitionImpl::getPrefix).collect(Collectors.toList()).toString();
+        String namespaces = model.getNamespaceDefinitions().stream().map(NamespaceDefinition::getPrefix).collect(Collectors.toList()).toString();
         assertEquals("[myhippoproject, hishippoproject]", namespaces);
         assertEquals(1, model.getNodeTypeDefinitions().size());
 
-        final List<ContentDefinitionImpl> definitions = model.getSortedConfigurations().get(0)
-                .getModifiableProjects().get(0)
-                .getModifiableModules().get(0)
-                .getContentDefinitions();
+        final List<ContentDefinition> definitions = getContentDefinitionsFromFirstModule(model);
 
         assertEquals(9, definitions.size());
         String roots = definitions.stream().map(d -> d.getNode().getPath()).collect(Collectors.toList()).toString();

@@ -52,6 +52,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.commons.cnd.TemplateBuilderFactory;
+import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
 import org.onehippo.cm.api.model.DefinitionItem;
@@ -81,8 +82,7 @@ public class RepositoryFacade {
     private final Map<Module, ResourceInputProvider> resourceInputProviders;
     private final List<Pair<ConfigurationProperty, Node>> unprocessedReferences = new ArrayList<>();
 
-    public RepositoryFacade(final Session session,
-                               final Map<Module, ResourceInputProvider> resourceInputProviders) {
+    public RepositoryFacade(final Session session, final Map<Module, ResourceInputProvider> resourceInputProviders) {
         this.session = session;
         this.resourceInputProviders = resourceInputProviders;
     }
