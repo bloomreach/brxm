@@ -82,17 +82,6 @@ describe('ScrollService', () => {
     });
   });
 
-  it('should not start scrolling when the scrollAllowed argument returns false', (done) => {
-    loadIframeFixture(() => {
-      spyOn(ScrollService, '_startScrolling');
-      ScrollService.enable(() => false);
-
-      $iframe.trigger('mouseleave');
-      expect(ScrollService._startScrolling).not.toHaveBeenCalled();
-      done();
-    });
-  });
-
   it('should stop scrolling and unbind event listeners when disabled', (done) => {
     loadIframeFixture(() => {
       spyOn(ScrollService, '_unbindMouseEnterMouseLeave').and.callThrough();
@@ -425,17 +414,6 @@ describe('ScrollService', () => {
         ScrollService.disable();
 
         expect(ScrollService._unbindMouseMove).toHaveBeenCalled();
-        done();
-      });
-    });
-
-    it('should not start scrolling when the scrollAllowed argument returns false', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_startScrolling');
-        ScrollService.enable(() => false);
-
-        triggerMouseMove(0, 0);
-        expect(ScrollService._startScrolling).not.toHaveBeenCalled();
         done();
       });
     });

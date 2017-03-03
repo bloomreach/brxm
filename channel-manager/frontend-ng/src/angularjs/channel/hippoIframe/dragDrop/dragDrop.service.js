@@ -123,8 +123,6 @@ class DragDropService {
       this.drake.on('over', (el, container) => this._updateDragDirection(container));
       this.drake.on('dragend', el => this._onStopDragOrClick(el));
       this.drake.on('drop', (el, target, source, sibling) => this._onDrop(el, target, source, sibling));
-
-      this.ScrollService.enable(() => this.draggingOrClicking);
     });
   }
 
@@ -209,6 +207,8 @@ class DragDropService {
     this.canvasJQueryElement.addClass('hippo-dragging');
     this._updateDragDirection(containerElement);
 
+    this.ScrollService.enable();
+
     // make Angular evaluate isDragging() again
     this._digestIfNeeded();
   }
@@ -254,6 +254,7 @@ class DragDropService {
     this._getIframeHtmlElement().removeClass('hippo-dragging hippo-overlay-permeable');
     this.canvasJQueryElement.removeClass('hippo-dragging');
 
+    this.ScrollService.disable();
     this.draggingOrClicking = false;
 
     $(element)

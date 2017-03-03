@@ -37,13 +37,13 @@ class ScrollService {
     };
   }
 
-  enable(scrollAllowed) {
+  enable() {
     if (!this.enabled && this.iframe) {
       this._initIframeElements();
       if (this.BrowserService.isFF()) {
-        this._bindMouseMove(scrollAllowed);
+        this._bindMouseMove();
       } else {
-        this._bindMouseEnterMouseLeave(scrollAllowed);
+        this._bindMouseEnterMouseLeave();
       }
       this.enabled = true;
     }
@@ -68,13 +68,11 @@ class ScrollService {
     this.iframeBody = this.iframeDocument.find('body');
   }
 
-  _bindMouseEnterMouseLeave(scrollAllowed) {
+  _bindMouseEnterMouseLeave() {
     this.iframe
       .on(`mouseenter${EVENT_NAMESPACE}`, () => this._stopScrolling())
       .on(`mouseleave${EVENT_NAMESPACE}`, (event) => {
-        if (scrollAllowed()) {
-          this._startScrolling(event.pageX, event.pageY);
-        }
+        this._startScrolling(event.pageX, event.pageY);
       });
   }
 
@@ -82,7 +80,7 @@ class ScrollService {
     this.iframe.off(EVENT_NAMESPACE);
   }
 
-  _bindMouseMove(scrollAllowed) {
+  _bindMouseMove() {
     const iframe = {
       top: 0,
       right: 0,
@@ -92,7 +90,6 @@ class ScrollService {
     let iframeX;
     let iframeY;
     let mouseHasLeft = false;
-    let coordsLoaded = false;
 
     const loadCoords = () => {
       const { top, right, bottom, left } = this._getCoords();
@@ -100,33 +97,26 @@ class ScrollService {
       iframeX = left;
       iframe.bottom = bottom - top;
       iframe.right = right - left;
-      coordsLoaded = true;
     };
 
+    loadCoords();
     this.iframeWindow.on(`resize${EVENT_NAMESPACE}`, loadCoords);
+
     this.iframeDocument.on(`mousemove${EVENT_NAMESPACE}`, (event) => {
-      if (scrollAllowed()) {
-        if (!coordsLoaded) {
-          loadCoords();
-        }
+      // event pageX&Y coordinates are relative to the iframe, but expected to be relative to the NG app.
+      const pageX = event.pageX - this._getScrollLeft();
+      const pageY = event.pageY - this._getScrollTop();
 
-        // event pageX&Y coordinates are relative to the iframe, but expected to be relative to the NG app.
-        const pageX = event.pageX - this._getScrollLeft();
-        const pageY = event.pageY - this._getScrollTop();
-
-        if (mouseHasLeft) {
-          if (pageX > iframe.left && pageX < iframe.right && pageY > iframe.top && pageY < iframe.bottom) {
-            // mouse enters
-            this._stopScrolling();
-            mouseHasLeft = false;
-          }
-        } else if (pageX <= iframe.left || pageX >= iframe.right || pageY <= iframe.top || pageY >= iframe.bottom) {
-          // mouse leaves
-          mouseHasLeft = true;
-          this._startScrolling(pageX + iframeX, pageY + iframeY);
+      if (mouseHasLeft) {
+        if (pageX > iframe.left && pageX < iframe.right && pageY > iframe.top && pageY < iframe.bottom) {
+          // mouse enters
+          this._stopScrolling();
+          mouseHasLeft = false;
         }
-      } else {
-        coordsLoaded = false;
+      } else if (pageX <= iframe.left || pageX >= iframe.right || pageY <= iframe.top || pageY >= iframe.bottom) {
+        // mouse leaves
+        mouseHasLeft = true;
+        this._startScrolling(pageX + iframeX, pageY + iframeY);
       }
     });
   }
