@@ -26,8 +26,9 @@ class ScrollService {
     this.BrowserService = BrowserService;
   }
 
-  init(iframe) {
+  init(iframe, canvas) {
     this.iframe = iframe;
+    this.canvas = canvas;
     this.enabled = false;
 
     this.savedScrollPosition = {
@@ -36,13 +37,13 @@ class ScrollService {
     };
   }
 
-  enable(scrollAllowed) {
+  enable() {
     if (!this.enabled && this.iframe) {
       this._initIframeElements();
       if (this.BrowserService.isFF()) {
-        this._bindMouseMove(scrollAllowed);
+        this._bindMouseMove();
       } else {
-        this._bindMouseEnterMouseLeave(scrollAllowed);
+        this._bindMouseEnterMouseLeave();
       }
       this.enabled = true;
     }
@@ -67,13 +68,11 @@ class ScrollService {
     this.iframeBody = this.iframeDocument.find('body');
   }
 
-  _bindMouseEnterMouseLeave(scrollAllowed) {
+  _bindMouseEnterMouseLeave() {
     this.iframe
       .on(`mouseenter${EVENT_NAMESPACE}`, () => this._stopScrolling())
       .on(`mouseleave${EVENT_NAMESPACE}`, (event) => {
-        if (scrollAllowed()) {
-          this._startScrolling(event.pageX, event.pageY);
-        }
+        this._startScrolling(event.pageX, event.pageY);
       });
   }
 
@@ -81,37 +80,43 @@ class ScrollService {
     this.iframe.off(EVENT_NAMESPACE);
   }
 
-  _bindMouseMove(scrollAllowed) {
-    const upperBoundary = 0;
-    let bottomBoundary;
-    let iframeTop;
+  _bindMouseMove() {
+    const iframe = {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    };
+    let iframeX;
+    let iframeY;
     let mouseHasLeft = false;
 
-    const loadProperties = () => {
-      const coords = this._getIframeCoords();
-      iframeTop = coords.iframeTop;
-      bottomBoundary = coords.iframeBottom - coords.iframeTop;
+    const loadCoords = () => {
+      const { top, right, bottom, left } = this._getCoords();
+      iframeY = top;
+      iframeX = left;
+      iframe.bottom = bottom - top;
+      iframe.right = right - left;
     };
-    loadProperties();
 
-    const mouseEnters = pageY => pageY > upperBoundary && pageY < bottomBoundary;
-    const mouseLeaves = pageY => pageY <= upperBoundary || pageY >= bottomBoundary;
+    loadCoords();
+    this.iframeWindow.on(`resize${EVENT_NAMESPACE}`, loadCoords);
 
-    this.iframeWindow.on(`resize${EVENT_NAMESPACE}`, loadProperties);
     this.iframeDocument.on(`mousemove${EVENT_NAMESPACE}`, (event) => {
-      if (scrollAllowed()) {
-        // event pageX&Y coordinates are relative to the iframe, but expected to be relative to the NG app.
-        const pageY = event.pageY - this._getScrollTop();
+      // event pageX&Y coordinates are relative to the iframe, but expected to be relative to the NG app.
+      const pageX = event.pageX - this._getScrollLeft();
+      const pageY = event.pageY - this._getScrollTop();
 
-        if (mouseHasLeft) {
-          if (mouseEnters(pageY)) {
-            this._stopScrolling();
-            mouseHasLeft = false;
-          }
-        } else if (mouseLeaves(pageY)) {
-          mouseHasLeft = true;
-          this._startScrolling(event.pageX, pageY + iframeTop);
+      if (mouseHasLeft) {
+        if (pageX > iframe.left && pageX < iframe.right && pageY > iframe.top && pageY < iframe.bottom) {
+          // mouse enters
+          this._stopScrolling();
+          mouseHasLeft = false;
         }
+      } else if (pageX <= iframe.left || pageX >= iframe.right || pageY <= iframe.top || pageY >= iframe.bottom) {
+        // mouse leaves
+        mouseHasLeft = true;
+        this._startScrolling(pageX + iframeX, pageY + iframeY);
       }
     });
   }
@@ -122,26 +127,36 @@ class ScrollService {
   }
 
   _startScrolling(mouseX, mouseY) {
-    const { iframeHeight, iframeTop, iframeBottom } = this._getIframeCoords();
-    const iframeScrollTop = this._getScrollTop();
-
-    let targetScrollTop;
+    const { scrollWidth, scrollHeight, top, right, bottom, left } = this._getCoords();
+    let target;
+    let to;
     let distance;
 
-    if (mouseY <= iframeTop) {
-      // scroll to top
-      targetScrollTop = 0;
-      distance = iframeScrollTop;
-    } else if (mouseY >= iframeBottom) {
-      // scroll to bottom
-      const pageHeight = this.iframeBody[0].scrollHeight;
-      targetScrollTop = pageHeight - iframeHeight;
-      distance = targetScrollTop - iframeScrollTop;
+    if (mouseY <= top) {
+      // scroll to the top
+      target = this.iframeHtmlBody;
+      to = { scrollTop: 0 };
+      distance = this._getScrollTop();
+    } else if (mouseY >= bottom) {
+      // scroll to the bottom
+      target = this.iframeHtmlBody;
+      to = { scrollTop: scrollHeight };
+      distance = scrollHeight - this._getScrollTop();
+    } else if (mouseX <= left) {
+      // scroll to the left
+      target = this.canvas;
+      to = { scrollLeft: 0 };
+      distance = this._getScrollLeft();
+    } else if (mouseX >= right) {
+      // scroll to the right
+      target = this.canvas;
+      to = { scrollLeft: scrollWidth };
+      distance = scrollWidth - this._getScrollLeft();
     }
 
     if (distance > 0) {
       const duration = this._calculateDuration(distance, DURATION_MIN, DURATION_MAX);
-      this._scroll(targetScrollTop, duration);
+      this._scroll(target, to, duration);
     }
   }
 
@@ -149,10 +164,13 @@ class ScrollService {
     if (this.iframeHtmlBody) {
       this.iframeHtmlBody.stop();
     }
+    if (this.canvas) {
+      this.canvas.stop();
+    }
   }
 
-  _scroll(scrollTop, duration) {
-    this.iframeHtmlBody.stop().animate({ scrollTop }, {
+  _scroll(target, to, duration) {
+    target.stop().animate(to, {
       duration,
     });
   }
@@ -175,25 +193,28 @@ class ScrollService {
   }
 
   _getScrollLeft() {
-    return this.iframeWindow.scrollLeft();
+    return this.canvas.scrollLeft();
   }
 
   _setScrollLeft(scrollLeft) {
-    this.iframeHtmlBody.scrollLeft(scrollLeft);
+    this.canvas.scrollLeft(scrollLeft);
   }
 
-  _getIframeCoords() {
-    const iframeWidth = this.iframe.outerWidth();
+  _getCoords() {
+    const canvasOffset = this.canvas.offset();
+    const canvasWidth = this.canvas.outerWidth();
     const iframeHeight = this.iframe.outerHeight();
     const iframeOffset = this.iframe.offset();
+    const iframeWidth = this.iframe.outerWidth();
+    const pageHeight = this.iframeBody[0].scrollHeight;
 
     return {
-      iframeWidth,
-      iframeHeight,
-      iframeTop: iframeOffset.top,
-      iframeRight: iframeOffset.left + iframeWidth,
-      iframeBottom: iframeOffset.top + iframeHeight,
-      iframeLeft: iframeOffset.left,
+      scrollWidth: iframeWidth - canvasWidth,
+      scrollHeight: pageHeight - iframeHeight,
+      top: iframeOffset.top,
+      right: canvasOffset.left + canvasWidth,
+      bottom: iframeOffset.top + iframeHeight,
+      left: canvasOffset.left,
     };
   }
 
