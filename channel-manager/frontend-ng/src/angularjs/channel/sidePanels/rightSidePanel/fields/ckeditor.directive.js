@@ -81,6 +81,10 @@ function ckeditor($window, ConfigService) {
           ngModel.$setViewValue(html);
         });
       });
+
+      scope.$on('$destroy', () => {
+        editor.destroy();
+      });
     },
   };
 }

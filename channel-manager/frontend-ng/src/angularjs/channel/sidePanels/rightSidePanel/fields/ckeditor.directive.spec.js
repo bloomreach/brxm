@@ -35,6 +35,7 @@ describe('ckeditor directive', () => {
     beforeEach(() => {
       CKEDITOR = jasmine.createSpyObj('CKEDITOR', ['replace']);
       editor = jasmine.createSpyObj('editor', [
+        'destroy',
         'getData',
         'on',
         'setData',
@@ -79,6 +80,12 @@ describe('ckeditor directive', () => {
       scope.$digest();
 
       expect(scope.value).toBe(newValue);
+    });
+
+    it('destroys the editor the scope is destroyed', () => {
+      compile();
+      scope.$destroy();
+      expect(editor.destroy).toHaveBeenCalled();
     });
   });
 
