@@ -83,36 +83,48 @@ class ScrollService {
   }
 
   _bindMouseMove(scrollAllowed) {
-    const upperBoundary = 0;
-    let bottomBoundary;
+    const topBound = 0;
+    let rightBound = 0;
+    let bottomBound = 0;
+    const leftBound = 0;
     let iframeTop;
+    let iframeLeft;
     let mouseHasLeft = false;
+    let coordsLoaded = false;
 
-    const loadProperties = () => {
-      const { top, bottom } = this._getCoords();
+    const loadCoords = () => {
+      const { top, right, bottom, left } = this._getCoords();
       iframeTop = top;
-      bottomBoundary = bottom - top;
+      iframeLeft = left;
+      bottomBound = bottom - top;
+      rightBound = right - left;
+      coordsLoaded = true;
     };
-    loadProperties();
 
-    const mouseEnters = pageY => pageY > upperBoundary && pageY < bottomBoundary;
-    const mouseLeaves = pageY => pageY <= upperBoundary || pageY >= bottomBoundary;
-
-    this.iframeWindow.on(`resize${EVENT_NAMESPACE}`, loadProperties);
+    this.iframeWindow.on(`resize${EVENT_NAMESPACE}`, loadCoords);
     this.iframeDocument.on(`mousemove${EVENT_NAMESPACE}`, (event) => {
       if (scrollAllowed()) {
+        if (!coordsLoaded) {
+          loadCoords();
+        }
+
         // event pageX&Y coordinates are relative to the iframe, but expected to be relative to the NG app.
+        const pageX = event.pageX - this._getScrollLeft();
         const pageY = event.pageY - this._getScrollTop();
 
         if (mouseHasLeft) {
-          if (mouseEnters(pageY)) {
+          if (pageX > leftBound && pageX < rightBound && pageY > topBound && pageY < bottomBound) {
+            // mouse enters
             this._stopScrolling();
             mouseHasLeft = false;
           }
-        } else if (mouseLeaves(pageY)) {
+        } else if (pageX <= leftBound || pageX >= rightBound || pageY <= topBound || pageY >= bottomBound) {
+          // mouse leaves
           mouseHasLeft = true;
-          this._startScrolling(event.pageX, pageY + iframeTop);
+          this._startScrolling(pageX + iframeLeft, pageY + iframeTop);
         }
+      } else {
+        coordsLoaded = false;
       }
     });
   }

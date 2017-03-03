@@ -395,8 +395,9 @@ describe('ScrollService', () => {
       });
     });
 
-    function triggerMouseMove(pageY) {
+    function triggerMouseMove(pageX, pageY) {
       const event = $.Event('mousemove'); // eslint-disable-line new-cap
+      event.pageX = pageX;
       event.pageY = pageY;
       $iframe.contents().trigger(event);
     }
@@ -429,7 +430,7 @@ describe('ScrollService', () => {
         spyOn(ScrollService, '_startScrolling');
         ScrollService.enable(() => false);
 
-        triggerMouseMove(0);
+        triggerMouseMove(0, 0);
         expect(ScrollService._startScrolling).not.toHaveBeenCalled();
         done();
       });
@@ -440,11 +441,11 @@ describe('ScrollService', () => {
         spyOn(ScrollService, '_startScrolling');
         ScrollService.enable(() => true);
 
-        triggerMouseMove(0);
+        triggerMouseMove(1, 0);
         expect(ScrollService._startScrolling).toHaveBeenCalled();
         ScrollService._startScrolling.calls.reset();
 
-        triggerMouseMove(0);
+        triggerMouseMove(1, 0);
         expect(ScrollService._startScrolling).not.toHaveBeenCalled();
 
         done();
@@ -456,11 +457,43 @@ describe('ScrollService', () => {
         spyOn(ScrollService, '_startScrolling');
         ScrollService.enable(() => true);
 
-        triggerMouseMove(200);
+        triggerMouseMove(1, 200);
         expect(ScrollService._startScrolling).toHaveBeenCalled();
         ScrollService._startScrolling.calls.reset();
 
-        triggerMouseMove(200);
+        triggerMouseMove(1, 200);
+        expect(ScrollService._startScrolling).not.toHaveBeenCalled();
+
+        done();
+      });
+    });
+
+    it('should call start scrolling once when mouse moves over the left bound', (done) => {
+      loadIframeFixture(() => {
+        spyOn(ScrollService, '_startScrolling');
+        ScrollService.enable(() => true);
+
+        triggerMouseMove(0, 1);
+        expect(ScrollService._startScrolling).toHaveBeenCalled();
+        ScrollService._startScrolling.calls.reset();
+
+        triggerMouseMove(0, 1);
+        expect(ScrollService._startScrolling).not.toHaveBeenCalled();
+
+        done();
+      });
+    });
+
+    it('should call start scrolling once when mouse moves over the right bound', (done) => {
+      loadIframeFixture(() => {
+        spyOn(ScrollService, '_startScrolling');
+        ScrollService.enable(() => true);
+
+        triggerMouseMove(200, 1);
+        expect(ScrollService._startScrolling).toHaveBeenCalled();
+        ScrollService._startScrolling.calls.reset();
+
+        triggerMouseMove(200, 1);
         expect(ScrollService._startScrolling).not.toHaveBeenCalled();
 
         done();
@@ -472,12 +505,12 @@ describe('ScrollService', () => {
         spyOn(ScrollService, '_stopScrolling');
         ScrollService.enable(() => true);
 
-        triggerMouseMove(0);
-        triggerMouseMove(10);
+        triggerMouseMove(0, 0);
+        triggerMouseMove(10, 10);
         expect(ScrollService._stopScrolling).toHaveBeenCalled();
         ScrollService._stopScrolling.calls.reset();
 
-        triggerMouseMove(11);
+        triggerMouseMove(11, 11);
         expect(ScrollService._stopScrolling).not.toHaveBeenCalled();
 
         done();
