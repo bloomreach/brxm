@@ -136,30 +136,35 @@ class ScrollService {
 
   _startScrolling(mouseX, mouseY) {
     const { scrollWidth, scrollHeight, top, right, bottom, left } = this._getCoords();
+    let target;
     let to;
     let distance;
 
     if (mouseY <= top) {
       // scroll to the top
+      target = this.iframeHtmlBody;
       to = { scrollTop: 0 };
       distance = this._getScrollTop();
     } else if (mouseY >= bottom) {
       // scroll to the bottom
+      target = this.iframeHtmlBody;
       to = { scrollTop: scrollHeight };
       distance = scrollHeight - this._getScrollTop();
     } else if (mouseX <= left) {
       // scroll to the left
+      target = this.canvas;
       to = { scrollLeft: 0 };
       distance = this._getScrollLeft();
     } else if (mouseX >= right) {
       // scroll to the right
+      target = this.canvas;
       to = { scrollLeft: scrollWidth };
       distance = scrollWidth - this._getScrollLeft();
     }
 
     if (distance > 0) {
       const duration = this._calculateDuration(distance, DURATION_MIN, DURATION_MAX);
-      this._scroll(to, duration);
+      this._scroll(target, to, duration);
     }
   }
 
@@ -172,8 +177,7 @@ class ScrollService {
     }
   }
 
-  _scroll(to, duration) {
-    const target = to.scrollLeft !== undefined ? this.canvas : this.iframeHtmlBody;
+  _scroll(target, to, duration) {
     target.stop().animate(to, {
       duration,
     });

@@ -141,7 +141,8 @@ describe('ScrollService', () => {
       ScrollService.enable();
       ScrollService._startScrolling(...exitOnTop);
 
-      expect(ScrollService._scroll).toHaveBeenCalledWith({ scrollTop: 0 }, jasmine.any(Number));
+      const htmlBody = $iframe.contents().find('html, body');
+      expect(ScrollService._scroll).toHaveBeenCalledWith(htmlBody, { scrollTop: 0 }, jasmine.any(Number));
       done();
     });
   });
@@ -155,7 +156,8 @@ describe('ScrollService', () => {
       ScrollService.enable();
       ScrollService._startScrolling(...exitOnTop);
 
-      expect(ScrollService._scroll).toHaveBeenCalledWith({ scrollTop: 0 }, jasmine.any(Number));
+      const htmlBody = $iframe.contents().find('html, body');
+      expect(ScrollService._scroll).toHaveBeenCalledWith(htmlBody, { scrollTop: 0 }, jasmine.any(Number));
       done();
     });
   });
@@ -181,7 +183,8 @@ describe('ScrollService', () => {
       ScrollService.enable();
       ScrollService._startScrolling(...exitOnBottom);
 
-      expect(ScrollService._scroll).toHaveBeenCalledWith({ scrollTop: 200 }, jasmine.any(Number));
+      const htmlBody = $iframe.contents().find('html, body');
+      expect(ScrollService._scroll).toHaveBeenCalledWith(htmlBody, { scrollTop: 200 }, jasmine.any(Number));
       done();
     });
   });
@@ -195,7 +198,8 @@ describe('ScrollService', () => {
       ScrollService.enable();
       ScrollService._startScrolling(...exitOnBottom);
 
-      expect(ScrollService._scroll).toHaveBeenCalledWith({ scrollTop: 200 }, jasmine.any(Number));
+      const htmlBody = $iframe.contents().find('html, body');
+      expect(ScrollService._scroll).toHaveBeenCalledWith(htmlBody, { scrollTop: 200 }, jasmine.any(Number));
       done();
     });
   });
@@ -220,7 +224,7 @@ describe('ScrollService', () => {
       ScrollService.enable();
       ScrollService._startScrolling(...exitOnLeft);
 
-      expect(ScrollService._scroll).toHaveBeenCalled();
+      expect(ScrollService._scroll).toHaveBeenCalledWith($canvas, { scrollLeft: 0 }, jasmine.any(Number));
       done();
     });
   });
@@ -233,7 +237,7 @@ describe('ScrollService', () => {
       ScrollService.enable();
       ScrollService._startScrolling(...exitOnLeft);
 
-      expect(ScrollService._scroll).toHaveBeenCalled();
+      expect(ScrollService._scroll).toHaveBeenCalledWith($canvas, { scrollLeft: 0 }, jasmine.any(Number));
       done();
     });
   });
@@ -259,7 +263,7 @@ describe('ScrollService', () => {
       ScrollService.enable();
       ScrollService._startScrolling(...exitOnRight);
 
-      expect(ScrollService._scroll).toHaveBeenCalled();
+      expect(ScrollService._scroll).toHaveBeenCalledWith($canvas, { scrollLeft: 200 }, jasmine.any(Number));
       done();
     });
   });
@@ -271,7 +275,7 @@ describe('ScrollService', () => {
       ScrollService.enable();
       ScrollService._startScrolling(...exitOnRight);
 
-      expect(ScrollService._scroll).toHaveBeenCalled();
+      expect(ScrollService._scroll).toHaveBeenCalledWith($canvas, { scrollLeft: 200 }, jasmine.any(Number));
       done();
     });
   });
@@ -283,7 +287,7 @@ describe('ScrollService', () => {
       spyOn(ScrollService.canvas, 'animate').and.callThrough();
 
       const to = { scrollLeft: 0 };
-      ScrollService._scroll(to, 0);
+      ScrollService._scroll(ScrollService.canvas, to, 0);
 
       expect(ScrollService.canvas.stop).toHaveBeenCalled();
       expect(ScrollService.canvas.animate).toHaveBeenCalledWith(to, { duration: 0 });
@@ -298,7 +302,7 @@ describe('ScrollService', () => {
       spyOn(ScrollService.iframeHtmlBody, 'animate').and.callThrough();
 
       const to = { scrollTop: 0 };
-      ScrollService._scroll(to, 0);
+      ScrollService._scroll(ScrollService.iframeHtmlBody, to, 0);
 
       expect(ScrollService.iframeHtmlBody.stop).toHaveBeenCalled();
       expect(ScrollService.iframeHtmlBody.animate).toHaveBeenCalledWith(to, { duration: 0 });
