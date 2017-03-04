@@ -208,69 +208,6 @@
         <checksumPolicy>fail</checksumPolicy>
       </releases>
     </repository>
-    <!-- DISABLED repositories which are often "transitively" pulled in
-        and/or were used in the past
-    -->
-    <repository>
-      <id>codehaus</id>
-      <url>https://nexus.codehaus.org/content/repositories/releases/org/codehaus/mojo</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>glassfish</id>
-      <name>Glassfish maven repository</name>
-      <url>http://download.java.net/maven/glassfish</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>openqa</id>
-      <name>OpenQA Repository</name>
-      <url>http://nexus.openqa.org/content/repositories/releases</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>m2snapshots</id>
-      <name>Maven 2 snapshots repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-    <!-- connections to maven central are by default over https since maven 3.2.3;
-         we override it here only so that earlier maven versions also use a secure connection
-     -->
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-        <checksumPolicy>fail</checksumPolicy>
-      </releases>
-      <id>central</id>
-      <name>Central Repository</name>
-      <url>https://repo.maven.apache.org/maven2</url>
-    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -286,35 +223,6 @@
         <checksumPolicy>fail</checksumPolicy>
       </releases>
       <layout>default</layout>
-    </pluginRepository>
-    <!-- DISABLED repositories which are often "transitively" pulled in
-        and/or were used in the past
-    -->
-    <pluginRepository>
-      <id>codehaus</id>
-      <url>http://repository.codehaus.org/</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
-    <!-- connections to maven central are by default over https since maven 3.2.3;
-         we override it here only so that earlier maven versions also use a secure connection
-     -->
-    <pluginRepository>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-        <checksumPolicy>fail</checksumPolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>central</id>
-      <name>Central Repository</name>
-      <url>https://repo.maven.apache.org/maven2</url>
     </pluginRepository>
   </pluginRepositories>
 
@@ -863,7 +771,7 @@
             <configuration>
               <rules>
                 <requireMavenVersion>
-                  <version>3.2.1</version>
+                  <version>3.2.3</version>
                 </requireMavenVersion>
               </rules>
             </configuration>
