@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Value;

@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

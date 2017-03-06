@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;

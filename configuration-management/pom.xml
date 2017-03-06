@@ -36,18 +36,21 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Configuration Management</notice.project.name>
 
-    <!-- Test dependencies  -->
-    <hippo.repository.version>4.2.0-SNAPSHOT</hippo.repository.version>
-    <junit.version>4.12</junit.version>
+    <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
     <snakeyaml.version>1.18</snakeyaml.version>
     <commons-lang3.version>3.5</commons-lang3.version>
     <commons-io.version>2.5</commons-io.version>
     <tdunning-json.version>1.8</tdunning-json.version>
     <lib.json.version>20160810</lib.json.version>
+
+    <!-- Test dependencies  -->
+    <junit.version>4.12</junit.version>
   </properties>
   
   <modules>
     <module>api</module>
+    <module>backend</module>
     <module>engine</module>
   </modules>
   
@@ -70,6 +73,11 @@
     <dependencies>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-api</artifactId>
+        <version>${hippo.repository.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-dependencies</artifactId>
         <version>${hippo.repository.version}</version>
         <type>pom</type>
@@ -78,6 +86,11 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-testutils</artifactId>
         <version>${hippo.repository.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-services</artifactId>
+        <version>${hippo.services.version}</version>
       </dependency>
 
       <dependency>

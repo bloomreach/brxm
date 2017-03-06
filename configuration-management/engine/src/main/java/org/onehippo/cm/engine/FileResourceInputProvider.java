@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Source;
 
 public class FileResourceInputProvider implements ResourceInputProvider {

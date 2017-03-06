@@ -27,6 +27,11 @@
   <artifactId>hippo-configuration-management-api</artifactId>
 
   <dependencies>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services</artifactId>
+    </dependency>
+
     <!-- test -->
     <dependency>
       <groupId>junit</groupId>

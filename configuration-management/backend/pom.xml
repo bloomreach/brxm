@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -23,14 +23,23 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Configuration Management Engine</name>
-  <artifactId>hippo-configuration-management-engine</artifactId>
+  <name>Hippo Configuration Management Backend</name>
+  <artifactId>hippo-configuration-management-backend</artifactId>
 
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms</groupId>
       <artifactId>hippo-configuration-management-api</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms</groupId>
+      <artifactId>hippo-configuration-management-engine</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>
@@ -45,22 +54,39 @@
       <artifactId>commons-io</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-    </dependency>
-    <!-- todo: replacement for org.json:json (above) in the future
-    <dependency>
-      <groupId>com.tdunning</groupId>
-      <artifactId>json</artifactId>
-    </dependency>
-    -->
-    <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-jcr-commons</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-spi-commons</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-spi</artifactId>
     </dependency>
 
     <!-- test -->
 
+    <dependency>
+      <groupId>org.onehippo.cms</groupId>
+      <artifactId>hippo-configuration-management-engine</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
+    <!-- embedded repository  -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-dependencies</artifactId>
+      <scope>test</scope>
+      <type>pom</type>
+    </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-testutils</artifactId>
@@ -72,27 +98,6 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

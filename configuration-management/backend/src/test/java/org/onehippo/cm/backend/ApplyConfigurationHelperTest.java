@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cm.impl.model.builder;
+package org.onehippo.cm.backend;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,14 +32,15 @@ import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
-import org.onehippo.cm.engine.ResourceInputProvider;
+import org.onehippo.cm.backend.eventutils.EventCollector;
+import org.onehippo.cm.backend.eventutils.EventPojo;
+import org.onehippo.cm.backend.eventutils.ExpectedEvents;
 import org.onehippo.cm.impl.model.ConfigurationImpl;
 import org.onehippo.cm.impl.model.ModelTestUtils;
-import org.onehippo.cm.impl.model.builder.eventutils.EventCollector;
-import org.onehippo.cm.impl.model.builder.eventutils.EventPojo;
-import org.onehippo.cm.impl.model.builder.eventutils.ExpectedEvents;
+import org.onehippo.cm.impl.model.builder.MergedModelBuilder;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
@@ -48,7 +49,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
 
-public class RepositoryFacadeTest extends RepositoryTestCase {
+public class ApplyConfigurationHelperTest extends RepositoryTestCase {
 
     private Node testNode;
 
@@ -705,8 +706,8 @@ public class RepositoryFacadeTest extends RepositoryTestCase {
         }
         final MergedModel mergedModel = mergedModelBuilder.build();
 
-        final RepositoryFacade repositoryFacade = new RepositoryFacade(session, resourceInputProviders);
-        repositoryFacade.push(mergedModel);
+        final ApplyConfigurationHelper helper = new ApplyConfigurationHelper(session, resourceInputProviders);
+        helper.push(mergedModel);
 
         session.save();
 

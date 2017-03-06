@@ -31,6 +31,7 @@ import java.util.function.BiPredicate;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;

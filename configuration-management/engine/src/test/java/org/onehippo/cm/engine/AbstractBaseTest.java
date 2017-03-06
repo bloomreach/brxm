@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.ContentDefinition;
 import org.onehippo.cm.api.model.Definition;

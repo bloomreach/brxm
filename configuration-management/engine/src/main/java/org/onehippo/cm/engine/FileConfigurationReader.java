@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.function.BiPredicate;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;

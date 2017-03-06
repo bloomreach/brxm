@@ -26,13 +26,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Orderable;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
-import org.onehippo.cm.engine.ResourceInputProvider;
 import org.onehippo.cm.engine.SourceParser;
 
 public class ModelTestUtils {

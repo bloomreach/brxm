@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.onehippo.cm.impl.model.builder;
+package org.onehippo.cm.backend;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -53,6 +53,7 @@ import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.commons.cnd.TemplateBuilderFactory;
 import org.onehippo.cm.api.MergedModel;
+import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
 import org.onehippo.cm.api.model.DefinitionItem;
@@ -65,7 +66,6 @@ import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
-import org.onehippo.cm.engine.ResourceInputProvider;
 import org.onehippo.cm.impl.model.ModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,15 +74,15 @@ import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 
-public class RepositoryFacade {
+public class ApplyConfigurationHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(RepositoryFacade.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApplyConfigurationHelper.class);
 
     private final Session session;
     private final Map<Module, ResourceInputProvider> resourceInputProviders;
     private final List<Pair<ConfigurationProperty, Node>> unprocessedReferences = new ArrayList<>();
 
-    public RepositoryFacade(final Session session, final Map<Module, ResourceInputProvider> resourceInputProviders) {
+    public ApplyConfigurationHelper(final Session session, final Map<Module, ResourceInputProvider> resourceInputProviders) {
         this.session = session;
         this.resourceInputProviders = resourceInputProviders;
     }
