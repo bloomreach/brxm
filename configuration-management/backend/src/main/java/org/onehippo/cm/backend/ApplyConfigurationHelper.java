@@ -73,6 +73,8 @@ import org.slf4j.LoggerFactory;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
+import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
@@ -346,7 +348,6 @@ public class ApplyConfigurationHelper {
     }
 
     private boolean isKnownProtectedPropertyName(final String modelPropertyName) {
-        // TODO: use constants from repository module(s) once we have the compile dependency
         final String[] knownProtectedPropertyNames = new String[] {
                 JCR_PRIMARYTYPE,
                 JCR_MIXINTYPES,
@@ -354,10 +355,10 @@ public class ApplyConfigurationHelper {
                 HIPPO_AVAILABILITY,
                 HIPPO_RELATED,
                 HIPPO_PATHS,
-// todo: needed for now               "hippostd:state",
-                "hippostd:holder",
-// todo: needed for now               "hippostd:stateSummary",
-                "hippostdpubwf:publicationDate"
+// todo: needed for now               HIPPOSTD_STATE,
+                HIPPOSTD_HOLDER,
+// todo: needed for now               HIPPOSTD_STATESUMMARY,
+                HIPPOSTDPUBWF_PUBLICATION_DATE
         };
         return ArrayUtils.contains(knownProtectedPropertyNames, modelPropertyName);
     }
