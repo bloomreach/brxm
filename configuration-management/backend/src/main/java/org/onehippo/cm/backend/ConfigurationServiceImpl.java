@@ -42,7 +42,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             throws Exception {
         try {
             final ApplyConfigurationHelper helper = new ApplyConfigurationHelper(session, resourceInputProviders);
-            helper.push(mergedModel);
+            helper.apply(mergedModel);
             session.save();
         } catch (Exception e) {
             log.warn("Failed to apply configuration", e);

@@ -87,16 +87,16 @@ public class ApplyConfigurationHelper {
         this.resourceInputProviders = resourceInputProviders;
     }
 
-    public void push(final MergedModel model) throws Exception {
+    public void apply(final MergedModel model) throws Exception {
         unprocessedReferences.clear();
 
-        pushNamespaces(model.getNamespaceDefinitions());
-        pushNodeTypes(model.getNodeTypeDefinitions());
-        pushNodes(model.getConfigurationRootNode());
-        pushUnprocessedReferences();
+        applyNamespaces(model.getNamespaceDefinitions());
+        applyNodeTypes(model.getNodeTypeDefinitions());
+        applyNodes(model.getConfigurationRootNode());
+        applyUnprocessedReferences();
     }
 
-    private void pushNamespaces(final List<? extends NamespaceDefinition> namespaceDefinitions) throws RepositoryException {
+    private void applyNamespaces(final List<? extends NamespaceDefinition> namespaceDefinitions) throws RepositoryException {
         final Set<String> prefixes = new HashSet<>(Arrays.asList(session.getNamespacePrefixes()));
 
         for (NamespaceDefinition namespaceDefinition : namespaceDefinitions) {
@@ -117,13 +117,13 @@ public class ApplyConfigurationHelper {
         }
     }
 
-    private void pushNodeTypes(final List<? extends NodeTypeDefinition> nodeTypeDefinitions) throws RepositoryException, ParseException, IOException {
+    private void applyNodeTypes(final List<? extends NodeTypeDefinition> nodeTypeDefinitions) throws RepositoryException, ParseException, IOException {
         for (NodeTypeDefinition nodeTypeDefinition : nodeTypeDefinitions) {
-            pushNodeType(nodeTypeDefinition);
+            applyNodeType(nodeTypeDefinition);
         }
     }
 
-    private void pushNodeType(final NodeTypeDefinition nodeTypeDefinition) throws RepositoryException, IOException {
+    private void applyNodeType(final NodeTypeDefinition nodeTypeDefinition) throws RepositoryException, IOException {
         logger.debug(String.format("processing cnd '%s' from %s.", nodeTypeDefinition.getValue(), ModelUtils.formatDefinition(nodeTypeDefinition)));
         final String definitionValue = nodeTypeDefinition.getValue();
         final InputStream cndStream = nodeTypeDefinition.isResource()
@@ -152,13 +152,13 @@ public class ApplyConfigurationHelper {
         }
     }
 
-    private void pushNodes(final ConfigurationNode configurationRoot) throws Exception {
+    private void applyNodes(final ConfigurationNode configurationRoot) throws Exception {
         final Node root = session.getRootNode();
-        pushProperties(configurationRoot, root);
-        pushNodes(configurationRoot, root);
+        applyProperties(configurationRoot, root);
+        applyNodes(configurationRoot, root);
     }
 
-    private void pushNodes(final ConfigurationNode modelNode, final Node jcrNode) throws Exception {
+    private void applyNodes(final ConfigurationNode modelNode, final Node jcrNode) throws Exception {
         logger.debug(String.format("processing node '%s' defined through %s.", modelNode.getPath(), ModelUtils.formatDefinitions(modelNode)));
         final Map<String, Node> retainedChildren = removeNonModelNodes(modelNode, jcrNode);
         final NextChildNameProvider nextChildNameProvider = new NextChildNameProvider(retainedChildren);
@@ -186,8 +186,8 @@ public class ApplyConfigurationHelper {
                 }
             }
 
-            pushProperties(modelChild, jcrChild);
-            pushNodes(modelChild, jcrChild);
+            applyProperties(modelChild, jcrChild);
+            applyNodes(modelChild, jcrChild);
         }
     }
 
@@ -254,17 +254,17 @@ public class ApplyConfigurationHelper {
         }
     }
 
-    private void pushProperties(final ConfigurationNode source, final Node target) throws Exception {
+    private void applyProperties(final ConfigurationNode source, final Node target) throws Exception {
         removeNonModelProperties(source, target);
 
-        pushPrimaryAndMixinTypes(source, target);
+        applyPrimaryAndMixinTypes(source, target);
 
         for (ConfigurationProperty modelProperty : source.getProperties().values()) {
             if (modelProperty.getValueType() == ValueType.REFERENCE ||
                     modelProperty.getValueType() == ValueType.WEAKREFERENCE) {
                 unprocessedReferences.add(Pair.of(modelProperty, target));
             } else {
-                pushProperty(modelProperty, target);
+                applyProperty(modelProperty, target);
             }
         }
     }
@@ -281,7 +281,7 @@ public class ApplyConfigurationHelper {
         }
     }
 
-    private void pushPrimaryAndMixinTypes(final ConfigurationNode source, final Node target) throws RepositoryException {
+    private void applyPrimaryAndMixinTypes(final ConfigurationNode source, final Node target) throws RepositoryException {
         final List<String> jcrMixinTypes = Arrays.stream(target.getMixinNodeTypes())
                 .map(NodeType::getName)
                 .collect(Collectors.toList());
@@ -313,7 +313,7 @@ public class ApplyConfigurationHelper {
         }
     }
 
-    private void pushProperty(final ConfigurationProperty modelProperty, final Node jcrNode) throws Exception {
+    private void applyProperty(final ConfigurationProperty modelProperty, final Node jcrNode) throws Exception {
         final Property jcrProperty = getPropertyIfExists(jcrNode, modelProperty.getName());
 
         if (isKnownProtectedPropertyName(modelProperty.getName())) {
@@ -608,11 +608,11 @@ public class ApplyConfigurationHelper {
         }
     }
 
-    private void pushUnprocessedReferences() throws Exception {
+    private void applyUnprocessedReferences() throws Exception {
         for (Pair<ConfigurationProperty, Node> unprocessedReference : unprocessedReferences) {
             final ConfigurationProperty configurationProperty = unprocessedReference.getLeft();
             final Node jcrNode = unprocessedReference.getRight();
-            pushProperty(configurationProperty, jcrNode);
+            applyProperty(configurationProperty, jcrNode);
         }
     }
 

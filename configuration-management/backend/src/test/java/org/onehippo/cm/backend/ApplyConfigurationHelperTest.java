@@ -707,7 +707,7 @@ public class ApplyConfigurationHelperTest extends RepositoryTestCase {
         final MergedModel mergedModel = mergedModelBuilder.build();
 
         final ApplyConfigurationHelper helper = new ApplyConfigurationHelper(session, resourceInputProviders);
-        helper.push(mergedModel);
+        helper.apply(mergedModel);
 
         session.save();
 
