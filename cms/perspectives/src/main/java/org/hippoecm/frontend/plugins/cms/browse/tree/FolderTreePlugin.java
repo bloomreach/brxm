@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,16 +14,6 @@
  *  limitations under the License.
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
@@ -58,8 +48,20 @@ import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.plugins.yui.scrollbehavior.ScrollBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class FolderTreePlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
@@ -173,20 +175,38 @@ public class FolderTreePlugin extends RenderPlugin {
 
             @Override
             protected void onNodeLinkClicked(AjaxRequestTarget target, TreeNode clickedNode) {
-                if (clickedNode instanceof IJcrTreeNode) {
-                    IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
-                    FolderTreePlugin.this.setDefaultModel(treeNodeModel.getNodeModel());
-                    ITreeState state = getTreeState();
-                    if (state.isNodeExpanded(clickedNode)) {
-                        // super has already switched selection.
-                        if (!state.isNodeSelected(clickedNode)) {
-                            state.collapseNode(clickedNode);
+                Task nodeClickedTask = null;
+                try {
+                    if (HDC.isStarted()) {
+                        nodeClickedTask = HDC.getCurrentTask().startSubtask("FolderTreePlugin.onNodeLinkClicked");
+                    }
+                    if (clickedNode instanceof IJcrTreeNode) {
+                        final IJcrTreeNode treeNodeModel = (IJcrTreeNode) clickedNode;
+                        // add clicked node path to diagnostics output
+                        if (nodeClickedTask != null && clickedNode instanceof FolderTreeNode) {
+                            final FolderTreeNode ftn = (FolderTreeNode) clickedNode;
+                            final IModel<Node> chainedModel = ftn.getChainedModel();
+                            if (chainedModel != null && chainedModel.getObject() != null) {
+                                nodeClickedTask.setAttribute("node", JcrUtils.getNodePathQuietly(chainedModel.getObject()));
+                            }
                         }
-                    } else {
-                        state.expandNode(clickedNode);
+                        FolderTreePlugin.this.setDefaultModel(treeNodeModel.getNodeModel());
+                        ITreeState state = getTreeState();
+                        if (state.isNodeExpanded(clickedNode)) {
+                            // super has already switched selection.
+                            if (!state.isNodeSelected(clickedNode)) {
+                                state.collapseNode(clickedNode);
+                            }
+                        } else {
+                            state.expandNode(clickedNode);
+                        }
+                    }
+                    updateTree(target);
+                } finally {
+                    if (nodeClickedTask != null) {
+                        nodeClickedTask.stop();
                     }
                 }
-                updateTree(target);
             }
 
             @Override
