@@ -36,7 +36,6 @@ import javax.jcr.Binary;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
@@ -52,6 +51,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.commons.cnd.TemplateBuilderFactory;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigurationNode;
@@ -73,6 +73,9 @@ import org.slf4j.LoggerFactory;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
 
 public class ApplyConfigurationHelper {
 
@@ -314,7 +317,7 @@ public class ApplyConfigurationHelper {
     }
 
     private void applyProperty(final ConfigurationProperty modelProperty, final Node jcrNode) throws Exception {
-        final Property jcrProperty = getPropertyIfExists(jcrNode, modelProperty.getName());
+        final Property jcrProperty = JcrUtils.getPropertyIfExists(jcrNode, modelProperty.getName());
 
         if (isKnownProtectedPropertyName(modelProperty.getName())) {
             return;
@@ -348,9 +351,9 @@ public class ApplyConfigurationHelper {
                 JCR_PRIMARYTYPE,
                 JCR_MIXINTYPES,
                 JCR_UUID,
-                "hippo:availability",
-                "hippo:related",
-                "hippo:paths",
+                HIPPO_AVAILABILITY,
+                HIPPO_RELATED,
+                HIPPO_PATHS,
 // todo: needed for now               "hippostd:state",
                 "hippostd:holder",
 // todo: needed for now               "hippostd:stateSummary",
@@ -587,25 +590,6 @@ public class ApplyConfigurationHelper {
 
     private Node getReferredNode(final Value modelValue, final Node jcrNode) throws RepositoryException {
         return session.getNodeByIdentifier(getReferredNodeIdentifier(modelValue, jcrNode));
-    }
-
-    // TODO: copied from JcrUtils as afaik we do not want a compile dependency on that project yet
-    /**
-     * Get the property at <code>relPath</code> from <code>baseNode</code> or <code>null</code> if no such property
-     * exists.
-     *
-     * @param baseNode existing node that should be the base for the relative path
-     * @param relPath  relative path to the property to get
-     * @return the property at <code>relPath</code> from <code>baseNode</code> or <code>null</code> if no such property
-     *         exists.
-     * @throws RepositoryException in case of exception accessing the Repository
-     */
-    public static Property getPropertyIfExists(Node baseNode, String relPath) throws RepositoryException {
-        try {
-            return baseNode.getProperty(relPath);
-        } catch (PathNotFoundException e) {
-            return null;
-        }
     }
 
     private void applyUnprocessedReferences() throws Exception {
