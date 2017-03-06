@@ -127,12 +127,15 @@ public class RepositoryServlet extends HttpServlet {
         storageLocation = null;
     }
 
-    private void parseInitParameters(ServletConfig config) throws ServletException {
+    protected void parseInitParameters(ServletConfig config) throws ServletException {
         bindingAddress = getConfigurationParameter(REPOSITORY_BINDING_PARAM, DEFAULT_REPOSITORY_BINDING);
         repositoryConfig = getConfigurationParameter(REPOSITORY_CONFIG_PARAM, DEFAULT_REPOSITORY_CONFIG);
         storageLocation = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM, DEFAULT_REPOSITORY_DIRECTORY);
         startRemoteServer = Boolean.valueOf(getConfigurationParameter(START_REMOTE_SERVER, DEFAULT_START_REMOTE_SERVER));
+        storageLocation = verifyStorageLocation(config, storageLocation);
+    }
 
+    protected String verifyStorageLocation(ServletConfig config, final String storageLocation) {
         // check for absolute path
         if (!storageLocation.startsWith("/") && !storageLocation.startsWith("file:")) {
             // try to parse the relative path
@@ -142,11 +145,12 @@ public class RepositoryServlet extends HttpServlet {
             if (storagePath == null) {
                 log.warn("Cannot determine the real path of the repository storage location, '{}'. Defaults to './{}'",
                         storageLocation, DEFAULT_REPOSITORY_DIRECTORY_UNDER_CURRENT_WORKING_DIR);
-                storageLocation = DEFAULT_REPOSITORY_DIRECTORY_UNDER_CURRENT_WORKING_DIR;
+                return DEFAULT_REPOSITORY_DIRECTORY_UNDER_CURRENT_WORKING_DIR;
             } else {
-                storageLocation = storagePath;
+                return storagePath;
             }
         }
+        return storageLocation;
     }
 
     public String getConfigurationParameter(String parameterName, String defaultValue) {
@@ -476,6 +480,13 @@ public class RepositoryServlet extends HttpServlet {
     }
 
     /**
+     * @return the prefix for Freemarker properties and template lookup, default RepositoryServlet.class.getSimpleName()
+     */
+    protected String getFreemarkerPropertiesAndTemplatePrefix() {
+        return RepositoryServlet.class.getSimpleName();
+    }
+
+    /**
      * Create Freemarker template engine configuration on initiaization
      * <P>
      * By default, this method created a configuration by using {@link DefaultObjectWrapper}
@@ -491,7 +502,7 @@ public class RepositoryServlet extends HttpServlet {
         cfg.setTemplateLoader(new ClassTemplateLoader(getClass(), ""));
 
         InputStream propsInput = null;
-        final String propsResName = getClass().getSimpleName() + "-ftl.properties";
+        final String propsResName = getFreemarkerPropertiesAndTemplatePrefix() + "-ftl.properties";
 
         try {
             propsInput = getClass().getResourceAsStream(propsResName);
@@ -514,7 +525,7 @@ public class RepositoryServlet extends HttpServlet {
      * @throws IOException
      */
     protected Template getRenderTemplate(@SuppressWarnings("UnusedParameters") final HttpServletRequest request) throws IOException {
-        final String templateName = getClass().getSimpleName() + "-html.ftl";
+        final String templateName = getFreemarkerPropertiesAndTemplatePrefix() + "-html.ftl";
         return freeMarkerConfiguration.getTemplate(templateName);
     }
 
