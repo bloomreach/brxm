@@ -279,14 +279,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
                 bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
                 lockSession = DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(credentials), credentials);
-                initializeSystemNodeTypes(initializationProcessor, bootstrapSession, jackrabbitRepository.getFileSystem());
-                if (!bootstrapSession.nodeExists("/hippo:configuration")) {
-                    log.debug("Initializing configuration content");
-                    BootstrapUtils.initializeNodecontent(bootstrapSession, "/", getClass().getResource("configuration.xml"));
-                    bootstrapSession.save();
-                } else {
-                    log.debug("Initial configuration content already present");
-                }
+                initializeRepositoryConfiguration(initializationProcessor, bootstrapSession);
                 initializationProcessor.lock(lockSession);
                 locked = true;
                 postStartupTasks = contentBootstrap(initializationProcessor, bootstrapSession);
@@ -319,6 +312,18 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
+    protected void initializeRepositoryConfiguration(final InitializationProcessorImpl initializationProcessor,
+                                                     final Session bootstrapSession) throws RepositoryException {
+        initializeSystemNodeTypes(initializationProcessor, bootstrapSession, jackrabbitRepository.getFileSystem());
+        if (!bootstrapSession.nodeExists("/hippo:configuration")) {
+            log.debug("Initializing configuration content");
+            BootstrapUtils.initializeNodecontent(bootstrapSession, "/", getClass().getResource("configuration.xml"));
+            bootstrapSession.save();
+        } else {
+            log.debug("Initial configuration content already present");
+        }
+    }
+
     private void ensureRootIsReferenceable(final Session rootSession) throws RepositoryException {
         if(!rootSession.getRootNode().isNodeType(MIX_REFERENCEABLE)) {
             rootSession.getRootNode().addMixin(MIX_REFERENCEABLE);
@@ -334,7 +339,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         return Boolean.getBoolean(SYSTEM_BOOTSTRAP_PROPERTY);
     }
 
-    private List<PostStartupTask> contentBootstrap(final InitializationProcessorImpl initializationProcessor, final Session systemSession) throws RepositoryException {
+    protected List<PostStartupTask> contentBootstrap(final InitializationProcessorImpl initializationProcessor, final Session systemSession) throws RepositoryException {
         final List<Node> pendingItems;
         try {
             pendingItems = initializationProcessor.loadExtensions(systemSession);
