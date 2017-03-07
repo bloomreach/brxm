@@ -480,10 +480,10 @@ public class RepositoryServlet extends HttpServlet {
     }
 
     /**
-     * @return the prefix for Freemarker properties and template lookup, default RepositoryServlet.class.getSimpleName()
+     * @return the prefix for Freemarker properties and template lookup, default getClass().getSimpleName()
      */
     protected String getFreemarkerPropertiesAndTemplatePrefix() {
-        return RepositoryServlet.class.getSimpleName();
+        return getClass().getSimpleName();
     }
 
     /**
