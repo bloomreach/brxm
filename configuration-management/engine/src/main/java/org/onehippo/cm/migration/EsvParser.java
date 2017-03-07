@@ -305,7 +305,12 @@ public class EsvParser extends DefaultHandler {
     }
 
     private void endProperty() throws SAXException {
-        if (JCR_PRIMARYTYPE.equals(currentProperty.getName())) {
+        if (!getCurrentNode().getChildren().isEmpty()) {
+            log.warn("Skipped property "+ currentProperty.getName() +
+                    " (and likewise skipped during esv bootstrap) because it is defined AFTER a sibling child node (" +
+                    getCurrentNode().getChildren().get(0).getName() + ") at "+ getLocation());
+        }
+        else if (JCR_PRIMARYTYPE.equals(currentProperty.getName())) {
             setPrimaryType(getCurrentNode(), currentProperty);
         } else if (JCR_MIXINTYPES.equals(currentProperty.getName())) {
             setMixinTypes(getCurrentNode(), currentProperty);
