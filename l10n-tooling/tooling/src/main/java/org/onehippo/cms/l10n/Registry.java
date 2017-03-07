@@ -88,7 +88,7 @@ public class Registry {
                         while (next == null && iter.hasNext()) {
                             try {
                                 final File file = iter.next();
-                                final String infoFileName = file.getAbsolutePath().substring(registryDir.getAbsolutePath().length()+1);
+                                final String infoFileName = file.toURI().toString().substring(registryDir.toURI().toString().length()+1);
                                 this.next = new RegistryInfo(infoFileName, file);
                                 this.next.load();
                             } catch (IOException e) {
