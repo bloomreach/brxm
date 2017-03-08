@@ -155,7 +155,7 @@ public abstract class AbstractHelper {
     }
 
     /**
-     * Reorder the {@code copied} to be in the same location as {@code source} with respect to their parents in case the
+     * Reorder the {@code copied} to be in the same position as {@code source} with respect to their parents in case the
      * parents are orderable.
      * @param source
      * @param copied
