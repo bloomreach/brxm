@@ -51,8 +51,15 @@ describe('ckeditor directive', () => {
     });
 
     function compile() {
-      $compile('<textarea ckeditor ng-model="value"></textarea>')(scope);
+      const compiledElement = $compile('<textarea ckeditor ng-model="value"></textarea>')(scope);
       scope.$digest();
+      return compiledElement;
+    }
+
+    function getEventListener(event) {
+      expect(editor.on).toHaveBeenCalledWith(event, jasmine.any(Function));
+      const onCall = editor.on.calls.all().find(call => call.args[0] === event);
+      return onCall.args[1];
     }
 
     it('renders an editor for the model value', () => {
@@ -69,17 +76,39 @@ describe('ckeditor directive', () => {
 
     it('updates the model value when the editor has changes', () => {
       compile();
-      expect(editor.on).toHaveBeenCalledWith('change', jasmine.any(Function));
-
-      const onChangeCallback = editor.on.calls.mostRecent().args[1];
+      const onChange = getEventListener('change');
 
       const newValue = '<p>changed</p>';
       editor.getData.and.returnValue(newValue);
 
-      onChangeCallback();
+      onChange();
       scope.$digest();
 
       expect(scope.value).toBe(newValue);
+    });
+
+    it('triggers focus handlers on the element when the editor is focused', () => {
+      const compiledElement = compile();
+      const onEditorFocus = getEventListener('focus');
+
+      const onElementFocus = jasmine.createSpy('onElementFocus');
+      compiledElement.on('focus', onElementFocus);
+
+      onEditorFocus();
+
+      expect(onElementFocus).toHaveBeenCalled();
+    });
+
+    it('triggers blur handlers on the element when the editor is blurred', () => {
+      const compiledElement = compile();
+      const onEditorBlur = getEventListener('blur');
+
+      const onElementBlur = jasmine.createSpy('onElementBlur');
+      compiledElement.on('blur', onElementBlur);
+
+      onEditorBlur();
+
+      expect(onElementBlur).toHaveBeenCalled();
     });
 
     it('destroys the editor the scope is destroyed', () => {

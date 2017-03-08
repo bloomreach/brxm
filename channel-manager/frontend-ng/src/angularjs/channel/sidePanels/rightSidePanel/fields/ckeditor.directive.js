@@ -82,6 +82,14 @@ function ckeditor($window, ConfigService) {
         });
       });
 
+      editor.on('focus', () => {
+        element.triggerHandler('focus');
+      });
+
+      editor.on('blur', () => {
+        element.triggerHandler('blur');
+      });
+
       scope.$on('$destroy', () => {
         editor.destroy();
       });
