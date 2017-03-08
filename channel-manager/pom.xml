@@ -36,7 +36,7 @@
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
     <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>5.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>5.0.0-visual-editing-psp2-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
