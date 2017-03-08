@@ -155,27 +155,27 @@ public abstract class AbstractHelper {
     }
 
     /**
-     * Reorder the {@code copy} ot be in the same location as {@code source} with respect to their parents in case the
+     * Reorder the {@code copied} to be in the same location as {@code source} with respect to their parents in case the
      * parents are orderable.
      * @param source
-     * @param copy
+     * @param copied
      * @throws RepositoryException
      */
-    private void reorderCopyIfNeeded(final Node source, final Node copy) throws RepositoryException {
+    private void reorderCopyIfNeeded(final Node source, final Node copied) throws RepositoryException {
 
         if (!source.getParent().getPrimaryNodeType().hasOrderableChildNodes()) {
             return;
         }
 
-        Node parentOfCopy = copy.getParent();
+        Node parentOfCopy = copied.getParent();
 
         if (!parentOfCopy.getPrimaryNodeType().hasOrderableChildNodes()) {
             return;
         }
 
-        // reorder the copied source if needed and if the parent is orderable
-        // find the next sibling of 'source' : We need to try to order the 'copy' before the
-        // same node as the source in preview. In case for some reason the next sibling does not
+        // reorder the copied source if needed and find the next sibling of 'source' :
+        // We need to try to order the 'copied' before the
+        // same node as the source in 'source'. In case for some reason the next sibling does not
         // exist in live, we need to catch the exception and log an error (because it indicates a
         // live and preview that is out of sync)
         Node nextSibling = JcrUtils.getNextSiblingIfExists(source);
@@ -183,14 +183,12 @@ public abstract class AbstractHelper {
         if (nextSibling != null) {
             try {
                 // HST nodes do not allow same name siblings so we do not take into account the index
-                // if nextSibling is null, the copy will just be at the end of the list which is fine
-                parentOfCopy.orderBefore(copy.getName(), nextSibling.getName());
+                // if nextSibling is null, the copied will just be at the end of the list which is fine
+                parentOfCopy.orderBefore(copied.getName(), nextSibling.getName());
             } catch (ItemNotFoundException e) {
-                log.error("Cannot reorder '{}' before '{}' because a node with the name '{}' does " +
-                        "not exist in the live configuration which should not be the case because preview " +
-                        "and live configuration are out of sync. The preview configuration node that misses " +
-                        "in live is '{}'." +
-                        "", copy.getPath(), nextSibling.getName(), nextSibling.getPath());
+                log.error("Cannot reorder '{}' before '{}' because the node '{}' does not have the sibling '{}'. This " +
+                        "seems to indicate live and preview configurations are out of sync which indicates an error." +
+                        "", copied.getPath(), nextSibling.getName(), copied.getName(), nextSibling.getName());
             }
         }
     }
