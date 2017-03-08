@@ -17,6 +17,8 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.helpers;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +50,8 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.SITEMENUITEM_PROPERTY_
 public abstract class AbstractHelper {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractHelper.class);
+    public static final String SEEMS_TO_INDICATE_LIVE_AND_PREVIEW_CONFIGURATIONS_ARE_OUT_OF_SYNC_WHICH_INDICATES_AN_ERROR =
+            "seems to indicate live and preview configurations are out of sync which indicates an error";
 
     protected LockHelper lockHelper = new LockHelper();
     protected PageComposerContextService pageComposerContextService;
@@ -128,6 +132,7 @@ public abstract class AbstractHelper {
         String liveConfigurationPath = pageComposerContextService.getEditingLiveConfigurationPath();
         String previewConfigurationPath = pageComposerContextService.getEditingPreviewConfigurationPath();
         final Session session = pageComposerContextService.getRequestContext().getSession();
+        final Map<Node, Node> checkReorderMap = new IdentityHashMap<>();
         for (Node lockedNode : lockedNodes) {
             String relPath = lockedNode.getPath().substring(previewConfigurationPath.length());
 
@@ -147,10 +152,12 @@ public abstract class AbstractHelper {
                 } else {
                     log.info("Publishing '{}'", lockedNode.getPath());
                     Node copy = JcrUtils.copy(session, lockedNode.getPath(), liveConfigurationPath + relPath);
-                    reorderCopyIfNeeded(lockedNode, copy);
+                    checkReorderMap.put(lockedNode, copy);
                 }
             }
-
+        }
+        for (Map.Entry<Node, Node> entry : checkReorderMap.entrySet()) {
+            reorderCopyIfNeeded(entry.getKey(), entry.getValue());
         }
     }
 
@@ -181,14 +188,17 @@ public abstract class AbstractHelper {
         Node nextSibling = JcrUtils.getNextSiblingIfExists(source);
 
         if (nextSibling != null) {
+            String copyName = copied.getName();
+            String nextSiblingName = nextSibling.getName();
             try {
                 // HST nodes do not allow same name siblings so we do not take into account the index
                 // if nextSibling is null, the copied will just be at the end of the list which is fine
-                parentOfCopy.orderBefore(copied.getName(), nextSibling.getName());
+                parentOfCopy.orderBefore(copyName, nextSiblingName);
+                log.debug("Successfully ordered '{}' before '{}'", copyName, nextSiblingName);
             } catch (ItemNotFoundException e) {
                 log.error("Cannot reorder '{}' before '{}' because the node '{}' does not have the sibling '{}'. This " +
-                        "seems to indicate live and preview configurations are out of sync which indicates an error." +
-                        "", copied.getPath(), nextSibling.getName(), copied.getName(), nextSibling.getName());
+                        SEEMS_TO_INDICATE_LIVE_AND_PREVIEW_CONFIGURATIONS_ARE_OUT_OF_SYNC_WHICH_INDICATES_AN_ERROR + "." +
+                        "", copied.getPath(), nextSiblingName, copyName, nextSiblingName);
             }
         }
     }
@@ -203,6 +213,7 @@ public abstract class AbstractHelper {
         String previewConfigurationPath = pageComposerContextService.getEditingPreviewConfigurationPath();
         final Session session = pageComposerContextService.getRequestContext().getSession();
 
+        final Map<Node, Node> checkReorderMap = new IdentityHashMap<>();
         for (Node lockedNodeRoot : lockedNodeRoots) {
             final String lockedNodePath = lockedNodeRoot.getPath();
             String relPath = lockedNodePath.substring(previewConfigurationPath.length());
@@ -214,7 +225,10 @@ public abstract class AbstractHelper {
             }
             lockedNodeRoot.remove();
             JcrUtils.copy(session, liveConfigurationPath + relPath, lockedNodePath);
-            reorderCopyIfNeeded(session.getNode(liveConfigurationPath + relPath), session.getNode(lockedNodePath));
+            checkReorderMap.put(session.getNode(liveConfigurationPath + relPath), session.getNode(lockedNodePath));
+        }
+        for (Map.Entry<Node, Node> entry : checkReorderMap.entrySet()) {
+            reorderCopyIfNeeded(entry.getKey(), entry.getValue());
         }
     }
 

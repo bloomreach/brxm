@@ -27,8 +27,8 @@ import javax.ws.rs.core.Response;
 
 import com.google.common.eventbus.Subscribe;
 
-import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.log4j.Log4jListener;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
@@ -39,14 +39,20 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.MountResourceAccessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
+import org.onehippo.repository.testutils.ExecuteOnLogLevel;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_EDITABLE;
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.DISCARD;
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PREVIEW_CREATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEvent.ChannelEventType.PUBLISH;
+import static org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.AbstractHelper.SEEMS_TO_INDICATE_LIVE_AND_PREVIEW_CONFIGURATIONS_ARE_OUT_OF_SYNC_WHICH_INDICATES_AN_ERROR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -165,6 +171,55 @@ public class MountResourceTest extends AbstractMountResourceTest {
                 MountResourceAccessor.buildXPathQueryToFindMainfConfigNodesForUsers("/hst:hst/hst:configurations/7_8-preview", Arrays.asList(new String[]{"admin", "editor"})));
     }
 
+
+    @Test
+    public void publication_of_mode_than_1_new_page_does_not_result_in_reordering_warnings() throws Exception {
+        movePagesFromCommonToUnitTestProject();
+
+        final Node unitTestConfigNode = session.getNode("/hst:hst/hst:configurations/unittestproject");
+        final Node workspace = unitTestConfigNode.addNode("hst:workspace", "hst:workspace");
+        workspace.addNode("hst:sitemap", "hst:sitemap");
+        session.save();
+
+        mockNewRequest(session, "localhost", "");
+
+        final PageComposerContextService pccs = mountResource.getPageComposerContextService();
+        final HstRequestContext ctx = pccs.getRequestContext();
+
+        String liveConfigurationPath = ctx.getResolvedMount().getMount().getHstSite().getConfigurationPath();
+        final String previewConfigurationPath = liveConfigurationPath + "-preview";
+
+        mountResource.startEdit();
+
+        // add manually two new pages to the preview
+        Node previewConfigurationNode = session.getNode(previewConfigurationPath);
+        Node aboutUsSiteMapItemNode = previewConfigurationNode.getNode("hst:sitemap/about-us");
+
+        Node about2 = JcrUtils.copy(aboutUsSiteMapItemNode, "about-us-2", previewConfigurationNode.getNode("hst:workspace/hst:sitemap"));
+        Node about3 = JcrUtils.copy(aboutUsSiteMapItemNode, "about-us-3", previewConfigurationNode.getNode("hst:workspace/hst:sitemap"));
+
+        about2.addMixin(MIXINTYPE_HST_EDITABLE);
+        about2.setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
+
+        about3.addMixin(MIXINTYPE_HST_EDITABLE);
+        about3.setProperty(GENERAL_PROPERTY_LOCKED_BY, "admin");
+
+        session.save();
+
+        mockNewRequest(session, "localhost", "/home");
+
+        ExecuteOnLogLevel.debug((ExecuteOnLogLevel.Executable)() -> {
+            try (Log4jListener listener = Log4jListener.onDebug()) {
+                mountResource.publish();
+                assertTrue(listener.messages().anyMatch(m -> m.contains("Successfully ordered 'about-us-2' before 'about-us-3'")));
+                assertFalse(listener.messages().anyMatch(m -> m.contains(SEEMS_TO_INDICATE_LIVE_AND_PREVIEW_CONFIGURATIONS_ARE_OUT_OF_SYNC_WHICH_INDICATES_AN_ERROR)));
+            }
+
+        }, AbstractHelper.class);
+
+        assertTrue(session.nodeExists(liveConfigurationPath + "/hst:workspace/hst:sitemap/about-us-2"));
+        assertTrue(session.nodeExists(liveConfigurationPath + "/hst:workspace/hst:sitemap/about-us-3"));
+    }
 
     @Test
     public void publication_of_containers_keep_order_containers_in_live_same_as_order_in_preview() throws Exception {
@@ -406,6 +461,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
         private List<ChannelEvent> processed = new ArrayList<>();
         private boolean previewCreatedEventProcessed;
         private boolean locksOnConfigurationPresentDuringEventDispatching;
+
         @Subscribe
         public void onChannelEvent(ChannelEvent event) throws RepositoryException {
             final Session session = event.getRequestContext().getSession();
@@ -440,7 +496,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
     }
 
     private static boolean checkRecursiveForLock(final Node current) throws RepositoryException {
-        if (current.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+        if (current.hasProperty(GENERAL_PROPERTY_LOCKED_BY)) {
             return true;
         }
         for (Node child : new NodeIterable(current.getNodes())) {
@@ -495,7 +551,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
     }
 
     @Test
-     public void discard_mount_with_ChannelEventListener() throws Exception {
+    public void discard_mount_with_ChannelEventListener() throws Exception {
         final ChannelEventListener listener = new ChannelEventListener();
         try {
             HstServices.getComponentManager().registerEventSubscriber(listener);
@@ -515,6 +571,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
     public static class ChannelEventListenerSettingClientException {
         private ChannelEvent handledEvent;
+
         @Subscribe
         public void onChannelEvent(ChannelEvent event) throws RepositoryException {
             if (event.getChannelEventType() == PUBLISH || event.getChannelEventType() == DISCARD) {
@@ -537,7 +594,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
             assertNotNull(listener.handledEvent.getException());
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-            assertEquals(listener.handledEvent.getException().toString(), ((ExtResponseRepresentation) response.getEntity()).getMessage());
+            assertEquals(listener.handledEvent.getException().toString(), ((ExtResponseRepresentation)response.getEntity()).getMessage());
 
             // session contains not more changes as should be reset
             assertFalse(session.hasPendingChanges());
@@ -564,7 +621,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
 
             assertNotNull(listener.handledEvent.getException());
             assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-            assertEquals(listener.handledEvent.getException().toString(), ((ExtResponseRepresentation) response.getEntity()).getMessage());
+            assertEquals(listener.handledEvent.getException().toString(), ((ExtResponseRepresentation)response.getEntity()).getMessage());
 
             // session contains not more changes as should be reset
             assertFalse(session.hasPendingChanges());
@@ -624,7 +681,7 @@ public class MountResourceTest extends AbstractMountResourceTest {
             Response response = mountResource.discardChanges();
 
             assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
-            assertEquals("IllegalStateException message", ((ExtResponseRepresentation) response.getEntity()).getMessage());
+            assertEquals("IllegalStateException message", ((ExtResponseRepresentation)response.getEntity()).getMessage());
 
             // session contains not more changes as should be reset
             assertFalse(session.hasPendingChanges());
