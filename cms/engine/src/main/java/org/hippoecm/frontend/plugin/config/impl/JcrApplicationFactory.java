@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,8 +21,13 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_DEFAULTCLUSTER;
+import static org.hippoecm.frontend.FrontendNodeType.NT_PLUGINCLUSTER;
 
 public class JcrApplicationFactory implements IApplicationFactory, IDetachable {
 
@@ -66,11 +71,36 @@ public class JcrApplicationFactory implements IApplicationFactory, IDetachable {
     }
 
     private IPluginConfigService getApplication(Node applicationNode) throws RepositoryException {
+        Node node = null;
         if (applicationNode.hasNodes()) {
-            Node clusterNode = applicationNode.getNodes().nextNode();
-            return new JcrConfigServiceFactory(new JcrNodeModel(applicationNode), clusterNode.getName());
+            final String defaultCluster = JcrUtils.getStringProperty(applicationNode, FRONTEND_DEFAULTCLUSTER, null);
+            if (defaultCluster != null) {
+                if (!applicationNode.hasNode(defaultCluster)) {
+                    log.error("Application configuration '{}' {} child node '{}' not found, using fallback", applicationNode.getName(),
+                            FRONTEND_DEFAULTCLUSTER, defaultCluster);
+                } else {
+                    node = applicationNode.getNode(defaultCluster);
+                    if (!node.isNodeType(NT_PLUGINCLUSTER)) {
+                        log.error("Application configuration '{}' {} child node '{}' not of required type {}, using fallback.",
+                                applicationNode.getName(), FRONTEND_DEFAULTCLUSTER, defaultCluster, NT_PLUGINCLUSTER);
+                        node = null;
+                    }
+                }
+            }
+            if (node == null) {
+                // fallback: use first NT_PLUGINCLUSTER type child node as default cluster (name)
+                for (Node child : new NodeIterable(applicationNode.getNodes())) {
+                    if (child.isNodeType(NT_PLUGINCLUSTER)) {
+                        node = child;
+                        break;
+                    }
+                }
+            }
+        }
+        if (node != null) {
+            return new JcrConfigServiceFactory(new JcrNodeModel(applicationNode), node.getName());
         } else {
-            log.error("Application configuration '{}' contains no plugin cluster", applicationNode.getName());
+            log.error("Application configuration '{}' contains no plugin cluster child node", applicationNode.getName());
         }
         return null;
     }

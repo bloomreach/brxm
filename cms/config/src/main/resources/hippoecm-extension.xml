@@ -185,6 +185,20 @@
       <sv:value>2.27.00</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="frontend-cms-application-default-cluster">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/cms/frontend:defaultcluster</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>cms-static</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>900.1</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="cms-login">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
@@ -203,6 +217,20 @@
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
       <sv:value>2.27.00</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="frontend-login-application-default-cluster">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:frontend/login/frontend:defaultcluster</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>login</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>900.5</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="cms-login-class-set-default-login-plugin">
