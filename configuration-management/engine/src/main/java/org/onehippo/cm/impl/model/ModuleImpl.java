@@ -83,8 +83,15 @@ public class ModuleImpl implements Module {
 
     public SourceImpl addSource(final String path) {
         final SourceImpl source = new SourceImpl(path, this);
-        sortedSources.add(source);
-        return source;
+        if (sortedSources.add(source)) {
+            return source;
+        } else {
+            // path already added before: return existing source
+            return sortedSources
+                    .stream()
+                    .filter(s -> s.getPath().equals(path))
+                    .findFirst().get();
+        }
     }
 
     public Set<SourceImpl> getModifiableSources() {
