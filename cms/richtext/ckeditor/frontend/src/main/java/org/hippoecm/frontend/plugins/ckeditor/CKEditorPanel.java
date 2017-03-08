@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.Application;
-import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
@@ -35,7 +33,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.CmsHeaderItem;
-import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,7 +53,6 @@ public class CKEditorPanel extends Panel {
             return Collections.singleton(CmsHeaderItem.get());
         }
     };
-    private static final String CKEDITOR_TIMESTAMP = WebApplicationHelper.APPLICATION_HASH;
     private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
     private static final String CONFIG_STYLES_SET_LANGUAGE_PARAM = "{language}";
 
@@ -114,7 +110,7 @@ public class CKEditorPanel extends Panel {
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
 
-        response.render(JavaScriptUrlReferenceHeaderItem.forReference(getCKEditorJsReference()));
+        response.render(JavaScriptUrlReferenceHeaderItem.forReference(CKEditorConstants.getCKEditorJsReference()));
         response.render(OnDomReadyHeaderItem.forScript(getJavaScriptForCKEditorTimestamp()));
         response.render(JavaScriptUrlReferenceHeaderItem.forReference(CKEDITOR_PANEL_JS));
 
@@ -123,23 +119,13 @@ public class CKEditorPanel extends Panel {
         response.render(OnDomReadyHeaderItem.forScript(getJavaScriptForEditor(editorConfig)));
     }
 
-    public static ResourceReference getCKEditorJsReference() {
-        if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)
-                && CKEditorConstants.existsOnClassPath(CKEditorConstants.CKEDITOR_SRC_JS)) {
-            log.info("Using non-optimized CKEditor sources.");
-            return CKEditorConstants.CKEDITOR_SRC_JS;
-        }
-        log.info("Using optimized CKEditor sources");
-        return CKEditorConstants.CKEDITOR_OPTIMIZED_JS;
-    }
-
     /**
      * Generates the script to set a unique cache-busting timestamp value used by CKEditor's resource loader.
      * This ensures that changes to plugins outside the minified CKEditor sources are picked up when the
      * CKEditor source itself does not change.
      */
     private String getJavaScriptForCKEditorTimestamp() {
-        return "CKEDITOR.timestamp='" + CKEDITOR_TIMESTAMP + "';";
+        return "CKEDITOR.timestamp='" + CKEditorConstants.CKEDITOR_TIMESTAMP + "';";
     }
 
     private JSONObject getConfigurationForEditor() {

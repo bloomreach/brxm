@@ -17,15 +17,21 @@ package org.onehippo.cms7.ckeditor;
 
 import java.io.InputStream;
 
+import org.apache.wicket.Application;
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.resource.UrlResourceReference;
 import org.apache.wicket.util.io.IOUtils;
 import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Bundle for the CKEditor sources.
  */
 public class CKEditorConstants {
+
+    private static final Logger log = LoggerFactory.getLogger(CKEditorConstants.class);
 
     private CKEditorConstants() {
     }
@@ -35,8 +41,13 @@ public class CKEditorConstants {
      * {@code org.onehippo.cms7.utilities.servlet.ResourceServlet} should be configured that serves files from jars
      * that start with /ckeditor.
      */
-    public static final UrlResourceReference CKEDITOR_OPTIMIZED_JS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("ckeditor/optimized/ckeditor.js")).setContextRelative(true);
-    public static final UrlResourceReference CKEDITOR_SRC_JS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("ckeditor/ckeditor.js")).setContextRelative(true);
+    static final UrlResourceReference CKEDITOR_OPTIMIZED_JS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("ckeditor/optimized/ckeditor.js")).setContextRelative(true);
+    static final UrlResourceReference CKEDITOR_SRC_JS = WebApplicationHelper.createUniqueUrlResourceReference(Url.parse("ckeditor/ckeditor.js")).setContextRelative(true);
+
+    /**
+     * The value to use for "CKEDITOR.timestamp" (i.e. the cache-busting hash value used by CKEditor's resource loader).
+     */
+    public static final String CKEDITOR_TIMESTAMP = WebApplicationHelper.APPLICATION_HASH;
 
     /**
      * CKEDITOR constants for keyboard shortcuts
@@ -56,19 +67,23 @@ public class CKEditorConstants {
     public static final String CONFIG_STYLES_SET = "stylesSet";
 
     /**
-     * CKEditor plugin names
-     */
-    public static final String PLUGIN_DIVAREA = "divarea";
-
-    /**
      * Checks whether a CKEditor resource reference exists on the class path.
      * @param ref a CKEditor resource reference.
      */
-    public static boolean existsOnClassPath(final UrlResourceReference ref) {
+    static boolean existsOnClassPath(final UrlResourceReference ref) {
         final String path = ref.getUrl().getPath();
         final InputStream resource = CKEditorConstants.class.getResourceAsStream("/" + path);
         IOUtils.closeQuietly(resource);
         return resource != null;
     }
 
+    public static UrlResourceReference getCKEditorJsReference() {
+        if (Application.get().getConfigurationType().equals(RuntimeConfigurationType.DEVELOPMENT)
+                && existsOnClassPath(CKEditorConstants.CKEDITOR_SRC_JS)) {
+            log.info("Using non-optimized CKEditor sources.");
+            return CKEditorConstants.CKEDITOR_SRC_JS;
+        }
+        log.info("Using optimized CKEditor sources");
+        return CKEditorConstants.CKEDITOR_OPTIMIZED_JS;
+    }
 }
