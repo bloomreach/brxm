@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -40,7 +40,7 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
     private final List<String> classNamePrefixes;
 
     public WhitelistedClassesResourceGuard() {
-        classNamePrefixes = new ArrayList<>();
+        classNamePrefixes = new CopyOnWriteArrayList<>();
     }
 
     public void addClassNamePrefixes(final String... prefixes) {
