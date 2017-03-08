@@ -42,9 +42,9 @@ describe('ckeditor directive', () => {
       ]);
       CKEDITOR.replace.and.returnValue(editor);
 
-      inject((_ConfigService_, $window) => {
+      inject(($q, _ConfigService_, CKEditorService) => {
         ConfigService = _ConfigService_;
-        $window.CKEDITOR = CKEDITOR;
+        spyOn(CKEditorService, 'loadCKEditor').and.returnValue($q.resolve(CKEDITOR));
       });
 
       scope.value = '<p>text</p>';

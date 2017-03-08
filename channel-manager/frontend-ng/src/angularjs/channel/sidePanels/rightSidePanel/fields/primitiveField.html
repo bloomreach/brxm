@@ -59,6 +59,7 @@
     </textarea>
 
     <textarea ng-switch-when="HTML"
+              class="textarea-ckeditor"
               ng-model="fieldValue.value"
               ckeditor
               name="{{ ::$ctrl.getFieldName($index) }}"

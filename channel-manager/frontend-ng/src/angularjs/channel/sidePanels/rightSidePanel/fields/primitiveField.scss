@@ -1,0 +1,4 @@
+// hide textarea while CKEditor is loading
+md-input-container .md-input.textarea-ckeditor {
+  visibility: hidden;
+}
