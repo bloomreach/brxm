@@ -352,11 +352,11 @@ public class ApplyConfigurationHelper {
                 JCR_PRIMARYTYPE,
                 JCR_MIXINTYPES,
                 JCR_UUID,
-                HIPPO_AVAILABILITY,
+// todo: actually needed               HIPPO_AVAILABILITY,
                 HIPPO_RELATED,
                 HIPPO_PATHS,
 // todo: needed for now               HIPPOSTD_STATE,
-                HIPPOSTD_HOLDER,
+// todo: actually needed               HIPPOSTD_HOLDER,
 // todo: needed for now               HIPPOSTD_STATESUMMARY,
                 HIPPOSTDPUBWF_PUBLICATION_DATE
         };
