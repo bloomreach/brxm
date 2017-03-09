@@ -41,8 +41,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public void apply(final MergedModel mergedModel, final Map<Module, ResourceInputProvider> resourceInputProviders)
             throws Exception {
         try {
-            final ApplyConfigurationHelper helper = new ApplyConfigurationHelper(session, resourceInputProviders);
-            helper.apply(mergedModel);
+            final ConfigurationPersistenceService service =
+                    new ConfigurationPersistenceService(session, resourceInputProviders);
+            service.apply(mergedModel);
             session.save();
         } catch (Exception e) {
             log.warn("Failed to apply configuration", e);

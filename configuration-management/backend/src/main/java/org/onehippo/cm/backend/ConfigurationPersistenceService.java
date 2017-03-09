@@ -73,21 +73,19 @@ import org.slf4j.LoggerFactory;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
-import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
 import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLICATION_DATE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PATHS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_RELATED;
 
-public class ApplyConfigurationHelper {
+public class ConfigurationPersistenceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ApplyConfigurationHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationPersistenceService.class);
 
     private final Session session;
     private final Map<Module, ResourceInputProvider> resourceInputProviders;
     private final List<Pair<ConfigurationProperty, Node>> unprocessedReferences = new ArrayList<>();
 
-    public ApplyConfigurationHelper(final Session session, final Map<Module, ResourceInputProvider> resourceInputProviders) {
+    public ConfigurationPersistenceService(final Session session, final Map<Module, ResourceInputProvider> resourceInputProviders) {
         this.session = session;
         this.resourceInputProviders = resourceInputProviders;
     }

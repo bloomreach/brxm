@@ -49,7 +49,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
 
-public class ApplyConfigurationHelperTest extends RepositoryTestCase {
+public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
 
     private Node testNode;
 
@@ -706,7 +706,7 @@ public class ApplyConfigurationHelperTest extends RepositoryTestCase {
         }
         final MergedModel mergedModel = mergedModelBuilder.build();
 
-        final ApplyConfigurationHelper helper = new ApplyConfigurationHelper(session, resourceInputProviders);
+        final ConfigurationPersistenceService helper = new ConfigurationPersistenceService(session, resourceInputProviders);
         helper.apply(mergedModel);
 
         session.save();
