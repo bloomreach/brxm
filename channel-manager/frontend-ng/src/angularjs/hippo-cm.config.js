@@ -134,9 +134,7 @@ function config($mdThemingProvider, $stateProvider, $urlRouterProvider, $transla
     .warnPalette('hippo-red')
     .backgroundPalette('hippo-grey');
 
-  $compileProvider.debugInfoEnabled(false)
-      .commentDirectivesEnabled(false)
-      .cssClassDirectivesEnabled(false);
+  $compileProvider.debugInfoEnabled(false);
 }
 
 export default config;
