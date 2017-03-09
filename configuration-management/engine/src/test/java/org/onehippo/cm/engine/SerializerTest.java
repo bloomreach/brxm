@@ -89,7 +89,7 @@ public class SerializerTest extends AbstractBaseTest {
 
         assertEquals(
                 "instructions:\n" +
-                "  - config:\n" +
+                "    config:\n" +
                 "      - /foo:\n" +
                 "          - str: 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789\n" +
                 "                0123456789 0123456789 0123456789 0123456789\n",

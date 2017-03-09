@@ -75,30 +75,22 @@ public class SourceSerializer extends AbstractBaseSerializer {
             }
         }
 
-        final List<Node> definitionNodes = new ArrayList<>();
+        final List<NodeTuple> definitionNodes = new ArrayList<>();
         if (namespaceDefinitionNodes.size() > 0) {
-            final List<NodeTuple> nodeTypeTuples = new ArrayList<>();
-            nodeTypeTuples.add(createStrSeqTuple("namespace", namespaceDefinitionNodes));
-            definitionNodes.add(new MappingNode(Tag.MAP, nodeTypeTuples, false));
+            definitionNodes.add(createStrSeqTuple("namespace", namespaceDefinitionNodes));
         }
         if (nodeTypeDefinitionNodes.size() > 0) {
-            final List<NodeTuple> nodeTypeTuples = new ArrayList<>();
-            nodeTypeTuples.add(createStrSeqTuple("cnd", nodeTypeDefinitionNodes));
-            definitionNodes.add(new MappingNode(Tag.MAP, nodeTypeTuples, false));
+            definitionNodes.add(createStrSeqTuple("cnd", nodeTypeDefinitionNodes));
         }
         if (configDefinitionNodes.size() > 0) {
-            final List<NodeTuple> configTuples = new ArrayList<>();
-            configTuples.add(createStrSeqTuple("config", configDefinitionNodes));
-            definitionNodes.add(new MappingNode(Tag.MAP, configTuples, false));
+            definitionNodes.add(createStrSeqTuple("config", configDefinitionNodes));
         }
         if (contentDefinitionNodes.size() > 0) {
-            final List<NodeTuple> contentTuples = new ArrayList<>();
-            contentTuples.add(createStrSeqTuple("content", contentDefinitionNodes));
-            definitionNodes.add(new MappingNode(Tag.MAP, contentTuples, false));
+            definitionNodes.add(createStrSeqTuple("content", contentDefinitionNodes));
         }
 
         final List<NodeTuple> sourceTuples = new ArrayList<>();
-        sourceTuples.add(createStrSeqTuple("instructions", definitionNodes));
+        sourceTuples.add(new NodeTuple(createStrScalar("instructions"), new MappingNode(Tag.MAP, definitionNodes, false)));
         return new MappingNode(Tag.MAP, sourceTuples, false);
     }
 

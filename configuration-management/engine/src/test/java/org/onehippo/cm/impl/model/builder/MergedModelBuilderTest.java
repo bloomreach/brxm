@@ -392,9 +392,9 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
         final String yaml = "instructions:\n"
-                + "  - config:\n"
-                + "    - /a/b:\n"
-                + "      - propertyX: blaX";
+                + "  config:\n"
+                + "  - /a/b:\n"
+                + "    - propertyX: blaX";
 
         loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
         loadYAMLString(yaml, m1);
@@ -415,8 +415,8 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
         final String yaml = "instructions:\n"
-                + "  - cnd:\n"
-                + "    - dummy CND content";
+                + "  cnd:\n"
+                + "  - dummy CND content";
 
         loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
         loadYAMLString(yaml, m1);
@@ -437,9 +437,9 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
         final String yaml = "instructions:\n"
-                + "  - cnd:\n"
-                + "    - dummy CND content\n"
-                + "    - alphabetically earlier dummy CND";
+                + "  cnd:\n"
+                + "  - dummy CND content\n"
+                + "  - alphabetically earlier dummy CND";
 
         loadYAMLString(yaml, m1);
 

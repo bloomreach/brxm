@@ -1,14 +1,14 @@
 instructions:
-  - namespace:
+    namespace:
       - prefix: myhippoproject
         uri: http://www.onehippo.org/myhippoproject/nt/1.0
-  - cnd:
+    cnd:
       - |
         <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
         <'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>
         [myhippoproject:basedocument] > hippo:document orderable
       - resource: example.cnd
-  - config:
+    config:
       - /:
           - root-level-property: root-level-property-value
           - /node-with-single-property:
@@ -59,6 +59,6 @@ instructions:
                     operation: add
                     type: name
                     value: ['some:mixin']
-  - content:
+    content:
       - /content/documents/myhippoproject:
           - property: document

@@ -1,5 +1,5 @@
 instructions:
-  - config:
+    config:
       - /resources:
           - single-value-string-resource:
                 type: string

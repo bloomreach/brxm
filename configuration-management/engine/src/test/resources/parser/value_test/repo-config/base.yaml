@@ -1,5 +1,5 @@
 instructions:
-  - config:
+    config:
       - /autodetected:
           - binary: !!binary |-
                 aGVsbG8gd29ybGQ=

@@ -99,10 +99,9 @@ public class SourceParser extends AbstractBaseParser {
         final Map<String, Node> sourceMap = asMapping(src, new String[]{"instructions"}, null);
         final SourceImpl source = parent.addSource(path);
 
-        final Map<Node, Node> definitions = asOrderedMap(sourceMap.get("instructions"));
-        for (Node definitionKeyNode : definitions.keySet()) {
-            final String definitionName = asStringScalar(definitionKeyNode);
-            final Node definitionNode = definitions.get(definitionKeyNode);
+        final Map<String, Node> definitionsMap = asMapping(sourceMap.get("instructions"), null, new String[]{"namespace","cnd","config","content"});
+        for (String definitionName : definitionsMap.keySet()) {
+            final Node definitionNode = definitionsMap.get(definitionName);
             switch (definitionName) {
                 case "namespace":
                     constructNamespaceDefinitions(definitionNode, source);
@@ -116,8 +115,6 @@ public class SourceParser extends AbstractBaseParser {
                 case "content":
                     constructContentDefinitions(definitionNode, source);
                     break;
-                default:
-                    throw new ParserException("Unknown instruction type '" + definitionName + "'", definitionKeyNode);
             }
         }
     }
