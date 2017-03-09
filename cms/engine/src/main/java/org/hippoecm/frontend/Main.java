@@ -47,6 +47,7 @@ import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectPolicy;
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
+import org.apache.wicket.markup.html.IPackageResourceGuard;
 import org.apache.wicket.page.IPageManagerContext;
 import org.apache.wicket.pageStore.IDataStore;
 import org.apache.wicket.pageStore.IPageStore;
@@ -498,36 +499,34 @@ public class Main extends PluginApplication {
             }
         });
 
-        // don't allow public access to any package resource (empty whitelist) by default
-        resourceSettings.setPackageResourceGuard(new WhitelistedClassesResourceGuard());
+        final IPackageResourceGuard resourceGuard = createPackageResourceGuard();
+        resourceSettings.setPackageResourceGuard(resourceGuard);
 
         if (log.isInfoEnabled()) {
             log.info("Hippo CMS application " + applicationName + " has started");
         }
     }
 
-    protected void initPackageResourceGuard() {
-        final WhitelistedClassesResourceGuard packageResourceGuard = new WhitelistedClassesResourceGuard();
+    protected IPackageResourceGuard createPackageResourceGuard() {
+        return new WhitelistedClassesResourceGuard() {
+            @Override
+            protected void onInit() {
+                String[] classNamePrefixes = GlobalSettings.get().getStringArray(WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES);
+                if (classNamePrefixes == null || classNamePrefixes.length == 0) {
+                    log.info("No whitelisted package resources found, using the default whitelist: {}",
+                             Arrays.asList(DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES));
+                    classNamePrefixes = DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES;
+                }
+                addClassNamePrefixes(classNamePrefixes);
 
-        String[] classNamePrefixes = GlobalSettings.get().getStringArray(WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES);
-        if (classNamePrefixes == null || classNamePrefixes.length == 0) {
-            log.info("No whitelisted package resources found, using the default whitelist: {}",
-                    Arrays.asList(DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES));
-            classNamePrefixes = DEFAULT_WHITELISTED_CLASSES_FOR_PACKAGE_RESOURCES;
-        }
-        packageResourceGuard.addClassNamePrefixes(classNamePrefixes);
-
-        // CMS7-8898: allow .woff2 files to be served
-        packageResourceGuard.addPattern("+*.woff2");
-
-        getResourceSettings().setPackageResourceGuard(packageResourceGuard);
+                // CMS7-8898: allow .woff2 files to be served
+                addPattern("+*.woff2");
+            }
+        };
     }
 
     protected void registerSessionListeners() {
-        getSessionListeners().add(session -> {
-            ((PluginUserSession) session).login();
-            initPackageResourceGuard();
-        });
+        getSessionListeners().add(session -> ((PluginUserSession) session).login());
     }
 
     @Override

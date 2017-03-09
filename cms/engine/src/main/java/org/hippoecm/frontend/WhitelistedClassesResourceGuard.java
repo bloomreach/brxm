@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -38,9 +38,10 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
     private static final Logger log = LoggerFactory.getLogger(WhitelistedClassesResourceGuard.class);
 
     private final List<String> classNamePrefixes;
+    private boolean initialized;
 
     public WhitelistedClassesResourceGuard() {
-        classNamePrefixes = new CopyOnWriteArrayList<>();
+        classNamePrefixes = new ArrayList<>();
     }
 
     public void addClassNamePrefixes(final String... prefixes) {
@@ -51,11 +52,21 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
 
     @Override
     public boolean accept(final Class<?> scope, final String absolutePath) {
+        synchronized (this) {
+            if (!initialized) {
+                onInit();
+                initialized = true;
+            }
+        }
+
         if (isUserLoggedIn() || isWhitelisted(scope)) {
             return super.accept(scope, absolutePath);
         }
         log.error("Public access denied to non-whitelisted (static) package resource: {}", absolutePath);
         return false;
+    }
+
+    protected void onInit() {
     }
 
     private boolean isWhitelisted(final Class<?> scope) {
