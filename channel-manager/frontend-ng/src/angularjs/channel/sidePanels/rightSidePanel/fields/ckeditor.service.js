@@ -75,6 +75,65 @@ class CKEditorService {
 
     return ready.promise;
   }
+
+  getConfigByType(type) {
+    const CKEDITOR = this.ckeditor || this.loadCKEditor();
+
+    // TODO: Instead of returning the objects explicitly,
+    // TODO: the configuratoin will be returned from the back-end.
+
+    let config = null;
+
+    if (type === 'rich-text') {
+      // Rich text configuration
+      config = {
+        autoUpdateElement: false,
+        entities: false,
+        basicEntities: true,
+        customConfig: '',
+        dialog_buttonsOrder: 'ltr',
+        dialog_noConfirmCancel: true,
+        extraAllowedContent: 'embed[allowscriptaccess,height,src,type,width]; img[border,hspace,vspace]; object[align,data,height,id,title,type,width]; p[align]; param[name,value]; table[width]; td[valign,width]; th[valign,width];',
+        keystrokes: [
+          [CKEDITOR.CTRL + 77, 'maximize'],
+          [CKEDITOR.ALT + 66, 'showblocks'],
+        ],
+        language: this.ConfigService.locale,
+        linkShowAdvancedTab: false,
+        plugins: 'a11yhelp,basicstyles,button,clipboard,codemirror,contextmenu,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,specialchar,stylescombo,tab,table,tableresize,tabletools,textselection,toolbar,undo,youtube',
+        removeFormatAttributes: 'style,lang,width,height,align,hspace,valign',
+        title: false,
+        toolbarGroups: [
+          { name: 'styles' },
+          { name: 'basicstyles' },
+          { name: 'undo' },
+          { name: 'listindentalign', groups: ['list', 'indent', 'align'] },
+          { name: 'links' },
+          { name: 'insert' },
+          { name: 'tools' },
+          { name: 'mode' },
+        ],
+      };
+    } else if (type === 'formatted-text') {
+      // Formatted text configuration
+      config = {
+        autoUpdateElement: false,
+        entities: false,
+        basicEntities: true,
+        customConfig: '',
+        language: this.ConfigService.locale,
+        plugins: 'basicstyles,button,clipboard,contextmenu,divarea,enterkey,entities,floatingspace,floatpanel,htmlwriter,listblock,magicline,menu,menubutton,panel,panelbutton,removeformat,richcombo,stylescombo,tab,toolbar,undo',
+        title: false,
+        toolbar: [
+          { name: 'styles', items: ['Styles'] },
+          { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', '-', 'RemoveFormat'] },
+          { name: 'clipboard', items: ['Undo', 'Redo'] },
+        ],
+      };
+    }
+
+    return config;
+  }
 }
 
 export default CKEditorService;
