@@ -603,7 +603,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyPathValue = secondTuple(propertyMap).getValueNode();
 
         assertParserException(root, propertyPathValue,
-                "Path can only be used for value type 'reference' or 'weakreference'");
+                "Path values can only be used for value type 'reference' or 'weakreference'");
     }
 
     @Test
@@ -621,6 +621,23 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node propertyPathValue = secondTuple(propertyMap).getValueNode();
 
         assertParserException(root, propertyPathValue, "Path value must be scalar or sequence, found 'mapping'");
+    }
+
+    @Test
+    public void configWithDefinitionWithEmptyPathSequence() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: reference\n"
+                + "        path: [ ]";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyPathValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyPathValue, "Path value must define at least one value");
     }
 
     @Test

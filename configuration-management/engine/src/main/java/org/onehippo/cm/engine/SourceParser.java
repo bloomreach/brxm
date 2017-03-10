@@ -550,7 +550,7 @@ public class SourceParser extends AbstractBaseParser {
 
     private DefinitionPropertyImpl constructDefinitionPropertyFromPathMap(final String name, final Node node, final DefinitionNodeImpl parent, final ValueType valueType) throws ParserException {
         if (!(valueType == ValueType.REFERENCE || valueType == ValueType.WEAKREFERENCE)) {
-            throw new ParserException("Path can only be used for value type 'reference' or 'weakreference'", node);
+            throw new ParserException("Path values can only be used for value type 'reference' or 'weakreference'", node);
         }
         switch (node.getNodeId()) {
             case scalar:
