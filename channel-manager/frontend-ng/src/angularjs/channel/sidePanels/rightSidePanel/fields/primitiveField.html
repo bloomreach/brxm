@@ -17,10 +17,13 @@
   <md-input-container class="qa-field"
                       md-no-float
                       ng-repeat="fieldValue in $ctrl.fieldValues"
-                      ng-switch="$ctrl.fieldType.type">
+                      ng-switch="$ctrl.fieldType.type"
+                      ng-class="{ 'has-focused-field': $ctrl.hasFocus }" >
+
     <label ng-if="$first"
            layout
-           layout-align="start center">
+           layout-align="start center"
+           class="field-title">
       <span>
         {{ $ctrl.fieldType.displayName }}
 
@@ -44,8 +47,8 @@
            ng-attr-maxlength="{{::$ctrl.fieldType.maxLength}}"
            aria-label="{{::$ctrl.fieldType.displayName}}"
            ng-required="{{::$ctrl.fieldType.required}}"
-           ng-focus="$ctrl.onFieldFocus()"
-           ng-blur="$ctrl.onFieldBlur()">
+           ng-focus="$ctrl.focusPrimitive()"
+           ng-blur="$ctrl.blurPrimitive()">
 
     <textarea ng-switch-when="MULTILINE_STRING"
               ng-model="fieldValue.value"
@@ -58,18 +61,16 @@
               ng-blur="$ctrl.onFieldBlur()">
     </textarea>
 
-    <textarea ng-switch-when="HTML"
-              class="textarea-ckeditor"
+    <ckeditor ng-cloak
+              ng-switch-when="HTML"
               ng-model="fieldValue.value"
-              ckeditor
               name="{{ ::$ctrl.getFieldName($index) }}"
-              placeholder=""
-              aria-label="{{::$ctrl.fieldType.displayName}}"
-              ng-required="{{::$ctrl.fieldType.required}}"
-              md-no-resize
-              ng-focus="$ctrl.onFieldFocus()"
-              ng-blur="$ctrl.onFieldBlur()">
-    </textarea>
+              aria-label="{{ ::$ctrl.fieldType.displayName }}"
+              is-required="{{ ::$ctrl.fieldType.required }}"
+              on-focus="$ctrl.focusPrimitive()"
+              on-blur="$ctrl.blurPrimitive()"
+              class="textarea-ckeditor">
+    </ckeditor>
 
     <div ng-if="$last"
          ng-messages="$ctrl.getFieldError()">
