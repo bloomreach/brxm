@@ -24,7 +24,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 import org.hippoecm.frontend.util.WebApplicationHelper;
-import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,12 +84,6 @@ public class WhitelistedClassesResourceGuard extends SecurePackageResourceGuard 
     private static boolean isUserLoggedIn() {
         final HttpServletRequest servletRequest = WebApplicationHelper.retrieveWebRequest().getContainerRequest();
         final HttpSession httpSession = servletRequest.getSession(false);
-
-        if (httpSession == null) {
-            return false;
-        }
-
-        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
-        return cmsSessionContext != null;
+        return httpSession != null && httpSession.getAttribute("hippo:username") != null;
     }
 }
