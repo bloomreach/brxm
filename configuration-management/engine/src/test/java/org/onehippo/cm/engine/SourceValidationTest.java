@@ -31,11 +31,11 @@ import org.yaml.snakeyaml.nodes.SequenceNode;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class SourceValidationTest extends AbstractBaseTest {
 
     final Yaml yamlParser = new Yaml();
-    final SourceParser sourceParser = new SourceParser(DUMMY_RESOURCE_INPUT_PROVIDER);
     final ConfigurationImpl configuration = new ConfigurationImpl("configuration");
     final ProjectImpl project = new ProjectImpl("project", configuration);
     final ModuleImpl module = new ModuleImpl("module", project);
@@ -234,31 +234,819 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void configWithScalarValue() {
         final Node root = yamlParser.compose(new StringReader("instructions: { config: scalar value }"));
 
-        assertParserException(root, firstInstructionTuple(root).getValueNode(), "Node must be a sequence");
+        assertParserException(root, firstInstructionTuple(root).getValueNode(), "Node must be a mapping");
     }
 
     @Test
-    public void configWithSequenceOfScalar() {
-        final Node root = yamlParser.compose(new StringReader("instructions: { config: [ scalar value ] }"));
+    public void configWithMapOfScalar() {
+        final Node root = yamlParser.compose(new StringReader("instructions: { config: { scalar value } }"));
 
-        assertParserException(root, firstInstructionFirstValue(root), "Node must be a mapping");
+        assertParserException(root, firstConfigTuple(root).getKeyNode(), "Path must start with a slash");
     }
 
     @Test
-    public void configWithTooManyKeys() {
+    public void configWithNonScalarKey() {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - first: value\n"
-                + "    second: value";
+                + "    [ first ]: value";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
 
-        assertParserException(root, firstInstructionFirstValue(root),
-                "Map must contain single element");
+        assertParserException(root, firstConfigTuple(root).getKeyNode(), "Node must be scalar");
     }
 
     @Test
-    public void configWithDuplicateKeys() {
+    public void configWithNonStringKey() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    25: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+
+        assertParserException(root, firstConfigTuple(root).getKeyNode(), "Scalar must be a string");
+    }
+
+    @Test
+    public void configWithRelativePathKey() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    path/to/node: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+
+        assertParserException(root, firstConfigTuple(root).getKeyNode(), "Path must start with a slash");
+    }
+
+    @Test
+    public void configWithDoubleSlashPathKey() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    //:\n"
+                + "      property: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+
+        assertParserException(root, firstConfigTuple(root).getKeyNode(), "Path must not contain double slashes");
+    }
+
+    @Test
+    public void configWithPathKeyIncludingDoubleSlashes() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to//node:\n"
+                + "      property: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+
+        assertParserException(root, firstConfigTuple(root).getKeyNode(), "Path must not contain double slashes");
+    }
+
+    @Test
+    public void configWithPathKeyWithTrailingSlash() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node/:\n"
+                + "      property: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+
+        assertParserException(root, firstConfigTuple(root).getKeyNode(), "Path must not end with a slash");
+    }
+
+    @Test
+    public void configWithScalarDefinitionLen() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node: scalar property value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+
+        assertParserException(root, firstConfigTuple(root).getValueNode(), "Node must be a mapping");
+    }
+
+    @Test
+    public void configWithDefinitionWithNonScalarKey() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      [ property ]: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+
+        assertParserException(root, firstTuple(nodeMap).getKeyNode(), "Node must be scalar");
+    }
+
+    @Test
+    public void configWithDefinitionWithNonStringKey() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      42: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+
+        assertParserException(root, firstTuple(nodeMap).getKeyNode(), "Scalar must be a string");
+    }
+
+    @Test
+    public void configWithDefinitionWithUnsupportedScalarType() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property: ~"; // indicates null
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyValue, "Tag not recognized: tag:yaml.org,2002:null");
+    }
+
+    @Test
+    public void configWithDefinitionWithBigInteger() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property: 31415926535897932384626433832795028841971";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyValue, "Value is too big to fit into a long, use a property of type decimal");
+    }
+
+    @Test
+    public void configWithDefinitionWithMixedSequenceTypes() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property: [ true, test ]"; // boolean + string
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyValue,
+                "Property values must all be of the same type, found value type 'boolean' as well as 'string'");
+    }
+
+    @Test
+    public void configWithDefinitionWithMissingKey() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property: { }";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap, "Property map must have either a 'value', 'resource' or 'path' key");
+    }
+
+    @Test
+    public void configWithDefinitionWithUnsupportedKey() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        unsupported: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap, "Key 'unsupported' is not allowed");
+    }
+
+    @Test
+    public void configWithDefinitionWithUnsupportedType() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property: { type: unsupported }";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyTypeValue = firstTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyTypeValue, "Unrecognized value type: 'unsupported'");
+    }
+
+    @Test
+    public void configWithDefinitionWithMissingValue() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property: { type: string }";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap, "Property map must have either a 'value', 'resource' or 'path' key");
+    }
+
+    @Test
+    public void configWithDefinitionWithMultipleValueKeys() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: string\n"
+                + "        resource: []\n"
+                + "        value: []";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap, "Property map must have either a 'value', 'resource' or 'path' key");
+    }
+
+    @Test
+    public void configWithDefinitionWithMapValue() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: string\n"
+                + "        value: { }";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyMapValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyMapValue, "Property value in map must be scalar or sequence, found 'mapping'");
+    }
+
+    @Test
+    public void configWithDefinitionWithUnsupportedValueType() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: string\n"
+                + "        value: ~"; // indicates null
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyMapValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyMapValue, "Tag not recognized: tag:yaml.org,2002:null");
+    }
+
+    @Test
+    public void configWithDefinitionWithTypeValueMismatch() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: string\n"
+                + "        value: 42";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyMapValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyMapValue,
+                "Property value is not of the correct type, expected 'string', found 'long'");
+    }
+
+    @Test
+    public void configWithDefinitionWithNonNumericDecimalValue() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: decimal\n"
+                + "        value: '42a'";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyMapValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyMapValue, "Could not parse scalar value as BigDecimal: 42a");
+    }
+
+    @Test
+    public void configWithDefinitionWithNonStringDecimalValue() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: decimal\n"
+                + "        value: 42";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyMapValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyMapValue, "Scalar must be a string");
+    }
+
+    @Test
+    public void configWithDefinitionWithIncorrectUriValue() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: uri\n"
+                + "        value: ':'";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyMapValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyMapValue, "Scalar must be formatted as an URI");
+    }
+
+    @Test
+    public void configWithDefinitionWithIncorrectReferenceValue() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: reference\n"
+                + "        value: abc";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyMapValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyMapValue, "Could not parse scalar value as Reference (UUID): abc");
+    }
+
+    @Test
+    public void configWithDefinitionWithPathWithIncorrectType() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: string\n"
+                + "        path: /path/to/node";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyPathValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyPathValue,
+                "Path can only be used for value type 'reference' or 'weakreference'");
+    }
+
+    @Test
+    public void configWithDefinitionWithPathMap() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: reference\n"
+                + "        path: { }";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyPathValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyPathValue, "Path value must be scalar or sequence, found 'mapping'");
+    }
+
+    @Test
+    public void configWithDefinitionWithIncorrectWeakReferenceValue() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: weakreference\n"
+                + "        value: abc";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyMapValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyMapValue, "Could not parse scalar value as WeakReference (UUID): abc");
+    }
+
+    @Test
+    public void configWithDefinitionWithInvalidResourceType() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: string\n"
+                + "        resource: 25";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyResourceValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyResourceValue, "Scalar must be a string");
+    }
+
+    @Test
+    public void configWithDefinitionWithInvalidResourceValue() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: string\n"
+                + "        resource: { }";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyResourceValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyResourceValue,
+                "Resource value must be scalar or sequence, found 'mapping'");
+    }
+
+    @Test
+    public void configWithDefinitionWithInvalidResourcePropertyTypeCombination() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: boolean\n"
+                + "        resource: boolean.bin";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyResourceValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyResourceValue,
+                "Resource values can only be used for value type 'binary' or 'string'");
+    }
+
+    @Test
+    public void configWithDefinitionWithEmptyResourceSequence() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: binary\n"
+                + "        resource: []";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyResourceValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyResourceValue, "Resource value must define at least one value");
+    }
+
+    @Test
+    public void configWithDefinitionWithParentPathElementResource() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: binary\n"
+                + "        resource: ../etc/passwd";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyResourceValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyResourceValue,
+                "Resource path is not valid: '../etc/passwd'; a resource path must not contain ..");
+    }
+
+    @Test
+    public void configWithDefinitionWithNotExistingResource() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        type: binary\n"
+                + "        resource: foo.txt";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+        final Node propertyResourceValue = secondTuple(propertyMap).getValueNode();
+
+        assertParserException(root, propertyResourceValue, "Cannot find resource 'foo.txt'");
+    }
+
+    @Test
+    public void configWithDefinitionWithNodeDeleteNonScalar() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:delete: [true]";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node metaDeleteValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, metaDeleteValue, "Node must be scalar");
+    }
+
+    @Test
+    public void configWithDefinitionWithNodeDeleteNonBoolean() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:delete: 42";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node metaDeleteValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, metaDeleteValue, "Value for .meta:delete must be boolean value 'true'");
+    }
+
+    @Test
+    public void configWithDefinitionWithNodeDeleteFalse() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:delete: false";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node metaDeleteValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, metaDeleteValue, "Value for .meta:delete must be boolean value 'true'");
+    }
+
+    @Test
+    public void configWithDefinitionWithNodeDeleteAndMore() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:delete: true\n"
+                + "      property: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+
+        assertParserException(root, nodeMap, "Node cannot contain '.meta:delete' and other keys");
+    }
+
+    @Test
+    public void configWithDefinitionWithOrderBeforeNonScalar() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:order-before: [node]";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node metaOrderBeforeValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, metaOrderBeforeValue, "Node must be scalar");
+    }
+
+    @Test
+    public void configWithDefinitionWithOrderBeforeNonString() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:order-before: 42";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node metaOrderBeforeValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, metaOrderBeforeValue, "Scalar must be a string");
+    }
+
+    @Test
+    public void configWithDefinitionWithNullOrderBefore() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:order-before: !!null";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node metaOrderBeforeValue = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, metaOrderBeforeValue, "Scalar must be a string");
+    }
+
+    @Test
+    public void configWithDefinitionWithOrderBeforeSelf() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:order-before: node";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+
+        assertParserException(root, nodeMap, "Invalid .meta:order-before targeting this node itself");
+    }
+
+    @Test
+    public void configWithDefinitionWithOrderBeforeFirst() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      .meta:order-before: ''";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final ScalarNode orderBefore = (ScalarNode)firstTuple(nodeMap).getValueNode();
+        assertEquals(orderBefore.getValue(), "");
+    }
+
+    @Test
+    public void configWithDefinitionWithNonScalarPropertyOperation() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        operation: [unknown]";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, firstTuple(propertyMap).getValueNode(), "Node must be scalar");
+    }
+
+    @Test
+    public void configWithDefinitionWithUnknownPropertyOperation() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        operation: unknown";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, firstTuple(propertyMap).getValueNode(), "Unrecognized property operation: 'unknown'");
+    }
+
+    @Test
+    public void configWithDefinitionWithPropertyDeleteAndMore() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        operation: delete\n"
+                + "        value: str";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap, "Property map cannot contain 'operation: delete' and other keys");
+    }
+
+    @Test
+    public void configWithDefinitionWithPropertyValueAddAndSingleScalar() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      property:\n"
+                + "        operation: add\n"
+                + "        value: str";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap, "Property map with operation 'add' must have a sequence for 'value', 'resource' or 'path'");
+    }
+
+    @Test
+    public void configWithDefinitionWithPrimaryTypePropertyWithNonNameType() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      jcr:primaryType:\n"
+                + "        type: string\n"
+                + "        value: str";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap, "Property 'jcr:primaryType' must be of type 'name'");
+    }
+
+    @Test
+    public void configWithDefinitionWithPrimaryTypePropertyWithNonScalar() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      jcr:primaryType:\n"
+                + "        value: [str]";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap, "Property 'jcr:primaryType' must be property type 'single'");
+    }
+
+    @Test
+    public void configWithDefinitionWithPrimaryTypePropertyWithDelete() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      jcr:primaryType:\n"
+                + "        operation: delete";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap,
+                "Property 'jcr:primaryType' supports only the following operations: replace, override");
+    }
+
+    @Test
+    public void configWithDefinitionWithPrimaryTypePropertyWithAdd() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      jcr:primaryType:\n"
+                + "        operation: add\n"
+                + "        value: ['some:type']";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap,
+                "Property 'jcr:primaryType' supports only the following operations: replace, override");
+    }
+
+    @Test
+    public void configWithDefinitionWithMixinTypesPropertyWithNonNameType() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      jcr:mixinTypes:\n"
+                + "        type: string\n"
+                + "        value: ['some:type']";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap, "Property 'jcr:mixinTypes' must be of type 'name'");
+    }
+
+    @Test
+    public void configWithDefinitionWithMixinTypesPropertyWithNonSequence() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      jcr:mixinTypes:\n"
+                + "        type: name\n"
+                + "        value: 'some:type'";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap, "Property 'jcr:mixinTypes' must be property type 'list'");
+    }
+
+    @Test
+    public void configWithDefinitionWithMixinTypesPropertyWithDelete() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /path/to/node:\n"
+                + "      jcr:mixinTypes:\n"
+                + "        operation: delete";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+        final Node nodeMap = firstConfigTuple(root).getValueNode();
+        final Node propertyMap = firstTuple(nodeMap).getValueNode();
+
+        assertParserException(root, propertyMap,
+                "Property 'jcr:mixinTypes' supports only the following operations: add, replace, override");
+    }
+
+    // start set for "explicit sequencing"
+
+    @Test
+    public void configWithDuplicateKeysInRoot() {
         final String yaml = "instructions:\n"
                 + "  config:\n"
                 + "  - first: value\n"
@@ -267,113 +1055,11 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node root = yamlParser.compose(new StringReader(yaml));
 
         assertParserException(root, firstInstructionTuple(root).getValueNode(),
-                "Ordered map contains key 'first' multiple times");
+                "Ordered map contains key 'first' multiple times", true);
     }
 
     @Test
-    public void configWithNonScalarKey() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - [ first ]: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-
-        assertParserException(root, firstTuple(config0).getKeyNode(), "Node must be scalar");
-    }
-
-    @Test
-    public void configWithNonStringKey() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - 25: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-
-        assertParserException(root, firstTuple(config0).getKeyNode(), "Scalar must be a string");
-    }
-
-    @Test
-    public void configWithRelativePathKey() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - path/to/node: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-
-        assertParserException(root, firstTuple(config0).getKeyNode(), "Path must start with a slash");
-    }
-
-    @Test
-    public void configWithDoubleSlashPathKey() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - //:\n"
-                + "    - property: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-
-        assertParserException(root, firstTuple(config0).getKeyNode(), "Path must not contain double slashes");
-    }
-
-    @Test
-    public void configWithPathKeyIncludingDoubleSlashes() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to//node:\n"
-                + "    - property: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-
-        assertParserException(root, firstTuple(config0).getKeyNode(), "Path must not contain double slashes");
-    }
-
-    @Test
-    public void configWithPathKeyWithTrailingSlash() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node/:\n"
-                + "    - property: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-
-        assertParserException(root, firstTuple(config0).getKeyNode(), "Path must not end with a slash");
-    }
-
-    @Test
-    public void configWithScalarDefinition() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node: scalar property value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-
-        assertParserException(root, firstTuple(config0).getValueNode(), "Node must be a sequence");
-    }
-
-    @Test
-    public void configWithDefinitionWithMultipleKeys() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property1: value1\n"
-                + "      property2: value2";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, propertyMap, "Map must contain single element");
-    }
-
-    @Test
-    public void configWithDefinitionWithDuplicateKeys() {
+    public void configWithDuplicateKeysInDefinition() {
         final String yaml = "instructions:\n"
                 + "  config:\n"
                 + "  - /path/to/node:\n"
@@ -384,760 +1070,46 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node config0 = firstInstructionFirstValue(root);
 
         assertParserException(root, firstTuple(config0).getValueNode(),
-                "Ordered map contains key 'property1' multiple times");
+                "Ordered map contains key 'property1' multiple times", true);
     }
 
     @Test
-    public void configWithDefinitionWithNonScalarKey() {
+    public void configWithTooManyKeysInRoot() {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "  - first: value\n"
+                + "    second: value";
+
+        final Node root = yamlParser.compose(new StringReader(yaml));
+
+        assertParserException(root, firstInstructionFirstValue(root), "Map must contain single element", true);
+    }
+
+    @Test
+    public void configWithTooManyKeysInDefinition() {
         final String yaml = "instructions:\n"
                 + "  config:\n"
                 + "  - /path/to/node:\n"
-                + "    - [ property ]: value";
+                + "    - first: value\n"
+                + "      second: value";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node config0 = firstInstructionFirstValue(root);
         final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
 
-        assertParserException(root, firstTuple(propertyMap).getKeyNode(), "Node must be scalar");
+        assertParserException(root, propertyMap, "Map must contain single element", true);
     }
 
     @Test
-    public void configWithDefinitionWithNonStringKey() {
+    public void configWithScalarDefinition() {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - 42: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getKeyNode(), "Scalar must be a string");
-    }
-
-    @Test
-    public void configWithDefinitionWithUnsupportedScalarType() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property: ~"; // indicates null
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Tag not recognized: tag:yaml.org,2002:null");
-    }
-
-    @Test
-    public void configWithDefinitionWithBigInteger() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property: 31415926535897932384626433832795028841971";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Value is too big to fit into a long, use a property of type decimal");
-    }
-
-    @Test
-    public void configWithDefinitionWithMixedSequenceTypes() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property: [ true, test ]"; // boolean + string
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property values must all be of the same type, found value type 'boolean' as well as 'string'");
-    }
-
-    @Test
-    public void configWithDefinitionWithMissingKey() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property: { }";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property map must have either a 'value', 'resource' or 'path' key");
-    }
-
-    @Test
-    public void configWithDefinitionWithUnsupportedKey() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        unsupported: value";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Key 'unsupported' is not allowed");
-    }
-
-    @Test
-    public void configWithDefinitionWithUnsupportedType() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property: { type: unsupported }";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, firstTuple(propertyValueMap).getValueNode(),
-                "Unrecognized value type: 'unsupported'");
-    }
-
-    @Test
-    public void configWithDefinitionWithMissingValue() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property: { type: string }";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property map must have either a 'value', 'resource' or 'path' key");
-    }
-
-    @Test
-    public void configWithDefinitionWithMultipleValueKeys() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: string\n"
-                + "        resource: []\n"
-                + "        value: []";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property map must have either a 'value', 'resource' or 'path' key");
-    }
-
-    @Test
-    public void configWithDefinitionWithMapValue() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: string\n"
-                + "        value: { }";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Property value in map must be scalar or sequence, found 'mapping'");
-    }
-
-    @Test
-    public void configWithDefinitionWithUnsupportedValueType() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: string\n"
-                + "        value: ~"; // indicates null
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Tag not recognized: tag:yaml.org,2002:null");
-    }
-
-    @Test
-    public void configWithDefinitionWithTypeValueMismatch() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: string\n"
-                + "        value: 42";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Property value is not of the correct type, expected 'string', found 'long'");
-    }
-
-    @Test
-    public void configWithDefinitionWithNonNumericDecimalValue() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: decimal\n"
-                + "        value: '42a'";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Could not parse scalar value as BigDecimal: 42a");
-    }
-
-    @Test
-    public void configWithDefinitionWithNonStringDecimalValue() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: decimal\n"
-                + "        value: 42";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Scalar must be a string");
-    }
-
-    @Test
-    public void configWithDefinitionWithIncorrectUriValue() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: uri\n"
-                + "        value: ':'";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Scalar must be formatted as an URI");
-    }
-
-    @Test
-    public void configWithDefinitionWithIncorrectReferenceValue() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: reference\n"
-                + "        value: abc";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Could not parse scalar value as Reference (UUID): abc");
-    }
-
-    @Test
-    public void configWithDefinitionWithPathWithIncorrectType() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: string\n"
-                + "        path: /path/to/node";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Path can only be used for value type 'reference' or 'weakreference'");
-    }
-
-    @Test
-    public void configWithDefinitionWithPathMap() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: reference\n"
-                + "        path: { }";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Path value must be scalar or sequence, found 'mapping'");
-    }
-
-    @Test
-    public void configWithDefinitionWithIncorrectWeakReferenceValue() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: weakreference\n"
-                + "        value: abc";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Could not parse scalar value as WeakReference (UUID): abc");
-    }
-
-    @Test
-    public void configWithDefinitionWithInvalidResourceType() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: string\n"
-                + "        resource: 25";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Scalar must be a string");
-    }
-
-    @Test
-    public void configWithDefinitionWithInvalidResourceValue() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: string\n"
-                + "        resource: { }";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Resource value must be scalar or sequence, found 'mapping'");
-    }
-
-    @Test
-    public void configWithDefinitionWithInvalidResourcePropertyTypeCombination() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: boolean\n"
-                + "        resource: boolean.bin";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Resource values can only be used for value type 'binary' or 'string'");
-    }
-
-    @Test
-    public void configWithDefinitionWithEmptyResourceSequence() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: binary\n"
-                + "        resource: []";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Resource value must define at least one value");
-    }
-
-    @Test
-    public void configWithDefinitionWithParentPathElementResource() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: binary\n"
-                + "        resource: ../etc/passwd";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Resource path is not valid: '../etc/passwd'; a resource path must not contain ..");
-    }
-
-    @Test
-    public void configWithDefinitionWithNotExistingResource() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        type: binary\n"
-                + "        resource: foo.txt";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, secondTuple(propertyValueMap).getValueNode(),
-                "Cannot find resource 'foo.txt'");
-    }
-
-    @Test
-    public void configWithDefinitionWithNodeDeleteNonScalar() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - .meta:delete: [true]";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(), "Node must be scalar");
-    }
-
-    @Test
-    public void configWithDefinitionWithNodeDeleteNonBoolean() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - .meta:delete: 42";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Value for .meta:delete must be boolean value 'true'");
-    }
-
-    @Test
-    public void configWithDefinitionWithNodeDeleteFalse() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - .meta:delete: false";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Value for .meta:delete must be boolean value 'true'");
-    }
-
-    @Test
-    public void configWithDefinitionWithNodeDeleteAndMore() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - .meta:delete: true\n"
-                + "    - property: value";
+                + "    - /path/to/node: scalar property value";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node config0 = firstInstructionFirstValue(root);
 
-        assertParserException(root, firstTuple(config0).getValueNode(),
-                "Node cannot contain '.meta:delete' and other keys");
-    }
-
-    @Test
-    public void configWithDefinitionWithOrderBeforeNonScalar() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - .meta:order-before: [node]";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(), "Node must be scalar");
-    }
-
-    @Test
-    public void configWithDefinitionWithOrderBeforeNonString() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - .meta:order-before: 42";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(), "Scalar must be a string");
-    }
-
-    @Test
-    public void configWithDefinitionWithNullOrderBefore() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - .meta:order-before: !!null";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(), "Scalar must be a string");
-    }
-
-    @Test
-    public void configWithDefinitionWithOrderBeforeSelf() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - .meta:order-before: node";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-
-        assertParserException(root, firstTuple(config0).getValueNode(), "Invalid .meta:order-before targeting this node itself");
-    }
-
-    @Test
-    public void configWithDefinitionWithOrderBeforeFirst() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - .meta:order-before: ''";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final ScalarNode orderBefore = (ScalarNode)firstTuple(propertyMap).getValueNode();
-        assertEquals(orderBefore.getValue(), "");
-    }
-
-    @Test
-    public void configWithDefinitionWithNonScalarPropertyOperation() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        operation: [unknown]";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, firstTuple(propertyValueMap).getValueNode(),
-                "Node must be scalar");
-    }
-
-    @Test
-    public void configWithDefinitionWithUnknownPropertyOperation() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        operation: unknown";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-        final Node propertyValueMap = firstTuple(propertyMap).getValueNode();
-
-        assertParserException(root, firstTuple(propertyValueMap).getValueNode(),
-                "Unrecognized property operation: 'unknown'");
-    }
-
-    @Test
-    public void configWithDefinitionWithPropertyDeleteAndMore() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        operation: delete\n"
-                + "        value: str";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property map cannot contain 'operation: delete' and other keys");
-    }
-
-    @Test
-    public void configWithDefinitionWithPropertyValueAddAndSingleScalar() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - property:\n"
-                + "        operation: add\n"
-                + "        value: str";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property map with operation 'add' must have a sequence for 'value', 'resource' or 'path'");
-    }
-
-    @Test
-    public void configWithDefinitionWithPrimaryTypePropertyWithNonNameType() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - jcr:primaryType:\n"
-                + "        type: string\n"
-                + "        value: str";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property 'jcr:primaryType' must be of type 'name'");
-    }
-
-    @Test
-    public void configWithDefinitionWithPrimaryTypePropertyWithNonScalar() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - jcr:primaryType:\n"
-                + "        value: [str]";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property 'jcr:primaryType' must be property type 'single'");
-    }
-
-    @Test
-    public void configWithDefinitionWithPrimaryTypePropertyWithDelete() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - jcr:primaryType:\n"
-                + "        operation: delete";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property 'jcr:primaryType' supports only the following operations: replace, override");
-    }
-
-    @Test
-    public void configWithDefinitionWithPrimaryTypePropertyWithAdd() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - jcr:primaryType:\n"
-                + "        operation: add\n"
-                + "        value: ['some:type']";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property 'jcr:primaryType' supports only the following operations: replace, override");
-    }
-
-    @Test
-    public void configWithDefinitionWithMixinTypesPropertyWithNonNameType() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - jcr:mixinTypes:\n"
-                + "        type: string\n"
-                + "        value: ['some:type']";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property 'jcr:mixinTypes' must be of type 'name'");
-    }
-
-    @Test
-    public void configWithDefinitionWithMixinTypesPropertyWithNonSequence() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - jcr:mixinTypes:\n"
-                + "        type: name\n"
-                + "        value: 'some:type'";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property 'jcr:mixinTypes' must be property type 'list'");
-    }
-
-    @Test
-    public void configWithDefinitionWithMixinTypesPropertyWithDelete() {
-        final String yaml = "instructions:\n"
-                + "  config:\n"
-                + "  - /path/to/node:\n"
-                + "    - jcr:mixinTypes:\n"
-                + "        operation: delete";
-
-        final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
-        final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
-
-        assertParserException(root, firstTuple(propertyMap).getValueNode(),
-                "Property 'jcr:mixinTypes' supports only the following operations: add, replace, override");
+        assertParserException(root, firstTuple(config0).getValueNode(), "Node must be a sequence", true);
     }
 
     private void assertParserException(final String input, final String exceptionMessage) {
@@ -1146,9 +1118,18 @@ public class SourceValidationTest extends AbstractBaseTest {
         assertParserException(node, node, exceptionMessage);
     }
 
-    private void assertParserException(final Node inputNode, final Node exceptionNode,
+    private void assertParserException(final Node inputNode,
+                                       final Node exceptionNode,
                                        final String exceptionMessage) {
+        assertParserException(inputNode, exceptionNode, exceptionMessage, DEFAULT_EXPLICIT_SEQUENCING);
+    }
+
+    private void assertParserException(final Node inputNode,
+                                       final Node exceptionNode,
+                                       final String exceptionMessage,
+                                       final boolean explicitSequencing) {
         try {
+            final SourceParser sourceParser = new SourceParser(DUMMY_RESOURCE_INPUT_PROVIDER, false, explicitSequencing);
             sourceParser.constructSource("sourcePath", inputNode, module);
             fail("An exception should have occurred");
         } catch (ParserException e) {
@@ -1157,16 +1138,20 @@ public class SourceValidationTest extends AbstractBaseTest {
         }
     }
 
-    private Node firstInstructionFirstValue(final Node root) {
-        return firstValue(firstInstructionTuple(root).getValueNode());
+    private Node instructions(final Node root) {
+        return ((MappingNode)root).getValue().get(0).getValueNode();
     }
 
     private NodeTuple firstInstructionTuple(final Node root) {
         return firstTuple(instructions(root));
     }
 
-    private Node instructions(final Node root) {
-        return ((MappingNode)root).getValue().get(0).getValueNode();
+    private NodeTuple firstConfigTuple(final Node root) {
+        return firstTuple(firstInstructionTuple(root).getValueNode());
+    }
+
+    private Node firstInstructionFirstValue(final Node root) {
+        return firstValue(firstInstructionTuple(root).getValueNode());
     }
 
     private NodeTuple firstTuple(final Node mapping) {

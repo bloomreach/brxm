@@ -136,10 +136,10 @@ public class ParserValueTest extends AbstractBaseTest {
 
         final String yaml =
                 "instructions:\n" +
-                "    config:\n" +
-                "      - /node:\n" +
-                "          - property:\n" +
-                "              value: []";
+                "  config:\n" +
+                "    /node:\n" +
+                "      property:\n" +
+                "        value: []";
         final InputStream inputStream = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
 
         sourceParser.parse(inputStream, "dummy.yaml", "dummy.yaml", module);
@@ -159,9 +159,9 @@ public class ParserValueTest extends AbstractBaseTest {
 
         final String yaml =
                 "instructions:\n" +
-                "    config:\n" +
-                "      - /node:\n" +
-                "          - dateShort: 2015-10-21";
+                "  config:\n" +
+                "    /node:\n" +
+                "      dateShort: 2015-10-21";
         final InputStream inputStream = new ByteArrayInputStream(yaml.getBytes(StandardCharsets.UTF_8));
 
         sourceParser.parse(inputStream, "dummy.yaml", "dummy.yaml", module);

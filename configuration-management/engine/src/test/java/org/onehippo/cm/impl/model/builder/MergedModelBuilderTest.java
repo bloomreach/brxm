@@ -393,8 +393,8 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
 
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a/b:\n"
-                + "    - propertyX: blaX";
+                + "    /a/b:\n"
+                + "      propertyX: blaX";
 
         loadYAMLResource(this.getClass().getClassLoader(), "builder/definition-sorter.yaml", m1);
         loadYAMLString(yaml, m1);

@@ -18,6 +18,6 @@ package org.onehippo.cm.engine;
 
 public final class Constants {
 
-    public static final boolean DEFAULT_EXPLICIT_SEQUENCING = true;
+    public static final boolean DEFAULT_EXPLICIT_SEQUENCING = false;
 
 }

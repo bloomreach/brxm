@@ -1,15 +1,15 @@
 instructions:
   config:
-  - /a:
-    - jcr:primaryType: foo
-    - property1: bla1
-    - property2: bla2
-  - /a/b/c:
-    - jcr:primaryType: foo
-    - property3: bla3
-  - /a/b:
-    - jcr:primaryType: foo
-    - property4: bla4
+    /a:
+      jcr:primaryType: foo
+      property1: bla1
+      property2: bla2
+    /a/b/c:
+      jcr:primaryType: foo
+      property3: bla3
+    /a/b:
+      jcr:primaryType: foo
+      property4: bla4
   namespace:
   - prefix: myhippoproject
     uri: http://www.onehippo.org/myhippoproject/nt/1.0
@@ -19,9 +19,9 @@ instructions:
     <'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>
     [myhippoproject:basedocument] > hippo:document orderable
   content:
-  - /a/b/c/d:
-    - jcr:primaryType: foo
-    - property5: bla5
-  - /a/b/a:
-    - jcr:primaryType: foo
-    - property6: bla6
+    /a/b/c/d:
+      jcr:primaryType: foo
+      property5: bla5
+    /a/b/a:
+      jcr:primaryType: foo
+      property6: bla6

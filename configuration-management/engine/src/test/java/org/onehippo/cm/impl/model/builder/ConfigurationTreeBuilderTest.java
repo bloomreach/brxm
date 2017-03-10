@@ -41,10 +41,10 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void simple_single_definition() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - property1: bla1\n"
-                + "    - property2: bla2";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property1: bla1\n"
+                + "      property2: bla2";
 
         final List<Definition> definitions = parseNoSort(yaml);
         final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
@@ -60,21 +60,22 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void complex_single_definition() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml
+                = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - property2: bla2\n"
-                + "    - property1: bla1\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /d:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "        - property4: bla4\n"
-                + "      - property3: bla3\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "        - property5: bla5";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property2: bla2\n"
+                + "      property1: bla1\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /d:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property4: bla4\n"
+                + "        property3: bla3\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property5: bla5";
 
         final List<Definition> definitions = parseNoSort(yaml);
         final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
@@ -101,8 +102,8 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void invalid_single_definition() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a/b:\n"
-                + "    - property1: bla1";
+                + "    /a/b:\n"
+                + "      property1: bla1";
 
         final List<Definition> definitions = parseNoSort(yaml);
         final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
@@ -119,11 +120,11 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void root_node_property() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /:\n"
-                + "    - property1: bla1\n"
-                + "    - /a:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property2: [bla2, bla3]";
+                + "    /:\n"
+                + "      property1: bla1\n"
+                + "      /a:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property2: [bla2, bla3]";
 
         final List<Definition> definitions = parseNoSort(yaml);
         final ContentDefinitionImpl definition = (ContentDefinitionImpl)definitions.get(0);
@@ -143,22 +144,22 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void merge_two_definitions_same_module() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - property2: bla2\n"
-                + "    - property1: bla1\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /d:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "        - property4: bla4\n"
-                + "      - property8: bla8\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "        - property5: bla5\n"
-                + "  - /a/d:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - property7: bla7";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property2: bla2\n"
+                + "      property1: bla1\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /d:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property4: bla4\n"
+                + "        property8: bla8\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property5: bla5\n"
+                + "    /a/d:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property7: bla7";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -183,35 +184,35 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void merge_two_definitions_separate_modules() throws Exception {
         final String yaml1 = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - property2: bla2\n"
-                + "    - property1: bla1\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /d:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "        - property4: bla4\n"
-                + "      - property8: bla8\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "        - property5: bla5";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property2: bla2\n"
+                + "      property1: bla1\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /d:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property4: bla4\n"
+                + "        property8: bla8\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property5: bla5";
 
         final List<Definition> definitions1 = parseNoSort(yaml1);
         builder.push((ContentDefinitionImpl)definitions1.get(0));
 
         final String yaml2 = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - property3: bla3\n"
-                + "    - /e:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property6: bla6\n"
-                + "    - /b:\n"
-                + "      - property7: bla7\n"
-                + "      - /f:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "        - property9: bla9";
+                + "    /a:\n"
+                + "      property3: bla3\n"
+                + "      /e:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property6: bla6\n"
+                + "      /b:\n"
+                + "        property7: bla7\n"
+                + "        /f:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property9: bla9";
 
         final List<Definition> definitions2 = parseNoSort(yaml2);
         builder.push((ContentDefinitionImpl)definitions2.get(0));
@@ -237,16 +238,16 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void reorder_first_node_to_first() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /c:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /d:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "  - /a/b:\n"
-                + "    - .meta:order-before: ''";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /c:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /d:\n"
+                + "        jcr:primaryType: foo\n"
+                + "    /a/b:\n"
+                + "      .meta:order-before: ''";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -266,16 +267,16 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void reorder_node_unnecessary() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /c:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /d:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "  - /a/b:\n"
-                + "    - .meta:order-before: 'c'";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /c:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /d:\n"
+                + "        jcr:primaryType: foo\n"
+                + "    /a/b:\n"
+                + "      .meta:order-before: 'c'";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -295,16 +296,16 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void reorder_existing_node_to_first() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /c:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /d:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "  - /a/d:\n"
-                + "    - .meta:order-before: b";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /c:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /d:\n"
+                + "        jcr:primaryType: foo\n"
+                + "    /a/d:\n"
+                + "      .meta:order-before: b";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -320,20 +321,20 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void reorder_existing_node_to_earlier() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /c:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /d:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /e:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /f:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "  - /a/e:\n"
-                + "    - .meta:order-before: c";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /c:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /d:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /e:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /f:\n"
+                + "        jcr:primaryType: foo\n"
+                + "    /a/e:\n"
+                + "      .meta:order-before: c";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -349,20 +350,20 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void reorder_existing_node_to_later() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /c:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /d:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /e:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /f:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "  - /a/c:\n"
-                + "    - .meta:order-before: f";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /c:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /d:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /e:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /f:\n"
+                + "        jcr:primaryType: foo\n"
+                + "    /a/c:\n"
+                + "      .meta:order-before: f";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -378,17 +379,17 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void reorder_new_root() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "      - /d:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "  - /a/b/e:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - .meta:order-before: d";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "        /d:\n"
+                + "          jcr:primaryType: foo\n"
+                + "    /a/b/e:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      .meta:order-before: d";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -405,18 +406,18 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void reorder_new_child() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "      - /d:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "  - /a/b:\n"
-                + "    - /e:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - .meta:order-before: c";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "        /d:\n"
+                + "          jcr:primaryType: foo\n"
+                + "    /a/b:\n"
+                + "      /e:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        .meta:order-before: c";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -433,17 +434,17 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void reorder_existing_child() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "      - /d:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "  - /a/b:\n"
-                + "    - /d:\n"
-                + "      - .meta:order-before: c";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "        /d:\n"
+                + "          jcr:primaryType: foo\n"
+                + "    /a/b:\n"
+                + "      /d:\n"
+                + "        .meta:order-before: c";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -460,16 +461,16 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void delete_leaf_node() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /c:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "    - /d:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "  - /a/c:\n"
-                + "    - .meta:delete: true";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /c:\n"
+                + "        jcr:primaryType: foo\n"
+                + "      /d:\n"
+                + "        jcr:primaryType: foo\n"
+                + "    /a/c:\n"
+                + "      .meta:delete: true";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -485,16 +486,16 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void delete_subtree() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "      - /d:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "  - /a/b:\n"
-                + "    - .meta:delete: true";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "        /d:\n"
+                + "          jcr:primaryType: foo\n"
+                + "    /a/b:\n"
+                + "      .meta:delete: true";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -510,25 +511,25 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void delete_embedded_in_definition_tree() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "        - property2: bla2\n"
-                + "      - /d:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "        - property3: bla3\n"
-                + "  - /a/b:\n"
-                + "    - property1: bla1\n"
-                + "    - /c:\n"
-                + "      - property4: bla4\n"
-                + "    - /d:\n"
-                + "      - .meta:delete: true\n"
-                + "    - /e:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property5: bla5";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property2: bla2\n"
+                + "        /d:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property3: bla3\n"
+                + "    /a/b:\n"
+                + "      property1: bla1\n"
+                + "      /c:\n"
+                + "        property4: bla4\n"
+                + "      /d:\n"
+                + "        .meta:delete: true\n"
+                + "      /e:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property5: bla5";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -550,8 +551,8 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void delete_at_root_level() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /:\n"
-                + "    - .meta:delete: true";
+                + "    /:\n"
+                + "      .meta:delete: true";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -567,17 +568,17 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void modify_deleted_node() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "  - /a/b:\n"
-                + "    - /c:\n"
-                + "      - .meta:delete: true\n"
-                + "  - /a/b/c:\n"
-                + "    - property2: bla2";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "    /a/b:\n"
+                + "      /c:\n"
+                + "        .meta:delete: true\n"
+                + "    /a/b/c:\n"
+                + "      property2: bla2";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -595,17 +596,17 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void definition_root_below_deleted_node() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "  - /a/b:\n"
-                + "    - /c:\n"
-                + "      - .meta:delete: true\n"
-                + "  - /a/b/c/d:\n"
-                + "        - jcr:primaryType: foo";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "    /a/b:\n"
+                + "      /c:\n"
+                + "        .meta:delete: true\n"
+                + "    /a/b/c/d:\n"
+                + "          jcr:primaryType: foo";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -623,12 +624,12 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void non_existent_definition_root_with_delete_flag() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "  - /a/b/c:\n"
-                + "    - .meta:delete: true";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "    /a/b/c:\n"
+                + "      .meta:delete: true";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -650,13 +651,13 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void non_existent_definition_root_with_delete_and_merge() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "  - /a/b/c:\n"
-                + "    - .meta:delete: true\n"
-                + "    - jcr:primaryType: foo";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "    /a/b/c:\n"
+                + "      .meta:delete: true\n"
+                + "      jcr:primaryType: foo";
 
         final List<Definition> definitions = parseNoSort(yaml, true);
 
@@ -678,14 +679,14 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void non_existent_definition_node_with_delete_flag() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property1: bla1\n"
-                + "  - /a/b:\n"
-                + "    - /c:\n"
-                + "      - .meta:delete: true";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property1: bla1\n"
+                + "    /a/b:\n"
+                + "      /c:\n"
+                + "        .meta:delete: true";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -707,15 +708,15 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void non_existent_definition_node_with_delete_and_merge() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property1: bla1\n"
-                + "  - /a/b:\n"
-                + "    - /c:\n"
-                + "      - .meta:delete: true\n"
-                + "      - jcr:primaryType: foo";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property1: bla1\n"
+                + "    /a/b:\n"
+                + "      /c:\n"
+                + "        .meta:delete: true\n"
+                + "        jcr:primaryType: foo";
 
         final List<Definition> definitions = parseNoSort(yaml, true);
 
@@ -737,17 +738,17 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void existing_definition_root_with_delete_and_merge() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo";
 
         final String yaml2 = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - /b:\n"
-                + "      - .meta:delete: true\n"
-                + "      - jcr:primaryType: foo";
+                + "    /a:\n"
+                + "      /b:\n"
+                + "        .meta:delete: true\n"
+                + "        jcr:primaryType: foo";
 
         final List<Definition> definitions = parseNoSort(yaml);
         final List<Definition> definitions2 = parseNoSort(yaml2, true);
@@ -765,16 +766,16 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void existing_definition_with_delete_and_merge() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo";
 
         final String yaml2 = "instructions:\n"
                 + "  config:\n"
-                + "  - /a/b:\n"
-                + "    - .meta:delete: true\n"
-                + "    - jcr:primaryType: foo";
+                + "    /a/b:\n"
+                + "      .meta:delete: true\n"
+                + "      jcr:primaryType: foo";
 
         final List<Definition> definitions = parseNoSort(yaml);
         final List<Definition> definitions2 = parseNoSort(yaml2, true);
@@ -792,17 +793,17 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void double_delete() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "  - /a/b/c:\n"
-                + "    - .meta:delete: true\n"
-                + "  - /a/b:\n"
-                + "    - /c:\n"
-                + "      - .meta:delete: true";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "    /a/b/c:\n"
+                + "      .meta:delete: true\n"
+                + "    /a/b:\n"
+                + "      /c:\n"
+                + "        .meta:delete: true";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -821,21 +822,21 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void modify_deleted_non_root_definition_node() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "        - /d:\n"
-                + "          - jcr:primaryType: foo\n"
-                + "  - /a/b:\n"
-                + "    - /c:\n"
-                + "      - /d:\n"
-                + "        - .meta:delete: true\n"
-                + "  - /a/b/c:\n"
-                + "    - /d:\n"
-                + "      - property2: bla2";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          /d:\n"
+                + "            jcr:primaryType: foo\n"
+                + "    /a/b:\n"
+                + "      /c:\n"
+                + "        /d:\n"
+                + "          .meta:delete: true\n"
+                + "    /a/b/c:\n"
+                + "      /d:\n"
+                + "        property2: bla2";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -854,14 +855,14 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void replace_single_property() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - property1: bla1\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property2: bla2\n"
-                + "  - /a/b:\n"
-                + "    - property2: bla3";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property1: bla1\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property2: bla2\n"
+                + "    /a/b:\n"
+                + "      property2: bla3";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -887,13 +888,13 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void replace_single_property_with_equal_value() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property1: bla1\n"
-                + "  - /a/b:\n"
-                + "    - property1: bla1";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property1: bla1\n"
+                + "    /a/b:\n"
+                + "      property1: bla1";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -911,14 +912,14 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void replace_list_property() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - property1: bla1\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property2: [bla2]\n"
-                + "  - /a/b:\n"
-                + "    - property2: [bla3, bla4]";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property1: bla1\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property2: [bla2]\n"
+                + "    /a/b:\n"
+                + "      property2: [bla3, bla4]";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -940,13 +941,13 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void replace_list_property_with_equal_values() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property1: [bla1, bla2]\n"
-                + "  - /a/b:\n"
-                + "    - property1: [bla1, bla2]";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property1: [bla1, bla2]\n"
+                + "    /a/b:\n"
+                + "      property1: [bla1, bla2]";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -964,13 +965,13 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void add_property_values() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property1: [bla1, bla2]\n"
-                + "  - /a/b:\n"
-                + "    - property1:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property1: [bla1, bla2]\n"
+                + "    /a/b:\n"
+                + "      property1:\n"
                 + "        operation: add\n"
                 + "        value: [bla3, bla2]";
 
@@ -990,13 +991,13 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void add_property_values_for_new_property() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property1: [bla1, bla2]\n"
-                + "  - /a/b:\n"
-                + "    - property2:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property1: [bla1, bla2]\n"
+                + "    /a/b:\n"
+                + "      property2:\n"
                 + "        operation: add\n"
                 + "        value: [bla3, bla2]";
 
@@ -1016,14 +1017,14 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void reject_property_if_different_kind() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - property1: bla1\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property2: bla2\n"
-                + "  - /a/b:\n"
-                + "    - property2: [bla3, bla4]";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property1: bla1\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property2: bla2\n"
+                + "    /a/b:\n"
+                + "      property2: [bla3, bla4]";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -1041,13 +1042,13 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void override_property_with_different_kind() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property1: bla1\n"
-                + "  - /a/b:\n"
-                + "    - property1:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property1: bla1\n"
+                + "    /a/b:\n"
+                + "      property1:\n"
                 + "        operation: override\n"
                 + "        value: [bla2, bla3]";
 
@@ -1067,14 +1068,14 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void reject_property_if_different_type() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - property1: bla1\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property2: [bla2]\n"
-                + "  - /a/b:\n"
-                + "    - property2: [34]";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property1: bla1\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property2: [bla2]\n"
+                + "    /a/b:\n"
+                + "      property2: [34]";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -1092,13 +1093,13 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void override_property_with_different_type() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property1: bla1\n"
-                + "  - /a/b:\n"
-                + "    - property1:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property1: bla1\n"
+                + "    /a/b:\n"
+                + "      property1:\n"
                 + "        operation: override\n"
                 + "        type: long\n"
                 + "        value: 42";
@@ -1118,12 +1119,12 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void reject_value_change_for_primary_type() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: bla1\n"
-                + "  - /a/b:\n"
-                + "    - jcr:primaryType: bla2";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: bla1\n"
+                + "    /a/b:\n"
+                + "      jcr:primaryType: bla2";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -1141,12 +1142,12 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void ignore_identical_value_for_primary_type() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: bla1\n"
-                + "  - /a/b:\n"
-                + "    - jcr:primaryType: bla1";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: bla1\n"
+                + "    /a/b:\n"
+                + "      jcr:primaryType: bla1";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -1163,12 +1164,12 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void override_primary_type() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: bla1\n"
-                + "  - /a/b:\n"
-                + "    - jcr:primaryType:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: bla1\n"
+                + "    /a/b:\n"
+                + "      jcr:primaryType:\n"
                 + "        operation: override\n"
                 + "        value: bla2";
 
@@ -1187,13 +1188,13 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void add_mixins() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - jcr:mixinTypes: [bla1, bla2]\n"
-                + "  - /a/b:\n"
-                + "    - jcr:mixinTypes:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        jcr:mixinTypes: [bla1, bla2]\n"
+                + "    /a/b:\n"
+                + "      jcr:mixinTypes:\n"
                 + "        operation: add\n"
                 + "        value: [bla3, bla4]";
 
@@ -1212,13 +1213,13 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void replace_mixins_with_superset() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - jcr:mixinTypes: [bla1, bla2]\n"
-                + "  - /a/b:\n"
-                + "    - jcr:mixinTypes: [bla2, bla3, bla1]";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        jcr:mixinTypes: [bla1, bla2]\n"
+                + "    /a/b:\n"
+                + "      jcr:mixinTypes: [bla2, bla3, bla1]";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -1235,13 +1236,13 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void reject_mixins_if_no_superset() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - jcr:mixinTypes: [bla1, bla2]\n"
-                + "  - /a/b:\n"
-                + "    - jcr:mixinTypes: [bla3, bla1]";
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        jcr:mixinTypes: [bla1, bla2]\n"
+                + "    /a/b:\n"
+                + "      jcr:mixinTypes: [bla3, bla1]";
 
         final List<Definition> definitions = parseNoSort(yaml);
 
@@ -1259,13 +1260,13 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void override_mixins_with_no_superset() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - jcr:mixinTypes: [bla1, bla2]\n"
-                + "  - /a/b:\n"
-                + "    - jcr:mixinTypes:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        jcr:mixinTypes: [bla1, bla2]\n"
+                + "    /a/b:\n"
+                + "      jcr:mixinTypes:\n"
                 + "        operation: override\n"
                 + "        value: [bla3, bla1]";
 
@@ -1284,13 +1285,13 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void delete_property() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - property1: bla1\n"
-                + "  - /a/b:\n"
-                + "    - property1:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property1: bla1\n"
+                + "    /a/b:\n"
+                + "      property1:\n"
                 + "        operation: delete";
 
         final List<Definition> definitions = parseNoSort(yaml);
@@ -1308,9 +1309,9 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void delete_non_existent_property() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - property1:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      property1:\n"
                 + "        operation: delete";
 
         final List<Definition> definitions = parseNoSort(yaml);
@@ -1326,19 +1327,19 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     public void modify_deleted_property() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
-                + "  - /a:\n"
-                + "    - jcr:primaryType: foo\n"
-                + "    - /b:\n"
-                + "      - jcr:primaryType: foo\n"
-                + "      - /c:\n"
-                + "        - jcr:primaryType: foo\n"
-                + "        - property1: bla1\n"
-                + "  - /a/b:\n"
-                + "    - /c:\n"
-                + "      - property1:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        /c:\n"
+                + "          jcr:primaryType: foo\n"
+                + "          property1: bla1\n"
+                + "    /a/b:\n"
+                + "      /c:\n"
+                + "        property1:\n"
                 + "          operation: delete\n"
-                + "  - /a/b/c:\n"
-                + "    - property1: bla2";
+                + "    /a/b/c:\n"
+                + "      property1: bla2";
 
         final List<Definition> definitions = parseNoSort(yaml);
 

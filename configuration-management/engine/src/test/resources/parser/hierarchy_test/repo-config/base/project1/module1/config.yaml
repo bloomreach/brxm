@@ -1,64 +1,64 @@
 instructions:
-    namespace:
-      - prefix: myhippoproject
-        uri: http://www.onehippo.org/myhippoproject/nt/1.0
-    cnd:
-      - |
-        <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
-        <'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>
-        [myhippoproject:basedocument] > hippo:document orderable
-      - resource: example.cnd
-    config:
-      - /:
-          - root-level-property: root-level-property-value
-          - /node-with-single-property:
-              - property: node-with-single-property-value
-          - /node-with-multiple-properties:
-              - single: value1
-              - multiple: [value2, value3]
-              - empty-multiple: []
-          - /node-with-sub-node:
-              - /sub-node:
-                  - property: sub-node-value
-          - /node-delete:
-              - .meta:delete: true
-          - /node-order-before:
-              - .meta:order-before: node
-              - property: value
-              - /empty-node: []
-      - /path/to/node-delete:
-          - .meta:delete: true
-      - /path/to/node-order-before:
-          - .meta:order-before: node
-      - /path/to/node:
-          - delete-property:
-                operation: delete
-          - add-property:
-                operation: add
-                type: string
-                value: [addme]
-          - replace-property-single-string: single
-          - replace-property-map:
-                type: binary
-                resource: [folder/image.png]
-          - override-property:
-                operation: override
-                type: string
-                value: single
-          - /node-with-new-type:
-              - jcr:primaryType:
-                    operation: override
-                    type: name
-                    value: some:type
-              - jcr:mixinTypes:
-                    operation: override
-                    type: name
-                    value: ['some:mixin']
-          - /node-with-mixin-add:
-              - jcr:mixinTypes:
-                    operation: add
-                    type: name
-                    value: ['some:mixin']
-    content:
-      - /content/documents/myhippoproject:
-          - property: document
+  namespace:
+  - prefix: myhippoproject
+    uri: http://www.onehippo.org/myhippoproject/nt/1.0
+  cnd:
+  - |
+    <'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+    <'myhippoproject'='http://www.onehippo.org/myhippoproject/nt/1.0'>
+    [myhippoproject:basedocument] > hippo:document orderable
+  - resource: example.cnd
+  config:
+    /:
+      root-level-property: root-level-property-value
+      /node-with-single-property:
+        property: node-with-single-property-value
+      /node-with-multiple-properties:
+        single: value1
+        multiple: [value2, value3]
+        empty-multiple: []
+      /node-with-sub-node:
+        /sub-node:
+          property: sub-node-value
+      /node-delete:
+        .meta:delete: true
+      /node-order-before:
+        .meta:order-before: node
+        property: value
+        /empty-node: {}
+    /path/to/node-delete:
+      .meta:delete: true
+    /path/to/node-order-before:
+      .meta:order-before: node
+    /path/to/node:
+      delete-property:
+        operation: delete
+      add-property:
+        operation: add
+        type: string
+        value: [addme]
+      replace-property-single-string: single
+      replace-property-map:
+        type: binary
+        resource: [folder/image.png]
+      override-property:
+        operation: override
+        type: string
+        value: single
+      /node-with-new-type:
+        jcr:primaryType:
+          operation: override
+          type: name
+          value: some:type
+        jcr:mixinTypes:
+          operation: override
+          type: name
+          value: ['some:mixin']
+      /node-with-mixin-add:
+        jcr:mixinTypes:
+          operation: add
+          type: name
+          value: ['some:mixin']
+  content:
+    /content/documents/myhippoproject:
+      property: document
