@@ -15,7 +15,6 @@
  */
 
 class ChoiceFieldCtrl {
-
   getFieldName(index) {
     const choiceId = this.fieldValues[index].chosenId;
     const fieldName = `${this.name}/${choiceId}`;

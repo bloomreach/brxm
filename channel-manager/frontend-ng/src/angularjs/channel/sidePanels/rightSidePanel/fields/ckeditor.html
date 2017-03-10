@@ -1,0 +1,34 @@
+<!--
+
+    <textarea ng-switch-when="HTML"
+              class="textarea-ckeditor"
+              ng-model="fieldValue.value"
+              name="{{ ::$ctrl.getFieldName($index) }}"
+              placeholder=""
+              aria-label="{{::$ctrl.fieldType.displayName}}"
+              ng-required="{{::$ctrl.fieldType.required}}"
+              md-no-resize
+              ng-focus="$ctrl.onFieldFocus()"
+              ng-blur="$ctrl.onFieldBlur()">
+    </textarea>
+
+-->
+<!--<textarea ng-model="$ctrl.testValue"-->
+          <!--name="{{ ::$ctrl.name }}"-->
+          <!--aria-label="{{ ::$ctrl.ariaLabel }}"-->
+          <!--ng-required="{{ ::$ctrl.isRequired }}"-->
+          <!--ng-focus="$ctrl.onFocus()"-->
+          <!--ng-blur="$ctrl.onBlur()"-->
+          <!--placeholder=""-->
+          <!--md-no-resize-->
+          <!--class="textarea-ckeditor"></textarea>-->
+
+<!-- TODO: fix attributes -->
+
+<textarea ng-model="$ctrl.model"
+          aria-label="{{ $ctrl.ariaLabel }}"
+          ng-required="{{ $ctrl.isRequired }}"
+          placeholder=""
+          md-no-resize
+          class="textarea-ckeditor"
+></textarea>
