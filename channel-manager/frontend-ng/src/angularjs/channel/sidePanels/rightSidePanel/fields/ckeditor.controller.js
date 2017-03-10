@@ -26,16 +26,15 @@ class CKEditorController {
   $onInit() {
     this.CKEditorService.loadCKEditor().then((CKEDITOR) => {
       const textAreaElement = this.CKEditorElement.find('textarea')[0];
-      const editorConfig = this.CKEditorService.getConfigByType(this.ckeditorType);
+      const editorConfig = this.CKEditorService.getConfigByType();
 
       this.editor = CKEDITOR.replace(textAreaElement, editorConfig);
       this.editor.setData(this.model.$viewValue);
 
       this.editor.on('change', () => {
-        this.scope.$evalAsync(() => {
-          const html = this.editor.getData();
-          this.model.$setViewValue(html);
-        });
+        const html = this.editor.getData();
+        this.model.$setViewValue(html);
+        this.scope.$apply();
       });
 
       this.editor.on('focus', () => {

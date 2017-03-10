@@ -62,14 +62,13 @@
     </textarea>
 
     <ckeditor ng-switch-when="HTML"
-              type="formatted-text"
+              class="textarea-ckeditor"
               ng-model="fieldValue.value"
               name="{{ ::$ctrl.getFieldName($index) }}"
               aria-label="{{ ::$ctrl.fieldType.displayName }}"
               is-required="{{ ::$ctrl.fieldType.required }}"
               on-focus="$ctrl.focusPrimitive()"
-              on-blur="$ctrl.blurPrimitive()"
-              class="textarea-ckeditor">
+              on-blur="$ctrl.blurPrimitive()">
     </ckeditor>
 
     <div ng-if="$last"
