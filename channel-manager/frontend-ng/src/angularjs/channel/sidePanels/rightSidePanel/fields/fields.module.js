@@ -17,7 +17,6 @@ import documentFieldsComponent from './documentFields.component';
 import primitiveFieldComponent from './primitiveField.component';
 import choiceFieldComponent from './choiceField.component';
 import compoundFieldComponent from './compoundField.component';
-// import ckeditorDirective from './ckeditor.directive';
 import ckeditorComponent from './ckeditor.component';
 import ckeditorService from './ckeditor.service';
 import collapse from './collapse.directive';
@@ -28,7 +27,6 @@ const fieldsModule = angular
   .component('primitiveField', primitiveFieldComponent)
   .component('choiceField', choiceFieldComponent)
   .component('compoundField', compoundFieldComponent)
-  // .directive('ckeditor', ckeditorDirective)
   .component('ckeditor', ckeditorComponent)
   .directive('collapse', collapse)
   .service('CKEditorService', ckeditorService);

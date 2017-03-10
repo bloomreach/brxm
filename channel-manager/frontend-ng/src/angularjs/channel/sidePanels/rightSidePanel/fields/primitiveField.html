@@ -61,8 +61,8 @@
               ng-blur="$ctrl.onFieldBlur()">
     </textarea>
 
-    <ckeditor ng-cloak
-              ng-switch-when="HTML"
+    <ckeditor ng-switch-when="HTML"
+              type="formatted-text"
               ng-model="fieldValue.value"
               name="{{ ::$ctrl.getFieldName($index) }}"
               aria-label="{{ ::$ctrl.fieldType.displayName }}"
