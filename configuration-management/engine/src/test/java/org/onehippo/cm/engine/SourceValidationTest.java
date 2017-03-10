@@ -80,7 +80,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void namespaceWithScalarValue() {
         final Node root = yamlParser.compose(new StringReader("instructions: { namespace: scalar value }"));
 
-        assertParserException(root, firstInstructionTuple(root).getValueNode(), "Node must be sequence");
+        assertParserException(root, firstInstructionTuple(root).getValueNode(), "Node must be a sequence");
     }
 
     @Test
@@ -190,7 +190,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void cndWithScalarValue() {
         final Node root = yamlParser.compose(new StringReader("instructions: { cnd: scalar value }"));
 
-        assertParserException(root, firstInstructionTuple(root).getValueNode(), "Node must be sequence");
+        assertParserException(root, firstInstructionTuple(root).getValueNode(), "Node must be a sequence");
     }
 
     @Test
@@ -234,7 +234,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void configWithScalarValue() {
         final Node root = yamlParser.compose(new StringReader("instructions: { config: scalar value }"));
 
-        assertParserException(root, firstInstructionTuple(root).getValueNode(), "Node must be sequence");
+        assertParserException(root, firstInstructionTuple(root).getValueNode(), "Node must be a sequence");
     }
 
     @Test
@@ -354,7 +354,7 @@ public class SourceValidationTest extends AbstractBaseTest {
         final Node root = yamlParser.compose(new StringReader(yaml));
         final Node config0 = firstInstructionFirstValue(root);
 
-        assertParserException(root, firstTuple(config0).getValueNode(), "Node must be sequence");
+        assertParserException(root, firstTuple(config0).getValueNode(), "Node must be a sequence");
     }
 
     @Test

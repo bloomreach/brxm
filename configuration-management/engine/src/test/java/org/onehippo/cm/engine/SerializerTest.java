@@ -46,6 +46,7 @@ import org.onehippo.cm.impl.model.ValueImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class SerializerTest extends AbstractBaseTest {
 
@@ -60,6 +61,16 @@ public class SerializerTest extends AbstractBaseTest {
     @Test
     public void read_write_value_test() throws IOException, ParserException {
         readAndWrite("/parser/value_test/repo-config.yaml");
+    }
+
+    @Test
+    public void read_write_explicitly_sequenced() throws IOException, ParserException {
+        readAndWrite("/parser/explicitly_sequenced_test/repo-config.yaml", true);
+    }
+
+    @Test
+    public void read_write_not_explicitly_sequenced_test() throws IOException, ParserException {
+        readAndWrite("/parser/not_explicitly_sequenced_test/repo-config.yaml", false);
     }
 
     @Test
@@ -121,9 +132,13 @@ public class SerializerTest extends AbstractBaseTest {
     }
 
     private void readAndWrite(final String repoConfig) throws IOException, ParserException {
-        final FileConfigurationReader.ReadResult result = readFromResource(repoConfig);
+        readAndWrite(repoConfig, DEFAULT_EXPLICIT_SEQUENCING);
+    }
 
-        final FileConfigurationWriter writer = new FileConfigurationWriter();
+    private void readAndWrite(final String repoConfig, final boolean explicitSequencing) throws IOException, ParserException {
+        final FileConfigurationReader.ReadResult result = readFromResource(repoConfig, explicitSequencing);
+
+        final FileConfigurationWriter writer = new FileConfigurationWriter(explicitSequencing);
         writer.write(folder.getRoot().toPath(), result.getConfigurations(), result.getResourceInputProviders());
 
         final Path expectedRoot = findBase(repoConfig);

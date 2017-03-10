@@ -40,10 +40,19 @@ import org.yaml.snakeyaml.nodes.Tag;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class SourceSerializer extends AbstractBaseSerializer {
 
     private final static YamlRepresenter representer = new YamlRepresenter();
+
+    public SourceSerializer() {
+        this(DEFAULT_EXPLICIT_SEQUENCING);
+    }
+
+    public SourceSerializer(final boolean explicitSequencing) {
+        super(explicitSequencing);
+    }
 
     public void serialize(final OutputStream outputStream, final Source source, final Consumer<String> resourceConsumer) throws IOException {
         final Node node = representSource(source, resourceConsumer);
@@ -51,18 +60,18 @@ public class SourceSerializer extends AbstractBaseSerializer {
     }
 
     private Node representSource(final Source source, final Consumer<String> resourceConsumer) {
-        final List<Node> configDefinitionNodes = new ArrayList<>();
-        final List<Node> contentDefinitionNodes = new ArrayList<>();
+        final List<NodeTuple> configDefinitionTuples = new ArrayList<>();
+        final List<NodeTuple> contentDefinitionTuples = new ArrayList<>();
         final List<Node> namespaceDefinitionNodes = new ArrayList<>();
         final List<Node> nodeTypeDefinitionNodes = new ArrayList<>();
 
         for (Definition definition : source.getDefinitions()) {
             switch (definition.getType()) {
                 case CONFIG:
-                    configDefinitionNodes.add(representConfigDefinition((ConfigDefinition) definition, resourceConsumer));
+                    configDefinitionTuples.add(representConfigDefinition((ConfigDefinition) definition, resourceConsumer));
                     break;
                 case CONTENT:
-                    contentDefinitionNodes.add(representContentDefinition((ContentDefinition) definition, resourceConsumer));
+                    contentDefinitionTuples.add(representContentDefinition((ContentDefinition) definition, resourceConsumer));
                     break;
                 case NAMESPACE:
                     namespaceDefinitionNodes.add(representNamespaceDefinition((NamespaceDefinition) definition));
@@ -82,28 +91,28 @@ public class SourceSerializer extends AbstractBaseSerializer {
         if (nodeTypeDefinitionNodes.size() > 0) {
             definitionNodes.add(createStrSeqTuple("cnd", nodeTypeDefinitionNodes));
         }
-        if (configDefinitionNodes.size() > 0) {
-            definitionNodes.add(createStrSeqTuple("config", configDefinitionNodes));
+        if (configDefinitionTuples.size() > 0) {
+            definitionNodes.add(createStrOptionalSequenceTuple("config", configDefinitionTuples));
         }
-        if (contentDefinitionNodes.size() > 0) {
-            definitionNodes.add(createStrSeqTuple("content", contentDefinitionNodes));
+        if (contentDefinitionTuples.size() > 0) {
+            definitionNodes.add(createStrOptionalSequenceTuple("content", contentDefinitionTuples));
         }
 
         final List<NodeTuple> sourceTuples = new ArrayList<>();
-        sourceTuples.add(new NodeTuple(createStrScalar("instructions"), new MappingNode(Tag.MAP, definitionNodes, false)));
+        sourceTuples.add(createStrMapTuple("instructions", definitionNodes));
         return new MappingNode(Tag.MAP, sourceTuples, false);
     }
 
-    private Node representConfigDefinition(final ConfigDefinition definition, final Consumer<String> resourceConsumer) {
+    private NodeTuple representConfigDefinition(final ConfigDefinition definition, final Consumer<String> resourceConsumer) {
         return representDefinitionNode(definition.getNode(), resourceConsumer);
     }
 
-    private Node representContentDefinition(final ContentDefinition definition, final Consumer<String> resourceConsumer) {
+    private NodeTuple representContentDefinition(final ContentDefinition definition, final Consumer<String> resourceConsumer) {
         return representDefinitionNode(definition.getNode(), resourceConsumer);
     }
 
-    private Node representDefinitionNode(final DefinitionNode node, final Consumer<String> resourceConsumer) {
-        final List<Node> children = new ArrayList<>(node.getProperties().size() + node.getNodes().size());
+    private NodeTuple representDefinitionNode(final DefinitionNode node, final Consumer<String> resourceConsumer) {
+        final List<NodeTuple> children = new ArrayList<>(node.getProperties().size() + node.getNodes().size());
 
         if (node.isDelete()) {
             children.add(representNodeDelete());
@@ -118,25 +127,19 @@ public class SourceSerializer extends AbstractBaseSerializer {
             children.add(representDefinitionNode(childNode, resourceConsumer));
         }
 
-        final List<NodeTuple> tuples = new ArrayList<>(1);
         final String name = node.isRoot() ? node.getPath() : "/" + node.getName();
-        tuples.add(createStrSeqTuple(name, children));
-        return new MappingNode(Tag.MAP, tuples, false);
+        return createStrOptionalSequenceTuple(name, children);
     }
 
-    private Node representNodeDelete() {
-        final List<NodeTuple> tuples = new ArrayList<>(1);
-        tuples.add(new NodeTuple(createStrScalar(".meta:delete"), new ScalarNode(Tag.BOOL, "true", null, null, null)));
-        return new MappingNode(Tag.MAP, tuples, false);
+    private NodeTuple representNodeDelete() {
+        return new NodeTuple(createStrScalar(".meta:delete"), new ScalarNode(Tag.BOOL, "true", null, null, null));
     }
 
-    private Node representNodeOrderBefore(final String name) {
-        final List<NodeTuple> tuples = new ArrayList<>(1);
-        tuples.add(createStrStrTuple(".meta:order-before", name));
-        return new MappingNode(Tag.MAP, tuples, false);
+    private NodeTuple representNodeOrderBefore(final String name) {
+        return createStrStrTuple(".meta:order-before", name);
     }
 
-    private Node representProperty(final DefinitionProperty property, final Consumer<String> resourceConsumer) {
+    private NodeTuple representProperty(final DefinitionProperty property, final Consumer<String> resourceConsumer) {
         if (requiresValueMap(property)) {
             return representPropertyUsingMap(property, resourceConsumer);
         } else {
@@ -144,7 +147,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         }
     }
 
-    private Node representPropertyUsingMap(final DefinitionProperty property, final Consumer<String> resourceConsumer) {
+    private NodeTuple representPropertyUsingMap(final DefinitionProperty property, final Consumer<String> resourceConsumer) {
         final List<NodeTuple> valueMapTuples = new ArrayList<>(2);
 
         if (property.getOperation() == PropertyOperation.DELETE) {
@@ -183,27 +186,19 @@ public class SourceSerializer extends AbstractBaseSerializer {
             }
         }
 
-        final List<NodeTuple> propertyTuples = new ArrayList<>(1);
-        propertyTuples.add(new NodeTuple(
-                createStrScalar(property.getName()),
-                new MappingNode(Tag.MAP, valueMapTuples, false)));
-        return new MappingNode(Tag.MAP, propertyTuples, false);
+        return new NodeTuple(createStrScalar(property.getName()), new MappingNode(Tag.MAP, valueMapTuples, false));
     }
 
-    private Node representPropertyUsingScalarOrSequence(final DefinitionProperty property) {
-        final List<NodeTuple> tuples = new ArrayList<>(1);
-
+    private NodeTuple representPropertyUsingScalarOrSequence(final DefinitionProperty property) {
         if (property.getType() == PropertyType.SINGLE) {
-            tuples.add(new NodeTuple(createStrScalar(property.getName()), representValue(property.getValue())));
+            return new NodeTuple(createStrScalar(property.getName()), representValue(property.getValue()));
         } else {
             final List<Node> valueNodes = new ArrayList<>(property.getValues().length);
             for (Value value : property.getValues()) {
                 valueNodes.add(representValue(value));
             }
-            tuples.add(createStrSeqTuple(property.getName(), valueNodes, true));
+            return createStrSeqTuple(property.getName(), valueNodes, true);
         }
-
-        return new MappingNode(Tag.MAP, tuples, false);
     }
 
     private boolean requiresValueMap(final DefinitionProperty property) {

@@ -34,7 +34,11 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.impl.model.ModuleImpl;
 
+import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+
 public class FileConfigurationReader {
+
+    private final boolean explicitSequencing;
 
     public static class ReadResult {
         private final Map<String, Configuration> configurations;
@@ -51,12 +55,20 @@ public class FileConfigurationReader {
         }
     }
 
+    public FileConfigurationReader() {
+        this(DEFAULT_EXPLICIT_SEQUENCING);
+    }
+
+    public FileConfigurationReader(final boolean explicitSequencing) {
+        this.explicitSequencing = explicitSequencing;
+    }
+
     public ReadResult read(final Path repoConfigPath) throws IOException, ParserException {
         return read(repoConfigPath, false);
     }
 
     public ReadResult read(final Path repoConfigPath, final boolean verifyOnly) throws IOException, ParserException {
-        final RepoConfigParser parser = new RepoConfigParser();
+        final RepoConfigParser parser = new RepoConfigParser(explicitSequencing);
         final Map<String, Configuration> configurations =
                 parser.parse(new FileInputStream(repoConfigPath.toFile()), repoConfigPath.toAbsolutePath().toString());
         final boolean hasMultipleModules = FileConfigurationUtils.hasMultipleModules(configurations);
@@ -69,7 +81,7 @@ public class FileConfigurationReader {
                             FileConfigurationUtils.getModuleBasePath(repoConfigPath, module, hasMultipleModules);
                     final ResourceInputProvider provider = new FileResourceInputProvider(moduleRootPath);
                     resourceDataProviders.put(module, provider);
-                    final SourceParser sourceParser = new SourceParser(provider, verifyOnly);
+                    final SourceParser sourceParser = new SourceParser(provider, verifyOnly, explicitSequencing);
 
                     for (Pair<InputStream, String> pair : getSourceData(moduleRootPath)) {
                         sourceParser.parse(pair.getLeft(), pair.getRight(), moduleRootPath.resolve(pair.getRight()).toString(), (ModuleImpl) module);

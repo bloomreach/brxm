@@ -32,13 +32,25 @@ import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.Project;
 import org.onehippo.cm.api.model.Source;
 
+import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+
 public class FileConfigurationWriter {
+
+    private final boolean explicitSequencing;
+
+    public FileConfigurationWriter() {
+        this(DEFAULT_EXPLICIT_SEQUENCING);
+    }
+
+    public FileConfigurationWriter(final boolean explicitSequencing) {
+        this.explicitSequencing = explicitSequencing;
+    }
 
     public void write(final Path destination,
                       final Map<String, Configuration> configurations,
                       final Map<Module, ResourceInputProvider> resourceInputProviders) throws IOException {
-        final RepoConfigSerializer repoConfigSerializer = new RepoConfigSerializer();
-        final SourceSerializer sourceSerializer = new SourceSerializer();
+        final RepoConfigSerializer repoConfigSerializer = new RepoConfigSerializer(explicitSequencing);
+        final SourceSerializer sourceSerializer = new SourceSerializer(explicitSequencing);
         final Path repoConfigPath = destination.resolve("repo-config.yaml");
 
         try (final OutputStream repoConfigOutputStream = new FileOutputStream(repoConfigPath.toFile())) {

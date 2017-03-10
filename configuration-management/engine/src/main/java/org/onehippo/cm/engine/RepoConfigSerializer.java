@@ -34,6 +34,10 @@ import org.yaml.snakeyaml.nodes.Tag;
 
 public class RepoConfigSerializer extends AbstractBaseSerializer {
 
+    public RepoConfigSerializer(final boolean explicitSequencing) {
+        super(explicitSequencing);
+    }
+
     public void serialize(final OutputStream outputStream, final Map<String, Configuration> configurations) throws IOException {
         final Node node = representRepoConfig(configurations);
         serializeNode(outputStream, node);

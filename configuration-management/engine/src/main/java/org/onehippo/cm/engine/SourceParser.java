@@ -42,11 +42,13 @@ import org.yaml.snakeyaml.constructor.Construct;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 
 public class SourceParser extends AbstractBaseParser {
 
@@ -77,6 +79,11 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     public SourceParser(final ResourceInputProvider resourceInputProvider, boolean verifyOnly) {
+        this(resourceInputProvider, verifyOnly, DEFAULT_EXPLICIT_SEQUENCING);
+    }
+
+    public SourceParser(final ResourceInputProvider resourceInputProvider, boolean verifyOnly, boolean explicitSequencing) {
+        super(explicitSequencing);
         this.resourceInputProvider = resourceInputProvider;
         this.verifyOnly = verifyOnly;
     }
@@ -147,20 +154,18 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     private void constructConfigDefinitions(final Node src, final SourceImpl parent) throws ParserException {
-        final Map<Node, Node> definitions = asOrderedMap(src);
-        for (Node keyNode : definitions.keySet()) {
+        for (NodeTuple nodeTuple : asTuples(src)) {
             final ConfigDefinitionImpl definition = parent.addConfigDefinition();
-            final String key = asPathScalar(keyNode, true);
-            constructDefinitionNode(key, definitions.get(keyNode), definition);
+            final String key = asPathScalar(nodeTuple.getKeyNode(), true);
+            constructDefinitionNode(key, nodeTuple.getValueNode(), definition);
         }
     }
 
     private void constructContentDefinitions(final Node src, final SourceImpl parent) throws ParserException {
-        final Map<Node, Node> definitions = asOrderedMap(src);
-        for (Node keyNode : definitions.keySet()) {
+        for (NodeTuple nodeTuple : asTuples(src)) {
             final ContentDefinitionImpl definition = parent.addContentDefinition();
-            final String key = asPathScalar(keyNode, true);
-            constructDefinitionNode(key, definitions.get(keyNode), definition);
+            final String key = asPathScalar(nodeTuple.getKeyNode(), true);
+            constructDefinitionNode(key, nodeTuple.getValueNode(), definition);
         }
     }
 
@@ -171,29 +176,30 @@ public class SourceParser extends AbstractBaseParser {
         populateDefinitionNode(definitionNode, value);
     }
 
-    private void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node value) throws ParserException {
-        final Map<Node, Node> children = asOrderedMap(value);
-        for (Node keyNode : children.keySet()) {
-            final String key = asStringScalar(keyNode);
+    private void populateDefinitionNode(final DefinitionNodeImpl definitionNode, final Node node) throws ParserException {
+        final List<NodeTuple> tuples = asTuples(node);
+        for (NodeTuple tuple : tuples) {
+            final String key = asStringScalar(tuple.getKeyNode());
+            final Node tupleValue = tuple.getValueNode();
             if (key.equals(".meta:delete")) {
                 if (!verifyOnly) {
-                    if (children.size() > 1) {
-                        throw new ParserException("Node cannot contain '.meta:delete' and other keys", value);
+                    if (tuples.size() > 1) {
+                        throw new ParserException("Node cannot contain '.meta:delete' and other keys", node);
                     }
                 }
-                final boolean delete = asNodeDeleteValue(children.get(keyNode));
+                final boolean delete = asNodeDeleteValue(tupleValue);
                 definitionNode.setDelete(delete);
             } else if (key.equals(".meta:order-before")) {
-                final String name = asNodeOrderBeforeValue(children.get(keyNode));
+                final String name = asNodeOrderBeforeValue(tupleValue);
                 if (definitionNode.getName().equals(name)) {
-                    throw new ParserException("Invalid .meta:order-before targeting this node itself", value);
+                    throw new ParserException("Invalid .meta:order-before targeting this node itself", node);
                 }
                 definitionNode.setOrderBefore(name);
             } else if (key.startsWith("/")) {
                 final String name = key.substring(1);
-                constructDefinitionNode(name, children.get(keyNode), definitionNode);
+                constructDefinitionNode(name, tupleValue, definitionNode);
             } else {
-                constructDefinitionProperty(key, children.get(keyNode), definitionNode);
+                constructDefinitionProperty(key, tupleValue, definitionNode);
             }
         }
     }

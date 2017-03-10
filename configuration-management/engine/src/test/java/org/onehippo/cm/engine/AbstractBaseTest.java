@@ -42,6 +42,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.impl.model.ModelTestUtils.findByName;
 import static org.onehippo.cm.impl.model.ModelTestUtils.findByPath;
 
@@ -60,8 +61,12 @@ public abstract class AbstractBaseTest {
     };
 
     protected FileConfigurationReader.ReadResult readFromResource(final String resourceName) throws IOException, ParserException {
+        return readFromResource(resourceName, DEFAULT_EXPLICIT_SEQUENCING);
+    }
+
+    protected FileConfigurationReader.ReadResult readFromResource(final String resourceName, final boolean explicitSequencing) throws IOException, ParserException {
         final Path repoConfig = find(resourceName);
-        return new FileConfigurationReader().read(repoConfig);
+        return new FileConfigurationReader(explicitSequencing).read(repoConfig);
     }
 
     Path find(final String repoConfigResourceName) throws IOException {

@@ -22,8 +22,8 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.Source;
 import org.slf4j.Logger;
@@ -49,6 +48,12 @@ public abstract class AbstractBaseParser {
 
     static final Logger log = LoggerFactory.getLogger(AbstractBaseParser.class);
 
+    private final boolean explicitSequencing;
+
+    public AbstractBaseParser(final boolean explicitSequencing) {
+        this.explicitSequencing = explicitSequencing;
+    }
+
     protected Node composeYamlNode(final InputStream inputStream, final String location) throws ParserException {
         log.debug("Parsing YAML source '{}'", location);
         final Yaml yamlParser = new Yaml();
@@ -57,6 +62,39 @@ public abstract class AbstractBaseParser {
         } catch (RuntimeException e) {
             final String message = String.format("Failed to parse YAML source '%s'", location);
             throw new ParserException(message, e);
+        }
+    }
+
+    protected List<NodeTuple> asTuples(final Node node) throws ParserException {
+        if (explicitSequencing) {
+            if (node.getNodeId() != NodeId.sequence) {
+                throw new ParserException("Node must be a sequence", node);
+            }
+            final List<Node> subNodes = ((SequenceNode) node).getValue();
+            final List<NodeTuple> result = new ArrayList<>(subNodes.size());
+            final List<String> keys = new ArrayList<>(subNodes.size());
+            for (Node subNode : subNodes) {
+                if (subNode.getNodeId() != NodeId.mapping) {
+                    throw new ParserException("Node must be a mapping", subNode);
+                }
+                final MappingNode mappingNode = (MappingNode) subNode;
+                if (mappingNode.getValue().size() != 1) {
+                    throw new ParserException("Map must contain single element", subNode);
+                }
+                final NodeTuple tuple = ((MappingNode) subNode).getValue().get(0);
+                final String tupleKey = asStringScalar(tuple.getKeyNode());
+                if (keys.contains(tupleKey)) {
+                    throw new ParserException("Ordered map contains key '" + tupleKey + "' multiple times", node);
+                }
+                result.add(tuple);
+                keys.add(tupleKey);
+            }
+            return result;
+        } else {
+            if (node.getNodeId() != NodeId.mapping) {
+                throw new ParserException("Node must be a mapping", node);
+            }
+            return ((MappingNode) node).getValue();
         }
     }
 
@@ -108,39 +146,12 @@ public abstract class AbstractBaseParser {
         return ArrayUtils.contains(array1, string) || ArrayUtils.contains(array2, string);
     }
 
-    protected Pair<Node, Node> asMappingWithSingleKey(final Node node) throws ParserException {
-        if (node.getNodeId() != NodeId.mapping) {
-            throw new ParserException("Node must be a mapping", node);
-        }
-        final List<NodeTuple> tuples = ((MappingNode) node).getValue();
-        if (tuples.size() != 1) {
-            throw new ParserException("Map must contain single element", node);
-        }
-        final NodeTuple tuple = tuples.get(0);
-        return Pair.of(tuple.getKeyNode(), tuple.getValueNode());
-    }
-
-    // See http://yaml.org/type/omap.html
-    protected Map<Node, Node> asOrderedMap(final Node node) throws ParserException {
-        final Set<String> keys = new HashSet<>();
-        final Map<Node, Node> result = new LinkedHashMap<>();
-        for (Node child : asSequence(node)) {
-            final Pair<Node, Node> pair = asMappingWithSingleKey(child);
-            final String key = asStringScalar(pair.getKey());
-            if (!keys.add(key)) {
-                throw new ParserException("Ordered map contains key '" + key + "' multiple times", node);
-            }
-            result.put(pair.getKey(), pair.getValue());
-        }
-        return result;
-    }
-
     protected List<Node> asSequence(final Node node) throws ParserException {
         if (node == null) {
             return Collections.emptyList();
         }
         if (node.getNodeId() != NodeId.sequence) {
-            throw new ParserException("Node must be sequence", node);
+            throw new ParserException("Node must be a sequence", node);
         }
         final SequenceNode sequenceNode = (SequenceNode) node;
         return sequenceNode.getValue();

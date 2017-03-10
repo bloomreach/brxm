@@ -1,0 +1,6 @@
+configurations:
+- name: base
+  projects:
+  - name: project1
+    modules:
+    - name: module1

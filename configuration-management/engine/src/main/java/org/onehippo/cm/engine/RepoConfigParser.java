@@ -27,6 +27,10 @@ import org.yaml.snakeyaml.nodes.Node;
 
 public class RepoConfigParser extends AbstractBaseParser {
 
+    public RepoConfigParser(final boolean explicitSequencing) {
+        super(explicitSequencing);
+    }
+
     public Map<String, Configuration> parse(final InputStream inputStream, final String location) throws ParserException {
         final Node node = composeYamlNode(inputStream, location);
 
