@@ -24,7 +24,6 @@ const ckeditorComponent = {
     model: 'ngModel',
   },
   bindings: {
-    ckeditorType: '@type',
     name: '@',
     ariaLabel: '@',
     isRequired: '@',
