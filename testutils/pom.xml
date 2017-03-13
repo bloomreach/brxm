@@ -33,9 +33,21 @@
   <inceptionYear>2017</inceptionYear>
 
   <properties>
+    <commons-lang3.version>3.5</commons-lang3.version>
+    <junit.version>4.12</junit.version>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3.version}</version>
+    </dependency>
   </dependencies>
 
  <scm>
