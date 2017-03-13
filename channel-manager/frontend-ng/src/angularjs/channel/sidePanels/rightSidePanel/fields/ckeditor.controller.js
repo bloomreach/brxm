@@ -46,10 +46,10 @@ class CKEditorController {
         this.onBlur();
         this.scope.$apply();
       });
-    });
 
-    this.scope.$on('$destroy', () => {
-      this.editor.destroy();
+      this.scope.$on('$destroy', () => {
+        this.editor.destroy();
+      });
     });
   }
 }
