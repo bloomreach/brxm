@@ -677,8 +677,6 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                         .status(true).isLive(false).previewAvailable(true).checkModified(false).noEdit()
                         .cancelRequest(scheduledRequest.getIdentifier())
-                        .acceptRequest(scheduledRequest.getIdentifier(),true)
-                        .rejectRequest(scheduledRequest.getIdentifier())
                         .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion().requestDelete(false)
                         .hints()
         );
@@ -1073,8 +1071,6 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         assertMatchingHints(wf.hints(), HintsBuilder.build()
                         .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
                         .cancelRequest(scheduledRequest.getIdentifier())
-                        .acceptRequest(scheduledRequest.getIdentifier(),false)
-                        .rejectRequest(scheduledRequest.getIdentifier())
                         .requestPublication(false).requestDepublication(false)
                         .listVersions().requestDelete(false)
                         .hints()
