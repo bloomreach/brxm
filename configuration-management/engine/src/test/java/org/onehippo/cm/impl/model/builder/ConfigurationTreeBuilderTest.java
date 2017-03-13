@@ -26,7 +26,7 @@ import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ConfigurationNodeImpl;
 import org.onehippo.cm.impl.model.ContentDefinitionImpl;
-import org.onehippo.cms.testutils.log4j.Log4jListener;
+import org.onehippo.testutils.log4j.Log4jListener;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

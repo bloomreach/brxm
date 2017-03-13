@@ -36,6 +36,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Configuration Management</notice.project.name>
 
+    <hippo.testutils.version>1.0.0-SNAPSHOT</hippo.testutils.version>
     <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>4.0.0-SNAPSHOT</hippo.services.version>
     <snakeyaml.version>1.18</snakeyaml.version>
@@ -86,6 +87,11 @@
         <artifactId>hippo-repository-dependencies</artifactId>
         <version>${hippo.repository.version}</version>
         <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-testutils</artifactId>
+        <version>${hippo.testutils.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
