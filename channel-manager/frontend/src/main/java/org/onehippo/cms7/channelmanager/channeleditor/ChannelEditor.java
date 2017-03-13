@@ -40,6 +40,7 @@ import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
+import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
@@ -96,6 +97,14 @@ public class ChannelEditor extends ExtPanel {
 
     @ExtProperty
     @SuppressWarnings("unused")
+    private final String ckeditorUrl;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private final String ckeditorTimestamp;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
     private static final String ANTI_CACHE = WebApplicationHelper.APPLICATION_HASH;
 
     private ExtStoreFuture<Object> channelStoreFuture;
@@ -110,6 +119,8 @@ public class ChannelEditor extends ExtPanel {
         this.locale = Session.get().getLocale().toString();
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
+        this.ckeditorUrl = CKEditorConstants.getCKEditorJsReference().getUrl().toString();
+        this.ckeditorTimestamp = CKEditorConstants.CKEDITOR_TIMESTAMP;
 
         String variantsPath = null;
         if (config != null) {

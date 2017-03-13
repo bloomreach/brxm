@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-class ChoiceFieldCtrl {
-  getFieldName(index) {
-    const choiceId = this.fieldValues[index].chosenId;
-    const fieldName = `${this.name}/${choiceId}`;
-    return index > 0 ? `${fieldName}[${index}]` : fieldName;
-  }
+import template from './ckeditor.html';
+import controller from './ckeditor.controller';
 
-  focusChoice() {
-    this.hasFocus = true;
-    this.onFieldFocus();
-  }
+const ckeditorComponent = {
+  template,
+  controller,
+  require: {
+    model: 'ngModel',
+  },
+  bindings: {
+    name: '@',
+    ariaLabel: '@',
+    isRequired: '@',
+    onFocus: '&',
+    onBlur: '&',
+  },
+};
 
-  blurChoice() {
-    delete this.hasFocus;
-    this.onFieldBlur();
-  }
-}
-
-export default ChoiceFieldCtrl;
+export default ckeditorComponent;

@@ -15,7 +15,6 @@
  */
 
 class PrimitiveFieldCtrl {
-
   getFieldName(index) {
     const fieldName = this.name ? `${this.name}/${this.fieldType.id}` : this.fieldType.id;
     return index > 0 ? `${fieldName}[${index}]` : fieldName;
@@ -31,6 +30,16 @@ class PrimitiveFieldCtrl {
       }
     });
     return combinedError;
+  }
+
+  focusPrimitive() {
+    this.hasFocus = true;
+    this.onFieldFocus();
+  }
+
+  blurPrimitive() {
+    delete this.hasFocus;
+    this.onFieldBlur();
   }
 }
 

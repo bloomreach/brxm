@@ -71,7 +71,7 @@ md-input-container:not(:last-child) .md-errors-spacer {
 .has-focused-field {
   border-color: $blue-500 !important;
 
-  & > h5 {
+  & > .field-title {
     color: $blue-500 !important;
 
     md-icon {
