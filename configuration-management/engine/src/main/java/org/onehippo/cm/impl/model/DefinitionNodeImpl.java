@@ -23,7 +23,6 @@ import java.util.Optional;
 import org.onehippo.cm.api.model.Definition;
 import org.onehippo.cm.api.model.DefinitionNode;
 import org.onehippo.cm.api.model.DefinitionProperty;
-import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 
 public class DefinitionNodeImpl extends DefinitionItemImpl implements DefinitionNode {
@@ -85,13 +84,13 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
         return node;
     }
 
-    public DefinitionPropertyImpl addProperty(final String name, final Value value) {
+    public DefinitionPropertyImpl addProperty(final String name, final ValueImpl value) {
         final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, value, this);
         modifiableProperties.put(name, property);
         return property;
     }
 
-    public DefinitionPropertyImpl addProperty(final String name, final ValueType type, final Value[] values) {
+    public DefinitionPropertyImpl addProperty(final String name, final ValueType type, final ValueImpl[] values) {
         final DefinitionPropertyImpl property = new DefinitionPropertyImpl(name, type, values, this);
         modifiableProperties.put(name, property);
         return property;

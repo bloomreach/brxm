@@ -304,7 +304,7 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     private void constructDefinitionPropertyFromSequence(final String name, final Node value, final DefinitionNodeImpl parent) throws ParserException {
-        final Value[] values = constructValuesFromSequence(value);
+        final ValueImpl[] values = constructValuesFromSequence(value);
 
         if (values.length == 0) {
             parent.addProperty(name, ValueType.STRING, values);
@@ -325,7 +325,7 @@ public class SourceParser extends AbstractBaseParser {
                 if (map.size() > 1) {
                     throw new ParserException("Property map cannot contain 'operation: delete' and other keys", value);
                 }
-                property = parent.addProperty(name, ValueType.STRING, new Value[0]);
+                property = parent.addProperty(name, ValueType.STRING, new ValueImpl[0]);
                 property.setOperation(operation);
                 return property;
             }
@@ -371,10 +371,10 @@ public class SourceParser extends AbstractBaseParser {
     private DefinitionPropertyImpl constructDefinitionPropertyFromValueMap(final String name, final Node node, final DefinitionNodeImpl parent, final ValueType valueType) throws ParserException {
         switch (node.getNodeId()) {
             case scalar:
-                final Value propertyValue = constructValueFromScalar(node, valueType);
+                final ValueImpl propertyValue = constructValueFromScalar(node, valueType);
                 return parent.addProperty(name, propertyValue);
             case sequence:
-                final Value[] propertyValues = constructValuesFromSequence(node, valueType);
+                final ValueImpl[] propertyValues = constructValuesFromSequence(node, valueType);
                 return parent.addProperty(name, valueType, propertyValues);
             default:
                 throw new ParserException(
@@ -388,7 +388,7 @@ public class SourceParser extends AbstractBaseParser {
      * @return parsed {@link Value}
      * @throws ParserException in case the value cannot be parsed
      */
-    private Value constructValueFromScalar(final Node node) throws ParserException {
+    private ValueImpl constructValueFromScalar(final Node node) throws ParserException {
         final ScalarNode scalar = asScalar(node);
         try {
             final Object object = scalarConstructor.constructScalarNode(scalar);
@@ -431,7 +431,7 @@ public class SourceParser extends AbstractBaseParser {
      * @return parsed {@link Value}
      * @throws ParserException in case the value cannot be parsed or it is not of the expected type
      */
-    private Value constructValueFromScalar(final Node node, final ValueType expectedValueType) throws ParserException {
+    private ValueImpl constructValueFromScalar(final Node node, final ValueType expectedValueType) throws ParserException {
         switch (expectedValueType) {
             case DECIMAL:
                 return constructDecimalValue(node);
@@ -446,7 +446,7 @@ public class SourceParser extends AbstractBaseParser {
             case WEAKREFERENCE:
                 return constructWeakReferenceValue(node);
             default:
-                final Value value = constructValueFromScalar(node);
+                final ValueImpl value = constructValueFromScalar(node);
                 if (value.getType() != expectedValueType) {
                     throw new ParserException(
                             MessageFormat.format(
@@ -459,7 +459,7 @@ public class SourceParser extends AbstractBaseParser {
         }
     }
 
-    private Value constructDecimalValue(final Node node) throws ParserException {
+    private ValueImpl constructDecimalValue(final Node node) throws ParserException {
         final String string = asStringScalar(node);
         try {
             return new ValueImpl(new BigDecimal(string));
@@ -468,17 +468,17 @@ public class SourceParser extends AbstractBaseParser {
         }
     }
 
-    private Value constructNameValue(final Node node) throws ParserException {
+    private ValueImpl constructNameValue(final Node node) throws ParserException {
         final String name = asStringScalar(node);
         return new ValueImpl(name, ValueType.NAME, false, false);
     }
 
-    private Value constructPathValue(final Node node) throws ParserException {
+    private ValueImpl constructPathValue(final Node node) throws ParserException {
         final String path = asStringScalar(node);
         return new ValueImpl(path, ValueType.PATH, false, false);
     }
 
-    private Value constructReferenceValue(final Node node) throws ParserException {
+    private ValueImpl constructReferenceValue(final Node node) throws ParserException {
         final String string = asStringScalar(node);
         try {
             return new ValueImpl(UUID.fromString(string), ValueType.REFERENCE, false, false);
@@ -487,12 +487,12 @@ public class SourceParser extends AbstractBaseParser {
         }
     }
 
-    private Value constructUriValue(final Node node) throws ParserException {
+    private ValueImpl constructUriValue(final Node node) throws ParserException {
         final URI uri = asURIScalar(node);
         return new ValueImpl(uri);
     }
 
-    private Value constructWeakReferenceValue(final Node node) throws ParserException {
+    private ValueImpl constructWeakReferenceValue(final Node node) throws ParserException {
         final String string = asStringScalar(node);
         try {
             return new ValueImpl(UUID.fromString(string), ValueType.WEAKREFERENCE, false, false);
@@ -508,9 +508,9 @@ public class SourceParser extends AbstractBaseParser {
      * @return parsed {@link Value} array
      * @throws ParserException in case a value cannot be parsed or not all values are of the same {@link ValueType}
      */
-    private Value[] constructValuesFromSequence(final Node node) throws ParserException {
+    private ValueImpl[] constructValuesFromSequence(final Node node) throws ParserException {
         final List<Node> valueNodes = asSequence(node);
-        final Value[] values = new Value[valueNodes.size()];
+        final ValueImpl[] values = new ValueImpl[valueNodes.size()];
         for (int i = 0; i < valueNodes.size(); i++) {
             values[i] = constructValueFromScalar(valueNodes.get(i));
         }
@@ -539,9 +539,9 @@ public class SourceParser extends AbstractBaseParser {
      * @return parsed {@link Value} array
      * @throws ParserException in case a value cannot be parsed or it is not of the expected type
      */
-    private Value[] constructValuesFromSequence(final Node node, final ValueType expectedValueType) throws ParserException {
+    private ValueImpl[] constructValuesFromSequence(final Node node, final ValueType expectedValueType) throws ParserException {
         final List<Node> valueNodes = asSequence(node);
-        final Value[] values = new Value[valueNodes.size()];
+        final ValueImpl[] values = new ValueImpl[valueNodes.size()];
         for (int i = 0; i < valueNodes.size(); i++) {
             values[i] = constructValueFromScalar(valueNodes.get(i), expectedValueType);
         }
@@ -554,10 +554,10 @@ public class SourceParser extends AbstractBaseParser {
         }
         switch (node.getNodeId()) {
             case scalar:
-                final Value propertyValue = constructPathValueFromScalar(node, valueType);
+                final ValueImpl propertyValue = constructPathValueFromScalar(node, valueType);
                 return parent.addProperty(name, propertyValue);
             case sequence:
-                final Value[] propertyValues = constructPathValuesFromSequence(node, valueType);
+                final ValueImpl[] propertyValues = constructPathValuesFromSequence(node, valueType);
                 return parent.addProperty(name, valueType, propertyValues);
             default:
                 throw new ParserException(
@@ -565,17 +565,17 @@ public class SourceParser extends AbstractBaseParser {
         }
     }
 
-    private Value constructPathValueFromScalar(final Node node, final ValueType valueType) throws ParserException {
+    private ValueImpl constructPathValueFromScalar(final Node node, final ValueType valueType) throws ParserException {
         final String path = asPathScalar(node, false);
         return new ValueImpl(path, valueType, false, true);
     }
 
-    private Value[] constructPathValuesFromSequence(final Node node, final ValueType valueType) throws ParserException {
+    private ValueImpl[] constructPathValuesFromSequence(final Node node, final ValueType valueType) throws ParserException {
         final List<Node> pathNodes = asSequence(node);
         if (pathNodes.size() == 0) {
             throw new ParserException("Path value must define at least one value", node);
         }
-        final Value[] values = new Value[pathNodes.size()];
+        final ValueImpl[] values = new ValueImpl[pathNodes.size()];
         for (int i = 0; i < pathNodes.size(); i++) {
             values[i] = constructPathValueFromScalar(pathNodes.get(i), valueType);
         }
@@ -588,10 +588,10 @@ public class SourceParser extends AbstractBaseParser {
         }
         switch (node.getNodeId()) {
             case scalar:
-                final Value propertyValue = constructResourceValueFromScalar(node, valueType, parent);
+                final ValueImpl propertyValue = constructResourceValueFromScalar(node, valueType, parent);
                 return parent.addProperty(name, propertyValue);
             case sequence:
-                final Value[] propertyValues = constructResourceValuesFromSequence(node, valueType, parent);
+                final ValueImpl[] propertyValues = constructResourceValuesFromSequence(node, valueType, parent);
                 return parent.addProperty(name, valueType, propertyValues);
             default:
                 throw new ParserException(
@@ -599,17 +599,17 @@ public class SourceParser extends AbstractBaseParser {
         }
     }
 
-    private Value constructResourceValueFromScalar(final Node node, final ValueType valueType, final DefinitionNodeImpl parent) throws ParserException {
+    private ValueImpl constructResourceValueFromScalar(final Node node, final ValueType valueType, final DefinitionNodeImpl parent) throws ParserException {
         final String resourcePath = asResourcePathScalar(node, parent.getDefinition().getSource(), resourceInputProvider);
         return new ValueImpl(resourcePath, valueType, true, false);
     }
 
-    private Value[] constructResourceValuesFromSequence(final Node node, final ValueType valueType, final DefinitionNodeImpl parent) throws ParserException {
+    private ValueImpl[] constructResourceValuesFromSequence(final Node node, final ValueType valueType, final DefinitionNodeImpl parent) throws ParserException {
         final List<Node> valueNodes = asSequence(node);
         if (valueNodes.size() == 0) {
             throw new ParserException("Resource value must define at least one value", node);
         }
-        final Value[] values = new Value[valueNodes.size()];
+        final ValueImpl[] values = new ValueImpl[valueNodes.size()];
         for (int i = 0; i < valueNodes.size(); i++) {
             values[i] = constructResourceValueFromScalar(valueNodes.get(i), valueType, parent);
         }

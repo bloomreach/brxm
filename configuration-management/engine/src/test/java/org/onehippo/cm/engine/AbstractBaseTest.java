@@ -258,7 +258,7 @@ public abstract class AbstractBaseTest {
         } catch (ValueFormatException e) {
             // ignore
         }
-        assertValue(valueType, value, valueIsResource, valueIsPath, property.getValue());
+        assertValue(valueType, value, valueIsResource, valueIsPath, property, property.getValue());
         return property;
     }
 
@@ -305,12 +305,13 @@ public abstract class AbstractBaseTest {
         }
         assertEquals(values.length, property.getValues().length);
         for (int i = 0; i < values.length; i++) {
-            assertValue(valueType, values[i], valuesAreResource, valuesArePath, property.getValues()[i]);
+            assertValue(valueType, values[i], valuesAreResource, valuesArePath, property, property.getValues()[i]);
         }
         return property;
     }
 
-    void assertValue(final ValueType valueType, final Object expected, final boolean isResource, final boolean isPath, final Value actual) {
+    void assertValue(final ValueType valueType, final Object expected, final boolean isResource, final boolean isPath,
+                     final DefinitionProperty parent, final Value actual) {
         if (expected instanceof byte[]) {
             assertArrayEquals((byte[]) expected, (byte[]) actual.getObject());
         } else {
@@ -319,5 +320,6 @@ public abstract class AbstractBaseTest {
         assertEquals(valueType, actual.getType());
         assertEquals(isResource, actual.isResource());
         assertEquals(isPath, actual.isPath());
+        assertEquals(parent, actual.getParent());
     }
 }

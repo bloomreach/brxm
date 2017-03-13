@@ -182,7 +182,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                     }
                 }
                 if (node != null) {
-                    DefinitionPropertyImpl prop = node.addProperty(name, ValueType.STRING, new Value[0]);
+                    DefinitionPropertyImpl prop = node.addProperty(name, ValueType.STRING, new ValueImpl[0]);
                     prop.setOperation(PropertyOperation.DELETE);
                     prop.getSourceLocation().copy(getInstructionNode().getSourceLocation());
                 }
@@ -258,14 +258,14 @@ public class ContentInitializeInstruction extends InitializeInstruction {
             throws EsvParseException {
         DefinitionPropertyImpl prop;
         ValueType valueType = ValueType.values()[property.getType()];
-        Value[] newValues = property.isMultiple() ? new ValueImpl[property.getValues().size()] : new ValueImpl[1];
+        ValueImpl[] newValues = property.isMultiple() ? new ValueImpl[property.getValues().size()] : new ValueImpl[1];
         for (int i = 0; i < newValues.length; i++) {
             EsvValue value = property.getValues().get(i);
             newValues[i] = new ValueImpl(value.getValue(), valueType, value.isResourcePath(), isPathReference);
         }
         if (current != null && PropertyOperation.ADD == op) {
-            Value[] oldValues = current.getValues();
-            Value[] values = new ValueImpl[oldValues.length + newValues.length];
+            ValueImpl[] oldValues = cloneValues(current.getValues());
+            ValueImpl[] values = new ValueImpl[oldValues.length + newValues.length];
             System.arraycopy(oldValues, 0, values, 0, oldValues.length);
             System.arraycopy(newValues, 0, values, oldValues.length, newValues.length);
             newValues = values;
@@ -280,6 +280,15 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         }
         prop.getSourceLocation().copy(property.getSourceLocation());
         return prop;
+    }
+
+    private ValueImpl[] cloneValues(final Value[] values) {
+        final ValueImpl[] result = new ValueImpl[values.length];
+        for (int i = 0; i < values.length; i++) {
+            final Value value = values[i];
+            result[i] = new ValueImpl(value.getObject(), value.getType(), value.isResource(), value.isPath());
+        }
+        return result;
     }
 
     private DefinitionNodeImpl addIntermediateParents(final DefinitionNodeImpl parentNode, final String nodePath,

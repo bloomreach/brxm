@@ -56,12 +56,9 @@ import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
 import org.onehippo.cm.api.model.ConfigurationNode;
 import org.onehippo.cm.api.model.ConfigurationProperty;
-import org.onehippo.cm.api.model.DefinitionItem;
-import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Module;
 import org.onehippo.cm.api.model.NamespaceDefinition;
 import org.onehippo.cm.api.model.NodeTypeDefinition;
-import org.onehippo.cm.api.model.PropertyOperation;
 import org.onehippo.cm.api.model.PropertyType;
 import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
@@ -407,9 +404,9 @@ public class ConfigurationPersistenceService {
 
         switch (modelValue.getType()) {
             case STRING:
-                return getStringValue(modelProperty, modelValue).equals(jcrValue.getString());
+                return getStringValue(modelValue).equals(jcrValue.getString());
             case BINARY:
-                try (final InputStream modelInputStream = getBinaryInputStream(modelProperty, modelValue)) {
+                try (final InputStream modelInputStream = getBinaryInputStream(modelValue)) {
                     final Binary jcrBinary = jcrValue.getBinary();
                     try (final InputStream jcrInputStream = jcrBinary.getStream()) {
                         return IOUtils.contentEquals(modelInputStream, jcrInputStream);
@@ -442,10 +439,9 @@ public class ConfigurationPersistenceService {
         }
     }
 
-    private String getStringValue(final ConfigurationProperty modelProperty,
-                                  final Value modelValue) throws IOException {
+    private String getStringValue(final Value modelValue) throws IOException {
         if (modelValue.isResource()) {
-            try (final InputStream inputStream = getResourceInputStream(modelProperty, modelValue)) {
+            try (final InputStream inputStream = getResourceInputStream(modelValue)) {
                 return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             }
         } else {
@@ -453,10 +449,9 @@ public class ConfigurationPersistenceService {
         }
     }
 
-    private InputStream getBinaryInputStream(final ConfigurationProperty modelProperty,
-                                             final Value modelValue) throws IOException {
+    private InputStream getBinaryInputStream(final Value modelValue) throws IOException {
         if (modelValue.isResource()) {
-            return getResourceInputStream(modelProperty, modelValue);
+            return getResourceInputStream(modelValue);
         } else {
             return new ByteArrayInputStream((byte[]) modelValue.getObject());
         }
@@ -466,58 +461,8 @@ public class ConfigurationPersistenceService {
         return resourceInputProviders.get(source.getModule()).getResourceInputStream(source, resourceName);
     }
 
-    private InputStream getResourceInputStream(final ConfigurationProperty modelProperty,
-                                               final Value modelValue) throws IOException {
-        final List<DefinitionItem> definitions = modelProperty.getDefinitions();
-        final DefinitionItem definitionItem = findDefinitionItemForValue(definitions, modelValue);
-        if (definitionItem == null) {
-            final String msg = String.format(
-                    "Failed to process property '%s' defined through %s: cannot find definition item that contributed resource '%s'",
-                    modelProperty.getPath(),
-                    ModelUtils.formatDefinitions(modelProperty),
-                    modelValue.getString());
-            throw new RuntimeException(msg);
-        }
-        return getResourceInputStream(definitionItem.getDefinition().getSource(), modelValue.getString());
-    }
-
-    /**
-     * Finds the {@link DefinitionItem} that contributed the given {@link Value} or null if not found. It might be that
-     * a value cannot be found because {@link DefinitionItem} later in the model processing order performs a
-     * {@link PropertyOperation} delete, replace or override.
-     */
-    private DefinitionItem findDefinitionItemForValue(final List<DefinitionItem> definitions, final Value value) {
-        for (int i = definitions.size() - 1; i > -1 ; i--) {
-            final DefinitionProperty definitionProperty = (DefinitionProperty) definitions.get(i);
-            if (definitionProperty.getOperation() == PropertyOperation.DELETE) {
-                return null;
-            }
-            if (definitionPropertyContainsValue(definitionProperty, value)) {
-                return definitionProperty;
-            }
-            if (definitionProperty.getOperation() == PropertyOperation.REPLACE
-                    || definitionProperty.getOperation() == PropertyOperation.OVERRIDE) {
-                return null;
-            }
-        }
-
-        return null;
-    }
-
-    private boolean definitionPropertyContainsValue(final DefinitionProperty definitionProperty, final Value value) {
-        // intentionally uses reference equality, not object equality
-        // see also the test "expect_value_add_on_resource_to_work" which would fail if object equality would be used
-        if (definitionProperty.getType() == PropertyType.SINGLE) {
-            return definitionProperty.getValue() == value;
-        } else {
-            final Value[] values = definitionProperty.getValues();
-            for (int i = 0; i < values.length; i++) {
-                if (values[i] == value) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    private InputStream getResourceInputStream(final Value modelValue) throws IOException {
+        return getResourceInputStream(modelValue.getParent().getDefinition().getSource(), modelValue.getString());
     }
 
     private String getReferredNodeIdentifier(final Value modelValue, final Node jcrNode) throws RepositoryException {
@@ -554,9 +499,9 @@ public class ConfigurationPersistenceService {
 
         switch (type) {
             case STRING:
-                return factory.createValue(getStringValue(modelProperty, modelValue));
+                return factory.createValue(getStringValue(modelValue));
             case BINARY:
-                final Binary binary = factory.createBinary(getBinaryInputStream(modelProperty, modelValue));
+                final Binary binary = factory.createBinary(getBinaryInputStream(modelValue));
                 try {
                     return factory.createValue(binary);
                 } finally {

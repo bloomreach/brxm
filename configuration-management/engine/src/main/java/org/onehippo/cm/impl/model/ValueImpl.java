@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Calendar;
 
+import org.onehippo.cm.api.model.DefinitionProperty;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 
@@ -28,6 +29,7 @@ public class ValueImpl implements Value {
     private final ValueType valueType;
     private final boolean isResource;
     private final boolean isPath;
+    private DefinitionPropertyImpl parent = null;
 
     public ValueImpl(final BigDecimal value) {
         this(value, ValueType.DECIMAL, false, false);
@@ -100,6 +102,15 @@ public class ValueImpl implements Value {
     }
 
     @Override
+    public DefinitionProperty getParent() {
+        return parent;
+    }
+
+    public void setParent(DefinitionPropertyImpl parent) {
+        this.parent = parent;
+    }
+
+    @Override
     public boolean equals(Object otherObj) {
         if (!(otherObj instanceof ValueImpl)) {
             return false;
@@ -110,6 +121,18 @@ public class ValueImpl implements Value {
         return valueType == other.valueType
                 && isResource == other.isResource
                 && isPath == other.isPath
-                && value.equals(other.value);
+                && value.equals(other.value)
+                && parent == null ? other.getParent() == null : parent.equals(other.getParent());
     }
+
+    @Override
+    public int hashCode() {
+        int result = valueType.ordinal();
+        result = 31 * result + (isResource ? 1 : 2);
+        result = 31 * result + (isPath ? 1 : 2);
+        result = 31 * result + value.hashCode();
+        result = 31 * result + (parent == null ? 0 : parent.hashCode());
+        return result;
+    }
+
 }

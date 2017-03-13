@@ -30,20 +30,26 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     private Value[] values;
     private PropertyOperation operation = PropertyOperation.REPLACE;
 
-    public DefinitionPropertyImpl(final String name, final Value value, final DefinitionNodeImpl parent) {
+    public DefinitionPropertyImpl(final String name, final ValueImpl value, final DefinitionNodeImpl parent) {
         super(name, parent);
         this.propertyType = PropertyType.SINGLE;
         this.valueType = value.getType();
         this.value = value;
         this.values = null;
+
+        value.setParent(this);
     }
 
-    public DefinitionPropertyImpl(final String name, final ValueType valueType, final Value[] values, final DefinitionNodeImpl parent) {
+    public DefinitionPropertyImpl(final String name, final ValueType valueType, final ValueImpl[] values, final DefinitionNodeImpl parent) {
         super(name, parent);
         this.propertyType = PropertyType.LIST;
         this.valueType = valueType;
         this.value = null;
         this.values = values;
+
+        for (ValueImpl value : values) {
+            value.setParent(this);
+        }
     }
 
     @Override
