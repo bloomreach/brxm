@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,19 @@
  */
 package org.hippoecm.hst.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.jcr.Credentials;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
+import javax.security.auth.Subject;
+
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -24,7 +37,11 @@ import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
-import org.hippoecm.hst.content.beans.standard.*;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
+import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.LazySession;
@@ -38,12 +55,6 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.*;
-import javax.security.auth.Subject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Note most of the utilities in this class rely on that the {@link HstRequestContext} is available via a thread local via
@@ -96,17 +107,30 @@ public class ContentBeanUtils {
     }
 
     /**
-     * @deprecated since 11.2 : includeSubtypes rarely used, convenience method adds little value
+     * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it
+     *  You need to add a <code>linkPath</code>: this is that path, that the incoming beans use to link to the HippoDocumentBean {@code bean}. For example, with 'myproject:link/@hippo:docbase' or even 'wildcard/@hippo:docbase' or
+     * 'wildcard/wildcard/@hippo:docbase' where wildcard = *
      *
-     * use {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, String, Class)} if you only want exact matches
-     * or {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, List, Class, boolean)} if you need control over subtype inclusion
+     * @deprecated since CMS 12.0 (HST 5.0.0): the includeSubtypes parameter is rarely used, therefore use:
+     * <ul>
+     *   <li>{@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, String, Class)} if you only want exact matches, or</li>
+     *   <li>{@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, List, Class, boolean)} if you need control over subtype inclusion</li>
+     * </ul>
      *
+     * @param bean The HippoDocumentBean that you have, and for which you want to find the other beans that have a link to it (incoming beans)
+     * @param scope the scope (hierarchical location) to search below for 'incoming beans'
+     * @param linkPath the path where the 'incoming beans' have there link (mirror) stored, for example at myns:links/@hippo:docbase
+     * @param beanMappingClass the type the 'incoming beans' should be of
+     * @param includeSubTypes <code>true</code> when subtypes of beanMappingClass should be included in the result
+     * @return a HstQuery that contains the constraints for 'incoming beans' to your <code>bean</code>
+     * @throws QueryException
      */
+    @Deprecated
     public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope,
                                                     String linkPath,
                                                     Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException{
 
-        List<String> linkPaths = new ArrayList<String>();
+        List<String> linkPaths = new ArrayList<>();
         linkPaths.add(linkPath);
         return createIncomingBeansQuery(bean, scope, linkPaths, beanMappingClass, includeSubTypes);
     }
@@ -138,18 +162,32 @@ public class ContentBeanUtils {
 
 
     /**
-     * @deprecated since 11.2 : includeSubtypes rarely used, convenience method adds little value
+     * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it
+     *  You need to add a <code>depth</code>: this is the maximum depth, that the incoming beans use to link to the HippoDocumentBean {@code bean}. For example, with 'myproject:link/@hippo:docbase' is depth 1,
+     *  'myproject:somecompound/myproject:link/@hippo:docbase' is depth 2
      *
-     * use {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, int, Class)} unless you need the subtypes included
-     * then use {@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, List, Class, boolean)}
+     * @deprecated since CMS 12.0 (HST 5.0.0): the includeSubtypes parameter is rarely used, therefore use:
+     * <ul>
+     *   <li>{@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, int, Class)}, or</li>
+     *   <li>{@link #createIncomingBeansQuery(HippoDocumentBean, HippoBean, List, Class, boolean)}, if you need the subtypes included</li>
+     * </ul>
+     *
+     * @param bean The HippoDocumentBean that you have, and for which you want to find the other beans that have a link to it (incoming beans)
+     * @param scope the scope (hierarchical location) to search below for 'incoming beans'
+     * @param depth the <code>depth</code> until which the links below the HippoDocuments you want to find can be.  Maximum depth is 4, when larger, a QueryException is thrown
+     * @param beanMappingClass the type the 'incoming beans' should be of
+     * @param includeSubTypes <code>true</code> when subtypes of beanMappingClass should be included in the result
+     * @return a HstQuery that contains the constraints for 'incoming beans' to your <code>bean</code>
+     * @throws QueryException when <code>depth</code> is larger than 4
      */
+    @Deprecated
     public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope, int depth, Class<? extends HippoBean> beanMappingClass,
         boolean includeSubTypes) throws QueryException{
         if (depth < 0 || depth > 4) {
             throw new FilterException("Depth must be between 0 and 4 (inclusive)");
         }
         String path = "@hippo:docbase";
-        List<String> linkPaths = new ArrayList<String>();
+        List<String> linkPaths = new ArrayList<>();
         linkPaths.add(path);
         for (int i = 1; i <= depth; i++) {
             path = "*/" + path;
@@ -178,7 +216,7 @@ public class ContentBeanUtils {
             throw new FilterException("Depth must be between 0 and 4 (inclusive)");
         }
         String path = "@hippo:docbase";
-        List<String> linkPaths = new ArrayList<String>();
+        List<String> linkPaths = new ArrayList<>();
         linkPaths.add(path);
         for (int i = 1; i <= depth; i++) {
             path = "*/" + path;
