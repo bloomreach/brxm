@@ -57,6 +57,7 @@
     <hippo.services.eventbus.version>4.0.0-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.services.webfiles.version>4.0.0-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.utilities.version>4.0.0-SNAPSHOT</hippo.utilities.version>
+    <hippo.testutils.version>1.0.0-SNAPSHOT</hippo.testutils.version>
 
     <!-- Hippo standard plugin versions -->
     <hippo.essentials-components.version>4.0.0-SNAPSHOT</hippo.essentials-components.version>
@@ -124,6 +125,11 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms7-utilities</artifactId>
         <version>${hippo.utilities.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-testutils</artifactId>
+        <version>${hippo.testutils.version}</version>
       </dependency>
 
       <!-- All Hippo Services artifacts -->
