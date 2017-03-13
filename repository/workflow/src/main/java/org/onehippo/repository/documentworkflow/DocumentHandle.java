@@ -134,12 +134,4 @@ public class DocumentHandle implements SCXMLWorkflowData {
         }
         return count > 1;
     }
-
-    public void setProcessInstanceId(final String processInstanceId) throws RepositoryException {
-        handle.setProperty("hippo:externalid", processInstanceId);
-    }
-
-    public String getProcessInstanceId() throws RepositoryException {
-        return JcrUtils.getStringProperty(handle, "hippo:externalid", null);
-    }
 }
