@@ -69,7 +69,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
                 + "  cnd:\n"
                 + "  - |\n"
                 + "    <'test'='http://www.onehippo.org/test/nt/1.0'>\n"
-                + "    [test:type] > nt:unstructured\n"
+                + "    [test:type] > nt:base\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -84,6 +84,80 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
 
         expectNode("/test/node", "[]", "[jcr:primaryType]");
         expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test:type");
+    }
+
+    @Test
+    public void expect_cnd_reloads_to_work() throws Exception {
+        /* Test in three steps:
+         *  - step 1: load a basic cnd for a node type that does not allow sibling properties
+         *  - step 2: validate that it is not possible to create a sibling property
+         *  - step 3: reload the cnd, allowing a sibling property and test it is possible to load some content
+         */
+
+        // step 1
+        final String startConfiguration
+                = "instructions:\n"
+                + "  namespace:\n"
+                + "  - prefix: test\n"
+                + "    uri: http://www.onehippo.org/test/nt/1.0\n"
+                + "  cnd:\n"
+                + "  - |\n"
+                + "    <'test'='http://www.onehippo.org/test/nt/1.0'>\n"
+                + "    [test:type] > nt:base\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /node:\n"
+                + "        jcr:primaryType: test:type\n"
+                + "";
+
+        applyDefinitions(startConfiguration);
+
+        expectNode("/test/node", "[]", "[jcr:primaryType]");
+        expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test:type");
+
+        // step 2
+        final String additionalPropertyConfiguration
+                = "instructions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /node:\n"
+                + "        jcr:primaryType: test:type\n"
+                + "        test:property: value\n"
+                + "";
+
+        try {
+            applyDefinitions(additionalPropertyConfiguration);
+        } catch (Exception e) {
+            assertEquals(
+                    "Failed to process property '/test/node/test:property' defined through"
+                    + " [test-configuration/test-project/test-module-0 [string]]: no matching property definition"
+                    + " found for {http://www.onehippo.org/test/nt/1.0}property",
+                    e.getMessage());
+        }
+
+        // step 3
+        final String reregisterConfiguration
+                = "instructions:\n"
+                + "  cnd:\n"
+                + "  - |\n"
+                + "    <'test'='http://www.onehippo.org/test/nt/1.0'>\n"
+                + "    [test:type] > nt:base\n"
+                + "     - test:property (string)\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      /node:\n"
+                + "        jcr:primaryType: test:type\n"
+                + "        test:property: value\n"
+                + "";
+
+        applyDefinitions(reregisterConfiguration);
+
+        expectNode("/test/node", "[]", "[jcr:primaryType, test:property]");
+        expectProp("/test/node/jcr:primaryType", PropertyType.NAME, "test:type");
+        expectProp("/test/node/test:property", PropertyType.STRING, "value");
     }
 
     @Test
