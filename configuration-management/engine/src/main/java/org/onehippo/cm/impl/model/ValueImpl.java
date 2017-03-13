@@ -118,11 +118,18 @@ public class ValueImpl implements Value {
 
         final ValueImpl other = (ValueImpl) otherObj;
 
-        return valueType == other.valueType
-                && isResource == other.isResource
-                && isPath == other.isPath
-                && value.equals(other.value)
-                && parent == null ? other.getParent() == null : parent.equals(other.getParent());
+        if (isResource && parent != null && other.parent != null) {
+            return valueType == other.valueType
+                    && other.isResource
+                    && isPath == other.isPath
+                    && value.equals(other.value)
+                    && parent.getDefinition().getSource() == other.parent.getDefinition().getSource();
+        } else {
+            return valueType == other.valueType
+                    && isResource == other.isResource
+                    && isPath == other.isPath
+                    && value.equals(other.value);
+        }
     }
 
     @Override

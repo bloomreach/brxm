@@ -885,7 +885,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     }
 
     @Test
-    public void replace_single_property_with_equal_value() throws Exception {
+    public void replace_single_property_from_same_source_with_equal_value_gives_warning() throws Exception {
         final String yaml = "instructions:\n"
                 + "  config:\n"
                 + "    /a:\n"
@@ -899,13 +899,126 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final List<Definition> definitions = parseNoSort(yaml);
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
-        builder.push((ContentDefinitionImpl)definitions.get(1));
+
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl)definitions.get(1));
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.")));
+        }
+
         final ConfigurationNodeImpl root = builder.build();
 
         final ConfigurationNode a = root.getNodes().get("a");
         final ConfigurationNode b = a.getNodes().get("b");
         assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
         assertEquals("bla1", valueToString(b.getProperties().get("property1")));
+    }
+
+    @Test
+    public void replace_single_property_from_different_sources_with_equal_value_gives_warning() throws Exception {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property1: bla1\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl)definitions.get(0));
+
+        final String yaml2 = "instructions:\n"
+                + "  config:\n"
+                + "    /a/b:\n"
+                + "      property1: bla1";
+
+        final List<Definition> definitions2 = parseNoSort(yaml2);
+
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl)definitions2.get(0));
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.")));
+        }
+
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
+        assertEquals("bla1", valueToString(b.getProperties().get("property1")));
+    }
+
+    @Test
+    public void replace_resource_with_equal_value_from_same_source_gives_warning() throws Exception {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property1:\n"
+                + "          type: string\n"
+                + "          resource: resource.txt\n"
+                + "    /a/b:\n"
+                + "      property1:\n"
+                + "        type: string\n"
+                + "        resource: resource.txt";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl)definitions.get(0));
+
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl)definitions.get(1));
+            assertTrue(listener.messages()
+                    .anyMatch(m->m.equals("Property '/a/b/property1' defined in 'test-configuration/test-project/test-module [string]' specifies value equivalent to existing property.")));
+        }
+
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
+        assertEquals("resource.txt", valueToString(b.getProperties().get("property1")));
+    }
+
+    @Test
+    public void replace_resource_with_equal_value_from_different_sources_gives_no_warning() throws Exception {
+        final String yaml = "instructions:\n"
+                + "  config:\n"
+                + "    /a:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      /b:\n"
+                + "        jcr:primaryType: foo\n"
+                + "        property1:\n"
+                + "          type: string\n"
+                + "          resource: resource.txt\n";
+
+        final List<Definition> definitions = parseNoSort(yaml);
+
+        builder.push((ContentDefinitionImpl)definitions.get(0));
+
+        final String yaml2 = "instructions:\n"
+                + "  config:\n"
+                + "    /a/b:\n"
+                + "      property1:\n"
+                + "        type: string\n"
+                + "        resource: resource.txt";
+
+        final List<Definition> definitions2 = parseNoSort(yaml2);
+
+        try (Log4jListener listener = Log4jListener.onWarn()) {
+            builder.push((ContentDefinitionImpl)definitions2.get(0));
+            assertEquals(0, listener.messages().count());
+        }
+
+        final ConfigurationNodeImpl root = builder.build();
+
+        final ConfigurationNode a = root.getNodes().get("a");
+        final ConfigurationNode b = a.getNodes().get("b");
+        assertEquals("[jcr:primaryType, property1]", sortedCollectionToString(b.getProperties()));
+        assertEquals("resource.txt", valueToString(b.getProperties().get("property1")));
     }
 
     @Test
