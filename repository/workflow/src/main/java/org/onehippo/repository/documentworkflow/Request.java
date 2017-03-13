@@ -16,16 +16,12 @@
 
 package org.onehippo.repository.documentworkflow;
 
-import java.util.Calendar;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.quartz.HippoSchedJcrConstants;
-import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.repository.util.JcrConstants;
 
 /**
  * Request provides a base class model object for a Hippo Document request node to the DocumentWorkflow SCXML state machine.
@@ -44,17 +40,8 @@ public abstract class Request extends Document {
         super(node);
     }
 
-    static Node newRequestNode(Node parent) throws RepositoryException {
-        JcrUtils.ensureIsCheckedOut(parent);
-        Node requestNode = parent.addNode(HippoStdPubWfNodeType.HIPPO_REQUEST, HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST);
-        requestNode.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE, Calendar.getInstance());
-        requestNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
-        return requestNode;
-    }
-
     /**
      * Enabling package access
-     *
      * @return backing Node
      */
     protected Node getNode() {
@@ -62,22 +49,29 @@ public abstract class Request extends Document {
     }
 
     public static Request createRequest(Node requestNode) throws RepositoryException {
-        final String requestType = getRequestType(requestNode);
-        if (requestType== null) {
-            return null;
+        Request request = createWorkflowRequest(requestNode);
+        if (request == null) {
+            request = createScheduledRequest(requestNode);
         }
-        switch (requestType) {
-            case HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST:
-                return new WorkflowRequest(requestNode);
-            case HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB:
-                return new WorkflowRequest(requestNode);
-            default:
-                return null;
+        return request;
+    }
+
+    public static WorkflowRequest createWorkflowRequest(Node requestNode) throws RepositoryException {
+        if (requestNode.isNodeType(HippoStdPubWfNodeType.NT_HIPPOSTDPUBWF_REQUEST)) {
+            return new WorkflowRequest(requestNode);
         }
+        return null;
+    }
+
+    public static ScheduledRequest createScheduledRequest(Node requestNode) throws RepositoryException {
+        if (requestNode.isNodeType(HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB)) {
+            return new ScheduledRequest(requestNode);
+        }
+        return null;
     }
 
     public String getRequestType() throws RepositoryException {
-        return getRequestType(getNode());
+        return hasNode() ? getNode().getPrimaryNodeType().getName() : null;
     }
 
     public final boolean isScheduledRequest() {
@@ -87,13 +81,4 @@ public abstract class Request extends Document {
     public final boolean isWorkflowRequest() {
         return this instanceof WorkflowRequest;
     }
-
-    public String getType() throws RepositoryException {
-        return getStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_TYPE);
-    }
-
-    private static String getRequestType(Node node) throws RepositoryException {
-        return node != null ? node.getPrimaryNodeType().getName() : null;
-    }
-
 }

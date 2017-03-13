@@ -205,7 +205,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public void requestDepublication(final Date depublicationDate) throws WorkflowException {
         workflowExecutor.start();
-        workflowExecutor.triggerAction("requestDepublication", createPayload("depublicationDate", depublicationDate));
+        workflowExecutor.triggerAction("requestDepublication", createPayload("targetDate", depublicationDate));
     }
 
     @Override
@@ -217,7 +217,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public void requestPublication(final Date publicationDate) throws WorkflowException {
         workflowExecutor.start();
-        workflowExecutor.triggerAction("requestPublication", createPayload("publicationDate", publicationDate));
+        workflowExecutor.triggerAction("requestPublication", createPayload("targetDate", publicationDate));
     }
 
     @Override
@@ -260,7 +260,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public void depublish(final Date depublicationDate) throws WorkflowException, RepositoryException, RemoteException {
         workflowExecutor.start();
-        workflowExecutor.triggerAction("depublish", createPayload("depublicationDate", depublicationDate));
+        workflowExecutor.triggerAction("depublish", createPayload("targetDate", depublicationDate));
     }
 
     @Override
@@ -272,7 +272,7 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public void publish(final Date publicationDate) throws WorkflowException, RepositoryException, RemoteException {
         workflowExecutor.start();
-        workflowExecutor.triggerAction("publish", createPayload("publicationDate", publicationDate));
+        workflowExecutor.triggerAction("publish", createPayload("targetDate", publicationDate));
     }
 
     @Override
