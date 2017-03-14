@@ -68,6 +68,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
                 + "    uri: http://www.onehippo.org/test/nt/1.0\n"
                 + "  cnd:\n"
                 + "  - |\n"
+                + "    <'nt'='http://www.jcp.org/jcr/nt/1.0'>\n"
                 + "    <'test'='http://www.onehippo.org/test/nt/1.0'>\n"
                 + "    [test:type] > nt:base\n"
                 + "  config:\n"
@@ -102,6 +103,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
                 + "    uri: http://www.onehippo.org/test/nt/1.0\n"
                 + "  cnd:\n"
                 + "  - |\n"
+                + "    <'nt'='http://www.jcp.org/jcr/nt/1.0'>\n"
                 + "    <'test'='http://www.onehippo.org/test/nt/1.0'>\n"
                 + "    [test:type] > nt:base\n"
                 + "  config:\n"
@@ -142,6 +144,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
                 = "instructions:\n"
                 + "  cnd:\n"
                 + "  - |\n"
+                + "    <'nt'='http://www.jcp.org/jcr/nt/1.0'>\n"
                 + "    <'test'='http://www.onehippo.org/test/nt/1.0'>\n"
                 + "    [test:type] > nt:base\n"
                 + "     - test:property (string)\n"
@@ -166,6 +169,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
                 = "instructions:\n"
                 + "  cnd:\n"
                 + "  - |\n"
+                + "    <'nt'='http://www.jcp.org/jcr/nt/1.0'>\n"
                 + "    [unknown:type] > nt:unstructured\n"
                 + "  config:\n"
                 + "    /test:\n"
@@ -177,8 +181,8 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         try {
             applyDefinitions(source);
             fail("an exception should have occurred");
-        } catch (RuntimeException e) {
-            assertTrue(e.getMessage().contains("Failed to process CND defined through"));
+        } catch (RepositoryException e) {
+            assertTrue(e.getMessage().contains("Failed to parse cnd test-configuration/test-project/test-module-0 [string]"));
         }
     }
 

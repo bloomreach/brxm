@@ -18,7 +18,6 @@ package org.onehippo.cm.backend;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -42,15 +41,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeManager;
-import javax.jcr.nodetype.NodeTypeTemplate;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.commons.cnd.ParseException;
-import org.apache.jackrabbit.commons.cnd.TemplateBuilderFactory;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cm.api.MergedModel;
 import org.onehippo.cm.api.ResourceInputProvider;
@@ -64,6 +59,7 @@ import org.onehippo.cm.api.model.Source;
 import org.onehippo.cm.api.model.Value;
 import org.onehippo.cm.api.model.ValueType;
 import org.onehippo.cm.impl.model.ModelUtils;
+import org.onehippo.repository.bootstrap.util.BootstrapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,26 +126,7 @@ public class ConfigurationPersistenceService {
                 ? getResourceInputStream(nodeTypeDefinition.getSource(), definitionValue)
                 : new ByteArrayInputStream(definitionValue.getBytes(StandardCharsets.UTF_8));
 
-        final NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
-        final TemplateBuilderFactory factory = new TemplateBuilderFactory(session);
-
-        final CompactNodeTypeDefReader<NodeTypeTemplate, NamespaceRegistry> reader;
-        try {
-            reader = new CompactNodeTypeDefReader<>(new InputStreamReader(cndStream), "<yaml-reader>",
-                    namespaceRegistry, factory);
-        } catch (ParseException e) {
-            final String msg = String.format("Failed to process CND defined through %s: %s",
-                    ModelUtils.formatDefinition(nodeTypeDefinition), e.getMessage());
-            throw new RuntimeException(msg, e);
-        }
-
-        final List<NodeTypeTemplate> nttList = reader.getNodeTypeDefinitions();
-        final NodeTypeManager nodeTypeManager = session.getWorkspace().getNodeTypeManager();
-
-        for (NodeTypeTemplate ntt : nttList) {
-            logger.debug(String.format("registering node type '%s'", ntt.getName()));
-            nodeTypeManager.registerNodeType(ntt, true);
-        }
+        BootstrapUtils.initializeNodetypes(session, cndStream, ModelUtils.formatDefinition(nodeTypeDefinition));
     }
 
     private void applyNodes(final ConfigurationNode configurationRoot) throws Exception {
