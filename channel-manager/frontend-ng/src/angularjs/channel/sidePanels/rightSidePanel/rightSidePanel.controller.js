@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import MultiActionDialogCtrl from './multiActionDialog.controller';
-import multiActionDialogTemplate from './multiActionDialog.html';
+import MultiActionDialogCtrl from './multiActionDialog/multiActionDialog.controller';
+import multiActionDialogTemplate from './multiActionDialog/multiActionDialog.html';
 
 const ERROR_MAP = {
   UNAVAILABLE: { // default catch-all
