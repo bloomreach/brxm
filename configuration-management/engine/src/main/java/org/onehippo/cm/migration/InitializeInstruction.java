@@ -354,6 +354,7 @@ public class InitializeInstruction {
         if (path == null) {
             return null;
         }
+        path = path.trim();
         while (path.startsWith("/")) {
             path = path.substring(1);
         }
