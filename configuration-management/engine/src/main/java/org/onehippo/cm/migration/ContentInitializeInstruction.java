@@ -275,6 +275,9 @@ public class ContentInitializeInstruction extends InitializeInstruction {
         } else {
             prop = node.addProperty(propertyName, newValues[0]);
         }
+        if (current != null) {
+            prop.setOperation(current.getOperation());
+        }
         if (PropertyOperation.ADD != op || current == null) {
             prop.setOperation(op);
         }
