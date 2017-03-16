@@ -812,7 +812,7 @@
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:modules/diagnostics/hipposys:cmsonly</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+    <sv:property sv:name="hippo:contentpropset" sv:type="Boolean">
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
