@@ -97,7 +97,7 @@
         <sv:property sv:name="robotstxt:useragent" sv:type="String">
           <sv:value>*</sv:value>
         </sv:property>
-        <sv:property sv:name="robotstxt:disallow" sv:type="String">
+        <sv:property sv:name="robotstxt:disallow" sv:type="String" sv:multiple="true">
           <sv:value/>
         </sv:property>
       </sv:node>
@@ -349,7 +349,7 @@
           <sv:property sv:name="robotstxt:useragent" sv:type="String">
             <sv:value>*</sv:value>
           </sv:property>
-          <sv:property sv:name="robotstxt:disallow" sv:type="String">
+          <sv:property sv:name="robotstxt:disallow" sv:type="String" sv:multiple="true">
             <sv:value/>
           </sv:property>
         </sv:node>
