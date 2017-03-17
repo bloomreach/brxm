@@ -51,16 +51,19 @@ describe('OverlayService', () => {
 
     jasmine.getFixtures().load('channel/hippoIframe/overlay/overlay.service.fixture.html');
     $iframe = $('.iframe');
+
+    // initialize the overlay service only once per test so there is only one MutationObserver
+    // (otherwise multiple MutationObservers will react on each other's changes and crash the browser)
+    OverlayService.init($iframe);
   });
 
   function loadIframeFixture(callback) {
-    OverlayService.init($iframe);
-
     $iframe.one('load', () => {
       iframeWindow = $iframe[0].contentWindow;
       DomService.addCss(iframeWindow, hippoIframeCss);
 
       try {
+        PageStructureService.clearParsedElements();
         hstCommentsProcessorService.run(
           iframeWindow.document,
           PageStructureService.registerParsedElement.bind(PageStructureService),
@@ -93,7 +96,8 @@ describe('OverlayService', () => {
   });
 
   it('attaches an unload handler to the iframe', (done) => {
-    spyOn(OverlayService, '_onUnload');
+    // call through so the mutation observer is disconnected before the second one is started
+    spyOn(OverlayService, '_onUnload').and.callThrough();
     loadIframeFixture(() => {
       // load URL again to cause unload
       loadIframeFixture(() => {
