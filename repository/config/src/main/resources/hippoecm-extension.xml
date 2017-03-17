@@ -186,7 +186,7 @@
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:groups/everybody/hipposys:system</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:contentpropset" sv:type="Boolean">
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
