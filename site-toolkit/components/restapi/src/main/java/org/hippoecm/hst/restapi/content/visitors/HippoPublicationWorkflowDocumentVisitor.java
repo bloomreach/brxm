@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,9 @@ public class HippoPublicationWorkflowDocumentVisitor extends HippoPublishableDoc
     protected boolean skipProperty(final ResourceContext context, final ContentTypeProperty propertyType,
                                    final Property property) throws RepositoryException {
         if (skipProperties.contains(property.getName())) {
+            return true;
+        }
+        if(context.getIncludedAttributes().size() > 0 && !context.getIncludedAttributes().contains(property.getName())) {
             return true;
         }
         return super.skipProperty(context, propertyType, property);

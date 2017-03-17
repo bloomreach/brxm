@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.restapi;
 
+import java.util.List;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -28,5 +30,5 @@ public interface ResourceContext {
     NodeVisitor getVisitor(Node node) throws RepositoryException;
     NodeVisitor getPrimaryNodeTypeVisitor(Node node) throws RepositoryException;
     RestApiLinkCreator getRestApiLinkCreator();
-
+    List<String> getIncludedAttributes();
 }

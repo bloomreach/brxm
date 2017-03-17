@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,12 @@
  */
 package org.hippoecm.hst.restapi.content.requests;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
-import javax.servlet.ServletException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,7 +29,6 @@ import org.hippoecm.hst.restapi.AbstractRestApiIT;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
@@ -39,6 +36,7 @@ import static org.hippoecm.repository.HippoStdPubWfNodeType.HIPPOSTDPUBWF_PUBLIC
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class DocumentsResourceIT extends AbstractRestApiIT {
@@ -46,7 +44,6 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
     private static final Logger log = LoggerFactory.getLogger(DocumentsResourceIT.class);
 
     private static ObjectMapper mapper = new ObjectMapper();
-
 
     @Test
     public void test_about_us_document() throws Exception {
@@ -180,6 +177,75 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
                 liveUser.logout();
             }
         }
+    }
+
+    @Test
+    public void test_document_attribute_selection() throws Exception {
+        // about-us  handle identifier is 'ebebebeb-5fa8-48a8-b03b-4524373d992b'
+        RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/api/documents/30092f4e-2ef7-4c72-86a5-8ce895908937", "_attributes=unittestproject:summary,unittestproject:title");
+
+        Map<String, Object> items = renderAndGetDocumentItems(requestResponse);
+        assertNotNull(items);
+        assertEquals(2, items.size());
+        assertEquals("Summary of the about us", items.get("unittestproject:summary"));
+        assertEquals("This is the about us", items.get("unittestproject:title"));
+
+        requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/api/documents/30092f4e-2ef7-4c72-86a5-8ce895908937", "_attributes=no-such-property");
+
+        items = renderAndGetDocumentItems(requestResponse);
+        // TODO - this should never be null imho
+        assertNull(items);
+    }
+
+    @Test
+    public void test_list_attribute_selection() throws Exception {
+        RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/api/documents/",
+                "_attributes=unittestproject:summary,unittestproject:title&_nodetype=unittestproject:textpage");
+
+        List<Map<String, Object>> listItems = renderAndGetListItems(requestResponse);
+        assertTrue(listItems.size() > 0);
+
+        for (Map<String, Object> item : listItems) {
+            final Map<String, Object> documentItems = (Map<String, Object>) item.get("items");
+            assertEquals(2, documentItems.keySet().size());
+            assertNotNull(documentItems.get("unittestproject:title"));
+            assertNotNull(documentItems.get("unittestproject:summary"));
+        }
+
+        requestResponse = mockGetRequestResponse("http", "localhost", "/api/documents/", null);
+
+        listItems = renderAndGetListItems(requestResponse);
+        assertTrue(listItems.size() > 0);
+
+        for (Map<String, Object> item : listItems) {
+            final Map<String, Object> documentItems = (Map<String, Object>) item.get("items");
+            assertTrue(documentItems.keySet().size() > 2);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> renderAndGetDocumentItems(final RequestResponseMock requestResponse) throws Exception {
+        MockHttpServletResponse response = render(requestResponse);
+
+        String restResponse = response.getContentAsString();
+        assertTrue(StringUtils.isNotEmpty(restResponse));
+
+        Map<String, Object> deserializedResponse = mapper.reader(Map.class).readValue(restResponse);
+        return (Map<String, Object>) deserializedResponse.get("items");
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> renderAndGetListItems(final RequestResponseMock requestResponse) throws Exception {
+        MockHttpServletResponse response = render(requestResponse);
+
+        String restResponse = response.getContentAsString();
+        assertTrue(StringUtils.isNotEmpty(restResponse));
+
+        Map<String, Object> deserializedResponse = mapper.reader(Map.class).readValue(restResponse);
+        return (List) deserializedResponse.get("items");
     }
 
     private List<Map<String, Object>> getItemsFromSearchResult(final Map<String, Object> searchResult) {

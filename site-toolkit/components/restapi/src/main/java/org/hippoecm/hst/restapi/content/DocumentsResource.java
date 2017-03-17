@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package org.hippoecm.hst.restapi.content;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -133,14 +136,23 @@ public class DocumentsResource extends AbstractResource {
         throw new IllegalArgumentException(String.format("_nodetype must be of (sub)type: '%s'", NT_DOCUMENT));
     }
 
+    private List<String> parseAttributes(final String attributeString) {
+        if (attributeString == null) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(attributeString.split(","));
+    }
+
     @GET
     @Path("/documents")
     public Response getDocuments(@QueryParam("_offset") final String offsetString,
                                  @QueryParam("_max") final String maxString,
                                  @QueryParam("_query") final String queryString,
-                                 @QueryParam("_nodetype") final String nodeTypeString) {
+                                 @QueryParam("_nodetype") final String nodeTypeString,
+                                 @QueryParam("_attributes") final String attributeString) {
         try {
-            ResourceContext context = getResourceContextFactory().createResourceContext();
+            final List<String> includedAttributes = parseAttributes(attributeString);
+            final ResourceContext context = getResourceContextFactory().createResourceContext(includedAttributes);
             final int offset = parseOffset(offsetString);
             final int max = parseMax(maxString);
             final String parsedQuery = parseQuery(queryString);
@@ -190,9 +202,11 @@ public class DocumentsResource extends AbstractResource {
 
     @GET
     @Path("/documents/{uuid}")
-    public Response getDocumentsByUUID(@PathParam("uuid") final String uuidString) {
+    public Response getDocumentsByUUID(@PathParam("uuid") final String uuidString,
+                                       @QueryParam("_attributes") final String attributeString) {
         try {
-            final ResourceContext context = getResourceContextFactory().createResourceContext();
+            final List<String> includedAttributes = parseAttributes(attributeString);
+            final ResourceContext context = getResourceContextFactory().createResourceContext(includedAttributes);
             final Session session = context.getRequestContext().getSession();
 
             // throws an IllegalArgumentException in case the uuid is not correctly formed
