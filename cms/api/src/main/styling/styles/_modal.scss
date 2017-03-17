@@ -509,6 +509,17 @@ table.hippo-window-form {
   padding: 5px;
 }
 
+.hippo-window-form.no-left-padding {
+  padding-left: 0;
+  td {
+    padding-left: 0;
+  }
+}
+
+.hippo-window-form.top-margin {
+  margin-top: 12px;
+}
+
 .hippo-window-form .hippo-form-select {
   width: 300px;
 }
