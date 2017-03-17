@@ -53,15 +53,10 @@ describe('OverlayService', () => {
     $iframe = $('.iframe');
   });
 
-  function loadIframe(callback) {
-    $iframe.one('load', callback);
-    $iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/overlay/overlay.service.iframe.fixture.html`);
-  }
-
-  function loadOverlay(callback) {
+  function loadIframeFixture(callback) {
     OverlayService.init($iframe);
 
-    loadIframe(() => {
+    $iframe.one('load', () => {
       iframeWindow = $iframe[0].contentWindow;
       DomService.addCss(iframeWindow, hippoIframeCss);
 
@@ -77,6 +72,8 @@ describe('OverlayService', () => {
         fail(e);
       }
     });
+
+    $iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/overlay/overlay.service.iframe.fixture.html`);
   }
 
   function iframe(selector) {
@@ -85,7 +82,7 @@ describe('OverlayService', () => {
 
   it('initializes when the iframe is loaded', (done) => {
     spyOn(OverlayService, '_onLoad');
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       expect(OverlayService._onLoad).toHaveBeenCalled();
       done();
     });
@@ -97,9 +94,9 @@ describe('OverlayService', () => {
 
   it('attaches an unload handler to the iframe', (done) => {
     spyOn(OverlayService, '_onUnload');
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       // load URL again to cause unload
-      loadIframe(() => {
+      loadIframeFixture(() => {
         expect(OverlayService._onUnload).toHaveBeenCalled();
         done();
       });
@@ -107,17 +104,17 @@ describe('OverlayService', () => {
   });
 
   it('attaches a MutationObserver on the iframe document on first load', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       expect(OverlayService.observer).not.toBeNull();
       done();
     });
   });
 
   it('disconnects the MutationObserver on iframe unload', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const disconnect = spyOn(OverlayService.observer, 'disconnect').and.callThrough();
       // load URL again to cause unload
-      loadIframe(() => {
+      loadIframeFixture(() => {
         expect(disconnect).toHaveBeenCalled();
         done();
       });
@@ -126,7 +123,7 @@ describe('OverlayService', () => {
 
   it('syncs when the iframe DOM is changed', (done) => {
     spyOn(OverlayService, 'sync');
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       OverlayService.sync.calls.reset();
       OverlayService.sync.and.callFake(done);
       iframe('body').css('color', 'green');
@@ -135,7 +132,7 @@ describe('OverlayService', () => {
 
   it('syncs when the iframe is resized', (done) => {
     spyOn(OverlayService, 'sync');
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       OverlayService.sync.calls.reset();
       $(iframeWindow).trigger('resize');
       expect(OverlayService.sync).toHaveBeenCalled();
@@ -146,7 +143,7 @@ describe('OverlayService', () => {
   it('generates an empty overlay when there are no page structure elements', (done) => {
     spyOn(PageStructureService, 'getContainers').and.returnValue([]);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       expect(iframe('.hippo-overlay')).toBeEmpty();
       done();
     });
@@ -155,7 +152,7 @@ describe('OverlayService', () => {
   it('sets the class hippo-mode-edit on the HTML element when edit mode is active', (done) => {
     spyOn(PageStructureService, 'getContainers').and.returnValue([]);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       OverlayService.setMode('view');
       expect(iframe('html')).not.toHaveClass('hippo-mode-edit');
 
@@ -174,7 +171,7 @@ describe('OverlayService', () => {
   });
 
   it('generates overlay elements', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(10);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(4);
@@ -185,7 +182,7 @@ describe('OverlayService', () => {
   });
 
   it('sets specific CSS classes on the box- and overlay elements of containers', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const vboxContainerBox = iframe('#container-vbox');
       expect(vboxContainerBox).toHaveClass('hippo-overlay-box-container-filled');
 
@@ -212,7 +209,7 @@ describe('OverlayService', () => {
   });
 
   it('generates box elements for re-rendered components without any markup in an HST.NoMarkup container', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const markupComponentC = iframe('#componentC');
       const boxElement = PageStructureService.getComponentById('cccc').getBoxElement();
 
@@ -236,7 +233,7 @@ describe('OverlayService', () => {
   });
 
   it('only renders labels for structure elements that have a label', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
@@ -248,7 +245,7 @@ describe('OverlayService', () => {
   });
 
   it('renders the name structure elements in a data-qa-name attribute', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length).toBe(4);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length).toBe(4);
 
@@ -259,14 +256,14 @@ describe('OverlayService', () => {
   });
 
   it('renders icons for links', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-link > svg').length).toBe(2);
       done();
     });
   });
 
   it('renders a title for links', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element-content-link').attr('title')).toBe('EDIT_CONTENT');
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').attr('title')).toBe('EDIT_MENU');
       done();
@@ -274,7 +271,7 @@ describe('OverlayService', () => {
   });
 
   it('renders lock icons for disabled containers', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const disabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(0);
       const lock = disabledContainer.find('.hippo-overlay-lock');
       expect(lock.length).toBe(1);
@@ -286,7 +283,7 @@ describe('OverlayService', () => {
   });
 
   it('does not render lock icons for enabled containers', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const enabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(1);
       expect(enabledContainer.find('.hippo-overlay-lock').length).toBe(0);
       done();
@@ -294,7 +291,7 @@ describe('OverlayService', () => {
   });
 
   it('renders lock icons for inherited containers', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const inheritedContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(3);
       const lock = inheritedContainer.find('.hippo-overlay-lock');
       expect(lock.length).toBe(1);
@@ -306,7 +303,7 @@ describe('OverlayService', () => {
   });
 
   it('renders the experiment state of components', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(3);
       const label = componentWithExperiment.find('.hippo-overlay-label');
       expect(label.length).toBe(1);
@@ -322,7 +319,7 @@ describe('OverlayService', () => {
   });
 
   it('updates the experiment state of components', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(3);
       const labelText = componentWithExperiment.find('.hippo-overlay-label-text');
       expect(labelText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
@@ -337,7 +334,7 @@ describe('OverlayService', () => {
   });
 
   it('starts showing the experiment state of a component for which an experiment was just created', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const componentA = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(0);
       const labelText = componentA.find('.hippo-overlay-label-text');
       expect(labelText.html()).toBe('component A');
@@ -362,7 +359,7 @@ describe('OverlayService', () => {
 
   it('syncs the position of overlay elements in view mode', (done) => {
     OverlayService.setMode('view');
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
 
       const componentA = $(components[0]);
@@ -389,7 +386,7 @@ describe('OverlayService', () => {
 
   it('syncs the position of overlay elements in edit mode', (done) => {
     OverlayService.setMode('edit');
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
 
       const componentA = components.eq(0);
@@ -425,7 +422,7 @@ describe('OverlayService', () => {
 
   it('takes the scroll position of the iframe into account when positioning overlay elements', (done) => {
     OverlayService.setMode('view');
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       // enlarge body so the iframe can scroll
       const body = iframe('body');
       body.width('200%');
@@ -455,7 +452,7 @@ describe('OverlayService', () => {
     const mousedownSpy = jasmine.createSpy('mousedown');
     OverlayService.attachComponentMouseDown(mousedownSpy);
 
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const component = PageStructureService.getComponentById('aaaa');
       const overlayComponentElement = iframe('.hippo-overlay > .hippo-overlay-element-component').first();
 
@@ -477,7 +474,7 @@ describe('OverlayService', () => {
 
     spyOn(PageStructureService, 'getComponentByOverlayElement').and.returnValue(false);
 
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const overlayComponentElement = iframe('.hippo-overlay > .hippo-overlay-element-component').first();
 
       overlayComponentElement.mousedown();
@@ -488,7 +485,7 @@ describe('OverlayService', () => {
   });
 
   it('does not throw an error when calling edit content handler if not set', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
 
       expectNoPropagatedClicks();
@@ -502,7 +499,7 @@ describe('OverlayService', () => {
     const editContentHandler = jasmine.createSpy('editContentHandler');
 
     OverlayService.onEditContent(editContentHandler);
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-content-link');
 
       expectNoPropagatedClicks();
@@ -515,7 +512,7 @@ describe('OverlayService', () => {
   });
 
   it('does not throw an error when calling edit menu handler if not set', (done) => {
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
 
       expectNoPropagatedClicks();
@@ -530,7 +527,7 @@ describe('OverlayService', () => {
 
     OverlayService.onEditMenu(editMenuHandler);
     OverlayService.setMode('edit');
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
 
       expectNoPropagatedClicks();
@@ -545,7 +542,7 @@ describe('OverlayService', () => {
   it('removes overlay elements when they are no longer part of the page structure', (done) => {
     OverlayService.setMode('edit');
 
-    loadOverlay(() => {
+    loadIframeFixture(() => {
       expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(10);
       expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
 
