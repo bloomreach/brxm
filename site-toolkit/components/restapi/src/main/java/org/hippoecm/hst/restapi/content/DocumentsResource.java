@@ -142,24 +142,24 @@ public class DocumentsResource extends AbstractResource {
     }
 
     private List<String> parseOrderBy(final String orderBy) {
-        return new LinkedList<>(Arrays.asList(StringUtils.split(orderBy, ',')));
+        return Arrays.asList(StringUtils.split(orderBy, ','));
     }
 
     private List<SortOrder> parseSortOrder(final String sortOrder) {
         final List<SortOrder> sortOrders = new LinkedList<>();
         try {
             final String[] sortOrderArray = StringUtils.split(sortOrder, ',');
-            for(String sort : sortOrderArray) {
+            for (String sort : sortOrderArray) {
                 sortOrders.add(SortOrder.valueOf(sort.toUpperCase()));
             }
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("_sortorder value must be one of: " + StringUtils.join(SortOrder.values(), ", ").toLowerCase());
+            throw new IllegalArgumentException("_sortOrder value must be one of: " + StringUtils.join(SortOrder.values(), ", ").toLowerCase());
         }
         return sortOrders;
     }
 
     private void checkOrderParameters(final List<String> orderBys, final List<SortOrder> parsedSortOrders) {
-        if(orderBys.size() != parsedSortOrders.size()) {
+        if (orderBys.size() != parsedSortOrders.size()) {
             throw new IllegalArgumentException("Number of values for _orderBy and _sortOrder must be equal.");
         }
     }
@@ -178,9 +178,9 @@ public class DocumentsResource extends AbstractResource {
             final int max = parseMax(maxString);
             final String parsedQuery = parseQuery(queryString);
             final String parsedNodeType = parseNodeType(context, nodeTypeString);
-            final List<String> orderBys = parseOrderBy(orderBy);
+            final List<String> parsedOrderBys = parseOrderBy(orderBy);
             final List<SortOrder> parsedSortOrders = parseSortOrder(sortOrder);
-            checkOrderParameters(orderBys, parsedSortOrders);
+            checkOrderParameters(parsedOrderBys, parsedSortOrders);
 
             final String availability;
             if (RequestContextProvider.get().isPreview() ) {
@@ -189,7 +189,6 @@ public class DocumentsResource extends AbstractResource {
                 availability = "live";
             }
             final SearchService searchService = getSearchService(context);
-            Query query = null;
             AndClause andClause = searchService.createQuery()
                     .from(RequestContextProvider.get()
                             .getResolvedMount()
@@ -199,10 +198,11 @@ public class DocumentsResource extends AbstractResource {
                     .where(QueryUtils.text().contains(parsedQuery == null ? "" : parsedQuery))
                     .and(QueryUtils.text(HIPPO_AVAILABILITY).isEqualTo(availability));
 
-            for(String ob : orderBys) {
+            for (String ob : parsedOrderBys) {
                 andClause = andClause.and(new ExistsConstraint(ob));
             }
-            query = addOrdering(andClause, orderBys, parsedSortOrders);
+
+            final Query query = addOrdering(andClause, parsedOrderBys, parsedSortOrders);
             query.offsetBy(offset)
                  .limitTo(max);
 
@@ -229,9 +229,9 @@ public class DocumentsResource extends AbstractResource {
 
     private Query addOrdering(final AndClause andClause, final List<String> orderBys, final List<SortOrder> sortOrders) {
         Query query = andClause;
-        for(int x = 0; x < orderBys.size(); x++) {
-            final String orderBy = orderBys.get(x);
-            final SortOrder sortOrder = sortOrders.get(x);
+        for (int i = 0; i < orderBys.size(); i++) {
+            final String orderBy = orderBys.get(i);
+            final SortOrder sortOrder = sortOrders.get(i);
             switch (sortOrder) {
                 case DESCENDING:
                 case DESC:
