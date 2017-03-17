@@ -52,10 +52,11 @@ public class HippoPublicationWorkflowDocumentVisitor extends HippoPublishableDoc
     protected void visitNode(final ResourceContext context, final Node node, final Map<String, Object> response)
             throws RepositoryException {
         super.visitNode(context, node, response);
-        response.put("pubwfCreationDate", node.getProperty(HIPPOSTDPUBWF_CREATION_DATE).getString());
-        response.put("pubwfLastModificationDate", node.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE).getString());
+        addPropertyConditionally(context, "pubwfCreationDate", node.getProperty(HIPPOSTDPUBWF_CREATION_DATE).getString(), response);
+        addPropertyConditionally(context, "pubwfLastModificationDate", node.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_DATE).getString(), response);
+        addPropertyConditionally(context, "pubwfCreationDate", node.getProperty(HIPPOSTDPUBWF_CREATION_DATE).getString(), response);
         if (node.hasProperty(HIPPOSTDPUBWF_PUBLICATION_DATE)) {
-            response.put("pubwfPublicationDate", node.getProperty(HIPPOSTDPUBWF_PUBLICATION_DATE).getString());
+            addPropertyConditionally(context, "pubwfPublicationDate", node.getProperty(HIPPOSTDPUBWF_PUBLICATION_DATE).getString(), response);
         }
     }
 
