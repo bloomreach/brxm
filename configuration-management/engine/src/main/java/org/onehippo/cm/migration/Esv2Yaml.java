@@ -78,7 +78,7 @@ public class Esv2Yaml {
             } else {
                 log.error("Esv2Yaml.convert() failed: " + t.getMessage());
             }
-//            throw e;
+            throw e;
         }
     }
 

@@ -190,6 +190,9 @@ public class ContentInitializeInstruction extends InitializeInstruction {
             case CONTENTPROPSET:
             case CONTENTPROPADD:
                 EsvProperty property = getTypeProperty();
+                if (!property.isMultiple() && EsvProperty.isKnownMultipleProperty(name)) {
+                    property.setMultiple(true);
+                }
                 DefinitionPropertyImpl prop = null;
                 if (node != null) {
                     if (node.isDeleted()) {
@@ -211,7 +214,7 @@ public class ContentInitializeInstruction extends InitializeInstruction {
                                             " at " + property.getSourceLocation() + " (from " + prop.getValueType().toString() +
                                             " at " + prop.getSourceLocation() + ")");
                                 }
-                                if ((prop.getType() == SINGLE && property.isMultiple()) || (prop.getType() != SINGLE && property.isSingle())) {
+                                if ((prop.getType() == SINGLE && property.isMultiple()) || (prop.getType() != SINGLE && !property.isMultiple())) {
                                     throw new EsvParseException("Unsupported " + getType().getPropertyName() + " " + prop.getPath() +
                                             " multiplicity change to " + property.isMultiple() + " at " + property.getSourceLocation() +
                                             " (from " + !property.isMultiple() + " at " + prop.getSourceLocation() + ")");

@@ -16,11 +16,98 @@
 package org.onehippo.cm.migration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.onehippo.cm.impl.model.SourceLocationImpl;
 
 public class EsvProperty {
+
+    private static final HashSet<String> KNOWN_MULTIPLE_PROPERTIES = new HashSet<>(Arrays.asList(
+            "autoexport:modules",
+            "autoexport:reloadonstartuppaths",
+            "autoexport:filteruuidpaths",
+            "autoexport:excluded",
+            "editor:extension",
+            "frontend:services",
+            "frontend:references",
+            "frontend:properties",
+            "frontend:nodetypes",
+            "frontend:uuids",
+            "hippo:modes",
+            "hippo:values",
+            "hippo:facets",
+            "hippo:availability",
+            "hippo:discriminator",
+            "hippocollection:exceptions",
+            "hippocollection:uuids",
+            "hippofacnav:filters",
+            "hippofacnav:modes",
+            "hippofacnav:sortfunction",
+            "hippofacnav:facets",
+            "hippofacnav:filters",
+            "hippofacnav:facetnodenames",
+            "hippofacnav:sortby",
+            "hippofacnav:sortorder",
+            "hippohtmlcleaner:attributes",
+            "hippohtmlcleaner:allowedDivClasses",
+            "hippohtmlcleaner:allowedSpanClasses",
+            "hippohtmlcleaner:allowedPreClasses",
+            "hippohtmlcleaner:allowedParaClasses",
+            "hippolog:eventArguments",
+            "hipposched:attributeValues",
+            "hipposched:attributeNames",
+            "hipposearch:includes",
+            "hipposearch:orderBy",
+            "hipposearch:ascDesc",
+            "hipposearch:excludes",
+            "hippostd:foldertype",
+            "hippostd:gallerytype",
+            "hippostd:modify",
+            "hipposys:users",
+            "hipposys:groups",
+            "hipposys:excluded",
+            "hipposys:privileges",
+            "hipposys:members",
+            "hipposys:previouspasswords",
+            "hipposys:roles",
+            "hipposys:search",
+            "hipposysedit:validators",
+            "hipposysedit:supertype",
+            "hippotaxonomy:keys",
+            "hippotaxonomy:synonyms",
+            "hippotaxonomy:locales",
+            "hippotaxonomy:synonyms",
+            "hst:parameternameprefixes",
+            "hst:parametervalues",
+            "hst:parameternames",
+            "hst:devices",
+            "hst:users",
+            "hst:roles",
+            "hst:defaultsitemapitemhandlerids",
+            "hst:containers",
+            "hst:componentconfigurationmappingvalues",
+            "hst:componentconfigurationmappingnames",
+            "hst:excludedforlinkrewriting",
+            "hst:sitemapitemhandlerids",
+            "hst:inheritsfrom",
+            "hst:formfieldmessages",
+            "hst:formfielddata",
+            "hst:diagnosticsforips",
+            "hst:prefixexclusions",
+            "hst:suffixexclusions",
+            "poll:option",
+            "reporting:parametervalues",
+            "reporting:parameternames",
+            "resourcebundle:messages",
+            "resourcebundle:keys",
+            "robotstxt:disallow",
+            "robotstxt:sitemap",
+            "targeting:propertynames",
+            "targeting:propertyvalues",
+            "targeting:skipUserAgents"
+    ));
 
     private final String name;
     private int type;
@@ -29,6 +116,10 @@ public class EsvProperty {
     private EsvMerge merge;
     private String mergeLocation;
     private List<EsvValue> values = new ArrayList<>();
+
+    public static boolean isKnownMultipleProperty(String name) {
+        return KNOWN_MULTIPLE_PROPERTIES.contains(name);
+    }
 
     public EsvProperty(final String name, final int type, final SourceLocationImpl location) {
         this.name = name;

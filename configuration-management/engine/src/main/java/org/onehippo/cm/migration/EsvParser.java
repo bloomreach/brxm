@@ -18,8 +18,6 @@ package org.onehippo.cm.migration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Stack;
 
 import javax.jcr.PropertyType;
@@ -58,22 +56,6 @@ public class EsvParser extends DefaultHandler {
     private static final String ESV_FILE = "file";
 
     private static final String[] IGNORED_PROPERTIES = new String[]{"hippo:paths", "hippo:related"};
-
-    private static final HashSet<String> FORCED_MULTIPLE = new HashSet<>(Arrays.asList(
-            "hipposys:groups",
-            "hipposys:members",
-            "hipposys:privileges",
-            "hipposys:roles",
-            "hippostd:foldertype",
-            "hippostd:gallerytype",
-            "hipposysedit:supertype",
-            "hipposysedit:validators",
-            "frontend:nodetypes",
-            "frontend:services",
-            "frontend:properties",
-            "autoexport:modules",
-            ""
-    ));
 
     private final File baseDir;
     private final Stack<EsvNode> stack = new Stack<>();
@@ -333,8 +315,7 @@ public class EsvParser extends DefaultHandler {
                         currentProperty.setMultiple(true);
                     }
                 }
-                if ((currentProperty.getMultiple() == null || !currentProperty.getMultiple()) &&
-                        FORCED_MULTIPLE.contains(currentProperty.getName())) {
+                if (!currentProperty.isMultiple() && EsvProperty.isKnownMultipleProperty(currentProperty.getName())) {
                     currentProperty.setMultiple(true);
                 }
                 getCurrentNode().getProperties().add(currentProperty);
