@@ -209,7 +209,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
                 }
                 String current = node.getProperty(PROPERTY_TITLE).getString();
                 if (previous != null) {
-                    assertTrue(previous.compareTo(current) >= 0); // default order is descending
+                    assertTrue(previous.compareTo(current) > 0); // default order is descending
                 }
                 previous = current;
                 processed++;
@@ -248,7 +248,7 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
                 }
                 String current = node.getProperty(PROPERTY_TITLE).getString();
                 if (previous != null) {
-                    assertTrue(previous.compareTo(current) <= 0);
+                    assertTrue(previous.compareTo(current) < 0);
                 }
                 processed++;
                 previous = current;
@@ -288,8 +288,6 @@ public class DocumentsResourceIT extends AbstractRestApiIT {
                 }
                 final String currentTitle = node.getProperty(PROPERTY_TITLE).getString();
                 final Calendar currentDate = node.getProperty(PROPERTY_DATE).getDate();
-
-                System.out.println(currentDate.getTime() + " - " + currentTitle);
 
                 if (previousDate != null && previousTitle != null) {
                     if(previousDate.equals(currentDate)) {
