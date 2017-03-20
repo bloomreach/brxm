@@ -60,6 +60,10 @@ $buttons-width: 40px;
     tr.hippo-list-selected td {
       background-color: $reorder-selected-bgcolor;
       color: $reorder-selected-color;
+
+      svg {
+        color: $reorder-selected-color;
+      }
     }
   }
 

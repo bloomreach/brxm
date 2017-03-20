@@ -24,7 +24,6 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -51,10 +50,9 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortableDataProvider;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.IconRenderer;
+import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,17 +68,15 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
 
         private String name;
         private IModel<String> displayName;
-        private AttributeModifier cellModifier;
         private JcrNodeModel nodeModel;
         private int index;
 
-        ListItem(JcrNodeModel nodeModel, DocumentTypeIconAttributeModifier attributeModifier) {
+        ListItem(JcrNodeModel nodeModel) {
             this.nodeModel = nodeModel;
             try {
                 name = nodeModel.getNode().getName();
                 index = nodeModel.getNode().getIndex();
                 displayName = new NodeNameModel(nodeModel);
-                cellModifier = attributeModifier.getCellAttributeModifier(nodeModel.getNode());
             } catch (RepositoryException e) {
                 log.error(e.getMessage(), e);
             }
@@ -94,12 +90,12 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             return name;
         }
 
-        public String getPathName() {
-            return name + (index > 1 ? "["+index+"]" : "");
+        public IModel<Node> getNodeModel() {
+            return nodeModel;
         }
 
-        public AttributeModifier getCellModifier() {
-            return cellModifier;
+        public String getPathName() {
+            return name + (index > 1 ? "["+index+"]" : "");
         }
 
         public void detach() {
@@ -137,7 +133,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             while (it.hasNext()) {
                 IModel<Node> entry = documents.model(it.next());
                 if (entry instanceof JcrNodeModel) {
-                    listItems.add(new ListItem((JcrNodeModel) entry, DocumentTypeIconAttributeModifier.getInstance()));
+                    listItems.add(new ListItem((JcrNodeModel) entry));
                 }
             }
         }
@@ -223,19 +219,18 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             List<ListColumn<ListItem>> columns = new ArrayList<>();
 
             ListColumn<ListItem> column = new ListColumn<>(Model.of(""), "icon");
-            column.setRenderer(EmptyRenderer.getInstance());
-            column.setAttributeModifier(new AbstractListAttributeModifier<ListItem>() {
+            IconRenderer iconRenderer = new IconRenderer(IconSize.M);
+            column.setRenderer(new IListCellRenderer<ListItem>() {
                 @Override
-                public AttributeModifier[] getCellAttributeModifiers(IModel<ListItem> model) {
-                    ListItem item = model.getObject();
-                    return new AttributeModifier[] { item.getCellModifier() };
+                public Component getRenderer(final String id, final IModel<ListItem> model) {
+                    final IModel<Node> nodeModel = model.getObject().getNodeModel();
+                    return iconRenderer.getRenderer(id, nodeModel);
                 }
 
                 @Override
-                public AttributeModifier[] getColumnAttributeModifiers() {
-                    return new AttributeModifier[] {
-                            DocumentTypeIconAttributeModifier.getInstance().getColumnAttributeModifier()
-                    };
+                public IObservable getObservable(final IModel<ListItem> model) {
+                    final IModel<Node> nodeModel = model.getObject().getNodeModel();
+                    return iconRenderer.getObservable(nodeModel);
                 }
             });
             columns.add(column);
