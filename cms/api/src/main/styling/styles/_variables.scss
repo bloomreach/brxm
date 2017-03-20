@@ -284,6 +284,11 @@ $file-upload-progress:              $success;
 $file-upload-error:                 $danger;
 $file-upload-stripe-bg:             $lighter-shade;
 
+// Permissions workflow dialog
+$permissions-workflow-border:       $modal-border-color;
+$permissions-workflow-separator:    $light-shade;
+
+
 // supported mimetypes that have a specific icon
 $mimetypes: (
   audio

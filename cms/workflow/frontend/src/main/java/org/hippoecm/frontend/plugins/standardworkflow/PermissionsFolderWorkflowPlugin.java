@@ -38,8 +38,6 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -51,14 +49,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.ReadOnlyModel;
@@ -78,10 +74,10 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(PermissionsFolderWorkflowPlugin.class);
 
-    private static final ResourceReference CSS = new CssResourceReference(PermissionsFolderWorkflowPlugin.class, "PermissionsFolderWorkflowPlugin.css");
     private static final String QUERY_LANGUAGE_QUERIES = Query.XPATH;
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
     private static final String HIPPO_TEMPLATES_BUNDLE_NAME = "hippo:templates";
+    private static final IValueMap DIALOG_SIZE = new ValueMap("width=525,height=auto").makeImmutable();
 
     private String name;
     private String selected;
@@ -163,18 +159,16 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
         this.selected = selected;
     }
 
-    public class PermissionsConfirmDialog extends AbstractWorkflowDialog {
+    public class PermissionsConfirmDialog extends WorkflowDialog {
 
-        protected final IValueMap CUSTOM = new ValueMap("width=475,height=425").makeImmutable();
         protected static final String EXCLUDE = "exclude";
-
-        private IModel folderName;
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         public PermissionsConfirmDialog(WorkflowDescriptorModel model, IWorkflowInvoker invoker, IModel folderName, Query query) {
-            super(model, invoker);
+            super(invoker, model);
 
-            this.folderName = folderName;
+            setTitle(new StringResourceModel("title", this, null, folderName.getObject()));
+            setSize(DIALOG_SIZE);
 
             final IPluginConfig pluginConfig = getPluginConfig();
             List<String> excludes;
@@ -269,10 +263,9 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     downLink.add(downIcon);
 
                     item.add(fragment);
-
-                    final ReadOnlyModel<String> cssClassModel = ReadOnlyModel.of(
-                            () -> (item.getIndex() & 1) == 1 ? "qfwli-even" : "qfwli-odd");
-                    item.add(CssClass.append(cssClassModel));
+                    item.add(CssClass.append(
+                        ReadOnlyModel.of(() -> (item.getIndex() & 1) == 1 ? "qfwli-even" : "qfwli-odd"))
+                    );
                 }
             };
 
@@ -312,21 +305,6 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                 }
             });
             querySelection.setNullValid(true);
-        }
-
-        @Override
-        public void renderHead(IHeaderResponse response) {
-            super.renderHead(response);
-            response.render(CssHeaderItem.forReference(CSS));
-        }
-
-        @Override
-        public IModel<String> getTitle() {
-            return new StringResourceModel("title", this, null, folderName.getObject());
-        }
-        @Override
-        public IValueMap getProperties() {
-            return CUSTOM;
         }
     }
 
