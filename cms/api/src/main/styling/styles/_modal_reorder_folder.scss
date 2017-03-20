@@ -64,7 +64,6 @@ $buttons-width: 40px;
   }
 
   .hippo-reorder-border {
-    max-height: 340px;
     min-height: 140px;
     position: relative
   }
@@ -90,6 +89,7 @@ $buttons-width: 40px;
 
   .hippo-reorder-table-area {
     border: 1px solid $reorder-border-color;
+    max-height: 340px;
     overflow-x: hidden;
     overflow-y: auto;
     width: calc(100% - #{$reorder-buttons-width + 8px});
