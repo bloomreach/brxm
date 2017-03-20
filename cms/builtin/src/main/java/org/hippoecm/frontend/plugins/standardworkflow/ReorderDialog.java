@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -65,8 +64,6 @@ import org.slf4j.LoggerFactory;
 
 class ReorderDialog extends AbstractWorkflowDialog {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(ReorderDialog.class);
 
     static final CssResourceReference REORDER_CSS = new CssResourceReference(ReorderDialog.class, "reorder.css");
@@ -75,7 +72,6 @@ class ReorderDialog extends AbstractWorkflowDialog {
     private List<String> mapping;
 
     static class ListItem implements IDetachable {
-        private static final long serialVersionUID = 1L;
 
         private String name;
         private IModel<String> displayName;
@@ -137,12 +133,11 @@ class ReorderDialog extends AbstractWorkflowDialog {
     }
 
     static class ReorderDataProvider extends SortableDataProvider<ListItem> {
-        private static final long serialVersionUID = 1L;
 
         private final List<ListItem> listItems;
 
         ReorderDataProvider(DocumentsProvider documents) {
-            listItems = new LinkedList<ListItem>();
+            listItems = new LinkedList<>();
             Iterator<Node> it = documents.iterator(0, documents.size());
             while (it.hasNext()) {
                 IModel<Node> entry = documents.model(it.next());
@@ -159,7 +154,7 @@ class ReorderDialog extends AbstractWorkflowDialog {
 
         @Override
         public IModel<ListItem> model(ListItem object) {
-            return new Model<ListItem>(object);
+            return new Model<>(object);
         }
 
         @Override
@@ -207,7 +202,7 @@ class ReorderDialog extends AbstractWorkflowDialog {
         }
 
         public List<String> getMapping() {
-            LinkedList<String> newOrder = new LinkedList<String>();
+            LinkedList<String> newOrder = new LinkedList<>();
             for (ListItem item : listItems) {
                 newOrder.add(item.getPathName());
             }
@@ -216,7 +211,6 @@ class ReorderDialog extends AbstractWorkflowDialog {
     }
 
     class ReorderPanel extends WebMarkupContainer implements TableSelectionListener<ListItem> {
-        private static final long serialVersionUID = 1L;
 
         private TableDefinition<ListItem> tableDefinition;
         private ReorderDataProvider dataProvider;
@@ -251,9 +245,8 @@ class ReorderDialog extends AbstractWorkflowDialog {
             });
             columns.add(column);
 
-            column = new ListColumn<ListItem>(Model.of(""), "name");
+            column = new ListColumn<>(Model.of(""), "name");
             column.setRenderer(new IListCellRenderer<ListItem>() {
-                private static final long serialVersionUID = 1L;
 
                 public Component getRenderer(String id, IModel<ListItem> model) {
                     ListItem item = model.getObject();
@@ -271,25 +264,23 @@ class ReorderDialog extends AbstractWorkflowDialog {
             });
             columns.add(column);
 
-            tableDefinition = new TableDefinition<ListItem>(columns, false);
-            DocumentsProvider documents = new DocumentsProvider(model, filter, new HashMap<String, Comparator<Node>>());
+            tableDefinition = new TableDefinition<>(columns, false);
+            DocumentsProvider documents = new DocumentsProvider(model, filter, new HashMap<>());
             dataProvider = new ReorderDataProvider(documents);
 
             pagingDefinition = new ListPagingDefinition();
             pagingDefinition.setPageSize(dataProvider.size() > 0 ? (int) dataProvider.size() : 1);
-            dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, this, false, pagingDefinition);
+            dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, this, false, pagingDefinition);
             add(dataTable);
 
             top = new AjaxLink<Void>("top") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftTop(selection.getObject());
 
                     ReorderPanel thisPanel = ReorderPanel.this;
-                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
+                    dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
                     dataTable.setScrollSelectedIntoView(true, true);
                     thisPanel.replace(dataTable);
@@ -299,15 +290,13 @@ class ReorderDialog extends AbstractWorkflowDialog {
             add(top);
 
             up = new AjaxLink<Void>("up") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftUp(selection.getObject());
 
                     ReorderPanel thisPanel = ReorderPanel.this;
-                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
+                    dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
                     dataTable.setScrollSelectedIntoView(true, true);
                     thisPanel.replace(dataTable);
@@ -317,15 +306,13 @@ class ReorderDialog extends AbstractWorkflowDialog {
             add(up);
 
             down = new AjaxLink<Void>("down") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftDown(selection.getObject());
 
                     ReorderPanel thisPanel = ReorderPanel.this;
-                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
+                    dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
                     dataTable.setScrollSelectedIntoView(true, false);
                     thisPanel.replace(dataTable);
@@ -335,15 +322,13 @@ class ReorderDialog extends AbstractWorkflowDialog {
             add(down);
 
             bottom = new AjaxLink<Void>("bottom") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftBottom(selection.getObject());
 
                     ReorderPanel thisPanel = ReorderPanel.this;
-                    dataTable = new ListDataTable<ListItem>("table", tableDefinition, dataProvider, thisPanel, false,
+                    dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, thisPanel, false,
                             pagingDefinition);
                     dataTable.setScrollSelectedIntoView(true, false);
                     thisPanel.replace(dataTable);
@@ -389,7 +374,7 @@ class ReorderDialog extends AbstractWorkflowDialog {
             }
         }
 
-        public List<String> getMapping() {
+        List<String> getMapping() {
             return dataProvider.getMapping();
         }
     }
