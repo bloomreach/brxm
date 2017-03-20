@@ -114,57 +114,39 @@ describe('PageStructureService', () => {
 
   const registerEmptyVBoxContainer = () => {
     const container = $j('#container-vbox-empty', $document)[0];
-
     registerParsedElement(previousComment(container));
-
     return container;
   };
 
   const registerVBoxContainer = () => {
     const container = $j('#container-vbox', $document)[0];
-
     registerParsedElement(previousComment(container));
-
     return container;
   };
 
   const registerVBoxComponent = (id) => {
     const component = $j(`#${id}`, $document)[0];
-
     registerParsedElement(childComment(component));
-
     return component;
   };
 
-  const registerEmptyNoMarkupContainer = () => {
-    const container = $j('#container-no-markup-empty', $document)[0];
-
+  const registerNoMarkupContainer = (id = '#container-no-markup') => {
+    const container = $j(id, $document)[0];
     registerParsedElement(childComment(container));
-
     return container;
   };
 
-  const registerNoMarkupContainerWithoutTextNodesAfterEndComment = () => {
-    const container = $j('#container-no-markup-without-text-nodes-after-end-comment', $document)[0];
+  const registerEmptyNoMarkupContainer = () => registerNoMarkupContainer('#container-no-markup-empty');
 
-    registerParsedElement(childComment(container));
+  const registerLowercaseNoMarkupContainer = () => registerNoMarkupContainer('#container-no-markup-lowercase');
 
-    return container;
-  };
+  const registerEmptyLowercaseNoMarkupContainer = () => registerNoMarkupContainer('#container-no-markup-lowercase-empty');
 
-  const registerNoMarkupContainer = () => {
-    const container = $j('#container-no-markup', $document)[0];
-
-    registerParsedElement(childComment(container));
-
-    return container;
-  };
+  const registerNoMarkupContainerWithoutTextNodesAfterEndComment = () => registerNoMarkupContainer('#container-no-markup-without-text-nodes-after-end-comment');
 
   const registerNoMarkupComponent = () => {
     const component = $j('#component-no-markup', $document)[0];
-
     registerParsedElement(previousComment(component));
-
     return component;
   };
 
@@ -280,7 +262,7 @@ describe('PageStructureService', () => {
     expect(containers[0].getJQueryElement('test')).toEqual(testElement);
   });
 
-  it('finds the DOM element of a transparent container as parent of the comment', () => {
+  it('finds the DOM element of a no-markup container as parent of the comment', () => {
     const container = registerNoMarkupContainer();
 
     const containers = PageStructureService.getContainers();
@@ -288,7 +270,7 @@ describe('PageStructureService', () => {
     expect(containers[0].getBoxElement()[0]).toBe(container);
   });
 
-  it('finds the DOM element of a component of a transparent container as next sibling of the comment', () => {
+  it('finds the DOM element of a component of a no-markup container as next sibling of the comment', () => {
     registerNoMarkupContainer();
 
     const component = registerNoMarkupComponent();
@@ -301,7 +283,7 @@ describe('PageStructureService', () => {
     expect(containers[0].getComponents()[0].hasNoIFrameDomElement()).not.toEqual(true);
   });
 
-  it('registers no iframe box element in case of a transparent, empty component', () => {
+  it('registers no iframe box element in case of a no-markup, empty component', () => {
     registerNoMarkupContainer();
     registerEmptyNoMarkupComponent();
 
@@ -315,19 +297,23 @@ describe('PageStructureService', () => {
   it('detects if a container contains DOM elements that represent a container-item', () => {
     registerVBoxContainer();
     registerNoMarkupContainer();
+    registerLowercaseNoMarkupContainer();
 
     const containers = PageStructureService.getContainers();
     expect(containers[0].isEmptyInDom()).toEqual(false);
     expect(containers[1].isEmptyInDom()).toEqual(false);
+    expect(containers[2].isEmptyInDom()).toEqual(false);
   });
 
   it('detects if a container does not contain DOM elements that represent a container-item', () => {
     registerEmptyVBoxContainer();
     registerEmptyNoMarkupContainer();
+    registerEmptyLowercaseNoMarkupContainer();
 
     const containers = PageStructureService.getContainers();
     expect(containers[0].isEmptyInDom()).toEqual(true);
     expect(containers[1].isEmptyInDom()).toEqual(true);
+    expect(containers[2].isEmptyInDom()).toEqual(true);
   });
 
   it('parses the page meta-data and adds it to the PageMetaDataService', () => {

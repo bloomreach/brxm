@@ -40,8 +40,7 @@ class ContainerElement extends PageStructureElement {
   // instead we simply fallback to checking if there is *any* child element present
   isEmptyInDom() {
     const box = this.getBoxElement();
-    const type = this.metaData[HstConstants.XTYPE];
-    const items = type === HstConstants.XTYPE_NOMARKUP ? box.children() : box.find('.hst-container-item');
+    const items = PageStructureElement.isXTypeNoMarkup(this.metaData) ? box.children() : box.find('.hst-container-item');
     return items.length === 0;
   }
 
