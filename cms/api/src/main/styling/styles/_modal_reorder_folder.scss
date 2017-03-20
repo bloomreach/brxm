@@ -1,0 +1,102 @@
+// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+$buttons-width: 40px;
+
+.hippo-reorder {
+  table {
+    width: 100%;
+
+    * {
+      cursor: pointer
+    }
+
+    tr {
+      border-bottom: 1px solid $reorder-separator-color;
+
+      &:last-child {
+        border-bottom: 0;
+      }
+    }
+
+    td {
+      padding: 4px 4px 4px 4px;
+
+      &:nth-child(2) {
+        width: 100%;
+      }
+
+      &.icon-16 {
+        height: 16px;
+        padding: 0;
+        width: 16px;
+      }
+
+      &.icon-16 span {
+        background-position: center center;
+        background-repeat: no-repeat;
+        display: block;
+        height: 16px;
+        margin-left: 4px;
+        width: 16px;
+      }
+    }
+
+    th {
+      padding: 2px 2px 6px 4px;
+    }
+
+    tr.hippo-list-selected td {
+      background-color: $reorder-selected-bgcolor;
+      color: $reorder-selected-color;
+    }
+  }
+
+  .hippo-reorder-border {
+    max-height: 340px;
+    min-height: 140px;
+    position: relative
+  }
+
+  .hippo-reorder-buttons {
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: $buttons-width;
+
+    button {
+      margin-bottom: 4px;
+
+      &[disabled] {
+        background-color: $button-disabled-bgcolor;
+        border: 1px solid $button-disabled-border;
+        color: $button-disabled-color;
+
+      }
+    }
+  }
+
+  .hippo-reorder-table-area {
+    border: 1px solid $reorder-border-color;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: calc(100% - #{$reorder-buttons-width + 8px});
+  }
+
+  .folderlist h3 {
+    font-weight: normal;
+    padding: 2px 2px 5px 6px;
+  }
+}

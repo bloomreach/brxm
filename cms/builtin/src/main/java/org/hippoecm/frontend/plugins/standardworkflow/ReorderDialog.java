@@ -28,8 +28,6 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IDetachable;
@@ -37,12 +35,10 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.resource.CssResourceReference;
-import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.addon.workflow.WorkflowDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -59,14 +55,13 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttrib
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentTypeIconAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
+import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ReorderDialog extends AbstractWorkflowDialog {
+class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
 
     private static final Logger log = LoggerFactory.getLogger(ReorderDialog.class);
-
-    static final CssResourceReference REORDER_CSS = new CssResourceReference(ReorderDialog.class, "reorder.css");
 
     private ReorderPanel panel;
     private List<String> mapping;
@@ -363,8 +358,10 @@ class ReorderDialog extends AbstractWorkflowDialog {
                 }
             }
             if (position != -1) {
+                top.setEnabled(position > 1);
                 up.setEnabled(position > 1);
                 down.setEnabled(position < size);
+                bottom.setEnabled(position < size);
             }
 
             dataTable.setModel(model);
@@ -379,9 +376,13 @@ class ReorderDialog extends AbstractWorkflowDialog {
         }
     }
 
-    ReorderDialog(IWorkflowInvoker action, IPluginConfig pluginConfig,
-            WorkflowDescriptorModel model, List<String> mapping) {
-        super(model, action);
+    ReorderDialog(IWorkflowInvoker invoker, IPluginConfig pluginConfig, WorkflowDescriptorModel model,
+                  List<String> mapping) {
+        super(invoker, model);
+
+        setTitleKey("reorder");
+        setSize(DialogConstants.MEDIUM_AUTO);
+
         this.mapping = mapping;
 
         String name;
@@ -398,28 +399,9 @@ class ReorderDialog extends AbstractWorkflowDialog {
     }
 
     @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        response.render(CssHeaderItem.forReference(REORDER_CSS));
-    }
-
-    @Override
-    public IModel getTitle() {
-        return new StringResourceModel("reorder", this, null);
-    }
-
-    @Override
     protected void onOk() {
         mapping.clear();
         mapping.addAll(panel.getMapping());
         super.onOk();
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        IValueMap props = new ValueMap(super.getProperties());
-        props.put("width", 520);
-        props.put("height", 400);
-        return props;
     }
 }
