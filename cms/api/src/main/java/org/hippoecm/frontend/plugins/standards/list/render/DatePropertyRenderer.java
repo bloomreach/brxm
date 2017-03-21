@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.gallery.columns.render;
+package org.hippoecm.frontend.plugins.standards.list.render;
 
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import java.util.Date;
 
-public class StringPropertyRenderer extends PropertyRenderer<String> {
+public class DatePropertyRenderer extends PropertyRenderer<Date> {
 
-    public StringPropertyRenderer(String prop, String relPath) {
-        super(prop, relPath);
-    }
-
-    public StringPropertyRenderer(String prop) {
+    public DatePropertyRenderer(String prop) {
         super(prop);
     }
 
-    @Override
-    protected String getValue(Property p) throws RepositoryException {
-        return p.getString();
-
+    public DatePropertyRenderer(String prop, String relPath) {
+        super(prop, relPath);
     }
 
+    @Override
+    protected Date getValue(Property p) throws RepositoryException {
+        return p.getDate().getTime();
+    }
 }

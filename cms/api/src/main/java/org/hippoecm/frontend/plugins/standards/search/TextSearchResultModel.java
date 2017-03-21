@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,10 +23,16 @@ public class TextSearchResultModel extends BrowserSearchResultModel {
     private static final long serialVersionUID = 1L;
 
     private String text;
-    
+    private String[] scope;
+
+    public TextSearchResultModel(final String text, final BrowserSearchResult bsr, final String[] scope) {
+        super(bsr);
+        this.text = text;
+        this.scope = scope;
+    }
+
     public TextSearchResultModel(String text, BrowserSearchResult bsr) {
         super(bsr);
- 
         this.text = text;
     }
 
@@ -34,4 +40,7 @@ public class TextSearchResultModel extends BrowserSearchResultModel {
         return text;
     }
 
+    public String[] getScope() {
+        return scope;
+    }
 }

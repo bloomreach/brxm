@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,14 @@ import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.gallery.columns.compare.CalendarComparator;
-import org.hippoecm.frontend.plugins.gallery.columns.compare.MimeTypeComparator;
-import org.hippoecm.frontend.plugins.gallery.columns.compare.SizeComparator;
-import org.hippoecm.frontend.plugins.gallery.columns.render.DatePropertyRenderer;
-import org.hippoecm.frontend.plugins.gallery.columns.render.MimeTypeIconRenderer;
-import org.hippoecm.frontend.plugins.gallery.columns.render.SizeRenderer;
-import org.hippoecm.frontend.plugins.gallery.columns.render.StringPropertyRenderer;
+import org.hippoecm.frontend.plugins.gallery.Translations;
+import org.hippoecm.frontend.plugins.gallery.compare.CalendarComparator;
+import org.hippoecm.frontend.plugins.gallery.compare.MimeTypeComparator;
+import org.hippoecm.frontend.plugins.gallery.compare.SizeComparator;
+import org.hippoecm.frontend.plugins.standards.list.render.DatePropertyRenderer;
+import org.hippoecm.frontend.plugins.standards.list.render.MimeTypeIconRenderer;
+import org.hippoecm.frontend.plugins.standards.list.render.SizeRenderer;
+import org.hippoecm.frontend.plugins.standards.list.render.StringPropertyRenderer;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.standards.list.AbstractListColumnProviderPlugin;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;

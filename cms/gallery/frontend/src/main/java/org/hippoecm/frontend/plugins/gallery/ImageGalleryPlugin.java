@@ -95,7 +95,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     }
 
     public List<ListColumn<Node>> getThumbnailModeColumns() {
-        int thumbnailSize = getPluginConfig().getAsInteger(ImageGalleryPlugin.CONFIG_GALLERY_THUMBNAIL_SIZE);
+        int thumbnailSize = getPluginConfig().getAsInteger(CONFIG_GALLERY_THUMBNAIL_SIZE);
         return Arrays.asList(
                 ImageGalleryColumnProviderPlugin.createIconColumn(thumbnailSize, thumbnailSize),
                 ImageGalleryColumnProviderPlugin.NAME_COLUMN

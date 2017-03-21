@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.io.IClusterable;
@@ -46,7 +47,7 @@ public class TextSearchBuilder implements IClusterable {
     private String[] scope;
 
     private String[] includePrimaryTypes;
-    private String[] excludedPrimaryTypes = {};
+    private String[] excludedPrimaryTypes = ArrayUtils.EMPTY_STRING_ARRAY;
     private boolean wildcardSearch = false;
     private String ignoredChars = DEFAULT_IGNORED_CHARS;
     private int limit = -1;
@@ -101,7 +102,7 @@ public class TextSearchBuilder implements IClusterable {
         
         final String query = querySb.toString();
         IModel<QueryResult> resultModel = new QueryResultModel(query, limit);
-        return new TextSearchResultModel(value, new BrowserSearchResult(TEXT_QUERY_NAME, resultModel));
+        return new TextSearchResultModel(value, new BrowserSearchResult(TEXT_QUERY_NAME, resultModel), scope);
     }
 
     /**
