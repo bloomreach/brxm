@@ -1,0 +1,23 @@
+.hippo-dialog-bottom-left .question-answer {
+  margin-left: 16px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+
+  .question{
+    line-height: 32px;
+    margin-right: 8px;
+    align-self: center;
+  }
+
+  .answer {
+    display: flex;
+    align-items: center;
+
+    input {
+      padding-left: 4px;
+      line-height: 30px;
+      width: 320px;
+    }
+  }
+}

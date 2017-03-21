@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -37,18 +37,17 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
-import org.hippoecm.repository.api.WorkflowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class DestinationDialog extends AbstractDialog implements IWorkflowInvoker {
+public abstract class DestinationDialog extends Dialog<Void> implements IWorkflowInvoker {
 
     static final Logger log = LoggerFactory.getLogger(DestinationDialog.class);
 
-    private IModel title;
     private IRenderService dialogRenderer;
     private IClusterControl control;
     private String modelServiceId;
@@ -57,26 +56,21 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
     private final String intialPath;
     private final NodeModelWrapper<Node> destination;
 
-    public DestinationDialog(IModel<String> title, IModel<String> question, IModel<String> nameModel, final NodeModelWrapper destination,
+    public DestinationDialog(IModel<String> title, IModel<String> question, IModel<String> answer,
+                             final NodeModelWrapper destination,
                              final IPluginContext context, IPluginConfig config) {
-        this.title = title;
+
+        setTitle(title);
+        setSize(DialogConstants.LARGE_AUTO);
+        setFocusOnCancel();
+        setOkEnabled(false);
+
         this.context = context;
         this.destination = destination;
         this.intialPath = getDestinationPath();
 
-        if (question != null) {
-            add(new Label("question", question));
-        } else {
-            Label dummy = new Label("question");
-            dummy.setVisible(false);
-            add(dummy);
-        }
-        if (nameModel != null) {
-            add(new TextFieldWidget("name", nameModel));
-        } else {
-            Label dummy = new Label("name");
-            dummy.setVisible(false);
-            add(dummy);
+        if (question != null && answer != null) {
+            addOrReplace(new QuestionPanel(Dialog.BOTTOM_LEFT_ID, question, answer));
         }
 
         IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
@@ -100,7 +94,6 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
                     modelRef = service;
                     modelRef.setModel(destination.getChainedModel());
                     context.registerService(modelObserver = new IObserver<IModelReference>() {
-                        private static final long serialVersionUID = 1L;
 
                         public IModelReference getObservable() {
                             return modelRef;
@@ -133,8 +126,6 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
         dialogRenderer = context.getService(decorated.getString("wicket.id"), IRenderService.class);
         dialogRenderer.bind(null, "picker");
         add(dialogRenderer.getComponent());
-        setFocusOnCancel();
-        setOkEnabled(false);
     }
 
     @Override
@@ -157,9 +148,6 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
             } else {
                 error(new StringResourceModel("permission.denied", this, null).getString());
             }
-        } catch (WorkflowException e) {
-            log.info("Could not execute workflow.", e);
-            error(e);
         } catch (Exception e) {
             log.info("Could not execute workflow.", e);
             error(e);
@@ -174,16 +162,6 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
         control.stop();
         context.unregisterTracker(tracker, modelServiceId);
         tracker = null;
-    }
-
-    @Override
-    public IModel getTitle() {
-        return title;
-    }
-
-    @Override
-    public IValueMap getProperties() {
-        return DialogConstants.LARGE;
     }
 
     protected boolean isOkEnabled() {
@@ -208,6 +186,17 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
         } catch (RepositoryException e) {
             log.error("Failed to get path of the destination node", e);
             return "";
+        }
+    }
+
+    private static class QuestionPanel extends Panel {
+
+        QuestionPanel(final String id, final IModel<String> question, final IModel<String> answer) {
+            super(id);
+
+            add(CssClass.append("question-answer"));
+            add(new Label("question", question));
+            add(new TextFieldWidget("answer", answer));
         }
     }
 }

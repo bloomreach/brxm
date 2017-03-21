@@ -109,6 +109,10 @@
   .hippo-dialog-body {
     padding: 16px;
 
+    &.no-padding {
+      padding: 0;
+    }
+
     .label {
       padding: 0 0 5px 0;
     }
