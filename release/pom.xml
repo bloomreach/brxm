@@ -42,10 +42,10 @@
     <hippo.release.version>12.0.0-SNAPSHOT</hippo.release.version>
 
     <hippo.addon-hst-configuration-editor.version>4.0.0-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
-    <hippo.addon-channel-manager.version>5.0.0-SNAPSHOT</hippo.addon-channel-manager.version>
+    <hippo.addon-channel-manager.version>5.0.0-visual-editing-psp2-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>4.0.0-SNAPSHOT</hippo.addon-search-service.version>
     <hippo.commons.version>4.0.0-SNAPSHOT</hippo.commons.version>
-    <hippo.cms.version>5.0.0-SNAPSHOT</hippo.cms.version>
+    <hippo.cms.version>5.0.0-visual-editing-psp2-SNAPSHOT</hippo.cms.version>
     <hippo.frontend.plugins.version>4.0.0-SNAPSHOT</hippo.frontend.plugins.version>
     <hippo.frontend.theme.version>4.0.0-SNAPSHOT</hippo.frontend.theme.version>
     <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
