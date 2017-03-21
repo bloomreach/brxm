@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.ckeditor.CKEditorConstants;
+import org.onehippo.ckeditor.CKEditorConfig;
 
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
 
 /**
  * Tests {@link org.hippoecm.frontend.plugins.ckeditor.CKEditorPanel}.
@@ -51,7 +50,7 @@ public class CKEditorPanelTest {
 
     @Test
     public void renderSingleContentsCss() throws JSONException {
-        config.put(CKEditorConstants.CONFIG_CONTENTS_CSS, "ckeditor/hippocontents.css");
+        config.put(CKEditorConfig.CONTENTS_CSS, "ckeditor/hippocontents.css");
 
         expectCssHeaderItemRendered("ckeditor/hippocontents.css");
 
@@ -63,7 +62,7 @@ public class CKEditorPanelTest {
     @Test
     public void renderMultipleContentsCss() throws JSONException {
         List<String> files = Arrays.asList("ckeditor/hippocontents.css", "extra.css");
-        config.put(CKEditorConstants.CONFIG_CONTENTS_CSS, new JSONArray(files));
+        config.put(CKEditorConfig.CONTENTS_CSS, new JSONArray(files));
 
         expectCssHeaderItemRendered("ckeditor/hippocontents.css");
         expectCssHeaderItemRendered("extra.css");
