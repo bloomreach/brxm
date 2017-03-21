@@ -1,6 +1,6 @@
 <!--
 
-    Copyright 2001-2013 Hippo B.V. (http://www.onehippo.com)
+    Copyright 2001-2017 Hippo B.V. (http://www.onehippo.com)
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -18,25 +18,15 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:extend>
-    <table class="modal-contents">
-      <tr>
-        <td><span wicket:id="name-label">[name]</span></td>
-        <td>
-          <input wicket:id="name" class="hippo-form-input document-name-field" type="text"/>
-        </td>
-      </tr>
-      <tr>
-        <td><span wicket:id="list-label">[list]</span></td>
-        <td>
-          <select wicket:id="list" class="hippo-form-input"></select>
-        </td>
-      </tr>
-      <tr>
-        <td><span wicket:id="date-label">[date]</span></td>
-        <td>
-          <span wicket:id="date"></span>
-        </td>
-      </tr>
-    </table>
+    <div class="hippo-dialog-body">
+      <div class="label" wicket:id="name-label">[name]</div>
+      <div class="input"><input type="text" wicket:id="name" class="hippo-form-input"/></div>
+      <div>
+        <div class="label" wicket:id="list-label">[list]</div>
+        <div><select class="hippo-form-select" wicket:id="list"></select></div>
+      </div>
+      <div class="label" wicket:id="date-label">[date]</div>
+      <div wicket:id="date"></div>
+    </div>
   </wicket:extend>
 </html>

@@ -1,5 +1,5 @@
 /**
- * Copyright 2001-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2001-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,18 @@
  * limitations under the License
  */
 
-.document-name-field{
-  width:290px;
+.new-document-wizard .hippo-datepicker {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.new-document-wizard .hippo-datepicker input {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.new-document-wizard .hippo-datepicker-time .hippo-datepicker-value-container {
+  padding-top: 0;
+  padding-bottom: 0;
 }

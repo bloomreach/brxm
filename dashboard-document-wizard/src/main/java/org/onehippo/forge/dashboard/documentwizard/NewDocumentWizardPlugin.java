@@ -1,12 +1,12 @@
-/**
- * Copyright 2001-2015 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2001-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
@@ -35,7 +35,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.datetime.markup.html.form.DateTextField;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -55,20 +54,18 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.CmsHeaderItem;
-import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
+import org.hippoecm.frontend.plugins.yui.datetime.YuiDateTimeField;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
-import org.hippoecm.frontend.widgets.AjaxDateTimeField;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -79,6 +76,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.onehippo.forge.selection.frontend.model.ValueList;
@@ -92,7 +90,8 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
     private static final String DEFAULT_LANGUAGE = "en";
 
-    private static final ResourceReference WIZARD_CSS = new CssResourceReference(NewDocumentWizardPlugin.class, "NewDocumentWizardPlugin.css");
+    private static final ResourceReference WIZARD_CSS = new CssResourceReference(NewDocumentWizardPlugin.class,
+                                                                                 "NewDocumentWizardPlugin.css");
 
     private static final String PARAM_CLASSIFICATION_TYPE = "classificationType";
     private static final String PARAM_BASE_FOLDER = "baseFolder";
@@ -121,10 +120,12 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         Label labelComponent;
 
         if (localeConfig != null) {
-            String labelText = localeConfig.getString(PARAM_SHORTCUT_LINK_LABEL, "Warning: label not found: " + PARAM_SHORTCUT_LINK_LABEL);
+            String labelText = localeConfig.getString(PARAM_SHORTCUT_LINK_LABEL,
+                                                      "Warning: label not found: " + PARAM_SHORTCUT_LINK_LABEL);
             labelComponent = new Label(PARAM_SHORTCUT_LINK_LABEL, Model.of(labelText));
         } else {
-            labelComponent = new Label(PARAM_SHORTCUT_LINK_LABEL, new StringResourceModel(PARAM_SHORTCUT_LINK_LABEL, this, null));
+            labelComponent = new Label(PARAM_SHORTCUT_LINK_LABEL,
+                                       new StringResourceModel(PARAM_SHORTCUT_LINK_LABEL, this, null));
         }
 
         link.add(labelComponent);
@@ -189,13 +190,11 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
     /**
      * The dialog that opens after the user has clicked the dashboard link.
      */
-    protected class Dialog extends AbstractDialog<Object> {
+    protected class Dialog extends org.hippoecm.frontend.dialog.Dialog<Object> {
 
         private static final String DIALOG_NAME_LABEL = "name-label";
         private static final String DIALOG_LIST_LABEL = "list-label";
         private static final String DIALOG_DATE_LABEL = "date-label";
-        private static final String DIALOG_HOURS_LABEL = "hours-label";
-        private static final String DIALOG_MINUTES_LABEL = "minutes-label";
 
         private final IPluginContext context;
         private final IPluginConfig config;
@@ -216,6 +215,9 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         public Dialog(final IPluginContext context, final IPluginConfig config, @SuppressWarnings("unused") Component parent) {
             this.context = context;
             this.config = config;
+
+            setSize(DialogConstants.MEDIUM_AUTO);
+            setCssClass("new-document-wizard");
 
             // get values from the shortcut configuration
             documentType = config.getString(PARAM_DOCUMENT_TYPE);
@@ -246,8 +248,10 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             try {
                 categories = provider.getValueList(valuelistPath, null);
             } catch (IllegalStateException ise) {
-                if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(ClassificationType.LISTDATE)) {
-                    log.warn("ValueList not found for parameter " + PARAM_VALUELIST_PATH + " with value " + valuelistPath);
+                if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(
+                        ClassificationType.LISTDATE)) {
+                    log.warn(
+                            "ValueList not found for parameter " + PARAM_VALUELIST_PATH + " with value " + valuelistPath);
                 }
                 categories = new ValueList();
             }
@@ -279,23 +283,21 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             listField.setLabel(new StringResourceModel(DIALOG_LIST_LABEL, this, null));
             add(listField);
 
-            if (!classificationType.equals(ClassificationType.LIST) && !classificationType.equals(ClassificationType.LISTDATE)) {
+            if (!classificationType.equals(ClassificationType.LIST) && !classificationType.equals(
+                    ClassificationType.LISTDATE)) {
                 listLabel.setVisible(false);
                 listField.setVisible(false);
             }
 
             // add date field
             final Label dateLabel = getLabel(DIALOG_DATE_LABEL, config);
-            AjaxDateTimeField dateField = new AjaxDateTimeField("date", new PropertyModel<>(this, "date"), true);
-            dateField.setRequired(true);
-            final StringResourceModel dateLabelModel = new StringResourceModel(DIALOG_DATE_LABEL, this, null);
-            dateField.setLabel(dateLabelModel);
-            ((DateTextField)dateField.get("date")).setLabel(dateLabelModel);
-            ((TextField)dateField.get("hours")).setLabel(new StringResourceModel(DIALOG_HOURS_LABEL, this, null));
-            ((TextField)dateField.get("minutes")).setLabel(new StringResourceModel(DIALOG_MINUTES_LABEL, this, null));
             add(dateLabel);
+
+            final YuiDateTimeField dateField = new YuiDateTimeField("date", new PropertyModel<>(this, "date"));
+            dateField.setRequired(true);
             add(dateField);
-            if (!classificationType.equals(ClassificationType.DATE) && !classificationType.equals(ClassificationType.LISTDATE)) {
+            if (!classificationType.equals(ClassificationType.DATE) && !classificationType.equals(
+                    ClassificationType.LISTDATE)) {
                 dateLabel.setVisible(false);
                 dateField.setVisible(false);
             }
@@ -379,6 +381,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
          *
          * @return the label, or a warning if not found.
          */
+        @Override
         public IModel<String> getTitle() {
             final IPluginConfig localeConfig = getLocalizedPluginConfig(config);
             if (localeConfig != null) {
@@ -391,14 +394,9 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         }
 
         @Override
-        public IValueMap getProperties() {
-            return DialogConstants.MEDIUM;
-        }
-
-        @Override
         protected void onOk() {
             Session session = getSession().getJcrSession();
-            HippoWorkspace workspace = (HippoWorkspace)session.getWorkspace();
+            HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
             try {
                 // get the folder node
                 HippoNode folder = getFolder(list, date, true);
@@ -409,17 +407,19 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                 Workflow workflow = workflowMgr.getWorkflow("internal", folder);
 
                 if (workflow instanceof FolderWorkflow) {
-                    FolderWorkflow fw = (FolderWorkflow)workflow;
+                    FolderWorkflow fw = (FolderWorkflow) workflow;
 
                     String encodedDocumentName = getNodeNameCodec().encode(documentName);
                     // create the new document
                     Map<String, String> arguments = new TreeMap<>();
                     arguments.put("name", encodedDocumentName);
-                    if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(ClassificationType.LISTDATE)) {
+                    if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(
+                            ClassificationType.LISTDATE)) {
                         arguments.put("list", list);
                         log.debug("Create document using for $list: " + list);
                     }
-                    if (classificationType.equals(ClassificationType.DATE) || classificationType.equals(ClassificationType.LISTDATE)) {
+                    if (classificationType.equals(ClassificationType.DATE) || classificationType.equals(
+                            ClassificationType.LISTDATE)) {
                         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd'T'kk:mm:ss.SSSZZ");
                         arguments.put("date", fmt.print(date.getTime()));
                         log.debug("Create document using for $date: " + fmt.print(date.getTime()));
@@ -433,7 +433,8 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                     // add the not-encoded document name as translation
                     if (!documentName.equals(encodedDocumentName)) {
 
-                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow)workflowMgr.getWorkflow("core", nodeModel.getNode());
+                        DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core",
+                                                                                                    nodeModel.getNode());
                         if (defaultWorkflow != null) {
                             defaultWorkflow.setDisplayName(documentName);
                         }
@@ -441,15 +442,16 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                 }
             } catch (RepositoryException | RemoteException | WorkflowException e) {
                 log.error("Error occurred while creating new document: "
-                        + e.getClass().getName() + ": " + e.getMessage());
+                                  + e.getClass().getName() + ": " + e.getMessage());
             }
         }
 
         private HippoNode getFolder(String list, Date date, final boolean create) throws RepositoryException, RemoteException, WorkflowException {
             Session session = getSession().getJcrSession();
-            HippoNode folder = (HippoNode)session.getItem(baseFolder);
+            HippoNode folder = (HippoNode) session.getItem(baseFolder);
 
-            if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(ClassificationType.LISTDATE)) {
+            if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(
+                    ClassificationType.LISTDATE)) {
                 folder = getListFolder(folder, list, create);
             }
 
@@ -457,23 +459,15 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                 return null;
             }
 
-            if (classificationType.equals(ClassificationType.DATE) || classificationType.equals(ClassificationType.LISTDATE)) {
+            if (classificationType.equals(ClassificationType.DATE) || classificationType.equals(
+                    ClassificationType.LISTDATE)) {
                 folder = getDateFolder(folder, date, create);
             }
             return folder;
         }
 
-        @Override
-        protected void onValidate() {
-            super.onValidate();
-        }
-
-        private IPluginContext getPluginContext() {
-            return context;
-        }
-
         private IValueListProvider getValueListProvider() {
-            return getPluginContext().getService(DEFAULT_SERVICE_VALUELIST, IValueListProvider.class);
+            return context.getService(DEFAULT_SERVICE_VALUELIST, IValueListProvider.class);
         }
 
         protected void select(JcrNodeModel nodeModel) {
@@ -486,7 +480,6 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                 log.warn("no browser service found");
             }
         }
-
     }
 
     /**
@@ -511,7 +504,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
      * Get or create folder for classificationType.LIST.
      *
      * @param parent parent folder in which the list-based folder is to be found/created.
-     * @param list list-based name of the folder
+     * @param list   list-based name of the folder
      * @param create flag indicating whether the folder should be created if it doesn't exist
      * @return node representing the list-based folder
      * @throws java.rmi.RemoteException
@@ -522,7 +515,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         String listEncoded = getNodeNameCodec().encode(list);
         HippoNode resultParent = parent;
         if (resultParent.hasNode(listEncoded)) {
-            resultParent = (HippoNode)resultParent.getNode(listEncoded);
+            resultParent = (HippoNode) resultParent.getNode(listEncoded);
         } else {
             if (create) {
                 resultParent = createFolder(resultParent, listEncoded);
@@ -537,7 +530,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
      * Get or create folder(s) for classificationType.DATE.
      *
      * @param parent parent folder in which the date-based folder is to be found/created.
-     * @param date date for which to find/create the folder(s).
+     * @param date   date for which to find/create the folder(s).
      * @param create flag indicating whether the folders should be created if they don't exist
      * @return node representing the date-based folder
      * @throws java.rmi.RemoteException
@@ -548,7 +541,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         String year = new SimpleDateFormat("yyyy").format(date);
         HippoNode resultParent = parent;
         if (resultParent.hasNode(year)) {
-            resultParent = (HippoNode)resultParent.getNode(year);
+            resultParent = (HippoNode) resultParent.getNode(year);
         } else {
             if (create) {
                 resultParent = createFolder(resultParent, year);
@@ -559,7 +552,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
         String month = new SimpleDateFormat("MM").format(date);
         if (resultParent.hasNode(month)) {
-            resultParent = (HippoNode)resultParent.getNode(month);
+            resultParent = (HippoNode) resultParent.getNode(month);
         } else {
             if (create) {
                 resultParent = createFolder(resultParent, month);
@@ -573,27 +566,27 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
     protected HippoNode createFolder(HippoNode parentNode, String name) throws RepositoryException, RemoteException, WorkflowException {
         Session session = getSession().getJcrSession();
-        HippoWorkspace workspace = (HippoWorkspace)session.getWorkspace();
+        HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
         WorkflowManager workflowMgr = workspace.getWorkflowManager();
 
         // get the folder node's workflow
         Workflow workflow = workflowMgr.getWorkflow("internal", parentNode);
 
         if (workflow instanceof FolderWorkflow) {
-            FolderWorkflow fw = (FolderWorkflow)workflow;
+            FolderWorkflow fw = (FolderWorkflow) workflow;
 
             // create the new folder
             String category = "new-folder";
             NodeType[] mixinNodeTypes = parentNode.getMixinNodeTypes();
             for (NodeType mixinNodeType : mixinNodeTypes) {
-                if (mixinNodeType.getName().equals("hippotranslation:translated")) {
+                if (mixinNodeType.getName().equals(HippoTranslationNodeType.NT_TRANSLATED)) {
                     category = "new-translated-folder";
                     break;
                 }
             }
-            fw.add(category, "hippostd:folder", name);
+            fw.add(category, HippoStdNodeType.NT_FOLDER, name);
 
-            HippoNode newFolder = (HippoNode)parentNode.getNode(name);
+            HippoNode newFolder = (HippoNode) parentNode.getNode(name);
 
             // give the new folder the same folder types as its parent
             Property parentFolderType = parentNode.getProperty("hippostd:foldertype");
