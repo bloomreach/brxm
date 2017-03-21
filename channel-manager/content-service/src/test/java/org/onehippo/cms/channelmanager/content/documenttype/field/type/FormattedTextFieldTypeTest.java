@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.ckeditor.CKEditorConfig;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -48,5 +49,16 @@ public class FormattedTextFieldTypeTest {
     public void configWithErrorsIsNull() throws IOException {
         field = new FormattedTextFieldType("{ this is not valid json ");
         assertNull(field.getConfig());
+    }
+
+    @Test
+    public void customConfigIsDisabledWhenNotConfigured() {
+        assertEquals("", field.getConfig().get(CKEditorConfig.CUSTOM_CONFIG).asText());
+    }
+
+    @Test
+    public void customConfigIsKeptWhenConfigured() {
+        field = new FormattedTextFieldType("{ customConfig: 'myconfig.js' }");
+        assertEquals("myconfig.js", field.getConfig().get(CKEditorConfig.CUSTOM_CONFIG).asText());
     }
 }

@@ -19,7 +19,9 @@ package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 import java.io.IOException;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.apache.commons.lang.StringUtils;
 import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms.channelmanager.content.documenttype.util.CKEditorUtils;
 import org.slf4j.Logger;
@@ -42,10 +44,19 @@ public class FormattedTextFieldType extends StringFieldType {
 
     public JsonNode getConfig() {
         try {
-            return CKEditorUtils.readConfig(defaultConfig);
+            final JsonNode config = CKEditorUtils.readConfig(defaultConfig);
+            disableCustomConfigLoadingIfNotConfigured(config);
+            return config;
         } catch (IOException e) {
             log.warn("Cannot read config of field '{}'", getId(), e);
         }
         return null;
+    }
+
+    private void disableCustomConfigLoadingIfNotConfigured(final JsonNode config) {
+        if (!config.has(CKEditorConfig.CUSTOM_CONFIG)) {
+            final ObjectNode mutableConfig = (ObjectNode) config;
+            mutableConfig.put(CKEditorConfig.CUSTOM_CONFIG, StringUtils.EMPTY);
+        }
     }
 }
