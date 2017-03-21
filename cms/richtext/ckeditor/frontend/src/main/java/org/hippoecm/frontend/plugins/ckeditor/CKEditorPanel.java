@@ -36,6 +36,7 @@ import org.hippoecm.frontend.CmsHeaderItem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,6 @@ public class CKEditorPanel extends Panel {
         }
     };
     private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
-    private static final String CONFIG_STYLES_SET_LANGUAGE_PARAM = "{language}";
 
     private static final Logger log = LoggerFactory.getLogger(CKEditorPanel.class);
 
@@ -147,8 +147,8 @@ public class CKEditorPanel extends Panel {
             editorConfig.putOpt(CKEditorConstants.CONFIG_KEYSTROKES, numericKeystrokes);
 
             // load the localized hippo styles if no other styles are specified
-            String stylesSet = editorConfig.optString(CKEditorConstants.CONFIG_STYLES_SET, HippoStyles.getConfigStyleSet(locale));
-            stylesSet = stylesSet.replace(CONFIG_STYLES_SET_LANGUAGE_PARAM, locale.getLanguage());
+            String stylesSet = editorConfig.optString(CKEditorConstants.CONFIG_STYLES_SET, CKEditorConfig.getDefaultStylesSet(locale));
+            stylesSet = CKEditorConfig.getStylesSet(stylesSet, locale);
             editorConfig.put(CKEditorConstants.CONFIG_STYLES_SET, stylesSet);
 
             // disable custom config loading if not configured
