@@ -194,7 +194,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         final Node contentNode = nodeModel.getNode();
         try {
             Property contentProperty = contentNode.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT);
-            return new JcrPropertyValueModel<String>(new JcrPropertyModel(contentProperty));
+            return new JcrPropertyValueModel<>(new JcrPropertyModel(contentProperty));
         } catch (RepositoryException e) {
             final String nodePath = JcrUtils.getNodePathQuietly(contentNode);
             final String propertyPath = nodePath + "/@" + HippoStdNodeType.HIPPOSTD_CONTENT;
