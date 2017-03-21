@@ -21,11 +21,11 @@ import java.text.ParseException;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class DateMathParserTest  {
+
+    public static final int DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 
     private static Calendar getNow() {
         Calendar startCal = Calendar.getInstance();
@@ -43,8 +43,13 @@ public class DateMathParserTest  {
             long startTime = startDate.getTime();
             long endTime = endDate.getTime();
             long diffTime = endTime - startTime;
-            long diff = diffTime / (1000 * 60 * 60 * 24);
-            assertTrue(diff == 7);
+            long diff = diffTime / DAY_IN_MILLIS;
+            Calendar nextWeek = getNow();
+            nextWeek.add(Calendar.DATE,7);
+            final long utcEndTime = endTime - nextWeek.getTimeZone().getOffset(endTime);
+            final long utcStartTime = startTime - now.getTimeZone().getOffset(startTime);
+            long utcDiff = utcEndTime - utcStartTime;
+            assertEquals(utcDiff/ DAY_IN_MILLIS, diff);
         }
         catch (IllegalStateException ex) {
             fail();
@@ -60,8 +65,13 @@ public class DateMathParserTest  {
             assertNotNull(endDate);
             long startTime = startDate.getTime();
             long endTime = endDate.getTime();
-            long diff = (startTime / (1000 * 60 * 60 * 24)) - (endTime / (1000 * 60 * 60 * 24));
-            assertTrue(diff == 7);
+            long diff = (startTime / DAY_IN_MILLIS) - (endTime / DAY_IN_MILLIS);
+            Calendar previousWeek = getNow();
+            previousWeek.add(Calendar.DATE,-7);
+            final long utcStartTime = startTime - now.getTimeZone().getOffset(startTime);
+            final long utcEndTime = endTime - previousWeek.getTimeZone().getOffset(endTime);
+            long utcDiff = utcStartTime - utcEndTime;
+            assertEquals(utcDiff/ DAY_IN_MILLIS, diff);
         }
         catch (IllegalStateException ex) {
             fail();
