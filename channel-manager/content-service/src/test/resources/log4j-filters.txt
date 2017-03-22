@@ -49,3 +49,4 @@ Failed to retrieve child node 'fieldName' of node '/bla'.
 Failed to retrieve hints for workflow
 Failed to obtain draft for user 'bla'.
 Failed to commit changes for user 'bla'.
+Failed to read rich text field 'test:richtextfield'
