@@ -391,7 +391,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         final ConfigurationImpl c1 = new ConfigurationImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a/b:\n"
                 + "      propertyX: blaX";
@@ -414,7 +414,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         final ConfigurationImpl c1 = new ConfigurationImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  cnd:\n"
                 + "  - dummy CND content";
 
@@ -436,7 +436,7 @@ public class MergedModelBuilderTest extends AbstractBuilderBaseTest {
         final ConfigurationImpl c1 = new ConfigurationImpl("c1");
         final ModuleImpl m1 = c1.addProject("p1").addModule("m1");
 
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  cnd:\n"
                 + "  - dummy CND content\n"
                 + "  - alphabetically earlier dummy CND";

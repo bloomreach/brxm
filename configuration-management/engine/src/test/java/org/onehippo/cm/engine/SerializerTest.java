@@ -99,7 +99,7 @@ public class SerializerTest extends AbstractBaseTest {
         final Path path = folder.getRoot().toPath().resolve("repo-config").resolve("test.yaml");
 
         assertEquals(
-                "instructions:\n" +
+                "definitions:\n" +
                 "  config:\n" +
                 "    /foo:\n" +
                 "      str: 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789\n" +

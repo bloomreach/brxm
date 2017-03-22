@@ -25,6 +25,12 @@ import org.onehippo.cm.impl.model.ModuleImpl;
 import org.onehippo.cm.impl.model.ProjectImpl;
 import org.yaml.snakeyaml.nodes.Node;
 
+import static org.onehippo.cm.engine.Constants.CONFIGURATIONS_KEY;
+import static org.onehippo.cm.engine.Constants.NAME_KEY;
+import static org.onehippo.cm.engine.Constants.PROJECTS_KEY;
+import static org.onehippo.cm.engine.Constants.AFTER_KEY;
+import static org.onehippo.cm.engine.Constants.MODULES_KEY;
+
 public class RepoConfigParser extends AbstractBaseParser {
 
     public RepoConfigParser(final boolean explicitSequencing) {
@@ -35,9 +41,9 @@ public class RepoConfigParser extends AbstractBaseParser {
         final Node node = composeYamlNode(inputStream, location);
 
         final Map<String, Configuration> result = new LinkedHashMap<>();
-        final Map<String, Node> sourceMap = asMapping(node, new String[]{"configurations"}, null);
+        final Map<String, Node> sourceMap = asMapping(node, new String[]{CONFIGURATIONS_KEY}, null);
 
-        for (Node configurationNode : asSequence(sourceMap.get("configurations"))) {
+        for (Node configurationNode : asSequence(sourceMap.get(CONFIGURATIONS_KEY))) {
             constructConfiguration(configurationNode, result);
         }
 
@@ -45,33 +51,33 @@ public class RepoConfigParser extends AbstractBaseParser {
     }
 
     private void constructConfiguration(final Node src, final Map<String, Configuration> parent) throws ParserException {
-        final Map<String, Node> configurationMap = asMapping(src, new String[]{"name", "projects"}, new String[]{"after"});
-        final String name = asStringScalar(configurationMap.get("name"));
+        final Map<String, Node> configurationMap = asMapping(src, new String[]{NAME_KEY, PROJECTS_KEY}, new String[]{AFTER_KEY});
+        final String name = asStringScalar(configurationMap.get(NAME_KEY));
         final ConfigurationImpl configuration = new ConfigurationImpl(name);
-        configuration.addAfter(asSingleOrSetOfStrScalars(configurationMap.get("after")));
+        configuration.addAfter(asSingleOrSetOfStrScalars(configurationMap.get(AFTER_KEY)));
         parent.put(name, configuration);
 
-        for (Node projectNode : asSequence(configurationMap.get("projects"))) {
+        for (Node projectNode : asSequence(configurationMap.get(PROJECTS_KEY))) {
             constructProject(projectNode, configuration);
         }
     }
 
     private void constructProject(final Node src, final ConfigurationImpl parent) throws ParserException {
-        final Map<String, Node> sourceMap = asMapping(src, new String[]{"name", "modules"}, new String[]{"after"});
-        final String name = asStringScalar(sourceMap.get("name"));
+        final Map<String, Node> sourceMap = asMapping(src, new String[]{NAME_KEY, MODULES_KEY}, new String[]{AFTER_KEY});
+        final String name = asStringScalar(sourceMap.get(NAME_KEY));
         final ProjectImpl project = parent.addProject(name);
-        project.addAfter(asSingleOrSetOfStrScalars(sourceMap.get("after")));
+        project.addAfter(asSingleOrSetOfStrScalars(sourceMap.get(AFTER_KEY)));
 
-        for (Node moduleNode : asSequence(sourceMap.get("modules"))) {
+        for (Node moduleNode : asSequence(sourceMap.get(MODULES_KEY))) {
             constructModule(moduleNode, project);
         }
     }
 
     private void constructModule(final Node src, final ProjectImpl parent) throws ParserException {
-        final Map<String, Node> map = asMapping(src, new String[]{"name"}, new String[]{"after"});
-        final String name = asStringScalar(map.get("name"));
+        final Map<String, Node> map = asMapping(src, new String[]{NAME_KEY}, new String[]{AFTER_KEY});
+        final String name = asStringScalar(map.get(NAME_KEY));
         final ModuleImpl module = parent.addModule(name);
-        module.addAfter(asSingleOrSetOfStrScalars(map.get("after")));
+        module.addAfter(asSingleOrSetOfStrScalars(map.get(AFTER_KEY)));
     }
 
 }

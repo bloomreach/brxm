@@ -19,5 +19,11 @@ package org.onehippo.cm.engine;
 public final class Constants {
 
     public static final boolean DEFAULT_EXPLICIT_SEQUENCING = false;
+    public static final String AFTER_KEY = "after";
+    public static final String NAME_KEY = "name";
+    public static final String MODULES_KEY = "modules";
+    public static final String PROJECTS_KEY = "projects";
+    public static final String CONFIGURATIONS_KEY = "configurations";
+    public static final String DEFINITIONS = "definitions";
 
 }

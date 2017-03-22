@@ -135,7 +135,7 @@ public class ParserValueTest extends AbstractBaseTest {
         final ModuleImpl module = new ModuleImpl("module", project);
 
         final String yaml =
-                "instructions:\n" +
+                "definitions:\n" +
                 "  config:\n" +
                 "    /node:\n" +
                 "      property:\n" +
@@ -158,7 +158,7 @@ public class ParserValueTest extends AbstractBaseTest {
         final ModuleImpl module = new ModuleImpl("module", project);
 
         final String yaml =
-                "instructions:\n" +
+                "definitions:\n" +
                 "  config:\n" +
                 "    /node:\n" +
                 "      dateShort: 2015-10-21";

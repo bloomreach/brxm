@@ -99,7 +99,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         }
 
         final List<NodeTuple> sourceTuples = new ArrayList<>();
-        sourceTuples.add(createStrMapTuple("instructions", definitionNodes));
+        sourceTuples.add(createStrMapTuple("definitions", definitionNodes));
         return new MappingNode(Tag.MAP, sourceTuples, false);
     }
 

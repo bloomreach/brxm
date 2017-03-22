@@ -1,4 +1,4 @@
-instructions:
+definitions:
   content:
     /b:
       jcr:primaryType: foo

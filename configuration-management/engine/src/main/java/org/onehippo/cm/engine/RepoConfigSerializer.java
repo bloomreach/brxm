@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.onehippo.cm.api.model.Configuration;
 import org.onehippo.cm.api.model.Module;
@@ -31,6 +32,13 @@ import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.Tag;
+
+import static org.onehippo.cm.engine.Constants.AFTER_KEY;
+import static org.onehippo.cm.engine.Constants.CONFIGURATIONS_KEY;
+import static org.onehippo.cm.engine.Constants.MODULES_KEY;
+import static org.onehippo.cm.engine.Constants.NAME_KEY;
+import static org.onehippo.cm.engine.Constants.PROJECTS_KEY;
+
 
 public class RepoConfigSerializer extends AbstractBaseSerializer {
 
@@ -46,11 +54,9 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
     private Node representRepoConfig(final Map<String, Configuration> configurations) {
         final List<NodeTuple> rootTuples = new ArrayList<>();
 
-        final List<Node> configurationNodes = new ArrayList<>();
-        for (Configuration configuration : configurations.values()) {
-            configurationNodes.add(representConfiguration(configuration));
-        }
-        rootTuples.add(createStrSeqTuple("configurations", configurationNodes));
+        final List<Node> configurationNodes = configurations.values().stream().map(this::representConfiguration)
+                .collect(Collectors.toList());
+        rootTuples.add(createStrSeqTuple(CONFIGURATIONS_KEY, configurationNodes));
 
         return new MappingNode(Tag.MAP, rootTuples, false);
     }
@@ -59,11 +65,9 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
         final List<NodeTuple> tuples = new ArrayList<>();
         tuples.addAll(representOrderable(configuration));
 
-        final List<Node> projectNodes = new ArrayList<>();
-        for (Project project: configuration.getProjects()) {
-            projectNodes.add(representProject(project));
-        }
-        tuples.add(createStrSeqTuple("projects", projectNodes));
+        final List<Node> projectNodes = configuration.getProjects().stream().map(this::representProject)
+                .collect(Collectors.toList());
+        tuples.add(createStrSeqTuple(PROJECTS_KEY, projectNodes));
 
         return new MappingNode(Tag.MAP, tuples, false);
     }
@@ -72,11 +76,8 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
         final List<NodeTuple> tuples = new ArrayList<>();
         tuples.addAll(representOrderable(project));
 
-        final List<Node> moduleNodes = new ArrayList<>();
-        for (Module module : project.getModules()) {
-            moduleNodes.add(representModule(module));
-        }
-        tuples.add(createStrSeqTuple("modules", moduleNodes));
+        final List<Node> moduleNodes = project.getModules().stream().map(this::representModule).collect(Collectors.toList());
+        tuples.add(createStrSeqTuple(MODULES_KEY, moduleNodes));
 
         return new MappingNode(Tag.MAP, tuples, false);
     }
@@ -89,21 +90,20 @@ public class RepoConfigSerializer extends AbstractBaseSerializer {
 
     private List<NodeTuple> representOrderable(final Orderable orderable) {
         final List<NodeTuple> tuples = new ArrayList<>();
-        tuples.add(createStrStrTuple("name", orderable.getName()));
+        tuples.add(createStrStrTuple(NAME_KEY, orderable.getName()));
 
         final Set<String> afters = orderable.getAfter();
         switch (afters.size()) {
             case 0:
                 break;
             case 1:
-                tuples.add(createStrStrTuple("after", afters.iterator().next()));
+                tuples.add(createStrStrTuple(AFTER_KEY, afters.iterator().next()));
                 break;
             default:
-                final List<Node> afterNodes = new ArrayList<>();
-                for (String after : afters) {
-                    afterNodes.add(new ScalarNode(Tag.STR, after, null, null, null));
-                }
-                tuples.add(createStrSeqTuple("after", afterNodes, true));
+                final List<Node> afterNodes = afters.stream()
+                        .map(after -> new ScalarNode(Tag.STR, after, null, null, null))
+                        .collect(Collectors.toList());
+                tuples.add(createStrSeqTuple(AFTER_KEY, afterNodes, true));
                 break;
         }
         return tuples;

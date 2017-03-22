@@ -32,14 +32,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.onehippo.cm.impl.model.ModelTestUtils.parseNoSort;
-
 public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     private final ConfigurationTreeBuilder builder = new ConfigurationTreeBuilder();
 
     @Test
     public void simple_single_definition() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -61,7 +60,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
     @Test
     public void complex_single_definition() throws Exception {
         final String yaml
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -100,7 +99,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void invalid_single_definition() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a/b:\n"
                 + "      property1: bla1";
@@ -118,7 +117,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void root_node_property() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /:\n"
                 + "      property1: bla1\n"
@@ -142,7 +141,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void merge_two_definitions_same_module() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -182,7 +181,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void merge_two_definitions_separate_modules() throws Exception {
-        final String yaml1 = "instructions:\n"
+        final String yaml1 = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -201,7 +200,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
         final List<Definition> definitions1 = parseNoSort(yaml1);
         builder.push((ContentDefinitionImpl)definitions1.get(0));
 
-        final String yaml2 = "instructions:\n"
+        final String yaml2 = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      property3: bla3\n"
@@ -236,7 +235,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void reorder_first_node_to_first() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -265,7 +264,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void reorder_node_unnecessary() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -294,7 +293,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void reorder_existing_node_to_first() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -319,7 +318,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void reorder_existing_node_to_earlier() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -348,7 +347,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void reorder_existing_node_to_later() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -377,7 +376,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void reorder_new_root() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -404,7 +403,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void reorder_new_child() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -432,7 +431,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void reorder_existing_child() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -459,7 +458,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void delete_leaf_node() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -484,7 +483,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void delete_subtree() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -509,7 +508,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void delete_embedded_in_definition_tree() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -549,7 +548,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void delete_at_root_level() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /:\n"
                 + "      .meta:delete: true";
@@ -566,7 +565,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void modify_deleted_node() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -594,7 +593,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void definition_root_below_deleted_node() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -622,7 +621,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void non_existent_definition_root_with_delete_flag() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -649,7 +648,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void non_existent_definition_root_with_delete_and_merge() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -677,7 +676,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void non_existent_definition_node_with_delete_flag() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -706,7 +705,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void non_existent_definition_node_with_delete_and_merge() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -736,14 +735,14 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void existing_definition_root_with_delete_and_merge() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
                 + "      /b:\n"
                 + "        jcr:primaryType: foo";
 
-        final String yaml2 = "instructions:\n"
+        final String yaml2 = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      /b:\n"
@@ -764,14 +763,14 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void existing_definition_with_delete_and_merge() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
                 + "      /b:\n"
                 + "        jcr:primaryType: foo";
 
-        final String yaml2 = "instructions:\n"
+        final String yaml2 = "definitions:\n"
                 + "  config:\n"
                 + "    /a/b:\n"
                 + "      .meta:delete: true\n"
@@ -791,7 +790,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void double_delete() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -820,7 +819,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void modify_deleted_non_root_definition_node() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -853,7 +852,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void replace_single_property() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -886,7 +885,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void replace_single_property_from_same_source_with_equal_value_gives_warning() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -916,7 +915,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void replace_single_property_from_different_sources_with_equal_value_gives_warning() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -928,7 +927,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
 
-        final String yaml2 = "instructions:\n"
+        final String yaml2 = "definitions:\n"
                 + "  config:\n"
                 + "    /a/b:\n"
                 + "      property1: bla1";
@@ -951,7 +950,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void replace_resource_with_equal_value_from_same_source_gives_warning() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -985,7 +984,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void replace_resource_with_equal_value_from_different_sources_gives_no_warning() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -999,7 +998,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
         builder.push((ContentDefinitionImpl)definitions.get(0));
 
-        final String yaml2 = "instructions:\n"
+        final String yaml2 = "definitions:\n"
                 + "  config:\n"
                 + "    /a/b:\n"
                 + "      property1:\n"
@@ -1023,7 +1022,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void replace_list_property() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1052,7 +1051,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void replace_list_property_with_equal_values() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1076,7 +1075,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void add_property_values() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1102,7 +1101,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void add_property_values_for_new_property() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1128,7 +1127,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void reject_property_if_different_kind() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1153,7 +1152,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void override_property_with_different_kind() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1179,7 +1178,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void reject_property_if_different_type() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1204,7 +1203,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void override_property_with_different_type() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1230,7 +1229,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void reject_value_change_for_primary_type() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1253,7 +1252,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void ignore_identical_value_for_primary_type() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1275,7 +1274,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void override_primary_type() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1299,7 +1298,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void add_mixins() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1324,7 +1323,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void replace_mixins_with_superset() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1347,7 +1346,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void reject_mixins_if_no_superset() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1371,7 +1370,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void override_mixins_with_no_superset() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1396,7 +1395,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void delete_property() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1420,7 +1419,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void delete_non_existent_property() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"
@@ -1438,7 +1437,7 @@ public class ConfigurationTreeBuilderTest extends AbstractBuilderBaseTest {
 
     @Test
     public void modify_deleted_property() throws Exception {
-        final String yaml = "instructions:\n"
+        final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /a:\n"
                 + "      jcr:primaryType: foo\n"

@@ -49,6 +49,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 import static org.apache.jackrabbit.JcrConstants.JCR_MIXINTYPES;
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.engine.Constants.DEFAULT_EXPLICIT_SEQUENCING;
+import static org.onehippo.cm.engine.Constants.DEFINITIONS;
 
 public class SourceParser extends AbstractBaseParser {
 
@@ -103,10 +104,10 @@ public class SourceParser extends AbstractBaseParser {
     }
 
     protected void constructSource(final String path, final Node src, final ModuleImpl parent) throws ParserException {
-        final Map<String, Node> sourceMap = asMapping(src, new String[]{"instructions"}, null);
+        final Map<String, Node> sourceMap = asMapping(src, new String[]{DEFINITIONS}, null);
         final SourceImpl source = parent.addSource(path);
 
-        final Map<String, Node> definitionsMap = asMapping(sourceMap.get("instructions"), null, new String[]{"namespace","cnd","config","content"});
+        final Map<String, Node> definitionsMap = asMapping(sourceMap.get(DEFINITIONS), null, new String[]{"namespace","cnd","config","content"});
         for (String definitionName : definitionsMap.keySet()) {
             final Node definitionNode = definitionsMap.get(definitionName);
             switch (definitionName) {
@@ -148,7 +149,7 @@ public class SourceParser extends AbstractBaseParser {
                     parent.addNodeTypeDefinition(resource, true);
                     break;
                 default:
-                    throw new ParserException("CND instruction item must be a string or a map with key 'resource'", node);
+                    throw new ParserException("CND definition item must be a string or a map with key 'resource'", node);
             }
         }
     }

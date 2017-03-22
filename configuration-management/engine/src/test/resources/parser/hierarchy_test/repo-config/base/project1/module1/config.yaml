@@ -1,4 +1,4 @@
-instructions:
+definitions:
   namespace:
   - prefix: myhippoproject
     uri: http://www.onehippo.org/myhippoproject/nt/1.0

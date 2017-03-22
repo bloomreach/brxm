@@ -62,7 +62,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
     @Test
     public void expect_namespaces_and_cnds_to_be_registered() throws Exception {
         final String source
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  namespace:\n"
                 + "  - prefix: test\n"
                 + "    uri: http://www.onehippo.org/test/nt/1.0\n"
@@ -97,7 +97,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
 
         // step 1
         final String startConfiguration
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  namespace:\n"
                 + "  - prefix: test\n"
                 + "    uri: http://www.onehippo.org/test/nt/1.0\n"
@@ -120,7 +120,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
 
         // step 2
         final String additionalPropertyConfiguration
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -141,7 +141,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
 
         // step 3
         final String reregisterConfiguration
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  cnd:\n"
                 + "  - |\n"
                 + "    <'nt'='http://www.jcp.org/jcr/nt/1.0'>\n"
@@ -166,7 +166,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
     @Test
     public void expect_parse_error_in_cnd() throws Exception {
         final String source
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  cnd:\n"
                 + "  - |\n"
                 + "    <'nt'='http://www.jcp.org/jcr/nt/1.0'>\n"
@@ -192,7 +192,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         setProperty("/test", "multiple", PropertyType.STRING, new String[]{"org1","org2"});
 
         final String source
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -214,7 +214,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         // no initial content
 
         final String definition
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -240,7 +240,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         setProperty("/test", "reordered", PropertyType.STRING, new String[]{"new2","new1"});
 
         final String definition
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -268,7 +268,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         setProperty("/test", "explicitly-deleted", PropertyType.STRING, "value");
 
         final String definition1
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -276,7 +276,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
                 + "      explicitly-deleted-non-existing: value\n"
                 + "";
         final String definition2
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      explicitly-deleted:\n"
@@ -302,7 +302,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         setProperty("/test", "already-changed-to-long", PropertyType.LONG, new String[]{"42","31415"});
 
         final String definition1
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -313,7 +313,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
                 + "      not-yet-existing: [org1, org2]\n"
                 + "";
         final String definition2
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      incorrect-should-be-single:\n"
@@ -357,7 +357,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
     @Test
     public void expect_all_value_types_to_be_handled_correctly() throws Exception {
         final String definition
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -411,7 +411,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
     @Test
     public void expect_resources_are_loaded() throws Exception {
         final String definition
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -442,7 +442,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
     @Test
     public void expect_value_add_on_resource_to_work() throws Exception {
         final String definition1
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -451,7 +451,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
                 + "        resource: [folder/string1.txt]\n"
                 + "";
         final String definition2
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      string:\n"
@@ -476,7 +476,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
     @Test
     public void expect_path_references_to_be_resolved() throws Exception {
         final String definition
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -514,7 +514,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         setProperty("/test/b", "property", PropertyType.STRING, "b");
 
         final String source
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -552,7 +552,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         setProperty("/test/b", "property", PropertyType.STRING, "b");
 
         final String source
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -612,7 +612,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         setProperty("/test/b", "property", PropertyType.STRING, "b");
 
         final String source
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -639,7 +639,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         // TODO: as part of HCM-24, expand this test
         // TODO: replace hippo types with custom test types
         final String source
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -682,7 +682,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         final String idC = session.getNode("/test/c").getIdentifier();
 
         final String source
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"
@@ -713,7 +713,7 @@ public class ConfigurationPersistenceServiceTest extends RepositoryTestCase {
         addNode("/test/non-orderable", "c", "nt:unstructured");
 
         final String source
-                = "instructions:\n"
+                = "definitions:\n"
                 + "  config:\n"
                 + "    /test:\n"
                 + "      jcr:primaryType: nt:unstructured\n"

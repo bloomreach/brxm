@@ -1,4 +1,4 @@
-instructions:
+definitions:
   config:
     /node-with-sub-node/sub-node:
       property: override

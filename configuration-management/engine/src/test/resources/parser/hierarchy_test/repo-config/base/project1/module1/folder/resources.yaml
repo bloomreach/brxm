@@ -1,4 +1,4 @@
-instructions:
+definitions:
   config:
     /resources:
       single-value-string-resource:
