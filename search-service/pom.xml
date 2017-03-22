@@ -45,7 +45,7 @@
     <easymock.version>3.0</easymock.version>
 
     <commons-lang.version>2.6</commons-lang.version>
-    <commons-collections.version>3.2.1</commons-collections.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
     <commons-beanutils.version>1.8.0</commons-beanutils.version>
     <commons-io.version>1.4</commons-io.version>
     <commons-configuration.version>1.7</commons-configuration.version>
