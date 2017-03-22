@@ -31,14 +31,12 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
-import org.onehippo.cms.channelmanager.content.error.BadRequestException;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CompoundFieldType extends FieldType {
+public class CompoundFieldType extends FieldType implements CompoundWriter {
     private static final Logger log = LoggerFactory.getLogger(CompoundFieldType.class);
 
     private final List<FieldType> fields = new ArrayList<>();
@@ -101,30 +99,16 @@ public class CompoundFieldType extends FieldType {
         checkCardinality(values);
 
         try {
-            final NodeIterator iterator = node.getNodes(nodeName);
-            long numberOfNodes = iterator.getSize();
-
-            // Additional cardinality check due to not yet being able to create new
-            // (or remove a subset of the old) compound nodes, unless there are more nodes than allowed
-            if (!values.isEmpty() && values.size() != numberOfNodes && !(numberOfNodes > getMaxValues())) {
-                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
-            }
-
-            for (FieldValue value : values) {
-                writeSingleTo(iterator.nextNode(), value);
-            }
-
-            // delete excess nodes to match field type
-            while (iterator.hasNext()) {
-                iterator.nextNode().remove();
-            }
+            NodeIterator children = node.getNodes(nodeName);
+            FieldTypeUtils.writeCompoundValues(children, values, getMaxValues(), this);
         } catch (RepositoryException e) {
             log.warn("Failed to write compound value to node {}", nodeName, e);
             throw new InternalServerErrorException();
         }
     }
 
-    public void writeSingleTo(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException {
+    @Override
+    public void writeValue(final Node node, final FieldValue fieldValue) throws ErrorWithPayloadException {
         final Map<String, List<FieldValue>> valueMap = fieldValue.findFields().orElseThrow(INVALID_DATA);
 
         FieldTypeUtils.writeFieldValues(valueMap, getFields(), node);

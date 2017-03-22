@@ -16,7 +16,10 @@
 
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -25,17 +28,25 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.testutils.log4j.Log4jListener;
+import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import static org.easymock.EasyMock.anyInt;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
+import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(MockNode.class)
+@PrepareForTest(FieldTypeUtils.class)
 public class RichTextFieldTypeTest {
 
     private static final String FIELD_NAME = "test:richtextfield";
@@ -60,11 +71,25 @@ public class RichTextFieldTypeTest {
         }
     }
 
-    private void assertNoWarningsLogged(Runnable test) throws Exception {
+    private interface Code {
+        void run() throws Exception;
+    }
+
+    private void assertWarningsLogged(final long count, Code code, Code... verifications) throws Exception {
         try (Log4jListener listener = Log4jListener.onWarn()) {
-            test.run();
-            assertThat("no warnings logged", listener.messages().count(), equalTo(0L));
+            try {
+                code.run();
+            } finally {
+                assertThat(count + " warnings logged", listener.messages().count(), equalTo(count));
+                for (Code verification : verifications) {
+                    verification.run();
+                }
+            }
         }
+    }
+
+    private void assertNoWarningsLogged(final Code code, final Code... verifications) throws Exception {
+        assertWarningsLogged(0, code, verifications);
     }
 
     @Test
@@ -92,9 +117,7 @@ public class RichTextFieldTypeTest {
 
     @Test
     public void readOptionalEmptyValue() throws Exception {
-        assertNoWarningsLogged(() -> {
-            assertFalse(type.readFrom(document).isPresent());
-        });
+        assertNoWarningsLogged(() -> assertFalse(type.readFrom(document).isPresent()));
     }
 
     @Test
@@ -103,9 +126,98 @@ public class RichTextFieldTypeTest {
         Node value = addValue("");
         value.getProperty("hippostd:content").setValue(new String[]{"one", "two"});
 
-        try (Log4jListener listener = Log4jListener.onWarn()) {
+        assertWarningsLogged(1, () -> assertFalse(type.readFrom(document).isPresent()));
+    }
+
+    @Test
+    public void writeSingleValue() throws Exception {
+        addValue("<p>value</p>");
+        assertNoWarningsLogged(() -> {
+            FieldValue newValue = new FieldValue("<p>changed</p>");
+
+            type.writeTo(document, Optional.of(Collections.singletonList(newValue)));
+
+            List<FieldValue> fieldValues = type.readFrom(document).get();
+            assertThat(fieldValues.size(), equalTo(1));
+            assertThat(fieldValues.get(0).getValue(), equalTo("<p>changed</p>"));
+        });
+    }
+
+    @Test
+    public void writeMultipleValues() throws Exception {
+        addValue("<p>one</p>");
+        addValue("<p>two</p>");
+        type.setMaxValues(2);
+        assertNoWarningsLogged(() -> {
+            FieldValue newValue1 = new FieldValue("<p>one changed</p>");
+            FieldValue newValue2 = new FieldValue("<p>two changed</p>");
+
+            type.writeTo(document, Optional.of(Arrays.asList(newValue1, newValue2)));
+
+            List<FieldValue> fieldValues = type.readFrom(document).get();
+            assertThat(fieldValues.size(), equalTo(2));
+            assertThat(fieldValues.get(0).getValue(), equalTo("<p>one changed</p>"));
+            assertThat(fieldValues.get(1).getValue(), equalTo("<p>two changed</p>"));
+        });
+    }
+
+    @Test
+    public void writeOptionalEmptyValue() throws Exception {
+        type.setMinValues(0);
+        assertNoWarningsLogged(() -> {
+            type.writeTo(document, Optional.of(Collections.emptyList()));
             assertFalse(type.readFrom(document).isPresent());
-            assertThat(listener.messages().count(), equalTo(1L));
-        }
+        });
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void writeLessValuesThanMinimum() throws Exception {
+        // default minimum is 1
+        type.writeTo(document, Optional.of(Collections.emptyList()));
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void writeMoreValuesThanMaximum() throws Exception {
+        FieldValue newValue1 = new FieldValue("<p>one</p>");
+        FieldValue newValue2 = new FieldValue("<p>two</p>");
+        type.writeTo(document, Optional.of(Arrays.asList(newValue1, newValue2)));
+    }
+
+    @Test
+    public void writeLessValuesThanStored() throws Exception {
+        addValue("<p>one</p>");
+        addValue("<p>two</p>");
+        addValue("<p>three</p>");
+        assertThat(document.getNodes().getSize(), equalTo(3L));
+
+        assertNoWarningsLogged(
+                () -> {
+                    FieldValue newValue = new FieldValue("<p>changed</p>");
+                    type.writeTo(document, Optional.of(Collections.singletonList(newValue)));
+                }, () -> {
+                    List<FieldValue> fieldValues = type.readFrom(document).get();
+                    assertThat(fieldValues.size(), equalTo(1));
+                    assertThat(fieldValues.get(0).getValue(), equalTo("<p>changed</p>"));
+                    assertThat(document.getNodes().getSize(), equalTo(1L));
+                });
+    }
+
+    @Test(expected = InternalServerErrorException.class)
+    public void exceptionWhileWriting() throws Exception {
+        PowerMock.mockStaticPartial(FieldTypeUtils.class, "writeCompoundValues");
+        FieldTypeUtils.writeCompoundValues(anyObject(), anyObject(), anyInt(), anyObject());
+        expectLastCall().andThrow(new RepositoryException());
+        replayAll();
+
+        addValue("<p>value</p>");
+        final FieldValue newValue = new FieldValue("<p>changed</p>");
+
+        assertWarningsLogged(1,
+                () -> type.writeTo(document, Optional.of(Collections.singletonList(newValue))),
+                () -> {
+                    List<FieldValue> fieldValues = type.readFrom(document).get();
+                    assertThat(fieldValues.size(), equalTo(1));
+                    assertThat(fieldValues.get(0).getValue(), equalTo("<p>value</p>"));
+                });
     }
 }
