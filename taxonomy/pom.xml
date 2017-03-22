@@ -47,7 +47,7 @@
     <hippo.repository.version>5.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.hst.version>5.0.0-SNAPSHOT</hippo.hst.version>
 
-    <commons-collections.version>3.2.1</commons-collections.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
 
     <jsp-api.version>2.2</jsp-api.version>
 
