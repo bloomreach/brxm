@@ -68,7 +68,7 @@
     <xalan.version>2.4.1</xalan.version>
 
     <commons-lang.version>2.6</commons-lang.version>
-    <commons-collections.version>3.2.1</commons-collections.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
     <commons-codec.version>1.4</commons-codec.version>
     <commons-pool.version>1.5.4</commons-pool.version>
     <commons-beanutils.version>1.8.0</commons-beanutils.version>
