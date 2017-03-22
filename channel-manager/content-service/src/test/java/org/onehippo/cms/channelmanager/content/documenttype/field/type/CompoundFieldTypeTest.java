@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +78,17 @@ public class CompoundFieldTypeTest {
         fieldType.getFields().add(compoundField);
 
         node = MockNode.root();
+    }
+
+    @Test
+    public void isValid() {
+        assertTrue(fieldType.isValid());
+
+        CompoundFieldType empty = new CompoundFieldType();
+        assertFalse(empty.isValid());
+
+        fieldType.addValidator(FieldType.Validator.UNSUPPORTED);
+        assertFalse(fieldType.isValid());
     }
 
     @Test

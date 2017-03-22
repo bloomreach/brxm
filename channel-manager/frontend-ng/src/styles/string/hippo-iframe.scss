@@ -203,6 +203,7 @@
   left: 50%;
   margin-left: -($overlay-icon-size / 2);
   margin-top: -($overlay-icon-size / 2);
+  pointer-events: none;
   position: absolute;
   top: 50%;
   width: $overlay-icon-size;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,14 @@ class ContainerElement extends PageStructureElement {
 
   isEmpty() {
     return this.items.length === 0;
+  }
+
+  // For no-markup containers we can not depend on the built-in CSS class .hst-container-item to indicate non-emptiness,
+  // instead we simply fallback to checking if there is *any* child element present
+  isEmptyInDom() {
+    const box = this.getBoxElement();
+    const items = PageStructureElement.isXTypeNoMarkup(this.metaData) ? box.children() : box.find('.hst-container-item');
+    return items.length === 0;
   }
 
   isDisabled() {

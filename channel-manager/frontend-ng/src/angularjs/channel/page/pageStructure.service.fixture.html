@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
   -->
 
 <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox" } -->
-<div id="container-vbox">
-  <div id="componentA">
+<div id="container-vbox" class="hst-container">
+  <div id="componentA" class="hst-container-item">
     <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
     <p id="test">Some markup in component A</p>
     <p id="edit-menu-in-component-a">
@@ -27,13 +27,20 @@
   <p id="content-in-container-vbox">
     <!-- { "HST-Type": "CONTENT_LINK", "uuid": "content-in-container-vbox" } -->
   </p>
-  <div id="componentB">
+  <div id="componentB" class="hst-container-item">
     <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component B", "uuid": "bbbb" } -->
     <p>Some markup in component B</p>
     <!-- { "HST-End": "true", "uuid": "bbbb" } -->
   </div>
 </div>
 <!-- { "HST-End": "true", "uuid": "container-vbox" } -->
+
+<!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty vBox container", "HST-XType": "HST.vBox", "uuid": "container-vbox-empty" } -->
+<div id="container-vbox-empty" class="hst-container">
+  <!-- some placeholder HTML -->
+  <div></div>
+</div>
+<!-- { "HST-End": "true", "uuid": "container-vbox-empty" } -->
 
 <div id="container-no-markup">
   <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "NoMarkup container", "HST-XType": "HST.NoMarkup", "uuid": "container-no-markup" } -->
@@ -50,6 +57,30 @@
   <!-- { "HST-End": "true", "uuid": "component-no-markup" } -->
   <!-- { "HST-End": "true", "uuid": "container-no-markup" } -->
 </div>
+
+<div id="container-no-markup-empty">
+  <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty NoMarkup container", "HST-XType": "HST.NoMarkup", "uuid": "container-no-markup-empty" } -->
+  <!-- { "HST-End": "true", "uuid": "container-no-markup-empty" } -->
+</div>
+
+<div id="container-no-markup-lowercase">
+  <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "NoMarkup container with lowercase xtype", "HST-XType": "hst.nomarkup", "uuid": "container-no-markup-lowercase" } -->
+  <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "Component in NoMarkup container with lowercase xtype", "uuid": "component-no-markup-lowercase" } -->
+  <div id="component-no-markup-lowercase">
+    <p>Some markup in lowercase nomarkup component</p>
+  </div>
+  <!-- { "HST-End": "true", "uuid": "component-no-markup-lowercase" } -->
+  <!-- { "HST-End": "true", "uuid": "container-no-markup-lowercase" } -->
+</div>
+
+<div id="container-no-markup-lowercase-empty">
+  <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty NoMarkup container with lowercase xtype", "HST-XType": "hst.nomarkup", "uuid": "container-no-markup-lowercase-empty" } -->
+  <!-- { "HST-End": "true", "uuid": "container-no-markup-lowercase-empty" } -->
+</div>
+
+<div id="container-no-markup-without-text-nodes-after-end-comment">
+  <!-- { "HST-Type": "CONTAINER_COMPONENT", "HST-Label": "Empty NoMarkup container without text nodes after the end comment", "HST-XType": "HST.NoMarkup", "uuid": "container-no-markup-without-text-nodes-after-end-comment" } -->
+  <!-- { "HST-End": "true", "uuid": "container-no-markup-without-text-nodes-after-end-comment" } --></div>
 
 <div id="content-in-page">
   <!-- { "HST-Type": "CONTENT_LINK", "uuid": "content-in-page" } -->
