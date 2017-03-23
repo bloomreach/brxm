@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class RepositoryJobExecutionContext {
      */
     @Deprecated
     public Session getSession(Credentials credentials) throws LoginException, RepositoryException {
-        return systemSession.impersonate(credentials);
+        return createSession(credentials);
     }
 
     /**
@@ -56,7 +56,11 @@ public class RepositoryJobExecutionContext {
      * Caller must log out the returned session after use.
      */
     public Session createSession(Credentials credentials) throws LoginException, RepositoryException {
-        return systemSession.impersonate(credentials);
+        // since the backing systemSession can be shared by different RepositoryJobExecutionContext's and there can
+        // be multiple threads involved, we need to synchronize on systemSession during impersonation
+        synchronized (systemSession) {
+            return systemSession.impersonate(credentials);
+        }
     }
 
     /**
