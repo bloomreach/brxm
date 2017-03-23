@@ -63,17 +63,17 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void instructionsNotAMap() {
+    public void definitionsNotAMap() {
         final Node root = yamlParser.compose(new StringReader("definitions: scalar value"));
 
-        assertParserException(root, instructions(root), "Node must be a mapping");
+        assertParserException(root, definitions(root), "Node must be a mapping");
     }
 
     @Test
     public void unknownInstruction() {
         final Node root = yamlParser.compose(new StringReader("definitions: { key1: value1 }"));
 
-        assertParserException(root, instructions(root), "Key 'key1' is not allowed");
+        assertParserException(root, definitions(root), "Key 'key1' is not allowed");
     }
 
     @Test
@@ -87,14 +87,14 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void namespaceWithSequenceOfScalar() {
         final Node root = yamlParser.compose(new StringReader("definitions: { namespace: [ scalar value ] }"));
 
-        assertParserException(root, firstInstructionFirstValue(root), "Node must be a mapping");
+        assertParserException(root, firstDefinitionFirstValue(root), "Node must be a mapping");
     }
 
     @Test
     public void namespaceWithMissingPrefix() {
         final Node root = yamlParser.compose(new StringReader("definitions: { namespace: [ uri: testURI ] }"));
 
-        assertParserException(root, firstInstructionFirstValue(root),
+        assertParserException(root, firstDefinitionFirstValue(root),
                 "Node must contain pair with key 'prefix'");
     }
 
@@ -102,7 +102,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void namespaceWithMissingURI() {
         final Node root = yamlParser.compose(new StringReader("definitions: { namespace: [ prefix: testPrefix ] }"));
 
-        assertParserException(root, firstInstructionFirstValue(root),
+        assertParserException(root, firstDefinitionFirstValue(root),
                 "Node must contain pair with key 'uri'");
     }
 
@@ -116,7 +116,7 @@ public class SourceValidationTest extends AbstractBaseTest {
 
         final Node root = yamlParser.compose(new StringReader(yaml));
 
-        assertParserException(root, firstInstructionFirstValue(root),
+        assertParserException(root, firstDefinitionFirstValue(root),
                 "Key 'unsupported' is not allowed");
     }
 
@@ -128,7 +128,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "    uri: testURI";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node namespaceMapping = firstInstructionFirstValue(root);
+        final Node namespaceMapping = firstDefinitionFirstValue(root);
 
         assertParserException(root, firstTuple(namespaceMapping).getValueNode(), "Node must be scalar");
     }
@@ -141,7 +141,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "    uri: testURI";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node namespaceMapping = firstInstructionFirstValue(root);
+        final Node namespaceMapping = firstDefinitionFirstValue(root);
 
         assertParserException(root, firstTuple(namespaceMapping).getValueNode(), "Scalar must be a string");
     }
@@ -154,7 +154,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "    uri: { }";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node namespaceMapping = firstInstructionFirstValue(root);
+        final Node namespaceMapping = firstDefinitionFirstValue(root);
 
         assertParserException(root, secondTuple(namespaceMapping).getValueNode(), "Node must be scalar");
     }
@@ -167,7 +167,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "    uri: 42";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node namespaceMapping = firstInstructionFirstValue(root);
+        final Node namespaceMapping = firstDefinitionFirstValue(root);
 
         assertParserException(root, secondTuple(namespaceMapping).getValueNode(), "Scalar must be a string");
     }
@@ -180,7 +180,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "    uri: 44:bla?//]";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node namespaceMapping = firstInstructionFirstValue(root);
+        final Node namespaceMapping = firstDefinitionFirstValue(root);
 
         assertParserException(root, secondTuple(namespaceMapping).getValueNode(),
                 "Scalar must be formatted as an URI");
@@ -197,14 +197,14 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void cndWithNonStringValue() {
         final Node root = yamlParser.compose(new StringReader("definitions: { cnd: [ 24 ] }"));
 
-        assertParserException(root, firstInstructionFirstValue(root), "Scalar must be a string");
+        assertParserException(root, firstDefinitionFirstValue(root), "Scalar must be a string");
     }
 
     @Test
     public void cndWithNonStringResourceValue() {
         final Node root = yamlParser.compose(new StringReader("definitions: { cnd: [ resource: 24 ] }"));
 
-        final Node cnd = firstInstructionFirstValue(root);
+        final Node cnd = firstDefinitionFirstValue(root);
 
         assertParserException(root, firstTuple(cnd).getValueNode(), "Scalar must be a string");
     }
@@ -213,7 +213,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void cndWithNotExistingResourceValue() {
         final Node root = yamlParser.compose(new StringReader("definitions: { cnd: [ resource: foo.txt ] }"));
 
-        final Node cnd = firstInstructionFirstValue(root);
+        final Node cnd = firstDefinitionFirstValue(root);
 
         assertParserException(root, firstTuple(cnd).getValueNode(), "Cannot find resource 'foo.txt'");
     }
@@ -226,7 +226,7 @@ public class SourceValidationTest extends AbstractBaseTest {
 
         final Node root = yamlParser.compose(new StringReader(yaml));
 
-        assertParserException(root, firstInstructionFirstValue(root),
+        assertParserException(root, firstDefinitionFirstValue(root),
                 "CND definition item must be a string or a map with key 'resource'");
     }
 
@@ -1084,7 +1084,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "    - property1: value2";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
+        final Node config0 = firstDefinitionFirstValue(root);
 
         assertParserException(root, firstTuple(config0).getValueNode(),
                 "Ordered map contains key 'property1' multiple times", true);
@@ -1099,7 +1099,7 @@ public class SourceValidationTest extends AbstractBaseTest {
 
         final Node root = yamlParser.compose(new StringReader(yaml));
 
-        assertParserException(root, firstInstructionFirstValue(root), "Map must contain single element", true);
+        assertParserException(root, firstDefinitionFirstValue(root), "Map must contain single element", true);
     }
 
     @Test
@@ -1111,7 +1111,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "      second: value";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
+        final Node config0 = firstDefinitionFirstValue(root);
         final Node propertyMap = firstValue(firstTuple(config0).getValueNode());
 
         assertParserException(root, propertyMap, "Map must contain single element", true);
@@ -1124,7 +1124,7 @@ public class SourceValidationTest extends AbstractBaseTest {
                 + "    - /path/to/node: scalar property value";
 
         final Node root = yamlParser.compose(new StringReader(yaml));
-        final Node config0 = firstInstructionFirstValue(root);
+        final Node config0 = firstDefinitionFirstValue(root);
 
         assertParserException(root, firstTuple(config0).getValueNode(), "Node must be a sequence", true);
     }
@@ -1155,19 +1155,19 @@ public class SourceValidationTest extends AbstractBaseTest {
         }
     }
 
-    private Node instructions(final Node root) {
+    private Node definitions(final Node root) {
         return ((MappingNode)root).getValue().get(0).getValueNode();
     }
 
     private NodeTuple firstInstructionTuple(final Node root) {
-        return firstTuple(instructions(root));
+        return firstTuple(definitions(root));
     }
 
     private NodeTuple firstConfigTuple(final Node root) {
         return firstTuple(firstInstructionTuple(root).getValueNode());
     }
 
-    private Node firstInstructionFirstValue(final Node root) {
+    private Node firstDefinitionFirstValue(final Node root) {
         return firstValue(firstInstructionTuple(root).getValueNode());
     }
 
