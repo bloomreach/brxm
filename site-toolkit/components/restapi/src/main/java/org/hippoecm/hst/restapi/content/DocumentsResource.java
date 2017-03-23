@@ -142,7 +142,12 @@ public class DocumentsResource extends AbstractResource {
     }
 
     private List<String> parseOrderBy(final String orderBy) {
-        return Arrays.asList(StringUtils.split(orderBy, ','));
+        final List<String> orderBys = new LinkedList<>();
+        final List<String> strings = Arrays.asList(StringUtils.split(orderBy, ','));
+        for(String string : strings) {
+            orderBys.add(string);
+        }
+        return orderBys;
     }
 
     private List<SortOrder> parseSortOrder(final String sortOrder) {
