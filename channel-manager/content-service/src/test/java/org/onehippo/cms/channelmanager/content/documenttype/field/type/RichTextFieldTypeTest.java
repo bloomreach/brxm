@@ -178,6 +178,7 @@ public class RichTextFieldTypeTest {
 
     @Test(expected = BadRequestException.class)
     public void writeMoreValuesThanMaximum() throws Exception {
+        // default maximum is 1
         FieldValue newValue1 = new FieldValue("<p>one</p>");
         FieldValue newValue2 = new FieldValue("<p>two</p>");
         type.writeTo(document, Optional.of(Arrays.asList(newValue1, newValue2)));
