@@ -24,14 +24,26 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.sort.FieldSorter;
-import org.onehippo.cms.channelmanager.content.documenttype.field.type.*;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.ChoiceFieldUtils;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.CompoundWriter;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.FormattedTextFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.MultilineStringFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType;
+import org.onehippo.cms.channelmanager.content.documenttype.field.type.StringFieldType;
 import org.onehippo.cms.channelmanager.content.documenttype.model.DocumentType;
 import org.onehippo.cms.channelmanager.content.documenttype.util.NamespaceUtils;
+import org.onehippo.cms.channelmanager.content.error.BadRequestException;
+import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 
@@ -212,6 +224,27 @@ public class FieldTypeUtils {
             if (!fieldType.hasUnsupportedValidator()) {
                 fieldType.writeTo(node, Optional.ofNullable(valueMap.get(fieldType.getId())));
             }
+        }
+    }
+
+    public static void writeCompoundValues(final NodeIterator compounds,
+                                           final List<FieldValue> values,
+                                           final int maxValues,
+                                           final CompoundWriter writer) throws RepositoryException, ErrorWithPayloadException {
+        long count = compounds.getSize();
+
+        // additional cardinality check to prevent creating new values or remove a subset of the old values
+        if (!values.isEmpty() && values.size() != count && !(count > maxValues)) {
+            throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
+        }
+
+        for (FieldValue value : values) {
+            writer.writeValue(compounds.nextNode(), value);
+        }
+
+        // delete excess nodes to match field type
+        while (compounds.hasNext()) {
+            compounds.nextNode().remove();
         }
     }
 

@@ -31,8 +31,7 @@ import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.ContentTypeContext;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
-import org.onehippo.cms.channelmanager.content.error.BadRequestException;
-import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
+import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeUtils;
 import org.onehippo.cms.channelmanager.content.error.ErrorWithPayloadException;
 import org.onehippo.cms.channelmanager.content.error.InternalServerErrorException;
 import org.slf4j.Logger;
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * The ChoiceFieldType represents the Content Blocks functionality, which allows users to choose from a list of
  * compound types to create instances in a document.
  */
-public class ChoiceFieldType extends FieldType {
+public class ChoiceFieldType extends FieldType implements CompoundWriter {
     private static final Logger log = LoggerFactory.getLogger(ChoiceFieldType.class);
 
     // The order of the entries in the choice map matters, so we use a *linked* hash map.
@@ -105,31 +104,16 @@ public class ChoiceFieldType extends FieldType {
 
         try {
             removeInvalidChoices(node); // This is symmetric to ignoring them in #readValues.
-
-            final NodeIterator iterator = node.getNodes(getId());
-            long numberOfNodes = iterator.getSize();
-
-            // Additional cardinality check due to not yet being able to create new
-            // (or remove a subset of the old) compound nodes, unless there are more nodes than allowed
-            if (!values.isEmpty() && values.size() != numberOfNodes && !(numberOfNodes > getMaxValues())) {
-                throw new BadRequestException(new ErrorInfo(ErrorInfo.Reason.CARDINALITY_CHANGE));
-            }
-
-            for (FieldValue value : values) {
-                writeSingleTo(iterator.nextNode(), value);
-            }
-
-            // delete excess nodes to match field type
-            while (iterator.hasNext()) {
-                iterator.nextNode().remove();
-            }
+            final NodeIterator children = node.getNodes(getId());
+            FieldTypeUtils.writeCompoundValues(children, values, getMaxValues(), this);
         } catch (RepositoryException e) {
             log.warn("Failed to write value for choice type '{}'", getId(), e);
             throw new InternalServerErrorException();
         }
     }
 
-    private void writeSingleTo(final Node node, final FieldValue value) throws ErrorWithPayloadException, RepositoryException {
+    @Override
+    public void writeValue(final Node node, final FieldValue value) throws ErrorWithPayloadException, RepositoryException {
         // each value must specify a chosen ID
         final String chosenId = value.findChosenId().orElseThrow(INVALID_DATA);
 
@@ -145,7 +129,7 @@ public class ChoiceFieldType extends FieldType {
         // each value must specify a choice value
         final FieldValue chosenValue = value.findChosenValue().orElseThrow(INVALID_DATA);
 
-        compound.writeSingleTo(node, chosenValue);
+        compound.writeValue(node, chosenValue);
     }
 
 
