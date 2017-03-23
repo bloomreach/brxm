@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettin
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.ckeditor.CKEditorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,36 +69,6 @@ import org.slf4j.LoggerFactory;
  */
 public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
 
-    public static final String DEFAULT_EDITOR_CONFIG = "{"
-            // do not html encode but utf-8 encode hence entities = false
-            + "  entities: false,"
-            // &gt; must not be replaced with > hence basicEntities = true
-            + "  basicEntities: true,"
-            + "  autoUpdateElement: false,"
-            + "  contentsCss: ['ckeditor/hippocontents.css'],"
-            + "  dialog_buttonsOrder: 'ltr',"
-            + "  dialog_noConfirmCancel: true,"
-            + "  extraAllowedContent: 'embed[allowscriptaccess,height,src,type,width]; img[border,hspace,vspace]; object[align,data,height,id,title,type,width]; p[align]; param[name,value]; table[width]; td[valign,width]; th[valign,width];',"
-            + "  keystrokes: ["
-            + "    [ 'Ctrl', 'm', 'maximize' ],"
-            + "    [ 'Alt', 'b', 'showblocks' ]"
-            + "  ],"
-            + "  linkShowAdvancedTab: false,"
-            + "  plugins: 'a11yhelp,basicstyles,button,clipboard,codemirror,contextmenu,dialog,dialogadvtab,dialogui,divarea,elementspath,enterkey,entities,floatingspace,floatpanel,htmlwriter,indent,indentblock,indentlist,justify,link,list,listblock,liststyle,magicline,maximize,menu,menubutton,panel,panelbutton,pastefromword,pastetext,popup,removeformat,resize,richcombo,showblocks,showborders,specialchar,stylescombo,tab,table,tableresize,tabletools,textselection,toolbar,undo,youtube',"
-            + "  removeFormatAttributes: 'style,lang,width,height,align,hspace,valign',"
-            + "  title: false,"
-            + "  toolbarGroups: ["
-            + "    { name: 'styles' },"
-            + "    { name: 'basicstyles' },"
-            + "    { name: 'undo' },"
-            + "    { name: 'listindentalign',  groups: [ 'list', 'indent', 'align' ] },"
-            + "    { name: 'links' },"
-            + "    { name: 'insert' },"
-            + "    { name: 'tools' },"
-            + "    { name: 'mode' }"
-            + "  ]"
-            + "}";
-
     public static final String CONFIG_CHILD_IMAGE_PICKER = "imagepicker";
     public static final String CONFIG_CHILD_LINK_PICKER = "linkpicker";
 
@@ -110,7 +81,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
     private static final Logger log = LoggerFactory.getLogger(CKEditorNodePlugin.class);
 
     public CKEditorNodePlugin(final IPluginContext context, final IPluginConfig config) {
-        super(context, config, DEFAULT_EDITOR_CONFIG);
+        super(context, config, CKEditorConfig.DEFAULT_RICH_TEXT_CONFIG);
     }
 
     /**
@@ -223,7 +194,7 @@ public class CKEditorNodePlugin extends AbstractCKEditorPlugin<Node> {
         final Node contentNode = nodeModel.getNode();
         try {
             Property contentProperty = contentNode.getProperty(HippoStdNodeType.HIPPOSTD_CONTENT);
-            return new JcrPropertyValueModel<String>(new JcrPropertyModel(contentProperty));
+            return new JcrPropertyValueModel<>(new JcrPropertyModel(contentProperty));
         } catch (RepositoryException e) {
             final String nodePath = JcrUtils.getNodePathQuietly(contentNode);
             final String propertyPath = nodePath + "/@" + HippoStdNodeType.HIPPOSTD_CONTENT;

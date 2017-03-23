@@ -36,6 +36,7 @@ import org.hippoecm.frontend.CmsHeaderItem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.ckeditor.CKEditorConfig;
 import org.onehippo.cms7.ckeditor.CKEditorConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,6 @@ public class CKEditorPanel extends Panel {
         }
     };
     private static final int LOGGED_EDITOR_CONFIG_INDENT_SPACES = 2;
-    private static final String CONFIG_STYLES_SET_LANGUAGE_PARAM = "{language}";
 
     private static final Logger log = LoggerFactory.getLogger(CKEditorPanel.class);
 
@@ -139,20 +139,20 @@ public class CKEditorPanel extends Panel {
 
             // always use the language of the current CMS locale
             final Locale locale = getLocale();
-            editorConfig.put(CKEditorConstants.CONFIG_LANGUAGE, locale.getLanguage());
+            editorConfig.put(CKEditorConfig.LANGUAGE, locale.getLanguage());
 
             // convert Hippo-specific 'declarative' keystrokes to numeric ones
-            final JSONArray declarativeAndNumericKeystrokes = editorConfig.optJSONArray(CKEditorConstants.CONFIG_KEYSTROKES);
+            final JSONArray declarativeAndNumericKeystrokes = editorConfig.optJSONArray(CKEditorConfig.KEYSTROKES);
             final JSONArray numericKeystrokes = DeclarativeKeystrokesConverter.convertToNumericKeystrokes(declarativeAndNumericKeystrokes);
-            editorConfig.putOpt(CKEditorConstants.CONFIG_KEYSTROKES, numericKeystrokes);
+            editorConfig.putOpt(CKEditorConfig.KEYSTROKES, numericKeystrokes);
 
             // load the localized hippo styles if no other styles are specified
-            String stylesSet = editorConfig.optString(CKEditorConstants.CONFIG_STYLES_SET, HippoStyles.getConfigStyleSet(locale));
-            stylesSet = stylesSet.replace(CONFIG_STYLES_SET_LANGUAGE_PARAM, locale.getLanguage());
-            editorConfig.put(CKEditorConstants.CONFIG_STYLES_SET, stylesSet);
+            String stylesSet = editorConfig.optString(CKEditorConfig.STYLES_SET, CKEditorConfig.getDefaultStylesSet(locale));
+            stylesSet = CKEditorConfig.getStylesSet(stylesSet, locale);
+            editorConfig.put(CKEditorConfig.STYLES_SET, stylesSet);
 
             // disable custom config loading if not configured
-            JsonUtils.putIfAbsent(editorConfig, CKEditorConstants.CONFIG_CUSTOM_CONFIG, StringUtils.EMPTY);
+            JsonUtils.putIfAbsent(editorConfig, CKEditorConfig.CUSTOM_CONFIG, StringUtils.EMPTY);
 
             if (log.isInfoEnabled()) {
                 log.info("CKEditor configuration:\n" + editorConfig.toString(LOGGED_EDITOR_CONFIG_INDENT_SPACES));
@@ -165,14 +165,14 @@ public class CKEditorPanel extends Panel {
     }
 
     static void renderContentsCss(IHeaderResponse response, JSONObject editorConfig) {
-        final JSONArray array = editorConfig.optJSONArray(CKEditorConstants.CONFIG_CONTENTS_CSS);
+        final JSONArray array = editorConfig.optJSONArray(CKEditorConfig.CONTENTS_CSS);
         if (array != null) {
             for (int i = 0; i < array.length(); i++) {
                 final String file = array.optString(i);
                 response.render(CssHeaderItem.forUrl(file));
             }
         } else {
-            final String file = editorConfig.optString(CKEditorConstants.CONFIG_CONTENTS_CSS);
+            final String file = editorConfig.optString(CKEditorConfig.CONTENTS_CSS);
             response.render(CssHeaderItem.forUrl(file));
         }
     }

@@ -57,16 +57,6 @@ public class CKEditorConstants {
     public static final int ALT = 0x440000;
 
     /**
-     * The CKEDITOR.config properties
-     */
-    public static final String CONFIG_CONTENTS_CSS = "contentsCss";
-    public static final String CONFIG_CUSTOM_CONFIG = "customConfig";
-    public static final String CONFIG_EXTRA_PLUGINS = "extraPlugins";
-    public static final String CONFIG_KEYSTROKES = "keystrokes";
-    public static final String CONFIG_LANGUAGE = "language";
-    public static final String CONFIG_STYLES_SET = "stylesSet";
-
-    /**
      * Checks whether a CKEditor resource reference exists on the class path.
      * @param ref a CKEditor resource reference.
      */

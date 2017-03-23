@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,10 @@ import java.util.Collections;
 
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.ckeditor.hippoautosave.HippoAutoSave;
-import org.hippoecm.frontend.plugins.ckeditor.hippopicker.HippoPicker;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.onehippo.cms7.ckeditor.CKEditorConstants;
+import org.onehippo.ckeditor.CKEditorConfig;
 
 /**
  * Adds the CKEditor plugin 'hippoautosave'.
@@ -39,7 +37,7 @@ public class CKEditorPanelAutoSaveExtension implements CKEditorPanelExtension {
 
     @Override
     public void addConfiguration(final JSONObject editorConfig) throws JSONException {
-        JsonUtils.appendToCommaSeparatedString(editorConfig, CKEditorConstants.CONFIG_EXTRA_PLUGINS, HippoAutoSave.PLUGIN_NAME);
+        JsonUtils.appendToCommaSeparatedString(editorConfig, CKEditorConfig.EXTRA_PLUGINS, HippoAutoSave.PLUGIN_NAME);
         editorConfig.put(HippoAutoSave.CONFIG_CALLBACK_URL, autoSaveBehavior.getCallbackUrl());
     }
 
