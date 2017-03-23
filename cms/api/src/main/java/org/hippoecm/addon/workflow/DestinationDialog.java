@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -69,9 +70,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
         this.destination = destination;
         this.intialPath = getDestinationPath();
 
-        if (question != null && answer != null) {
-            addOrReplace(new QuestionPanel(Dialog.BOTTOM_LEFT_ID, question, answer));
-        }
+        add(createQuestionPanel("question", question, answer));
 
         IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                                                                       IPluginConfigService.class);
@@ -134,6 +133,14 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
             dialogRenderer.render(target);
         }
         super.render(target);
+    }
+
+    protected Panel createQuestionPanel(final String id, final IModel<String> question, final IModel<String> answer) {
+        if (question != null && answer != null) {
+            return new QuestionPanel(id, question, answer);
+        } else {
+            return new EmptyPanel(id);
+        }
     }
 
     @Override
