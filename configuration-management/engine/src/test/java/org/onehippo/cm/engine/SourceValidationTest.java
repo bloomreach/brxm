@@ -70,7 +70,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void unknownInstruction() {
+    public void unknownDefinition() {
         final Node root = yamlParser.compose(new StringReader("definitions: { key1: value1 }"));
 
         assertParserException(root, definitions(root), "Key 'key1' is not allowed");
@@ -80,7 +80,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void namespaceWithScalarValue() {
         final Node root = yamlParser.compose(new StringReader("definitions: { namespace: scalar value }"));
 
-        assertParserException(root, firstInstructionTuple(root).getValueNode(), "Node must be a sequence");
+        assertParserException(root, firstDefinitionTuple(root).getValueNode(), "Node must be a sequence");
     }
 
     @Test
@@ -190,7 +190,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void cndWithScalarValue() {
         final Node root = yamlParser.compose(new StringReader("definitions: { cnd: scalar value }"));
 
-        assertParserException(root, firstInstructionTuple(root).getValueNode(), "Node must be a sequence");
+        assertParserException(root, firstDefinitionTuple(root).getValueNode(), "Node must be a sequence");
     }
 
     @Test
@@ -234,7 +234,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     public void configWithScalarValue() {
         final Node root = yamlParser.compose(new StringReader("definitions: { config: scalar value }"));
 
-        assertParserException(root, firstInstructionTuple(root).getValueNode(), "Node must be a mapping");
+        assertParserException(root, firstDefinitionTuple(root).getValueNode(), "Node must be a mapping");
     }
 
     @Test
@@ -314,7 +314,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithScalarInstructionLen() {
+    public void configWithScalarDefinitionLen() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node: scalar property value";
@@ -325,7 +325,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithNonScalarKey() {
+    public void configWithDefinitionWithNonScalarKey() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -338,7 +338,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithNonStringKey() {
+    public void configWithDefinitionWithNonStringKey() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -351,7 +351,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithUnsupportedScalarType() {
+    public void configWithDefinitionWithUnsupportedScalarType() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -365,7 +365,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithBigInteger() {
+    public void configWithDefinitionWithBigInteger() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -379,7 +379,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithMixedSequenceTypes() {
+    public void configWithDefinitionWithMixedSequenceTypes() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -394,7 +394,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithMissingKey() {
+    public void configWithDefinitionWithMissingKey() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -408,7 +408,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithUnsupportedKey() {
+    public void configWithDefinitionWithUnsupportedKey() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -423,7 +423,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithUnsupportedType() {
+    public void configWithDefinitionWithUnsupportedType() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -438,7 +438,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithMissingValue() {
+    public void configWithDefinitionWithMissingValue() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -452,7 +452,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithMultipleValueKeys() {
+    public void configWithDefinitionWithMultipleValueKeys() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -469,7 +469,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithMapValue() {
+    public void configWithDefinitionWithMapValue() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -486,7 +486,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithUnsupportedValueType() {
+    public void configWithDefinitionWithUnsupportedValueType() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -503,7 +503,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithTypeValueMismatch() {
+    public void configWithDefinitionWithTypeValueMismatch() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -521,7 +521,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithNonNumericDecimalValue() {
+    public void configWithDefinitionWithNonNumericDecimalValue() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -538,7 +538,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithNonStringDecimalValue() {
+    public void configWithDefinitionWithNonStringDecimalValue() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -555,7 +555,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithIncorrectUriValue() {
+    public void configWithDefinitionWithIncorrectUriValue() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -572,7 +572,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithIncorrectReferenceValue() {
+    public void configWithDefinitionWithIncorrectReferenceValue() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -589,7 +589,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithPathWithIncorrectType() {
+    public void configWithDefinitionWithPathWithIncorrectType() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -607,7 +607,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithPathMap() {
+    public void configWithDefinitionWithPathMap() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -624,7 +624,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithEmptyPathSequence() {
+    public void configWithDefinitionWithEmptyPathSequence() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -641,7 +641,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithIncorrectWeakReferenceValue() {
+    public void configWithDefinitionWithIncorrectWeakReferenceValue() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -658,7 +658,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithInvalidResourceType() {
+    public void configWithDefinitionWithInvalidResourceType() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -675,7 +675,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithInvalidResourceValue() {
+    public void configWithDefinitionWithInvalidResourceValue() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -693,7 +693,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithInvalidResourcePropertyTypeCombination() {
+    public void configWithDefinitionWithInvalidResourcePropertyTypeCombination() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -711,7 +711,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithEmptyResourceSequence() {
+    public void configWithDefinitionWithEmptyResourceSequence() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -728,7 +728,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithParentPathElementResource() {
+    public void configWithDefinitionWithParentPathElementResource() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -746,7 +746,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithNotExistingResource() {
+    public void configWithDefinitionWithNotExistingResource() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -763,7 +763,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithNodeDeleteNonScalar() {
+    public void configWithDefinitionWithNodeDeleteNonScalar() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -777,7 +777,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithNodeDeleteNonBoolean() {
+    public void configWithDefinitionWithNodeDeleteNonBoolean() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -791,7 +791,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithNodeDeleteFalse() {
+    public void configWithDefinitionWithNodeDeleteFalse() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -805,7 +805,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithNodeDeleteAndMore() {
+    public void configWithDefinitionWithNodeDeleteAndMore() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -819,7 +819,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithOrderBeforeNonScalar() {
+    public void configWithDefinitionWithOrderBeforeNonScalar() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -833,7 +833,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithOrderBeforeNonString() {
+    public void configWithDefinitionWithOrderBeforeNonString() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -847,7 +847,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithNullOrderBefore() {
+    public void configWithDefinitionWithNullOrderBefore() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -861,7 +861,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithOrderBeforeSelf() {
+    public void configWithDefinitionWithOrderBeforeSelf() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -874,7 +874,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithOrderBeforeFirst() {
+    public void configWithDefinitionWithOrderBeforeFirst() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -887,7 +887,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithNonScalarPropertyOperation() {
+    public void configWithDefinitionWithNonScalarPropertyOperation() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -902,7 +902,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithUnknownPropertyOperation() {
+    public void configWithDefinitionWithUnknownPropertyOperation() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -917,7 +917,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithPropertyDeleteAndMore() {
+    public void configWithDefinitionWithPropertyDeleteAndMore() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -933,7 +933,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithPropertyValueAddAndSingleScalar() {
+    public void configWithDefinitionWithPropertyValueAddAndSingleScalar() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -949,7 +949,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithPrimaryTypePropertyWithNonNameType() {
+    public void configWithDefinitionWithPrimaryTypePropertyWithNonNameType() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -965,7 +965,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithPrimaryTypePropertyWithNonScalar() {
+    public void configWithDefinitionWithPrimaryTypePropertyWithNonScalar() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -980,7 +980,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithPrimaryTypePropertyWithDelete() {
+    public void configWithDefinitionWithPrimaryTypePropertyWithDelete() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -996,7 +996,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithPrimaryTypePropertyWithAdd() {
+    public void configWithDefinitionWithPrimaryTypePropertyWithAdd() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -1013,7 +1013,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithMixinTypesPropertyWithNonNameType() {
+    public void configWithDefinitionWithMixinTypesPropertyWithNonNameType() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -1029,7 +1029,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithMixinTypesPropertyWithNonSequence() {
+    public void configWithDefinitionWithMixinTypesPropertyWithNonSequence() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -1045,7 +1045,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithInstructionWithMixinTypesPropertyWithDelete() {
+    public void configWithDefinitionWithMixinTypesPropertyWithDelete() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    /path/to/node:\n"
@@ -1071,12 +1071,12 @@ public class SourceValidationTest extends AbstractBaseTest {
 
         final Node root = yamlParser.compose(new StringReader(yaml));
 
-        assertParserException(root, firstInstructionTuple(root).getValueNode(),
+        assertParserException(root, firstDefinitionTuple(root).getValueNode(),
                 "Ordered map contains key 'first' multiple times", true);
     }
 
     @Test
-    public void configWithDuplicateKeysInInstruction() {
+    public void configWithDuplicateKeysInDefinition() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "  - /path/to/node:\n"
@@ -1103,7 +1103,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithTooManyKeysInInstruction() {
+    public void configWithTooManyKeysInDefinition() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "  - /path/to/node:\n"
@@ -1118,7 +1118,7 @@ public class SourceValidationTest extends AbstractBaseTest {
     }
 
     @Test
-    public void configWithScalarInstruction() {
+    public void configWithScalarDefinition() {
         final String yaml = "definitions:\n"
                 + "  config:\n"
                 + "    - /path/to/node: scalar property value";
@@ -1159,16 +1159,16 @@ public class SourceValidationTest extends AbstractBaseTest {
         return ((MappingNode)root).getValue().get(0).getValueNode();
     }
 
-    private NodeTuple firstInstructionTuple(final Node root) {
+    private NodeTuple firstDefinitionTuple(final Node root) {
         return firstTuple(definitions(root));
     }
 
     private NodeTuple firstConfigTuple(final Node root) {
-        return firstTuple(firstInstructionTuple(root).getValueNode());
+        return firstTuple(firstDefinitionTuple(root).getValueNode());
     }
 
     private Node firstDefinitionFirstValue(final Node root) {
-        return firstValue(firstInstructionTuple(root).getValueNode());
+        return firstValue(firstDefinitionTuple(root).getValueNode());
     }
 
     private NodeTuple firstTuple(final Node mapping) {
